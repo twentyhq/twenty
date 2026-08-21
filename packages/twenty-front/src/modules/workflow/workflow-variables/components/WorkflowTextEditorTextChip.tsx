@@ -1,7 +1,7 @@
-import { BaseChip } from '@/ui/input/components/BaseChip';
-import { styled } from '@linaria/react';
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { BaseChip } from "@/ui/input/components/BaseChip";
+import { styled } from "@linaria/react";
+import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledWrapper = styled.span`
   display: inline-block;
@@ -11,18 +11,18 @@ const StyledWrapper = styled.span`
 type WorkflowTextEditorTextChipProps = NodeViewProps;
 
 export const WorkflowTextEditorTextChip = ({
-  deleteNode,
-  node,
-  editor,
+	deleteNode,
+	node,
+	editor,
 }: WorkflowTextEditorTextChipProps) => {
-  const text = node.attrs.text as string;
+	const text = node.attrs.text as string;
 
-  return (
-    <NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: 'nowrap' }}>
-      <BaseChip
-        label={text}
-        onRemove={editor.isEditable ? deleteNode : undefined}
-      />
-    </NodeViewWrapper>
-  );
+	return (
+		<NodeViewWrapper as={StyledWrapper} style={{ whiteSpace: "nowrap" }}>
+			<BaseChip
+				label={text}
+				onRemove={editor.isEditable ? deleteNode : undefined}
+			/>
+		</NodeViewWrapper>
+	);
 };

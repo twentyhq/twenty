@@ -1,177 +1,177 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { TEST_IFRAME_CONFIG } from 'test/integration/constants/widget-configuration-test-data.constants';
+import { isNonEmptyString } from "@sniptt/guards";
+import { TEST_IFRAME_CONFIG } from "test/integration/constants/widget-configuration-test-data.constants";
 import {
-  createTestDashboardWithGraphQL,
-  destroyDashboardWithGraphQL,
-} from 'test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util';
-import { duplicateOneDashboard } from 'test/integration/metadata/suites/dashboard/utils/duplicate-one-dashboard.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
-import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
-import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+	createTestDashboardWithGraphQL,
+	destroyDashboardWithGraphQL,
+} from "test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util";
+import { duplicateOneDashboard } from "test/integration/metadata/suites/dashboard/utils/duplicate-one-dashboard.util";
+import { findManyObjectMetadata } from "test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util";
+import { createOnePageLayoutTab } from "test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util";
+import { createOnePageLayoutWidget } from "test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util";
+import { createOnePageLayout } from "test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util";
+import { extractRecordIdsAndDatesAsExpectAny } from "test/utils/extract-record-ids-and-dates-as-expect-any";
+import { jestExpectToBeDefined } from "test/utils/jest-expect-to-be-defined.util.test";
 import {
-  type EachTestingContext,
-  eachTestingContextFilter,
-} from 'twenty-shared/testing';
-import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
+	type EachTestingContext,
+	eachTestingContextFilter,
+} from "twenty-shared/testing";
+import { AggregateOperations, ViewFilterOperand } from "twenty-shared/types";
 
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { WidgetConfigurationType } from "src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type";
+import { WidgetType } from "src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum";
+import { PageLayoutType } from "src/engine/metadata-modules/page-layout/enums/page-layout-type.enum";
 
 type TestContext = {
-  id: string;
-  title: string;
-  withTabs?: boolean;
-  withWidgets?: boolean;
+	id: string;
+	title: string;
+	withTabs?: boolean;
+	withWidgets?: boolean;
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
-  {
-    title: 'duplicate a basic dashboard with page layout',
-    context: {
-      id: 'a69899ef-ad51-4abc-8105-45e8e6de85ac',
-      title: 'Basic Dashboard',
-    },
-  },
-  {
-    title: 'duplicate a dashboard with page layout and tabs',
-    context: {
-      id: '8da0a29d-b459-4b09-af3e-9490d9b644b4',
-      title: 'Dashboard With Tabs',
-      withTabs: true,
-    },
-  },
-  {
-    title: 'duplicate a dashboard with page layout, tabs and widgets',
-    context: {
-      id: 'a13e58f9-c5db-4e1d-a7fb-c282774c5053',
-      title: 'Dashboard With Widgets',
-      withTabs: true,
-      withWidgets: true,
-    },
-  },
+	{
+		title: "duplicate a basic dashboard with page layout",
+		context: {
+			id: "a69899ef-ad51-4abc-8105-45e8e6de85ac",
+			title: "Basic Dashboard",
+		},
+	},
+	{
+		title: "duplicate a dashboard with page layout and tabs",
+		context: {
+			id: "8da0a29d-b459-4b09-af3e-9490d9b644b4",
+			title: "Dashboard With Tabs",
+			withTabs: true,
+		},
+	},
+	{
+		title: "duplicate a dashboard with page layout, tabs and widgets",
+		context: {
+			id: "a13e58f9-c5db-4e1d-a7fb-c282774c5053",
+			title: "Dashboard With Widgets",
+			withTabs: true,
+			withWidgets: true,
+		},
+	},
 ];
 
-describe('Dashboard duplication should succeed', () => {
-  let testPageLayoutId: string;
-  let testPageLayoutTabId: string;
-  let testDashboardId: string;
-  let duplicatedDashboardId: string;
-  let currentTestContextId: string;
+describe("Dashboard duplication should succeed", () => {
+	let testPageLayoutId: string;
+	let testPageLayoutTabId: string;
+	let testDashboardId: string;
+	let duplicatedDashboardId: string;
+	let currentTestContextId: string;
 
-  const cleanup = async () => {
-    if (isNonEmptyString(duplicatedDashboardId)) {
-      await destroyDashboardWithGraphQL(duplicatedDashboardId);
-      duplicatedDashboardId = '';
-    }
+	const cleanup = async () => {
+		if (isNonEmptyString(duplicatedDashboardId)) {
+			await destroyDashboardWithGraphQL(duplicatedDashboardId);
+			duplicatedDashboardId = "";
+		}
 
-    if (isNonEmptyString(testDashboardId)) {
-      await destroyDashboardWithGraphQL(testDashboardId);
-      testDashboardId = '';
-    }
+		if (isNonEmptyString(testDashboardId)) {
+			await destroyDashboardWithGraphQL(testDashboardId);
+			testDashboardId = "";
+		}
 
-    if (isNonEmptyString(currentTestContextId)) {
-      await destroyDashboardWithGraphQL(currentTestContextId);
-      currentTestContextId = '';
-    }
-  };
+		if (isNonEmptyString(currentTestContextId)) {
+			await destroyDashboardWithGraphQL(currentTestContextId);
+			currentTestContextId = "";
+		}
+	};
 
-  beforeEach(async () => {
-    testPageLayoutId = '';
-    testPageLayoutTabId = '';
-    testDashboardId = '';
-    duplicatedDashboardId = '';
-    currentTestContextId = '';
-  });
+	beforeEach(async () => {
+		testPageLayoutId = "";
+		testPageLayoutTabId = "";
+		testDashboardId = "";
+		duplicatedDashboardId = "";
+		currentTestContextId = "";
+	});
 
-  afterEach(async () => {
-    await cleanup();
-  });
+	afterEach(async () => {
+		await cleanup();
+	});
 
-  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
-    'should $title',
-    async ({ context: { id, title, withTabs, withWidgets } }) => {
-      currentTestContextId = id;
+	it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+		"should $title",
+		async ({ context: { id, title, withTabs, withWidgets } }) => {
+			currentTestContextId = id;
 
-      const { data: pageLayoutData } = await createOnePageLayout({
-        expectToFail: false,
-        input: {
-          name: `Page Layout for ${title}`,
-          type: PageLayoutType.DASHBOARD,
-        },
-      });
+			const { data: pageLayoutData } = await createOnePageLayout({
+				expectToFail: false,
+				input: {
+					name: `Page Layout for ${title}`,
+					type: PageLayoutType.DASHBOARD,
+				},
+			});
 
-      testPageLayoutId = pageLayoutData.createPageLayout.id;
+			testPageLayoutId = pageLayoutData.createPageLayout.id;
 
-      if (withTabs) {
-        const { data: tabData } = await createOnePageLayoutTab({
-          expectToFail: false,
-          input: {
-            title: 'Test Tab',
-            pageLayoutId: testPageLayoutId,
-          },
-        });
+			if (withTabs) {
+				const { data: tabData } = await createOnePageLayoutTab({
+					expectToFail: false,
+					input: {
+						title: "Test Tab",
+						pageLayoutId: testPageLayoutId,
+					},
+				});
 
-        testPageLayoutTabId = tabData.createPageLayoutTab.id;
+				testPageLayoutTabId = tabData.createPageLayoutTab.id;
 
-        if (withWidgets) {
-          await createOnePageLayoutWidget({
-            expectToFail: false,
-            input: {
-              title: 'Test Widget',
-              type: WidgetType.IFRAME,
-              pageLayoutTabId: testPageLayoutTabId,
-              gridPosition: {
-                row: 0,
-                column: 0,
-                rowSpan: 1,
-                columnSpan: 1,
-              },
-              configuration: TEST_IFRAME_CONFIG,
-            },
-          });
-        }
-      }
+				if (withWidgets) {
+					await createOnePageLayoutWidget({
+						expectToFail: false,
+						input: {
+							title: "Test Widget",
+							type: WidgetType.IFRAME,
+							pageLayoutTabId: testPageLayoutTabId,
+							gridPosition: {
+								row: 0,
+								column: 0,
+								rowSpan: 1,
+								columnSpan: 1,
+							},
+							configuration: TEST_IFRAME_CONFIG,
+						},
+					});
+				}
+			}
 
-      const dashboard = await createTestDashboardWithGraphQL({
-        id,
-        title,
-        pageLayoutId: testPageLayoutId,
-      });
+			const dashboard = await createTestDashboardWithGraphQL({
+				id,
+				title,
+				pageLayoutId: testPageLayoutId,
+			});
 
-      testDashboardId = dashboard.id;
+			testDashboardId = dashboard.id;
 
-      const { data } = await duplicateOneDashboard({
-        expectToFail: false,
-        input: { id: testDashboardId },
-      });
+			const { data } = await duplicateOneDashboard({
+				expectToFail: false,
+				input: { id: testDashboardId },
+			});
 
-      duplicatedDashboardId = data.duplicateDashboard.id;
+			duplicatedDashboardId = data.duplicateDashboard.id;
 
-      expect(data.duplicateDashboard).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...data.duplicateDashboard }),
-      );
+			expect(data.duplicateDashboard).toMatchSnapshot(
+				extractRecordIdsAndDatesAsExpectAny({ ...data.duplicateDashboard }),
+			);
 
-      expect(data.duplicateDashboard.id).not.toBe(testDashboardId);
-      expect(data.duplicateDashboard.pageLayoutId).not.toBe(testPageLayoutId);
-      expect(data.duplicateDashboard.title).toContain('(Copy)');
-    },
-  );
+			expect(data.duplicateDashboard.id).not.toBe(testDashboardId);
+			expect(data.duplicateDashboard.pageLayoutId).not.toBe(testPageLayoutId);
+			expect(data.duplicateDashboard.title).toContain("(Copy)");
+		},
+	);
 
-  // Regression test for #24285
-  it('should duplicate a dashboard with a chart widget filtering through a relation target field', async () => {
-    currentTestContextId = 'e7b2f7d1-4c3a-4f5e-9b8d-1a2b3c4d5e6f';
+	// Regression test for #24285
+	it("should duplicate a dashboard with a chart widget filtering through a relation target field", async () => {
+		currentTestContextId = "e7b2f7d1-4c3a-4f5e-9b8d-1a2b3c4d5e6f";
 
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: { first: 100 },
-      },
-      gqlFields: `
+		const { objects } = await findManyObjectMetadata({
+			expectToFail: false,
+			input: {
+				filter: {},
+				paging: { first: 100 },
+			},
+			gqlFields: `
         id
         nameSingular
         fieldsList {
@@ -179,101 +179,101 @@ describe('Dashboard duplication should succeed', () => {
           name
         }
       `,
-    });
+		});
 
-    const companyObject = objects.find(
-      (object) => object.nameSingular === 'company',
-    );
-    const opportunityObject = objects.find(
-      (object) => object.nameSingular === 'opportunity',
-    );
+		const companyObject = objects.find(
+			(object) => object.nameSingular === "company",
+		);
+		const opportunityObject = objects.find(
+			(object) => object.nameSingular === "opportunity",
+		);
 
-    jestExpectToBeDefined(companyObject);
-    jestExpectToBeDefined(opportunityObject);
+		jestExpectToBeDefined(companyObject);
+		jestExpectToBeDefined(opportunityObject);
 
-    const companyEmployeesField = companyObject.fieldsList?.find(
-      (field) => field.name === 'employees',
-    );
-    const companyOpportunitiesField = companyObject.fieldsList?.find(
-      (field) => field.name === 'opportunities',
-    );
-    const opportunityNameField = opportunityObject.fieldsList?.find(
-      (field) => field.name === 'name',
-    );
+		const companyEmployeesField = companyObject.fieldsList?.find(
+			(field) => field.name === "employees",
+		);
+		const companyOpportunitiesField = companyObject.fieldsList?.find(
+			(field) => field.name === "opportunities",
+		);
+		const opportunityNameField = opportunityObject.fieldsList?.find(
+			(field) => field.name === "name",
+		);
 
-    jestExpectToBeDefined(companyEmployeesField);
-    jestExpectToBeDefined(companyOpportunitiesField);
-    jestExpectToBeDefined(opportunityNameField);
+		jestExpectToBeDefined(companyEmployeesField);
+		jestExpectToBeDefined(companyOpportunitiesField);
+		jestExpectToBeDefined(opportunityNameField);
 
-    const { data: pageLayoutData } = await createOnePageLayout({
-      expectToFail: false,
-      input: {
-        name: 'Page Layout with relation-traversal chart filter',
-        type: PageLayoutType.DASHBOARD,
-      },
-    });
+		const { data: pageLayoutData } = await createOnePageLayout({
+			expectToFail: false,
+			input: {
+				name: "Page Layout with relation-traversal chart filter",
+				type: PageLayoutType.DASHBOARD,
+			},
+		});
 
-    testPageLayoutId = pageLayoutData.createPageLayout.id;
+		testPageLayoutId = pageLayoutData.createPageLayout.id;
 
-    const { data: tabData } = await createOnePageLayoutTab({
-      expectToFail: false,
-      input: {
-        title: 'Test Tab',
-        pageLayoutId: testPageLayoutId,
-      },
-    });
+		const { data: tabData } = await createOnePageLayoutTab({
+			expectToFail: false,
+			input: {
+				title: "Test Tab",
+				pageLayoutId: testPageLayoutId,
+			},
+		});
 
-    testPageLayoutTabId = tabData.createPageLayoutTab.id;
+		testPageLayoutTabId = tabData.createPageLayoutTab.id;
 
-    await createOnePageLayoutWidget({
-      expectToFail: false,
-      input: {
-        title: 'Companies without lost opportunities',
-        type: WidgetType.GRAPH,
-        objectMetadataId: companyObject.id,
-        pageLayoutTabId: testPageLayoutTabId,
-        gridPosition: {
-          row: 0,
-          column: 0,
-          rowSpan: 1,
-          columnSpan: 1,
-        },
-        configuration: {
-          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-          aggregateFieldMetadataId: companyEmployeesField.id,
-          aggregateOperation: AggregateOperations.SUM,
-          filter: {
-            recordFilters: [
-              {
-                fieldMetadataId: companyOpportunitiesField.id,
-                relationTargetFieldMetadataId: opportunityNameField.id,
-                operand: ViewFilterOperand.DOES_NOT_CONTAIN,
-                value: 'lost',
-              },
-            ],
-          },
-        },
-      },
-    });
+		await createOnePageLayoutWidget({
+			expectToFail: false,
+			input: {
+				title: "Companies without lost opportunities",
+				type: WidgetType.GRAPH,
+				objectMetadataId: companyObject.id,
+				pageLayoutTabId: testPageLayoutTabId,
+				gridPosition: {
+					row: 0,
+					column: 0,
+					rowSpan: 1,
+					columnSpan: 1,
+				},
+				configuration: {
+					configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+					aggregateFieldMetadataId: companyEmployeesField.id,
+					aggregateOperation: AggregateOperations.SUM,
+					filter: {
+						recordFilters: [
+							{
+								fieldMetadataId: companyOpportunitiesField.id,
+								relationTargetFieldMetadataId: opportunityNameField.id,
+								operand: ViewFilterOperand.DOES_NOT_CONTAIN,
+								value: "lost",
+							},
+						],
+					},
+				},
+			},
+		});
 
-    const dashboard = await createTestDashboardWithGraphQL({
-      id: currentTestContextId,
-      title: 'Dashboard with relation-traversal chart filter',
-      pageLayoutId: testPageLayoutId,
-    });
+		const dashboard = await createTestDashboardWithGraphQL({
+			id: currentTestContextId,
+			title: "Dashboard with relation-traversal chart filter",
+			pageLayoutId: testPageLayoutId,
+		});
 
-    testDashboardId = dashboard.id;
+		testDashboardId = dashboard.id;
 
-    const { data, errors } = await duplicateOneDashboard({
-      expectToFail: false,
-      input: { id: testDashboardId },
-    });
+		const { data, errors } = await duplicateOneDashboard({
+			expectToFail: false,
+			input: { id: testDashboardId },
+		});
 
-    expect(errors).toBeUndefined();
+		expect(errors).toBeUndefined();
 
-    duplicatedDashboardId = data.duplicateDashboard.id;
+		duplicatedDashboardId = data.duplicateDashboard.id;
 
-    expect(data.duplicateDashboard.id).not.toBe(testDashboardId);
-    expect(data.duplicateDashboard.title).toContain('(Copy)');
-  });
+		expect(data.duplicateDashboard.id).not.toBe(testDashboardId);
+		expect(data.duplicateDashboard.title).toContain("(Copy)");
+	});
 });

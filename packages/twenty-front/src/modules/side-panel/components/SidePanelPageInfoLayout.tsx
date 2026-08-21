@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledPageInfoContainer = styled.div`
   align-items: center;
@@ -13,7 +13,7 @@ export const StyledPageInfoIcon = styled.div<{ iconColor?: string }>`
   align-items: center;
   background: ${themeCssVariables.background.transparent.light};
   border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${({ iconColor }) => iconColor ?? ''};
+  color: ${({ iconColor }) => iconColor ?? ""};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -45,27 +45,27 @@ export const StyledPageInfoLabel = styled.div`
 `;
 
 type SidePanelPageInfoLayoutProps = {
-  icon?: ReactNode;
-  iconColor?: string;
-  title: ReactNode;
-  label?: ReactNode;
+	icon?: ReactNode;
+	iconColor?: string;
+	title: ReactNode;
+	label?: ReactNode;
 };
 
 export const SidePanelPageInfoLayout = ({
-  icon,
-  iconColor,
-  title,
-  label,
+	icon,
+	iconColor,
+	title,
+	label,
 }: SidePanelPageInfoLayoutProps) => {
-  return (
-    <StyledPageInfoContainer>
-      {isDefined(icon) && (
-        <StyledPageInfoIcon iconColor={iconColor}>{icon}</StyledPageInfoIcon>
-      )}
-      <StyledPageInfoTextContainer>
-        <StyledPageInfoTitleContainer>{title}</StyledPageInfoTitleContainer>
-        {isDefined(label) && <StyledPageInfoLabel>{label}</StyledPageInfoLabel>}
-      </StyledPageInfoTextContainer>
-    </StyledPageInfoContainer>
-  );
+	return (
+		<StyledPageInfoContainer>
+			{isDefined(icon) && (
+				<StyledPageInfoIcon iconColor={iconColor}>{icon}</StyledPageInfoIcon>
+			)}
+			<StyledPageInfoTextContainer>
+				<StyledPageInfoTitleContainer>{title}</StyledPageInfoTitleContainer>
+				{isDefined(label) && <StyledPageInfoLabel>{label}</StyledPageInfoLabel>}
+			</StyledPageInfoTextContainer>
+		</StyledPageInfoContainer>
+	);
 };

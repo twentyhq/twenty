@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { styled } from '@linaria/react';
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { styled } from "@linaria/react";
 
-import { spacing } from '@/tokens';
+import { spacing } from "@/tokens";
 
-import { useDotLottieScrollSync } from '../utils/use-dot-lottie-scroll-sync';
+import { useDotLottieScrollSync } from "../utils/use-dot-lottie-scroll-sync";
 
-const LOTTIE_SRC = '/lottie/stepper/stepper.lottie';
+const LOTTIE_SRC = "/lottie/stepper/stepper.lottie";
 
 const LottieSlot = styled.div`
   box-sizing: border-box;
@@ -19,23 +19,23 @@ const LottieSlot = styled.div`
 `;
 
 export function HomeStepperLottie({
-  scrollProgress,
+	scrollProgress,
 }: {
-  scrollProgress: number;
+	scrollProgress: number;
 }) {
-  const playerRefCallback = useDotLottieScrollSync(scrollProgress);
+	const playerRefCallback = useDotLottieScrollSync(scrollProgress);
 
-  return (
-    <LottieSlot aria-hidden>
-      <DotLottieReact
-        autoplay={false}
-        dotLottieRefCallback={playerRefCallback}
-        layout={{ align: [0.5, 0.5], fit: 'contain' }}
-        loop={false}
-        src={LOTTIE_SRC}
-        style={{ height: '100%', maxWidth: '100%', width: '100%' }}
-        useFrameInterpolation
-      />
-    </LottieSlot>
-  );
+	return (
+		<LottieSlot aria-hidden>
+			<DotLottieReact
+				autoplay={false}
+				dotLottieRefCallback={playerRefCallback}
+				layout={{ align: [0.5, 0.5], fit: "contain" }}
+				loop={false}
+				src={LOTTIE_SRC}
+				style={{ height: "100%", maxWidth: "100%", width: "100%" }}
+				useFrameInterpolation
+			/>
+		</LottieSlot>
+	);
 }

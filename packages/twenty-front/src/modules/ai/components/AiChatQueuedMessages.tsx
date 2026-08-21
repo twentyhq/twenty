@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
-import { IconX } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { agentChatQueuedMessagesComponentFamilyState } from "@/ai/states/agentChatQueuedMessagesComponentFamilyState";
+import { currentAiChatThreadState } from "@/ai/states/currentAiChatThreadState";
+import { useDeleteQueuedMessage } from "@/ai/hooks/useDeleteQueuedMessage";
+import { useAtomComponentFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { isDefined } from "twenty-shared/utils";
+import { IconX } from "twenty-ui/icon";
+import { LightIconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledQueueContainer = styled.div`
   display: flex;
@@ -42,37 +42,37 @@ const StyledQueuedText = styled.span`
 `;
 
 export const AiChatQueuedMessages = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatQueuedMessages = useAtomComponentFamilyStateValue(
-    agentChatQueuedMessagesComponentFamilyState,
-    { threadId: currentAiChatThread },
-  );
-  const { deleteQueuedMessage } = useDeleteQueuedMessage();
+	const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+	const agentChatQueuedMessages = useAtomComponentFamilyStateValue(
+		agentChatQueuedMessagesComponentFamilyState,
+		{ threadId: currentAiChatThread },
+	);
+	const { deleteQueuedMessage } = useDeleteQueuedMessage();
 
-  if (!isDefined(currentAiChatThread) || agentChatQueuedMessages.length === 0) {
-    return null;
-  }
+	if (!isDefined(currentAiChatThread) || agentChatQueuedMessages.length === 0) {
+		return null;
+	}
 
-  return (
-    <StyledQueueContainer>
-      <StyledQueueLabel>
-        {agentChatQueuedMessages.length} Queued
-      </StyledQueueLabel>
-      {agentChatQueuedMessages.map((message) => {
-        const textPart = message.parts?.find((part) => part.type === 'text');
-        const displayText = textPart && 'text' in textPart ? textPart.text : '';
+	return (
+		<StyledQueueContainer>
+			<StyledQueueLabel>
+				{agentChatQueuedMessages.length} Queued
+			</StyledQueueLabel>
+			{agentChatQueuedMessages.map((message) => {
+				const textPart = message.parts?.find((part) => part.type === "text");
+				const displayText = textPart && "text" in textPart ? textPart.text : "";
 
-        return (
-          <StyledQueuedItem key={message.id}>
-            <StyledQueuedText>{displayText}</StyledQueuedText>
-            <LightIconButton
-              Icon={IconX}
-              onClick={() => deleteQueuedMessage(message.id)}
-              size="small"
-            />
-          </StyledQueuedItem>
-        );
-      })}
-    </StyledQueueContainer>
-  );
+				return (
+					<StyledQueuedItem key={message.id}>
+						<StyledQueuedText>{displayText}</StyledQueuedText>
+						<LightIconButton
+							Icon={IconX}
+							onClick={() => deleteQueuedMessage(message.id)}
+							size="small"
+						/>
+					</StyledQueuedItem>
+				);
+			})}
+		</StyledQueueContainer>
+	);
 };

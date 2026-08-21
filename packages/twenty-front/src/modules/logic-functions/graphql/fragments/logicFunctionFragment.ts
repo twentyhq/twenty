@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const LOGIC_FUNCTION_FRAGMENT = gql`
   fragment LogicFunctionFields on LogicFunction {

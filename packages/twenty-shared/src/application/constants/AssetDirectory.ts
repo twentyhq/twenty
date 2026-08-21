@@ -1,1 +1,1 @@
-export const ASSETS_DIR = 'public';
+export const ASSETS_DIR = "public";

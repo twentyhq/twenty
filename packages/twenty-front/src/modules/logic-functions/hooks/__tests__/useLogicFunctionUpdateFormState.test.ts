@@ -1,51 +1,51 @@
-import { useLogicFunctionUpdateFormState } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
-import { renderHook } from '@testing-library/react';
+import { useLogicFunctionUpdateFormState } from "@/logic-functions/hooks/useLogicFunctionUpdateFormState";
+import { renderHook } from "@testing-library/react";
 
-jest.mock('@/logic-functions/hooks/useGetOneLogicFunction', () => ({
-  useGetOneLogicFunction: jest.fn(),
+jest.mock("@/logic-functions/hooks/useGetOneLogicFunction", () => ({
+	useGetOneLogicFunction: jest.fn(),
 }));
 
-jest.mock('@/logic-functions/hooks/useGetLogicFunctionSourceCode', () => ({
-  useGetLogicFunctionSourceCode: jest.fn(),
+jest.mock("@/logic-functions/hooks/useGetLogicFunctionSourceCode", () => ({
+	useGetLogicFunctionSourceCode: jest.fn(),
 }));
 
-const mockCode = 'export const main = async (): Promise<void> => { return; }';
+const mockCode = "export const main = async (): Promise<void> => { return; }";
 
-describe('useLogicFunctionUpdateFormState', () => {
-  test('should return a form', () => {
-    const logicFunctionId = 'logicFunctionId';
-    const useGetOneLogicFunctionMock = jest.requireMock(
-      '@/logic-functions/hooks/useGetOneLogicFunction',
-    );
-    const useGetLogicFunctionSourceCodeMock = jest.requireMock(
-      '@/logic-functions/hooks/useGetLogicFunctionSourceCode',
-    );
-    useGetOneLogicFunctionMock.useGetOneLogicFunction.mockReturnValue({
-      logicFunction: { name: 'name' },
-      loading: false,
-    });
-    useGetLogicFunctionSourceCodeMock.useGetLogicFunctionSourceCode.mockReturnValue(
-      {
-        code: mockCode,
-        loading: false,
-      },
-    );
-    const { result } = renderHook(() =>
-      useLogicFunctionUpdateFormState({ logicFunctionId }),
-    );
+describe("useLogicFunctionUpdateFormState", () => {
+	test("should return a form", () => {
+		const logicFunctionId = "logicFunctionId";
+		const useGetOneLogicFunctionMock = jest.requireMock(
+			"@/logic-functions/hooks/useGetOneLogicFunction",
+		);
+		const useGetLogicFunctionSourceCodeMock = jest.requireMock(
+			"@/logic-functions/hooks/useGetLogicFunctionSourceCode",
+		);
+		useGetOneLogicFunctionMock.useGetOneLogicFunction.mockReturnValue({
+			logicFunction: { name: "name" },
+			loading: false,
+		});
+		useGetLogicFunctionSourceCodeMock.useGetLogicFunctionSourceCode.mockReturnValue(
+			{
+				code: mockCode,
+				loading: false,
+			},
+		);
+		const { result } = renderHook(() =>
+			useLogicFunctionUpdateFormState({ logicFunctionId }),
+		);
 
-    const { formValues } = result.current;
+		const { formValues } = result.current;
 
-    expect(formValues).toEqual({
-      name: 'name',
-      description: '',
-      sourceHandlerCode: '',
-      timeoutSeconds: 300,
-      cronTriggerSettings: null,
-      databaseEventTriggerSettings: null,
-      httpRouteTriggerSettings: null,
-      toolTriggerSettings: null,
-      workflowActionTriggerSettings: null,
-    });
-  });
+		expect(formValues).toEqual({
+			name: "name",
+			description: "",
+			sourceHandlerCode: "",
+			timeoutSeconds: 300,
+			cronTriggerSettings: null,
+			databaseEventTriggerSettings: null,
+			httpRouteTriggerSettings: null,
+			toolTriggerSettings: null,
+			workflowActionTriggerSettings: null,
+		});
+	});
 });

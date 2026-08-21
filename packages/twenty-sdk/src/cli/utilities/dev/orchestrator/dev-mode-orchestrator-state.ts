@@ -1,336 +1,336 @@
-import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
-import { type BuildManifestOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step';
-import { type CheckServerOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
-import { type StartWatchersOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
-import { type SyncApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
-import { type UploadFilesOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
-import { type VersionInfo } from '@/cli/utilities/version/version-info';
-import { type Manifest, SyncableEntity } from 'twenty-shared/application';
-import { type FileFolder } from 'twenty-shared/types';
+import { type EntityFilePaths } from "@/cli/utilities/build/manifest/manifest-extract-config";
+import { type BuildManifestOrchestratorStepOutput } from "@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step";
+import { type CheckServerOrchestratorStepOutput } from "@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step";
+import { type StartWatchersOrchestratorStepOutput } from "@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step";
+import { type SyncApplicationOrchestratorStepOutput } from "@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step";
+import { type UploadFilesOrchestratorStepOutput } from "@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step";
+import { type VersionInfo } from "@/cli/utilities/version/version-info";
+import { type Manifest, SyncableEntity } from "twenty-shared/application";
+import { type FileFolder } from "twenty-shared/types";
 
 export type OrchestratorStateStepEvent = {
-  message: string;
-  status: 'info' | 'success' | 'error' | 'warning';
-  spacingBefore?: boolean;
+	message: string;
+	status: "info" | "success" | "error" | "warning";
+	spacingBefore?: boolean;
 };
 
 export type OrchestratorStateEvent = OrchestratorStateStepEvent & {
-  id: number;
-  timestamp: Date;
+	id: number;
+	timestamp: Date;
 };
 
 export type OrchestratorStateSyncStatus =
-  | 'idle'
-  | 'building'
-  | 'syncing'
-  | 'synced'
-  | 'error';
+	| "idle"
+	| "building"
+	| "syncing"
+	| "synced"
+	| "error";
 
 export type OrchestratorStateStepStatus =
-  | 'idle'
-  | 'in_progress'
-  | 'done'
-  | 'error';
+	| "idle"
+	| "in_progress"
+	| "done"
+	| "error";
 
 export type OrchestratorStepState<TOutput> = {
-  output: TOutput;
-  status: OrchestratorStateStepStatus;
+	output: TOutput;
+	status: OrchestratorStateStepStatus;
 };
 
 export type OrchestratorStateFileStatus =
-  | 'pending'
-  | 'building'
-  | 'uploading'
-  | 'success'
-  | 'error';
+	| "pending"
+	| "building"
+	| "uploading"
+	| "success"
+	| "error";
 
 export type OrchestratorStateEntityInfo = {
-  name: string;
-  path: string;
-  type?: SyncableEntity;
-  status: OrchestratorStateFileStatus;
+	name: string;
+	path: string;
+	type?: SyncableEntity;
+	status: OrchestratorStateFileStatus;
 };
 
 export type OrchestratorStateBuiltFileInfo = {
-  checksum: string;
-  builtPath: string;
-  sourcePath: string;
-  fileFolder: FileFolder;
-  usesSdkClient?: boolean;
+	checksum: string;
+	builtPath: string;
+	sourcePath: string;
+	fileFolder: FileFolder;
+	usesSdkClient?: boolean;
 };
 
 export type OrchestratorStatePipeline = {
-  status: OrchestratorStateSyncStatus;
-  isSyncing: boolean;
-  error: string | null;
-  appName: string | null;
+	status: OrchestratorStateSyncStatus;
+	isSyncing: boolean;
+	error: string | null;
+	appName: string | null;
 };
 
 const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
-  objects: SyncableEntity.Object,
-  fields: SyncableEntity.Field,
-  logicFunctions: SyncableEntity.LogicFunction,
-  frontComponents: SyncableEntity.FrontComponent,
-  roles: SyncableEntity.Role,
-  skills: SyncableEntity.Skill,
-  connectionProviders: SyncableEntity.ConnectionProvider,
-  views: SyncableEntity.View,
-  viewFields: SyncableEntity.ViewField,
-  navigationMenuItems: SyncableEntity.NavigationMenuItem,
-  pageLayouts: SyncableEntity.PageLayout,
-  pageLayoutTabs: SyncableEntity.PageLayoutTab,
-  commandMenuItems: SyncableEntity.CommandMenuItem,
+	objects: SyncableEntity.Object,
+	fields: SyncableEntity.Field,
+	logicFunctions: SyncableEntity.LogicFunction,
+	frontComponents: SyncableEntity.FrontComponent,
+	roles: SyncableEntity.Role,
+	skills: SyncableEntity.Skill,
+	connectionProviders: SyncableEntity.ConnectionProvider,
+	views: SyncableEntity.View,
+	viewFields: SyncableEntity.ViewField,
+	navigationMenuItems: SyncableEntity.NavigationMenuItem,
+	pageLayouts: SyncableEntity.PageLayout,
+	pageLayoutTabs: SyncableEntity.PageLayoutTab,
+	commandMenuItems: SyncableEntity.CommandMenuItem,
 };
 
 const MAX_EVENT_COUNT = 200;
 
 const FILE_STATUS_TRANSITION_MATRIX: Record<
-  OrchestratorStateFileStatus,
-  OrchestratorStateFileStatus[]
+	OrchestratorStateFileStatus,
+	OrchestratorStateFileStatus[]
 > = {
-  pending: ['building', 'uploading', 'success', 'error'],
-  building: ['pending', 'uploading', 'success', 'error'],
-  uploading: ['pending', 'success', 'error'],
-  success: ['pending', 'building', 'uploading', 'error'],
-  error: ['pending', 'building', 'uploading', 'success'],
+	pending: ["building", "uploading", "success", "error"],
+	building: ["pending", "uploading", "success", "error"],
+	uploading: ["pending", "success", "error"],
+	success: ["pending", "building", "uploading", "error"],
+	error: ["pending", "building", "uploading", "success"],
 };
 
 export class OrchestratorState {
-  appPath: string;
-  frontendUrl?: string;
+	appPath: string;
+	frontendUrl?: string;
 
-  steps: {
-    checkServer: OrchestratorStepState<CheckServerOrchestratorStepOutput>;
-    ensureValidTokens: OrchestratorStepState<Record<string, never>>;
-    resolveApplication: OrchestratorStepState<{
-      applicationId: string | null;
-      universalIdentifier: string | null;
-    }>;
-    buildManifest: OrchestratorStepState<BuildManifestOrchestratorStepOutput>;
-    uploadFiles: OrchestratorStepState<UploadFilesOrchestratorStepOutput>;
-    generateApiClient: OrchestratorStepState<Record<string, never>>;
-    syncApplication: OrchestratorStepState<SyncApplicationOrchestratorStepOutput>;
-    startWatchers: OrchestratorStepState<StartWatchersOrchestratorStepOutput>;
-  };
+	steps: {
+		checkServer: OrchestratorStepState<CheckServerOrchestratorStepOutput>;
+		ensureValidTokens: OrchestratorStepState<Record<string, never>>;
+		resolveApplication: OrchestratorStepState<{
+			applicationId: string | null;
+			universalIdentifier: string | null;
+		}>;
+		buildManifest: OrchestratorStepState<BuildManifestOrchestratorStepOutput>;
+		uploadFiles: OrchestratorStepState<UploadFilesOrchestratorStepOutput>;
+		generateApiClient: OrchestratorStepState<Record<string, never>>;
+		syncApplication: OrchestratorStepState<SyncApplicationOrchestratorStepOutput>;
+		startWatchers: OrchestratorStepState<StartWatchersOrchestratorStepOutput>;
+	};
 
-  previousObjectsFieldsFingerprint: string | null;
+	previousObjectsFieldsFingerprint: string | null;
 
-  pipeline: OrchestratorStatePipeline;
+	pipeline: OrchestratorStatePipeline;
 
-  versionInfo: VersionInfo | null;
+	versionInfo: VersionInfo | null;
 
-  entities: Map<string, OrchestratorStateEntityInfo>;
-  events: OrchestratorStateEvent[];
+	entities: Map<string, OrchestratorStateEntityInfo>;
+	events: OrchestratorStateEvent[];
 
-  pendingConfirmation: { deleteCount: number } | null;
+	pendingConfirmation: { deleteCount: number } | null;
 
-  private confirmationResolver: ((approved: boolean) => void) | null = null;
-  private eventIdCounter = 0;
-  onChange?: () => void;
+	private confirmationResolver: ((approved: boolean) => void) | null = null;
+	private eventIdCounter = 0;
+	onChange?: () => void;
 
-  constructor(options: { appPath: string }) {
-    this.appPath = options.appPath;
+	constructor(options: { appPath: string }) {
+		this.appPath = options.appPath;
 
-    this.previousObjectsFieldsFingerprint = null;
-    this.pendingConfirmation = null;
+		this.previousObjectsFieldsFingerprint = null;
+		this.pendingConfirmation = null;
 
-    this.steps = {
-      checkServer: {
-        output: { isReady: false, errorLogged: false },
-        status: 'idle',
-      },
-      ensureValidTokens: {
-        output: {},
-        status: 'idle',
-      },
-      resolveApplication: {
-        output: { applicationId: null, universalIdentifier: null },
-        status: 'idle',
-      },
-      buildManifest: {
-        output: { result: null },
-        status: 'idle',
-      },
-      uploadFiles: {
-        output: {
-          fileUploader: null,
-          builtFileInfos: new Map(),
-          activeUploads: new Set(),
-        },
-        status: 'idle',
-      },
-      generateApiClient: {
-        output: {},
-        status: 'idle',
-      },
-      syncApplication: {
-        output: { syncStatus: 'idle', error: null },
-        status: 'idle',
-      },
-      startWatchers: {
-        output: { watchersStarted: false },
-        status: 'idle',
-      },
-    };
+		this.steps = {
+			checkServer: {
+				output: { isReady: false, errorLogged: false },
+				status: "idle",
+			},
+			ensureValidTokens: {
+				output: {},
+				status: "idle",
+			},
+			resolveApplication: {
+				output: { applicationId: null, universalIdentifier: null },
+				status: "idle",
+			},
+			buildManifest: {
+				output: { result: null },
+				status: "idle",
+			},
+			uploadFiles: {
+				output: {
+					fileUploader: null,
+					builtFileInfos: new Map(),
+					activeUploads: new Set(),
+				},
+				status: "idle",
+			},
+			generateApiClient: {
+				output: {},
+				status: "idle",
+			},
+			syncApplication: {
+				output: { syncStatus: "idle", error: null },
+				status: "idle",
+			},
+			startWatchers: {
+				output: { watchersStarted: false },
+				status: "idle",
+			},
+		};
 
-    this.pipeline = {
-      status: 'idle',
-      isSyncing: false,
-      error: null,
-      appName: null,
-    };
+		this.pipeline = {
+			status: "idle",
+			isSyncing: false,
+			error: null,
+			appName: null,
+		};
 
-    this.versionInfo = null;
+		this.versionInfo = null;
 
-    this.entities = new Map();
-    this.events = [];
-  }
+		this.entities = new Map();
+		this.events = [];
+	}
 
-  setVersionInfo(versionInfo: VersionInfo): void {
-    this.versionInfo = versionInfo;
-    this.notify();
-  }
+	setVersionInfo(versionInfo: VersionInfo): void {
+		this.versionInfo = versionInfo;
+		this.notify();
+	}
 
-  notify(): void {
-    this.onChange?.();
-  }
+	notify(): void {
+		this.onChange?.();
+	}
 
-  requestDestructiveConfirmation(deleteCount: number): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.pendingConfirmation = { deleteCount };
-      this.confirmationResolver = resolve;
-      this.notify();
-    });
-  }
+	requestDestructiveConfirmation(deleteCount: number): Promise<boolean> {
+		return new Promise((resolve) => {
+			this.pendingConfirmation = { deleteCount };
+			this.confirmationResolver = resolve;
+			this.notify();
+		});
+	}
 
-  resolveDestructiveConfirmation(approved: boolean): void {
-    const resolver = this.confirmationResolver;
+	resolveDestructiveConfirmation(approved: boolean): void {
+		const resolver = this.confirmationResolver;
 
-    this.pendingConfirmation = null;
-    this.confirmationResolver = null;
-    this.notify();
+		this.pendingConfirmation = null;
+		this.confirmationResolver = null;
+		this.notify();
 
-    resolver?.(approved);
-  }
+		resolver?.(approved);
+	}
 
-  updatePipeline(update: Partial<OrchestratorStatePipeline>): void {
-    Object.assign(this.pipeline, update);
-    this.notify();
-  }
+	updatePipeline(update: Partial<OrchestratorStatePipeline>): void {
+		Object.assign(this.pipeline, update);
+		this.notify();
+	}
 
-  applyStepEvents(stepEvents: OrchestratorStateStepEvent[]): void {
-    const enrichedEvents: OrchestratorStateEvent[] = stepEvents.map(
-      (stepEvent) => {
-        this.eventIdCounter += 1;
+	applyStepEvents(stepEvents: OrchestratorStateStepEvent[]): void {
+		const enrichedEvents: OrchestratorStateEvent[] = stepEvents.map(
+			(stepEvent) => {
+				this.eventIdCounter += 1;
 
-        return {
-          ...stepEvent,
-          id: this.eventIdCounter,
-          timestamp: new Date(),
-          message: stepEvent.message.slice(0, 5_000),
-        };
-      },
-    );
+				return {
+					...stepEvent,
+					id: this.eventIdCounter,
+					timestamp: new Date(),
+					message: stepEvent.message.slice(0, 5_000),
+				};
+			},
+		);
 
-    this.events = [
-      ...this.events.slice(-(MAX_EVENT_COUNT - enrichedEvents.length)),
-      ...enrichedEvents,
-    ];
-  }
+		this.events = [
+			...this.events.slice(-(MAX_EVENT_COUNT - enrichedEvents.length)),
+			...enrichedEvents,
+		];
+	}
 
-  addEvent(event: OrchestratorStateStepEvent): void {
-    this.applyStepEvents([event]);
-  }
+	addEvent(event: OrchestratorStateStepEvent): void {
+		this.applyStepEvents([event]);
+	}
 
-  updateEntityStatus(
-    filePath: string,
-    status: OrchestratorStateFileStatus,
-  ): void {
-    const entities = new Map(this.entities);
-    const entity = entities.get(filePath);
+	updateEntityStatus(
+		filePath: string,
+		status: OrchestratorStateFileStatus,
+	): void {
+		const entities = new Map(this.entities);
+		const entity = entities.get(filePath);
 
-    if (
-      entity?.status &&
-      !FILE_STATUS_TRANSITION_MATRIX[entity.status].includes(status)
-    ) {
-      return;
-    }
+		if (
+			entity?.status &&
+			!FILE_STATUS_TRANSITION_MATRIX[entity.status].includes(status)
+		) {
+			return;
+		}
 
-    entities.set(
-      filePath,
-      entity
-        ? { ...entity, status }
-        : { name: filePath, path: filePath, status },
-    );
+		entities.set(
+			filePath,
+			entity
+				? { ...entity, status }
+				: { name: filePath, path: filePath, status },
+		);
 
-    this.entities = entities;
-  }
+		this.entities = entities;
+	}
 
-  removeEntity(filePath: string): void {
-    const entities = new Map(this.entities);
+	removeEntity(filePath: string): void {
+		const entities = new Map(this.entities);
 
-    entities.delete(filePath);
-    this.entities = entities;
-  }
+		entities.delete(filePath);
+		this.entities = entities;
+	}
 
-  updateAllEntitiesStatus(status: OrchestratorStateFileStatus): void {
-    const entities = new Map(this.entities);
+	updateAllEntitiesStatus(status: OrchestratorStateFileStatus): void {
+		const entities = new Map(this.entities);
 
-    for (const [filePath, entity] of entities) {
-      entities.set(filePath, { ...entity, status });
-    }
+		for (const [filePath, entity] of entities) {
+			entities.set(filePath, { ...entity, status });
+		}
 
-    this.entities = entities;
-  }
+		this.entities = entities;
+	}
 
-  updateEntitiesFromManifest(manifestFilePaths: EntityFilePaths): void {
-    const entityTypeMap = new Map<string, SyncableEntity>();
+	updateEntitiesFromManifest(manifestFilePaths: EntityFilePaths): void {
+		const entityTypeMap = new Map<string, SyncableEntity>();
 
-    for (const [entityType, filePaths] of Object.entries(manifestFilePaths)) {
-      const syncableEntity = ENTITY_TYPE_TO_SYNCABLE[entityType];
+		for (const [entityType, filePaths] of Object.entries(manifestFilePaths)) {
+			const syncableEntity = ENTITY_TYPE_TO_SYNCABLE[entityType];
 
-      if (!syncableEntity) {
-        continue;
-      }
+			if (!syncableEntity) {
+				continue;
+			}
 
-      for (const filePath of filePaths as string[]) {
-        entityTypeMap.set(filePath, syncableEntity);
-      }
-    }
+			for (const filePath of filePaths as string[]) {
+				entityTypeMap.set(filePath, syncableEntity);
+			}
+		}
 
-    const entities = new Map(this.entities);
+		const entities = new Map(this.entities);
 
-    for (const [filePath, entity] of entities) {
-      entities.set(filePath, {
-        ...entity,
-        type: entityTypeMap.get(filePath),
-      });
-    }
+		for (const [filePath, entity] of entities) {
+			entities.set(filePath, {
+				...entity,
+				type: entityTypeMap.get(filePath),
+			});
+		}
 
-    for (const [filePath, syncableEntity] of entityTypeMap) {
-      if (!entities.has(filePath)) {
-        entities.set(filePath, {
-          name: filePath,
-          path: filePath,
-          type: syncableEntity,
-          status: 'pending',
-        });
-      }
-    }
+		for (const [filePath, syncableEntity] of entityTypeMap) {
+			if (!entities.has(filePath)) {
+				entities.set(filePath, {
+					name: filePath,
+					path: filePath,
+					type: syncableEntity,
+					status: "pending",
+				});
+			}
+		}
 
-    this.entities = entities;
-  }
+		this.entities = entities;
+	}
 
-  hasObjectsOrFieldsChanged(manifest: Manifest): boolean {
-    const fingerprint = JSON.stringify({
-      objects: manifest.objects,
-      fields: manifest.fields,
-    });
+	hasObjectsOrFieldsChanged(manifest: Manifest): boolean {
+		const fingerprint = JSON.stringify({
+			objects: manifest.objects,
+			fields: manifest.fields,
+		});
 
-    const changed = fingerprint !== this.previousObjectsFieldsFingerprint;
+		const changed = fingerprint !== this.previousObjectsFieldsFingerprint;
 
-    this.previousObjectsFieldsFingerprint = fingerprint;
+		this.previousObjectsFieldsFingerprint = fingerprint;
 
-    return changed;
-  }
+		return changed;
+	}
 }

@@ -1,41 +1,41 @@
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getShiftedRecordCalendarDate } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDate';
-import { isDefined } from 'twenty-shared/utils';
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
+import { getShiftedRecordCalendarDate } from "@/object-record/record-drag/utils/getShiftedRecordCalendarDate";
+import { isDefined } from "twenty-shared/utils";
 
 type GetShiftedRecordCalendarDateUpdateInputArgs = {
-  record: ObjectRecord;
-  calendarFieldName: string;
-  calendarEndFieldName?: string;
-  dayOffset: number;
-  fallbackStartDate: string;
+	record: ObjectRecord;
+	calendarFieldName: string;
+	calendarEndFieldName?: string;
+	dayOffset: number;
+	fallbackStartDate: string;
 };
 
 export const getShiftedRecordCalendarDateUpdateInput = ({
-  record,
-  calendarFieldName,
-  calendarEndFieldName,
-  dayOffset,
-  fallbackStartDate,
+	record,
+	calendarFieldName,
+	calendarEndFieldName,
+	dayOffset,
+	fallbackStartDate,
 }: GetShiftedRecordCalendarDateUpdateInputArgs): Partial<ObjectRecord> | null => {
-  const startDate = record[calendarFieldName] as string | undefined;
+	const startDate = record[calendarFieldName] as string | undefined;
 
-  if (!isDefined(startDate)) {
-    return { [calendarFieldName]: fallbackStartDate };
-  }
+	if (!isDefined(startDate)) {
+		return { [calendarFieldName]: fallbackStartDate };
+	}
 
-  const shiftedDate = getShiftedRecordCalendarDate({
-    dayOffset,
-    startDate,
-    endDate: isDefined(calendarEndFieldName)
-      ? record[calendarEndFieldName]
-      : undefined,
-  });
+	const shiftedDate = getShiftedRecordCalendarDate({
+		dayOffset,
+		startDate,
+		endDate: isDefined(calendarEndFieldName)
+			? record[calendarEndFieldName]
+			: undefined,
+	});
 
-  return {
-    [calendarFieldName]: shiftedDate?.startDate ?? fallbackStartDate,
-    ...(isDefined(calendarEndFieldName) &&
-      isDefined(shiftedDate?.endDate) && {
-        [calendarEndFieldName]: shiftedDate.endDate,
-      }),
-  };
+	return {
+		[calendarFieldName]: shiftedDate?.startDate ?? fallbackStartDate,
+		...(isDefined(calendarEndFieldName) &&
+			isDefined(shiftedDate?.endDate) && {
+				[calendarEndFieldName]: shiftedDate.endDate,
+			}),
+	};
 };

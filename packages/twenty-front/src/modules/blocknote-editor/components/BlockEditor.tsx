@@ -1,31 +1,31 @@
 import {
-  filterSuggestionItems,
-  SuggestionMenu,
-} from '@blocknote/core/extensions';
-import { BlockNoteView } from '@blocknote/mantine';
-import { SuggestionMenuController } from '@blocknote/react';
-import { useLingui } from '@lingui/react/macro';
-import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext } from 'react';
-import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
-import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
-import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
-import { CustomSideMenu } from '@/blocknote-editor/components/CustomSideMenu';
+	filterSuggestionItems,
+	SuggestionMenu,
+} from "@blocknote/core/extensions";
+import { BlockNoteView } from "@blocknote/mantine";
+import { SuggestionMenuController } from "@blocknote/react";
+import { useLingui } from "@lingui/react/macro";
+import { styled } from "@linaria/react";
+import { type ClipboardEvent, useContext } from "react";
+import { type BLOCK_SCHEMA } from "@/blocknote-editor/blocks/Schema";
+import { getSlashMenu } from "@/blocknote-editor/utils/getSlashMenu";
+import { CustomMentionMenu } from "@/blocknote-editor/components/CustomMentionMenu";
+import { CustomSideMenu } from "@/blocknote-editor/components/CustomSideMenu";
 import {
-  CustomSlashMenu,
-  type SuggestionItem,
-} from '@/blocknote-editor/components/CustomSlashMenu';
-import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
-import { IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+	CustomSlashMenu,
+	type SuggestionItem,
+} from "@/blocknote-editor/components/CustomSlashMenu";
+import { useMentionMenu } from "@/mention/hooks/useMentionMenu";
+import { IconX } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 interface BlockEditorProps {
-  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  onPaste?: (event: ClipboardEvent) => void;
-  onChange?: () => void;
-  readonly?: boolean;
+	editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
+	onFocus?: () => void;
+	onBlur?: () => void;
+	onPaste?: (event: ClipboardEvent) => void;
+	onChange?: () => void;
+	readonly?: boolean;
 }
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
@@ -158,79 +158,79 @@ const StyledEditor = styled.div`
 `;
 
 export const BlockEditor = ({
-  editor,
-  onFocus,
-  onBlur,
-  onChange,
-  onPaste,
-  readonly,
+	editor,
+	onFocus,
+	onBlur,
+	onChange,
+	onPaste,
+	readonly,
 }: BlockEditorProps) => {
-  const { colorScheme } = useContext(ThemeContext);
-  const { t } = useLingui();
+	const { colorScheme } = useContext(ThemeContext);
+	const { t } = useLingui();
 
-  const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
-  const getMentionItems = useMentionMenu(editor);
+	const blockNoteTheme = colorScheme === "light" ? "light" : "dark";
+	const getMentionItems = useMentionMenu(editor);
 
-  const getSlashMenuItems = async (query: string) => {
-    const filtered = filterSuggestionItems<SuggestionItem>(
-      getSlashMenu(editor),
-      query,
-    );
+	const getSlashMenuItems = async (query: string) => {
+		const filtered = filterSuggestionItems<SuggestionItem>(
+			getSlashMenu(editor),
+			query,
+		);
 
-    if (filtered.length > 0) {
-      return filtered;
-    }
+		if (filtered.length > 0) {
+			return filtered;
+		}
 
-    return [
-      {
-        title: t`Close menu`,
-        Icon: IconX,
-        onItemClick: () => editor.getExtension(SuggestionMenu)?.closeMenu(),
-      },
-    ];
-  };
+		return [
+			{
+				title: t`Close menu`,
+				Icon: IconX,
+				onItemClick: () => editor.getExtension(SuggestionMenu)?.closeMenu(),
+			},
+		];
+	};
 
-  const handleFocus = () => {
-    onFocus?.();
-  };
+	const handleFocus = () => {
+		onFocus?.();
+	};
 
-  const handleBlur = () => {
-    onBlur?.();
-  };
+	const handleBlur = () => {
+		onBlur?.();
+	};
 
-  const handleChange = () => {
-    onChange?.();
-  };
+	const handleChange = () => {
+		onChange?.();
+	};
 
-  const handlePaste = (event: ClipboardEvent) => {
-    onPaste?.(event);
-  };
+	const handlePaste = (event: ClipboardEvent) => {
+		onPaste?.(event);
+	};
 
-  return (
-    <StyledEditor>
-      <BlockNoteView
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onPaste={handlePaste}
-        onChange={handleChange}
-        editor={editor}
-        theme={blockNoteTheme}
-        slashMenu={false}
-        sideMenu={false}
-        editable={!readonly}
-      >
-        <CustomSideMenu editor={editor} />
-        <SuggestionMenuController
-          triggerCharacter="/"
-          getItems={getSlashMenuItems}
-          suggestionMenuComponent={CustomSlashMenu}
-        />
-        <SuggestionMenuController
-          triggerCharacter="@"
-          getItems={async (query) => getMentionItems(query)}
-          suggestionMenuComponent={CustomMentionMenu}
-        />
-      </BlockNoteView>
-    </StyledEditor>
-  );
+	return (
+		<StyledEditor>
+			<BlockNoteView
+				onFocus={handleFocus}
+				onBlur={handleBlur}
+				onPaste={handlePaste}
+				onChange={handleChange}
+				editor={editor}
+				theme={blockNoteTheme}
+				slashMenu={false}
+				sideMenu={false}
+				editable={!readonly}
+			>
+				<CustomSideMenu editor={editor} />
+				<SuggestionMenuController
+					triggerCharacter="/"
+					getItems={getSlashMenuItems}
+					suggestionMenuComponent={CustomSlashMenu}
+				/>
+				<SuggestionMenuController
+					triggerCharacter="@"
+					getItems={async (query) => getMentionItems(query)}
+					suggestionMenuComponent={CustomMentionMenu}
+				/>
+			</BlockNoteView>
+		</StyledEditor>
+	);
 };

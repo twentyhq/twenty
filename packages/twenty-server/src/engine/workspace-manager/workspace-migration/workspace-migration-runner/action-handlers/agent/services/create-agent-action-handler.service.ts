@@ -1,65 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import { v4 } from 'uuid';
+import { v4 } from "uuid";
 
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
+import { WorkspaceMigrationRunnerActionHandler } from "src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface";
 
-import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util";
 import {
-  FlatCreateAgentAction,
-  UniversalCreateAgentAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+	FlatCreateAgentAction,
+	UniversalCreateAgentAction,
+} from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service";
 import {
-  WorkspaceMigrationActionRunnerArgs,
-  WorkspaceMigrationActionRunnerContext,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+	WorkspaceMigrationActionRunnerArgs,
+	WorkspaceMigrationActionRunnerContext,
+} from "src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type";
 
 @Injectable()
 export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
-  'create',
-  'agent',
+	"create",
+	"agent",
 ) {
-  constructor() {
-    super();
-  }
+	constructor() {
+		super();
+	}
 
-  override async transpileUniversalActionToFlatAction({
-    action,
-    flatApplication,
-    workspaceId,
-  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateAgentAction>): Promise<FlatCreateAgentAction> {
-    const emptyUniversalForeignKeyAggregators =
-      getUniversalFlatEntityEmptyForeignKeyAggregators({
-        metadataName: 'agent',
-      });
+	override async transpileUniversalActionToFlatAction({
+		action,
+		flatApplication,
+		workspaceId,
+	}: WorkspaceMigrationActionRunnerArgs<UniversalCreateAgentAction>): Promise<FlatCreateAgentAction> {
+		const emptyUniversalForeignKeyAggregators =
+			getUniversalFlatEntityEmptyForeignKeyAggregators({
+				metadataName: "agent",
+			});
 
-    return {
-      ...action,
-      flatEntity: {
-        ...action.flatEntity,
-        applicationId: flatApplication.id,
-        id: action.id ?? v4(),
-        workspaceId,
-        ...emptyUniversalForeignKeyAggregators,
-      },
-    };
-  }
+		return {
+			...action,
+			flatEntity: {
+				...action.flatEntity,
+				applicationId: flatApplication.id,
+				id: action.id ?? v4(),
+				workspaceId,
+				...emptyUniversalForeignKeyAggregators,
+			},
+		};
+	}
 
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
-  ): Promise<void> {
-    const { flatAction, queryRunner } = context;
-    const { flatEntity } = flatAction;
+	async executeForMetadata(
+		context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
+	): Promise<void> {
+		const { flatAction, queryRunner } = context;
+		const { flatEntity } = flatAction;
 
-    await this.insertFlatEntitiesInRepository({
-      queryRunner,
-      flatEntities: [flatEntity],
-    });
-  }
+		await this.insertFlatEntitiesInRepository({
+			queryRunner,
+			flatEntities: [flatEntity],
+		});
+	}
 
-  async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
-  ): Promise<void> {
-    return;
-  }
+	async executeForWorkspaceSchema(
+		_context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
+	): Promise<void> {
+		return;
+	}
 }

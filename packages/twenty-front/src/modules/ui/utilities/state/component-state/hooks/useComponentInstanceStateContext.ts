@@ -1,12 +1,12 @@
-import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { useContext } from 'react';
+import { type ComponentInstanceStateContext } from "@/ui/utilities/state/component-state/types/ComponentInstanceStateContext";
+import { useContext } from "react";
 
 export const useComponentInstanceStateContext = <
-  T extends { instanceId: string },
+	T extends { instanceId: string },
 >(
-  Context: ComponentInstanceStateContext<T>,
+	Context: ComponentInstanceStateContext<T>,
 ) => {
-  const context = useContext(Context);
+	const context = useContext(Context);
 
-  return context;
+	return context;
 };

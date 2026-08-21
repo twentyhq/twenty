@@ -1,11 +1,11 @@
-import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
-import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
+import { CommandMenuOpenContainer } from "@/command-menu/components/CommandMenuOpenContainer";
+import { SidePanelRouter } from "@/side-panel/components/SidePanelRouter";
+import { isSidePanelOpenedState } from "@/side-panel/states/isSidePanelOpenedState";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
 
-import { AnimatePresence } from 'framer-motion';
-import { createPortal } from 'react-dom';
+import { AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 
 const StyledCommandMenuMobileFullScreenContainer = styled.div`
   height: 100%;
@@ -13,22 +13,22 @@ const StyledCommandMenuMobileFullScreenContainer = styled.div`
 `;
 
 export const CommandMenuForMobile = () => {
-  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+	const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
-  return (
-    <AnimatePresence>
-      {isSidePanelOpened && (
-        <>
-          {createPortal(
-            <StyledCommandMenuMobileFullScreenContainer>
-              <CommandMenuOpenContainer>
-                <SidePanelRouter />
-              </CommandMenuOpenContainer>
-            </StyledCommandMenuMobileFullScreenContainer>,
-            document.body,
-          )}
-        </>
-      )}
-    </AnimatePresence>
-  );
+	return (
+		<AnimatePresence>
+			{isSidePanelOpened && (
+				<>
+					{createPortal(
+						<StyledCommandMenuMobileFullScreenContainer>
+							<CommandMenuOpenContainer>
+								<SidePanelRouter />
+							</CommandMenuOpenContainer>
+						</StyledCommandMenuMobileFullScreenContainer>,
+						document.body,
+					)}
+				</>
+			)}
+		</AnimatePresence>
+	);
 };

@@ -1,10 +1,10 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
-import { pascalCase } from 'twenty-shared/utils';
+import { type FieldMetadataType } from "twenty-shared/types";
+import { pascalCase } from "twenty-shared/utils";
 
-import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
+import { ObjectTypeDefinitionKind } from "src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum";
 
 export const computeCompositeFieldObjectTypeKey = (
-  compositeFieldMetadataType: FieldMetadataType,
+	compositeFieldMetadataType: FieldMetadataType,
 ): string => {
-  return `${pascalCase(compositeFieldMetadataType)}${ObjectTypeDefinitionKind.Plain.toString()}`;
+	return `${pascalCase(compositeFieldMetadataType)}${ObjectTypeDefinitionKind.Plain.toString()}`;
 };

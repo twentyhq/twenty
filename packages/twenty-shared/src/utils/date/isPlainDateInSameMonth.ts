@@ -1,10 +1,10 @@
-import { type Temporal } from 'temporal-polyfill';
+import { type Temporal } from "temporal-polyfill";
 
 export const isPlainDateInSameMonth = (
-  plainDateA: Temporal.PlainDate,
-  plainDateB: Temporal.PlainDate,
+	plainDateA: Temporal.PlainDate,
+	plainDateB: Temporal.PlainDate,
 ) => {
-  return (
-    plainDateA.month === plainDateB.month && plainDateA.year === plainDateB.year
-  );
+	return (
+		plainDateA.month === plainDateB.month && plainDateA.year === plainDateB.year
+	);
 };

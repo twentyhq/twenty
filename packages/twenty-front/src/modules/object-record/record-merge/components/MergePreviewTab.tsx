@@ -1,48 +1,48 @@
-import { usePerformMergePreview } from '@/object-record/record-merge/hooks/usePerformMergePreview';
-import { PageLayoutSingleTabRenderer } from '@/page-layout/components/PageLayoutSingleTabRenderer';
-import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
-import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { usePerformMergePreview } from "@/object-record/record-merge/hooks/usePerformMergePreview";
+import { PageLayoutSingleTabRenderer } from "@/page-layout/components/PageLayoutSingleTabRenderer";
+import { usePageLayoutIdForRecord } from "@/page-layout/hooks/usePageLayoutIdForRecord";
+import { LayoutRenderingProvider } from "@/ui/layout/contexts/LayoutRenderingContext";
+import { isDefined } from "twenty-shared/utils";
+import { PageLayoutType } from "~/generated-metadata/graphql";
 
 type MergePreviewTabProps = {
-  objectNameSingular: string;
+	objectNameSingular: string;
 };
 
 export const MergePreviewTab = ({
-  objectNameSingular,
+	objectNameSingular,
 }: MergePreviewTabProps) => {
-  const { mergePreviewRecord, isGeneratingPreview } = usePerformMergePreview({
-    objectNameSingular,
-  });
+	const { mergePreviewRecord, isGeneratingPreview } = usePerformMergePreview({
+		objectNameSingular,
+	});
 
-  const { pageLayoutId } = usePageLayoutIdForRecord({
-    id: mergePreviewRecord?.id ?? '',
-    targetObjectNameSingular: objectNameSingular,
-  });
+	const { pageLayoutId } = usePageLayoutIdForRecord({
+		id: mergePreviewRecord?.id ?? "",
+		targetObjectNameSingular: objectNameSingular,
+	});
 
-  if (
-    !isDefined(mergePreviewRecord) ||
-    isGeneratingPreview ||
-    !isDefined(pageLayoutId)
-  ) {
-    return null;
-  }
+	if (
+		!isDefined(mergePreviewRecord) ||
+		isGeneratingPreview ||
+		!isDefined(pageLayoutId)
+	) {
+		return null;
+	}
 
-  const recordId = mergePreviewRecord.id;
+	const recordId = mergePreviewRecord.id;
 
-  return (
-    <LayoutRenderingProvider
-      value={{
-        targetRecordIdentifier: {
-          id: recordId,
-          targetObjectNameSingular: objectNameSingular,
-        },
-        layoutType: PageLayoutType.RECORD_PAGE,
-        isInSidePanel: true,
-      }}
-    >
-      <PageLayoutSingleTabRenderer pageLayoutId={pageLayoutId} />
-    </LayoutRenderingProvider>
-  );
+	return (
+		<LayoutRenderingProvider
+			value={{
+				targetRecordIdentifier: {
+					id: recordId,
+					targetObjectNameSingular: objectNameSingular,
+				},
+				layoutType: PageLayoutType.RECORD_PAGE,
+				isInSidePanel: true,
+			}}
+		>
+			<PageLayoutSingleTabRenderer pageLayoutId={pageLayoutId} />
+		</LayoutRenderingProvider>
+	);
 };

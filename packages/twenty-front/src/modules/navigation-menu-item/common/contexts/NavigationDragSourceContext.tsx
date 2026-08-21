@@ -1,10 +1,10 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 type NavigationDragSourceContextType = {
-  sourceDroppableId: string | null;
+	sourceDroppableId: string | null;
 };
 
 export const NavigationDragSourceContext =
-  createContext<NavigationDragSourceContextType>({
-    sourceDroppableId: null,
-  });
+	createContext<NavigationDragSourceContextType>({
+		sourceDroppableId: null,
+	});

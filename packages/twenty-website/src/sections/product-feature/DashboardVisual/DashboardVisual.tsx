@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconDotsVertical, IconLayoutDashboard } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconDotsVertical, IconLayoutDashboard } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { mediaUp } from '@/tokens';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { mediaUp } from "@/tokens";
 
-import { BarChart } from './components/BarChart';
-import { DonutChart } from './components/DonutChart';
-import { KpiCard } from './components/KpiCard';
-import { DASHBOARD_VISUAL_DATA } from './data/dashboard-visual-data';
+import { BarChart } from "./components/BarChart";
+import { DonutChart } from "./components/DonutChart";
+import { KpiCard } from "./components/KpiCard";
+import { DASHBOARD_VISUAL_DATA } from "./data/dashboard-visual-data";
 
 const Window = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -50,7 +50,7 @@ const BreadcrumbText = styled.span`
   color: ${THEME_LIGHT.font.color.secondary};
   font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   }
 `;
@@ -60,7 +60,7 @@ const BreadcrumbCurrent = styled.span`
   font-size: ${previewFontSize(THEME_LIGHT.font.size.sm)};
   font-weight: ${THEME_LIGHT.font.weight.medium};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
   }
 `;
@@ -112,7 +112,7 @@ const KpiRow = styled.div`
     display: none;
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-template-columns: repeat(3, 1fr);
 
     & > :nth-child(3) {
@@ -145,7 +145,7 @@ const WidgetCard = styled.div`
     display: none;
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     &[data-cell='bar'] {
       flex: 1.4;
     }
@@ -167,46 +167,46 @@ const WidgetHeader = styled.span`
 `;
 
 export function DashboardVisual({ active }: { active: boolean }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <Window>
-      <Topbar>
-        <Breadcrumb>
-          <BreadcrumbIcon>
-            <IconLayoutDashboard size={16} stroke={2} />
-          </BreadcrumbIcon>
-          <BreadcrumbText>{i18n._(msg`Dashboards`)} /</BreadcrumbText>
-          <BreadcrumbCurrent>
-            {i18n._(msg`Sales performance`)}
-          </BreadcrumbCurrent>
-        </Breadcrumb>
-        <Actions>
-          <IconButton>
-            <IconDotsVertical size={16} stroke={2} />
-          </IconButton>
-          <SearchChip>⌘K</SearchChip>
-        </Actions>
-      </Topbar>
-      <Body>
-        <KpiRow>
-          {DASHBOARD_VISUAL_DATA.kpis.map((kpi) => (
-            <WidgetCard key={kpi.id}>
-              <KpiCard kpi={kpi} />
-            </WidgetCard>
-          ))}
-        </KpiRow>
-        <ChartRow>
-          <WidgetCard data-cell="bar">
-            <WidgetHeader>{i18n._(msg`Deals by month`)}</WidgetHeader>
-            <BarChart active={active} months={DASHBOARD_VISUAL_DATA.byMonth} />
-          </WidgetCard>
-          <WidgetCard data-cell="donut">
-            <WidgetHeader>{i18n._(msg`Deals by stage`)}</WidgetHeader>
-            <DonutChart active={active} stages={DASHBOARD_VISUAL_DATA.stages} />
-          </WidgetCard>
-        </ChartRow>
-      </Body>
-    </Window>
-  );
+	return (
+		<Window>
+			<Topbar>
+				<Breadcrumb>
+					<BreadcrumbIcon>
+						<IconLayoutDashboard size={16} stroke={2} />
+					</BreadcrumbIcon>
+					<BreadcrumbText>{i18n._(msg`Dashboards`)} /</BreadcrumbText>
+					<BreadcrumbCurrent>
+						{i18n._(msg`Sales performance`)}
+					</BreadcrumbCurrent>
+				</Breadcrumb>
+				<Actions>
+					<IconButton>
+						<IconDotsVertical size={16} stroke={2} />
+					</IconButton>
+					<SearchChip>⌘K</SearchChip>
+				</Actions>
+			</Topbar>
+			<Body>
+				<KpiRow>
+					{DASHBOARD_VISUAL_DATA.kpis.map((kpi) => (
+						<WidgetCard key={kpi.id}>
+							<KpiCard kpi={kpi} />
+						</WidgetCard>
+					))}
+				</KpiRow>
+				<ChartRow>
+					<WidgetCard data-cell="bar">
+						<WidgetHeader>{i18n._(msg`Deals by month`)}</WidgetHeader>
+						<BarChart active={active} months={DASHBOARD_VISUAL_DATA.byMonth} />
+					</WidgetCard>
+					<WidgetCard data-cell="donut">
+						<WidgetHeader>{i18n._(msg`Deals by stage`)}</WidgetHeader>
+						<DonutChart active={active} stages={DASHBOARD_VISUAL_DATA.stages} />
+					</WidgetCard>
+				</ChartRow>
+			</Body>
+		</Window>
+	);
 }

@@ -1,34 +1,34 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconChevronDown,
-  IconLayoutKanban,
-  IconPlus,
-} from '@tabler/icons-react';
+	IconChevronDown,
+	IconLayoutKanban,
+	IconPlus,
+} from "@tabler/icons-react";
 import {
-  type PointerEvent as ReactPointerEvent,
-  useRef,
-  useState,
-} from 'react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+	type PointerEvent as ReactPointerEvent,
+	useRef,
+	useState,
+} from "react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { PreviewTag } from '@/app-preview/primitives/PreviewTag';
-import { clampToRange } from '@/platform/motion';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { PreviewTag } from "@/app-preview/primitives/PreviewTag";
+import { clampToRange } from "@/platform/motion";
 
-import { OpportunityCard } from './components/OpportunityCard';
-import { CARDS } from './data/cards';
-import { INITIAL_LANES } from './data/initial-lanes';
-import { LANES_META } from './data/lanes-meta';
-import { CardFlipAnimationEffect } from './effect-components/CardFlipAnimationEffect';
-import { type PipelineCardAnimations } from './types/pipeline-card-animations';
-import { type PipelineCardElements } from './types/pipeline-card-elements';
-import { type PipelineCardId } from './types/pipeline-card-id';
-import { type PipelineCardRects } from './types/pipeline-card-rects';
-import { type PipelineLanes } from './types/pipeline-lanes';
-import { getDropTarget } from './utils/get-drop-target';
-import { movePipelineCard } from './utils/pipeline-move-card';
+import { OpportunityCard } from "./components/OpportunityCard";
+import { CARDS } from "./data/cards";
+import { INITIAL_LANES } from "./data/initial-lanes";
+import { LANES_META } from "./data/lanes-meta";
+import { CardFlipAnimationEffect } from "./effect-components/CardFlipAnimationEffect";
+import { type PipelineCardAnimations } from "./types/pipeline-card-animations";
+import { type PipelineCardElements } from "./types/pipeline-card-elements";
+import { type PipelineCardId } from "./types/pipeline-card-id";
+import { type PipelineCardRects } from "./types/pipeline-card-rects";
+import { type PipelineLanes } from "./types/pipeline-lanes";
+import { getDropTarget } from "./utils/get-drop-target";
+import { movePipelineCard } from "./utils/pipeline-move-card";
 
 const TOTAL_CARD_COUNT = Object.keys(CARDS).length;
 
@@ -165,257 +165,257 @@ const FloatingCardShell = styled.div`
 `;
 
 type DragState = {
-  cardId: PipelineCardId;
-  lastX: number;
-  lastY: number;
-  maxX: number;
-  maxY: number;
-  originX: number;
-  originY: number;
-  pointerX: number;
-  pointerY: number;
+	cardId: PipelineCardId;
+	lastX: number;
+	lastY: number;
+	maxX: number;
+	maxY: number;
+	originX: number;
+	originY: number;
+	pointerX: number;
+	pointerY: number;
 };
 
 export function PipelineVisual({ active: _active }: { active: boolean }) {
-  const [lanes, setLanes] = useState<PipelineLanes>(INITIAL_LANES);
-  const [draggedCardId, setDraggedCardId] = useState<PipelineCardId | null>(
-    null,
-  );
+	const [lanes, setLanes] = useState<PipelineLanes>(INITIAL_LANES);
+	const [draggedCardId, setDraggedCardId] = useState<PipelineCardId | null>(
+		null,
+	);
 
-  const interactionRef = useRef<HTMLDivElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
-  const laneBodyRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardRefs = useRef<PipelineCardElements>({});
-  const pendingRectsRef = useRef<PipelineCardRects>({});
-  const animationsRef = useRef<PipelineCardAnimations>({});
-  const activePointerRef = useRef<number | null>(null);
-  const dragStateRef = useRef<DragState | null>(null);
+	const interactionRef = useRef<HTMLDivElement>(null);
+	const ghostRef = useRef<HTMLDivElement>(null);
+	const laneBodyRefs = useRef<(HTMLDivElement | null)[]>([]);
+	const cardRefs = useRef<PipelineCardElements>({});
+	const pendingRectsRef = useRef<PipelineCardRects>({});
+	const animationsRef = useRef<PipelineCardAnimations>({});
+	const activePointerRef = useRef<number | null>(null);
+	const dragStateRef = useRef<DragState | null>(null);
 
-  const captureRects = () => {
-    const rects: PipelineCardRects = {};
+	const captureRects = () => {
+		const rects: PipelineCardRects = {};
 
-    for (const lane of lanes) {
-      for (const cardId of lane) {
-        const element = cardRefs.current[cardId];
+		for (const lane of lanes) {
+			for (const cardId of lane) {
+				const element = cardRefs.current[cardId];
 
-        if (element) {
-          rects[cardId] = element.getBoundingClientRect();
-        }
-      }
-    }
-    pendingRectsRef.current = rects;
-  };
+				if (element) {
+					rects[cardId] = element.getBoundingClientRect();
+				}
+			}
+		}
+		pendingRectsRef.current = rects;
+	};
 
-  const moveGhost = (x: number, y: number) => {
-    ghostRef.current?.style.setProperty(
-      'transform',
-      `translate3d(${x}px, ${y}px, 0)`,
-    );
-  };
+	const moveGhost = (x: number, y: number) => {
+		ghostRef.current?.style.setProperty(
+			"transform",
+			`translate3d(${x}px, ${y}px, 0)`,
+		);
+	};
 
-  const handlePointerDown = (
-    event: ReactPointerEvent<HTMLDivElement>,
-    cardId: PipelineCardId,
-  ) => {
-    event.preventDefault();
-    const layerRect = interactionRef.current?.getBoundingClientRect();
-    const cardRect = event.currentTarget.getBoundingClientRect();
+	const handlePointerDown = (
+		event: ReactPointerEvent<HTMLDivElement>,
+		cardId: PipelineCardId,
+	) => {
+		event.preventDefault();
+		const layerRect = interactionRef.current?.getBoundingClientRect();
+		const cardRect = event.currentTarget.getBoundingClientRect();
 
-    if (!layerRect || dragStateRef.current) {
-      return;
-    }
+		if (!layerRect || dragStateRef.current) {
+			return;
+		}
 
-    dragStateRef.current = {
-      cardId,
-      lastX: event.clientX,
-      lastY: event.clientY,
-      maxX: layerRect.width - cardRect.width,
-      maxY: layerRect.height - cardRect.height,
-      originX: cardRect.left - layerRect.left,
-      originY: cardRect.top - layerRect.top,
-      pointerX: event.clientX,
-      pointerY: event.clientY,
-    };
-    setDraggedCardId(cardId);
-    activePointerRef.current = event.pointerId;
-    interactionRef.current?.setPointerCapture(event.pointerId);
-  };
+		dragStateRef.current = {
+			cardId,
+			lastX: event.clientX,
+			lastY: event.clientY,
+			maxX: layerRect.width - cardRect.width,
+			maxY: layerRect.height - cardRect.height,
+			originX: cardRect.left - layerRect.left,
+			originY: cardRect.top - layerRect.top,
+			pointerX: event.clientX,
+			pointerY: event.clientY,
+		};
+		setDraggedCardId(cardId);
+		activePointerRef.current = event.pointerId;
+		interactionRef.current?.setPointerCapture(event.pointerId);
+	};
 
-  const finishDrag = (clientX: number, clientY: number) => {
-    const state = dragStateRef.current;
+	const finishDrag = (clientX: number, clientY: number) => {
+		const state = dragStateRef.current;
 
-    if (!state) {
-      return;
-    }
-    const dropTarget = getDropTarget(
-      clientX,
-      clientY,
-      state.cardId,
-      laneBodyRefs.current,
-      cardRefs.current,
-      lanes,
-    );
+		if (!state) {
+			return;
+		}
+		const dropTarget = getDropTarget(
+			clientX,
+			clientY,
+			state.cardId,
+			laneBodyRefs.current,
+			cardRefs.current,
+			lanes,
+		);
 
-    if (dropTarget) {
-      captureRects();
-      setLanes((previous) =>
-        movePipelineCard(
-          previous,
-          state.cardId,
-          dropTarget.laneIndex,
-          dropTarget.cardIndex,
-        ),
-      );
-    }
-    dragStateRef.current = null;
-    setDraggedCardId(null);
-    activePointerRef.current = null;
-  };
+		if (dropTarget) {
+			captureRects();
+			setLanes((previous) =>
+				movePipelineCard(
+					previous,
+					state.cardId,
+					dropTarget.laneIndex,
+					dropTarget.cardIndex,
+				),
+			);
+		}
+		dragStateRef.current = null;
+		setDraggedCardId(null);
+		activePointerRef.current = null;
+	};
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerId !== activePointerRef.current) {
-      return;
-    }
-    event.preventDefault();
-    const state = dragStateRef.current;
+	const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+		if (event.pointerId !== activePointerRef.current) {
+			return;
+		}
+		event.preventDefault();
+		const state = dragStateRef.current;
 
-    if (!state) {
-      return;
-    }
-    state.lastX = event.clientX;
-    state.lastY = event.clientY;
-    moveGhost(
-      clampToRange(
-        state.originX + event.clientX - state.pointerX,
-        0,
-        state.maxX,
-      ),
-      clampToRange(
-        state.originY + event.clientY - state.pointerY,
-        0,
-        state.maxY,
-      ),
-    );
-  };
+		if (!state) {
+			return;
+		}
+		state.lastX = event.clientX;
+		state.lastY = event.clientY;
+		moveGhost(
+			clampToRange(
+				state.originX + event.clientX - state.pointerX,
+				0,
+				state.maxX,
+			),
+			clampToRange(
+				state.originY + event.clientY - state.pointerY,
+				0,
+				state.maxY,
+			),
+		);
+	};
 
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerId !== activePointerRef.current) {
-      return;
-    }
-    event.preventDefault();
-    finishDrag(event.clientX, event.clientY);
+	const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+		if (event.pointerId !== activePointerRef.current) {
+			return;
+		}
+		event.preventDefault();
+		finishDrag(event.clientX, event.clientY);
 
-    if (interactionRef.current?.hasPointerCapture(event.pointerId)) {
-      interactionRef.current.releasePointerCapture(event.pointerId);
-    }
-  };
+		if (interactionRef.current?.hasPointerCapture(event.pointerId)) {
+			interactionRef.current.releasePointerCapture(event.pointerId);
+		}
+	};
 
-  const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerId !== activePointerRef.current) {
-      return;
-    }
-    const state = dragStateRef.current;
-    finishDrag(state?.lastX ?? event.clientX, state?.lastY ?? event.clientY);
+	const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
+		if (event.pointerId !== activePointerRef.current) {
+			return;
+		}
+		const state = dragStateRef.current;
+		finishDrag(state?.lastX ?? event.clientX, state?.lastY ?? event.clientY);
 
-    if (interactionRef.current?.hasPointerCapture(event.pointerId)) {
-      interactionRef.current.releasePointerCapture(event.pointerId);
-    }
-  };
+		if (interactionRef.current?.hasPointerCapture(event.pointerId)) {
+			interactionRef.current.releasePointerCapture(event.pointerId);
+		}
+	};
 
-  const handleLostCapture = () => {
-    const state = dragStateRef.current;
+	const handleLostCapture = () => {
+		const state = dragStateRef.current;
 
-    if (state) {
-      finishDrag(state.lastX, state.lastY);
-    }
-    activePointerRef.current = null;
-  };
+		if (state) {
+			finishDrag(state.lastX, state.lastY);
+		}
+		activePointerRef.current = null;
+	};
 
-  const laneHeaders = LANES_META.map((meta, laneNumber) => ({
-    laneNumber,
-    meta,
-  }));
-  const laneBodies = lanes.map((laneCardIds, laneNumber) => ({
-    laneCardIds,
-    laneNumber,
-  }));
-  const dragOrigin = dragStateRef.current;
+	const laneHeaders = LANES_META.map((meta, laneNumber) => ({
+		laneNumber,
+		meta,
+	}));
+	const laneBodies = lanes.map((laneCardIds, laneNumber) => ({
+		laneCardIds,
+		laneNumber,
+	}));
+	const dragOrigin = dragStateRef.current;
 
-  return (
-    <Root>
-      <CardFlipAnimationEffect
-        animationsRef={animationsRef}
-        cardRefs={cardRefs}
-        lanes={lanes}
-        pendingRectsRef={pendingRectsRef}
-      />
-      <BoardHeader>
-        <IconLayoutKanban size={14} stroke={1.6} />
-        <BoardTitle>By Stage</BoardTitle>
-        <BoardAdornments>
-          · {TOTAL_CARD_COUNT}
-          <IconChevronDown size={14} stroke={1.6} />
-        </BoardAdornments>
-      </BoardHeader>
+	return (
+		<Root>
+			<CardFlipAnimationEffect
+				animationsRef={animationsRef}
+				cardRefs={cardRefs}
+				lanes={lanes}
+				pendingRectsRef={pendingRectsRef}
+			/>
+			<BoardHeader>
+				<IconLayoutKanban size={14} stroke={1.6} />
+				<BoardTitle>By Stage</BoardTitle>
+				<BoardAdornments>
+					· {TOTAL_CARD_COUNT}
+					<IconChevronDown size={14} stroke={1.6} />
+				</BoardAdornments>
+			</BoardHeader>
 
-      <ColumnsHeaderGrid>
-        {laneHeaders.map(({ laneNumber, meta }) => (
-          <LaneHeader key={meta.label}>
-            <PreviewTag color={meta.color} label={meta.label} />
-            <LaneCount>{lanes[laneNumber].length}</LaneCount>
-          </LaneHeader>
-        ))}
-      </ColumnsHeaderGrid>
+			<ColumnsHeaderGrid>
+				{laneHeaders.map(({ laneNumber, meta }) => (
+					<LaneHeader key={meta.label}>
+						<PreviewTag color={meta.color} label={meta.label} />
+						<LaneCount>{lanes[laneNumber].length}</LaneCount>
+					</LaneHeader>
+				))}
+			</ColumnsHeaderGrid>
 
-      <ColumnsGrid>
-        {laneBodies.map(({ laneCardIds, laneNumber }) => (
-          <LaneBody
-            key={laneNumber}
-            ref={(element) => {
-              laneBodyRefs.current[laneNumber] = element;
-            }}
-          >
-            {laneCardIds.map((cardId) => (
-              <DealCard
-                data-dragging={draggedCardId === cardId ? '' : undefined}
-                key={cardId}
-                onPointerDown={(event) => handlePointerDown(event, cardId)}
-                ref={(element) => {
-                  cardRefs.current[cardId] = element;
-                }}
-              >
-                <OpportunityCard data={CARDS[cardId]} />
-              </DealCard>
-            ))}
-            <AddCardRow>
-              <IconPlus size={16} stroke={1.6} />
-              New
-            </AddCardRow>
-          </LaneBody>
-        ))}
-      </ColumnsGrid>
+			<ColumnsGrid>
+				{laneBodies.map(({ laneCardIds, laneNumber }) => (
+					<LaneBody
+						key={laneNumber}
+						ref={(element) => {
+							laneBodyRefs.current[laneNumber] = element;
+						}}
+					>
+						{laneCardIds.map((cardId) => (
+							<DealCard
+								data-dragging={draggedCardId === cardId ? "" : undefined}
+								key={cardId}
+								onPointerDown={(event) => handlePointerDown(event, cardId)}
+								ref={(element) => {
+									cardRefs.current[cardId] = element;
+								}}
+							>
+								<OpportunityCard data={CARDS[cardId]} />
+							</DealCard>
+						))}
+						<AddCardRow>
+							<IconPlus size={16} stroke={1.6} />
+							New
+						</AddCardRow>
+					</LaneBody>
+				))}
+			</ColumnsGrid>
 
-      <InteractionLayer
-        onLostPointerCapture={handleLostCapture}
-        onPointerCancel={handlePointerCancel}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        ref={interactionRef}
-        style={{ pointerEvents: draggedCardId ? 'auto' : 'none' }}
-      >
-        {draggedCardId && dragOrigin ? (
-          <FloatingCardShell
-            ref={ghostRef}
-            style={{
-              transform: `translate3d(${dragOrigin.originX}px, ${dragOrigin.originY}px, 0)`,
-            }}
-          >
-            <DealCard>
-              <OpportunityCard data={CARDS[draggedCardId]} />
-            </DealCard>
-          </FloatingCardShell>
-        ) : null}
-      </InteractionLayer>
-    </Root>
-  );
+			<InteractionLayer
+				onLostPointerCapture={handleLostCapture}
+				onPointerCancel={handlePointerCancel}
+				onPointerMove={handlePointerMove}
+				onPointerUp={handlePointerUp}
+				ref={interactionRef}
+				style={{ pointerEvents: draggedCardId ? "auto" : "none" }}
+			>
+				{draggedCardId && dragOrigin ? (
+					<FloatingCardShell
+						ref={ghostRef}
+						style={{
+							transform: `translate3d(${dragOrigin.originX}px, ${dragOrigin.originY}px, 0)`,
+						}}
+					>
+						<DealCard>
+							<OpportunityCard data={CARDS[draggedCardId]} />
+						</DealCard>
+					</FloatingCardShell>
+				) : null}
+			</InteractionLayer>
+		</Root>
+	);
 }

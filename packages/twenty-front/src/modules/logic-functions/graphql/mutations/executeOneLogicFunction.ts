@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const EXECUTE_ONE_LOGIC_FUNCTION = gql`
   mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {

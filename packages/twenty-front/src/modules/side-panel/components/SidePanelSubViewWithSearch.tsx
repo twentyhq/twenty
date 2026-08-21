@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSubViewContainer = styled.div`
   display: flex;
@@ -49,36 +49,36 @@ const StyledScrollableListWrapper = styled.div`
 `;
 
 type SidePanelSubViewWithSearchProps = {
-  searchPlaceholder: string;
-  searchValue: string;
-  onSearchChange: (value: string) => void;
-  searchInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  rightElement?: ReactNode;
-  children?: ReactNode;
+	searchPlaceholder: string;
+	searchValue: string;
+	onSearchChange: (value: string) => void;
+	searchInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+	rightElement?: ReactNode;
+	children?: ReactNode;
 };
 
 export const SidePanelSubViewWithSearch = ({
-  searchPlaceholder,
-  searchValue,
-  onSearchChange,
-  searchInputProps,
-  rightElement,
-  children,
+	searchPlaceholder,
+	searchValue,
+	onSearchChange,
+	searchInputProps,
+	rightElement,
+	children,
 }: SidePanelSubViewWithSearchProps) => (
-  <StyledSubViewContainer>
-    <StyledSearchContainer>
-      <StyledSearchInput
-        placeholder={searchPlaceholder}
-        value={searchValue}
-        onChange={(event) => onSearchChange(event.target.value)}
-        autoFocus
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...searchInputProps}
-      />
-      {rightElement}
-    </StyledSearchContainer>
-    {children != null && (
-      <StyledScrollableListWrapper>{children}</StyledScrollableListWrapper>
-    )}
-  </StyledSubViewContainer>
+	<StyledSubViewContainer>
+		<StyledSearchContainer>
+			<StyledSearchInput
+				placeholder={searchPlaceholder}
+				value={searchValue}
+				onChange={(event) => onSearchChange(event.target.value)}
+				autoFocus
+				// oxlint-disable-next-line react/jsx-props-no-spreading
+				{...searchInputProps}
+			/>
+			{rightElement}
+		</StyledSearchContainer>
+		{children != null && (
+			<StyledScrollableListWrapper>{children}</StyledScrollableListWrapper>
+		)}
+	</StyledSubViewContainer>
 );

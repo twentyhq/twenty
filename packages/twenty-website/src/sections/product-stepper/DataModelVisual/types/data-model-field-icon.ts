@@ -1,6 +1,6 @@
 export type DataModelFieldIcon =
-  | 'apps'
-  | 'building'
-  | 'tag'
-  | 'target'
-  | 'user';
+	| "apps"
+	| "building"
+	| "tag"
+	| "target"
+	| "user";

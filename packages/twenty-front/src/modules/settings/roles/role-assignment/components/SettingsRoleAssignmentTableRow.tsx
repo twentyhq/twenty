@@ -1,20 +1,20 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { UserContext } from '@/users/contexts/UserContext';
-import { useContext } from 'react';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Avatar } from 'twenty-ui/data-display';
-import { IconKey, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { formatDateString } from '~/utils/string/formatDateString';
-import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { currentWorkspaceMembersState } from "@/auth/states/currentWorkspaceMembersState";
+import { TableCell } from "@/ui/layout/table/components/TableCell";
+import { TableRow } from "@/ui/layout/table/components/TableRow";
+import { UserContext } from "@/users/contexts/UserContext";
+import { useContext } from "react";
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { Avatar } from "twenty-ui/data-display";
+import { IconKey, useIcons } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
+import { type Agent, type ApiKeyForRole } from "~/generated-metadata/graphql";
+import { dateLocaleState } from "~/localization/states/dateLocaleState";
+import { getAbsoluteImageUrl } from "~/utils/image/getAbsoluteImageUrl";
+import { formatDateString } from "~/utils/string/formatDateString";
+import { type PartialWorkspaceMember } from "@/settings/roles/types/RoleWithPartialMembers";
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -37,95 +37,95 @@ const StyledNameContainer = styled.div`
 `;
 
 export type RoleTarget =
-  | { type: 'member'; data: PartialWorkspaceMember }
-  | { type: 'agent'; data: Agent }
-  | { type: 'apiKey'; data: ApiKeyForRole };
+	| { type: "member"; data: PartialWorkspaceMember }
+	| { type: "agent"; data: Agent }
+	| { type: "apiKey"; data: ApiKeyForRole };
 
 type SettingsRoleAssignmentTableRowProps = {
-  roleTarget: RoleTarget;
+	roleTarget: RoleTarget;
 };
 
 export const SettingsRoleAssignmentTableRow = ({
-  roleTarget,
+	roleTarget,
 }: SettingsRoleAssignmentTableRowProps) => {
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
-  const { dateFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useAtomStateValue(dateLocaleState);
+	const currentWorkspaceMembers = useAtomStateValue(
+		currentWorkspaceMembersState,
+	);
+	const { theme } = useContext(ThemeContext);
+	const { getIcon } = useIcons();
+	const { dateFormat, timeZone } = useContext(UserContext);
+	const dateLocale = useAtomStateValue(dateLocaleState);
 
-  const renderIcon = () => {
-    switch (roleTarget.type) {
-      case 'member': {
-        const enrichedWorkspaceMember = currentWorkspaceMembers.find(
-          (member) => member.id === roleTarget.data.id,
-        );
-        return (
-          <Avatar
-            avatarUrl={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
-            placeholderColorSeed={enrichedWorkspaceMember?.id}
-            placeholder={enrichedWorkspaceMember?.name.firstName ?? ''}
-            type="rounded"
-            size="md"
-          />
-        );
-      }
-      case 'agent': {
-        const Icon = getIcon(roleTarget.data.icon || 'IconRobot');
-        return <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
-      }
-      case 'apiKey': {
-        return (
-          <IconKey size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        );
-      }
-    }
-  };
+	const renderIcon = () => {
+		switch (roleTarget.type) {
+			case "member": {
+				const enrichedWorkspaceMember = currentWorkspaceMembers.find(
+					(member) => member.id === roleTarget.data.id,
+				);
+				return (
+					<Avatar
+						avatarUrl={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
+						placeholderColorSeed={enrichedWorkspaceMember?.id}
+						placeholder={enrichedWorkspaceMember?.name.firstName ?? ""}
+						type="rounded"
+						size="md"
+					/>
+				);
+			}
+			case "agent": {
+				const Icon = getIcon(roleTarget.data.icon || "IconRobot");
+				return <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
+			}
+			case "apiKey": {
+				return (
+					<IconKey size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+				);
+			}
+		}
+	};
 
-  const renderName = () => {
-    switch (roleTarget.type) {
-      case 'member':
-        return `${roleTarget.data.name.firstName} ${roleTarget.data.name.lastName}`;
-      case 'agent':
-        return roleTarget.data.label;
-      case 'apiKey':
-        return roleTarget.data.name;
-    }
-  };
+	const renderName = () => {
+		switch (roleTarget.type) {
+			case "member":
+				return `${roleTarget.data.name.firstName} ${roleTarget.data.name.lastName}`;
+			case "agent":
+				return roleTarget.data.label;
+			case "apiKey":
+				return roleTarget.data.name;
+		}
+	};
 
-  const renderSecondaryInfo = () => {
-    switch (roleTarget.type) {
-      case 'member':
-        return roleTarget.data.userEmail;
-      case 'agent':
-        return roleTarget.data.description;
-      case 'apiKey':
-        return roleTarget.data.expiresAt
-          ? formatDateString({
-              value: roleTarget.data.expiresAt,
-              timeZone,
-              dateFormat,
-              localeCatalog: dateLocale.localeCatalog,
-            })
-          : t`Never expires`;
-    }
-  };
+	const renderSecondaryInfo = () => {
+		switch (roleTarget.type) {
+			case "member":
+				return roleTarget.data.userEmail;
+			case "agent":
+				return roleTarget.data.description;
+			case "apiKey":
+				return roleTarget.data.expiresAt
+					? formatDateString({
+							value: roleTarget.data.expiresAt,
+							timeZone,
+							dateFormat,
+							localeCatalog: dateLocale.localeCatalog,
+						})
+					: t`Never expires`;
+		}
+	};
 
-  return (
-    <TableRow gridAutoColumns="2fr 4fr">
-      <TableCell overflow="hidden">
-        <StyledNameContainer>
-          <StyledIconWrapper>{renderIcon()}</StyledIconWrapper>
-          <StyledNameCell>
-            <OverflowingTextWithTooltip text={renderName()} />
-          </StyledNameCell>
-        </StyledNameContainer>
-      </TableCell>
-      <TableCell overflow="hidden">
-        <OverflowingTextWithTooltip text={renderSecondaryInfo()} />
-      </TableCell>
-    </TableRow>
-  );
+	return (
+		<TableRow gridAutoColumns="2fr 4fr">
+			<TableCell overflow="hidden">
+				<StyledNameContainer>
+					<StyledIconWrapper>{renderIcon()}</StyledIconWrapper>
+					<StyledNameCell>
+						<OverflowingTextWithTooltip text={renderName()} />
+					</StyledNameCell>
+				</StyledNameContainer>
+			</TableCell>
+			<TableCell overflow="hidden">
+				<OverflowingTextWithTooltip text={renderSecondaryInfo()} />
+			</TableCell>
+		</TableRow>
+	);
 };

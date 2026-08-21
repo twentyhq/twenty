@@ -1,5 +1,5 @@
 export type ResendErrorBody = {
-  statusCode?: number;
-  name?: string;
-  message?: string;
+	statusCode?: number;
+	name?: string;
+	message?: string;
 };

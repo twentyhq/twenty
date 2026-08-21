@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('BillingSession')
+@ObjectType("BillingSession")
 export class BillingSessionDTO {
-  @Field(() => String, { nullable: true })
-  url: string;
+	@Field(() => String, { nullable: true })
+	url: string;
 }

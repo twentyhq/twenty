@@ -1,1 +1,1 @@
-export type NavigationMenuItemSection = 'workspace' | 'favorite';
+export type NavigationMenuItemSection = "workspace" | "favorite";

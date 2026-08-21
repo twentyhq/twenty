@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { color, fontFamily, fontSize, semanticColor, spacing } from '@/tokens';
+import { color, fontFamily, fontSize, semanticColor, spacing } from "@/tokens";
 
-import { RichText } from './RichText';
+import { RichText } from "./RichText";
 
 const About = styled.div`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4.25)};
   line-height: 1.58;
   max-width: 64ch;
@@ -59,7 +59,7 @@ const About = styled.div`
   }
 
   & ul li::before {
-    background: ${color('blue')};
+    background: ${color("blue")};
     border-radius: 50%;
     content: '';
     height: 5px;
@@ -70,18 +70,18 @@ const About = styled.div`
   }
 
   & a {
-    color: ${color('blue')};
+    color: ${color("blue")};
     text-decoration: underline;
     text-underline-offset: 2px;
   }
 `;
 
 export function PartnerProfileAbout({ description }: { description: string }) {
-  if (!description) return null;
+	if (!description) return null;
 
-  return (
-    <About>
-      <RichText markdown={description} />
-    </About>
-  );
+	return (
+		<About>
+			<RichText markdown={description} />
+		</About>
+	);
 }

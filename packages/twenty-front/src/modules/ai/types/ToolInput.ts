@@ -1,3 +1,3 @@
-import { type ToolUIPart } from 'ai';
+import { type ToolUIPart } from "ai";
 
-export type ToolInput = ToolUIPart['input'];
+export type ToolInput = ToolUIPart["input"];

@@ -1,4 +1,4 @@
 export type HostFetchPolicy = {
-  allowedOrigins: string[];
-  fileStorageRedirectableUrls: string[];
+	allowedOrigins: string[];
+	fileStorageRedirectableUrls: string[];
 };

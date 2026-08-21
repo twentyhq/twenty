@@ -1,10 +1,10 @@
-import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+import { createAtomFamilyState } from "@/ui/utilities/state/jotai/utils/createAtomFamilyState";
 
 export const isNavigationSectionOpenFamilyState = createAtomFamilyState<
-  boolean,
-  string
+	boolean,
+	string
 >({
-  key: 'isNavigationSectionOpenFamilyState',
-  defaultValue: true,
-  useLocalStorage: true,
+	key: "isNavigationSectionOpenFamilyState",
+	defaultValue: true,
+	useLocalStorage: true,
 });

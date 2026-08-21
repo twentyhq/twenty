@@ -1,5 +1,5 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
 
 export type FlatFieldMetadataItem = FieldMetadataItem & {
-  objectMetadataId: string;
+	objectMetadataId: string;
 };

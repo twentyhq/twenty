@@ -1,11 +1,11 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role.input';
+import { type UpdateRolePayload } from "src/engine/metadata-modules/role/dtos/update-role.input";
 
 export type UpdateOneRoleFactoryInput = {
-  idToUpdate: string;
-  updatePayload: UpdateRolePayload;
+	idToUpdate: string;
+	updatePayload: UpdateRolePayload;
 };
 
 const DEFAULT_ROLE_GQL_FIELDS = `
@@ -26,18 +26,18 @@ const DEFAULT_ROLE_GQL_FIELDS = `
 `;
 
 export const updateOneRoleQueryFactory = ({
-  gqlFields = DEFAULT_ROLE_GQL_FIELDS,
-  input,
+	gqlFields = DEFAULT_ROLE_GQL_FIELDS,
+	input,
 }: PerformMetadataQueryParams<UpdateOneRoleFactoryInput>) => ({
-  query: gql`
+	query: gql`
         mutation UpdateOneRole($idToUpdate: UUID!, $updatePayload: UpdateRolePayload!) {
             updateOneRole(updateRoleInput: {id: $idToUpdate, update: $updatePayload}) {
             ${gqlFields}
         }
       }
       `,
-  variables: {
-    idToUpdate: input.idToUpdate,
-    updatePayload: input.updatePayload,
-  },
+	variables: {
+		idToUpdate: input.idToUpdate,
+		updatePayload: input.updatePayload,
+	},
 });

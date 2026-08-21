@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type TopBarProps = {
-  className?: string;
-  leftComponent?: ReactNode;
-  rightComponent?: ReactNode;
-  bottomComponent?: ReactNode;
-  displayBottomBorder?: boolean;
+	className?: string;
+	leftComponent?: ReactNode;
+	rightComponent?: ReactNode;
+	bottomComponent?: ReactNode;
+	displayBottomBorder?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -44,16 +44,16 @@ const StyledRightSection = styled.div`
 `;
 
 export const TopBar = ({
-  className,
-  leftComponent,
-  rightComponent,
-  bottomComponent,
+	className,
+	leftComponent,
+	rightComponent,
+	bottomComponent,
 }: TopBarProps) => (
-  <StyledContainer className={className}>
-    <StyledTopBar>
-      <StyledLeftSection>{leftComponent}</StyledLeftSection>
-      <StyledRightSection>{rightComponent}</StyledRightSection>
-    </StyledTopBar>
-    {bottomComponent}
-  </StyledContainer>
+	<StyledContainer className={className}>
+		<StyledTopBar>
+			<StyledLeftSection>{leftComponent}</StyledLeftSection>
+			<StyledRightSection>{rightComponent}</StyledRightSection>
+		</StyledTopBar>
+		{bottomComponent}
+	</StyledContainer>
 );

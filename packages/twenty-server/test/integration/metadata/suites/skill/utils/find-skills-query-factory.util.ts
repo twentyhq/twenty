@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 const DEFAULT_SKILL_GQL_FIELDS = `
   id
@@ -15,9 +15,9 @@ const DEFAULT_SKILL_GQL_FIELDS = `
 `;
 
 export const findSkillsQueryFactory = ({
-  gqlFields = DEFAULT_SKILL_GQL_FIELDS,
+	gqlFields = DEFAULT_SKILL_GQL_FIELDS,
 }: PerformMetadataQueryParams<void>) => ({
-  query: gql`
+	query: gql`
     query Skills {
       skills {
         ${gqlFields}

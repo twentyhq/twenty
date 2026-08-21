@@ -1,3 +1,3 @@
 export type WebhookToolContext = {
-  workspaceId: string;
+	workspaceId: string;
 };

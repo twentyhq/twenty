@@ -1,15 +1,15 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const getEnglishLanguageNameFromLocale = (locale: string): string => {
-  const languageTag = locale.split('-')[0];
+	const languageTag = locale.split("-")[0];
 
-  try {
-    const languageName = new Intl.DisplayNames(['en'], {
-      type: 'language',
-    }).of(languageTag);
+	try {
+		const languageName = new Intl.DisplayNames(["en"], {
+			type: "language",
+		}).of(languageTag);
 
-    return isNonEmptyString(languageName) ? languageName : locale;
-  } catch {
-    return locale;
-  }
+		return isNonEmptyString(languageName) ? languageName : locale;
+	} catch {
+		return locale;
+	}
 };

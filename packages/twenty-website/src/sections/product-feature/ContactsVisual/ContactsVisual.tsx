@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconCheck, IconPlus } from '@tabler/icons-react';
-import { useState } from 'react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconCheck, IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { useHorizontalDragScroll } from '@/platform/motion';
-import { EASING } from '@/tokens';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { useHorizontalDragScroll } from "@/platform/motion";
+import { EASING } from "@/tokens";
 
-import { CellValue } from './components/CellValue';
-import { COLUMNS } from './data/columns';
-import { COMPANIES } from './data/companies';
-import { HEADER_ICONS } from './data/header-icons';
+import { CellValue } from "./components/CellValue";
+import { COLUMNS } from "./data/columns";
+import { COMPANIES } from "./data/companies";
+import { HEADER_ICONS } from "./data/header-icons";
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -213,128 +213,128 @@ const GRIP_CELL_COUNT = 11;
 const TOTAL_WIDTH = COLUMNS.reduce((sum, column) => sum + column.width, 0);
 
 const GRIP_CELLS = Array.from(
-  { length: GRIP_CELL_COUNT },
-  (_, gripNumber) => gripNumber,
+	{ length: GRIP_CELL_COUNT },
+	(_, gripNumber) => gripNumber,
 );
 
 export function ContactsVisual({ active: _active }: { active: boolean }) {
-  const { i18n } = useLingui();
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-  const {
-    dragging,
-    onPointerCancel,
-    onPointerDown,
-    onPointerLeave,
-    onPointerMove,
-    onPointerUp,
-    viewportRef,
-  } = useHorizontalDragScroll<HTMLDivElement>();
+	const { i18n } = useLingui();
+	const [checked, setChecked] = useState<Record<string, boolean>>({});
+	const {
+		dragging,
+		onPointerCancel,
+		onPointerDown,
+		onPointerLeave,
+		onPointerMove,
+		onPointerUp,
+		viewportRef,
+	} = useHorizontalDragScroll<HTMLDivElement>();
 
-  const toggleCheck = (domain: string) => {
-    setChecked((previous) => ({ ...previous, [domain]: !previous[domain] }));
-  };
+	const toggleCheck = (domain: string) => {
+		setChecked((previous) => ({ ...previous, [domain]: !previous[domain] }));
+	};
 
-  const rows = COMPANIES.map((company, rowNumber) => ({ company, rowNumber }));
+	const rows = COMPANIES.map((company, rowNumber) => ({ company, rowNumber }));
 
-  return (
-    <Root>
-      <ViewHeader>
-        <ViewTitle>All Companies</ViewTitle>
-        <ViewCount>· 9</ViewCount>
-      </ViewHeader>
+	return (
+		<Root>
+			<ViewHeader>
+				<ViewTitle>All Companies</ViewTitle>
+				<ViewCount>· 9</ViewCount>
+			</ViewHeader>
 
-      <TableShell>
-        <GripRail>
-          {GRIP_CELLS.map((gripNumber) => (
-            <GripCell key={gripNumber} />
-          ))}
-        </GripRail>
+			<TableShell>
+				<GripRail>
+					{GRIP_CELLS.map((gripNumber) => (
+						<GripCell key={gripNumber} />
+					))}
+				</GripRail>
 
-        <TableViewport
-          data-dragging={dragging ? '' : undefined}
-          onPointerCancel={onPointerCancel}
-          onPointerDown={onPointerDown}
-          onPointerLeave={onPointerLeave}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          ref={viewportRef}
-        >
-          <TableCanvas $width={TOTAL_WIDTH}>
-            <HeaderRow>
-              {COLUMNS.map((column) => {
-                const HeaderColumnIcon = HEADER_ICONS[column.id];
+				<TableViewport
+					data-dragging={dragging ? "" : undefined}
+					onPointerCancel={onPointerCancel}
+					onPointerDown={onPointerDown}
+					onPointerLeave={onPointerLeave}
+					onPointerMove={onPointerMove}
+					onPointerUp={onPointerUp}
+					ref={viewportRef}
+				>
+					<TableCanvas $width={TOTAL_WIDTH}>
+						<HeaderRow>
+							{COLUMNS.map((column) => {
+								const HeaderColumnIcon = HEADER_ICONS[column.id];
 
-                return (
-                  <Cell $width={column.width} key={column.id}>
-                    <HeaderContent>
-                      {column.isFirstColumn ? (
-                        <CheckboxWrap aria-hidden>
-                          <CheckboxBox />
-                        </CheckboxWrap>
-                      ) : null}
-                      <HeaderIcon>
-                        <HeaderColumnIcon size={16} stroke={1.6} />
-                      </HeaderIcon>
-                      <HeaderLabel>{column.label}</HeaderLabel>
-                      {column.isFirstColumn ? (
-                        <EdgePlus>
-                          <IconPlus size={12} stroke={1.6} />
-                        </EdgePlus>
-                      ) : null}
-                    </HeaderContent>
-                  </Cell>
-                );
-              })}
-            </HeaderRow>
+								return (
+									<Cell $width={column.width} key={column.id}>
+										<HeaderContent>
+											{column.isFirstColumn ? (
+												<CheckboxWrap aria-hidden>
+													<CheckboxBox />
+												</CheckboxWrap>
+											) : null}
+											<HeaderIcon>
+												<HeaderColumnIcon size={16} stroke={1.6} />
+											</HeaderIcon>
+											<HeaderLabel>{column.label}</HeaderLabel>
+											{column.isFirstColumn ? (
+												<EdgePlus>
+													<IconPlus size={12} stroke={1.6} />
+												</EdgePlus>
+											) : null}
+										</HeaderContent>
+									</Cell>
+								);
+							})}
+						</HeaderRow>
 
-            {rows.map(({ company, rowNumber }) => {
-              const isChecked = Boolean(checked[company.domain]);
+						{rows.map(({ company, rowNumber }) => {
+							const isChecked = Boolean(checked[company.domain]);
 
-              return (
-                <DataRow $index={rowNumber} key={company.domain}>
-                  {COLUMNS.map((column) => (
-                    <Cell $width={column.width} key={column.id}>
-                      {column.isFirstColumn ? (
-                        <HeaderContent>
-                          <CheckboxWrap
-                            aria-checked={isChecked}
-                            aria-label={i18n._(msg`Select ${company.name}`)}
-                            onClick={() => toggleCheck(company.domain)}
-                            onKeyDown={(event) => {
-                              if (event.key === 'Enter' || event.key === ' ') {
-                                event.preventDefault();
-                                toggleCheck(company.domain);
-                              }
-                            }}
-                            onPointerDown={(event) => event.stopPropagation()}
-                            role="checkbox"
-                            tabIndex={0}
-                          >
-                            <CheckboxBox
-                              data-checked={isChecked ? '' : undefined}
-                            >
-                              {isChecked ? (
-                                <IconCheck
-                                  color={THEME_LIGHT.border.color.blue}
-                                  size={9}
-                                  stroke={2}
-                                />
-                              ) : null}
-                            </CheckboxBox>
-                          </CheckboxWrap>
-                          <CellValue columnId={column.id} company={company} />
-                        </HeaderContent>
-                      ) : (
-                        <CellValue columnId={column.id} company={company} />
-                      )}
-                    </Cell>
-                  ))}
-                </DataRow>
-              );
-            })}
-          </TableCanvas>
-        </TableViewport>
-      </TableShell>
-    </Root>
-  );
+							return (
+								<DataRow $index={rowNumber} key={company.domain}>
+									{COLUMNS.map((column) => (
+										<Cell $width={column.width} key={column.id}>
+											{column.isFirstColumn ? (
+												<HeaderContent>
+													<CheckboxWrap
+														aria-checked={isChecked}
+														aria-label={i18n._(msg`Select ${company.name}`)}
+														onClick={() => toggleCheck(company.domain)}
+														onKeyDown={(event) => {
+															if (event.key === "Enter" || event.key === " ") {
+																event.preventDefault();
+																toggleCheck(company.domain);
+															}
+														}}
+														onPointerDown={(event) => event.stopPropagation()}
+														role="checkbox"
+														tabIndex={0}
+													>
+														<CheckboxBox
+															data-checked={isChecked ? "" : undefined}
+														>
+															{isChecked ? (
+																<IconCheck
+																	color={THEME_LIGHT.border.color.blue}
+																	size={9}
+																	stroke={2}
+																/>
+															) : null}
+														</CheckboxBox>
+													</CheckboxWrap>
+													<CellValue columnId={column.id} company={company} />
+												</HeaderContent>
+											) : (
+												<CellValue columnId={column.id} company={company} />
+											)}
+										</Cell>
+									))}
+								</DataRow>
+							);
+						})}
+					</TableCanvas>
+				</TableViewport>
+			</TableShell>
+		</Root>
+	);
 }

@@ -1,5 +1,5 @@
-import { VIEW_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewGroupFragment';
-import { gql } from '@apollo/client';
+import { VIEW_GROUP_FRAGMENT } from "@/views/graphql/fragments/viewGroupFragment";
+import { gql } from "@apollo/client";
 
 export const CREATE_MANY_VIEW_GROUPS = gql`
   ${VIEW_GROUP_FRAGMENT}

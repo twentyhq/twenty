@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { IconAlignCenter, IconAlignLeft, IconAlignRight } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { IconAlignCenter, IconAlignLeft, IconAlignRight } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
+import { StyledEmailFieldLabel } from "@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel";
 
 const StyledAlignRow = styled.div`
   display: flex;
@@ -12,16 +12,16 @@ const StyledAlignRow = styled.div`
 const StyledAlignButton = styled.button<{ isActive: boolean }>`
   align-items: center;
   background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.medium : 'none'};
+		isActive ? themeCssVariables.background.transparent.medium : "none"};
   border: 1px solid
     ${({ isActive }) =>
-      isActive ? themeCssVariables.border.color.strong : 'transparent'};
+			isActive ? themeCssVariables.border.color.strong : "transparent"};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
+		isActive
+			? themeCssVariables.font.color.primary
+			: themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
   height: 28px;
@@ -35,38 +35,38 @@ const StyledAlignButton = styled.button<{ isActive: boolean }>`
 `;
 
 export const CAMPAIGN_ALIGN_OPTIONS = [
-  { align: 'left', Icon: IconAlignLeft },
-  { align: 'center', Icon: IconAlignCenter },
-  { align: 'right', Icon: IconAlignRight },
+	{ align: "left", Icon: IconAlignLeft },
+	{ align: "center", Icon: IconAlignCenter },
+	{ align: "right", Icon: IconAlignRight },
 ] as const;
 
 type EmailAlignmentInputProps = {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
+	label: string;
+	value: string;
+	onChange: (value: string) => void;
 };
 
 export const EmailAlignmentInput = ({
-  label,
-  value,
-  onChange,
+	label,
+	value,
+	onChange,
 }: EmailAlignmentInputProps) => (
-  <div>
-    <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
-    <StyledAlignRow>
-      {CAMPAIGN_ALIGN_OPTIONS.map(({ align, Icon }) => (
-        <StyledAlignButton
-          key={align}
-          type="button"
-          aria-label={align}
-          aria-pressed={value === align}
-          title={align}
-          isActive={value === align}
-          onClick={() => onChange(align)}
-        >
-          <Icon size={16} />
-        </StyledAlignButton>
-      ))}
-    </StyledAlignRow>
-  </div>
+	<div>
+		<StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
+		<StyledAlignRow>
+			{CAMPAIGN_ALIGN_OPTIONS.map(({ align, Icon }) => (
+				<StyledAlignButton
+					key={align}
+					type="button"
+					aria-label={align}
+					aria-pressed={value === align}
+					title={align}
+					isActive={value === align}
+					onClick={() => onChange(align)}
+				>
+					<Icon size={16} />
+				</StyledAlignButton>
+			))}
+		</StyledAlignRow>
+	</div>
 );

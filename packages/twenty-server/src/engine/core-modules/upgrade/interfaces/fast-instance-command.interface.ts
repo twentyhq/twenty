@@ -1,6 +1,6 @@
-import { type QueryRunner } from 'typeorm';
+import { type QueryRunner } from "typeorm";
 
 export interface FastInstanceCommand {
-  up(queryRunner: QueryRunner): Promise<void>;
-  down(queryRunner: QueryRunner): Promise<void>;
+	up(queryRunner: QueryRunner): Promise<void>;
+	down(queryRunner: QueryRunner): Promise<void>;
 }

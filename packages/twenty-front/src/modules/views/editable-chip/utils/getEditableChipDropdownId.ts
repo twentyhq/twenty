@@ -1,9 +1,9 @@
 type GetEditableChipDropdownIdProps = {
-  recordFilterId: string;
+	recordFilterId: string;
 };
 
 export const getEditableChipDropdownId = ({
-  recordFilterId,
+	recordFilterId,
 }: GetEditableChipDropdownIdProps) => {
-  return `editable-chip-dropdown-${recordFilterId}`;
+	return `editable-chip-dropdown-${recordFilterId}`;
 };

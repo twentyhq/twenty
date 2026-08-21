@@ -1,5 +1,5 @@
 export const CHAT_SYSTEM_PROMPTS = {
-  BASE: `You are a helpful AI assistant integrated into Twenty, a CRM (similar to Salesforce).
+	BASE: `You are a helpful AI assistant integrated into Twenty, a CRM (similar to Salesforce).
 
 ## Plan → Skill → Learn → Execute
 
@@ -67,9 +67,9 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 - Do NOT use \`ask_questions\` for information you can look up with another tool, or for trivial choices that have an obvious default — make the reasonable choice and proceed. Ask at most a few focused questions at once.
 `,
 
-  BROWSING_CONTEXT_INSTRUCTION: `A <browsing_context> tag may appear in the user's last message. Only use it when directly relevant to the question.`,
+	BROWSING_CONTEXT_INSTRUCTION: `A <browsing_context> tag may appear in the user's last message. Only use it when directly relevant to the question.`,
 
-  RESPONSE_FORMAT: `
+	RESPONSE_FORMAT: `
 Format responses with markdown for clarity (headings, lists, code blocks, tables).
 
 Record References - IMPORTANT:

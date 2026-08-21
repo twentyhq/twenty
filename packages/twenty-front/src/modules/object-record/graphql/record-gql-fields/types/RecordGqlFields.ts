@@ -1,3 +1,3 @@
 export type RecordGqlFields = {
-  [k: string]: boolean | RecordGqlFields | undefined;
+	[k: string]: boolean | RecordGqlFields | undefined;
 };

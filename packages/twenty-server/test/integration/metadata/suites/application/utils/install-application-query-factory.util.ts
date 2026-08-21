@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export type InstallApplicationFactoryInput = {
-  universalIdentifier: string;
-  version?: string;
+	universalIdentifier: string;
+	version?: string;
 };
 
 export const installApplicationQueryFactory = ({
-  input,
+	input,
 }: {
-  input: InstallApplicationFactoryInput;
+	input: InstallApplicationFactoryInput;
 }) => ({
-  query: gql`
+	query: gql`
     mutation InstallApplication(
       $universalIdentifier: String!
       $version: String
@@ -23,8 +23,8 @@ export const installApplicationQueryFactory = ({
       }
     }
   `,
-  variables: {
-    universalIdentifier: input.universalIdentifier,
-    version: input.version,
-  },
+	variables: {
+		universalIdentifier: input.universalIdentifier,
+		version: input.version,
+	},
 });

@@ -4,17 +4,17 @@
 // millisecond and the message counter. Epoch seconds never wrap, so no rerun
 // can reproduce an earlier run's keys.
 export const createSlackMessageTimestampSequence = (
-  suiteOffsetSeconds: number,
+	suiteOffsetSeconds: number,
 ): (() => string) => {
-  const startedAt = Date.now();
-  const runSecond = Math.floor(startedAt / 1000) + suiteOffsetSeconds;
-  const runMillisecond = String(startedAt % 1000).padStart(3, '0');
+	const startedAt = Date.now();
+	const runSecond = Math.floor(startedAt / 1000) + suiteOffsetSeconds;
+	const runMillisecond = String(startedAt % 1000).padStart(3, "0");
 
-  let sequence = 0;
+	let sequence = 0;
 
-  return () => {
-    sequence += 1;
+	return () => {
+		sequence += 1;
 
-    return `${runSecond}.${runMillisecond}${String(sequence).padStart(3, '0')}`;
-  };
+		return `${runSecond}.${runMillisecond}${String(sequence).padStart(3, "0")}`;
+	};
 };

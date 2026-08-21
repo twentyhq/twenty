@@ -1,7 +1,7 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
 
 export const useObjectLabel = (
-  objectMetadataItem: EnrichedObjectMetadataItem,
+	objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
-  return objectMetadataItem?.labelSingular ?? '';
+	return objectMetadataItem?.labelSingular ?? "";
 };

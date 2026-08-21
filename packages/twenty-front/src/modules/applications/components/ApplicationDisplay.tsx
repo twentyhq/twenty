@@ -1,10 +1,10 @@
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
-import { AppChip } from '@/applications/components/AppChip';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { type ApplicationDisplayData } from "@/applications/types/applicationDisplayData.type";
+import { AppChip } from "@/applications/components/AppChip";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { styled } from "@linaria/react";
 
 type ApplicationDisplayProps = {
-  application?: ApplicationDisplayData;
+	application?: ApplicationDisplayData;
 };
 
 const StyledAppChip = styled(AppChip)`
@@ -14,16 +14,16 @@ const StyledAppChip = styled(AppChip)`
 `;
 
 export const ApplicationDisplay = ({
-  application,
+	application,
 }: ApplicationDisplayProps) => {
-  return (
-    <StyledAppChip
-      size="md"
-      applicationId={application?.id}
-      logoUrl={application?.logoUrl}
-      fallbackApplicationData={{
-        name: application?.name,
-      }}
-    />
-  );
+	return (
+		<StyledAppChip
+			size="md"
+			applicationId={application?.id}
+			logoUrl={application?.logoUrl}
+			fallbackApplicationData={{
+				name: application?.name,
+			}}
+		/>
+	);
 };

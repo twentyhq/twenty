@@ -1,26 +1,26 @@
-import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
-import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { AppConnectionHeader } from "@/applications/components/AppConnectionHeader";
+import { AuthorizeActionButtons } from "@/applications/components/AuthorizeActionButtons";
 import {
-  buildPermissionSummaryFromRoleManifest,
-  type PermissionSummaryItem,
-} from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
-import { type RoleManifest } from 'twenty-shared/application';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
+	buildPermissionSummaryFromRoleManifest,
+	type PermissionSummaryItem,
+} from "@/marketplace/utils/buildPermissionSummaryFromRoleManifest";
+import { useModal } from "@/ui/layout/modal/hooks/useModal";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useMemo } from "react";
+import { type RoleManifest } from "twenty-shared/application";
+import { IconChevronLeft } from "twenty-ui/icon";
+import { LightButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { StyledAppModal } from "~/pages/settings/applications/components/SettingsAppModalLayout";
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
-  modalInstanceId: string;
-  appDisplayName: string;
-  appLogoUrl?: string;
-  defaultRole?: RoleManifest;
-  onAuthorize: () => void;
-  isInstalling?: boolean;
+	modalInstanceId: string;
+	appDisplayName: string;
+	appLogoUrl?: string;
+	defaultRole?: RoleManifest;
+	onAuthorize: () => void;
+	isInstalling?: boolean;
 };
 
 const StyledFullscreenContainer = styled.div`
@@ -89,83 +89,83 @@ const StyledPermissionIcon = styled.div`
 `;
 
 export const SettingsApplicationInstallPermissionValidationModal = ({
-  modalInstanceId,
-  appDisplayName,
-  appLogoUrl,
-  defaultRole,
-  onAuthorize,
-  isInstalling,
+	modalInstanceId,
+	appDisplayName,
+	appLogoUrl,
+	defaultRole,
+	onAuthorize,
+	isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
-  const { closeModal } = useModal();
+	const { closeModal } = useModal();
 
-  const permissionItems: PermissionSummaryItem[] = useMemo(() => {
-    if (!defaultRole) {
-      return [];
-    }
+	const permissionItems: PermissionSummaryItem[] = useMemo(() => {
+		if (!defaultRole) {
+			return [];
+		}
 
-    return buildPermissionSummaryFromRoleManifest(defaultRole);
-  }, [defaultRole]);
+		return buildPermissionSummaryFromRoleManifest(defaultRole);
+	}, [defaultRole]);
 
-  const handleAuthorize = () => {
-    closeModal(modalInstanceId);
-    onAuthorize();
-  };
+	const handleAuthorize = () => {
+		closeModal(modalInstanceId);
+		onAuthorize();
+	};
 
-  const handleClose = () => {
-    closeModal(modalInstanceId);
-  };
+	const handleClose = () => {
+		closeModal(modalInstanceId);
+	};
 
-  return (
-    <StyledAppModal
-      modalId={modalInstanceId}
-      isClosable
-      onClose={handleClose}
-      size="fullscreen"
-      padding="none"
-      overlay="transparent"
-    >
-      <StyledFullscreenContainer>
-        <StyledLightButton
-          Icon={IconChevronLeft}
-          title={t`Back to settings`}
-          onClick={handleClose}
-        />
+	return (
+		<StyledAppModal
+			modalId={modalInstanceId}
+			isClosable
+			onClose={handleClose}
+			size="fullscreen"
+			padding="none"
+			overlay="transparent"
+		>
+			<StyledFullscreenContainer>
+				<StyledLightButton
+					Icon={IconChevronLeft}
+					title={t`Back to settings`}
+					onClick={handleClose}
+				/>
 
-        <StyledContent>
-          <StyledAppConnectionHeaderContainer>
-            <AppConnectionHeader
-              appLogoUrl={appLogoUrl}
-              appName={appDisplayName}
-            />
-          </StyledAppConnectionHeaderContainer>
+				<StyledContent>
+					<StyledAppConnectionHeaderContainer>
+						<AppConnectionHeader
+							appLogoUrl={appLogoUrl}
+							appName={appDisplayName}
+						/>
+					</StyledAppConnectionHeaderContainer>
 
-          <StyledTitle>
-            {t`Install ${appDisplayName} on your workspace`}
-          </StyledTitle>
+					<StyledTitle>
+						{t`Install ${appDisplayName} on your workspace`}
+					</StyledTitle>
 
-          {permissionItems.length > 0 && (
-            <StyledPermissionsCard>
-              <StyledPermissionsTitle>
-                {t`${appDisplayName} would like to:`}
-              </StyledPermissionsTitle>
-              {permissionItems.map((item) => (
-                <StyledPermissionRow key={item.label}>
-                  <StyledPermissionIcon>
-                    <item.Icon size={16} />
-                  </StyledPermissionIcon>
-                  {item.label}
-                </StyledPermissionRow>
-              ))}
-            </StyledPermissionsCard>
-          )}
+					{permissionItems.length > 0 && (
+						<StyledPermissionsCard>
+							<StyledPermissionsTitle>
+								{t`${appDisplayName} would like to:`}
+							</StyledPermissionsTitle>
+							{permissionItems.map((item) => (
+								<StyledPermissionRow key={item.label}>
+									<StyledPermissionIcon>
+										<item.Icon size={16} />
+									</StyledPermissionIcon>
+									{item.label}
+								</StyledPermissionRow>
+							))}
+						</StyledPermissionsCard>
+					)}
 
-          <AuthorizeActionButtons
-            onCancel={handleClose}
-            onAuthorize={handleAuthorize}
-            isLoading={isInstalling}
-          />
-        </StyledContent>
-      </StyledFullscreenContainer>
-    </StyledAppModal>
-  );
+					<AuthorizeActionButtons
+						onCancel={handleClose}
+						onAuthorize={handleAuthorize}
+						isLoading={isInstalling}
+					/>
+				</StyledContent>
+			</StyledFullscreenContainer>
+		</StyledAppModal>
+	);
 };

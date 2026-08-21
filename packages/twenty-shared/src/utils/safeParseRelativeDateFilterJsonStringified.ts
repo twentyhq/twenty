@@ -1,22 +1,22 @@
 import {
-  relativeDateFilterSchema,
-  type RelativeDateFilter,
-} from '@/utils/filter/dates/utils/relativeDateFilterSchema';
+	relativeDateFilterSchema,
+	type RelativeDateFilter,
+} from "@/utils/filter/dates/utils/relativeDateFilterSchema";
 
 export const safeParseRelativeDateFilterJsonStringified = (
-  value: string,
+	value: string,
 ): RelativeDateFilter | undefined => {
-  try {
-    const parsedJson = JSON.parse(value);
+	try {
+		const parsedJson = JSON.parse(value);
 
-    const result = relativeDateFilterSchema.safeParse(parsedJson);
+		const result = relativeDateFilterSchema.safeParse(parsedJson);
 
-    if (result.success) {
-      return result.data;
-    }
+		if (result.success) {
+			return result.data;
+		}
 
-    return undefined;
-  } catch {
-    return undefined;
-  }
+		return undefined;
+	} catch {
+		return undefined;
+	}
 };

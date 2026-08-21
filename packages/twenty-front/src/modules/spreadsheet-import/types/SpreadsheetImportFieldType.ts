@@ -1,26 +1,26 @@
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from "twenty-ui/input";
 export type SpreadsheetImportCheckbox = {
-  type: 'checkbox';
-  // Alternate values to be treated as booleans, e.g. {yes: true, no: false}
-  booleanMatches?: { [key: string]: boolean };
+	type: "checkbox";
+	// Alternate values to be treated as booleans, e.g. {yes: true, no: false}
+	booleanMatches?: { [key: string]: boolean };
 };
 
 export type SpreadsheetImportSelect = {
-  type: 'select';
-  options: SelectOption[];
+	type: "select";
+	options: SelectOption[];
 };
 
 export type SpreadsheetImportMultiSelect = {
-  type: 'multiSelect';
-  options: SelectOption[];
+	type: "multiSelect";
+	options: SelectOption[];
 };
 
 export type SpreadsheetImportInput = {
-  type: 'input';
+	type: "input";
 };
 
 export type SpreadsheetImportFieldType =
-  | SpreadsheetImportCheckbox
-  | SpreadsheetImportSelect
-  | SpreadsheetImportMultiSelect
-  | SpreadsheetImportInput;
+	| SpreadsheetImportCheckbox
+	| SpreadsheetImportSelect
+	| SpreadsheetImportMultiSelect
+	| SpreadsheetImportInput;

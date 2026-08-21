@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/input';
-import { AnimatedContainer } from 'twenty-ui/layout';
+import { styled } from "@linaria/react";
+import { type IconComponent } from "twenty-ui/icon";
+import { FloatingIconButton } from "twenty-ui/input";
+import { AnimatedContainer } from "twenty-ui/layout";
 
 const StyledInlineCellButtonContainer = styled.div`
   align-items: center;
@@ -9,21 +9,21 @@ const StyledInlineCellButtonContainer = styled.div`
 `;
 
 export const RecordInlineCellButton = ({
-  Icon,
-  onClick,
+	Icon,
+	onClick,
 }: {
-  Icon: IconComponent;
-  onClick?: () => void;
+	Icon: IconComponent;
+	onClick?: () => void;
 }) => {
-  return (
-    <AnimatedContainer>
-      <StyledInlineCellButtonContainer onClick={onClick}>
-        <FloatingIconButton
-          size="small"
-          Icon={Icon}
-          data-testid="inline-cell-edit-mode-container"
-        />
-      </StyledInlineCellButtonContainer>
-    </AnimatedContainer>
-  );
+	return (
+		<AnimatedContainer>
+			<StyledInlineCellButtonContainer onClick={onClick}>
+				<FloatingIconButton
+					size="small"
+					Icon={Icon}
+					data-testid="inline-cell-edit-mode-container"
+				/>
+			</StyledInlineCellButtonContainer>
+		</AnimatedContainer>
+	);
 };

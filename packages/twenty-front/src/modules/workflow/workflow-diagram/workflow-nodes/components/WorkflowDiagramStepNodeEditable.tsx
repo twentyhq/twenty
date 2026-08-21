@@ -1,84 +1,84 @@
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
-import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
-import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { CommandMenuContext } from "@/command-menu-item/contexts/CommandMenuContext";
+import { useSidePanelWorkflowNavigation } from "@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation";
+import { sidePanelNavigationStackState } from "@/side-panel/states/sidePanelNavigationStackState";
+import { useAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
+import { workflowVisualizerWorkflowIdComponentState } from "@/workflow/states/workflowVisualizerWorkflowIdComponentState";
+import { useResetWorkflowInsertStepIds } from "@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds";
+import { workflowSelectedNodeComponentState } from "@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState";
+import { type WorkflowDiagramStepNodeData } from "@/workflow/workflow-diagram/types/WorkflowDiagram";
+import { getWorkflowNodeIconKey } from "@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey";
+import { WorkflowDiagramStepNodeEditableContent } from "@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent";
+import { useDeleteStep } from "@/workflow/workflow-steps/hooks/useDeleteStep";
+import { useContext } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { useIcons } from "twenty-ui/icon";
 
 export const WorkflowDiagramStepNodeEditable = ({
-  id,
-  data,
+	id,
+	data,
 }: {
-  id: string;
-  data: WorkflowDiagramStepNodeData;
+	id: string;
+	data: WorkflowDiagramStepNodeData;
 }) => {
-  const { getIcon } = useIcons();
+	const { getIcon } = useIcons();
 
-  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
+	const workflowVisualizerWorkflowId = useAtomComponentStateValue(
+		workflowVisualizerWorkflowIdComponentState,
+	);
 
-  const [workflowSelectedNode, setWorkflowSelectedNode] = useAtomComponentState(
-    workflowSelectedNodeComponentState,
-  );
+	const [workflowSelectedNode, setWorkflowSelectedNode] = useAtomComponentState(
+		workflowSelectedNodeComponentState,
+	);
 
-  const selected = workflowSelectedNode === id;
+	const selected = workflowSelectedNode === id;
 
-  const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
+	const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
 
-  const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
+	const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
 
-  const { deleteStep } = useDeleteStep();
+	const { deleteStep } = useDeleteStep();
 
-  const { commandMenuContextApi } = useContext(CommandMenuContext);
-  const isInSidePanel = commandMenuContextApi.isInSidePanel;
+	const { commandMenuContextApi } = useContext(CommandMenuContext);
+	const isInSidePanel = commandMenuContextApi.isInSidePanel;
 
-  const setSidePanelNavigationStack = useSetAtomState(
-    sidePanelNavigationStackState,
-  );
+	const setSidePanelNavigationStack = useSetAtomState(
+		sidePanelNavigationStackState,
+	);
 
-  const handleClick = () => {
-    if (!isInSidePanel) {
-      setSidePanelNavigationStack([]);
-    }
+	const handleClick = () => {
+		if (!isInSidePanel) {
+			setSidePanelNavigationStack([]);
+		}
 
-    resetWorkflowInsertStepIds();
+		resetWorkflowInsertStepIds();
 
-    setWorkflowSelectedNode(id);
+		setWorkflowSelectedNode(id);
 
-    if (isDefined(workflowVisualizerWorkflowId)) {
-      openWorkflowEditStepInSidePanel(
-        workflowVisualizerWorkflowId,
-        data.name,
-        getIcon(getWorkflowNodeIconKey(data)),
-        id,
-      );
+		if (isDefined(workflowVisualizerWorkflowId)) {
+			openWorkflowEditStepInSidePanel(
+				workflowVisualizerWorkflowId,
+				data.name,
+				getIcon(getWorkflowNodeIconKey(data)),
+				id,
+			);
 
-      return;
-    }
-  };
+			return;
+		}
+	};
 
-  const handleDelete = () => {
-    deleteStep(data.stepId);
-  };
+	const handleDelete = () => {
+		deleteStep(data.stepId);
+	};
 
-  return (
-    <WorkflowDiagramStepNodeEditableContent
-      id={id}
-      data={data}
-      selected={selected}
-      onClick={handleClick}
-      onDelete={handleDelete}
-    />
-  );
+	return (
+		<WorkflowDiagramStepNodeEditableContent
+			id={id}
+			data={data}
+			selected={selected}
+			onClick={handleClick}
+			onDelete={handleDelete}
+		/>
+	);
 };

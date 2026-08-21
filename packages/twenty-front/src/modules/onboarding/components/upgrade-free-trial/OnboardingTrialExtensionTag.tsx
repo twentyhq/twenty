@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconCalendarEvent } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { IconCalendarEvent } from "twenty-ui/icon";
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 const StyledTag = styled.div`
   align-items: center;
@@ -15,7 +15,7 @@ const StyledTag = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
   padding: 0 ${themeCssVariables.spacing[2]} 0
-    ${themeCssVariables.spacing['1.5']};
+    ${themeCssVariables.spacing["1.5"]};
 `;
 
 const StyledPrefix = styled.span`
@@ -34,24 +34,24 @@ const StyledSuffix = styled.span`
 `;
 
 type OnboardingTrialExtensionTagProps = {
-  duration: number;
+	duration: number;
 };
 
 export const OnboardingTrialExtensionTag = ({
-  duration,
+	duration,
 }: OnboardingTrialExtensionTagProps) => {
-  const { t } = useLingui();
-  const theme = useTheme();
+	const { t } = useLingui();
+	const theme = useTheme();
 
-  return (
-    <StyledTag>
-      <IconCalendarEvent
-        size={theme.icon.size.md}
-        color={themeCssVariables.color.green9}
-      />
-      <StyledPrefix>{t`Extended`}</StyledPrefix>
-      <StyledDuration>{duration}</StyledDuration>
-      <StyledSuffix>{t`days trial`}</StyledSuffix>
-    </StyledTag>
-  );
+	return (
+		<StyledTag>
+			<IconCalendarEvent
+				size={theme.icon.size.md}
+				color={themeCssVariables.color.green9}
+			/>
+			<StyledPrefix>{t`Extended`}</StyledPrefix>
+			<StyledDuration>{duration}</StyledDuration>
+			<StyledSuffix>{t`days trial`}</StyledSuffix>
+		</StyledTag>
+	);
 };

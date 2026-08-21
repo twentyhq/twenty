@@ -1,7 +1,7 @@
-import { useInitializeRecordTableWidgetViewDrafts } from '@/page-layout/widgets/record-table/hooks/useInitializeRecordTableWidgetViewDrafts';
+import { useInitializeRecordTableWidgetViewDrafts } from "@/page-layout/widgets/record-table/hooks/useInitializeRecordTableWidgetViewDrafts";
 
 export const RecordTableWidgetViewDraftsInitializationEffect = () => {
-  useInitializeRecordTableWidgetViewDrafts();
+	useInitializeRecordTableWidgetViewDrafts();
 
-  return null;
+	return null;
 };

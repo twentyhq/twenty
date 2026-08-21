@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type ContextUsageProgressRingProps = {
-  percentage: number;
-  size?: number;
-  strokeWidth?: number;
+	percentage: number;
+	size?: number;
+	strokeWidth?: number;
 };
 
 const StyledSvg = styled.svg`
@@ -26,41 +26,41 @@ const StyledProgressCircle = styled.circle`
 `;
 
 export const ContextUsageProgressRing = ({
-  percentage,
-  size = 16,
-  strokeWidth = 2,
+	percentage,
+	size = 16,
+	strokeWidth = 2,
 }: ContextUsageProgressRingProps) => {
-  const normalizedPercentage = Math.min(Math.max(percentage, 0), 100);
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset =
-    circumference - (normalizedPercentage / 100) * circumference;
+	const normalizedPercentage = Math.min(Math.max(percentage, 0), 100);
+	const radius = (size - strokeWidth) / 2;
+	const circumference = 2 * Math.PI * radius;
+	const strokeDashoffset =
+		circumference - (normalizedPercentage / 100) * circumference;
 
-  const progressColor =
-    normalizedPercentage > 80
-      ? themeCssVariables.color.red
-      : normalizedPercentage > 60
-        ? themeCssVariables.color.orange
-        : themeCssVariables.color.blue;
+	const progressColor =
+		normalizedPercentage > 80
+			? themeCssVariables.color.red
+			: normalizedPercentage > 60
+				? themeCssVariables.color.orange
+				: themeCssVariables.color.blue;
 
-  return (
-    <StyledSvg width={size} height={size}>
-      <StyledBackgroundCircle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        strokeWidth={strokeWidth}
-      />
-      <StyledProgressCircle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        strokeWidth={strokeWidth}
-        style={{ stroke: progressColor }}
-        strokeDasharray={circumference}
-        strokeDashoffset={strokeDashoffset}
-        strokeLinecap="round"
-      />
-    </StyledSvg>
-  );
+	return (
+		<StyledSvg width={size} height={size}>
+			<StyledBackgroundCircle
+				cx={size / 2}
+				cy={size / 2}
+				r={radius}
+				strokeWidth={strokeWidth}
+			/>
+			<StyledProgressCircle
+				cx={size / 2}
+				cy={size / 2}
+				r={radius}
+				strokeWidth={strokeWidth}
+				style={{ stroke: progressColor }}
+				strokeDasharray={circumference}
+				strokeDashoffset={strokeDashoffset}
+				strokeLinecap="round"
+			/>
+		</StyledSvg>
+	);
 };

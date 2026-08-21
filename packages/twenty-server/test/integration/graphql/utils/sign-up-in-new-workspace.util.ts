@@ -1,25 +1,25 @@
-import gql from 'graphql-tag';
-import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
-import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import gql from "graphql-tag";
+import { type CommonResponseBody } from "test/integration/metadata/types/common-response-body.type";
+import { warnIfErrorButNotExpectedToFail } from "test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util";
+import { warnIfNoErrorButExpectedToFail } from "test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util";
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
-import { type SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
+import { type SignUpDTO } from "src/engine/core-modules/auth/dto/sign-up.dto";
 
 type SignUpOnNewWorkspaceUtilArgs = {
-  accessToken: string;
-  displayName?: string;
-  expectToFail?: boolean;
+	accessToken: string;
+	displayName?: string;
+	expectToFail?: boolean;
 };
 
 export const signUpInNewWorkspace = async ({
-  accessToken,
-  displayName = 'Test Workspace',
-  expectToFail,
+	accessToken,
+	displayName = "Test Workspace",
+	expectToFail,
 }: SignUpOnNewWorkspaceUtilArgs): CommonResponseBody<{
-  signUpInNewWorkspace: SignUpDTO;
+	signUpInNewWorkspace: SignUpDTO;
 }> => {
-  const mutation = gql`
+	const mutation = gql`
     mutation SignUpInNewWorkspace($input: SignUpInNewWorkspaceInput) {
       signUpInNewWorkspace(input: $input) {
         loginToken {
@@ -37,27 +37,27 @@ export const signUpInNewWorkspace = async ({
     }
   `;
 
-  const response = await makeMetadataAPIRequest(
-    {
-      query: mutation,
-      variables: { input: { displayName } },
-    },
-    accessToken,
-  );
+	const response = await makeMetadataAPIRequest(
+		{
+			query: mutation,
+			variables: { input: { displayName } },
+		},
+		accessToken,
+	);
 
-  if (expectToFail === true) {
-    warnIfNoErrorButExpectedToFail({
-      response,
-      errorMessage: 'Sign up on new workspace should have failed but did not',
-    });
-  }
+	if (expectToFail === true) {
+		warnIfNoErrorButExpectedToFail({
+			response,
+			errorMessage: "Sign up on new workspace should have failed but did not",
+		});
+	}
 
-  if (expectToFail === false) {
-    warnIfErrorButNotExpectedToFail({
-      response,
-      errorMessage: 'Sign up on new workspace has failed but should not',
-    });
-  }
+	if (expectToFail === false) {
+		warnIfErrorButNotExpectedToFail({
+			response,
+			errorMessage: "Sign up on new workspace has failed but should not",
+		});
+	}
 
-  return { data: response.body.data, errors: response.body.errors };
+	return { data: response.body.data, errors: response.body.errors };
 };

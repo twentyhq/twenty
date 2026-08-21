@@ -1,16 +1,16 @@
-import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
+import { type FrontComponentStorageType } from "twenty-sdk/front-component";
 
-import { createFrontComponentStorageBridge } from '@/polyfills/storage/utils/createFrontComponentStorageBridge';
-import { type FrontComponentStorageBridge } from '@/polyfills/storage/types/FrontComponentStorageBridge';
+import { createFrontComponentStorageBridge } from "@/polyfills/storage/utils/createFrontComponentStorageBridge";
+import { type FrontComponentStorageBridge } from "@/polyfills/storage/types/FrontComponentStorageBridge";
 
 export const frontComponentStorageBridges: Record<
-  FrontComponentStorageType,
-  FrontComponentStorageBridge
+	FrontComponentStorageType,
+	FrontComponentStorageBridge
 > = {
-  localStorage: createFrontComponentStorageBridge({
-    storageType: 'localStorage',
-  }),
-  sessionStorage: createFrontComponentStorageBridge({
-    storageType: 'sessionStorage',
-  }),
+	localStorage: createFrontComponentStorageBridge({
+		storageType: "localStorage",
+	}),
+	sessionStorage: createFrontComponentStorageBridge({
+		storageType: "sessionStorage",
+	}),
 };

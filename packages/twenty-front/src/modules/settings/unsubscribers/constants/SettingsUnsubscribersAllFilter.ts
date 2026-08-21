@@ -1,1 +1,1 @@
-export const SETTINGS_UNSUBSCRIBERS_ALL_FILTER = 'all';
+export const SETTINGS_UNSUBSCRIBERS_ALL_FILTER = "all";

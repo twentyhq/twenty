@@ -1,38 +1,38 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { isFieldRelation } from "@/object-record/record-field/ui/types/guards/isFieldRelation";
+import { isRelationNestedFieldDateKind } from "@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind";
+import { isDefined, isFieldMetadataDateKind } from "twenty-shared/utils";
 
 export const isFieldOrRelationNestedFieldDateKind = ({
-  fieldId,
-  subFieldName,
-  objectMetadataItem,
-  objectMetadataItems,
+	fieldId,
+	subFieldName,
+	objectMetadataItem,
+	objectMetadataItems,
 }: {
-  fieldId: string | null;
-  subFieldName: string | null;
-  objectMetadataItem?: EnrichedObjectMetadataItem;
-  objectMetadataItems?: EnrichedObjectMetadataItem[];
+	fieldId: string | null;
+	subFieldName: string | null;
+	objectMetadataItem?: EnrichedObjectMetadataItem;
+	objectMetadataItems?: EnrichedObjectMetadataItem[];
 }): boolean => {
-  if (!isDefined(fieldId) || !isDefined(objectMetadataItem)) {
-    return false;
-  }
+	if (!isDefined(fieldId) || !isDefined(objectMetadataItem)) {
+		return false;
+	}
 
-  const field = objectMetadataItem.fields.find(
-    (fieldMetadataItem) => fieldMetadataItem.id === fieldId,
-  );
+	const field = objectMetadataItem.fields.find(
+		(fieldMetadataItem) => fieldMetadataItem.id === fieldId,
+	);
 
-  if (!isDefined(field)) {
-    return false;
-  }
+	if (!isDefined(field)) {
+		return false;
+	}
 
-  if (isFieldRelation(field) && isDefined(subFieldName)) {
-    return isRelationNestedFieldDateKind({
-      relationField: field,
-      relationNestedFieldName: subFieldName,
-      objectMetadataItems: objectMetadataItems ?? [],
-    });
-  }
+	if (isFieldRelation(field) && isDefined(subFieldName)) {
+		return isRelationNestedFieldDateKind({
+			relationField: field,
+			relationNestedFieldName: subFieldName,
+			objectMetadataItems: objectMetadataItems ?? [],
+		});
+	}
 
-  return isFieldMetadataDateKind(field.type);
+	return isFieldMetadataDateKind(field.type);
 };

@@ -1,89 +1,89 @@
-import { useApolloClient } from '@apollo/client/react';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useApolloClient } from "@apollo/client/react";
+import { useStore } from "jotai";
+import { useCallback } from "react";
+import { isDefined } from "twenty-shared/utils";
 
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { RETRY_CHAT_MESSAGE } from '@/ai/graphql/mutations/retryChatMessage';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { AGENT_CHAT_INSTANCE_ID } from "@/ai/constants/AgentChatInstanceId";
+import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from "@/ai/constants/AgentChatRefetchMessagesEventName";
+import { RETRY_CHAT_MESSAGE } from "@/ai/graphql/mutations/retryChatMessage";
+import { useAgentChatModelId } from "@/ai/hooks/useAgentChatModelId";
+import { agentChatDisplayedThreadState } from "@/ai/states/agentChatDisplayedThreadState";
+import { agentChatErrorComponentFamilyState } from "@/ai/states/agentChatErrorComponentFamilyState";
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from "@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState";
+import { AiChatErrorCode } from "@/ai/utils/aiChatErrorCode";
+import { currentWorkspaceState } from "@/auth/states/currentWorkspaceState";
+import { dispatchBrowserEvent } from "@/browser-event/utils/dispatchBrowserEvent";
 import {
-  markWorkspaceCreditsAvailable,
-  markWorkspaceCreditsExhausted,
-} from '@/workspace/utils/updateWorkspaceResourceCreditCap';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+	markWorkspaceCreditsAvailable,
+	markWorkspaceCreditsExhausted,
+} from "@/workspace/utils/updateWorkspaceResourceCreditCap";
+import { isGraphqlErrorOfType } from "~/utils/is-graphql-error-of-type.util";
 
 export const useRetryChatMessage = () => {
-  const apolloClient = useApolloClient();
-  const store = useStore();
-  const { modelIdForRequest } = useAgentChatModelId();
+	const apolloClient = useApolloClient();
+	const store = useStore();
+	const { modelIdForRequest } = useAgentChatModelId();
 
-  const retryChatMessage = useCallback(async () => {
-    const threadId = store.get(agentChatDisplayedThreadState.atom);
+	const retryChatMessage = useCallback(async () => {
+		const threadId = store.get(agentChatDisplayedThreadState.atom);
 
-    if (!isDefined(threadId)) {
-      return;
-    }
+		if (!isDefined(threadId)) {
+			return;
+		}
 
-    const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
-      instanceId: AGENT_CHAT_INSTANCE_ID,
-      familyKey: { threadId },
-    });
-    const isAwaitingFirstChunkAtom =
-      agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
-        instanceId: AGENT_CHAT_INSTANCE_ID,
-        familyKey: { threadId },
-      });
-    const previousError = store.get(errorAtom);
+		const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
+			instanceId: AGENT_CHAT_INSTANCE_ID,
+			familyKey: { threadId },
+		});
+		const isAwaitingFirstChunkAtom =
+			agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
+				instanceId: AGENT_CHAT_INSTANCE_ID,
+				familyKey: { threadId },
+			});
+		const previousError = store.get(errorAtom);
 
-    store.set(errorAtom, null);
-    store.set(isAwaitingFirstChunkAtom, true);
+		store.set(errorAtom, null);
+		store.set(isAwaitingFirstChunkAtom, true);
 
-    try {
-      await apolloClient.mutate({
-        mutation: RETRY_CHAT_MESSAGE,
-        variables: {
-          threadId,
-          modelId: modelIdForRequest ?? undefined,
-        },
-      });
+		try {
+			await apolloClient.mutate({
+				mutation: RETRY_CHAT_MESSAGE,
+				variables: {
+					threadId,
+					modelId: modelIdForRequest ?? undefined,
+				},
+			});
 
-      // Same ordering guard as useAgentChat: a credits-exhausted event from
-      // the stream this retry started may already have marked the thread error
-      // before this response resolves, and that exhaustion is newer truth.
-      if (
-        !isGraphqlErrorOfType(
-          store.get(errorAtom),
-          AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
-        )
-      ) {
-        store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
-      }
+			// Same ordering guard as useAgentChat: a credits-exhausted event from
+			// the stream this retry started may already have marked the thread error
+			// before this response resolves, and that exhaustion is newer truth.
+			if (
+				!isGraphqlErrorOfType(
+					store.get(errorAtom),
+					AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+				)
+			) {
+				store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
+			}
 
-      dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-    } catch (retryError) {
-      store.set(isAwaitingFirstChunkAtom, false);
-      store.set(
-        errorAtom,
-        retryError instanceof Error ? retryError : previousError,
-      );
+			dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+		} catch (retryError) {
+			store.set(isAwaitingFirstChunkAtom, false);
+			store.set(
+				errorAtom,
+				retryError instanceof Error ? retryError : previousError,
+			);
 
-      if (
-        isGraphqlErrorOfType(
-          retryError,
-          AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
-        )
-      ) {
-        store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
-      }
-    }
-  }, [apolloClient, store, modelIdForRequest]);
+			if (
+				isGraphqlErrorOfType(
+					retryError,
+					AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+				)
+			) {
+				store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+			}
+		}
+	}, [apolloClient, store, modelIdForRequest]);
 
-  return { retryChatMessage };
+	return { retryChatMessage };
 };

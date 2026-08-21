@@ -1,24 +1,24 @@
-import { styled } from '@linaria/react';
-import { useIMask } from 'react-imask';
+import { styled } from "@linaria/react";
+import { useIMask } from "react-imask";
 
-import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
-import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
-import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
-import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
+import { useDateTimeFormat } from "@/localization/hooks/useDateTimeFormat";
+import { DATE_BLOCKS } from "@/ui/input/components/internal/date/constants/DateBlocks";
+import { MAX_DATE } from "@/ui/input/components/internal/date/constants/MaxDate";
+import { MIN_DATE } from "@/ui/input/components/internal/date/constants/MinDate";
+import { getDateTimeMask } from "@/ui/input/components/internal/date/utils/getDateTimeMask";
+import { getTimeBlocks } from "@/ui/input/components/internal/date/utils/getTimeBlocks";
 
-import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
-import { useGetShiftedDateToCustomTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToCustomTimeZone';
-import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
-import { useParseDateTimeInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate';
-import { useParseJSDateToIMaskDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useEffect, useState } from 'react';
-import { Temporal } from 'temporal-polyfill';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { isDifferentZonedDateTime } from '~/utils/dates/isDifferentZonedDateTime';
+import { TimeZoneAbbreviation } from "@/ui/input/components/internal/date/components/TimeZoneAbbreviation";
+import { useGetShiftedDateToCustomTimeZone } from "@/ui/input/components/internal/date/hooks/useGetShiftedDateToCustomTimeZone";
+import { useGetShiftedDateToSystemTimeZone } from "@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone";
+import { useParseDateTimeInputStringToJSDate } from "@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate";
+import { useParseJSDateToIMaskDateTimeInputString } from "@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString";
+import { useUserTimezone } from "@/ui/input/components/internal/date/hooks/useUserTimezone";
+import { useEffect, useState } from "react";
+import { Temporal } from "temporal-polyfill";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { isDifferentZonedDateTime } from "~/utils/dates/isDifferentZonedDateTime";
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -42,143 +42,143 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
 `;
 
 type DateTimePickerInputProps = {
-  onChange?: (date: Temporal.ZonedDateTime | null) => void;
-  date: Temporal.ZonedDateTime | null;
-  onFocus?: () => void;
-  readonly?: boolean;
-  timeZone?: string;
+	onChange?: (date: Temporal.ZonedDateTime | null) => void;
+	date: Temporal.ZonedDateTime | null;
+	onFocus?: () => void;
+	readonly?: boolean;
+	timeZone?: string;
 };
 
 export const DateTimePickerInput = ({
-  date,
-  onChange,
-  onFocus,
-  readonly,
-  timeZone,
+	date,
+	onChange,
+	onFocus,
+	readonly,
+	timeZone,
 }: DateTimePickerInputProps) => {
-  const [internalDate, setInternalDate] = useState(date);
+	const [internalDate, setInternalDate] = useState(date);
 
-  const { userTimezone } = useUserTimezone();
+	const { userTimezone } = useUserTimezone();
 
-  const { dateFormat, timeFormat } = useDateTimeFormat();
+	const { dateFormat, timeFormat } = useDateTimeFormat();
 
-  const { getShiftedDateToSystemTimeZone } =
-    useGetShiftedDateToSystemTimeZone();
+	const { getShiftedDateToSystemTimeZone } =
+		useGetShiftedDateToSystemTimeZone();
 
-  const { getShiftedDateToCustomTimeZone } =
-    useGetShiftedDateToCustomTimeZone();
+	const { getShiftedDateToCustomTimeZone } =
+		useGetShiftedDateToCustomTimeZone();
 
-  const { parseDateTimeInputStringToJSDate } =
-    useParseDateTimeInputStringToJSDate();
-  const { parseJSDateToDateTimeInputString } =
-    useParseJSDateToIMaskDateTimeInputString();
+	const { parseDateTimeInputStringToJSDate } =
+		useParseDateTimeInputStringToJSDate();
+	const { parseJSDateToDateTimeInputString } =
+		useParseJSDateToIMaskDateTimeInputString();
 
-  const handleParseStringToDate = (newDateAsString: string) => {
-    const date = parseDateTimeInputStringToJSDate(newDateAsString);
+	const handleParseStringToDate = (newDateAsString: string) => {
+		const date = parseDateTimeInputStringToJSDate(newDateAsString);
 
-    return date;
-  };
+		return date;
+	};
 
-  const pattern = getDateTimeMask({ dateFormat, timeFormat });
+	const pattern = getDateTimeMask({ dateFormat, timeFormat });
 
-  const blocks = { ...DATE_BLOCKS, ...getTimeBlocks(timeFormat) };
+	const blocks = { ...DATE_BLOCKS, ...getTimeBlocks(timeFormat) };
 
-  const defaultValueForIMask = isDefined(internalDate)
-    ? new Date(internalDate?.toInstant().toString())
-    : null;
+	const defaultValueForIMask = isDefined(internalDate)
+		? new Date(internalDate?.toInstant().toString())
+		: null;
 
-  const shiftedIMaskDate = isDefined(defaultValueForIMask)
-    ? getShiftedDateToSystemTimeZone(
-        defaultValueForIMask,
-        timeZone ?? userTimezone,
-      )
-    : null;
+	const shiftedIMaskDate = isDefined(defaultValueForIMask)
+		? getShiftedDateToSystemTimeZone(
+				defaultValueForIMask,
+				timeZone ?? userTimezone,
+			)
+		: null;
 
-  const { ref, setValue } = useIMask(
-    {
-      mask: Date,
-      pattern,
-      blocks,
-      min: MIN_DATE,
-      max: MAX_DATE,
-      format: (date: any) => parseJSDateToDateTimeInputString(date),
-      parse: handleParseStringToDate,
-      lazy: false,
-      autofix: false,
-    },
-    {
-      defaultValue: isDefined(shiftedIMaskDate)
-        ? parseJSDateToDateTimeInputString(shiftedIMaskDate)
-        : undefined,
-      onComplete: (value) => {
-        const parsedDate = parseDateTimeInputStringToJSDate(value);
+	const { ref, setValue } = useIMask(
+		{
+			mask: Date,
+			pattern,
+			blocks,
+			min: MIN_DATE,
+			max: MAX_DATE,
+			format: (date: any) => parseJSDateToDateTimeInputString(date),
+			parse: handleParseStringToDate,
+			lazy: false,
+			autofix: false,
+		},
+		{
+			defaultValue: isDefined(shiftedIMaskDate)
+				? parseJSDateToDateTimeInputString(shiftedIMaskDate)
+				: undefined,
+			onComplete: (value) => {
+				const parsedDate = parseDateTimeInputStringToJSDate(value);
 
-        if (!isDefined(parsedDate)) {
-          return;
-        }
+				if (!isDefined(parsedDate)) {
+					return;
+				}
 
-        const pointInTime = getShiftedDateToCustomTimeZone(
-          parsedDate,
-          timeZone ?? userTimezone,
-        );
+				const pointInTime = getShiftedDateToCustomTimeZone(
+					parsedDate,
+					timeZone ?? userTimezone,
+				);
 
-        setInternalDate(date);
+				setInternalDate(date);
 
-        const zonedDateTime = Temporal.Instant.from(
-          pointInTime.toISOString(),
-        ).toZonedDateTimeISO(timeZone ?? userTimezone);
+				const zonedDateTime = Temporal.Instant.from(
+					pointInTime.toISOString(),
+				).toZonedDateTimeISO(timeZone ?? userTimezone);
 
-        onChange?.(zonedDateTime);
-      },
-    },
-  );
+				onChange?.(zonedDateTime);
+			},
+		},
+	);
 
-  useEffect(() => {
-    if (isDifferentZonedDateTime(internalDate, date)) {
-      setInternalDate(date);
+	useEffect(() => {
+		if (isDifferentZonedDateTime(internalDate, date)) {
+			setInternalDate(date);
 
-      if (!isDefined(date)) {
-        setValue('');
-        return;
-      }
+			if (!isDefined(date)) {
+				setValue("");
+				return;
+			}
 
-      const newDateAsDate = new Date(date.toInstant().toString());
+			const newDateAsDate = new Date(date.toInstant().toString());
 
-      const newShiftedDate = getShiftedDateToSystemTimeZone(
-        newDateAsDate,
-        timeZone ?? userTimezone,
-      );
+			const newShiftedDate = getShiftedDateToSystemTimeZone(
+				newDateAsDate,
+				timeZone ?? userTimezone,
+			);
 
-      setValue(parseJSDateToDateTimeInputString(newShiftedDate));
-    }
-  }, [
-    date,
-    internalDate,
-    parseJSDateToDateTimeInputString,
-    setValue,
-    shiftedIMaskDate,
-    timeZone,
-    getShiftedDateToSystemTimeZone,
-    userTimezone,
-  ]);
+			setValue(parseJSDateToDateTimeInputString(newShiftedDate));
+		}
+	}, [
+		date,
+		internalDate,
+		parseJSDateToDateTimeInputString,
+		setValue,
+		shiftedIMaskDate,
+		timeZone,
+		getShiftedDateToSystemTimeZone,
+		userTimezone,
+	]);
 
-  const shouldDisplayReadOnly = readonly === true;
+	const shouldDisplayReadOnly = readonly === true;
 
-  const internalDateForTimeZoneAbbreviation =
-    internalDate?.toInstant() ?? Temporal.Now.instant();
+	const internalDateForTimeZoneAbbreviation =
+		internalDate?.toInstant() ?? Temporal.Now.instant();
 
-  return (
-    <StyledInputContainer>
-      <StyledInput
-        disabled={shouldDisplayReadOnly}
-        type="text"
-        ref={ref as any}
-        onFocus={!shouldDisplayReadOnly ? onFocus : undefined}
-      />
-      <TimeZoneAbbreviation
-        instant={internalDateForTimeZoneAbbreviation}
-        timeZone={timeZone ?? userTimezone}
-      />
-    </StyledInputContainer>
-  );
+	return (
+		<StyledInputContainer>
+			<StyledInput
+				disabled={shouldDisplayReadOnly}
+				type="text"
+				ref={ref as any}
+				onFocus={!shouldDisplayReadOnly ? onFocus : undefined}
+			/>
+			<TimeZoneAbbreviation
+				instant={internalDateForTimeZoneAbbreviation}
+				timeZone={timeZone ?? userTimezone}
+			/>
+		</StyledInputContainer>
+	);
 };

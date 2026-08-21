@@ -1,30 +1,30 @@
 import {
-  type DocumentNode,
-  type OperationDefinitionNode,
-  GraphQLError,
-  Kind,
-} from 'graphql';
+	type DocumentNode,
+	type OperationDefinitionNode,
+	GraphQLError,
+	Kind,
+} from "graphql";
 
 export const findOperationDefinition = (
-  document: DocumentNode,
-  operationName: string | undefined,
+	document: DocumentNode,
+	operationName: string | undefined,
 ): OperationDefinitionNode | undefined => {
-  const operations = document.definitions.filter(
-    (definition): definition is OperationDefinitionNode =>
-      definition.kind === Kind.OPERATION_DEFINITION,
-  );
+	const operations = document.definitions.filter(
+		(definition): definition is OperationDefinitionNode =>
+			definition.kind === Kind.OPERATION_DEFINITION,
+	);
 
-  if (operationName) {
-    return operations.find(
-      (operation) => operation.name?.value === operationName,
-    );
-  }
+	if (operationName) {
+		return operations.find(
+			(operation) => operation.name?.value === operationName,
+		);
+	}
 
-  if (operations.length > 1) {
-    throw new GraphQLError(
-      'Must provide operation name when document contains multiple operations.',
-    );
-  }
+	if (operations.length > 1) {
+		throw new GraphQLError(
+			"Must provide operation name when document contains multiple operations.",
+		);
+	}
 
-  return operations[0];
+	return operations[0];
 };

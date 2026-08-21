@@ -1,2 +1,2 @@
 export const isAbsoluteUrl = (url: string): boolean =>
-  /^https?:\/\//i.test(url);
+	/^https?:\/\//i.test(url);

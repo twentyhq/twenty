@@ -1,97 +1,97 @@
-import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
-import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
-import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
-import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { Field } from 'twenty-ui/input';
-import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
-import { useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { t } from "@lingui/core/macro";
+import { FormFieldInputContainer } from "@/ui/input/components/FormFieldInputContainer";
+import { FormFieldInputInnerContainer } from "@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer";
+import { FormFieldInputRowContainer } from "@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer";
+import { TextVariableEditor } from "@/object-record/record-field/ui/form-types/components/TextVariableEditor";
+import { useTextVariableEditor } from "@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor";
+import { type VariablePickerComponent } from "@/object-record/record-field/ui/form-types/types/VariablePickerComponent";
+import { Field } from "twenty-ui/input";
+import { parseEditorContent } from "@/workflow/workflow-variables/utils/parseEditorContent";
+import { useId } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 type FormTextFieldInputProps = {
-  label?: string;
-  error?: string;
-  hint?: string;
-  defaultValue: string | undefined | null;
-  onChange: (value: string) => void;
-  onBlur?: () => void;
-  multiline?: boolean;
-  readonly?: boolean;
-  placeholder?: string;
-  VariablePicker?: VariablePickerComponent;
+	label?: string;
+	error?: string;
+	hint?: string;
+	defaultValue: string | undefined | null;
+	onChange: (value: string) => void;
+	onBlur?: () => void;
+	multiline?: boolean;
+	readonly?: boolean;
+	placeholder?: string;
+	VariablePicker?: VariablePickerComponent;
 };
 
 export const FormTextFieldInput = ({
-  label,
-  error,
-  hint,
-  defaultValue,
-  placeholder,
-  onChange,
-  onBlur,
-  multiline,
-  readonly,
-  VariablePicker,
+	label,
+	error,
+	hint,
+	defaultValue,
+	placeholder,
+	onChange,
+	onBlur,
+	multiline,
+	readonly,
+	VariablePicker,
 }: FormTextFieldInputProps) => {
-  const instanceId = useId();
+	const instanceId = useId();
 
-  const editor = useTextVariableEditor({
-    placeholder: placeholder ?? t`Enter text`,
-    multiline,
-    readonly,
-    defaultValue,
-    onUpdate: (editor) => {
-      const jsonContent = editor.getJSON();
-      const parsedContent = parseEditorContent(jsonContent);
+	const editor = useTextVariableEditor({
+		placeholder: placeholder ?? t`Enter text`,
+		multiline,
+		readonly,
+		defaultValue,
+		onUpdate: (editor) => {
+			const jsonContent = editor.getJSON();
+			const parsedContent = parseEditorContent(jsonContent);
 
-      onChange(parsedContent);
-    },
-  });
+			onChange(parsedContent);
+		},
+	});
 
-  const handleVariableTagInsert = (variableName: string) => {
-    if (!isDefined(editor)) {
-      throw new Error(
-        'Expected the editor to be defined when a variable is selected',
-      );
-    }
+	const handleVariableTagInsert = (variableName: string) => {
+		if (!isDefined(editor)) {
+			throw new Error(
+				"Expected the editor to be defined when a variable is selected",
+			);
+		}
 
-    editor.commands.insertVariableTag(variableName);
-  };
+		editor.commands.insertVariableTag(variableName);
+	};
 
-  if (!isDefined(editor)) {
-    return null;
-  }
+	if (!isDefined(editor)) {
+		return null;
+	}
 
-  return (
-    <FormFieldInputContainer>
-      {label ? <Field.Label>{label}</Field.Label> : null}
+	return (
+		<FormFieldInputContainer>
+			{label ? <Field.Label>{label}</Field.Label> : null}
 
-      <FormFieldInputRowContainer multiline={multiline}>
-        <FormFieldInputInnerContainer
-          formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
-          multiline={multiline}
-          onBlur={onBlur}
-        >
-          <TextVariableEditor
-            editor={editor}
-            multiline={multiline}
-            readonly={readonly}
-          />
-        </FormFieldInputInnerContainer>
+			<FormFieldInputRowContainer multiline={multiline}>
+				<FormFieldInputInnerContainer
+					formFieldInputInstanceId={instanceId}
+					hasRightElement={isDefined(VariablePicker) && !readonly}
+					multiline={multiline}
+					onBlur={onBlur}
+				>
+					<TextVariableEditor
+						editor={editor}
+						multiline={multiline}
+						readonly={readonly}
+					/>
+				</FormFieldInputInnerContainer>
 
-        {VariablePicker && !readonly ? (
-          <VariablePicker
-            instanceId={instanceId}
-            multiline={multiline}
-            onVariableSelect={handleVariableTagInsert}
-          />
-        ) : null}
-      </FormFieldInputRowContainer>
-      {hint && <Field.Description>{hint}</Field.Description>}
-      {error && <Field.Error match>{error}</Field.Error>}
-    </FormFieldInputContainer>
-  );
+				{VariablePicker && !readonly ? (
+					<VariablePicker
+						instanceId={instanceId}
+						multiline={multiline}
+						onVariableSelect={handleVariableTagInsert}
+					/>
+				) : null}
+			</FormFieldInputRowContainer>
+			{hint && <Field.Description>{hint}</Field.Description>}
+			{error && <Field.Error match>{error}</Field.Error>}
+		</FormFieldInputContainer>
+	);
 };

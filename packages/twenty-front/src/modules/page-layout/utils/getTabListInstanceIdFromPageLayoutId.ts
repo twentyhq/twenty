@@ -1,3 +1,3 @@
 export const getTabListInstanceIdFromPageLayoutId = (pageLayoutId: string) => {
-  return `${pageLayoutId}-tab-list`;
+	return `${pageLayoutId}-tab-list`;
 };

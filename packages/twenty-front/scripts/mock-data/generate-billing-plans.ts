@@ -1,5 +1,5 @@
 /* oxlint-disable no-console */
-import { graphqlRequest, writeGeneratedFile } from './utils.js';
+import { graphqlRequest, writeGeneratedFile } from "./utils.js";
 
 const LIST_PLANS_QUERY = `
   query listPlans {
@@ -50,19 +50,19 @@ const LIST_PLANS_QUERY = `
 `;
 
 export const generateBillingPlans = async (token: string) => {
-  console.log('Fetching billing plans from /metadata ...');
+	console.log("Fetching billing plans from /metadata ...");
 
-  const data = (await graphqlRequest('/metadata', LIST_PLANS_QUERY, token)) as {
-    listPlans: Record<string, unknown>[];
-  };
+	const data = (await graphqlRequest("/metadata", LIST_PLANS_QUERY, token)) as {
+		listPlans: Record<string, unknown>[];
+	};
 
-  console.log(`  Got ${data.listPlans.length} billing plans.`);
+	console.log(`  Got ${data.listPlans.length} billing plans.`);
 
-  writeGeneratedFile(
-    'metadata/billing-plans/mock-billing-plans-data.ts',
-    'mockedBillingPlans',
-    'Record<string, unknown>',
-    '',
-    { listPlans: data.listPlans },
-  );
+	writeGeneratedFile(
+		"metadata/billing-plans/mock-billing-plans-data.ts",
+		"mockedBillingPlans",
+		"Record<string, unknown>",
+		"",
+		{ listPlans: data.listPlans },
+	);
 };

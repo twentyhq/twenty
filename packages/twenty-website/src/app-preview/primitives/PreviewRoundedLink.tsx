@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { APP_PREVIEW_CHROME } from "@/app-preview/app-preview-chrome";
 
 const LinkPill = styled.span`
   align-items: center;
@@ -26,5 +26,5 @@ const LinkPill = styled.span`
 `;
 
 export function PreviewRoundedLink({ label }: { label: string }) {
-  return <LinkPill>{label}</LinkPill>;
+	return <LinkPill>{label}</LinkPill>;
 }

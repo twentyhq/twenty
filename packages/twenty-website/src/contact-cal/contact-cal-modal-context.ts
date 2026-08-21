@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export type ContactCalModalContextValue = {
-  openContactCalModal: () => void;
+	openContactCalModal: () => void;
 };
 
 export const ContactCalModalContext =
-  createContext<ContactCalModalContextValue | null>(null);
+	createContext<ContactCalModalContextValue | null>(null);

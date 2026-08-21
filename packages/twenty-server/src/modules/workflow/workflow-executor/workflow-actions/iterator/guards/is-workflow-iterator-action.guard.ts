@@ -1,10 +1,10 @@
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import { WorkflowActionType } from "twenty-shared/workflow";
 import {
-  type WorkflowAction,
-  type WorkflowIteratorAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+	type WorkflowAction,
+	type WorkflowIteratorAction,
+} from "src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type";
 
 export const isWorkflowIteratorAction = (
-  action: WorkflowAction,
+	action: WorkflowAction,
 ): action is WorkflowIteratorAction =>
-  action.type === WorkflowActionType.ITERATOR;
+	action.type === WorkflowActionType.ITERATOR;

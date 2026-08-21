@@ -1,11 +1,11 @@
-import gql from 'graphql-tag';
-import { WIDGET_CONFIGURATION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { WIDGET_CONFIGURATION_GQL_FIELDS } from "test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
+import { type UpdatePageLayoutWithTabsInput } from "src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input";
 
 export type UpdateOnePageLayoutWithTabsAndWidgetsFactoryInput = {
-  id: string;
+	id: string;
 } & UpdatePageLayoutWithTabsInput;
 
 const DEFAULT_PAGE_LAYOUT_GQL_FIELDS = `
@@ -51,23 +51,23 @@ const DEFAULT_PAGE_LAYOUT_GQL_FIELDS = `
 `;
 
 export const updateOnePageLayoutWithTabsAndWidgetsQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_PAGE_LAYOUT_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_PAGE_LAYOUT_GQL_FIELDS,
 }: PerformMetadataQueryParams<UpdateOnePageLayoutWithTabsAndWidgetsFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation UpdatePageLayoutWithTabsAndWidgets($id: String!, $input: UpdatePageLayoutWithTabsInput!) {
       updatePageLayoutWithTabsAndWidgets(id: $id, input: $input) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-    input: {
-      name: input.name,
-      type: input.type,
-      objectMetadataId: input.objectMetadataId,
-      tabs: input.tabs,
-    },
-  },
+	variables: {
+		id: input.id,
+		input: {
+			name: input.name,
+			type: input.type,
+			objectMetadataId: input.objectMetadataId,
+			tabs: input.tabs,
+		},
+	},
 });

@@ -1,16 +1,16 @@
 import {
-  AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT,
-  AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT,
-} from '@/auth/graphql/fragments/authFragments';
-import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
-import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
-import { BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/billingSubscriptionsFragment';
-import { CURRENT_BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/currentBillingSubscriptionFragement';
-import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
-import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
-import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
-import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
-import { gql } from '@apollo/client';
+	AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT,
+	AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT,
+} from "@/auth/graphql/fragments/authFragments";
+import { OBJECT_PERMISSION_FRAGMENT } from "@/settings/roles/graphql/fragments/objectPermissionFragment";
+import { ROLE_FRAGMENT } from "@/settings/roles/graphql/fragments/roleFragment";
+import { BILLING_SUBSCRIPTION_FRAGMENT } from "@/users/graphql/fragments/billingSubscriptionsFragment";
+import { CURRENT_BILLING_SUBSCRIPTION_FRAGMENT } from "@/users/graphql/fragments/currentBillingSubscriptionFragement";
+import { WORKSPACE_URLS_FRAGMENT } from "@/users/graphql/fragments/workspaceUrlsFragment";
+import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from "@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment";
+import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from "@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment";
+import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from "@/workspace-member/graphql/fragments/workspaceMemberQueryFragment";
+import { gql } from "@apollo/client";
 
 export const USER_QUERY_FRAGMENT = gql`
   fragment UserQueryFragment on User {

@@ -1,7 +1,7 @@
-import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { MessageFolderImportPolicy } from "twenty-shared/types";
 
 export const shouldSyncFolderByDefault = (
-  messageFolderImportPolicy: MessageFolderImportPolicy,
+	messageFolderImportPolicy: MessageFolderImportPolicy,
 ): boolean => {
-  return messageFolderImportPolicy === MessageFolderImportPolicy.ALL_FOLDERS;
+	return messageFolderImportPolicy === MessageFolderImportPolicy.ALL_FOLDERS;
 };

@@ -1,6 +1,6 @@
-import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
-import { gql } from '@apollo/client';
-import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from "@/object-record/hooks/__mocks__/personFragments";
+import { gql } from "@apollo/client";
+import { mockedPersonRecords } from "~/testing/mock-data/generated/data/people/mock-people-data";
 
 const peopleMock = [...mockedPersonRecords];
 
@@ -23,27 +23,27 @@ export const query = gql`
 `;
 
 export const variables = {
-  ids: ['6205681e-7c11-40b4-9e32-f523dbe54590'],
+	ids: ["6205681e-7c11-40b4-9e32-f523dbe54590"],
 };
 
 export const responseData = {
-  personDuplicates: [
-    {
-      edges: [
-        {
-          node: { ...peopleMock[0], updatedAt: '' },
-          cursor: 'cursor1',
-        },
-        {
-          node: { ...peopleMock[1], updatedAt: '' },
-          cursor: 'cursor2',
-        },
-      ],
-      pageInfo: {
-        hasNextPage: false,
-        startCursor: 'cursor1',
-        endCursor: 'cursor2',
-      },
-    },
-  ],
+	personDuplicates: [
+		{
+			edges: [
+				{
+					node: { ...peopleMock[0], updatedAt: "" },
+					cursor: "cursor1",
+				},
+				{
+					node: { ...peopleMock[1], updatedAt: "" },
+					cursor: "cursor2",
+				},
+			],
+			pageInfo: {
+				hasNextPage: false,
+				startCursor: "cursor1",
+				endCursor: "cursor2",
+			},
+		},
+	],
 };

@@ -1,5 +1,5 @@
 export enum GqlOperation {
-  Query = 'Query',
-  Mutation = 'Mutation',
-  Subscription = 'Subscription',
+	Query = "Query",
+	Mutation = "Mutation",
+	Subscription = "Subscription",
 }

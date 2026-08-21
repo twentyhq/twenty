@@ -1,14 +1,14 @@
-import { ConfigurableModuleBuilder } from '@nestjs/common';
+import { ConfigurableModuleBuilder } from "@nestjs/common";
 
-import { type ExceptionHandlerModuleOptions } from 'src/engine/core-modules/exception-handler/interfaces';
+import { type ExceptionHandlerModuleOptions } from "src/engine/core-modules/exception-handler/interfaces";
 
 export const {
-  ConfigurableModuleClass,
-  MODULE_OPTIONS_TOKEN,
-  OPTIONS_TYPE,
-  ASYNC_OPTIONS_TYPE,
+	ConfigurableModuleClass,
+	MODULE_OPTIONS_TOKEN,
+	OPTIONS_TYPE,
+	ASYNC_OPTIONS_TYPE,
 } = new ConfigurableModuleBuilder<ExceptionHandlerModuleOptions>({
-  moduleName: 'ExceptionHandlerModule',
+	moduleName: "ExceptionHandlerModule",
 })
-  .setClassMethodName('forRoot')
-  .build();
+	.setClassMethodName("forRoot")
+	.build();

@@ -1,1 +1,1 @@
-export type OAuthProviderTokenRequestContentType = 'json' | 'form-urlencoded';
+export type OAuthProviderTokenRequestContentType = "json" | "form-urlencoded";

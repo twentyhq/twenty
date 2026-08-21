@@ -1,12 +1,12 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 export const buildDescriptionForRelationFieldMetadataOnToField = ({
-  relationObjectMetadataNamePlural,
-  targetObjectLabelSingular,
+	relationObjectMetadataNamePlural,
+	targetObjectLabelSingular,
 }: {
-  relationObjectMetadataNamePlural: string;
-  targetObjectLabelSingular: string;
+	relationObjectMetadataNamePlural: string;
+	targetObjectLabelSingular: string;
 }) => {
-  const description = `${capitalize(relationObjectMetadataNamePlural)} ${targetObjectLabelSingular}`;
+	const description = `${capitalize(relationObjectMetadataNamePlural)} ${targetObjectLabelSingular}`;
 
-  return { description };
+	return { description };
 };

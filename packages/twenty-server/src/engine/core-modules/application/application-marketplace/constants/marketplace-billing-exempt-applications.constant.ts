@@ -5,6 +5,6 @@
 // Admin Panel; the default is only applied when the registration is first
 // created from the catalog.
 export const MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS: string[] = [
-  '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
-  '66a504cc-0a75-410e-a43f-cdeae1db1522',
+	"8da4b8b5-5edf-4880-b51f-ab6e679ec617",
+	"66a504cc-0a75-410e-a43f-cdeae1db1522",
 ];

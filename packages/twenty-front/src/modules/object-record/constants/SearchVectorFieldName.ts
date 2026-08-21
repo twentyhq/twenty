@@ -1,1 +1,1 @@
-export const SEARCH_VECTOR_FIELD_NAME = 'searchVector';
+export const SEARCH_VECTOR_FIELD_NAME = "searchVector";

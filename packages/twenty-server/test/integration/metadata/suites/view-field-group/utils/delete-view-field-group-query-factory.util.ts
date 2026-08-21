@@ -1,21 +1,21 @@
-import gql from 'graphql-tag';
-import { VIEW_FIELD_GROUP_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { VIEW_FIELD_GROUP_GQL_FIELDS } from "test/integration/constants/view-gql-fields.constants";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type DeleteViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/delete-view-field-group.input';
+import { type DeleteViewFieldGroupInput } from "src/engine/metadata-modules/view-field-group/dtos/inputs/delete-view-field-group.input";
 
 export const deleteViewFieldGroupQueryFactory = ({
-  gqlFields = VIEW_FIELD_GROUP_GQL_FIELDS,
-  input,
+	gqlFields = VIEW_FIELD_GROUP_GQL_FIELDS,
+	input,
 }: PerformMetadataQueryParams<DeleteViewFieldGroupInput>) => ({
-  query: gql`
+	query: gql`
     mutation DeleteViewFieldGroup($input: DeleteViewFieldGroupInput!) {
       deleteViewFieldGroup(input: $input) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    input,
-  },
+	variables: {
+		input,
+	},
 });

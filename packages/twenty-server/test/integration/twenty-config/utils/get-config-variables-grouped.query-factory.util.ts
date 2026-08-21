@@ -1,8 +1,8 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 export const getConfigVariablesGroupedQueryFactory = () => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       query GetConfigVariablesGrouped {
         getConfigVariablesGrouped {
           groups {
@@ -23,5 +23,5 @@ export const getConfigVariablesGroupedQueryFactory = () => {
         }
       }
     `,
-  };
+	};
 };

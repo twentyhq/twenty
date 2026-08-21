@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CREATE_APPROVED_ACCESS_DOMAIN = gql`
   mutation CreateApprovedAccessDomain(

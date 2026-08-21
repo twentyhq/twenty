@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 
-import { isNumber } from 'class-validator';
-import { ListResponse, type ImapFlow } from 'imapflow';
+import { isNumber } from "class-validator";
+import { ListResponse, type ImapFlow } from "imapflow";
 
-import { getImapSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
+import { getImapSentFolderCandidatesByRegex } from "src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util";
 
 type SentFolderResult = {
-  name: string;
-  path: string;
+	name: string;
+	path: string;
 } | null;
 
 /**
@@ -22,139 +22,139 @@ type SentFolderResult = {
  */
 @Injectable()
 export class ImapFindSentFolderService {
-  private readonly logger = new Logger(ImapFindSentFolderService.name);
+	private readonly logger = new Logger(ImapFindSentFolderService.name);
 
-  public async findSentFolder(client: ImapFlow): Promise<SentFolderResult> {
-    try {
-      const list = await client.list();
+	public async findSentFolder(client: ImapFlow): Promise<SentFolderResult> {
+		try {
+			const list = await client.list();
 
-      this.logger.debug(
-        `Available folders: ${list.map((item) => item.path).join(', ')}`,
-      );
+			this.logger.debug(
+				`Available folders: ${list.map((item) => item.path).join(", ")}`,
+			);
 
-      const specialUseSentFolder = await this.findSentFolderBySpecialUse(
-        client,
-        list,
-      );
+			const specialUseSentFolder = await this.findSentFolderBySpecialUse(
+				client,
+				list,
+			);
 
-      if (specialUseSentFolder) {
-        return specialUseSentFolder;
-      }
+			if (specialUseSentFolder) {
+				return specialUseSentFolder;
+			}
 
-      const candidateSentFolder = await this.findSentFolderByRegexCandidates(
-        client,
-        list,
-      );
+			const candidateSentFolder = await this.findSentFolderByRegexCandidates(
+				client,
+				list,
+			);
 
-      if (candidateSentFolder) {
-        return candidateSentFolder;
-      }
+			if (candidateSentFolder) {
+				return candidateSentFolder;
+			}
 
-      this.logger.warn(
-        'No sent folder found. Only inbox messages will be imported.',
-      );
+			this.logger.warn(
+				"No sent folder found. Only inbox messages will be imported.",
+			);
 
-      return null;
-    } catch (error) {
-      this.logger.warn(`Error listing folders: ${error.message}`);
+			return null;
+		} catch (error) {
+			this.logger.warn(`Error listing folders: ${error.message}`);
 
-      return null;
-    }
-  }
+			return null;
+		}
+	}
 
-  private async findSentFolderBySpecialUse(
-    client: ImapFlow,
-    list: ListResponse[],
-  ): Promise<SentFolderResult> {
-    for (const folder of list) {
-      if (folder.specialUse && folder.specialUse.includes('\\Sent')) {
-        this.logger.debug(
-          `Found sent folder via special-use flag: ${folder.path}`,
-        );
+	private async findSentFolderBySpecialUse(
+		client: ImapFlow,
+		list: ListResponse[],
+	): Promise<SentFolderResult> {
+		for (const folder of list) {
+			if (folder.specialUse && folder.specialUse.includes("\\Sent")) {
+				this.logger.debug(
+					`Found sent folder via special-use flag: ${folder.path}`,
+				);
 
-        const messageCount = await this.getFolderMessageCount(
-          client,
-          folder.path,
-        );
+				const messageCount = await this.getFolderMessageCount(
+					client,
+					folder.path,
+				);
 
-        if (messageCount > 0) {
-          return {
-            name: folder.name,
-            path: folder.path,
-          };
-        }
+				if (messageCount > 0) {
+					return {
+						name: folder.name,
+						path: folder.path,
+					};
+				}
 
-        this.logger.warn(
-          `Special-use sent folder "${folder.path}" is empty, checking other candidates`,
-        );
+				this.logger.warn(
+					`Special-use sent folder "${folder.path}" is empty, checking other candidates`,
+				);
 
-        break;
-      }
-    }
+				break;
+			}
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  private async findSentFolderByRegexCandidates(
-    client: ImapFlow,
-    list: ListResponse[],
-  ): Promise<SentFolderResult> {
-    const regexCandidateFolders = getImapSentFolderCandidatesByRegex(list);
+	private async findSentFolderByRegexCandidates(
+		client: ImapFlow,
+		list: ListResponse[],
+	): Promise<SentFolderResult> {
+		const regexCandidateFolders = getImapSentFolderCandidatesByRegex(list);
 
-    for (const folder of regexCandidateFolders) {
-      const messageCount = await this.getFolderMessageCount(
-        client,
-        folder.path,
-      );
+		for (const folder of regexCandidateFolders) {
+			const messageCount = await this.getFolderMessageCount(
+				client,
+				folder.path,
+			);
 
-      if (messageCount > 0) {
-        this.logger.debug(
-          `Selected sent folder via pattern match: ${folder.path}`,
-        );
+			if (messageCount > 0) {
+				this.logger.debug(
+					`Selected sent folder via pattern match: ${folder.path}`,
+				);
 
-        return {
-          name: folder.name,
-          path: folder.path,
-        };
-      }
-    }
+				return {
+					name: folder.name,
+					path: folder.path,
+				};
+			}
+		}
 
-    if (regexCandidateFolders.length > 0) {
-      this.logger.debug(
-        `Using first regex candidate sent folder: ${regexCandidateFolders[0].path} (no messages found in any regex candidate)`,
-      );
+		if (regexCandidateFolders.length > 0) {
+			this.logger.debug(
+				`Using first regex candidate sent folder: ${regexCandidateFolders[0].path} (no messages found in any regex candidate)`,
+			);
 
-      const folder = regexCandidateFolders[0];
+			const folder = regexCandidateFolders[0];
 
-      return {
-        name: folder.name,
-        path: folder.path,
-      };
-    }
+			return {
+				name: folder.name,
+				path: folder.path,
+			};
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  private async getFolderMessageCount(
-    client: ImapFlow,
-    folderPath: string,
-  ): Promise<number> {
-    try {
-      const status = await client.status(folderPath, {
-        messages: true,
-      });
+	private async getFolderMessageCount(
+		client: ImapFlow,
+		folderPath: string,
+	): Promise<number> {
+		try {
+			const status = await client.status(folderPath, {
+				messages: true,
+			});
 
-      const messageCount = status?.messages;
+			const messageCount = status?.messages;
 
-      this.logger.debug(`Folder "${folderPath}" has ${messageCount} messages`);
+			this.logger.debug(`Folder "${folderPath}" has ${messageCount} messages`);
 
-      return isNumber(messageCount) ? messageCount : 0;
-    } catch (error) {
-      this.logger.warn(
-        `Error checking folder "${folderPath}": ${error.message}`,
-      );
+			return isNumber(messageCount) ? messageCount : 0;
+		} catch (error) {
+			this.logger.warn(
+				`Error checking folder "${folderPath}": ${error.message}`,
+			);
 
-      return 0;
-    }
-  }
+			return 0;
+		}
+	}
 }

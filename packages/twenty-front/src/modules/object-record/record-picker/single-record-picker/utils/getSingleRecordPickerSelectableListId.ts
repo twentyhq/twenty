@@ -1,5 +1,5 @@
 export const getSingleRecordPickerSelectableListId = (
-  singleRecordPickerComponentInstanceId: string,
+	singleRecordPickerComponentInstanceId: string,
 ) => {
-  return `${singleRecordPickerComponentInstanceId}-selectable-list`;
+	return `${singleRecordPickerComponentInstanceId}-selectable-list`;
 };

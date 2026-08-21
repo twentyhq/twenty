@@ -1,11 +1,11 @@
-import { v4 } from 'uuid';
+import { v4 } from "uuid";
 
 export const getViewFieldBaseFile = ({
-  universalIdentifier = v4(),
+	universalIdentifier = v4(),
 }: {
-  universalIdentifier?: string;
+	universalIdentifier?: string;
 }) => {
-  return `import {
+	return `import {
   defineViewField,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';

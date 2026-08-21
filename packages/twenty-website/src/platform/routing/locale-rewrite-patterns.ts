@@ -7,40 +7,40 @@
 // BEFORE the filesystem, so an unlisted prefix gets rewritten to /en/* and
 // 404s (the old site ships this bug; its CDN masks it in production).
 const RESERVED_PREFIXES = [
-  'api',
-  '_next',
-  'images',
-  'fonts',
-  'lottie',
-  'models',
-  '.well-known',
+	"api",
+	"_next",
+	"images",
+	"fonts",
+	"lottie",
+	"models",
+	".well-known",
 ];
 
 export const buildLocaleRewrites = (
-  localeSegments: readonly string[],
+	localeSegments: readonly string[],
 ): { source: string; destination: string }[] => {
-  const localeAlternation = localeSegments.join('|');
-  const reservedAlternation = RESERVED_PREFIXES.join('|');
-  const terminalExclusions = [
-    ...localeSegments.map((segment) => `${segment}$|${segment}/`),
-    ...RESERVED_PREFIXES,
-    '_next/static',
-    '_next/image',
-    'favicon\\.ico',
-    'robots\\.txt',
-    'sitemap\\.xml',
-    '.+\\..+',
-  ].join('|');
+	const localeAlternation = localeSegments.join("|");
+	const reservedAlternation = RESERVED_PREFIXES.join("|");
+	const terminalExclusions = [
+		...localeSegments.map((segment) => `${segment}$|${segment}/`),
+		...RESERVED_PREFIXES,
+		"_next/static",
+		"_next/image",
+		"favicon\\.ico",
+		"robots\\.txt",
+		"sitemap\\.xml",
+		".+\\..+",
+	].join("|");
 
-  return [
-    { source: '/', destination: '/en' },
-    {
-      source: `/:first((?!(?:${localeAlternation}|${reservedAlternation})(?=/))[^/.]+)/:rest+`,
-      destination: '/en/:first/:rest+',
-    },
-    {
-      source: `/:rest((?!${terminalExclusions}).+)`,
-      destination: '/en/:rest',
-    },
-  ];
+	return [
+		{ source: "/", destination: "/en" },
+		{
+			source: `/:first((?!(?:${localeAlternation}|${reservedAlternation})(?=/))[^/.]+)/:rest+`,
+			destination: "/en/:first/:rest+",
+		},
+		{
+			source: `/:rest((?!${terminalExclusions}).+)`,
+			destination: "/en/:rest",
+		},
+	];
 };

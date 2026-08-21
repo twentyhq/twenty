@@ -1,25 +1,25 @@
-import { SuggestionMenu } from '@blocknote/core/extensions';
+import { SuggestionMenu } from "@blocknote/core/extensions";
 import {
-  BlockColorsItem,
-  DragHandleButton,
-  DragHandleMenu,
-  RemoveBlockItem,
-  SideMenu,
-  SideMenuController,
-  useBlockNoteEditor,
-  useComponentsContext,
-} from '@blocknote/react';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/icon';
-import { isDefined } from 'twenty-shared/utils';
+	BlockColorsItem,
+	DragHandleButton,
+	DragHandleMenu,
+	RemoveBlockItem,
+	SideMenu,
+	SideMenuController,
+	useBlockNoteEditor,
+	useComponentsContext,
+} from "@blocknote/react";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { IconColorSwatch, IconPlus, IconTrash } from "twenty-ui/icon";
+import { isDefined } from "twenty-shared/utils";
 
-import { CustomSideMenuOptions } from '@/blocknote-editor/components/CustomSideMenuOptions';
-import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { CustomSideMenuOptions } from "@/blocknote-editor/components/CustomSideMenuOptions";
+import { type DASHBOARD_BLOCK_SCHEMA } from "@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type DashboardEditorSideMenuProps = {
-  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
+	editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
 };
 
 const StyledDivToCreateGap = styled.div`
@@ -27,82 +27,82 @@ const StyledDivToCreateGap = styled.div`
 `;
 
 const DashboardAddBlockItem = ({
-  editor,
-  children,
+	editor,
+	children,
 }: {
-  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
-  children: React.ReactNode;
+	editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
+	children: React.ReactNode;
 }) => {
-  const Components = useComponentsContext();
-  const blockNoteEditor = useBlockNoteEditor();
+	const Components = useComponentsContext();
+	const blockNoteEditor = useBlockNoteEditor();
 
-  if (!Components) {
-    return null;
-  }
+	if (!Components) {
+		return null;
+	}
 
-  const handleClick = () => {
-    const currentBlock = blockNoteEditor.getTextCursorPosition().block;
+	const handleClick = () => {
+		const currentBlock = blockNoteEditor.getTextCursorPosition().block;
 
-    const insertedBlocks = editor.insertBlocks(
-      [{ type: 'paragraph' }],
-      currentBlock,
-      'after',
-    );
+		const insertedBlocks = editor.insertBlocks(
+			[{ type: "paragraph" }],
+			currentBlock,
+			"after",
+		);
 
-    const insertedBlock = insertedBlocks[0];
-    if (isDefined(insertedBlock)) {
-      editor.setTextCursorPosition(insertedBlock);
-    }
+		const insertedBlock = insertedBlocks[0];
+		if (isDefined(insertedBlock)) {
+			editor.setTextCursorPosition(insertedBlock);
+		}
 
-    blockNoteEditor.getExtension(SuggestionMenu)?.openSuggestionMenu('/');
-  };
+		blockNoteEditor.getExtension(SuggestionMenu)?.openSuggestionMenu("/");
+	};
 
-  return (
-    <Components.Generic.Menu.Item onClick={handleClick}>
-      {children}
-    </Components.Generic.Menu.Item>
-  );
+	return (
+		<Components.Generic.Menu.Item onClick={handleClick}>
+			{children}
+		</Components.Generic.Menu.Item>
+	);
 };
 
 export const DashboardEditorSideMenu = ({
-  editor,
+	editor,
 }: DashboardEditorSideMenuProps) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  return (
-    <SideMenuController
-      sideMenu={() => (
-        <SideMenu>
-          <DragHandleButton
-            dragHandleMenu={() => (
-              <DragHandleMenu>
-                <DashboardAddBlockItem editor={editor}>
-                  <CustomSideMenuOptions
-                    LeftIcon={IconPlus}
-                    text={t`Add Block`}
-                    Variant="normal"
-                  />
-                </DashboardAddBlockItem>
-                <BlockColorsItem>
-                  <CustomSideMenuOptions
-                    LeftIcon={IconColorSwatch}
-                    text={t`Change Color`}
-                    Variant="normal"
-                  />
-                </BlockColorsItem>
-                <RemoveBlockItem>
-                  <CustomSideMenuOptions
-                    LeftIcon={IconTrash}
-                    text={t`Delete`}
-                    Variant="danger"
-                  />
-                </RemoveBlockItem>
-              </DragHandleMenu>
-            )}
-          />
-          <StyledDivToCreateGap />
-        </SideMenu>
-      )}
-    />
-  );
+	return (
+		<SideMenuController
+			sideMenu={() => (
+				<SideMenu>
+					<DragHandleButton
+						dragHandleMenu={() => (
+							<DragHandleMenu>
+								<DashboardAddBlockItem editor={editor}>
+									<CustomSideMenuOptions
+										LeftIcon={IconPlus}
+										text={t`Add Block`}
+										Variant="normal"
+									/>
+								</DashboardAddBlockItem>
+								<BlockColorsItem>
+									<CustomSideMenuOptions
+										LeftIcon={IconColorSwatch}
+										text={t`Change Color`}
+										Variant="normal"
+									/>
+								</BlockColorsItem>
+								<RemoveBlockItem>
+									<CustomSideMenuOptions
+										LeftIcon={IconTrash}
+										text={t`Delete`}
+										Variant="danger"
+									/>
+								</RemoveBlockItem>
+							</DragHandleMenu>
+						)}
+					/>
+					<StyledDivToCreateGap />
+				</SideMenu>
+			)}
+		/>
+	);
 };

@@ -1,40 +1,40 @@
-import process from 'process';
+import process from "process";
 
 import {
-  type ClickHouseClient,
-  ClickHouseLogLevel,
-  createClient,
-} from '@clickhouse/client';
-import request from 'supertest';
+	type ClickHouseClient,
+	ClickHouseLogLevel,
+	createClient,
+} from "@clickhouse/client";
+import request from "supertest";
 
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-activated';
-import { type GenericTrackEvent } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from "src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-activated";
+import { type GenericTrackEvent } from "src/engine/core-modules/event-logs/emit/events/workspace-event/track";
 
-describe('ClickHouse Event Registration (integration)', () => {
-  let clickHouseClient: ClickHouseClient;
+describe("ClickHouse Event Registration (integration)", () => {
+	let clickHouseClient: ClickHouseClient;
 
-  beforeAll(async () => {
-    jest.useRealTimers();
+	beforeAll(async () => {
+		jest.useRealTimers();
 
-    clickHouseClient = createClient({
-      url: process.env.CLICKHOUSE_URL,
-      log: { level: ClickHouseLogLevel.OFF },
-    });
+		clickHouseClient = createClient({
+			url: process.env.CLICKHOUSE_URL,
+			log: { level: ClickHouseLogLevel.OFF },
+		});
 
-    await clickHouseClient.query({
-      query: 'TRUNCATE TABLE workspaceEvent',
-      format: 'JSONEachRow',
-    });
-  });
+		await clickHouseClient.query({
+			query: "TRUNCATE TABLE workspaceEvent",
+			format: "JSONEachRow",
+		});
+	});
 
-  afterAll(async () => {
-    if (clickHouseClient) {
-      await clickHouseClient.close();
-    }
-  });
+	afterAll(async () => {
+		if (clickHouseClient) {
+			await clickHouseClient.close();
+		}
+	});
 
-  it('should register events in ClickHouse when sending an event', async () => {
-    const mutation = `
+	it("should register events in ClickHouse when sending an event", async () => {
+		const mutation = `
       mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
         trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {
           success
@@ -42,40 +42,40 @@ describe('ClickHouse Event Registration (integration)', () => {
       }
     `;
 
-    const variables = {
-      type: 'TRACK',
-      event: CUSTOM_DOMAIN_ACTIVATED_EVENT,
-      properties: {},
-    };
+		const variables = {
+			type: "TRACK",
+			event: CUSTOM_DOMAIN_ACTIVATED_EVENT,
+			properties: {},
+		};
 
-    const response = await request(`http://localhost:${APP_PORT}`)
-      .post('/metadata')
-      .send({
-        query: mutation,
-        variables,
-      });
+		const response = await request(`http://localhost:${APP_PORT}`)
+			.post("/metadata")
+			.send({
+				query: mutation,
+				variables,
+			});
 
-    expect(response.status).toBe(200);
-    expect(response.body.data.trackAnalytics.success).toBe(true);
+		expect(response.status).toBe(200);
+		expect(response.body.data.trackAnalytics.success).toBe(true);
 
-    const queryResult = await clickHouseClient.query({
-      query: `
+		const queryResult = await clickHouseClient.query({
+			query: `
         SELECT *
         FROM workspaceEvent
         WHERE event = '${CUSTOM_DOMAIN_ACTIVATED_EVENT}' AND timestamp >= now() - INTERVAL 1 SECOND
 
       `,
-      format: 'JSONEachRow',
-    });
+			format: "JSONEachRow",
+		});
 
-    const rows = await queryResult.json<GenericTrackEvent>();
+		const rows = await queryResult.json<GenericTrackEvent>();
 
-    expect(rows.length).toEqual(1);
-    expect(rows[0].properties).toEqual(variables.properties);
-    expect(rows[0].event).toEqual(variables.event);
-    // workspaceId and userId are empty/undefined for unauthenticated requests
-    expect(rows[0].workspaceId ?? '').toEqual('');
-    expect(rows[0].userId ?? '').toEqual('');
-    expect(rows[0].timestamp).toHaveLength(23);
-  });
+		expect(rows.length).toEqual(1);
+		expect(rows[0].properties).toEqual(variables.properties);
+		expect(rows[0].event).toEqual(variables.event);
+		// workspaceId and userId are empty/undefined for unauthenticated requests
+		expect(rows[0].workspaceId ?? "").toEqual("");
+		expect(rows[0].userId ?? "").toEqual("");
+		expect(rows[0].timestamp).toHaveLength(23);
+	});
 });

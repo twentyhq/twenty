@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const RETRY_JOBS = gql`
   mutation RetryJobs($queueName: String!, $jobIds: [String!]!) {

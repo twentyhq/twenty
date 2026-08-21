@@ -1,70 +1,70 @@
-import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import crypto from 'crypto';
-import type * as esbuild from 'esbuild';
-import { readFile } from 'node:fs/promises';
-import path from 'path';
-import { FileFolder } from 'twenty-shared/types';
+import { type OnFileBuiltCallback } from "@/cli/utilities/build/common/restartable-watcher-interface";
+import crypto from "crypto";
+import type * as esbuild from "esbuild";
+import { readFile } from "node:fs/promises";
+import path from "path";
+import { FileFolder } from "twenty-shared/types";
 
-const SDK_CLIENT_IMPORT_PREFIX = 'twenty-client-sdk';
+const SDK_CLIENT_IMPORT_PREFIX = "twenty-client-sdk";
 
 export type ProcessEsbuildResultParams = {
-  result: esbuild.BuildResult;
-  appPath: string;
-  fileFolder: FileFolder;
-  lastChecksums: Map<string, string>;
-  onFileBuilt?: OnFileBuiltCallback;
+	result: esbuild.BuildResult;
+	appPath: string;
+	fileFolder: FileFolder;
+	lastChecksums: Map<string, string>;
+	onFileBuilt?: OnFileBuiltCallback;
 };
 
 export const processEsbuildResult = async ({
-  result,
-  appPath,
-  fileFolder,
-  lastChecksums,
-  onFileBuilt,
+	result,
+	appPath,
+	fileFolder,
+	lastChecksums,
+	onFileBuilt,
 }: ProcessEsbuildResultParams) => {
-  const outputFiles = Object.keys(result.metafile?.outputs ?? {}).filter(
-    (file) => file.endsWith('.mjs'),
-  );
+	const outputFiles = Object.keys(result.metafile?.outputs ?? {}).filter(
+		(file) => file.endsWith(".mjs"),
+	);
 
-  for (const outputFile of outputFiles) {
-    const absoluteBuiltFile = path.resolve(outputFile);
-    const relativeBuiltPath = path.relative(appPath, absoluteBuiltFile);
-    const absoluteSourcePath =
-      result.metafile?.outputs?.[outputFile]?.entryPoint || '';
-    const relativeSourcePath = path.relative(appPath, absoluteSourcePath);
+	for (const outputFile of outputFiles) {
+		const absoluteBuiltFile = path.resolve(outputFile);
+		const relativeBuiltPath = path.relative(appPath, absoluteBuiltFile);
+		const absoluteSourcePath =
+			result.metafile?.outputs?.[outputFile]?.entryPoint || "";
+		const relativeSourcePath = path.relative(appPath, absoluteSourcePath);
 
-    const content = await readFile(absoluteBuiltFile);
+		const content = await readFile(absoluteBuiltFile);
 
-    const checksumAlgorithm =
-      fileFolder === FileFolder.BuiltFrontComponent ? 'sha256' : 'md5';
-    const checksum = crypto
-      .createHash(checksumAlgorithm)
-      .update(content)
-      .digest('hex');
+		const checksumAlgorithm =
+			fileFolder === FileFolder.BuiltFrontComponent ? "sha256" : "md5";
+		const checksum = crypto
+			.createHash(checksumAlgorithm)
+			.update(content)
+			.digest("hex");
 
-    const lastChecksum = lastChecksums.get(relativeBuiltPath);
+		const lastChecksum = lastChecksums.get(relativeBuiltPath);
 
-    if (lastChecksum === checksum) {
-      continue;
-    }
+		if (lastChecksum === checksum) {
+			continue;
+		}
 
-    lastChecksums.set(relativeBuiltPath, checksum);
+		lastChecksums.set(relativeBuiltPath, checksum);
 
-    const outputMeta = result.metafile?.outputs?.[outputFile];
-    const usesSdkClient =
-      outputMeta?.imports?.some(
-        (imp) =>
-          imp.external === true &&
-          imp.path.startsWith(SDK_CLIENT_IMPORT_PREFIX),
-      ) ?? false;
-    if (onFileBuilt) {
-      await onFileBuilt({
-        fileFolder,
-        builtPath: relativeBuiltPath,
-        sourcePath: relativeSourcePath,
-        checksum,
-        usesSdkClient,
-      });
-    }
-  }
+		const outputMeta = result.metafile?.outputs?.[outputFile];
+		const usesSdkClient =
+			outputMeta?.imports?.some(
+				(imp) =>
+					imp.external === true &&
+					imp.path.startsWith(SDK_CLIENT_IMPORT_PREFIX),
+			) ?? false;
+		if (onFileBuilt) {
+			await onFileBuilt({
+				fileFolder,
+				builtPath: relativeBuiltPath,
+				sourcePath: relativeSourcePath,
+				checksum,
+				usesSdkClient,
+			});
+		}
+	}
 };

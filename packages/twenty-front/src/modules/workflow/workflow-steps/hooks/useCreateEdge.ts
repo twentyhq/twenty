@@ -1,54 +1,54 @@
-import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
-import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
-import { useCreateWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge';
-import { useState } from 'react';
+import { useGetUpdatableWorkflowVersionOrThrow } from "@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow";
+import { type WorkflowDiagramEdgeDescriptor } from "@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor";
+import { type WorkflowStepConnectionOptions } from "@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions";
+import { useCreateWorkflowVersionEdge } from "@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge";
+import { useState } from "react";
 
 type CreateEdgeParams = Pick<
-  WorkflowDiagramEdgeDescriptor,
-  'source' | 'target'
+	WorkflowDiagramEdgeDescriptor,
+	"source" | "target"
 > & {
-  connectionOptions?: WorkflowStepConnectionOptions;
+	connectionOptions?: WorkflowStepConnectionOptions;
 };
 
 export const useCreateEdge = () => {
-  const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
-  const { createWorkflowVersionEdge } = useCreateWorkflowVersionEdge();
+	const { createWorkflowVersionEdge } = useCreateWorkflowVersionEdge();
 
-  const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow();
+	const { getUpdatableWorkflowVersion } =
+		useGetUpdatableWorkflowVersionOrThrow();
 
-  const createEdge = async ({
-    source,
-    target,
-    connectionOptions,
-  }: CreateEdgeParams) => {
-    if (isLoading) {
-      return;
-    }
+	const createEdge = async ({
+		source,
+		target,
+		connectionOptions,
+	}: CreateEdgeParams) => {
+		if (isLoading) {
+			return;
+		}
 
-    setIsLoading(true);
+		setIsLoading(true);
 
-    try {
-      const workflowVersionId = await getUpdatableWorkflowVersion();
+		try {
+			const workflowVersionId = await getUpdatableWorkflowVersion();
 
-      const createdEdge = (
-        await createWorkflowVersionEdge({
-          workflowVersionId,
-          source,
-          target,
-          sourceConnectionOptions: connectionOptions,
-        })
-      )?.data?.createWorkflowVersionEdge;
+			const createdEdge = (
+				await createWorkflowVersionEdge({
+					workflowVersionId,
+					source,
+					target,
+					sourceConnectionOptions: connectionOptions,
+				})
+			)?.data?.createWorkflowVersionEdge;
 
-      if (!createdEdge) {
-        return;
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+			if (!createdEdge) {
+				return;
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  return { createEdge };
+	return { createEdge };
 };

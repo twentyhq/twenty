@@ -1,4 +1,4 @@
 export type GeoMapAutocompleteSanitizedResult = {
-  text: string;
-  placeId: string;
+	text: string;
+	placeId: string;
 };

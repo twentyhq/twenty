@@ -1,7 +1,7 @@
-import { AppPath } from 'twenty-shared/types';
+import { AppPath } from "twenty-shared/types";
 
 const getIndexAppPath = () => {
-  return AppPath.Index;
+	return AppPath.Index;
 };
 
 // This file is using the default export pattern to be compatible

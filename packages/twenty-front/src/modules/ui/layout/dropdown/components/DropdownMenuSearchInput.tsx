@@ -1,9 +1,9 @@
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react/macro';
-import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
-import { styled } from '@linaria/react';
-import { forwardRef, type InputHTMLAttributes } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
+import { useInputFocusWithoutScrollOnMount } from "@/ui/input/hooks/useInputFocusWithoutScrollOnMount";
+import { styled } from "@linaria/react";
+import { forwardRef, type InputHTMLAttributes } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   --vertical-padding: ${themeCssVariables.spacing[2]};
@@ -53,20 +53,20 @@ const StyledInput = styled.input`
 const defaultSearchPlaceholder = msg`Search`;
 
 export const DropdownMenuSearchInput = forwardRef<
-  HTMLInputElement,
-  InputHTMLAttributes<HTMLInputElement>
+	HTMLInputElement,
+	InputHTMLAttributes<HTMLInputElement>
 >(({ value, onChange, placeholder, type }, forwardedRef) => {
-  const { i18n } = useLingui();
-  const { inputRef } = useInputFocusWithoutScrollOnMount();
-  const ref = forwardedRef ?? inputRef;
-  const translatedPlaceholder = placeholder ?? i18n._(defaultSearchPlaceholder);
-  return (
-    <StyledDropdownMenuSearchInputContainer>
-      <StyledInput
-        autoComplete="off"
-        {...{ onChange, placeholder: translatedPlaceholder, type, value }}
-        ref={ref}
-      />
-    </StyledDropdownMenuSearchInputContainer>
-  );
+	const { i18n } = useLingui();
+	const { inputRef } = useInputFocusWithoutScrollOnMount();
+	const ref = forwardedRef ?? inputRef;
+	const translatedPlaceholder = placeholder ?? i18n._(defaultSearchPlaceholder);
+	return (
+		<StyledDropdownMenuSearchInputContainer>
+			<StyledInput
+				autoComplete="off"
+				{...{ onChange, placeholder: translatedPlaceholder, type, value }}
+				ref={ref}
+			/>
+		</StyledDropdownMenuSearchInputContainer>
+	);
 });

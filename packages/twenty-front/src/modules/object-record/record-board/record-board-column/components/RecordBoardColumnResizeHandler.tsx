@@ -1,22 +1,22 @@
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from "twenty-ui/utilities";
 
-import { useResizeBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useResizeBoardColumn';
-import { RecordColumnResizeHandle } from '@/object-record/record-index/components/RecordColumnResizeHandle';
+import { useResizeBoardColumn } from "@/object-record/record-board/record-board-column/hooks/useResizeBoardColumn";
+import { RecordColumnResizeHandle } from "@/object-record/record-index/components/RecordColumnResizeHandle";
 
 export const RecordBoardColumnResizeHandler = () => {
-  const isMobile = useIsMobile();
+	const isMobile = useIsMobile();
 
-  const { isResizing, handleResizeStart } = useResizeBoardColumn();
+	const { isResizing, handleResizeStart } = useResizeBoardColumn();
 
-  if (isMobile) {
-    return null;
-  }
+	if (isMobile) {
+		return null;
+	}
 
-  return (
-    <RecordColumnResizeHandle
-      isResizing={isResizing}
-      position="right"
-      onPointerDown={handleResizeStart}
-    />
-  );
+	return (
+		<RecordColumnResizeHandle
+			isResizing={isResizing}
+			position="right"
+			onPointerDown={handleResizeStart}
+		/>
+	);
 };

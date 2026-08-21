@@ -1,48 +1,48 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
-import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
+import { type CommonResponseBody } from "test/integration/metadata/types/common-response-body.type";
+import { warnIfErrorButNotExpectedToFail } from "test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util";
+import { warnIfNoErrorButExpectedToFail } from "test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util";
 
-import { type DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
+import { type DuplicatedDashboardDTO } from "src/modules/dashboard/dtos/duplicated-dashboard.dto";
 
 import {
-  type DuplicateOneDashboardFactoryInput,
-  duplicateOneDashboardQueryFactory,
-} from './duplicate-one-dashboard-query-factory.util';
+	type DuplicateOneDashboardFactoryInput,
+	duplicateOneDashboardQueryFactory,
+} from "./duplicate-one-dashboard-query-factory.util";
 
 export const duplicateOneDashboard = async ({
-  input,
-  gqlFields,
-  expectToFail = false,
-  token,
+	input,
+	gqlFields,
+	expectToFail = false,
+	token,
 }: {
-  input: DuplicateOneDashboardFactoryInput;
-  gqlFields?: string;
-  expectToFail?: boolean;
-  token?: string;
+	input: DuplicateOneDashboardFactoryInput;
+	gqlFields?: string;
+	expectToFail?: boolean;
+	token?: string;
 }): CommonResponseBody<{
-  duplicateDashboard: DuplicatedDashboardDTO;
+	duplicateDashboard: DuplicatedDashboardDTO;
 }> => {
-  const graphqlOperation = duplicateOneDashboardQueryFactory({
-    input,
-    gqlFields,
-  });
+	const graphqlOperation = duplicateOneDashboardQueryFactory({
+		input,
+		gqlFields,
+	});
 
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+	const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
-  if (expectToFail === true) {
-    warnIfNoErrorButExpectedToFail({
-      response,
-      errorMessage: 'Dashboard duplication should have failed but did not',
-    });
-  }
+	if (expectToFail === true) {
+		warnIfNoErrorButExpectedToFail({
+			response,
+			errorMessage: "Dashboard duplication should have failed but did not",
+		});
+	}
 
-  if (expectToFail === false) {
-    warnIfErrorButNotExpectedToFail({
-      response,
-      errorMessage: 'Dashboard duplication has failed but should not',
-    });
-  }
+	if (expectToFail === false) {
+		warnIfErrorButNotExpectedToFail({
+			response,
+			errorMessage: "Dashboard duplication has failed but should not",
+		});
+	}
 
-  return { data: response.body.data, errors: response.body.errors };
+	return { data: response.body.data, errors: response.body.errors };
 };

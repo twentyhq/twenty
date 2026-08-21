@@ -1,15 +1,15 @@
-import { t } from '@lingui/core/macro';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { t } from "@lingui/core/macro";
+import { useIsSettingsPage } from "@/navigation/hooks/useIsSettingsPage";
+import { styled } from "@linaria/react";
+import { isNonEmptyString } from "@sniptt/guards";
+import { type ReactNode, useContext } from "react";
+import { Link } from "react-router-dom";
+import { IconChevronLeft } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 export type MobileBreadcrumbProps = {
-  className?: string;
-  links: { children: string | ReactNode; href?: string }[];
+	className?: string;
+	links: { children: string | ReactNode; href?: string }[];
 };
 
 const StyledWrapper = styled.nav`
@@ -43,36 +43,36 @@ const StyledText = styled.span`
 `;
 
 export const MobileBreadcrumb = ({
-  className,
-  links,
+	className,
+	links,
 }: MobileBreadcrumbProps) => {
-  const { theme } = useContext(ThemeContext);
-  const isSettingsPage = useIsSettingsPage();
+	const { theme } = useContext(ThemeContext);
+	const isSettingsPage = useIsSettingsPage();
 
-  if (isSettingsPage && links.length <= 2) {
-    return null;
-  }
+	if (isSettingsPage && links.length <= 2) {
+		return null;
+	}
 
-  const previousLink = links[links.length - 2];
+	const previousLink = links[links.length - 2];
 
-  const text = isNonEmptyString(previousLink.children)
-    ? previousLink.children
-    : '';
+	const text = isNonEmptyString(previousLink.children)
+		? previousLink.children
+		: "";
 
-  return (
-    <StyledWrapper className={className}>
-      {previousLink?.href ? (
-        <>
-          <IconChevronLeft size={theme.icon.size.md} />
-          <StyledLinkContainer>
-            <Link title={text} to={previousLink.href}>
-              {t`Back to ${text}`}
-            </Link>
-          </StyledLinkContainer>
-        </>
-      ) : (
-        <StyledText title={text}>{previousLink?.children}</StyledText>
-      )}
-    </StyledWrapper>
-  );
+	return (
+		<StyledWrapper className={className}>
+			{previousLink?.href ? (
+				<>
+					<IconChevronLeft size={theme.icon.size.md} />
+					<StyledLinkContainer>
+						<Link title={text} to={previousLink.href}>
+							{t`Back to ${text}`}
+						</Link>
+					</StyledLinkContainer>
+				</>
+			) : (
+				<StyledText title={text}>{previousLink?.children}</StyledText>
+			)}
+		</StyledWrapper>
+	);
 };

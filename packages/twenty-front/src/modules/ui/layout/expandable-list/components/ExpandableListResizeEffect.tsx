@@ -1,57 +1,57 @@
-import { type RefObject, useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type RefObject, useEffect } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 const RESIZE_THRESHOLD_PX = 1;
 
 const RESIZE_SETTLE_DELAY_MS = 100;
 
 type ExpandableListResizeEffectProps = {
-  containerRef: RefObject<HTMLElement | null>;
-  onContainerWidthChange: () => void;
+	containerRef: RefObject<HTMLElement | null>;
+	onContainerWidthChange: () => void;
 };
 
 export const ExpandableListResizeEffect = ({
-  containerRef,
-  onContainerWidthChange,
+	containerRef,
+	onContainerWidthChange,
 }: ExpandableListResizeEffectProps) => {
-  useEffect(() => {
-    const containerElement = containerRef.current;
+	useEffect(() => {
+		const containerElement = containerRef.current;
 
-    if (!isDefined(containerElement)) {
-      return;
-    }
+		if (!isDefined(containerElement)) {
+			return;
+		}
 
-    let previousWidth = containerElement.clientWidth;
-    let settleTimeoutId: ReturnType<typeof setTimeout> | undefined;
+		let previousWidth = containerElement.clientWidth;
+		let settleTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
+		const resizeObserver = new ResizeObserver((entries) => {
+			const entry = entries[0];
 
-      if (!isDefined(entry)) {
-        return;
-      }
+			if (!isDefined(entry)) {
+				return;
+			}
 
-      const newWidth = entry.contentRect.width;
+			const newWidth = entry.contentRect.width;
 
-      if (Math.abs(newWidth - previousWidth) <= RESIZE_THRESHOLD_PX) {
-        return;
-      }
+			if (Math.abs(newWidth - previousWidth) <= RESIZE_THRESHOLD_PX) {
+				return;
+			}
 
-      previousWidth = newWidth;
-      clearTimeout(settleTimeoutId);
-      settleTimeoutId = setTimeout(
-        onContainerWidthChange,
-        RESIZE_SETTLE_DELAY_MS,
-      );
-    });
+			previousWidth = newWidth;
+			clearTimeout(settleTimeoutId);
+			settleTimeoutId = setTimeout(
+				onContainerWidthChange,
+				RESIZE_SETTLE_DELAY_MS,
+			);
+		});
 
-    resizeObserver.observe(containerElement);
+		resizeObserver.observe(containerElement);
 
-    return () => {
-      clearTimeout(settleTimeoutId);
-      resizeObserver.disconnect();
-    };
-  }, [containerRef, onContainerWidthChange]);
+		return () => {
+			clearTimeout(settleTimeoutId);
+			resizeObserver.disconnect();
+		};
+	}, [containerRef, onContainerWidthChange]);
 
-  return null;
+	return null;
 };

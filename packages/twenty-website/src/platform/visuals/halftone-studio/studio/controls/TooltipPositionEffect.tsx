@@ -1,47 +1,47 @@
-'use client';
+"use client";
 
-import { type RefObject, useEffect } from 'react';
+import { type RefObject, useEffect } from "react";
 
 type TooltipPositionEffectProps = {
-  buttonRef: RefObject<HTMLButtonElement | null>;
-  isOpen: boolean;
-  setTooltipPosition: (position: { left: number; top: number }) => void;
+	buttonRef: RefObject<HTMLButtonElement | null>;
+	isOpen: boolean;
+	setTooltipPosition: (position: { left: number; top: number }) => void;
 };
 
 export function TooltipPositionEffect({
-  buttonRef,
-  isOpen,
-  setTooltipPosition,
+	buttonRef,
+	isOpen,
+	setTooltipPosition,
 }: TooltipPositionEffectProps) {
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
+	useEffect(() => {
+		if (!isOpen) {
+			return;
+		}
 
-    const updateTooltipPosition = () => {
-      const button = buttonRef.current;
+		const updateTooltipPosition = () => {
+			const button = buttonRef.current;
 
-      if (!button) {
-        return;
-      }
+			if (!button) {
+				return;
+			}
 
-      const rect = button.getBoundingClientRect();
-      setTooltipPosition({
-        left: rect.left + rect.width / 2,
-        top: rect.bottom + 12,
-      });
-    };
+			const rect = button.getBoundingClientRect();
+			setTooltipPosition({
+				left: rect.left + rect.width / 2,
+				top: rect.bottom + 12,
+			});
+		};
 
-    updateTooltipPosition();
+		updateTooltipPosition();
 
-    window.addEventListener('resize', updateTooltipPosition);
-    window.addEventListener('scroll', updateTooltipPosition, true);
+		window.addEventListener("resize", updateTooltipPosition);
+		window.addEventListener("scroll", updateTooltipPosition, true);
 
-    return () => {
-      window.removeEventListener('resize', updateTooltipPosition);
-      window.removeEventListener('scroll', updateTooltipPosition, true);
-    };
-  }, [isOpen, buttonRef, setTooltipPosition]);
+		return () => {
+			window.removeEventListener("resize", updateTooltipPosition);
+			window.removeEventListener("scroll", updateTooltipPosition, true);
+		};
+	}, [isOpen, buttonRef, setTooltipPosition]);
 
-  return null;
+	return null;
 }

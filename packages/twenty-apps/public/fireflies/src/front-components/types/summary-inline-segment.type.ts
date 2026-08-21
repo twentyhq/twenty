@@ -1,4 +1,4 @@
 export type SummaryInlineSegment = {
-  text: string;
-  isBold: boolean;
+	text: string;
+	isBold: boolean;
 };

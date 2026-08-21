@@ -1,9 +1,9 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 
 export const getGroupByAggregateQueryName = ({
-  objectMetadataNamePlural,
+	objectMetadataNamePlural,
 }: {
-  objectMetadataNamePlural: string;
+	objectMetadataNamePlural: string;
 }) => {
-  return `${capitalize(objectMetadataNamePlural)}GroupByAggregates`;
+	return `${capitalize(objectMetadataNamePlural)}GroupByAggregates`;
 };

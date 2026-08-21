@@ -1,1 +1,1 @@
-export type FieldInputLayoutDirection = 'upward' | 'downward';
+export type FieldInputLayoutDirection = "upward" | "downward";

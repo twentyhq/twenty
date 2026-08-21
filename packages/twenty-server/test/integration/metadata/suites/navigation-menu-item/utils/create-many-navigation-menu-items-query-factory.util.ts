@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
+import { type CreateNavigationMenuItemInput } from "src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input";
 
 const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   id
@@ -21,13 +21,13 @@ const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
 `;
 
 export const createManyNavigationMenuItemsQueryFactory = ({
-  inputs,
-  gqlFields = DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS,
+	inputs,
+	gqlFields = DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS,
 }: {
-  inputs: CreateNavigationMenuItemInput[];
-  gqlFields?: string;
+	inputs: CreateNavigationMenuItemInput[];
+	gqlFields?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation CreateManyNavigationMenuItems(
       $inputs: [CreateNavigationMenuItemInput!]!
     ) {
@@ -36,7 +36,7 @@ export const createManyNavigationMenuItemsQueryFactory = ({
       }
     }
   `,
-  variables: {
-    inputs,
-  },
+	variables: {
+		inputs,
+	},
 });

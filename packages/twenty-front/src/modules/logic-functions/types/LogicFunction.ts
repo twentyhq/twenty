@@ -1,4 +1,4 @@
-import { type FindManyLogicFunctionsQuery } from '~/generated-metadata/graphql';
+import { type FindManyLogicFunctionsQuery } from "~/generated-metadata/graphql";
 
 export type LogicFunction =
-  FindManyLogicFunctionsQuery['findManyLogicFunctions'][number];
+	FindManyLogicFunctionsQuery["findManyLogicFunctions"][number];

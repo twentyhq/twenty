@@ -1,1 +1,1 @@
-export const AUTO_SET_HEADER_KEYS = ['content-type'];
+export const AUTO_SET_HEADER_KEYS = ["content-type"];

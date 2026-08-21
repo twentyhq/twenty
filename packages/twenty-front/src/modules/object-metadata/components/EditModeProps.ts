@@ -1,4 +1,4 @@
 export type EditModeProps = {
-  isSelectedInEditMode: boolean;
-  onEditModeClick?: () => void;
+	isSelectedInEditMode: boolean;
+	onEditModeClick?: () => void;
 };

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const DELETE_DATABASE_CONFIG_VARIABLE = gql`
   mutation DeleteDatabaseConfigVariable($key: String!) {

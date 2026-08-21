@@ -1,14 +1,14 @@
-import { type LogLevel } from '@nestjs/common';
+import { type LogLevel } from "@nestjs/common";
 
-export type TwentyLogLevel = LogLevel | 'performance';
+export type TwentyLogLevel = LogLevel | "performance";
 
 export enum LoggerDriverType {
-  CONSOLE = 'CONSOLE',
+	CONSOLE = "CONSOLE",
 }
 
 export interface ConsoleDriverFactoryOptions {
-  type: LoggerDriverType.CONSOLE;
-  logLevels?: TwentyLogLevel[];
+	type: LoggerDriverType.CONSOLE;
+	logLevels?: TwentyLogLevel[];
 }
 
 export type LoggerModuleOptions = ConsoleDriverFactoryOptions;

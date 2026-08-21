@@ -1,20 +1,20 @@
-import { useTextFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useTextFieldDisplay';
-import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { TextDisplay } from 'twenty-ui/data-display';
+import { useTextFieldDisplay } from "@/object-record/record-field/ui/meta-types/hooks/useTextFieldDisplay";
+import { isFieldText } from "@/object-record/record-field/ui/types/guards/isFieldText";
+import { TextDisplay } from "twenty-ui/data-display";
 
 export const TextFieldDisplay = () => {
-  const { fieldValue, fieldDefinition, displayedMaxRows } =
-    useTextFieldDisplay();
+	const { fieldValue, fieldDefinition, displayedMaxRows } =
+		useTextFieldDisplay();
 
-  const displayedMaxRowsFromSettings = isFieldText(fieldDefinition)
-    ? fieldDefinition.metadata?.settings?.displayedMaxRows
-    : undefined;
+	const displayedMaxRowsFromSettings = isFieldText(fieldDefinition)
+		? fieldDefinition.metadata?.settings?.displayedMaxRows
+		: undefined;
 
-  const displayMaxRowCalculated = displayedMaxRows
-    ? displayedMaxRows
-    : displayedMaxRowsFromSettings;
+	const displayMaxRowCalculated = displayedMaxRows
+		? displayedMaxRows
+		: displayedMaxRowsFromSettings;
 
-  return (
-    <TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
-  );
+	return (
+		<TextDisplay text={fieldValue} displayedMaxRows={displayMaxRowCalculated} />
+	);
 };

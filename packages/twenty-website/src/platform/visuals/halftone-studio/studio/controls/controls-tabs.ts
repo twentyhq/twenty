@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { fontFamily } from '@/tokens';
+import { fontFamily } from "@/tokens";
 
 const TabsBar = styled.div<{ $collapsed?: boolean }>`
   align-items: center;
@@ -8,18 +8,18 @@ const TabsBar = styled.div<{ $collapsed?: boolean }>`
   flex-shrink: 0;
   gap: 6px;
   margin: 0;
-  padding: ${(props) => (props.$collapsed ? '12px' : '12px 12px 0')};
+  padding: ${(props) => (props.$collapsed ? "12px" : "12px 12px 0")};
 `;
 
 const TabButton = styled.button<{ $active: boolean }>`
   background: ${(props) =>
-    props.$active ? 'rgba(255, 255, 255, 0.08)' : 'transparent'};
+		props.$active ? "rgba(255, 255, 255, 0.08)" : "transparent"};
   border: none;
   border-radius: 7px;
   color: ${(props) =>
-    props.$active ? 'rgba(255, 255, 255, 0.94)' : 'rgba(255, 255, 255, 0.52)'};
+		props.$active ? "rgba(255, 255, 255, 0.94)" : "rgba(255, 255, 255, 0.52)"};
   cursor: pointer;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: 12px;
   font-weight: ${(props) => (props.$active ? 600 : 500)};
   letter-spacing: 0;
@@ -31,11 +31,11 @@ const TabButton = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${(props) =>
-      props.$active ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.04)'};
+			props.$active ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.04)"};
     color: ${(props) =>
-      props.$active
-        ? 'rgba(255, 255, 255, 0.94)'
-        : 'rgba(255, 255, 255, 0.74)'};
+			props.$active
+				? "rgba(255, 255, 255, 0.94)"
+				: "rgba(255, 255, 255, 0.74)"};
   }
 
   &:focus-visible {
@@ -51,7 +51,7 @@ const TabContent = styled.div`
 `;
 
 export const CONTROLS_TABS = {
-  Bar: TabsBar,
-  Button: TabButton,
-  Content: TabContent,
+	Bar: TabsBar,
+	Button: TabButton,
+	Content: TabContent,
 };

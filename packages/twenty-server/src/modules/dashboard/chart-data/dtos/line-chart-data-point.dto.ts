@@ -1,10 +1,10 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('LineChartDataPoint')
+@ObjectType("LineChartDataPoint")
 export class LineChartDataPointDTO {
-  @Field(() => String)
-  x: string;
+	@Field(() => String)
+	x: string;
 
-  @Field(() => Float)
-  y: number;
+	@Field(() => Float)
+	y: number;
 }

@@ -1,18 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 type FrontComponentErrorEffectProps = {
-  error: Error | null;
-  onError: (error: Error) => void;
+	error: Error | null;
+	onError: (error: Error) => void;
 };
 export const FrontComponentErrorEffect = ({
-  error,
-  onError,
+	error,
+	onError,
 }: FrontComponentErrorEffectProps) => {
-  useEffect(() => {
-    if (error) {
-      onError(error);
-    }
-  }, [error, onError]);
+	useEffect(() => {
+		if (error) {
+			onError(error);
+		}
+	}, [error, onError]);
 
-  return null;
+	return null;
 };

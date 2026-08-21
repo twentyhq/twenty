@@ -1,15 +1,15 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const uploadApplicationFileQueryFactory = ({
-  applicationUniversalIdentifier,
-  fileFolder,
-  filePath,
+	applicationUniversalIdentifier,
+	fileFolder,
+	filePath,
 }: {
-  applicationUniversalIdentifier: string;
-  fileFolder: string;
-  filePath: string;
+	applicationUniversalIdentifier: string;
+	fileFolder: string;
+	filePath: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation UploadApplicationFile(
       $file: Upload!
       $applicationUniversalIdentifier: String!
@@ -27,10 +27,10 @@ export const uploadApplicationFileQueryFactory = ({
       }
     }
   `,
-  variables: {
-    file: null,
-    applicationUniversalIdentifier,
-    fileFolder,
-    filePath,
-  },
+	variables: {
+		file: null,
+		applicationUniversalIdentifier,
+		fileFolder,
+		filePath,
+	},
 });

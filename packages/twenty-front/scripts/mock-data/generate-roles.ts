@@ -1,5 +1,5 @@
 /* oxlint-disable no-console, lingui/no-unlocalized-strings */
-import { graphqlRequest, writeGeneratedFile } from './utils.js';
+import { graphqlRequest, writeGeneratedFile } from "./utils.js";
 
 // Inline the full GetRoles query with all fragments so we don't need
 // @apollo/client at generation time.
@@ -132,19 +132,19 @@ const GET_ROLES_QUERY = `
 `;
 
 export const generateRoles = async (token: string) => {
-  console.log('Fetching roles from /metadata ...');
+	console.log("Fetching roles from /metadata ...");
 
-  const data = (await graphqlRequest('/metadata', GET_ROLES_QUERY, token)) as {
-    getRoles: Record<string, unknown>[];
-  };
+	const data = (await graphqlRequest("/metadata", GET_ROLES_QUERY, token)) as {
+		getRoles: Record<string, unknown>[];
+	};
 
-  console.log(`  Got ${data.getRoles.length} roles.`);
+	console.log(`  Got ${data.getRoles.length} roles.`);
 
-  writeGeneratedFile(
-    'metadata/roles/mock-roles-data.ts',
-    'mockedRoles',
-    'Role[]',
-    "import { type Role } from '~/generated-metadata/graphql';",
-    data.getRoles,
-  );
+	writeGeneratedFile(
+		"metadata/roles/mock-roles-data.ts",
+		"mockedRoles",
+		"Role[]",
+		"import { type Role } from '~/generated-metadata/graphql';",
+		data.getRoles,
+	);
 };

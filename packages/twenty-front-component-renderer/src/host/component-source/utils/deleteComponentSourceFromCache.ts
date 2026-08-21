@@ -1,9 +1,9 @@
 export const deleteComponentSourceFromCache = ({
-  cache,
-  url,
+	cache,
+	url,
 }: {
-  cache: Cache;
-  url: string;
+	cache: Cache;
+	url: string;
 }): void => {
-  cache.delete(url).catch(() => undefined);
+	cache.delete(url).catch(() => undefined);
 };

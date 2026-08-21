@@ -1,26 +1,26 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
 import {
-  PageDecorator,
-  type PageDecoratorArgs,
-} from '~/testing/decorators/PageDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+	PageDecorator,
+	type PageDecoratorArgs,
+} from "~/testing/decorators/PageDecorator";
+import { graphqlMocks } from "~/testing/graphqlMocks";
 
-import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
+import { RecordIndexPage } from "~/pages/object-record/RecordIndexPage";
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/ObjectRecord/RecordIndexPage',
-  component: RecordIndexPage,
-  decorators: [PageDecorator],
-  args: {
-    routePath: '/objects/:objectNamePlural',
-    routeParams: {
-      ':objectNamePlural': 'companies',
-    },
-  },
-  parameters: {
-    msw: graphqlMocks,
-  },
+	title: "Pages/ObjectRecord/RecordIndexPage",
+	component: RecordIndexPage,
+	decorators: [PageDecorator],
+	args: {
+		routePath: "/objects/:objectNamePlural",
+		routeParams: {
+			":objectNamePlural": "companies",
+		},
+	},
+	parameters: {
+		msw: graphqlMocks,
+	},
 };
 
 export default meta;

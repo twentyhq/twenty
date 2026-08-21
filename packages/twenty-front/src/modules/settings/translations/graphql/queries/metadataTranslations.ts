@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const METADATA_TRANSLATIONS = gql`
   query MetadataTranslations($input: MetadataTranslationsInput!) {

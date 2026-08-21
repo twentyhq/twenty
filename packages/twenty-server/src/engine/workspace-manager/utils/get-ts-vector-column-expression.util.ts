@@ -1,135 +1,135 @@
 import {
-  FieldMetadataType,
-  compositeTypeDefinitions,
-} from 'twenty-shared/types';
-import type { SearchableFieldType } from 'twenty-shared/utils';
+	FieldMetadataType,
+	compositeTypeDefinitions,
+} from "twenty-shared/types";
+import type { SearchableFieldType } from "twenty-shared/utils";
 
 import {
-  computeColumnName,
-  computeCompositeColumnName,
-} from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isSearchableSubfield } from 'src/engine/workspace-manager/utils/is-searchable-subfield.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+	computeColumnName,
+	computeCompositeColumnName,
+} from "src/engine/metadata-modules/field-metadata/utils/compute-column-name.util";
+import { isCompositeFieldMetadataType } from "src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util";
+import { isSearchableSubfield } from "src/engine/workspace-manager/utils/is-searchable-subfield.util";
+import { escapeIdentifier } from "src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util";
 
 export type FieldTypeAndNameMetadata = {
-  name: string;
-  type: SearchableFieldType;
+	name: string;
+	type: SearchableFieldType;
 };
 
 export const getTsVectorColumnExpressionFromFields = (
-  fieldsUsedForSearch: FieldTypeAndNameMetadata[],
+	fieldsUsedForSearch: FieldTypeAndNameMetadata[],
 ): string => {
-  const columnExpressions = fieldsUsedForSearch.flatMap(
-    getColumnExpressionsFromField,
-  );
-  const concatenatedExpression =
-    columnExpressions.length > 0
-      ? columnExpressions.join(" || ' ' || ")
-      : 'NULL';
+	const columnExpressions = fieldsUsedForSearch.flatMap(
+		getColumnExpressionsFromField,
+	);
+	const concatenatedExpression =
+		columnExpressions.length > 0
+			? columnExpressions.join(" || ' ' || ")
+			: "NULL";
 
-  return `to_tsvector('simple', ${concatenatedExpression})`;
+	return `to_tsvector('simple', ${concatenatedExpression})`;
 };
 
 const getColumnExpressionsFromField = (
-  fieldMetadataTypeAndName: FieldTypeAndNameMetadata,
+	fieldMetadataTypeAndName: FieldTypeAndNameMetadata,
 ): string[] => {
-  if (isCompositeFieldMetadataType(fieldMetadataTypeAndName.type)) {
-    const compositeType = compositeTypeDefinitions.get(
-      fieldMetadataTypeAndName.type,
-    );
+	if (isCompositeFieldMetadataType(fieldMetadataTypeAndName.type)) {
+		const compositeType = compositeTypeDefinitions.get(
+			fieldMetadataTypeAndName.type,
+		);
 
-    if (!compositeType) {
-      throw new Error(
-        `Composite type not found for field metadata type: ${fieldMetadataTypeAndName.type}`,
-      );
-    }
+		if (!compositeType) {
+			throw new Error(
+				`Composite type not found for field metadata type: ${fieldMetadataTypeAndName.type}`,
+			);
+		}
 
-    const baseExpressions = compositeType.properties
-      .filter((property) =>
-        isSearchableSubfield(compositeType.type, property.type, property.name),
-      )
-      .map((property) => {
-        const columnName = computeCompositeColumnName(
-          fieldMetadataTypeAndName,
-          property,
-        );
+		const baseExpressions = compositeType.properties
+			.filter((property) =>
+				isSearchableSubfield(compositeType.type, property.type, property.name),
+			)
+			.map((property) => {
+				const columnName = computeCompositeColumnName(
+					fieldMetadataTypeAndName,
+					property,
+				);
 
-        return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
-      });
+				return getColumnExpression(columnName, fieldMetadataTypeAndName.type);
+			});
 
-    if (fieldMetadataTypeAndName.type === FieldMetadataType.PHONES) {
-      const phoneNumberColumn = escapeIdentifier(
-        `${fieldMetadataTypeAndName.name}PrimaryPhoneNumber`,
-      );
-      const callingCodeColumn = escapeIdentifier(
-        `${fieldMetadataTypeAndName.name}PrimaryPhoneCallingCode`,
-      );
-      const additionalPhonesColumn = escapeIdentifier(
-        `${fieldMetadataTypeAndName.name}AdditionalPhones`,
-      );
+		if (fieldMetadataTypeAndName.type === FieldMetadataType.PHONES) {
+			const phoneNumberColumn = escapeIdentifier(
+				`${fieldMetadataTypeAndName.name}PrimaryPhoneNumber`,
+			);
+			const callingCodeColumn = escapeIdentifier(
+				`${fieldMetadataTypeAndName.name}PrimaryPhoneCallingCode`,
+			);
+			const additionalPhonesColumn = escapeIdentifier(
+				`${fieldMetadataTypeAndName.name}AdditionalPhones`,
+			);
 
-      const internationalFormats = [
-        `COALESCE(${callingCodeColumn} || ${phoneNumberColumn}, '')`,
-        `COALESCE(REPLACE(${callingCodeColumn}, '+', '') || ${phoneNumberColumn}, '')`,
-        `COALESCE('0' || ${phoneNumberColumn}, '')`,
-      ];
+			const internationalFormats = [
+				`COALESCE(${callingCodeColumn} || ${phoneNumberColumn}, '')`,
+				`COALESCE(REPLACE(${callingCodeColumn}, '+', '') || ${phoneNumberColumn}, '')`,
+				`COALESCE('0' || ${phoneNumberColumn}, '')`,
+			];
 
-      const additionalPhonesExpression = `COALESCE(TRANSLATE(regexp_replace(${additionalPhonesColumn}::text, '"(number|countryCode|callingCode)"\\s*:\\s*', '', 'g'), '[]{}",:', '        '), '')`;
+			const additionalPhonesExpression = `COALESCE(TRANSLATE(regexp_replace(${additionalPhonesColumn}::text, '"(number|countryCode|callingCode)"\\s*:\\s*', '', 'g'), '[]{}",:', '        '), '')`;
 
-      return [
-        ...baseExpressions,
-        ...internationalFormats,
-        additionalPhonesExpression,
-      ];
-    }
+			return [
+				...baseExpressions,
+				...internationalFormats,
+				additionalPhonesExpression,
+			];
+		}
 
-    if (fieldMetadataTypeAndName.type === FieldMetadataType.LINKS) {
-      const secondaryLinksColumn = escapeIdentifier(
-        `${fieldMetadataTypeAndName.name}SecondaryLinks`,
-      );
+		if (fieldMetadataTypeAndName.type === FieldMetadataType.LINKS) {
+			const secondaryLinksColumn = escapeIdentifier(
+				`${fieldMetadataTypeAndName.name}SecondaryLinks`,
+			);
 
-      const secondaryLinksExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(${secondaryLinksColumn}::text, '"(label|url)"\\s*:\\s*', '', 'g'), '[]{}",:', '        ')), '')`;
+			const secondaryLinksExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(${secondaryLinksColumn}::text, '"(label|url)"\\s*:\\s*', '', 'g'), '[]{}",:', '        ')), '')`;
 
-      return [...baseExpressions, secondaryLinksExpression];
-    }
+			return [...baseExpressions, secondaryLinksExpression];
+		}
 
-    if (fieldMetadataTypeAndName.type === FieldMetadataType.EMAILS) {
-      const additionalEmailsColumn = escapeIdentifier(
-        `${fieldMetadataTypeAndName.name}AdditionalEmails`,
-      );
+		if (fieldMetadataTypeAndName.type === FieldMetadataType.EMAILS) {
+			const additionalEmailsColumn = escapeIdentifier(
+				`${fieldMetadataTypeAndName.name}AdditionalEmails`,
+			);
 
-      const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]",', '    ')), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(REPLACE(${additionalEmailsColumn}::text, '@', ' '), '[]",', '    ')), '')`;
+			const additionalEmailsExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(${additionalEmailsColumn}::text, '[]",', '    ')), '') || ' ' || COALESCE(public.unaccent_immutable(TRANSLATE(REPLACE(${additionalEmailsColumn}::text, '@', ' '), '[]",', '    ')), '')`;
 
-      return [...baseExpressions, additionalEmailsExpression];
-    }
+			return [...baseExpressions, additionalEmailsExpression];
+		}
 
-    return baseExpressions;
-  }
-  const columnName = computeColumnName(fieldMetadataTypeAndName.name);
+		return baseExpressions;
+	}
+	const columnName = computeColumnName(fieldMetadataTypeAndName.name);
 
-  return [getColumnExpression(columnName, fieldMetadataTypeAndName.type)];
+	return [getColumnExpression(columnName, fieldMetadataTypeAndName.type)];
 };
 
 const getColumnExpression = (
-  columnName: string,
-  fieldType: FieldMetadataType,
+	columnName: string,
+	fieldType: FieldMetadataType,
 ): string => {
-  const quotedColumnName = escapeIdentifier(columnName);
+	const quotedColumnName = escapeIdentifier(columnName);
 
-  switch (fieldType) {
-    case FieldMetadataType.EMAILS:
-      return `
+	switch (fieldType) {
+		case FieldMetadataType.EMAILS:
+			return `
       COALESCE(public.unaccent_immutable(${quotedColumnName}), '') || ' ' ||
       COALESCE(public.unaccent_immutable(SPLIT_PART(${quotedColumnName}, '@', 2)), '')`;
 
-    case FieldMetadataType.PHONES:
-      return `COALESCE(${quotedColumnName}, '')`;
+		case FieldMetadataType.PHONES:
+			return `COALESCE(${quotedColumnName}, '')`;
 
-    case FieldMetadataType.UUID:
-      return `COALESCE(${quotedColumnName}::text, '')`;
+		case FieldMetadataType.UUID:
+			return `COALESCE(${quotedColumnName}::text, '')`;
 
-    default:
-      return `COALESCE(public.unaccent_immutable(${quotedColumnName}), '')`;
-  }
+		default:
+			return `COALESCE(public.unaccent_immutable(${quotedColumnName}), '')`;
+	}
 };

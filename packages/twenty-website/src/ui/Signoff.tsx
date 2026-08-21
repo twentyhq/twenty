@@ -1,19 +1,19 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { mediaUp, type Scheme, spacing } from '@/tokens';
+import { mediaUp, type Scheme, spacing } from "@/tokens";
 
-import { Body } from './Body';
-import { GuideCrosshair } from './GuideCrosshair';
-import { Heading } from './Heading';
-import { SectionShell } from './SectionShell';
+import { Body } from "./Body";
+import { GuideCrosshair } from "./GuideCrosshair";
+import { Heading } from "./Heading";
+import { SectionShell } from "./SectionShell";
 
-type SignoffCrosshairSide = 'left' | 'right';
+type SignoffCrosshairSide = "left" | "right";
 
-const SIGNOFF_CROSSHAIR_Y = '198px';
+const SIGNOFF_CROSSHAIR_Y = "198px";
 const SIGNOFF_CROSSHAIR_X: Record<SignoffCrosshairSide, string> = {
-  left: 'calc(50% - 334px)',
-  right: 'calc(50% + 334px)',
+	left: "calc(50% - 334px)",
+	right: "calc(50% + 334px)",
 };
 
 const SignoffStack = styled.div`
@@ -23,7 +23,7 @@ const SignoffStack = styled.div`
   padding-block: ${spacing(20)};
   text-align: center;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     justify-content: center;
     min-height: 759px;
     padding-block: 0;
@@ -51,44 +51,44 @@ const Actions = styled.div`
 `;
 
 export type SignoffProps = {
-  body: string;
-  children: ReactNode;
-  crosshairSide?: SignoffCrosshairSide;
-  heading: string;
-  scheme?: Scheme;
+	body: string;
+	children: ReactNode;
+	crosshairSide?: SignoffCrosshairSide;
+	heading: string;
+	scheme?: Scheme;
 };
 
 export function Signoff({
-  body,
-  children,
-  crosshairSide = 'right',
-  heading,
-  scheme = 'light',
+	body,
+	children,
+	crosshairSide = "right",
+	heading,
+	scheme = "light",
 }: SignoffProps) {
-  return (
-    <SectionShell
-      background={
-        <GuideCrosshair
-          crossX={SIGNOFF_CROSSHAIR_X[crosshairSide]}
-          crossY={SIGNOFF_CROSSHAIR_Y}
-        />
-      }
-      rhythm="flush"
-      scheme={scheme}
-    >
-      <SignoffStack>
-        <HeadingMeasure>
-          <Heading as="h2" size="lg" weight="light">
-            {heading}
-          </Heading>
-        </HeadingMeasure>
-        <Subline>
-          <Body muted size="sm">
-            {body}
-          </Body>
-        </Subline>
-        <Actions>{children}</Actions>
-      </SignoffStack>
-    </SectionShell>
-  );
+	return (
+		<SectionShell
+			background={
+				<GuideCrosshair
+					crossX={SIGNOFF_CROSSHAIR_X[crosshairSide]}
+					crossY={SIGNOFF_CROSSHAIR_Y}
+				/>
+			}
+			rhythm="flush"
+			scheme={scheme}
+		>
+			<SignoffStack>
+				<HeadingMeasure>
+					<Heading as="h2" size="lg" weight="light">
+						{heading}
+					</Heading>
+				</HeadingMeasure>
+				<Subline>
+					<Body muted size="sm">
+						{body}
+					</Body>
+				</Subline>
+				<Actions>{children}</Actions>
+			</SignoffStack>
+		</SectionShell>
+	);
 }

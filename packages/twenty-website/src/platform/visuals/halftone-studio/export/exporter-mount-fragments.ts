@@ -3,7 +3,7 @@
 // identical runtime JavaScript.
 
 function emitSizingHelpers() {
-  return `
+	return `
   const getWidth = () => Math.max(container.clientWidth, 1);
   const getHeight = () => Math.max(container.clientHeight, 1);
   const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
@@ -15,7 +15,7 @@ function emitSizingHelpers() {
 }
 
 function emitRendererSetup(cursor: string) {
-  return `
+	return `
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(1);
@@ -32,7 +32,7 @@ function emitRendererSetup(cursor: string) {
 }
 
 function emitBlurMaterials() {
-  return `
+	return `
   const blurHorizontalMaterial = new THREE.ShaderMaterial({
     uniforms: {
       tInput: { value: null },
@@ -55,14 +55,14 @@ function emitBlurMaterials() {
 }
 
 type HalftoneUniformOverrides = {
-  cropToBounds: number;
-  hoverHalftoneRadius: string;
-  hoverLightRadius: string;
-  waveSpeed: string;
+	cropToBounds: number;
+	hoverHalftoneRadius: string;
+	hoverLightRadius: string;
+	waveSpeed: string;
 };
 
 function emitHalftoneMaterial(overrides: HalftoneUniformOverrides) {
-  return `
+	return `
   const halftoneMaterial = new THREE.ShaderMaterial({
     transparent: true,
     uniforms: {
@@ -108,7 +108,7 @@ function emitHalftoneMaterial(overrides: HalftoneUniformOverrides) {
 }
 
 function emitPostScenes() {
-  return `
+	return `
   const blurHorizontalScene = new THREE.Scene();
   blurHorizontalScene.add(
     new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
@@ -122,7 +122,7 @@ function emitPostScenes() {
 }
 
 function emitBlurPasses() {
-  return `
+	return `
     blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
     renderer.setRenderTarget(blurTargetA);
     renderer.render(blurHorizontalScene, orthographicCamera);
@@ -145,14 +145,14 @@ function emitBlurPasses() {
 }
 
 function emitTimerSetup() {
-  return `
+	return `
   const clock = new THREE.Timer();
   clock.connect(document);
   let animationFrameId = 0;`;
 }
 
 function emitCleanup(extraDispose: string, extraListeners: string) {
-  return `
+	return `
   return () => {
     window.cancelAnimationFrame(animationFrameId);
     clock.dispose();
@@ -175,12 +175,12 @@ ${extraDispose}
 }
 
 export const HALFTONE_MOUNT_FRAGMENTS = {
-  sizingHelpers: emitSizingHelpers,
-  rendererSetup: emitRendererSetup,
-  blurMaterials: emitBlurMaterials,
-  halftoneMaterial: emitHalftoneMaterial,
-  postScenes: emitPostScenes,
-  blurPasses: emitBlurPasses,
-  timerSetup: emitTimerSetup,
-  cleanup: emitCleanup,
+	sizingHelpers: emitSizingHelpers,
+	rendererSetup: emitRendererSetup,
+	blurMaterials: emitBlurMaterials,
+	halftoneMaterial: emitHalftoneMaterial,
+	postScenes: emitPostScenes,
+	blurPasses: emitBlurPasses,
+	timerSetup: emitTimerSetup,
+	cleanup: emitCleanup,
 };

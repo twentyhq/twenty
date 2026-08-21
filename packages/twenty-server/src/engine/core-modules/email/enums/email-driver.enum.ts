@@ -1,4 +1,4 @@
 export enum EmailDriver {
-  LOGGER = 'LOGGER',
-  SMTP = 'SMTP',
+	LOGGER = "LOGGER",
+	SMTP = "SMTP",
 }

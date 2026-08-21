@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/month/constants/RecordCalendarCardDndType';
-import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
-import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
-import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
-import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { RECORD_CALENDAR_CARD_DND_TYPE } from "@/object-record/record-calendar/month/constants/RecordCalendarCardDndType";
+import { RecordCalendarCard } from "@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard";
+import { useIsRecordCalendarCardDragDisabled } from "@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled";
+import { getRecordCalendarCardDraggableId } from "@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId";
+import { DragDropItemSortableCell } from "@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell";
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -14,37 +14,37 @@ const StyledDraggableContainer = styled.div`
 `;
 
 export const RecordCalendarCardDraggableContainer = ({
-  calendarDay,
-  recordId,
-  index,
+	calendarDay,
+	recordId,
+	index,
 }: {
-  calendarDay: string;
-  recordId: string;
-  index: number;
+	calendarDay: string;
+	recordId: string;
+	index: number;
 }) => {
-  const dragIsDisabled = useIsRecordCalendarCardDragDisabled(recordId);
+	const dragIsDisabled = useIsRecordCalendarCardDragDisabled(recordId);
 
-  const draggableId = getRecordCalendarCardDraggableId({
-    calendarDay,
-    recordId,
-  });
+	const draggableId = getRecordCalendarCardDraggableId({
+		calendarDay,
+		recordId,
+	});
 
-  return (
-    <DragDropItemSortableCell
-      id={draggableId}
-      index={index}
-      group={calendarDay}
-      type={RECORD_CALENDAR_CARD_DND_TYPE}
-      accept={RECORD_CALENDAR_CARD_DND_TYPE}
-      disabled={dragIsDisabled}
-      fadeSourceWhileDragging
-    >
-      <StyledDraggableContainer
-        id={`record-calendar-card-${recordId}-${calendarDay}`}
-        data-selectable-id={recordId}
-      >
-        <RecordCalendarCard recordId={recordId} calendarDay={calendarDay} />
-      </StyledDraggableContainer>
-    </DragDropItemSortableCell>
-  );
+	return (
+		<DragDropItemSortableCell
+			id={draggableId}
+			index={index}
+			group={calendarDay}
+			type={RECORD_CALENDAR_CARD_DND_TYPE}
+			accept={RECORD_CALENDAR_CARD_DND_TYPE}
+			disabled={dragIsDisabled}
+			fadeSourceWhileDragging
+		>
+			<StyledDraggableContainer
+				id={`record-calendar-card-${recordId}-${calendarDay}`}
+				data-selectable-id={recordId}
+			>
+				<RecordCalendarCard recordId={recordId} calendarDay={calendarDay} />
+			</StyledDraggableContainer>
+		</DragDropItemSortableCell>
+	);
 };

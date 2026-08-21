@@ -1,22 +1,22 @@
-import { isAutoSelectModelId } from 'twenty-shared/utils';
+import { isAutoSelectModelId } from "twenty-shared/utils";
 
 export type WorkspaceModelAvailabilitySettings = {
-  useRecommendedModels: boolean;
-  enabledAiModelIds: string[];
+	useRecommendedModels: boolean;
+	enabledAiModelIds: string[];
 };
 
 export const isModelAllowedByWorkspace = (
-  modelId: string,
-  availabilitySettings: WorkspaceModelAvailabilitySettings,
-  recommendedModelIds?: Set<string>,
+	modelId: string,
+	availabilitySettings: WorkspaceModelAvailabilitySettings,
+	recommendedModelIds?: Set<string>,
 ): boolean => {
-  if (isAutoSelectModelId(modelId)) {
-    return true;
-  }
+	if (isAutoSelectModelId(modelId)) {
+		return true;
+	}
 
-  if (availabilitySettings.useRecommendedModels) {
-    return recommendedModelIds?.has(modelId) ?? false;
-  }
+	if (availabilitySettings.useRecommendedModels) {
+		return recommendedModelIds?.has(modelId) ?? false;
+	}
 
-  return availabilitySettings.enabledAiModelIds.includes(modelId);
+	return availabilitySettings.enabledAiModelIds.includes(modelId);
 };

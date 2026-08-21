@@ -1,18 +1,18 @@
-import { buildModuleImportContextPattern } from '@/utils/module-imports/buildModuleImportContextPattern';
+import { buildModuleImportContextPattern } from "@/utils/module-imports/buildModuleImportContextPattern";
 
 export const rewriteModuleImportsToBlobUrls = (
-  source: string,
-  blobUrlBySpecifier: Record<string, string>,
+	source: string,
+	blobUrlBySpecifier: Record<string, string>,
 ): string => {
-  let rewrittenSource = source;
+	let rewrittenSource = source;
 
-  for (const [specifier, blobUrl] of Object.entries(blobUrlBySpecifier)) {
-    rewrittenSource = rewrittenSource.replace(
-      buildModuleImportContextPattern(specifier),
-      (_fullMatch, importContext: string, quote: string) =>
-        `${importContext}${quote}${blobUrl}${quote}`,
-    );
-  }
+	for (const [specifier, blobUrl] of Object.entries(blobUrlBySpecifier)) {
+		rewrittenSource = rewrittenSource.replace(
+			buildModuleImportContextPattern(specifier),
+			(_fullMatch, importContext: string, quote: string) =>
+				`${importContext}${quote}${blobUrl}${quote}`,
+		);
+	}
 
-  return rewrittenSource;
+	return rewrittenSource;
 };

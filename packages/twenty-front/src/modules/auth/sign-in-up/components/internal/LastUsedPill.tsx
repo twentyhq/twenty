@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { Pill } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { Pill } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledPillContainer = styled.span`
   position: absolute;
@@ -20,17 +20,17 @@ const StyledPillContainer = styled.span`
 `;
 
 export const LastUsedPill = () => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  return (
-    <StyledPillContainer>
-      <Pill
-        label={t({
-          message: 'Last',
-          comment:
-            'Short label (keep brief) indicating the most recently used login method',
-        })}
-      />
-    </StyledPillContainer>
-  );
+	return (
+		<StyledPillContainer>
+			<Pill
+				label={t({
+					message: "Last",
+					comment:
+						"Short label (keep brief) indicating the most recently used login method",
+				})}
+			/>
+		</StyledPillContainer>
+	);
 };

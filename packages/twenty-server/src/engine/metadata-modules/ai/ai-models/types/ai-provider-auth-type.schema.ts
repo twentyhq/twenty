@@ -1,3 +1,3 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const aiProviderAuthTypeSchema = z.enum(['key', 'credentials', 'role']);
+export const aiProviderAuthTypeSchema = z.enum(["key", "credentials", "role"]);

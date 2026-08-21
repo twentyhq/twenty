@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 type GraphWidgetChartContainerProps = {
-  $isClickable?: boolean;
-  $cursorSelector?: string;
+	$isClickable?: boolean;
+	$cursorSelector?: string;
 };
 
 const StyledGraphWidgetChartContainer = styled.div<GraphWidgetChartContainerProps>`
@@ -11,13 +11,13 @@ const StyledGraphWidgetChartContainer = styled.div<GraphWidgetChartContainerProp
   width: 100%;
 
   ${({ $isClickable, $cursorSelector }) =>
-    $isClickable && $cursorSelector
-      ? `
+		$isClickable && $cursorSelector
+			? `
     ${$cursorSelector} {
       cursor: pointer;
     }
   `
-      : ''}
+			: ""}
 `;
 
 export const GraphWidgetChartContainer = StyledGraphWidgetChartContainer;

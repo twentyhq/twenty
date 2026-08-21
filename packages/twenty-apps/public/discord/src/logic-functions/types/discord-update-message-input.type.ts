@@ -1,5 +1,5 @@
 export type DiscordUpdateMessageInput = {
-  channelId: string;
-  messageId: string;
-  newMessageText: string;
+	channelId: string;
+	messageId: string;
+	newMessageText: string;
 };

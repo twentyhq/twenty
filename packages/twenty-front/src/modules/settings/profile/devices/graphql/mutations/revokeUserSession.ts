@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const REVOKE_USER_SESSION = gql`
   mutation RevokeUserSession($userSessionId: UUID!) {

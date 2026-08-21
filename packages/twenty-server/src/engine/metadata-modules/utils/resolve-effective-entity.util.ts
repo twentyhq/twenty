@@ -1,19 +1,19 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 type FlatEntityWithOverrides = {
-  [key: string]: unknown;
-  overrides: Record<string, unknown> | null;
+	[key: string]: unknown;
+	overrides: Record<string, unknown> | null;
 };
 
 export const resolveEffectiveEntity = <T extends FlatEntityWithOverrides>(
-  flatEntity: T,
+	flatEntity: T,
 ): T => {
-  if (!isDefined(flatEntity.overrides)) {
-    return flatEntity;
-  }
+	if (!isDefined(flatEntity.overrides)) {
+		return flatEntity;
+	}
 
-  return {
-    ...flatEntity,
-    ...flatEntity.overrides,
-  };
+	return {
+		...flatEntity,
+		...flatEntity.overrides,
+	};
 };

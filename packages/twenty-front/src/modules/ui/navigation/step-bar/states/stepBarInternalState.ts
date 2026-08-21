@@ -1,11 +1,11 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 export type StepsState = {
-  activeStep: number;
+	activeStep: number;
 };
 
 export const stepBarInternalState = createAtomState<StepsState>({
-  key: 'step-bar/internal-state',
-  defaultValue: {
-    activeStep: -1,
-  },
+	key: "step-bar/internal-state",
+	defaultValue: {
+		activeStep: -1,
+	},
 });

@@ -1,20 +1,20 @@
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type ObjectPermission } from "~/generated-metadata/graphql";
 
 type IsFieldMetadataReadOnlyByPermissionParams = {
-  objectPermissions: ObjectPermission;
-  fieldMetadataId: string;
+	objectPermissions: ObjectPermission;
+	fieldMetadataId: string;
 };
 
 export const isFieldMetadataReadOnlyByPermissions = ({
-  objectPermissions,
-  fieldMetadataId,
+	objectPermissions,
+	fieldMetadataId,
 }: IsFieldMetadataReadOnlyByPermissionParams) => {
-  if (objectPermissions.canUpdateObjectRecords === false) {
-    return true;
-  }
+	if (objectPermissions.canUpdateObjectRecords === false) {
+		return true;
+	}
 
-  const fieldMetadataIsRestrictedForUpdate =
-    objectPermissions.restrictedFields?.[fieldMetadataId]?.canUpdate === false;
+	const fieldMetadataIsRestrictedForUpdate =
+		objectPermissions.restrictedFields?.[fieldMetadataId]?.canUpdate === false;
 
-  return fieldMetadataIsRestrictedForUpdate;
+	return fieldMetadataIsRestrictedForUpdate;
 };

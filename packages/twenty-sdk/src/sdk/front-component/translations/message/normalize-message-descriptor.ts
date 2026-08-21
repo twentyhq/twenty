@@ -1,6 +1,6 @@
-import { type MessageDescriptor } from './message-descriptor.type';
+import { type MessageDescriptor } from "./message-descriptor.type";
 
 export const normalizeMessageDescriptor = (
-  descriptor: string | MessageDescriptor,
+	descriptor: string | MessageDescriptor,
 ): MessageDescriptor =>
-  typeof descriptor === 'string' ? { message: descriptor } : descriptor;
+	typeof descriptor === "string" ? { message: descriptor } : descriptor;

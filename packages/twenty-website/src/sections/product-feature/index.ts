@@ -1,1 +1,1 @@
-export { ProductFeature } from './ProductFeature';
+export { ProductFeature } from "./ProductFeature";

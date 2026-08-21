@@ -1,38 +1,38 @@
-import { useTriggerInstallAppsOnboardingStep } from '@/onboarding/hooks/useTriggerInstallAppsOnboardingStep';
-import { useEffect, useRef } from 'react';
+import { useTriggerInstallAppsOnboardingStep } from "@/onboarding/hooks/useTriggerInstallAppsOnboardingStep";
+import { useEffect, useRef } from "react";
 
 type InstallAppsAutoSkipEffectProps = {
-  onError: () => void;
+	onError: () => void;
 };
 
 export const InstallAppsAutoSkipEffect = ({
-  onError,
+	onError,
 }: InstallAppsAutoSkipEffectProps) => {
-  const triggerInstallAppsOnboardingStep =
-    useTriggerInstallAppsOnboardingStep();
+	const triggerInstallAppsOnboardingStep =
+		useTriggerInstallAppsOnboardingStep();
 
-  // oxlint-disable-next-line twenty/no-state-useref
-  const hasSkippedRef = useRef(false);
+	// oxlint-disable-next-line twenty/no-state-useref
+	const hasSkippedRef = useRef(false);
 
-  useEffect(() => {
-    if (hasSkippedRef.current) {
-      return;
-    }
-    hasSkippedRef.current = true;
+	useEffect(() => {
+		if (hasSkippedRef.current) {
+			return;
+		}
+		hasSkippedRef.current = true;
 
-    const skip = async () => {
-      try {
-        await triggerInstallAppsOnboardingStep({
-          universalIdentifiers: [],
-          isAutoSkipped: true,
-        });
-      } catch {
-        onError();
-      }
-    };
+		const skip = async () => {
+			try {
+				await triggerInstallAppsOnboardingStep({
+					universalIdentifiers: [],
+					isAutoSkipped: true,
+				});
+			} catch {
+				onError();
+			}
+		};
 
-    void skip();
-  }, [triggerInstallAppsOnboardingStep, onError]);
+		void skip();
+	}, [triggerInstallAppsOnboardingStep, onError]);
 
-  return null;
+	return null;
 };

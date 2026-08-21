@@ -1,41 +1,41 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { ViewFilterGroupLogicalOperator } from "twenty-shared/types";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
 registerEnumType(ViewFilterGroupLogicalOperator, {
-  name: 'ViewFilterGroupLogicalOperator',
+	name: "ViewFilterGroupLogicalOperator",
 });
 
-@ObjectType('ViewFilterGroup')
+@ObjectType("ViewFilterGroup")
 export class ViewFilterGroupDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  parentViewFilterGroupId?: string | null;
+	@Field(() => UUIDScalarType, { nullable: true })
+	parentViewFilterGroupId?: string | null;
 
-  @Field(() => ViewFilterGroupLogicalOperator, {
-    nullable: false,
-    defaultValue: ViewFilterGroupLogicalOperator.NOT,
-  })
-  logicalOperator: ViewFilterGroupLogicalOperator;
+	@Field(() => ViewFilterGroupLogicalOperator, {
+		nullable: false,
+		defaultValue: ViewFilterGroupLogicalOperator.NOT,
+	})
+	logicalOperator: ViewFilterGroupLogicalOperator;
 
-  @Field(() => Number, { nullable: true })
-  positionInViewFilterGroup?: number | null;
+	@Field(() => Number, { nullable: true })
+	positionInViewFilterGroup?: number | null;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  viewId: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	viewId: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  workspaceId: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	workspaceId: string;
 
-  @Field()
-  createdAt: Date;
+	@Field()
+	createdAt: Date;
 
-  @Field()
-  updatedAt: Date;
+	@Field()
+	updatedAt: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+	@Field(() => Date, { nullable: true })
+	deletedAt?: Date | null;
 }

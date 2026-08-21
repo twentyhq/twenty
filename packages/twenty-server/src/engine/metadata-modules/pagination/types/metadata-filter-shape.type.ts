@@ -1,4 +1,4 @@
 export type MetadataFilterShape<TFilter> = {
-  and?: TFilter[];
-  or?: TFilter[];
+	and?: TFilter[];
+	or?: TFilter[];
 };

@@ -1,14 +1,14 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
-import { workspaceLogoUrl } from '~/testing/mock-data/users';
+import { workspaceLogoUrl } from "~/testing/mock-data/users";
 
-import { ImageInput } from '@/ui/input/components/ImageInput';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ImageInput } from "@/ui/input/components/ImageInput";
+import { ComponentDecorator } from "twenty-ui/testing";
 
 const meta: Meta<typeof ImageInput> = {
-  title: 'UI/Input/ImageInput/ImageInput',
-  component: ImageInput,
-  decorators: [ComponentDecorator],
+	title: "UI/Input/ImageInput/ImageInput",
+	component: ImageInput,
+	decorators: [ComponentDecorator],
 };
 
 export default meta;

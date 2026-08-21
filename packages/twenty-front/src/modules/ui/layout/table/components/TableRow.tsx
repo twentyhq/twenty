@@ -1,39 +1,39 @@
-import { styled } from '@linaria/react';
-import { Link } from 'react-router-dom';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Link } from "react-router-dom";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledTableRow = styled.div<{
-  isSelected?: boolean;
-  isExpanded?: boolean;
-  onClick?: () => void;
-  to?: string;
-  gridAutoColumns?: string;
-  gridTemplateColumns?: string;
-  mobileGridAutoColumns?: string;
-  height?: string;
-  cursor?: string;
-  hoverBackgroundColor?: string;
+	isSelected?: boolean;
+	isExpanded?: boolean;
+	onClick?: () => void;
+	to?: string;
+	gridAutoColumns?: string;
+	gridTemplateColumns?: string;
+	mobileGridAutoColumns?: string;
+	height?: string;
+	cursor?: string;
+	hoverBackgroundColor?: string;
 }>`
   background-color: ${({ isSelected, isExpanded }) =>
-    isSelected
-      ? themeCssVariables.accent.quaternary
-      : isExpanded === true
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
+		isSelected
+			? themeCssVariables.accent.quaternary
+			: isExpanded === true
+				? themeCssVariables.background.transparent.light
+				: "transparent"};
   border-radius: ${themeCssVariables.border.radius.md};
-  cursor: ${({ cursor }) => cursor ?? 'default'};
+  cursor: ${({ cursor }) => cursor ?? "default"};
   display: grid;
-  grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? '1fr'};
+  grid-auto-columns: ${({ gridAutoColumns }) => gridAutoColumns ?? "1fr"};
   grid-auto-flow: column;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-auto-columns: ${({ mobileGridAutoColumns, gridAutoColumns }) =>
-      mobileGridAutoColumns ?? gridAutoColumns ?? '1fr'};
+			mobileGridAutoColumns ?? gridAutoColumns ?? "1fr"};
   }
 
   grid-template-columns: ${({ gridTemplateColumns }) =>
-    gridTemplateColumns ?? 'none'};
-  height: ${({ height }) => height ?? 'auto'};
+		gridTemplateColumns ?? "none"};
+  height: ${({ height }) => height ?? "auto"};
   text-decoration: none;
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s);
@@ -41,12 +41,14 @@ const StyledTableRow = styled.div<{
 
   &:hover {
     background-color: ${({ onClick, to, hoverBackgroundColor }) =>
-      hoverBackgroundColor ??
-      (onClick || to
-        ? themeCssVariables.background.transparent.light
-        : 'transparent')};
+			hoverBackgroundColor ??
+			(
+				onClick || to
+					? themeCssVariables.background.transparent.light
+					: "transparent"
+			)};
     cursor: ${({ onClick, to, cursor }) =>
-      cursor ?? (onClick || to ? 'pointer' : 'default')};
+			cursor ?? (onClick || to ? "pointer" : "default")};
   }
 
   &[data-clickable='true'] {
@@ -55,63 +57,63 @@ const StyledTableRow = styled.div<{
 `;
 
 type TableRowProps = {
-  id?: string;
-  isSelected?: boolean;
-  isExpanded?: boolean;
-  isClickable?: boolean;
-  onClick?: () => void;
-  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
-  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
-  to?: string;
-  className?: string;
-  style?: React.CSSProperties;
-  gridAutoColumns?: string;
-  gridTemplateColumns?: string;
-  mobileGridAutoColumns?: string;
-  height?: string;
-  cursor?: string;
-  hoverBackgroundColor?: string;
+	id?: string;
+	isSelected?: boolean;
+	isExpanded?: boolean;
+	isClickable?: boolean;
+	onClick?: () => void;
+	onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+	onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
+	to?: string;
+	className?: string;
+	style?: React.CSSProperties;
+	gridAutoColumns?: string;
+	gridTemplateColumns?: string;
+	mobileGridAutoColumns?: string;
+	height?: string;
+	cursor?: string;
+	hoverBackgroundColor?: string;
 };
 
 export const TableRow = ({
-  id,
-  isSelected,
-  isExpanded,
-  isClickable,
-  onClick,
-  onMouseEnter,
-  onMouseLeave,
-  to,
-  className,
-  style,
-  children,
-  gridAutoColumns,
-  gridTemplateColumns,
-  mobileGridAutoColumns,
-  height,
-  cursor,
-  hoverBackgroundColor,
+	id,
+	isSelected,
+	isExpanded,
+	isClickable,
+	onClick,
+	onMouseEnter,
+	onMouseLeave,
+	to,
+	className,
+	style,
+	children,
+	gridAutoColumns,
+	gridTemplateColumns,
+	mobileGridAutoColumns,
+	height,
+	cursor,
+	hoverBackgroundColor,
 }: React.PropsWithChildren<TableRowProps>) => (
-  <StyledTableRow
-    id={id}
-    isSelected={isSelected}
-    isExpanded={isExpanded}
-    onClick={onClick}
-    onMouseEnter={onMouseEnter}
-    onMouseLeave={onMouseLeave}
-    gridAutoColumns={gridAutoColumns}
-    gridTemplateColumns={gridTemplateColumns}
-    className={className}
-    style={style}
-    data-clickable={isClickable}
-    data-table-row
-    mobileGridAutoColumns={mobileGridAutoColumns}
-    height={height}
-    cursor={cursor}
-    hoverBackgroundColor={hoverBackgroundColor}
-    to={to}
-    as={to ? Link : 'div'}
-  >
-    {children}
-  </StyledTableRow>
+	<StyledTableRow
+		id={id}
+		isSelected={isSelected}
+		isExpanded={isExpanded}
+		onClick={onClick}
+		onMouseEnter={onMouseEnter}
+		onMouseLeave={onMouseLeave}
+		gridAutoColumns={gridAutoColumns}
+		gridTemplateColumns={gridTemplateColumns}
+		className={className}
+		style={style}
+		data-clickable={isClickable}
+		data-table-row
+		mobileGridAutoColumns={mobileGridAutoColumns}
+		height={height}
+		cursor={cursor}
+		hoverBackgroundColor={hoverBackgroundColor}
+		to={to}
+		as={to ? Link : "div"}
+	>
+		{children}
+	</StyledTableRow>
 );

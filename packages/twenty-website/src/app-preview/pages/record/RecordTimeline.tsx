@@ -1,18 +1,18 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 import {
-  IconCalendarEvent,
-  IconChevronUp,
-  IconCirclePlus,
-  IconEditCircle,
-  IconNotes,
-} from '@tabler/icons-react';
+	IconCalendarEvent,
+	IconChevronUp,
+	IconCirclePlus,
+	IconEditCircle,
+	IconNotes,
+} from "@tabler/icons-react";
 
-import { EASING } from '@/tokens';
+import { EASING } from "@/tokens";
 
-import { PersonAvatar } from '../../primitives/PersonAvatar';
-import { PreviewTag } from '../../primitives/PreviewTag';
-import { type RecordFieldValue, type TimelineEvent } from '../../types';
+import { PersonAvatar } from "../../primitives/PersonAvatar";
+import { PreviewTag } from "../../primitives/PreviewTag";
+import { type RecordFieldValue, type TimelineEvent } from "../../types";
 
 const TimelineFeed = styled.div`
   display: flex;
@@ -250,169 +250,169 @@ const TimelineCardText = styled.div`
   line-height: 1.4;
 `;
 
-function TimelineEventIcon({ kind }: { kind: TimelineEvent['kind'] }) {
-  const stroke = THEME_LIGHT.icon.stroke.sm;
-  switch (kind) {
-    case 'created':
-      return <IconCirclePlus size={16} stroke={stroke} />;
-    case 'updated':
-      return <IconEditCircle size={16} stroke={stroke} />;
-    case 'note':
-      return <IconNotes size={16} stroke={stroke} />;
-    case 'calendar':
-      return <IconCalendarEvent size={16} stroke={stroke} />;
-    default:
-      return null;
-  }
+function TimelineEventIcon({ kind }: { kind: TimelineEvent["kind"] }) {
+	const stroke = THEME_LIGHT.icon.stroke.sm;
+	switch (kind) {
+		case "created":
+			return <IconCirclePlus size={16} stroke={stroke} />;
+		case "updated":
+			return <IconEditCircle size={16} stroke={stroke} />;
+		case "note":
+			return <IconNotes size={16} stroke={stroke} />;
+		case "calendar":
+			return <IconCalendarEvent size={16} stroke={stroke} />;
+		default:
+			return null;
+	}
 }
 
 function TimelineDiffValue({ value }: { value: RecordFieldValue }) {
-  switch (value.type) {
-    case 'select':
-      return <PreviewTag color={value.color} label={value.value} />;
-    case 'person':
-      return (
-        <TimelineDiffPerson>
-          <PersonAvatar person={value} size={16} />
-          <TimelineValueText>{value.name}</TimelineValueText>
-        </TimelineDiffPerson>
-      );
-    case 'boolean':
-      return (
-        <TimelineValueText>{value.value ? 'True' : 'False'}</TimelineValueText>
-      );
-    case 'currency':
-    case 'text':
-      return <TimelineValueText>{value.value}</TimelineValueText>;
-    case 'link':
-      return (
-        <TimelineValueText>{value.label ?? value.value}</TimelineValueText>
-      );
-    default:
-      return null;
-  }
+	switch (value.type) {
+		case "select":
+			return <PreviewTag color={value.color} label={value.value} />;
+		case "person":
+			return (
+				<TimelineDiffPerson>
+					<PersonAvatar person={value} size={16} />
+					<TimelineValueText>{value.name}</TimelineValueText>
+				</TimelineDiffPerson>
+			);
+		case "boolean":
+			return (
+				<TimelineValueText>{value.value ? "True" : "False"}</TimelineValueText>
+			);
+		case "currency":
+		case "text":
+			return <TimelineValueText>{value.value}</TimelineValueText>;
+		case "link":
+			return (
+				<TimelineValueText>{value.label ?? value.value}</TimelineValueText>
+			);
+		default:
+			return null;
+	}
 }
 
 function TimelineEventSummary({ event }: { event: TimelineEvent }) {
-  const stroke = THEME_LIGHT.icon.stroke.sm;
-  switch (event.kind) {
-    case 'created':
-      return (
-        <>
-          <TimelineSubject>{event.subject}</TimelineSubject>
-          <TimelineAction>was created by</TimelineAction>
-          <TimelineActor>{event.actor}</TimelineActor>
-        </>
-      );
-    case 'note':
-      return (
-        <>
-          <TimelineActor>{event.actor}</TimelineActor>
-          <TimelineAction>created a note</TimelineAction>
-          <TimelineLinkedTitle>{event.title}</TimelineLinkedTitle>
-        </>
-      );
-    case 'calendar':
-      return (
-        <>
-          <TimelineActor>{event.actor}</TimelineActor>
-          <TimelineAction>added a calendar event</TimelineAction>
-          <TimelineSubject>{event.title}</TimelineSubject>
-          <TimelineToggle>
-            <IconChevronUp size={12} stroke={stroke} />
-          </TimelineToggle>
-        </>
-      );
-    case 'updated':
-      if (event.diffs.length === 1) {
-        return (
-          <>
-            <TimelineActor>{event.actor}</TimelineActor>
-            <TimelineAction>updated</TimelineAction>
-            <TimelineDiffLabel>{event.diffs[0].label}</TimelineDiffLabel>
-            <TimelineArrow>→</TimelineArrow>
-            <TimelineDiffValue value={event.diffs[0].value} />
-          </>
-        );
-      }
+	const stroke = THEME_LIGHT.icon.stroke.sm;
+	switch (event.kind) {
+		case "created":
+			return (
+				<>
+					<TimelineSubject>{event.subject}</TimelineSubject>
+					<TimelineAction>was created by</TimelineAction>
+					<TimelineActor>{event.actor}</TimelineActor>
+				</>
+			);
+		case "note":
+			return (
+				<>
+					<TimelineActor>{event.actor}</TimelineActor>
+					<TimelineAction>created a note</TimelineAction>
+					<TimelineLinkedTitle>{event.title}</TimelineLinkedTitle>
+				</>
+			);
+		case "calendar":
+			return (
+				<>
+					<TimelineActor>{event.actor}</TimelineActor>
+					<TimelineAction>added a calendar event</TimelineAction>
+					<TimelineSubject>{event.title}</TimelineSubject>
+					<TimelineToggle>
+						<IconChevronUp size={12} stroke={stroke} />
+					</TimelineToggle>
+				</>
+			);
+		case "updated":
+			if (event.diffs.length === 1) {
+				return (
+					<>
+						<TimelineActor>{event.actor}</TimelineActor>
+						<TimelineAction>updated</TimelineAction>
+						<TimelineDiffLabel>{event.diffs[0].label}</TimelineDiffLabel>
+						<TimelineArrow>→</TimelineArrow>
+						<TimelineDiffValue value={event.diffs[0].value} />
+					</>
+				);
+			}
 
-      return (
-        <>
-          <TimelineActor>{event.actor}</TimelineActor>
-          <TimelineAction>updated</TimelineAction>
-          <TimelineSubject>
-            {event.diffs.length} fields on {event.record}
-          </TimelineSubject>
-          <TimelineToggle>
-            <IconChevronUp size={12} stroke={stroke} />
-          </TimelineToggle>
-        </>
-      );
-    default:
-      return null;
-  }
+			return (
+				<>
+					<TimelineActor>{event.actor}</TimelineActor>
+					<TimelineAction>updated</TimelineAction>
+					<TimelineSubject>
+						{event.diffs.length} fields on {event.record}
+					</TimelineSubject>
+					<TimelineToggle>
+						<IconChevronUp size={12} stroke={stroke} />
+					</TimelineToggle>
+				</>
+			);
+		default:
+			return null;
+	}
 }
 
 function TimelineEventCard({ event }: { event: TimelineEvent }) {
-  if (event.kind === 'updated' && event.diffs.length > 1) {
-    return (
-      <TimelineCardOuter>
-        <TimelineCardInner>
-          {event.diffs.map((diff) => (
-            <TimelineDiffRow key={diff.label}>
-              <TimelineDiffLabel>{diff.label}</TimelineDiffLabel>
-              <TimelineArrow>→</TimelineArrow>
-              <TimelineDiffValue value={diff.value} />
-            </TimelineDiffRow>
-          ))}
-        </TimelineCardInner>
-      </TimelineCardOuter>
-    );
-  }
+	if (event.kind === "updated" && event.diffs.length > 1) {
+		return (
+			<TimelineCardOuter>
+				<TimelineCardInner>
+					{event.diffs.map((diff) => (
+						<TimelineDiffRow key={diff.label}>
+							<TimelineDiffLabel>{diff.label}</TimelineDiffLabel>
+							<TimelineArrow>→</TimelineArrow>
+							<TimelineDiffValue value={diff.value} />
+						</TimelineDiffRow>
+					))}
+				</TimelineCardInner>
+			</TimelineCardOuter>
+		);
+	}
 
-  if (event.kind === 'calendar') {
-    return (
-      <TimelineCardOuter>
-        <TimelineCardInner>
-          <TimelineCardTitle>{event.title}</TimelineCardTitle>
-          <TimelineCardText>{event.detail}</TimelineCardText>
-        </TimelineCardInner>
-      </TimelineCardOuter>
-    );
-  }
+	if (event.kind === "calendar") {
+		return (
+			<TimelineCardOuter>
+				<TimelineCardInner>
+					<TimelineCardTitle>{event.title}</TimelineCardTitle>
+					<TimelineCardText>{event.detail}</TimelineCardText>
+				</TimelineCardInner>
+			</TimelineCardOuter>
+		);
+	}
 
-  return null;
+	return null;
 }
 
 export function RecordTimeline({ timeline }: { timeline: TimelineEvent[] }) {
-  return (
-    <TimelineFeed>
-      <MonthSeparator>
-        Today
-        <MonthSeparatorLine />
-      </MonthSeparator>
-      <TimelineGroup>
-        <TimelineRail />
-        {timeline.map((event, index) => (
-          <TimelineRow $index={index} key={event.id}>
-            <TimelineGutter>
-              <TimelineIconBox>
-                <TimelineEventIcon kind={event.kind} />
-              </TimelineIconBox>
-              <TimelineConnector $hidden={index === timeline.length - 1} />
-            </TimelineGutter>
-            <TimelineMain>
-              <TimelineSummary>
-                <TimelineSummaryLeft>
-                  <TimelineEventSummary event={event} />
-                </TimelineSummaryLeft>
-                <TimelineTime>{event.time}</TimelineTime>
-              </TimelineSummary>
-              <TimelineEventCard event={event} />
-            </TimelineMain>
-          </TimelineRow>
-        ))}
-      </TimelineGroup>
-    </TimelineFeed>
-  );
+	return (
+		<TimelineFeed>
+			<MonthSeparator>
+				Today
+				<MonthSeparatorLine />
+			</MonthSeparator>
+			<TimelineGroup>
+				<TimelineRail />
+				{timeline.map((event, index) => (
+					<TimelineRow $index={index} key={event.id}>
+						<TimelineGutter>
+							<TimelineIconBox>
+								<TimelineEventIcon kind={event.kind} />
+							</TimelineIconBox>
+							<TimelineConnector $hidden={index === timeline.length - 1} />
+						</TimelineGutter>
+						<TimelineMain>
+							<TimelineSummary>
+								<TimelineSummaryLeft>
+									<TimelineEventSummary event={event} />
+								</TimelineSummaryLeft>
+								<TimelineTime>{event.time}</TimelineTime>
+							</TimelineSummary>
+							<TimelineEventCard event={event} />
+						</TimelineMain>
+					</TimelineRow>
+				))}
+			</TimelineGroup>
+		</TimelineFeed>
+	);
 }

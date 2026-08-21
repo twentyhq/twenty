@@ -1,21 +1,21 @@
-import { v4 } from 'uuid';
+import { v4 } from "uuid";
 
 export const getObjectBaseFile = ({
-  data,
-  universalIdentifier = v4(),
-  nameFieldUniversalIdentifier = v4(),
+	data,
+	universalIdentifier = v4(),
+	nameFieldUniversalIdentifier = v4(),
 }: {
-  data: {
-    nameSingular: string;
-    namePlural: string;
-    labelSingular: string;
-    labelPlural: string;
-  };
-  name: string;
-  universalIdentifier?: string;
-  nameFieldUniversalIdentifier?: string;
+	data: {
+		nameSingular: string;
+		namePlural: string;
+		labelSingular: string;
+		labelPlural: string;
+	};
+	name: string;
+	universalIdentifier?: string;
+	nameFieldUniversalIdentifier?: string;
 }) => {
-  return `import { defineObject, FieldType } from 'twenty-sdk/define';
+	return `import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
   '${nameFieldUniversalIdentifier}';

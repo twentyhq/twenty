@@ -1,4 +1,4 @@
 export type EmailRecipient = {
-  address: string;
-  displayName?: string;
+	address: string;
+	displayName?: string;
 };

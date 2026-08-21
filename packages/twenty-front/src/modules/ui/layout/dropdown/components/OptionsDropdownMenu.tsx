@@ -1,98 +1,98 @@
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useId } from 'react';
-import { IconDotsVertical } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { SIDE_PANEL_FOCUS_ID } from "@/side-panel/constants/SidePanelFocusId";
+import { Dropdown } from "@/ui/layout/dropdown/components/Dropdown";
+import { DropdownContent } from "@/ui/layout/dropdown/components/DropdownContent";
+import { DropdownMenuItemsContainer } from "@/ui/layout/dropdown/components/DropdownMenuItemsContainer";
+import { useToggleDropdown } from "@/ui/layout/dropdown/hooks/useToggleDropdown";
+import { SelectableList } from "@/ui/layout/selectable-list/components/SelectableList";
+import { useSelectableList } from "@/ui/layout/selectable-list/hooks/useSelectableList";
+import { useHotkeysOnFocusedElement } from "@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement";
+import { useLingui } from "@lingui/react/macro";
+import { type ReactNode, useId } from "react";
+import { IconDotsVertical } from "twenty-ui/icon";
+import { IconButton } from "twenty-ui/input";
 
 type OptionsDropdownMenuProps = {
-  dropdownId?: string;
-  selectableListId?: string;
-  selectableItemIdArray?: string[];
-  onOpen?: () => void;
-  children: ReactNode;
+	dropdownId?: string;
+	selectableListId?: string;
+	selectableItemIdArray?: string[];
+	onOpen?: () => void;
+	children: ReactNode;
 };
 
 export const OptionsDropdownMenu = ({
-  dropdownId: dropdownIdFromProps,
-  selectableListId,
-  selectableItemIdArray = [],
-  onOpen,
-  children,
+	dropdownId: dropdownIdFromProps,
+	selectableListId,
+	selectableItemIdArray = [],
+	onOpen,
+	children,
 }: OptionsDropdownMenuProps) => {
-  const generatedDropdownId = useId();
-  const dropdownId = dropdownIdFromProps ?? generatedDropdownId;
-  const { t } = useLingui();
-  const { toggleDropdown } = useToggleDropdown();
+	const generatedDropdownId = useId();
+	const dropdownId = dropdownIdFromProps ?? generatedDropdownId;
+	const { t } = useLingui();
+	const { toggleDropdown } = useToggleDropdown();
 
-  const listId = selectableListId ?? dropdownId;
-  const { setSelectedItemId } = useSelectableList(listId);
+	const listId = selectableListId ?? dropdownId;
+	const { setSelectedItemId } = useSelectableList(listId);
 
-  const handleOpen = () => {
-    if (selectableItemIdArray.length > 0) {
-      setSelectedItemId(selectableItemIdArray[0]);
-    }
-    onOpen?.();
-  };
+	const handleOpen = () => {
+		if (selectableItemIdArray.length > 0) {
+			setSelectedItemId(selectableItemIdArray[0]);
+		}
+		onOpen?.();
+	};
 
-  const hotkeysConfig = {
-    keys: ['ctrl+o', 'meta+o'],
-    callback: () => {
-      toggleDropdown({
-        dropdownComponentInstanceIdFromProps: dropdownId,
-      });
-    },
-    dependencies: [toggleDropdown, dropdownId],
-  };
+	const hotkeysConfig = {
+		keys: ["ctrl+o", "meta+o"],
+		callback: () => {
+			toggleDropdown({
+				dropdownComponentInstanceIdFromProps: dropdownId,
+			});
+		},
+		dependencies: [toggleDropdown, dropdownId],
+	};
 
-  useHotkeysOnFocusedElement({
-    ...hotkeysConfig,
-    focusId: SIDE_PANEL_FOCUS_ID,
-  });
+	useHotkeysOnFocusedElement({
+		...hotkeysConfig,
+		focusId: SIDE_PANEL_FOCUS_ID,
+	});
 
-  useHotkeysOnFocusedElement({
-    ...hotkeysConfig,
-    focusId: dropdownId,
-  });
+	useHotkeysOnFocusedElement({
+		...hotkeysConfig,
+		focusId: dropdownId,
+	});
 
-  return (
-    <Dropdown
-      dropdownId={dropdownId}
-      data-select-disable
-      clickableComponent={
-        <IconButton
-          Icon={IconDotsVertical}
-          ariaLabel={t`Options`}
-          size="small"
-          variant="primary"
-        />
-      }
-      dropdownPlacement="top-end"
-      dropdownOffset={{ y: 8 }}
-      globalHotkeysConfig={{
-        enableGlobalHotkeysWithModifiers: true,
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      }}
-      onOpen={handleOpen}
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <SelectableList
-              selectableListInstanceId={listId}
-              focusId={dropdownId}
-              selectableItemIdArray={selectableItemIdArray}
-            >
-              {children}
-            </SelectableList>
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
-  );
+	return (
+		<Dropdown
+			dropdownId={dropdownId}
+			data-select-disable
+			clickableComponent={
+				<IconButton
+					Icon={IconDotsVertical}
+					ariaLabel={t`Options`}
+					size="small"
+					variant="primary"
+				/>
+			}
+			dropdownPlacement="top-end"
+			dropdownOffset={{ y: 8 }}
+			globalHotkeysConfig={{
+				enableGlobalHotkeysWithModifiers: true,
+				enableGlobalHotkeysConflictingWithKeyboard: false,
+			}}
+			onOpen={handleOpen}
+			dropdownComponents={
+				<DropdownContent>
+					<DropdownMenuItemsContainer>
+						<SelectableList
+							selectableListInstanceId={listId}
+							focusId={dropdownId}
+							selectableItemIdArray={selectableItemIdArray}
+						>
+							{children}
+						</SelectableList>
+					</DropdownMenuItemsContainer>
+				</DropdownContent>
+			}
+		/>
+	);
 };

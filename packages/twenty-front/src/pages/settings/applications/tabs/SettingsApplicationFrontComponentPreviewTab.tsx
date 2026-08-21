@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Suspense, lazy } from 'react';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { Suspense, lazy } from "react";
+import { Section } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
+import { FrontComponentSkeletonLoader } from "@/front-components/components/FrontComponentSkeletonLoader";
 
 const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
+	import("@/front-components/components/FrontComponentRenderer").then(
+		(module) => ({ default: module.FrontComponentRenderer }),
+	),
 );
 
 const StyledPreviewFrame = styled.div`
@@ -48,33 +48,33 @@ const StyledRendererContainer = styled.div`
 `;
 
 type SettingsApplicationFrontComponentPreviewTabProps = {
-  frontComponentId: string;
-  isHeadless: boolean;
+	frontComponentId: string;
+	isHeadless: boolean;
 };
 
 export const SettingsApplicationFrontComponentPreviewTab = ({
-  frontComponentId,
-  isHeadless,
+	frontComponentId,
+	isHeadless,
 }: SettingsApplicationFrontComponentPreviewTabProps) => {
-  return (
-    <Section>
-      <StyledPreviewFrame>
-        {isHeadless ? (
-          <StyledHeadlessNotice>
-            <StyledHeadlessTitle>{t`Headless component`}</StyledHeadlessTitle>
-            <span>{t`This component runs without a UI and renders nothing here.`}</span>
-          </StyledHeadlessNotice>
-        ) : (
-          <StyledRendererContainer>
-            <Suspense fallback={<FrontComponentSkeletonLoader />}>
-              <FrontComponentRenderer
-                frontComponentId={frontComponentId}
-                loadingFallback={<FrontComponentSkeletonLoader />}
-              />
-            </Suspense>
-          </StyledRendererContainer>
-        )}
-      </StyledPreviewFrame>
-    </Section>
-  );
+	return (
+		<Section>
+			<StyledPreviewFrame>
+				{isHeadless ? (
+					<StyledHeadlessNotice>
+						<StyledHeadlessTitle>{t`Headless component`}</StyledHeadlessTitle>
+						<span>{t`This component runs without a UI and renders nothing here.`}</span>
+					</StyledHeadlessNotice>
+				) : (
+					<StyledRendererContainer>
+						<Suspense fallback={<FrontComponentSkeletonLoader />}>
+							<FrontComponentRenderer
+								frontComponentId={frontComponentId}
+								loadingFallback={<FrontComponentSkeletonLoader />}
+							/>
+						</Suspense>
+					</StyledRendererContainer>
+				)}
+			</StyledPreviewFrame>
+		</Section>
+	);
 };

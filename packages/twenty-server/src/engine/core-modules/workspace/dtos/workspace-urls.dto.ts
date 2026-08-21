@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('WorkspaceUrls')
+@ObjectType("WorkspaceUrls")
 export class WorkspaceUrlsDTO {
-  @Field(() => String, { nullable: true })
-  customUrl?: string;
+	@Field(() => String, { nullable: true })
+	customUrl?: string;
 
-  @Field(() => String)
-  subdomainUrl: string;
+	@Field(() => String)
+	subdomainUrl: string;
 }

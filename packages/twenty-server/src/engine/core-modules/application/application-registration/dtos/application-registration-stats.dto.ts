@@ -1,22 +1,22 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('VersionDistributionEntry')
+@ObjectType("VersionDistributionEntry")
 export class VersionDistributionEntryDTO {
-  @Field(() => String)
-  version: string;
+	@Field(() => String)
+	version: string;
 
-  @Field(() => Int)
-  count: number;
+	@Field(() => Int)
+	count: number;
 }
 
-@ObjectType('ApplicationRegistrationStats')
+@ObjectType("ApplicationRegistrationStats")
 export class ApplicationRegistrationStatsDTO {
-  @Field(() => Int)
-  activeInstalls: number;
+	@Field(() => Int)
+	activeInstalls: number;
 
-  @Field(() => String, { nullable: true })
-  mostInstalledVersion: string | null;
+	@Field(() => String, { nullable: true })
+	mostInstalledVersion: string | null;
 
-  @Field(() => [VersionDistributionEntryDTO])
-  versionDistribution: VersionDistributionEntryDTO[];
+	@Field(() => [VersionDistributionEntryDTO])
+	versionDistribution: VersionDistributionEntryDTO[];
 }

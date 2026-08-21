@@ -1,2 +1,2 @@
 export const isImportantPriorityKeyword = (priority: string): boolean =>
-  priority.toLowerCase() === 'important';
+	priority.toLowerCase() === "important";

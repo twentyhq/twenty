@@ -1,19 +1,19 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { CurrencyCode } from 'twenty-shared/constants';
+import { Dropdown } from "@/ui/layout/dropdown/components/Dropdown";
+import { CurrencyCode } from "twenty-shared/constants";
 
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
-import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useContext } from 'react';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { CURRENCIES } from "@/settings/data-model/constants/Currencies";
+import { type Currency } from "@/ui/input/components/internal/types/Currency";
+import { useCloseDropdown } from "@/ui/layout/dropdown/hooks/useCloseDropdown";
+import { useContext } from "react";
+import { IconChevronDown } from "twenty-ui/icon";
+import { CurrencyPickerDropdownSelect } from "./CurrencyPickerDropdownSelect";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
-  color: ${({ color }) => color ?? 'none'};
+  color: ${({ color }) => color ?? "none"};
   cursor: pointer;
   display: flex;
   height: 32px;
@@ -42,47 +42,47 @@ const StyledIconContainer = styled.div`
 `;
 
 export const CurrencyPickerDropdownButton = ({
-  selectedCurrencyCode,
-  onChange,
+	selectedCurrencyCode,
+	onChange,
 }: {
-  selectedCurrencyCode: string;
-  onChange: (currency: Currency) => void;
+	selectedCurrencyCode: string;
+	onChange: (currency: Currency) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
-  const dropdownId = 'currency-picker-dropdown-id';
+	const { theme } = useContext(ThemeContext);
+	const dropdownId = "currency-picker-dropdown-id";
 
-  const { closeDropdown } = useCloseDropdown();
+	const { closeDropdown } = useCloseDropdown();
 
-  const handleChange = (currency: Currency) => {
-    onChange(currency);
-    closeDropdown(dropdownId);
-  };
+	const handleChange = (currency: Currency) => {
+		onChange(currency);
+		closeDropdown(dropdownId);
+	};
 
-  const currency = CURRENCIES.find(
-    ({ value }) => value === selectedCurrencyCode,
-  );
+	const currency = CURRENCIES.find(
+		({ value }) => value === selectedCurrencyCode,
+	);
 
-  const currencyCode = currency?.value ?? CurrencyCode.USD;
+	const currencyCode = currency?.value ?? CurrencyCode.USD;
 
-  return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <StyledDropdownButtonContainer>
-          <StyledIconContainer>
-            {currencyCode}
-            <IconChevronDown size={theme.icon.size.sm} />
-          </StyledIconContainer>
-        </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <CurrencyPickerDropdownSelect
-          selectedCurrency={currency}
-          onChange={handleChange}
-        />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{ x: 0, y: 4 }}
-    />
-  );
+	return (
+		<Dropdown
+			dropdownId={dropdownId}
+			clickableComponent={
+				<StyledDropdownButtonContainer>
+					<StyledIconContainer>
+						{currencyCode}
+						<IconChevronDown size={theme.icon.size.sm} />
+					</StyledIconContainer>
+				</StyledDropdownButtonContainer>
+			}
+			dropdownComponents={
+				<CurrencyPickerDropdownSelect
+					selectedCurrency={currency}
+					onChange={handleChange}
+				/>
+			}
+			dropdownPlacement="bottom-start"
+			dropdownOffset={{ x: 0, y: 4 }}
+		/>
+	);
 };

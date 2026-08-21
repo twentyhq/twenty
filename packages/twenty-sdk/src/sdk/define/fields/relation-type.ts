@@ -1,1 +1,1 @@
-export { RelationType } from 'twenty-shared/types';
+export { RelationType } from "twenty-shared/types";

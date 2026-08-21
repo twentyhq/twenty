@@ -1,18 +1,18 @@
 import {
-  JsonTreeContext,
-  type JsonTreeContextType,
-} from '@ui/json-visualizer/contexts/JsonTreeContext';
+	JsonTreeContext,
+	type JsonTreeContextType,
+} from "@ui/json-visualizer/contexts/JsonTreeContext";
 
 export const JsonTreeContextProvider = ({
-  value,
-  children,
+	value,
+	children,
 }: {
-  value: JsonTreeContextType;
-  children: React.ReactNode;
+	value: JsonTreeContextType;
+	children: React.ReactNode;
 }) => {
-  return (
-    <JsonTreeContext.Provider value={value}>
-      {children}
-    </JsonTreeContext.Provider>
-  );
+	return (
+		<JsonTreeContext.Provider value={value}>
+			{children}
+		</JsonTreeContext.Provider>
+	);
 };

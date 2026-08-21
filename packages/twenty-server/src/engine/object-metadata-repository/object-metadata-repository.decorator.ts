@@ -1,14 +1,14 @@
-import { Inject } from '@nestjs/common';
+import { Inject } from "@nestjs/common";
 
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
+import { convertClassNameToObjectMetadataName } from "src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util";
 
 // oxlint-disable-next-line typescript/no-explicit-any
 export const InjectObjectMetadataRepository = (objectMetadata: any) => {
-  const token = `${capitalize(
-    convertClassNameToObjectMetadataName(objectMetadata.name),
-  )}Repository`;
+	const token = `${capitalize(
+		convertClassNameToObjectMetadataName(objectMetadata.name),
+	)}Repository`;
 
-  return Inject(token);
+	return Inject(token);
 };

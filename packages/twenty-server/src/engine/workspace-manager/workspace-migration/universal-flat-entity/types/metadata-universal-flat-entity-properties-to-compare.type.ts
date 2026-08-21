@@ -1,75 +1,74 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
-import { type Equal, type Expect } from 'twenty-shared/testing';
+import { type AllMetadataName } from "twenty-shared/metadata";
+import { type Equal, type Expect } from "twenty-shared/testing";
 
 import {
-  type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
-  type MetadataEntityComparablePropertyName,
-} from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+	type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
+	type MetadataEntityComparablePropertyName,
+} from "src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant";
+import { type MetadataUniversalFlatEntity } from "src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type";
 
 type ExtractPropertyToCompare<
-  MetadataConfig,
-  P extends keyof MetadataConfig,
+	MetadataConfig,
+	P extends keyof MetadataConfig,
 > = MetadataConfig[P] extends { universalProperty: string }
-  ? MetadataConfig[P]['universalProperty']
-  : P;
+	? MetadataConfig[P]["universalProperty"]
+	: P;
 
 export type MetadataUniversalFlatEntityPropertiesToCompare<
-  T extends AllMetadataName,
-  MetadataConfig =
-    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
-  TComparedKeys extends keyof MetadataConfig =
-    MetadataEntityComparablePropertyName<T> & keyof MetadataConfig,
+	T extends AllMetadataName,
+	MetadataConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
+	TComparedKeys extends
+		keyof MetadataConfig = MetadataEntityComparablePropertyName<T> &
+		keyof MetadataConfig,
 > = {
-  [P in TComparedKeys]: ExtractPropertyToCompare<MetadataConfig, P>;
+	[P in TComparedKeys]: ExtractPropertyToCompare<MetadataConfig, P>;
 }[TComparedKeys] &
-  keyof MetadataUniversalFlatEntity<T>;
+	keyof MetadataUniversalFlatEntity<T>;
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
-  Expect<
-    Equal<
-      MetadataUniversalFlatEntityPropertiesToCompare<'fieldMetadata'>,
-      | 'name'
-      | 'label'
-      | 'icon'
-      | 'description'
-      | 'isActive'
-      | 'defaultValue'
-      | 'overrides'
-      | 'options'
-      | 'isUnique'
-      | 'isLabelSyncedWithName'
-      | 'isUIEditable'
-      | 'writability'
-      | 'isNullable'
-      | 'universalSettings'
-    >
-  >,
-
-  Expect<
-    Equal<
-      MetadataUniversalFlatEntityPropertiesToCompare<'view'>,
-      | 'name'
-      | 'icon'
-      | 'deletedAt'
-      | 'type'
-      | 'position'
-      | 'isCompact'
-      | 'openRecordIn'
-      | 'kanbanAggregateOperation'
-      | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'
-      | 'calendarLayout'
-      | 'calendarFieldMetadataUniversalIdentifier'
-      | 'calendarEndFieldMetadataUniversalIdentifier'
-      | 'mainGroupByFieldMetadataUniversalIdentifier'
-      | 'shouldHideEmptyGroups'
-      | 'kanbanColumnWidth'
-      | 'anyFieldFilterValue'
-      | 'visibility'
-      | 'createdByUserWorkspaceId'
-      | 'isActive'
-      | 'universalOverrides'
-    >
-  >,
+	Expect<
+		Equal<
+			MetadataUniversalFlatEntityPropertiesToCompare<"fieldMetadata">,
+			| "name"
+			| "label"
+			| "icon"
+			| "description"
+			| "isActive"
+			| "defaultValue"
+			| "overrides"
+			| "options"
+			| "isUnique"
+			| "isLabelSyncedWithName"
+			| "isUIEditable"
+			| "writability"
+			| "isNullable"
+			| "universalSettings"
+		>
+	>,
+	Expect<
+		Equal<
+			MetadataUniversalFlatEntityPropertiesToCompare<"view">,
+			| "name"
+			| "icon"
+			| "deletedAt"
+			| "type"
+			| "position"
+			| "isCompact"
+			| "openRecordIn"
+			| "kanbanAggregateOperation"
+			| "kanbanAggregateOperationFieldMetadataUniversalIdentifier"
+			| "calendarLayout"
+			| "calendarFieldMetadataUniversalIdentifier"
+			| "calendarEndFieldMetadataUniversalIdentifier"
+			| "mainGroupByFieldMetadataUniversalIdentifier"
+			| "shouldHideEmptyGroups"
+			| "kanbanColumnWidth"
+			| "anyFieldFilterValue"
+			| "visibility"
+			| "createdByUserWorkspaceId"
+			| "isActive"
+			| "universalOverrides"
+		>
+	>,
 ];

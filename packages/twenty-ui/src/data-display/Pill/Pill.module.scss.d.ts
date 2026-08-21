@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly pill: 'pill';
+	readonly pill: "pill";
 };
 export default classNames;

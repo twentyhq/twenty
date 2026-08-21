@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from "@sniptt/guards";
 
 export const isUndefinedOrNull = (value: any): value is null | undefined =>
-  isUndefined(value) || isNull(value);
+	isUndefined(value) || isNull(value);

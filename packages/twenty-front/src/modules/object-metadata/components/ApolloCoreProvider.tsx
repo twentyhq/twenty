@@ -1,17 +1,17 @@
-import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
+import { useApolloFactory } from "@/apollo/hooks/useApolloFactory";
 
-import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
+import { ApolloCoreClientContext } from "@/object-metadata/contexts/ApolloCoreClientContext";
 
 export const ApolloCoreProvider = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => {
-  const apolloCoreClient = useApolloFactory();
+	const apolloCoreClient = useApolloFactory();
 
-  return (
-    <ApolloCoreClientContext.Provider value={apolloCoreClient}>
-      {children}
-    </ApolloCoreClientContext.Provider>
-  );
+	return (
+		<ApolloCoreClientContext.Provider value={apolloCoreClient}>
+			{children}
+		</ApolloCoreClientContext.Provider>
+	);
 };

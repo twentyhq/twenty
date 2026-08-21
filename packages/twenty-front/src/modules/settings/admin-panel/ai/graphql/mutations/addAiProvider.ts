@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ADD_AI_PROVIDER = gql`
   mutation AddAiProvider($providerName: String!, $providerConfig: JSON!) {

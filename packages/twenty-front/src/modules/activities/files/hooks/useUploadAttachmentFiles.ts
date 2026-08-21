@@ -1,20 +1,20 @@
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useUploadAttachmentFile } from "@/activities/files/hooks/useUploadAttachmentFile";
+import { type ActivityTargetableObject } from "@/activities/types/ActivityTargetableEntity";
 
 export const useUploadAttachmentFiles = () => {
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
+	const { uploadAttachmentFile } = useUploadAttachmentFile();
 
-  const uploadAttachmentFiles = async ({
-    files,
-    targetableObject,
-  }: {
-    files: File[];
-    targetableObject: ActivityTargetableObject;
-  }) => {
-    for (const file of files) {
-      await uploadAttachmentFile(file, targetableObject);
-    }
-  };
+	const uploadAttachmentFiles = async ({
+		files,
+		targetableObject,
+	}: {
+		files: File[];
+		targetableObject: ActivityTargetableObject;
+	}) => {
+		for (const file of files) {
+			await uploadAttachmentFile(file, targetableObject);
+		}
+	};
 
-  return { uploadAttachmentFiles };
+	return { uploadAttachmentFiles };
 };

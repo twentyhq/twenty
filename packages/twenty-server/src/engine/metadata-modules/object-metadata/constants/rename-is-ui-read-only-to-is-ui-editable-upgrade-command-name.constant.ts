@@ -5,4 +5,4 @@
 // is applied, the new columns are hidden from TypeORM and the legacy
 // isUIReadOnly column is still written.
 export const RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME =
-  '2.13.0_RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand_1781277453604';
+	"2.13.0_RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand_1781277453604";

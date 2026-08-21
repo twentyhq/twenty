@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
+import { styled } from "@linaria/react";
+import { type CSSProperties } from "react";
 
-import { color, MAX_CONTENT_WIDTH_PX, mediaUp, semanticColor } from '@/tokens';
+import { color, MAX_CONTENT_WIDTH_PX, mediaUp, semanticColor } from "@/tokens";
 
 // Decorative guide lines crossing at a point, with a gap and a blue plus at
 // the intersection — desktop only. Position arrives via CSS variables.
 const CrosshairRoot = styled.div`
   display: none;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: block;
     inset: 0;
     pointer-events: none;
@@ -72,7 +72,7 @@ const CrosshairRoot = styled.div`
     width: 12px;
 
     &::before {
-      background: ${color('blue')};
+      background: ${color("blue")};
       content: '';
       height: 100%;
       left: 50%;
@@ -83,7 +83,7 @@ const CrosshairRoot = styled.div`
     }
 
     &::after {
-      background: ${color('blue')};
+      background: ${color("blue")};
       content: '';
       height: 1px;
       left: 0;
@@ -96,13 +96,13 @@ const CrosshairRoot = styled.div`
 `;
 
 export type GuideCrosshairProps = {
-  // Bounds the lines to the content max-width instead of the full section, so
-  // they stay within the content column rather than bleeding into the gutters.
-  contained?: boolean;
-  crossX: string;
-  crossY: string;
-  // Scenes that draw their own full-height vertical guide disable these.
-  verticalLines?: boolean;
+	// Bounds the lines to the content max-width instead of the full section, so
+	// they stay within the content column rather than bleeding into the gutters.
+	contained?: boolean;
+	crossX: string;
+	crossY: string;
+	// Scenes that draw their own full-height vertical guide disable these.
+	verticalLines?: boolean;
 };
 
 const CrosshairBounds = styled.div`
@@ -114,30 +114,30 @@ const CrosshairBounds = styled.div`
 `;
 
 export function GuideCrosshair({
-  contained = false,
-  crossX,
-  crossY,
-  verticalLines = true,
+	contained = false,
+	crossX,
+	crossY,
+	verticalLines = true,
 }: GuideCrosshairProps) {
-  const crosshair = (
-    <CrosshairRoot
-      aria-hidden
-      style={
-        {
-          '--cross-x': crossX,
-          '--cross-y': crossY,
-          '--cross-gap': '18px',
-        } as CSSProperties
-      }
-    >
-      <span data-line data-slot="h-left" />
-      <span data-line data-slot="h-right" />
-      {verticalLines && <span data-line data-slot="v-top" />}
-      {verticalLines && <span data-line data-slot="v-bottom" />}
-      {!verticalLines && <span data-slot="v-eraser" />}
-      <span data-slot="plus" />
-    </CrosshairRoot>
-  );
+	const crosshair = (
+		<CrosshairRoot
+			aria-hidden
+			style={
+				{
+					"--cross-x": crossX,
+					"--cross-y": crossY,
+					"--cross-gap": "18px",
+				} as CSSProperties
+			}
+		>
+			<span data-line data-slot="h-left" />
+			<span data-line data-slot="h-right" />
+			{verticalLines && <span data-line data-slot="v-top" />}
+			{verticalLines && <span data-line data-slot="v-bottom" />}
+			{!verticalLines && <span data-slot="v-eraser" />}
+			<span data-slot="plus" />
+		</CrosshairRoot>
+	);
 
-  return contained ? <CrosshairBounds>{crosshair}</CrosshairBounds> : crosshair;
+	return contained ? <CrosshairBounds>{crosshair}</CrosshairBounds> : crosshair;
 }

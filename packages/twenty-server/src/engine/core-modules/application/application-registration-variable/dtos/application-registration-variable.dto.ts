@@ -1,53 +1,53 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { GraphQLJSON } from 'graphql-type-json';
-import { type ApplicationVariableOption } from 'twenty-shared/application';
+import { Field, ObjectType } from "@nestjs/graphql";
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { GraphQLJSON } from "graphql-type-json";
+import { type ApplicationVariableOption } from "twenty-shared/application";
 
-@ObjectType('ApplicationRegistrationVariable')
+@ObjectType("ApplicationRegistrationVariable")
 export class ApplicationRegistrationVariableDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @IsString()
-  @Field()
-  key: string;
+	@IsString()
+	@Field()
+	key: string;
 
-  @IsString()
-  @Field(() => String, { nullable: true })
-  value?: string | null;
+	@IsString()
+	@Field(() => String, { nullable: true })
+	value?: string | null;
 
-  @IsString()
-  @Field()
-  description: string;
+	@IsString()
+	@Field()
+	description: string;
 
-  @IsBoolean()
-  @Field()
-  isSecret: boolean;
+	@IsBoolean()
+	@Field()
+	isSecret: boolean;
 
-  @IsBoolean()
-  @Field()
-  isRequired: boolean;
+	@IsBoolean()
+	@Field()
+	isRequired: boolean;
 
-  @IsBoolean()
-  @Field()
-  isDeprecated: boolean;
+	@IsBoolean()
+	@Field()
+	isDeprecated: boolean;
 
-  @IsBoolean()
-  @Field()
-  isFilled: boolean;
+	@IsBoolean()
+	@Field()
+	isFilled: boolean;
 
-  @IsString()
-  @Field()
-  type: string;
+	@IsString()
+	@Field()
+	type: string;
 
-  @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
-  options?: ApplicationVariableOption[] | null;
+	@IsOptional()
+	@Field(() => GraphQLJSON, { nullable: true })
+	options?: ApplicationVariableOption[] | null;
 
-  @Field(() => Date)
-  createdAt: Date;
+	@Field(() => Date)
+	createdAt: Date;
 
-  @Field(() => Date)
-  updatedAt: Date;
+	@Field(() => Date)
+	updatedAt: Date;
 }

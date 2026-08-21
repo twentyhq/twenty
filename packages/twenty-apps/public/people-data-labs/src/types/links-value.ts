@@ -1,5 +1,5 @@
 export type LinksValue = {
-  primaryLinkUrl: string;
-  primaryLinkLabel: string;
-  secondaryLinks: null;
+	primaryLinkUrl: string;
+	primaryLinkLabel: string;
+	secondaryLinks: null;
 };

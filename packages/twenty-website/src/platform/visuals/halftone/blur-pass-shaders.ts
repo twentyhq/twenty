@@ -1,7 +1,7 @@
 // Fullscreen passthrough vertex + separable 5-tap gaussian blur, run once
 // horizontally and once vertically between the scene and the composite.
 export const BLUR_PASS_SHADERS = {
-  vertex: /* glsl */ `
+	vertex: /* glsl */ `
   varying vec2 vUv;
 
   void main() {
@@ -9,7 +9,7 @@ export const BLUR_PASS_SHADERS = {
     gl_Position = vec4(position, 1.0);
   }
 `,
-  fragment: /* glsl */ `
+	fragment: /* glsl */ `
   precision highp float;
 
   uniform sampler2D tInput;

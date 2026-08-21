@@ -1,9 +1,9 @@
-import styles from './SeparatorLineText.module.scss';
+import styles from "./SeparatorLineText.module.scss";
 
 export const SeparatorLineText = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => {
-  return <div className={styles.container}>{children}</div>;
+	return <div className={styles.container}>{children}</div>;
 };

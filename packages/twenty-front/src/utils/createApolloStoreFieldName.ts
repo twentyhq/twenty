@@ -1,9 +1,9 @@
 export const createApolloStoreFieldName = ({
-  fieldName,
-  fieldVariables,
+	fieldName,
+	fieldVariables,
 }: {
-  fieldName: string;
-  fieldVariables: Record<string, any>;
+	fieldName: string;
+	fieldVariables: Record<string, any>;
 }) => {
-  return `${fieldName}(${JSON.stringify(fieldVariables)})`;
+	return `${fieldName}(${JSON.stringify(fieldVariables)})`;
 };

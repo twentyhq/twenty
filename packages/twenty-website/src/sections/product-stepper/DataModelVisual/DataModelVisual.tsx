@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { useState } from 'react';
+import { styled } from "@linaria/react";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { useState } from "react";
 
-import { usePointerDragPositions } from '@/platform/motion';
-import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
+import { usePointerDragPositions } from "@/platform/motion";
+import { PRODUCT_STEPPER_SCENE } from "@/tokens/feature-scenes/product-stepper-scene";
 
-import { STEPPER_SHELL_CHROME } from '../components/ProductStepperShell';
-import { DATA_MODEL_ICONS } from './components/DataModelIcons';
-import { DrawEdge } from './components/DrawEdge';
-import { DATA_MODEL_GRAPH } from './data/data-model-data';
-import { type EntityConnection } from './types/entity-connection';
+import { STEPPER_SHELL_CHROME } from "../components/ProductStepperShell";
+import { DATA_MODEL_ICONS } from "./components/DataModelIcons";
+import { DrawEdge } from "./components/DrawEdge";
+import { DATA_MODEL_GRAPH } from "./data/data-model-data";
+import { type EntityConnection } from "./types/entity-connection";
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 const entityTones = PRODUCT_STEPPER_SCENE.entityTones;
@@ -133,111 +133,111 @@ const CARD_HEIGHT_ESTIMATE = 110;
 type EntityPositions = Record<string, { x: number; y: number }>;
 
 function getCardCenter(
-  positions: EntityPositions,
-  entityId: string,
+	positions: EntityPositions,
+	entityId: string,
 ): { x: number; y: number } {
-  const position = positions[entityId];
+	const position = positions[entityId];
 
-  if (!position) {
-    return { x: 0, y: 0 };
-  }
-  return {
-    x: position.x + CARD_WIDTH / 2,
-    y: position.y + CARD_HEIGHT_ESTIMATE / 2,
-  };
+	if (!position) {
+		return { x: 0, y: 0 };
+	}
+	return {
+		x: position.x + CARD_WIDTH / 2,
+		y: position.y + CARD_HEIGHT_ESTIMATE / 2,
+	};
 }
 
 export function DataModelVisual({ active }: { active: boolean }) {
-  const {
-    canvasHandlers,
-    draggingId: dragging,
-    handlePointerDown,
-    positions,
-  } = usePointerDragPositions(() =>
-    Object.fromEntries(
-      DATA_MODEL_GRAPH.entities.map((entity) => [
-        entity.id,
-        { x: entity.x, y: entity.y },
-      ]),
-    ),
-  );
-  const [hoveredEntity, setHoveredEntity] = useState<string | null>(null);
-  const { i18n } = useLingui();
+	const {
+		canvasHandlers,
+		draggingId: dragging,
+		handlePointerDown,
+		positions,
+	} = usePointerDragPositions(() =>
+		Object.fromEntries(
+			DATA_MODEL_GRAPH.entities.map((entity) => [
+				entity.id,
+				{ x: entity.x, y: entity.y },
+			]),
+		),
+	);
+	const [hoveredEntity, setHoveredEntity] = useState<string | null>(null);
+	const { i18n } = useLingui();
 
-  const isConnectionHighlighted = (connection: EntityConnection) =>
-    hoveredEntity === connection.from || hoveredEntity === connection.to;
+	const isConnectionHighlighted = (connection: EntityConnection) =>
+		hoveredEntity === connection.from || hoveredEntity === connection.to;
 
-  return (
-    <Shell active={active}>
-      <Canvas {...canvasHandlers}>
-        <StageFit designHeight={530} designWidth={560}>
-          <SvgLayer>
-            {DATA_MODEL_GRAPH.connections.map((connection) => (
-              <DrawEdge
-                circleRadius={1.5}
-                elbow="horizontal-first"
-                from={getCardCenter(positions, connection.from)}
-                highlighted={isConnectionHighlighted(connection)}
-                key={`${connection.from}-${connection.to}`}
-                to={getCardCenter(positions, connection.to)}
-              />
-            ))}
-          </SvgLayer>
+	return (
+		<Shell active={active}>
+			<Canvas {...canvasHandlers}>
+				<StageFit designHeight={530} designWidth={560}>
+					<SvgLayer>
+						{DATA_MODEL_GRAPH.connections.map((connection) => (
+							<DrawEdge
+								circleRadius={1.5}
+								elbow="horizontal-first"
+								from={getCardCenter(positions, connection.from)}
+								highlighted={isConnectionHighlighted(connection)}
+								key={`${connection.from}-${connection.to}`}
+								to={getCardCenter(positions, connection.to)}
+							/>
+						))}
+					</SvgLayer>
 
-          {DATA_MODEL_GRAPH.entities.map((entity) => {
-            const position = positions[entity.id];
-            const HeaderIcon = DATA_MODEL_ICONS.headers[entity.headerIcon];
-            const tone = entityTones[entity.tone];
+					{DATA_MODEL_GRAPH.entities.map((entity) => {
+						const position = positions[entity.id];
+						const HeaderIcon = DATA_MODEL_ICONS.headers[entity.headerIcon];
+						const tone = entityTones[entity.tone];
 
-            return (
-              <EntityCard
-                data-hovered={
-                  hoveredEntity === entity.id || dragging === entity.id
-                    ? ''
-                    : undefined
-                }
-                key={entity.id}
-                onPointerDown={(event) => handlePointerDown(entity.id, event)}
-                onPointerEnter={() => setHoveredEntity(entity.id)}
-                onPointerLeave={() => setHoveredEntity(null)}
-                style={{
-                  left: position.x,
-                  top: position.y,
-                  transition:
-                    dragging === entity.id ? 'none' : 'border-color 0.15s',
-                }}
-              >
-                <EntityHeader>
-                  <EntityIcon $line={tone.border} $tint={tone.background}>
-                    <HeaderIcon />
-                  </EntityIcon>
-                  <EntityLabel>{i18n._(entity.label)}</EntityLabel>
-                  <EntityMeta>· {entity.meta}</EntityMeta>
-                </EntityHeader>
-                <InnerCard>
-                  {entity.fields.map((field) => {
-                    const Icon = DATA_MODEL_ICONS.fields[field.icon];
-                    return (
-                      <FieldRow key={field.id}>
-                        <FieldIcon>
-                          <Icon />
-                        </FieldIcon>
-                        {i18n._(field.label)}
-                      </FieldRow>
-                    );
-                  })}
-                  <ExpandHint>
-                    <FieldIcon>
-                      <DATA_MODEL_ICONS.ChevronExpand />
-                    </FieldIcon>
-                    {entity.expandCount} {i18n._(msg`fields`)}
-                  </ExpandHint>
-                </InnerCard>
-              </EntityCard>
-            );
-          })}
-        </StageFit>
-      </Canvas>
-    </Shell>
-  );
+						return (
+							<EntityCard
+								data-hovered={
+									hoveredEntity === entity.id || dragging === entity.id
+										? ""
+										: undefined
+								}
+								key={entity.id}
+								onPointerDown={(event) => handlePointerDown(entity.id, event)}
+								onPointerEnter={() => setHoveredEntity(entity.id)}
+								onPointerLeave={() => setHoveredEntity(null)}
+								style={{
+									left: position.x,
+									top: position.y,
+									transition:
+										dragging === entity.id ? "none" : "border-color 0.15s",
+								}}
+							>
+								<EntityHeader>
+									<EntityIcon $line={tone.border} $tint={tone.background}>
+										<HeaderIcon />
+									</EntityIcon>
+									<EntityLabel>{i18n._(entity.label)}</EntityLabel>
+									<EntityMeta>· {entity.meta}</EntityMeta>
+								</EntityHeader>
+								<InnerCard>
+									{entity.fields.map((field) => {
+										const Icon = DATA_MODEL_ICONS.fields[field.icon];
+										return (
+											<FieldRow key={field.id}>
+												<FieldIcon>
+													<Icon />
+												</FieldIcon>
+												{i18n._(field.label)}
+											</FieldRow>
+										);
+									})}
+									<ExpandHint>
+										<FieldIcon>
+											<DATA_MODEL_ICONS.ChevronExpand />
+										</FieldIcon>
+										{entity.expandCount} {i18n._(msg`fields`)}
+									</ExpandHint>
+								</InnerCard>
+							</EntityCard>
+						);
+					})}
+				</StageFit>
+			</Canvas>
+		</Shell>
+	);
 }

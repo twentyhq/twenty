@@ -1,11 +1,11 @@
-import request from 'supertest';
+import request from "supertest";
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('companiesResolver (e2e)', () => {
-  it('should find many companies', () => {
-    const queryData = {
-      query: `
+describe("companiesResolver (e2e)", () => {
+	it("should find many companies", () => {
+		const queryData = {
+			query: `
         query companies {
           companies {
             edges {
@@ -26,40 +26,40 @@ describe('companiesResolver (e2e)', () => {
           }
         }
       `,
-    };
+		};
 
-    return client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const data = res.body.data.companies;
+		return client
+			.post("/graphql")
+			.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+			.send(queryData)
+			.expect(200)
+			.expect((res) => {
+				expect(res.body.data).toBeDefined();
+				expect(res.body.errors).toBeUndefined();
+			})
+			.expect((res) => {
+				const data = res.body.data.companies;
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+				expect(data).toBeDefined();
+				expect(Array.isArray(data.edges)).toBe(true);
 
-        const edges = data.edges;
+				const edges = data.edges;
 
-        if (edges.length > 0) {
-          const companies = edges[0].node;
+				if (edges.length > 0) {
+					const companies = edges[0].node;
 
-          expect(companies).toHaveProperty('name');
-          expect(companies).toHaveProperty('position');
-          expect(companies).toHaveProperty('searchVector');
-          expect(companies).toHaveProperty('id');
-          expect(companies).toHaveProperty('createdAt');
-          expect(companies).toHaveProperty('updatedAt');
-          expect(companies).toHaveProperty('deletedAt');
-          expect(companies).toHaveProperty('accountOwnerId');
-          expect(companies).toHaveProperty('tagline');
-          expect(companies).toHaveProperty('workPolicy');
-          expect(companies).toHaveProperty('visaSponsorship');
-        }
-      });
-  });
+					expect(companies).toHaveProperty("name");
+					expect(companies).toHaveProperty("position");
+					expect(companies).toHaveProperty("searchVector");
+					expect(companies).toHaveProperty("id");
+					expect(companies).toHaveProperty("createdAt");
+					expect(companies).toHaveProperty("updatedAt");
+					expect(companies).toHaveProperty("deletedAt");
+					expect(companies).toHaveProperty("accountOwnerId");
+					expect(companies).toHaveProperty("tagline");
+					expect(companies).toHaveProperty("workPolicy");
+					expect(companies).toHaveProperty("visaSponsorship");
+				}
+			});
+	});
 });

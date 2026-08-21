@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
-  type ReactNode,
-} from 'react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+	type KeyboardEvent,
+	type MouseEvent,
+	type PointerEvent,
+	type ReactNode,
+} from "react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '../preview-font-size';
+import { previewFontSize } from "../preview-font-size";
 
 export type ChipVariant =
-  | 'highlighted'
-  | 'regular'
-  | 'transparent'
-  | 'rounded'
-  | 'static';
+	| "highlighted"
+	| "regular"
+	| "transparent"
+	| "rounded"
+	| "static";
 
 type ChipProps = {
-  className?: string;
-  clickable?: boolean;
-  isBold?: boolean;
-  label: string;
-  leftComponent?: ReactNode;
-  maxWidth?: number;
-  onClick?: () => void;
-  variant?: ChipVariant;
+	className?: string;
+	clickable?: boolean;
+	isBold?: boolean;
+	label: string;
+	leftComponent?: ReactNode;
+	maxWidth?: number;
+	onClick?: () => void;
+	variant?: ChipVariant;
 };
 
 // Variant styling lives in data-attribute selectors (not prop functions) so
@@ -52,9 +52,9 @@ const StyledContainer = styled.div<{ $maxWidth?: number }>`
   justify-content: flex-start;
   line-height: 1.4;
   max-width: ${({ $maxWidth }) =>
-    $maxWidth
-      ? `calc(${$maxWidth}px - 2 * var(--chip-horizontal-padding))`
-      : '100%'};
+		$maxWidth
+			? `calc(${$maxWidth}px - 2 * var(--chip-horizontal-padding))`
+			: "100%"};
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
@@ -124,54 +124,54 @@ const StyledLabel = styled.span`
 `;
 
 export function Chip({
-  label,
-  clickable = false,
-  isBold = false,
-  leftComponent = null,
-  className,
-  maxWidth,
-  onClick,
-  variant = 'regular',
+	label,
+	clickable = false,
+	isBold = false,
+	leftComponent = null,
+	className,
+	maxWidth,
+	onClick,
+	variant = "regular",
 }: ChipProps) {
-  const isInteractive = clickable || onClick !== undefined;
-  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isInteractive) {
-      return;
-    }
-    event.stopPropagation();
-  };
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (!isInteractive) {
-      return;
-    }
-    event.stopPropagation();
-    onClick?.();
-  };
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (!onClick) {
-      return;
-    }
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      onClick();
-    }
-  };
+	const isInteractive = clickable || onClick !== undefined;
+	const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+		if (!isInteractive) {
+			return;
+		}
+		event.stopPropagation();
+	};
+	const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+		if (!isInteractive) {
+			return;
+		}
+		event.stopPropagation();
+		onClick?.();
+	};
+	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+		if (!onClick) {
+			return;
+		}
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			onClick();
+		}
+	};
 
-  return (
-    <StyledContainer
-      $maxWidth={maxWidth}
-      className={className}
-      data-bold={isBold ? '' : undefined}
-      data-clickable={isInteractive ? '' : undefined}
-      data-variant={variant}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      onPointerDown={handlePointerDown}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-    >
-      {leftComponent}
-      <StyledLabel>{label}</StyledLabel>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer
+			$maxWidth={maxWidth}
+			className={className}
+			data-bold={isBold ? "" : undefined}
+			data-clickable={isInteractive ? "" : undefined}
+			data-variant={variant}
+			onClick={handleClick}
+			onKeyDown={handleKeyDown}
+			onPointerDown={handlePointerDown}
+			role={onClick ? "button" : undefined}
+			tabIndex={onClick ? 0 : undefined}
+		>
+			{leftComponent}
+			<StyledLabel>{label}</StyledLabel>
+		</StyledContainer>
+	);
 }

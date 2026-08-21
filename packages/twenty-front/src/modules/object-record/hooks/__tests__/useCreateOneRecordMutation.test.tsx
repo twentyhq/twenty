@@ -1,9 +1,9 @@
-import { renderHook } from '@testing-library/react';
-import { print } from 'graphql';
+import { renderHook } from "@testing-library/react";
+import { print } from "graphql";
 
-import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
-import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from "@/object-record/hooks/__mocks__/personFragments";
+import { useCreateOneRecordMutation } from "@/object-record/hooks/useCreateOneRecordMutation";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const expectedQueryTemplate = `
   mutation CreateOnePerson($input: PersonCreateInput!) {
@@ -11,35 +11,35 @@ const expectedQueryTemplate = `
       ${PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS}
     }
   }
-`.replace(/\s/g, '');
+`.replace(/\s/g, "");
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useCreateOneRecordMutation', () => {
-  it('should return a valid createOneRecordMutation', () => {
-    const objectNameSingular = 'person';
+describe("useCreateOneRecordMutation", () => {
+	it("should return a valid createOneRecordMutation", () => {
+		const objectNameSingular = "person";
 
-    const { result } = renderHook(
-      () =>
-        useCreateOneRecordMutation({
-          objectNameSingular,
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+		const { result } = renderHook(
+			() =>
+				useCreateOneRecordMutation({
+					objectNameSingular,
+				}),
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    const { createOneRecordMutation } = result.current;
+		const { createOneRecordMutation } = result.current;
 
-    expect(createOneRecordMutation).toBeDefined();
+		expect(createOneRecordMutation).toBeDefined();
 
-    const printedReceivedQuery = print(createOneRecordMutation).replace(
-      /\s/g,
-      '',
-    );
+		const printedReceivedQuery = print(createOneRecordMutation).replace(
+			/\s/g,
+			"",
+		);
 
-    expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
-  });
+		expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+	});
 });

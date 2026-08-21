@@ -1,1 +1,1 @@
-export type NativeModelToolKey = 'webSearch' | 'twitterSearch';
+export type NativeModelToolKey = "webSearch" | "twitterSearch";

@@ -1,4 +1,4 @@
 export enum PlaygroundTypes {
-  GRAPHQL = 'graphql',
-  REST = 'rest',
+	GRAPHQL = "graphql",
+	REST = "rest",
 }

@@ -1,90 +1,90 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 import {
-  IdentityProviderType,
-  SSOIdentityProviderStatus,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+	IdentityProviderType,
+	SSOIdentityProviderStatus,
+} from "src/engine/core-modules/sso/workspace-sso-identity-provider.entity";
+import { WorkspaceUrlsDTO } from "src/engine/core-modules/workspace/dtos/workspace-urls.dto";
+import { WorkspaceEntity } from "src/engine/core-modules/workspace/workspace.entity";
 
-@ObjectType('SSOIdentityProvider')
+@ObjectType("SSOIdentityProvider")
 export class SSOIdentityProviderDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String)
-  name: string;
+	@Field(() => String)
+	name: string;
 
-  @Field(() => IdentityProviderType)
-  type: IdentityProviderType;
+	@Field(() => IdentityProviderType)
+	type: IdentityProviderType;
 
-  @Field(() => SSOIdentityProviderStatus)
-  status: SSOIdentityProviderStatus;
+	@Field(() => SSOIdentityProviderStatus)
+	status: SSOIdentityProviderStatus;
 
-  @Field(() => String)
-  issuer: string;
+	@Field(() => String)
+	issuer: string;
 }
 
-@ObjectType('AuthProviders')
+@ObjectType("AuthProviders")
 export class AuthProvidersDTO {
-  @Field(() => [SSOIdentityProviderDTO])
-  sso: Array<SSOIdentityProviderDTO>;
+	@Field(() => [SSOIdentityProviderDTO])
+	sso: Array<SSOIdentityProviderDTO>;
 
-  @Field(() => Boolean)
-  google: boolean;
+	@Field(() => Boolean)
+	google: boolean;
 
-  @Field(() => Boolean)
-  magicLink: boolean;
+	@Field(() => Boolean)
+	magicLink: boolean;
 
-  @Field(() => Boolean)
-  password: boolean;
+	@Field(() => Boolean)
+	password: boolean;
 
-  @Field(() => Boolean)
-  microsoft: boolean;
+	@Field(() => Boolean)
+	microsoft: boolean;
 }
 
-@ObjectType('AuthBypassProviders')
+@ObjectType("AuthBypassProviders")
 export class AuthBypassProvidersDTO {
-  @Field(() => Boolean)
-  google: boolean;
+	@Field(() => Boolean)
+	google: boolean;
 
-  @Field(() => Boolean)
-  password: boolean;
+	@Field(() => Boolean)
+	password: boolean;
 
-  @Field(() => Boolean)
-  microsoft: boolean;
+	@Field(() => Boolean)
+	microsoft: boolean;
 }
 
-@ObjectType('PublicWorkspaceData')
+@ObjectType("PublicWorkspaceData")
 export class PublicWorkspaceDataDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => AuthProvidersDTO)
-  authProviders: AuthProvidersDTO;
+	@Field(() => AuthProvidersDTO)
+	authProviders: AuthProvidersDTO;
 
-  @Field(() => AuthBypassProvidersDTO, { nullable: true })
-  authBypassProviders?: AuthBypassProvidersDTO;
+	@Field(() => AuthBypassProvidersDTO, { nullable: true })
+	authBypassProviders?: AuthBypassProvidersDTO;
 
-  @Field(() => String, { nullable: true })
-  logo: WorkspaceEntity['logo'];
+	@Field(() => String, { nullable: true })
+	logo: WorkspaceEntity["logo"];
 
-  @Field(() => String, { nullable: true })
-  displayName: WorkspaceEntity['displayName'];
+	@Field(() => String, { nullable: true })
+	displayName: WorkspaceEntity["displayName"];
 
-  @Field(() => WorkspaceUrlsDTO)
-  workspaceUrls: WorkspaceUrlsDTO;
+	@Field(() => WorkspaceUrlsDTO)
+	workspaceUrls: WorkspaceUrlsDTO;
 }
 
-@ObjectType('PublicWorkspaceDataSummary')
+@ObjectType("PublicWorkspaceDataSummary")
 export class PublicWorkspaceDataSummaryDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String, { nullable: true })
-  logo: WorkspaceEntity['logo'];
+	@Field(() => String, { nullable: true })
+	logo: WorkspaceEntity["logo"];
 
-  @Field(() => String, { nullable: true })
-  displayName: WorkspaceEntity['displayName'];
+	@Field(() => String, { nullable: true })
+	displayName: WorkspaceEntity["displayName"];
 }

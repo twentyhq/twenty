@@ -1,11 +1,11 @@
-import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { IconCopy, IconTerminal } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { MONOSPACE_FONT_FAMILY } from "@/ui/theme/constants/MonospaceFontFamily";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useState } from "react";
+import { IconCopy, IconTerminal } from "twenty-ui/icon";
+import { LightIconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -39,38 +39,38 @@ const StyledTabContainer = styled.div`
 
 const StyledTab = styled.button<{ isActive: boolean; hasError?: boolean }>`
   background: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.secondary : 'transparent'};
+		isActive ? themeCssVariables.background.secondary : "transparent"};
   border: none;
   border-radius: ${themeCssVariables.border.radius.xs};
   color: ${({ isActive, hasError }) =>
-    hasError
-      ? themeCssVariables.color.red
-      : isActive
-        ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.tertiary};
+		hasError
+			? themeCssVariables.color.red
+			: isActive
+				? themeCssVariables.font.color.primary
+				: themeCssVariables.font.color.tertiary};
   cursor: pointer;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
+		isActive
+			? themeCssVariables.font.weight.medium
+			: themeCssVariables.font.weight.regular};
+  padding: ${themeCssVariables.spacing["0.5"]} ${themeCssVariables.spacing[1]};
 
   &:hover {
     background: ${themeCssVariables.background.secondary};
     color: ${({ hasError }) =>
-      hasError
-        ? themeCssVariables.color.red
-        : themeCssVariables.font.color.primary};
+			hasError
+				? themeCssVariables.color.red
+				: themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledOutputArea = styled.div<{ isError?: boolean }>`
   background: ${themeCssVariables.background.tertiary};
   color: ${({ isError }) =>
-    isError
-      ? themeCssVariables.color.red
-      : themeCssVariables.font.color.primary};
+		isError
+			? themeCssVariables.color.red
+			: themeCssVariables.font.color.primary};
   font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
@@ -107,75 +107,75 @@ const StyledCursor = styled.span`
   }
 `;
 
-type TabType = 'stdout' | 'stderr';
+type TabType = "stdout" | "stderr";
 
 type TerminalOutputProps = {
-  stdout: string;
-  stderr: string;
-  isRunning?: boolean;
+	stdout: string;
+	stderr: string;
+	isRunning?: boolean;
 };
 
 export const TerminalOutput = ({
-  stdout,
-  stderr,
-  isRunning = false,
+	stdout,
+	stderr,
+	isRunning = false,
 }: TerminalOutputProps) => {
-  const { t } = useLingui();
-  const { copyToClipboard } = useCopyToClipboard();
+	const { t } = useLingui();
+	const { copyToClipboard } = useCopyToClipboard();
 
-  const hasStderr = stderr.length > 0;
-  const hasStdout = stdout.length > 0;
+	const hasStderr = stderr.length > 0;
+	const hasStdout = stdout.length > 0;
 
-  const defaultTab: TabType = hasStderr && !hasStdout ? 'stderr' : 'stdout';
-  const [userSelectedTab, setUserSelectedTab] = useState<TabType | null>(null);
-  const activeTab = userSelectedTab ?? defaultTab;
+	const defaultTab: TabType = hasStderr && !hasStdout ? "stderr" : "stdout";
+	const [userSelectedTab, setUserSelectedTab] = useState<TabType | null>(null);
+	const activeTab = userSelectedTab ?? defaultTab;
 
-  const currentOutput = activeTab === 'stdout' ? stdout : stderr;
+	const currentOutput = activeTab === "stdout" ? stdout : stderr;
 
-  return (
-    <StyledContainer>
-      <StyledHeader>
-        <StyledHeaderLeft>
-          <IconTerminal size={14} />
-          {t`Output`}
-        </StyledHeaderLeft>
-        <StyledTabContainer>
-          <StyledTab
-            isActive={activeTab === 'stdout'}
-            onClick={() => setUserSelectedTab('stdout')}
-          >
-            stdout
-          </StyledTab>
-          {hasStderr && (
-            <StyledTab
-              isActive={activeTab === 'stderr'}
-              hasError
-              onClick={() => setUserSelectedTab('stderr')}
-            >
-              stderr
-            </StyledTab>
-          )}
-          <LightIconButton
-            Icon={IconCopy}
-            onClick={() => copyToClipboard(currentOutput)}
-            title={t`Copy output`}
-            size="small"
-            accent="tertiary"
-          />
-        </StyledTabContainer>
-      </StyledHeader>
-      <StyledOutputArea isError={activeTab === 'stderr'}>
-        {currentOutput ? (
-          <>
-            {currentOutput}
-            {isRunning && <StyledCursor />}
-          </>
-        ) : (
-          <StyledEmptyMessage>
-            {isRunning ? t`Waiting for output...` : t`No output`}
-          </StyledEmptyMessage>
-        )}
-      </StyledOutputArea>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledHeader>
+				<StyledHeaderLeft>
+					<IconTerminal size={14} />
+					{t`Output`}
+				</StyledHeaderLeft>
+				<StyledTabContainer>
+					<StyledTab
+						isActive={activeTab === "stdout"}
+						onClick={() => setUserSelectedTab("stdout")}
+					>
+						stdout
+					</StyledTab>
+					{hasStderr && (
+						<StyledTab
+							isActive={activeTab === "stderr"}
+							hasError
+							onClick={() => setUserSelectedTab("stderr")}
+						>
+							stderr
+						</StyledTab>
+					)}
+					<LightIconButton
+						Icon={IconCopy}
+						onClick={() => copyToClipboard(currentOutput)}
+						title={t`Copy output`}
+						size="small"
+						accent="tertiary"
+					/>
+				</StyledTabContainer>
+			</StyledHeader>
+			<StyledOutputArea isError={activeTab === "stderr"}>
+				{currentOutput ? (
+					<>
+						{currentOutput}
+						{isRunning && <StyledCursor />}
+					</>
+				) : (
+					<StyledEmptyMessage>
+						{isRunning ? t`Waiting for output...` : t`No output`}
+					</StyledEmptyMessage>
+				)}
+			</StyledOutputArea>
+		</StyledContainer>
+	);
 };

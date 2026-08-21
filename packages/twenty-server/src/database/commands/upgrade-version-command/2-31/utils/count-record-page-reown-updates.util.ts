@@ -1,9 +1,9 @@
-import { type RecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/types/record-page-reown-updates.type';
+import { type RecordPageReownUpdates } from "src/database/commands/upgrade-version-command/2-31/types/record-page-reown-updates.type";
 
 export const countRecordPageReownUpdates = (
-  reownUpdates: RecordPageReownUpdates,
+	reownUpdates: RecordPageReownUpdates,
 ): number =>
-  Object.values(reownUpdates).reduce(
-    (count, updates) => count + updates.length,
-    0,
-  );
+	Object.values(reownUpdates).reduce(
+		(count, updates) => count + updates.length,
+		0,
+	);

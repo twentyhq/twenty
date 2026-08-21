@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Card } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledListContainer = styled.div`
   width: 100%;
@@ -15,9 +15,9 @@ const StyledListContainer = styled.div`
 `;
 
 export const ActivityList = ({ children }: React.PropsWithChildren) => {
-  return (
-    <StyledListContainer>
-      <Card>{children}</Card>
-    </StyledListContainer>
-  );
+	return (
+		<StyledListContainer>
+			<Card>{children}</Card>
+		</StyledListContainer>
+	);
 };

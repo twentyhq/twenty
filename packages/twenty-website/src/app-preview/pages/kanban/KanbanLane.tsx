@@ -1,20 +1,20 @@
-import { styled } from '@linaria/react';
-import { IconPlus } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconPlus } from "@tabler/icons-react";
 
-import { EASING } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { EASING } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { KanbanCard } from './KanbanCard';
-import { MiniIcon } from '../../primitives/MiniIcon';
-import { PREVIEW_SKELETON } from '../../primitives/PreviewSkeleton';
-import { type KanbanLane as KanbanLaneData } from '../../types';
+import { KanbanCard } from "./KanbanCard";
+import { MiniIcon } from "../../primitives/MiniIcon";
+import { PREVIEW_SKELETON } from "../../primitives/PreviewSkeleton";
+import { type KanbanLane as KanbanLaneData } from "../../types";
 
 const Lane = styled.div<{ $index: number; $last?: boolean }>`
   animation: kanbanLaneAppear 420ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${120 + $index * 80}ms`};
   border-right: ${({ $last }) =>
-    $last ? 'none' : `1px solid ${THEME_LIGHT.border.color.light}`};
+		$last ? "none" : `1px solid ${THEME_LIGHT.border.color.light}`};
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -138,55 +138,55 @@ const SkeletonCardField = styled.div`
   width: 100%;
 `;
 
-const SKELETON_FIELD_WIDTHS = ['70%', '54%', '62%'];
+const SKELETON_FIELD_WIDTHS = ["70%", "54%", "62%"];
 
 function SkeletonCard({ index }: { index: number }) {
-  return (
-    <SkeletonCardShell $index={index}>
-      <PREVIEW_SKELETON.Bar $height={9} $width="64%" />
-      {SKELETON_FIELD_WIDTHS.map((width) => (
-        <SkeletonCardField key={width}>
-          <PREVIEW_SKELETON.Circle $size={16} />
-          <PREVIEW_SKELETON.Bar $height={8} $width={width} />
-        </SkeletonCardField>
-      ))}
-    </SkeletonCardShell>
-  );
+	return (
+		<SkeletonCardShell $index={index}>
+			<PREVIEW_SKELETON.Bar $height={9} $width="64%" />
+			{SKELETON_FIELD_WIDTHS.map((width) => (
+				<SkeletonCardField key={width}>
+					<PREVIEW_SKELETON.Circle $size={16} />
+					<PREVIEW_SKELETON.Bar $height={8} $width={width} />
+				</SkeletonCardField>
+			))}
+		</SkeletonCardShell>
+	);
 }
 
 export function KanbanLane({
-  lane,
-  index = 0,
-  isLast,
-  generating = false,
+	lane,
+	index = 0,
+	isLast,
+	generating = false,
 }: {
-  generating?: boolean;
-  index?: number;
-  isLast: boolean;
-  lane: KanbanLaneData;
+	generating?: boolean;
+	index?: number;
+	isLast: boolean;
+	lane: KanbanLaneData;
 }) {
-  const skeletonCardCount = 2 + (index % 2);
-  return (
-    <Lane $index={index} $last={isLast}>
-      <LaneHeader>
-        <LaneTag data-tone={lane.tone}>{lane.label}</LaneTag>
-        {generating ? null : <LaneCount>{lane.cards.length}</LaneCount>}
-      </LaneHeader>
-      <LaneBody>
-        {generating
-          ? Array.from({ length: skeletonCardCount }, (_, cardIndex) => (
-              <SkeletonCard index={cardIndex} key={cardIndex} />
-            ))
-          : lane.cards.map((card) => <KanbanCard card={card} key={card.id} />)}
-        <AddCardButton aria-hidden>
-          <MiniIcon
-            icon={IconPlus}
-            color={THEME_LIGHT.font.color.light}
-            size={12}
-          />
-          New
-        </AddCardButton>
-      </LaneBody>
-    </Lane>
-  );
+	const skeletonCardCount = 2 + (index % 2);
+	return (
+		<Lane $index={index} $last={isLast}>
+			<LaneHeader>
+				<LaneTag data-tone={lane.tone}>{lane.label}</LaneTag>
+				{generating ? null : <LaneCount>{lane.cards.length}</LaneCount>}
+			</LaneHeader>
+			<LaneBody>
+				{generating
+					? Array.from({ length: skeletonCardCount }, (_, cardIndex) => (
+							<SkeletonCard index={cardIndex} key={cardIndex} />
+						))
+					: lane.cards.map((card) => <KanbanCard card={card} key={card.id} />)}
+				<AddCardButton aria-hidden>
+					<MiniIcon
+						icon={IconPlus}
+						color={THEME_LIGHT.font.color.light}
+						size={12}
+					/>
+					New
+				</AddCardButton>
+			</LaneBody>
+		</Lane>
+	);
 }

@@ -1,19 +1,19 @@
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
-import { v4 as uuidv4 } from 'uuid';
+import { PageLayoutTabLayoutMode, PageLayoutType } from "twenty-shared/types";
+import { v4 as uuidv4 } from "uuid";
 
 export const getPageLayoutBaseFile = ({
-  name,
-  type,
+	name,
+	type,
 }: {
-  name: string;
-  type: PageLayoutType;
+	name: string;
+	type: PageLayoutType;
 }) => {
-  const layoutMode =
-    type === PageLayoutType.DASHBOARD
-      ? PageLayoutTabLayoutMode.GRID
-      : PageLayoutTabLayoutMode.VERTICAL_LIST;
+	const layoutMode =
+		type === PageLayoutType.DASHBOARD
+			? PageLayoutTabLayoutMode.GRID
+			: PageLayoutTabLayoutMode.VERTICAL_LIST;
 
-  return `import {
+	return `import {
   definePageLayout,
   PageLayoutTabLayoutMode,
   PageLayoutType,

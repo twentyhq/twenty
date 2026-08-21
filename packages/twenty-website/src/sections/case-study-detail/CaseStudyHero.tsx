@@ -1,28 +1,28 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { IconArrowLeft, IconClock } from '@tabler/icons-react';
-import NextImage from 'next/image';
+import { msg } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
+import { IconArrowLeft, IconClock } from "@tabler/icons-react";
+import NextImage from "next/image";
 
 import {
-  type CaseStudyCatalogEntry,
-  type CaseStudyStory,
-  CLIENT_LOGO_DISPLAY_WIDTHS,
-  ClientLogo,
-  CustomerCasesCover,
-} from '@/case-studies';
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+	type CaseStudyCatalogEntry,
+	type CaseStudyStory,
+	CLIENT_LOGO_DISPLAY_WIDTHS,
+	ClientLogo,
+	CustomerCasesCover,
+} from "@/case-studies";
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
+import { LocalizedLink } from "@/platform/i18n/LocalizedLink";
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  type PaletteToken,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { Heading, SectionShell } from '@/ui';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	type PaletteToken,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { Heading, SectionShell } from "@/ui";
 
 const HERO_LOGO_SCALE = 1.6;
 
@@ -37,18 +37,18 @@ const HeroStack = styled.div`
     margin-top: ${spacing(4)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding-top: ${spacing(16)};
   }
 `;
 
 const Badge = styled.span`
   align-items: center;
-  background-color: ${color('blue')};
+  background-color: ${color("blue")};
   border-radius: 50px;
-  color: ${color('white')};
+  color: ${color("white")};
   display: inline-flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3)};
   gap: ${spacing(1)};
   padding: ${spacing(1.25)} ${spacing(3)};
@@ -59,7 +59,7 @@ const TitleWrap = styled.div`
 `;
 
 const AuthorAvatar = styled.div`
-  background-color: ${color('blue')};
+  background-color: ${color("blue")};
   border-radius: 50%;
   flex-shrink: 0;
   height: 56px;
@@ -68,7 +68,7 @@ const AuthorAvatar = styled.div`
   position: relative;
   width: 56px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     height: 64px;
     margin-top: ${spacing(7)};
     width: 64px;
@@ -77,9 +77,9 @@ const AuthorAvatar = styled.div`
 
 const AuthorAvatarInitials = styled.span`
   align-items: center;
-  color: ${color('white')};
+  color: ${color("white")};
   display: flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(5)};
   font-weight: ${FONT_WEIGHT.medium};
   height: 100%;
@@ -102,7 +102,7 @@ const BackLink = styled(LocalizedLink)`
   align-items: center;
   color: ${semanticColor.inkMuted};
   display: inline-flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   gap: ${spacing(1)};
   text-decoration: none;
@@ -112,7 +112,7 @@ const BackLink = styled(LocalizedLink)`
     color: ${semanticColor.ink};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: none;
   }
 `;
@@ -123,7 +123,7 @@ const AuthorDivider = styled.span`
   height: 10px;
   width: 1px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: none;
   }
 `;
@@ -136,20 +136,20 @@ const AuthorInfo = styled.div`
 `;
 
 const AuthorName = styled.p`
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
 `;
 
 const AuthorRole = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
 `;
 
 const HeroCover = styled.div`
   align-items: center;
-  background-color: ${color('black')};
+  background-color: ${color("black")};
   display: flex;
   height: 320px;
   justify-content: center;
@@ -157,7 +157,7 @@ const HeroCover = styled.div`
   overflow: hidden;
   position: relative;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     height: 462px;
     margin-top: ${spacing(14)};
   }
@@ -170,7 +170,7 @@ const CoverLayer = styled.div`
 
 const LogoLayer = styled.div`
   align-items: center;
-  color: ${color('white')};
+  color: ${color("white")};
   display: flex;
   inset: 0;
   justify-content: center;
@@ -179,76 +179,76 @@ const LogoLayer = styled.div`
 `;
 
 export type CaseStudyHeroProps = {
-  accent: PaletteToken;
-  entry: CaseStudyCatalogEntry;
-  story: CaseStudyStory;
+	accent: PaletteToken;
+	entry: CaseStudyCatalogEntry;
+	story: CaseStudyStory;
 };
 
 export function CaseStudyHero({ accent, entry, story }: CaseStudyHeroProps) {
-  const i18n = getServerI18n();
-  const initials = entry.author
-    .split(' ')
-    .map((part) => part[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-  const logoWidth =
-    CLIENT_LOGO_DISPLAY_WIDTHS[entry.clientIcon] * HERO_LOGO_SCALE;
+	const i18n = getServerI18n();
+	const initials = entry.author
+		.split(" ")
+		.map((part) => part[0])
+		.filter(Boolean)
+		.slice(0, 2)
+		.join("")
+		.toUpperCase();
+	const logoWidth =
+		CLIENT_LOGO_DISPLAY_WIDTHS[entry.clientIcon] * HERO_LOGO_SCALE;
 
-  return (
-    <SectionShell
-      ariaLabel={i18n._(msg`Customer story`)}
-      rhythm="flush"
-      scheme="dark"
-    >
-      <HeroStack>
-        <Badge>
-          <IconClock size={16} stroke={1.5} />
-          {entry.readingTime}
-        </Badge>
+	return (
+		<SectionShell
+			ariaLabel={i18n._(msg`Customer story`)}
+			rhythm="flush"
+			scheme="dark"
+		>
+			<HeroStack>
+				<Badge>
+					<IconClock size={16} stroke={1.5} />
+					{entry.readingTime}
+				</Badge>
 
-        <TitleWrap>
-          <Heading as="h1" size="lg" weight="light">
-            {i18n._(story.heroTitle)}
-          </Heading>
-        </TitleWrap>
+				<TitleWrap>
+					<Heading as="h1" size="lg" weight="light">
+						{i18n._(story.heroTitle)}
+					</Heading>
+				</TitleWrap>
 
-        <AuthorAvatar>
-          {entry.authorAvatarSrc ? (
-            <NextImage
-              alt=""
-              fill
-              sizes="64px"
-              src={entry.authorAvatarSrc}
-              style={{ objectFit: 'cover' }}
-            />
-          ) : (
-            <AuthorAvatarInitials>{initials}</AuthorAvatarInitials>
-          )}
-        </AuthorAvatar>
+				<AuthorAvatar>
+					{entry.authorAvatarSrc ? (
+						<NextImage
+							alt=""
+							fill
+							sizes="64px"
+							src={entry.authorAvatarSrc}
+							style={{ objectFit: "cover" }}
+						/>
+					) : (
+						<AuthorAvatarInitials>{initials}</AuthorAvatarInitials>
+					)}
+				</AuthorAvatar>
 
-        <AuthorRow>
-          <BackLink href="/customers">
-            <IconArrowLeft size={16} stroke={1.5} />
-            {i18n._(msg`Back`)}
-          </BackLink>
-          <AuthorDivider aria-hidden />
-          <AuthorInfo>
-            <AuthorName>{entry.author}</AuthorName>
-            <AuthorRole>{i18n._(entry.authorRole)}</AuthorRole>
-          </AuthorInfo>
-        </AuthorRow>
-      </HeroStack>
+				<AuthorRow>
+					<BackLink href="/customers">
+						<IconArrowLeft size={16} stroke={1.5} />
+						{i18n._(msg`Back`)}
+					</BackLink>
+					<AuthorDivider aria-hidden />
+					<AuthorInfo>
+						<AuthorName>{entry.author}</AuthorName>
+						<AuthorRole>{i18n._(entry.authorRole)}</AuthorRole>
+					</AuthorInfo>
+				</AuthorRow>
+			</HeroStack>
 
-      <HeroCover>
-        <CoverLayer>
-          <CustomerCasesCover accent={accent} imageUrl={entry.coverImageSrc} />
-        </CoverLayer>
-        <LogoLayer>
-          <ClientLogo client={entry.clientIcon} sizePx={logoWidth} />
-        </LogoLayer>
-      </HeroCover>
-    </SectionShell>
-  );
+			<HeroCover>
+				<CoverLayer>
+					<CustomerCasesCover accent={accent} imageUrl={entry.coverImageSrc} />
+				</CoverLayer>
+				<LogoLayer>
+					<ClientLogo client={entry.clientIcon} sizePx={logoWidth} />
+				</LogoLayer>
+			</HeroCover>
+		</SectionShell>
+	);
 }

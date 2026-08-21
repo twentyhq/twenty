@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { IconX } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
-import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { currentNavigationMenuItemFolderIdState } from "@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
 
 const StyledBackButton = styled.button`
   align-items: center;
@@ -30,31 +30,31 @@ const StyledBackButton = styled.button`
 `;
 
 type NavigationMenuItemBackButtonProps = {
-  folderName: string;
+	folderName: string;
 };
 
 export const NavigationMenuItemBackButton = ({
-  folderName,
+	folderName,
 }: NavigationMenuItemBackButtonProps) => {
-  const { theme } = useContext(ThemeContext);
-  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
-    currentNavigationMenuItemFolderIdState,
-  );
+	const { theme } = useContext(ThemeContext);
+	const setCurrentNavigationMenuItemFolderId = useSetAtomState(
+		currentNavigationMenuItemFolderIdState,
+	);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentNavigationMenuItemFolderId(null);
-  };
+	const handleClick = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setCurrentNavigationMenuItemFolderId(null);
+	};
 
-  return (
-    <StyledBackButton onClick={handleClick}>
-      <IconX
-        size={theme.icon.size.md}
-        stroke={theme.icon.stroke.lg}
-        color={theme.font.color.tertiary}
-      />
-      <span>{folderName}</span>
-    </StyledBackButton>
-  );
+	return (
+		<StyledBackButton onClick={handleClick}>
+			<IconX
+				size={theme.icon.size.md}
+				stroke={theme.icon.stroke.lg}
+				color={theme.font.color.tertiary}
+			/>
+			<span>{folderName}</span>
+		</StyledBackButton>
+	);
 };

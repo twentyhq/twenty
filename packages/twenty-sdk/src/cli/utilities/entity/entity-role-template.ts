@@ -1,22 +1,22 @@
-import { kebabCase } from '@/cli/utilities/string/kebab-case';
-import { v4 } from 'uuid';
+import { kebabCase } from "@/cli/utilities/string/kebab-case";
+import { v4 } from "uuid";
 
 export const getRoleBaseFile = ({
-  name,
-  universalIdentifier = v4(),
+	name,
+	universalIdentifier = v4(),
 }: {
-  name: string;
-  universalIdentifier?: string;
+	name: string;
+	universalIdentifier?: string;
 }) => {
-  const kebabCaseName = kebabCase(name);
+	const kebabCaseName = kebabCase(name);
 
-  return `import { defineRole } from 'twenty-sdk/define';
+	return `import { defineRole } from 'twenty-sdk/define';
 
-export const ${kebabCaseName.toUpperCase().replace(/-/g, '_')}_ROLE_UNIVERSAL_IDENTIFIER =
+export const ${kebabCaseName.toUpperCase().replace(/-/g, "_")}_ROLE_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';
 
 export default defineRole({
-  universalIdentifier: ${kebabCaseName.toUpperCase().replace(/-/g, '_')}_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: ${kebabCaseName.toUpperCase().replace(/-/g, "_")}_ROLE_UNIVERSAL_IDENTIFIER,
   label: '${name}',
   description: 'Add a description for your role',
   canReadAllObjectRecords: true,

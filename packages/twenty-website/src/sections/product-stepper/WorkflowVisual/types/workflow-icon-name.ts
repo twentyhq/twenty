@@ -1,8 +1,8 @@
 export type WorkflowIconName =
-  | 'brain'
-  | 'filter'
-  | 'playlistAdd'
-  | 'plus'
-  | 'reload'
-  | 'search'
-  | 'send';
+	| "brain"
+	| "filter"
+	| "playlistAdd"
+	| "plus"
+	| "reload"
+	| "search"
+	| "send";

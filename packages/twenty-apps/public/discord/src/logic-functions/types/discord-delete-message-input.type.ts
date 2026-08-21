@@ -1,4 +1,4 @@
 export type DiscordDeleteMessageInput = {
-  channelId: string;
-  messageId: string;
+	channelId: string;
+	messageId: string;
 };

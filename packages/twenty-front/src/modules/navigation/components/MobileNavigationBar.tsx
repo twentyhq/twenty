@@ -1,12 +1,12 @@
-import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
-import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
-import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { NavigationBar } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MobileNavigationBarScrollEffect } from "@/navigation/components/MobileNavigationBarScrollEffect";
+import { useMobileNavigationBarItems } from "@/navigation/hooks/useMobileNavigationBarItems";
+import { isMobileNavigationBarVisibleState } from "@/navigation/states/isMobileNavigationBarVisibleState";
+import { isSidePanelOpenedState } from "@/side-panel/states/isSidePanelOpenedState";
+import { RootStackingContextZIndices } from "@/ui/layout/constants/RootStackingContextZIndices";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
+import { NavigationBar } from "twenty-ui/navigation";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 // The bar floats over the page, so the container has to let taps through to
 // whatever is scrolling underneath it. flex-start rather than left so the bar
@@ -35,24 +35,24 @@ const StyledFloatingContainer = styled.div`
 `;
 
 export const MobileNavigationBar = () => {
-  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const isMobileNavigationBarVisible = useAtomStateValue(
-    isMobileNavigationBarVisibleState,
-  );
-  const { items, activeItemName } = useMobileNavigationBarItems();
+	const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+	const isMobileNavigationBarVisible = useAtomStateValue(
+		isMobileNavigationBarVisibleState,
+	);
+	const { items, activeItemName } = useMobileNavigationBarItems();
 
-  const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
+	const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
 
-  return (
-    <>
-      <MobileNavigationBarScrollEffect />
-      <StyledFloatingContainer>
-        <NavigationBar
-          activeItemName={activeItemName}
-          isHidden={isHidden}
-          items={items}
-        />
-      </StyledFloatingContainer>
-    </>
-  );
+	return (
+		<>
+			<MobileNavigationBarScrollEffect />
+			<StyledFloatingContainer>
+				<NavigationBar
+					activeItemName={activeItemName}
+					isHidden={isHidden}
+					items={items}
+				/>
+			</StyledFloatingContainer>
+		</>
+	);
 };

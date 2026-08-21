@@ -4,19 +4,19 @@
 type FileItemRead = { url?: string | null } | null | undefined;
 
 export function firstFileUrl(
-  files: ReadonlyArray<FileItemRead> | null | undefined,
+	files: ReadonlyArray<FileItemRead> | null | undefined,
 ): string | null {
-  return files?.find((file) => file?.url)?.url ?? null;
+	return files?.find((file) => file?.url)?.url ?? null;
 }
 
 // Picture has two sources: the new uploaded file (profilePictureFile, FILES) and
 // the legacy URL (profilePicture, LINKS) that pre-FILES partners still carry.
 // Prefer an uploaded file, fall back to the legacy URL.
 export function resolvePartnerPictureUrl(
-  files: ReadonlyArray<FileItemRead> | null | undefined,
-  legacyLinkUrl: string | null | undefined,
+	files: ReadonlyArray<FileItemRead> | null | undefined,
+	legacyLinkUrl: string | null | undefined,
 ): string | null {
-  return firstFileUrl(files) ?? legacyLinkUrl ?? null;
+	return firstFileUrl(files) ?? legacyLinkUrl ?? null;
 }
 
 // Cover has the same two sources as the picture, in the opposite order: a
@@ -24,8 +24,8 @@ export function resolvePartnerPictureUrl(
 // back as '' when unset — `??` would hand that empty string to the caller and
 // hide the uploaded file behind it.
 export function resolveCoverUrl(
-  pastedUrl: string | null | undefined,
-  files: ReadonlyArray<FileItemRead> | null | undefined,
+	pastedUrl: string | null | undefined,
+	files: ReadonlyArray<FileItemRead> | null | undefined,
 ): string | null {
-  return (pastedUrl ?? '').trim() || firstFileUrl(files);
+	return (pastedUrl ?? "").trim() || firstFileUrl(files);
 }

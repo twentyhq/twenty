@@ -1,28 +1,28 @@
-import { styled } from '@linaria/react';
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
+import { styled } from "@linaria/react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import TextareaAutosize from "react-textarea-autosize";
 
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { isDefined } from 'twenty-shared/utils';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LightCopyIconButton } from "@/object-record/record-field/ui/components/LightCopyIconButton";
+import { useRegisterInputEvents } from "@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents";
+import { isDefined } from "twenty-shared/utils";
+import { turnIntoEmptyStringIfWhitespacesOnly } from "~/utils/string/turnIntoEmptyStringIfWhitespacesOnly";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export type TextAreaInputProps = {
-  instanceId: string;
-  disabled?: boolean;
-  className?: string;
-  placeholder?: string;
-  autoFocus?: boolean;
-  value: string;
-  onEnter: (newText: string) => void;
-  onEscape: (newText: string) => void;
-  onTab?: (newText: string) => void;
-  onShiftTab?: (newText: string) => void;
-  onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
-  onChange?: (newText: string) => void;
-  maxRows?: number;
-  copyButton?: boolean;
+	instanceId: string;
+	disabled?: boolean;
+	className?: string;
+	placeholder?: string;
+	autoFocus?: boolean;
+	value: string;
+	onEnter: (newText: string) => void;
+	onEscape: (newText: string) => void;
+	onTab?: (newText: string) => void;
+	onShiftTab?: (newText: string) => void;
+	onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
+	onChange?: (newText: string) => void;
+	maxRows?: number;
+	copyButton?: boolean;
 };
 
 const StyledTextAreaContainer = styled.div`
@@ -63,73 +63,73 @@ const StyledLightIconButtonContainer = styled.div`
 `;
 
 export const TextAreaInput = ({
-  instanceId,
-  disabled,
-  className,
-  placeholder,
-  autoFocus,
-  value,
-  onEnter,
-  onEscape,
-  onTab,
-  onShiftTab,
-  onClickOutside,
-  onChange,
-  maxRows,
-  copyButton = true,
+	instanceId,
+	disabled,
+	className,
+	placeholder,
+	autoFocus,
+	value,
+	onEnter,
+	onEscape,
+	onTab,
+	onShiftTab,
+	onClickOutside,
+	onChange,
+	maxRows,
+	copyButton = true,
 }: TextAreaInputProps) => {
-  const [internalText, setInternalText] = useState(value);
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const targetValue = turnIntoEmptyStringIfWhitespacesOnly(
-      event.target.value,
-    );
-    setInternalText(targetValue);
-    onChange?.(targetValue);
-  };
+	const [internalText, setInternalText] = useState(value);
+	const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+		const targetValue = turnIntoEmptyStringIfWhitespacesOnly(
+			event.target.value,
+		);
+		setInternalText(targetValue);
+		onChange?.(targetValue);
+	};
 
-  const wrapperRef = useRef<HTMLTextAreaElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
+	const wrapperRef = useRef<HTMLTextAreaElement>(null);
+	const copyRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isDefined(wrapperRef.current)) {
-      wrapperRef.current.setSelectionRange(
-        wrapperRef.current.value.length,
-        wrapperRef.current.value.length,
-      );
-    }
-  }, []);
+	useEffect(() => {
+		if (isDefined(wrapperRef.current)) {
+			wrapperRef.current.setSelectionRange(
+				wrapperRef.current.value.length,
+				wrapperRef.current.value.length,
+			);
+		}
+	}, []);
 
-  useRegisterInputEvents({
-    focusId: instanceId,
-    inputRef: wrapperRef,
-    copyRef: copyRef,
-    inputValue: internalText,
-    onEnter,
-    onEscape,
-    onClickOutside,
-    onTab,
-    onShiftTab,
-  });
+	useRegisterInputEvents({
+		focusId: instanceId,
+		inputRef: wrapperRef,
+		copyRef: copyRef,
+		inputValue: internalText,
+		onEnter,
+		onEscape,
+		onClickOutside,
+		onTab,
+		onShiftTab,
+	});
 
-  return (
-    <>
-      <StyledTextAreaContainer>
-        <TextareaAutosize
-          placeholder={placeholder}
-          disabled={disabled}
-          className={className}
-          ref={wrapperRef}
-          onChange={handleChange}
-          autoFocus={autoFocus}
-          value={internalText}
-          maxRows={maxRows}
-        />
-      </StyledTextAreaContainer>
-      {copyButton && (
-        <StyledLightIconButtonContainer ref={copyRef}>
-          <LightCopyIconButton copyText={internalText} />
-        </StyledLightIconButtonContainer>
-      )}
-    </>
-  );
+	return (
+		<>
+			<StyledTextAreaContainer>
+				<TextareaAutosize
+					placeholder={placeholder}
+					disabled={disabled}
+					className={className}
+					ref={wrapperRef}
+					onChange={handleChange}
+					autoFocus={autoFocus}
+					value={internalText}
+					maxRows={maxRows}
+				/>
+			</StyledTextAreaContainer>
+			{copyButton && (
+				<StyledLightIconButtonContainer ref={copyRef}>
+					<LightCopyIconButton copyText={internalText} />
+				</StyledLightIconButtonContainer>
+			)}
+		</>
+	);
 };

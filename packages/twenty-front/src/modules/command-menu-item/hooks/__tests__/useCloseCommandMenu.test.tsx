@@ -1,241 +1,241 @@
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
-import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
-import { ContextStorePageType } from 'twenty-shared/types';
+import { CommandMenuContext } from "@/command-menu-item/contexts/CommandMenuContext";
+import { useCloseCommandMenu } from "@/command-menu-item/hooks/useCloseCommandMenu";
+import { CommandMenuItemContainerType } from "@/command-menu-item/types/CommandMenuItemContainerType";
+import { act, renderHook } from "@testing-library/react";
+import { type ReactNode } from "react";
+import { ContextStorePageType } from "twenty-shared/types";
 
-const TEST_COMMAND_MENU_ID = 'test-cmd-menu-1';
+const TEST_COMMAND_MENU_ID = "test-cmd-menu-1";
 
 const mockCloseSidePanelMenu = jest.fn();
 const mockCloseDropdown = jest.fn();
 
 jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow',
-  () => ({
-    useAvailableComponentInstanceIdOrThrow: () => TEST_COMMAND_MENU_ID,
-  }),
+	"@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow",
+	() => ({
+		useAvailableComponentInstanceIdOrThrow: () => TEST_COMMAND_MENU_ID,
+	}),
 );
 
-jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
-  useSidePanelMenu: () => ({
-    closeSidePanelMenu: mockCloseSidePanelMenu,
-  }),
+jest.mock("@/side-panel/hooks/useSidePanelMenu", () => ({
+	useSidePanelMenu: () => ({
+		closeSidePanelMenu: mockCloseSidePanelMenu,
+	}),
 }));
 
-jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
-  useCloseDropdown: () => ({
-    closeDropdown: mockCloseDropdown,
-  }),
+jest.mock("@/ui/layout/dropdown/hooks/useCloseDropdown", () => ({
+	useCloseDropdown: () => ({
+		closeDropdown: mockCloseDropdown,
+	}),
 }));
 
 const getWrapper =
-  ({
-    containerType,
-    isInSidePanel = false,
-  }: {
-    containerType: CommandMenuItemContainerType;
-    isInSidePanel?: boolean;
-  }) =>
-  ({ children }: { children: ReactNode }) => (
-    <CommandMenuContext.Provider
-      value={{
-        containerType,
-        displayType: 'button',
-        commandMenuItems: [],
-        commandMenuContextApi: {
-          pageType: ContextStorePageType.Index,
-          isInSidePanel,
-          isDashboardPageLayoutInEditMode: false,
-          isLayoutCustomizationModeEnabled: false,
-          favoriteRecordIds: [],
-          isSelectAll: false,
-          hasAnySoftDeleteFilterOnView: false,
-          numberOfSelectedRecords: 0,
-          objectPermissions: {
-            canReadObjectRecords: false,
-            canUpdateObjectRecords: false,
-            canSoftDeleteObjectRecords: false,
-            canDestroyObjectRecords: false,
-            restrictedFields: {},
-            objectMetadataId: '',
-            rowLevelPermissionPredicates: [],
-            rowLevelPermissionPredicateGroups: [],
-          },
-          selectedRecords: [],
-          featureFlags: {},
-          permissionFlags: {},
-          targetObjectReadPermissions: {},
-          targetObjectWritePermissions: {},
-          canImpersonate: false,
-          canAccessFullAdminPanel: false,
-          objectMetadataItem: {},
-          objectMetadataLabel: '',
-        },
-        isInPreviewMode: false,
-      }}
-    >
-      {children}
-    </CommandMenuContext.Provider>
-  );
+	({
+		containerType,
+		isInSidePanel = false,
+	}: {
+		containerType: CommandMenuItemContainerType;
+		isInSidePanel?: boolean;
+	}) =>
+	({ children }: { children: ReactNode }) => (
+		<CommandMenuContext.Provider
+			value={{
+				containerType,
+				displayType: "button",
+				commandMenuItems: [],
+				commandMenuContextApi: {
+					pageType: ContextStorePageType.Index,
+					isInSidePanel,
+					isDashboardPageLayoutInEditMode: false,
+					isLayoutCustomizationModeEnabled: false,
+					favoriteRecordIds: [],
+					isSelectAll: false,
+					hasAnySoftDeleteFilterOnView: false,
+					numberOfSelectedRecords: 0,
+					objectPermissions: {
+						canReadObjectRecords: false,
+						canUpdateObjectRecords: false,
+						canSoftDeleteObjectRecords: false,
+						canDestroyObjectRecords: false,
+						restrictedFields: {},
+						objectMetadataId: "",
+						rowLevelPermissionPredicates: [],
+						rowLevelPermissionPredicateGroups: [],
+					},
+					selectedRecords: [],
+					featureFlags: {},
+					permissionFlags: {},
+					targetObjectReadPermissions: {},
+					targetObjectWritePermissions: {},
+					canImpersonate: false,
+					canAccessFullAdminPanel: false,
+					objectMetadataItem: {},
+					objectMetadataLabel: "",
+				},
+				isInPreviewMode: false,
+			}}
+		>
+			{children}
+		</CommandMenuContext.Provider>
+	);
 
 beforeEach(() => {
-  jest.clearAllMocks();
+	jest.clearAllMocks();
 });
 
-describe('useCloseCommandMenu', () => {
-  describe('when containerType is command-menu-list', () => {
-    it('should call closeSidePanelMenu by default', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.CommandMenuList,
-      });
+describe("useCloseCommandMenu", () => {
+	describe("when containerType is command-menu-list", () => {
+		it("should call closeSidePanelMenu by default", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.CommandMenuList,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
-      expect(mockCloseDropdown).not.toHaveBeenCalled();
-    });
+			expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+			expect(mockCloseDropdown).not.toHaveBeenCalled();
+		});
 
-    it('should not call closeSidePanelMenu when closeSidePanelOnCommandMenuListExecution is false', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.CommandMenuList,
-      });
+		it("should not call closeSidePanelMenu when closeSidePanelOnCommandMenuListExecution is false", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.CommandMenuList,
+			});
 
-      const { result } = renderHook(
-        () =>
-          useCloseCommandMenu({
-            closeSidePanelOnCommandMenuListExecution: false,
-          }),
-        { wrapper },
-      );
+			const { result } = renderHook(
+				() =>
+					useCloseCommandMenu({
+						closeSidePanelOnCommandMenuListExecution: false,
+					}),
+				{ wrapper },
+			);
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
-      expect(mockCloseDropdown).not.toHaveBeenCalled();
-    });
+			expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+			expect(mockCloseDropdown).not.toHaveBeenCalled();
+		});
 
-    it('should not call closeDropdown', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.CommandMenuList,
-      });
+		it("should not call closeDropdown", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.CommandMenuList,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseDropdown).not.toHaveBeenCalled();
-    });
-  });
+			expect(mockCloseDropdown).not.toHaveBeenCalled();
+		});
+	});
 
-  describe('when containerType is index-page-dropdown', () => {
-    it('should call closeDropdown with the correct dropdown id', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.IndexPageDropdown,
-      });
+	describe("when containerType is index-page-dropdown", () => {
+		it("should call closeDropdown with the correct dropdown id", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.IndexPageDropdown,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseDropdown).toHaveBeenCalledWith(
-        `command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
-      );
-    });
+			expect(mockCloseDropdown).toHaveBeenCalledWith(
+				`command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
+			);
+		});
 
-    it('should not call closeSidePanelMenu', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.IndexPageDropdown,
-      });
+		it("should not call closeSidePanelMenu", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.IndexPageDropdown,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
-    });
-  });
+			expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+		});
+	});
 
-  describe('when containerType is command-menu-show-page-dropdown', () => {
-    it('should call closeDropdown with the correct dropdown id', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
-      });
+	describe("when containerType is command-menu-show-page-dropdown", () => {
+		it("should call closeDropdown with the correct dropdown id", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseDropdown).toHaveBeenCalledWith(
-        `command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
-      );
-    });
+			expect(mockCloseDropdown).toHaveBeenCalledWith(
+				`command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
+			);
+		});
 
-    it('should not call closeSidePanelMenu by default', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
-      });
+		it("should not call closeSidePanelMenu by default", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
-    });
+			expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+		});
 
-    it('should call closeSidePanelMenu when closeSidePanelOnShowPageOptionsExecution is true', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
-      });
+		it("should call closeSidePanelMenu when closeSidePanelOnShowPageOptionsExecution is true", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.CommandMenuShowPageDropdown,
+			});
 
-      const { result } = renderHook(
-        () =>
-          useCloseCommandMenu({
-            closeSidePanelOnShowPageOptionsExecution: true,
-          }),
-        { wrapper },
-      );
+			const { result } = renderHook(
+				() =>
+					useCloseCommandMenu({
+						closeSidePanelOnShowPageOptionsExecution: true,
+					}),
+				{ wrapper },
+			);
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
-    });
-  });
+			expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+		});
+	});
 
-  describe('when isInSidePanel is true', () => {
-    it('should use side panel dropdown id for closeDropdown', () => {
-      const wrapper = getWrapper({
-        containerType: CommandMenuItemContainerType.IndexPageDropdown,
-        isInSidePanel: true,
-      });
+	describe("when isInSidePanel is true", () => {
+		it("should use side panel dropdown id for closeDropdown", () => {
+			const wrapper = getWrapper({
+				containerType: CommandMenuItemContainerType.IndexPageDropdown,
+				isInSidePanel: true,
+			});
 
-      const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
+			const { result } = renderHook(() => useCloseCommandMenu(), { wrapper });
 
-      act(() => {
-        result.current.closeCommandMenu();
-      });
+			act(() => {
+				result.current.closeCommandMenu();
+			});
 
-      expect(mockCloseDropdown).toHaveBeenCalledWith(
-        `side-panel-command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
-      );
-    });
-  });
+			expect(mockCloseDropdown).toHaveBeenCalledWith(
+				`side-panel-command-menu-dropdown-${TEST_COMMAND_MENU_ID}`,
+			);
+		});
+	});
 });

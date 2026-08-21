@@ -1,5 +1,5 @@
 export const getAdvancedFilterAddFilterRuleSelectDropdownId = (
-  recordFilterGroupId: string,
+	recordFilterGroupId: string,
 ) => {
-  return `advanced-filter-add-filter-rule-${recordFilterGroupId}`;
+	return `advanced-filter-add-filter-rule-${recordFilterGroupId}`;
 };

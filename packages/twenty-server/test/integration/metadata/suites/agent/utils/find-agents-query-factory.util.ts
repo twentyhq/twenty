@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 const DEFAULT_AGENT_GQL_FIELDS = `
   id
@@ -20,9 +20,9 @@ const DEFAULT_AGENT_GQL_FIELDS = `
 `;
 
 export const findAgentsQueryFactory = ({
-  gqlFields = DEFAULT_AGENT_GQL_FIELDS,
+	gqlFields = DEFAULT_AGENT_GQL_FIELDS,
 }: PerformMetadataQueryParams<void>) => ({
-  query: gql`
+	query: gql`
     query findManyAgents {
       findManyAgents {
         ${gqlFields}

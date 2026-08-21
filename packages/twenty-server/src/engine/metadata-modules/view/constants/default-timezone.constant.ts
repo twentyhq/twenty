@@ -1,1 +1,1 @@
-export const DEFAULT_TIMEZONE = 'UTC';
+export const DEFAULT_TIMEZONE = "UTC";

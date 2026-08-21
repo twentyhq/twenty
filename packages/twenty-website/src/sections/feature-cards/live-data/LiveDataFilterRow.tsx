@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconHeartHandshake,
-  IconPlus,
-  IconUser,
-  IconX,
-} from '@tabler/icons-react';
-import { type RefObject } from 'react';
+	IconHeartHandshake,
+	IconPlus,
+	IconUser,
+	IconX,
+} from "@tabler/icons-react";
+import { type RefObject } from "react";
 
-import { EASING, FONT_WEIGHT } from '@/tokens';
-import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
+import { EASING, FONT_WEIGHT } from "@/tokens";
+import { LIVE_DATA_SCENE } from "@/tokens/feature-scenes/live-data-scene";
 
-import { type LiveDataPhase } from './use-live-data-demo-timeline';
+import { type LiveDataPhase } from "./use-live-data-demo-timeline";
 
 const SCENE = LIVE_DATA_SCENE;
 const FILTER_ICON_STROKE = 1.33;
@@ -28,39 +28,39 @@ const FilterRowShell = styled.div`
 `;
 
 const FilterChipMotion = styled.div<{
-  $removing?: boolean;
-  $visible: boolean;
+	$removing?: boolean;
+	$visible: boolean;
 }>`
   display: inline-flex;
-  max-width: ${({ $visible }) => ($visible ? '172px' : '0')};
+  max-width: ${({ $visible }) => ($visible ? "172px" : "0")};
   opacity: ${({ $removing, $visible }) => ($visible || $removing ? 1 : 0)};
-  overflow: ${({ $removing }) => ($removing ? 'visible' : 'hidden')};
+  overflow: ${({ $removing }) => ($removing ? "visible" : "hidden")};
   pointer-events: ${({ $removing, $visible }) =>
-    $visible && !$removing ? 'auto' : 'none'};
+		$visible && !$removing ? "auto" : "none"};
   transform: ${({ $removing, $visible }) =>
-    $visible || $removing
-      ? 'translateX(0) scale(1)'
-      : 'translateX(-8px) scale(0.92)'};
+		$visible || $removing
+			? "translateX(0) scale(1)"
+			: "translateX(-8px) scale(0.92)"};
   transform-origin: right center;
   transition:
     max-width 280ms ${EASING.standard}
-      ${({ $removing }) => ($removing ? '180ms' : '0ms')},
-    opacity 180ms ease ${({ $removing }) => ($removing ? '180ms' : '0ms')},
+      ${({ $removing }) => ($removing ? "180ms" : "0ms")},
+    opacity 180ms ease ${({ $removing }) => ($removing ? "180ms" : "0ms")},
     transform 280ms ${EASING.standard}
-      ${({ $removing }) => ($removing ? '180ms' : '0ms')};
+      ${({ $removing }) => ($removing ? "180ms" : "0ms")};
   white-space: nowrap;
 `;
 
 const FilterChip = styled.div<{
-  $pressed?: boolean;
-  $removing?: boolean;
+	$pressed?: boolean;
+	$removing?: boolean;
 }>`
   align-items: center;
   background: ${SCENE.colors.blueSurface};
   border: 1px solid ${SCENE.colors.blueBorder};
   border-radius: 4px;
   box-shadow: ${({ $pressed }) =>
-    $pressed ? SCENE.colors.filterPressedInset : 'none'};
+		$pressed ? SCENE.colors.filterPressedInset : "none"};
   color: ${SCENE.colors.blue};
   display: inline-flex;
   font-family: ${SCENE.appFont};
@@ -70,16 +70,16 @@ const FilterChip = styled.div<{
   line-height: 1.4;
   padding: 2px 2px 2px 4px;
   opacity: 1;
-  transform: ${({ $pressed }) => ($pressed ? 'scale(0.985)' : 'scale(1)')};
+  transform: ${({ $pressed }) => ($pressed ? "scale(0.985)" : "scale(1)")};
   transition:
     box-shadow 180ms ease,
     transform 180ms ease;
   white-space: nowrap;
 
   animation: ${({ $removing }) =>
-    $removing
-      ? `employees-filter-pop-away 320ms ${SCENE.popAwayEase} forwards`
-      : 'none'};
+		$removing
+			? `employees-filter-pop-away 320ms ${SCENE.popAwayEase} forwards`
+			: "none"};
   transform-origin: right center;
   will-change: opacity, transform;
 
@@ -138,7 +138,7 @@ const FilterValue = styled.span`
 const FilterCloseButton = styled.button<{ $pressed?: boolean }>`
   align-items: center;
   background: ${({ $pressed }) =>
-    $pressed ? SCENE.colors.filterPressedWash : 'transparent'};
+		$pressed ? SCENE.colors.filterPressedWash : "transparent"};
   border: 0;
   border-radius: 2px;
   color: ${SCENE.colors.blue};
@@ -153,7 +153,7 @@ const FilterCloseButton = styled.button<{ $pressed?: boolean }>`
 
   &:hover {
     background: ${({ $pressed }) =>
-      $pressed ? SCENE.colors.filterPressedWash : SCENE.colors.filterHoverWash};
+			$pressed ? SCENE.colors.filterPressedWash : SCENE.colors.filterHoverWash};
   }
 
   &:focus-visible {
@@ -163,8 +163,8 @@ const FilterCloseButton = styled.button<{ $pressed?: boolean }>`
 `;
 
 const FloatingAddFilter = styled.button<{
-  $animated: boolean;
-  $left: number;
+	$animated: boolean;
+	$left: number;
 }>`
   align-items: center;
   background: transparent;
@@ -185,9 +185,9 @@ const FloatingAddFilter = styled.button<{
   top: 50%;
   transform: translateY(-50%);
   transition: ${({ $animated }) =>
-    $animated
-      ? `background-color 120ms ease, left 340ms ${EASING.standard}`
-      : 'background-color 120ms ease'};
+		$animated
+			? `background-color 120ms ease, left 340ms ${EASING.standard}`
+			: "background-color 120ms ease"};
   white-space: nowrap;
 
   &:hover {
@@ -196,94 +196,94 @@ const FloatingAddFilter = styled.button<{
 `;
 
 export function LiveDataFilterRow({
-  addFilterLeft,
-  isAddFilterAnimated,
-  phase,
-  typeFilterRef,
-  employeesFilterRef,
+	addFilterLeft,
+	isAddFilterAnimated,
+	phase,
+	typeFilterRef,
+	employeesFilterRef,
 }: {
-  addFilterLeft: number;
-  isAddFilterAnimated: boolean;
-  phase: LiveDataPhase;
-  typeFilterRef: RefObject<HTMLDivElement | null>;
-  employeesFilterRef: RefObject<HTMLDivElement | null>;
+	addFilterLeft: number;
+	isAddFilterAnimated: boolean;
+	phase: LiveDataPhase;
+	typeFilterRef: RefObject<HTMLDivElement | null>;
+	employeesFilterRef: RefObject<HTMLDivElement | null>;
 }) {
-  const isEmployeesFilterRemoving = phase === 'remove-filter';
-  const isEmployeesFilterVisible =
-    phase !== 'remove-filter' && phase !== 'return-bob' && phase !== 'settle';
+	const isEmployeesFilterRemoving = phase === "remove-filter";
+	const isEmployeesFilterVisible =
+		phase !== "remove-filter" && phase !== "return-bob" && phase !== "settle";
 
-  return (
-    <FilterRowShell>
-      <FilterChip ref={typeFilterRef}>
-        <FilterChipLabel>
-          <FilterChipIcon>
-            <IconHeartHandshake
-              aria-hidden
-              color={SCENE.colors.blue}
-              size={14}
-              stroke={FILTER_ICON_STROKE}
-            />
-          </FilterChipIcon>
-          <FilterName>Type</FilterName>
-        </FilterChipLabel>
-        <FilterValue>is Customer</FilterValue>
-        <FilterCloseButton type="button">
-          <IconX
-            aria-hidden
-            color={SCENE.colors.blue}
-            size={14}
-            stroke={FILTER_ICON_STROKE}
-          />
-        </FilterCloseButton>
-      </FilterChip>
+	return (
+		<FilterRowShell>
+			<FilterChip ref={typeFilterRef}>
+				<FilterChipLabel>
+					<FilterChipIcon>
+						<IconHeartHandshake
+							aria-hidden
+							color={SCENE.colors.blue}
+							size={14}
+							stroke={FILTER_ICON_STROKE}
+						/>
+					</FilterChipIcon>
+					<FilterName>Type</FilterName>
+				</FilterChipLabel>
+				<FilterValue>is Customer</FilterValue>
+				<FilterCloseButton type="button">
+					<IconX
+						aria-hidden
+						color={SCENE.colors.blue}
+						size={14}
+						stroke={FILTER_ICON_STROKE}
+					/>
+				</FilterCloseButton>
+			</FilterChip>
 
-      <FilterChipMotion
-        ref={employeesFilterRef}
-        $removing={isEmployeesFilterRemoving}
-        $visible={isEmployeesFilterVisible}
-      >
-        <FilterChip
-          $pressed={phase === 'remove-filter'}
-          $removing={isEmployeesFilterRemoving}
-        >
-          <FilterChipLabel>
-            <FilterChipIcon>
-              <IconUser
-                aria-hidden
-                color={SCENE.colors.blue}
-                size={14}
-                stroke={FILTER_ICON_STROKE}
-              />
-            </FilterChipIcon>
-            <FilterName>Employees</FilterName>
-          </FilterChipLabel>
-          <FilterValue>{'>500'}</FilterValue>
-          <FilterCloseButton $pressed={phase === 'remove-filter'} type="button">
-            <IconX
-              aria-hidden
-              color={SCENE.colors.blue}
-              size={14}
-              stroke={FILTER_ICON_STROKE}
-            />
-          </FilterCloseButton>
-        </FilterChip>
-      </FilterChipMotion>
+			<FilterChipMotion
+				ref={employeesFilterRef}
+				$removing={isEmployeesFilterRemoving}
+				$visible={isEmployeesFilterVisible}
+			>
+				<FilterChip
+					$pressed={phase === "remove-filter"}
+					$removing={isEmployeesFilterRemoving}
+				>
+					<FilterChipLabel>
+						<FilterChipIcon>
+							<IconUser
+								aria-hidden
+								color={SCENE.colors.blue}
+								size={14}
+								stroke={FILTER_ICON_STROKE}
+							/>
+						</FilterChipIcon>
+						<FilterName>Employees</FilterName>
+					</FilterChipLabel>
+					<FilterValue>{">500"}</FilterValue>
+					<FilterCloseButton $pressed={phase === "remove-filter"} type="button">
+						<IconX
+							aria-hidden
+							color={SCENE.colors.blue}
+							size={14}
+							stroke={FILTER_ICON_STROKE}
+						/>
+					</FilterCloseButton>
+				</FilterChip>
+			</FilterChipMotion>
 
-      <FloatingAddFilter
-        $animated={isAddFilterAnimated}
-        $left={addFilterLeft}
-        type="button"
-      >
-        <FilterChipIcon>
-          <IconPlus
-            aria-hidden
-            color={SCENE.colors.muted}
-            size={14}
-            stroke={FILTER_ICON_STROKE}
-          />
-        </FilterChipIcon>
-        Add filter
-      </FloatingAddFilter>
-    </FilterRowShell>
-  );
+			<FloatingAddFilter
+				$animated={isAddFilterAnimated}
+				$left={addFilterLeft}
+				type="button"
+			>
+				<FilterChipIcon>
+					<IconPlus
+						aria-hidden
+						color={SCENE.colors.muted}
+						size={14}
+						stroke={FILTER_ICON_STROKE}
+					/>
+				</FilterChipIcon>
+				Add filter
+			</FloatingAddFilter>
+		</FilterRowShell>
+	);
 }

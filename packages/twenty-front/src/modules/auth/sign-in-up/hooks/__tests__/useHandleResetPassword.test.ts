@@ -1,160 +1,160 @@
-import { i18n } from '@lingui/core';
-import { I18nProvider } from '@lingui/react';
-import { act, renderHook } from '@testing-library/react';
-import { type ReactNode, createElement } from 'react';
-import { Provider as JotaiProvider } from 'jotai';
+import { i18n } from "@lingui/core";
+import { I18nProvider } from "@lingui/react";
+import { act, renderHook } from "@testing-library/react";
+import { type ReactNode, createElement } from "react";
+import { Provider as JotaiProvider } from "jotai";
 
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { useMutation } from '@apollo/client/react';
-import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
-import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { useHandleResetPassword } from "@/auth/sign-in-up/hooks/useHandleResetPassword";
+import { workspacePublicDataState } from "@/auth/states/workspacePublicDataState";
+import { useReadCaptchaToken } from "@/captcha/hooks/useReadCaptchaToken";
+import { useCaptcha } from "@/client-config/hooks/useCaptcha";
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { jotaiStore } from "@/ui/utilities/state/jotai/jotaiStore";
+import { SOURCE_LOCALE } from "twenty-shared/translations";
+import { useMutation } from "@apollo/client/react";
+import { type PublicWorkspaceData } from "~/generated-metadata/graphql";
+import { dynamicActivate } from "~/utils/i18n/dynamicActivate";
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('@apollo/client/react');
-jest.mock('@/captcha/hooks/useReadCaptchaToken');
-jest.mock('@/client-config/hooks/useCaptcha');
+jest.mock("@/ui/feedback/snack-bar-manager/hooks/useSnackBar");
+jest.mock("@apollo/client/react");
+jest.mock("@/captcha/hooks/useReadCaptchaToken");
+jest.mock("@/client-config/hooks/useCaptcha");
 
 dynamicActivate(SOURCE_LOCALE);
 
 const renderHooks = () => {
-  jotaiStore.set(workspacePublicDataState.atom, {
-    id: 'workspace-id',
-  } as PublicWorkspaceData);
+	jotaiStore.set(workspacePublicDataState.atom, {
+		id: "workspace-id",
+	} as PublicWorkspaceData);
 
-  const { result } = renderHook(() => useHandleResetPassword(), {
-    wrapper: ({ children }: { children: ReactNode }) =>
-      createElement(
-        JotaiProvider,
-        { store: jotaiStore },
-        createElement(I18nProvider, { i18n }, children),
-      ),
-  });
-  return { result };
+	const { result } = renderHook(() => useHandleResetPassword(), {
+		wrapper: ({ children }: { children: ReactNode }) =>
+			createElement(
+				JotaiProvider,
+				{ store: jotaiStore },
+				createElement(I18nProvider, { i18n }, children),
+			),
+	});
+	return { result };
 };
 
 const renderHooksWithoutWorkspace = () => {
-  jotaiStore.set(workspacePublicDataState.atom, null);
+	jotaiStore.set(workspacePublicDataState.atom, null);
 
-  const { result } = renderHook(() => useHandleResetPassword(), {
-    wrapper: ({ children }: { children: ReactNode }) =>
-      createElement(
-        JotaiProvider,
-        { store: jotaiStore },
-        createElement(I18nProvider, { i18n }, children),
-      ),
-  });
-  return { result };
+	const { result } = renderHook(() => useHandleResetPassword(), {
+		wrapper: ({ children }: { children: ReactNode }) =>
+			createElement(
+				JotaiProvider,
+				{ store: jotaiStore },
+				createElement(I18nProvider, { i18n }, children),
+			),
+	});
+	return { result };
 };
 
-describe('useHandleResetPassword', () => {
-  const enqueueErrorSnackBarMock = jest.fn();
-  const enqueueSuccessSnackBarMock = jest.fn();
-  const emailPasswordResetLinkMock = jest.fn();
+describe("useHandleResetPassword", () => {
+	const enqueueErrorSnackBarMock = jest.fn();
+	const enqueueSuccessSnackBarMock = jest.fn();
+	const emailPasswordResetLinkMock = jest.fn();
 
-  beforeEach(() => {
-    jest.clearAllMocks();
+	beforeEach(() => {
+		jest.clearAllMocks();
 
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: enqueueErrorSnackBarMock,
-      enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
-    });
-    (useMutation as unknown as jest.Mock).mockReturnValue([
-      emailPasswordResetLinkMock,
-    ]);
-    (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: true });
-    (useReadCaptchaToken as jest.Mock).mockReturnValue({
-      readCaptchaToken: () => 'mock-captcha-token',
-    });
-  });
+		(useSnackBar as jest.Mock).mockReturnValue({
+			enqueueErrorSnackBar: enqueueErrorSnackBarMock,
+			enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
+		});
+		(useMutation as unknown as jest.Mock).mockReturnValue([
+			emailPasswordResetLinkMock,
+		]);
+		(useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: true });
+		(useReadCaptchaToken as jest.Mock).mockReturnValue({
+			readCaptchaToken: () => "mock-captcha-token",
+		});
+	});
 
-  it('should show error message if email is invalid', async () => {
-    const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('')());
+	it("should show error message if email is invalid", async () => {
+		const { result } = renderHooks();
+		await act(() => result.current.handleResetPassword("")());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
-      message: 'Invalid email',
-    });
-  });
+		expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+			message: "Invalid email",
+		});
+	});
 
-  it('should show success message if password reset link is sent', async () => {
-    emailPasswordResetLinkMock.mockResolvedValue({
-      data: { emailPasswordResetLink: { success: true } },
-    });
+	it("should show success message if password reset link is sent", async () => {
+		emailPasswordResetLinkMock.mockResolvedValue({
+			data: { emailPasswordResetLink: { success: true } },
+		});
 
-    const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('test@example.com')());
+		const { result } = renderHooks();
+		await act(() => result.current.handleResetPassword("test@example.com")());
 
-    expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
-      variables: {
-        email: 'test@example.com',
-        workspaceId: 'workspace-id',
-        captchaToken: 'mock-captcha-token',
-      },
-    });
-    expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
-      message:
-        'If this email is registered, a password reset link has been sent',
-    });
-  });
+		expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
+			variables: {
+				email: "test@example.com",
+				workspaceId: "workspace-id",
+				captchaToken: "mock-captcha-token",
+			},
+		});
+		expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
+			message:
+				"If this email is registered, a password reset link has been sent",
+		});
+	});
 
-  it('should send reset link without workspaceId if workspace context is missing', async () => {
-    emailPasswordResetLinkMock.mockResolvedValue({
-      data: { emailPasswordResetLink: { success: true } },
-    });
+	it("should send reset link without workspaceId if workspace context is missing", async () => {
+		emailPasswordResetLinkMock.mockResolvedValue({
+			data: { emailPasswordResetLink: { success: true } },
+		});
 
-    const { result } = renderHooksWithoutWorkspace();
-    await act(() => result.current.handleResetPassword('test@example.com')());
+		const { result } = renderHooksWithoutWorkspace();
+		await act(() => result.current.handleResetPassword("test@example.com")());
 
-    expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
-      variables: {
-        email: 'test@example.com',
-        captchaToken: 'mock-captcha-token',
-      },
-    });
-    expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
-      message:
-        'If this email is registered, a password reset link has been sent',
-    });
-  });
+		expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
+			variables: {
+				email: "test@example.com",
+				captchaToken: "mock-captcha-token",
+			},
+		});
+		expect(enqueueSuccessSnackBarMock).toHaveBeenCalledWith({
+			message:
+				"If this email is registered, a password reset link has been sent",
+		});
+	});
 
-  it('should show error message if captcha is not ready', async () => {
-    (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: false });
+	it("should show error message if captcha is not ready", async () => {
+		(useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: false });
 
-    const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('test@example.com')());
+		const { result } = renderHooks();
+		await act(() => result.current.handleResetPassword("test@example.com")());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
-      message: 'Captcha (anti-bot check) is still loading, try again',
-    });
-    expect(emailPasswordResetLinkMock).not.toHaveBeenCalled();
-  });
+		expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+			message: "Captcha (anti-bot check) is still loading, try again",
+		});
+		expect(emailPasswordResetLinkMock).not.toHaveBeenCalled();
+	});
 
-  it('should show error message if sending reset link fails', async () => {
-    emailPasswordResetLinkMock.mockResolvedValue({
-      data: { emailPasswordResetLink: { success: false } },
-    });
+	it("should show error message if sending reset link fails", async () => {
+		emailPasswordResetLinkMock.mockResolvedValue({
+			data: { emailPasswordResetLink: { success: false } },
+		});
 
-    const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('test@example.com')());
+		const { result } = renderHooks();
+		await act(() => result.current.handleResetPassword("test@example.com")());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
-  });
+		expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
+	});
 
-  it('should show error message in case of request error', async () => {
-    const errorMessage = 'Network Error';
-    emailPasswordResetLinkMock.mockRejectedValue(new Error(errorMessage));
+	it("should show error message in case of request error", async () => {
+		const errorMessage = "Network Error";
+		emailPasswordResetLinkMock.mockRejectedValue(new Error(errorMessage));
 
-    const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('test@example.com')());
+		const { result } = renderHooks();
+		await act(() => result.current.handleResetPassword("test@example.com")());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
-      message: errorMessage,
-    });
-  });
+		expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+			message: errorMessage,
+		});
+	});
 });

@@ -1,6 +1,6 @@
 export default class WorkerMock {
-  postMessage() {}
-  terminate() {}
-  addEventListener() {}
-  removeEventListener() {}
+	postMessage() {}
+	terminate() {}
+	addEventListener() {}
+	removeEventListener() {}
 }

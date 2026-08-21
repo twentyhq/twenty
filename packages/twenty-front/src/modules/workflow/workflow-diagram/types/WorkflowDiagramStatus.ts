@@ -1,4 +1,4 @@
 export type WorkflowDiagramStatus =
-  | 'computing-diagram'
-  | 'computing-dimensions'
-  | 'done';
+	| "computing-diagram"
+	| "computing-dimensions"
+	| "done";

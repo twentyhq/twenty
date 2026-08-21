@@ -1,450 +1,450 @@
-import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
-import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
+import { StandardFolder } from "src/modules/messaging/message-import-manager/drivers/types/standard-folder";
+import { getStandardFolderByRegex } from "src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex";
 
 function testFolderMatches(
-  variants: string[],
-  expectedStandardFolder: StandardFolder,
+	variants: string[],
+	expectedStandardFolder: StandardFolder,
 ) {
-  variants.forEach((variant) => {
-    const result = getStandardFolderByRegex(variant);
+	variants.forEach((variant) => {
+		const result = getStandardFolderByRegex(variant);
 
-    expect(result).toBe(expectedStandardFolder);
-  });
+		expect(result).toBe(expectedStandardFolder);
+	});
 }
 
-describe('getStandardFolderByRegex', () => {
-  describe('INBOX folder detection', () => {
-    it('matches English variants', () => {
-      const englishVariants = [
-        'Inbox',
-        'Mail',
-        'Messages',
-        'Message',
-        'Received',
-      ];
-
-      testFolderMatches(englishVariants, StandardFolder.INBOX);
-    });
-
-    it('matches French variants', () => {
-      const frenchVariants = [
-        'Boîte de réception',
-        'Courrier entrant',
-        'Messages reçus',
-        'Réception',
-      ];
-
-      testFolderMatches(frenchVariants, StandardFolder.INBOX);
-    });
-
-    it('matches German variants', () => {
-      const germanVariants = [
-        'Posteingang',
-        'Eingang',
-        'Eingangsmails',
-        'Empfangen',
-      ];
-
-      testFolderMatches(germanVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Spanish variants', () => {
-      const spanishVariants = [
-        'Bandeja de entrada',
-        'Entrada',
-        'Correo entrante',
-        'Recibidos',
-      ];
-
-      testFolderMatches(spanishVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Portuguese variants', () => {
-      const portugueseVariants = [
-        'Caixa de entrada',
-        'Entrada',
-        'Correio de entrada',
-        'Recebidos',
-      ];
-
-      testFolderMatches(portugueseVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Italian variants', () => {
-      const italianVariants = [
-        'Posta in arrivo',
-        'Arrivo',
-        'Casella postale',
-        'Ricevuti',
-      ];
-
-      testFolderMatches(italianVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Korean variants', () => {
-      const koreanVariants = ['받은편지함', '수신함', '받은메일'];
-
-      testFolderMatches(koreanVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Japanese variants', () => {
-      const japaneseVariants = ['受信トレイ', '受信箱', '受信メール'];
-
-      testFolderMatches(japaneseVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Polish variants', () => {
-      const polishVariants = [
-        'Odebrane',
-        'Skrzynka odbiorcza',
-        'Wiadomości przychodzące',
-      ];
-
-      testFolderMatches(polishVariants, StandardFolder.INBOX);
-    });
-
-    it('matches Russian variants', () => {
-      const russianVariants = [
-        'Входящие',
-        'Папка входящих',
-        'Полученные сообщения',
-        'Полученные письма',
-      ];
-
-      testFolderMatches(russianVariants, StandardFolder.INBOX);
-    });
+describe("getStandardFolderByRegex", () => {
+	describe("INBOX folder detection", () => {
+		it("matches English variants", () => {
+			const englishVariants = [
+				"Inbox",
+				"Mail",
+				"Messages",
+				"Message",
+				"Received",
+			];
+
+			testFolderMatches(englishVariants, StandardFolder.INBOX);
+		});
+
+		it("matches French variants", () => {
+			const frenchVariants = [
+				"Boîte de réception",
+				"Courrier entrant",
+				"Messages reçus",
+				"Réception",
+			];
+
+			testFolderMatches(frenchVariants, StandardFolder.INBOX);
+		});
+
+		it("matches German variants", () => {
+			const germanVariants = [
+				"Posteingang",
+				"Eingang",
+				"Eingangsmails",
+				"Empfangen",
+			];
+
+			testFolderMatches(germanVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Spanish variants", () => {
+			const spanishVariants = [
+				"Bandeja de entrada",
+				"Entrada",
+				"Correo entrante",
+				"Recibidos",
+			];
+
+			testFolderMatches(spanishVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Portuguese variants", () => {
+			const portugueseVariants = [
+				"Caixa de entrada",
+				"Entrada",
+				"Correio de entrada",
+				"Recebidos",
+			];
+
+			testFolderMatches(portugueseVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Italian variants", () => {
+			const italianVariants = [
+				"Posta in arrivo",
+				"Arrivo",
+				"Casella postale",
+				"Ricevuti",
+			];
+
+			testFolderMatches(italianVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Korean variants", () => {
+			const koreanVariants = ["받은편지함", "수신함", "받은메일"];
+
+			testFolderMatches(koreanVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Japanese variants", () => {
+			const japaneseVariants = ["受信トレイ", "受信箱", "受信メール"];
+
+			testFolderMatches(japaneseVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Polish variants", () => {
+			const polishVariants = [
+				"Odebrane",
+				"Skrzynka odbiorcza",
+				"Wiadomości przychodzące",
+			];
+
+			testFolderMatches(polishVariants, StandardFolder.INBOX);
+		});
+
+		it("matches Russian variants", () => {
+			const russianVariants = [
+				"Входящие",
+				"Папка входящих",
+				"Полученные сообщения",
+				"Полученные письма",
+			];
+
+			testFolderMatches(russianVariants, StandardFolder.INBOX);
+		});
 
-    it('matches Gmail special folder', () => {
-      const gmailVariants = ['[Gmail]/Inbox', '[Gmail]\\Inbox'];
+		it("matches Gmail special folder", () => {
+			const gmailVariants = ["[Gmail]/Inbox", "[Gmail]\\Inbox"];
 
-      testFolderMatches(gmailVariants, StandardFolder.INBOX);
-    });
-  });
+			testFolderMatches(gmailVariants, StandardFolder.INBOX);
+		});
+	});
 
-  describe('DRAFTS folder detection', () => {
-    it('matches English variants', () => {
-      const englishVariants = [
-        'Drafts',
-        'Draft',
-        'Draft Items',
-        'Draft Mail',
-        'Draft Messages',
-      ];
+	describe("DRAFTS folder detection", () => {
+		it("matches English variants", () => {
+			const englishVariants = [
+				"Drafts",
+				"Draft",
+				"Draft Items",
+				"Draft Mail",
+				"Draft Messages",
+			];
 
-      testFolderMatches(englishVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(englishVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches French variants', () => {
-      const frenchVariants = ['Brouillons', 'Éléments brouillons'];
+		it("matches French variants", () => {
+			const frenchVariants = ["Brouillons", "Éléments brouillons"];
 
-      testFolderMatches(frenchVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(frenchVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches German variants', () => {
-      const germanVariants = ['Entwürfe', 'Entwurf'];
+		it("matches German variants", () => {
+			const germanVariants = ["Entwürfe", "Entwurf"];
 
-      testFolderMatches(germanVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(germanVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Spanish variants', () => {
-      const spanishVariants = ['Borradores', 'Elementos borrador'];
+		it("matches Spanish variants", () => {
+			const spanishVariants = ["Borradores", "Elementos borrador"];
 
-      testFolderMatches(spanishVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(spanishVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Portuguese variants', () => {
-      const portugueseVariants = ['Rascunhos', 'Itens rascunho'];
+		it("matches Portuguese variants", () => {
+			const portugueseVariants = ["Rascunhos", "Itens rascunho"];
 
-      testFolderMatches(portugueseVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(portugueseVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Italian variants', () => {
-      const italianVariants = ['Bozze', 'Bozze salvate'];
+		it("matches Italian variants", () => {
+			const italianVariants = ["Bozze", "Bozze salvate"];
 
-      testFolderMatches(italianVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(italianVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Korean variants', () => {
-      const koreanVariants = ['임시보관함', '초안'];
+		it("matches Korean variants", () => {
+			const koreanVariants = ["임시보관함", "초안"];
 
-      testFolderMatches(koreanVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(koreanVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Japanese variants', () => {
-      const japaneseVariants = ['下書き', '草稿'];
+		it("matches Japanese variants", () => {
+			const japaneseVariants = ["下書き", "草稿"];
 
-      testFolderMatches(japaneseVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(japaneseVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Polish variants', () => {
-      const polishVariants = ['Wersje robocze', 'Szkice'];
+		it("matches Polish variants", () => {
+			const polishVariants = ["Wersje robocze", "Szkice"];
 
-      testFolderMatches(polishVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(polishVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Russian variants', () => {
-      const russianVariants = [
-        'Черновики',
-        'Черновые сообщения',
-        'Неотправленные',
-      ];
+		it("matches Russian variants", () => {
+			const russianVariants = [
+				"Черновики",
+				"Черновые сообщения",
+				"Неотправленные",
+			];
 
-      testFolderMatches(russianVariants, StandardFolder.DRAFTS);
-    });
+			testFolderMatches(russianVariants, StandardFolder.DRAFTS);
+		});
 
-    it('matches Gmail special folder', () => {
-      const gmailVariants = ['[Gmail]/Drafts', '[Gmail]\\Drafts'];
+		it("matches Gmail special folder", () => {
+			const gmailVariants = ["[Gmail]/Drafts", "[Gmail]\\Drafts"];
 
-      testFolderMatches(gmailVariants, StandardFolder.DRAFTS);
-    });
-  });
+			testFolderMatches(gmailVariants, StandardFolder.DRAFTS);
+		});
+	});
 
-  describe('SENT folder detection', () => {
-    it('matches English variants', () => {
-      const englishVariants = [
-        'Sent',
-        'Sent Items',
-        'Sent Mail',
-        'Sent Messages',
-        'sent-elements',
-      ];
+	describe("SENT folder detection", () => {
+		it("matches English variants", () => {
+			const englishVariants = [
+				"Sent",
+				"Sent Items",
+				"Sent Mail",
+				"Sent Messages",
+				"sent-elements",
+			];
 
-      testFolderMatches(englishVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(englishVariants, StandardFolder.SENT);
+		});
 
-    it('matches French variants', () => {
-      const frenchVariants = ['Envoyés', 'Éléments envoyés', 'Objets envoyés'];
+		it("matches French variants", () => {
+			const frenchVariants = ["Envoyés", "Éléments envoyés", "Objets envoyés"];
 
-      testFolderMatches(frenchVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(frenchVariants, StandardFolder.SENT);
+		});
 
-    it('matches German variants', () => {
-      const germanVariants = ['Gesendet', 'Gesendete Elemente'];
+		it("matches German variants", () => {
+			const germanVariants = ["Gesendet", "Gesendete Elemente"];
 
-      testFolderMatches(germanVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(germanVariants, StandardFolder.SENT);
+		});
 
-    it('matches Spanish variants', () => {
-      const spanishVariants = ['Enviados', 'Elementos enviados'];
+		it("matches Spanish variants", () => {
+			const spanishVariants = ["Enviados", "Elementos enviados"];
 
-      testFolderMatches(spanishVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(spanishVariants, StandardFolder.SENT);
+		});
 
-    it('matches Portuguese variants', () => {
-      const portugueseVariants = ['Itens enviados'];
+		it("matches Portuguese variants", () => {
+			const portugueseVariants = ["Itens enviados"];
 
-      testFolderMatches(portugueseVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(portugueseVariants, StandardFolder.SENT);
+		});
 
-    it('matches Italian variants', () => {
-      const italianVariants = ['Posta inviata', 'Inviati'];
+		it("matches Italian variants", () => {
+			const italianVariants = ["Posta inviata", "Inviati"];
 
-      testFolderMatches(italianVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(italianVariants, StandardFolder.SENT);
+		});
 
-    it('matches Korean variant', () => {
-      const koreanVariants = ['보낸편지함'];
+		it("matches Korean variant", () => {
+			const koreanVariants = ["보낸편지함"];
 
-      testFolderMatches(koreanVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(koreanVariants, StandardFolder.SENT);
+		});
 
-    it('matches Japanese variants', () => {
-      const japaneseVariants = ['送信済みメール', '送信済み'];
+		it("matches Japanese variants", () => {
+			const japaneseVariants = ["送信済みメール", "送信済み"];
 
-      testFolderMatches(japaneseVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(japaneseVariants, StandardFolder.SENT);
+		});
 
-    it('matches Polish variants', () => {
-      const polishVariants = ['Wysłane', 'Elementy wysłane'];
+		it("matches Polish variants", () => {
+			const polishVariants = ["Wysłane", "Elementy wysłane"];
 
-      testFolderMatches(polishVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(polishVariants, StandardFolder.SENT);
+		});
 
-    it('matches Russian variants', () => {
-      const russianVariants = [
-        'Отправленные',
-        'Отправленные письма',
-        'Отправленные сообщения',
-        'Исходящие',
-      ];
+		it("matches Russian variants", () => {
+			const russianVariants = [
+				"Отправленные",
+				"Отправленные письма",
+				"Отправленные сообщения",
+				"Исходящие",
+			];
 
-      testFolderMatches(russianVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(russianVariants, StandardFolder.SENT);
+		});
 
-    it('matches Gmail special folder', () => {
-      const gmailVariants = ['[Gmail]/Sent Mail', '[Gmail]\\Sent Mail'];
+		it("matches Gmail special folder", () => {
+			const gmailVariants = ["[Gmail]/Sent Mail", "[Gmail]\\Sent Mail"];
 
-      testFolderMatches(gmailVariants, StandardFolder.SENT);
-    });
+			testFolderMatches(gmailVariants, StandardFolder.SENT);
+		});
 
-    it('does not match unrelated folders', () => {
-      const unrelatedFolders = [
-        'Inbox',
-        'Drafts',
-        'Trash',
-        'Archive',
-        'Junk',
-        'Important',
-        'RandomFolder',
-      ];
+		it("does not match unrelated folders", () => {
+			const unrelatedFolders = [
+				"Inbox",
+				"Drafts",
+				"Trash",
+				"Archive",
+				"Junk",
+				"Important",
+				"RandomFolder",
+			];
 
-      unrelatedFolders.forEach((folder) => {
-        const result = getStandardFolderByRegex(folder);
+			unrelatedFolders.forEach((folder) => {
+				const result = getStandardFolderByRegex(folder);
 
-        expect(result).not.toBe(StandardFolder.SENT);
-      });
-    });
-  });
+				expect(result).not.toBe(StandardFolder.SENT);
+			});
+		});
+	});
 
-  describe('TRASH folder detection', () => {
-    it('matches English variants', () => {
-      const englishVariants = [
-        'Trash',
-        'Deleted Items',
-        'Deleted Messages',
-        'Bin',
-        'Recycle Bin',
-      ];
+	describe("TRASH folder detection", () => {
+		it("matches English variants", () => {
+			const englishVariants = [
+				"Trash",
+				"Deleted Items",
+				"Deleted Messages",
+				"Bin",
+				"Recycle Bin",
+			];
 
-      testFolderMatches(englishVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(englishVariants, StandardFolder.TRASH);
+		});
 
-    it('matches French variants', () => {
-      const frenchVariants = ['Corbeille', 'Supprimés', 'Éléments supprimés'];
+		it("matches French variants", () => {
+			const frenchVariants = ["Corbeille", "Supprimés", "Éléments supprimés"];
 
-      testFolderMatches(frenchVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(frenchVariants, StandardFolder.TRASH);
+		});
 
-    it('matches German variants', () => {
-      const germanVariants = ['Gelöscht', 'Gelöschte Elemente', 'Papierkorb'];
+		it("matches German variants", () => {
+			const germanVariants = ["Gelöscht", "Gelöschte Elemente", "Papierkorb"];
 
-      testFolderMatches(germanVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(germanVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Spanish variants', () => {
-      const spanishVariants = [
-        'Papelera',
-        'Eliminados',
-        'Elementos eliminados',
-      ];
+		it("matches Spanish variants", () => {
+			const spanishVariants = [
+				"Papelera",
+				"Eliminados",
+				"Elementos eliminados",
+			];
 
-      testFolderMatches(spanishVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(spanishVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Portuguese variants', () => {
-      const portugueseVariants = ['Lixeira', 'Itens excluídos'];
+		it("matches Portuguese variants", () => {
+			const portugueseVariants = ["Lixeira", "Itens excluídos"];
 
-      testFolderMatches(portugueseVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(portugueseVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Italian variants', () => {
-      const italianVariants = ['Cestino', 'Posta eliminata', 'Eliminati'];
+		it("matches Italian variants", () => {
+			const italianVariants = ["Cestino", "Posta eliminata", "Eliminati"];
 
-      testFolderMatches(italianVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(italianVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Korean variants', () => {
-      const koreanVariants = ['휴지통', '삭제된편지함'];
+		it("matches Korean variants", () => {
+			const koreanVariants = ["휴지통", "삭제된편지함"];
 
-      testFolderMatches(koreanVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(koreanVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Japanese variants', () => {
-      const japaneseVariants = ['ごみ箱', '削除済み', '削除済みメール'];
+		it("matches Japanese variants", () => {
+			const japaneseVariants = ["ごみ箱", "削除済み", "削除済みメール"];
 
-      testFolderMatches(japaneseVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(japaneseVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Polish variants', () => {
-      const polishVariants = ['Kosz', 'Usunięte', 'Elementy usunięte'];
+		it("matches Polish variants", () => {
+			const polishVariants = ["Kosz", "Usunięte", "Elementy usunięte"];
 
-      testFolderMatches(polishVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(polishVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Russian variants', () => {
-      const russianVariants = ['Удалённые', 'Корзина', 'Удалённые сообщения'];
+		it("matches Russian variants", () => {
+			const russianVariants = ["Удалённые", "Корзина", "Удалённые сообщения"];
 
-      testFolderMatches(russianVariants, StandardFolder.TRASH);
-    });
+			testFolderMatches(russianVariants, StandardFolder.TRASH);
+		});
 
-    it('matches Gmail special folder', () => {
-      const gmailVariants = ['[Gmail]/Trash', '[Gmail]\\Trash'];
+		it("matches Gmail special folder", () => {
+			const gmailVariants = ["[Gmail]/Trash", "[Gmail]\\Trash"];
 
-      testFolderMatches(gmailVariants, StandardFolder.TRASH);
-    });
-  });
+			testFolderMatches(gmailVariants, StandardFolder.TRASH);
+		});
+	});
 
-  describe('JUNK/SPAM folder detection', () => {
-    it('matches English variants', () => {
-      const englishVariants = [
-        'Spam',
-        'Junk Mail',
-        'Junk Messages',
-        'Bulk Mail',
-        'Bulk Messages',
-      ];
+	describe("JUNK/SPAM folder detection", () => {
+		it("matches English variants", () => {
+			const englishVariants = [
+				"Spam",
+				"Junk Mail",
+				"Junk Messages",
+				"Bulk Mail",
+				"Bulk Messages",
+			];
 
-      testFolderMatches(englishVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(englishVariants, StandardFolder.JUNK);
+		});
 
-    it('matches French variants', () => {
-      const frenchVariants = ['Indésirables', 'Courrier indésirable', 'Spam'];
+		it("matches French variants", () => {
+			const frenchVariants = ["Indésirables", "Courrier indésirable", "Spam"];
 
-      testFolderMatches(frenchVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(frenchVariants, StandardFolder.JUNK);
+		});
 
-    it('matches German variants', () => {
-      const germanVariants = ['Spam', 'Junk Mail', 'Unerwünscht'];
+		it("matches German variants", () => {
+			const germanVariants = ["Spam", "Junk Mail", "Unerwünscht"];
 
-      testFolderMatches(germanVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(germanVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Spanish variants', () => {
-      const spanishVariants = ['Spam', 'Correo basura', 'No deseado'];
+		it("matches Spanish variants", () => {
+			const spanishVariants = ["Spam", "Correo basura", "No deseado"];
 
-      testFolderMatches(spanishVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(spanishVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Portuguese variants', () => {
-      const portugueseVariants = ['Spam', 'Lixo eletrônico', 'Indesejados'];
+		it("matches Portuguese variants", () => {
+			const portugueseVariants = ["Spam", "Lixo eletrônico", "Indesejados"];
 
-      testFolderMatches(portugueseVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(portugueseVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Italian variants', () => {
-      const italianVariants = ['Spam', 'Posta indesiderata', 'Indesiderata'];
+		it("matches Italian variants", () => {
+			const italianVariants = ["Spam", "Posta indesiderata", "Indesiderata"];
 
-      testFolderMatches(italianVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(italianVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Korean variants', () => {
-      const koreanVariants = ['스팸', '정크메일'];
+		it("matches Korean variants", () => {
+			const koreanVariants = ["스팸", "정크메일"];
 
-      testFolderMatches(koreanVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(koreanVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Japanese variants', () => {
-      const japaneseVariants = ['スパム', '迷惑メール'];
+		it("matches Japanese variants", () => {
+			const japaneseVariants = ["スパム", "迷惑メール"];
 
-      testFolderMatches(japaneseVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(japaneseVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Polish variants', () => {
-      const polishVariants = ['Spam', 'Niechciane', 'Śmieci'];
+		it("matches Polish variants", () => {
+			const polishVariants = ["Spam", "Niechciane", "Śmieci"];
 
-      testFolderMatches(polishVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(polishVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Russian variants', () => {
-      const russianVariants = ['Спам', 'Нежелательные', 'Мусор'];
+		it("matches Russian variants", () => {
+			const russianVariants = ["Спам", "Нежелательные", "Мусор"];
 
-      testFolderMatches(russianVariants, StandardFolder.JUNK);
-    });
+			testFolderMatches(russianVariants, StandardFolder.JUNK);
+		});
 
-    it('matches Gmail special folder', () => {
-      const gmailVariants = ['[Gmail]/Spam', '[Gmail]\\Spam'];
+		it("matches Gmail special folder", () => {
+			const gmailVariants = ["[Gmail]/Spam", "[Gmail]\\Spam"];
 
-      testFolderMatches(gmailVariants, StandardFolder.JUNK);
-    });
-  });
+			testFolderMatches(gmailVariants, StandardFolder.JUNK);
+		});
+	});
 });

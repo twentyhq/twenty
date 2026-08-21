@@ -1,6 +1,6 @@
 export type RecordPickerPickableMorphItem = {
-  recordId: string;
-  objectMetadataId: string;
-  isSelected: boolean;
-  isMatchingSearchFilter: boolean;
+	recordId: string;
+	objectMetadataId: string;
+	isSelected: boolean;
+	isMatchingSearchFilter: boolean;
 };

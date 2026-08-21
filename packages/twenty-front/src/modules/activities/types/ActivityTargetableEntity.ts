@@ -1,4 +1,4 @@
 export type ActivityTargetableObject = {
-  id: string;
-  targetObjectNameSingular: string;
+	id: string;
+	targetObjectNameSingular: string;
 };

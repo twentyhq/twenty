@@ -1,5 +1,5 @@
 export const getScrollWrapperInstanceIdFromPageLayoutId = (
-  pageLayoutId: string,
+	pageLayoutId: string,
 ) => {
-  return `scroll-wrapper-page-layout-${pageLayoutId}`;
+	return `scroll-wrapper-page-layout-${pageLayoutId}`;
 };

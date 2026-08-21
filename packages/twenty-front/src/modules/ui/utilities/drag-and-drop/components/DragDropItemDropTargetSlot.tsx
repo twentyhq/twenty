@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
 // Zero-footprint seam between adjacent sortable cells: 2px of indicator space
 // pulled 1px into each neighbor so the cells keep their layout.
@@ -14,11 +14,11 @@ const StyledDropTargetSlot = styled.div`
 `;
 
 type DragDropItemDropTargetSlotProps = {
-  children: ReactNode;
+	children: ReactNode;
 };
 
 export const DragDropItemDropTargetSlot = ({
-  children,
+	children,
 }: DragDropItemDropTargetSlotProps) => (
-  <StyledDropTargetSlot>{children}</StyledDropTargetSlot>
+	<StyledDropTargetSlot>{children}</StyledDropTargetSlot>
 );

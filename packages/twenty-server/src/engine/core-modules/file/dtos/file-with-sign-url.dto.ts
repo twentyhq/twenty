@@ -1,21 +1,21 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('FileWithSignedUrl')
+@ObjectType("FileWithSignedUrl")
 export class FileWithSignedUrlDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field()
-  path: string;
+	@Field()
+	path: string;
 
-  @Field()
-  size: number;
+	@Field()
+	size: number;
 
-  @Field(() => Date, { nullable: false })
-  createdAt: Date;
+	@Field(() => Date, { nullable: false })
+	createdAt: Date;
 
-  @Field()
-  url: string;
+	@Field()
+	url: string;
 }

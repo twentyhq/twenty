@@ -1,10 +1,10 @@
-import { registerEnumType } from '@nestjs/graphql';
+import { registerEnumType } from "@nestjs/graphql";
 
 export enum SupportDriver {
-  NONE = 'NONE',
-  FRONT = 'FRONT',
+	NONE = "NONE",
+	FRONT = "FRONT",
 }
 
 registerEnumType(SupportDriver, {
-  name: 'SupportDriver',
+	name: "SupportDriver",
 });

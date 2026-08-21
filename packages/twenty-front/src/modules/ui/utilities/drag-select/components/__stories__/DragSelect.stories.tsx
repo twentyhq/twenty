@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useRef, useState } from 'react';
-import { userEvent, within } from 'storybook/test';
+import { styled } from "@linaria/react";
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { useRef, useState } from "react";
+import { userEvent, within } from "storybook/test";
 
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { DragSelect } from "@/ui/utilities/drag-select/components/DragSelect";
+import { ScrollWrapper } from "@/ui/utilities/scroll/components/ScrollWrapper";
+import { isDefined } from "twenty-shared/utils";
+import { ComponentDecorator } from "twenty-ui/testing";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
@@ -25,9 +25,9 @@ const StyledSelectableItem = styled.div<{ selected?: boolean }>`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   background: ${({ selected }) =>
-    selected
-      ? themeCssVariables.color.blue3
-      : themeCssVariables.background.secondary};
+		selected
+			? themeCssVariables.color.blue3
+			: themeCssVariables.background.secondary};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,9 +37,9 @@ const StyledSelectableItem = styled.div<{ selected?: boolean }>`
 
   &:hover {
     background: ${({ selected }) =>
-      selected
-        ? themeCssVariables.color.blue5
-        : themeCssVariables.background.tertiary};
+			selected
+				? themeCssVariables.color.blue5
+				: themeCssVariables.background.tertiary};
   }
 `;
 
@@ -69,121 +69,121 @@ const StyledScrollableWrapperContainer = styled.div`
 `;
 
 type SelectableItemProps = {
-  id: string;
-  selected: boolean;
-  children: React.ReactNode;
+	id: string;
+	selected: boolean;
+	children: React.ReactNode;
 };
 
 const SelectableItem = ({ id, selected, children }: SelectableItemProps) => (
-  <StyledSelectableItem data-selectable-id={id} selected={selected}>
-    {children}
-  </StyledSelectableItem>
+	<StyledSelectableItem data-selectable-id={id} selected={selected}>
+		{children}
+	</StyledSelectableItem>
 );
 
 type BasicDragSelectDemoProps = {
-  itemCount?: number;
-  disableSelection?: boolean;
+	itemCount?: number;
+	disableSelection?: boolean;
 };
 
 const BasicDragSelectDemo = ({
-  itemCount = 12,
-  disableSelection = false,
+	itemCount = 12,
+	disableSelection = false,
 }: BasicDragSelectDemoProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-  const handleSelectionChange = (id: string, selected: boolean) => {
-    setSelectedItems((prev) => {
-      const newSet = new Set(prev);
-      if (selected) {
-        newSet.add(id);
-      } else {
-        newSet.delete(id);
-      }
-      return newSet;
-    });
-  };
+	const handleSelectionChange = (id: string, selected: boolean) => {
+		setSelectedItems((prev) => {
+			const newSet = new Set(prev);
+			if (selected) {
+				newSet.add(id);
+			} else {
+				newSet.delete(id);
+			}
+			return newSet;
+		});
+	};
 
-  return (
-    <StyledContainer ref={containerRef}>
-      <StyledGrid>
-        {Array.from({ length: itemCount }, (_, index) => (
-          <SelectableItem
-            key={index}
-            id={`item-${index}`}
-            selected={selectedItems.has(`item-${index}`)}
-          >
-            Item {index + 1}
-          </SelectableItem>
-        ))}
-      </StyledGrid>
+	return (
+		<StyledContainer ref={containerRef}>
+			<StyledGrid>
+				{Array.from({ length: itemCount }, (_, index) => (
+					<SelectableItem
+						key={index}
+						id={`item-${index}`}
+						selected={selectedItems.has(`item-${index}`)}
+					>
+						Item {index + 1}
+					</SelectableItem>
+				))}
+			</StyledGrid>
 
-      {!disableSelection && (
-        <DragSelect
-          selectableItemsContainerRef={containerRef}
-          onDragSelectionChange={handleSelectionChange}
-          onDragSelectionStart={() => {}}
-          onDragSelectionEnd={() => {}}
-        />
-      )}
-    </StyledContainer>
-  );
+			{!disableSelection && (
+				<DragSelect
+					selectableItemsContainerRef={containerRef}
+					onDragSelectionChange={handleSelectionChange}
+					onDragSelectionStart={() => {}}
+					onDragSelectionEnd={() => {}}
+				/>
+			)}
+		</StyledContainer>
+	);
 };
 
 const ScrollableDragSelectDemo = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-  const handleSelectionChange = (id: string, selected: boolean) => {
-    setSelectedItems((prev) => {
-      const newSet = new Set(prev);
-      if (selected) {
-        newSet.add(id);
-      } else {
-        newSet.delete(id);
-      }
-      return newSet;
-    });
-  };
+	const handleSelectionChange = (id: string, selected: boolean) => {
+		setSelectedItems((prev) => {
+			const newSet = new Set(prev);
+			if (selected) {
+				newSet.add(id);
+			} else {
+				newSet.delete(id);
+			}
+			return newSet;
+		});
+	};
 
-  return (
-    <StyledScrollableWrapperContainer>
-      <ScrollWrapper componentInstanceId="scrollable-demo">
-        <div
-          ref={containerRef}
-          style={{ position: 'relative', padding: '16px' }}
-        >
-          <StyledLargeGrid>
-            {Array.from({ length: 36 }, (_, index) => (
-              <SelectableItem
-                key={index}
-                id={`scroll-item-${index}`}
-                selected={selectedItems.has(`scroll-item-${index}`)}
-              >
-                Item {index + 1}
-              </SelectableItem>
-            ))}
-          </StyledLargeGrid>
+	return (
+		<StyledScrollableWrapperContainer>
+			<ScrollWrapper componentInstanceId="scrollable-demo">
+				<div
+					ref={containerRef}
+					style={{ position: "relative", padding: "16px" }}
+				>
+					<StyledLargeGrid>
+						{Array.from({ length: 36 }, (_, index) => (
+							<SelectableItem
+								key={index}
+								id={`scroll-item-${index}`}
+								selected={selectedItems.has(`scroll-item-${index}`)}
+							>
+								Item {index + 1}
+							</SelectableItem>
+						))}
+					</StyledLargeGrid>
 
-          <DragSelect
-            selectableItemsContainerRef={containerRef}
-            onDragSelectionChange={handleSelectionChange}
-            scrollWrapperComponentInstanceId="scrollable-demo"
-          />
-        </div>
-      </ScrollWrapper>
-    </StyledScrollableWrapperContainer>
-  );
+					<DragSelect
+						selectableItemsContainerRef={containerRef}
+						onDragSelectionChange={handleSelectionChange}
+						scrollWrapperComponentInstanceId="scrollable-demo"
+					/>
+				</div>
+			</ScrollWrapper>
+		</StyledScrollableWrapperContainer>
+	);
 };
 
 const meta: Meta<typeof DragSelect> = {
-  title: 'UI/Utilities/DragSelect/DragSelect',
-  component: DragSelect,
-  decorators: [ComponentDecorator],
-  parameters: {
-    docs: {
-      description: {
-        component: `
+	title: "UI/Utilities/DragSelect/DragSelect",
+	component: DragSelect,
+	decorators: [ComponentDecorator],
+	parameters: {
+		docs: {
+			description: {
+				component: `
 The DragSelect component enables users to select multiple items by dragging a selection box.
 
 **Key Features:**
@@ -200,82 +200,82 @@ The DragSelect component enables users to select multiple items by dragging a se
 - For auto-scroll functionality, wrap in ScrollWrapper and provide \`scrollWrapperComponentInstanceId\`
 - Can work without ScrollWrapper for basic drag selection (auto-scroll gracefully disabled)
         `,
-      },
-    },
-  },
-  argTypes: {
-    selectableItemsContainerRef: { control: false },
-    onDragSelectionChange: { control: false },
-    onDragSelectionStart: { control: false },
-    onDragSelectionEnd: { control: false },
-  },
+			},
+		},
+	},
+	argTypes: {
+		selectableItemsContainerRef: { control: false },
+		onDragSelectionChange: { control: false },
+		onDragSelectionStart: { control: false },
+		onDragSelectionEnd: { control: false },
+	},
 };
 
 export default meta;
 type Story = StoryObj<typeof DragSelect>;
 
 export const Default: Story = {
-  render: () => <BasicDragSelectDemo />,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Basic drag selection with a grid of selectable items. Works without ScrollWrapper - drag selection is universal and can work in any container.',
-      },
-    },
-  },
+	render: () => <BasicDragSelectDemo />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"Basic drag selection with a grid of selectable items. Works without ScrollWrapper - drag selection is universal and can work in any container.",
+			},
+		},
+	},
 };
 
 export const WithAutoScroll: Story = {
-  render: () => <ScrollableDragSelectDemo />,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Drag selection with auto-scroll support. The container will automatically scroll when dragging near the edges. Uses ScrollWrapper for auto-scroll functionality.',
-      },
-    },
-  },
+	render: () => <ScrollableDragSelectDemo />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"Drag selection with auto-scroll support. The container will automatically scroll when dragging near the edges. Uses ScrollWrapper for auto-scroll functionality.",
+			},
+		},
+	},
 };
 
 export const InteractiveDragSelection: Story = {
-  render: () => <BasicDragSelectDemo />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	render: () => <BasicDragSelectDemo />,
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByText('Item 1');
+		await canvas.findByText("Item 1");
 
-    const container = canvasElement
-      .querySelector('[data-selectable-id="item-0"]')
-      ?.closest('div');
+		const container = canvasElement
+			.querySelector('[data-selectable-id="item-0"]')
+			?.closest("div");
 
-    if (isDefined(container)) {
-      await userEvent.pointer([
-        { target: container, coords: { x: 50, y: 50 } },
-        { keys: '[MouseLeft>]', coords: { x: 50, y: 50 } },
-        { coords: { x: 200, y: 150 } },
-        { keys: '[/MouseLeft]' },
-      ]);
-    }
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Automated interaction test showing drag selection behavior. Watch as items get selected during the drag operation.',
-      },
-    },
-  },
+		if (isDefined(container)) {
+			await userEvent.pointer([
+				{ target: container, coords: { x: 50, y: 50 } },
+				{ keys: "[MouseLeft>]", coords: { x: 50, y: 50 } },
+				{ coords: { x: 200, y: 150 } },
+				{ keys: "[/MouseLeft]" },
+			]);
+		}
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"Automated interaction test showing drag selection behavior. Watch as items get selected during the drag operation.",
+			},
+		},
+	},
 };
 
 export const Disabled: Story = {
-  render: () => <BasicDragSelectDemo disableSelection={true} />,
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Component without drag selection enabled. Items are displayed but cannot be selected via dragging.',
-      },
-    },
-  },
+	render: () => <BasicDragSelectDemo disableSelection={true} />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					"Component without drag selection enabled. Items are displayed but cannot be selected via dragging.",
+			},
+		},
+	},
 };

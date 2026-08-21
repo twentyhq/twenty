@@ -1,1 +1,1 @@
-export const VISIBILITY_MOBILE = 'mobile';
+export const VISIBILITY_MOBILE = "mobile";

@@ -1,35 +1,35 @@
-import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useEffect, useRef } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 type RemoteStyleRendererProps = {
-  cssText?: string;
-  styleKey?: string;
+	cssText?: string;
+	styleKey?: string;
 };
 
 // oxlint-disable-next-line twenty/effect-components
 export const RemoteStyleRenderer = ({
-  cssText,
-  styleKey,
+	cssText,
+	styleKey,
 }: RemoteStyleRendererProps) => {
-  const styleRef = useRef<HTMLStyleElement | null>(null);
+	const styleRef = useRef<HTMLStyleElement | null>(null);
 
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.setAttribute('data-remote-style', styleKey ?? '');
-    document.head.appendChild(styleElement);
-    styleRef.current = styleElement;
+	useEffect(() => {
+		const styleElement = document.createElement("style");
+		styleElement.setAttribute("data-remote-style", styleKey ?? "");
+		document.head.appendChild(styleElement);
+		styleRef.current = styleElement;
 
-    return () => {
-      document.head.removeChild(styleElement);
-      styleRef.current = null;
-    };
-  }, [styleKey]);
+		return () => {
+			document.head.removeChild(styleElement);
+			styleRef.current = null;
+		};
+	}, [styleKey]);
 
-  useEffect(() => {
-    if (isDefined(styleRef.current) && isDefined(cssText)) {
-      styleRef.current.textContent = cssText;
-    }
-  }, [cssText]);
+	useEffect(() => {
+		if (isDefined(styleRef.current) && isDefined(cssText)) {
+			styleRef.current.textContent = cssText;
+		}
+	}, [cssText]);
 
-  return null;
+	return null;
 };

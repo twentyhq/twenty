@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('InitiateTwoFactorAuthenticationProvisioning')
+@ObjectType("InitiateTwoFactorAuthenticationProvisioning")
 export class InitiateTwoFactorAuthenticationProvisioningDTO {
-  @Field(() => String)
-  uri: string;
+	@Field(() => String)
+	uri: string;
 }

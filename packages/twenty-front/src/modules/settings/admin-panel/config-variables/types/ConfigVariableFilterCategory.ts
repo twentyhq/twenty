@@ -1,1 +1,1 @@
-export type ConfigVariableFilterCategory = 'source' | 'group';
+export type ConfigVariableFilterCategory = "source" | "group";

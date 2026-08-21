@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  type ChangeEventHandler,
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+	type ChangeEventHandler,
+	type ReactNode,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
-import { TAB_LABEL_WIDTH } from './controls-form-constants';
+import { TAB_LABEL_WIDTH } from "./controls-form-constants";
 
 const SliderLabel = styled.label`
   align-items: center;
@@ -121,159 +121,159 @@ const EditableControlValueInput = styled.input`
 `;
 
 function getStepPrecision(step: number | undefined) {
-  if (!step || Number.isInteger(step)) {
-    return 0;
-  }
+	if (!step || Number.isInteger(step)) {
+		return 0;
+	}
 
-  const stepString = step.toString().toLowerCase();
+	const stepString = step.toString().toLowerCase();
 
-  if (stepString.includes('e-')) {
-    const exponent = stepString.split('e-')[1];
+	if (stepString.includes("e-")) {
+		const exponent = stepString.split("e-")[1];
 
-    return exponent ? Number.parseInt(exponent, 10) : 0;
-  }
+		return exponent ? Number.parseInt(exponent, 10) : 0;
+	}
 
-  return stepString.split('.')[1]?.length ?? 0;
+	return stepString.split(".")[1]?.length ?? 0;
 }
 
 function formatEditableValue(value: number, step: number | undefined) {
-  const precision = getStepPrecision(step);
+	const precision = getStepPrecision(step);
 
-  if (precision === 0) {
-    return String(Math.round(value));
-  }
+	if (precision === 0) {
+		return String(Math.round(value));
+	}
 
-  return String(Number(value.toFixed(precision)));
+	return String(Number(value.toFixed(precision)));
 }
 
 function clampAndSnapValue(
-  value: number,
-  min: number,
-  max: number,
-  step: number | undefined,
+	value: number,
+	min: number,
+	max: number,
+	step: number | undefined,
 ) {
-  const clampedValue = Math.min(Math.max(value, min), max);
+	const clampedValue = Math.min(Math.max(value, min), max);
 
-  if (!step || step <= 0) {
-    return clampedValue;
-  }
+	if (!step || step <= 0) {
+		return clampedValue;
+	}
 
-  const precision = getStepPrecision(step);
-  const snappedValue = Math.round((clampedValue - min) / step) * step + min;
+	const precision = getStepPrecision(step);
+	const snappedValue = Math.round((clampedValue - min) / step) * step + min;
 
-  return Number(Math.min(Math.max(snappedValue, min), max).toFixed(precision));
+	return Number(Math.min(Math.max(snappedValue, min), max).toFixed(precision));
 }
 
 type SliderControlProps = {
-  children: ReactNode;
-  max: number;
-  min: number;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  step?: number;
-  value: number;
-  valueLabel: string;
+	children: ReactNode;
+	max: number;
+	min: number;
+	onChange: ChangeEventHandler<HTMLInputElement>;
+	step?: number;
+	value: number;
+	valueLabel: string;
 };
 
 export function SliderControl({
-  children,
-  max,
-  min,
-  onChange,
-  step,
-  value,
-  valueLabel,
+	children,
+	max,
+	min,
+	onChange,
+	step,
+	value,
+	valueLabel,
 }: SliderControlProps) {
-  const [draftValue, setDraftValue] = useState<string | null>(null);
-  const valueInputReference = useRef<HTMLInputElement>(null);
-  const fillPercent = ((value - min) / (max - min)) * 100;
-  const isEditing = draftValue !== null;
+	const [draftValue, setDraftValue] = useState<string | null>(null);
+	const valueInputReference = useRef<HTMLInputElement>(null);
+	const fillPercent = ((value - min) / (max - min)) * 100;
+	const isEditing = draftValue !== null;
 
-  useEffect(() => {
-    if (!isEditing) {
-      return;
-    }
+	useEffect(() => {
+		if (!isEditing) {
+			return;
+		}
 
-    valueInputReference.current?.focus();
-    valueInputReference.current?.select();
-  }, [isEditing]);
+		valueInputReference.current?.focus();
+		valueInputReference.current?.select();
+	}, [isEditing]);
 
-  const commitDraftValue = () => {
-    if (draftValue === null) {
-      return;
-    }
+	const commitDraftValue = () => {
+		if (draftValue === null) {
+			return;
+		}
 
-    const trimmed = draftValue.trim();
-    setDraftValue(null);
+		const trimmed = draftValue.trim();
+		setDraftValue(null);
 
-    if (trimmed === '') {
-      return;
-    }
+		if (trimmed === "") {
+			return;
+		}
 
-    const nextValue = Number(trimmed);
+		const nextValue = Number(trimmed);
 
-    if (!Number.isFinite(nextValue)) {
-      return;
-    }
+		if (!Number.isFinite(nextValue)) {
+			return;
+		}
 
-    const normalizedValue = clampAndSnapValue(nextValue, min, max, step);
+		const normalizedValue = clampAndSnapValue(nextValue, min, max, step);
 
-    onChange({
-      target: { value: String(normalizedValue) },
-    } as React.ChangeEvent<HTMLInputElement>);
-  };
+		onChange({
+			target: { value: String(normalizedValue) },
+		} as React.ChangeEvent<HTMLInputElement>);
+	};
 
-  return (
-    <SliderLabel>
-      <span>{children}</span>
-      <SliderInput
-        $fillPercent={fillPercent}
-        max={max}
-        min={min}
-        onChange={onChange}
-        step={step}
-        type="range"
-        value={value}
-      />
-      {isEditing ? (
-        <EditableControlValueInput
-          inputMode="decimal"
-          max={max}
-          min={min}
-          onBlur={commitDraftValue}
-          onChange={(event) => setDraftValue(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              commitDraftValue();
-              return;
-            }
+	return (
+		<SliderLabel>
+			<span>{children}</span>
+			<SliderInput
+				$fillPercent={fillPercent}
+				max={max}
+				min={min}
+				onChange={onChange}
+				step={step}
+				type="range"
+				value={value}
+			/>
+			{isEditing ? (
+				<EditableControlValueInput
+					inputMode="decimal"
+					max={max}
+					min={min}
+					onBlur={commitDraftValue}
+					onChange={(event) => setDraftValue(event.target.value)}
+					onKeyDown={(event) => {
+						if (event.key === "Enter") {
+							event.preventDefault();
+							commitDraftValue();
+							return;
+						}
 
-            if (event.key === 'Escape') {
-              event.preventDefault();
-              setDraftValue(null);
-            }
-          }}
-          ref={valueInputReference}
-          step={step}
-          type="number"
-          value={draftValue}
-        />
-      ) : (
-        <EditableControlValueButton
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setDraftValue(formatEditableValue(value, step));
-          }}
-          onMouseDown={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-          }}
-          type="button"
-        >
-          <ControlValue>{valueLabel}</ControlValue>
-        </EditableControlValueButton>
-      )}
-    </SliderLabel>
-  );
+						if (event.key === "Escape") {
+							event.preventDefault();
+							setDraftValue(null);
+						}
+					}}
+					ref={valueInputReference}
+					step={step}
+					type="number"
+					value={draftValue}
+				/>
+			) : (
+				<EditableControlValueButton
+					onClick={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						setDraftValue(formatEditableValue(value, step));
+					}}
+					onMouseDown={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+					}}
+					type="button"
+				>
+					<ControlValue>{valueLabel}</ControlValue>
+				</EditableControlValueButton>
+			)}
+		</SliderLabel>
+	);
 }

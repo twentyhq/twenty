@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('BarChartSeries')
+@ObjectType("BarChartSeries")
 export class BarChartSeriesDTO {
-  @Field(() => String)
-  key: string;
+	@Field(() => String)
+	key: string;
 
-  @Field(() => String)
-  label: string;
+	@Field(() => String)
+	label: string;
 }

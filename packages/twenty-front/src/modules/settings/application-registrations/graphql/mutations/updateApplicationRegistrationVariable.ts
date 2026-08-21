@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPDATE_APPLICATION_REGISTRATION_VARIABLE = gql`
   mutation UpdateApplicationRegistrationVariable(

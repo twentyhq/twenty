@@ -1,10 +1,10 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 type TimelineActivityContextValue = {
-  recordId: string;
+	recordId: string;
 };
 
 export const TimelineActivityContext =
-  createContext<TimelineActivityContextValue>({
-    recordId: '',
-  });
+	createContext<TimelineActivityContextValue>({
+		recordId: "",
+	});

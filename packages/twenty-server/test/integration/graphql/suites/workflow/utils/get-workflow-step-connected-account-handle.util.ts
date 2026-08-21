@@ -1,13 +1,13 @@
-import { gql } from 'graphql-tag';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { gql } from "graphql-tag";
+import { makeGraphqlAPIRequest } from "test/integration/graphql/utils/make-graphql-api-request.util";
 
 export const getWorkflowStepConnectedAccountHandle = async ({
-  connectedAccountId,
+	connectedAccountId,
 }: {
-  connectedAccountId: string;
+	connectedAccountId: string;
 }) => {
-  const response = await makeGraphqlAPIRequest({
-    query: gql`
+	const response = await makeGraphqlAPIRequest({
+		query: gql`
       query WorkflowStepConnectedAccountHandle($connectedAccountId: UUID!) {
         workflowStepConnectedAccountHandle(
           connectedAccountId: $connectedAccountId
@@ -18,10 +18,10 @@ export const getWorkflowStepConnectedAccountHandle = async ({
         }
       }
     `,
-    variables: { connectedAccountId },
-  });
+		variables: { connectedAccountId },
+	});
 
-  expect(response.body.errors).toBeUndefined();
+	expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.workflowStepConnectedAccountHandle;
+	return response.body.data.workflowStepConnectedAccountHandle;
 };

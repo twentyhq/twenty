@@ -1,22 +1,22 @@
-import { styled } from '@linaria/react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { useContext } from "react";
 
-import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
+import { TimelineActivityContext } from "@/activities/timeline-activities/contexts/TimelineActivityContext";
 
-import { useLinkedObjectObjectMetadataItem } from '@/activities/timeline-activities/hooks/useLinkedObjectObjectMetadataItem';
-import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
-import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useLinkedObjectObjectMetadataItem } from "@/activities/timeline-activities/hooks/useLinkedObjectObjectMetadataItem";
+import { EventIconDynamicComponent } from "@/activities/timeline-activities/rows/components/EventIconDynamicComponent";
+import { EventRowDynamicComponent } from "@/activities/timeline-activities/rows/components/EventRowDynamicComponent";
+import { type TimelineActivity } from "@/activities/timeline-activities/types/TimelineActivity";
+import { getTimelineActivityAuthorFullName } from "@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName";
+import { currentWorkspaceMemberState } from "@/auth/states/currentWorkspaceMemberState";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { getObjectRecordIdentifier } from "@/object-metadata/utils/getObjectRecordIdentifier";
+import { recordStoreFamilyState } from "@/object-record/record-store/states/recordStoreFamilyState";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { isUndefinedOrNull } from "~/utils/isUndefinedOrNull";
+import { allowRequestsToTwentyIconsState } from "@/client-config/states/allowRequestsToTwentyIcons";
 
 const StyledTimelineItemContainer = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -71,91 +71,91 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   margin-bottom: ${({ isMarginBottom }) =>
-    isMarginBottom ? themeCssVariables.spacing[3] : '0'};
+		isMarginBottom ? themeCssVariables.spacing[3] : "0"};
   min-height: 26px;
   overflow: hidden;
 `;
 
 type EventRowProps = {
-  mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
-  isLastEvent?: boolean;
-  event: TimelineActivity;
+	mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
+	isLastEvent?: boolean;
+	event: TimelineActivity;
 };
 
 export const EventRow = ({
-  isLastEvent,
-  event,
-  mainObjectMetadataItem,
+	isLastEvent,
+	event,
+	mainObjectMetadataItem,
 }: EventRowProps) => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+	const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
+	const allowRequestsToTwentyIcons = useAtomStateValue(
+		allowRequestsToTwentyIconsState,
+	);
 
-  const { recordId } = useContext(TimelineActivityContext);
+	const { recordId } = useContext(TimelineActivityContext);
 
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+	const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const linkedObjectMetadataItem = useLinkedObjectObjectMetadataItem(
-    event.linkedObjectMetadataId,
-  );
+	const linkedObjectMetadataItem = useLinkedObjectObjectMetadataItem(
+		event.linkedObjectMetadataId,
+	);
 
-  if (isUndefinedOrNull(currentWorkspaceMember)) {
-    return null;
-  }
+	if (isUndefinedOrNull(currentWorkspaceMember)) {
+		return null;
+	}
 
-  if (isUndefinedOrNull(recordStore)) {
-    return null;
-  }
-  if (isUndefinedOrNull(mainObjectMetadataItem)) {
-    return null;
-  }
+	if (isUndefinedOrNull(recordStore)) {
+		return null;
+	}
+	if (isUndefinedOrNull(mainObjectMetadataItem)) {
+		return null;
+	}
 
-  const labelIdentifier = getObjectRecordIdentifier({
-    objectMetadataItem: mainObjectMetadataItem,
-    record: recordStore,
-    allowRequestsToTwentyIcons,
-  });
+	const labelIdentifier = getObjectRecordIdentifier({
+		objectMetadataItem: mainObjectMetadataItem,
+		record: recordStore,
+		allowRequestsToTwentyIcons,
+	});
 
-  const authorFullName = getTimelineActivityAuthorFullName(
-    event,
-    currentWorkspaceMember,
-  );
+	const authorFullName = getTimelineActivityAuthorFullName(
+		event,
+		currentWorkspaceMember,
+	);
 
-  if (isUndefinedOrNull(mainObjectMetadataItem)) {
-    throw new Error('mainObjectMetadataItem is required');
-  }
+	if (isUndefinedOrNull(mainObjectMetadataItem)) {
+		throw new Error("mainObjectMetadataItem is required");
+	}
 
-  return (
-    <>
-      <StyledTimelineItemContainer>
-        <StyledLeftContainer>
-          <StyledIconContainer>
-            <EventIconDynamicComponent
-              event={event}
-              linkedObjectMetadataItem={linkedObjectMetadataItem}
-            />
-          </StyledIconContainer>
-          {!isLastEvent && (
-            <StyledVerticalLineContainer>
-              <StyledVerticalLine />
-            </StyledVerticalLineContainer>
-          )}
-        </StyledLeftContainer>
-        <StyledItemContainer isMarginBottom={!isLastEvent}>
-          <StyledSummary>
-            <EventRowDynamicComponent
-              authorFullName={authorFullName}
-              labelIdentifierValue={labelIdentifier.name}
-              event={event}
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              linkedObjectMetadataItem={linkedObjectMetadataItem}
-              createdAt={event.createdAt}
-            />
-          </StyledSummary>
-        </StyledItemContainer>
-      </StyledTimelineItemContainer>
-    </>
-  );
+	return (
+		<>
+			<StyledTimelineItemContainer>
+				<StyledLeftContainer>
+					<StyledIconContainer>
+						<EventIconDynamicComponent
+							event={event}
+							linkedObjectMetadataItem={linkedObjectMetadataItem}
+						/>
+					</StyledIconContainer>
+					{!isLastEvent && (
+						<StyledVerticalLineContainer>
+							<StyledVerticalLine />
+						</StyledVerticalLineContainer>
+					)}
+				</StyledLeftContainer>
+				<StyledItemContainer isMarginBottom={!isLastEvent}>
+					<StyledSummary>
+						<EventRowDynamicComponent
+							authorFullName={authorFullName}
+							labelIdentifierValue={labelIdentifier.name}
+							event={event}
+							mainObjectMetadataItem={mainObjectMetadataItem}
+							linkedObjectMetadataItem={linkedObjectMetadataItem}
+							createdAt={event.createdAt}
+						/>
+					</StyledSummary>
+				</StyledItemContainer>
+			</StyledTimelineItemContainer>
+		</>
+	);
 };

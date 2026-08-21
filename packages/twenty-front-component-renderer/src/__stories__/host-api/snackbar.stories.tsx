@@ -1,25 +1,25 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { expect, userEvent, waitFor, within } from "storybook/test";
+import { isDefined } from "twenty-shared/utils";
 
-import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { FrontComponentRenderer } from "@/host/components/FrontComponentRenderer";
 import {
-  FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  resetFrontComponentStoryMocks,
-} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
+	FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+	resetFrontComponentStoryMocks,
+} from "@/__stories__/shared/test-utils/createFrontComponentStoryMeta";
+import { expectFrontComponentMounted } from "@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted";
+import { runFrontComponentStory } from "@/__stories__/shared/test-utils/runFrontComponentStory";
 import {
-  HOST_API_TIMEOUT,
-  INTERACTION_TIMEOUT,
-} from '@/__stories__/shared/test-utils/timeouts';
+	HOST_API_TIMEOUT,
+	INTERACTION_TIMEOUT,
+} from "@/__stories__/shared/test-utils/timeouts";
 
 const meta: Meta<typeof FrontComponentRenderer> = {
-  title: 'FrontComponent/HostApi/Snackbar',
-  component: FrontComponentRenderer,
-  parameters: { layout: 'centered' },
-  args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  beforeEach: resetFrontComponentStoryMocks,
+	title: "FrontComponent/HostApi/Snackbar",
+	component: FrontComponentRenderer,
+	parameters: { layout: "centered" },
+	args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+	beforeEach: resetFrontComponentStoryMocks,
 };
 
 export default meta;
@@ -27,37 +27,37 @@ export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
 export const Snackbar: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-snackbar',
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const api = args.frontComponentHostCommunicationApi;
+	frontComponentBundleName: "host-api-snackbar",
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		const api = args.frontComponentHostCommunicationApi;
 
-    if (!isDefined(api)) {
-      throw new Error('frontComponentHostCommunicationApi is required');
-    }
+		if (!isDefined(api)) {
+			throw new Error("frontComponentHostCommunicationApi is required");
+		}
 
-    await expectFrontComponentMounted(canvas);
+		await expectFrontComponentMounted(canvas);
 
-    const subject = await canvas.findByTestId('subject');
+		const subject = await canvas.findByTestId("subject");
 
-    await userEvent.click(subject);
+		await userEvent.click(subject);
 
-    await waitFor(
-      () => {
-        expect(api.enqueueSnackbar).toHaveBeenCalledWith({
-          message: 'Test notification',
-          variant: 'success',
-        });
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
+		await waitFor(
+			() => {
+				expect(api.enqueueSnackbar).toHaveBeenCalledWith({
+					message: "Test notification",
+					variant: "success",
+				});
+			},
+			{ timeout: HOST_API_TIMEOUT },
+		);
 
-    expect(
-      await canvas.findByText(
-        'snackbar:success',
-        {},
-        { timeout: INTERACTION_TIMEOUT },
-      ),
-    ).toBeVisible();
-  },
+		expect(
+			await canvas.findByText(
+				"snackbar:success",
+				{},
+				{ timeout: INTERACTION_TIMEOUT },
+			),
+		).toBeVisible();
+	},
 });

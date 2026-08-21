@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPDATE_MESSAGE_FOLDERS = gql`
   mutation UpdateMessageFolders($input: UpdateMessageFoldersInput!) {

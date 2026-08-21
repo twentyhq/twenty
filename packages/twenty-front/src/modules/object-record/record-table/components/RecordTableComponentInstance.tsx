@@ -1,23 +1,23 @@
-import { type ReactNode } from 'react';
+import { type ReactNode } from "react";
 
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { RecordTableComponentInstanceContext } from "@/object-record/record-table/states/context/RecordTableComponentInstanceContext";
 
 type RecordTableComponentInstanceProps = {
-  children: ReactNode;
-  recordTableId: string;
+	children: ReactNode;
+	recordTableId: string;
 };
 
 export const RecordTableComponentInstance = ({
-  children,
-  recordTableId,
+	children,
+	recordTableId,
 }: RecordTableComponentInstanceProps) => {
-  return (
-    <RecordTableComponentInstanceContext.Provider
-      value={{
-        instanceId: recordTableId,
-      }}
-    >
-      {children}
-    </RecordTableComponentInstanceContext.Provider>
-  );
+	return (
+		<RecordTableComponentInstanceContext.Provider
+			value={{
+				instanceId: recordTableId,
+			}}
+		>
+			{children}
+		</RecordTableComponentInstanceContext.Provider>
+	);
 };

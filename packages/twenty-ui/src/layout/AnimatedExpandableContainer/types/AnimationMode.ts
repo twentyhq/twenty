@@ -1,1 +1,1 @@
-export type AnimationMode = 'scroll-height' | 'fit-content';
+export type AnimationMode = "scroll-height" | "fit-content";

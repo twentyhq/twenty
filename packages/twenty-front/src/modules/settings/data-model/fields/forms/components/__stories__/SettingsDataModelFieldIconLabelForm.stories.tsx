@@ -1,30 +1,30 @@
-import { styled } from '@linaria/react';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { styled } from "@linaria/react";
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
-import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
-import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { FormProviderDecorator } from "~/testing/decorators/FormProviderDecorator";
+import { IconsProviderDecorator } from "~/testing/decorators/IconsProviderDecorator";
 
-import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { SettingsDataModelFieldIconLabelForm } from "@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm";
+import { ComponentDecorator } from "twenty-ui/testing";
+import { getTestEnrichedObjectMetadataItemsMock } from "~/testing/utils/getTestEnrichedObjectMetadataItemsMock";
 
 const StyledContainer = styled.div`
   flex: 1;
 `;
 
 const meta: Meta<typeof SettingsDataModelFieldIconLabelForm> = {
-  title: 'Modules/Settings/DataModel/SettingsDataModelFieldIconLabelForm',
-  component: SettingsDataModelFieldIconLabelForm,
-  decorators: [
-    (Story) => (
-      <StyledContainer>
-        <Story />
-      </StyledContainer>
-    ),
-    FormProviderDecorator,
-    IconsProviderDecorator,
-    ComponentDecorator,
-  ],
+	title: "Modules/Settings/DataModel/SettingsDataModelFieldIconLabelForm",
+	component: SettingsDataModelFieldIconLabelForm,
+	decorators: [
+		(Story) => (
+			<StyledContainer>
+				<Story />
+			</StyledContainer>
+		),
+		FormProviderDecorator,
+		IconsProviderDecorator,
+		ComponentDecorator,
+	],
 };
 
 export default meta;
@@ -33,24 +33,24 @@ type Story = StoryObj<typeof SettingsDataModelFieldIconLabelForm>;
 export const Default: Story = {};
 
 const mockedPersonObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.namePlural === 'person',
-  );
+	getTestEnrichedObjectMetadataItemsMock().find(
+		(item) => item.namePlural === "person",
+	);
 
 export const WithFieldMetadataItem: Story = {
-  args: {
-    fieldMetadataItem: mockedPersonObjectMetadataItem?.fields.find(
-      ({ name }) => name === 'name',
-    ),
-  },
+	args: {
+		fieldMetadataItem: mockedPersonObjectMetadataItem?.fields.find(
+			({ name }) => name === "name",
+		),
+	},
 };
 
 export const Disabled: Story = {
-  args: {},
+	args: {},
 };
 
 export const WithMaxLength: Story = {
-  args: {
-    maxLength: 50,
-  },
+	args: {
+		maxLength: 50,
+	},
 };

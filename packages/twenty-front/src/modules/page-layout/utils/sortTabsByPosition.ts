@@ -1,5 +1,5 @@
 export const sortTabsByPosition = <T extends { position: number }>(
-  tabs: T[],
+	tabs: T[],
 ): T[] => {
-  return tabs.toSorted((a, b) => a.position - b.position);
+	return tabs.toSorted((a, b) => a.position - b.position);
 };

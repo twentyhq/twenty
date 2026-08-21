@@ -1,6 +1,6 @@
-import { RecordCalendarMonthHeaderDay } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeaderDay';
-import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import { styled } from '@linaria/react';
+import { RecordCalendarMonthHeaderDay } from "@/object-record/record-calendar/month/components/RecordCalendarMonthHeaderDay";
+import { useRecordCalendarMonthContextOrThrow } from "@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext";
+import { styled } from "@linaria/react";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -9,13 +9,13 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonthHeader = () => {
-  const { weekDayLabels } = useRecordCalendarMonthContextOrThrow();
+	const { weekDayLabels } = useRecordCalendarMonthContextOrThrow();
 
-  return (
-    <StyledContainer>
-      {weekDayLabels.map((label, index) => (
-        <RecordCalendarMonthHeaderDay key={`label-${index}`} label={label} />
-      ))}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			{weekDayLabels.map((label, index) => (
+				<RecordCalendarMonthHeaderDay key={`label-${index}`} label={label} />
+			))}
+		</StyledContainer>
+	);
 };

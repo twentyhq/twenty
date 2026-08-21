@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
+import { styled } from "@linaria/react";
+import { type CSSProperties } from "react";
 
 import {
-  color,
-  EASING,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  SHADOW,
-} from '@/tokens';
+	color,
+	EASING,
+	radius,
+	REDUCED_MOTION,
+	semanticColor,
+	SHADOW,
+} from "@/tokens";
 
 export type PartnerCardIndexStyle = CSSProperties & {
-  '--partner-card-index': number;
+	"--partner-card-index": number;
 };
 
 // Shared marketplace card shell: staggered entrance, hover lift, reduced-motion
@@ -32,7 +32,7 @@ export const CardFrame = styled.article`
 
   animation: partnerCardEnter 700ms ${EASING.standard} both;
   animation-delay: calc(var(--partner-card-index) * 90ms + 180ms);
-  background-color: ${color('white')};
+  background-color: ${color("white")};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   display: flex;

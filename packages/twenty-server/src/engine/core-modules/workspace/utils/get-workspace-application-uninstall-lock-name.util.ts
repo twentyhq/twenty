@@ -1,2 +1,2 @@
 export const getWorkspaceApplicationUninstallLockName = (workspaceId: string) =>
-  `workspace-application-uninstall-${workspaceId}`;
+	`workspace-application-uninstall-${workspaceId}`;

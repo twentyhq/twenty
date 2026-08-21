@@ -1,21 +1,21 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
 
-import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
-import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
-import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { type BackgroundMockCompany } from "@/sign-in-background-mock/constants/BackgroundMockCompanies";
+import { BACKGROUND_MOCK_COLUMN_WIDTHS } from "@/sign-in-background-mock/constants/BackgroundMockColumnWidths";
+import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from "@/sign-in-background-mock/constants/BackgroundMockTableDimensions";
+import { getAbsoluteImageUrl } from "~/utils/image/getAbsoluteImageUrl";
 import {
-  Avatar,
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
-import { IconLink } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Checkbox } from 'twenty-ui/input';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+	Avatar,
+	Chip,
+	ChipAccent,
+	ChipSize,
+	ChipVariant,
+} from "twenty-ui/data-display";
+import { IconLink } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
+import { Checkbox } from "twenty-ui/input";
+import { getLogoUrlFromDomainName } from "twenty-shared/utils";
 
 const StyledRow = styled.div`
   display: flex;
@@ -74,98 +74,98 @@ const StyledLastEmptyCell = styled.div`
 `;
 
 type BackgroundMockTableRowProps = {
-  company: BackgroundMockCompany;
+	company: BackgroundMockCompany;
 };
 
-const formatNumber = (value: number) => value.toLocaleString('en-US');
+const formatNumber = (value: number) => value.toLocaleString("en-US");
 
 const PersonChip = ({ fullName }: { fullName: string | null }) => {
-  if (fullName === null) {
-    return null;
-  }
+	if (fullName === null) {
+		return null;
+	}
 
-  return (
-    <Chip
-      label={fullName}
-      size={ChipSize.Small}
-      variant={ChipVariant.Transparent}
-      accent={ChipAccent.TextPrimary}
-      clickable={false}
-      leftComponent={
-        <Avatar
-          type="rounded"
-          placeholder={fullName}
-          placeholderColorSeed={fullName}
-          size="md"
-        />
-      }
-    />
-  );
+	return (
+		<Chip
+			label={fullName}
+			size={ChipSize.Small}
+			variant={ChipVariant.Transparent}
+			accent={ChipAccent.TextPrimary}
+			clickable={false}
+			leftComponent={
+				<Avatar
+					type="rounded"
+					placeholder={fullName}
+					placeholderColorSeed={fullName}
+					size="md"
+				/>
+			}
+		/>
+	);
 };
 
 export const BackgroundMockTableRow = ({
-  company,
+	company,
 }: BackgroundMockTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const logoUrl = getLogoUrlFromDomainName(company.domainName);
+	const logoUrl = getLogoUrlFromDomainName(company.domainName);
 
-  return (
-    <StyledRow>
-      <StyledDragHandleColumn />
-      <StyledCheckboxColumn>
-        <Checkbox hoverable checked={false} />
-      </StyledCheckboxColumn>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Name}>
-        <Chip
-          label={company.name}
-          size={ChipSize.Small}
-          variant={ChipVariant.Transparent}
-          accent={ChipAccent.TextPrimary}
-          clickable={false}
-          leftComponent={
-            <Avatar
-              type="squared"
-              avatarUrl={getAbsoluteImageUrl(logoUrl)}
-              placeholder={company.name}
-              placeholderColorSeed={company.id}
-              size="md"
-            />
-          }
-        />
-      </StyledCell>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Domain}>
-        <Chip
-          label={company.domainName}
-          size={ChipSize.Small}
-          variant={ChipVariant.Transparent}
-          accent={ChipAccent.TextSecondary}
-          clickable={false}
-          leftComponent={
-            <IconLink
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
-              color={theme.font.color.tertiary}
-            />
-          }
-        />
-      </StyledCell>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS['Created by']}>
-        <PersonChip fullName={company.createdBy} />
-      </StyledCell>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS['Account Owner']}>
-        <PersonChip fullName={company.accountOwner} />
-      </StyledCell>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS['Creation date']}>
-        <StyledMutedText>{company.creationDate}</StyledMutedText>
-      </StyledCell>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Employees}>
-        <StyledTruncated>{formatNumber(company.employees)}</StyledTruncated>
-      </StyledCell>
-      <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Address}>
-        <StyledTruncated>{company.address}</StyledTruncated>
-      </StyledCell>
-      <StyledLastEmptyCell />
-    </StyledRow>
-  );
+	return (
+		<StyledRow>
+			<StyledDragHandleColumn />
+			<StyledCheckboxColumn>
+				<Checkbox hoverable checked={false} />
+			</StyledCheckboxColumn>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Name}>
+				<Chip
+					label={company.name}
+					size={ChipSize.Small}
+					variant={ChipVariant.Transparent}
+					accent={ChipAccent.TextPrimary}
+					clickable={false}
+					leftComponent={
+						<Avatar
+							type="squared"
+							avatarUrl={getAbsoluteImageUrl(logoUrl)}
+							placeholder={company.name}
+							placeholderColorSeed={company.id}
+							size="md"
+						/>
+					}
+				/>
+			</StyledCell>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Domain}>
+				<Chip
+					label={company.domainName}
+					size={ChipSize.Small}
+					variant={ChipVariant.Transparent}
+					accent={ChipAccent.TextSecondary}
+					clickable={false}
+					leftComponent={
+						<IconLink
+							size={theme.icon.size.sm}
+							stroke={theme.icon.stroke.sm}
+							color={theme.font.color.tertiary}
+						/>
+					}
+				/>
+			</StyledCell>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS["Created by"]}>
+				<PersonChip fullName={company.createdBy} />
+			</StyledCell>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS["Account Owner"]}>
+				<PersonChip fullName={company.accountOwner} />
+			</StyledCell>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS["Creation date"]}>
+				<StyledMutedText>{company.creationDate}</StyledMutedText>
+			</StyledCell>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Employees}>
+				<StyledTruncated>{formatNumber(company.employees)}</StyledTruncated>
+			</StyledCell>
+			<StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Address}>
+				<StyledTruncated>{company.address}</StyledTruncated>
+			</StyledCell>
+			<StyledLastEmptyCell />
+		</StyledRow>
+	);
 };

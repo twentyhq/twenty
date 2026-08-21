@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useContext, useRef } from 'react';
-import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type KeyboardEvent, useContext, useRef } from "react";
+import { type IconComponent } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div<{ isHighlighted: boolean }>`
   background: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
+		isHighlighted
+			? themeCssVariables.background.transparent.light
+			: "transparent"};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   cursor: pointer;
@@ -60,64 +60,64 @@ const StyledTextArea = styled.textarea`
 `;
 
 type AiChatQuestionOtherOptionProps = {
-  NumberIcon: IconComponent;
-  isHighlighted: boolean;
-  value: string;
-  onChange: (value: string) => void;
-  onSelect: () => void;
-  onTextareaKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+	NumberIcon: IconComponent;
+	isHighlighted: boolean;
+	value: string;
+	onChange: (value: string) => void;
+	onSelect: () => void;
+	onTextareaKeyDown: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 };
 
 export const AiChatQuestionOtherOption = ({
-  NumberIcon,
-  isHighlighted,
-  value,
-  onChange,
-  onSelect,
-  onTextareaKeyDown,
+	NumberIcon,
+	isHighlighted,
+	value,
+	onChange,
+	onSelect,
+	onTextareaKeyDown,
 }: AiChatQuestionOtherOptionProps) => {
-  const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const { t } = useLingui();
+	const { theme } = useContext(ThemeContext);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const selectAndFocus = () => {
-    onSelect();
-    textareaRef.current?.focus();
-  };
+	const selectAndFocus = () => {
+		onSelect();
+		textareaRef.current?.focus();
+	};
 
-  return (
-    <StyledContainer isHighlighted={isHighlighted} onClick={selectAndFocus}>
-      <StyledLabelRow
-        role="button"
-        tabIndex={0}
-        aria-pressed={isHighlighted}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            selectAndFocus();
-          }
-        }}
-      >
-        <NumberIcon
-          size={theme.icon.size.sm}
-          color={themeCssVariables.font.color.tertiary}
-        />
-        <StyledLabel>{t`Other`}</StyledLabel>
-      </StyledLabelRow>
-      <StyledTextArea
-        ref={textareaRef}
-        value={value}
-        placeholder={t`Type your own answer here`}
-        rows={1}
-        onClick={(event) => {
-          event.stopPropagation();
-          if (!isHighlighted) {
-            onSelect();
-          }
-        }}
-        onChange={(event) => onChange(event.target.value)}
-        onKeyDown={onTextareaKeyDown}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer isHighlighted={isHighlighted} onClick={selectAndFocus}>
+			<StyledLabelRow
+				role="button"
+				tabIndex={0}
+				aria-pressed={isHighlighted}
+				onKeyDown={(event) => {
+					if (event.key === "Enter" || event.key === " ") {
+						event.preventDefault();
+						selectAndFocus();
+					}
+				}}
+			>
+				<NumberIcon
+					size={theme.icon.size.sm}
+					color={themeCssVariables.font.color.tertiary}
+				/>
+				<StyledLabel>{t`Other`}</StyledLabel>
+			</StyledLabelRow>
+			<StyledTextArea
+				ref={textareaRef}
+				value={value}
+				placeholder={t`Type your own answer here`}
+				rows={1}
+				onClick={(event) => {
+					event.stopPropagation();
+					if (!isHighlighted) {
+						onSelect();
+					}
+				}}
+				onChange={(event) => onChange(event.target.value)}
+				onKeyDown={onTextareaKeyDown}
+			/>
+		</StyledContainer>
+	);
 };

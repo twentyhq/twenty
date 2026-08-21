@@ -1,15 +1,15 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
-import { type ParsedName } from 'src/modules/contact-creation-manager/types/parsed-name.type';
+import { type ParsedName } from "src/modules/contact-creation-manager/types/parsed-name.type";
 
 export const getParsedNameFromEmailLocalPart = (
-  localPart: string,
+	localPart: string,
 ): ParsedName => {
-  const [withoutPlusAddressTag = ''] = localPart.split('+');
-  const parts = withoutPlusAddressTag.split('.').filter(isNonEmptyString);
+	const [withoutPlusAddressTag = ""] = localPart.split("+");
+	const parts = withoutPlusAddressTag.split(".").filter(isNonEmptyString);
 
-  return {
-    firstName: parts[0] ?? '',
-    lastName: parts.slice(1).join(' '),
-  };
+	return {
+		firstName: parts[0] ?? "",
+		lastName: parts.slice(1).join(" "),
+	};
 };

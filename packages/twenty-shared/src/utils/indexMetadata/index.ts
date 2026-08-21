@@ -1,1 +1,1 @@
-export * from './getUniqueConstraintsFields';
+export * from "./getUniqueConstraintsFields";

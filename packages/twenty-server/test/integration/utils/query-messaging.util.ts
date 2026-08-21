@@ -1,81 +1,81 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 import {
-  type CalendarChannelContactAutoCreationPolicy,
-  type MessageFolderImportPolicy,
-} from 'twenty-shared/types';
+	type CalendarChannelContactAutoCreationPolicy,
+	type MessageFolderImportPolicy,
+} from "twenty-shared/types";
 
-import { type CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
-import { type ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
-import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
-import { type MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
+import { type CalendarChannelDTO } from "src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto";
+import { type ConnectedAccountDTO } from "src/engine/metadata-modules/connected-account/dtos/connected-account.dto";
+import { type MessageChannelDTO } from "src/engine/metadata-modules/message-channel/dtos/message-channel.dto";
+import { type MessageFolderDTO } from "src/engine/metadata-modules/message-folder/dtos/message-folder.dto";
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
+import { waitForAllJobsToFinish } from "test/integration/utils/wait-for-all-jobs-to-finish.util";
 
 type MetadataAPIResponse = {
-  body: { data: Record<string, unknown>; errors?: { message: string }[] };
+	body: { data: Record<string, unknown>; errors?: { message: string }[] };
 };
 
 export const getDataOrThrow = (response: MetadataAPIResponse) => {
-  if (response.body.errors?.length) {
-    throw new Error(
-      `Metadata API request failed: ${response.body.errors
-        .map((error) => error.message)
-        .join('; ')}`,
-    );
-  }
+	if (response.body.errors?.length) {
+		throw new Error(
+			`Metadata API request failed: ${response.body.errors
+				.map((error) => error.message)
+				.join("; ")}`,
+		);
+	}
 
-  return response.body.data;
+	return response.body.data;
 };
 
 export type MessageFolderDto = Pick<
-  MessageFolderDTO,
-  'id' | 'name' | 'isSynced'
+	MessageFolderDTO,
+	"id" | "name" | "isSynced"
 >;
 
 export type MessageChannelDto = Pick<
-  MessageChannelDTO,
-  | 'id'
-  | 'handle'
-  | 'connectedAccountId'
-  | 'syncStatus'
-  | 'syncStage'
-  | 'syncStageStartedAt'
-  | 'throttleFailureCount'
-  | 'throttleRetryAfter'
-  | 'visibility'
+	MessageChannelDTO,
+	| "id"
+	| "handle"
+	| "connectedAccountId"
+	| "syncStatus"
+	| "syncStage"
+	| "syncStageStartedAt"
+	| "throttleFailureCount"
+	| "throttleRetryAfter"
+	| "visibility"
 >;
 
 export type CalendarChannelDto = Pick<
-  CalendarChannelDTO,
-  | 'id'
-  | 'handle'
-  | 'connectedAccountId'
-  | 'syncStatus'
-  | 'syncStage'
-  | 'syncStageStartedAt'
-  | 'throttleFailureCount'
-  | 'isContactAutoCreationEnabled'
-  | 'contactAutoCreationPolicy'
-  | 'visibility'
+	CalendarChannelDTO,
+	| "id"
+	| "handle"
+	| "connectedAccountId"
+	| "syncStatus"
+	| "syncStage"
+	| "syncStageStartedAt"
+	| "throttleFailureCount"
+	| "isContactAutoCreationEnabled"
+	| "contactAutoCreationPolicy"
+	| "visibility"
 >;
 
 export type ConnectedAccountDto = Pick<
-  ConnectedAccountDTO,
-  'id' | 'handle' | 'provider' | 'lastCredentialsRefreshedAt' | 'authFailedAt'
+	ConnectedAccountDTO,
+	"id" | "handle" | "provider" | "lastCredentialsRefreshedAt" | "authFailedAt"
 >;
 
 type MessageChannelUpdate = {
-  messageFolderImportPolicy?: MessageFolderImportPolicy;
-  isSyncEnabled?: boolean;
-  isContactAutoCreationEnabled?: boolean;
+	messageFolderImportPolicy?: MessageFolderImportPolicy;
+	isSyncEnabled?: boolean;
+	isContactAutoCreationEnabled?: boolean;
 };
 
 type CalendarChannelUpdate = {
-  isSyncEnabled?: boolean;
-  isContactAutoCreationEnabled?: boolean;
-  contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
+	isSyncEnabled?: boolean;
+	isContactAutoCreationEnabled?: boolean;
+	contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
 };
 
 const MESSAGE_CHANNEL_FIELDS = gql`
@@ -93,8 +93,8 @@ const MESSAGE_CHANNEL_FIELDS = gql`
 `;
 
 export const queryMessageChannels = async (): Promise<MessageChannelDto[]> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query MessageChannelsForTest {
         myMessageChannels {
           ...TestMessageChannelFields
@@ -102,20 +102,20 @@ export const queryMessageChannels = async (): Promise<MessageChannelDto[]> => {
       }
       ${MESSAGE_CHANNEL_FIELDS}
     `,
-  });
+	});
 
-  return getDataOrThrow(response).myMessageChannels as MessageChannelDto[];
+	return getDataOrThrow(response).myMessageChannels as MessageChannelDto[];
 };
 
 export const queryMessageChannel = async ({
-  connectedAccountId,
-  channelId,
+	connectedAccountId,
+	channelId,
 }: {
-  connectedAccountId: string;
-  channelId: string;
+	connectedAccountId: string;
+	channelId: string;
 }): Promise<MessageChannelDto> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query MessageChannelForTest($connectedAccountId: UUID) {
         myMessageChannels(connectedAccountId: $connectedAccountId) {
           ...TestMessageChannelFields
@@ -123,25 +123,25 @@ export const queryMessageChannel = async ({
       }
       ${MESSAGE_CHANNEL_FIELDS}
     `,
-    variables: { connectedAccountId },
-  });
+		variables: { connectedAccountId },
+	});
 
-  const channel = (
-    getDataOrThrow(response).myMessageChannels as MessageChannelDto[]
-  ).find((candidate) => candidate.id === channelId);
+	const channel = (
+		getDataOrThrow(response).myMessageChannels as MessageChannelDto[]
+	).find((candidate) => candidate.id === channelId);
 
-  if (!channel) {
-    throw new Error(`Message channel ${channelId} not found`);
-  }
+	if (!channel) {
+		throw new Error(`Message channel ${channelId} not found`);
+	}
 
-  return channel;
+	return channel;
 };
 
 export const queryMessageFolders = async (
-  messageChannelId: string,
+	messageChannelId: string,
 ): Promise<MessageFolderDto[]> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query MessageFoldersForTest($messageChannelId: UUID) {
         myMessageFolders(messageChannelId: $messageChannelId) {
           id
@@ -150,17 +150,17 @@ export const queryMessageFolders = async (
         }
       }
     `,
-    variables: { messageChannelId },
-  });
+		variables: { messageChannelId },
+	});
 
-  return getDataOrThrow(response).myMessageFolders as MessageFolderDto[];
+	return getDataOrThrow(response).myMessageFolders as MessageFolderDto[];
 };
 
 export const queryCalendarChannels = async (
-  connectedAccountId: string,
+	connectedAccountId: string,
 ): Promise<CalendarChannelDto[]> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query CalendarChannelsForTest($connectedAccountId: UUID) {
         myCalendarChannels(connectedAccountId: $connectedAccountId) {
           id
@@ -176,35 +176,35 @@ export const queryCalendarChannels = async (
         }
       }
     `,
-    variables: { connectedAccountId },
-  });
+		variables: { connectedAccountId },
+	});
 
-  return getDataOrThrow(response).myCalendarChannels as CalendarChannelDto[];
+	return getDataOrThrow(response).myCalendarChannels as CalendarChannelDto[];
 };
 
 export const queryCalendarChannel = async ({
-  connectedAccountId,
-  calendarChannelId,
+	connectedAccountId,
+	calendarChannelId,
 }: {
-  connectedAccountId: string;
-  calendarChannelId: string;
+	connectedAccountId: string;
+	calendarChannelId: string;
 }): Promise<CalendarChannelDto> => {
-  const channel = (await queryCalendarChannels(connectedAccountId)).find(
-    (candidate) => candidate.id === calendarChannelId,
-  );
+	const channel = (await queryCalendarChannels(connectedAccountId)).find(
+		(candidate) => candidate.id === calendarChannelId,
+	);
 
-  if (!channel) {
-    throw new Error(`Calendar channel ${calendarChannelId} not found`);
-  }
+	if (!channel) {
+		throw new Error(`Calendar channel ${calendarChannelId} not found`);
+	}
 
-  return channel;
+	return channel;
 };
 
 export const queryConnectedAccount = async (
-  connectedAccountId: string,
+	connectedAccountId: string,
 ): Promise<ConnectedAccountDto> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query ConnectedAccountsForTest {
         myConnectedAccounts {
           id
@@ -215,48 +215,48 @@ export const queryConnectedAccount = async (
         }
       }
     `,
-  });
+	});
 
-  const account = (
-    getDataOrThrow(response).myConnectedAccounts as ConnectedAccountDto[]
-  ).find((candidate) => candidate.id === connectedAccountId);
+	const account = (
+		getDataOrThrow(response).myConnectedAccounts as ConnectedAccountDto[]
+	).find((candidate) => candidate.id === connectedAccountId);
 
-  if (!account) {
-    throw new Error(`Connected account ${connectedAccountId} not found`);
-  }
+	if (!account) {
+		throw new Error(`Connected account ${connectedAccountId} not found`);
+	}
 
-  return account;
+	return account;
 };
 
 export const updateMessageChannel = async (
-  messageChannelId: string,
-  update: MessageChannelUpdate,
+	messageChannelId: string,
+	update: MessageChannelUpdate,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       mutation UpdateMessageChannelForTest($input: UpdateMessageChannelInput!) {
         updateMessageChannel(input: $input) {
           id
         }
       }
     `,
-    variables: {
-      input: {
-        id: messageChannelId,
-        update,
-      },
-    },
-  });
+		variables: {
+			input: {
+				id: messageChannelId,
+				update,
+			},
+		},
+	});
 
-  getDataOrThrow(response);
+	getDataOrThrow(response);
 };
 
 export const updateCalendarChannel = async (
-  calendarChannelId: string,
-  update: CalendarChannelUpdate,
+	calendarChannelId: string,
+	update: CalendarChannelUpdate,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       mutation UpdateCalendarChannelForTest(
         $input: UpdateCalendarChannelInput!
       ) {
@@ -265,49 +265,49 @@ export const updateCalendarChannel = async (
         }
       }
     `,
-    variables: {
-      input: {
-        id: calendarChannelId,
-        update,
-      },
-    },
-  });
+		variables: {
+			input: {
+				id: calendarChannelId,
+				update,
+			},
+		},
+	});
 
-  getDataOrThrow(response);
+	getDataOrThrow(response);
 };
 
 export const startChannelSync = async (
-  connectedAccountId: string,
+	connectedAccountId: string,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       mutation StartChannelSyncForTest($connectedAccountId: UUID!) {
         startChannelSync(connectedAccountId: $connectedAccountId) {
           success
         }
       }
     `,
-    variables: { connectedAccountId },
-  });
+		variables: { connectedAccountId },
+	});
 
-  getDataOrThrow(response);
+	getDataOrThrow(response);
 };
 
 export const deleteConnectedAccount = async (
-  connectedAccountId: string,
+	connectedAccountId: string,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       mutation DeleteConnectedAccountForTest($id: UUID!) {
         deleteConnectedAccount(id: $id) {
           id
         }
       }
     `,
-    variables: { id: connectedAccountId },
-  });
+		variables: { id: connectedAccountId },
+	});
 
-  getDataOrThrow(response);
+	getDataOrThrow(response);
 
-  await waitForAllJobsToFinish();
+	await waitForAllJobsToFinish();
 };

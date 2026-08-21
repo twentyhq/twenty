@@ -1,18 +1,18 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type StyledCardContentProps = {
-  disabled?: boolean;
-  alignItems?: 'center' | 'flex-start';
-  fullHeight?: boolean;
+	disabled?: boolean;
+	alignItems?: "center" | "flex-start";
+	fullHeight?: boolean;
 };
 
 export const StyledSettingsCardContent = styled.div<StyledCardContentProps>`
-  align-items: ${({ alignItems }) => alignItems ?? 'center'};
+  align-items: ${({ alignItems }) => alignItems ?? "center"};
   background-color: ${themeCssVariables.background.secondary};
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
-  height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
+  height: ${({ fullHeight }) => (fullHeight ? "100%" : "auto")};
   padding: ${themeCssVariables.spacing[4]};
 `;
 export const StyledSettingsCardIcon = styled.div`

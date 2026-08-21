@@ -1,12 +1,12 @@
 /* @license Enterprise */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
 @Injectable()
 export class StripeSDKService {
-  getStripe(stripeApiKey: string) {
-    return new Stripe(stripeApiKey, {});
-  }
+	getStripe(stripeApiKey: string) {
+		return new Stripe(stripeApiKey, {});
+	}
 }

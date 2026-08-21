@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
-import { useContext } from 'react';
-import { type AskQuestionsToolResult } from 'twenty-shared/ai';
-import { IconHelpCircle } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { isNonEmptyString } from "@sniptt/guards";
+import { type DynamicToolUIPart, type ToolUIPart } from "ai";
+import { useContext } from "react";
+import { type AskQuestionsToolResult } from "twenty-shared/ai";
+import { IconHelpCircle } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { ShimmeringText } from "@/ai/components/ShimmeringText";
 
 const StyledContainer = styled.div`
   align-items: flex-start;
@@ -42,7 +42,7 @@ const StyledAnswersCard = styled.div`
 const StyledAnswerBlock = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
   min-width: 0;
 `;
 
@@ -59,66 +59,66 @@ const StyledAnswerValue = styled.span`
 `;
 
 export const AiChatQuestionStatusRenderer = ({
-  toolPart,
-  isStreaming,
+	toolPart,
+	isStreaming,
 }: {
-  toolPart: ToolUIPart | DynamicToolUIPart;
-  isStreaming: boolean;
+	toolPart: ToolUIPart | DynamicToolUIPart;
+	isStreaming: boolean;
 }) => {
-  const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+	const { t } = useLingui();
+	const { theme } = useContext(ThemeContext);
 
-  const result = (toolPart.output as { result?: AskQuestionsToolResult } | null)
-    ?.result;
-  const questions = result?.questions ?? [];
-  const status = result?.status ?? 'pending';
+	const result = (toolPart.output as { result?: AskQuestionsToolResult } | null)
+		?.result;
+	const questions = result?.questions ?? [];
+	const status = result?.status ?? "pending";
 
-  if (status === 'pending') {
-    const label = t`Asking questions...`;
+	if (status === "pending") {
+		const label = t`Asking questions...`;
 
-    return (
-      <StyledContainer>
-        <IconHelpCircle size={theme.icon.size.sm} />
-        {isStreaming ? (
-          <ShimmeringText>
-            <StyledMessage>{label}</StyledMessage>
-          </ShimmeringText>
-        ) : (
-          <StyledMessage>{label}</StyledMessage>
-        )}
-      </StyledContainer>
-    );
-  }
+		return (
+			<StyledContainer>
+				<IconHelpCircle size={theme.icon.size.sm} />
+				{isStreaming ? (
+					<ShimmeringText>
+						<StyledMessage>{label}</StyledMessage>
+					</ShimmeringText>
+				) : (
+					<StyledMessage>{label}</StyledMessage>
+				)}
+			</StyledContainer>
+		);
+	}
 
-  const answers = result?.answers ?? [];
+	const answers = result?.answers ?? [];
 
-  return (
-    <StyledAnswersCard>
-      <StyledMessage>{t`Answers`}</StyledMessage>
-      {questions.map((question, index) => {
-        const answer = answers.find(
-          (candidate) => candidate.questionIndex === index,
-        );
-        const selectedLabels = (answer?.selectedOptionIndices ?? [])
-          .map((optionIndex) => question.options[optionIndex]?.label)
-          .filter(isNonEmptyString);
-        const freeTextAnswer = answer?.freeText ?? '';
-        const value =
-          freeTextAnswer.length > 0
-            ? freeTextAnswer
-            : selectedLabels.join(', ');
+	return (
+		<StyledAnswersCard>
+			<StyledMessage>{t`Answers`}</StyledMessage>
+			{questions.map((question, index) => {
+				const answer = answers.find(
+					(candidate) => candidate.questionIndex === index,
+				);
+				const selectedLabels = (answer?.selectedOptionIndices ?? [])
+					.map((optionIndex) => question.options[optionIndex]?.label)
+					.filter(isNonEmptyString);
+				const freeTextAnswer = answer?.freeText ?? "";
+				const value =
+					freeTextAnswer.length > 0
+						? freeTextAnswer
+						: selectedLabels.join(", ");
 
-        if (value.length === 0) {
-          return null;
-        }
+				if (value.length === 0) {
+					return null;
+				}
 
-        return (
-          <StyledAnswerBlock key={index}>
-            <StyledAnswerQuestion>{question.question}</StyledAnswerQuestion>
-            <StyledAnswerValue>{value}</StyledAnswerValue>
-          </StyledAnswerBlock>
-        );
-      })}
-    </StyledAnswersCard>
-  );
+				return (
+					<StyledAnswerBlock key={index}>
+						<StyledAnswerQuestion>{question.question}</StyledAnswerQuestion>
+						<StyledAnswerValue>{value}</StyledAnswerValue>
+					</StyledAnswerBlock>
+				);
+			})}
+		</StyledAnswersCard>
+	);
 };

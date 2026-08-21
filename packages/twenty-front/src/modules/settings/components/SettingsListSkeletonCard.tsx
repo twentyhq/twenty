@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Card } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledCardContainer = styled.div`
   height: 40px;
@@ -12,7 +12,7 @@ const StyledCardContainer = styled.div`
 `;
 
 export const SettingsListSkeletonCard = () => (
-  <StyledCardContainer>
-    <Card />
-  </StyledCardContainer>
+	<StyledCardContainer>
+		<Card />
+	</StyledCardContainer>
 );

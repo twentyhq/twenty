@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import type { ChangeEventHandler, ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import type { ChangeEventHandler, ReactNode } from "react";
 
-import { ToggleSwitch } from './ToggleSwitch';
+import { ToggleSwitch } from "./ToggleSwitch";
 
 const ToggleRow = styled.div`
   align-items: center;
@@ -18,20 +18,20 @@ const ToggleText = styled.span`
 `;
 
 type ToggleControlProps = {
-  checked: boolean;
-  label: ReactNode;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+	checked: boolean;
+	label: ReactNode;
+	onChange: ChangeEventHandler<HTMLInputElement>;
 };
 
 export function ToggleControl({
-  checked,
-  label,
-  onChange,
+	checked,
+	label,
+	onChange,
 }: ToggleControlProps) {
-  return (
-    <ToggleRow>
-      <ToggleText>{label}</ToggleText>
-      <ToggleSwitch checked={checked} onChange={onChange} />
-    </ToggleRow>
-  );
+	return (
+		<ToggleRow>
+			<ToggleText>{label}</ToggleText>
+			<ToggleSwitch checked={checked} onChange={onChange} />
+		</ToggleRow>
+	);
 }

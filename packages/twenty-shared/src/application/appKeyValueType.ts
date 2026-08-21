@@ -1,7 +1,7 @@
-import { type AppKeyValueScope } from '@/application/appKeyValueScopeType';
+import { type AppKeyValueScope } from "@/application/appKeyValueScopeType";
 
 export type AppKeyValue = {
-  key: string;
-  value: unknown;
-  scope: AppKeyValueScope;
+	key: string;
+	value: unknown;
+	scope: AppKeyValueScope;
 };

@@ -1,24 +1,24 @@
 /* @license Enterprise */
 
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { SubscriptionInterval } from "src/engine/core-modules/billing/enums/billing-subscription-interval.enum";
+import { BillingUsageType } from "src/engine/core-modules/billing/enums/billing-usage-type.enum";
 
-@ObjectType('BillingPriceLicensed')
+@ObjectType("BillingPriceLicensed")
 export class BillingPriceLicensedDTO {
-  @Field(() => SubscriptionInterval)
-  recurringInterval: SubscriptionInterval;
+	@Field(() => SubscriptionInterval)
+	recurringInterval: SubscriptionInterval;
 
-  @Field(() => Number)
-  unitAmount: number;
+	@Field(() => Number)
+	unitAmount: number;
 
-  @Field(() => String)
-  stripePriceId: string;
+	@Field(() => String)
+	stripePriceId: string;
 
-  @Field(() => BillingUsageType)
-  priceUsageType: BillingUsageType.LICENSED;
+	@Field(() => BillingUsageType)
+	priceUsageType: BillingUsageType.LICENSED;
 
-  @Field(() => Number, { nullable: true })
-  creditAmount: number | null;
+	@Field(() => Number, { nullable: true })
+	creditAmount: number | null;
 }

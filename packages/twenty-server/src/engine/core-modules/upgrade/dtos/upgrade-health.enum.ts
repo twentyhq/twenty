@@ -1,9 +1,9 @@
-import { registerEnumType } from '@nestjs/graphql';
+import { registerEnumType } from "@nestjs/graphql";
 
-import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { UpgradeHealthEnum } from "twenty-shared/types";
 
 export { UpgradeHealthEnum };
 
 registerEnumType(UpgradeHealthEnum, {
-  name: 'UpgradeHealth',
+	name: "UpgradeHealth",
 });

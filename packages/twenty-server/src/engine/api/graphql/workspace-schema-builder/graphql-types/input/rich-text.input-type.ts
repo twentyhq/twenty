@@ -1,19 +1,19 @@
-import { GraphQLInputObjectType, GraphQLString } from 'graphql';
+import { GraphQLInputObjectType, GraphQLString } from "graphql";
 
 const richTextLeafFilter = new GraphQLInputObjectType({
-  name: 'RichTextLeafFilter',
-  fields: {
-    ilike: {
-      type: GraphQLString,
-      description: 'Case-insensitive match with % wildcard (e.g. %value%)',
-    },
-  },
+	name: "RichTextLeafFilter",
+	fields: {
+		ilike: {
+			type: GraphQLString,
+			description: "Case-insensitive match with % wildcard (e.g. %value%)",
+		},
+	},
 });
 
 export const RichTextFilterType = new GraphQLInputObjectType({
-  name: 'RichTextFilter',
-  fields: {
-    blocknote: { type: richTextLeafFilter },
-    markdown: { type: richTextLeafFilter },
-  },
+	name: "RichTextFilter",
+	fields: {
+		blocknote: { type: richTextLeafFilter },
+		markdown: { type: richTextLeafFilter },
+	},
 });

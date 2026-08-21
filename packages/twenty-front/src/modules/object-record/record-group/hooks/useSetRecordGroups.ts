@@ -1,143 +1,143 @@
-import { useStore } from 'jotai';
+import { useStore } from "jotai";
 
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { type ViewGroup } from '@/views/types/ViewGroup';
-import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { objectMetadataItemsSelector } from "@/object-metadata/states/objectMetadataItemsSelector";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { recordGroupDefinitionFamilyState } from "@/object-record/record-group/states/recordGroupDefinitionFamilyState";
+import { recordGroupIdsComponentState } from "@/object-record/record-group/states/recordGroupIdsComponentState";
+import { type RecordGroupDefinition } from "@/object-record/record-group/types/RecordGroupDefinition";
+import { recordIndexGroupFieldMetadataItemComponentState } from "@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState";
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from "@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId";
+import { type ViewGroup } from "@/views/types/ViewGroup";
+import { mapViewGroupsToRecordGroupDefinitions } from "@/views/utils/mapViewGroupsToRecordGroupDefinitions";
+import { useCallback } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { isDeeplyEqual } from "~/utils/isDeeplyEqual";
 
 export const useSetRecordGroups = () => {
-  const store = useStore();
+	const store = useStore();
 
-  const setRecordGroups = useCallback(
-    ({
-      mainGroupByFieldMetadataId,
-      recordGroups,
-      recordIndexId,
-      objectMetadataItemId,
-    }: {
-      mainGroupByFieldMetadataId: string;
-      recordGroups: RecordGroupDefinition[];
-      recordIndexId: string;
-      objectMetadataItemId: string;
-    }) => {
-      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+	const setRecordGroups = useCallback(
+		({
+			mainGroupByFieldMetadataId,
+			recordGroups,
+			recordIndexId,
+			objectMetadataItemId,
+		}: {
+			mainGroupByFieldMetadataId: string;
+			recordGroups: RecordGroupDefinition[];
+			recordIndexId: string;
+			objectMetadataItemId: string;
+		}) => {
+			const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
-      const objectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
-      );
+			const objectMetadataItem = objectMetadataItems.find(
+				(objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+			);
 
-      if (!isDefined(objectMetadataItem)) {
-        return;
-      }
+			if (!isDefined(objectMetadataItem)) {
+				return;
+			}
 
-      const currentRecordGroupIds = store.get(
-        recordGroupIdsComponentState.atomFamily({
-          instanceId: recordIndexId,
-        }),
-      );
+			const currentRecordGroupIds = store.get(
+				recordGroupIdsComponentState.atomFamily({
+					instanceId: recordIndexId,
+				}),
+			);
 
-      const fieldMetadataId = mainGroupByFieldMetadataId;
-      const fieldMetadata = fieldMetadataId
-        ? objectMetadataItem.fields.find(
-            (field) => field.id === fieldMetadataId,
-          )
-        : undefined;
-      const recordIndexGroupFieldMetadata =
-        recordIndexGroupFieldMetadataItemComponentState.atomFamily({
-          instanceId: recordIndexId,
-        });
-      const currentFieldMetadata = store.get(recordIndexGroupFieldMetadata);
+			const fieldMetadataId = mainGroupByFieldMetadataId;
+			const fieldMetadata = fieldMetadataId
+				? objectMetadataItem.fields.find(
+						(field) => field.id === fieldMetadataId,
+					)
+				: undefined;
+			const recordIndexGroupFieldMetadata =
+				recordIndexGroupFieldMetadataItemComponentState.atomFamily({
+					instanceId: recordIndexId,
+				});
+			const currentFieldMetadata = store.get(recordIndexGroupFieldMetadata);
 
-      if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
-        store.set(recordIndexGroupFieldMetadata, fieldMetadata);
-      }
+			if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
+				store.set(recordIndexGroupFieldMetadata, fieldMetadata);
+			}
 
-      recordGroups.forEach((recordGroup) => {
-        const existingRecordGroup = store.get(
-          recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
-        );
+			recordGroups.forEach((recordGroup) => {
+				const existingRecordGroup = store.get(
+					recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
+				);
 
-        if (isDeeplyEqual(existingRecordGroup, recordGroup)) {
-          return;
-        }
+				if (isDeeplyEqual(existingRecordGroup, recordGroup)) {
+					return;
+				}
 
-        store.set(
-          recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
-          recordGroup,
-        );
-      });
+				store.set(
+					recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
+					recordGroup,
+				);
+			});
 
-      const recordGroupIds = recordGroups.map(({ id }) => id);
+			const recordGroupIds = recordGroups.map(({ id }) => id);
 
-      const removedRecordGroupIds = currentRecordGroupIds.filter(
-        (id) => !recordGroupIds.includes(id),
-      );
+			const removedRecordGroupIds = currentRecordGroupIds.filter(
+				(id) => !recordGroupIds.includes(id),
+			);
 
-      removedRecordGroupIds.forEach((id) => {
-        store.set(recordGroupDefinitionFamilyState.atomFamily(id), undefined);
-      });
+			removedRecordGroupIds.forEach((id) => {
+				store.set(recordGroupDefinitionFamilyState.atomFamily(id), undefined);
+			});
 
-      if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
-        return;
-      }
+			if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
+				return;
+			}
 
-      store.set(
-        recordGroupIdsComponentState.atomFamily({
-          instanceId: recordIndexId,
-        }),
-        recordGroupIds,
-      );
-    },
-    [store],
-  );
+			store.set(
+				recordGroupIdsComponentState.atomFamily({
+					instanceId: recordIndexId,
+				}),
+				recordGroupIds,
+			);
+		},
+		[store],
+	);
 
-  const setRecordGroupsFromViewGroups = useCallback(
-    ({
-      viewId,
-      mainGroupByFieldMetadataId,
-      viewGroups,
-      objectMetadataItem,
-      recordIndexId: recordIndexIdFromOptions,
-    }: {
-      viewId: string;
-      mainGroupByFieldMetadataId: string;
-      viewGroups: ViewGroup[];
-      objectMetadataItem: EnrichedObjectMetadataItem;
-      recordIndexId?: string;
-    }) => {
-      const recordIndexId =
-        recordIndexIdFromOptions ??
-        getRecordIndexIdFromObjectNamePluralAndViewId(
-          objectMetadataItem.namePlural,
-          viewId,
-        );
+	const setRecordGroupsFromViewGroups = useCallback(
+		({
+			viewId,
+			mainGroupByFieldMetadataId,
+			viewGroups,
+			objectMetadataItem,
+			recordIndexId: recordIndexIdFromOptions,
+		}: {
+			viewId: string;
+			mainGroupByFieldMetadataId: string;
+			viewGroups: ViewGroup[];
+			objectMetadataItem: EnrichedObjectMetadataItem;
+			recordIndexId?: string;
+		}) => {
+			const recordIndexId =
+				recordIndexIdFromOptions ??
+				getRecordIndexIdFromObjectNamePluralAndViewId(
+					objectMetadataItem.namePlural,
+					viewId,
+				);
 
-      const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
-        mainGroupByFieldMetadataId,
-        objectMetadataItem,
-        viewGroups,
-      });
+			const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
+				mainGroupByFieldMetadataId,
+				objectMetadataItem,
+				viewGroups,
+			});
 
-      setRecordGroups({
-        mainGroupByFieldMetadataId,
-        recordGroups: newGroupDefinitions,
-        recordIndexId,
-        objectMetadataItemId: objectMetadataItem.id,
-      });
-    },
-    [setRecordGroups],
-  );
+			setRecordGroups({
+				mainGroupByFieldMetadataId,
+				recordGroups: newGroupDefinitions,
+				recordIndexId,
+				objectMetadataItemId: objectMetadataItem.id,
+			});
+		},
+		[setRecordGroups],
+	);
 
-  return {
-    setRecordGroups,
-    setRecordGroupsFromViewGroups,
-  };
+	return {
+		setRecordGroups,
+		setRecordGroupsFromViewGroups,
+	};
 };

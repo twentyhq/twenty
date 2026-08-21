@@ -1,27 +1,27 @@
-import { styled } from '@linaria/react';
-import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Avatar, AvatarGroup } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { getAbsoluteImageUrl } from "~/utils/image/getAbsoluteImageUrl";
 
 const DEFAULT_MAX_VISIBLE_MEMBER_AVATARS = 5;
-const WORKSPACE_MEMBER_AVATAR_CHIP_SIZE = '18px';
+const WORKSPACE_MEMBER_AVATAR_CHIP_SIZE = "18px";
 
 type WorkspaceMemberAvatarStackMember = {
-  avatarUrl?: string | null;
-  id: string;
-  name?: {
-    firstName?: string | null;
-    lastName?: string | null;
-  } | null;
-  userEmail?: string | null;
+	avatarUrl?: string | null;
+	id: string;
+	name?: {
+		firstName?: string | null;
+		lastName?: string | null;
+	} | null;
+	userEmail?: string | null;
 };
 
 type WorkspaceMemberAvatarStackProps = {
-  defaultAvatarName: string;
-  maxVisible?: number;
-  totalWorkspaceMembersCount?: number | null;
-  workspaceMembers: WorkspaceMemberAvatarStackMember[];
+	defaultAvatarName: string;
+	maxVisible?: number;
+	totalWorkspaceMembersCount?: number | null;
+	workspaceMembers: WorkspaceMemberAvatarStackMember[];
 };
 
 const StyledAvatarStackContainer = styled.div`
@@ -55,68 +55,68 @@ const StyledMoreAvatar = styled.div`
 `;
 
 const getWorkspaceMemberDisplayName = (
-  workspaceMember: WorkspaceMemberAvatarStackMember,
-  defaultAvatarName: string,
+	workspaceMember: WorkspaceMemberAvatarStackMember,
+	defaultAvatarName: string,
 ) => {
-  const fullName = [
-    workspaceMember.name?.firstName,
-    workspaceMember.name?.lastName,
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .trim();
+	const fullName = [
+		workspaceMember.name?.firstName,
+		workspaceMember.name?.lastName,
+	]
+		.filter(Boolean)
+		.join(" ")
+		.trim();
 
-  return fullName || workspaceMember.userEmail || defaultAvatarName;
+	return fullName || workspaceMember.userEmail || defaultAvatarName;
 };
 
 export const WorkspaceMemberAvatarStack = ({
-  defaultAvatarName,
-  maxVisible = DEFAULT_MAX_VISIBLE_MEMBER_AVATARS,
-  totalWorkspaceMembersCount,
-  workspaceMembers,
+	defaultAvatarName,
+	maxVisible = DEFAULT_MAX_VISIBLE_MEMBER_AVATARS,
+	totalWorkspaceMembersCount,
+	workspaceMembers,
 }: WorkspaceMemberAvatarStackProps) => {
-  const visibleWorkspaceMembers = workspaceMembers.slice(0, maxVisible);
-  const visibleWorkspaceMembersCount = visibleWorkspaceMembers.length;
-  const hiddenWorkspaceMembersCount = Math.max(
-    0,
-    (totalWorkspaceMembersCount ?? workspaceMembers.length) -
-      visibleWorkspaceMembersCount,
-  );
+	const visibleWorkspaceMembers = workspaceMembers.slice(0, maxVisible);
+	const visibleWorkspaceMembersCount = visibleWorkspaceMembers.length;
+	const hiddenWorkspaceMembersCount = Math.max(
+		0,
+		(totalWorkspaceMembersCount ?? workspaceMembers.length) -
+			visibleWorkspaceMembersCount,
+	);
 
-  if (visibleWorkspaceMembersCount === 0 && hiddenWorkspaceMembersCount === 0) {
-    return null;
-  }
+	if (visibleWorkspaceMembersCount === 0 && hiddenWorkspaceMembersCount === 0) {
+		return null;
+	}
 
-  return (
-    <StyledAvatarStackContainer>
-      <AvatarGroup
-        avatars={visibleWorkspaceMembers.map((workspaceMember) => {
-          const displayName = getWorkspaceMemberDisplayName(
-            workspaceMember,
-            defaultAvatarName,
-          );
+	return (
+		<StyledAvatarStackContainer>
+			<AvatarGroup
+				avatars={visibleWorkspaceMembers.map((workspaceMember) => {
+					const displayName = getWorkspaceMemberDisplayName(
+						workspaceMember,
+						defaultAvatarName,
+					);
 
-          return (
-            <StyledAvatarContainer key={workspaceMember.id}>
-              <Avatar
-                avatarUrl={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                placeholder={displayName}
-                placeholderColorSeed={workspaceMember.id}
-                size="md"
-                type="rounded"
-              />
-            </StyledAvatarContainer>
-          );
-        })}
-        maxVisible={maxVisible}
-        overflowAvatar={
-          hiddenWorkspaceMembersCount > 0 ? (
-            <StyledMoreAvatar>+{hiddenWorkspaceMembersCount}</StyledMoreAvatar>
-          ) : undefined
-        }
-        overlap="left"
-        overlapOffset="4px"
-      />
-    </StyledAvatarStackContainer>
-  );
+					return (
+						<StyledAvatarContainer key={workspaceMember.id}>
+							<Avatar
+								avatarUrl={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+								placeholder={displayName}
+								placeholderColorSeed={workspaceMember.id}
+								size="md"
+								type="rounded"
+							/>
+						</StyledAvatarContainer>
+					);
+				})}
+				maxVisible={maxVisible}
+				overflowAvatar={
+					hiddenWorkspaceMembersCount > 0 ? (
+						<StyledMoreAvatar>+{hiddenWorkspaceMembersCount}</StyledMoreAvatar>
+					) : undefined
+				}
+				overlap="left"
+				overlapOffset="4px"
+			/>
+		</StyledAvatarStackContainer>
+	);
 };

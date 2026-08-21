@@ -1,30 +1,30 @@
-import { msg } from '@lingui/core/macro';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import NextImage from 'next/image';
+import { msg } from "@lingui/core/macro";
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import NextImage from "next/image";
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { Body, Button, Eyebrow, Heading } from '@/ui';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	radius,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { Body, Button, Eyebrow, Heading } from "@/ui";
 
 import {
-  type CompareReceiptLine,
-  type CompetitorComparison,
-} from './compare-data';
+	type CompareReceiptLine,
+	type CompetitorComparison,
+} from "./compare-data";
 
 const TWENTY_CARD_ICON = {
-  alt: 'Twenty Organization plan icon',
-  src: '/images/pricing/plans/organization-icon.webp',
-  widthPx: 80,
+	alt: "Twenty Organization plan icon",
+	src: "/images/pricing/plans/organization-icon.webp",
+	widthPx: 80,
 };
 
 const ReceiptScope = styled.div`
@@ -36,7 +36,7 @@ const ReceiptScope = styled.div`
 
 const Scenario = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   text-align: center;
 `;
@@ -47,7 +47,7 @@ const CardsGrid = styled.div`
   grid-template-columns: 1fr;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     gap: ${spacing(6)};
     grid-template-columns: 1fr 1fr;
   }
@@ -56,7 +56,7 @@ const CardsGrid = styled.div`
 // Mirrors the pricing page's PlanCard shell so both pages read as one
 // component family.
 const CardShell = styled.div`
-  background-color: ${color('white')};
+  background-color: ${color("white")};
   border: 1px solid transparent;
   border-radius: ${radius(2)};
   display: flex;
@@ -108,7 +108,7 @@ const PriceLine = styled.div`
 `;
 
 const priceSuffixClassName = css`
-  color: ${color('black-60')};
+  color: ${color("black-60")};
   display: block;
   min-width: 0;
 `;
@@ -118,11 +118,11 @@ const priceSuffixClassName = css`
 const SavingsBadge = styled.span`
   align-items: center;
   align-self: center;
-  background-color: ${color('blue')};
+  background-color: ${color("blue")};
   border-radius: ${radius(12)};
-  color: ${color('white')};
+  color: ${color("white")};
   display: inline-flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(2.5)};
   font-weight: ${FONT_WEIGHT.medium};
   height: 24px;
@@ -164,7 +164,7 @@ const LinesList = styled.div`
 const LineRow = styled.div`
   align-items: baseline;
   display: flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   gap: ${spacing(3)};
   justify-content: space-between;
@@ -181,7 +181,7 @@ const LineAmount = styled.span`
 
 const PerUserLine = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
 `;
 
@@ -209,108 +209,108 @@ const FairPlayBlock = styled.div`
 `;
 
 function ReceiptLines({ lines }: { lines: CompareReceiptLine[] }) {
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <LinesList>
-      {lines.map((line) => (
-        <LineRow key={i18n._(line.label)}>
-          <LineLabel>{i18n._(line.label)}</LineLabel>
-          <LineAmount>{i18n._(line.amount)}</LineAmount>
-        </LineRow>
-      ))}
-    </LinesList>
-  );
+	return (
+		<LinesList>
+			{lines.map((line) => (
+				<LineRow key={i18n._(line.label)}>
+					<LineLabel>{i18n._(line.label)}</LineLabel>
+					<LineAmount>{i18n._(line.amount)}</LineAmount>
+				</LineRow>
+			))}
+		</LinesList>
+	);
 }
 
 export function CompareReceipt({
-  comparison,
+	comparison,
 }: {
-  comparison: CompetitorComparison;
+	comparison: CompetitorComparison;
 }) {
-  const i18n = getServerI18n();
-  const { receipt } = comparison;
+	const i18n = getServerI18n();
+	const { receipt } = comparison;
 
-  return (
-    <ReceiptScope>
-      <Scenario>{i18n._(receipt.scenario)}</Scenario>
-      <CardsGrid>
-        <CardShell>
-          <CardHeader>
-            <CardHeaderInfo>
-              <Heading
-                as="h3"
-                className={titleClassName}
-                family="sans"
-                size="xs"
-                weight="light"
-              >
-                {comparison.competitor}
-              </Heading>
-              <PriceLine>
-                <Heading as="h4" family="sans" size="sm" weight="regular">
-                  {i18n._(receipt.competitorTotalAmount)}
-                </Heading>
-                <Body as="span" className={priceSuffixClassName} size="sm">
-                  {i18n._(receipt.competitorTotalSuffix)}
-                </Body>
-              </PriceLine>
-            </CardHeaderInfo>
-          </CardHeader>
-          <CardRule />
-          <ReceiptLines lines={receipt.competitorLines} />
-          <PerUserLine>{i18n._(receipt.competitorPerUser)}</PerUserLine>
-        </CardShell>
+	return (
+		<ReceiptScope>
+			<Scenario>{i18n._(receipt.scenario)}</Scenario>
+			<CardsGrid>
+				<CardShell>
+					<CardHeader>
+						<CardHeaderInfo>
+							<Heading
+								as="h3"
+								className={titleClassName}
+								family="sans"
+								size="xs"
+								weight="light"
+							>
+								{comparison.competitor}
+							</Heading>
+							<PriceLine>
+								<Heading as="h4" family="sans" size="sm" weight="regular">
+									{i18n._(receipt.competitorTotalAmount)}
+								</Heading>
+								<Body as="span" className={priceSuffixClassName} size="sm">
+									{i18n._(receipt.competitorTotalSuffix)}
+								</Body>
+							</PriceLine>
+						</CardHeaderInfo>
+					</CardHeader>
+					<CardRule />
+					<ReceiptLines lines={receipt.competitorLines} />
+					<PerUserLine>{i18n._(receipt.competitorPerUser)}</PerUserLine>
+				</CardShell>
 
-        <CardShell>
-          <CardHeader>
-            <CardHeaderInfo>
-              <Heading
-                as="h3"
-                className={titleClassName}
-                family="sans"
-                size="xs"
-                weight="light"
-              >
-                Twenty
-              </Heading>
-              <PriceLine>
-                <Heading as="h4" family="sans" size="sm" weight="regular">
-                  {i18n._(receipt.twentyTotalAmount)}
-                </Heading>
-                <Body as="span" className={priceSuffixClassName} size="sm">
-                  {i18n._(receipt.twentyTotalSuffix)}
-                </Body>
-                <SavingsBadge>{i18n._(receipt.multiplier)}</SavingsBadge>
-              </PriceLine>
-            </CardHeaderInfo>
-            <CardIcon>
-              <NextImage
-                alt={TWENTY_CARD_ICON.alt}
-                fill
-                sizes={`${TWENTY_CARD_ICON.widthPx}px`}
-                src={TWENTY_CARD_ICON.src}
-              />
-            </CardIcon>
-          </CardHeader>
-          <CardRule />
-          <ReceiptLines lines={receipt.twentyLines} />
-          <PerUserLine>{i18n._(receipt.twentyPerUser)}</PerUserLine>
-          <CtaRow>
-            <Button
-              href="https://app.twenty.com/welcome"
-              label={i18n._(msg`Start for free`)}
-              variant="filled"
-            />
-          </CtaRow>
-        </CardShell>
-      </CardsGrid>
-      <FairPlayBlock>
-        <Eyebrow>{i18n._(msg`Fair play`)}</Eyebrow>
-        <Body muted size="sm">
-          {i18n._(comparison.honest)}
-        </Body>
-      </FairPlayBlock>
-    </ReceiptScope>
-  );
+				<CardShell>
+					<CardHeader>
+						<CardHeaderInfo>
+							<Heading
+								as="h3"
+								className={titleClassName}
+								family="sans"
+								size="xs"
+								weight="light"
+							>
+								Twenty
+							</Heading>
+							<PriceLine>
+								<Heading as="h4" family="sans" size="sm" weight="regular">
+									{i18n._(receipt.twentyTotalAmount)}
+								</Heading>
+								<Body as="span" className={priceSuffixClassName} size="sm">
+									{i18n._(receipt.twentyTotalSuffix)}
+								</Body>
+								<SavingsBadge>{i18n._(receipt.multiplier)}</SavingsBadge>
+							</PriceLine>
+						</CardHeaderInfo>
+						<CardIcon>
+							<NextImage
+								alt={TWENTY_CARD_ICON.alt}
+								fill
+								sizes={`${TWENTY_CARD_ICON.widthPx}px`}
+								src={TWENTY_CARD_ICON.src}
+							/>
+						</CardIcon>
+					</CardHeader>
+					<CardRule />
+					<ReceiptLines lines={receipt.twentyLines} />
+					<PerUserLine>{i18n._(receipt.twentyPerUser)}</PerUserLine>
+					<CtaRow>
+						<Button
+							href="https://app.twenty.com/welcome"
+							label={i18n._(msg`Start for free`)}
+							variant="filled"
+						/>
+					</CtaRow>
+				</CardShell>
+			</CardsGrid>
+			<FairPlayBlock>
+				<Eyebrow>{i18n._(msg`Fair play`)}</Eyebrow>
+				<Body muted size="sm">
+					{i18n._(comparison.honest)}
+				</Body>
+			</FairPlayBlock>
+		</ReceiptScope>
+	);
 }

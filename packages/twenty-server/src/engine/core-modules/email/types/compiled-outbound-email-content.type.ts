@@ -1,4 +1,4 @@
 export type CompiledOutboundEmailContent = {
-  html: string;
-  plainText: string;
+	html: string;
+	plainText: string;
 };

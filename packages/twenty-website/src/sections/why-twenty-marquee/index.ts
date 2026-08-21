@@ -1,1 +1,1 @@
-export { WhyTwentyMarquee } from './WhyTwentyMarquee';
+export { WhyTwentyMarquee } from "./WhyTwentyMarquee";

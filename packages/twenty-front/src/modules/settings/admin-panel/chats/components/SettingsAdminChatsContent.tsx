@@ -1,17 +1,17 @@
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined, isNonEmptyArray } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { SettingsAdminChatsTable } from '@/settings/admin-panel/chats/components/SettingsAdminChatsTable';
-import { type AdminChatThreadListItem } from '@/settings/admin-panel/chats/types/AdminChatThreadListItem';
-import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { SettingsAdminChatsTable } from "@/settings/admin-panel/chats/components/SettingsAdminChatsTable";
+import { type AdminChatThreadListItem } from "@/settings/admin-panel/chats/types/AdminChatThreadListItem";
+import { SettingsEmptyPlaceholder } from "@/settings/components/SettingsEmptyPlaceholder";
 
 type SettingsAdminChatsContentProps = {
-  threads: AdminChatThreadListItem[];
-  loading: boolean;
-  error?: Error;
+	threads: AdminChatThreadListItem[];
+	loading: boolean;
+	error?: Error;
 };
 
 const StyledTableContainer = styled.div`
@@ -20,31 +20,31 @@ const StyledTableContainer = styled.div`
 `;
 
 export const SettingsAdminChatsContent = ({
-  threads,
-  loading,
-  error,
+	threads,
+	loading,
+	error,
 }: SettingsAdminChatsContentProps) => {
-  if (isDefined(error)) {
-    return (
-      <SettingsEmptyPlaceholder>{t`Failed to load chats. Please try again.`}</SettingsEmptyPlaceholder>
-    );
-  }
+	if (isDefined(error)) {
+		return (
+			<SettingsEmptyPlaceholder>{t`Failed to load chats. Please try again.`}</SettingsEmptyPlaceholder>
+		);
+	}
 
-  if (loading && !isNonEmptyArray(threads)) {
-    return (
-      <SettingsEmptyPlaceholder>{t`Loading chats...`}</SettingsEmptyPlaceholder>
-    );
-  }
+	if (loading && !isNonEmptyArray(threads)) {
+		return (
+			<SettingsEmptyPlaceholder>{t`Loading chats...`}</SettingsEmptyPlaceholder>
+		);
+	}
 
-  if (!isNonEmptyArray(threads)) {
-    return (
-      <SettingsEmptyPlaceholder>{t`No chats found`}</SettingsEmptyPlaceholder>
-    );
-  }
+	if (!isNonEmptyArray(threads)) {
+		return (
+			<SettingsEmptyPlaceholder>{t`No chats found`}</SettingsEmptyPlaceholder>
+		);
+	}
 
-  return (
-    <StyledTableContainer>
-      <SettingsAdminChatsTable threads={threads} />
-    </StyledTableContainer>
-  );
+	return (
+		<StyledTableContainer>
+			<SettingsAdminChatsTable threads={threads} />
+		</StyledTableContainer>
+	);
 };

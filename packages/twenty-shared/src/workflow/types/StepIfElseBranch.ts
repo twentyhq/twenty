@@ -1,5 +1,5 @@
 export type StepIfElseBranch = {
-  id: string;
-  nextStepIds: string[];
-  filterGroupId?: string;
+	id: string;
+	nextStepIds: string[];
+	filterGroupId?: string;
 };

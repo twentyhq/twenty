@@ -1,35 +1,35 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdStackState';
-import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { activeDropdownFocusIdState } from "@/ui/layout/dropdown/states/activeDropdownFocusIdState";
+import { previousDropdownFocusIdStackState } from "@/ui/layout/dropdown/states/previousDropdownFocusIdStackState";
+import { useStore } from "jotai";
+import { isDefined } from "twenty-shared/utils";
 
 export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
-  const store = useStore();
+	const store = useStore();
 
-  const setActiveDropdownFocusIdAndMemorizePrevious = useCallback(
-    (dropdownId: string | null) => {
-      const activeDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
+	const setActiveDropdownFocusIdAndMemorizePrevious = useCallback(
+		(dropdownId: string | null) => {
+			const activeDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
-      if (activeDropdownFocusId === dropdownId) {
-        return;
-      }
+			if (activeDropdownFocusId === dropdownId) {
+				return;
+			}
 
-      if (isDefined(activeDropdownFocusId) && isDefined(dropdownId)) {
-        const previousStack = store.get(previousDropdownFocusIdStackState.atom);
-        store.set(previousDropdownFocusIdStackState.atom, [
-          ...previousStack,
-          activeDropdownFocusId,
-        ]);
-      }
+			if (isDefined(activeDropdownFocusId) && isDefined(dropdownId)) {
+				const previousStack = store.get(previousDropdownFocusIdStackState.atom);
+				store.set(previousDropdownFocusIdStackState.atom, [
+					...previousStack,
+					activeDropdownFocusId,
+				]);
+			}
 
-      store.set(activeDropdownFocusIdState.atom, dropdownId);
-    },
-    [store],
-  );
+			store.set(activeDropdownFocusIdState.atom, dropdownId);
+		},
+		[store],
+	);
 
-  return {
-    setActiveDropdownFocusIdAndMemorizePrevious,
-  };
+	return {
+		setActiveDropdownFocusIdAndMemorizePrevious,
+	};
 };

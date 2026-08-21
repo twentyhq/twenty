@@ -1,4 +1,4 @@
 export type CrowdinContext = {
-  token: string;
-  projectId: number;
+	token: string;
+	projectId: number;
 };

@@ -1,10 +1,10 @@
-import { FieldMetadataType } from '@/types';
+import { FieldMetadataType } from "@/types";
 
 export const isFieldMetadataSelectKind = (
-  fieldMetadataType: FieldMetadataType,
+	fieldMetadataType: FieldMetadataType,
 ): boolean => {
-  return (
-    fieldMetadataType === FieldMetadataType.SELECT ||
-    fieldMetadataType === FieldMetadataType.MULTI_SELECT
-  );
+	return (
+		fieldMetadataType === FieldMetadataType.SELECT ||
+		fieldMetadataType === FieldMetadataType.MULTI_SELECT
+	);
 };

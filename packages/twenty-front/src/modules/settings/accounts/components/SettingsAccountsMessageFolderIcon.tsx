@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { styled } from "@linaria/react";
+import { MessageFolderImportPolicy } from "twenty-shared/types";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsAccountsMessageFolderIconProps = {
-  className?: string;
-  value?: MessageFolderImportPolicy;
+	className?: string;
+	value?: MessageFolderImportPolicy;
 };
 
 const StyledCardMedia = styled.div`
@@ -45,9 +45,9 @@ const StyledFolderRow = styled.div`
 
 const StyledFolderIcon = styled.div<{ isDisabled?: boolean }>`
   background-color: ${({ isDisabled }) =>
-    isDisabled
-      ? themeCssVariables.border.color.medium
-      : themeCssVariables.accent.accent7};
+		isDisabled
+			? themeCssVariables.border.color.medium
+			: themeCssVariables.accent.accent7};
   border-radius: 1px;
   height: 100%;
   width: 4.8px;
@@ -55,45 +55,45 @@ const StyledFolderIcon = styled.div<{ isDisabled?: boolean }>`
 
 const StyledFolderLabel = styled.div<{ isDisabled?: boolean }>`
   background-color: ${({ isDisabled }) =>
-    isDisabled
-      ? themeCssVariables.border.color.medium
-      : themeCssVariables.accent.accent7};
+		isDisabled
+			? themeCssVariables.border.color.medium
+			: themeCssVariables.accent.accent7};
   border-radius: 1px;
   flex: 1;
   height: 100%;
 `;
 
 export const SettingsAccountsMessageFolderIcon = ({
-  className,
-  value,
+	className,
+	value,
 }: SettingsAccountsMessageFolderIconProps) => {
-  const isSelectedFolders =
-    value === MessageFolderImportPolicy.SELECTED_FOLDERS;
+	const isSelectedFolders =
+		value === MessageFolderImportPolicy.SELECTED_FOLDERS;
 
-  return (
-    <StyledCardMedia className={className}>
-      <StyledCardMediaContent>
-        <StyledFolderRow>
-          <StyledFolderIcon isDisabled={isSelectedFolders} />
-          <StyledFolderLabel isDisabled={isSelectedFolders} />
-        </StyledFolderRow>
-        <StyledFolderRow>
-          <StyledFolderIcon isDisabled={isSelectedFolders} />
-          <StyledFolderLabel isDisabled={isSelectedFolders} />
-        </StyledFolderRow>
-        <StyledFolderRow>
-          <StyledFolderIcon />
-          <StyledFolderLabel />
-        </StyledFolderRow>
-        <StyledFolderRow>
-          <StyledFolderIcon isDisabled={isSelectedFolders} />
-          <StyledFolderLabel isDisabled={isSelectedFolders} />
-        </StyledFolderRow>
-        <StyledFolderRow>
-          <StyledFolderIcon />
-          <StyledFolderLabel />
-        </StyledFolderRow>
-      </StyledCardMediaContent>
-    </StyledCardMedia>
-  );
+	return (
+		<StyledCardMedia className={className}>
+			<StyledCardMediaContent>
+				<StyledFolderRow>
+					<StyledFolderIcon isDisabled={isSelectedFolders} />
+					<StyledFolderLabel isDisabled={isSelectedFolders} />
+				</StyledFolderRow>
+				<StyledFolderRow>
+					<StyledFolderIcon isDisabled={isSelectedFolders} />
+					<StyledFolderLabel isDisabled={isSelectedFolders} />
+				</StyledFolderRow>
+				<StyledFolderRow>
+					<StyledFolderIcon />
+					<StyledFolderLabel />
+				</StyledFolderRow>
+				<StyledFolderRow>
+					<StyledFolderIcon isDisabled={isSelectedFolders} />
+					<StyledFolderLabel isDisabled={isSelectedFolders} />
+				</StyledFolderRow>
+				<StyledFolderRow>
+					<StyledFolderIcon />
+					<StyledFolderLabel />
+				</StyledFolderRow>
+			</StyledCardMediaContent>
+		</StyledCardMedia>
+	);
 };

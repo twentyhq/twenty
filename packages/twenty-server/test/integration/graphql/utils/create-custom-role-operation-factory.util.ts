@@ -1,23 +1,23 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const createRoleOperation = ({
-  label,
-  description,
-  canUpdateAllSettings,
-  canReadAllObjectRecords,
-  canDestroyAllObjectRecords,
-  canUpdateAllObjectRecords,
-  canSoftDeleteAllObjectRecords,
+	label,
+	description,
+	canUpdateAllSettings,
+	canReadAllObjectRecords,
+	canDestroyAllObjectRecords,
+	canUpdateAllObjectRecords,
+	canSoftDeleteAllObjectRecords,
 }: {
-  label: string;
-  description: string;
-  canUpdateAllSettings: boolean;
-  canReadAllObjectRecords: boolean;
-  canDestroyAllObjectRecords: boolean;
-  canUpdateAllObjectRecords: boolean;
-  canSoftDeleteAllObjectRecords: boolean;
+	label: string;
+	description: string;
+	canUpdateAllSettings: boolean;
+	canReadAllObjectRecords: boolean;
+	canDestroyAllObjectRecords: boolean;
+	canUpdateAllObjectRecords: boolean;
+	canSoftDeleteAllObjectRecords: boolean;
 }) => ({
-  query: gql`
+	query: gql`
     mutation CreateOneRole($createRoleInput: CreateRoleInput!) {
       createOneRole(createRoleInput: $createRoleInput) {
         id
@@ -25,15 +25,15 @@ export const createRoleOperation = ({
       }
     }
   `,
-  variables: {
-    createRoleInput: {
-      label,
-      description,
-      canUpdateAllSettings,
-      canReadAllObjectRecords,
-      canUpdateAllObjectRecords,
-      canSoftDeleteAllObjectRecords,
-      canDestroyAllObjectRecords,
-    },
-  },
+	variables: {
+		createRoleInput: {
+			label,
+			description,
+			canUpdateAllSettings,
+			canReadAllObjectRecords,
+			canUpdateAllObjectRecords,
+			canSoftDeleteAllObjectRecords,
+			canDestroyAllObjectRecords,
+		},
+	},
 });

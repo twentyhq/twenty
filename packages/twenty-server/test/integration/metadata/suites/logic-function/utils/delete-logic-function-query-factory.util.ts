@@ -1,22 +1,22 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export type DeleteLogicFunctionFactoryInput = {
-  id: string;
+	id: string;
 };
 
 export const deleteLogicFunctionQueryFactory = ({
-  input,
+	input,
 }: {
-  input: DeleteLogicFunctionFactoryInput;
+	input: DeleteLogicFunctionFactoryInput;
 }) => ({
-  query: gql`
+	query: gql`
     mutation DeleteOneLogicFunction($input: LogicFunctionIdInput!) {
       deleteOneLogicFunction(input: $input) {
         id
       }
     }
   `,
-  variables: {
-    input,
-  },
+	variables: {
+		input,
+	},
 });

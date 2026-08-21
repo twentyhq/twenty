@@ -1,11 +1,11 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import { type TimelineCalendarEvent } from '~/generated/graphql';
+import { type TimelineCalendarEvent } from "~/generated/graphql";
 
 type CalendarContextValue = {
-  calendarEventsByDayTime: Record<number, TimelineCalendarEvent[] | undefined>;
+	calendarEventsByDayTime: Record<number, TimelineCalendarEvent[] | undefined>;
 };
 
 export const CalendarContext = createContext<CalendarContextValue>({
-  calendarEventsByDayTime: {},
+	calendarEventsByDayTime: {},
 });

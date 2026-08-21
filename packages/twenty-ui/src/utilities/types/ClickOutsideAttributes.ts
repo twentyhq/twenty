@@ -1,4 +1,4 @@
 export type ClickOutsideAttributes = {
-  dataClickOutsideId?: string;
-  dataGloballyPreventClickOutside?: boolean;
+	dataClickOutsideId?: string;
+	dataGloballyPreventClickOutside?: boolean;
 };

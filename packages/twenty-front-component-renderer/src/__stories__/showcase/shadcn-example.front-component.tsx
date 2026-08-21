@@ -1,5 +1,5 @@
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useState } from 'react';
+import { defineFrontComponent } from "twenty-sdk/define";
+import { useState } from "react";
 
 const SHADCN_CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -48,61 +48,61 @@ const SHADCN_CSS = `
 `;
 
 const ShadcnComponent = () => {
-  const [count, setCount] = useState(0);
+	const [count, setCount] = useState(0);
 
-  return (
-    <>
-      <style>{SHADCN_CSS}</style>
-      <div
-        data-testid="shadcn-component"
-        className="p-6 bg-white rounded-xl border-2 border-slate-300 max-w-sm flex-col gap-4"
-        style={{ fontFamily: 'system-ui, sans-serif' }}
-      >
-        <h2 className="text-lg font-bold text-slate-900">shadcn / ui</h2>
-        <p className="text-sm text-slate-500">
-          Composable primitives powered by Radix UI and Tailwind CSS.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <span className="px-3 py-1 bg-slate-900 text-white rounded-full text-xs font-semibold">
-            Badge
-          </span>
-          <span className="px-3 py-1 bg-violet-500 text-white rounded-full text-xs font-semibold">
-            Styled
-          </span>
-          <span className="px-3 py-1 bg-emerald-500 text-white rounded-full text-xs font-semibold">
-            Composable
-          </span>
-        </div>
-        <p
-          data-testid="shadcn-count"
-          className="text-2xl font-extrabold text-slate-700"
-        >
-          Count: {count}
-        </p>
-        <div className="flex gap-2">
-          <button
-            data-testid="shadcn-button"
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 cursor-pointer bg-slate-900 text-white transition-colors"
-            onClick={() => setCount((previous) => previous + 1)}
-          >
-            Increment
-          </button>
-          <button
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 cursor-pointer border border-slate-200 bg-white text-slate-700 transition-colors"
-            onClick={() => setCount(0)}
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-    </>
-  );
+	return (
+		<>
+			<style>{SHADCN_CSS}</style>
+			<div
+				data-testid="shadcn-component"
+				className="p-6 bg-white rounded-xl border-2 border-slate-300 max-w-sm flex-col gap-4"
+				style={{ fontFamily: "system-ui, sans-serif" }}
+			>
+				<h2 className="text-lg font-bold text-slate-900">shadcn / ui</h2>
+				<p className="text-sm text-slate-500">
+					Composable primitives powered by Radix UI and Tailwind CSS.
+				</p>
+				<div className="flex flex-wrap gap-2">
+					<span className="px-3 py-1 bg-slate-900 text-white rounded-full text-xs font-semibold">
+						Badge
+					</span>
+					<span className="px-3 py-1 bg-violet-500 text-white rounded-full text-xs font-semibold">
+						Styled
+					</span>
+					<span className="px-3 py-1 bg-emerald-500 text-white rounded-full text-xs font-semibold">
+						Composable
+					</span>
+				</div>
+				<p
+					data-testid="shadcn-count"
+					className="text-2xl font-extrabold text-slate-700"
+				>
+					Count: {count}
+				</p>
+				<div className="flex gap-2">
+					<button
+						data-testid="shadcn-button"
+						className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 cursor-pointer bg-slate-900 text-white transition-colors"
+						onClick={() => setCount((previous) => previous + 1)}
+					>
+						Increment
+					</button>
+					<button
+						className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 cursor-pointer border border-slate-200 bg-white text-slate-700 transition-colors"
+						onClick={() => setCount(0)}
+					>
+						Reset
+					</button>
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'test-shadcn-0000-0000-0000-000000000008',
-  name: 'shadcn-component',
-  description:
-    'A front component simulating the shadcn UI pattern (Tailwind + composable primitives)',
-  component: ShadcnComponent,
+	universalIdentifier: "test-shadcn-0000-0000-0000-000000000008",
+	name: "shadcn-component",
+	description:
+		"A front component simulating the shadcn UI pattern (Tailwind + composable primitives)",
+	component: ShadcnComponent,
 });

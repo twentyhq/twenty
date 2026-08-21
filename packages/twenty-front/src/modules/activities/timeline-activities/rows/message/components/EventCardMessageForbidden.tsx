@@ -1,7 +1,7 @@
-import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
-import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { EventCardMessageBodyNotShared } from "@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared";
+import { styled } from "@linaria/react";
+import { Trans } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledEventCardMessageContainer = styled.div`
   display: flex;
@@ -26,20 +26,20 @@ const StyledEmailTitle = styled.div`
 `;
 
 export const EventCardMessageForbidden = ({
-  notSharedByFullName,
+	notSharedByFullName,
 }: {
-  notSharedByFullName: string;
+	notSharedByFullName: string;
 }) => {
-  return (
-    <StyledEventCardMessageContainer>
-      <StyledEmailContent>
-        <StyledEmailTitle>
-          <Trans>Subject not shared</Trans>
-        </StyledEmailTitle>
-        <EventCardMessageBodyNotShared
-          notSharedByFullName={notSharedByFullName}
-        />
-      </StyledEmailContent>
-    </StyledEventCardMessageContainer>
-  );
+	return (
+		<StyledEventCardMessageContainer>
+			<StyledEmailContent>
+				<StyledEmailTitle>
+					<Trans>Subject not shared</Trans>
+				</StyledEmailTitle>
+				<EventCardMessageBodyNotShared
+					notSharedByFullName={notSharedByFullName}
+				/>
+			</StyledEmailContent>
+		</StyledEventCardMessageContainer>
+	);
 };

@@ -1,5 +1,5 @@
 export const getRecordIndexIdFromObjectNamePlural = (
-  objectNamePlural: string,
+	objectNamePlural: string,
 ) => {
-  return objectNamePlural;
+	return objectNamePlural;
 };

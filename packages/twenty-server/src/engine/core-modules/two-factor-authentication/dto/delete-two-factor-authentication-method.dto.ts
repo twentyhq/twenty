@@ -1,9 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('DeleteTwoFactorAuthenticationMethod')
+@ObjectType("DeleteTwoFactorAuthenticationMethod")
 export class DeleteTwoFactorAuthenticationMethodDTO {
-  @Field(() => Boolean, {
-    description: 'Boolean that confirms query was dispatched',
-  })
-  success: boolean;
+	@Field(() => Boolean, {
+		description: "Boolean that confirms query was dispatched",
+	})
+	success: boolean;
 }

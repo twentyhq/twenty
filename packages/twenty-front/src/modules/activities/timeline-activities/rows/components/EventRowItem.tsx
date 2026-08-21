@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventRowItemProps = {
-  children: ReactNode;
-  variant?: 'column' | 'action';
+	children: ReactNode;
+	variant?: "column" | "action";
 };
 
 const StyledColumn = styled.div`
@@ -25,12 +25,12 @@ const StyledAction = styled.div`
 `;
 
 export const EventRowItem = ({
-  children,
-  variant = 'column',
+	children,
+	variant = "column",
 }: EventRowItemProps) => {
-  if (variant === 'action') {
-    return <StyledAction>{children}</StyledAction>;
-  }
+	if (variant === "action") {
+		return <StyledAction>{children}</StyledAction>;
+	}
 
-  return <StyledColumn>{children}</StyledColumn>;
+	return <StyledColumn>{children}</StyledColumn>;
 };

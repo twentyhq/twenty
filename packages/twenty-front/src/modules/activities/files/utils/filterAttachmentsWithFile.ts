@@ -1,34 +1,34 @@
-import { type Attachment } from '@/activities/files/types/Attachment';
-import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { type Attachment } from "@/activities/files/types/Attachment";
+import { type FieldFilesValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { isDefined, isNonEmptyArray } from "twenty-shared/utils";
 
 export type FieldFilesValueWithUrl = FieldFilesValue & {
-  url: string;
+	url: string;
 };
 
 type AttachmentWithFiles = Attachment & {
-  file: [FieldFilesValueWithUrl, ...FieldFilesValueWithUrl[]];
+	file: [FieldFilesValueWithUrl, ...FieldFilesValueWithUrl[]];
 };
 
-export type AttachmentWithFile = Omit<Attachment, 'file'> & {
-  file: FieldFilesValueWithUrl;
+export type AttachmentWithFile = Omit<Attachment, "file"> & {
+	file: FieldFilesValueWithUrl;
 };
 
 const hasFileWithUrl = (
-  attachment: Attachment,
+	attachment: Attachment,
 ): attachment is AttachmentWithFiles => {
-  return isNonEmptyArray(attachment.file) && isDefined(attachment.file[0].url);
+	return isNonEmptyArray(attachment.file) && isDefined(attachment.file[0].url);
 };
 
 const normalizeAttachment = (
-  attachment: AttachmentWithFiles,
+	attachment: AttachmentWithFiles,
 ): AttachmentWithFile => ({
-  ...attachment,
-  file: attachment.file[0],
+	...attachment,
+	file: attachment.file[0],
 });
 
 export const filterAttachmentsWithFile = (
-  attachments: Attachment[],
+	attachments: Attachment[],
 ): AttachmentWithFile[] => {
-  return attachments.filter(hasFileWithUrl).map(normalizeAttachment);
+	return attachments.filter(hasFileWithUrl).map(normalizeAttachment);
 };

@@ -1,24 +1,24 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getGroupByAggregateQueryName } from '@/object-record/record-aggregate/utils/getGroupByAggregateQueryName';
-import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
-import { capitalize } from 'twenty-shared/utils';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { getGroupByAggregateQueryName } from "@/object-record/record-aggregate/utils/getGroupByAggregateQueryName";
+import { getGroupByQueryResultGqlFieldName } from "@/page-layout/utils/getGroupByQueryResultGqlFieldName";
+import { capitalize } from "twenty-shared/utils";
 
 export const generateGroupByAggregateQuery = ({
-  objectMetadataItem,
-  aggregateOperationGqlFields,
+	objectMetadataItem,
+	aggregateOperationGqlFields,
 }: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  aggregateOperationGqlFields: string[];
+	objectMetadataItem: EnrichedObjectMetadataItem;
+	aggregateOperationGqlFields: string[];
 }) => {
-  const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
-  const queryName = getGroupByAggregateQueryName({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
-  const queryFieldName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
+	const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
+	const queryName = getGroupByAggregateQueryName({
+		objectMetadataNamePlural: objectMetadataItem.namePlural,
+	});
+	const queryFieldName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
-  return gql`
+	return gql`
     query ${queryName}(
       $groupBy: [${capitalizedSingular}GroupByInput!]!
       $filter: ${capitalizedSingular}FilterInput
@@ -33,7 +33,7 @@ export const generateGroupByAggregateQuery = ({
         viewId: $viewId
         limit: $limit
       ) {
-        groupByDimensionValues${aggregateOperationGqlFields.length > 0 ? `\n        ${aggregateOperationGqlFields.join('\n        ')}` : ''}
+        groupByDimensionValues${aggregateOperationGqlFields.length > 0 ? `\n        ${aggregateOperationGqlFields.join("\n        ")}` : ""}
       }
     }
   `;

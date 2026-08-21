@@ -1,13 +1,13 @@
 export const parseBooleanFromStringValue = (
-  value: unknown,
+	value: unknown,
 ): boolean | unknown => {
-  if (value === 'true') {
-    return true;
-  }
+	if (value === "true") {
+		return true;
+	}
 
-  if (value === 'false') {
-    return false;
-  }
+	if (value === "false") {
+		return false;
+	}
 
-  return value;
+	return value;
 };

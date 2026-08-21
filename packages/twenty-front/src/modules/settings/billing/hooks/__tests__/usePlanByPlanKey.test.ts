@@ -1,7 +1,7 @@
-import { usePlanByPlanKey } from '@/settings/billing/hooks/usePlanByPlanKey';
+import { usePlanByPlanKey } from "@/settings/billing/hooks/usePlanByPlanKey";
 
-describe('usePlanByPlanKey', () => {
-  it('should be a function', () => {
-    expect(typeof usePlanByPlanKey).toBe('function');
-  });
+describe("usePlanByPlanKey", () => {
+	it("should be a function", () => {
+		expect(typeof usePlanByPlanKey).toBe("function");
+	});
 });

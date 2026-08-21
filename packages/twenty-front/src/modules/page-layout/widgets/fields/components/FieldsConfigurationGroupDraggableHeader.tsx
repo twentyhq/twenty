@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
 
-import { IconGripVertical } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconGripVertical } from "twenty-ui/icon";
+import { Label } from "twenty-ui/typography";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -24,24 +24,24 @@ const StyledIconContainer = styled.div`
 `;
 
 type FieldsConfigurationGroupDraggableHeaderProps = {
-  text: string;
+	text: string;
 };
 
 export const FieldsConfigurationGroupDraggableHeader = ({
-  text,
+	text,
 }: FieldsConfigurationGroupDraggableHeaderProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledContainer>
-      <StyledIconContainer>
-        <IconGripVertical
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={themeCssVariables.font.color.tertiary}
-        />
-      </StyledIconContainer>
-      <Label>{text}</Label>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledIconContainer>
+				<IconGripVertical
+					size={theme.icon.size.md}
+					stroke={theme.icon.stroke.sm}
+					color={themeCssVariables.font.color.tertiary}
+				/>
+			</StyledIconContainer>
+			<Label>{text}</Label>
+		</StyledContainer>
+	);
 };

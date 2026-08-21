@@ -1,13 +1,13 @@
-import { isObject } from '@sniptt/guards';
+import { isObject } from "@sniptt/guards";
 
 export const resolvePolyfillWindow = (
-  globalScope: Record<string, unknown>,
+	globalScope: Record<string, unknown>,
 ): Record<string, unknown> | null => {
-  const polyfillWindow = globalScope.window;
+	const polyfillWindow = globalScope.window;
 
-  if (!isObject(polyfillWindow) || polyfillWindow === globalScope) {
-    return null;
-  }
+	if (!isObject(polyfillWindow) || polyfillWindow === globalScope) {
+		return null;
+	}
 
-  return polyfillWindow as Record<string, unknown>;
+	return polyfillWindow as Record<string, unknown>;
 };

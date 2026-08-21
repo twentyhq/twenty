@@ -1,64 +1,64 @@
 import {
-  Brackets,
-  NotBrackets,
-  type ObjectLiteral,
-  type WhereExpressionBuilder,
-} from 'typeorm';
+	Brackets,
+	NotBrackets,
+	type ObjectLiteral,
+	type WhereExpressionBuilder,
+} from "typeorm";
 
 export type RecordedWhereNode =
-  | { kind: 'sql'; sql: string; parameters: ObjectLiteral | undefined }
-  | { kind: 'brackets'; children: RecordedWhereCall[] }
-  | { kind: 'notBrackets'; children: RecordedWhereCall[] };
+	| { kind: "sql"; sql: string; parameters: ObjectLiteral | undefined }
+	| { kind: "brackets"; children: RecordedWhereCall[] }
+	| { kind: "notBrackets"; children: RecordedWhereCall[] };
 
 export type RecordedWhereCall = {
-  method: 'where' | 'andWhere' | 'orWhere';
-  node: RecordedWhereNode;
+	method: "where" | "andWhere" | "orWhere";
+	node: RecordedWhereNode;
 };
 
 export type WhereExpressionRecorder = {
-  whereExpression: WhereExpressionBuilder;
-  calls: RecordedWhereCall[];
+	whereExpression: WhereExpressionBuilder;
+	calls: RecordedWhereCall[];
 };
 
 export const createWhereExpressionRecorder = (): WhereExpressionRecorder => {
-  const calls: RecordedWhereCall[] = [];
+	const calls: RecordedWhereCall[] = [];
 
-  const recordNode = (
-    condition: unknown,
-    parameters: ObjectLiteral | undefined,
-  ): RecordedWhereNode => {
-    if (condition instanceof NotBrackets) {
-      const childRecorder = createWhereExpressionRecorder();
+	const recordNode = (
+		condition: unknown,
+		parameters: ObjectLiteral | undefined,
+	): RecordedWhereNode => {
+		if (condition instanceof NotBrackets) {
+			const childRecorder = createWhereExpressionRecorder();
 
-      condition.whereFactory(childRecorder.whereExpression);
+			condition.whereFactory(childRecorder.whereExpression);
 
-      return { kind: 'notBrackets', children: childRecorder.calls };
-    }
+			return { kind: "notBrackets", children: childRecorder.calls };
+		}
 
-    if (condition instanceof Brackets) {
-      const childRecorder = createWhereExpressionRecorder();
+		if (condition instanceof Brackets) {
+			const childRecorder = createWhereExpressionRecorder();
 
-      condition.whereFactory(childRecorder.whereExpression);
+			condition.whereFactory(childRecorder.whereExpression);
 
-      return { kind: 'brackets', children: childRecorder.calls };
-    }
+			return { kind: "brackets", children: childRecorder.calls };
+		}
 
-    return { kind: 'sql', sql: String(condition), parameters };
-  };
+		return { kind: "sql", sql: String(condition), parameters };
+	};
 
-  const recordCall =
-    (method: RecordedWhereCall['method']) =>
-    (condition: unknown, parameters?: ObjectLiteral) => {
-      calls.push({ method, node: recordNode(condition, parameters) });
+	const recordCall =
+		(method: RecordedWhereCall["method"]) =>
+		(condition: unknown, parameters?: ObjectLiteral) => {
+			calls.push({ method, node: recordNode(condition, parameters) });
 
-      return whereExpression;
-    };
+			return whereExpression;
+		};
 
-  const whereExpression = {
-    where: recordCall('where'),
-    andWhere: recordCall('andWhere'),
-    orWhere: recordCall('orWhere'),
-  } as unknown as WhereExpressionBuilder;
+	const whereExpression = {
+		where: recordCall("where"),
+		andWhere: recordCall("andWhere"),
+		orWhere: recordCall("orWhere"),
+	} as unknown as WhereExpressionBuilder;
 
-  return { whereExpression, calls };
+	return { whereExpression, calls };
 };

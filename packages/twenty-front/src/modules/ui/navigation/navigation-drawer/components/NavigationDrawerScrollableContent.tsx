@@ -1,9 +1,9 @@
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsSettingsDrawer } from "@/navigation/hooks/useIsSettingsDrawer";
+import { ScrollWrapper } from "@/ui/utilities/scroll/components/ScrollWrapper";
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { useIsMobile } from "twenty-ui/utilities";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledItemsContainer = styled.div`
   display: flex;
@@ -26,29 +26,29 @@ const StyledScrollableMobileInnerContainer = styled.div`
 `;
 
 export const NavigationDrawerScrollableContent = ({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }) => {
-  const isSettingsDrawer = useIsSettingsDrawer();
-  const isMobile = useIsMobile();
+	const isSettingsDrawer = useIsSettingsDrawer();
+	const isMobile = useIsMobile();
 
-  return (
-    <StyledNavigationDrawerScrollWrapper
-      componentInstanceId={`scroll-wrapper-${
-        isSettingsDrawer ? 'settings-' : ''
-      }navigation-drawer`}
-      defaultEnableXScroll={false}
-    >
-      <StyledItemsContainer>
-        {isMobile ? (
-          <StyledScrollableMobileInnerContainer>
-            {children}
-          </StyledScrollableMobileInnerContainer>
-        ) : (
-          <>{children}</>
-        )}
-      </StyledItemsContainer>
-    </StyledNavigationDrawerScrollWrapper>
-  );
+	return (
+		<StyledNavigationDrawerScrollWrapper
+			componentInstanceId={`scroll-wrapper-${
+				isSettingsDrawer ? "settings-" : ""
+			}navigation-drawer`}
+			defaultEnableXScroll={false}
+		>
+			<StyledItemsContainer>
+				{isMobile ? (
+					<StyledScrollableMobileInnerContainer>
+						{children}
+					</StyledScrollableMobileInnerContainer>
+				) : (
+					<>{children}</>
+				)}
+			</StyledItemsContainer>
+		</StyledNavigationDrawerScrollWrapper>
+	);
 };

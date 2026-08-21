@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { IconArrowRight, IconPlus } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { IconArrowRight, IconPlus } from "@tabler/icons-react";
 
-import { EASING } from '@/tokens';
+import { EASING } from "@/tokens";
 
-import { type RecordCalendarDay } from '../../types';
-import { AvatarGroup } from './AvatarGroup';
-import { RECORD_PANEL_CHROME } from './RecordPanelChrome';
+import { type RecordCalendarDay } from "../../types";
+import { AvatarGroup } from "./AvatarGroup";
+import { RECORD_PANEL_CHROME } from "./RecordPanelChrome";
 
 const CalendarDayRow = styled.div<{ $index: number }>`
   align-items: flex-start;
@@ -71,7 +71,7 @@ const CalEventRow = styled.div`
 
 const AttendanceBar = styled.span<{ $active?: boolean }>`
   background: ${({ $active }) =>
-    $active ? THEME_LIGHT.accent.accent9 : THEME_LIGHT.border.color.strong};
+		$active ? THEME_LIGHT.accent.accent9 : THEME_LIGHT.border.color.strong};
   border-radius: ${THEME_LIGHT.border.radius.xs};
   flex-shrink: 0;
   height: 24px;
@@ -107,63 +107,63 @@ const CalTitle = styled.div`
 `;
 
 const {
-  ListCard,
-  TabAddButton,
-  TabHeader,
-  TabHeaderCount,
-  TabHeaderLabel,
-  TabHeaderTitle,
-  TabSection,
+	ListCard,
+	TabAddButton,
+	TabHeader,
+	TabHeaderCount,
+	TabHeaderLabel,
+	TabHeaderTitle,
+	TabSection,
 } = RECORD_PANEL_CHROME;
 
 export function RecordCalendar({
-  calendar,
+	calendar,
 }: {
-  calendar: RecordCalendarDay[];
+	calendar: RecordCalendarDay[];
 }) {
-  return (
-    <TabSection>
-      <TabHeader>
-        <TabHeaderLabel>
-          <TabHeaderTitle>June</TabHeaderTitle>
-          <TabHeaderCount>
-            {calendar.reduce((total, day) => total + day.events.length, 0)}
-          </TabHeaderCount>
-        </TabHeaderLabel>
-        <TabAddButton>
-          <IconPlus size={14} stroke={2} />
-          Add event
-        </TabAddButton>
-      </TabHeader>
-      <ListCard>
-        {calendar.map((day, index) => (
-          <CalendarDayRow $index={index} key={day.id}>
-            <DayBadge>
-              <WeekDay>{day.weekday}</WeekDay>
-              <MonthDay>{day.day}</MonthDay>
-            </DayBadge>
-            <DayEvents>
-              {day.events.map((event) => (
-                <CalEventRow key={event.id}>
-                  <AttendanceBar $active={event.attending} />
-                  <CalLabels>
-                    <CalTime>
-                      {event.start}
-                      <IconArrowRight
-                        size={14}
-                        stroke={THEME_LIGHT.icon.stroke.sm}
-                      />
-                      {event.end}
-                    </CalTime>
-                    <CalTitle>{event.title}</CalTitle>
-                  </CalLabels>
-                  <AvatarGroup people={event.participants} size={16} />
-                </CalEventRow>
-              ))}
-            </DayEvents>
-          </CalendarDayRow>
-        ))}
-      </ListCard>
-    </TabSection>
-  );
+	return (
+		<TabSection>
+			<TabHeader>
+				<TabHeaderLabel>
+					<TabHeaderTitle>June</TabHeaderTitle>
+					<TabHeaderCount>
+						{calendar.reduce((total, day) => total + day.events.length, 0)}
+					</TabHeaderCount>
+				</TabHeaderLabel>
+				<TabAddButton>
+					<IconPlus size={14} stroke={2} />
+					Add event
+				</TabAddButton>
+			</TabHeader>
+			<ListCard>
+				{calendar.map((day, index) => (
+					<CalendarDayRow $index={index} key={day.id}>
+						<DayBadge>
+							<WeekDay>{day.weekday}</WeekDay>
+							<MonthDay>{day.day}</MonthDay>
+						</DayBadge>
+						<DayEvents>
+							{day.events.map((event) => (
+								<CalEventRow key={event.id}>
+									<AttendanceBar $active={event.attending} />
+									<CalLabels>
+										<CalTime>
+											{event.start}
+											<IconArrowRight
+												size={14}
+												stroke={THEME_LIGHT.icon.stroke.sm}
+											/>
+											{event.end}
+										</CalTime>
+										<CalTitle>{event.title}</CalTitle>
+									</CalLabels>
+									<AvatarGroup people={event.participants} size={16} />
+								</CalEventRow>
+							))}
+						</DayEvents>
+					</CalendarDayRow>
+				))}
+			</ListCard>
+		</TabSection>
+	);
 }

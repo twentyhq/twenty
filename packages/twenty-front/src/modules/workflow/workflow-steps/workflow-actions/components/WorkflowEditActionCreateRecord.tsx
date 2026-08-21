@@ -1,251 +1,251 @@
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
-import { Select } from '@/ui/input/components/Select';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
-import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { useFilteredObjectMetadataItems } from "@/object-metadata/hooks/useFilteredObjectMetadataItems";
+import { useObjectMetadataItems } from "@/object-metadata/hooks/useObjectMetadataItems";
+import { useObjectMetadataSelectHelpers } from "@/object-metadata/hooks/useObjectMetadataSelectHelpers";
+import { formatFieldMetadataItemAsFieldDefinition } from "@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition";
+import { FormFieldInput } from "@/object-record/record-field/ui/components/FormFieldInput";
+import { isFieldRelationManyToOne } from "@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne";
+import { Select } from "@/ui/input/components/Select";
+import { GenericDropdownContentWidth } from "@/ui/layout/dropdown/constants/GenericDropdownContentWidth";
+import { useViewOrDefaultView } from "@/views/hooks/useViewOrDefaultView";
+import { type WorkflowCreateRecordAction } from "@/workflow/types/Workflow";
+import { WorkflowStepBody } from "@/workflow/workflow-steps/components/WorkflowStepBody";
+import { WorkflowStepFooter } from "@/workflow/workflow-steps/components/WorkflowStepFooter";
 import {
-  buildUpdatedRecordActionFormData,
-  type RecordActionFormData,
-  type RelationManyToOneField,
-} from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
-import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
-import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { type SelectOption } from 'twenty-ui/input';
-import { type JsonValue } from 'type-fest';
-import { useDebouncedCallback } from 'use-debounce';
+	buildUpdatedRecordActionFormData,
+	type RecordActionFormData,
+	type RelationManyToOneField,
+} from "@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData";
+import { shouldDisplayFormField } from "@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField";
+import { WorkflowVariablePicker } from "@/workflow/workflow-variables/components/WorkflowVariablePicker";
+import { t } from "@lingui/core/macro";
+import { useEffect, useState } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { canObjectBeManagedByAutomation } from "twenty-shared/workflow";
+import { HorizontalSeparator } from "twenty-ui/layout";
+import { type SelectOption } from "twenty-ui/input";
+import { type JsonValue } from "type-fest";
+import { useDebouncedCallback } from "use-debounce";
 
 type CreateRecordFormData = RecordActionFormData;
 
 type WorkflowEditActionCreateRecordProps = {
-  action: WorkflowCreateRecordAction;
-  actionOptions:
-    | {
-        readonly: true;
-      }
-    | {
-        readonly?: false;
-        onActionUpdate: (action: WorkflowCreateRecordAction) => void;
-      };
+	action: WorkflowCreateRecordAction;
+	actionOptions:
+		| {
+				readonly: true;
+		  }
+		| {
+				readonly?: false;
+				onActionUpdate: (action: WorkflowCreateRecordAction) => void;
+		  };
 };
 
 const sortByViewFieldPosition = (
-  a: { viewFieldPosition?: number },
-  b: { viewFieldPosition?: number },
+	a: { viewFieldPosition?: number },
+	b: { viewFieldPosition?: number },
 ) => {
-  if (isDefined(a.viewFieldPosition) && isDefined(b.viewFieldPosition)) {
-    return a.viewFieldPosition - b.viewFieldPosition;
-  }
+	if (isDefined(a.viewFieldPosition) && isDefined(b.viewFieldPosition)) {
+		return a.viewFieldPosition - b.viewFieldPosition;
+	}
 
-  if (isDefined(a.viewFieldPosition)) {
-    return -1;
-  }
+	if (isDefined(a.viewFieldPosition)) {
+		return -1;
+	}
 
-  if (isDefined(b.viewFieldPosition)) {
-    return 1;
-  }
+	if (isDefined(b.viewFieldPosition)) {
+		return 1;
+	}
 
-  return 0;
+	return 0;
 };
 
 export const WorkflowEditActionCreateRecord = ({
-  action,
-  actionOptions,
+	action,
+	actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
-  const { activeNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+	const { getSelectIconPropsFromObjectMetadataItem } =
+		useObjectMetadataSelectHelpers();
+	const { activeNonSystemObjectMetadataItems } =
+		useFilteredObjectMetadataItems();
 
-  const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems
-      .filter((objectMetadataItem) =>
-        canObjectBeManagedByAutomation({
-          nameSingular: objectMetadataItem.nameSingular,
-        }),
-      )
-      .map((item) => ({
-        label: item.labelPlural,
-        value: item.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(item),
-      }));
+	const availableMetadata: Array<SelectOption<string>> =
+		activeNonSystemObjectMetadataItems
+			.filter((objectMetadataItem) =>
+				canObjectBeManagedByAutomation({
+					nameSingular: objectMetadataItem.nameSingular,
+				}),
+			)
+			.map((item) => ({
+				label: item.labelPlural,
+				value: item.nameSingular,
+				...getSelectIconPropsFromObjectMetadataItem(item),
+			}));
 
-  const [formData, setFormData] = useState<CreateRecordFormData>({
-    objectName: action.settings.input.objectName,
-    ...action.settings.input.objectRecord,
-  });
+	const [formData, setFormData] = useState<CreateRecordFormData>({
+		objectName: action.settings.input.objectName,
+		...action.settings.input.objectRecord,
+	});
 
-  const isFormDisabled = actionOptions.readonly === true;
+	const isFormDisabled = actionOptions.readonly === true;
 
-  const objectNameSingular = formData.objectName;
+	const objectNameSingular = formData.objectName;
 
-  const { objectMetadataItems } = useObjectMetadataItems();
+	const { objectMetadataItems } = useObjectMetadataItems();
 
-  const objectMetadataItem = objectMetadataItems.find(
-    (item) => item.nameSingular === objectNameSingular,
-  );
+	const objectMetadataItem = objectMetadataItems.find(
+		(item) => item.nameSingular === objectNameSingular,
+	);
 
-  const { view: indexView } = useViewOrDefaultView({
-    objectMetadataItemId: objectMetadataItem?.id ?? '',
-  });
+	const { view: indexView } = useViewOrDefaultView({
+		objectMetadataItemId: objectMetadataItem?.id ?? "",
+	});
 
-  const viewFields = indexView?.viewFields ?? [];
+	const viewFields = indexView?.viewFields ?? [];
 
-  const inlineFieldMetadataItems = objectMetadataItem?.fields
-    .filter((fieldMetadataItem) =>
-      shouldDisplayFormField({
-        fieldMetadataItem,
-        actionType: 'CREATE_RECORD',
-      }),
-    )
-    .map((fieldMetadataItem) => {
-      const viewField = viewFields.find(
-        (viewField) => viewField.fieldMetadataId === fieldMetadataItem.id,
-      );
-      return {
-        ...fieldMetadataItem,
-        viewFieldPosition: viewField?.position,
-      };
-    })
-    .sort(sortByViewFieldPosition);
+	const inlineFieldMetadataItems = objectMetadataItem?.fields
+		.filter((fieldMetadataItem) =>
+			shouldDisplayFormField({
+				fieldMetadataItem,
+				actionType: "CREATE_RECORD",
+			}),
+		)
+		.map((fieldMetadataItem) => {
+			const viewField = viewFields.find(
+				(viewField) => viewField.fieldMetadataId === fieldMetadataItem.id,
+			);
+			return {
+				...fieldMetadataItem,
+				viewFieldPosition: viewField?.position,
+			};
+		})
+		.sort(sortByViewFieldPosition);
 
-  const inlineFieldDefinitions = isDefined(objectMetadataItem)
-    ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
-        formatFieldMetadataItemAsFieldDefinition({
-          field: fieldMetadataItem,
-          objectMetadataItem,
-          showLabel: true,
-          labelWidth: 90,
-        }),
-      )
-    : [];
+	const inlineFieldDefinitions = isDefined(objectMetadataItem)
+		? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
+				formatFieldMetadataItemAsFieldDefinition({
+					field: fieldMetadataItem,
+					objectMetadataItem,
+					showLabel: true,
+					labelWidth: 90,
+				}),
+			)
+		: [];
 
-  const handleFieldChange = (
-    fieldName: keyof CreateRecordFormData,
-    updatedValue: JsonValue,
-  ) => {
-    const fieldDefinition = inlineFieldDefinitions?.find(
-      (definition) => definition.metadata.fieldName === fieldName,
-    );
+	const handleFieldChange = (
+		fieldName: keyof CreateRecordFormData,
+		updatedValue: JsonValue,
+	) => {
+		const fieldDefinition = inlineFieldDefinitions?.find(
+			(definition) => definition.metadata.fieldName === fieldName,
+		);
 
-    if (!isDefined(fieldDefinition)) {
-      return;
-    }
+		if (!isDefined(fieldDefinition)) {
+			return;
+		}
 
-    const newFormData = buildUpdatedRecordActionFormData({
-      formData,
-      fieldName,
-      fieldDefinition,
-      updatedValue,
-    });
+		const newFormData = buildUpdatedRecordActionFormData({
+			formData,
+			fieldName,
+			fieldDefinition,
+			updatedValue,
+		});
 
-    setFormData(newFormData);
+		setFormData(newFormData);
 
-    saveAction(newFormData);
-  };
+		saveAction(newFormData);
+	};
 
-  const handleFieldClear = (fieldName: keyof CreateRecordFormData) => {
-    const newFormData: CreateRecordFormData = { ...formData };
-    delete newFormData[fieldName];
+	const handleFieldClear = (fieldName: keyof CreateRecordFormData) => {
+		const newFormData: CreateRecordFormData = { ...formData };
+		delete newFormData[fieldName];
 
-    setFormData(newFormData);
+		setFormData(newFormData);
 
-    saveAction(newFormData);
-  };
+		saveAction(newFormData);
+	};
 
-  const saveAction = useDebouncedCallback(
-    async (formData: CreateRecordFormData) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
+	const saveAction = useDebouncedCallback(
+		async (formData: CreateRecordFormData) => {
+			if (actionOptions.readonly === true) {
+				return;
+			}
 
-      const { objectName: updatedObjectName, ...updatedOtherFields } = formData;
+			const { objectName: updatedObjectName, ...updatedOtherFields } = formData;
 
-      actionOptions.onActionUpdate({
-        ...action,
-        settings: {
-          ...action.settings,
-          input: {
-            objectName: updatedObjectName,
-            objectRecord: updatedOtherFields,
-          },
-        },
-      });
-    },
-    1_000,
-  );
+			actionOptions.onActionUpdate({
+				...action,
+				settings: {
+					...action.settings,
+					input: {
+						objectName: updatedObjectName,
+						objectRecord: updatedOtherFields,
+					},
+				},
+			});
+		},
+		1_000,
+	);
 
-  useEffect(() => {
-    return () => {
-      saveAction.flush();
-    };
-  }, [saveAction]);
+	useEffect(() => {
+		return () => {
+			saveAction.flush();
+		};
+	}, [saveAction]);
 
-  return (
-    <>
-      <WorkflowStepBody>
-        <Select
-          dropdownId="workflow-create-record-object-name"
-          label={t`Object`}
-          fullWidth
-          disabled={isFormDisabled}
-          value={formData.objectName}
-          emptyOption={{ label: t`Select an option`, value: '' }}
-          options={availableMetadata}
-          onChange={(updatedObjectName) => {
-            const newFormData: CreateRecordFormData = {
-              objectName: updatedObjectName,
-            };
+	return (
+		<>
+			<WorkflowStepBody>
+				<Select
+					dropdownId="workflow-create-record-object-name"
+					label={t`Object`}
+					fullWidth
+					disabled={isFormDisabled}
+					value={formData.objectName}
+					emptyOption={{ label: t`Select an option`, value: "" }}
+					options={availableMetadata}
+					onChange={(updatedObjectName) => {
+						const newFormData: CreateRecordFormData = {
+							objectName: updatedObjectName,
+						};
 
-            setFormData(newFormData);
+						setFormData(newFormData);
 
-            saveAction(newFormData);
-          }}
-          withSearchInput
-          dropdownOffset={{ y: 4 }}
-          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-        />
+						saveAction(newFormData);
+					}}
+					withSearchInput
+					dropdownOffset={{ y: 4 }}
+					dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+				/>
 
-        <HorizontalSeparator noMargin />
+				<HorizontalSeparator noMargin />
 
-        {inlineFieldDefinitions?.map((fieldDefinition) => {
-          const currentValue = isFieldRelationManyToOne(fieldDefinition)
-            ? (
-                formData[
-                  fieldDefinition.metadata.fieldName
-                ] as RelationManyToOneField
-              )?.id
-            : (formData[fieldDefinition.metadata.fieldName] as JsonValue);
+				{inlineFieldDefinitions?.map((fieldDefinition) => {
+					const currentValue = isFieldRelationManyToOne(fieldDefinition)
+						? (
+								formData[
+									fieldDefinition.metadata.fieldName
+								] as RelationManyToOneField
+							)?.id
+						: (formData[fieldDefinition.metadata.fieldName] as JsonValue);
 
-          return (
-            <FormFieldInput
-              key={fieldDefinition.metadata.fieldName}
-              defaultValue={currentValue}
-              field={fieldDefinition}
-              onChange={(value) => {
-                handleFieldChange(fieldDefinition.metadata.fieldName, value);
-              }}
-              onClear={() => {
-                handleFieldClear(fieldDefinition.metadata.fieldName);
-              }}
-              VariablePicker={WorkflowVariablePicker}
-              readonly={isFormDisabled}
-            />
-          );
-        })}
-      </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
-    </>
-  );
+					return (
+						<FormFieldInput
+							key={fieldDefinition.metadata.fieldName}
+							defaultValue={currentValue}
+							field={fieldDefinition}
+							onChange={(value) => {
+								handleFieldChange(fieldDefinition.metadata.fieldName, value);
+							}}
+							onClear={() => {
+								handleFieldClear(fieldDefinition.metadata.fieldName);
+							}}
+							VariablePicker={WorkflowVariablePicker}
+							readonly={isFormDisabled}
+						/>
+					);
+				})}
+			</WorkflowStepBody>
+			{!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
+		</>
+	);
 };

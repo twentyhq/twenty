@@ -1,26 +1,26 @@
-import { filterSuggestionItems } from '@blocknote/core/extensions';
-import { BlockNoteView } from '@blocknote/mantine';
-import { SuggestionMenuController } from '@blocknote/react';
-import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext } from 'react';
+import { filterSuggestionItems } from "@blocknote/core/extensions";
+import { BlockNoteView } from "@blocknote/mantine";
+import { SuggestionMenuController } from "@blocknote/react";
+import { styled } from "@linaria/react";
+import { type ClipboardEvent, useContext } from "react";
 
 import {
-  CustomSlashMenu,
-  type SuggestionItem,
-} from '@/blocknote-editor/components/CustomSlashMenu';
-import { DashboardEditorSideMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu';
-import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar';
-import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
-import { getDashboardSlashMenu } from '@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+	CustomSlashMenu,
+	type SuggestionItem,
+} from "@/blocknote-editor/components/CustomSlashMenu";
+import { DashboardEditorSideMenu } from "@/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu";
+import { DashboardFormattingToolbar } from "@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar";
+import { type DASHBOARD_BLOCK_SCHEMA } from "@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema";
+import { getDashboardSlashMenu } from "@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 type DashboardsBlockEditorProps = {
-  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  onPaste?: (event: ClipboardEvent) => void;
-  onChange?: () => void;
-  readonly?: boolean;
-  boundaryElement?: HTMLElement | null;
+	editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
+	onFocus?: () => void;
+	onBlur?: () => void;
+	onPaste?: (event: ClipboardEvent) => void;
+	onChange?: () => void;
+	readonly?: boolean;
+	boundaryElement?: HTMLElement | null;
 };
 
 // TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
@@ -148,62 +148,62 @@ const StyledEditor = styled.div`
 `;
 
 export const DashboardsBlockEditor = ({
-  editor,
-  onFocus,
-  onBlur,
-  onChange,
-  onPaste,
-  readonly,
-  boundaryElement,
+	editor,
+	onFocus,
+	onBlur,
+	onChange,
+	onPaste,
+	readonly,
+	boundaryElement,
 }: DashboardsBlockEditorProps) => {
-  const { colorScheme } = useContext(ThemeContext);
-  const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
+	const { colorScheme } = useContext(ThemeContext);
+	const blockNoteTheme = colorScheme === "light" ? "light" : "dark";
 
-  const handleFocus = () => {
-    onFocus?.();
-  };
+	const handleFocus = () => {
+		onFocus?.();
+	};
 
-  const handleBlur = () => {
-    onBlur?.();
-  };
+	const handleBlur = () => {
+		onBlur?.();
+	};
 
-  const handleChange = () => {
-    onChange?.();
-  };
+	const handleChange = () => {
+		onChange?.();
+	};
 
-  const handlePaste = (event: ClipboardEvent) => {
-    onPaste?.(event);
-  };
+	const handlePaste = (event: ClipboardEvent) => {
+		onPaste?.(event);
+	};
 
-  return (
-    <StyledEditor>
-      <BlockNoteView
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onPaste={handlePaste}
-        onChange={handleChange}
-        editor={editor}
-        theme={blockNoteTheme}
-        slashMenu={false}
-        sideMenu={false}
-        formattingToolbar={false}
-        editable={!readonly}
-      >
-        {!readonly && (
-          <>
-            <DashboardFormattingToolbar boundaryElement={boundaryElement} />
-            <DashboardEditorSideMenu editor={editor} />
-            <SuggestionMenuController
-              triggerCharacter="/"
-              getItems={async (query) => {
-                const items = getDashboardSlashMenu(editor);
-                return filterSuggestionItems<SuggestionItem>(items, query);
-              }}
-              suggestionMenuComponent={CustomSlashMenu}
-            />
-          </>
-        )}
-      </BlockNoteView>
-    </StyledEditor>
-  );
+	return (
+		<StyledEditor>
+			<BlockNoteView
+				onFocus={handleFocus}
+				onBlur={handleBlur}
+				onPaste={handlePaste}
+				onChange={handleChange}
+				editor={editor}
+				theme={blockNoteTheme}
+				slashMenu={false}
+				sideMenu={false}
+				formattingToolbar={false}
+				editable={!readonly}
+			>
+				{!readonly && (
+					<>
+						<DashboardFormattingToolbar boundaryElement={boundaryElement} />
+						<DashboardEditorSideMenu editor={editor} />
+						<SuggestionMenuController
+							triggerCharacter="/"
+							getItems={async (query) => {
+								const items = getDashboardSlashMenu(editor);
+								return filterSuggestionItems<SuggestionItem>(items, query);
+							}}
+							suggestionMenuComponent={CustomSlashMenu}
+						/>
+					</>
+				)}
+			</BlockNoteView>
+		</StyledEditor>
+	);
 };

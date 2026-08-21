@@ -1,23 +1,23 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { styled } from "@linaria/react";
 
 type StyledDropdownButtonProps = {
-  isUnfolded?: boolean;
-  isActive?: boolean;
+	isUnfolded?: boolean;
+	isActive?: boolean;
 };
 
 export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProps>`
   align-items: center;
   background: ${({ isUnfolded }) =>
-    isUnfolded
-      ? themeCssVariables.background.transparent.light
-      : themeCssVariables.background.primary};
+		isUnfolded
+			? themeCssVariables.background.transparent.light
+			: themeCssVariables.background.primary};
   border: none;
   border-radius: ${themeCssVariables.border.radius.md};
   color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.color.blue
-      : themeCssVariables.font.color.secondary};
+		isActive
+			? themeCssVariables.color.blue
+			: themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
 
@@ -31,8 +31,8 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
 
   &:hover {
     background: ${({ isUnfolded }) =>
-      isUnfolded
-        ? themeCssVariables.background.transparent.medium
-        : themeCssVariables.background.transparent.light};
+			isUnfolded
+				? themeCssVariables.background.transparent.medium
+				: themeCssVariables.background.transparent.light};
   }
 `;

@@ -1,35 +1,35 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
 import {
-  IsIn,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsUUID,
-  Min,
-} from 'class-validator';
+	IsIn,
+	IsInt,
+	IsNotEmpty,
+	IsOptional,
+	IsUUID,
+	Min,
+} from "class-validator";
 import {
-  type RecordTableConfiguration,
-  type SerializedRelation,
-} from 'twenty-shared/types';
+	type RecordTableConfiguration,
+	type SerializedRelation,
+} from "twenty-shared/types";
 
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetConfigurationType } from "src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type";
 
-@ObjectType('RecordTableConfiguration')
+@ObjectType("RecordTableConfiguration")
 export class RecordTableConfigurationDTO implements RecordTableConfiguration {
-  @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.RECORD_TABLE])
-  @IsNotEmpty()
-  configurationType: WidgetConfigurationType.RECORD_TABLE;
+	@Field(() => WidgetConfigurationType)
+	@IsIn([WidgetConfigurationType.RECORD_TABLE])
+	@IsNotEmpty()
+	configurationType: WidgetConfigurationType.RECORD_TABLE;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsUUID()
-  viewId?: SerializedRelation | null;
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	@IsUUID()
+	viewId?: SerializedRelation | null;
 
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  recordLimit?: number;
+	@Field(() => Int, { nullable: true })
+	@IsOptional()
+	@IsInt()
+	@Min(1)
+	recordLimit?: number;
 }

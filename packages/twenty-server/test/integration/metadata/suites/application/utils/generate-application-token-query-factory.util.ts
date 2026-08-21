@@ -1,11 +1,11 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const generateApplicationTokenQueryFactory = ({
-  applicationId,
+	applicationId,
 }: {
-  applicationId: string;
+	applicationId: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation GenerateApplicationToken($applicationId: UUID!) {
       generateApplicationToken(applicationId: $applicationId) {
         applicationAccessToken {
@@ -19,7 +19,7 @@ export const generateApplicationTokenQueryFactory = ({
       }
     }
   `,
-  variables: {
-    applicationId,
-  },
+	variables: {
+		applicationId,
+	},
 });

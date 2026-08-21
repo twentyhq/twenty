@@ -1,49 +1,49 @@
-import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
-import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
-import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
-import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
-import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { recordIndexCommandMenuDropdownPositionComponentState } from "@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState";
+import { getCommandMenuDropdownIdFromCommandMenuId } from "@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId";
+import { getCommandMenuIdFromRecordIndexId } from "@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId";
+import { RecordBoardCardContext } from "@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext";
+import { isRecordBoardCardActiveComponentFamilyState } from "@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState";
+import { isRecordBoardCardFocusedComponentFamilyState } from "@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState";
+import { isRecordBoardCardSelectedComponentFamilyState } from "@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState";
 
-import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
-import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { RecordBoardCardCellEditModePortal } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellEditModePortal';
-import { RecordBoardCardCellHoveredPortal } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellHoveredPortal';
-import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
-import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
-import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
-import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
-import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
-import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
-import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
-import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { RecordCard } from '@/object-record/record-card/components/RecordCard';
-import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
-import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
-import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
-import { useDebouncedCallback } from 'use-debounce';
-import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
+import { useActiveRecordBoardCard } from "@/object-record/record-board/hooks/useActiveRecordBoardCard";
+import { useFocusedRecordBoardCard } from "@/object-record/record-board/hooks/useFocusedRecordBoardCard";
+import { RecordBoardCardCellEditModePortal } from "@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellEditModePortal";
+import { RecordBoardCardCellHoveredPortal } from "@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellHoveredPortal";
+import { RecordBoardCardBody } from "@/object-record/record-board/record-board-card/components/RecordBoardCardBody";
+import { RecordBoardCardHeader } from "@/object-record/record-board/record-board-card/components/RecordBoardCardHeader";
+import { RecordDragMultiDragStack } from "@/object-record/record-drag/components/RecordDragMultiDragStack";
+import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from "@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId";
+import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from "@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix";
+import { RecordBoardCardComponentInstanceContext } from "@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext";
+import { recordBoardCardIsExpandedComponentState } from "@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState";
+import { RecordBoardComponentInstanceContext } from "@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext";
+import { RecordCard } from "@/object-record/record-card/components/RecordCard";
+import { isRecordIdPrimaryDragMultipleComponentFamilyState } from "@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState";
+import { isRecordIdSecondaryDragMultipleComponentFamilyState } from "@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState";
+import { primaryDraggedRecordIdComponentState } from "@/object-record/record-drag/states/primaryDraggedRecordIdComponentState";
+import { RecordFieldsScopeContextProvider } from "@/object-record/record-field-list/contexts/RecordFieldsScopeContext";
+import { useOpenRecordFromIndexView } from "@/object-record/record-index/hooks/useOpenRecordFromIndexView";
+import { useOpenDropdown } from "@/ui/layout/dropdown/hooks/useOpenDropdown";
+import { useAvailableComponentInstanceIdOrThrow } from "@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow";
+import { useAtomComponentFamilyState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState";
+import { useAtomComponentFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue";
+import { useAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { useSetAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useSetAtomComponentState";
+import { useGetCurrentViewOnly } from "@/views/hooks/useGetCurrentViewOnly";
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { AnimatedEaseInOut } from "twenty-ui/layout";
+import { useDebouncedCallback } from "use-debounce";
+import { useDisableDragSelectOnPointerDown } from "@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown";
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   position: relative;
   transform: ${({ isPrimaryMultiDrag }) =>
-    isPrimaryMultiDrag ? 'scale(1.02)' : 'none'};
-  z-index: ${({ isPrimaryMultiDrag }) => (isPrimaryMultiDrag ? '10' : 'auto')};
+		isPrimaryMultiDrag ? "scale(1.02)" : "none"};
+  z-index: ${({ isPrimaryMultiDrag }) => (isPrimaryMultiDrag ? "10" : "auto")};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -52,163 +52,163 @@ const StyledBoardCardWrapper = styled.div`
 `;
 
 export const RecordBoardCard = () => {
-  const { recordId, rowIndex, columnIndex, isDragOverlay } = useContext(
-    RecordBoardCardContext,
-  );
+	const { recordId, rowIndex, columnIndex, isDragOverlay } = useContext(
+		RecordBoardCardContext,
+	);
 
-  const recordBoardId = useAvailableComponentInstanceIdOrThrow(
-    RecordBoardComponentInstanceContext,
-  );
+	const recordBoardId = useAvailableComponentInstanceIdOrThrow(
+		RecordBoardComponentInstanceContext,
+	);
 
-  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
-    isRecordIdPrimaryDragMultipleComponentFamilyState,
-    { recordId },
-  );
+	const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
+		isRecordIdPrimaryDragMultipleComponentFamilyState,
+		{ recordId },
+	);
 
-  const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
-    isRecordIdSecondaryDragMultipleComponentFamilyState,
-    { recordId },
-  );
+	const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
+		isRecordIdSecondaryDragMultipleComponentFamilyState,
+		{ recordId },
+	);
 
-  const primaryDraggedRecordId = useAtomComponentStateValue(
-    primaryDraggedRecordIdComponentState,
-  );
+	const primaryDraggedRecordId = useAtomComponentStateValue(
+		primaryDraggedRecordIdComponentState,
+	);
 
-  const { currentView } = useGetCurrentViewOnly();
+	const { currentView } = useGetCurrentViewOnly();
 
-  const isCompactModeActive = currentView?.isCompact ?? false;
+	const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
-    useAtomComponentState(
-      recordBoardCardIsExpandedComponentState,
-      `record-board-card-${recordId}`,
-    );
+	const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
+		useAtomComponentState(
+			recordBoardCardIsExpandedComponentState,
+			`record-board-card-${recordId}`,
+		);
 
-  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
-    useAtomComponentFamilyState(
-      isRecordBoardCardSelectedComponentFamilyState,
-      recordId,
-    );
+	const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
+		useAtomComponentFamilyState(
+			isRecordBoardCardSelectedComponentFamilyState,
+			recordId,
+		);
 
-  const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
-    isRecordBoardCardFocusedComponentFamilyState,
-    {
-      rowIndex,
-      columnIndex,
-    },
-  );
+	const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
+		isRecordBoardCardFocusedComponentFamilyState,
+		{
+			rowIndex,
+			columnIndex,
+		},
+	);
 
-  const isRecordBoardCardActive = useAtomComponentFamilyStateValue(
-    isRecordBoardCardActiveComponentFamilyState,
-    {
-      rowIndex,
-      columnIndex,
-    },
-  );
+	const isRecordBoardCardActive = useAtomComponentFamilyStateValue(
+		isRecordBoardCardActiveComponentFamilyState,
+		{
+			rowIndex,
+			columnIndex,
+		},
+	);
 
-  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
+	const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
 
-  const commandMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
+	const commandMenuDropdownId =
+		getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexCommandMenuDropdownPositionComponentState,
-    commandMenuDropdownId,
-  );
+	const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
+		recordIndexCommandMenuDropdownPositionComponentState,
+		commandMenuDropdownId,
+	);
 
-  const { openDropdown } = useOpenDropdown();
+	const { openDropdown } = useOpenDropdown();
 
-  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
-  const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
-  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
+	const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+	const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
+	const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const {
-    onPointerCancel: handlePointerCancel,
-    onPointerDown: handlePointerDown,
-    onPointerUp: handlePointerUp,
-  } = useDisableDragSelectOnPointerDown();
+	const {
+		onPointerCancel: handlePointerCancel,
+		onPointerDown: handlePointerDown,
+		onPointerUp: handlePointerUp,
+	} = useDisableDragSelectOnPointerDown();
 
-  const handleContextMenuOpen = (event: React.MouseEvent) => {
-    event.preventDefault();
-    setIsRecordBoardCardSelected(true);
-    setRecordIndexCommandMenuDropdownPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
-      globalHotkeysConfig: {
-        enableGlobalHotkeysWithModifiers: true,
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-  };
+	const handleContextMenuOpen = (event: React.MouseEvent) => {
+		event.preventDefault();
+		setIsRecordBoardCardSelected(true);
+		setRecordIndexCommandMenuDropdownPosition({
+			x: event.clientX,
+			y: event.clientY,
+		});
+		openDropdown({
+			dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
+			globalHotkeysConfig: {
+				enableGlobalHotkeysWithModifiers: true,
+				enableGlobalHotkeysConflictingWithKeyboard: false,
+			},
+		});
+	};
 
-  const handleCardClick = () => {
-    activateBoardCard({ rowIndex, columnIndex });
-    unfocusBoardCard();
-    openRecordFromIndexView({ recordId });
-  };
+	const handleCardClick = () => {
+		activateBoardCard({ rowIndex, columnIndex });
+		unfocusBoardCard();
+		openRecordFromIndexView({ recordId });
+	};
 
-  const onMouseLeaveBoard = useDebouncedCallback(() => {
-    if (isCompactModeActive && recordBoardCardIsExpanded) {
-      setRecordBoardCardIsExpanded(false);
-    }
-  }, 800);
+	const onMouseLeaveBoard = useDebouncedCallback(() => {
+		if (isCompactModeActive && recordBoardCardIsExpanded) {
+			setRecordBoardCardIsExpanded(false);
+		}
+	}, 800);
 
-  const isDraggingThisCard =
-    !isDragOverlay &&
-    (isRecordIdPrimaryDragMultiple ||
-      isRecordIdSecondaryDragMultiple ||
-      primaryDraggedRecordId === recordId);
+	const isDraggingThisCard =
+		!isDragOverlay &&
+		(isRecordIdPrimaryDragMultiple ||
+			isRecordIdSecondaryDragMultiple ||
+			primaryDraggedRecordId === recordId);
 
-  return (
-    <RecordBoardCardComponentInstanceContext.Provider
-      value={{
-        instanceId: `record-board-card-${recordId}`,
-      }}
-    >
-      <RecordFieldsScopeContextProvider
-        value={{ scopeInstanceId: RECORD_BOARD_CARD_INPUT_ID_PREFIX }}
-      >
-        <StyledBoardCardWrapper
-          data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-          onContextMenu={handleContextMenuOpen}
-          onPointerCancel={handlePointerCancel}
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-        >
-          <StyledCardContainer
-            isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
-          >
-            {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-              <RecordDragMultiDragStack />
-            )}
-            <RecordCard
-              data-selected={isRecordBoardCardSelected}
-              data-focused={isRecordBoardCardFocused}
-              data-active={isRecordBoardCardActive}
-              onMouseLeave={onMouseLeaveBoard}
-              onClick={handleCardClick}
-              isDragging={isDraggingThisCard}
-            >
-              <RecordBoardCardHeader />
-              <AnimatedEaseInOut
-                isOpen={recordBoardCardIsExpanded || !isCompactModeActive}
-                initial={false}
-              >
-                <RecordBoardCardBody />
-              </AnimatedEaseInOut>
-            </RecordCard>
-          </StyledCardContainer>
-          {!isDragOverlay && (
-            <>
-              <RecordBoardCardCellHoveredPortal />
-              <RecordBoardCardCellEditModePortal />
-            </>
-          )}
-        </StyledBoardCardWrapper>
-      </RecordFieldsScopeContextProvider>
-    </RecordBoardCardComponentInstanceContext.Provider>
-  );
+	return (
+		<RecordBoardCardComponentInstanceContext.Provider
+			value={{
+				instanceId: `record-board-card-${recordId}`,
+			}}
+		>
+			<RecordFieldsScopeContextProvider
+				value={{ scopeInstanceId: RECORD_BOARD_CARD_INPUT_ID_PREFIX }}
+			>
+				<StyledBoardCardWrapper
+					data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
+					onContextMenu={handleContextMenuOpen}
+					onPointerCancel={handlePointerCancel}
+					onPointerDown={handlePointerDown}
+					onPointerUp={handlePointerUp}
+				>
+					<StyledCardContainer
+						isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
+					>
+						{isDragOverlay && isRecordIdPrimaryDragMultiple && (
+							<RecordDragMultiDragStack />
+						)}
+						<RecordCard
+							data-selected={isRecordBoardCardSelected}
+							data-focused={isRecordBoardCardFocused}
+							data-active={isRecordBoardCardActive}
+							onMouseLeave={onMouseLeaveBoard}
+							onClick={handleCardClick}
+							isDragging={isDraggingThisCard}
+						>
+							<RecordBoardCardHeader />
+							<AnimatedEaseInOut
+								isOpen={recordBoardCardIsExpanded || !isCompactModeActive}
+								initial={false}
+							>
+								<RecordBoardCardBody />
+							</AnimatedEaseInOut>
+						</RecordCard>
+					</StyledCardContainer>
+					{!isDragOverlay && (
+						<>
+							<RecordBoardCardCellHoveredPortal />
+							<RecordBoardCardCellEditModePortal />
+						</>
+					)}
+				</StyledBoardCardWrapper>
+			</RecordFieldsScopeContextProvider>
+		</RecordBoardCardComponentInstanceContext.Provider>
+	);
 };

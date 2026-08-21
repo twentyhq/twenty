@@ -1,82 +1,82 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
 import {
-  computeMorphRelationGqlFieldName,
-  computeRelationGqlFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+	computeMorphRelationGqlFieldName,
+	computeRelationGqlFieldJoinColumnName,
+	isDefined,
+} from "twenty-shared/utils";
 
 export type TargetFieldInfo = {
-  fieldName: string;
-  joinColumnName?: string;
+	fieldName: string;
+	joinColumnName?: string;
 };
 
 const findMorphTargetFieldInfo = (
-  field: FieldMetadataItem,
-  targetObjectMetadataId: string,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
+	field: FieldMetadataItem,
+	targetObjectMetadataId: string,
+	objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
-  if (!isDefined(field.morphRelations) || field.morphRelations.length === 0) {
-    return undefined;
-  }
+	if (!isDefined(field.morphRelations) || field.morphRelations.length === 0) {
+		return undefined;
+	}
 
-  const matchingMorphRelation = field.morphRelations.find(
-    (morphRelation) =>
-      morphRelation.targetObjectMetadata.id === targetObjectMetadataId,
-  );
+	const matchingMorphRelation = field.morphRelations.find(
+		(morphRelation) =>
+			morphRelation.targetObjectMetadata.id === targetObjectMetadataId,
+	);
 
-  if (!isDefined(matchingMorphRelation)) {
-    return undefined;
-  }
+	if (!isDefined(matchingMorphRelation)) {
+		return undefined;
+	}
 
-  const targetObjectMetadata = objectMetadataItems.find(
-    (item) => item.id === targetObjectMetadataId,
-  );
+	const targetObjectMetadata = objectMetadataItems.find(
+		(item) => item.id === targetObjectMetadataId,
+	);
 
-  if (!isDefined(targetObjectMetadata)) {
-    return undefined;
-  }
+	if (!isDefined(targetObjectMetadata)) {
+		return undefined;
+	}
 
-  const fieldName = computeMorphRelationGqlFieldName({
-    fieldName: matchingMorphRelation.sourceFieldMetadata.name,
-    relationType: matchingMorphRelation.type,
-    targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
-    targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
-  });
+	const fieldName = computeMorphRelationGqlFieldName({
+		fieldName: matchingMorphRelation.sourceFieldMetadata.name,
+		relationType: matchingMorphRelation.type,
+		targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,
+		targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
+	});
 
-  // For morph relations, compute the join column name from the computed field name
-  // e.g., caretakerPerson → caretakerPersonId
-  return {
-    fieldName,
-    joinColumnName: computeRelationGqlFieldJoinColumnName({ name: fieldName }),
-  };
+	// For morph relations, compute the join column name from the computed field name
+	// e.g., caretakerPerson → caretakerPersonId
+	return {
+		fieldName,
+		joinColumnName: computeRelationGqlFieldJoinColumnName({ name: fieldName }),
+	};
 };
 
 export const findTargetFieldInfo = (
-  targetFields: FieldMetadataItem[],
-  targetObjectMetadataId: string,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
+	targetFields: FieldMetadataItem[],
+	targetObjectMetadataId: string,
+	objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
-  for (const field of targetFields) {
-    const morphResult = findMorphTargetFieldInfo(
-      field,
-      targetObjectMetadataId,
-      objectMetadataItems,
-    );
+	for (const field of targetFields) {
+		const morphResult = findMorphTargetFieldInfo(
+			field,
+			targetObjectMetadataId,
+			objectMetadataItems,
+		);
 
-    if (isDefined(morphResult)) {
-      return morphResult;
-    }
+		if (isDefined(morphResult)) {
+			return morphResult;
+		}
 
-    if (field.relation?.targetObjectMetadata.id === targetObjectMetadataId) {
-      return {
-        fieldName: field.name,
-        joinColumnName: computeRelationGqlFieldJoinColumnName({
-          name: field.name,
-        }),
-      };
-    }
-  }
+		if (field.relation?.targetObjectMetadata.id === targetObjectMetadataId) {
+			return {
+				fieldName: field.name,
+				joinColumnName: computeRelationGqlFieldJoinColumnName({
+					name: field.name,
+				}),
+			};
+		}
+	}
 
-  return undefined;
+	return undefined;
 };

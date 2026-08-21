@@ -1,1 +1,1 @@
-export const DROPDOWN_WIDTH = '200px';
+export const DROPDOWN_WIDTH = "200px";

@@ -12,46 +12,46 @@
 // it in elapsed time would shift the other selected records by an extra
 // hour on those days. Using toPlainTime() keeps this on the wall clock.
 
-import { Temporal } from 'temporal-polyfill';
+import { Temporal } from "temporal-polyfill";
 
 type GetRecordCalendarWeekEventDropShiftArgs = {
-  destinationDay: Temporal.PlainDate;
-  destinationMinutes: number;
-  startDateTime: unknown;
-  timeZone: string;
+	destinationDay: Temporal.PlainDate;
+	destinationMinutes: number;
+	startDateTime: unknown;
+	timeZone: string;
 };
 
 export const getRecordCalendarWeekEventDropShift = ({
-  destinationDay,
-  destinationMinutes,
-  startDateTime,
-  timeZone,
+	destinationDay,
+	destinationMinutes,
+	startDateTime,
+	timeZone,
 }: GetRecordCalendarWeekEventDropShiftArgs) => {
-  if (typeof startDateTime !== 'string') {
-    return null;
-  }
+	if (typeof startDateTime !== "string") {
+		return null;
+	}
 
-  try {
-    const startZoned =
-      Temporal.Instant.from(startDateTime).toZonedDateTimeISO(timeZone);
+	try {
+		const startZoned =
+			Temporal.Instant.from(startDateTime).toZonedDateTimeISO(timeZone);
 
-    const dayOffset = startZoned.toPlainDate().until(destinationDay).days;
+		const dayOffset = startZoned.toPlainDate().until(destinationDay).days;
 
-    const destinationTimeOfDayNanoseconds = BigInt(
-      Math.round(destinationMinutes * 60 * 1_000_000_000),
-    );
-    const originalTimeOfDayNanoseconds = BigInt(
-      Temporal.PlainTime.from('00:00')
-        .until(startZoned.toPlainTime())
-        .total({ unit: 'nanoseconds' }),
-    );
+		const destinationTimeOfDayNanoseconds = BigInt(
+			Math.round(destinationMinutes * 60 * 1_000_000_000),
+		);
+		const originalTimeOfDayNanoseconds = BigInt(
+			Temporal.PlainTime.from("00:00")
+				.until(startZoned.toPlainTime())
+				.total({ unit: "nanoseconds" }),
+		);
 
-    return {
-      dayOffset,
-      timeOfDayDeltaNanoseconds:
-        destinationTimeOfDayNanoseconds - originalTimeOfDayNanoseconds,
-    };
-  } catch {
-    return null;
-  }
+		return {
+			dayOffset,
+			timeOfDayDeltaNanoseconds:
+				destinationTimeOfDayNanoseconds - originalTimeOfDayNanoseconds,
+		};
+	} catch {
+		return null;
+	}
 };

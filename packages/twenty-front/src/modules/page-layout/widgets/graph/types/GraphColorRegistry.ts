@@ -1,5 +1,5 @@
-import { type GraphColorScheme } from './GraphColorScheme';
+import { type GraphColorScheme } from "./GraphColorScheme";
 
 export type GraphColorRegistry = {
-  [key: string]: GraphColorScheme;
+	[key: string]: GraphColorScheme;
 };

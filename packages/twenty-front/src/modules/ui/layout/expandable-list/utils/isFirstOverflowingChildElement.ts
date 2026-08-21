@@ -1,17 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 export const isFirstOverflowingChildElement = ({
-  containerElement,
-  childElement,
+	containerElement,
+	childElement,
 }: {
-  containerElement: HTMLElement | null;
-  childElement: HTMLElement | null;
+	containerElement: HTMLElement | null;
+	childElement: HTMLElement | null;
 }) =>
-  isDefined(containerElement) &&
-  isDefined(childElement) &&
-  // First element is always displayed.
-  isDefined(childElement.previousElementSibling) &&
-  containerElement.scrollWidth > containerElement.clientWidth &&
-  childElement.offsetLeft + childElement.offsetWidth >
-    containerElement.clientWidth &&
-  (childElement.previousElementSibling as HTMLElement).offsetLeft <
-    containerElement.clientWidth;
+	isDefined(containerElement) &&
+	isDefined(childElement) &&
+	// First element is always displayed.
+	isDefined(childElement.previousElementSibling) &&
+	containerElement.scrollWidth > containerElement.clientWidth &&
+	childElement.offsetLeft + childElement.offsetWidth >
+		containerElement.clientWidth &&
+	(childElement.previousElementSibling as HTMLElement).offsetLeft <
+		containerElement.clientWidth;

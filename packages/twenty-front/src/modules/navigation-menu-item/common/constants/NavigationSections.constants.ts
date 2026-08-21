@@ -1,4 +1,4 @@
 export enum NavigationSections {
-  WORKSPACE = 'workspace',
-  FAVORITES = 'favorites',
+	WORKSPACE = "workspace",
+	FAVORITES = "favorites",
 }

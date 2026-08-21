@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('StopImpersonation')
+@ObjectType("StopImpersonation")
 export class StopImpersonationDTO {
-  @Field(() => Boolean)
-  canRestoreImpersonatorSession: boolean;
+	@Field(() => Boolean)
+	canRestoreImpersonatorSession: boolean;
 }

@@ -1,19 +1,19 @@
 // The mockup's authored motion grammar (reveal choreography curves; the
 // standard curve comes from EASING).
 export const APP_PREVIEW_MOTION: {
-  revealPopEase: string;
-  revealPulseEase: string;
-  revealPulseFrames: string;
-  windowSpringEase: string;
+	revealPopEase: string;
+	revealPulseEase: string;
+	revealPulseFrames: string;
+	windowSpringEase: string;
 } = {
-  // The icon's rotate-pop when the AI scenario creates an object.
-  revealPopEase: 'cubic-bezier(0.34, 1.7, 0.64, 1)',
-  // The sidebar row's slide-in ring pulse for the same reveal.
-  revealPulseEase: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-  // The pulse's keyframe body: a tone-colored ring that slides the row in,
-  // flares, and decays. The consumer supplies --highlight-rgb (the icon's
-  // tone) and the resting --highlight-rest-background.
-  revealPulseFrames: `
+	// The icon's rotate-pop when the AI scenario creates an object.
+	revealPopEase: "cubic-bezier(0.34, 1.7, 0.64, 1)",
+	// The sidebar row's slide-in ring pulse for the same reveal.
+	revealPulseEase: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+	// The pulse's keyframe body: a tone-colored ring that slides the row in,
+	// flares, and decays. The consumer supplies --highlight-rgb (the icon's
+	// tone) and the resting --highlight-rest-background.
+	revealPulseFrames: `
     0% {
       background: rgba(var(--highlight-rgb, 237, 95, 0), 0);
       box-shadow:
@@ -59,6 +59,6 @@ export const APP_PREVIEW_MOTION: {
       transform: translateX(0) scale(1);
     }
   `,
-  // The terminal window's spring grow between chat states.
-  windowSpringEase: 'cubic-bezier(0.34, 1.45, 0.55, 1)',
+	// The terminal window's spring grow between chat states.
+	windowSpringEase: "cubic-bezier(0.34, 1.45, 0.55, 1)",
 };

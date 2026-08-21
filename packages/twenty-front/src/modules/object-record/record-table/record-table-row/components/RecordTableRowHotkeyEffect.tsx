@@ -1,10 +1,10 @@
-import { useRecordTableRowFocusId } from '@/object-record/record-table/record-table-row/hooks/useRecordTableRowFocusId';
-import { useRecordTableRowHotkeys } from '@/object-record/record-table/record-table-row/hooks/useRecordTableRowHotkeys';
+import { useRecordTableRowFocusId } from "@/object-record/record-table/record-table-row/hooks/useRecordTableRowFocusId";
+import { useRecordTableRowHotkeys } from "@/object-record/record-table/record-table-row/hooks/useRecordTableRowHotkeys";
 
 export const RecordTableRowHotkeyEffect = () => {
-  const recordTableRowFocusId = useRecordTableRowFocusId();
+	const recordTableRowFocusId = useRecordTableRowFocusId();
 
-  useRecordTableRowHotkeys(recordTableRowFocusId);
+	useRecordTableRowHotkeys(recordTableRowFocusId);
 
-  return null;
+	return null;
 };

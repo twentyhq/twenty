@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPLOAD_AI_CHAT_FILE = gql`
   mutation uploadAiChatFile($file: Upload!) {

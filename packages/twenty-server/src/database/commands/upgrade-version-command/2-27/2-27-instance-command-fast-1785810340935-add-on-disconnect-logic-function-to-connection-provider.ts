@@ -1,21 +1,21 @@
-import { type QueryRunner } from 'typeorm';
+import { type QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { type FastInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface";
 
-@RegisteredInstanceCommand('2.27.0', 1785810340935)
+@RegisteredInstanceCommand("2.27.0", 1785810340935)
 export class AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand
-  implements FastInstanceCommand
+	implements FastInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      'ALTER TABLE "core"."connectionProvider" ADD COLUMN IF NOT EXISTS "onDisconnectLogicFunctionUniversalIdentifier" uuid',
-    );
-  }
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			'ALTER TABLE "core"."connectionProvider" ADD COLUMN IF NOT EXISTS "onDisconnectLogicFunctionUniversalIdentifier" uuid',
+		);
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      'ALTER TABLE "core"."connectionProvider" DROP COLUMN IF EXISTS "onDisconnectLogicFunctionUniversalIdentifier"',
-    );
-  }
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			'ALTER TABLE "core"."connectionProvider" DROP COLUMN IF EXISTS "onDisconnectLogicFunctionUniversalIdentifier"',
+		);
+	}
 }

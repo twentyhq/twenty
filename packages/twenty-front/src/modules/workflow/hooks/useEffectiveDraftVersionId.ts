@@ -1,76 +1,76 @@
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { lastDiscardedDraftIdState } from '@/workflow/states/lastDiscardedDraftIdState';
-import { useAtom } from 'jotai';
-import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { useGetRecordFromCache } from "@/object-record/cache/hooks/useGetRecordFromCache";
+import { lastDiscardedDraftIdState } from "@/workflow/states/lastDiscardedDraftIdState";
+import { useAtom } from "jotai";
+import { useState } from "react";
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
 
 export const useEffectiveDraftVersionId = (
-  draftVersionFromServer: { id: string } | undefined,
+	draftVersionFromServer: { id: string } | undefined,
 ): {
-  effectiveDraftId: string | undefined;
-  lastDiscardedDraftId: string | undefined;
+	effectiveDraftId: string | undefined;
+	lastDiscardedDraftId: string | undefined;
 } => {
-  const getVersionFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    recordGqlFields: { id: true, status: true, deletedAt: true },
-  });
+	const getVersionFromCache = useGetRecordFromCache({
+		objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+		recordGqlFields: { id: true, status: true, deletedAt: true },
+	});
 
-  const [lastDiscardedDraftId, setLastDiscardedDraftId] = useAtom(
-    lastDiscardedDraftIdState,
-  );
+	const [lastDiscardedDraftId, setLastDiscardedDraftId] = useAtom(
+		lastDiscardedDraftIdState,
+	);
 
-  const [previouslyKnownDraftId, setPreviouslyKnownDraftId] = useState<
-    string | undefined
-  >();
+	const [previouslyKnownDraftId, setPreviouslyKnownDraftId] = useState<
+		string | undefined
+	>();
 
-  if (isDefined(draftVersionFromServer)) {
-    const isReaddedBySSEAfterDiscard =
-      draftVersionFromServer.id === lastDiscardedDraftId;
+	if (isDefined(draftVersionFromServer)) {
+		const isReaddedBySSEAfterDiscard =
+			draftVersionFromServer.id === lastDiscardedDraftId;
 
-    if (isReaddedBySSEAfterDiscard) {
-      return { effectiveDraftId: undefined, lastDiscardedDraftId };
-    }
+		if (isReaddedBySSEAfterDiscard) {
+			return { effectiveDraftId: undefined, lastDiscardedDraftId };
+		}
 
-    const isNewDraft = draftVersionFromServer.id !== previouslyKnownDraftId;
+		const isNewDraft = draftVersionFromServer.id !== previouslyKnownDraftId;
 
-    if (isNewDraft) {
-      setPreviouslyKnownDraftId(draftVersionFromServer.id);
-    }
+		if (isNewDraft) {
+			setPreviouslyKnownDraftId(draftVersionFromServer.id);
+		}
 
-    if (isDefined(lastDiscardedDraftId)) {
-      setLastDiscardedDraftId(undefined);
-    }
+		if (isDefined(lastDiscardedDraftId)) {
+			setLastDiscardedDraftId(undefined);
+		}
 
-    return {
-      effectiveDraftId: draftVersionFromServer.id,
-      lastDiscardedDraftId,
-    };
-  }
+		return {
+			effectiveDraftId: draftVersionFromServer.id,
+			lastDiscardedDraftId,
+		};
+	}
 
-  if (!isDefined(previouslyKnownDraftId)) {
-    return { effectiveDraftId: undefined, lastDiscardedDraftId };
-  }
+	if (!isDefined(previouslyKnownDraftId)) {
+		return { effectiveDraftId: undefined, lastDiscardedDraftId };
+	}
 
-  const cachedDraft = getVersionFromCache(previouslyKnownDraftId);
+	const cachedDraft = getVersionFromCache(previouslyKnownDraftId);
 
-  const isDraftStillAlive =
-    isDefined(cachedDraft) &&
-    cachedDraft.status === 'DRAFT' &&
-    !isDefined(cachedDraft.deletedAt);
+	const isDraftStillAlive =
+		isDefined(cachedDraft) &&
+		cachedDraft.status === "DRAFT" &&
+		!isDefined(cachedDraft.deletedAt);
 
-  if (isDraftStillAlive) {
-    return { effectiveDraftId: previouslyKnownDraftId, lastDiscardedDraftId };
-  }
+	if (isDraftStillAlive) {
+		return { effectiveDraftId: previouslyKnownDraftId, lastDiscardedDraftId };
+	}
 
-  const wasDiscarded =
-    isDefined(cachedDraft) && isDefined(cachedDraft.deletedAt);
+	const wasDiscarded =
+		isDefined(cachedDraft) && isDefined(cachedDraft.deletedAt);
 
-  if (wasDiscarded) {
-    setLastDiscardedDraftId(previouslyKnownDraftId);
-  }
+	if (wasDiscarded) {
+		setLastDiscardedDraftId(previouslyKnownDraftId);
+	}
 
-  setPreviouslyKnownDraftId(undefined);
+	setPreviouslyKnownDraftId(undefined);
 
-  return { effectiveDraftId: undefined, lastDiscardedDraftId };
+	return { effectiveDraftId: undefined, lastDiscardedDraftId };
 };

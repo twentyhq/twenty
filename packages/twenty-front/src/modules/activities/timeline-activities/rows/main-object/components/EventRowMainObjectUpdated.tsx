@@ -1,22 +1,22 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useState } from "react";
 
-import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
-import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
-import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
-import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { EventCard } from "@/activities/timeline-activities/rows/components/EventCard";
+import { EventCardToggleButton } from "@/activities/timeline-activities/rows/components/EventCardToggleButton";
+import { EventRowDate } from "@/activities/timeline-activities/rows/components/EventRowDate";
+import { EventRowItem } from "@/activities/timeline-activities/rows/components/EventRowItem";
+import { EventFieldDiffContainer } from "@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer";
+import { type TimelineActivity } from "@/activities/timeline-activities/types/TimelineActivity";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventRowMainObjectUpdatedProps = {
-  mainObjectMetadataItem: EnrichedObjectMetadataItem;
-  authorFullName: string;
-  labelIdentifierValue: string;
-  event: TimelineActivity;
-  createdAt?: string;
+	mainObjectMetadataItem: EnrichedObjectMetadataItem;
+	authorFullName: string;
+	labelIdentifierValue: string;
+	event: TimelineActivity;
+	createdAt?: string;
 };
 
 const StyledRowContainer = styled.div`
@@ -41,62 +41,62 @@ const StyledEventRowMainObjectUpdatedContainer = styled.div`
 `;
 
 export const EventRowMainObjectUpdated = ({
-  authorFullName,
-  labelIdentifierValue,
-  event,
-  mainObjectMetadataItem,
-  createdAt,
+	authorFullName,
+	labelIdentifierValue,
+	event,
+	mainObjectMetadataItem,
+	createdAt,
 }: EventRowMainObjectUpdatedProps) => {
-  const { t } = useLingui();
-  const diff: Record<string, { before: any; after: any }> =
-    event.properties?.diff;
+	const { t } = useLingui();
+	const diff: Record<string, { before: any; after: any }> =
+		event.properties?.diff;
 
-  const [isOpen, setIsOpen] = useState(true);
+	const [isOpen, setIsOpen] = useState(true);
 
-  const diffEntries = Object.entries(diff);
-  if (diffEntries.length === 0) {
-    throw new Error('Cannot render update description without changes');
-  }
+	const diffEntries = Object.entries(diff);
+	if (diffEntries.length === 0) {
+		throw new Error("Cannot render update description without changes");
+	}
 
-  const fieldCount = diffEntries.length;
-  const recordLabel = labelIdentifierValue;
+	const fieldCount = diffEntries.length;
+	const recordLabel = labelIdentifierValue;
 
-  return (
-    <StyledEventRowMainObjectUpdatedContainer>
-      <StyledRowContainer>
-        <StyledRow>
-          <EventRowItem>{authorFullName}</EventRowItem>
-          {t`updated`}
-          {diffEntries.length === 1 && (
-            <EventFieldDiffContainer
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              diffKey={diffEntries[0][0]}
-              fieldDiff={diffEntries[0][1]}
-              eventId={event.id}
-            />
-          )}
-          {diffEntries.length > 1 && (
-            <>
-              <span>{t`${fieldCount} fields on ${recordLabel}`}</span>
-              <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
-            </>
-          )}
-        </StyledRow>
-        <EventRowDate createdAt={createdAt} />
-      </StyledRowContainer>
-      {diffEntries.length > 1 && (
-        <EventCard isOpen={isOpen}>
-          {diffEntries.map(([diffKey, diffValue]) => (
-            <EventFieldDiffContainer
-              key={diffKey}
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              diffKey={diffKey}
-              fieldDiff={diffValue}
-              eventId={event.id}
-            />
-          ))}
-        </EventCard>
-      )}
-    </StyledEventRowMainObjectUpdatedContainer>
-  );
+	return (
+		<StyledEventRowMainObjectUpdatedContainer>
+			<StyledRowContainer>
+				<StyledRow>
+					<EventRowItem>{authorFullName}</EventRowItem>
+					{t`updated`}
+					{diffEntries.length === 1 && (
+						<EventFieldDiffContainer
+							mainObjectMetadataItem={mainObjectMetadataItem}
+							diffKey={diffEntries[0][0]}
+							fieldDiff={diffEntries[0][1]}
+							eventId={event.id}
+						/>
+					)}
+					{diffEntries.length > 1 && (
+						<>
+							<span>{t`${fieldCount} fields on ${recordLabel}`}</span>
+							<EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+						</>
+					)}
+				</StyledRow>
+				<EventRowDate createdAt={createdAt} />
+			</StyledRowContainer>
+			{diffEntries.length > 1 && (
+				<EventCard isOpen={isOpen}>
+					{diffEntries.map(([diffKey, diffValue]) => (
+						<EventFieldDiffContainer
+							key={diffKey}
+							mainObjectMetadataItem={mainObjectMetadataItem}
+							diffKey={diffKey}
+							fieldDiff={diffValue}
+							eventId={event.id}
+						/>
+					))}
+				</EventCard>
+			)}
+		</StyledEventRowMainObjectUpdatedContainer>
+	);
 };

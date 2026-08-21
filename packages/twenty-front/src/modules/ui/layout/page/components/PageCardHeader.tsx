@@ -1,26 +1,26 @@
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { useNavigationDrawerExpanded } from "@/navigation/hooks/useNavigationDrawerExpanded";
+import { SIDE_PANEL_TOP_BAR_HEIGHT } from "@/side-panel/constants/SidePanelTopBarHeight";
 import {
-  Breadcrumb,
-  type BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
-import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	Breadcrumb,
+	type BreadcrumbProps,
+} from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from "@/ui/layout/page/constants/PageActionContainerClickOutsideId";
+import { NavigationDrawerCollapseButton } from "@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton";
+import { useIsMobile } from "@/ui/utilities/responsive/hooks/useIsMobile";
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type PageCardHeaderProps = {
-  links?: BreadcrumbProps['links'];
-  breadcrumb?: ReactNode;
-  icon?: ReactNode;
-  title?: ReactNode;
-  tag?: ReactNode;
-  actionButton?: ReactNode;
-  centerTitle?: boolean;
-  titleColor?: string;
+	links?: BreadcrumbProps["links"];
+	breadcrumb?: ReactNode;
+	icon?: ReactNode;
+	title?: ReactNode;
+	tag?: ReactNode;
+	actionButton?: ReactNode;
+	centerTitle?: boolean;
+	titleColor?: string;
 };
 
 const StyledHeader = styled.div<{ centerTitle?: boolean }>`
@@ -31,9 +31,9 @@ const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   column-gap: ${themeCssVariables.spacing[2]};
   display: grid;
   grid-template-columns: ${({ centerTitle }) =>
-    centerTitle
-      ? 'minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr)'
-      : 'minmax(0, auto) minmax(min-content, 1fr)'};
+		centerTitle
+			? "minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr)"
+			: "minmax(0, auto) minmax(min-content, 1fr)"};
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
@@ -52,7 +52,7 @@ const StyledLeft = styled.div`
 const StyledTitle = styled.div<{ titleColor?: string }>`
   align-items: center;
   color: ${({ titleColor }) =>
-    titleColor ?? themeCssVariables.font.color.primary};
+		titleColor ?? themeCssVariables.font.color.primary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
@@ -80,53 +80,53 @@ const StyledRight = styled.div<{ centerTitle?: boolean }>`
 `;
 
 export const PageCardHeader = ({
-  links,
-  breadcrumb,
-  icon,
-  title,
-  tag,
-  actionButton,
-  centerTitle = false,
-  titleColor,
+	links,
+	breadcrumb,
+	icon,
+	title,
+	tag,
+	actionButton,
+	centerTitle = false,
+	titleColor,
 }: PageCardHeaderProps) => {
-  const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
+	const isMobile = useIsMobile();
+	const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
-  const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
-  const shouldCenterTitle = centerTitle && hasTitleContent;
+	const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
+	const shouldCenterTitle = centerTitle && hasTitleContent;
 
-  const titleContent = (
-    <>
-      {icon}
-      {isDefined(title) && title}
-      {tag}
-    </>
-  );
+	const titleContent = (
+		<>
+			{icon}
+			{isDefined(title) && title}
+			{tag}
+		</>
+	);
 
-  return (
-    <StyledHeader centerTitle={shouldCenterTitle}>
-      <StyledLeft>
-        {!isMobile && !isNavigationDrawerExpanded && (
-          <NavigationDrawerCollapseButton direction="right" />
-        )}
-        {isDefined(breadcrumb)
-          ? breadcrumb
-          : isDefined(links) && <Breadcrumb links={links} />}
-        {!shouldCenterTitle && hasTitleContent && (
-          <StyledTitle titleColor={titleColor}>{titleContent}</StyledTitle>
-        )}
-      </StyledLeft>
-      {shouldCenterTitle && (
-        <StyledCenteredTitle titleColor={titleColor}>
-          {titleContent}
-        </StyledCenteredTitle>
-      )}
-      <StyledRight
-        centerTitle={shouldCenterTitle}
-        data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
-      >
-        {actionButton}
-      </StyledRight>
-    </StyledHeader>
-  );
+	return (
+		<StyledHeader centerTitle={shouldCenterTitle}>
+			<StyledLeft>
+				{!isMobile && !isNavigationDrawerExpanded && (
+					<NavigationDrawerCollapseButton direction="right" />
+				)}
+				{isDefined(breadcrumb)
+					? breadcrumb
+					: isDefined(links) && <Breadcrumb links={links} />}
+				{!shouldCenterTitle && hasTitleContent && (
+					<StyledTitle titleColor={titleColor}>{titleContent}</StyledTitle>
+				)}
+			</StyledLeft>
+			{shouldCenterTitle && (
+				<StyledCenteredTitle titleColor={titleColor}>
+					{titleContent}
+				</StyledCenteredTitle>
+			)}
+			<StyledRight
+				centerTitle={shouldCenterTitle}
+				data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+			>
+				{actionButton}
+			</StyledRight>
+		</StyledHeader>
+	);
 };

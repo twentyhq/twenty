@@ -1,1 +1,1 @@
-export type CommandMenuConfirmationModalResult = 'confirm' | 'cancel';
+export type CommandMenuConfirmationModalResult = "confirm" | "cancel";

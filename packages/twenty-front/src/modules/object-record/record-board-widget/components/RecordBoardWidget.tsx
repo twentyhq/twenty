@@ -1,7 +1,7 @@
-import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
-import { RecordBoardWidgetViewSettingsReadOnlyEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetViewSettingsReadOnlyEffect';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { styled } from '@linaria/react';
+import { RecordBoardContainer } from "@/object-record/record-board/components/RecordBoardContainer";
+import { RecordBoardWidgetViewSettingsReadOnlyEffect } from "@/object-record/record-board-widget/components/RecordBoardWidgetViewSettingsReadOnlyEffect";
+import { useRecordIndexContextOrThrow } from "@/object-record/record-index/contexts/RecordIndexContext";
+import { styled } from "@linaria/react";
 
 const StyledBoardContainer = styled.div`
   display: flex;
@@ -12,28 +12,28 @@ const StyledBoardContainer = styled.div`
 `;
 
 type RecordBoardWidgetProps = {
-  isReadOnly?: boolean;
+	isReadOnly?: boolean;
 };
 
 export const RecordBoardWidget = ({
-  isReadOnly = true,
+	isReadOnly = true,
 }: RecordBoardWidgetProps) => {
-  const { objectNameSingular, recordIndexId, viewBarInstanceId } =
-    useRecordIndexContextOrThrow();
+	const { objectNameSingular, recordIndexId, viewBarInstanceId } =
+		useRecordIndexContextOrThrow();
 
-  return (
-    <>
-      <RecordBoardWidgetViewSettingsReadOnlyEffect
-        recordBoardId={recordIndexId}
-        isViewSettingsReadOnly={isReadOnly}
-      />
-      <StyledBoardContainer>
-        <RecordBoardContainer
-          recordBoardId={recordIndexId}
-          viewBarId={viewBarInstanceId}
-          objectNameSingular={objectNameSingular}
-        />
-      </StyledBoardContainer>
-    </>
-  );
+	return (
+		<>
+			<RecordBoardWidgetViewSettingsReadOnlyEffect
+				recordBoardId={recordIndexId}
+				isViewSettingsReadOnly={isReadOnly}
+			/>
+			<StyledBoardContainer>
+				<RecordBoardContainer
+					recordBoardId={recordIndexId}
+					viewBarId={viewBarInstanceId}
+					objectNameSingular={objectNameSingular}
+				/>
+			</StyledBoardContainer>
+		</>
+	);
 };

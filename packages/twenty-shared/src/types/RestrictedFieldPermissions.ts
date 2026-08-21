@@ -1,4 +1,4 @@
 export type RestrictedFieldPermissions = {
-  canRead?: boolean | null;
-  canUpdate?: boolean | null;
+	canRead?: boolean | null;
+	canUpdate?: boolean | null;
 };

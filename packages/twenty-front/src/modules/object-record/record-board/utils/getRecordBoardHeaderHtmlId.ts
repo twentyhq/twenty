@@ -1,2 +1,2 @@
 export const getRecordBoardHeaderHtmlId = (recordBoardId: string) =>
-  `record-board-header-${recordBoardId}`;
+	`record-board-header-${recordBoardId}`;

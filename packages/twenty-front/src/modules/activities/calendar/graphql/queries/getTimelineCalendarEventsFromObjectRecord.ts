@@ -1,5 +1,5 @@
-import { timelineCalendarEventWithTotalFragment } from '@/activities/calendar/graphql/queries/fragments/timelineCalendarEventWithTotalFragment';
-import { gql } from '@apollo/client';
+import { timelineCalendarEventWithTotalFragment } from "@/activities/calendar/graphql/queries/fragments/timelineCalendarEventWithTotalFragment";
+import { gql } from "@apollo/client";
 
 export const getTimelineCalendarEventsFromObjectRecord = gql`
   query GetTimelineCalendarEventsFromObjectRecord(

@@ -1,5 +1,5 @@
 export type TopicOptOutState = {
-  unsubscribeTopicId: string;
-  topicName: string | null;
-  optedOut: boolean;
+	unsubscribeTopicId: string;
+	topicName: string | null;
+	optedOut: boolean;
 };

@@ -1,11 +1,11 @@
-import request from 'supertest';
+import request from "supertest";
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('notesResolver (e2e)', () => {
-  it('should find many notes', () => {
-    const queryData = {
-      query: `
+describe("notesResolver (e2e)", () => {
+	it("should find many notes", () => {
+		const queryData = {
+			query: `
         query notes {
           notes {
             edges {
@@ -25,36 +25,36 @@ describe('notesResolver (e2e)', () => {
           }
         }
       `,
-    };
+		};
 
-    return client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const data = res.body.data.notes;
+		return client
+			.post("/graphql")
+			.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+			.send(queryData)
+			.expect(200)
+			.expect((res) => {
+				expect(res.body.data).toBeDefined();
+				expect(res.body.errors).toBeUndefined();
+			})
+			.expect((res) => {
+				const data = res.body.data.notes;
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+				expect(data).toBeDefined();
+				expect(Array.isArray(data.edges)).toBe(true);
 
-        const edges = data.edges;
+				const edges = data.edges;
 
-        if (edges.length > 0) {
-          const notes = edges[0].node;
+				if (edges.length > 0) {
+					const notes = edges[0].node;
 
-          expect(notes).toHaveProperty('position');
-          expect(notes).toHaveProperty('title');
-          expect(notes).toHaveProperty('bodyV2');
-          expect(notes).toHaveProperty('id');
-          expect(notes).toHaveProperty('createdAt');
-          expect(notes).toHaveProperty('updatedAt');
-          expect(notes).toHaveProperty('deletedAt');
-        }
-      });
-  });
+					expect(notes).toHaveProperty("position");
+					expect(notes).toHaveProperty("title");
+					expect(notes).toHaveProperty("bodyV2");
+					expect(notes).toHaveProperty("id");
+					expect(notes).toHaveProperty("createdAt");
+					expect(notes).toHaveProperty("updatedAt");
+					expect(notes).toHaveProperty("deletedAt");
+				}
+			});
+	});
 });

@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export const getCommandMenuItemBaseFile = ({ name }: { name: string }) => {
-  return `import { defineCommandMenuItem } from 'twenty-sdk/define';
+	return `import { defineCommandMenuItem } from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '${uuidv4()}',

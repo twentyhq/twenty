@@ -1,4 +1,4 @@
-import { isArray } from '@sniptt/guards';
+import { isArray } from "@sniptt/guards";
 
 export const isRealTranscript = (transcript: unknown): boolean =>
-  isArray(transcript) && transcript.length > 0;
+	isArray(transcript) && transcript.length > 0;

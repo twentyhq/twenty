@@ -1,4 +1,4 @@
 export type WorkflowEdgeDefinition = {
-  from: string;
-  to: string;
+	from: string;
+	to: string;
 };

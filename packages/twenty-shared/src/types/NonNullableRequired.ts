@@ -1,3 +1,3 @@
 export type NonNullableRequired<T> = {
-  [P in keyof T]-?: NonNullable<T[P]>;
+	[P in keyof T]-?: NonNullable<T[P]>;
 };

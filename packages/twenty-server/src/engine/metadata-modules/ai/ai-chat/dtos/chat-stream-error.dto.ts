@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('ChatStreamError')
+@ObjectType("ChatStreamError")
 export class ChatStreamErrorDTO {
-  @Field(() => String)
-  code: string;
+	@Field(() => String)
+	code: string;
 
-  @Field(() => String)
-  message: string;
+	@Field(() => String)
+	message: string;
 }

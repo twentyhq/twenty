@@ -1,1 +1,1 @@
-export type MenuItemDraggableGripMode = 'always' | 'onHover' | 'never';
+export type MenuItemDraggableGripMode = "always" | "onHover" | "never";

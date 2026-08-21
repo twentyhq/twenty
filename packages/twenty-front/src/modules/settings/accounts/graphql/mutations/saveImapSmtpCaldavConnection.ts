@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const SAVE_IMAP_SMTP_CALDAV_ACCOUNT = gql`
   mutation SaveImapSmtpCaldavAccount(

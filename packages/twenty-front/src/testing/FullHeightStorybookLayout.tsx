@@ -1,5 +1,5 @@
-import { type JSX } from 'react';
-import { styled } from '@linaria/react';
+import { type JSX } from "react";
+import { styled } from "@linaria/react";
 
 const StyledLayout = styled.div`
   display: flex;
@@ -9,9 +9,9 @@ const StyledLayout = styled.div`
 `;
 
 type FullHeightStorybookLayoutProps = {
-  children: JSX.Element;
+	children: JSX.Element;
 };
 
 export const FullHeightStorybookLayout = ({
-  children,
+	children,
 }: FullHeightStorybookLayoutProps) => <StyledLayout>{children}</StyledLayout>;

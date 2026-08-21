@@ -1,13 +1,13 @@
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { type ExtendedUIMessagePart } from "twenty-shared/ai";
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
+import { type AgentMessagePartEntity } from "src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity";
+import { mapDBPartToUIMessagePart } from "src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart";
 
 export const mapDBPartsToUIMessageParts = (
-  parts: AgentMessagePartEntity[],
+	parts: AgentMessagePartEntity[],
 ): ExtendedUIMessagePart[] => {
-  return parts
-    .sort((a, b) => a.orderIndex - b.orderIndex)
-    .map(mapDBPartToUIMessagePart)
-    .filter((part): part is ExtendedUIMessagePart => part !== null);
+	return parts
+		.sort((a, b) => a.orderIndex - b.orderIndex)
+		.map(mapDBPartToUIMessagePart)
+		.filter((part): part is ExtendedUIMessagePart => part !== null);
 };

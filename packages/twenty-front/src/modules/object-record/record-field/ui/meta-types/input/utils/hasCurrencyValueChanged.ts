@@ -1,21 +1,21 @@
-import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
+import { type FieldCurrencyValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { isFieldCurrencyValue } from "@/object-record/record-field/ui/types/guards/isFieldCurrencyValue";
 
 type HasCurrencyValueChangedParams = {
-  newValue: FieldCurrencyValue | undefined;
-  currentValue: unknown;
+	newValue: FieldCurrencyValue | undefined;
+	currentValue: unknown;
 };
 
 export const hasCurrencyValueChanged = ({
-  newValue,
-  currentValue,
+	newValue,
+	currentValue,
 }: HasCurrencyValueChangedParams): boolean => {
-  if (!isFieldCurrencyValue(newValue) || !isFieldCurrencyValue(currentValue)) {
-    return true;
-  }
+	if (!isFieldCurrencyValue(newValue) || !isFieldCurrencyValue(currentValue)) {
+		return true;
+	}
 
-  return (
-    newValue.amountMicros !== currentValue.amountMicros ||
-    newValue.currencyCode !== currentValue.currencyCode
-  );
+	return (
+		newValue.amountMicros !== currentValue.amountMicros ||
+		newValue.currencyCode !== currentValue.currencyCode
+	);
 };

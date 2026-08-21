@@ -1,54 +1,54 @@
-import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
-import { v4 as uuidv4 } from 'uuid';
+import { getWorkflowVersionDiagram } from "@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram";
+import { v4 as uuidv4 } from "uuid";
 
-jest.mock('uuid', () => ({
-  ...jest.requireActual('uuid'),
-  v4: jest.fn(),
+jest.mock("uuid", () => ({
+	...jest.requireActual("uuid"),
+	v4: jest.fn(),
 }));
 
 beforeEach(() => {
-  let counter = 0;
-  (uuidv4 as jest.Mock).mockImplementation(
-    () => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
-  );
+	let counter = 0;
+	(uuidv4 as jest.Mock).mockImplementation(
+		() => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
+	);
 });
 
 afterAll(() => {
-  jest.resetAllMocks();
+	jest.resetAllMocks();
 });
 
-describe('getWorkflowVersionDiagram', () => {
-  it('returns an empty diagram if the provided workflow version', () => {
-    const result = getWorkflowVersionDiagram({
-      workflowVersion: undefined,
-      workflowContext: 'workflow',
-    });
+describe("getWorkflowVersionDiagram", () => {
+	it("returns an empty diagram if the provided workflow version", () => {
+		const result = getWorkflowVersionDiagram({
+			workflowVersion: undefined,
+			workflowContext: "workflow",
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "edges": [],
   "nodes": [],
 }
 `);
-  });
+	});
 
-  it('returns a diagram with an empty-trigger node if the provided workflow version has no trigger', () => {
-    const result = getWorkflowVersionDiagram({
-      workflowVersion: {
-        __typename: 'WorkflowVersion',
-        status: 'ACTIVE',
-        createdAt: '',
-        id: '1',
-        name: '',
-        steps: [],
-        trigger: null,
-        updatedAt: '',
-        workflowId: '',
-      },
-      workflowContext: 'workflow',
-    });
+	it("returns a diagram with an empty-trigger node if the provided workflow version has no trigger", () => {
+		const result = getWorkflowVersionDiagram({
+			workflowVersion: {
+				__typename: "WorkflowVersion",
+				status: "ACTIVE",
+				createdAt: "",
+				id: "1",
+				name: "",
+				steps: [],
+				trigger: null,
+				updatedAt: "",
+				workflowId: "",
+			},
+			workflowContext: "workflow",
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "edges": [],
   "nodes": [
@@ -70,29 +70,29 @@ describe('getWorkflowVersionDiagram', () => {
   ],
 }
 `);
-  });
+	});
 
-  it('returns a diagram with only a trigger node if the provided workflow version has no steps', () => {
-    const result = getWorkflowVersionDiagram({
-      workflowVersion: {
-        __typename: 'WorkflowVersion',
-        status: 'ACTIVE',
-        createdAt: '',
-        id: '1',
-        name: '',
-        steps: null,
-        trigger: {
-          name: 'Record is created',
-          settings: { eventName: 'company.created', outputSchema: {} },
-          type: 'DATABASE_EVENT',
-        },
-        updatedAt: '',
-        workflowId: '',
-      },
-      workflowContext: 'workflow',
-    });
+	it("returns a diagram with only a trigger node if the provided workflow version has no steps", () => {
+		const result = getWorkflowVersionDiagram({
+			workflowVersion: {
+				__typename: "WorkflowVersion",
+				status: "ACTIVE",
+				createdAt: "",
+				id: "1",
+				name: "",
+				steps: null,
+				trigger: {
+					name: "Record is created",
+					settings: { eventName: "company.created", outputSchema: {} },
+					type: "DATABASE_EVENT",
+				},
+				updatedAt: "",
+				workflowId: "",
+			},
+			workflowContext: "workflow",
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "edges": [],
   "nodes": [
@@ -118,48 +118,48 @@ describe('getWorkflowVersionDiagram', () => {
   ],
 }
 `);
-  });
+	});
 
-  it('returns the diagram for the last version', () => {
-    const result = getWorkflowVersionDiagram({
-      workflowVersion: {
-        __typename: 'WorkflowVersion',
-        status: 'ACTIVE',
-        createdAt: '',
-        id: '1',
-        name: '',
-        steps: [
-          {
-            id: 'step-1',
-            name: '',
-            settings: {
-              errorHandlingOptions: {
-                retryOnFailure: { value: true },
-                continueOnFailure: { value: false },
-              },
-              input: {
-                logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-                logicFunctionInput: {},
-              },
-              outputSchema: {},
-            },
-            type: 'CODE',
-            valid: true,
-          },
-        ],
-        trigger: {
-          name: 'Company created',
-          settings: { eventName: 'company.created', outputSchema: {} },
-          type: 'DATABASE_EVENT',
-          nextStepIds: ['step-1'],
-        },
-        updatedAt: '',
-        workflowId: '',
-      },
-      workflowContext: 'workflow',
-    });
+	it("returns the diagram for the last version", () => {
+		const result = getWorkflowVersionDiagram({
+			workflowVersion: {
+				__typename: "WorkflowVersion",
+				status: "ACTIVE",
+				createdAt: "",
+				id: "1",
+				name: "",
+				steps: [
+					{
+						id: "step-1",
+						name: "",
+						settings: {
+							errorHandlingOptions: {
+								retryOnFailure: { value: true },
+								continueOnFailure: { value: false },
+							},
+							input: {
+								logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+								logicFunctionInput: {},
+							},
+							outputSchema: {},
+						},
+						type: "CODE",
+						valid: true,
+					},
+				],
+				trigger: {
+					name: "Company created",
+					settings: { eventName: "company.created", outputSchema: {} },
+					type: "DATABASE_EVENT",
+					nextStepIds: ["step-1"],
+				},
+				updatedAt: "",
+				workflowId: "",
+			},
+			workflowContext: "workflow",
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "edges": [
     {
@@ -221,5 +221,5 @@ describe('getWorkflowVersionDiagram', () => {
   ],
 }
 `);
-  });
+	});
 });

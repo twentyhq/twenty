@@ -1,37 +1,37 @@
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { type FlatIndexMetadata } from "src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type";
+import { IndexType } from "src/engine/metadata-modules/index-metadata/types/indexType.types";
 
 type FlatIndexMetadataOverrides = Required<
-  Pick<
-    FlatIndexMetadata,
-    | 'universalIdentifier'
-    | 'objectMetadataId'
-    | 'objectMetadataUniversalIdentifier'
-    | 'applicationUniversalIdentifier'
-  >
+	Pick<
+		FlatIndexMetadata,
+		| "universalIdentifier"
+		| "objectMetadataId"
+		| "objectMetadataUniversalIdentifier"
+		| "applicationUniversalIdentifier"
+	>
 > &
-  Partial<FlatIndexMetadata>;
+	Partial<FlatIndexMetadata>;
 export const getFlatIndexMetadataMock = (
-  overrides: FlatIndexMetadataOverrides,
+	overrides: FlatIndexMetadataOverrides,
 ): FlatIndexMetadata => {
-  const createdAt = faker.date.anytime().toISOString();
+	const createdAt = faker.date.anytime().toISOString();
 
-  return {
-    universalFlatIndexFieldMetadatas: [],
-    flatIndexFieldMetadatas: [],
-    createdAt,
-    id: faker.string.uuid(),
-    indexType: IndexType.BTREE,
-    indexWhereClause: null,
-    isCustom: false,
-    isUnique: false,
-    isSystemSideEffect: false,
-    name: 'defaultFlatIndexMetadataName',
-    updatedAt: createdAt,
-    workspaceId: faker.string.uuid(),
-    applicationId: faker.string.uuid(),
-    ...overrides,
-  };
+	return {
+		universalFlatIndexFieldMetadatas: [],
+		flatIndexFieldMetadatas: [],
+		createdAt,
+		id: faker.string.uuid(),
+		indexType: IndexType.BTREE,
+		indexWhereClause: null,
+		isCustom: false,
+		isUnique: false,
+		isSystemSideEffect: false,
+		name: "defaultFlatIndexMetadataName",
+		updatedAt: createdAt,
+		workspaceId: faker.string.uuid(),
+		applicationId: faker.string.uuid(),
+		...overrides,
+	};
 };

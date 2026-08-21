@@ -1,41 +1,41 @@
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isNonEmptyString } from "@sniptt/guards";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { SettingsAdminChatAskQuestionsPart } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart';
-import { SettingsAdminChatCollapsibleSection } from '@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection';
-import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';
-import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
-import { parseAdminAskQuestionsResult } from '@/settings/admin-panel/utils/parseAdminAskQuestionsResult';
+import { LazyMarkdownRenderer } from "@/ai/components/LazyMarkdownRenderer";
+import { SettingsAdminChatAskQuestionsPart } from "@/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart";
+import { SettingsAdminChatCollapsibleSection } from "@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection";
+import { SettingsAdminChatToolCallPart } from "@/settings/admin-panel/components/SettingsAdminChatToolCallPart";
+import { type AdminChatThreadMessagePart } from "@/settings/admin-panel/types/AdminChatThreadMessagePart";
+import { parseAdminAskQuestionsResult } from "@/settings/admin-panel/utils/parseAdminAskQuestionsResult";
 
 type SettingsAdminChatMessagePartRendererProps = {
-  part: AdminChatThreadMessagePart;
-  isUserMessage: boolean;
+	part: AdminChatThreadMessagePart;
+	isUserMessage: boolean;
 };
 
 const StyledTextContent = styled.div<{ isUser?: boolean }>`
   background: ${({ isUser }) =>
-    isUser ? themeCssVariables.background.tertiary : 'transparent'};
+		isUser ? themeCssVariables.background.tertiary : "transparent"};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${({ isUser }) =>
-    isUser
-      ? themeCssVariables.font.color.secondary
-      : themeCssVariables.font.color.primary};
+		isUser
+			? themeCssVariables.font.color.secondary
+			: themeCssVariables.font.color.primary};
   font-weight: ${({ isUser }) =>
-    isUser
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
+		isUser
+			? themeCssVariables.font.weight.medium
+			: themeCssVariables.font.weight.regular};
   line-height: 1.4em;
   max-width: 100%;
   overflow-wrap: break-word;
   padding: ${({ isUser }) =>
-    isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
-  white-space: ${({ isUser }) => (isUser ? 'pre-wrap' : 'normal')};
-  width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
+		isUser ? `0 ${themeCssVariables.spacing[2]}` : "0"};
+  white-space: ${({ isUser }) => (isUser ? "pre-wrap" : "normal")};
+  width: ${({ isUser }) => (isUser ? "fit-content" : "100%")};
 `;
 
 const StyledReasoningContent = styled.div`
@@ -49,39 +49,39 @@ const StyledReasoningContent = styled.div`
 `;
 
 export const SettingsAdminChatMessagePartRenderer = ({
-  part,
-  isUserMessage,
+	part,
+	isUserMessage,
 }: SettingsAdminChatMessagePartRendererProps) => {
-  if (part.type === 'text' && isNonEmptyString(part.textContent)) {
-    return (
-      <StyledTextContent isUser={isUserMessage}>
-        {isUserMessage ? (
-          part.textContent
-        ) : (
-          <LazyMarkdownRenderer text={part.textContent} />
-        )}
-      </StyledTextContent>
-    );
-  }
+	if (part.type === "text" && isNonEmptyString(part.textContent)) {
+		return (
+			<StyledTextContent isUser={isUserMessage}>
+				{isUserMessage ? (
+					part.textContent
+				) : (
+					<LazyMarkdownRenderer text={part.textContent} />
+				)}
+			</StyledTextContent>
+		);
+	}
 
-  if (part.type === 'reasoning' && isNonEmptyString(part.reasoningContent)) {
-    return (
-      <SettingsAdminChatCollapsibleSection label={t`Reasoning`}>
-        <StyledReasoningContent>{part.reasoningContent}</StyledReasoningContent>
-      </SettingsAdminChatCollapsibleSection>
-    );
-  }
+	if (part.type === "reasoning" && isNonEmptyString(part.reasoningContent)) {
+		return (
+			<SettingsAdminChatCollapsibleSection label={t`Reasoning`}>
+				<StyledReasoningContent>{part.reasoningContent}</StyledReasoningContent>
+			</SettingsAdminChatCollapsibleSection>
+		);
+	}
 
-  const askQuestionsResult = parseAdminAskQuestionsResult(part);
+	const askQuestionsResult = parseAdminAskQuestionsResult(part);
 
-  if (isDefined(askQuestionsResult)) {
-    return (
-      <SettingsAdminChatAskQuestionsPart
-        part={part}
-        result={askQuestionsResult}
-      />
-    );
-  }
+	if (isDefined(askQuestionsResult)) {
+		return (
+			<SettingsAdminChatAskQuestionsPart
+				part={part}
+				result={askQuestionsResult}
+			/>
+		);
+	}
 
-  return <SettingsAdminChatToolCallPart part={part} />;
+	return <SettingsAdminChatToolCallPart part={part} />;
 };

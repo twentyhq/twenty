@@ -1,14 +1,14 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceUrlsDTO } from "src/engine/core-modules/workspace/dtos/workspace-urls.dto";
 
-import { AuthToken } from './auth-token.dto';
+import { AuthToken } from "./auth-token.dto";
 
-@ObjectType('VerifyEmailAndGetLoginToken')
+@ObjectType("VerifyEmailAndGetLoginToken")
 export class VerifyEmailAndGetLoginTokenDTO {
-  @Field(() => AuthToken)
-  loginToken: AuthToken;
+	@Field(() => AuthToken)
+	loginToken: AuthToken;
 
-  @Field(() => WorkspaceUrlsDTO)
-  workspaceUrls: WorkspaceUrlsDTO;
+	@Field(() => WorkspaceUrlsDTO)
+	workspaceUrls: WorkspaceUrlsDTO;
 }

@@ -1,9 +1,9 @@
-import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
-import { useSortable } from '@dnd-kit/react/sortable';
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { SortableKeyboardPlugin } from "@dnd-kit/dom/sortable";
+import { useSortable } from "@dnd-kit/react/sortable";
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
+import { SortableDropTargetRefContext } from "@/navigation-menu-item/common/contexts/SortableDropTargetRefContext";
 
 const SORTABLE_COLLISION_PRIORITY = 3;
 
@@ -15,45 +15,45 @@ const StyledSortableRoot = styled.div`
 `;
 
 type NavigationMenuItemSortableItemProps = {
-  children: ReactNode;
-  disabled?: boolean;
-  group: string;
-  id: string;
-  index: number;
+	children: ReactNode;
+	disabled?: boolean;
+	group: string;
+	id: string;
+	index: number;
 };
 
 export const NavigationMenuItemSortableItem = ({
-  id,
-  index,
-  group,
-  disabled = false,
-  children,
+	id,
+	index,
+	group,
+	disabled = false,
+	children,
 }: NavigationMenuItemSortableItemProps) => {
-  const { handleRef, ref, targetRef } = useSortable({
-    id,
-    index,
-    group,
-    collisionPriority: SORTABLE_COLLISION_PRIORITY,
-    data: {
-      sourceDroppableId: group,
-      sourceIndex: index,
-    },
-    disabled,
-    transition: null,
-    plugins: PLUGINS_WITHOUT_OPTIMISTIC,
-    feedback: 'clone',
-  });
+	const { handleRef, ref, targetRef } = useSortable({
+		id,
+		index,
+		group,
+		collisionPriority: SORTABLE_COLLISION_PRIORITY,
+		data: {
+			sourceDroppableId: group,
+			sourceIndex: index,
+		},
+		disabled,
+		transition: null,
+		plugins: PLUGINS_WITHOUT_OPTIMISTIC,
+		feedback: "clone",
+	});
 
-  return (
-    <SortableDropTargetRefContext.Provider value={targetRef}>
-      <StyledSortableRoot
-        ref={(el) => {
-          ref(el);
-          handleRef?.(el);
-        }}
-      >
-        {children}
-      </StyledSortableRoot>
-    </SortableDropTargetRefContext.Provider>
-  );
+	return (
+		<SortableDropTargetRefContext.Provider value={targetRef}>
+			<StyledSortableRoot
+				ref={(el) => {
+					ref(el);
+					handleRef?.(el);
+				}}
+			>
+				{children}
+			</StyledSortableRoot>
+		</SortableDropTargetRefContext.Provider>
+	);
 };

@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 export const getDestroyOneRecordMutationResponseField = (
-  objectNameSingular: string,
+	objectNameSingular: string,
 ) => `destroy${capitalize(objectNameSingular)}`;

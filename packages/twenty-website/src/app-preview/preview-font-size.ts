@@ -5,4 +5,4 @@
 const PRODUCT_REM_BASE_PX = 13;
 
 export const previewFontSize = (themeRemValue: string): string =>
-  `${parseFloat(themeRemValue) * PRODUCT_REM_BASE_PX}px`;
+	`${parseFloat(themeRemValue) * PRODUCT_REM_BASE_PX}px`;

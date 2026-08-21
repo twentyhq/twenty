@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode, useState } from "react";
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown, IconChevronUp } from "twenty-ui/icon";
+import { AnimatedExpandableContainer } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsAdminChatCollapsibleSectionProps = {
-  label: string;
-  defaultExpanded?: boolean;
-  children: ReactNode;
+	label: string;
+	defaultExpanded?: boolean;
+	children: ReactNode;
 };
 
 const StyledContainer = styled.div`
@@ -33,30 +33,30 @@ const StyledToggleButton = styled.button`
 `;
 
 export const SettingsAdminChatCollapsibleSection = ({
-  label,
-  defaultExpanded = false,
-  children,
+	label,
+	defaultExpanded = false,
+	children,
 }: SettingsAdminChatCollapsibleSectionProps) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
-  return (
-    <StyledContainer>
-      <StyledToggleButton
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
-        {label}
-        {isExpanded ? (
-          <IconChevronUp size={14} />
-        ) : (
-          <IconChevronDown size={14} />
-        )}
-      </StyledToggleButton>
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-        {children}
-      </AnimatedExpandableContainer>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledToggleButton
+				aria-expanded={isExpanded}
+				onClick={() =>
+					setIsExpanded((previousIsExpanded) => !previousIsExpanded)
+				}
+			>
+				{label}
+				{isExpanded ? (
+					<IconChevronUp size={14} />
+				) : (
+					<IconChevronDown size={14} />
+				)}
+			</StyledToggleButton>
+			<AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+				{children}
+			</AnimatedExpandableContainer>
+		</StyledContainer>
+	);
 };

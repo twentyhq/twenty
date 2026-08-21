@@ -1,114 +1,114 @@
-import { ApolloLink, gql, type Operation } from '@apollo/client';
-import { map } from 'rxjs';
-import { logDebug } from '~/utils/logDebug';
-import { logError } from '~/utils/logError';
+import { ApolloLink, gql, type Operation } from "@apollo/client";
+import { map } from "rxjs";
+import { logDebug } from "~/utils/logDebug";
+import { logError } from "~/utils/logError";
 
-import { isDefined } from 'twenty-shared/utils';
-import formatTitle from './formatTitle';
+import { isDefined } from "twenty-shared/utils";
+import formatTitle from "./formatTitle";
 
 const getGroup = (collapsed: boolean) =>
-  collapsed
-    ? console.groupCollapsed.bind(console)
-    : console.group.bind(console);
+	collapsed
+		? console.groupCollapsed.bind(console)
+		: console.group.bind(console);
 
 const parseQuery = (queryString: string) => {
-  if (!queryString.trim()) {
-    return ['Generic', ''];
-  }
+	if (!queryString.trim()) {
+		return ["Generic", ""];
+	}
 
-  const queryObj = gql`
+	const queryObj = gql`
     ${queryString}
   `;
 
-  const { name } = queryObj.definitions[0] as any;
-  return [name ? name.value : 'Generic', queryString.trim()];
+	const { name } = queryObj.definitions[0] as any;
+	return [name ? name.value : "Generic", queryString.trim()];
 };
 
 export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
-  new ApolloLink((operation, forward) => {
-    const schemaName = getSchemaName(operation);
-    operation.setContext({ start: Date.now() });
+	new ApolloLink((operation, forward) => {
+		const schemaName = getSchemaName(operation);
+		operation.setContext({ start: Date.now() });
 
-    const { variables } = operation;
+		const { variables } = operation;
 
-    const operationType = (operation.query.definitions[0] as any).operation;
-    const headers = operation.getContext().headers;
+		const operationType = (operation.query.definitions[0] as any).operation;
+		const headers = operation.getContext().headers;
 
-    const [queryName, query] = parseQuery(
-      operation.query.loc?.source.body ?? '',
-    );
+		const [queryName, query] = parseQuery(
+			operation.query.loc?.source.body ?? "",
+		);
 
-    if (operationType === 'subscription') {
-      const date = new Date().toLocaleTimeString();
+		if (operationType === "subscription") {
+			const date = new Date().toLocaleTimeString();
 
-      const titleArgs = formatTitle(operationType, schemaName, queryName, date);
+			const titleArgs = formatTitle(operationType, schemaName, queryName, date);
 
-      console.groupCollapsed(...titleArgs);
+			console.groupCollapsed(...titleArgs);
 
-      if (Object.keys(variables).length !== 0) {
-        logDebug('VARIABLES', variables);
-      }
+			if (Object.keys(variables).length !== 0) {
+				logDebug("VARIABLES", variables);
+			}
 
-      logDebug('QUERY', query);
+			logDebug("QUERY", query);
 
-      console.groupEnd();
+			console.groupEnd();
 
-      return forward(operation);
-    }
+			return forward(operation);
+		}
 
-    return forward(operation).pipe(
-      map((result) => {
-        const time = Date.now() - operation.getContext().start;
-        const errors = result.errors ?? result.data?.[queryName]?.errors;
-        const hasError = Boolean(errors);
+		return forward(operation).pipe(
+			map((result) => {
+				const time = Date.now() - operation.getContext().start;
+				const errors = result.errors ?? result.data?.[queryName]?.errors;
+				const hasError = Boolean(errors);
 
-        try {
-          const titleArgs = formatTitle(
-            operationType,
-            schemaName,
-            queryName,
-            time,
-          );
+				try {
+					const titleArgs = formatTitle(
+						operationType,
+						schemaName,
+						queryName,
+						time,
+					);
 
-          getGroup(!hasError)(...titleArgs);
+					getGroup(!hasError)(...titleArgs);
 
-          if (isDefined(errors)) {
-            errors.forEach((err: any) => {
-              logDebug(
-                `%c${err.message}`,
-                // oxlint-disable-next-line twenty/no-hardcoded-colors
-                'color: #F51818; font-weight: lighter',
-              );
-            });
-          }
+					if (isDefined(errors)) {
+						errors.forEach((err: any) => {
+							logDebug(
+								`%c${err.message}`,
+								// oxlint-disable-next-line twenty/no-hardcoded-colors
+								"color: #F51818; font-weight: lighter",
+							);
+						});
+					}
 
-          logDebug('HEADERS: ', headers);
+					logDebug("HEADERS: ", headers);
 
-          if (Object.keys(variables).length !== 0) {
-            logDebug('VARIABLES', variables);
-          }
+					if (Object.keys(variables).length !== 0) {
+						logDebug("VARIABLES", variables);
+					}
 
-          logDebug('QUERY', query);
+					logDebug("QUERY", query);
 
-          if (isDefined(result.data)) {
-            logDebug('RESULT', result.data);
-          }
-          if (isDefined(errors)) {
-            logDebug('ERRORS', errors);
-          }
+					if (isDefined(result.data)) {
+						logDebug("RESULT", result.data);
+					}
+					if (isDefined(errors)) {
+						logDebug("ERRORS", errors);
+					}
 
-          console.groupEnd();
-        } catch {
-          // this may happen if console group is not supported
-          logDebug(
-            `${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
-          );
-          if (isDefined(errors)) {
-            logError(errors);
-          }
-        }
+					console.groupEnd();
+				} catch {
+					// this may happen if console group is not supported
+					logDebug(
+						`${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
+					);
+					if (isDefined(errors)) {
+						logError(errors);
+					}
+				}
 
-        return result;
-      }),
-    );
-  });
+				return result;
+			}),
+		);
+	});

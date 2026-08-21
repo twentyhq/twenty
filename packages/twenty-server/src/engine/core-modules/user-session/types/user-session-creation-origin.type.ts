@@ -1,1 +1,1 @@
-export type UserSessionCreationOrigin = 'sign_in' | 'renewal_bridge';
+export type UserSessionCreationOrigin = "sign_in" | "renewal_bridge";

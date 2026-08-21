@@ -1,9 +1,9 @@
-import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
+import { type AttachmentWithFile } from "@/activities/files/utils/filterAttachmentsWithFile";
 
 export const getAttachmentUrl = ({
-  attachment,
+	attachment,
 }: {
-  attachment: AttachmentWithFile;
+	attachment: AttachmentWithFile;
 }): string => {
-  return attachment.file.url;
+	return attachment.file.url;
 };

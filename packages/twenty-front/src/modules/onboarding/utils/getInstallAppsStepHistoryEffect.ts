@@ -1,15 +1,15 @@
-import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
+import { type OnboardingStepHistoryEffect } from "@/onboarding/types/OnboardingStepHistoryEffect";
 
 export const getInstallAppsStepHistoryEffect = ({
-  universalIdentifiers,
-  isAutoSkipped,
+	universalIdentifiers,
+	isAutoSkipped,
 }: {
-  universalIdentifiers: string[];
-  isAutoSkipped: boolean;
+	universalIdentifiers: string[];
+	isAutoSkipped: boolean;
 }): OnboardingStepHistoryEffect => {
-  if (universalIdentifiers.length > 0) {
-    return 'clearAfterIrreversibleStep';
-  }
+	if (universalIdentifiers.length > 0) {
+		return "clearAfterIrreversibleStep";
+	}
 
-  return isAutoSkipped ? 'leaveUnchanged' : 'recordAsReversible';
+	return isAutoSkipped ? "leaveUnchanged" : "recordAsReversible";
 };

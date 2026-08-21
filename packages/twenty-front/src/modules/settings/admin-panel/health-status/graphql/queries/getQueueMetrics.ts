@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_QUEUE_METRICS = gql`
   query GetQueueMetrics(

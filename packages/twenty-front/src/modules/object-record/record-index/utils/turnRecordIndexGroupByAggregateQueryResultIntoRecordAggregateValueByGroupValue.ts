@@ -1,45 +1,45 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type RecordAggregateValueByRecordGroupValue } from '@/object-record/record-index/types/RecordAggregateValueByRecordGroupValue';
-import { type RecordIndexGroupByQueryResult } from '@/object-record/record-index/types/RecordIndexGroupByQueryResult';
-import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { type RecordAggregateValueByRecordGroupValue } from "@/object-record/record-index/types/RecordAggregateValueByRecordGroupValue";
+import { type RecordIndexGroupByQueryResult } from "@/object-record/record-index/types/RecordIndexGroupByQueryResult";
+import { getGroupByQueryResultGqlFieldName } from "@/page-layout/utils/getGroupByQueryResultGqlFieldName";
 
 type TurnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValueParams =
-  {
-    queryResult: RecordIndexGroupByQueryResult;
-    recordAggregateGqlField: string;
-    objectMetadataItem: EnrichedObjectMetadataItem;
-  };
+	{
+		queryResult: RecordIndexGroupByQueryResult;
+		recordAggregateGqlField: string;
+		objectMetadataItem: EnrichedObjectMetadataItem;
+	};
 
 export const turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue =
-  ({
-    objectMetadataItem,
-    queryResult,
-    recordAggregateGqlField,
-  }: TurnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValueParams) => {
-    const recordAggregateValueByGroupValueArray: RecordAggregateValueByRecordGroupValue[] =
-      [];
+	({
+		objectMetadataItem,
+		queryResult,
+		recordAggregateGqlField,
+	}: TurnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValueParams) => {
+		const recordAggregateValueByGroupValueArray: RecordAggregateValueByRecordGroupValue[] =
+			[];
 
-    const queryResultGqlFieldName =
-      getGroupByQueryResultGqlFieldName(objectMetadataItem);
+		const queryResultGqlFieldName =
+			getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
-    const groupByQueryResultItems = queryResult[queryResultGqlFieldName];
+		const groupByQueryResultItems = queryResult[queryResultGqlFieldName];
 
-    for (const groupByQueryResultItem of groupByQueryResultItems) {
-      if (groupByQueryResultItem.groupByDimensionValues.length === 1) {
-        const groupByValue = groupByQueryResultItem.groupByDimensionValues[0];
+		for (const groupByQueryResultItem of groupByQueryResultItems) {
+			if (groupByQueryResultItem.groupByDimensionValues.length === 1) {
+				const groupByValue = groupByQueryResultItem.groupByDimensionValues[0];
 
-        const gqlAggregateFieldName = recordAggregateGqlField;
+				const gqlAggregateFieldName = recordAggregateGqlField;
 
-        const aggregateValue = groupByQueryResultItem[gqlAggregateFieldName];
+				const aggregateValue = groupByQueryResultItem[gqlAggregateFieldName];
 
-        recordAggregateValueByGroupValueArray.push({
-          recordGroupValue: groupByValue,
-          recordAggregateValue: aggregateValue,
-        });
-      }
-    }
+				recordAggregateValueByGroupValueArray.push({
+					recordGroupValue: groupByValue,
+					recordAggregateValue: aggregateValue,
+				});
+			}
+		}
 
-    return {
-      recordAggregateValueByGroupValueArray,
-    };
-  };
+		return {
+			recordAggregateValueByGroupValueArray,
+		};
+	};

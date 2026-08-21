@@ -1,8 +1,8 @@
-import { createRequiredContext } from '~/utils/createRequiredContext';
+import { createRequiredContext } from "~/utils/createRequiredContext";
 
 export type SelectableListContextValue = {
-  focusId: string;
+	focusId: string;
 };
 
 export const [SelectableListContextProvider, useSelectableListContextOrThrow] =
-  createRequiredContext<SelectableListContextValue>('SelectableListContext');
+	createRequiredContext<SelectableListContextValue>("SelectableListContext");

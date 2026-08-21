@@ -1,46 +1,46 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType, registerEnumType } from "@nestjs/graphql";
 
-import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
+import { EmailConnectionSecurity } from "src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum";
 
 registerEnumType(EmailConnectionSecurity, {
-  name: 'EmailConnectionSecurity',
+	name: "EmailConnectionSecurity",
 });
 
 @InputType()
 export class AccountType {
-  @Field(() => String)
-  type: 'IMAP' | 'SMTP' | 'CALDAV';
+	@Field(() => String)
+	type: "IMAP" | "SMTP" | "CALDAV";
 }
 
 @InputType()
 export class ConnectionParametersInput {
-  @Field(() => String)
-  host: string;
+	@Field(() => String)
+	host: string;
 
-  @Field(() => Number)
-  port: number;
+	@Field(() => Number)
+	port: number;
 
-  @Field(() => String, { nullable: true })
-  username?: string;
+	@Field(() => String, { nullable: true })
+	username?: string;
 
-  @Field(() => String, { nullable: true })
-  password?: string;
+	@Field(() => String, { nullable: true })
+	password?: string;
 
-  @Field(() => EmailConnectionSecurity, { nullable: true })
-  connectionSecurity?: EmailConnectionSecurity;
+	@Field(() => EmailConnectionSecurity, { nullable: true })
+	connectionSecurity?: EmailConnectionSecurity;
 }
 
-@InputType('EmailAccountConnectionParameters')
+@InputType("EmailAccountConnectionParameters")
 export class EmailAccountConnectionParametersInput {
-  @Field(() => String, { nullable: true })
-  name?: string | null;
+	@Field(() => String, { nullable: true })
+	name?: string | null;
 
-  @Field(() => ConnectionParametersInput, { nullable: true })
-  IMAP?: ConnectionParametersInput;
+	@Field(() => ConnectionParametersInput, { nullable: true })
+	IMAP?: ConnectionParametersInput;
 
-  @Field(() => ConnectionParametersInput, { nullable: true })
-  SMTP?: ConnectionParametersInput;
+	@Field(() => ConnectionParametersInput, { nullable: true })
+	SMTP?: ConnectionParametersInput;
 
-  @Field(() => ConnectionParametersInput, { nullable: true })
-  CALDAV?: ConnectionParametersInput;
+	@Field(() => ConnectionParametersInput, { nullable: true })
+	CALDAV?: ConnectionParametersInput;
 }

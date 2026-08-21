@@ -1,4 +1,4 @@
 export type CampaignRecipient = {
-  personId: string;
-  email: string;
+	personId: string;
+	email: string;
 };

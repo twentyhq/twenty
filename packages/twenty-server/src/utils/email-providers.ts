@@ -16345,4 +16345,4 @@ zzom.co.uksina.com
 zzz.com
 zzz.pl`;
 
-export const emailProvidersSet = new Set(emailProviders.split('\n'));
+export const emailProvidersSet = new Set(emailProviders.split("\n"));

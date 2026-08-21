@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledEventRowContainer = styled.div`
   align-items: center;

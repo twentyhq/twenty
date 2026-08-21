@@ -1,14 +1,14 @@
 export const ensureAbsoluteUrl = (value: string): string => {
-  const trimmedValue = value.trim();
+	const trimmedValue = value.trim();
 
-  if (
-    trimmedValue.startsWith('http://') ||
-    trimmedValue.startsWith('https://') ||
-    trimmedValue.startsWith('HTTPS://') ||
-    trimmedValue.startsWith('HTTP://')
-  ) {
-    return trimmedValue;
-  }
+	if (
+		trimmedValue.startsWith("http://") ||
+		trimmedValue.startsWith("https://") ||
+		trimmedValue.startsWith("HTTPS://") ||
+		trimmedValue.startsWith("HTTP://")
+	) {
+		return trimmedValue;
+	}
 
-  return `https://${trimmedValue}`;
+	return `https://${trimmedValue}`;
 };

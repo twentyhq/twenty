@@ -1,9 +1,9 @@
 export const getBasePathToShowPage = ({
-  objectNameSingular,
+	objectNameSingular,
 }: {
-  objectNameSingular: string;
+	objectNameSingular: string;
 }) => {
-  const basePathToShowPage = `/object/${objectNameSingular}/`;
+	const basePathToShowPage = `/object/${objectNameSingular}/`;
 
-  return basePathToShowPage;
+	return basePathToShowPage;
 };

@@ -1,82 +1,82 @@
 import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
-} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+	type LogicFunctionFormValues,
+	useLogicFunctionUpdateFormState,
+} from "@/logic-functions/hooks/useLogicFunctionUpdateFormState";
+import { usePersistLogicFunction } from "@/logic-functions/hooks/usePersistLogicFunction";
 import {
-  getInputSchemaFromSourceCode,
-  jsonSchemaToInputSchema,
-  type InputJsonSchema,
-} from 'twenty-shared/logic-function';
-import { useDebouncedCallback } from 'use-debounce';
+	getInputSchemaFromSourceCode,
+	jsonSchemaToInputSchema,
+	type InputJsonSchema,
+} from "twenty-shared/logic-function";
+import { useDebouncedCallback } from "use-debounce";
 
 export const useLogicFunctionForm = ({
-  logicFunctionId,
+	logicFunctionId,
 }: {
-  logicFunctionId: string;
+	logicFunctionId: string;
 }) => {
-  const { updateLogicFunction } = usePersistLogicFunction();
+	const { updateLogicFunction } = usePersistLogicFunction();
 
-  const { formValues, setFormValues, logicFunction, loading } =
-    useLogicFunctionUpdateFormState({ logicFunctionId });
+	const { formValues, setFormValues, logicFunction, loading } =
+		useLogicFunctionUpdateFormState({ logicFunctionId });
 
-  const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunction({
-      input: {
-        id: logicFunctionId,
-        update: formValues,
-      },
-    });
-  }, 500);
+	const handleSave = useDebouncedCallback(async () => {
+		await updateLogicFunction({
+			input: {
+				id: logicFunctionId,
+				update: formValues,
+			},
+		});
+	}, 500);
 
-  const onChange = <TKey extends keyof LogicFunctionFormValues>(key: TKey) => {
-    return async (
-      value: LogicFunctionFormValues[TKey],
-    ): Promise<InputJsonSchema | undefined> => {
-      if (key === 'sourceHandlerCode') {
-        const inferredJsonSchema = await getInputSchemaFromSourceCode(
-          value as LogicFunctionFormValues['sourceHandlerCode'],
-        );
+	const onChange = <TKey extends keyof LogicFunctionFormValues>(key: TKey) => {
+		return async (
+			value: LogicFunctionFormValues[TKey],
+		): Promise<InputJsonSchema | undefined> => {
+			if (key === "sourceHandlerCode") {
+				const inferredJsonSchema = await getInputSchemaFromSourceCode(
+					value as LogicFunctionFormValues["sourceHandlerCode"],
+				);
 
-        setFormValues((prevState: LogicFunctionFormValues) => ({
-          ...prevState,
-          sourceHandlerCode: value as string,
-          toolTriggerSettings: prevState.toolTriggerSettings
-            ? {
-                ...prevState.toolTriggerSettings,
-                inputSchema: inferredJsonSchema,
-              }
-            : null,
-          workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
-            ? {
-                ...prevState.workflowActionTriggerSettings,
-                inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
-              }
-            : null,
-        }));
+				setFormValues((prevState: LogicFunctionFormValues) => ({
+					...prevState,
+					sourceHandlerCode: value as string,
+					toolTriggerSettings: prevState.toolTriggerSettings
+						? {
+								...prevState.toolTriggerSettings,
+								inputSchema: inferredJsonSchema,
+							}
+						: null,
+					workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
+						? {
+								...prevState.workflowActionTriggerSettings,
+								inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
+							}
+						: null,
+				}));
 
-        await handleSave();
+				await handleSave();
 
-        return inferredJsonSchema;
-      }
+				return inferredJsonSchema;
+			}
 
-      setFormValues((prevState: LogicFunctionFormValues) => ({
-        ...prevState,
-        [key]: value,
-      }));
+			setFormValues((prevState: LogicFunctionFormValues) => ({
+				...prevState,
+				[key]: value,
+			}));
 
-      await handleSave();
+			await handleSave();
 
-      return undefined;
-    };
-  };
+			return undefined;
+		};
+	};
 
-  return {
-    formValues,
-    setFormValues,
-    logicFunction,
-    loading,
-    handleSave,
-    onChange,
-  };
+	return {
+		formValues,
+		setFormValues,
+		logicFunction,
+		loading,
+		handleSave,
+		onChange,
+	};
 };

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { CalendarEventTranscriptBody } from 'src/front-components/components/CalendarEventTranscriptBody';
-import { useCalendarEventTranscript } from 'src/front-components/hooks/use-calendar-event-transcript';
+import { CalendarEventTranscriptBody } from "src/front-components/components/CalendarEventTranscriptBody";
+import { useCalendarEventTranscript } from "src/front-components/hooks/use-calendar-event-transcript";
 
 const StyledTranscriptShell = styled.div`
   background: ${() => themeCssVariables.background.primary};
@@ -54,31 +54,31 @@ const StyledTranscriptContentFrame = styled.div`
 `;
 
 type CalendarEventTranscriptContentProps = {
-  calendarEventId: string;
+	calendarEventId: string;
 };
 
 export const CalendarEventTranscriptContent = ({
-  calendarEventId,
+	calendarEventId,
 }: CalendarEventTranscriptContentProps) => {
-  const { transcript, isCalendarEventTranscriptQueryLoading, errorMessage } =
-    useCalendarEventTranscript(calendarEventId);
+	const { transcript, isCalendarEventTranscriptQueryLoading, errorMessage } =
+		useCalendarEventTranscript(calendarEventId);
 
-  return (
-    <StyledTranscriptShell>
-      <StyledTranscriptHeader>
-        <StyledTranscriptTitle>Transcript</StyledTranscriptTitle>
-      </StyledTranscriptHeader>
-      <StyledTranscriptBody>
-        <StyledTranscriptContentFrame>
-          <CalendarEventTranscriptBody
-            transcript={transcript}
-            isCalendarEventTranscriptQueryLoading={
-              isCalendarEventTranscriptQueryLoading
-            }
-            errorMessage={errorMessage}
-          />
-        </StyledTranscriptContentFrame>
-      </StyledTranscriptBody>
-    </StyledTranscriptShell>
-  );
+	return (
+		<StyledTranscriptShell>
+			<StyledTranscriptHeader>
+				<StyledTranscriptTitle>Transcript</StyledTranscriptTitle>
+			</StyledTranscriptHeader>
+			<StyledTranscriptBody>
+				<StyledTranscriptContentFrame>
+					<CalendarEventTranscriptBody
+						transcript={transcript}
+						isCalendarEventTranscriptQueryLoading={
+							isCalendarEventTranscriptQueryLoading
+						}
+						errorMessage={errorMessage}
+					/>
+				</StyledTranscriptContentFrame>
+			</StyledTranscriptBody>
+		</StyledTranscriptShell>
+	);
 };

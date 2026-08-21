@@ -1,74 +1,74 @@
-import { defineRule } from '@oxlint/plugins';
+import { defineRule } from "@oxlint/plugins";
 
-export const RULE_NAME = 'no-storybook-a11y-disable';
+export const RULE_NAME = "no-storybook-a11y-disable";
 
-const DISABLING_TEST_VALUES = ['off', 'todo'];
+const DISABLING_TEST_VALUES = ["off", "todo"];
 
 const getPropertyKeyName = (node: any): string | undefined => {
-  if (node.type !== 'Property') {
-    return undefined;
-  }
+	if (node.type !== "Property") {
+		return undefined;
+	}
 
-  if (node.key.type === 'Identifier') {
-    return node.key.name;
-  }
+	if (node.key.type === "Identifier") {
+		return node.key.name;
+	}
 
-  if (node.key.type === 'Literal' && typeof node.key.value === 'string') {
-    return node.key.value;
-  }
+	if (node.key.type === "Literal" && typeof node.key.value === "string") {
+		return node.key.value;
+	}
 
-  return undefined;
+	return undefined;
 };
 
 const isDisablingTestProperty = (node: any): boolean =>
-  node.type === 'Property' &&
-  getPropertyKeyName(node) === 'test' &&
-  node.value.type === 'Literal' &&
-  DISABLING_TEST_VALUES.includes(node.value.value);
+	node.type === "Property" &&
+	getPropertyKeyName(node) === "test" &&
+	node.value.type === "Literal" &&
+	DISABLING_TEST_VALUES.includes(node.value.value);
 
 export const rule = defineRule({
-  meta: {
-    type: 'problem',
-    docs: {
-      description:
-        "Disallow disabling the Storybook accessibility (axe) gate with a11y: { test: 'off' | 'todo' }.",
-    },
-    messages: {
-      noA11yDisable:
-        "Do not disable the accessibility gate with test: 'off' or test: 'todo'. Fix the axe violations, or defer only color-contrast via A11Y_DEFER_COLOR_CONTRAST.",
-    },
-    schema: [],
-  },
-  create: (context) => ({
-    Property: (node: any) => {
-      if (getPropertyKeyName(node) !== 'parameters') {
-        return;
-      }
+	meta: {
+		type: "problem",
+		docs: {
+			description:
+				"Disallow disabling the Storybook accessibility (axe) gate with a11y: { test: 'off' | 'todo' }.",
+		},
+		messages: {
+			noA11yDisable:
+				"Do not disable the accessibility gate with test: 'off' or test: 'todo'. Fix the axe violations, or defer only color-contrast via A11Y_DEFER_COLOR_CONTRAST.",
+		},
+		schema: [],
+	},
+	create: (context) => ({
+		Property: (node: any) => {
+			if (getPropertyKeyName(node) !== "parameters") {
+				return;
+			}
 
-      if (node.value.type !== 'ObjectExpression') {
-        return;
-      }
+			if (node.value.type !== "ObjectExpression") {
+				return;
+			}
 
-      const a11yProperty = node.value.properties.find(
-        (property: any) =>
-          getPropertyKeyName(property) === 'a11y' &&
-          property.value.type === 'ObjectExpression',
-      );
+			const a11yProperty = node.value.properties.find(
+				(property: any) =>
+					getPropertyKeyName(property) === "a11y" &&
+					property.value.type === "ObjectExpression",
+			);
 
-      if (a11yProperty === undefined) {
-        return;
-      }
+			if (a11yProperty === undefined) {
+				return;
+			}
 
-      const disablingProperty = a11yProperty.value.properties.find(
-        isDisablingTestProperty,
-      );
+			const disablingProperty = a11yProperty.value.properties.find(
+				isDisablingTestProperty,
+			);
 
-      if (disablingProperty !== undefined) {
-        context.report({
-          node: disablingProperty,
-          messageId: 'noA11yDisable',
-        });
-      }
-    },
-  }),
+			if (disablingProperty !== undefined) {
+				context.report({
+					node: disablingProperty,
+					messageId: "noA11yDisable",
+				});
+			}
+		},
+	}),
 });

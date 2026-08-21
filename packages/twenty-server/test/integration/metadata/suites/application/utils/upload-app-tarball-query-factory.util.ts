@@ -1,11 +1,11 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const uploadAppTarballQueryFactory = ({
-  universalIdentifier,
+	universalIdentifier,
 }: {
-  universalIdentifier?: string;
+	universalIdentifier?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
       uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
         id
@@ -14,8 +14,8 @@ export const uploadAppTarballQueryFactory = ({
       }
     }
   `,
-  variables: {
-    file: null,
-    universalIdentifier: universalIdentifier ?? null,
-  },
+	variables: {
+		file: null,
+		universalIdentifier: universalIdentifier ?? null,
+	},
 });

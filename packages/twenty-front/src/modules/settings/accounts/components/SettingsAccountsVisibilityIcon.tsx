@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-type VisibilityElementState = 'active' | 'inactive';
+type VisibilityElementState = "active" | "inactive";
 
 type SettingsAccountsVisibilityIconProps = {
-  className?: string;
-  metadata?: VisibilityElementState;
-  subject?: VisibilityElementState;
-  body?: VisibilityElementState;
+	className?: string;
+	metadata?: VisibilityElementState;
+	subject?: VisibilityElementState;
+	body?: VisibilityElementState;
 };
 
 const StyledCardMedia = styled.div`
@@ -19,27 +19,27 @@ const StyledCardMedia = styled.div`
   color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
   height: 40px;
   justify-content: center;
-  padding: ${themeCssVariables.spacing['0.5']};
+  padding: ${themeCssVariables.spacing["0.5"]};
   width: 32px;
 `;
 
 const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.accent.accent7
-      : themeCssVariables.background.quaternary};
+		isActive
+			? themeCssVariables.accent.accent7
+			: themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
 `;
 
 const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.accent.accent7
-      : themeCssVariables.background.quaternary};
+		isActive
+			? themeCssVariables.accent.accent7
+			: themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
   margin-right: ${themeCssVariables.spacing[2]};
@@ -47,23 +47,23 @@ const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
 
 const StyledBodySkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.accent.accent7
-      : themeCssVariables.background.quaternary};
+		isActive
+			? themeCssVariables.accent.accent7
+			: themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.xs};
   flex: 1 0 auto;
   height: 3px;
 `;
 
 export const SettingsAccountsVisibilityIcon = ({
-  className,
-  metadata,
-  subject,
-  body,
+	className,
+	metadata,
+	subject,
+	body,
 }: SettingsAccountsVisibilityIconProps) => (
-  <StyledCardMedia className={className}>
-    {!!metadata && <StyledMetadataSkeleton isActive={metadata === 'active'} />}
-    {!!subject && <StyledSubjectSkeleton isActive={subject === 'active'} />}
-    {!!body && <StyledBodySkeleton isActive={body === 'active'} />}
-  </StyledCardMedia>
+	<StyledCardMedia className={className}>
+		{!!metadata && <StyledMetadataSkeleton isActive={metadata === "active"} />}
+		{!!subject && <StyledSubjectSkeleton isActive={subject === "active"} />}
+		{!!body && <StyledBodySkeleton isActive={body === "active"} />}
+	</StyledCardMedia>
 );

@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledStateContainer = styled.div`
   box-sizing: border-box;
@@ -30,18 +30,18 @@ const StyledErrorDescription = styled.span`
 `;
 
 type TranscriptErrorBoxProps = {
-  title: string;
-  description: string;
+	title: string;
+	description: string;
 };
 
 export const TranscriptErrorBox = ({
-  title,
-  description,
+	title,
+	description,
 }: TranscriptErrorBoxProps) => (
-  <StyledStateContainer>
-    <StyledErrorBox>
-      <StyledErrorTitle>{title}</StyledErrorTitle>
-      <StyledErrorDescription>{description}</StyledErrorDescription>
-    </StyledErrorBox>
-  </StyledStateContainer>
+	<StyledStateContainer>
+		<StyledErrorBox>
+			<StyledErrorTitle>{title}</StyledErrorTitle>
+			<StyledErrorDescription>{description}</StyledErrorDescription>
+		</StyledErrorBox>
+	</StyledStateContainer>
 );

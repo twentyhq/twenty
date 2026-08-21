@@ -1,68 +1,68 @@
-import { act, render } from '@testing-library/react';
+import { act, render } from "@testing-library/react";
 
-import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/BookCallBookingSuccessEffect';
+import { BookCallBookingSuccessEffect } from "@/onboarding/effect-components/BookCallBookingSuccessEffect";
 
 const mockCalApi = jest.fn();
 
-jest.mock('@calcom/embed-react', () => ({
-  getCalApi: () => Promise.resolve(mockCalApi),
+jest.mock("@calcom/embed-react", () => ({
+	getCalApi: () => Promise.resolve(mockCalApi),
 }));
 
 const renderEffect = async (onBookingSuccessful: () => void) => {
-  const view = render(
-    <BookCallBookingSuccessEffect onBookingSuccessful={onBookingSuccessful} />,
-  );
+	const view = render(
+		<BookCallBookingSuccessEffect onBookingSuccessful={onBookingSuccessful} />,
+	);
 
-  await act(async () => {
-    await Promise.resolve();
-  });
+	await act(async () => {
+		await Promise.resolve();
+	});
 
-  const subscription = mockCalApi.mock.calls.find(
-    ([action]) => action === 'on',
-  );
+	const subscription = mockCalApi.mock.calls.find(
+		([action]) => action === "on",
+	);
 
-  return {
-    view,
-    emitBookingSuccessful: subscription?.[1].callback as () => void,
-  };
+	return {
+		view,
+		emitBookingSuccessful: subscription?.[1].callback as () => void,
+	};
 };
 
-describe('BookCallBookingSuccessEffect', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+describe("BookCallBookingSuccessEffect", () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
 
-  it('should subscribe to the booking success event', async () => {
-    const onBookingSuccessful = jest.fn();
+	it("should subscribe to the booking success event", async () => {
+		const onBookingSuccessful = jest.fn();
 
-    const { emitBookingSuccessful } = await renderEffect(onBookingSuccessful);
+		const { emitBookingSuccessful } = await renderEffect(onBookingSuccessful);
 
-    expect(emitBookingSuccessful).toBeDefined();
-  });
+		expect(emitBookingSuccessful).toBeDefined();
+	});
 
-  it('should notify once even when the embed emits repeatedly', async () => {
-    const onBookingSuccessful = jest.fn();
+	it("should notify once even when the embed emits repeatedly", async () => {
+		const onBookingSuccessful = jest.fn();
 
-    const { emitBookingSuccessful } = await renderEffect(onBookingSuccessful);
+		const { emitBookingSuccessful } = await renderEffect(onBookingSuccessful);
 
-    act(() => {
-      emitBookingSuccessful();
-      emitBookingSuccessful();
-    });
+		act(() => {
+			emitBookingSuccessful();
+			emitBookingSuccessful();
+		});
 
-    expect(onBookingSuccessful).toHaveBeenCalledTimes(1);
-  });
+		expect(onBookingSuccessful).toHaveBeenCalledTimes(1);
+	});
 
-  it('should unsubscribe on unmount so listeners cannot stack up', async () => {
-    const onBookingSuccessful = jest.fn();
+	it("should unsubscribe on unmount so listeners cannot stack up", async () => {
+		const onBookingSuccessful = jest.fn();
 
-    const { view } = await renderEffect(onBookingSuccessful);
+		const { view } = await renderEffect(onBookingSuccessful);
 
-    view.unmount();
+		view.unmount();
 
-    expect(mockCalApi).toHaveBeenCalledWith(
-      'off',
-      expect.objectContaining({ action: 'bookingSuccessfulV2' }),
-    );
-  });
+		expect(mockCalApi).toHaveBeenCalledWith(
+			"off",
+			expect.objectContaining({ action: "bookingSuccessfulV2" }),
+		);
+	});
 });

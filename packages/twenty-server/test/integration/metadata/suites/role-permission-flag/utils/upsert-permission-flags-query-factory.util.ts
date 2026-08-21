@@ -1,7 +1,7 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
+import { type UpsertPermissionFlagsInput } from "src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input";
 
 export type UpsertPermissionFlagsFactoryInput = UpsertPermissionFlagsInput;
 
@@ -12,17 +12,17 @@ const DEFAULT_ROLE_PERMISSION_FLAG_GQL_FIELDS = `
 `;
 
 export const upsertPermissionFlagsQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_ROLE_PERMISSION_FLAG_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_ROLE_PERMISSION_FLAG_GQL_FIELDS,
 }: PerformMetadataQueryParams<UpsertPermissionFlagsFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation UpsertPermissionFlags($upsertPermissionFlagsInput: UpsertPermissionFlagsInput!) {
       upsertPermissionFlags(upsertPermissionFlagsInput: $upsertPermissionFlagsInput) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    upsertPermissionFlagsInput: input,
-  },
+	variables: {
+		upsertPermissionFlagsInput: input,
+	},
 });

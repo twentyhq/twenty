@@ -1,11 +1,11 @@
-import request from 'supertest';
+import request from "supertest";
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('taskTargetsResolver (e2e)', () => {
-  it('should find many taskTargets', () => {
-    const queryData = {
-      query: `
+describe("taskTargetsResolver (e2e)", () => {
+	it("should find many taskTargets", () => {
+		const queryData = {
+			query: `
         query taskTargets {
           taskTargets {
             edges {
@@ -25,39 +25,39 @@ describe('taskTargetsResolver (e2e)', () => {
           }
         }
       `,
-    };
+		};
 
-    return client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const data = res.body.data.taskTargets;
+		return client
+			.post("/graphql")
+			.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+			.send(queryData)
+			.expect(200)
+			.expect((res) => {
+				expect(res.body.data).toBeDefined();
+				expect(res.body.errors).toBeUndefined();
+			})
+			.expect((res) => {
+				const data = res.body.data.taskTargets;
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+				expect(data).toBeDefined();
+				expect(Array.isArray(data.edges)).toBe(true);
 
-        const edges = data.edges;
+				const edges = data.edges;
 
-        if (edges.length > 0) {
-          const taskTargets = edges[0].node;
+				if (edges.length > 0) {
+					const taskTargets = edges[0].node;
 
-          expect(taskTargets).toHaveProperty('id');
-          expect(taskTargets).toHaveProperty('createdAt');
-          expect(taskTargets).toHaveProperty('updatedAt');
-          expect(taskTargets).toHaveProperty('deletedAt');
-          expect(taskTargets).toHaveProperty('taskId');
-          expect(taskTargets).toHaveProperty('targetPersonId');
-          expect(taskTargets).toHaveProperty('targetCompanyId');
-          expect(taskTargets).toHaveProperty('targetOpportunityId');
-          expect(taskTargets).toHaveProperty('targetPetId');
-          expect(taskTargets).toHaveProperty('targetSurveyResultId');
-        }
-      });
-  });
+					expect(taskTargets).toHaveProperty("id");
+					expect(taskTargets).toHaveProperty("createdAt");
+					expect(taskTargets).toHaveProperty("updatedAt");
+					expect(taskTargets).toHaveProperty("deletedAt");
+					expect(taskTargets).toHaveProperty("taskId");
+					expect(taskTargets).toHaveProperty("targetPersonId");
+					expect(taskTargets).toHaveProperty("targetCompanyId");
+					expect(taskTargets).toHaveProperty("targetOpportunityId");
+					expect(taskTargets).toHaveProperty("targetPetId");
+					expect(taskTargets).toHaveProperty("targetSurveyResultId");
+				}
+			});
+	});
 });

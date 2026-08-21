@@ -1,1 +1,1 @@
-export const CALENDAR_CHANNEL_DELETED_EVENT = 'calendarChannel_deleted';
+export const CALENDAR_CHANNEL_DELETED_EVENT = "calendarChannel_deleted";

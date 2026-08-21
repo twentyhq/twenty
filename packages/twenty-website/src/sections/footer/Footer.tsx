@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { FooterBackdrop } from './FooterBackdrop';
+import { FooterBackdrop } from "./FooterBackdrop";
 
-import { TwentyLogo } from '@/icons';
-import { color, mediaUp, spacing } from '@/tokens';
-import { Container } from '@/ui';
+import { TwentyLogo } from "@/icons";
+import { color, mediaUp, spacing } from "@/tokens";
+import { Container } from "@/ui";
 
-import { FooterBottom } from './FooterBottom';
-import { FooterNav } from './FooterNav';
-import { NotchedCardShape } from '@/ui/NotchedCardShape';
+import { FooterBottom } from "./FooterBottom";
+import { FooterNav } from "./FooterNav";
+import { NotchedCardShape } from "@/ui/NotchedCardShape";
 
 const FooterRoot = styled.footer`
-  background-color: ${color('black')};
+  background-color: ${color("black")};
   width: 100%;
 `;
 
@@ -27,12 +27,12 @@ const StageContainer = styled(Container)`
   padding-top: ${spacing(30)};
   position: relative;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     min-height: 920px;
     padding-top: ${spacing(40)};
   }
 
-  ${mediaUp('lg')} {
+  ${mediaUp("lg")} {
     min-height: 1080px;
     padding-bottom: ${spacing(10)};
   }
@@ -44,23 +44,23 @@ const Card = styled.div`
   position: relative;
   z-index: 1;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding: ${spacing(20)} ${spacing(20)} ${spacing(12)};
   }
 `;
 
 export function Footer() {
-  return (
-    <FooterRoot data-menu-surface="" data-scheme="dark">
-      <StageContainer>
-        <FooterBackdrop />
-        <Card data-scheme="light">
-          <NotchedCardShape />
-          <TwentyLogo sizePx={40} />
-          <FooterNav />
-          <FooterBottom />
-        </Card>
-      </StageContainer>
-    </FooterRoot>
-  );
+	return (
+		<FooterRoot data-menu-surface="" data-scheme="dark">
+			<StageContainer>
+				<FooterBackdrop />
+				<Card data-scheme="light">
+					<NotchedCardShape />
+					<TwentyLogo sizePx={40} />
+					<FooterNav />
+					<FooterBottom />
+				</Card>
+			</StageContainer>
+		</FooterRoot>
+	);
 }

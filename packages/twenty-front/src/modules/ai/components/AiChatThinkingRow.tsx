@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { ThinkingOrbitLoaderIcon } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { ThinkingOrbitLoaderIcon } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledRow = styled.div`
   align-items: center;
@@ -25,12 +25,12 @@ const StyledLabel = styled.span`
 `;
 
 export const AiChatThinkingRow = () => {
-  return (
-    <StyledRow>
-      <StyledLoaderIconContainer>
-        <ThinkingOrbitLoaderIcon />
-      </StyledLoaderIconContainer>
-      <StyledLabel>{t`Thinking`}</StyledLabel>
-    </StyledRow>
-  );
+	return (
+		<StyledRow>
+			<StyledLoaderIconContainer>
+				<ThinkingOrbitLoaderIcon />
+			</StyledLoaderIconContainer>
+			<StyledLabel>{t`Thinking`}</StyledLabel>
+		</StyledRow>
+	);
 };

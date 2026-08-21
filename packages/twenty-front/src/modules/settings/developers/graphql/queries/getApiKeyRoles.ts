@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const GET_API_KEY_ROLES = gql`
   query GetApiKeyRoles {

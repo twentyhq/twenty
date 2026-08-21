@@ -1,19 +1,19 @@
-import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { isUndefined } from "@sniptt/guards";
+import { Avatar, Chip, ChipVariant } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
+import { type CalendarEventRecordingParticipant } from "src/front-components/types/calendar-event-recording-participant.type";
 import {
-  type TranscriptEntry,
-  type TranscriptWord,
-} from 'src/front-components/types/transcript-entry.type';
-import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-seconds-as-clock-timestamp.util';
+	type TranscriptEntry,
+	type TranscriptWord,
+} from "src/front-components/types/transcript-entry.type";
+import { formatSecondsAsClockTimestamp } from "src/logic-functions/utils/format-seconds-as-clock-timestamp.util";
 
 const StyledEntry = styled.div<{ $isActive: boolean }>`
   align-items: flex-start;
   background: ${({ $isActive }) =>
-    $isActive ? themeCssVariables.background.transparent.blue : 'transparent'};
+		$isActive ? themeCssVariables.background.transparent.blue : "transparent"};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -49,76 +49,76 @@ const StyledEntryText = styled.p`
 
 const StyledWord = styled.span<{ $isSpoken: boolean }>`
   color: ${({ $isSpoken }) =>
-    $isSpoken
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.secondary};
+		$isSpoken
+			? themeCssVariables.font.color.primary
+			: themeCssVariables.font.color.secondary};
   line-height: 1.4;
   transition: color 0.15s ease;
 `;
 
 type TranscriptEntryListItemProps = {
-  entry: TranscriptEntry;
-  isActive: boolean;
-  currentTimeSeconds: number;
-  calendarEventParticipant: CalendarEventRecordingParticipant | undefined;
+	entry: TranscriptEntry;
+	isActive: boolean;
+	currentTimeSeconds: number;
+	calendarEventParticipant: CalendarEventRecordingParticipant | undefined;
 };
 
 export const TranscriptEntryListItem = ({
-  entry,
-  isActive,
-  currentTimeSeconds,
-  calendarEventParticipant,
+	entry,
+	isActive,
+	currentTimeSeconds,
+	calendarEventParticipant,
 }: TranscriptEntryListItemProps) => {
-  const speakerDisplayName =
-    calendarEventParticipant?.displayName ?? entry.speakerName;
+	const speakerDisplayName =
+		calendarEventParticipant?.displayName ?? entry.speakerName;
 
-  return (
-    <StyledEntry $isActive={isActive}>
-      <StyledEntryHeader>
-        <Chip
-          clickable={false}
-          isBold
-          label={speakerDisplayName}
-          variant={ChipVariant.Transparent}
-          leftComponent={
-            <Avatar
-              avatarUrl={calendarEventParticipant?.avatarUrl}
-              placeholder={speakerDisplayName}
-              placeholderColorSeed={
-                calendarEventParticipant?.placeholderColorSeed ??
-                speakerDisplayName
-              }
-              size="md"
-              type="rounded"
-            />
-          }
-        />
-        {!isUndefined(entry.startSeconds) && (
-          <StyledTimestamp>
-            {formatSecondsAsClockTimestamp(entry.startSeconds)}
-          </StyledTimestamp>
-        )}
-      </StyledEntryHeader>
-      <StyledEntryText>
-        {entry.words.map((word, wordIndex) => (
-          <StyledWord
-            key={wordIndex}
-            $isSpoken={isWordSpoken({ word, currentTimeSeconds })}
-          >
-            {wordIndex > 0 ? ' ' : ''}
-            {word.text}
-          </StyledWord>
-        ))}
-      </StyledEntryText>
-    </StyledEntry>
-  );
+	return (
+		<StyledEntry $isActive={isActive}>
+			<StyledEntryHeader>
+				<Chip
+					clickable={false}
+					isBold
+					label={speakerDisplayName}
+					variant={ChipVariant.Transparent}
+					leftComponent={
+						<Avatar
+							avatarUrl={calendarEventParticipant?.avatarUrl}
+							placeholder={speakerDisplayName}
+							placeholderColorSeed={
+								calendarEventParticipant?.placeholderColorSeed ??
+								speakerDisplayName
+							}
+							size="md"
+							type="rounded"
+						/>
+					}
+				/>
+				{!isUndefined(entry.startSeconds) && (
+					<StyledTimestamp>
+						{formatSecondsAsClockTimestamp(entry.startSeconds)}
+					</StyledTimestamp>
+				)}
+			</StyledEntryHeader>
+			<StyledEntryText>
+				{entry.words.map((word, wordIndex) => (
+					<StyledWord
+						key={wordIndex}
+						$isSpoken={isWordSpoken({ word, currentTimeSeconds })}
+					>
+						{wordIndex > 0 ? " " : ""}
+						{word.text}
+					</StyledWord>
+				))}
+			</StyledEntryText>
+		</StyledEntry>
+	);
 };
 
 const isWordSpoken = ({
-  word,
-  currentTimeSeconds,
+	word,
+	currentTimeSeconds,
 }: {
-  word: TranscriptWord;
-  currentTimeSeconds: number;
+	word: TranscriptWord;
+	currentTimeSeconds: number;
 }): boolean =>
-  !isUndefined(word.startSeconds) && currentTimeSeconds >= word.startSeconds;
+	!isUndefined(word.startSeconds) && currentTimeSeconds >= word.startSeconds;

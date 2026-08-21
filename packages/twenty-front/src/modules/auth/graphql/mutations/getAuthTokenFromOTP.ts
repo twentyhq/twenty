@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_AUTH_TOKENS_FROM_OTP = gql`
   mutation getAuthTokensFromOTP(

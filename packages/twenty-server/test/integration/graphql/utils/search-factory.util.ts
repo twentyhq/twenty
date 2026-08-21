@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { type SearchArgs } from "src/engine/core-modules/search/dtos/search-args";
 
 export const searchFactory = ({
-  searchInput,
-  excludedObjectNameSingulars,
-  includedObjectNameSingulars,
-  filter,
-  after,
-  limit = 50,
+	searchInput,
+	excludedObjectNameSingulars,
+	includedObjectNameSingulars,
+	filter,
+	after,
+	limit = 50,
 }: SearchArgs) => ({
-  query: gql`
+	query: gql`
     query Search(
       $searchInput: String!
       $limit: Int!
@@ -45,12 +45,12 @@ export const searchFactory = ({
       }
     }
   `,
-  variables: {
-    searchInput,
-    limit,
-    after,
-    excludedObjectNameSingulars,
-    includedObjectNameSingulars,
-    filter,
-  },
+	variables: {
+		searchInput,
+		limit,
+		after,
+		excludedObjectNameSingulars,
+		includedObjectNameSingulars,
+		filter,
+	},
 });

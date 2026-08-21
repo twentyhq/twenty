@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CHECK_PUBLIC_DOMAIN_VALID_RECORDS = gql`
   mutation CheckPublicDomainValidRecords($domain: String!) {

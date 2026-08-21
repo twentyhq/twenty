@@ -1,65 +1,65 @@
-import 'reflect-metadata';
+import "reflect-metadata";
 
-import { defineUpgradeMetadataOnClassOrProperty } from 'src/engine/core-modules/upgrade/decorators/upgrade-decorator-metadata.util';
+import { defineUpgradeMetadataOnClassOrProperty } from "src/engine/core-modules/upgrade/decorators/upgrade-decorator-metadata.util";
 
 export type WasRemovedInUpgradeOptions = {
-  upgradeCommandName: string;
+	upgradeCommandName: string;
 };
 
 declare const wasRemovedInUpgradeBrand: unique symbol;
 
 export type WasRemovedInUpgrade<T> = T & {
-  readonly [wasRemovedInUpgradeBrand]?: true;
+	readonly [wasRemovedInUpgradeBrand]?: true;
 };
 
 export type UnwrapWasRemovedInUpgrade<T> = [T] extends [
-  WasRemovedInUpgrade<infer TUnwrapped>,
+	WasRemovedInUpgrade<infer TUnwrapped>,
 ]
-  ? TUnwrapped
-  : T;
+	? TUnwrapped
+	: T;
 
 type WasRemovedInUpgradeKeys<TEntity> = {
-  [K in keyof TEntity]: typeof wasRemovedInUpgradeBrand extends keyof TEntity[K]
-    ? K
-    : never;
+	[K in keyof TEntity]: typeof wasRemovedInUpgradeBrand extends keyof TEntity[K]
+		? K
+		: never;
 }[keyof TEntity];
 
 export type MakeWasRemovedInUpgradePropertiesOptional<TEntity> = Omit<
-  TEntity,
-  WasRemovedInUpgradeKeys<TEntity>
+	TEntity,
+	WasRemovedInUpgradeKeys<TEntity>
 > &
-  Partial<Pick<TEntity, WasRemovedInUpgradeKeys<TEntity>>>;
+	Partial<Pick<TEntity, WasRemovedInUpgradeKeys<TEntity>>>;
 
 export const WAS_REMOVED_IN_UPGRADE_CLASS_METADATA_KEY =
-  'WAS_REMOVED_IN_UPGRADE_CLASS';
+	"WAS_REMOVED_IN_UPGRADE_CLASS";
 
 export const WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY =
-  'WAS_REMOVED_IN_UPGRADE_PROPERTIES';
+	"WAS_REMOVED_IN_UPGRADE_PROPERTIES";
 
 export type WasRemovedInUpgradePropertyMap = Record<
-  string,
-  WasRemovedInUpgradeOptions
+	string,
+	WasRemovedInUpgradeOptions
 >;
 
 export const WasRemovedInUpgrade =
-  (options: WasRemovedInUpgradeOptions) =>
-  (target: object, propertyKey?: string | symbol): void => {
-    defineUpgradeMetadataOnClassOrProperty({
-      classMetadataKey: WAS_REMOVED_IN_UPGRADE_CLASS_METADATA_KEY,
-      propertyMetadataKey: WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY,
-      value: options,
-      target,
-      propertyKey,
-    });
-  };
+	(options: WasRemovedInUpgradeOptions) =>
+	(target: object, propertyKey?: string | symbol): void => {
+		defineUpgradeMetadataOnClassOrProperty({
+			classMetadataKey: WAS_REMOVED_IN_UPGRADE_CLASS_METADATA_KEY,
+			propertyMetadataKey: WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY,
+			value: options,
+			target,
+			propertyKey,
+		});
+	};
 
 export const getWasRemovedInUpgradeClassMetadata = (
-  target: Function,
+	target: Function,
 ): WasRemovedInUpgradeOptions | undefined =>
-  Reflect.getMetadata(WAS_REMOVED_IN_UPGRADE_CLASS_METADATA_KEY, target);
+	Reflect.getMetadata(WAS_REMOVED_IN_UPGRADE_CLASS_METADATA_KEY, target);
 
 export const getWasRemovedInUpgradePropertyMetadata = (
-  target: Function,
+	target: Function,
 ): WasRemovedInUpgradePropertyMap =>
-  Reflect.getMetadata(WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY, target) ??
-  {};
+	Reflect.getMetadata(WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY, target) ??
+	{};

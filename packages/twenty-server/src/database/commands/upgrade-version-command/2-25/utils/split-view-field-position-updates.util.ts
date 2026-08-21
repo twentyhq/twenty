@@ -1,6 +1,6 @@
 type ViewFieldPosition = {
-  universalIdentifier: string;
-  position: number;
+	universalIdentifier: string;
+	position: number;
 };
 
 // The migration builder validates updates one at a time against optimistic maps
@@ -12,21 +12,21 @@ type ViewFieldPosition = {
 // Applying the lowest column on its own, after the others have moved up, keeps
 // every intermediate state valid whatever order the builder picks.
 export const splitViewFieldPositionUpdates = <T extends ViewFieldPosition>(
-  positionUpdates: T[],
+	positionUpdates: T[],
 ): { others: T[]; lowest: T[] } => {
-  if (positionUpdates.length <= 1) {
-    return { others: [], lowest: positionUpdates };
-  }
+	if (positionUpdates.length <= 1) {
+		return { others: [], lowest: positionUpdates };
+	}
 
-  const lowestPosition = Math.min(
-    ...positionUpdates.map(({ position }) => position),
-  );
-  const lowestIndex = positionUpdates.findIndex(
-    ({ position }) => position === lowestPosition,
-  );
+	const lowestPosition = Math.min(
+		...positionUpdates.map(({ position }) => position),
+	);
+	const lowestIndex = positionUpdates.findIndex(
+		({ position }) => position === lowestPosition,
+	);
 
-  return {
-    others: positionUpdates.filter((_, index) => index !== lowestIndex),
-    lowest: [positionUpdates[lowestIndex]],
-  };
+	return {
+		others: positionUpdates.filter((_, index) => index !== lowestIndex),
+		lowest: [positionUpdates[lowestIndex]],
+	};
 };

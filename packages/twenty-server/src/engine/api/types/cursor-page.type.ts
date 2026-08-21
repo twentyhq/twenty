@@ -1,6 +1,6 @@
-import { type CursorPageFlags } from 'src/engine/api/types/cursor-page-flags.type';
+import { type CursorPageFlags } from "src/engine/api/types/cursor-page-flags.type";
 
 export type CursorPage<TItem> = {
-  items: TItem[];
-  pageInfo: CursorPageFlags;
+	items: TItem[];
+	pageInfo: CursorPageFlags;
 };

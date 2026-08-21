@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('WorkspaceInviteHashValid')
+@ObjectType("WorkspaceInviteHashValid")
 export class WorkspaceInviteHashValidDTO {
-  @Field(() => Boolean)
-  isValid: boolean;
+	@Field(() => Boolean)
+	isValid: boolean;
 }

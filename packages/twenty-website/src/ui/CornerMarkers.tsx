@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { PlusMark } from '@/icons';
-import { color } from '@/tokens';
+import { PlusMark } from "@/icons";
+import { color } from "@/tokens";
 
 const MARKER_SIZE_PX = 14;
 
@@ -15,7 +15,7 @@ const MARKER_OFFSET_PX = MARKER_SIZE_PX / 2 + HOST_BORDER_HALF_PX;
 // ancestor. One primitive instead of the four copies per call site the old
 // site repeated across sections.
 const Marker = styled.span`
-  color: ${color('blue')};
+  color: ${color("blue")};
   display: flex;
   line-height: 0;
   pointer-events: none;
@@ -42,23 +42,23 @@ const Marker = styled.span`
   }
 `;
 
-type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
 const CORNERS: readonly Corner[] = [
-  'top-left',
-  'top-right',
-  'bottom-left',
-  'bottom-right',
+	"top-left",
+	"top-right",
+	"bottom-left",
+	"bottom-right",
 ];
 
 export function CornerMarkers() {
-  return (
-    <>
-      {CORNERS.map((corner) => (
-        <Marker aria-hidden data-corner={corner} key={corner}>
-          <PlusMark sizePx={MARKER_SIZE_PX} />
-        </Marker>
-      ))}
-    </>
-  );
+	return (
+		<>
+			{CORNERS.map((corner) => (
+				<Marker aria-hidden data-corner={corner} key={corner}>
+					<PlusMark sizePx={MARKER_SIZE_PX} />
+				</Marker>
+			))}
+		</>
+	);
 }

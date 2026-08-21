@@ -1,4 +1,4 @@
 export type RecordBoardUpdateEffect =
-  | 'trigger-initial-query'
-  | 'reposition-records'
-  | 'none';
+	| "trigger-initial-query"
+	| "reposition-records"
+	| "none";

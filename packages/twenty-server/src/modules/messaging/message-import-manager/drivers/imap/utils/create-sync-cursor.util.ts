@@ -1,25 +1,25 @@
-import { type MailboxState } from './extract-mailbox-state.util';
-import { type ImapSyncCursor } from './parse-sync-cursor.util';
+import { type MailboxState } from "./extract-mailbox-state.util";
+import { type ImapSyncCursor } from "./parse-sync-cursor.util";
 
 export const createSyncCursor = (
-  messageUids: number[],
-  previousCursor: ImapSyncCursor | null,
-  mailboxState: MailboxState,
+	messageUids: number[],
+	previousCursor: ImapSyncCursor | null,
+	mailboxState: MailboxState,
 ): ImapSyncCursor => {
-  const { uidValidity, highestModSeq } = mailboxState;
-  const lastSeenUid = previousCursor?.highestUid ?? 0;
+	const { uidValidity, highestModSeq } = mailboxState;
+	const lastSeenUid = previousCursor?.highestUid ?? 0;
 
-  let highestUid = lastSeenUid;
+	let highestUid = lastSeenUid;
 
-  for (let i = 0; i < messageUids.length; i++) {
-    if (messageUids[i] > highestUid) {
-      highestUid = messageUids[i];
-    }
-  }
+	for (let i = 0; i < messageUids.length; i++) {
+		if (messageUids[i] > highestUid) {
+			highestUid = messageUids[i];
+		}
+	}
 
-  return {
-    highestUid,
-    uidValidity,
-    ...(highestModSeq ? { modSeq: highestModSeq.toString() } : {}),
-  };
+	return {
+		highestUid,
+		uidValidity,
+		...(highestModSeq ? { modSeq: highestModSeq.toString() } : {}),
+	};
 };

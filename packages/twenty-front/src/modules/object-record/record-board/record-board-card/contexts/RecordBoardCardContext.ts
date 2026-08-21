@@ -1,12 +1,12 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 type RecordBoardCardContextProps = {
-  recordId: string;
-  isRecordReadOnly: boolean;
-  rowIndex: number;
-  columnIndex: number;
-  isDragOverlay?: boolean;
+	recordId: string;
+	isRecordReadOnly: boolean;
+	rowIndex: number;
+	columnIndex: number;
+	isDragOverlay?: boolean;
 };
 
 export const RecordBoardCardContext =
-  createContext<RecordBoardCardContextProps>({} as RecordBoardCardContextProps);
+	createContext<RecordBoardCardContextProps>({} as RecordBoardCardContextProps);

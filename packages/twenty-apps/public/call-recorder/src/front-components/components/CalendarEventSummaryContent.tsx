@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { CalendarEventSummaryBody } from 'src/front-components/components/CalendarEventSummaryBody';
-import { CopyToClipboardButton } from 'src/front-components/components/CopyToClipboardButton';
-import { useCalendarEventSummary } from 'src/front-components/hooks/use-calendar-event-summary';
+import { CalendarEventSummaryBody } from "src/front-components/components/CalendarEventSummaryBody";
+import { CopyToClipboardButton } from "src/front-components/components/CopyToClipboardButton";
+import { useCalendarEventSummary } from "src/front-components/hooks/use-calendar-event-summary";
 
 const StyledSummaryShell = styled.div`
   background: ${() => themeCssVariables.background.primary};
@@ -48,35 +48,35 @@ const StyledSummaryContentFrame = styled.div`
 `;
 
 type CalendarEventSummaryContentProps = {
-  calendarEventId: string;
+	calendarEventId: string;
 };
 
 export const CalendarEventSummaryContent = ({
-  calendarEventId,
+	calendarEventId,
 }: CalendarEventSummaryContentProps) => {
-  const { summaryMarkdown, isCalendarEventSummaryQueryLoading, errorMessage } =
-    useCalendarEventSummary(calendarEventId);
+	const { summaryMarkdown, isCalendarEventSummaryQueryLoading, errorMessage } =
+		useCalendarEventSummary(calendarEventId);
 
-  return (
-    <StyledSummaryShell>
-      <StyledSummaryHeader>
-        <StyledSummaryTitle>Summary</StyledSummaryTitle>
-        <CopyToClipboardButton
-          textToCopy={summaryMarkdown}
-          ariaLabel="Copy summary"
-        />
-      </StyledSummaryHeader>
-      <StyledSummaryBody>
-        <StyledSummaryContentFrame>
-          <CalendarEventSummaryBody
-            summaryMarkdown={summaryMarkdown}
-            isCalendarEventSummaryQueryLoading={
-              isCalendarEventSummaryQueryLoading
-            }
-            errorMessage={errorMessage}
-          />
-        </StyledSummaryContentFrame>
-      </StyledSummaryBody>
-    </StyledSummaryShell>
-  );
+	return (
+		<StyledSummaryShell>
+			<StyledSummaryHeader>
+				<StyledSummaryTitle>Summary</StyledSummaryTitle>
+				<CopyToClipboardButton
+					textToCopy={summaryMarkdown}
+					ariaLabel="Copy summary"
+				/>
+			</StyledSummaryHeader>
+			<StyledSummaryBody>
+				<StyledSummaryContentFrame>
+					<CalendarEventSummaryBody
+						summaryMarkdown={summaryMarkdown}
+						isCalendarEventSummaryQueryLoading={
+							isCalendarEventSummaryQueryLoading
+						}
+						errorMessage={errorMessage}
+					/>
+				</StyledSummaryContentFrame>
+			</StyledSummaryBody>
+		</StyledSummaryShell>
+	);
 };

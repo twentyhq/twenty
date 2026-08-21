@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { PagePanel } from './PagePanel';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { PagePanel } from "./PagePanel";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 type PageBodyProps = {
-  children: ReactNode;
-  className?: string;
+	children: ReactNode;
+	className?: string;
 };
 
 const StyledMainContainer = styled.div`
@@ -28,7 +28,7 @@ const StyledMainContainer = styled.div`
 `;
 
 type LeftContainerProps = {
-  isSidePanelOpen?: boolean;
+	isSidePanelOpen?: boolean;
 };
 
 const StyledLeftContainer = styled.div<LeftContainerProps>`
@@ -39,9 +39,9 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
 `;
 
 export const PageBody = ({ children, className }: PageBodyProps) => (
-  <StyledMainContainer className={className}>
-    <StyledLeftContainer>
-      <PagePanel>{children}</PagePanel>
-    </StyledLeftContainer>
-  </StyledMainContainer>
+	<StyledMainContainer className={className}>
+		<StyledLeftContainer>
+			<PagePanel>{children}</PagePanel>
+		</StyledLeftContainer>
+	</StyledMainContainer>
 );

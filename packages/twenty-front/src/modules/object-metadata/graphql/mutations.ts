@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {

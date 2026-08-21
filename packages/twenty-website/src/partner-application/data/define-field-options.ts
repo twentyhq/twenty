@@ -4,7 +4,7 @@
 // inferred per field, so an option set can carry extra fields (a scope card's
 // description/examples) without a separate type.
 export function defineFieldOptions<const TOption extends { value: string }>(
-  options: readonly TOption[],
+	options: readonly TOption[],
 ): readonly TOption[] {
-  return options;
+	return options;
 }

@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const pendingCreateFromDraftPromiseState = createAtomState<Promise<
-  string | null
+	string | null
 > | null>({
-  key: 'ai/pendingCreateFromDraftPromiseState',
-  defaultValue: null,
+	key: "ai/pendingCreateFromDraftPromiseState",
+	defaultValue: null,
 });

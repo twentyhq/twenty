@@ -1,4 +1,4 @@
-import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
+import { SortableKeyboardPlugin } from "@dnd-kit/dom/sortable";
 
 // Deliberately excludes dnd-kit's optimistic sorting plugin: application state
 // stays the single source of truth for item order, so lists only reorder once

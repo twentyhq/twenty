@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const RUN_EVALUATION_INPUT = gql`
   mutation RunEvaluationInput($agentId: UUID!, $input: String!) {

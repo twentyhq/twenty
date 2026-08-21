@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui/icon';
-import { LightIconButtonGroup } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedContainer } from 'twenty-ui/layout';
+import { styled } from "@linaria/react";
+import { type IconComponent } from "twenty-ui/icon";
+import { LightIconButtonGroup } from "twenty-ui/input";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
+import { AnimatedContainer } from "twenty-ui/layout";
 
 const StyledButtonContainer = styled.div`
   /* Buttons stay concentric with the frame: its radius minus the 1px border.
@@ -22,20 +22,20 @@ const StyledButtonContainer = styled.div`
 `;
 
 type RecordTableCellButtonsProps = {
-  onClick?: () => void;
-  Icon: IconComponent;
+	onClick?: () => void;
+	Icon: IconComponent;
 }[];
 
 export const RecordTableCellButtons = ({
-  buttons,
+	buttons,
 }: {
-  buttons: RecordTableCellButtonsProps;
+	buttons: RecordTableCellButtonsProps;
 }) => {
-  return (
-    <AnimatedContainer>
-      <StyledButtonContainer>
-        <LightIconButtonGroup size="small" iconButtons={buttons} />
-      </StyledButtonContainer>
-    </AnimatedContainer>
-  );
+	return (
+		<AnimatedContainer>
+			<StyledButtonContainer>
+				<LightIconButtonGroup size="small" iconButtons={buttons} />
+			</StyledButtonContainer>
+		</AnimatedContainer>
+	);
 };

@@ -1,4 +1,4 @@
 export type RawCampaignRecipient = {
-  personId: string;
-  email: string | null;
+	personId: string;
+	email: string | null;
 };

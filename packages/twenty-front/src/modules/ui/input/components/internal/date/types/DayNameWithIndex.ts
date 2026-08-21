@@ -1,4 +1,4 @@
 export type DayNameWithIndex = {
-  day: string;
-  index: number;
+	day: string;
+	index: number;
 };

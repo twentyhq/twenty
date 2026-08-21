@@ -1,32 +1,32 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 type EnterpriseConfigCheck = {
-  route: string;
-  feature: string;
-  requiredEnvVars: string[];
+	route: string;
+	feature: string;
+	requiredEnvVars: string[];
 };
 
 export function getEnterpriseConfigError({
-  route,
-  feature,
-  requiredEnvVars,
+	route,
+	feature,
+	requiredEnvVars,
 }: EnterpriseConfigCheck): NextResponse | null {
-  const missingEnvVars = requiredEnvVars.filter(
-    (envVarName) => !process.env[envVarName],
-  );
+	const missingEnvVars = requiredEnvVars.filter(
+		(envVarName) => !process.env[envVarName],
+	);
 
-  if (missingEnvVars.length === 0) {
-    return null;
-  }
+	if (missingEnvVars.length === 0) {
+		return null;
+	}
 
-  console.error(
-    `[${route}] 503 — ${missingEnvVars.join(', ')} ${
-      missingEnvVars.length === 1 ? 'is' : 'are'
-    } not configured`,
-  );
+	console.error(
+		`[${route}] 503 — ${missingEnvVars.join(", ")} ${
+			missingEnvVars.length === 1 ? "is" : "are"
+		} not configured`,
+	);
 
-  return NextResponse.json(
-    { error: `${feature} is not configured.` },
-    { status: 503 },
-  );
+	return NextResponse.json(
+		{ error: `${feature} is not configured.` },
+		{ status: 503 },
+	);
 }

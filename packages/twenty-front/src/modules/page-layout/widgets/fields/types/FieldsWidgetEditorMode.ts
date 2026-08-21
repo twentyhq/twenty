@@ -1,1 +1,1 @@
-export type FieldsWidgetEditorMode = 'grouped' | 'ungrouped';
+export type FieldsWidgetEditorMode = "grouped" | "ungrouped";

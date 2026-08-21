@@ -1,15 +1,15 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export const getRecordPageLayoutBaseFile = ({
-  objectLabelSingular,
-  objectUniversalIdentifier,
-  fieldsWidgetViewUniversalIdentifier,
+	objectLabelSingular,
+	objectUniversalIdentifier,
+	fieldsWidgetViewUniversalIdentifier,
 }: {
-  objectLabelSingular: string;
-  objectUniversalIdentifier: string;
-  fieldsWidgetViewUniversalIdentifier: string;
+	objectLabelSingular: string;
+	objectUniversalIdentifier: string;
+	fieldsWidgetViewUniversalIdentifier: string;
 }) => {
-  return `import { definePageLayout, PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-sdk/define';
+	return `import { definePageLayout, PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '${uuidv4()}',

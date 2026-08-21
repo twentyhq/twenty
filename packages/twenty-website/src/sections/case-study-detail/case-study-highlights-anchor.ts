@@ -1,1 +1,1 @@
-export const CASE_STUDY_HIGHLIGHTS_ANCHOR = 'case-study-highlights';
+export const CASE_STUDY_HIGHLIGHTS_ANCHOR = "case-study-highlights";

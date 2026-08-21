@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { spacing } from '@/tokens';
+import { spacing } from "@/tokens";
 
 // The intro stack every section shares: eyebrow, heading, optional CTAs,
 // with one margin between them. Sections never set this rhythm themselves —

@@ -1,5 +1,5 @@
-import { type MetadataLabelPlaceholderName } from './metadata-label-placeholder';
-import { isDefined } from '../utils/validation/isDefined';
+import { type MetadataLabelPlaceholderName } from "./metadata-label-placeholder";
+import { isDefined } from "../utils/validation/isDefined";
 
 // DEPRECATED — remove once every workspace has run the 2.33 command
 // `upgrade:2-33:migrate-command-menu-item-labels-to-placeholders`, which
@@ -13,40 +13,40 @@ import { isDefined } from '../utils/validation/isDefined';
 // that replaced them. Values are already capitalized by the placeholder
 // builder, so the capitalize() wrapper is dropped rather than reimplemented.
 const LEGACY_EXPRESSION_TO_PLACEHOLDER_NAME: Record<
-  string,
-  MetadataLabelPlaceholderName
+	string,
+	MetadataLabelPlaceholderName
 > = {
-  objectMetadataLabel: 'objectLabel',
-  'objectMetadataItem.labelSingular': 'objectLabelSingular',
-  'objectMetadataItem.labelPlural': 'objectLabelPlural',
-  'objectMetadataItem.icon': 'objectIcon',
-  'navigateToObjectMetadataItem.labelSingular': 'objectLabelSingular',
-  'navigateToObjectMetadataItem.labelPlural': 'objectLabelPlural',
-  'navigateToObjectMetadataItem.icon': 'objectIcon',
+	objectMetadataLabel: "objectLabel",
+	"objectMetadataItem.labelSingular": "objectLabelSingular",
+	"objectMetadataItem.labelPlural": "objectLabelPlural",
+	"objectMetadataItem.icon": "objectIcon",
+	"navigateToObjectMetadataItem.labelSingular": "objectLabelSingular",
+	"navigateToObjectMetadataItem.labelPlural": "objectLabelPlural",
+	"navigateToObjectMetadataItem.icon": "objectIcon",
 };
 
 // `${capitalize(expression)}`, `${capitalize{expression}}` and bare
 // `${expression}` all occur in stored rows across the releases this syntax
 // changed in.
 const LEGACY_TEMPLATE_REGEX =
-  /\$\{\s*(?:capitalize\s*[({]\s*([\w.]+)\s*[)}]|([\w.]+))\s*\}/g;
+	/\$\{\s*(?:capitalize\s*[({]\s*([\w.]+)\s*[)}]|([\w.]+))\s*\}/g;
 
 export const rewriteLegacyMetadataLabelTemplate = (message: string): string => {
-  if (!message.includes('${')) {
-    return message;
-  }
+	if (!message.includes("${")) {
+		return message;
+	}
 
-  return message.replace(
-    LEGACY_TEMPLATE_REGEX,
-    (legacyExpression, capitalizedName?: string, bareName?: string) => {
-      const placeholderName =
-        LEGACY_EXPRESSION_TO_PLACEHOLDER_NAME[
-          capitalizedName ?? bareName ?? ''
-        ];
+	return message.replace(
+		LEGACY_TEMPLATE_REGEX,
+		(legacyExpression, capitalizedName?: string, bareName?: string) => {
+			const placeholderName =
+				LEGACY_EXPRESSION_TO_PLACEHOLDER_NAME[
+					capitalizedName ?? bareName ?? ""
+				];
 
-      return isDefined(placeholderName)
-        ? `{${placeholderName}}`
-        : legacyExpression;
-    },
-  );
+			return isDefined(placeholderName)
+				? `{${placeholderName}}`
+				: legacyExpression;
+		},
+	);
 };

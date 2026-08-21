@@ -1,43 +1,43 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconBox,
-  IconCalendarClock,
-  IconCalendarEvent,
-  IconCalendarPlus,
-  IconChevronDown,
-  IconChevronUp,
-  IconDotsVertical,
-  IconFlag,
-  IconHeart,
-  IconPlayerPause,
-  IconPlus,
-  IconRepeat,
-  IconRocket,
-} from '@tabler/icons-react';
+	IconBox,
+	IconCalendarClock,
+	IconCalendarEvent,
+	IconCalendarPlus,
+	IconChevronDown,
+	IconChevronUp,
+	IconDotsVertical,
+	IconFlag,
+	IconHeart,
+	IconPlayerPause,
+	IconPlus,
+	IconRepeat,
+	IconRocket,
+} from "@tabler/icons-react";
 
-import { EASING, mediaUp } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
+import { EASING, mediaUp } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { APP_PREVIEW_CHROME } from "@/app-preview/app-preview-chrome";
 
-import { OBJECT_PINNED_ACTIONS } from '../data/object-pinned-actions';
-import { renderPreviewIcon } from '../primitives/PreviewIcon';
-import { type NavbarAction, type SidebarItemDef } from '../types';
+import { OBJECT_PINNED_ACTIONS } from "../data/object-pinned-actions";
+import { renderPreviewIcon } from "../primitives/PreviewIcon";
+import { type NavbarAction, type SidebarItemDef } from "../types";
 
 const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
-  box: IconBox,
-  calendarClock: IconCalendarClock,
-  calendarEvent: IconCalendarEvent,
-  calendarPlus: IconCalendarPlus,
-  chevronDown: IconChevronDown,
-  chevronUp: IconChevronUp,
-  dotsVertical: IconDotsVertical,
-  flag: IconFlag,
-  heart: IconHeart,
-  playerPause: IconPlayerPause,
-  plus: IconPlus,
-  repeat: IconRepeat,
-  rocket: IconRocket,
+	box: IconBox,
+	calendarClock: IconCalendarClock,
+	calendarEvent: IconCalendarEvent,
+	calendarPlus: IconCalendarPlus,
+	chevronDown: IconChevronDown,
+	chevronUp: IconChevronUp,
+	dotsVertical: IconDotsVertical,
+	flag: IconFlag,
+	heart: IconHeart,
+	playerPause: IconPlayerPause,
+	plus: IconPlus,
+	repeat: IconRepeat,
+	rocket: IconRocket,
 };
 
 const NavbarBar = styled.div`
@@ -107,7 +107,7 @@ const DesktopOnlyAction = styled.div`
   flex: 0 1 auto;
   min-width: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: block;
   }
 `;
@@ -125,10 +125,10 @@ const ActionButton = styled.div<{ $iconOnly?: boolean }>`
   gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
   height: 24px;
   justify-content: center;
-  min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : '0')};
+  min-width: ${({ $iconOnly }) => ($iconOnly ? "24px" : "0")};
   max-width: 100%;
   padding: ${({ $iconOnly }) =>
-    $iconOnly ? '0' : `0 ${APP_PREVIEW_CHROME.spacingBasePx * 2}px`};
+		$iconOnly ? "0" : `0 ${APP_PREVIEW_CHROME.spacingBasePx * 2}px`};
   white-space: nowrap;
 `;
 
@@ -142,7 +142,7 @@ const ActionIconWrap = styled.span`
 
 const ActionLabel = styled.span<{ $light?: boolean }>`
   color: ${({ $light }) =>
-    $light ? THEME_LIGHT.font.color.light : THEME_LIGHT.font.color.secondary};
+		$light ? THEME_LIGHT.font.color.light : THEME_LIGHT.font.color.secondary};
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -159,7 +159,7 @@ const DesktopOnlyTrailing = styled.div`
   gap: ${APP_PREVIEW_CHROME.spacingBasePx}px;
   height: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: inline-flex;
   }
 `;
@@ -172,7 +172,7 @@ const ActionSeparator = styled.div`
 `;
 
 const PinnedActionButton = styled(ActionButton)<{
-  $pinnedActionIndex: number;
+	$pinnedActionIndex: number;
 }>`
   animation: pinnedActionIn 340ms ${EASING.standard} both;
   animation-delay: calc(
@@ -182,7 +182,7 @@ const PinnedActionButton = styled(ActionButton)<{
   gap: 4px;
   padding: 0 6px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: inline-flex;
   }
 
@@ -203,137 +203,137 @@ const PinnedActionButton = styled(ActionButton)<{
 `;
 
 function renderProvidedAction(action: NavbarAction, index: number) {
-  const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
-  return (
-    <ActionButton
-      $iconOnly={action.variant === 'icon' || !action.label}
-      key={`${action.icon}-${index}`}
-    >
-      {Icon ? (
-        <ActionIconWrap>
-          <Icon
-            aria-hidden
-            size={THEME_LIGHT.icon.size.sm}
-            stroke={THEME_LIGHT.icon.stroke.md}
-          />
-        </ActionIconWrap>
-      ) : null}
-      {action.label ? <ActionLabel>{action.label}</ActionLabel> : null}
-      {action.trailingLabel ? (
-        <DesktopOnlyTrailing>
-          <ActionSeparator />
-          <ActionLabel $light>{action.trailingLabel}</ActionLabel>
-        </DesktopOnlyTrailing>
-      ) : null}
-    </ActionButton>
-  );
+	const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
+	return (
+		<ActionButton
+			$iconOnly={action.variant === "icon" || !action.label}
+			key={`${action.icon}-${index}`}
+		>
+			{Icon ? (
+				<ActionIconWrap>
+					<Icon
+						aria-hidden
+						size={THEME_LIGHT.icon.size.sm}
+						stroke={THEME_LIGHT.icon.stroke.md}
+					/>
+				</ActionIconWrap>
+			) : null}
+			{action.label ? <ActionLabel>{action.label}</ActionLabel> : null}
+			{action.trailingLabel ? (
+				<DesktopOnlyTrailing>
+					<ActionSeparator />
+					<ActionLabel $light>{action.trailingLabel}</ActionLabel>
+				</DesktopOnlyTrailing>
+			) : null}
+		</ActionButton>
+	);
 }
 
 function renderPinnedAction(
-  action: NavbarAction,
-  index: number,
-  activeItemId: string | undefined,
+	action: NavbarAction,
+	index: number,
+	activeItemId: string | undefined,
 ) {
-  const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
+	const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
 
-  return (
-    <PinnedActionButton
-      $pinnedActionIndex={index}
-      key={`pinned-${activeItemId}-${action.label}-${index}`}
-    >
-      {Icon ? (
-        <ActionIconWrap>
-          <Icon
-            aria-hidden
-            size={THEME_LIGHT.icon.size.sm}
-            stroke={THEME_LIGHT.icon.stroke.md}
-          />
-        </ActionIconWrap>
-      ) : null}
-      <ActionLabel>{action.label}</ActionLabel>
-    </PinnedActionButton>
-  );
+	return (
+		<PinnedActionButton
+			$pinnedActionIndex={index}
+			key={`pinned-${activeItemId}-${action.label}-${index}`}
+		>
+			{Icon ? (
+				<ActionIconWrap>
+					<Icon
+						aria-hidden
+						size={THEME_LIGHT.icon.size.sm}
+						stroke={THEME_LIGHT.icon.stroke.md}
+					/>
+				</ActionIconWrap>
+			) : null}
+			<ActionLabel>{action.label}</ActionLabel>
+		</PinnedActionButton>
+	);
 }
 
 export function PreviewNavbar({
-  activeItem,
-  activeItemLabel,
-  navbarActions,
-  revealedObjectIds = [],
+	activeItem,
+	activeItemLabel,
+	navbarActions,
+	revealedObjectIds = [],
 }: {
-  activeItem?: SidebarItemDef;
-  activeItemLabel: string;
-  navbarActions?: NavbarAction[];
-  revealedObjectIds?: string[];
+	activeItem?: SidebarItemDef;
+	activeItemLabel: string;
+	navbarActions?: NavbarAction[];
+	revealedObjectIds?: string[];
 }) {
-  return (
-    <NavbarBar>
-      <Breadcrumb>
-        <BreadcrumbTag>
-          {activeItem ? (
-            <BreadcrumbIconSlot>
-              {renderPreviewIcon(activeItem.icon)}
-            </BreadcrumbIconSlot>
-          ) : null}
-          <CrumbLabel>{activeItemLabel}</CrumbLabel>
-        </BreadcrumbTag>
-      </Breadcrumb>
-      <NavbarActions aria-hidden>
-        {navbarActions ? (
-          navbarActions.map(renderProvidedAction)
-        ) : (
-          <DefaultActions
-            activeItem={activeItem}
-            revealedObjectIds={revealedObjectIds}
-          />
-        )}
-      </NavbarActions>
-    </NavbarBar>
-  );
+	return (
+		<NavbarBar>
+			<Breadcrumb>
+				<BreadcrumbTag>
+					{activeItem ? (
+						<BreadcrumbIconSlot>
+							{renderPreviewIcon(activeItem.icon)}
+						</BreadcrumbIconSlot>
+					) : null}
+					<CrumbLabel>{activeItemLabel}</CrumbLabel>
+				</BreadcrumbTag>
+			</Breadcrumb>
+			<NavbarActions aria-hidden>
+				{navbarActions ? (
+					navbarActions.map(renderProvidedAction)
+				) : (
+					<DefaultActions
+						activeItem={activeItem}
+						revealedObjectIds={revealedObjectIds}
+					/>
+				)}
+			</NavbarActions>
+		</NavbarBar>
+	);
 }
 
 function DefaultActions({
-  activeItem,
-  revealedObjectIds,
+	activeItem,
+	revealedObjectIds,
 }: {
-  activeItem?: SidebarItemDef;
-  revealedObjectIds: string[];
+	activeItem?: SidebarItemDef;
+	revealedObjectIds: string[];
 }) {
-  const pinnedActions =
-    activeItem && revealedObjectIds.includes(activeItem.id)
-      ? OBJECT_PINNED_ACTIONS[activeItem.id]
-      : undefined;
+	const pinnedActions =
+		activeItem && revealedObjectIds.includes(activeItem.id)
+			? OBJECT_PINNED_ACTIONS[activeItem.id]
+			: undefined;
 
-  return (
-    <>
-      {pinnedActions?.map((action, index) =>
-        renderPinnedAction(action, index, activeItem?.id),
-      )}
-      <DesktopOnlyAction>
-        <ActionButton>
-          <ActionIconWrap>
-            <IconPlus
-              aria-hidden
-              size={THEME_LIGHT.icon.size.sm}
-              stroke={THEME_LIGHT.icon.stroke.md}
-            />
-          </ActionIconWrap>
-          <ActionLabel>New</ActionLabel>
-        </ActionButton>
-      </DesktopOnlyAction>
-      <ActionButton>
-        <ActionIconWrap>
-          <IconDotsVertical
-            aria-hidden
-            size={THEME_LIGHT.icon.size.sm}
-            stroke={THEME_LIGHT.icon.stroke.md}
-          />
-        </ActionIconWrap>
-        <DesktopOnlyTrailing>
-          <ActionSeparator />
-          <ActionLabel $light>⌘K</ActionLabel>
-        </DesktopOnlyTrailing>
-      </ActionButton>
-    </>
-  );
+	return (
+		<>
+			{pinnedActions?.map((action, index) =>
+				renderPinnedAction(action, index, activeItem?.id),
+			)}
+			<DesktopOnlyAction>
+				<ActionButton>
+					<ActionIconWrap>
+						<IconPlus
+							aria-hidden
+							size={THEME_LIGHT.icon.size.sm}
+							stroke={THEME_LIGHT.icon.stroke.md}
+						/>
+					</ActionIconWrap>
+					<ActionLabel>New</ActionLabel>
+				</ActionButton>
+			</DesktopOnlyAction>
+			<ActionButton>
+				<ActionIconWrap>
+					<IconDotsVertical
+						aria-hidden
+						size={THEME_LIGHT.icon.size.sm}
+						stroke={THEME_LIGHT.icon.stroke.md}
+					/>
+				</ActionIconWrap>
+				<DesktopOnlyTrailing>
+					<ActionSeparator />
+					<ActionLabel $light>⌘K</ActionLabel>
+				</DesktopOnlyTrailing>
+			</ActionButton>
+		</>
+	);
 }

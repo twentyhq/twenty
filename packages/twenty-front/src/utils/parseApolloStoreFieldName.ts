@@ -4,27 +4,27 @@
 
 // For now we need to parse `storeFieldName` to retrieve the variables.
 export const parseApolloStoreFieldName = <
-  Variables extends Record<string, unknown>,
+	Variables extends Record<string, unknown>,
 >(
-  storeFieldName: string,
+	storeFieldName: string,
 ) => {
-  const matches = storeFieldName.match(/([a-zA-Z][a-zA-Z0-9 ]*)(\((.*)\))?/);
+	const matches = storeFieldName.match(/([a-zA-Z][a-zA-Z0-9 ]*)(\((.*)\))?/);
 
-  const fieldName = matches?.[1];
+	const fieldName = matches?.[1];
 
-  if (!fieldName) {
-    return {};
-  }
+	if (!fieldName) {
+		return {};
+	}
 
-  const stringifiedVariables = matches[3];
+	const stringifiedVariables = matches[3];
 
-  try {
-    const fieldVariables = stringifiedVariables
-      ? (JSON.parse(stringifiedVariables) as Variables)
-      : undefined;
+	try {
+		const fieldVariables = stringifiedVariables
+			? (JSON.parse(stringifiedVariables) as Variables)
+			: undefined;
 
-    return { fieldName, fieldVariables };
-  } catch {
-    return { fieldName };
-  }
+		return { fieldName, fieldVariables };
+	} catch {
+		return { fieldName };
+	}
 };

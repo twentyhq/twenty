@@ -1,539 +1,539 @@
-import { type OpenAPIV3_1 } from 'openapi-types';
-import { capitalize } from 'twenty-shared/utils';
+import { type OpenAPIV3_1 } from "openapi-types";
+import { capitalize } from "twenty-shared/utils";
 
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from "src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type";
 
 export const getFindManyResponse200 = ({
-  item,
-  isDirectDataFeatureFlagged = false,
+	item,
+	isDirectDataFeatureFlagged = false,
 }: {
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>;
-  isDirectDataFeatureFlagged?: boolean;
+	item: Pick<FlatObjectMetadata, "nameSingular" | "namePlural">;
+	isDirectDataFeatureFlagged?: boolean;
 }): OpenAPIV3_1.ResponseObject => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  const directDataSchema: OpenAPIV3_1.SchemaObject = {
-    type: 'array',
-    items: { $ref: schemaRef },
-  };
+	const directDataSchema: OpenAPIV3_1.SchemaObject = {
+		type: "array",
+		items: { $ref: schemaRef },
+	};
 
-  const nestedDataSchema: OpenAPIV3_1.SchemaObject = {
-    type: 'object',
-    properties: {
-      [item.namePlural]: {
-        type: 'array',
-        items: { $ref: schemaRef },
-      },
-    },
-  };
+	const nestedDataSchema: OpenAPIV3_1.SchemaObject = {
+		type: "object",
+		properties: {
+			[item.namePlural]: {
+				type: "array",
+				items: { $ref: schemaRef },
+			},
+		},
+	};
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            // Endpoints behind IS_REST_METADATA_API_NEW_FORMAT_DIRECT answer
-            // with either envelope depending on the workspace flag, so both
-            // are documented rather than only the post-flag shape.
-            data: isDirectDataFeatureFlagged
-              ? {
-                  description:
-                    'An array when IS_REST_METADATA_API_NEW_FORMAT_DIRECT is enabled for the workspace, otherwise the legacy nested envelope.',
-                  oneOf: [directDataSchema, nestedDataSchema],
-                }
-              : nestedDataSchema,
-            pageInfo: {
-              type: 'object',
-              properties: {
-                hasNextPage: { type: 'boolean' },
-                hasPreviousPage: { type: 'boolean' },
-                startCursor: {
-                  type: ['string', 'null'],
-                },
-                endCursor: {
-                  type: ['string', 'null'],
-                },
-              },
-            },
-            totalCount: {
-              type: 'integer',
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						// Endpoints behind IS_REST_METADATA_API_NEW_FORMAT_DIRECT answer
+						// with either envelope depending on the workspace flag, so both
+						// are documented rather than only the post-flag shape.
+						data: isDirectDataFeatureFlagged
+							? {
+									description:
+										"An array when IS_REST_METADATA_API_NEW_FORMAT_DIRECT is enabled for the workspace, otherwise the legacy nested envelope.",
+									oneOf: [directDataSchema, nestedDataSchema],
+								}
+							: nestedDataSchema,
+						pageInfo: {
+							type: "object",
+							properties: {
+								hasNextPage: { type: "boolean" },
+								hasPreviousPage: { type: "boolean" },
+								startCursor: {
+									type: ["string", "null"],
+								},
+								endCursor: {
+									type: ["string", "null"],
+								},
+							},
+						},
+						totalCount: {
+							type: "integer",
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getFindOneResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular'>,
+	item: Pick<FlatObjectMetadata, "nameSingular">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [item.nameSingular]: {
-                  $ref: schemaRef,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[item.nameSingular]: {
+									$ref: schemaRef,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getRestoreOneResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular'>,
+	item: Pick<FlatObjectMetadata, "nameSingular">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`restore${capitalize(item.nameSingular)}`]: {
-                  $ref: schemaRef,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`restore${capitalize(item.nameSingular)}`]: {
+									$ref: schemaRef,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getRestoreManyResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+	item: Pick<FlatObjectMetadata, "nameSingular" | "namePlural">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`restore${capitalize(item.namePlural)}`]: {
-                  type: 'array',
-                  items: {
-                    $ref: schemaRef,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`restore${capitalize(item.namePlural)}`]: {
+									type: "array",
+									items: {
+										$ref: schemaRef,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getCreateOneResponse201 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular'>,
-  fromMetadata = false,
+	item: Pick<FlatObjectMetadata, "nameSingular">,
+	fromMetadata = false,
 ) => {
-  const one = fromMetadata ? 'One' : '';
+	const one = fromMetadata ? "One" : "";
 
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`create${one}${capitalize(item.nameSingular)}`]: {
-                  $ref: schemaRef,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`create${one}${capitalize(item.nameSingular)}`]: {
+									$ref: schemaRef,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getCreateManyResponse201 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+	item: Pick<FlatObjectMetadata, "nameSingular" | "namePlural">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`create${capitalize(item.namePlural)}`]: {
-                  type: 'array',
-                  items: {
-                    $ref: schemaRef,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`create${capitalize(item.namePlural)}`]: {
+									type: "array",
+									items: {
+										$ref: schemaRef,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getUpdateOneResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular'>,
-  fromMetadata = false,
+	item: Pick<FlatObjectMetadata, "nameSingular">,
+	fromMetadata = false,
 ) => {
-  const one = fromMetadata ? 'One' : '';
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+	const one = fromMetadata ? "One" : "";
+	const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`update${one}${capitalize(item.nameSingular)}`]: {
-                  $ref: schemaRef,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`update${one}${capitalize(item.nameSingular)}`]: {
+									$ref: schemaRef,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getDeleteManyResponse200 = (
-  item: Pick<FlatObjectMetadata, 'namePlural'>,
+	item: Pick<FlatObjectMetadata, "namePlural">,
 ) => {
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`delete${capitalize(item.namePlural)}`]: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      id: {
-                        type: 'string',
-                        format: 'uuid',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`delete${capitalize(item.namePlural)}`]: {
+									type: "array",
+									items: {
+										type: "object",
+										properties: {
+											id: {
+												type: "string",
+												format: "uuid",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getUpdateManyResponse200 = (
-  item: Pick<FlatObjectMetadata, 'namePlural' | 'nameSingular'>,
+	item: Pick<FlatObjectMetadata, "namePlural" | "nameSingular">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`update${capitalize(item.namePlural)}`]: {
-                  type: 'array',
-                  items: {
-                    $ref: schemaRef,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`update${capitalize(item.namePlural)}`]: {
+									type: "array",
+									items: {
+										$ref: schemaRef,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getDeleteResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular'>,
-  fromMetadata = false,
+	item: Pick<FlatObjectMetadata, "nameSingular">,
+	fromMetadata = false,
 ) => {
-  const one = fromMetadata ? 'One' : '';
+	const one = fromMetadata ? "One" : "";
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`delete${one}${capitalize(item.nameSingular)}`]: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'string',
-                      format: 'uuid',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`delete${one}${capitalize(item.nameSingular)}`]: {
+									type: "object",
+									properties: {
+										id: {
+											type: "string",
+											format: "uuid",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getJsonResponse = () => {
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            openapi: { type: 'string' },
-            info: {
-              type: 'object',
-              properties: {
-                title: { type: 'string' },
-                description: { type: 'string' },
-                termsOfService: { type: 'string' },
-                contact: {
-                  type: 'object',
-                  properties: { email: { type: 'string' } },
-                },
-                license: {
-                  type: 'object',
-                  properties: {
-                    name: { type: 'string' },
-                    url: { type: 'string' },
-                  },
-                },
-              },
-            },
-            servers: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  url: { type: 'string' },
-                  description: { type: 'string' },
-                },
-              },
-            },
-            components: {
-              type: 'object',
-              properties: {
-                schemas: { type: 'object' },
-                parameters: { type: 'object' },
-                responses: { type: 'object' },
-              },
-            },
-            paths: {
-              type: 'object',
-            },
-            tags: {
-              type: 'object',
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						openapi: { type: "string" },
+						info: {
+							type: "object",
+							properties: {
+								title: { type: "string" },
+								description: { type: "string" },
+								termsOfService: { type: "string" },
+								contact: {
+									type: "object",
+									properties: { email: { type: "string" } },
+								},
+								license: {
+									type: "object",
+									properties: {
+										name: { type: "string" },
+										url: { type: "string" },
+									},
+								},
+							},
+						},
+						servers: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									url: { type: "string" },
+									description: { type: "string" },
+								},
+							},
+						},
+						components: {
+							type: "object",
+							properties: {
+								schemas: { type: "object" },
+								parameters: { type: "object" },
+								responses: { type: "object" },
+							},
+						},
+						paths: {
+							type: "object",
+						},
+						tags: {
+							type: "object",
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getFindDuplicatesResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular'>,
+	item: Pick<FlatObjectMetadata, "nameSingular">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  totalCount: { type: 'number' },
-                  pageInfo: {
-                    type: 'object',
-                    properties: {
-                      hasNextPage: { type: 'boolean' },
-                      startCursor: {
-                        type: 'string',
-                        format: 'uuid',
-                      },
-                      endCursor: {
-                        type: 'string',
-                        format: 'uuid',
-                      },
-                    },
-                  },
-                  [`${item.nameSingular}Duplicates`]: {
-                    type: 'array',
-                    items: {
-                      $ref: schemaRef,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									totalCount: { type: "number" },
+									pageInfo: {
+										type: "object",
+										properties: {
+											hasNextPage: { type: "boolean" },
+											startCursor: {
+												type: "string",
+												format: "uuid",
+											},
+											endCursor: {
+												type: "string",
+												format: "uuid",
+											},
+										},
+									},
+									[`${item.nameSingular}Duplicates`]: {
+										type: "array",
+										items: {
+											$ref: schemaRef,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getMergeManyResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+	item: Pick<FlatObjectMetadata, "nameSingular" | "namePlural">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`merge${capitalize(item.namePlural)}`]: {
-                  $ref: schemaRef,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`merge${capitalize(item.namePlural)}`]: {
+									$ref: schemaRef,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };
 
 export const getGroupByResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+	item: Pick<FlatObjectMetadata, "nameSingular" | "namePlural">,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
+	const schemaRef = `#/components/schemas/${capitalize(
+		item.nameSingular,
+	)}ForResponse`;
 
-  return {
-    description: 'Successful operation',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [`${item.namePlural}GroupBy`]: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      groupByDimensionValues: {
-                        type: 'array',
-                        description:
-                          'Array of values representing each dimension in the group',
-                        items: {
-                          type: 'string',
-                        },
-                      },
-                      records: {
-                        type: 'array',
-                        description:
-                          'Sample of records for this group (only present when include_records_sample is true)',
-                        items: {
-                          $ref: schemaRef,
-                        },
-                      },
-                    },
-                    additionalProperties: {
-                      type: 'number',
-                      description: 'Aggregate values (e.g., countNotEmptyId)',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
+	return {
+		description: "Successful operation",
+		content: {
+			"application/json": {
+				schema: {
+					type: "object",
+					properties: {
+						data: {
+							type: "object",
+							properties: {
+								[`${item.namePlural}GroupBy`]: {
+									type: "array",
+									items: {
+										type: "object",
+										properties: {
+											groupByDimensionValues: {
+												type: "array",
+												description:
+													"Array of values representing each dimension in the group",
+												items: {
+													type: "string",
+												},
+											},
+											records: {
+												type: "array",
+												description:
+													"Sample of records for this group (only present when include_records_sample is true)",
+												items: {
+													$ref: schemaRef,
+												},
+											},
+										},
+										additionalProperties: {
+											type: "number",
+											description: "Aggregate values (e.g., countNotEmptyId)",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	};
 };

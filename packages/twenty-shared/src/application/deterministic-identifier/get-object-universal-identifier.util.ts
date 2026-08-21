@@ -1,14 +1,14 @@
-import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { computeDeterministicUuid } from "@/application/deterministic-identifier/compute-deterministic-uuid.util";
 
 export const getObjectUniversalIdentifier = ({
-  applicationUniversalIdentifier,
-  nameSingular,
+	applicationUniversalIdentifier,
+	nameSingular,
 }: {
-  applicationUniversalIdentifier: string;
-  nameSingular: string;
+	applicationUniversalIdentifier: string;
+	nameSingular: string;
 }): string =>
-  computeDeterministicUuid({
-    entityNamespace: 'objectMetadata',
-    value: nameSingular,
-    applicationUniversalIdentifier,
-  });
+	computeDeterministicUuid({
+		entityNamespace: "objectMetadata",
+		value: nameSingular,
+		applicationUniversalIdentifier,
+	});

@@ -1,1 +1,1 @@
-export type EditingMode = 'input' | 'variable';
+export type EditingMode = "input" | "variable";

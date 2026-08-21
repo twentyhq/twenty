@@ -1,5 +1,5 @@
-import { type CaptchaValidateResult } from 'src/engine/core-modules/captcha/interfaces';
+import { type CaptchaValidateResult } from "src/engine/core-modules/captcha/interfaces";
 
 export interface CaptchaDriver {
-  validate(token: string): Promise<CaptchaValidateResult>;
+	validate(token: string): Promise<CaptchaValidateResult>;
 }

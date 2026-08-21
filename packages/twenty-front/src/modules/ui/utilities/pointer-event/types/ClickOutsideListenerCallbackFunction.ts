@@ -1,3 +1,3 @@
 export type ClickOutsideListenerCallbackFunction = (
-  event: MouseEvent | TouchEvent,
+	event: MouseEvent | TouchEvent,
 ) => void;

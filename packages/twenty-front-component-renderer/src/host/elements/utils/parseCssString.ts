@@ -1,28 +1,28 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { type CSSProperties } from 'react';
-import { kebabToCamelCase } from 'twenty-shared/utils';
+import { isNonEmptyString } from "@sniptt/guards";
+import { type CSSProperties } from "react";
+import { kebabToCamelCase } from "twenty-shared/utils";
 
-import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
-import { parseCssDeclarations } from '@/utils/css/parseCssDeclarations';
+import { isCssCustomPropertyName } from "@/utils/css/isCssCustomPropertyName";
+import { parseCssDeclarations } from "@/utils/css/parseCssDeclarations";
 
 export const parseCssString = (
-  styleString: string | undefined,
+	styleString: string | undefined,
 ): CSSProperties | undefined => {
-  if (!isNonEmptyString(styleString)) {
-    return undefined;
-  }
+	if (!isNonEmptyString(styleString)) {
+		return undefined;
+	}
 
-  const reactStyleProperties: Record<string, string> = {};
+	const reactStyleProperties: Record<string, string> = {};
 
-  for (const { cssPropertyName, cssValue } of parseCssDeclarations(
-    styleString,
-  )) {
-    const reactStylePropertyName = isCssCustomPropertyName(cssPropertyName)
-      ? cssPropertyName
-      : kebabToCamelCase(cssPropertyName);
+	for (const { cssPropertyName, cssValue } of parseCssDeclarations(
+		styleString,
+	)) {
+		const reactStylePropertyName = isCssCustomPropertyName(cssPropertyName)
+			? cssPropertyName
+			: kebabToCamelCase(cssPropertyName);
 
-    reactStyleProperties[reactStylePropertyName] = cssValue;
-  }
+		reactStyleProperties[reactStylePropertyName] = cssValue;
+	}
 
-  return reactStyleProperties;
+	return reactStyleProperties;
 };

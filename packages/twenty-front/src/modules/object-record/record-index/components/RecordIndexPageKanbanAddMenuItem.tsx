@@ -1,58 +1,58 @@
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/navigation';
-import { Tag } from 'twenty-ui/data-display';
+import { recordGroupDefinitionFamilyState } from "@/object-record/record-group/states/recordGroupDefinitionFamilyState";
+import { RecordGroupDefinitionType } from "@/object-record/record-group/types/RecordGroupDefinition";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { styled } from "@linaria/react";
+import { isDefined } from "twenty-shared/utils";
+import { MenuItem } from "twenty-ui/navigation";
+import { Tag } from "twenty-ui/data-display";
 
 const StyledMenuItemContainer = styled.div`
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
 type RecordIndexPageKanbanAddMenuItemProps = {
-  columnId: string;
-  onItemClick: (columnDefinition: any) => void;
+	columnId: string;
+	onItemClick: (columnDefinition: any) => void;
 };
 
 export const RecordIndexPageKanbanAddMenuItem = ({
-  columnId,
-  onItemClick,
+	columnId,
+	onItemClick,
 }: RecordIndexPageKanbanAddMenuItemProps) => {
-  const recordGroupDefinition = useAtomFamilyStateValue(
-    recordGroupDefinitionFamilyState,
-    columnId,
-  );
+	const recordGroupDefinition = useAtomFamilyStateValue(
+		recordGroupDefinitionFamilyState,
+		columnId,
+	);
 
-  if (!isDefined(recordGroupDefinition)) {
-    return null;
-  }
+	if (!isDefined(recordGroupDefinition)) {
+		return null;
+	}
 
-  return (
-    <StyledMenuItemContainer>
-      <MenuItem
-        text={
-          <Tag
-            variant={
-              recordGroupDefinition.type === RecordGroupDefinitionType.Value
-                ? 'solid'
-                : 'outline'
-            }
-            color={
-              recordGroupDefinition.type === RecordGroupDefinitionType.Value
-                ? recordGroupDefinition.color
-                : 'transparent'
-            }
-            text={recordGroupDefinition.title}
-            weight={
-              recordGroupDefinition.type === RecordGroupDefinitionType.Value
-                ? 'regular'
-                : 'medium'
-            }
-          />
-        }
-        onClick={() => onItemClick(recordGroupDefinition)}
-      />
-    </StyledMenuItemContainer>
-  );
+	return (
+		<StyledMenuItemContainer>
+			<MenuItem
+				text={
+					<Tag
+						variant={
+							recordGroupDefinition.type === RecordGroupDefinitionType.Value
+								? "solid"
+								: "outline"
+						}
+						color={
+							recordGroupDefinition.type === RecordGroupDefinitionType.Value
+								? recordGroupDefinition.color
+								: "transparent"
+						}
+						text={recordGroupDefinition.title}
+						weight={
+							recordGroupDefinition.type === RecordGroupDefinitionType.Value
+								? "regular"
+								: "medium"
+						}
+					/>
+				}
+				onClick={() => onItemClick(recordGroupDefinition)}
+			/>
+		</StyledMenuItemContainer>
+	);
 };

@@ -1,9 +1,9 @@
 type ComputeMorphOrRelationFieldJoinColumnNameArgs = {
-  name: string;
+	name: string;
 };
 
 export const computeMorphOrRelationFieldJoinColumnName = ({
-  name,
+	name,
 }: ComputeMorphOrRelationFieldJoinColumnNameArgs): string => {
-  return `${name}Id`;
+	return `${name}Id`;
 };

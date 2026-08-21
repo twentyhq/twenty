@@ -1,50 +1,50 @@
-import { type SelectQueryBuilder } from 'typeorm';
+import { type SelectQueryBuilder } from "typeorm";
 
-import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from "src/modules/person/standard-objects/person.workspace-entity";
 
 export interface AddPersonEmailFiltersToQueryBuilderOptions {
-  queryBuilder: SelectQueryBuilder<PersonWorkspaceEntity>;
-  emails: string[];
-  excludePersonIds?: string[];
+	queryBuilder: SelectQueryBuilder<PersonWorkspaceEntity>;
+	emails: string[];
+	excludePersonIds?: string[];
 }
 
 // A query builder rather than find(): matching additional emails needs the jsonb @> operator
 export function addPersonEmailFiltersToQueryBuilder({
-  queryBuilder,
-  emails,
-  excludePersonIds = [],
+	queryBuilder,
+	emails,
+	excludePersonIds = [],
 }: AddPersonEmailFiltersToQueryBuilderOptions): SelectQueryBuilder<PersonWorkspaceEntity> {
-  const normalizedEmails = emails.map((email) => email.toLowerCase());
+	const normalizedEmails = emails.map((email) => email.toLowerCase());
 
-  queryBuilder = queryBuilder
-    .where('LOWER("person"."emailsPrimaryEmail") IN (:...emails)', {
-      emails: normalizedEmails,
-    })
-    .withDeleted();
+	queryBuilder = queryBuilder
+		.where('LOWER("person"."emailsPrimaryEmail") IN (:...emails)', {
+			emails: normalizedEmails,
+		})
+		.withDeleted();
 
-  if (excludePersonIds.length > 0) {
-    queryBuilder = queryBuilder.andWhere(
-      '"person"."id" NOT IN (:...excludePersonIds)',
-      {
-        excludePersonIds,
-      },
-    );
-  }
+	if (excludePersonIds.length > 0) {
+		queryBuilder = queryBuilder.andWhere(
+			'"person"."id" NOT IN (:...excludePersonIds)',
+			{
+				excludePersonIds,
+			},
+		);
+	}
 
-  for (const [index, email] of normalizedEmails.entries()) {
-    const emailParamName = `email${index}`;
-    const orWhereIsInAdditionalEmail =
-      excludePersonIds.length > 0
-        ? `"person"."id" NOT IN (:...excludePersonIds) AND "person"."emailsAdditionalEmails" @> :${emailParamName}::jsonb`
-        : `"person"."emailsAdditionalEmails" @> :${emailParamName}::jsonb`;
+	for (const [index, email] of normalizedEmails.entries()) {
+		const emailParamName = `email${index}`;
+		const orWhereIsInAdditionalEmail =
+			excludePersonIds.length > 0
+				? `"person"."id" NOT IN (:...excludePersonIds) AND "person"."emailsAdditionalEmails" @> :${emailParamName}::jsonb`
+				: `"person"."emailsAdditionalEmails" @> :${emailParamName}::jsonb`;
 
-    queryBuilder = queryBuilder.orWhere(orWhereIsInAdditionalEmail, {
-      ...(excludePersonIds.length > 0 && { excludePersonIds }),
-      [emailParamName]: JSON.stringify([email]),
-    });
-  }
+		queryBuilder = queryBuilder.orWhere(orWhereIsInAdditionalEmail, {
+			...(excludePersonIds.length > 0 && { excludePersonIds }),
+			[emailParamName]: JSON.stringify([email]),
+		});
+	}
 
-  queryBuilder = queryBuilder.withDeleted();
+	queryBuilder = queryBuilder.withDeleted();
 
-  return queryBuilder;
+	return queryBuilder;
 }

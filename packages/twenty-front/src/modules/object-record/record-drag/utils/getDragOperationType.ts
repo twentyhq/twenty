@@ -1,16 +1,16 @@
-import { type DragOperationType } from '@/object-record/record-drag/types/DragOperationType';
+import { type DragOperationType } from "@/object-record/record-drag/types/DragOperationType";
 
 type DragOperationContext = {
-  draggedRecordId: string;
-  selectedRecordIds: string[];
+	draggedRecordId: string;
+	selectedRecordIds: string[];
 };
 
 export const getDragOperationType = ({
-  draggedRecordId,
-  selectedRecordIds,
+	draggedRecordId,
+	selectedRecordIds,
 }: DragOperationContext): DragOperationType => {
-  const isDraggedItemSelected = selectedRecordIds.includes(draggedRecordId);
-  const hasMultipleSelected = selectedRecordIds.length > 1;
+	const isDraggedItemSelected = selectedRecordIds.includes(draggedRecordId);
+	const hasMultipleSelected = selectedRecordIds.length > 1;
 
-  return isDraggedItemSelected && hasMultipleSelected ? 'multi' : 'single';
+	return isDraggedItemSelected && hasMultipleSelected ? "multi" : "single";
 };

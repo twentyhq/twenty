@@ -1,11 +1,11 @@
-import z from 'zod';
+import z from "zod";
 
 export const relativeDateFilterDirectionSchema = z.enum([
-  'NEXT',
-  'THIS',
-  'PAST',
+	"NEXT",
+	"THIS",
+	"PAST",
 ]);
 
 export type RelativeDateFilterDirection = z.infer<
-  typeof relativeDateFilterDirectionSchema
+	typeof relativeDateFilterDirectionSchema
 >;

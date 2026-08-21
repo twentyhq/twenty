@@ -1,3 +1,3 @@
 export type MessageChannelDeletedEvent = {
-  messageChannelId: string;
+	messageChannelId: string;
 };

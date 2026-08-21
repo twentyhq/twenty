@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { MappingRow } from './components/MappingRow';
-import { MAPPINGS } from './data/import-mappings';
+import { MappingRow } from "./components/MappingRow";
+import { MAPPINGS } from "./data/import-mappings";
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -39,16 +39,16 @@ const HeaderCell = styled.span`
 `;
 
 export function ImportVisual({ active: _active }: { active: boolean }) {
-  const { i18n } = useLingui();
-  return (
-    <Root>
-      <HeaderRow>
-        <HeaderCell>{i18n._(msg`Imported data`)}</HeaderCell>
-        <HeaderCell>{i18n._(msg`Twenty fields`)}</HeaderCell>
-      </HeaderRow>
-      {MAPPINGS.map((mapping) => (
-        <MappingRow key={mapping.header} mapping={mapping} />
-      ))}
-    </Root>
-  );
+	const { i18n } = useLingui();
+	return (
+		<Root>
+			<HeaderRow>
+				<HeaderCell>{i18n._(msg`Imported data`)}</HeaderCell>
+				<HeaderCell>{i18n._(msg`Twenty fields`)}</HeaderCell>
+			</HeaderRow>
+			{MAPPINGS.map((mapping) => (
+				<MappingRow key={mapping.header} mapping={mapping} />
+			))}
+		</Root>
+	);
 }

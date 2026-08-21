@@ -1,9 +1,9 @@
-import { registerEnumType } from '@nestjs/graphql';
+import { registerEnumType } from "@nestjs/graphql";
 
-import { EventLogTable } from 'twenty-shared/types';
+import { EventLogTable } from "twenty-shared/types";
 
 export const registerEventLogTableEnum = () => {
-  registerEnumType(EventLogTable, {
-    name: 'EventLogTable',
-  });
+	registerEnumType(EventLogTable, {
+		name: "EventLogTable",
+	});
 };

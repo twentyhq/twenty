@@ -1,50 +1,50 @@
-import { ObjectType } from '@nestjs/graphql';
+import { ObjectType } from "@nestjs/graphql";
 
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  type Relation,
-  UpdateDateColumn,
-} from 'typeorm';
+	Column,
+	CreateDateColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+	type Relation,
+	UpdateDateColumn,
+} from "typeorm";
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { ApplicationEntity } from "src/engine/core-modules/application/application.entity";
+import { WorkspaceRelatedEntity } from "src/engine/workspace-manager/types/workspace-related-entity";
 
-@Entity({ name: 'publicDomain', schema: 'core' })
-@ObjectType('PublicDomain')
-@Index('IDX_PUBLIC_DOMAIN_APPLICATION_ID', ['applicationId'])
+@Entity({ name: "publicDomain", schema: "core" })
+@ObjectType("PublicDomain")
+@Index("IDX_PUBLIC_DOMAIN_APPLICATION_ID", ["applicationId"])
 export class PublicDomainEntity extends WorkspaceRelatedEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+	@CreateDateColumn({ type: "timestamptz" })
+	createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+	@UpdateDateColumn({ type: "timestamptz" })
+	updatedAt: Date;
 
-  @Column({ type: 'varchar', nullable: false, unique: true })
-  domain: string;
+	@Column({ type: "varchar", nullable: false, unique: true })
+	domain: string;
 
-  @Column({ type: 'boolean', default: false, nullable: false })
-  isValidated: boolean;
+	@Column({ type: "boolean", default: false, nullable: false })
+	isValidated: boolean;
 
-  @Column({ type: 'uuid', nullable: false })
-  applicationId: string;
+	@Column({ type: "uuid", nullable: false })
+	applicationId: string;
 
-  @ManyToOne(
-    () => ApplicationEntity,
-    (application) => application.publicDomains,
-    {
-      onDelete: 'CASCADE',
-      nullable: false,
-    },
-  )
-  @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity>;
+	@ManyToOne(
+		() => ApplicationEntity,
+		(application) => application.publicDomains,
+		{
+			onDelete: "CASCADE",
+			nullable: false,
+		},
+	)
+	@JoinColumn({ name: "applicationId" })
+	application: Relation<ApplicationEntity>;
 }

@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 export const getUpdateOneRecordMutationResponseField = (
-  objectNameSingular: string,
+	objectNameSingular: string,
 ) => `update${capitalize(objectNameSingular)}`;

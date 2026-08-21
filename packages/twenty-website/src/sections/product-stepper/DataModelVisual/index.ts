@@ -1,1 +1,1 @@
-export { DataModelVisual } from './DataModelVisual';
+export { DataModelVisual } from "./DataModelVisual";

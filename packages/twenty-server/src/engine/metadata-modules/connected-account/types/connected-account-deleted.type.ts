@@ -1,4 +1,4 @@
 export type ConnectedAccountDeletedEvent = {
-  connectedAccountId: string;
-  userWorkspaceId: string;
+	connectedAccountId: string;
+	userWorkspaceId: string;
 };

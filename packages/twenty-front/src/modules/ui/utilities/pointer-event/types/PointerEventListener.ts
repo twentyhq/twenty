@@ -1,9 +1,9 @@
 export type PointerEventListener = ({
-  x,
-  y,
-  event,
+	x,
+	y,
+	event,
 }: {
-  x: number;
-  y: number;
-  event: MouseEvent | TouchEvent;
+	x: number;
+	y: number;
+	event: MouseEvent | TouchEvent;
 }) => void;

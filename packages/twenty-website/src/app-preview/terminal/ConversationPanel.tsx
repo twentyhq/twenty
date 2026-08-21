@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { AssistantResponse } from './AssistantResponse';
-import { type ConversationMessage } from './conversation-core';
-import { useConversationAutoScroll } from './use-conversation-auto-scroll';
-import { UserMessage } from './UserMessage';
+import { AssistantResponse } from "./AssistantResponse";
+import { type ConversationMessage } from "./conversation-core";
+import { useConversationAutoScroll } from "./use-conversation-auto-scroll";
+import { UserMessage } from "./UserMessage";
 
 const PanelRoot = styled.div`
   display: flex;
@@ -38,39 +38,39 @@ const PanelRoot = styled.div`
 `;
 
 export function ConversationPanel({
-  instantComplete = false,
-  messages,
-  onUndo,
-  onObjectCreated,
-  onChatFinished,
+	instantComplete = false,
+	messages,
+	onUndo,
+	onObjectCreated,
+	onChatFinished,
 }: {
-  instantComplete?: boolean;
-  messages: ConversationMessage[];
-  onUndo?: () => void;
-  onObjectCreated?: (id: string) => void;
-  onChatFinished?: () => void;
+	instantComplete?: boolean;
+	messages: ConversationMessage[];
+	onUndo?: () => void;
+	onObjectCreated?: (id: string) => void;
+	onChatFinished?: () => void;
 }) {
-  const scrollRef = useConversationAutoScroll();
+	const scrollRef = useConversationAutoScroll();
 
-  return (
-    <PanelRoot ref={scrollRef}>
-      {messages.map((message) =>
-        message.role === 'user' ? (
-          <UserMessage
-            instant={instantComplete}
-            key={message.id}
-            text={message.text}
-          />
-        ) : (
-          <AssistantResponse
-            instantComplete={instantComplete}
-            key={message.id}
-            onUndo={onUndo}
-            onObjectCreated={onObjectCreated}
-            onChatFinished={onChatFinished}
-          />
-        ),
-      )}
-    </PanelRoot>
-  );
+	return (
+		<PanelRoot ref={scrollRef}>
+			{messages.map((message) =>
+				message.role === "user" ? (
+					<UserMessage
+						instant={instantComplete}
+						key={message.id}
+						text={message.text}
+					/>
+				) : (
+					<AssistantResponse
+						instantComplete={instantComplete}
+						key={message.id}
+						onUndo={onUndo}
+						onObjectCreated={onObjectCreated}
+						onChatFinished={onChatFinished}
+					/>
+				),
+			)}
+		</PanelRoot>
+	);
 }

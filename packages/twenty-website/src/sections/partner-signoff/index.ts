@@ -1,1 +1,1 @@
-export { PartnerSignoff } from './PartnerSignoff';
+export { PartnerSignoff } from "./PartnerSignoff";

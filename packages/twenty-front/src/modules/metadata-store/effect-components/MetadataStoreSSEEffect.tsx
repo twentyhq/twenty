@@ -1,69 +1,69 @@
-import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
-import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
-import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
-import { isDefined } from 'twenty-shared/utils';
+import { useListenToMetadataOperationBrowserEvent } from "@/browser-event/hooks/useListenToMetadataOperationBrowserEvent";
+import { useCleanMorphRelationsTargetingObjectMetadataId } from "@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId";
+import { useUpdateMetadataStoreDraft } from "@/metadata-store/hooks/useUpdateMetadataStoreDraft";
+import { type MetadataEntityKey } from "@/metadata-store/states/metadataStoreState";
+import { type MetadataEntityTypeMap } from "@/metadata-store/types/MetadataEntityTypeMap";
+import { mapAllMetadataNameToEntityKey } from "@/metadata-store/utils/mapAllMetadataNameToEntityKey";
+import { isDefined } from "twenty-shared/utils";
 
 type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
 
 export const MetadataStoreSSEEffect = () => {
-  const { addToDraft, removeFromDraft, applyChanges } =
-    useUpdateMetadataStoreDraft();
-  const { cleanMorphRelations } =
-    useCleanMorphRelationsTargetingObjectMetadataId();
+	const { addToDraft, removeFromDraft, applyChanges } =
+		useUpdateMetadataStoreDraft();
+	const { cleanMorphRelations } =
+		useCleanMorphRelationsTargetingObjectMetadataId();
 
-  useListenToMetadataOperationBrowserEvent({
-    onMetadataOperationBrowserEvent: (eventDetail) => {
-      const entityKey = mapAllMetadataNameToEntityKey(eventDetail.metadataName);
+	useListenToMetadataOperationBrowserEvent({
+		onMetadataOperationBrowserEvent: (eventDetail) => {
+			const entityKey = mapAllMetadataNameToEntityKey(eventDetail.metadataName);
 
-      if (!isDefined(entityKey)) {
-        return;
-      }
+			if (!isDefined(entityKey)) {
+				return;
+			}
 
-      const collectionHash = eventDetail.updatedCollectionHash;
+			const collectionHash = eventDetail.updatedCollectionHash;
 
-      switch (eventDetail.operation.type) {
-        case 'create': {
-          addToDraft({
-            key: entityKey,
-            items: [
-              eventDetail.operation
-                .createdRecord as unknown as AnyMetadataEntity,
-            ],
-            collectionHash,
-          });
-          break;
-        }
-        case 'update': {
-          addToDraft({
-            key: entityKey,
-            items: [
-              eventDetail.operation
-                .updatedRecord as unknown as AnyMetadataEntity,
-            ],
-            collectionHash,
-          });
-          break;
-        }
-        case 'delete': {
-          removeFromDraft({
-            key: entityKey,
-            itemIds: [eventDetail.operation.deletedRecordId],
-            collectionHash,
-          });
+			switch (eventDetail.operation.type) {
+				case "create": {
+					addToDraft({
+						key: entityKey,
+						items: [
+							eventDetail.operation
+								.createdRecord as unknown as AnyMetadataEntity,
+						],
+						collectionHash,
+					});
+					break;
+				}
+				case "update": {
+					addToDraft({
+						key: entityKey,
+						items: [
+							eventDetail.operation
+								.updatedRecord as unknown as AnyMetadataEntity,
+						],
+						collectionHash,
+					});
+					break;
+				}
+				case "delete": {
+					removeFromDraft({
+						key: entityKey,
+						itemIds: [eventDetail.operation.deletedRecordId],
+						collectionHash,
+					});
 
-          if (entityKey === 'objectMetadataItems') {
-            cleanMorphRelations(eventDetail.operation.deletedRecordId);
-          }
-          break;
-        }
-      }
+					if (entityKey === "objectMetadataItems") {
+						cleanMorphRelations(eventDetail.operation.deletedRecordId);
+					}
+					break;
+				}
+			}
 
-      applyChanges();
-    },
-  });
+			applyChanges();
+		},
+	});
 
-  return null;
+	return null;
 };

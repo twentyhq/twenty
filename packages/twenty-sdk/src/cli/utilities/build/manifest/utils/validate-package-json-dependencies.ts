@@ -1,9 +1,9 @@
-import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
-import path from 'path';
-import { isDefined } from 'twenty-shared/utils';
+import { pathExists, readJson } from "@/cli/utilities/file/fs-utils";
+import path from "path";
+import { isDefined } from "twenty-shared/utils";
 
 type PackageJsonDependencies = {
-  dependencies?: Record<string, string>;
+	dependencies?: Record<string, string>;
 };
 
 // Neither Twenty SDK package needs to be resolved by the published app at
@@ -15,26 +15,26 @@ type PackageJsonDependencies = {
 //   app's installed copy is only needed for typecheck/build.
 // Keeping either under "dependencies" pulls it into the Lambda deps layer.
 const BUILD_TIME_DEPENDENCY_WARNINGS: Record<string, string> = {
-  'twenty-sdk':
-    '"twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".',
-  'twenty-client-sdk':
-    '"twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty\'s injected SDK and should be moved to "devDependencies".',
+	"twenty-sdk":
+		'"twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".',
+	"twenty-client-sdk":
+		'"twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty\'s injected SDK and should be moved to "devDependencies".',
 };
 
 export const validatePackageJsonDependencies = async (
-  appPath: string,
+	appPath: string,
 ): Promise<string[]> => {
-  const packageJsonPath = path.join(appPath, 'package.json');
+	const packageJsonPath = path.join(appPath, "package.json");
 
-  if (!(await pathExists(packageJsonPath))) {
-    return [];
-  }
+	if (!(await pathExists(packageJsonPath))) {
+		return [];
+	}
 
-  const packageJson = await readJson<PackageJsonDependencies>(packageJsonPath);
+	const packageJson = await readJson<PackageJsonDependencies>(packageJsonPath);
 
-  return Object.entries(BUILD_TIME_DEPENDENCY_WARNINGS)
-    .filter(([packageName]) =>
-      isDefined(packageJson.dependencies?.[packageName]),
-    )
-    .map(([, warning]) => warning);
+	return Object.entries(BUILD_TIME_DEPENDENCY_WARNINGS)
+		.filter(([packageName]) =>
+			isDefined(packageJson.dependencies?.[packageName]),
+		)
+		.map(([, warning]) => warning);
 };

@@ -1,5 +1,5 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export const EntityDeleteContext = createContext<
-  (idToDelete: string) => Promise<unknown>
+	(idToDelete: string) => Promise<unknown>
 >(async () => {});

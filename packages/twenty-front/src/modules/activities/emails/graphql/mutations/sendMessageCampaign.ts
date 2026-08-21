@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const SEND_MESSAGE_CAMPAIGN = gql`
   mutation SendMessageCampaign($input: SendMessageCampaignInput!) {

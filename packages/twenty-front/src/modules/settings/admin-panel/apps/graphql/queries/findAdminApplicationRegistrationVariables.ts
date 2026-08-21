@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const FIND_ADMIN_APPLICATION_REGISTRATION_VARIABLES = gql`
   query FindAdminApplicationRegistrationVariables(

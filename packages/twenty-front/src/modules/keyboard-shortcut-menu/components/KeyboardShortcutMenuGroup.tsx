@@ -1,18 +1,18 @@
-import { StyledGroup, StyledGroupHeading } from './KeyboardShortcutMenuStyles';
+import { StyledGroup, StyledGroupHeading } from "./KeyboardShortcutMenuStyles";
 
 type KeyboardMenuGroupProps = {
-  heading: string;
-  children: React.ReactNode | React.ReactNode[];
+	heading: string;
+	children: React.ReactNode | React.ReactNode[];
 };
 
 export const KeyboardMenuGroup = ({
-  heading,
-  children,
+	heading,
+	children,
 }: KeyboardMenuGroupProps) => {
-  return (
-    <StyledGroup>
-      <StyledGroupHeading>{heading}</StyledGroupHeading>
-      {children}
-    </StyledGroup>
-  );
+	return (
+		<StyledGroup>
+			<StyledGroupHeading>{heading}</StyledGroupHeading>
+			{children}
+		</StyledGroup>
+	);
 };

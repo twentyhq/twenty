@@ -1,10 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class RemoveQueryFromEventStreamInput {
-  @Field()
-  eventStreamId: string;
+	@Field()
+	eventStreamId: string;
 
-  @Field()
-  queryId: string;
+	@Field()
+	queryId: string;
 }

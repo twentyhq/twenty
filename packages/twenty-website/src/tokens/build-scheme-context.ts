@@ -1,6 +1,6 @@
-import { buildSchemeDeclarations } from './build-scheme-declarations';
-import { type Scheme } from './scheme';
-import { semanticColor } from './semantic-color';
+import { buildSchemeDeclarations } from "./build-scheme-declarations";
+import { type Scheme } from "./scheme";
+import { semanticColor } from "./semantic-color";
 
 // Adopting a scheme is two things at once: defining the semantic variables AND
 // applying the ink colour that inheriting text resolves to. Text that sets no
@@ -12,6 +12,6 @@ import { semanticColor } from './semantic-color';
 // `background-color: semanticColor.surface`; a panel drawn over an existing
 // shape does not.
 export function buildSchemeContext(scheme: Scheme): string {
-  return `${buildSchemeDeclarations(scheme)}
+	return `${buildSchemeDeclarations(scheme)}
 color: ${semanticColor.ink};`;
 }

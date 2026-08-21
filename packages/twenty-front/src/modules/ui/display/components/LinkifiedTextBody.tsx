@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
-import Linkify from 'linkify-react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
+import { styled } from "@linaria/react";
+import { motion } from "framer-motion";
+import Linkify from "linkify-react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { AnimatedEaseInOut } from "twenty-ui/layout";
 
 const StyledTextBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};
@@ -23,26 +23,26 @@ const StyledTextBody = styled(motion.div)`
 `;
 
 type LinkifiedTextBodyProps = {
-  body: string;
-  isDisplayed: boolean;
+	body: string;
+	isDisplayed: boolean;
 };
 
 export const LinkifiedTextBody = ({
-  body,
-  isDisplayed,
+	body,
+	isDisplayed,
 }: LinkifiedTextBodyProps) => {
-  return (
-    <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      <StyledTextBody>
-        <Linkify
-          options={{
-            target: '_blank',
-            rel: 'noopener noreferrer',
-          }}
-        >
-          {body}
-        </Linkify>
-      </StyledTextBody>
-    </AnimatedEaseInOut>
-  );
+	return (
+		<AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
+			<StyledTextBody>
+				<Linkify
+					options={{
+						target: "_blank",
+						rel: "noopener noreferrer",
+					}}
+				>
+					{body}
+				</Linkify>
+			</StyledTextBody>
+		</AnimatedEaseInOut>
+	);
 };

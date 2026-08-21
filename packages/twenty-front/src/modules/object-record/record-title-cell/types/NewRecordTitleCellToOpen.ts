@@ -1,4 +1,4 @@
 export type NewRecordTitleCellToOpen = {
-  recordId: string;
-  fieldName: string;
+	recordId: string;
+	fieldName: string;
 };

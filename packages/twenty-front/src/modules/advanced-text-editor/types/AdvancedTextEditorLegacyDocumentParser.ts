@@ -1,5 +1,5 @@
-import { type Content } from '@tiptap/core';
+import { type Content } from "@tiptap/core";
 
 export type AdvancedTextEditorLegacyDocumentParser = (
-  serializedDocument: string,
+	serializedDocument: string,
 ) => Content;

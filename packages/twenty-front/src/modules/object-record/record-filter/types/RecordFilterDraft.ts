@@ -1,4 +1,4 @@
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from "@/object-record/record-filter/types/RecordFilter";
 
 export type FilterDraft = Partial<RecordFilter> &
-  Omit<RecordFilter, 'fieldMetadataId' | 'operand' | 'definition'>;
+	Omit<RecordFilter, "fieldMetadataId" | "operand" | "definition">;

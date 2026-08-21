@@ -1,10 +1,10 @@
-import { formatSlackAssistantDuration } from 'src/logic-functions/utils/format-slack-assistant-duration';
+import { formatSlackAssistantDuration } from "src/logic-functions/utils/format-slack-assistant-duration";
 
 export const buildSlackAssistantAnswerText = ({
-  responseText,
-  durationMilliseconds,
+	responseText,
+	durationMilliseconds,
 }: {
-  responseText: string;
-  durationMilliseconds: number;
+	responseText: string;
+	durationMilliseconds: number;
 }): string =>
-  `${responseText}\n\n_Answered in ${formatSlackAssistantDuration(durationMilliseconds)}_`;
+	`${responseText}\n\n_Answered in ${formatSlackAssistantDuration(durationMilliseconds)}_`;

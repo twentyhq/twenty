@@ -1,1 +1,1 @@
-export * from './isWorkspaceProvisioned';
+export * from "./isWorkspaceProvisioned";

@@ -1,1 +1,1 @@
-export const AUTO_GENERATED_BODY_MARKER = 'automatically generated';
+export const AUTO_GENERATED_BODY_MARKER = "automatically generated";

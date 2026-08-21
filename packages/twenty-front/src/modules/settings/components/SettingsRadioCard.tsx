@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { CardContent } from 'twenty-ui/surfaces';
-import { type IconComponent } from 'twenty-ui/icon';
-import { Radio } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { CardContent } from "twenty-ui/surfaces";
+import { type IconComponent } from "twenty-ui/icon";
+import { Radio } from "twenty-ui/input";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledRadioCardContentContainer = styled.div`
   > * {
@@ -41,39 +41,39 @@ const StyledDescription = styled.div`
 `;
 
 type SettingsRadioCardProps = {
-  value: string;
-  handleSelect: (value: string) => void;
-  isSelected: boolean;
-  title: string;
-  description?: string;
-  Icon?: IconComponent;
-  role?: string;
-  ariaChecked?: boolean;
+	value: string;
+	handleSelect: (value: string) => void;
+	isSelected: boolean;
+	title: string;
+	description?: string;
+	Icon?: IconComponent;
+	role?: string;
+	ariaChecked?: boolean;
 };
 
 export const SettingsRadioCard = ({
-  value,
-  handleSelect,
-  title,
-  description,
-  isSelected,
-  Icon,
+	value,
+	handleSelect,
+	title,
+	description,
+	isSelected,
+	Icon,
 }: SettingsRadioCardProps) => {
-  const { theme } = useContext(ThemeContext);
-  const onClick = () => handleSelect(value);
+	const { theme } = useContext(ThemeContext);
+	const onClick = () => handleSelect(value);
 
-  return (
-    <StyledRadioCardContentContainer>
-      <CardContent tabIndex={0} onClick={onClick}>
-        {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
-        <span>
-          {title && <StyledTitle>{title}</StyledTitle>}
-          {description && <StyledDescription>{description}</StyledDescription>}
-        </span>
-        <StyledRadioContainer>
-          <Radio value={value} checked={isSelected} />
-        </StyledRadioContainer>
-      </CardContent>
-    </StyledRadioCardContentContainer>
-  );
+	return (
+		<StyledRadioCardContentContainer>
+			<CardContent tabIndex={0} onClick={onClick}>
+				{Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
+				<span>
+					{title && <StyledTitle>{title}</StyledTitle>}
+					{description && <StyledDescription>{description}</StyledDescription>}
+				</span>
+				<StyledRadioContainer>
+					<Radio value={value} checked={isSelected} />
+				</StyledRadioContainer>
+			</CardContent>
+		</StyledRadioCardContentContainer>
+	);
 };

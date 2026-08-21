@@ -1,29 +1,29 @@
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { createEmptyFlatEntityMaps } from "src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant";
+import { type SyncableFlatEntity } from "src/engine/metadata-modules/flat-entity/types/flat-entity-from.type";
+import { type FlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type";
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from "src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util";
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from "src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util";
 
 export const getSubFlatEntityByIdsMapsOrThrow = <T extends SyncableFlatEntity>({
-  flatEntityIds,
-  flatEntityMaps,
+	flatEntityIds,
+	flatEntityMaps,
 }: {
-  flatEntityMaps: FlatEntityMaps<T>;
-  flatEntityIds: string[];
+	flatEntityMaps: FlatEntityMaps<T>;
+	flatEntityIds: string[];
 }): FlatEntityMaps<T> => {
-  const flatEntityMapsToMutate = createEmptyFlatEntityMaps();
+	const flatEntityMapsToMutate = createEmptyFlatEntityMaps();
 
-  flatEntityIds.forEach((flatEntityId) => {
-    const flatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId,
-      flatEntityMaps,
-    });
+	flatEntityIds.forEach((flatEntityId) => {
+		const flatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
+			flatEntityId,
+			flatEntityMaps,
+		});
 
-    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity,
-      flatEntityMapsToMutate,
-    });
-  });
+		addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+			flatEntity,
+			flatEntityMapsToMutate,
+		});
+	});
 
-  return flatEntityMapsToMutate;
+	return flatEntityMapsToMutate;
 };

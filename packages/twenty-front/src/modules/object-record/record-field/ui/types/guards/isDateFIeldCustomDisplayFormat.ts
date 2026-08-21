@@ -1,6 +1,6 @@
-import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { FieldDateDisplayFormat } from "@/object-record/record-field/ui/types/FieldMetadata";
 
 export const isDateFieldCustomDisplayFormat = (
-  displayFormat: FieldDateDisplayFormat,
+	displayFormat: FieldDateDisplayFormat,
 ): displayFormat is FieldDateDisplayFormat =>
-  displayFormat === FieldDateDisplayFormat.CUSTOM;
+	displayFormat === FieldDateDisplayFormat.CUSTOM;

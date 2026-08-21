@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { color, DURATION, semanticColor, spacing } from '@/tokens';
+import { color, DURATION, semanticColor, spacing } from "@/tokens";
 
 const Track = styled.div`
   align-items: center;
@@ -23,7 +23,7 @@ const Dot = styled.span`
 
   &[data-state='active'],
   &[data-state='completed'] {
-    background: ${color('blue')};
+    background: ${color("blue")};
   }
 
   &[data-state='active'] {
@@ -38,50 +38,50 @@ const Connector = styled.span`
   max-width: 32px;
 
   &[data-completed] {
-    background: ${color('blue')};
+    background: ${color("blue")};
   }
 `;
 
 // A row of dots tracking progress through a fixed sequence of steps. Generic:
 // the consumer passes how many steps there are and which is active.
 export function StepIndicator({
-  activeStepIndex,
-  stepCount,
+	activeStepIndex,
+	stepCount,
 }: {
-  activeStepIndex: number;
-  stepCount: number;
+	activeStepIndex: number;
+	stepCount: number;
 }) {
-  const stepNumbers = Array.from(
-    { length: stepCount },
-    (_unused, index) => index + 1,
-  );
+	const stepNumbers = Array.from(
+		{ length: stepCount },
+		(_unused, index) => index + 1,
+	);
 
-  return (
-    <Track
-      aria-valuemax={stepCount}
-      aria-valuemin={1}
-      aria-valuenow={activeStepIndex + 1}
-      role="progressbar"
-    >
-      {stepNumbers.map((stepNumber) => {
-        const dotIndex = stepNumber - 1;
-        const state =
-          dotIndex < activeStepIndex
-            ? 'completed'
-            : dotIndex === activeStepIndex
-              ? 'active'
-              : 'upcoming';
-        return (
-          <Segment key={`step-${stepNumber}`}>
-            <Dot data-state={state} />
-            {stepNumber === stepCount ? null : (
-              <Connector
-                data-completed={dotIndex < activeStepIndex ? '' : undefined}
-              />
-            )}
-          </Segment>
-        );
-      })}
-    </Track>
-  );
+	return (
+		<Track
+			aria-valuemax={stepCount}
+			aria-valuemin={1}
+			aria-valuenow={activeStepIndex + 1}
+			role="progressbar"
+		>
+			{stepNumbers.map((stepNumber) => {
+				const dotIndex = stepNumber - 1;
+				const state =
+					dotIndex < activeStepIndex
+						? "completed"
+						: dotIndex === activeStepIndex
+							? "active"
+							: "upcoming";
+				return (
+					<Segment key={`step-${stepNumber}`}>
+						<Dot data-state={state} />
+						{stepNumber === stepCount ? null : (
+							<Connector
+								data-completed={dotIndex < activeStepIndex ? "" : undefined}
+							/>
+						)}
+					</Segment>
+				);
+			})}
+		</Track>
+	);
 }

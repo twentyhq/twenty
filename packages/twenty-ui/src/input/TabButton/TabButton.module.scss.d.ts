@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly tabTooltipWrapper: 'tabTooltipWrapper';
+	readonly tabTooltipWrapper: "tabTooltipWrapper";
 };
 export default classNames;

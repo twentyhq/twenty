@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export type PartnerApplicationModalContextValue = {
-  openPartnerApplicationModal: () => void;
+	openPartnerApplicationModal: () => void;
 };
 
 export const PartnerApplicationModalContext =
-  createContext<PartnerApplicationModalContextValue | null>(null);
+	createContext<PartnerApplicationModalContextValue | null>(null);

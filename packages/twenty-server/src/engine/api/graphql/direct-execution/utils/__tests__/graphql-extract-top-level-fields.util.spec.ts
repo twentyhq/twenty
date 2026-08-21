@@ -1,38 +1,38 @@
-import { parse } from 'graphql';
+import { parse } from "graphql";
 
-import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
+import { graphQLExtractTopLevelFields } from "src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util";
 
-describe('graphQLExtractTopLevelFields', () => {
-  it('should return top-level fields from a query', () => {
-    const query = `
+describe("graphQLExtractTopLevelFields", () => {
+	it("should return top-level fields from a query", () => {
+		const query = `
       query {
         findManyCompanies { id name }
         findManyPeople { id email }
       }
     `;
 
-    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
+		const fields = graphQLExtractTopLevelFields(parse(query), undefined);
 
-    expect(fields).toHaveLength(2);
-    expect(fields[0].name.value).toBe('findManyCompanies');
-    expect(fields[1].name.value).toBe('findManyPeople');
-  });
+		expect(fields).toHaveLength(2);
+		expect(fields[0].name.value).toBe("findManyCompanies");
+		expect(fields[1].name.value).toBe("findManyPeople");
+	});
 
-  it('should return top-level fields from a mutation', () => {
-    const query = `
+	it("should return top-level fields from a mutation", () => {
+		const query = `
       mutation {
         createOnePerson(data: { name: "Test" }) { id }
       }
     `;
 
-    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
+		const fields = graphQLExtractTopLevelFields(parse(query), undefined);
 
-    expect(fields).toHaveLength(1);
-    expect(fields[0].name.value).toBe('createOnePerson');
-  });
+		expect(fields).toHaveLength(1);
+		expect(fields[0].name.value).toBe("createOnePerson");
+	});
 
-  it('should select the operation matching operationName', () => {
-    const query = `
+	it("should select the operation matching operationName", () => {
+		const query = `
       query GetCompanies {
         findManyCompanies { id }
       }
@@ -41,14 +41,14 @@ describe('graphQLExtractTopLevelFields', () => {
       }
     `;
 
-    const fields = graphQLExtractTopLevelFields(parse(query), 'GetPeople');
+		const fields = graphQLExtractTopLevelFields(parse(query), "GetPeople");
 
-    expect(fields).toHaveLength(1);
-    expect(fields[0].name.value).toBe('findManyPeople');
-  });
+		expect(fields).toHaveLength(1);
+		expect(fields[0].name.value).toBe("findManyPeople");
+	});
 
-  it('should throw when multiple operations exist and operationName is undefined', () => {
-    const query = `
+	it("should throw when multiple operations exist and operationName is undefined", () => {
+		const query = `
       query First {
         findManyCompanies { id }
       }
@@ -57,25 +57,25 @@ describe('graphQLExtractTopLevelFields', () => {
       }
     `;
 
-    expect(() => graphQLExtractTopLevelFields(parse(query), undefined)).toThrow(
-      'Must provide operation name when document contains multiple operations.',
-    );
-  });
+		expect(() => graphQLExtractTopLevelFields(parse(query), undefined)).toThrow(
+			"Must provide operation name when document contains multiple operations.",
+		);
+	});
 
-  it('should return an empty array when no operation matches', () => {
-    const query = `
+	it("should return an empty array when no operation matches", () => {
+		const query = `
       query GetCompanies {
         findManyCompanies { id }
       }
     `;
 
-    const fields = graphQLExtractTopLevelFields(parse(query), 'NonExistent');
+		const fields = graphQLExtractTopLevelFields(parse(query), "NonExistent");
 
-    expect(fields).toEqual([]);
-  });
+		expect(fields).toEqual([]);
+	});
 
-  it('should expand fragment spreads at the top level', () => {
-    const query = `
+	it("should expand fragment spreads at the top level", () => {
+		const query = `
       query {
         __schema { types { name } }
         ...DataFragment
@@ -85,15 +85,15 @@ describe('graphQLExtractTopLevelFields', () => {
       }
     `;
 
-    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
+		const fields = graphQLExtractTopLevelFields(parse(query), undefined);
 
-    expect(fields).toHaveLength(2);
-    expect(fields[0].name.value).toBe('__schema');
-    expect(fields[1].name.value).toBe('companies');
-  });
+		expect(fields).toHaveLength(2);
+		expect(fields[0].name.value).toBe("__schema");
+		expect(fields[1].name.value).toBe("companies");
+	});
 
-  it('should expand inline fragments at the top level', () => {
-    const query = `
+	it("should expand inline fragments at the top level", () => {
+		const query = `
       query {
         __schema { types { name } }
         ... on Query {
@@ -102,10 +102,10 @@ describe('graphQLExtractTopLevelFields', () => {
       }
     `;
 
-    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
+		const fields = graphQLExtractTopLevelFields(parse(query), undefined);
 
-    expect(fields).toHaveLength(2);
-    expect(fields[0].name.value).toBe('__schema');
-    expect(fields[1].name.value).toBe('companies');
-  });
+		expect(fields).toHaveLength(2);
+		expect(fields[0].name.value).toBe("__schema");
+		expect(fields[1].name.value).toBe("companies");
+	});
 });

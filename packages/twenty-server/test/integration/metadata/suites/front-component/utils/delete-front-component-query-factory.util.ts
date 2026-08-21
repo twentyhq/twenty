@@ -1,8 +1,8 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type DeleteFrontComponentFactoryInput = {
-  id: string;
+	id: string;
 };
 
 const DEFAULT_FRONT_COMPONENT_GQL_FIELDS = `
@@ -11,17 +11,17 @@ const DEFAULT_FRONT_COMPONENT_GQL_FIELDS = `
 `;
 
 export const deleteFrontComponentQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_FRONT_COMPONENT_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_FRONT_COMPONENT_GQL_FIELDS,
 }: PerformMetadataQueryParams<DeleteFrontComponentFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation DeleteFrontComponent($id: UUID!) {
       deleteFrontComponent(id: $id) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-  },
+	variables: {
+		id: input.id,
+	},
 });

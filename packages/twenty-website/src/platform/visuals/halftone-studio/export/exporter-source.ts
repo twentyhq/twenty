@@ -1,8 +1,8 @@
-import { GLASS_ENVIRONMENT_DATA_URL } from '../engine/glass-environment-data';
-import { DRACO_DECODER_PATH } from '../engine/draco-decoder-path';
-import type { HalftoneGeometrySpec } from '../engine/studio-settings-types';
+import { GLASS_ENVIRONMENT_DATA_URL } from "../engine/glass-environment-data";
+import { DRACO_DECODER_PATH } from "../engine/draco-decoder-path";
+import type { HalftoneGeometrySpec } from "../engine/studio-settings-types";
 
-import type { ExportedShapeDescriptor } from './exporter-types';
+import type { ExportedShapeDescriptor } from "./exporter-types";
 
 const HALFTONE_TRANSMISSION_SHADER_PREFIX = String.raw`
 uniform float chromaticAberration;
@@ -924,13 +924,13 @@ function parseGlbGeometry(buffer, label) {
 }
 `;
 
-function createImportedRuntimeSource(loader: HalftoneGeometrySpec['loader']) {
-  const loaderSource =
-    loader === 'fbx'
-      ? IMPORTED_FBX_RUNTIME_SOURCE
-      : IMPORTED_GLB_RUNTIME_SOURCE;
+function createImportedRuntimeSource(loader: HalftoneGeometrySpec["loader"]) {
+	const loaderSource =
+		loader === "fbx"
+			? IMPORTED_FBX_RUNTIME_SOURCE
+			: IMPORTED_GLB_RUNTIME_SOURCE;
 
-  return `${IMPORTED_RUNTIME_SHARED_SOURCE}
+	return `${IMPORTED_RUNTIME_SHARED_SOURCE}
 ${loaderSource}
 
 async function loadImportedGeometryFromUrl(modelUrl, label) {
@@ -943,42 +943,42 @@ async function loadImportedGeometryFromUrl(modelUrl, label) {
   const buffer = await response.arrayBuffer();
 
   ${
-    loader === 'fbx'
-      ? 'return parseFbxGeometry(buffer, label);'
-      : 'return parseGlbGeometry(buffer, label);'
-  }
+		loader === "fbx"
+			? "return parseFbxGeometry(buffer, label);"
+			: "return parseGlbGeometry(buffer, label);"
+	}
 }
 `;
 }
 
 function getExportedShapeLoader(
-  shape: ExportedShapeDescriptor,
-): HalftoneGeometrySpec['loader'] | null {
-  if (shape.loader) {
-    return shape.loader;
-  }
+	shape: ExportedShapeDescriptor,
+): HalftoneGeometrySpec["loader"] | null {
+	if (shape.loader) {
+		return shape.loader;
+	}
 
-  const filename = shape.filename?.toLowerCase() ?? '';
+	const filename = shape.filename?.toLowerCase() ?? "";
 
-  if (filename.endsWith('.fbx')) {
-    return 'fbx';
-  }
+	if (filename.endsWith(".fbx")) {
+		return "fbx";
+	}
 
-  if (filename.endsWith('.glb')) {
-    return 'glb';
-  }
+	if (filename.endsWith(".glb")) {
+		return "glb";
+	}
 
-  return null;
+	return null;
 }
 
 function createImportedGeometryRuntimeSource(shape: ExportedShapeDescriptor) {
-  if (shape.kind !== 'imported') {
-    return '';
-  }
+	if (shape.kind !== "imported") {
+		return "";
+	}
 
-  const loader = getExportedShapeLoader(shape) ?? 'glb';
+	const loader = getExportedShapeLoader(shape) ?? "glb";
 
-  return createImportedRuntimeSource(loader);
+	return createImportedRuntimeSource(loader);
 }
 
 const GLASS_MATERIAL_RUNTIME_SOURCE = String.raw`
@@ -991,13 +991,13 @@ const GLASS_ENVIRONMENT_ZOOM = 1.55;
 const GLASS_TRANSMISSION_BACKGROUND = new THREE.Color(0x030303);
 const MAX_TEXTURE_ANISOTROPY = 8;
 const HALFTONE_TRANSMISSION_SHADER_PREFIX = ${JSON.stringify(
-  HALFTONE_TRANSMISSION_SHADER_PREFIX,
+	HALFTONE_TRANSMISSION_SHADER_PREFIX,
 )};
 const HALFTONE_TRANSMISSION_PARS_FRAGMENT = ${JSON.stringify(
-  HALFTONE_TRANSMISSION_PARS_FRAGMENT,
+	HALFTONE_TRANSMISSION_PARS_FRAGMENT,
 )};
 const HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE = ${JSON.stringify(
-  HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE,
+	HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE,
 )};
 
 class HalftoneTransmissionMaterial extends THREE.MeshPhysicalMaterial {
@@ -1340,8 +1340,8 @@ function disposeHalftoneMaterialAssets(materialAssets) {
 `;
 
 export const HALFTONE_EXPORT_SOURCE = {
-  geometryRuntime: GEOMETRY_RUNTIME_SOURCE,
-  glassMaterialRuntime: GLASS_MATERIAL_RUNTIME_SOURCE,
-  getExportedShapeLoader,
-  createImportedGeometryRuntime: createImportedGeometryRuntimeSource,
+	geometryRuntime: GEOMETRY_RUNTIME_SOURCE,
+	glassMaterialRuntime: GLASS_MATERIAL_RUNTIME_SOURCE,
+	getExportedShapeLoader,
+	createImportedGeometryRuntime: createImportedGeometryRuntimeSource,
 };

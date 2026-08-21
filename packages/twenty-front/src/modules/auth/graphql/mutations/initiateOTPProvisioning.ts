@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const INITIATE_OTP_PROVISIONING = gql`
   mutation initiateOTPProvisioning($loginToken: String!, $origin: String!) {

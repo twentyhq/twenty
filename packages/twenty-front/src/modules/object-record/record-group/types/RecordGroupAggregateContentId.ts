@@ -1,7 +1,7 @@
 export type RecordGroupAggregateContentId =
-  | 'aggregateOperations'
-  | 'aggregateFields'
-  | 'countAggregateOperationsOptions'
-  | 'percentAggregateOperationsOptions'
-  | 'datesAggregateOperationOptions'
-  | 'moreAggregateOperationOptions';
+	| "aggregateOperations"
+	| "aggregateFields"
+	| "countAggregateOperationsOptions"
+	| "percentAggregateOperationsOptions"
+	| "datesAggregateOperationOptions"
+	| "moreAggregateOperationOptions";

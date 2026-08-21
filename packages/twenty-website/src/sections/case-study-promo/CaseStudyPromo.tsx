@@ -1,28 +1,28 @@
-import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
+import { styled } from "@linaria/react";
+import { msg } from "@lingui/core/macro";
 
-import { PeopleGroupMark } from '@/icons';
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { PeopleGroupMark } from "@/icons";
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 import {
-  Body,
-  Button,
-  ConnectingFrame,
-  Eyebrow,
-  Heading,
-  SectionShell,
-} from '@/ui';
+	Body,
+	Button,
+	ConnectingFrame,
+	Eyebrow,
+	Heading,
+	SectionShell,
+} from "@/ui";
 
-import { CASE_STUDY_SLUGS } from './case-studies';
-import { PromoMic } from './PromoMic';
+import { CASE_STUDY_SLUGS } from "./case-studies";
+import { PromoMic } from "./PromoMic";
 
 // The section is a flush shell so its background frame can connect up to the
 // TrustedBy band; the Grid is then the SOLE owner of the promo's generous
@@ -40,7 +40,7 @@ const Grid = styled.div`
     margin-top: ${spacing(10)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     column-gap: ${spacing(16)};
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     /* Keep the content off the frame rails: without an internal inset the
@@ -62,7 +62,7 @@ const VisualColumn = styled.div`
   position: relative;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     min-height: 500px;
   }
 `;
@@ -74,7 +74,7 @@ const VisualStage = styled.div`
   position: relative;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     max-width: 500px;
   }
 `;
@@ -82,7 +82,7 @@ const VisualStage = styled.div`
 // The floating count chip overlaps the mic visual at its lower-left corner.
 const CountChip = styled.div`
   align-items: center;
-  background-color: ${color('white')};
+  background-color: ${color("white")};
   border: 1px solid ${semanticColor.line};
   bottom: ${spacing(4)};
   column-gap: ${spacing(2)};
@@ -92,7 +92,7 @@ const CountChip = styled.div`
   position: absolute;
   z-index: 2;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     bottom: ${spacing(5)};
     left: ${spacing(5)};
   }
@@ -100,10 +100,10 @@ const CountChip = styled.div`
 
 const CountLabel = styled.span`
   align-items: center;
-  color: ${color('black')};
+  color: ${color("black")};
   column-gap: ${spacing(1.5)};
   display: inline-flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.05em;
@@ -113,7 +113,7 @@ const CountLabel = styled.span`
 // The label text reads black, but the glyph stays brand blue on this white
 // chip; scope the ink to the mark the way every currentColor icon is tinted.
 const GlyphInk = styled.span`
-  color: ${color('blue')};
+  color: ${color("blue")};
   display: inline-flex;
 `;
 
@@ -125,7 +125,7 @@ const TextColumn = styled.div`
     margin-top: ${spacing(6)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     & > * + * {
       margin-top: ${spacing(8)};
     }
@@ -133,57 +133,57 @@ const TextColumn = styled.div`
 `;
 
 const BodyMeasure = styled.div`
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     max-width: 400px;
   }
 `;
 
 export function CaseStudyPromo() {
-  const i18n = getServerI18n();
-  const count = CASE_STUDY_SLUGS.length;
+	const i18n = getServerI18n();
+	const count = CASE_STUDY_SLUGS.length;
 
-  return (
-    <SectionShell
-      ariaLabel={i18n._(msg`Customer stories preview`)}
-      background={<ConnectingFrame />}
-      connectsUp
-      rhythm="flush"
-      scheme="light"
-    >
-      <Grid>
-        <VisualColumn>
-          <VisualStage>
-            <PromoMic />
-            <CountChip aria-hidden>
-              <CountLabel>
-                <GlyphInk>
-                  <PeopleGroupMark sizePx={12} />
-                </GlyphInk>
-                {i18n._(msg`${count} Case Studies`)}
-              </CountLabel>
-            </CountChip>
-          </VisualStage>
-        </VisualColumn>
+	return (
+		<SectionShell
+			ariaLabel={i18n._(msg`Customer stories preview`)}
+			background={<ConnectingFrame />}
+			connectsUp
+			rhythm="flush"
+			scheme="light"
+		>
+			<Grid>
+				<VisualColumn>
+					<VisualStage>
+						<PromoMic />
+						<CountChip aria-hidden>
+							<CountLabel>
+								<GlyphInk>
+									<PeopleGroupMark sizePx={12} />
+								</GlyphInk>
+								{i18n._(msg`${count} Case Studies`)}
+							</CountLabel>
+						</CountChip>
+					</VisualStage>
+				</VisualColumn>
 
-        <TextColumn>
-          <Eyebrow>{i18n._(msg`Customer Stories`)}</Eyebrow>
-          <Heading size="lg" weight="light">
-            {i18n._(msg`How teams\n*built with Twenty*`)}
-          </Heading>
-          <BodyMeasure>
-            <Body muted size="sm">
-              {i18n._(
-                msg`Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.`,
-              )}
-            </Body>
-          </BodyMeasure>
-          <Button
-            href="/customers"
-            label={i18n._(msg`Explore customer stories`)}
-            variant="outlined"
-          />
-        </TextColumn>
-      </Grid>
-    </SectionShell>
-  );
+				<TextColumn>
+					<Eyebrow>{i18n._(msg`Customer Stories`)}</Eyebrow>
+					<Heading size="lg" weight="light">
+						{i18n._(msg`How teams\n*built with Twenty*`)}
+					</Heading>
+					<BodyMeasure>
+						<Body muted size="sm">
+							{i18n._(
+								msg`Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.`,
+							)}
+						</Body>
+					</BodyMeasure>
+					<Button
+						href="/customers"
+						label={i18n._(msg`Explore customer stories`)}
+						variant="outlined"
+					/>
+				</TextColumn>
+			</Grid>
+		</SectionShell>
+	);
 }

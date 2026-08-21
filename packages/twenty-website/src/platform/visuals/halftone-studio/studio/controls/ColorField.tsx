@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { styled } from "@linaria/react";
+import { useEffect, useRef, useState } from "react";
 
-import { fontFamily } from '@/tokens';
+import { fontFamily } from "@/tokens";
 
 const ColorPickerField = styled.div`
   align-items: center;
@@ -33,7 +33,7 @@ const ColorHexInput = styled.input`
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.85);
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: 11px;
   height: 16px;
   letter-spacing: 0.02em;
@@ -74,85 +74,85 @@ const ColorInput = styled.input`
 `;
 
 function normalizeHexColor(value: string): string | null {
-  const normalizedValue = value.trim().replace(/^#/, '');
+	const normalizedValue = value.trim().replace(/^#/, "");
 
-  if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalizedValue)) {
-    return null;
-  }
+	if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalizedValue)) {
+		return null;
+	}
 
-  return `#${normalizedValue.toUpperCase()}`;
+	return `#${normalizedValue.toUpperCase()}`;
 }
 
 type ColorFieldProps = {
-  ariaLabel: string;
-  onChange: (value: string) => void;
-  value: string;
+	ariaLabel: string;
+	onChange: (value: string) => void;
+	value: string;
 };
 
 export function ColorField({ ariaLabel, onChange, value }: ColorFieldProps) {
-  const normalizedValue = value.toUpperCase();
-  const [draftValue, setDraftValue] = useState(normalizedValue);
-  const escapePressedReference = useRef(false);
+	const normalizedValue = value.toUpperCase();
+	const [draftValue, setDraftValue] = useState(normalizedValue);
+	const escapePressedReference = useRef(false);
 
-  useEffect(() => {
-    setDraftValue(normalizedValue);
-  }, [normalizedValue]);
+	useEffect(() => {
+		setDraftValue(normalizedValue);
+	}, [normalizedValue]);
 
-  const commitDraftValue = () => {
-    if (escapePressedReference.current) {
-      escapePressedReference.current = false;
-      return;
-    }
+	const commitDraftValue = () => {
+		if (escapePressedReference.current) {
+			escapePressedReference.current = false;
+			return;
+		}
 
-    const nextValue = normalizeHexColor(draftValue);
+		const nextValue = normalizeHexColor(draftValue);
 
-    if (!nextValue) {
-      setDraftValue(normalizedValue);
-      return;
-    }
+		if (!nextValue) {
+			setDraftValue(normalizedValue);
+			return;
+		}
 
-    setDraftValue(nextValue);
+		setDraftValue(nextValue);
 
-    if (nextValue !== normalizedValue) {
-      onChange(nextValue);
-    }
-  };
+		if (nextValue !== normalizedValue) {
+			onChange(nextValue);
+		}
+	};
 
-  return (
-    <ColorPickerField>
-      <ColorHexInput
-        aria-label={`${ariaLabel} hex value`}
-        maxLength={7}
-        onBlur={commitDraftValue}
-        onClick={(event) => event.currentTarget.select()}
-        onChange={(event) => setDraftValue(event.target.value.toUpperCase())}
-        onFocus={(event) => event.currentTarget.select()}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            event.preventDefault();
-            event.currentTarget.blur();
-          }
+	return (
+		<ColorPickerField>
+			<ColorHexInput
+				aria-label={`${ariaLabel} hex value`}
+				maxLength={7}
+				onBlur={commitDraftValue}
+				onClick={(event) => event.currentTarget.select()}
+				onChange={(event) => setDraftValue(event.target.value.toUpperCase())}
+				onFocus={(event) => event.currentTarget.select()}
+				onKeyDown={(event) => {
+					if (event.key === "Enter") {
+						event.preventDefault();
+						event.currentTarget.blur();
+					}
 
-          if (event.key === 'Escape') {
-            event.preventDefault();
-            escapePressedReference.current = true;
-            setDraftValue(normalizedValue);
-            event.currentTarget.blur();
-          }
-        }}
-        spellCheck={false}
-        type="text"
-        value={draftValue}
-      />
-      <ColorSwatchButton title={ariaLabel}>
-        <ColorSwatch style={{ backgroundColor: normalizedValue }} />
-        <ColorInput
-          aria-label={ariaLabel}
-          onChange={(event) => onChange(event.target.value)}
-          type="color"
-          value={value}
-        />
-      </ColorSwatchButton>
-    </ColorPickerField>
-  );
+					if (event.key === "Escape") {
+						event.preventDefault();
+						escapePressedReference.current = true;
+						setDraftValue(normalizedValue);
+						event.currentTarget.blur();
+					}
+				}}
+				spellCheck={false}
+				type="text"
+				value={draftValue}
+			/>
+			<ColorSwatchButton title={ariaLabel}>
+				<ColorSwatch style={{ backgroundColor: normalizedValue }} />
+				<ColorInput
+					aria-label={ariaLabel}
+					onChange={(event) => onChange(event.target.value)}
+					type="color"
+					value={value}
+				/>
+			</ColorSwatchButton>
+		</ColorPickerField>
+	);
 }

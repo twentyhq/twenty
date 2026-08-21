@@ -1,16 +1,16 @@
-import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import { type ConnectedAccountProvider } from "twenty-shared/types";
 
 type ReplyContextLoading = {
-  loading: true;
+	loading: true;
 };
 
 export type ReplyContextReady = {
-  loading: false;
-  to: string;
-  subject: string;
-  inReplyTo: string;
-  connectedAccountId: string;
-  connectedAccountProvider: ConnectedAccountProvider;
+	loading: false;
+	to: string;
+	subject: string;
+	inReplyTo: string;
+	connectedAccountId: string;
+	connectedAccountProvider: ConnectedAccountProvider;
 };
 
 export type ReplyContext = ReplyContextLoading | ReplyContextReady;

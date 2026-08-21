@@ -1,16 +1,16 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { EASING } from '@/tokens';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { EASING } from "@/tokens";
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { CONVERSATION_CORE } from './conversation-core';
+import { CONVERSATION_CORE } from "./conversation-core";
 
 const BubbleRow = styled.div<{ $instant: boolean }>`
   animation: ${({ $instant }) =>
-    $instant
-      ? 'none'
-      : `chatBubbleRise ${CONVERSATION_CORE.timings.bubbleEnterMs}ms ${EASING.standard} both`};
+		$instant
+			? "none"
+			: `chatBubbleRise ${CONVERSATION_CORE.timings.bubbleEnterMs}ms ${EASING.standard} both`};
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -39,15 +39,15 @@ const Bubble = styled.div`
 `;
 
 export function UserMessage({
-  instant = false,
-  text,
+	instant = false,
+	text,
 }: {
-  instant?: boolean;
-  text: string;
+	instant?: boolean;
+	text: string;
 }) {
-  return (
-    <BubbleRow $instant={instant}>
-      <Bubble>{text}</Bubble>
-    </BubbleRow>
-  );
+	return (
+		<BubbleRow $instant={instant}>
+			<Bubble>{text}</Bubble>
+		</BubbleRow>
+	);
 }

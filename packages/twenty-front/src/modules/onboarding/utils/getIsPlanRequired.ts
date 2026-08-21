@@ -1,11 +1,11 @@
-import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { type CurrentWorkspace } from "@/auth/states/currentWorkspaceState";
 
 export const getIsPlanRequired = ({
-  isBillingEnabled,
-  currentWorkspace,
+	isBillingEnabled,
+	currentWorkspace,
 }: {
-  isBillingEnabled: boolean;
-  currentWorkspace: Pick<CurrentWorkspace, 'billingSubscriptions'> | null;
+	isBillingEnabled: boolean;
+	currentWorkspace: Pick<CurrentWorkspace, "billingSubscriptions"> | null;
 }) =>
-  isBillingEnabled &&
-  (currentWorkspace?.billingSubscriptions?.length ?? 0) === 0;
+	isBillingEnabled &&
+	(currentWorkspace?.billingSubscriptions?.length ?? 0) === 0;

@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly rotatedIconWrapper: 'rotatedIconWrapper';
+	readonly rotatedIconWrapper: "rotatedIconWrapper";
 };
 export default classNames;

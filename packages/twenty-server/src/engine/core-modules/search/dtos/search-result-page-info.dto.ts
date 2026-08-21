@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('SearchResultPageInfo')
+@ObjectType("SearchResultPageInfo")
 export class SearchResultPageInfoDTO {
-  @Field(() => String, { nullable: true })
-  endCursor: string | null;
+	@Field(() => String, { nullable: true })
+	endCursor: string | null;
 
-  @Field(() => Boolean)
-  hasNextPage: boolean;
+	@Field(() => Boolean)
+	hasNextPage: boolean;
 }

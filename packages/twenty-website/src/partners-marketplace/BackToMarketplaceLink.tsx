@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
-import { fontFamily, fontSize, semanticColor } from '@/tokens';
+import { LocalizedLink } from "@/platform/i18n/LocalizedLink";
+import { fontFamily, fontSize, semanticColor } from "@/tokens";
 
 const BackLink = styled(LocalizedLink)`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   text-decoration: none;
   transition: color 150ms ease;
@@ -20,9 +20,9 @@ const BackLink = styled(LocalizedLink)`
 `;
 
 export function BackToMarketplaceLink() {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <BackLink href="/partners/list">{i18n._(msg`← Twenty partners`)}</BackLink>
-  );
+	return (
+		<BackLink href="/partners/list">{i18n._(msg`← Twenty partners`)}</BackLink>
+	);
 }

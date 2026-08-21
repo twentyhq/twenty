@@ -1,1 +1,1 @@
-export { CaseStudyPromo } from './CaseStudyPromo';
+export { CaseStudyPromo } from "./CaseStudyPromo";

@@ -1,28 +1,28 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type Editor } from '@tiptap/core';
-import { useRef, useState } from 'react';
-import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
-import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type Editor } from "@tiptap/core";
+import { useRef, useState } from "react";
+import { EMAIL_IMAGE_MIME_TYPES } from "twenty-shared/constants";
+import { isDefined, TIPTAP_NODE_TYPES } from "twenty-shared/utils";
 import {
-  IconH1,
-  IconH2,
-  IconH3,
-  IconLayoutGrid,
-  IconList,
-  IconListNumbers,
-  IconPhoto,
-  IconTypography,
-  IconVariable,
-} from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	IconH1,
+	IconH2,
+	IconH3,
+	IconLayoutGrid,
+	IconList,
+	IconListNumbers,
+	IconPhoto,
+	IconTypography,
+	IconVariable,
+} from "twenty-ui/icon";
+import { Button, LightIconButton } from "twenty-ui/input";
+import { MenuItem } from "twenty-ui/navigation";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
-import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
-import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from "@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes";
+import { type UploadedImage } from "@/advanced-text-editor/types/UploadedImage";
+import { hasEditorExtension } from "@/advanced-text-editor/utils/hasEditorExtension";
+import { TextInput } from "@/ui/input/components/TextInput";
 
 const StyledRail = styled.div`
   align-items: center;
@@ -82,246 +82,246 @@ const StyledImageHint = styled.div`
 `;
 
 type AdvancedTextEditorInsertRailProps = {
-  editor: Editor;
-  onImageUpload?: (file: File) => Promise<UploadedImage>;
-  variables?: Array<{ label: string; value: string }>;
+	editor: Editor;
+	onImageUpload?: (file: File) => Promise<UploadedImage>;
+	variables?: Array<{ label: string; value: string }>;
 };
 
 export const AdvancedTextEditorInsertRail = ({
-  editor,
-  onImageUpload,
-  variables = [],
+	editor,
+	onImageUpload,
+	variables = [],
 }: AdvancedTextEditorInsertRailProps) => {
-  const { i18n, t } = useLingui();
-  const imageFileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [openMenu, setOpenMenu] = useState<
-    'text' | 'image' | 'blocks' | 'variables' | null
-  >(null);
-  const [imageUrl, setImageUrl] = useState('');
+	const { i18n, t } = useLingui();
+	const imageFileInputRef = useRef<HTMLInputElement>(null);
+	const [isUploadingImage, setIsUploadingImage] = useState(false);
+	const [openMenu, setOpenMenu] = useState<
+		"text" | "image" | "blocks" | "variables" | null
+	>(null);
+	const [imageUrl, setImageUrl] = useState("");
 
-  const hasVariables =
-    variables.length > 0 && hasEditorExtension(editor, 'variableTag');
+	const hasVariables =
+		variables.length > 0 && hasEditorExtension(editor, "variableTag");
 
-  const insertVariable = (value: string) => {
-    editor.chain().focus().insertVariableTag(value).run();
-    setOpenMenu(null);
-  };
+	const insertVariable = (value: string) => {
+		editor.chain().focus().insertVariableTag(value).run();
+		setOpenMenu(null);
+	};
 
-  const insertAtEnd = (content: object) => {
-    editor
-      .chain()
-      .insertContentAt(editor.state.doc.content.size, content)
-      .focus('end')
-      .scrollIntoView()
-      .run();
-    setOpenMenu(null);
-  };
+	const insertAtEnd = (content: object) => {
+		editor
+			.chain()
+			.insertContentAt(editor.state.doc.content.size, content)
+			.focus("end")
+			.scrollIntoView()
+			.run();
+		setOpenMenu(null);
+	};
 
-  const listItemJson = () => ({
-    type: TIPTAP_NODE_TYPES.LIST_ITEM,
-    content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
-  });
+	const listItemJson = () => ({
+		type: TIPTAP_NODE_TYPES.LIST_ITEM,
+		content: [{ type: TIPTAP_NODE_TYPES.PARAGRAPH }],
+	});
 
-  const textItems = [
-    {
-      Icon: IconTypography,
-      label: t`Text`,
-      content: { type: TIPTAP_NODE_TYPES.PARAGRAPH },
-    },
-    {
-      Icon: IconH1,
-      label: t`Title`,
-      content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 1 } },
-    },
-    {
-      Icon: IconH2,
-      label: t`Subtitle`,
-      content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 2 } },
-    },
-    {
-      Icon: IconH3,
-      label: t`Heading`,
-      content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 3 } },
-    },
-    {
-      Icon: IconList,
-      label: t`Bullet list`,
-      content: {
-        type: TIPTAP_NODE_TYPES.BULLET_LIST,
-        content: [listItemJson()],
-      },
-    },
-    {
-      Icon: IconListNumbers,
-      label: t`Numbered list`,
-      content: {
-        type: TIPTAP_NODE_TYPES.ORDERED_LIST,
-        content: [listItemJson()],
-      },
-    },
-  ];
+	const textItems = [
+		{
+			Icon: IconTypography,
+			label: t`Text`,
+			content: { type: TIPTAP_NODE_TYPES.PARAGRAPH },
+		},
+		{
+			Icon: IconH1,
+			label: t`Title`,
+			content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 1 } },
+		},
+		{
+			Icon: IconH2,
+			label: t`Subtitle`,
+			content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 2 } },
+		},
+		{
+			Icon: IconH3,
+			label: t`Heading`,
+			content: { type: TIPTAP_NODE_TYPES.HEADING, attrs: { level: 3 } },
+		},
+		{
+			Icon: IconList,
+			label: t`Bullet list`,
+			content: {
+				type: TIPTAP_NODE_TYPES.BULLET_LIST,
+				content: [listItemJson()],
+			},
+		},
+		{
+			Icon: IconListNumbers,
+			label: t`Numbered list`,
+			content: {
+				type: TIPTAP_NODE_TYPES.ORDERED_LIST,
+				content: [listItemJson()],
+			},
+		},
+	];
 
-  const handleFilePicked = async (file: File | undefined) => {
-    if (!isDefined(file) || !isDefined(onImageUpload)) {
-      return;
-    }
+	const handleFilePicked = async (file: File | undefined) => {
+		if (!isDefined(file) || !isDefined(onImageUpload)) {
+			return;
+		}
 
-    setIsUploadingImage(true);
+		setIsUploadingImage(true);
 
-    try {
-      const uploadedImage = await onImageUpload(file);
+		try {
+			const uploadedImage = await onImageUpload(file);
 
-      insertAtEnd({
-        type: TIPTAP_NODE_TYPES.IMAGE,
-        attrs: {
-          fileId: uploadedImage.fileId ?? null,
-          src: uploadedImage.url,
-        },
-      });
-    } catch {
-    } finally {
-      setIsUploadingImage(false);
-    }
-  };
+			insertAtEnd({
+				type: TIPTAP_NODE_TYPES.IMAGE,
+				attrs: {
+					fileId: uploadedImage.fileId ?? null,
+					src: uploadedImage.url,
+				},
+			});
+		} catch {
+		} finally {
+			setIsUploadingImage(false);
+		}
+	};
 
-  const handleInsertImage = () => {
-    if (imageUrl.trim() === '') {
-      return;
-    }
+	const handleInsertImage = () => {
+		if (imageUrl.trim() === "") {
+			return;
+		}
 
-    insertAtEnd({
-      type: TIPTAP_NODE_TYPES.IMAGE,
-      attrs: { src: imageUrl.trim() },
-    });
-    setImageUrl('');
-  };
+		insertAtEnd({
+			type: TIPTAP_NODE_TYPES.IMAGE,
+			attrs: { src: imageUrl.trim() },
+		});
+		setImageUrl("");
+	};
 
-  const blockItems = ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(
-    ({ createContent, icon, id, title }) => ({
-      id,
-      Icon: icon,
-      label: i18n._(title),
-      content: createContent((message) => i18n._(message)),
-    }),
-  );
+	const blockItems = ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(
+		({ createContent, icon, id, title }) => ({
+			id,
+			Icon: icon,
+			label: i18n._(title),
+			content: createContent((message) => i18n._(message)),
+		}),
+	);
 
-  return (
-    <StyledRailContainer>
-      <input
-        ref={imageFileInputRef}
-        type="file"
-        accept={EMAIL_IMAGE_MIME_TYPES.join(',')}
-        hidden
-        onChange={(event) => {
-          void handleFilePicked(event.target.files?.[0]);
-          event.target.value = '';
-        }}
-      />
-      <StyledRail>
-        <LightIconButton
-          Icon={IconTypography}
-          size="medium"
-          accent={openMenu === 'text' ? 'secondary' : 'tertiary'}
-          title={t`Text`}
-          onClick={() => setOpenMenu(openMenu === 'text' ? null : 'text')}
-        />
-        <LightIconButton
-          Icon={IconPhoto}
-          size="medium"
-          accent={openMenu === 'image' ? 'secondary' : 'tertiary'}
-          title={isUploadingImage ? t`Uploading...` : t`Image`}
-          disabled={isUploadingImage}
-          onClick={() => {
-            if (isDefined(onImageUpload)) {
-              imageFileInputRef.current?.click();
-              return;
-            }
+	return (
+		<StyledRailContainer>
+			<input
+				ref={imageFileInputRef}
+				type="file"
+				accept={EMAIL_IMAGE_MIME_TYPES.join(",")}
+				hidden
+				onChange={(event) => {
+					void handleFilePicked(event.target.files?.[0]);
+					event.target.value = "";
+				}}
+			/>
+			<StyledRail>
+				<LightIconButton
+					Icon={IconTypography}
+					size="medium"
+					accent={openMenu === "text" ? "secondary" : "tertiary"}
+					title={t`Text`}
+					onClick={() => setOpenMenu(openMenu === "text" ? null : "text")}
+				/>
+				<LightIconButton
+					Icon={IconPhoto}
+					size="medium"
+					accent={openMenu === "image" ? "secondary" : "tertiary"}
+					title={isUploadingImage ? t`Uploading...` : t`Image`}
+					disabled={isUploadingImage}
+					onClick={() => {
+						if (isDefined(onImageUpload)) {
+							imageFileInputRef.current?.click();
+							return;
+						}
 
-            setOpenMenu(openMenu === 'image' ? null : 'image');
-          }}
-        />
-        <LightIconButton
-          Icon={IconLayoutGrid}
-          size="medium"
-          accent={openMenu === 'blocks' ? 'secondary' : 'tertiary'}
-          title={t`Blocks`}
-          onClick={() => setOpenMenu(openMenu === 'blocks' ? null : 'blocks')}
-        />
-        {hasVariables && (
-          <LightIconButton
-            Icon={IconVariable}
-            size="medium"
-            accent={openMenu === 'variables' ? 'secondary' : 'tertiary'}
-            title={t`Variables`}
-            onClick={() =>
-              setOpenMenu(openMenu === 'variables' ? null : 'variables')
-            }
-          />
-        )}
-      </StyledRail>
-      {openMenu === 'variables' && (
-        <StyledPopover>
-          {variables.map(({ label, value }) => (
-            <MenuItem
-              key={value}
-              text={<StyledVariableLiteral>{value}</StyledVariableLiteral>}
-              contextualText={label}
-              onClick={() => insertVariable(value)}
-            />
-          ))}
-        </StyledPopover>
-      )}
-      {openMenu === 'text' && (
-        <StyledPopover>
-          {textItems.map(({ Icon, label, content }) => (
-            <MenuItem
-              key={label}
-              LeftIcon={Icon}
-              text={label}
-              onClick={() => insertAtEnd(content)}
-            />
-          ))}
-        </StyledPopover>
-      )}
-      {openMenu === 'blocks' && (
-        <StyledPopover>
-          {blockItems.map(({ Icon, id, label, content }) => (
-            <MenuItem
-              key={id}
-              LeftIcon={Icon}
-              text={label}
-              onClick={() => insertAtEnd(content)}
-            />
-          ))}
-        </StyledPopover>
-      )}
-      {openMenu === 'image' && (
-        <StyledPopover>
-          <StyledImageForm>
-            <TextInput
-              value={imageUrl}
-              onChange={setImageUrl}
-              placeholder={t`Image URL`}
-              fullWidth
-              autoFocus
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  handleInsertImage();
-                }
-              }}
-            />
-            <StyledImageHint>
-              {t`Paste a link to a hosted image`}
-            </StyledImageHint>
-            <Button
-              title={t`Insert image`}
-              size="small"
-              onClick={handleInsertImage}
-            />
-          </StyledImageForm>
-        </StyledPopover>
-      )}
-    </StyledRailContainer>
-  );
+						setOpenMenu(openMenu === "image" ? null : "image");
+					}}
+				/>
+				<LightIconButton
+					Icon={IconLayoutGrid}
+					size="medium"
+					accent={openMenu === "blocks" ? "secondary" : "tertiary"}
+					title={t`Blocks`}
+					onClick={() => setOpenMenu(openMenu === "blocks" ? null : "blocks")}
+				/>
+				{hasVariables && (
+					<LightIconButton
+						Icon={IconVariable}
+						size="medium"
+						accent={openMenu === "variables" ? "secondary" : "tertiary"}
+						title={t`Variables`}
+						onClick={() =>
+							setOpenMenu(openMenu === "variables" ? null : "variables")
+						}
+					/>
+				)}
+			</StyledRail>
+			{openMenu === "variables" && (
+				<StyledPopover>
+					{variables.map(({ label, value }) => (
+						<MenuItem
+							key={value}
+							text={<StyledVariableLiteral>{value}</StyledVariableLiteral>}
+							contextualText={label}
+							onClick={() => insertVariable(value)}
+						/>
+					))}
+				</StyledPopover>
+			)}
+			{openMenu === "text" && (
+				<StyledPopover>
+					{textItems.map(({ Icon, label, content }) => (
+						<MenuItem
+							key={label}
+							LeftIcon={Icon}
+							text={label}
+							onClick={() => insertAtEnd(content)}
+						/>
+					))}
+				</StyledPopover>
+			)}
+			{openMenu === "blocks" && (
+				<StyledPopover>
+					{blockItems.map(({ Icon, id, label, content }) => (
+						<MenuItem
+							key={id}
+							LeftIcon={Icon}
+							text={label}
+							onClick={() => insertAtEnd(content)}
+						/>
+					))}
+				</StyledPopover>
+			)}
+			{openMenu === "image" && (
+				<StyledPopover>
+					<StyledImageForm>
+						<TextInput
+							value={imageUrl}
+							onChange={setImageUrl}
+							placeholder={t`Image URL`}
+							fullWidth
+							autoFocus
+							onKeyDown={(event) => {
+								if (event.key === "Enter") {
+									handleInsertImage();
+								}
+							}}
+						/>
+						<StyledImageHint>
+							{t`Paste a link to a hosted image`}
+						</StyledImageHint>
+						<Button
+							title={t`Insert image`}
+							size="small"
+							onClick={handleInsertImage}
+						/>
+					</StyledImageForm>
+				</StyledPopover>
+			)}
+		</StyledRailContainer>
+	);
 };

@@ -1,88 +1,88 @@
-import { type Readable } from 'stream';
+import { type Readable } from "stream";
 
 export const streamToBuffer = async (
-  stream: Readable,
-  maxSizeBytes?: number,
+	stream: Readable,
+	maxSizeBytes?: number,
 ): Promise<Buffer> => {
-  const chunks: Buffer[] = [];
-  let totalSize = 0;
+	const chunks: Buffer[] = [];
+	let totalSize = 0;
 
-  return new Promise((resolve, reject) => {
-    if (stream.readableEnded) {
-      reject(new Error('Stream has already ended'));
+	return new Promise((resolve, reject) => {
+		if (stream.readableEnded) {
+			reject(new Error("Stream has already ended"));
 
-      return;
-    }
+			return;
+		}
 
-    if (!stream.readable) {
-      reject(new Error('Stream is not readable'));
+		if (!stream.readable) {
+			reject(new Error("Stream is not readable"));
 
-      return;
-    }
+			return;
+		}
 
-    let isResolved = false;
+		let isResolved = false;
 
-    const cleanup = () => {
-      stream.removeListener('data', onData);
-      stream.removeListener('end', onEnd);
-      stream.removeListener('error', onError);
-      stream.removeListener('close', onClose);
-    };
+		const cleanup = () => {
+			stream.removeListener("data", onData);
+			stream.removeListener("end", onEnd);
+			stream.removeListener("error", onError);
+			stream.removeListener("close", onClose);
+		};
 
-    const onData = (chunk: Buffer) => {
-      if (!isResolved) {
-        totalSize += chunk.length;
+		const onData = (chunk: Buffer) => {
+			if (!isResolved) {
+				totalSize += chunk.length;
 
-        if (maxSizeBytes !== undefined && totalSize > maxSizeBytes) {
-          isResolved = true;
-          cleanup();
-          stream.destroy();
-          reject(
-            new Error(
-              `Stream exceeds maximum allowed size of ${maxSizeBytes} bytes`,
-            ),
-          );
+				if (maxSizeBytes !== undefined && totalSize > maxSizeBytes) {
+					isResolved = true;
+					cleanup();
+					stream.destroy();
+					reject(
+						new Error(
+							`Stream exceeds maximum allowed size of ${maxSizeBytes} bytes`,
+						),
+					);
 
-          return;
-        }
+					return;
+				}
 
-        chunks.push(chunk);
-      }
-    };
+				chunks.push(chunk);
+			}
+		};
 
-    const onEnd = () => {
-      if (!isResolved) {
-        isResolved = true;
-        cleanup();
-        resolve(Buffer.concat(chunks));
-      }
-    };
+		const onEnd = () => {
+			if (!isResolved) {
+				isResolved = true;
+				cleanup();
+				resolve(Buffer.concat(chunks));
+			}
+		};
 
-    const onError = (error: Error) => {
-      if (!isResolved) {
-        isResolved = true;
-        cleanup();
-        reject(error);
-      }
-    };
+		const onError = (error: Error) => {
+			if (!isResolved) {
+				isResolved = true;
+				cleanup();
+				reject(error);
+			}
+		};
 
-    const onClose = () => {
-      if (!isResolved) {
-        if (stream.readableEnded) {
-          isResolved = true;
-          cleanup();
-          resolve(Buffer.concat(chunks));
-        } else {
-          isResolved = true;
-          cleanup();
-          reject(new Error('Stream closed before end'));
-        }
-      }
-    };
+		const onClose = () => {
+			if (!isResolved) {
+				if (stream.readableEnded) {
+					isResolved = true;
+					cleanup();
+					resolve(Buffer.concat(chunks));
+				} else {
+					isResolved = true;
+					cleanup();
+					reject(new Error("Stream closed before end"));
+				}
+			}
+		};
 
-    stream.on('data', onData);
-    stream.on('end', onEnd);
-    stream.on('error', onError);
-    stream.on('close', onClose);
-  });
+		stream.on("data", onData);
+		stream.on("end", onEnd);
+		stream.on("error", onError);
+		stream.on("close", onClose);
+	});
 };

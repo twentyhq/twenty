@@ -1,20 +1,20 @@
-import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
-import { WorkflowDiagramCanvasReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasReadonly';
-import '@xyflow/react/dist/style.css';
-import { isDefined } from 'twenty-shared/utils';
+import { useWorkflowVersion } from "@/workflow/hooks/useWorkflowVersion";
+import { WorkflowDiagramCanvasReadonly } from "@/workflow/workflow-diagram/components/WorkflowDiagramCanvasReadonly";
+import "@xyflow/react/dist/style.css";
+import { isDefined } from "twenty-shared/utils";
 
 export const WorkflowVersionVisualizer = ({
-  workflowVersionId,
+	workflowVersionId,
 }: {
-  workflowVersionId: string;
+	workflowVersionId: string;
 }) => {
-  const workflowVersion = useWorkflowVersion(workflowVersionId);
+	const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  if (!isDefined(workflowVersion)) {
-    return null;
-  }
+	if (!isDefined(workflowVersion)) {
+		return null;
+	}
 
-  return (
-    <WorkflowDiagramCanvasReadonly versionStatus={workflowVersion.status} />
-  );
+	return (
+		<WorkflowDiagramCanvasReadonly versionStatus={workflowVersion.status} />
+	);
 };

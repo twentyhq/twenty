@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { IconChevronDown } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { IconChevronDown } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
-import { EASING } from '@/tokens';
+import { EASING } from "@/tokens";
 
-import { FaviconLogo } from '../../primitives/FaviconLogo';
-import { type RecordPageDefinition } from '../../types';
-import { recordFieldValue } from './RecordFieldValue';
-import { RecordCalendar } from './RecordCalendar';
-import { RecordEmails } from './RecordEmails';
-import { RecordFiles } from './RecordFiles';
-import { RecordNotes } from './RecordNotes';
-import { RecordTasks } from './RecordTasks';
-import { RecordTimeline } from './RecordTimeline';
-import { recordTabs } from './record-tabs';
+import { FaviconLogo } from "../../primitives/FaviconLogo";
+import { type RecordPageDefinition } from "../../types";
+import { recordFieldValue } from "./RecordFieldValue";
+import { RecordCalendar } from "./RecordCalendar";
+import { RecordEmails } from "./RecordEmails";
+import { RecordFiles } from "./RecordFiles";
+import { RecordNotes } from "./RecordNotes";
+import { RecordTasks } from "./RecordTasks";
+import { RecordTimeline } from "./RecordTimeline";
+import { recordTabs } from "./record-tabs";
 
 const Shell = styled.div`
   display: flex;
@@ -197,16 +197,16 @@ const RelationTitleCount = styled.span`
 const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
   align-items: center;
   background: ${({ $highlighted }) =>
-    $highlighted ? THEME_LIGHT.background.secondary : 'transparent'};
+		$highlighted ? THEME_LIGHT.background.secondary : "transparent"};
   border: 1px solid
     ${({ $highlighted }) =>
-      $highlighted ? THEME_LIGHT.border.color.medium : 'transparent'};
+			$highlighted ? THEME_LIGHT.border.color.medium : "transparent"};
   border-radius: 6px;
   display: flex;
   gap: 6px;
   opacity: ${({ $muted }) => ($muted ? 0.55 : 1)};
   padding: 2px 0;
-  padding-inline: ${({ $highlighted }) => ($highlighted ? '6px' : '0')};
+  padding-inline: ${({ $highlighted }) => ($highlighted ? "6px" : "0")};
   transition:
     background 180ms ease,
     border-color 180ms ease,
@@ -266,10 +266,10 @@ const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
   all: unset;
   align-items: center;
   color: ${({ $active }) =>
-    $active
-      ? THEME_LIGHT.font.color.primary
-      : THEME_LIGHT.font.color.secondary};
-  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+		$active
+			? THEME_LIGHT.font.color.primary
+			: THEME_LIGHT.font.color.secondary};
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
   display: flex;
   position: relative;
   text-decoration: none;
@@ -277,7 +277,7 @@ const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
 
   &::after {
     background-color: ${({ $active }) =>
-      $active ? THEME_LIGHT.font.color.primary : 'transparent'};
+			$active ? THEME_LIGHT.font.color.primary : "transparent"};
     bottom: 0;
     content: '';
     height: 1px;
@@ -303,157 +303,157 @@ const TabInner = styled.span`
 const { FieldIconGlyph, FieldValueRenderer } = recordFieldValue;
 
 export function RecordPage({ page }: { page: RecordPageDefinition }) {
-  const { record, notes, timeline, tasks, files, emails, calendar } = page;
-  const availableTabs = recordTabs.getAvailable(page);
-  const controlledTabLabel = page.activeTabLabel;
-  const isControlled = controlledTabLabel !== undefined;
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [isInteractive, setIsInteractive] = useState(false);
+	const { record, notes, timeline, tasks, files, emails, calendar } = page;
+	const availableTabs = recordTabs.getAvailable(page);
+	const controlledTabLabel = page.activeTabLabel;
+	const isControlled = controlledTabLabel !== undefined;
+	const [activeTabIndex, setActiveTabIndex] = useState(0);
+	const [isInteractive, setIsInteractive] = useState(false);
 
-  useEffect(() => {
-    if (isControlled || isInteractive) {
-      return undefined;
-    }
+	useEffect(() => {
+		if (isControlled || isInteractive) {
+			return undefined;
+		}
 
-    if (activeTabIndex >= availableTabs.length - 1) {
-      setIsInteractive(true);
-      return undefined;
-    }
+		if (activeTabIndex >= availableTabs.length - 1) {
+			setIsInteractive(true);
+			return undefined;
+		}
 
-    const timer = setTimeout(() => {
-      setActiveTabIndex((current) => current + 1);
-    }, recordTabs.DWELL_MS);
+		const timer = setTimeout(() => {
+			setActiveTabIndex((current) => current + 1);
+		}, recordTabs.DWELL_MS);
 
-    return () => clearTimeout(timer);
-  }, [availableTabs.length, activeTabIndex, isControlled, isInteractive]);
+		return () => clearTimeout(timer);
+	}, [availableTabs.length, activeTabIndex, isControlled, isInteractive]);
 
-  const activeTabLabel =
-    controlledTabLabel ?? availableTabs[activeTabIndex]?.label ?? 'Notes';
+	const activeTabLabel =
+		controlledTabLabel ?? availableTabs[activeTabIndex]?.label ?? "Notes";
 
-  const handleTabClick = (label: string) => {
-    if (!isInteractive) {
-      return;
-    }
+	const handleTabClick = (label: string) => {
+		if (!isInteractive) {
+			return;
+		}
 
-    const nextIndex = availableTabs.findIndex((tab) => tab.label === label);
+		const nextIndex = availableTabs.findIndex((tab) => tab.label === label);
 
-    if (nextIndex >= 0) {
-      setActiveTabIndex(nextIndex);
-    }
-  };
-  const hasHighlightedRelations = record.relations.some((section) =>
-    section.items.some((item) => item.highlighted),
-  );
+		if (nextIndex >= 0) {
+			setActiveTabIndex(nextIndex);
+		}
+	};
+	const hasHighlightedRelations = record.relations.some((section) =>
+		section.items.some((item) => item.highlighted),
+	);
 
-  return (
-    <Shell>
-      <LeftPanel>
-        <RecordHeader>
-          <FaviconLogo
-            domain={record.logoDomain}
-            label={record.name}
-            size={48}
-          />
-          <RecordName>{record.name}</RecordName>
-          <RecordMeta>{record.createdAt}</RecordMeta>
-        </RecordHeader>
+	return (
+		<Shell>
+			<LeftPanel>
+				<RecordHeader>
+					<FaviconLogo
+						domain={record.logoDomain}
+						label={record.name}
+						size={48}
+					/>
+					<RecordName>{record.name}</RecordName>
+					<RecordMeta>{record.createdAt}</RecordMeta>
+				</RecordHeader>
 
-        <FieldList>
-          {record.fields.map((field, index) => (
-            <FieldRow $index={index} key={field.label}>
-              <FieldMeta>
-                <FieldIcon>
-                  {field.icon ? <FieldIconGlyph iconName={field.icon} /> : null}
-                </FieldIcon>
-                <FieldLabel>{field.label}</FieldLabel>
-              </FieldMeta>
-              <FieldValueRenderer field={field} />
-            </FieldRow>
-          ))}
-        </FieldList>
+				<FieldList>
+					{record.fields.map((field, index) => (
+						<FieldRow $index={index} key={field.label}>
+							<FieldMeta>
+								<FieldIcon>
+									{field.icon ? <FieldIconGlyph iconName={field.icon} /> : null}
+								</FieldIcon>
+								<FieldLabel>{field.label}</FieldLabel>
+							</FieldMeta>
+							<FieldValueRenderer field={field} />
+						</FieldRow>
+					))}
+				</FieldList>
 
-        {record.moreCount ? (
-          <MoreToggle>
-            <IconChevronDown size={12} stroke={THEME_LIGHT.icon.stroke.sm} />
-            More ({record.moreCount})
-          </MoreToggle>
-        ) : null}
+				{record.moreCount ? (
+					<MoreToggle>
+						<IconChevronDown size={12} stroke={THEME_LIGHT.icon.stroke.sm} />
+						More ({record.moreCount})
+					</MoreToggle>
+				) : null}
 
-        <Divider />
+				<Divider />
 
-        {record.relations.map((section) => (
-          <RelationSection key={section.title}>
-            <RelationTitle>
-              {section.title}
-              {section.count ? (
-                <RelationTitleCount>All ({section.count})</RelationTitleCount>
-              ) : null}
-            </RelationTitle>
-            {section.items.map((item) => (
-              <RelationItem
-                $highlighted={item.highlighted}
-                $muted={hasHighlightedRelations && !item.highlighted}
-                key={item.name}
-              >
-                {item.avatarUrl ? (
-                  <RelationAvatarImage
-                    alt={item.name}
-                    fetchPriority="low"
-                    src={item.avatarUrl}
-                  />
-                ) : (
-                  <FaviconLogo
-                    domain={item.domain}
-                    label={item.name}
-                    size={16}
-                  />
-                )}
-                <RelationName>{item.name}</RelationName>
-              </RelationItem>
-            ))}
-          </RelationSection>
-        ))}
-      </LeftPanel>
+				{record.relations.map((section) => (
+					<RelationSection key={section.title}>
+						<RelationTitle>
+							{section.title}
+							{section.count ? (
+								<RelationTitleCount>All ({section.count})</RelationTitleCount>
+							) : null}
+						</RelationTitle>
+						{section.items.map((item) => (
+							<RelationItem
+								$highlighted={item.highlighted}
+								$muted={hasHighlightedRelations && !item.highlighted}
+								key={item.name}
+							>
+								{item.avatarUrl ? (
+									<RelationAvatarImage
+										alt={item.name}
+										fetchPriority="low"
+										src={item.avatarUrl}
+									/>
+								) : (
+									<FaviconLogo
+										domain={item.domain}
+										label={item.name}
+										size={16}
+									/>
+								)}
+								<RelationName>{item.name}</RelationName>
+							</RelationItem>
+						))}
+					</RelationSection>
+				))}
+			</LeftPanel>
 
-      <CenterPanel>
-        <TabBar>
-          {recordTabs.LIST.map((tab) => {
-            const isActive = tab.label === activeTabLabel;
+			<CenterPanel>
+				<TabBar>
+					{recordTabs.LIST.map((tab) => {
+						const isActive = tab.label === activeTabLabel;
 
-            return (
-              <Tab
-                key={tab.label}
-                $active={isActive}
-                $clickable={isInteractive}
-                data-record-tab={tab.label}
-                onClick={() => handleTabClick(tab.label)}
-              >
-                <TabInner>
-                  <tab.Icon size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
-                  {tab.label}
-                </TabInner>
-              </Tab>
-            );
-          })}
-        </TabBar>
+						return (
+							<Tab
+								key={tab.label}
+								$active={isActive}
+								$clickable={isInteractive}
+								data-record-tab={tab.label}
+								onClick={() => handleTabClick(tab.label)}
+							>
+								<TabInner>
+									<tab.Icon size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
+									{tab.label}
+								</TabInner>
+							</Tab>
+						);
+					})}
+				</TabBar>
 
-        {activeTabLabel === 'Timeline' && timeline ? (
-          <RecordTimeline timeline={timeline} />
-        ) : null}
-        {activeTabLabel === 'Tasks' && tasks ? (
-          <RecordTasks tasks={tasks} />
-        ) : null}
-        {activeTabLabel === 'Notes' ? <RecordNotes notes={notes} /> : null}
-        {activeTabLabel === 'Files' && files ? (
-          <RecordFiles files={files} />
-        ) : null}
-        {activeTabLabel === 'Emails' && emails ? (
-          <RecordEmails emails={emails} />
-        ) : null}
-        {activeTabLabel === 'Calendar' && calendar ? (
-          <RecordCalendar calendar={calendar} />
-        ) : null}
-      </CenterPanel>
-    </Shell>
-  );
+				{activeTabLabel === "Timeline" && timeline ? (
+					<RecordTimeline timeline={timeline} />
+				) : null}
+				{activeTabLabel === "Tasks" && tasks ? (
+					<RecordTasks tasks={tasks} />
+				) : null}
+				{activeTabLabel === "Notes" ? <RecordNotes notes={notes} /> : null}
+				{activeTabLabel === "Files" && files ? (
+					<RecordFiles files={files} />
+				) : null}
+				{activeTabLabel === "Emails" && emails ? (
+					<RecordEmails emails={emails} />
+				) : null}
+				{activeTabLabel === "Calendar" && calendar ? (
+					<RecordCalendar calendar={calendar} />
+				) : null}
+			</CenterPanel>
+		</Shell>
+	);
 }

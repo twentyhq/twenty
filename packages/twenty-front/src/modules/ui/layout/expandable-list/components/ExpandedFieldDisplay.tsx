@@ -1,15 +1,15 @@
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { styled } from '@linaria/react';
-import { flip, FloatingPortal, offset, useFloating } from '@floating-ui/react';
-import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RootStackingContextZIndices } from "@/ui/layout/constants/RootStackingContextZIndices";
+import { OverlayContainer } from "@/ui/layout/overlay/components/OverlayContainer";
+import { useListenClickOutside } from "@/ui/utilities/pointer-event/hooks/useListenClickOutside";
+import { styled } from "@linaria/react";
+import { flip, FloatingPortal, offset, useFloating } from "@floating-ui/react";
+import { type ReactNode } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type ExpandedFieldDisplayProps = {
-  anchorElement?: HTMLElement;
-  children: ReactNode;
-  onClickOutside?: () => void;
+	anchorElement?: HTMLElement;
+	children: ReactNode;
+	onClickOutside?: () => void;
 };
 
 const StyledExpandedFieldContainer = styled.div`
@@ -31,43 +31,43 @@ const StyledContainer = styled.div`
 `;
 
 export const ExpandedFieldDisplay = ({
-  anchorElement,
-  children,
-  onClickOutside,
+	anchorElement,
+	children,
+	onClickOutside,
 }: ExpandedFieldDisplayProps) => {
-  const { refs, floatingStyles } = useFloating({
-    placement: 'bottom-start',
-    middleware: [
-      flip(),
-      offset({
-        mainAxis: -29,
-        crossAxis: -10,
-      }),
-    ],
-    elements: { reference: anchorElement },
-  });
+	const { refs, floatingStyles } = useFloating({
+		placement: "bottom-start",
+		middleware: [
+			flip(),
+			offset({
+				mainAxis: -29,
+				crossAxis: -10,
+			}),
+		],
+		elements: { reference: anchorElement },
+	});
 
-  useListenClickOutside({
-    refs: [refs.domReference, refs.floating],
-    callback: () => {
-      onClickOutside?.();
-    },
-    listenerId: 'expanded-field-display',
-  });
+	useListenClickOutside({
+		refs: [refs.domReference, refs.floating],
+		callback: () => {
+			onClickOutside?.();
+		},
+		listenerId: "expanded-field-display",
+	});
 
-  return (
-    <FloatingPortal>
-      <StyledContainer
-        ref={refs.setFloating}
-        style={floatingStyles}
-        data-globally-prevent-click-outside="true"
-      >
-        <OverlayContainer>
-          <StyledExpandedFieldContainer>
-            {children}
-          </StyledExpandedFieldContainer>
-        </OverlayContainer>
-      </StyledContainer>
-    </FloatingPortal>
-  );
+	return (
+		<FloatingPortal>
+			<StyledContainer
+				ref={refs.setFloating}
+				style={floatingStyles}
+				data-globally-prevent-click-outside="true"
+			>
+				<OverlayContainer>
+					<StyledExpandedFieldContainer>
+						{children}
+					</StyledExpandedFieldContainer>
+				</OverlayContainer>
+			</StyledContainer>
+		</FloatingPortal>
+	);
 };

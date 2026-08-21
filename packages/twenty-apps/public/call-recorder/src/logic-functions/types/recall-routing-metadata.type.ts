@@ -1,4 +1,4 @@
 export type RecallRoutingMetadata = {
-  twentyWorkspaceId: string;
-  twentyCallRecordingId: string;
+	twentyWorkspaceId: string;
+	twentyCallRecordingId: string;
 };

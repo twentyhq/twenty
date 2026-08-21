@@ -1,5 +1,5 @@
 export type ExtractedFile = {
-  filename: string;
-  fileId: string;
-  mimeType: string;
+	filename: string;
+	fileId: string;
+	mimeType: string;
 };

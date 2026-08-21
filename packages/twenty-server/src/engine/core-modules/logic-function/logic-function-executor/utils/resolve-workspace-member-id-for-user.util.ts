@@ -1,25 +1,25 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
+import { type FlatWorkspaceMemberMaps } from "src/engine/core-modules/user/types/flat-workspace-member-maps.type";
+import { type FlatWorkspaceMember } from "src/engine/core-modules/user/types/flat-workspace-member.type";
 
 export const resolveWorkspaceMemberIdForUser = ({
-  userId,
-  flatWorkspaceMemberMaps,
+	userId,
+	flatWorkspaceMemberMaps,
 }: {
-  userId: string;
-  flatWorkspaceMemberMaps: {
-    byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'deletedAt'>>>;
-    idByUserId: FlatWorkspaceMemberMaps['idByUserId'];
-  };
+	userId: string;
+	flatWorkspaceMemberMaps: {
+		byId: Partial<Record<string, Pick<FlatWorkspaceMember, "deletedAt">>>;
+		idByUserId: FlatWorkspaceMemberMaps["idByUserId"];
+	};
 }): string | null => {
-  const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[userId];
+	const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[userId];
 
-  if (!isDefined(workspaceMemberId)) {
-    return null;
-  }
+	if (!isDefined(workspaceMemberId)) {
+		return null;
+	}
 
-  const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+	const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
 
-  return isDefined(workspaceMember?.deletedAt) ? null : workspaceMemberId;
+	return isDefined(workspaceMember?.deletedAt) ? null : workspaceMemberId;
 };

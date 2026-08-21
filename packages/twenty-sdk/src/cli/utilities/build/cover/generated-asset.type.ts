@@ -1,4 +1,4 @@
 export type GeneratedAsset = {
-  relativePath: string;
-  content: Buffer;
+	relativePath: string;
+	content: Buffer;
 };

@@ -1,8 +1,8 @@
-import { type CommandMenuItemManifest } from 'twenty-shared/application';
+import { type CommandMenuItemManifest } from "twenty-shared/application";
 
 export type CommandMenuItemConfig = Omit<
-  CommandMenuItemManifest,
-  'conditionalAvailabilityExpression'
+	CommandMenuItemManifest,
+	"conditionalAvailabilityExpression"
 > & {
-  conditionalAvailabilityExpression?: boolean | string;
+	conditionalAvailabilityExpression?: boolean | string;
 };

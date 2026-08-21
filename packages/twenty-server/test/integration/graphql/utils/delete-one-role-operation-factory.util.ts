@@ -1,5 +1,5 @@
 export const deleteOneRoleOperationFactory = (roleId: string) => ({
-  query: `
+	query: `
     mutation DeleteOneRole {
         deleteOneRole(roleId: "${roleId}")
       }

@@ -1,25 +1,25 @@
-import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
-import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
-import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
-import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
-import { computeToggleAllFoldersState } from '@/settings/accounts/components/message-folders/utils/computeToggleAllFoldersState';
-import { useMyMessageFolders } from '@/settings/accounts/hooks/useMyMessageFolders';
-import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
-import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo, useState } from 'react';
-import { Label } from 'twenty-ui/typography';
-import { Checkbox, CheckboxSize } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type MessageFolder } from "@/accounts/types/MessageFolder";
+import { SettingsMessageFoldersEmptyStateCard } from "@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard";
+import { SettingsMessageFoldersSkeletonLoader } from "@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader";
+import { SettingsMessageFoldersTreeItem } from "@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem";
+import { computeMessageFolderTree } from "@/settings/accounts/components/message-folders/utils/computeMessageFolderTree";
+import { computeToggleAllFoldersState } from "@/settings/accounts/components/message-folders/utils/computeToggleAllFoldersState";
+import { useMyMessageFolders } from "@/settings/accounts/hooks/useMyMessageFolders";
+import { useUpdateMessageFoldersSyncStatus } from "@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus";
+import { settingsAccountsSelectedMessageChannelState } from "@/settings/accounts/states/settingsAccountsSelectedMessageChannelState";
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { SettingsTextInput } from "@/ui/input/components/SettingsTextInput";
+import { Table } from "@/ui/layout/table/components/Table";
+import { TableCell } from "@/ui/layout/table/components/TableCell";
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { useMemo, useState } from "react";
+import { Label } from "twenty-ui/typography";
+import { Checkbox, CheckboxSize } from "twenty-ui/input";
+import { Section } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledTreeList = styled.ul`
   list-style: none;
@@ -60,122 +60,122 @@ const StyledLabelContainer = styled.span`
 `;
 
 export const SettingsAccountsMessageFoldersCard = () => {
-  const { t } = useLingui();
-  const [search, setSearch] = useState('');
+	const { t } = useLingui();
+	const [search, setSearch] = useState("");
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+	const { enqueueErrorSnackBar } = useSnackBar();
 
-  const settingsAccountsSelectedMessageChannel = useAtomStateValue(
-    settingsAccountsSelectedMessageChannelState,
-  );
+	const settingsAccountsSelectedMessageChannel = useAtomStateValue(
+		settingsAccountsSelectedMessageChannelState,
+	);
 
-  const { updateMessageFoldersSyncStatus } =
-    useUpdateMessageFoldersSyncStatus();
+	const { updateMessageFoldersSyncStatus } =
+		useUpdateMessageFoldersSyncStatus();
 
-  const { messageFolders, loading } = useMyMessageFolders(
-    settingsAccountsSelectedMessageChannel?.id,
-  );
+	const { messageFolders, loading } = useMyMessageFolders(
+		settingsAccountsSelectedMessageChannel?.id,
+	);
 
-  const filteredMessageFolders = useMemo(() => {
-    return messageFolders.filter((folder) =>
-      folder.name.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [messageFolders, search]);
+	const filteredMessageFolders = useMemo(() => {
+		return messageFolders.filter((folder) =>
+			folder.name.toLowerCase().includes(search.toLowerCase()),
+		);
+	}, [messageFolders, search]);
 
-  const folderTreeNodes = useMemo(() => {
-    return computeMessageFolderTree(filteredMessageFolders);
-  }, [filteredMessageFolders]);
+	const folderTreeNodes = useMemo(() => {
+		return computeMessageFolderTree(filteredMessageFolders);
+	}, [filteredMessageFolders]);
 
-  const { allSynced, messageFolderIds, targetSyncState } = useMemo(
-    () => computeToggleAllFoldersState(messageFolders),
-    [messageFolders],
-  );
+	const { allSynced, messageFolderIds, targetSyncState } = useMemo(
+		() => computeToggleAllFoldersState(messageFolders),
+		[messageFolders],
+	);
 
-  const handleToggleAllFolders = async () => {
-    if (messageFolderIds.length === 0) return;
+	const handleToggleAllFolders = async () => {
+		if (messageFolderIds.length === 0) return;
 
-    try {
-      await updateMessageFoldersSyncStatus({
-        messageFolderIds,
-        isSynced: targetSyncState,
-      });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
-    }
-  };
+		try {
+			await updateMessageFoldersSyncStatus({
+				messageFolderIds,
+				isSynced: targetSyncState,
+			});
+		} catch (error) {
+			enqueueErrorSnackBar({
+				...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+			});
+		}
+	};
 
-  const handleToggleFolder = async (folderToToggle: MessageFolder) => {
-    const isSynced = !folderToToggle.isSynced;
+	const handleToggleFolder = async (folderToToggle: MessageFolder) => {
+		const isSynced = !folderToToggle.isSynced;
 
-    try {
-      await updateMessageFoldersSyncStatus({
-        messageFolderIds: [folderToToggle.id],
-        isSynced,
-      });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
-    }
-  };
+		try {
+			await updateMessageFoldersSyncStatus({
+				messageFolderIds: [folderToToggle.id],
+				isSynced,
+			});
+		} catch (error) {
+			enqueueErrorSnackBar({
+				...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+			});
+		}
+	};
 
-  if (loading) {
-    return (
-      <Section>
-        <Table>
-          <SettingsMessageFoldersSkeletonLoader />
-        </Table>
-      </Section>
-    );
-  }
+	if (loading) {
+		return (
+			<Section>
+				<Table>
+					<SettingsMessageFoldersSkeletonLoader />
+				</Table>
+			</Section>
+		);
+	}
 
-  if (messageFolders.length === 0) {
-    return <SettingsMessageFoldersEmptyStateCard />;
-  }
+	if (messageFolders.length === 0) {
+		return <SettingsMessageFoldersEmptyStateCard />;
+	}
 
-  return (
-    <Section>
-      <Table>
-        <StyledSearchInputContainer>
-          <SettingsTextInput
-            placeholder={t`Search folders...`}
-            value={search}
-            onChange={setSearch}
-            instanceId={'message-folders-search'}
-          />
-        </StyledSearchInputContainer>
-        <StyledLabelContainer>
-          <Label>{t`Folders`}</Label>
-        </StyledLabelContainer>
+	return (
+		<Section>
+			<Table>
+				<StyledSearchInputContainer>
+					<SettingsTextInput
+						placeholder={t`Search folders...`}
+						value={search}
+						onChange={setSearch}
+						instanceId={"message-folders-search"}
+					/>
+				</StyledSearchInputContainer>
+				<StyledLabelContainer>
+					<Label>{t`Folders`}</Label>
+				</StyledLabelContainer>
 
-        <StyledSectionHeader>
-          <Label>{t`Toggle all folders`}</Label>
-          <TableCell
-            align="right"
-            padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
-          >
-            <Checkbox
-              checked={allSynced}
-              onChange={handleToggleAllFolders}
-              size={CheckboxSize.Small}
-            />
-          </TableCell>
-        </StyledSectionHeader>
+				<StyledSectionHeader>
+					<Label>{t`Toggle all folders`}</Label>
+					<TableCell
+						align="right"
+						padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+					>
+						<Checkbox
+							checked={allSynced}
+							onChange={handleToggleAllFolders}
+							size={CheckboxSize.Small}
+						/>
+					</TableCell>
+				</StyledSectionHeader>
 
-        <StyledFoldersContainer>
-          <StyledTreeList>
-            {folderTreeNodes.map((rootFolder) => (
-              <SettingsMessageFoldersTreeItem
-                key={rootFolder.folder.id}
-                folderTreeNode={rootFolder}
-                onToggleFolder={handleToggleFolder}
-              />
-            ))}
-          </StyledTreeList>
-        </StyledFoldersContainer>
-      </Table>
-    </Section>
-  );
+				<StyledFoldersContainer>
+					<StyledTreeList>
+						{folderTreeNodes.map((rootFolder) => (
+							<SettingsMessageFoldersTreeItem
+								key={rootFolder.folder.id}
+								folderTreeNode={rootFolder}
+								onToggleFolder={handleToggleFolder}
+							/>
+						))}
+					</StyledTreeList>
+				</StyledFoldersContainer>
+			</Table>
+		</Section>
+	);
 };

@@ -1,1 +1,1 @@
-export type ResizablePanelSide = 'left' | 'right';
+export type ResizablePanelSide = "left" | "right";

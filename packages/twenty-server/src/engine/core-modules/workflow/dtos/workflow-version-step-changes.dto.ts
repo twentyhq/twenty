@@ -1,13 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import GraphQLJSON from 'graphql-type-json';
-import { Difference } from 'microdiff';
+import GraphQLJSON from "graphql-type-json";
+import { Difference } from "microdiff";
 
-@ObjectType('WorkflowVersionStepChanges')
+@ObjectType("WorkflowVersionStepChanges")
 export class WorkflowVersionStepChangesDTO {
-  @Field(() => GraphQLJSON, { nullable: true })
-  triggerDiff?: Difference[];
+	@Field(() => GraphQLJSON, { nullable: true })
+	triggerDiff?: Difference[];
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  stepsDiff?: Difference[];
+	@Field(() => GraphQLJSON, { nullable: true })
+	stepsDiff?: Difference[];
 }

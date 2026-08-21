@@ -1,8 +1,8 @@
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { NotificationCounter } from 'twenty-ui/data-display';
+import { originalDragSelectionComponentState } from "@/object-record/record-drag/states/originalDragSelectionComponentState";
+import { useRecordIndexContextOrThrow } from "@/object-record/record-index/contexts/RecordIndexContext";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { styled } from "@linaria/react";
+import { NotificationCounter } from "twenty-ui/data-display";
 
 const StyledNotificationCounterContainer = styled.div`
   left: -7px;
@@ -12,24 +12,24 @@ const StyledNotificationCounterContainer = styled.div`
 `;
 
 export const RecordTableRowMultiDragCounterChip = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
+	const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const originalDragSelection = useAtomComponentStateValue(
-    originalDragSelectionComponentState,
-    recordIndexId,
-  );
+	const originalDragSelection = useAtomComponentStateValue(
+		originalDragSelectionComponentState,
+		recordIndexId,
+	);
 
-  const selectedCount = originalDragSelection.length ?? 0;
+	const selectedCount = originalDragSelection.length ?? 0;
 
-  const shouldShow = selectedCount > 1;
+	const shouldShow = selectedCount > 1;
 
-  if (!shouldShow) {
-    return null;
-  }
+	if (!shouldShow) {
+		return null;
+	}
 
-  return (
-    <StyledNotificationCounterContainer>
-      <NotificationCounter count={selectedCount} />
-    </StyledNotificationCounterContainer>
-  );
+	return (
+		<StyledNotificationCounterContainer>
+			<NotificationCounter count={selectedCount} />
+		</StyledNotificationCounterContainer>
+	);
 };

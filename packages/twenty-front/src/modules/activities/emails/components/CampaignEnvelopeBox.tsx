@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 // Widest label the campaign rows use ("Unsubscribe topic"), so every value
 // starts on the same column.
-export const CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH = '116px';
+export const CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH = "116px";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -37,24 +37,24 @@ const StyledRows = styled.div`
 `;
 
 type CampaignEnvelopeBoxProps = {
-  width: string;
-  children: ReactNode;
-  below?: ReactNode;
-  onBlur?: () => void;
+	width: string;
+	children: ReactNode;
+	below?: ReactNode;
+	onBlur?: () => void;
 };
 
 // The shell both campaign headers share, so the draft and the sent view line up
 // on the same column and cannot drift apart.
 export const CampaignEnvelopeBox = ({
-  width,
-  children,
-  below,
-  onBlur,
+	width,
+	children,
+	below,
+	onBlur,
 }: CampaignEnvelopeBoxProps) => (
-  <StyledContainer onBlur={onBlur}>
-    <StyledColumn $width={width}>
-      <StyledRows>{children}</StyledRows>
-      {below}
-    </StyledColumn>
-  </StyledContainer>
+	<StyledContainer onBlur={onBlur}>
+		<StyledColumn $width={width}>
+			<StyledRows>{children}</StyledRows>
+			{below}
+		</StyledColumn>
+	</StyledContainer>
 );

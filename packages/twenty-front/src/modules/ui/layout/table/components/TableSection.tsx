@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { type ReactNode, useContext, useState } from 'react';
-import { TableBody } from './TableBody';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode, useContext, useState } from "react";
+import { TableBody } from "./TableBody";
+import { IconChevronDown, IconChevronUp } from "twenty-ui/icon";
+import { Label } from "twenty-ui/typography";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type TableSectionProps = {
-  children: ReactNode;
-  isInitiallyExpanded?: boolean;
-  title: string;
+	children: ReactNode;
+	isInitiallyExpanded?: boolean;
+	title: string;
 };
 
 const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
@@ -24,7 +24,7 @@ const StyledSectionHeader = styled.div<{ isExpanded: boolean }>`
 `;
 
 const StyledSection = styled.div<{ isExpanded: boolean }>`
-  max-height: ${({ isExpanded }) => (isExpanded ? 'fit-content' : '0')};
+  max-height: ${({ isExpanded }) => (isExpanded ? "fit-content" : "0")};
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   overflow: hidden;
   transition:
@@ -37,42 +37,42 @@ const StyledSectionContentContainer = styled.div`
 `;
 
 export const TableSection = ({
-  children,
-  isInitiallyExpanded = true,
-  title,
+	children,
+	isInitiallyExpanded = true,
+	title,
 }: TableSectionProps) => {
-  const { theme } = useContext(ThemeContext);
-  const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
+	const { theme } = useContext(ThemeContext);
+	const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
-  const handleToggleSection = () =>
-    setIsExpanded((previousIsExpanded) => !previousIsExpanded);
+	const handleToggleSection = () =>
+		setIsExpanded((previousIsExpanded) => !previousIsExpanded);
 
-  return (
-    <>
-      <StyledSectionHeader
-        isExpanded={isExpanded}
-        onClick={handleToggleSection}
-      >
-        <Label>{title}</Label>
-        {isExpanded ? (
-          <IconChevronUp
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.light}
-          />
-        ) : (
-          <IconChevronDown
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.light}
-          />
-        )}
-      </StyledSectionHeader>
-      <StyledSection isExpanded={isExpanded}>
-        <StyledSectionContentContainer>
-          <TableBody>{children}</TableBody>
-        </StyledSectionContentContainer>
-      </StyledSection>
-    </>
-  );
+	return (
+		<>
+			<StyledSectionHeader
+				isExpanded={isExpanded}
+				onClick={handleToggleSection}
+			>
+				<Label>{title}</Label>
+				{isExpanded ? (
+					<IconChevronUp
+						size={theme.icon.size.md}
+						stroke={theme.icon.stroke.sm}
+						color={theme.font.color.light}
+					/>
+				) : (
+					<IconChevronDown
+						size={theme.icon.size.md}
+						stroke={theme.icon.stroke.sm}
+						color={theme.font.color.light}
+					/>
+				)}
+			</StyledSectionHeader>
+			<StyledSection isExpanded={isExpanded}>
+				<StyledSectionContentContainer>
+					<TableBody>{children}</TableBody>
+				</StyledSectionContentContainer>
+			</StyledSection>
+		</>
+	);
 };

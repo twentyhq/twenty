@@ -1,22 +1,22 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type DeleteOneObjectFactoryInput = {
-  idToDelete: string;
+	idToDelete: string;
 };
 
 export const deleteOneObjectMetadataQueryFactory = ({
-  input,
-  gqlFields = 'id',
+	input,
+	gqlFields = "id",
 }: PerformMetadataQueryParams<DeleteOneObjectFactoryInput>) => ({
-  query: gql`
+	query: gql`
         mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
           deleteOneObject(input: { id: $idToDelete }) {
             ${gqlFields}
         }
       }
       `,
-  variables: {
-    idToDelete: input.idToDelete,
-  },
+	variables: {
+		idToDelete: input.idToDelete,
+	},
 });

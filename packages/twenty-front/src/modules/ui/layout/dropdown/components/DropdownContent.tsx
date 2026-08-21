@@ -1,9 +1,9 @@
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { styled } from '@linaria/react';
-import { type Ref, forwardRef } from 'react';
+import { GenericDropdownContentWidth } from "@/ui/layout/dropdown/constants/GenericDropdownContentWidth";
+import { styled } from "@linaria/react";
+import { type Ref, forwardRef } from "react";
 
 const StyledInternalBaseDropdownContent = styled.div<{
-  widthInPixels: number;
+	widthInPixels: number;
 }>`
   display: flex;
 
@@ -13,25 +13,25 @@ const StyledInternalBaseDropdownContent = styled.div<{
 `;
 
 export const DropdownContent = forwardRef(
-  (
-    {
-      children,
-      widthInPixels = GenericDropdownContentWidth.Medium,
-      selectDisabled = false,
-    }: React.PropsWithChildren<{
-      widthInPixels?: number;
-      selectDisabled?: boolean;
-    }>,
-    ref: Ref<HTMLDivElement>,
-  ) => {
-    return (
-      <StyledInternalBaseDropdownContent
-        data-select-disable={selectDisabled}
-        widthInPixels={widthInPixels}
-        ref={ref}
-      >
-        {children}
-      </StyledInternalBaseDropdownContent>
-    );
-  },
+	(
+		{
+			children,
+			widthInPixels = GenericDropdownContentWidth.Medium,
+			selectDisabled = false,
+		}: React.PropsWithChildren<{
+			widthInPixels?: number;
+			selectDisabled?: boolean;
+		}>,
+		ref: Ref<HTMLDivElement>,
+	) => {
+		return (
+			<StyledInternalBaseDropdownContent
+				data-select-disable={selectDisabled}
+				widthInPixels={widthInPixels}
+				ref={ref}
+			>
+				{children}
+			</StyledInternalBaseDropdownContent>
+		);
+	},
 );

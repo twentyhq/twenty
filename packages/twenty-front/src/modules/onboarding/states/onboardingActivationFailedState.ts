@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const onboardingActivationFailedState = createAtomState<boolean>({
-  key: 'onboardingActivationFailedState',
-  defaultValue: false,
+	key: "onboardingActivationFailedState",
+	defaultValue: false,
 });

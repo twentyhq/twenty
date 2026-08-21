@@ -1,10 +1,10 @@
-import { OnboardingImportPreviewCompanies } from '@/onboarding/components/import-contacts/OnboardingImportPreviewCompanies';
-import { OnboardingImportPreviewEmails } from '@/onboarding/components/import-contacts/OnboardingImportPreviewEmails';
-import { OnboardingImportPreviewSyncBadge } from '@/onboarding/components/import-contacts/OnboardingImportPreviewSyncBadge';
-import { OnboardingImportPrivacyNote } from '@/onboarding/components/import-contacts/OnboardingImportPrivacyNote';
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OnboardingImportPreviewCompanies } from "@/onboarding/components/import-contacts/OnboardingImportPreviewCompanies";
+import { OnboardingImportPreviewEmails } from "@/onboarding/components/import-contacts/OnboardingImportPreviewEmails";
+import { OnboardingImportPreviewSyncBadge } from "@/onboarding/components/import-contacts/OnboardingImportPreviewSyncBadge";
+import { OnboardingImportPrivacyNote } from "@/onboarding/components/import-contacts/OnboardingImportPrivacyNote";
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from "@/onboarding/constants/OnboardingContentBlockWidth";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const PREVIEW_HEIGHT = 198;
 
@@ -33,12 +33,12 @@ const StyledColumns = styled.div`
 `;
 
 export const OnboardingImportPreview = () => (
-  <StyledCard>
-    <StyledColumns>
-      <OnboardingImportPreviewEmails />
-      <OnboardingImportPreviewCompanies />
-      <OnboardingImportPreviewSyncBadge />
-    </StyledColumns>
-    <OnboardingImportPrivacyNote />
-  </StyledCard>
+	<StyledCard>
+		<StyledColumns>
+			<OnboardingImportPreviewEmails />
+			<OnboardingImportPreviewCompanies />
+			<OnboardingImportPreviewSyncBadge />
+		</StyledColumns>
+		<OnboardingImportPrivacyNote />
+	</StyledCard>
 );

@@ -1,12 +1,12 @@
-import { clearAllSessionLocalStorageKeys } from '@/auth/utils/clearAllSessionLocalStorageKeys';
-import { createStore } from 'jotai';
+import { clearAllSessionLocalStorageKeys } from "@/auth/utils/clearAllSessionLocalStorageKeys";
+import { createStore } from "jotai";
 
 export let jotaiStore = createStore();
 
 export const resetJotaiStore = () => {
-  clearAllSessionLocalStorageKeys();
+	clearAllSessionLocalStorageKeys();
 
-  jotaiStore = createStore();
+	jotaiStore = createStore();
 
-  return jotaiStore;
+	return jotaiStore;
 };

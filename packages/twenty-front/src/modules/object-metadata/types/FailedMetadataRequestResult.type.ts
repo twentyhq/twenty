@@ -1,1 +1,1 @@
-export type FailedMetadataRequestResult = { status: 'failed'; error: unknown };
+export type FailedMetadataRequestResult = { status: "failed"; error: unknown };

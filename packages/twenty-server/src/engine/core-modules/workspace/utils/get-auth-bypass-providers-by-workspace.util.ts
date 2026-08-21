@@ -1,25 +1,25 @@
-import { type AuthBypassProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type AuthBypassProvidersDTO } from "src/engine/core-modules/workspace/dtos/public-workspace-data.dto";
+import { type WorkspaceEntity } from "src/engine/core-modules/workspace/workspace.entity";
 
 export const getAuthBypassProvidersByWorkspace = ({
-  workspace,
-  systemEnabledProviders,
+	workspace,
+	systemEnabledProviders,
 }: {
-  workspace: Pick<
-    WorkspaceEntity,
-    | 'isGoogleAuthBypassEnabled'
-    | 'isPasswordAuthBypassEnabled'
-    | 'isMicrosoftAuthBypassEnabled'
-  >;
-  systemEnabledProviders: AuthBypassProvidersDTO;
+	workspace: Pick<
+		WorkspaceEntity,
+		| "isGoogleAuthBypassEnabled"
+		| "isPasswordAuthBypassEnabled"
+		| "isMicrosoftAuthBypassEnabled"
+	>;
+	systemEnabledProviders: AuthBypassProvidersDTO;
 }) => {
-  return {
-    google:
-      workspace.isGoogleAuthBypassEnabled && systemEnabledProviders.google,
-    password:
-      workspace.isPasswordAuthBypassEnabled && systemEnabledProviders.password,
-    microsoft:
-      workspace.isMicrosoftAuthBypassEnabled &&
-      systemEnabledProviders.microsoft,
-  };
+	return {
+		google:
+			workspace.isGoogleAuthBypassEnabled && systemEnabledProviders.google,
+		password:
+			workspace.isPasswordAuthBypassEnabled && systemEnabledProviders.password,
+		microsoft:
+			workspace.isMicrosoftAuthBypassEnabled &&
+			systemEnabledProviders.microsoft,
+	};
 };

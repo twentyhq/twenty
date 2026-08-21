@@ -1,27 +1,27 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 import {
-  IconCalendar,
-  IconDots,
-  IconFile,
-  IconFileText,
-  IconPlus,
-  IconTable,
-} from '@tabler/icons-react';
+	IconCalendar,
+	IconDots,
+	IconFile,
+	IconFileText,
+	IconPlus,
+	IconTable,
+} from "@tabler/icons-react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { type RecordFile } from '../../types';
-import { RECORD_PANEL_CHROME } from './RecordPanelChrome';
+import { type RecordFile } from "../../types";
+import { RECORD_PANEL_CHROME } from "./RecordPanelChrome";
 
 const FILE_ICONS: Record<
-  RecordFile['category'],
-  { Icon: typeof IconFile; color: string }
+	RecordFile["category"],
+	{ Icon: typeof IconFile; color: string }
 > = {
-  pdf: { Icon: IconFileText, color: THEME_LIGHT.accent.accent9 },
-  doc: { Icon: IconFileText, color: THEME_LIGHT.accent.accent9 },
-  sheet: { Icon: IconTable, color: APP_PREVIEW_TONES.recordFileSheetInk },
-  other: { Icon: IconFile, color: THEME_LIGHT.font.color.tertiary },
+	pdf: { Icon: IconFileText, color: THEME_LIGHT.accent.accent9 },
+	doc: { Icon: IconFileText, color: THEME_LIGHT.accent.accent9 },
+	sheet: { Icon: IconTable, color: APP_PREVIEW_TONES.recordFileSheetInk },
+	other: { Icon: IconFile, color: THEME_LIGHT.font.color.tertiary },
 };
 
 const FileIconChip = styled.span<{ $color: string }>`
@@ -69,50 +69,50 @@ const FileDots = styled.span`
 `;
 
 const {
-  ActivityRowBox,
-  ListCard,
-  TabAddButton,
-  TabHeader,
-  TabHeaderCount,
-  TabHeaderLabel,
-  TabHeaderTitle,
-  TabSection,
+	ActivityRowBox,
+	ListCard,
+	TabAddButton,
+	TabHeader,
+	TabHeaderCount,
+	TabHeaderLabel,
+	TabHeaderTitle,
+	TabSection,
 } = RECORD_PANEL_CHROME;
 
 export function RecordFiles({ files }: { files: RecordFile[] }) {
-  return (
-    <TabSection>
-      <TabHeader>
-        <TabHeaderLabel>
-          <TabHeaderTitle>All</TabHeaderTitle>
-          <TabHeaderCount>{files.length}</TabHeaderCount>
-        </TabHeaderLabel>
-        <TabAddButton>
-          <IconPlus size={14} stroke={2} />
-          Add file
-        </TabAddButton>
-      </TabHeader>
-      <ListCard>
-        {files.map((file, index) => {
-          const { Icon, color } = FILE_ICONS[file.category];
+	return (
+		<TabSection>
+			<TabHeader>
+				<TabHeaderLabel>
+					<TabHeaderTitle>All</TabHeaderTitle>
+					<TabHeaderCount>{files.length}</TabHeaderCount>
+				</TabHeaderLabel>
+				<TabAddButton>
+					<IconPlus size={14} stroke={2} />
+					Add file
+				</TabAddButton>
+			</TabHeader>
+			<ListCard>
+				{files.map((file, index) => {
+					const { Icon, color } = FILE_ICONS[file.category];
 
-          return (
-            <ActivityRowBox $index={index} key={file.id}>
-              <FileIconChip $color={color}>
-                <Icon size={14} stroke={THEME_LIGHT.icon.stroke.sm} />
-              </FileIconChip>
-              <FileName>{file.name}</FileName>
-              <FileDate>
-                <IconCalendar size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
-                <FileDateText>{file.date}</FileDateText>
-              </FileDate>
-              <FileDots>
-                <IconDots size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
-              </FileDots>
-            </ActivityRowBox>
-          );
-        })}
-      </ListCard>
-    </TabSection>
-  );
+					return (
+						<ActivityRowBox $index={index} key={file.id}>
+							<FileIconChip $color={color}>
+								<Icon size={14} stroke={THEME_LIGHT.icon.stroke.sm} />
+							</FileIconChip>
+							<FileName>{file.name}</FileName>
+							<FileDate>
+								<IconCalendar size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
+								<FileDateText>{file.date}</FileDateText>
+							</FileDate>
+							<FileDots>
+								<IconDots size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
+							</FileDots>
+						</ActivityRowBox>
+					);
+				})}
+			</ListCard>
+		</TabSection>
+	);
 }

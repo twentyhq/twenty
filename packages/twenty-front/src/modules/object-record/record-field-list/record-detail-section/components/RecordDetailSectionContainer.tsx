@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Section } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledRecordDetailSectionWrapper = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
@@ -12,16 +12,16 @@ const StyledRecordDetailSectionWrapper = styled.div`
 `;
 
 const StyledHeader = styled.header<{
-  isDropdownOpen?: boolean;
-  areRecordsAvailable?: boolean;
-  ariaLabel?: string;
+	isDropdownOpen?: boolean;
+	areRecordsAvailable?: boolean;
+	ariaLabel?: string;
 }>`
   align-items: center;
   display: flex;
   height: 24px;
   justify-content: space-between;
   margin-bottom: ${({ areRecordsAvailable }) =>
-    areRecordsAvailable ? themeCssVariables.spacing[2] : '0'};
+		areRecordsAvailable ? themeCssVariables.spacing[2] : "0"};
   padding-left: ${themeCssVariables.spacing[3]};
   padding-right: ${themeCssVariables.spacing[2]};
 `;
@@ -49,48 +49,48 @@ const StyledLinkContainer = styled.span`
 `;
 
 type RecordDetailSectionContainerProps = {
-  children: React.ReactNode;
-  title: string;
-  link?: { to: string; label: string };
-  rightAdornment?: React.ReactNode;
-  hideRightAdornmentOnMouseLeave?: boolean;
-  areRecordsAvailable?: boolean;
-  dataTestId?: string;
+	children: React.ReactNode;
+	title: string;
+	link?: { to: string; label: string };
+	rightAdornment?: React.ReactNode;
+	hideRightAdornmentOnMouseLeave?: boolean;
+	areRecordsAvailable?: boolean;
+	dataTestId?: string;
 };
 
 export const RecordDetailSectionContainer = ({
-  children,
-  title,
-  link,
-  rightAdornment,
-  hideRightAdornmentOnMouseLeave = true,
-  areRecordsAvailable = false,
-  dataTestId,
+	children,
+	title,
+	link,
+	rightAdornment,
+	hideRightAdornmentOnMouseLeave = true,
+	areRecordsAvailable = false,
+	dataTestId,
 }: RecordDetailSectionContainerProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  return (
-    <StyledRecordDetailSectionWrapper>
-      <Section>
-        <StyledHeader
-          areRecordsAvailable={areRecordsAvailable}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          data-testid={dataTestId}
-        >
-          <StyledTitle>
-            <StyledTitleLabel>{title}</StyledTitleLabel>
-            {link && (
-              <StyledLinkContainer>
-                <Link to={link.to}>{link.label}</Link>
-              </StyledLinkContainer>
-            )}
-          </StyledTitle>
-          {hideRightAdornmentOnMouseLeave && !isHovered && areRecordsAvailable
-            ? null
-            : rightAdornment}
-        </StyledHeader>
-        {children}
-      </Section>
-    </StyledRecordDetailSectionWrapper>
-  );
+	const [isHovered, setIsHovered] = useState(false);
+	return (
+		<StyledRecordDetailSectionWrapper>
+			<Section>
+				<StyledHeader
+					areRecordsAvailable={areRecordsAvailable}
+					onMouseEnter={() => setIsHovered(true)}
+					onMouseLeave={() => setIsHovered(false)}
+					data-testid={dataTestId}
+				>
+					<StyledTitle>
+						<StyledTitleLabel>{title}</StyledTitleLabel>
+						{link && (
+							<StyledLinkContainer>
+								<Link to={link.to}>{link.label}</Link>
+							</StyledLinkContainer>
+						)}
+					</StyledTitle>
+					{hideRightAdornmentOnMouseLeave && !isHovered && areRecordsAvailable
+						? null
+						: rightAdornment}
+				</StyledHeader>
+				{children}
+			</Section>
+		</StyledRecordDetailSectionWrapper>
+	);
 };

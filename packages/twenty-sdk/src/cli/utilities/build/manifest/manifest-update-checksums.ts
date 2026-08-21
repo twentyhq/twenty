@@ -1,125 +1,125 @@
-import { relative } from 'path';
-import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
-import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { relative } from "path";
+import { type Manifest, OUTPUT_DIR } from "twenty-shared/application";
+import { FileFolder } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
 
-import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import type { EntityFilePaths } from "@/cli/utilities/build/manifest/manifest-extract-config";
 
 export type ManifestBuildResult = {
-  manifest: Manifest | null;
-  filePaths: EntityFilePaths;
-  error?: string;
+	manifest: Manifest | null;
+	filePaths: EntityFilePaths;
+	error?: string;
 };
 
 export type UpdateManifestChecksumParams = {
-  manifest: Manifest;
-  builtFileInfos: Map<
-    string,
-    {
-      checksum: string;
-      builtPath: string;
-      fileFolder: FileFolder;
-      usesSdkClient?: boolean;
-    }
-  >;
+	manifest: Manifest;
+	builtFileInfos: Map<
+		string,
+		{
+			checksum: string;
+			builtPath: string;
+			fileFolder: FileFolder;
+			usesSdkClient?: boolean;
+		}
+	>;
 };
 
 export const manifestUpdateChecksums = ({
-  manifest,
-  builtFileInfos,
+	manifest,
+	builtFileInfos,
 }: UpdateManifestChecksumParams): Manifest => {
-  let result = structuredClone(manifest);
-  for (const [
-    builtPath,
-    { fileFolder, checksum },
-  ] of builtFileInfos.entries()) {
-    const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
-    if (fileFolder === FileFolder.BuiltLogicFunction) {
-      const logicFunctions = result.logicFunctions;
-      const fnIndex = logicFunctions.findIndex(
-        (f) => f.builtHandlerPath === rootBuiltPath,
-      );
-      if (fnIndex === -1) {
-        continue;
-      }
-      result = {
-        ...result,
-        logicFunctions: logicFunctions.map((fn, index) =>
-          index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
-        ),
-      };
-    }
+	let result = structuredClone(manifest);
+	for (const [
+		builtPath,
+		{ fileFolder, checksum },
+	] of builtFileInfos.entries()) {
+		const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
+		if (fileFolder === FileFolder.BuiltLogicFunction) {
+			const logicFunctions = result.logicFunctions;
+			const fnIndex = logicFunctions.findIndex(
+				(f) => f.builtHandlerPath === rootBuiltPath,
+			);
+			if (fnIndex === -1) {
+				continue;
+			}
+			result = {
+				...result,
+				logicFunctions: logicFunctions.map((fn, index) =>
+					index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+				),
+			};
+		}
 
-    if (fileFolder === FileFolder.PublicAsset) {
-      const assets = result.publicAssets;
-      const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
-      if (assetIndex === -1) {
-        continue;
-      }
-      result = {
-        ...result,
-        publicAssets: assets.map((asset, index) =>
-          index === assetIndex ? { ...asset, checksum } : asset,
-        ),
-      };
-      continue;
-    }
+		if (fileFolder === FileFolder.PublicAsset) {
+			const assets = result.publicAssets;
+			const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
+			if (assetIndex === -1) {
+				continue;
+			}
+			result = {
+				...result,
+				publicAssets: assets.map((asset, index) =>
+					index === assetIndex ? { ...asset, checksum } : asset,
+				),
+			};
+			continue;
+		}
 
-    if (fileFolder === FileFolder.BuiltFrontComponent) {
-      const sharedDependencies =
-        result.application.frontComponentSharedDependencies;
+		if (fileFolder === FileFolder.BuiltFrontComponent) {
+			const sharedDependencies =
+				result.application.frontComponentSharedDependencies;
 
-      if (
-        isDefined(sharedDependencies) &&
-        sharedDependencies.builtPath === rootBuiltPath
-      ) {
-        result = {
-          ...result,
-          application: {
-            ...result.application,
-            frontComponentSharedDependencies: {
-              ...sharedDependencies,
-              builtChecksum: checksum,
-            },
-          },
-        };
-        continue;
-      }
+			if (
+				isDefined(sharedDependencies) &&
+				sharedDependencies.builtPath === rootBuiltPath
+			) {
+				result = {
+					...result,
+					application: {
+						...result.application,
+						frontComponentSharedDependencies: {
+							...sharedDependencies,
+							builtChecksum: checksum,
+						},
+					},
+				};
+				continue;
+			}
 
-      const frontComponents = result.frontComponents;
-      const componentIndex =
-        frontComponents.findIndex(
-          (c) => c.builtComponentPath === rootBuiltPath,
-        ) ?? -1;
-      if (componentIndex === -1) {
-        continue;
-      }
-      const builtFileInfo = builtFileInfos.get(builtPath);
+			const frontComponents = result.frontComponents;
+			const componentIndex =
+				frontComponents.findIndex(
+					(c) => c.builtComponentPath === rootBuiltPath,
+				) ?? -1;
+			if (componentIndex === -1) {
+				continue;
+			}
+			const builtFileInfo = builtFileInfos.get(builtPath);
 
-      result = {
-        ...result,
-        frontComponents: frontComponents.map((component, index) =>
-          index === componentIndex
-            ? {
-                ...component,
-                builtComponentChecksum: checksum,
-                usesSdkClient: builtFileInfo?.usesSdkClient ?? false,
-              }
-            : component,
-        ),
-      };
-    }
+			result = {
+				...result,
+				frontComponents: frontComponents.map((component, index) =>
+					index === componentIndex
+						? {
+								...component,
+								builtComponentChecksum: checksum,
+								usesSdkClient: builtFileInfo?.usesSdkClient ?? false,
+							}
+						: component,
+				),
+			};
+		}
 
-    if (fileFolder === FileFolder.Dependencies) {
-      if (rootBuiltPath === 'package.json') {
-        result.application.packageJsonChecksum = checksum;
-      }
+		if (fileFolder === FileFolder.Dependencies) {
+			if (rootBuiltPath === "package.json") {
+				result.application.packageJsonChecksum = checksum;
+			}
 
-      if (rootBuiltPath === 'yarn.lock') {
-        result.application.yarnLockChecksum = checksum;
-      }
-    }
-  }
+			if (rootBuiltPath === "yarn.lock") {
+				result.application.yarnLockChecksum = checksum;
+			}
+		}
+	}
 
-  return result;
+	return result;
 };

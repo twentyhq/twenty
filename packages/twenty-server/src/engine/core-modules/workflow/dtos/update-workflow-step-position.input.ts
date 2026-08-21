@@ -1,10 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class WorkflowStepPositionInput {
-  @Field(() => Number)
-  x: number;
+	@Field(() => Number)
+	x: number;
 
-  @Field(() => Number)
-  y: number;
+	@Field(() => Number)
+	y: number;
 }

@@ -1,6 +1,6 @@
-import { type ViewSort } from '~/generated-metadata/graphql';
+import { type ViewSort } from "~/generated-metadata/graphql";
 
 export type ViewSortEssential = Pick<
-  ViewSort,
-  'id' | 'fieldMetadataId' | 'direction' | 'viewId'
+	ViewSort,
+	"id" | "fieldMetadataId" | "direction" | "viewId"
 >;

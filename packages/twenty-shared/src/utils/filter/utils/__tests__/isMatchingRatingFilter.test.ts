@@ -1,119 +1,119 @@
-import { isMatchingRatingFilter } from '@/utils/filter/utils/isMatchingRatingFilter';
+import { isMatchingRatingFilter } from "@/utils/filter/utils/isMatchingRatingFilter";
 
-describe('isMatchingRatingFilter', () => {
-  describe('eq', () => {
-    it('should return true when value equals', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { eq: 'RATING_3' },
-          value: 'RATING_3',
-        }),
-      ).toBe(true);
-    });
+describe("isMatchingRatingFilter", () => {
+	describe("eq", () => {
+		it("should return true when value equals", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { eq: "RATING_3" },
+					value: "RATING_3",
+				}),
+			).toBe(true);
+		});
 
-    it('should return false when value does not equal', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { eq: 'RATING_3' },
-          value: 'RATING_1',
-        }),
-      ).toBe(false);
-    });
-  });
+		it("should return false when value does not equal", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { eq: "RATING_3" },
+					value: "RATING_1",
+				}),
+			).toBe(false);
+		});
+	});
 
-  describe('in', () => {
-    it('should return true when value is in list', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { in: ['RATING_3', 'RATING_5'] },
-          value: 'RATING_3',
-        }),
-      ).toBe(true);
-    });
+	describe("in", () => {
+		it("should return true when value is in list", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { in: ["RATING_3", "RATING_5"] },
+					value: "RATING_3",
+				}),
+			).toBe(true);
+		});
 
-    it('should return false for null value', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { in: ['RATING_3'] },
-          value: null,
-        }),
-      ).toBe(false);
-    });
-  });
+		it("should return false for null value", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { in: ["RATING_3"] },
+					value: null,
+				}),
+			).toBe(false);
+		});
+	});
 
-  describe('is', () => {
-    it('should match NULL check', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { is: 'NULL' },
-          value: null,
-        }),
-      ).toBe(true);
-    });
+	describe("is", () => {
+		it("should match NULL check", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { is: "NULL" },
+					value: null,
+				}),
+			).toBe(true);
+		});
 
-    it('should match NOT_NULL check', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { is: 'NOT_NULL' },
-          value: 'RATING_3',
-        }),
-      ).toBe(true);
-    });
-  });
+		it("should match NOT_NULL check", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { is: "NOT_NULL" },
+					value: "RATING_3",
+				}),
+			).toBe(true);
+		});
+	});
 
-  describe('comparison operators', () => {
-    const options = [
-      'RATING_1',
-      'RATING_2',
-      'RATING_3',
-      'RATING_4',
-      'RATING_5',
-    ].map((value, position) => ({ value, position }));
+	describe("comparison operators", () => {
+		const options = [
+			"RATING_1",
+			"RATING_2",
+			"RATING_3",
+			"RATING_4",
+			"RATING_5",
+		].map((value, position) => ({ value, position }));
 
-    it('should compare by option position', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { gt: 'RATING_2' },
-          value: 'RATING_4',
-          options,
-        }),
-      ).toBe(true);
+		it("should compare by option position", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { gt: "RATING_2" },
+					value: "RATING_4",
+					options,
+				}),
+			).toBe(true);
 
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { lte: 'RATING_2' },
-          value: 'RATING_4',
-          options,
-        }),
-      ).toBe(false);
-    });
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { lte: "RATING_2" },
+					value: "RATING_4",
+					options,
+				}),
+			).toBe(false);
+		});
 
-    it('should never match a null value or missing option values', () => {
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { gt: 'RATING_2' },
-          value: null,
-          options,
-        }),
-      ).toBe(false);
+		it("should never match a null value or missing option values", () => {
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { gt: "RATING_2" },
+					value: null,
+					options,
+				}),
+			).toBe(false);
 
-      expect(
-        isMatchingRatingFilter({
-          ratingFilter: { gt: 'RATING_2' },
-          value: 'RATING_4',
-        }),
-      ).toBe(false);
-    });
-  });
+			expect(
+				isMatchingRatingFilter({
+					ratingFilter: { gt: "RATING_2" },
+					value: "RATING_4",
+				}),
+			).toBe(false);
+		});
+	});
 
-  describe('default', () => {
-    it('should throw for unexpected filter', () => {
-      expect(() =>
-        isMatchingRatingFilter({
-          ratingFilter: {} as any,
-          value: 'RATING_3',
-        }),
-      ).toThrow('Unexpected value for rating filter');
-    });
-  });
+	describe("default", () => {
+		it("should throw for unexpected filter", () => {
+			expect(() =>
+				isMatchingRatingFilter({
+					ratingFilter: {} as any,
+					value: "RATING_3",
+				}),
+			).toThrow("Unexpected value for rating filter");
+		});
+	});
 });

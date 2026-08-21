@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const uninstallApplicationQueryFactory = ({
-  universalIdentifier,
+	universalIdentifier,
 }: {
-  universalIdentifier: string;
+	universalIdentifier: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation UninstallApplication($universalIdentifier: String!) {
       uninstallApplication(universalIdentifier: $universalIdentifier)
     }
   `,
-  variables: {
-    universalIdentifier,
-  },
+	variables: {
+		universalIdentifier,
+	},
 });

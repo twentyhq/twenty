@@ -1,1 +1,1 @@
-export type AppKeyValueScope = 'WORKSPACE' | 'SERVER';
+export type AppKeyValueScope = "WORKSPACE" | "SERVER";

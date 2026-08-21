@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const FIND_APPLICATION_REGISTRATION_STATS = gql`
   query FindApplicationRegistrationStats($id: String!) {

@@ -4,5 +4,5 @@
 // app-preview window scene. Every hero composition (Home / Pricing / Partner)
 // and the product demo read the standard from this one place.
 export const HERO_COMPOSITION: { ctaToVisualGapPx: number } = {
-  ctaToVisualGapPx: 68,
+	ctaToVisualGapPx: 68,
 };

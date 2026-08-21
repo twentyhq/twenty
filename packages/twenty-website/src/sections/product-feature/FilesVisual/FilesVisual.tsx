@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { IconPlus } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { IconPlus } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { RecordTabHeader } from '../components/RecordTabHeader';
-import { FileRow } from './components/FileRow';
-import { FILES } from './data/files';
+import { RecordTabHeader } from "../components/RecordTabHeader";
+import { FileRow } from "./components/FileRow";
+import { FILES } from "./data/files";
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -74,26 +74,26 @@ const FileCard = styled.div`
 `;
 
 export function FilesVisual({ active: _active }: { active: boolean }) {
-  return (
-    <Root>
-      <RecordTabHeader active="Files" />
-      <Panel>
-        <TitleBar>
-          <Title>
-            All
-            <Count>{FILES.length}</Count>
-          </Title>
-          <AddButton>
-            <IconPlus size={12} stroke={2} />
-            Add file
-          </AddButton>
-        </TitleBar>
-        <FileCard>
-          {FILES.map((file) => (
-            <FileRow key={file.name} file={file} />
-          ))}
-        </FileCard>
-      </Panel>
-    </Root>
-  );
+	return (
+		<Root>
+			<RecordTabHeader active="Files" />
+			<Panel>
+				<TitleBar>
+					<Title>
+						All
+						<Count>{FILES.length}</Count>
+					</Title>
+					<AddButton>
+						<IconPlus size={12} stroke={2} />
+						Add file
+					</AddButton>
+				</TitleBar>
+				<FileCard>
+					{FILES.map((file) => (
+						<FileRow key={file.name} file={file} />
+					))}
+				</FileCard>
+			</Panel>
+		</Root>
+	);
 }

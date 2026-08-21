@@ -1,35 +1,35 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+import type { ObjectRecordEvent } from "twenty-shared/database-events";
 
-import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
+import { removeSecretFromWebhookRecord } from "src/utils/remove-secret-from-webhook-record";
 
 export const transformEventToWebhookEvent = ({
-  eventName,
-  event,
+	eventName,
+	event,
 }: {
-  eventName: string;
-  event: ObjectRecordEvent;
+	eventName: string;
+	event: ObjectRecordEvent;
 }) => {
-  const [nameSingular, _] = eventName.split('.');
+	const [nameSingular, _] = eventName.split(".");
 
-  const record =
-    'after' in event.properties && isDefined(event.properties.after)
-      ? event.properties.after
-      : 'before' in event.properties && isDefined(event.properties.before)
-        ? event.properties.before
-        : {};
-  const updatedFields =
-    'updatedFields' in event.properties
-      ? event.properties.updatedFields
-      : undefined;
+	const record =
+		"after" in event.properties && isDefined(event.properties.after)
+			? event.properties.after
+			: "before" in event.properties && isDefined(event.properties.before)
+				? event.properties.before
+				: {};
+	const updatedFields =
+		"updatedFields" in event.properties
+			? event.properties.updatedFields
+			: undefined;
 
-  const isWebhookEvent = nameSingular === 'webhook';
+	const isWebhookEvent = nameSingular === "webhook";
 
-  const sanitizedRecord = removeSecretFromWebhookRecord(record, isWebhookEvent);
+	const sanitizedRecord = removeSecretFromWebhookRecord(record, isWebhookEvent);
 
-  return {
-    record: sanitizedRecord,
-    ...(updatedFields && { updatedFields }),
-  };
+	return {
+		record: sanitizedRecord,
+		...(updatedFields && { updatedFields }),
+	};
 };

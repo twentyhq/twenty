@@ -1,25 +1,25 @@
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type MessageChannel } from "@/accounts/types/MessageChannel";
+import { settingsAccountsSelectedMessageChannelState } from "@/settings/accounts/states/settingsAccountsSelectedMessageChannelState";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
+import { useEffect } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 type SettingsAccountsConfigurationSelectedMessageChannelEffectProps = {
-  messageChannel: MessageChannel | undefined;
+	messageChannel: MessageChannel | undefined;
 };
 
 export const SettingsAccountsConfigurationSelectedMessageChannelEffect = ({
-  messageChannel,
+	messageChannel,
 }: SettingsAccountsConfigurationSelectedMessageChannelEffectProps) => {
-  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
-    settingsAccountsSelectedMessageChannelState,
-  );
+	const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
+		settingsAccountsSelectedMessageChannelState,
+	);
 
-  useEffect(() => {
-    if (isDefined(messageChannel)) {
-      setSettingsAccountsSelectedMessageChannel(messageChannel);
-    }
-  }, [messageChannel, setSettingsAccountsSelectedMessageChannel]);
+	useEffect(() => {
+		if (isDefined(messageChannel)) {
+			setSettingsAccountsSelectedMessageChannel(messageChannel);
+		}
+	}, [messageChannel, setSettingsAccountsSelectedMessageChannel]);
 
-  return null;
+	return null;
 };

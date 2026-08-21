@@ -1,29 +1,29 @@
-import { getToolName, isToolUIPart } from 'ai';
+import { getToolName, isToolUIPart } from "ai";
 import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionsToolResult,
-  type ExtendedUIMessagePart,
-} from 'twenty-shared/ai';
+	ASK_QUESTIONS_TOOL_NAME,
+	type AskQuestionsToolResult,
+	type ExtendedUIMessagePart,
+} from "twenty-shared/ai";
 
 type ToolPartWithOutput = ExtendedUIMessagePart & {
-  toolCallId: string;
-  output?: { result?: AskQuestionsToolResult };
+	toolCallId: string;
+	output?: { result?: AskQuestionsToolResult };
 };
 
 export const findPendingQuestionPart = (
-  parts: ExtendedUIMessagePart[],
+	parts: ExtendedUIMessagePart[],
 ): ToolPartWithOutput | undefined => {
-  for (const part of parts) {
-    if (!isToolUIPart(part) || getToolName(part) !== ASK_QUESTIONS_TOOL_NAME) {
-      continue;
-    }
+	for (const part of parts) {
+		if (!isToolUIPart(part) || getToolName(part) !== ASK_QUESTIONS_TOOL_NAME) {
+			continue;
+		}
 
-    const output = (part as ToolPartWithOutput).output;
+		const output = (part as ToolPartWithOutput).output;
 
-    if (output?.result?.status === 'pending') {
-      return part as ToolPartWithOutput;
-    }
-  }
+		if (output?.result?.status === "pending") {
+			return part as ToolPartWithOutput;
+		}
+	}
 
-  return undefined;
+	return undefined;
 };

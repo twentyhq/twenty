@@ -1,9 +1,9 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { SKELETON_LOADER_HEIGHT_SIZES } from "@/activities/components/SkeletonLoader";
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSkeletonColumn = styled.div`
   box-sizing: border-box;
@@ -21,28 +21,28 @@ const fillSkeletonContainer = css`
 `;
 
 export const NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader: React.FC =
-  () => {
-    const { theme } = useContext(ThemeContext);
-    return (
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.light}
-        borderRadius={4}
-      >
-        <StyledSkeletonColumn>
-          <Skeleton
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-        </StyledSkeletonColumn>
-      </SkeletonTheme>
-    );
-  };
+	() => {
+		const { theme } = useContext(ThemeContext);
+		return (
+			<SkeletonTheme
+				baseColor={theme.background.tertiary}
+				highlightColor={theme.background.transparent.light}
+				borderRadius={4}
+			>
+				<StyledSkeletonColumn>
+					<Skeleton
+						containerClassName={fillSkeletonContainer}
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+					/>
+					<Skeleton
+						containerClassName={fillSkeletonContainer}
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+					/>
+					<Skeleton
+						containerClassName={fillSkeletonContainer}
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+					/>
+				</StyledSkeletonColumn>
+			</SkeletonTheme>
+		);
+	};

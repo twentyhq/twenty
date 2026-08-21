@@ -1,40 +1,40 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { type TableSortValue } from "@/ui/layout/table/types/TableSortValue";
 import {
-  AdminChatThreadSortDirection,
-  AdminChatThreadSortField,
-} from '~/generated-admin/graphql';
+	AdminChatThreadSortDirection,
+	AdminChatThreadSortField,
+} from "~/generated-admin/graphql";
 
 type AdminChatsSortVariables = {
-  sortBy: AdminChatThreadSortField;
-  sortDirection: AdminChatThreadSortDirection;
+	sortBy: AdminChatThreadSortField;
+	sortDirection: AdminChatThreadSortDirection;
 };
 
 const isAdminChatThreadSortField = (
-  fieldName: string,
+	fieldName: string,
 ): fieldName is AdminChatThreadSortField =>
-  Object.values(AdminChatThreadSortField).includes(
-    fieldName as AdminChatThreadSortField,
-  );
+	Object.values(AdminChatThreadSortField).includes(
+		fieldName as AdminChatThreadSortField,
+	);
 
 export const getAdminChatsSortVariables = (
-  sortValue: TableSortValue | null,
+	sortValue: TableSortValue | null,
 ): AdminChatsSortVariables => {
-  if (
-    !isDefined(sortValue) ||
-    !isAdminChatThreadSortField(sortValue.fieldName)
-  ) {
-    return {
-      sortBy: AdminChatThreadSortField.CREATED_AT,
-      sortDirection: AdminChatThreadSortDirection.DESC,
-    };
-  }
+	if (
+		!isDefined(sortValue) ||
+		!isAdminChatThreadSortField(sortValue.fieldName)
+	) {
+		return {
+			sortBy: AdminChatThreadSortField.CREATED_AT,
+			sortDirection: AdminChatThreadSortDirection.DESC,
+		};
+	}
 
-  return {
-    sortBy: sortValue.fieldName,
-    sortDirection: sortValue.orderBy.startsWith('Asc')
-      ? AdminChatThreadSortDirection.ASC
-      : AdminChatThreadSortDirection.DESC,
-  };
+	return {
+		sortBy: sortValue.fieldName,
+		sortDirection: sortValue.orderBy.startsWith("Asc")
+			? AdminChatThreadSortDirection.ASC
+			: AdminChatThreadSortDirection.DESC,
+	};
 };

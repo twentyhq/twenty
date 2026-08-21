@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { EASING } from '@/tokens';
-import { IconChevronDown, IconPlus } from '@tabler/icons-react';
-import { useState } from 'react';
+import { EASING } from "@/tokens";
+import { IconChevronDown, IconPlus } from "@tabler/icons-react";
+import { useState } from "react";
 
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { APP_PREVIEW_CHROME } from "@/app-preview/app-preview-chrome";
 
-import { renderTableCellValue } from './TableCellValue';
-import { TableCheckbox } from './TableCheckbox';
-import { renderTableHeaderIcon } from './TableHeaderIcon';
-import { MiniIcon } from '../../primitives/MiniIcon';
-import { PREVIEW_SKELETON } from '../../primitives/PreviewSkeleton';
-import { useHorizontalDragScroll } from '@/platform/motion';
-import { type TablePageDefinition } from '../../types';
+import { renderTableCellValue } from "./TableCellValue";
+import { TableCheckbox } from "./TableCheckbox";
+import { renderTableHeaderIcon } from "./TableHeaderIcon";
+import { MiniIcon } from "../../primitives/MiniIcon";
+import { PREVIEW_SKELETON } from "../../primitives/PreviewSkeleton";
+import { useHorizontalDragScroll } from "@/platform/motion";
+import { type TablePageDefinition } from "../../types";
 
 const CELL_HORIZONTAL_PADDING = 8;
 
@@ -30,7 +30,7 @@ const TableShell = styled.div`
 `;
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
-  cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
+  cursor: ${({ $dragging }) => ($dragging ? "grabbing" : "grab")};
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
@@ -100,21 +100,21 @@ const FooterRow = styled.div`
 `;
 
 const TableCell = styled.div<{
-  $align?: 'left' | 'right';
-  $header?: boolean;
-  $hovered?: boolean;
-  $sticky?: boolean;
-  $width: number;
+	$align?: "left" | "right";
+	$header?: boolean;
+	$hovered?: boolean;
+	$sticky?: boolean;
+	$width: number;
 }>`
   align-items: center;
   background: ${({ $header, $hovered }) => {
-    if ($header) {
-      return THEME_LIGHT.background.primary;
-    }
-    return $hovered
-      ? THEME_LIGHT.background.secondary
-      : THEME_LIGHT.background.primary;
-  }};
+		if ($header) {
+			return THEME_LIGHT.background.primary;
+		}
+		return $hovered
+			? THEME_LIGHT.background.secondary
+			: THEME_LIGHT.background.primary;
+	}};
   border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   border-right: 1px solid ${THEME_LIGHT.border.color.light};
   box-sizing: border-box;
@@ -122,42 +122,42 @@ const TableCell = styled.div<{
   flex: 0 0 ${({ $width }) => `${$width}px`};
   height: ${APP_PREVIEW_CHROME.recordTableRowHeightPx}px;
   justify-content: ${({ $align }) =>
-    $align === 'right' ? 'flex-end' : 'flex-start'};
-  left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
+		$align === "right" ? "flex-end" : "flex-start"};
+  left: ${({ $sticky }) => ($sticky ? "0" : "auto")};
   min-width: ${({ $width }) => `${$width}px`};
   padding-bottom: 0;
   padding-right: ${CELL_HORIZONTAL_PADDING}px;
   padding-top: 0;
   padding-left: ${({ $sticky }) =>
-    $sticky
-      ? `${CELL_HORIZONTAL_PADDING - 1}px`
-      : `${CELL_HORIZONTAL_PADDING}px`};
-  position: ${({ $sticky }) => ($sticky ? 'sticky' : 'relative')};
+		$sticky
+			? `${CELL_HORIZONTAL_PADDING - 1}px`
+			: `${CELL_HORIZONTAL_PADDING}px`};
+  position: ${({ $sticky }) => ($sticky ? "sticky" : "relative")};
   z-index: ${({ $header, $sticky }) => {
-    if ($sticky && $header) {
-      return 6;
-    }
-    if ($sticky) {
-      return 4;
-    }
-    return 1;
-  }};
+		if ($sticky && $header) {
+			return 6;
+		}
+		if ($sticky) {
+			return 4;
+		}
+		return 1;
+	}};
 `;
 
 const EmptyFillCell = styled.div<{
-  $footer?: boolean;
-  $header?: boolean;
-  $hovered?: boolean;
-  $width: number;
+	$footer?: boolean;
+	$header?: boolean;
+	$hovered?: boolean;
+	$width: number;
 }>`
   background: ${({ $header, $hovered, $footer }) => {
-    if ($header || $footer) {
-      return THEME_LIGHT.background.primary;
-    }
-    return $hovered
-      ? THEME_LIGHT.background.secondary
-      : THEME_LIGHT.background.primary;
-  }};
+		if ($header || $footer) {
+			return THEME_LIGHT.background.primary;
+		}
+		return $hovered
+			? THEME_LIGHT.background.secondary
+			: THEME_LIGHT.background.primary;
+	}};
   border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
   flex: 0 0 ${({ $width }) => `${$width}px`};
   min-width: ${({ $width }) => `${$width}px`};
@@ -221,168 +221,168 @@ const SkeletonRowLead = styled.div`
 `;
 
 export function TablePage({ page }: { page: TablePageDefinition }) {
-  const {
-    dragging,
-    onPointerCancel,
-    onPointerDown,
-    onPointerLeave,
-    onPointerMove,
-    onPointerUp,
-    viewportRef,
-  } = useHorizontalDragScroll<HTMLDivElement>();
-  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
+	const {
+		dragging,
+		onPointerCancel,
+		onPointerDown,
+		onPointerLeave,
+		onPointerMove,
+		onPointerUp,
+		viewportRef,
+	} = useHorizontalDragScroll<HTMLDivElement>();
+	const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
-  const columnWidth = page.columns.reduce(
-    (total, column) => total + column.width,
-    0,
-  );
-  const totalTableWidth = page.width ?? columnWidth;
-  const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
+	const columnWidth = page.columns.reduce(
+		(total, column) => total + column.width,
+		0,
+	);
+	const totalTableWidth = page.width ?? columnWidth;
+	const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
 
-  return (
-    <TableShell>
-      <TableViewport
-        $dragging={dragging}
-        onPointerCancel={onPointerCancel}
-        onPointerDown={onPointerDown}
-        onPointerLeave={onPointerLeave}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        ref={viewportRef}
-      >
-        <TableCanvas $width={totalTableWidth}>
-          <HeaderRow>
-            {page.columns.map((column) => (
-              <TableCell
-                $align={column.align}
-                $header
-                $sticky={column.isFirstColumn}
-                $width={column.width}
-                key={column.id}
-              >
-                <HeaderCellContent>
-                  {column.isFirstColumn ? (
-                    <>
-                      <TableCheckbox />
-                      {renderTableHeaderIcon(column.id)}
-                      <HeaderLabel>{column.label}</HeaderLabel>
-                      <EdgePlus aria-hidden>
-                        <MiniIcon
-                          icon={IconPlus}
-                          color={THEME_LIGHT.font.color.tertiary}
-                          size={12}
-                        />
-                      </EdgePlus>
-                    </>
-                  ) : (
-                    <>
-                      {renderTableHeaderIcon(column.id)}
-                      <HeaderLabel>{column.label}</HeaderLabel>
-                    </>
-                  )}
-                </HeaderCellContent>
-              </TableCell>
-            ))}
-            <EmptyFillCell $header $width={fillerWidth}>
-              {fillerWidth > 0 ? (
-                <HeaderFillContent>
-                  <MiniIcon
-                    icon={IconPlus}
-                    color={THEME_LIGHT.font.color.tertiary}
-                    size={16}
-                  />
-                </HeaderFillContent>
-              ) : null}
-            </EmptyFillCell>
-          </HeaderRow>
-          {page.generating
-            ? SKELETON_ROW_INDEXES.map((rowIndex) => (
-                <DataRow $rowIndex={rowIndex} key={`skeleton-${rowIndex}`}>
-                  {page.columns.map((column) => (
-                    <TableCell
-                      $align={column.align}
-                      $sticky={column.isFirstColumn}
-                      $width={column.width}
-                      key={column.id}
-                    >
-                      {column.isFirstColumn ? (
-                        <SkeletonRowLead>
-                          <PREVIEW_SKELETON.Circle $size={16} />
-                          <PREVIEW_SKELETON.Bar $height={8} $width="58%" />
-                        </SkeletonRowLead>
-                      ) : (
-                        <PREVIEW_SKELETON.Bar $height={8} $width="56%" />
-                      )}
-                    </TableCell>
-                  ))}
-                  <EmptyFillCell $width={fillerWidth} />
-                </DataRow>
-              ))
-            : page.rows.map((row, rowIndex) => {
-                const hovered = hoveredRowId === row.id;
-                return (
-                  <DataRow
-                    $rowIndex={rowIndex}
-                    data-row-id={row.id}
-                    key={row.id}
-                    onMouseEnter={() => setHoveredRowId(row.id)}
-                    onMouseLeave={() =>
-                      setHoveredRowId((current) =>
-                        current === row.id ? null : current,
-                      )
-                    }
-                  >
-                    {page.columns.map((column) => {
-                      const cell = row.cells[column.id];
-                      return (
-                        <TableCell
-                          $align={column.align}
-                          $hovered={hovered}
-                          $sticky={column.isFirstColumn}
-                          $width={column.width}
-                          key={`${row.id}-${column.id}`}
-                        >
-                          {cell
-                            ? renderTableCellValue({
-                                cell,
-                                columnId: column.id,
-                                hovered,
-                                isFirstColumn: !!column.isFirstColumn,
-                              })
-                            : null}
-                        </TableCell>
-                      );
-                    })}
-                    <EmptyFillCell $hovered={hovered} $width={fillerWidth} />
-                  </DataRow>
-                );
-              })}
-          <FooterRow>
-            {page.columns.length > 0 ? (
-              <TableCell
-                $sticky={page.columns[0].isFirstColumn}
-                $width={page.columns[0].width}
-              >
-                <FooterFirstContent>
-                  <MutedText>Calculate</MutedText>
-                  <MiniIcon
-                    icon={IconChevronDown}
-                    color={THEME_LIGHT.font.color.tertiary}
-                  />
-                </FooterFirstContent>
-              </TableCell>
-            ) : null}
-            {page.columns.slice(1).map((column) => (
-              <TableCell
-                $align={column.align}
-                $width={column.width}
-                key={`footer-${column.id}`}
-              />
-            ))}
-            <EmptyFillCell $footer $width={fillerWidth} />
-          </FooterRow>
-        </TableCanvas>
-      </TableViewport>
-    </TableShell>
-  );
+	return (
+		<TableShell>
+			<TableViewport
+				$dragging={dragging}
+				onPointerCancel={onPointerCancel}
+				onPointerDown={onPointerDown}
+				onPointerLeave={onPointerLeave}
+				onPointerMove={onPointerMove}
+				onPointerUp={onPointerUp}
+				ref={viewportRef}
+			>
+				<TableCanvas $width={totalTableWidth}>
+					<HeaderRow>
+						{page.columns.map((column) => (
+							<TableCell
+								$align={column.align}
+								$header
+								$sticky={column.isFirstColumn}
+								$width={column.width}
+								key={column.id}
+							>
+								<HeaderCellContent>
+									{column.isFirstColumn ? (
+										<>
+											<TableCheckbox />
+											{renderTableHeaderIcon(column.id)}
+											<HeaderLabel>{column.label}</HeaderLabel>
+											<EdgePlus aria-hidden>
+												<MiniIcon
+													icon={IconPlus}
+													color={THEME_LIGHT.font.color.tertiary}
+													size={12}
+												/>
+											</EdgePlus>
+										</>
+									) : (
+										<>
+											{renderTableHeaderIcon(column.id)}
+											<HeaderLabel>{column.label}</HeaderLabel>
+										</>
+									)}
+								</HeaderCellContent>
+							</TableCell>
+						))}
+						<EmptyFillCell $header $width={fillerWidth}>
+							{fillerWidth > 0 ? (
+								<HeaderFillContent>
+									<MiniIcon
+										icon={IconPlus}
+										color={THEME_LIGHT.font.color.tertiary}
+										size={16}
+									/>
+								</HeaderFillContent>
+							) : null}
+						</EmptyFillCell>
+					</HeaderRow>
+					{page.generating
+						? SKELETON_ROW_INDEXES.map((rowIndex) => (
+								<DataRow $rowIndex={rowIndex} key={`skeleton-${rowIndex}`}>
+									{page.columns.map((column) => (
+										<TableCell
+											$align={column.align}
+											$sticky={column.isFirstColumn}
+											$width={column.width}
+											key={column.id}
+										>
+											{column.isFirstColumn ? (
+												<SkeletonRowLead>
+													<PREVIEW_SKELETON.Circle $size={16} />
+													<PREVIEW_SKELETON.Bar $height={8} $width="58%" />
+												</SkeletonRowLead>
+											) : (
+												<PREVIEW_SKELETON.Bar $height={8} $width="56%" />
+											)}
+										</TableCell>
+									))}
+									<EmptyFillCell $width={fillerWidth} />
+								</DataRow>
+							))
+						: page.rows.map((row, rowIndex) => {
+								const hovered = hoveredRowId === row.id;
+								return (
+									<DataRow
+										$rowIndex={rowIndex}
+										data-row-id={row.id}
+										key={row.id}
+										onMouseEnter={() => setHoveredRowId(row.id)}
+										onMouseLeave={() =>
+											setHoveredRowId((current) =>
+												current === row.id ? null : current,
+											)
+										}
+									>
+										{page.columns.map((column) => {
+											const cell = row.cells[column.id];
+											return (
+												<TableCell
+													$align={column.align}
+													$hovered={hovered}
+													$sticky={column.isFirstColumn}
+													$width={column.width}
+													key={`${row.id}-${column.id}`}
+												>
+													{cell
+														? renderTableCellValue({
+																cell,
+																columnId: column.id,
+																hovered,
+																isFirstColumn: !!column.isFirstColumn,
+															})
+														: null}
+												</TableCell>
+											);
+										})}
+										<EmptyFillCell $hovered={hovered} $width={fillerWidth} />
+									</DataRow>
+								);
+							})}
+					<FooterRow>
+						{page.columns.length > 0 ? (
+							<TableCell
+								$sticky={page.columns[0].isFirstColumn}
+								$width={page.columns[0].width}
+							>
+								<FooterFirstContent>
+									<MutedText>Calculate</MutedText>
+									<MiniIcon
+										icon={IconChevronDown}
+										color={THEME_LIGHT.font.color.tertiary}
+									/>
+								</FooterFirstContent>
+							</TableCell>
+						) : null}
+						{page.columns.slice(1).map((column) => (
+							<TableCell
+								$align={column.align}
+								$width={column.width}
+								key={`footer-${column.id}`}
+							/>
+						))}
+						<EmptyFillCell $footer $width={fillerWidth} />
+					</FooterRow>
+				</TableCanvas>
+			</TableViewport>
+		</TableShell>
+	);
 }

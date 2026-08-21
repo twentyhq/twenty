@@ -1,9 +1,9 @@
-import { type SelectionBox } from '@/ui/utilities/drag-select/types/SelectionBox';
+import { type SelectionBox } from "@/ui/utilities/drag-select/types/SelectionBox";
 
 const calculateBoxArea = (box: SelectionBox): number => {
-  return box.width * box.height;
+	return box.width * box.height;
 };
 
 export const isValidSelectionStart = (box: SelectionBox): boolean => {
-  return calculateBoxArea(box) > 10;
+	return calculateBoxArea(box) > 10;
 };

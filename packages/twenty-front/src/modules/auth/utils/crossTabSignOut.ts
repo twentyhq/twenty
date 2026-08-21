@@ -1,41 +1,41 @@
-const SIGN_OUT_CHANNEL_NAME = 'twenty-sign-out';
+const SIGN_OUT_CHANNEL_NAME = "twenty-sign-out";
 
 let sharedChannel: BroadcastChannel | null = null;
 
 const getSharedSignOutChannel = (): BroadcastChannel | null => {
-  if (sharedChannel) {
-    return sharedChannel;
-  }
+	if (sharedChannel) {
+		return sharedChannel;
+	}
 
-  try {
-    sharedChannel = new BroadcastChannel(SIGN_OUT_CHANNEL_NAME);
-  } catch {
-    return null;
-  }
+	try {
+		sharedChannel = new BroadcastChannel(SIGN_OUT_CHANNEL_NAME);
+	} catch {
+		return null;
+	}
 
-  return sharedChannel;
+	return sharedChannel;
 };
 
 export const broadcastSignOutToOtherTabs = () => {
-  getSharedSignOutChannel()?.postMessage({ type: 'sign-out' });
+	getSharedSignOutChannel()?.postMessage({ type: "sign-out" });
 };
 
 export const subscribeToSignOutFromOtherTabs = (
-  callback: () => void,
+	callback: () => void,
 ): (() => void) => {
-  const channel = getSharedSignOutChannel();
+	const channel = getSharedSignOutChannel();
 
-  if (!channel) {
-    return () => {};
-  }
+	if (!channel) {
+		return () => {};
+	}
 
-  channel.onmessage = (event: MessageEvent) => {
-    if (event.data?.type === 'sign-out') {
-      callback();
-    }
-  };
+	channel.onmessage = (event: MessageEvent) => {
+		if (event.data?.type === "sign-out") {
+			callback();
+		}
+	};
 
-  return () => {
-    channel.onmessage = null;
-  };
+	return () => {
+		channel.onmessage = null;
+	};
 };

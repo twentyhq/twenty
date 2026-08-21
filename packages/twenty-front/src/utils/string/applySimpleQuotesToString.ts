@@ -1,3 +1,3 @@
 export const applySimpleQuotesToString = <T extends string>(
-  value: T,
+	value: T,
 ): `'${T}'` => `'${value}'`;

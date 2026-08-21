@@ -1,228 +1,228 @@
-import { HALFTONE_FOOTPRINT } from '../engine/footprint';
-import { HALFTONE_IMAGE_CONSTANTS } from '../engine/image-constants';
-import { HALFTONE_SHADERS } from '../engine/shaders';
+import { HALFTONE_FOOTPRINT } from "../engine/footprint";
+import { HALFTONE_IMAGE_CONSTANTS } from "../engine/image-constants";
+import { HALFTONE_SHADERS } from "../engine/shaders";
 import type {
-  HalftoneExportPose,
-  HalftoneGeometrySpec,
-  HalftoneStudioSettings,
-} from '../engine/studio-settings-types';
+	HalftoneExportPose,
+	HalftoneGeometrySpec,
+	HalftoneStudioSettings,
+} from "../engine/studio-settings-types";
 
-import { HALFTONE_EXPORT_NAMES } from './export-names';
-import { HALFTONE_MOUNT_FRAGMENTS } from './exporter-mount-fragments';
-import { HALFTONE_EXPORT_PARSING } from './exporter-parsing';
-import { HALFTONE_EXPORT_SOURCE } from './exporter-source';
+import { HALFTONE_EXPORT_NAMES } from "./export-names";
+import { HALFTONE_MOUNT_FRAGMENTS } from "./exporter-mount-fragments";
+import { HALFTONE_EXPORT_PARSING } from "./exporter-parsing";
+import { HALFTONE_EXPORT_SOURCE } from "./exporter-source";
 import {
-  DEFAULT_REACT_EXPORT_SETTINGS,
-  type ExportedShapeDescriptor,
-  type ReactExportOptions,
-  type ReactExportSettings,
-} from './exporter-types';
-import { HALFTONE_FOOTPRINT_RUNTIME_SOURCE } from './footprint-runtime-source';
-import { HALFTONE_INTERACTION_RUNTIME_SOURCE } from './interaction-runtime-source';
+	DEFAULT_REACT_EXPORT_SETTINGS,
+	type ExportedShapeDescriptor,
+	type ReactExportOptions,
+	type ReactExportSettings,
+} from "./exporter-types";
+import { HALFTONE_FOOTPRINT_RUNTIME_SOURCE } from "./footprint-runtime-source";
+import { HALFTONE_INTERACTION_RUNTIME_SOURCE } from "./interaction-runtime-source";
 
 function toIllustrationRegistryKey(componentName: string) {
-  return componentName.charAt(0).toLowerCase() + componentName.slice(1);
+	return componentName.charAt(0).toLowerCase() + componentName.slice(1);
 }
 
 function toPublicAssetDestination(assetUrl: string) {
-  return assetUrl.startsWith('/') ? `public${assetUrl}` : assetUrl;
+	return assetUrl.startsWith("/") ? `public${assetUrl}` : assetUrl;
 }
 
 function normalizeReactExportSettings(
-  exportSettings?: Partial<ReactExportSettings>,
+	exportSettings?: Partial<ReactExportSettings>,
 ): ReactExportSettings {
-  return {
-    ...DEFAULT_REACT_EXPORT_SETTINGS,
-    ...exportSettings,
-  };
+	return {
+		...DEFAULT_REACT_EXPORT_SETTINGS,
+		...exportSettings,
+	};
 }
 
 function getReactImportBlock(
-  exportSettings: ReactExportSettings,
-  isImageMode: boolean,
-  shape: ExportedShapeDescriptor,
+	exportSettings: ReactExportSettings,
+	isImageMode: boolean,
+	shape: ExportedShapeDescriptor,
 ) {
-  const imports = new Set<string>();
+	const imports = new Set<string>();
 
-  imports.add("import { useEffect, useRef, type CSSProperties } from 'react';");
-  imports.add("import * as THREE from 'three';");
+	imports.add("import { useEffect, useRef, type CSSProperties } from 'react';");
+	imports.add("import * as THREE from 'three';");
 
-  if (exportSettings.includeStyledMount) {
-    imports.add("import { styled } from '@linaria/react';");
-  }
+	if (exportSettings.includeStyledMount) {
+		imports.add("import { styled } from '@linaria/react';");
+	}
 
-  if (!isImageMode) {
-    imports.add(
-      "import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';",
-    );
-  }
+	if (!isImageMode) {
+		imports.add(
+			"import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';",
+		);
+	}
 
-  const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
+	const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
 
-  if (shape.kind === 'imported' && loader === 'fbx') {
-    imports.add(
-      "import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';",
-    );
-  }
+	if (shape.kind === "imported" && loader === "fbx") {
+		imports.add(
+			"import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';",
+		);
+	}
 
-  if (shape.kind === 'imported' && loader === 'glb') {
-    imports.add(
-      "import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';",
-    );
-    imports.add(
-      "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';",
-    );
-  }
+	if (shape.kind === "imported" && loader === "glb") {
+		imports.add(
+			"import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';",
+		);
+		imports.add(
+			"import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';",
+		);
+	}
 
-  return Array.from(imports).join('\n');
+	return Array.from(imports).join("\n");
 }
 
 function getStandaloneThreeImports(
-  isImageMode: boolean,
-  shape: ExportedShapeDescriptor,
+	isImageMode: boolean,
+	shape: ExportedShapeDescriptor,
 ) {
-  if (isImageMode) {
-    return `import * as THREE from 'three';`;
-  }
+	if (isImageMode) {
+		return `import * as THREE from 'three';`;
+	}
 
-  const imports = [
-    `import * as THREE from 'three';`,
-    `import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';`,
-  ];
+	const imports = [
+		`import * as THREE from 'three';`,
+		`import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';`,
+	];
 
-  const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
+	const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
 
-  if (shape.kind === 'imported' && loader === 'fbx') {
-    imports.push(
-      `import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';`,
-    );
-  }
+	if (shape.kind === "imported" && loader === "fbx") {
+		imports.push(
+			`import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';`,
+		);
+	}
 
-  if (shape.kind === 'imported' && loader === 'glb') {
-    imports.push(
-      `import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';`,
-      `import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';`,
-    );
-  }
+	if (shape.kind === "imported" && loader === "glb") {
+		imports.push(
+			`import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';`,
+			`import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';`,
+		);
+	}
 
-  return imports.join('\n      ');
+	return imports.join("\n      ");
 }
 
 function getTwentyReactHeaderComment(
-  componentName: string,
-  registryKey: string,
-  assetUrl?: string,
+	componentName: string,
+	registryKey: string,
+	assetUrl?: string,
 ) {
-  const lines = [
-    `// Suggested component destination: src/illustrations/${componentName}.tsx`,
-  ];
+	const lines = [
+		`// Suggested component destination: src/illustrations/${componentName}.tsx`,
+	];
 
-  if (assetUrl) {
-    lines.push(
-      `// Suggested public asset destination: ${toPublicAssetDestination(assetUrl)}`,
-    );
-  }
+	if (assetUrl) {
+		lines.push(
+			`// Suggested public asset destination: ${toPublicAssetDestination(assetUrl)}`,
+		);
+	}
 
-  lines.push(
-    `// illustrations-registry.tsx: import { ${componentName} } from './${componentName}';`,
-    `// illustrations-registry.tsx: ${registryKey}: ${componentName},`,
-  );
+	lines.push(
+		`// illustrations-registry.tsx: import { ${componentName} } from './${componentName}';`,
+		`// illustrations-registry.tsx: ${registryKey}: ${componentName},`,
+	);
 
-  return `${lines.join('\n')}\n`;
+	return `${lines.join("\n")}\n`;
 }
 
 function createShapeDescriptor(
-  shape: HalftoneGeometrySpec | undefined,
-  settings: HalftoneStudioSettings,
-  importedFile?: File,
-  modelFilenameOverride?: string,
+	shape: HalftoneGeometrySpec | undefined,
+	settings: HalftoneStudioSettings,
+	importedFile?: File,
+	modelFilenameOverride?: string,
 ): ExportedShapeDescriptor {
-  if (!shape) {
-    return {
-      filename: null,
-      key: settings.shapeKey,
-      kind: 'builtin',
-      label: settings.shapeKey,
-      loader: null,
-    };
-  }
+	if (!shape) {
+		return {
+			filename: null,
+			key: settings.shapeKey,
+			kind: "builtin",
+			label: settings.shapeKey,
+			loader: null,
+		};
+	}
 
-  const effectiveImportedFilename =
-    modelFilenameOverride ?? importedFile?.name ?? shape.filename ?? null;
+	const effectiveImportedFilename =
+		modelFilenameOverride ?? importedFile?.name ?? shape.filename ?? null;
 
-  return {
-    filename:
-      shape.kind === 'imported'
-        ? effectiveImportedFilename
-        : (shape.filename ?? null),
-    key: shape.key,
-    kind: shape.kind,
-    label:
-      shape.kind === 'imported'
-        ? (effectiveImportedFilename ?? shape.label)
-        : shape.label,
-    loader: shape.loader ?? null,
-  };
+	return {
+		filename:
+			shape.kind === "imported"
+				? effectiveImportedFilename
+				: (shape.filename ?? null),
+		key: shape.key,
+		kind: shape.kind,
+		label:
+			shape.kind === "imported"
+				? (effectiveImportedFilename ?? shape.label)
+				: shape.label,
+		loader: shape.loader ?? null,
+	};
 }
 
 function getModelMimeType(
-  file: File,
-  loader: HalftoneGeometrySpec['loader'] | null,
+	file: File,
+	loader: HalftoneGeometrySpec["loader"] | null,
 ) {
-  if (file.type) {
-    return file.type;
-  }
+	if (file.type) {
+		return file.type;
+	}
 
-  if (loader === 'glb' || file.name.toLowerCase().endsWith('.glb')) {
-    return 'model/gltf-binary';
-  }
+	if (loader === "glb" || file.name.toLowerCase().endsWith(".glb")) {
+		return "model/gltf-binary";
+	}
 
-  if (loader === 'fbx' || file.name.toLowerCase().endsWith('.fbx')) {
-    return 'application/octet-stream';
-  }
+	if (loader === "fbx" || file.name.toLowerCase().endsWith(".fbx")) {
+		return "application/octet-stream";
+	}
 
-  return 'application/octet-stream';
+	return "application/octet-stream";
 }
 
 async function fileToDataUrl(
-  file: File,
-  loader: HalftoneGeometrySpec['loader'] | null,
+	file: File,
+	loader: HalftoneGeometrySpec["loader"] | null,
 ) {
-  const buffer = await file.arrayBuffer();
-  const blob = new Blob([buffer], {
-    type: getModelMimeType(file, loader),
-  });
+	const buffer = await file.arrayBuffer();
+	const blob = new Blob([buffer], {
+		type: getModelMimeType(file, loader),
+	});
 
-  return await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
+	return await new Promise<string>((resolve, reject) => {
+		const reader = new FileReader();
 
-    reader.addEventListener('error', () => {
-      reject(reader.error ?? new Error(`Unable to read ${file.name}.`));
-    });
-    reader.addEventListener('load', () => {
-      if (typeof reader.result !== 'string') {
-        reject(new Error(`Unable to encode ${file.name}.`));
-        return;
-      }
+		reader.addEventListener("error", () => {
+			reject(reader.error ?? new Error(`Unable to read ${file.name}.`));
+		});
+		reader.addEventListener("load", () => {
+			if (typeof reader.result !== "string") {
+				reject(new Error(`Unable to encode ${file.name}.`));
+				return;
+			}
 
-      resolve(reader.result);
-    });
+			resolve(reader.result);
+		});
 
-    reader.readAsDataURL(blob);
-  });
+		reader.readAsDataURL(blob);
+	});
 }
 
 function serializeRuntimeSource(
-  settings: HalftoneStudioSettings,
-  shape: ExportedShapeDescriptor,
-  initialPose: HalftoneExportPose,
-  previewDistance: number | undefined,
+	settings: HalftoneStudioSettings,
+	shape: ExportedShapeDescriptor,
+	initialPose: HalftoneExportPose,
+	previewDistance: number | undefined,
 ) {
-  const isImageMode = settings.sourceMode === 'image';
-  const normalizedPreviewDistance =
-    HALFTONE_EXPORT_PARSING.normalizePreviewDistance(previewDistance);
+	const isImageMode = settings.sourceMode === "image";
+	const normalizedPreviewDistance =
+		HALFTONE_EXPORT_PARSING.normalizePreviewDistance(previewDistance);
 
-  return `
+	return `
 const settings = ${JSON.stringify(settings, null, 2)};
 const shape = ${JSON.stringify(shape, null, 2)};
 const initialPose = ${JSON.stringify(initialPose, null, 2)};
@@ -231,15 +231,15 @@ const VIRTUAL_RENDER_HEIGHT = ${HALFTONE_FOOTPRINT.virtualRenderHeight};
 const passThroughVertexShader = ${JSON.stringify(HALFTONE_SHADERS.passThroughVertex)};
 const blurFragmentShader = ${JSON.stringify(HALFTONE_SHADERS.blurFragment)};
 const halftoneFragmentShader = ${JSON.stringify(HALFTONE_SHADERS.halftoneFragment)};
-${isImageMode ? `const imagePassthroughFragmentShader = ${JSON.stringify(HALFTONE_SHADERS.imagePassthrough)};` : ''}
+${isImageMode ? `const imagePassthroughFragmentShader = ${JSON.stringify(HALFTONE_SHADERS.imagePassthrough)};` : ""}
 
 ${HALFTONE_FOOTPRINT_RUNTIME_SOURCE}
 
-${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.geometryRuntime}
+${isImageMode ? "" : HALFTONE_EXPORT_SOURCE.geometryRuntime}
 
-${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createImportedGeometryRuntime(shape)}
+${isImageMode ? "" : HALFTONE_EXPORT_SOURCE.createImportedGeometryRuntime(shape)}
 
-${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.glassMaterialRuntime}
+${isImageMode ? "" : HALFTONE_EXPORT_SOURCE.glassMaterialRuntime}
 
 function createRenderTarget(width, height) {
   return new THREE.WebGLRenderTarget(width, height, {
@@ -279,9 +279,9 @@ function createInteractionState() {
 }
 
 ${
-  isImageMode
-    ? ''
-    : `
+	isImageMode
+		? ""
+		: `
 function setPrimaryLightPosition(light, angleDegrees, height) {
   const lightAngle = (angleDegrees * Math.PI) / 180;
   light.position.set(Math.cos(lightAngle) * 5, height, Math.sin(lightAngle) * 5);
@@ -308,7 +308,7 @@ async function createGeometry(modelUrl) {
 }
 
 function createMountScript() {
-  return `
+	return `
 async function mountHalftoneCanvas(options) {
   const {
     container,
@@ -372,7 +372,7 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("settings.animation.followDragEnabled ?
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 ${HALFTONE_MOUNT_FRAGMENTS.blurMaterials()}
-${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 0, hoverHalftoneRadius: '0.2', hoverLightRadius: '0.2', waveSpeed: '1' })}
+${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 0, hoverHalftoneRadius: "0.2", hoverLightRadius: "0.2", waveSpeed: "1" })}
 ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
 
   const updateViewportUniforms = (
@@ -781,15 +781,15 @@ ${HALFTONE_MOUNT_FRAGMENTS.blurPasses()}
   renderFrame();
 
 ${HALFTONE_MOUNT_FRAGMENTS.cleanup(
-  `    material.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
-  `    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    window.removeEventListener('pointerup', handlePointerUp);\n    window.removeEventListener('pointermove', handleWindowPointerMove);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
+	`    material.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
+	`    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    window.removeEventListener('pointerup', handlePointerUp);\n    window.removeEventListener('pointermove', handleWindowPointerMove);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
 )}
 }
 `;
 }
 
 function createImageMountScript() {
-  return `
+	return `
 async function mountHalftoneCanvas(options) {
   const {
     container,
@@ -806,7 +806,7 @@ ${HALFTONE_MOUNT_FRAGMENTS.sizingHelpers()}
     img.src = imageUrl;
   });
 
-${HALFTONE_MOUNT_FRAGMENTS.rendererSetup('default')}
+${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("default")}
 
   const imageTexture = new THREE.Texture(image);
   imageTexture.colorSpace = THREE.SRGBColorSpace;
@@ -834,7 +834,7 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup('default')}
   imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
 
 ${HALFTONE_MOUNT_FRAGMENTS.blurMaterials()}
-${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 1, hoverHalftoneRadius: 'settings.animation.hoverHalftoneRadius', hoverLightRadius: 'settings.animation.hoverLightRadius', waveSpeed: 'settings.animation.waveSpeed' })}
+${HALFTONE_MOUNT_FRAGMENTS.halftoneMaterial({ cropToBounds: 1, hoverHalftoneRadius: "settings.animation.hoverHalftoneRadius", hoverLightRadius: "settings.animation.hoverLightRadius", waveSpeed: "settings.animation.waveSpeed" })}
 ${HALFTONE_MOUNT_FRAGMENTS.postScenes()}
 
   const updateViewportUniforms = (
@@ -1070,72 +1070,72 @@ ${HALFTONE_MOUNT_FRAGMENTS.blurPasses()}
   renderFrame();
 
 ${HALFTONE_MOUNT_FRAGMENTS.cleanup(
-  `    imageMaterial.dispose();\n    imageTexture.dispose();`,
-  `    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    canvas.removeEventListener('pointerup', handlePointerUp);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
+	`    imageMaterial.dispose();\n    imageTexture.dispose();`,
+	`    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    canvas.removeEventListener('pointerup', handlePointerUp);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
 )}
 }
 `;
 }
 
 function getExportedModelFile(
-  shape: HalftoneGeometrySpec | undefined,
-  importedFile: File | undefined,
+	shape: HalftoneGeometrySpec | undefined,
+	importedFile: File | undefined,
 ) {
-  if (!shape || shape.kind !== 'imported' || !importedFile) {
-    return null;
-  }
+	if (!shape || shape.kind !== "imported" || !importedFile) {
+		return null;
+	}
 
-  return importedFile;
+	return importedFile;
 }
 
 function generateReactComponent(
-  settings: HalftoneStudioSettings,
-  selectedShape: HalftoneGeometrySpec | undefined,
-  componentName = 'HalftoneDashes',
-  options: ReactExportOptions = {},
+	settings: HalftoneStudioSettings,
+	selectedShape: HalftoneGeometrySpec | undefined,
+	componentName = "HalftoneDashes",
+	options: ReactExportOptions = {},
 ) {
-  const isImageMode = settings.sourceMode === 'image';
-  const exportSettings = normalizeReactExportSettings(options.exportSettings);
-  const shape = createShapeDescriptor(
-    selectedShape,
-    settings,
-    options.importedFile,
-    options.modelFilenameOverride,
-  );
-  const pose = HALFTONE_EXPORT_PARSING.normalizePose(options.initialPose);
-  const normalizedComponentName =
-    HALFTONE_EXPORT_NAMES.normalizeComponentName(componentName);
-  const background = options.background ?? 'transparent';
-  const assetUrl =
-    exportSettings.includePublicAssetUrl && options.assetUrl
-      ? options.assetUrl
-      : null;
-  const defaultModelFilename =
-    options.modelFilenameOverride ?? shape.filename ?? 'model.glb';
-  const defaultImageFilename = options.imageFilename ?? 'image.png';
-  const defaultModelUrl = assetUrl ?? `./${defaultModelFilename}`;
-  const defaultImageUrl = assetUrl ?? `./${defaultImageFilename}`;
-  const importBlock = getReactImportBlock(exportSettings, isImageMode, shape);
-  const headerComment = exportSettings.includeRegistryComment
-    ? getTwentyReactHeaderComment(
-        normalizedComponentName,
-        toIllustrationRegistryKey(normalizedComponentName),
-        isImageMode || shape.kind === 'imported'
-          ? (assetUrl ?? undefined)
-          : undefined,
-      )
-    : '';
-  const mountScript = isImageMode
-    ? createImageMountScript()
-    : createMountScript();
-  const serializedRuntime = serializeRuntimeSource(
-    settings,
-    shape,
-    pose,
-    options.previewDistance,
-  );
-  const generatedBanner = exportSettings.includeTsNoCheck
-    ? `/**
+	const isImageMode = settings.sourceMode === "image";
+	const exportSettings = normalizeReactExportSettings(options.exportSettings);
+	const shape = createShapeDescriptor(
+		selectedShape,
+		settings,
+		options.importedFile,
+		options.modelFilenameOverride,
+	);
+	const pose = HALFTONE_EXPORT_PARSING.normalizePose(options.initialPose);
+	const normalizedComponentName =
+		HALFTONE_EXPORT_NAMES.normalizeComponentName(componentName);
+	const background = options.background ?? "transparent";
+	const assetUrl =
+		exportSettings.includePublicAssetUrl && options.assetUrl
+			? options.assetUrl
+			: null;
+	const defaultModelFilename =
+		options.modelFilenameOverride ?? shape.filename ?? "model.glb";
+	const defaultImageFilename = options.imageFilename ?? "image.png";
+	const defaultModelUrl = assetUrl ?? `./${defaultModelFilename}`;
+	const defaultImageUrl = assetUrl ?? `./${defaultImageFilename}`;
+	const importBlock = getReactImportBlock(exportSettings, isImageMode, shape);
+	const headerComment = exportSettings.includeRegistryComment
+		? getTwentyReactHeaderComment(
+				normalizedComponentName,
+				toIllustrationRegistryKey(normalizedComponentName),
+				isImageMode || shape.kind === "imported"
+					? (assetUrl ?? undefined)
+					: undefined,
+			)
+		: "";
+	const mountScript = isImageMode
+		? createImageMountScript()
+		: createMountScript();
+	const serializedRuntime = serializeRuntimeSource(
+		settings,
+		shape,
+		pose,
+		options.previewDistance,
+	);
+	const generatedBanner = exportSettings.includeTsNoCheck
+		? `/**
  * @generated halftone-studio
  * This file is autogenerated by the in-app halftone studio
  * (src/app/halftone). Do NOT hand-edit — regenerate the export
@@ -1147,15 +1147,15 @@ function generateReactComponent(
  * src/app/halftone/_lib/exporters.ts for the generator source.
  */
 // @ts-nocheck`
-    : null;
-  const directiveLines = [
-    generatedBanner,
-    exportSettings.includeUseClientDirective ? "'use client';" : null,
-  ]
-    .filter((line): line is string => line !== null)
-    .join('\n');
-  const mountStyleBlock = exportSettings.includeStyledMount
-    ? `const StyledVisualMount = styled.div\`
+		: null;
+	const directiveLines = [
+		generatedBanner,
+		exportSettings.includeUseClientDirective ? "'use client';" : null,
+	]
+		.filter((line): line is string => line !== null)
+		.join("\n");
+	const mountStyleBlock = exportSettings.includeStyledMount
+		? `const StyledVisualMount = styled.div\`
   background: ${background};
   display: block;
   height: 100%;
@@ -1163,31 +1163,31 @@ function generateReactComponent(
   width: 100%;
 \`;
 `
-    : '';
-  const assetPropName = isImageMode
-    ? 'imageUrl'
-    : shape.kind === 'imported'
-      ? 'modelUrl'
-      : null;
-  const assetPropDefaultValue =
-    assetPropName === 'imageUrl'
-      ? defaultImageUrl
-      : assetPropName === 'modelUrl'
-        ? defaultModelUrl
-        : null;
-  const propsTypeBlock = assetPropName
-    ? `type ${normalizedComponentName}Props = {\n  ${assetPropName}?: string;\n  style?: CSSProperties;\n};`
-    : `type ${normalizedComponentName}Props = {\n  style?: CSSProperties;\n};`;
-  const propsSignature = assetPropName
-    ? `{\n  ${assetPropName} = ${JSON.stringify(assetPropDefaultValue)},\n  style,\n}: ${normalizedComponentName}Props`
-    : `{\n  style,\n}: ${normalizedComponentName}Props`;
-  const mountOptionsBlock = assetPropName
-    ? `const unmount = mountHalftoneCanvas({\n      container,\n      ${assetPropName},\n      onError: (error) => {\n        console.error(error);\n      },\n    });`
-    : `const unmount = mountHalftoneCanvas({\n      container,\n      onError: (error) => {\n        console.error(error);\n      },\n    });`;
-  const effectDependencies = assetPropName ? `[${assetPropName}]` : '[]';
-  const returnBlock = exportSettings.includeStyledMount
-    ? `return <StyledVisualMount aria-hidden ref={mountReference} style={style} />;`
-    : `return (
+		: "";
+	const assetPropName = isImageMode
+		? "imageUrl"
+		: shape.kind === "imported"
+			? "modelUrl"
+			: null;
+	const assetPropDefaultValue =
+		assetPropName === "imageUrl"
+			? defaultImageUrl
+			: assetPropName === "modelUrl"
+				? defaultModelUrl
+				: null;
+	const propsTypeBlock = assetPropName
+		? `type ${normalizedComponentName}Props = {\n  ${assetPropName}?: string;\n  style?: CSSProperties;\n};`
+		: `type ${normalizedComponentName}Props = {\n  style?: CSSProperties;\n};`;
+	const propsSignature = assetPropName
+		? `{\n  ${assetPropName} = ${JSON.stringify(assetPropDefaultValue)},\n  style,\n}: ${normalizedComponentName}Props`
+		: `{\n  style,\n}: ${normalizedComponentName}Props`;
+	const mountOptionsBlock = assetPropName
+		? `const unmount = mountHalftoneCanvas({\n      container,\n      ${assetPropName},\n      onError: (error) => {\n        console.error(error);\n      },\n    });`
+		: `const unmount = mountHalftoneCanvas({\n      container,\n      onError: (error) => {\n        console.error(error);\n      },\n    });`;
+	const effectDependencies = assetPropName ? `[${assetPropName}]` : "[]";
+	const returnBlock = exportSettings.includeStyledMount
+		? `return <StyledVisualMount aria-hidden ref={mountReference} style={style} />;`
+		: `return (
     <div
       ref={mountReference}
       style={{
@@ -1198,8 +1198,8 @@ function generateReactComponent(
       }}
     />
   );`;
-  const componentFunctionBlock = exportSettings.includeNamedAndDefaultExport
-    ? `export function ${normalizedComponentName}(${propsSignature}) {
+	const componentFunctionBlock = exportSettings.includeNamedAndDefaultExport
+		? `export function ${normalizedComponentName}(${propsSignature}) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1220,7 +1220,7 @@ function generateReactComponent(
 }
 
 export default ${normalizedComponentName};`
-    : `export default function ${normalizedComponentName}(${propsSignature}) {
+		: `export default function ${normalizedComponentName}(${propsSignature}) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1240,61 +1240,61 @@ export default ${normalizedComponentName};`
   ${returnBlock}
 }`;
 
-  return `${directiveLines ? `${directiveLines}\n\n` : ''}${importBlock}
+	return `${directiveLines ? `${directiveLines}\n\n` : ""}${importBlock}
 
 ${headerComment}${serializedRuntime}
 
 ${mountScript}
 
-${mountStyleBlock ? `${mountStyleBlock}\n` : ''}${propsTypeBlock}
+${mountStyleBlock ? `${mountStyleBlock}\n` : ""}${propsTypeBlock}
 
 ${componentFunctionBlock}
 `;
 }
 
 async function generateStandaloneHtml(
-  settings: HalftoneStudioSettings,
-  selectedShape: HalftoneGeometrySpec | undefined,
-  componentName = 'HalftoneDashes',
-  options: ReactExportOptions = {},
+	settings: HalftoneStudioSettings,
+	selectedShape: HalftoneGeometrySpec | undefined,
+	componentName = "HalftoneDashes",
+	options: ReactExportOptions = {},
 ) {
-  const isImageMode = settings.sourceMode === 'image';
-  const shape = createShapeDescriptor(
-    selectedShape,
-    settings,
-    options.importedFile,
-    options.modelFilenameOverride,
-  );
-  const pose = HALFTONE_EXPORT_PARSING.normalizePose(options.initialPose);
-  const normalizedComponentName =
-    HALFTONE_EXPORT_NAMES.normalizeComponentName(componentName);
-  const defaultImageUrl = options.imageFilename ?? 'image.png';
-  const embeddedImportedModelUrl =
-    !isImageMode && shape.kind === 'imported' && options.importedFile
-      ? await fileToDataUrl(options.importedFile, shape.loader)
-      : null;
-  const defaultModelUrl =
-    embeddedImportedModelUrl ??
-    options.modelFilenameOverride ??
-    shape.filename ??
-    'model.glb';
-  const background = options.background ?? 'transparent';
+	const isImageMode = settings.sourceMode === "image";
+	const shape = createShapeDescriptor(
+		selectedShape,
+		settings,
+		options.importedFile,
+		options.modelFilenameOverride,
+	);
+	const pose = HALFTONE_EXPORT_PARSING.normalizePose(options.initialPose);
+	const normalizedComponentName =
+		HALFTONE_EXPORT_NAMES.normalizeComponentName(componentName);
+	const defaultImageUrl = options.imageFilename ?? "image.png";
+	const embeddedImportedModelUrl =
+		!isImageMode && shape.kind === "imported" && options.importedFile
+			? await fileToDataUrl(options.importedFile, shape.loader)
+			: null;
+	const defaultModelUrl =
+		embeddedImportedModelUrl ??
+		options.modelFilenameOverride ??
+		shape.filename ??
+		"model.glb";
+	const background = options.background ?? "transparent";
 
-  const threeImports = getStandaloneThreeImports(isImageMode, shape);
+	const threeImports = getStandaloneThreeImports(isImageMode, shape);
 
-  const mountScript = isImageMode
-    ? createImageMountScript()
-    : createMountScript();
+	const mountScript = isImageMode
+		? createImageMountScript()
+		: createMountScript();
 
-  const mountCall = isImageMode
-    ? `mountHalftoneCanvas({
+	const mountCall = isImageMode
+		? `mountHalftoneCanvas({
         container,
         imageUrl: ${JSON.stringify(`./${defaultImageUrl}`)},
         onError: (error) => {
           console.error(error);
         },
       });`
-    : `mountHalftoneCanvas({
+		: `mountHalftoneCanvas({
         container,
         modelUrl: ${JSON.stringify(`./${defaultModelUrl}`)},
         onError: (error) => {
@@ -1302,18 +1302,18 @@ async function generateStandaloneHtml(
         },
       });`;
 
-  const captionText = isImageMode
-    ? `Place <code>${defaultImageUrl}</code> next to this HTML file.`
-    : `Standalone export of the current halftone scene.
+	const captionText = isImageMode
+		? `Place <code>${defaultImageUrl}</code> next to this HTML file.`
+		: `Standalone export of the current halftone scene.
         ${
-          shape.kind === 'imported'
-            ? embeddedImportedModelUrl
-              ? 'The uploaded model is embedded directly in this HTML file.'
-              : `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.`
-            : ''
-        }`;
+					shape.kind === "imported"
+						? embeddedImportedModelUrl
+							? "The uploaded model is embedded directly in this HTML file."
+							: `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.`
+						: ""
+				}`;
 
-  return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -1402,7 +1402,7 @@ async function generateStandaloneHtml(
 }
 
 export const HALFTONE_EXPORTERS = {
-  getModelFile: getExportedModelFile,
-  generateReactComponent,
-  generateStandaloneHtml,
+	getModelFile: getExportedModelFile,
+	generateReactComponent,
+	generateStandaloneHtml,
 };

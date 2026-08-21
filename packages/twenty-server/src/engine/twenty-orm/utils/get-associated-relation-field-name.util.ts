@@ -1,2 +1,2 @@
 export const getAssociatedRelationFieldName = (connectFieldName: string) =>
-  `${connectFieldName}Id`;
+	`${connectFieldName}Id`;

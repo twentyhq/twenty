@@ -1,35 +1,35 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 
-import graphqlTypeJson from 'graphql-type-json';
+import graphqlTypeJson from "graphql-type-json";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkflowStepPosition } from 'src/engine/core-modules/workflow/dtos/workflow-step-position.dto';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { WorkflowStepPosition } from "src/engine/core-modules/workflow/dtos/workflow-step-position.dto";
+import { WorkflowActionType } from "twenty-shared/workflow";
 
 registerEnumType(WorkflowActionType, {
-  name: 'WorkflowActionType',
+	name: "WorkflowActionType",
 });
 
-@ObjectType('WorkflowAction')
+@ObjectType("WorkflowAction")
 export class WorkflowActionDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String)
-  name: string;
+	@Field(() => String)
+	name: string;
 
-  @Field(() => WorkflowActionType)
-  type: WorkflowActionType;
+	@Field(() => WorkflowActionType)
+	type: WorkflowActionType;
 
-  @Field(() => graphqlTypeJson)
-  settings: object;
+	@Field(() => graphqlTypeJson)
+	settings: object;
 
-  @Field(() => Boolean)
-  valid: boolean;
+	@Field(() => Boolean)
+	valid: boolean;
 
-  @Field(() => [UUIDScalarType], { nullable: true })
-  nextStepIds?: string[];
+	@Field(() => [UUIDScalarType], { nullable: true })
+	nextStepIds?: string[];
 
-  @Field(() => WorkflowStepPosition, { nullable: true })
-  position?: WorkflowStepPosition;
+	@Field(() => WorkflowStepPosition, { nullable: true })
+	position?: WorkflowStepPosition;
 }

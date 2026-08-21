@@ -1,15 +1,15 @@
-import { type QueryRunner } from 'typeorm';
+import { type QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { type FastInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface";
 
-@RegisteredInstanceCommand('2.27.0', 1785681272278)
+@RegisteredInstanceCommand("2.27.0", 1785681272278)
 export class CreateApplicationAuthorizationCoreTableFastInstanceCommand
-  implements FastInstanceCommand
+	implements FastInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "core"."applicationAuthorization" (
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`CREATE TABLE IF NOT EXISTS "core"."applicationAuthorization" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "userId" uuid NOT NULL,
         "workspaceId" uuid NOT NULL,
@@ -31,25 +31,25 @@ export class CreateApplicationAuthorizationCoreTableFastInstanceCommand
         CONSTRAINT "FK_APPLICATION_AUTHORIZATION_USER_WORKSPACE_ID" FOREIGN KEY ("userWorkspaceId")
           REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE
       )`,
-    );
+		);
 
-    await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_USER_APPLICATION_UNIQUE" ON "core"."applicationAuthorization" ("userId", "applicationId")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_WORKSPACE_ID" ON "core"."applicationAuthorization" ("workspaceId")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_APPLICATION_ID" ON "core"."applicationAuthorization" ("applicationId")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_USER_WORKSPACE_ID" ON "core"."applicationAuthorization" ("userWorkspaceId")`,
-    );
-  }
+		await queryRunner.query(
+			`CREATE UNIQUE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_USER_APPLICATION_UNIQUE" ON "core"."applicationAuthorization" ("userId", "applicationId")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_WORKSPACE_ID" ON "core"."applicationAuthorization" ("workspaceId")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_APPLICATION_ID" ON "core"."applicationAuthorization" ("applicationId")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_APPLICATION_AUTHORIZATION_USER_WORKSPACE_ID" ON "core"."applicationAuthorization" ("userWorkspaceId")`,
+		);
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DROP TABLE IF EXISTS "core"."applicationAuthorization"`,
-    );
-  }
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`DROP TABLE IF EXISTS "core"."applicationAuthorization"`,
+		);
+	}
 }

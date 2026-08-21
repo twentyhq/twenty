@@ -1,2 +1,2 @@
 export const isEventHandlerKey = (key: string): boolean =>
-  key.toLowerCase().startsWith('on');
+	key.toLowerCase().startsWith("on");

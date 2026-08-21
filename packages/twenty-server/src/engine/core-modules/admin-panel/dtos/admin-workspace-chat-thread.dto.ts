@@ -1,30 +1,30 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('AdminWorkspaceChatThread')
+@ObjectType("AdminWorkspaceChatThread")
 export class AdminWorkspaceChatThreadDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String, { nullable: true })
-  title: string | null;
+	@Field(() => String, { nullable: true })
+	title: string | null;
 
-  @Field(() => Int)
-  totalInputTokens: number;
+	@Field(() => Int)
+	totalInputTokens: number;
 
-  @Field(() => Int)
-  totalOutputTokens: number;
+	@Field(() => Int)
+	totalOutputTokens: number;
 
-  @Field(() => Int)
-  conversationSize: number;
+	@Field(() => Int)
+	conversationSize: number;
 
-  @Field(() => Int)
-  messageCount: number;
+	@Field(() => Int)
+	messageCount: number;
 
-  @Field(() => Date)
-  createdAt: Date;
+	@Field(() => Date)
+	createdAt: Date;
 
-  @Field(() => Date)
-  updatedAt: Date;
+	@Field(() => Date)
+	updatedAt: Date;
 }

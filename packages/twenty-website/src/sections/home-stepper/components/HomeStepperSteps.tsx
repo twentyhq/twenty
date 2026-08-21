@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { type CSSProperties } from "react";
 
-import { mediaUp, spacing } from '@/tokens';
-import { Body, Heading, StepperProgressRail, StepperSwipeDeck } from '@/ui';
+import { mediaUp, spacing } from "@/tokens";
+import { Body, Heading, StepperProgressRail, StepperSwipeDeck } from "@/ui";
 
-import { type StepperStep } from '../data/stepper.data';
+import { type StepperStep } from "../data/stepper.data";
 
 const HOLD_FRACTIONS = [240 / 285, (880 - 285) / (925 - 285), 1];
 
 const StepsRoot = styled.div`
   min-width: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: grid;
   }
 `;
@@ -24,7 +24,7 @@ const StickyPanel = styled.div`
   gap: ${spacing(6)};
   grid-template-columns: auto 1fr;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     align-self: start;
     gap: ${spacing(20)};
@@ -39,7 +39,7 @@ const StickyPanel = styled.div`
 const SpacerStack = styled.div`
   display: none;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: block;
     grid-area: 1 / 1;
   }
@@ -54,7 +54,7 @@ const StepsContainer = styled.div`
   grid-template-columns: 1fr;
   min-width: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     & > * {
       grid-area: 1 / 1;
     }
@@ -72,7 +72,7 @@ const StepBlock = styled.div`
     margin-top: ${spacing(4)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     opacity: var(--step-opacity, 0);
     transform: var(--step-transform, none);
 
@@ -94,105 +94,105 @@ const SwipeStepBlock = styled.div`
 `;
 
 const computeStepStyle = (
-  index: number,
-  activeStepIndex: number,
-  localProgress: number,
-  stepCount: number,
+	index: number,
+	activeStepIndex: number,
+	localProgress: number,
+	stepCount: number,
 ): { opacity: number; transform: string } => {
-  const holdMax = HOLD_FRACTIONS[activeStepIndex] ?? 1;
-  if (index === activeStepIndex) {
-    if (index === stepCount - 1 || localProgress <= holdMax) {
-      return { opacity: 1, transform: 'translateY(0)' };
-    }
-    const t = Math.min(1, (localProgress - holdMax) / (1 - holdMax));
-    return { opacity: 1 - t, transform: `translateY(${-40 * t}vh)` };
-  }
-  if (index === activeStepIndex + 1 && localProgress > holdMax) {
-    const t = Math.min(1, (localProgress - holdMax) / (1 - holdMax));
-    return { opacity: t, transform: `translateY(${40 * (1 - t)}vh)` };
-  }
-  return { opacity: 0, transform: 'translateY(40vh)' };
+	const holdMax = HOLD_FRACTIONS[activeStepIndex] ?? 1;
+	if (index === activeStepIndex) {
+		if (index === stepCount - 1 || localProgress <= holdMax) {
+			return { opacity: 1, transform: "translateY(0)" };
+		}
+		const t = Math.min(1, (localProgress - holdMax) / (1 - holdMax));
+		return { opacity: 1 - t, transform: `translateY(${-40 * t}vh)` };
+	}
+	if (index === activeStepIndex + 1 && localProgress > holdMax) {
+		const t = Math.min(1, (localProgress - holdMax) / (1 - holdMax));
+		return { opacity: t, transform: `translateY(${40 * (1 - t)}vh)` };
+	}
+	return { opacity: 0, transform: "translateY(40vh)" };
 };
 
 export type HomeStepperStepsProps = {
-  activeStepIndex: number;
-  layoutMode: 'scroll' | 'swipe';
-  localProgress: number;
-  onMobileStepIndexChange: (nextIndex: number) => void;
-  steps: readonly StepperStep[];
+	activeStepIndex: number;
+	layoutMode: "scroll" | "swipe";
+	localProgress: number;
+	onMobileStepIndexChange: (nextIndex: number) => void;
+	steps: readonly StepperStep[];
 };
 
 export function HomeStepperSteps({
-  activeStepIndex,
-  layoutMode,
-  localProgress,
-  onMobileStepIndexChange,
-  steps,
+	activeStepIndex,
+	layoutMode,
+	localProgress,
+	onMobileStepIndexChange,
+	steps,
 }: HomeStepperStepsProps) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  const renderStepContent = (step: StepperStep) => (
-    <>
-      <Heading as="h3" size="lg" weight="light">
-        {i18n._(step.heading)}
-      </Heading>
-      <Body muted size="sm">
-        {i18n._(step.body)}
-      </Body>
-    </>
-  );
+	const renderStepContent = (step: StepperStep) => (
+		<>
+			<Heading as="h3" size="lg" weight="light">
+				{i18n._(step.heading)}
+			</Heading>
+			<Body muted size="sm">
+				{i18n._(step.body)}
+			</Body>
+		</>
+	);
 
-  return (
-    <StepsRoot>
-      <StickyPanel>
-        <StepperProgressRail
-          activeStepIndex={activeStepIndex}
-          localProgress={localProgress}
-          stepCount={steps.length}
-        />
-        <StepsContainer>
-          {layoutMode === 'swipe' ? (
-            <StepperSwipeDeck
-              activeIndex={activeStepIndex}
-              onActiveIndexChange={onMobileStepIndexChange}
-              stepCount={steps.length}
-            >
-              {(stepIndex) => (
-                <SwipeStepBlock>
-                  {renderStepContent(steps[stepIndex])}
-                </SwipeStepBlock>
-              )}
-            </StepperSwipeDeck>
-          ) : (
-            steps.map((step, index) => {
-              const { opacity, transform } = computeStepStyle(
-                index,
-                activeStepIndex,
-                localProgress,
-                steps.length,
-              );
-              return (
-                <StepBlock
-                  key={step.heading.id}
-                  style={
-                    {
-                      '--step-opacity': opacity,
-                      '--step-transform': transform,
-                    } as CSSProperties
-                  }
-                >
-                  {renderStepContent(step)}
-                </StepBlock>
-              );
-            })
-          )}
-        </StepsContainer>
-      </StickyPanel>
-      <SpacerStack>
-        {steps.map((step) => (
-          <StepSpacer key={step.heading.id} />
-        ))}
-      </SpacerStack>
-    </StepsRoot>
-  );
+	return (
+		<StepsRoot>
+			<StickyPanel>
+				<StepperProgressRail
+					activeStepIndex={activeStepIndex}
+					localProgress={localProgress}
+					stepCount={steps.length}
+				/>
+				<StepsContainer>
+					{layoutMode === "swipe" ? (
+						<StepperSwipeDeck
+							activeIndex={activeStepIndex}
+							onActiveIndexChange={onMobileStepIndexChange}
+							stepCount={steps.length}
+						>
+							{(stepIndex) => (
+								<SwipeStepBlock>
+									{renderStepContent(steps[stepIndex])}
+								</SwipeStepBlock>
+							)}
+						</StepperSwipeDeck>
+					) : (
+						steps.map((step, index) => {
+							const { opacity, transform } = computeStepStyle(
+								index,
+								activeStepIndex,
+								localProgress,
+								steps.length,
+							);
+							return (
+								<StepBlock
+									key={step.heading.id}
+									style={
+										{
+											"--step-opacity": opacity,
+											"--step-transform": transform,
+										} as CSSProperties
+									}
+								>
+									{renderStepContent(step)}
+								</StepBlock>
+							);
+						})
+					)}
+				</StepsContainer>
+			</StickyPanel>
+			<SpacerStack>
+				{steps.map((step) => (
+					<StepSpacer key={step.heading.id} />
+				))}
+			</SpacerStack>
+		</StepsRoot>
+	);
 }

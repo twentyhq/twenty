@@ -1,10 +1,10 @@
-import { createContext } from 'react';
-import { type RecordFilterValueDependencies } from 'twenty-shared/types';
+import { createContext } from "react";
+import { type RecordFilterValueDependencies } from "twenty-shared/types";
 
 export type RecordFilterValueDependenciesContextValue = Pick<
-  RecordFilterValueDependencies,
-  'currentRecord'
+	RecordFilterValueDependencies,
+	"currentRecord"
 >;
 
 export const RecordFilterValueDependenciesContext =
-  createContext<RecordFilterValueDependenciesContextValue>({});
+	createContext<RecordFilterValueDependenciesContextValue>({});

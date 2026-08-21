@@ -1,5 +1,5 @@
 export type FileCategory =
-  | 'document'
-  | 'image'
-  | 'presentation'
-  | 'spreadsheet';
+	| "document"
+	| "image"
+	| "presentation"
+	| "spreadsheet";

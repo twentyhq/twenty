@@ -1,56 +1,56 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 
-import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
-import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
-import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
-import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
-import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
-import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { CalDavClientProvider } from "src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider";
+import { CalDavFetchEventsService } from "src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service";
+import { type CalDavSyncCursor } from "src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor";
+import { parseCalDAVError } from "src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util";
+import { CalendarEventImportDriverException } from "src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception";
+import { type GetCalendarEventsResponse } from "src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service";
 
 @Injectable()
 export class CalDavGetEventsService {
-  private readonly logger = new Logger(CalDavGetEventsService.name);
+	private readonly logger = new Logger(CalDavGetEventsService.name);
 
-  constructor(
-    private readonly calDavClientProvider: CalDavClientProvider,
-    private readonly fetchEventsService: CalDavFetchEventsService,
-  ) {}
+	constructor(
+		private readonly calDavClientProvider: CalDavClientProvider,
+		private readonly fetchEventsService: CalDavFetchEventsService,
+	) {}
 
-  async getCalendarEvents(
-    connectedAccountId: string,
-    syncCursor?: string,
-  ): Promise<GetCalendarEventsResponse> {
-    this.logger.debug(`Getting calendar events for ${connectedAccountId}`);
+	async getCalendarEvents(
+		connectedAccountId: string,
+		syncCursor?: string,
+	): Promise<GetCalendarEventsResponse> {
+		this.logger.debug(`Getting calendar events for ${connectedAccountId}`);
 
-    try {
-      const client =
-        await this.calDavClientProvider.getClient(connectedAccountId);
+		try {
+			const client =
+				await this.calDavClientProvider.getClient(connectedAccountId);
 
-      const result = await this.fetchEventsService.fetchChangedEventHrefs(
-        client,
-        syncCursor ? (JSON.parse(syncCursor) as CalDavSyncCursor) : undefined,
-      );
+			const result = await this.fetchEventsService.fetchChangedEventHrefs(
+				client,
+				syncCursor ? (JSON.parse(syncCursor) as CalDavSyncCursor) : undefined,
+			);
 
-      this.logger.debug(
-        `Found ${result.changedHrefs.length} changed and ${result.cancelledHrefs.length} cancelled calendar events for ${connectedAccountId}`,
-      );
+			this.logger.debug(
+				`Found ${result.changedHrefs.length} changed and ${result.cancelledHrefs.length} cancelled calendar events for ${connectedAccountId}`,
+			);
 
-      return {
-        calendarEventIds: result.changedHrefs,
-        calendarEventIdsToDelete: result.cancelledHrefs,
-        nextSyncCursor: JSON.stringify(result.syncCursor),
-      };
-    } catch (error) {
-      this.logger.error(
-        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
-        error,
-      );
+			return {
+				calendarEventIds: result.changedHrefs,
+				calendarEventIdsToDelete: result.cancelledHrefs,
+				nextSyncCursor: JSON.stringify(result.syncCursor),
+			};
+		} catch (error) {
+			this.logger.error(
+				`Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
+				error,
+			);
 
-      if (error instanceof CalendarEventImportDriverException) {
-        throw error;
-      }
+			if (error instanceof CalendarEventImportDriverException) {
+				throw error;
+			}
 
-      throw parseCalDAVError(error as Error);
-    }
-  }
+			throw parseCalDAVError(error as Error);
+		}
+	}
 }

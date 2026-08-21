@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const TRANSFER_APPLICATION_REGISTRATION_OWNERSHIP = gql`
   mutation TransferApplicationRegistrationOwnership(

@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const isEndingSubscriptionTrialPeriodState = createAtomState<boolean>({
-  key: 'billing/isEndingSubscriptionTrialPeriodState',
-  defaultValue: false,
+	key: "billing/isEndingSubscriptionTrialPeriodState",
+	defaultValue: false,
 });

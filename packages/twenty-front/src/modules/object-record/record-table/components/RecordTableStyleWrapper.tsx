@@ -1,74 +1,74 @@
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/HorizontalScrollBoxShadowCSS';
-import { VerticalScrollBoxShadowCSS } from '@/object-record/record-table/components/VerticalScrollBoxShadowCSS';
-import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
-import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName';
-import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
-import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
-import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
-import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
-import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
-import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
-import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthClassName';
-import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
-import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
-import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type RecordField } from "@/object-record/record-field/types/RecordField";
+import { HorizontalScrollBoxShadowCSS } from "@/object-record/record-table/components/HorizontalScrollBoxShadowCSS";
+import { VerticalScrollBoxShadowCSS } from "@/object-record/record-table/components/VerticalScrollBoxShadowCSS";
+import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from "@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth";
+import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidthClassName";
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from "@/object-record/record-table/constants/RecordTableColumnCheckboxWidth";
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName";
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from "@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth";
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName";
+import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName";
+import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from "@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName";
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthClassName";
+import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from "@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName";
+import { TABLE_Z_INDEX } from "@/object-record/record-table/constants/TableZIndex";
+import { getRecordTableColumnFieldWidthClassName } from "@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName";
+import { getRecordTableColumnFieldWidthCSSVariableName } from "@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName";
+import { styled } from "@linaria/react";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 export { HorizontalScrollBoxShadowCSS, VerticalScrollBoxShadowCSS };
 
 export const RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR =
-  '--record-table-drag-drop-width';
+	"--record-table-drag-drop-width";
 export const RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR =
-  '--record-table-checkbox-width';
+	"--record-table-checkbox-width";
 
 const MAX_COLUMNS = 100;
 
 const columnFieldWidthRules = Array.from(
-  { length: MAX_COLUMNS },
-  (_, i) =>
-    `div.${getRecordTableColumnFieldWidthClassName(i)} {
+	{ length: MAX_COLUMNS },
+	(_, i) =>
+		`div.${getRecordTableColumnFieldWidthClassName(i)} {
     width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
     min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
     max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
   }`,
-).join('\n');
+).join("\n");
 
 export const getRecordTableColumnWidthInlineStyles = ({
-  visibleRecordFields,
-  isDragColumnHidden,
-  isCheckboxColumnHidden,
+	visibleRecordFields,
+	isDragColumnHidden,
+	isCheckboxColumnHidden,
 }: {
-  visibleRecordFields: RecordField[];
-  isDragColumnHidden?: boolean;
-  isCheckboxColumnHidden?: boolean;
+	visibleRecordFields: RecordField[];
+	isDragColumnHidden?: boolean;
+	isCheckboxColumnHidden?: boolean;
 }): Record<string, string> => {
-  const style: Record<string, string> = {};
+	const style: Record<string, string> = {};
 
-  for (let i = 0; i < visibleRecordFields.length; i++) {
-    style[`--record-table-column-field-${i}`] =
-      `${visibleRecordFields[i].size}px`;
-  }
+	for (let i = 0; i < visibleRecordFields.length; i++) {
+		style[`--record-table-column-field-${i}`] =
+			`${visibleRecordFields[i].size}px`;
+	}
 
-  style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isDragColumnHidden
-    ? '0px'
-    : `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px`;
+	style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isDragColumnHidden
+		? "0px"
+		: `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px`;
 
-  style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isCheckboxColumnHidden
-    ? '0px'
-    : `${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`;
+	style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isCheckboxColumnHidden
+		? "0px"
+		: `${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`;
 
-  return style;
+	return style;
 };
 
 const StyledTable = styled.div<{
-  isDragging?: boolean;
+	isDragging?: boolean;
 }>`
   & > * {
     pointer-events: ${({ isDragging }) =>
-      isDragging === true ? 'none' : 'auto'};
+			isDragging === true ? "none" : "auto"};
   }
 
   display: flex;

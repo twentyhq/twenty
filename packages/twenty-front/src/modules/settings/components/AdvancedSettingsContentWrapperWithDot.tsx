@@ -1,29 +1,29 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { IconPoint } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { IconPoint } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledWrapper = styled.div`
   position: relative;
   width: 100%;
 `;
-type DotPosition = 'top' | 'centered';
+type DotPosition = "top" | "centered";
 
 type AdvancedSettingsContentWrapperWithDotProps = {
-  children: React.ReactNode;
-  hideDot?: boolean;
-  dotPosition?: DotPosition;
+	children: React.ReactNode;
+	hideDot?: boolean;
+	dotPosition?: DotPosition;
 };
 
 const StyledDotContainer = styled.div<{ dotPosition: DotPosition }>`
   align-items: ${({ dotPosition }) =>
-    dotPosition === 'top' ? 'stretch' : 'center'};
+		dotPosition === "top" ? "stretch" : "center"};
   display: flex;
   height: 100%;
   left: calc(-1 * ${themeCssVariables.spacing[5]});
 
   position: absolute;
-  top: ${({ dotPosition }) => (dotPosition === 'top' ? '0' : 'auto')};
+  top: ${({ dotPosition }) => (dotPosition === "top" ? "0" : "auto")};
 `;
 
 const StyledIconPointContainer = styled.span`
@@ -33,26 +33,26 @@ const StyledIconPointContainer = styled.span`
 `;
 
 export const AdvancedSettingsContentWrapperWithDot = ({
-  children,
-  hideDot = false,
-  dotPosition = 'centered',
+	children,
+	hideDot = false,
+	dotPosition = "centered",
 }: AdvancedSettingsContentWrapperWithDotProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledWrapper>
-      {!hideDot && (
-        <StyledDotContainer dotPosition={dotPosition}>
-          <StyledIconPointContainer>
-            <IconPoint
-              size={12}
-              color={theme.color.yellow}
-              fill={theme.color.yellow}
-            />
-          </StyledIconPointContainer>
-        </StyledDotContainer>
-      )}
-      {children}
-    </StyledWrapper>
-  );
+	return (
+		<StyledWrapper>
+			{!hideDot && (
+				<StyledDotContainer dotPosition={dotPosition}>
+					<StyledIconPointContainer>
+						<IconPoint
+							size={12}
+							color={theme.color.yellow}
+							fill={theme.color.yellow}
+						/>
+					</StyledIconPointContainer>
+				</StyledDotContainer>
+			)}
+			{children}
+		</StyledWrapper>
+	);
 };

@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { IconArrowsDiagonal, IconUserCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { IconArrowsDiagonal, IconUserCircle } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type OpenRecordInCardMediaProps = {
-  type: 'member-preference' | 'side-panel' | 'full-page';
+	type: "member-preference" | "side-panel" | "full-page";
 };
 
 const StyledPreviewFrame = styled.div`
@@ -82,38 +82,38 @@ const StyledFullPage = styled.div`
 `;
 
 const SidePanelPreview = () => (
-  <StyledSidePanelPreview>
-    <StyledSidePanelContent />
-    <StyledSidePanel />
-  </StyledSidePanelPreview>
+	<StyledSidePanelPreview>
+		<StyledSidePanelContent />
+		<StyledSidePanel />
+	</StyledSidePanelPreview>
 );
 
 export const OpenRecordInCardMedia = ({ type }: OpenRecordInCardMediaProps) => {
-  if (type === 'member-preference') {
-    return (
-      <StyledPreviewFrame>
-        <StyledMemberPreferenceCanvas>
-          <SidePanelPreview />
-          <StyledFullPage />
-          <StyledMemberPreferenceIcon>
-            <IconUserCircle size={14} />
-          </StyledMemberPreferenceIcon>
-        </StyledMemberPreferenceCanvas>
-      </StyledPreviewFrame>
-    );
-  }
+	if (type === "member-preference") {
+		return (
+			<StyledPreviewFrame>
+				<StyledMemberPreferenceCanvas>
+					<SidePanelPreview />
+					<StyledFullPage />
+					<StyledMemberPreferenceIcon>
+						<IconUserCircle size={14} />
+					</StyledMemberPreferenceIcon>
+				</StyledMemberPreferenceCanvas>
+			</StyledPreviewFrame>
+		);
+	}
 
-  return (
-    <StyledPreviewFrame>
-      <StyledPreviewCanvas>
-        {type === 'side-panel' ? (
-          <SidePanelPreview />
-        ) : (
-          <StyledFullPage>
-            <IconArrowsDiagonal size={14} />
-          </StyledFullPage>
-        )}
-      </StyledPreviewCanvas>
-    </StyledPreviewFrame>
-  );
+	return (
+		<StyledPreviewFrame>
+			<StyledPreviewCanvas>
+				{type === "side-panel" ? (
+					<SidePanelPreview />
+				) : (
+					<StyledFullPage>
+						<IconArrowsDiagonal size={14} />
+					</StyledFullPage>
+				)}
+			</StyledPreviewCanvas>
+		</StyledPreviewFrame>
+	);
 };

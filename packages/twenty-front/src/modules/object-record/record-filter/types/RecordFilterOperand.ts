@@ -1,1 +1,1 @@
-export { ViewFilterOperand as RecordFilterOperand } from 'twenty-shared/types';
+export { ViewFilterOperand as RecordFilterOperand } from "twenty-shared/types";

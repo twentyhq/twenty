@@ -1,12 +1,12 @@
-import gql from 'graphql-tag';
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import gql from "graphql-tag";
+import { type FeatureFlagKey } from "twenty-shared/types";
 
 export const updateFeatureFlagFactory = (
-  workspaceId: string,
-  featureFlag: FeatureFlagKey,
-  value: boolean,
+	workspaceId: string,
+	featureFlag: FeatureFlagKey,
+	value: boolean,
 ) => ({
-  query: gql`
+	query: gql`
     mutation UpdateWorkspaceFeatureFlag(
       $workspaceId: UUID!
       $featureFlag: String!
@@ -19,9 +19,9 @@ export const updateFeatureFlagFactory = (
       )
     }
   `,
-  variables: {
-    workspaceId,
-    featureFlag,
-    value,
-  },
+	variables: {
+		workspaceId,
+		featureFlag,
+		value,
+	},
 });

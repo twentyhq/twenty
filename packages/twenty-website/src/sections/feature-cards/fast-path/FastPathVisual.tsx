@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconArrowUpRight,
-  IconBuildingSkyscraper,
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronUp,
-  IconDatabaseExport,
-  IconDatabaseImport,
-  IconDotsVertical,
-  IconMail,
-  IconMoon,
-  IconPlus,
-  IconSparkles,
-  IconTrash,
-} from '@tabler/icons-react';
+	IconArrowUpRight,
+	IconBuildingSkyscraper,
+	IconChevronDown,
+	IconChevronLeft,
+	IconChevronUp,
+	IconDatabaseExport,
+	IconDatabaseImport,
+	IconDotsVertical,
+	IconMail,
+	IconMoon,
+	IconPlus,
+	IconSparkles,
+	IconTrash,
+} from "@tabler/icons-react";
 import {
-  useRef,
-  useState,
-  type MouseEvent as ReactMouseEvent,
-  type RefObject,
-} from 'react';
+	useRef,
+	useState,
+	type MouseEvent as ReactMouseEvent,
+	type RefObject,
+} from "react";
 
-import { useTimeoutRegistry } from '@/app-preview/stage/use-timeout-registry';
-import { useScaleToFit } from '@/platform/motion';
-import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/HalftoneCardBackdrop';
-import { EASING, FONT_WEIGHT } from '@/tokens';
-import { FAST_PATH_SCENE } from '@/tokens/feature-scenes/fast-path-scene';
+import { useTimeoutRegistry } from "@/app-preview/stage/use-timeout-registry";
+import { useScaleToFit } from "@/platform/motion";
+import { HalftoneCardBackdrop } from "@/platform/visuals/rigs/HalftoneCardBackdrop";
+import { EASING, FONT_WEIGHT } from "@/tokens";
+import { FAST_PATH_SCENE } from "@/tokens/feature-scenes/fast-path-scene";
 
-import { DENSE_CONFETTI_PARTICLES } from './fast-path-confetti-data';
-import { PreviewCursorIcon } from './PreviewCursorIcon';
+import { DENSE_CONFETTI_PARTICLES } from "./fast-path-confetti-data";
+import { PreviewCursorIcon } from "./PreviewCursorIcon";
 
 const SCENE = FAST_PATH_SCENE;
 const SCENE_DESIGN_WIDTH = 411;
@@ -38,7 +38,7 @@ const SCENE_DESIGN_HEIGHT = 508;
 const TOOLBAR_VERTICAL_PADDING = 16;
 const ACTION_BUTTON_HEIGHT = 24;
 const TOOLBAR_TOTAL_HEIGHT =
-  ACTION_BUTTON_HEIGHT + TOOLBAR_VERTICAL_PADDING * 2;
+	ACTION_BUTTON_HEIGHT + TOOLBAR_VERTICAL_PADDING * 2;
 const TOOLBAR_TABLER_STROKE = 1.55;
 const MENU_ICON_SIZE = 16;
 const MENU_TABLER_STROKE = 2;
@@ -89,16 +89,16 @@ const ScaledScene = styled.div<{ $sceneScale: number }>`
 `;
 
 const ConfettiParticle = styled.div<{
-  $color: string;
-  $delay: number;
-  $height: number;
-  $left: number;
-  $radius: number;
-  $rotation: number;
-  $top: number;
-  $tx: number;
-  $ty: number;
-  $width: number;
+	$color: string;
+	$delay: number;
+	$height: number;
+	$left: number;
+	$radius: number;
+	$rotation: number;
+	$top: number;
+	$tx: number;
+	$ty: number;
+	$width: number;
 }>`
   --confetti-rotation: ${({ $rotation }) => `${$rotation}deg`};
   --confetti-translate-x: ${({ $tx }) => `${$tx}px`};
@@ -158,7 +158,7 @@ const PreviewSurface = styled.div<{ $active?: boolean }>`
   overflow: hidden;
   position: absolute;
   right: -82px;
-  transform: ${({ $active }) => ($active ? 'scale(1.04)' : 'scale(1)')};
+  transform: ${({ $active }) => ($active ? "scale(1.04)" : "scale(1)")};
   transform-origin: center center;
   transition: transform 260ms ${EASING.standard};
   width: 378px;
@@ -208,12 +208,12 @@ const ActionButton = styled.div<{ $iconOnly?: boolean }>`
   font-family: ${SCENE.appFont};
   font-size: 13px;
   font-weight: ${FONT_WEIGHT.medium};
-  gap: ${({ $iconOnly }) => ($iconOnly ? '2px' : '4px')};
+  gap: ${({ $iconOnly }) => ($iconOnly ? "2px" : "4px")};
   height: 24px;
   justify-content: center;
-  width: ${({ $iconOnly }) => ($iconOnly ? '24px' : 'auto')};
-  min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : 'auto')};
-  padding: ${({ $iconOnly }) => ($iconOnly ? '0' : '0 8px')};
+  width: ${({ $iconOnly }) => ($iconOnly ? "24px" : "auto")};
+  min-width: ${({ $iconOnly }) => ($iconOnly ? "24px" : "auto")};
+  padding: ${({ $iconOnly }) => ($iconOnly ? "0" : "0 8px")};
   transition: background 0.1s ease;
   user-select: none;
   white-space: nowrap;
@@ -233,7 +233,7 @@ const ActionIcon = styled.span`
 
 const ActionLabel = styled.span<{ $muted?: boolean }>`
   color: ${({ $muted }) =>
-    $muted ? SCENE.colors.muted : SCENE.colors.textSecondary};
+		$muted ? SCENE.colors.muted : SCENE.colors.textSecondary};
   font-family: inherit;
   font-size: inherit;
   font-weight: ${FONT_WEIGHT.medium};
@@ -304,7 +304,7 @@ const SectionLabel = styled.div`
 const MenuItem = styled.div<{ $active?: boolean }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? SCENE.colors.surfaceHover : 'transparent'};
+		$active ? SCENE.colors.surfaceHover : "transparent"};
   border-radius: 4px;
   cursor: pointer;
   display: grid;
@@ -393,268 +393,268 @@ const SearchSparkles = styled.div`
 `;
 
 export function FastPathVisual({
-  active,
-  backgroundImageSrc,
-  pointerTargetRef,
+	active,
+	backgroundImageSrc,
+	pointerTargetRef,
 }: {
-  active?: boolean;
-  backgroundImageSrc: string;
-  pointerTargetRef?: RefObject<HTMLElement | null>;
+	active?: boolean;
+	backgroundImageSrc: string;
+	pointerTargetRef?: RefObject<HTMLElement | null>;
 }) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const previewSurfaceRef = useRef<HTMLDivElement>(null);
-  const timeoutRegistry = useTimeoutRegistry();
-  const [confettiBursts, setConfettiBursts] = useState<
-    Array<{ id: number; left: number; top: number }>
-  >([]);
-  const [nextConfettiBurstId, setNextConfettiBurstId] = useState(1);
-  const sceneScale = useScaleToFit(
-    rootRef,
-    SCENE_DESIGN_WIDTH,
-    SCENE_DESIGN_HEIGHT,
-  );
+	const rootRef = useRef<HTMLDivElement>(null);
+	const previewSurfaceRef = useRef<HTMLDivElement>(null);
+	const timeoutRegistry = useTimeoutRegistry();
+	const [confettiBursts, setConfettiBursts] = useState<
+		Array<{ id: number; left: number; top: number }>
+	>([]);
+	const [nextConfettiBurstId, setNextConfettiBurstId] = useState(1);
+	const sceneScale = useScaleToFit(
+		rootRef,
+		SCENE_DESIGN_WIDTH,
+		SCENE_DESIGN_HEIGHT,
+	);
 
-  const handleCommandClick = (event: ReactMouseEvent<HTMLDivElement>) => {
-    const burstId = nextConfettiBurstId;
-    const rootElement = rootRef.current;
-    const previewSurfaceElement = previewSurfaceRef.current;
+	const handleCommandClick = (event: ReactMouseEvent<HTMLDivElement>) => {
+		const burstId = nextConfettiBurstId;
+		const rootElement = rootRef.current;
+		const previewSurfaceElement = previewSurfaceRef.current;
 
-    let burstLeft = 176;
-    let burstTop = 160;
+		let burstLeft = 176;
+		let burstTop = 160;
 
-    if (rootElement && previewSurfaceElement) {
-      const rootRect = rootElement.getBoundingClientRect();
-      const previewSurfaceRect = previewSurfaceElement.getBoundingClientRect();
-      const targetRect = event.currentTarget.getBoundingClientRect();
+		if (rootElement && previewSurfaceElement) {
+			const rootRect = rootElement.getBoundingClientRect();
+			const previewSurfaceRect = previewSurfaceElement.getBoundingClientRect();
+			const targetRect = event.currentTarget.getBoundingClientRect();
 
-      burstLeft = Math.max(
-        24,
-        previewSurfaceRect.left -
-          rootRect.left -
-          CONFETTI_ORIGIN_OFFSET_FROM_PREVIEW,
-      );
-      burstTop = Math.max(
-        24,
-        Math.min(
-          rootRect.height - 24,
-          targetRect.top - rootRect.top + targetRect.height / 2,
-        ),
-      );
-    }
+			burstLeft = Math.max(
+				24,
+				previewSurfaceRect.left -
+					rootRect.left -
+					CONFETTI_ORIGIN_OFFSET_FROM_PREVIEW,
+			);
+			burstTop = Math.max(
+				24,
+				Math.min(
+					rootRect.height - 24,
+					targetRect.top - rootRect.top + targetRect.height / 2,
+				),
+			);
+		}
 
-    setNextConfettiBurstId((currentBurstId) => currentBurstId + 1);
-    setConfettiBursts((currentBursts) => [
-      ...currentBursts,
-      { id: burstId, left: burstLeft, top: burstTop },
-    ]);
+		setNextConfettiBurstId((currentBurstId) => currentBurstId + 1);
+		setConfettiBursts((currentBursts) => [
+			...currentBursts,
+			{ id: burstId, left: burstLeft, top: burstTop },
+		]);
 
-    timeoutRegistry.schedule(() => {
-      setConfettiBursts((currentBursts) =>
-        currentBursts.filter((currentBurst) => currentBurst.id !== burstId),
-      );
-    }, CONFETTI_CLEANUP_MS);
-  };
+		timeoutRegistry.schedule(() => {
+			setConfettiBursts((currentBursts) =>
+				currentBursts.filter((currentBurst) => currentBurst.id !== burstId),
+			);
+		}, CONFETTI_CLEANUP_MS);
+	};
 
-  return (
-    <VisualRoot aria-hidden ref={rootRef}>
-      <SceneBackdrop>
-        <HalftoneCardBackdrop
-          active={active}
-          config={SCENE.backdrop}
-          imageUrl={backgroundImageSrc}
-          pointerTargetRef={pointerTargetRef ?? rootRef}
-        />
-      </SceneBackdrop>
-      <SceneBackdrop>
-        {confettiBursts.map((burst) => (
-          <ConfettiBurstLayer key={burst.id}>
-            {DENSE_CONFETTI_PARTICLES.map((particle, index) => {
-              // The particle's position in the authored field IS its
-              // identity within a burst (the array is static).
-              const particleNumber = index + 1;
+	return (
+		<VisualRoot aria-hidden ref={rootRef}>
+			<SceneBackdrop>
+				<HalftoneCardBackdrop
+					active={active}
+					config={SCENE.backdrop}
+					imageUrl={backgroundImageSrc}
+					pointerTargetRef={pointerTargetRef ?? rootRef}
+				/>
+			</SceneBackdrop>
+			<SceneBackdrop>
+				{confettiBursts.map((burst) => (
+					<ConfettiBurstLayer key={burst.id}>
+						{DENSE_CONFETTI_PARTICLES.map((particle, index) => {
+							// The particle's position in the authored field IS its
+							// identity within a burst (the array is static).
+							const particleNumber = index + 1;
 
-              return (
-                <ConfettiParticle
-                  $color={particle.color}
-                  $delay={particle.delay}
-                  $height={particle.height}
-                  $left={
-                    burst.left +
-                    (particle.left - CONFETTI_BASE_LEFT) *
-                      CONFETTI_START_OFFSET_X
-                  }
-                  $radius={particle.radius}
-                  $rotation={particle.rotation}
-                  $top={
-                    burst.top +
-                    (particle.top - CONFETTI_BASE_TOP) * CONFETTI_START_OFFSET_Y
-                  }
-                  $tx={particle.tx}
-                  $ty={particle.ty}
-                  $width={particle.width}
-                  key={`${burst.id}-${particleNumber}`}
-                />
-              );
-            })}
-          </ConfettiBurstLayer>
-        ))}
-      </SceneBackdrop>
-      <ScaledScene $sceneScale={sceneScale}>
-        <PreviewSurface $active={active} ref={previewSurfaceRef}>
-          <ToolbarRow>
-            <ActionButton>
-              <ActionIcon>
-                <IconPlus size={14} stroke={TOOLBAR_TABLER_STROKE} />
-              </ActionIcon>
-              <ActionLabel>New Record</ActionLabel>
-            </ActionButton>
-            <ActionButton $iconOnly>
-              <ActionIcon>
-                <IconChevronUp size={16} stroke={TOOLBAR_TABLER_STROKE} />
-              </ActionIcon>
-            </ActionButton>
-            <ActionButton $iconOnly>
-              <ActionIcon>
-                <IconChevronDown size={16} stroke={TOOLBAR_TABLER_STROKE} />
-              </ActionIcon>
-            </ActionButton>
-            <ActionButton>
-              <ActionIcon>
-                <IconDotsVertical size={14} stroke={TOOLBAR_TABLER_STROKE} />
-              </ActionIcon>
-              <ShortcutDivider />
-              <ActionLabel $muted>⌘K</ActionLabel>
-            </ActionButton>
-          </ToolbarRow>
+							return (
+								<ConfettiParticle
+									$color={particle.color}
+									$delay={particle.delay}
+									$height={particle.height}
+									$left={
+										burst.left +
+										(particle.left - CONFETTI_BASE_LEFT) *
+											CONFETTI_START_OFFSET_X
+									}
+									$radius={particle.radius}
+									$rotation={particle.rotation}
+									$top={
+										burst.top +
+										(particle.top - CONFETTI_BASE_TOP) * CONFETTI_START_OFFSET_Y
+									}
+									$tx={particle.tx}
+									$ty={particle.ty}
+									$width={particle.width}
+									key={`${burst.id}-${particleNumber}`}
+								/>
+							);
+						})}
+					</ConfettiBurstLayer>
+				))}
+			</SceneBackdrop>
+			<ScaledScene $sceneScale={sceneScale}>
+				<PreviewSurface $active={active} ref={previewSurfaceRef}>
+					<ToolbarRow>
+						<ActionButton>
+							<ActionIcon>
+								<IconPlus size={14} stroke={TOOLBAR_TABLER_STROKE} />
+							</ActionIcon>
+							<ActionLabel>New Record</ActionLabel>
+						</ActionButton>
+						<ActionButton $iconOnly>
+							<ActionIcon>
+								<IconChevronUp size={16} stroke={TOOLBAR_TABLER_STROKE} />
+							</ActionIcon>
+						</ActionButton>
+						<ActionButton $iconOnly>
+							<ActionIcon>
+								<IconChevronDown size={16} stroke={TOOLBAR_TABLER_STROKE} />
+							</ActionIcon>
+						</ActionButton>
+						<ActionButton>
+							<ActionIcon>
+								<IconDotsVertical size={14} stroke={TOOLBAR_TABLER_STROKE} />
+							</ActionIcon>
+							<ShortcutDivider />
+							<ActionLabel $muted>⌘K</ActionLabel>
+						</ActionButton>
+					</ToolbarRow>
 
-          <CommandPalette>
-            <SearchRow>
-              <IconChevronLeft
-                color={SCENE.colors.mutedStrong}
-                size={16}
-                stroke={TOOLBAR_TABLER_STROKE}
-              />
-              <SearchPlaceholder>Type anything...</SearchPlaceholder>
-              <SearchSparkles>
-                <IconSparkles
-                  color={SCENE.colors.mutedStrong}
-                  size={14}
-                  stroke={TOOLBAR_TABLER_STROKE}
-                />
-              </SearchSparkles>
-            </SearchRow>
+					<CommandPalette>
+						<SearchRow>
+							<IconChevronLeft
+								color={SCENE.colors.mutedStrong}
+								size={16}
+								stroke={TOOLBAR_TABLER_STROKE}
+							/>
+							<SearchPlaceholder>Type anything...</SearchPlaceholder>
+							<SearchSparkles>
+								<IconSparkles
+									color={SCENE.colors.mutedStrong}
+									size={14}
+									stroke={TOOLBAR_TABLER_STROKE}
+								/>
+							</SearchSparkles>
+						</SearchRow>
 
-            <PaletteBody>
-              <SectionLabel>Record Selection</SectionLabel>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconMail size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
-                </MenuIconBox>
-                <MenuItemLabel>Send email</MenuItemLabel>
-              </MenuItem>
-              <MenuItem
-                $active
-                data-preview-active="true"
-                onClick={handleCommandClick}
-              >
-                <PreviewCursor data-preview-cursor="true">
-                  <PreviewCursorIcon />
-                </PreviewCursor>
-                <MenuIconBox>
-                  <IconDatabaseExport
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Export selection as CSV</MenuItemLabel>
-              </MenuItem>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconTrash
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Delete 8 records</MenuItemLabel>
-              </MenuItem>
+						<PaletteBody>
+							<SectionLabel>Record Selection</SectionLabel>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconMail size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
+								</MenuIconBox>
+								<MenuItemLabel>Send email</MenuItemLabel>
+							</MenuItem>
+							<MenuItem
+								$active
+								data-preview-active="true"
+								onClick={handleCommandClick}
+							>
+								<PreviewCursor data-preview-cursor="true">
+									<PreviewCursorIcon />
+								</PreviewCursor>
+								<MenuIconBox>
+									<IconDatabaseExport
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Export selection as CSV</MenuItemLabel>
+							</MenuItem>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconTrash
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Delete 8 records</MenuItemLabel>
+							</MenuItem>
 
-              <SectionLabel>&quot;Companies&quot; object</SectionLabel>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconDatabaseImport
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Import data</MenuItemLabel>
-              </MenuItem>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconBuildingSkyscraper
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Create company</MenuItemLabel>
-              </MenuItem>
+							<SectionLabel>&quot;Companies&quot; object</SectionLabel>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconDatabaseImport
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Import data</MenuItemLabel>
+							</MenuItem>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconBuildingSkyscraper
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Create company</MenuItemLabel>
+							</MenuItem>
 
-              <SectionLabel>Navigate</SectionLabel>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconArrowUpRight
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Go to People</MenuItemLabel>
-                <ShortcutHint>
-                  <ShortcutKey>G</ShortcutKey>
-                  then
-                  <ShortcutKey>P</ShortcutKey>
-                </ShortcutHint>
-              </MenuItem>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconArrowUpRight
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Go to Opportunities</MenuItemLabel>
-                <ShortcutHint>
-                  <ShortcutKey>G</ShortcutKey>
-                  then
-                  <ShortcutKey>O</ShortcutKey>
-                </ShortcutHint>
-              </MenuItem>
+							<SectionLabel>Navigate</SectionLabel>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconArrowUpRight
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Go to People</MenuItemLabel>
+								<ShortcutHint>
+									<ShortcutKey>G</ShortcutKey>
+									then
+									<ShortcutKey>P</ShortcutKey>
+								</ShortcutHint>
+							</MenuItem>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconArrowUpRight
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Go to Opportunities</MenuItemLabel>
+								<ShortcutHint>
+									<ShortcutKey>G</ShortcutKey>
+									then
+									<ShortcutKey>O</ShortcutKey>
+								</ShortcutHint>
+							</MenuItem>
 
-              <SectionLabel>Settings</SectionLabel>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconArrowUpRight
-                    size={MENU_ICON_SIZE}
-                    stroke={MENU_TABLER_STROKE}
-                  />
-                </MenuIconBox>
-                <MenuItemLabel>Go to settings</MenuItemLabel>
-                <ShortcutHint>
-                  <ShortcutKey>G</ShortcutKey>
-                  then
-                  <ShortcutKey>S</ShortcutKey>
-                </ShortcutHint>
-              </MenuItem>
-              <MenuItem onClick={handleCommandClick}>
-                <MenuIconBox>
-                  <IconMoon size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
-                </MenuIconBox>
-                <MenuItemLabel>Switch to dark mode</MenuItemLabel>
-              </MenuItem>
-              <SectionSpacer />
-              <SectionSpacer />
-            </PaletteBody>
-          </CommandPalette>
-        </PreviewSurface>
-      </ScaledScene>
-    </VisualRoot>
-  );
+							<SectionLabel>Settings</SectionLabel>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconArrowUpRight
+										size={MENU_ICON_SIZE}
+										stroke={MENU_TABLER_STROKE}
+									/>
+								</MenuIconBox>
+								<MenuItemLabel>Go to settings</MenuItemLabel>
+								<ShortcutHint>
+									<ShortcutKey>G</ShortcutKey>
+									then
+									<ShortcutKey>S</ShortcutKey>
+								</ShortcutHint>
+							</MenuItem>
+							<MenuItem onClick={handleCommandClick}>
+								<MenuIconBox>
+									<IconMoon size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
+								</MenuIconBox>
+								<MenuItemLabel>Switch to dark mode</MenuItemLabel>
+							</MenuItem>
+							<SectionSpacer />
+							<SectionSpacer />
+						</PaletteBody>
+					</CommandPalette>
+				</PreviewSurface>
+			</ScaledScene>
+		</VisualRoot>
+	);
 }

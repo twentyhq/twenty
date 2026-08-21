@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { Key } from 'ts-key-enum';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { Key } from "ts-key-enum";
 
-import { TextInput } from '@/ui/input/components/TextInput';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { TextInput } from "@/ui/input/components/TextInput";
+import { useHotkeysOnFocusedElement } from "@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement";
+import { Button } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -17,60 +17,60 @@ const StyledContainer = styled.div`
 `;
 
 type FieldsConfigurationGroupRenameInputProps = {
-  dropdownId: string;
-  renameValue: string;
-  onRenameValueChange: (value: string) => void;
-  onSave: (newName: string) => void;
-  onCancel: () => void;
+	dropdownId: string;
+	renameValue: string;
+	onRenameValueChange: (value: string) => void;
+	onSave: (newName: string) => void;
+	onCancel: () => void;
 };
 
 export const FieldsConfigurationGroupRenameInput = ({
-  dropdownId,
-  renameValue,
-  onRenameValueChange,
-  onSave,
-  onCancel,
+	dropdownId,
+	renameValue,
+	onRenameValueChange,
+	onSave,
+	onCancel,
 }: FieldsConfigurationGroupRenameInputProps) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const handleSave = () => {
-    if (renameValue.trim().length > 0) {
-      onSave(renameValue.trim());
-    }
-    onCancel();
-  };
+	const handleSave = () => {
+		if (renameValue.trim().length > 0) {
+			onSave(renameValue.trim());
+		}
+		onCancel();
+	};
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Enter],
-    callback: handleSave,
-    focusId: dropdownId,
-    dependencies: [handleSave],
-  });
+	useHotkeysOnFocusedElement({
+		keys: [Key.Enter],
+		callback: handleSave,
+		focusId: dropdownId,
+		dependencies: [handleSave],
+	});
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Escape],
-    callback: onCancel,
-    focusId: dropdownId,
-    dependencies: [onCancel],
-  });
+	useHotkeysOnFocusedElement({
+		keys: [Key.Escape],
+		callback: onCancel,
+		focusId: dropdownId,
+		dependencies: [onCancel],
+	});
 
-  return (
-    <StyledContainer>
-      <TextInput
-        value={renameValue}
-        onChange={onRenameValueChange}
-        autoFocus
-        fullWidth
-        sizeVariant="sm"
-        placeholder={t`Group name`}
-      />
-      <Button
-        variant="primary"
-        accent="blue"
-        size="small"
-        title={t`Done`}
-        onClick={handleSave}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<TextInput
+				value={renameValue}
+				onChange={onRenameValueChange}
+				autoFocus
+				fullWidth
+				sizeVariant="sm"
+				placeholder={t`Group name`}
+			/>
+			<Button
+				variant="primary"
+				accent="blue"
+				size="small"
+				title={t`Done`}
+				onClick={handleSave}
+			/>
+		</StyledContainer>
+	);
 };

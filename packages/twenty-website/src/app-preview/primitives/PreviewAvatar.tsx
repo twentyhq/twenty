@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
 // The product draws a colored, photo-less avatar from a color4 surface with
 // color12 text (twenty-front hashes the name to the tone; the mockup data
@@ -15,7 +15,7 @@ const AvatarFrame = styled.div<{ $size: number }>`
   flex: 0 0 auto;
   font-family: var(--font-product), sans-serif;
   font-size: ${({ $size }) =>
-    $size <= 12 ? '8px' : $size <= 14 ? '10px' : '12px'};
+		$size <= 12 ? "8px" : $size <= 14 ? "10px" : "12px"};
   font-weight: ${THEME_LIGHT.font.weight.medium};
   height: ${({ $size }) => `${$size}px`};
   justify-content: center;
@@ -62,23 +62,23 @@ const AvatarFrame = styled.div<{ $size: number }>`
 `;
 
 export function PreviewAvatar({
-  children,
-  size = 14,
-  square = false,
-  tone = 'gray',
+	children,
+	size = 14,
+	square = false,
+	tone = "gray",
 }: {
-  children: ReactNode;
-  size?: number;
-  square?: boolean;
-  tone?: string;
+	children: ReactNode;
+	size?: number;
+	square?: boolean;
+	tone?: string;
 }) {
-  return (
-    <AvatarFrame
-      $size={size}
-      data-square={square ? '' : undefined}
-      data-tone={tone}
-    >
-      {children}
-    </AvatarFrame>
-  );
+	return (
+		<AvatarFrame
+			$size={size}
+			data-square={square ? "" : undefined}
+			data-tone={tone}
+		>
+			{children}
+		</AvatarFrame>
+	);
 }

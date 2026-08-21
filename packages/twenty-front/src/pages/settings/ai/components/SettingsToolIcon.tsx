@@ -1,44 +1,44 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { isDefined } from 'twenty-shared/utils';
-import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
+import { useObjectMetadataItems } from "@/object-metadata/hooks/useObjectMetadataItems";
+import { getObjectColorWithFallback } from "@/object-metadata/utils/getObjectColorWithFallback";
+import { getAbsoluteImageUrl } from "~/utils/image/getAbsoluteImageUrl";
+import { isDefined } from "twenty-shared/utils";
+import { Avatar, getIconTileColorShades } from "twenty-ui/data-display";
 import {
-  IconCode,
-  IconEdit,
-  IconPlus,
-  IconSearch,
-  IconTrash,
-  useIcons,
-  type IconComponent,
-} from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
-import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
+	IconCode,
+	IconEdit,
+	IconPlus,
+	IconSearch,
+	IconTrash,
+	useIcons,
+	type IconComponent,
+} from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
+import { type SettingsAgentToolApplication } from "~/pages/settings/ai/types/SettingsAgentToolApplication";
+import { type SettingsAgentToolMarketplaceApp } from "~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp";
 
 type SettingsToolIconProps = {
-  icon?: string | null;
-  toolName?: string;
-  objectName?: string;
-  application?: ApplicationInfo;
-  marketplaceApp?: MarketplaceAppInfo;
+	icon?: string | null;
+	toolName?: string;
+	objectName?: string;
+	application?: ApplicationInfo;
+	marketplaceApp?: MarketplaceAppInfo;
 };
 
-type ApplicationInfo = Pick<SettingsAgentToolApplication, 'name'>;
+type ApplicationInfo = Pick<SettingsAgentToolApplication, "name">;
 
-type MarketplaceAppInfo = Pick<SettingsAgentToolMarketplaceApp, 'logoUrl'>;
+type MarketplaceAppInfo = Pick<SettingsAgentToolMarketplaceApp, "logoUrl">;
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
-  if (toolName.startsWith('create_')) return IconPlus;
-  if (toolName.startsWith('update_')) return IconEdit;
-  if (toolName.startsWith('delete_')) return IconTrash;
-  if (toolName.startsWith('find_') || toolName.startsWith('get_'))
-    return IconSearch;
+	if (toolName.startsWith("create_")) return IconPlus;
+	if (toolName.startsWith("update_")) return IconEdit;
+	if (toolName.startsWith("delete_")) return IconTrash;
+	if (toolName.startsWith("find_") || toolName.startsWith("get_"))
+		return IconSearch;
 
-  return null;
+	return null;
 };
 
 const StyledCompositeContainer = styled.div`
@@ -54,13 +54,13 @@ const StyledCompositeContainer = styled.div`
 `;
 
 const StyledMainIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
+	$backgroundColor: string;
+	$borderColor?: string;
 }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
+		$borderColor ? `1px solid ${$borderColor}` : "none"};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -83,96 +83,96 @@ const StyledOperationOverlay = styled.div`
 `;
 
 export const SettingsToolIcon = ({
-  icon,
-  toolName,
-  objectName,
-  application,
-  marketplaceApp,
+	icon,
+	toolName,
+	objectName,
+	application,
+	marketplaceApp,
 }: SettingsToolIconProps) => {
-  const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
-  const { objectMetadataItems } = useObjectMetadataItems();
+	const { getIcon } = useIcons();
+	const { theme } = useContext(ThemeContext);
+	const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
-    return (
-      <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
-        size="xs"
-      />
-    );
-  }
+	if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
+		return (
+			<Avatar
+				avatarUrl={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
+				placeholder={application.name}
+				placeholderColorSeed={application.name}
+				type="squared"
+				size="xs"
+			/>
+		);
+	}
 
-  if (isDefined(application)) {
-    return (
-      <Avatar
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
-        size="xs"
-      />
-    );
-  }
+	if (isDefined(application)) {
+		return (
+			<Avatar
+				placeholder={application.name}
+				placeholderColorSeed={application.name}
+				type="squared"
+				size="xs"
+			/>
+		);
+	}
 
-  const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
-  const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
+	const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
+	const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
 
-  const objectMetadata = isDefined(objectName)
-    ? objectMetadataItems.find((item) => item.nameSingular === objectName)
-    : undefined;
+	const objectMetadata = isDefined(objectName)
+		? objectMetadataItems.find((item) => item.nameSingular === objectName)
+		: undefined;
 
-  const objectStyle = isDefined(objectMetadata)
-    ? getIconTileColorShades(getObjectColorWithFallback(objectMetadata))
-    : null;
+	const objectStyle = isDefined(objectMetadata)
+		? getIconTileColorShades(getObjectColorWithFallback(objectMetadata))
+		: null;
 
-  if (isDefined(OperationIcon)) {
-    return (
-      <StyledCompositeContainer>
-        <StyledMainIconWrapper
-          $backgroundColor={objectStyle?.backgroundColor ?? 'transparent'}
-          $borderColor={objectStyle?.borderColor}
-        >
-          <MainIcon
-            size="14px"
-            stroke={theme.icon.stroke.md}
-            color={objectStyle?.iconColor ?? theme.font.color.secondary}
-          />
-        </StyledMainIconWrapper>
-        <StyledOperationOverlay>
-          <OperationIcon
-            size="12px"
-            stroke={theme.icon.stroke.md}
-            color={theme.font.color.tertiary}
-          />
-        </StyledOperationOverlay>
-      </StyledCompositeContainer>
-    );
-  }
+	if (isDefined(OperationIcon)) {
+		return (
+			<StyledCompositeContainer>
+				<StyledMainIconWrapper
+					$backgroundColor={objectStyle?.backgroundColor ?? "transparent"}
+					$borderColor={objectStyle?.borderColor}
+				>
+					<MainIcon
+						size="14px"
+						stroke={theme.icon.stroke.md}
+						color={objectStyle?.iconColor ?? theme.font.color.secondary}
+					/>
+				</StyledMainIconWrapper>
+				<StyledOperationOverlay>
+					<OperationIcon
+						size="12px"
+						stroke={theme.icon.stroke.md}
+						color={theme.font.color.tertiary}
+					/>
+				</StyledOperationOverlay>
+			</StyledCompositeContainer>
+		);
+	}
 
-  if (isDefined(objectStyle)) {
-    return (
-      <StyledCompositeContainer>
-        <StyledMainIconWrapper
-          $backgroundColor={objectStyle.backgroundColor}
-          $borderColor={objectStyle.borderColor}
-        >
-          <MainIcon
-            size="14px"
-            stroke={theme.icon.stroke.md}
-            color={objectStyle.iconColor}
-          />
-        </StyledMainIconWrapper>
-      </StyledCompositeContainer>
-    );
-  }
+	if (isDefined(objectStyle)) {
+		return (
+			<StyledCompositeContainer>
+				<StyledMainIconWrapper
+					$backgroundColor={objectStyle.backgroundColor}
+					$borderColor={objectStyle.borderColor}
+				>
+					<MainIcon
+						size="14px"
+						stroke={theme.icon.stroke.md}
+						color={objectStyle.iconColor}
+					/>
+				</StyledMainIconWrapper>
+			</StyledCompositeContainer>
+		);
+	}
 
-  return (
-    <MainIcon
-      size={16}
-      stroke={theme.icon.stroke.md}
-      color={theme.font.color.tertiary}
-    />
-  );
+	return (
+		<MainIcon
+			size={16}
+			stroke={theme.icon.stroke.md}
+			color={theme.font.color.tertiary}
+		/>
+	);
 };

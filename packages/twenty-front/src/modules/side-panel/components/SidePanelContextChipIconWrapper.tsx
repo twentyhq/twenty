@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSidePanelContextChipIconWrapper = styled.div`
   align-items: center;
@@ -10,4 +10,4 @@ const StyledSidePanelContextChipIconWrapper = styled.div`
 `;
 
 export const SidePanelContextChipIconWrapper =
-  StyledSidePanelContextChipIconWrapper;
+	StyledSidePanelContextChipIconWrapper;

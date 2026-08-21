@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { type ComponentProps, type MouseEvent } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ComponentProps, type MouseEvent } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledHeader = styled.li`
   align-items: center;
@@ -14,11 +14,11 @@ const StyledHeader = styled.li`
   );
   box-sizing: content-box;
   color: ${themeCssVariables.font.color.primary};
-  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
+  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
   display: flex;
   flex-shrink: 0;
   font-size: ${({ onClick }) =>
-    onClick ? themeCssVariables.font.size.sm : themeCssVariables.font.size.md};
+		onClick ? themeCssVariables.font.size.sm : themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
 
   height: ${themeCssVariables.spacing[6]};
@@ -27,7 +27,7 @@ const StyledHeader = styled.li`
 
   &:hover {
     background: ${({ onClick }) =>
-      onClick ? themeCssVariables.background.transparent.light : 'none'};
+			onClick ? themeCssVariables.background.transparent.light : "none"};
   }
 
   user-select: none;
@@ -52,29 +52,29 @@ const StyledEndComponent = styled.div`
   }
 `;
 
-type DropdownMenuHeaderProps = ComponentProps<'li'> & {
-  onClick?: (event: MouseEvent<HTMLLIElement>) => void;
-  testId?: string;
-  className?: string;
-  StartComponent?: React.ReactNode;
-  EndComponent?: React.ReactNode;
+type DropdownMenuHeaderProps = ComponentProps<"li"> & {
+	onClick?: (event: MouseEvent<HTMLLIElement>) => void;
+	testId?: string;
+	className?: string;
+	StartComponent?: React.ReactNode;
+	EndComponent?: React.ReactNode;
 };
 
 export const DropdownMenuHeader = ({
-  children,
-  StartComponent,
-  onClick,
-  testId,
-  className,
-  EndComponent,
+	children,
+	StartComponent,
+	onClick,
+	testId,
+	className,
+	EndComponent,
 }: DropdownMenuHeaderProps) => {
-  return (
-    <StyledHeader data-testid={testId} className={className} onClick={onClick}>
-      {isDefined(StartComponent) && StartComponent}
-      <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {isDefined(EndComponent) && (
-        <StyledEndComponent>{EndComponent}</StyledEndComponent>
-      )}
-    </StyledHeader>
-  );
+	return (
+		<StyledHeader data-testid={testId} className={className} onClick={onClick}>
+			{isDefined(StartComponent) && StartComponent}
+			<StyledChildrenWrapper>{children}</StyledChildrenWrapper>
+			{isDefined(EndComponent) && (
+				<StyledEndComponent>{EndComponent}</StyledEndComponent>
+			)}
+		</StyledHeader>
+	);
 };

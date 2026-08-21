@@ -1,4 +1,4 @@
 export enum CacheStorageType {
-  Memory = 'memory',
-  Redis = 'redis',
+	Memory = "memory",
+	Redis = "redis",
 }

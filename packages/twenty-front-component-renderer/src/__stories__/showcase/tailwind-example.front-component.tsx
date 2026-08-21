@@ -1,5 +1,5 @@
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useState } from 'react';
+import { defineFrontComponent } from "twenty-sdk/define";
+import { useState } from "react";
 
 const TAILWIND_CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -44,60 +44,60 @@ const TAILWIND_CSS = `
 `;
 
 const TailwindComponent = () => {
-  const [count, setCount] = useState(0);
+	const [count, setCount] = useState(0);
 
-  return (
-    <>
-      <style>{TAILWIND_CSS}</style>
-      <div
-        data-testid="tailwind-component"
-        className="p-6 bg-blue-50 rounded-xl border-2 border-blue-400 max-w-sm space-y-4"
-        style={{ fontFamily: 'system-ui, sans-serif' }}
-      >
-        <h2 className="text-lg font-bold text-blue-800">Tailwind CSS</h2>
-        <p className="text-sm text-blue-600">
-          Utility-first CSS framework with atomic class composition.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-semibold">
-            Badge
-          </span>
-          <span className="px-3 py-1 bg-purple-500 text-white rounded-full text-xs font-semibold">
-            Styled
-          </span>
-          <span className="px-3 py-1 bg-orange-500 text-white rounded-full text-xs font-semibold">
-            Utility
-          </span>
-        </div>
-        <p
-          data-testid="tailwind-count"
-          className="text-2xl font-extrabold text-blue-700"
-        >
-          Count: {count}
-        </p>
-        <div className="flex gap-2">
-          <button
-            data-testid="tailwind-button"
-            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md text-sm cursor-pointer"
-            onClick={() => setCount((previous) => previous + 1)}
-          >
-            Increment
-          </button>
-          <button
-            className="px-4 py-2 border border-blue-200 text-blue-700 font-semibold rounded-md text-sm cursor-pointer bg-blue-100"
-            onClick={() => setCount(0)}
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-    </>
-  );
+	return (
+		<>
+			<style>{TAILWIND_CSS}</style>
+			<div
+				data-testid="tailwind-component"
+				className="p-6 bg-blue-50 rounded-xl border-2 border-blue-400 max-w-sm space-y-4"
+				style={{ fontFamily: "system-ui, sans-serif" }}
+			>
+				<h2 className="text-lg font-bold text-blue-800">Tailwind CSS</h2>
+				<p className="text-sm text-blue-600">
+					Utility-first CSS framework with atomic class composition.
+				</p>
+				<div className="flex flex-wrap gap-2">
+					<span className="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-semibold">
+						Badge
+					</span>
+					<span className="px-3 py-1 bg-purple-500 text-white rounded-full text-xs font-semibold">
+						Styled
+					</span>
+					<span className="px-3 py-1 bg-orange-500 text-white rounded-full text-xs font-semibold">
+						Utility
+					</span>
+				</div>
+				<p
+					data-testid="tailwind-count"
+					className="text-2xl font-extrabold text-blue-700"
+				>
+					Count: {count}
+				</p>
+				<div className="flex gap-2">
+					<button
+						data-testid="tailwind-button"
+						className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md text-sm cursor-pointer"
+						onClick={() => setCount((previous) => previous + 1)}
+					>
+						Increment
+					</button>
+					<button
+						className="px-4 py-2 border border-blue-200 text-blue-700 font-semibold rounded-md text-sm cursor-pointer bg-blue-100"
+						onClick={() => setCount(0)}
+					>
+						Reset
+					</button>
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'test-tailwind-0000-0000-0000-000000000005',
-  name: 'tailwind-component',
-  description: 'A front component using Tailwind CSS utility classes',
-  component: TailwindComponent,
+	universalIdentifier: "test-tailwind-0000-0000-0000-000000000005",
+	name: "tailwind-component",
+	description: "A front component using Tailwind CSS utility classes",
+	component: TailwindComponent,
 });

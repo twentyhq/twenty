@@ -1,8 +1,8 @@
-import { type RelationType } from '@/types/RelationType';
+import { type RelationType } from "@/types/RelationType";
 
 export type RelationCreationPayload = {
-  type: RelationType;
-  targetObjectMetadataId: string;
-  targetFieldLabel: string;
-  targetFieldIcon: string;
+	type: RelationType;
+	targetObjectMetadataId: string;
+	targetFieldLabel: string;
+	targetFieldIcon: string;
 };

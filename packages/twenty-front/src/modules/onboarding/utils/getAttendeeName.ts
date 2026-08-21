@@ -1,11 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const getAttendeeName = (
-  nameParts:
-    | { firstName?: string | null; lastName?: string | null }
-    | null
-    | undefined,
+	nameParts:
+		| { firstName?: string | null; lastName?: string | null }
+		| null
+		| undefined,
 ) =>
-  [nameParts?.firstName, nameParts?.lastName]
-    .filter(isNonEmptyString)
-    .join(' ');
+	[nameParts?.firstName, nameParts?.lastName]
+		.filter(isNonEmptyString)
+		.join(" ");

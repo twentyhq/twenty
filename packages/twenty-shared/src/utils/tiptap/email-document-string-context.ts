@@ -1,1 +1,1 @@
-export type EmailDocumentStringContext = 'html' | 'text' | 'url';
+export type EmailDocumentStringContext = "html" | "text" | "url";

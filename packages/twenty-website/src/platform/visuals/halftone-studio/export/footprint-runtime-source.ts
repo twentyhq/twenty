@@ -1,4 +1,4 @@
-import { HALFTONE_FOOTPRINT } from '../engine/footprint';
+import { HALFTONE_FOOTPRINT } from "../engine/footprint";
 
 // Untyped JS mirror of the footprint helpers in ../engine/footprint.ts.
 // Injected into exported standalone HTML. Keep in sync — validated by

@@ -1,11 +1,11 @@
-import { FieldMetadataType } from '@/types';
+import { FieldMetadataType } from "@/types";
 
 export const isFieldMetadataEnumKind = (
-  fieldMetadataType: FieldMetadataType,
+	fieldMetadataType: FieldMetadataType,
 ): boolean => {
-  return (
-    fieldMetadataType === FieldMetadataType.SELECT ||
-    fieldMetadataType === FieldMetadataType.MULTI_SELECT ||
-    fieldMetadataType === FieldMetadataType.RATING
-  );
+	return (
+		fieldMetadataType === FieldMetadataType.SELECT ||
+		fieldMetadataType === FieldMetadataType.MULTI_SELECT ||
+		fieldMetadataType === FieldMetadataType.RATING
+	);
 };

@@ -1,14 +1,14 @@
 type SuccessfulApiResponse<TData = unknown> = {
-  success: true;
-  data: TData;
-  message?: string;
+	success: true;
+	data: TData;
+	message?: string;
 };
 type FailingApiResponse<TError = unknown> = {
-  success: false;
-  error?: TError;
-  message?: string;
-  isAuthError?: boolean;
+	success: false;
+	error?: TError;
+	message?: string;
+	isAuthError?: boolean;
 };
 export type ApiResponse<TData = unknown, TError = unknown> =
-  | SuccessfulApiResponse<TData>
-  | FailingApiResponse<TError>;
+	| SuccessfulApiResponse<TData>
+	| FailingApiResponse<TError>;

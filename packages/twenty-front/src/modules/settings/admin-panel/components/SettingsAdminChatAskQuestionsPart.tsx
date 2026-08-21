@@ -1,18 +1,18 @@
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { Tag, type TagColor } from 'twenty-ui/data-display';
-import { IconHelpCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tag, type TagColor } from "twenty-ui/data-display";
+import { IconHelpCircle } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { SettingsAdminChatAskQuestionsQuestion } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion';
-import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';
-import { type AdminAskQuestionsResult } from '@/settings/admin-panel/types/AdminAskQuestionsResult';
-import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
+import { SettingsAdminChatAskQuestionsQuestion } from "@/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion";
+import { SettingsAdminChatToolCallPart } from "@/settings/admin-panel/components/SettingsAdminChatToolCallPart";
+import { type AdminAskQuestionsResult } from "@/settings/admin-panel/types/AdminAskQuestionsResult";
+import { type AdminChatThreadMessagePart } from "@/settings/admin-panel/types/AdminChatThreadMessagePart";
 
 type SettingsAdminChatAskQuestionsPartProps = {
-  part: AdminChatThreadMessagePart;
-  result: AdminAskQuestionsResult;
+	part: AdminChatThreadMessagePart;
+	result: AdminAskQuestionsResult;
 };
 
 const StyledContainer = styled.div`
@@ -51,57 +51,57 @@ const StyledStatusTag = styled.div`
 `;
 
 const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'answered':
-      return t`Answered`;
-    case 'skipped':
-      return t`Skipped`;
-    case 'pending':
-      return t`Unanswered`;
-    default:
-      return status;
-  }
+	switch (status) {
+		case "answered":
+			return t`Answered`;
+		case "skipped":
+			return t`Skipped`;
+		case "pending":
+			return t`Unanswered`;
+		default:
+			return status;
+	}
 };
 
 const getStatusTagColor = (status: string): TagColor => {
-  switch (status) {
-    case 'answered':
-      return 'green';
-    case 'skipped':
-      return 'gray';
-    case 'pending':
-      return 'orange';
-    default:
-      return 'gray';
-  }
+	switch (status) {
+		case "answered":
+			return "green";
+		case "skipped":
+			return "gray";
+		case "pending":
+			return "orange";
+		default:
+			return "gray";
+	}
 };
 
 export const SettingsAdminChatAskQuestionsPart = ({
-  part,
-  result,
+	part,
+	result,
 }: SettingsAdminChatAskQuestionsPartProps) => (
-  <StyledContainer>
-    <StyledCard>
-      <StyledCardHeader>
-        <IconHelpCircle size={14} />
-        {t`Questions`}
-        <StyledStatusTag>
-          <Tag
-            color={getStatusTagColor(result.status)}
-            text={getStatusLabel(result.status)}
-          />
-        </StyledStatusTag>
-      </StyledCardHeader>
-      {result.questions.map((question, questionIndex) => (
-        <SettingsAdminChatAskQuestionsQuestion
-          key={questionIndex}
-          question={question}
-          answer={result.answers?.find(
-            (answer) => answer.questionIndex === questionIndex,
-          )}
-        />
-      ))}
-    </StyledCard>
-    <SettingsAdminChatToolCallPart part={part} />
-  </StyledContainer>
+	<StyledContainer>
+		<StyledCard>
+			<StyledCardHeader>
+				<IconHelpCircle size={14} />
+				{t`Questions`}
+				<StyledStatusTag>
+					<Tag
+						color={getStatusTagColor(result.status)}
+						text={getStatusLabel(result.status)}
+					/>
+				</StyledStatusTag>
+			</StyledCardHeader>
+			{result.questions.map((question, questionIndex) => (
+				<SettingsAdminChatAskQuestionsQuestion
+					key={questionIndex}
+					question={question}
+					answer={result.answers?.find(
+						(answer) => answer.questionIndex === questionIndex,
+					)}
+				/>
+			))}
+		</StyledCard>
+		<SettingsAdminChatToolCallPart part={part} />
+	</StyledContainer>
 );

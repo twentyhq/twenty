@@ -1,36 +1,36 @@
-import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { doesCommandMenuItemMatchSelectionState } from "@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState";
 import {
-  CommandMenuItemAvailabilityType,
-  type CommandMenuItemFieldsFragment,
-} from '~/generated-metadata/graphql';
+	CommandMenuItemAvailabilityType,
+	type CommandMenuItemFieldsFragment,
+} from "~/generated-metadata/graphql";
 
 const buildCommandMenuItem = (
-  availabilityType: CommandMenuItemAvailabilityType,
+	availabilityType: CommandMenuItemAvailabilityType,
 ) =>
-  ({
-    availabilityType,
-  }) as CommandMenuItemFieldsFragment;
+	({
+		availabilityType,
+	}) as CommandMenuItemFieldsFragment;
 
-describe('doesCommandMenuItemMatchSelectionState', () => {
-  it('should keep a non-record-selection item when no records are selected', () => {
-    const item = buildCommandMenuItem(CommandMenuItemAvailabilityType.GLOBAL);
+describe("doesCommandMenuItemMatchSelectionState", () => {
+	it("should keep a non-record-selection item when no records are selected", () => {
+		const item = buildCommandMenuItem(CommandMenuItemAvailabilityType.GLOBAL);
 
-    expect(doesCommandMenuItemMatchSelectionState(false)(item)).toBe(true);
-  });
+		expect(doesCommandMenuItemMatchSelectionState(false)(item)).toBe(true);
+	});
 
-  it('should hide a record-selection item when no records are selected', () => {
-    const item = buildCommandMenuItem(
-      CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    );
+	it("should hide a record-selection item when no records are selected", () => {
+		const item = buildCommandMenuItem(
+			CommandMenuItemAvailabilityType.RECORD_SELECTION,
+		);
 
-    expect(doesCommandMenuItemMatchSelectionState(false)(item)).toBe(false);
-  });
+		expect(doesCommandMenuItemMatchSelectionState(false)(item)).toBe(false);
+	});
 
-  it('should keep a record-selection item when records are selected', () => {
-    const item = buildCommandMenuItem(
-      CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    );
+	it("should keep a record-selection item when records are selected", () => {
+		const item = buildCommandMenuItem(
+			CommandMenuItemAvailabilityType.RECORD_SELECTION,
+		);
 
-    expect(doesCommandMenuItemMatchSelectionState(true)(item)).toBe(true);
-  });
+		expect(doesCommandMenuItemMatchSelectionState(true)(item)).toBe(true);
+	});
 });

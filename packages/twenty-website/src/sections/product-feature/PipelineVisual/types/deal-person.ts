@@ -1,4 +1,4 @@
 export type DealPerson = {
-  avatarUrl: string;
-  name: string;
+	avatarUrl: string;
+	name: string;
 };

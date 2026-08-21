@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 // Bottom separator is an ::after (not border-bottom), and the bar keeps full
 // height (default align-items) so the active tab's underline lands exactly on it.
@@ -25,5 +25,5 @@ const StyledSecondaryBar = styled.div`
 `;
 
 export const SettingsSecondaryBar = ({ children }: { children: ReactNode }) => (
-  <StyledSecondaryBar>{children}</StyledSecondaryBar>
+	<StyledSecondaryBar>{children}</StyledSecondaryBar>
 );

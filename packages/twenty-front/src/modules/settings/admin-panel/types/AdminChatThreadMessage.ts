@@ -1,5 +1,5 @@
-import { type GetAdminChatThreadMessagesQuery } from '~/generated-admin/graphql';
+import { type GetAdminChatThreadMessagesQuery } from "~/generated-admin/graphql";
 
 export type AdminChatThreadMessage = NonNullable<
-  GetAdminChatThreadMessagesQuery['getAdminChatThreadMessages']
->['messages'][number];
+	GetAdminChatThreadMessagesQuery["getAdminChatThreadMessages"]
+>["messages"][number];

@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const lastSseEventReceivedTimestampState = createAtomState<
-  number | null
+	number | null
 >({
-  key: 'lastSseEventReceivedTimestampState',
-  defaultValue: null,
+	key: "lastSseEventReceivedTimestampState",
+	defaultValue: null,
 });

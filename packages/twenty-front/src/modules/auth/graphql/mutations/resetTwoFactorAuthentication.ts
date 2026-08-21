@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const DELETE_TWO_FACTOR_AUTHENTICATION_METHOD = gql`
   mutation deleteTwoFactorAuthenticationMethod(

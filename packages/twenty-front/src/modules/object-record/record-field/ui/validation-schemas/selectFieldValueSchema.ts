@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { type FieldSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldSelectValue } from "@/object-record/record-field/ui/types/FieldMetadata";
 
 export const selectFieldValueSchema = (
-  options?: string[],
+	options?: string[],
 ): z.ZodType<FieldSelectValue> =>
-  options?.length
-    ? z.enum(options as [string, ...string[]]).nullable()
-    : z.string().nullable();
+	options?.length
+		? z.enum(options as [string, ...string[]]).nullable()
+		: z.string().nullable();

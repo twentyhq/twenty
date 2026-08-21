@@ -1,7 +1,7 @@
-import styles from './AnimatedCircleLoading.module.scss';
+import styles from "./AnimatedCircleLoading.module.scss";
 
 export const AnimatedCircleLoading = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => <div className={styles.container}>{children}</div>;

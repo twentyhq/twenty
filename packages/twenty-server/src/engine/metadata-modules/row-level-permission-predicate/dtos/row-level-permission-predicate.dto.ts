@@ -1,48 +1,48 @@
 /* @license Enterprise */
 
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 
-import GraphQLJSON from 'graphql-type-json';
+import GraphQLJSON from "graphql-type-json";
 import {
-  RowLevelPermissionPredicateOperand,
-  RowLevelPermissionPredicateValue,
-} from 'twenty-shared/types';
+	RowLevelPermissionPredicateOperand,
+	RowLevelPermissionPredicateValue,
+} from "twenty-shared/types";
 
 registerEnumType(RowLevelPermissionPredicateOperand, {
-  name: 'RowLevelPermissionPredicateOperand',
+	name: "RowLevelPermissionPredicateOperand",
 });
-@ObjectType('RowLevelPermissionPredicate')
+@ObjectType("RowLevelPermissionPredicate")
 export class RowLevelPermissionPredicateDTO {
-  @Field(() => String)
-  id: string;
+	@Field(() => String)
+	id: string;
 
-  @Field(() => String)
-  fieldMetadataId: string;
+	@Field(() => String)
+	fieldMetadataId: string;
 
-  @Field(() => String)
-  objectMetadataId: string;
+	@Field(() => String)
+	objectMetadataId: string;
 
-  @Field(() => RowLevelPermissionPredicateOperand)
-  operand: RowLevelPermissionPredicateOperand;
+	@Field(() => RowLevelPermissionPredicateOperand)
+	operand: RowLevelPermissionPredicateOperand;
 
-  @Field(() => String, { nullable: true })
-  subFieldName?: string | null;
+	@Field(() => String, { nullable: true })
+	subFieldName?: string | null;
 
-  @Field(() => String, { nullable: true })
-  workspaceMemberFieldMetadataId?: string | null;
+	@Field(() => String, { nullable: true })
+	workspaceMemberFieldMetadataId?: string | null;
 
-  @Field(() => String, { nullable: true })
-  workspaceMemberSubFieldName?: string | null;
+	@Field(() => String, { nullable: true })
+	workspaceMemberSubFieldName?: string | null;
 
-  @Field(() => String, { nullable: true })
-  rowLevelPermissionPredicateGroupId?: string | null;
+	@Field(() => String, { nullable: true })
+	rowLevelPermissionPredicateGroupId?: string | null;
 
-  @Field(() => Number, { nullable: true })
-  positionInRowLevelPermissionPredicateGroup?: number | null;
+	@Field(() => Number, { nullable: true })
+	positionInRowLevelPermissionPredicateGroup?: number | null;
 
-  @Field(() => String)
-  roleId: string;
+	@Field(() => String)
+	roleId: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  value: RowLevelPermissionPredicateValue | null;
+	@Field(() => GraphQLJSON, { nullable: true })
+	value: RowLevelPermissionPredicateValue | null;
 }

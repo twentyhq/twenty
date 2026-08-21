@@ -1,7 +1,7 @@
 export type RecordTabLabel =
-  | 'Calendar'
-  | 'Emails'
-  | 'Files'
-  | 'Notes'
-  | 'Tasks'
-  | 'Timeline';
+	| "Calendar"
+	| "Emails"
+	| "Files"
+	| "Notes"
+	| "Tasks"
+	| "Timeline";

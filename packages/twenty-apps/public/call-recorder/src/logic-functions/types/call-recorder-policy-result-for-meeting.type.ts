@@ -1,6 +1,6 @@
 export type CallRecorderPolicyResultForMeeting = {
-  realMeetingKey: string;
-  shouldRequestBot: boolean;
-  calendarEventIds: string[];
-  requestingCalendarEventIds: string[];
+	realMeetingKey: string;
+	shouldRequestBot: boolean;
+	calendarEventIds: string[];
+	requestingCalendarEventIds: string[];
 };

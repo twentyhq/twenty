@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPLOAD_WORKFLOW_FILE = gql`
   mutation UploadWorkflowFile($file: Upload!) {

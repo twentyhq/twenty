@@ -1,9 +1,9 @@
 export const getRecordTableRowFocusId = ({
-  recordTableId,
-  rowIndex,
+	recordTableId,
+	rowIndex,
 }: {
-  recordTableId: string;
-  rowIndex: number;
+	recordTableId: string;
+	rowIndex: number;
 }) => {
-  return `${recordTableId}-row-${rowIndex}`;
+	return `${recordTableId}-row-${rowIndex}`;
 };

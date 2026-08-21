@@ -1,17 +1,17 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 import {
-  type MetadataGqlOperationSignature,
-  type RecordGqlOperationSignature,
-} from 'twenty-shared/types';
+	type MetadataGqlOperationSignature,
+	type RecordGqlOperationSignature,
+} from "twenty-shared/types";
 
 export const requiredQueryListenersState = createAtomState<
-  {
-    queryId: string;
-    operationSignature:
-      | RecordGqlOperationSignature
-      | MetadataGqlOperationSignature;
-  }[]
+	{
+		queryId: string;
+		operationSignature:
+			| RecordGqlOperationSignature
+			| MetadataGqlOperationSignature;
+	}[]
 >({
-  key: 'requiredQueryListenersState',
-  defaultValue: [],
+	key: "requiredQueryListenersState",
+	defaultValue: [],
 });

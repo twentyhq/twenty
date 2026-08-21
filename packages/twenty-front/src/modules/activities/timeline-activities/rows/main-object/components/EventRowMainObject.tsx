@@ -1,10 +1,10 @@
-import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
-import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
-import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
-import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { EventRowDate } from "@/activities/timeline-activities/rows/components/EventRowDate";
+import { type EventRowDynamicComponentProps } from "@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types";
+import { EventRowItem } from "@/activities/timeline-activities/rows/components/EventRowItem";
+import { EventRowMainObjectUpdated } from "@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventRowMainObjectProps = EventRowDynamicComponentProps;
 
@@ -30,69 +30,69 @@ const StyledRow = styled.div`
 `;
 
 export const EventRowMainObject = ({
-  authorFullName,
-  labelIdentifierValue,
-  event,
-  mainObjectMetadataItem,
-  createdAt,
+	authorFullName,
+	labelIdentifierValue,
+	event,
+	mainObjectMetadataItem,
+	createdAt,
 }: EventRowMainObjectProps) => {
-  const [, eventAction] = event.name.split('.');
+	const [, eventAction] = event.name.split(".");
 
-  switch (eventAction) {
-    case 'created': {
-      return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
-              <EventRowItem>{labelIdentifierValue}</EventRowItem>
-              <EventRowItem variant="action">{t`was created by`}</EventRowItem>
-              <EventRowItem>{authorFullName}</EventRowItem>
-            </StyledRow>
-            <EventRowDate createdAt={createdAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
-      );
-    }
-    case 'updated': {
-      return (
-        <EventRowMainObjectUpdated
-          authorFullName={authorFullName}
-          labelIdentifierValue={labelIdentifierValue}
-          event={event}
-          mainObjectMetadataItem={mainObjectMetadataItem}
-          createdAt={createdAt}
-        />
-      );
-    }
-    case 'deleted': {
-      return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
-              <EventRowItem>{labelIdentifierValue}</EventRowItem>
-              <EventRowItem variant="action">{t`was deleted by`}</EventRowItem>
-              <EventRowItem>{authorFullName}</EventRowItem>
-            </StyledRow>
-            <EventRowDate createdAt={createdAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
-      );
-    }
-    case 'restored': {
-      return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
-              <EventRowItem>{labelIdentifierValue}</EventRowItem>
-              <EventRowItem variant="action">{t`was restored by`}</EventRowItem>
-              <EventRowItem>{authorFullName}</EventRowItem>
-            </StyledRow>
-            <EventRowDate createdAt={createdAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
-      );
-    }
-    default:
-      return null;
-  }
+	switch (eventAction) {
+		case "created": {
+			return (
+				<StyledMainContainer>
+					<StyledRowContainer>
+						<StyledRow>
+							<EventRowItem>{labelIdentifierValue}</EventRowItem>
+							<EventRowItem variant="action">{t`was created by`}</EventRowItem>
+							<EventRowItem>{authorFullName}</EventRowItem>
+						</StyledRow>
+						<EventRowDate createdAt={createdAt} />
+					</StyledRowContainer>
+				</StyledMainContainer>
+			);
+		}
+		case "updated": {
+			return (
+				<EventRowMainObjectUpdated
+					authorFullName={authorFullName}
+					labelIdentifierValue={labelIdentifierValue}
+					event={event}
+					mainObjectMetadataItem={mainObjectMetadataItem}
+					createdAt={createdAt}
+				/>
+			);
+		}
+		case "deleted": {
+			return (
+				<StyledMainContainer>
+					<StyledRowContainer>
+						<StyledRow>
+							<EventRowItem>{labelIdentifierValue}</EventRowItem>
+							<EventRowItem variant="action">{t`was deleted by`}</EventRowItem>
+							<EventRowItem>{authorFullName}</EventRowItem>
+						</StyledRow>
+						<EventRowDate createdAt={createdAt} />
+					</StyledRowContainer>
+				</StyledMainContainer>
+			);
+		}
+		case "restored": {
+			return (
+				<StyledMainContainer>
+					<StyledRowContainer>
+						<StyledRow>
+							<EventRowItem>{labelIdentifierValue}</EventRowItem>
+							<EventRowItem variant="action">{t`was restored by`}</EventRowItem>
+							<EventRowItem>{authorFullName}</EventRowItem>
+						</StyledRow>
+						<EventRowDate createdAt={createdAt} />
+					</StyledRowContainer>
+				</StyledMainContainer>
+			);
+		}
+		default:
+			return null;
+	}
 };

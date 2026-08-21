@@ -1,9 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
-import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
-import { type RecordTableColumnAggregateFooterDropdownContextValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type Context, useCallback, useContext } from 'react';
+import { isDefined } from "twenty-shared/utils";
+import { type ObjectOptionsDropdownContextValue } from "@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext";
+import { type RecordGroupAggregateDropdownContextValue } from "@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue";
+import { type RecordTableColumnAggregateFooterDropdownContextValue } from "@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext";
+import { useCloseDropdown } from "@/ui/layout/dropdown/hooks/useCloseDropdown";
+import { type Context, useCallback, useContext } from "react";
 
 /**
  *
@@ -12,33 +12,33 @@ import { type Context, useCallback, useContext } from 'react';
  * TODO: refactor this generic way to handle multiple pages in a dropdown with state management and specific code paths in a dedicated module, instead of using context with generic union types.
  */
 export const useDropdownContextStateManagement = <
-  T extends
-    | RecordGroupAggregateDropdownContextValue
-    | RecordTableColumnAggregateFooterDropdownContextValue
-    | ObjectOptionsDropdownContextValue,
+	T extends
+		| RecordGroupAggregateDropdownContextValue
+		| RecordTableColumnAggregateFooterDropdownContextValue
+		| ObjectOptionsDropdownContextValue,
 >({
-  context,
+	context,
 }: {
-  context: Context<T>;
+	context: Context<T>;
 }) => {
-  const dropdownContext = useContext(context);
+	const dropdownContext = useContext(context);
 
-  if (!isDefined(dropdownContext)) {
-    throw new Error(
-      `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
-    );
-  }
-  const dropdownId = dropdownContext.dropdownId;
-  const { closeDropdown } = useCloseDropdown();
+	if (!isDefined(dropdownContext)) {
+		throw new Error(
+			`useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
+		);
+	}
+	const dropdownId = dropdownContext.dropdownId;
+	const { closeDropdown } = useCloseDropdown();
 
-  const handleCloseDropdown = useCallback(() => {
-    dropdownContext.resetContent();
-    closeDropdown(dropdownId);
-  }, [closeDropdown, dropdownContext, dropdownId]);
+	const handleCloseDropdown = useCallback(() => {
+		dropdownContext.resetContent();
+		closeDropdown(dropdownId);
+	}, [closeDropdown, dropdownContext, dropdownId]);
 
-  return {
-    ...dropdownContext,
-    closeDropdown: handleCloseDropdown,
-    resetContent: dropdownContext.resetContent,
-  };
+	return {
+		...dropdownContext,
+		closeDropdown: handleCloseDropdown,
+		resetContent: dropdownContext.resetContent,
+	};
 };

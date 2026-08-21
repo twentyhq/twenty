@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const REFRESH_UPGRADE_STATUS = gql`
   mutation RefreshUpgradeStatus {

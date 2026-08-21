@@ -1,28 +1,28 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { isRequestObject } from '@/remote/worker/fetch-proxy/utils/isRequestObject';
+import { isRequestObject } from "@/remote/worker/fetch-proxy/utils/isRequestObject";
 
 const toHeaderRecord = (headers: HeadersInit): Record<string, string> => {
-  const record: Record<string, string> = {};
+	const record: Record<string, string> = {};
 
-  new Headers(headers).forEach((value, key) => {
-    record[key] = value;
-  });
+	new Headers(headers).forEach((value, key) => {
+		record[key] = value;
+	});
 
-  return record;
+	return record;
 };
 
 export const getHeadersFromFetchRequestArguments = (
-  input: RequestInfo | URL,
-  init: RequestInit | undefined,
+	input: RequestInfo | URL,
+	init: RequestInit | undefined,
 ): Record<string, string> => {
-  if (isDefined(init?.headers)) {
-    return toHeaderRecord(init.headers);
-  }
+	if (isDefined(init?.headers)) {
+		return toHeaderRecord(init.headers);
+	}
 
-  if (isRequestObject(input)) {
-    return toHeaderRecord(input.headers);
-  }
+	if (isRequestObject(input)) {
+		return toHeaderRecord(input.headers);
+	}
 
-  return {};
+	return {};
 };

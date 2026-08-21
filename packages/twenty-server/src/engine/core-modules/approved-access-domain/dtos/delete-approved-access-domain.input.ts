@@ -1,12 +1,12 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from "@nestjs/graphql";
 
-import { IsUUID } from 'class-validator';
+import { IsUUID } from "class-validator";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
 @InputType()
 export class DeleteApprovedAccessDomainInput {
-  @Field(() => UUIDScalarType)
-  @IsUUID()
-  id: string;
+	@Field(() => UUIDScalarType)
+	@IsUUID()
+	id: string;
 }

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const REMOVE_MODEL_FROM_PROVIDER = gql`
   mutation RemoveModelFromProvider(

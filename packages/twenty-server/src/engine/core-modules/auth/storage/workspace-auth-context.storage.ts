@@ -1,25 +1,25 @@
-import { AsyncLocalStorage } from 'async_hooks';
+import { AsyncLocalStorage } from "async_hooks";
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type WorkspaceAuthContext } from "src/engine/core-modules/auth/types/workspace-auth-context.type";
 
 export const workspaceAuthContextStorage =
-  new AsyncLocalStorage<WorkspaceAuthContext>();
+	new AsyncLocalStorage<WorkspaceAuthContext>();
 
 export const getWorkspaceAuthContext = (): WorkspaceAuthContext => {
-  const context = workspaceAuthContextStorage.getStore();
+	const context = workspaceAuthContextStorage.getStore();
 
-  if (!context) {
-    throw new Error(
-      'Workspace auth context not set. Operations must be wrapped with withWorkspaceAuthContext()',
-    );
-  }
+	if (!context) {
+		throw new Error(
+			"Workspace auth context not set. Operations must be wrapped with withWorkspaceAuthContext()",
+		);
+	}
 
-  return context;
+	return context;
 };
 
 export const withWorkspaceAuthContext = <T>(
-  context: WorkspaceAuthContext,
-  fn: () => T | Promise<T>,
+	context: WorkspaceAuthContext,
+	fn: () => T | Promise<T>,
 ): T | Promise<T> => {
-  return workspaceAuthContextStorage.run(context, fn);
+	return workspaceAuthContextStorage.run(context, fn);
 };

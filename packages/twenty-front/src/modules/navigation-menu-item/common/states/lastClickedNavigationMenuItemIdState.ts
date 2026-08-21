@@ -1,9 +1,9 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const lastClickedNavigationMenuItemIdState = createAtomState<
-  string | null
+	string | null
 >({
-  key: 'lastClickedNavigationMenuItemIdState',
-  defaultValue: null,
-  useSessionStorage: true,
+	key: "lastClickedNavigationMenuItemIdState",
+	defaultValue: null,
+	useSessionStorage: true,
 });

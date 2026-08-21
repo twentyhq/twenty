@@ -1,1 +1,1 @@
-export type EmailRecipientsFieldId = 'to' | 'cc' | 'bcc';
+export type EmailRecipientsFieldId = "to" | "cc" | "bcc";

@@ -1,11 +1,11 @@
 import {
-  type ExtendedUIMessagePart,
-  isSucceededCompleteWorkspaceSetupToolPart,
-} from 'twenty-shared/ai';
+	type ExtendedUIMessagePart,
+	isSucceededCompleteWorkspaceSetupToolPart,
+} from "twenty-shared/ai";
 
 export const extractCompletedWorkspaceSetupToolParts = (
-  messageParts: ExtendedUIMessagePart[],
+	messageParts: ExtendedUIMessagePart[],
 ): { toolCallId: string }[] =>
-  messageParts
-    .filter(isSucceededCompleteWorkspaceSetupToolPart)
-    .map((part) => ({ toolCallId: part.toolCallId }));
+	messageParts
+		.filter(isSucceededCompleteWorkspaceSetupToolPart)
+		.map((part) => ({ toolCallId: part.toolCallId }));

@@ -1,1 +1,1 @@
-export type ConfigVariableGroupFilter = 'all' | string;
+export type ConfigVariableGroupFilter = "all" | string;

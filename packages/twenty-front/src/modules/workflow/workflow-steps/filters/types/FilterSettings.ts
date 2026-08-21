@@ -1,15 +1,15 @@
 import {
-  type StepFilter,
-  type StepFilterGroup,
-  type StepFilterWithPotentiallyDeprecatedOperand,
-} from 'twenty-shared/types';
+	type StepFilter,
+	type StepFilterGroup,
+	type StepFilterWithPotentiallyDeprecatedOperand,
+} from "twenty-shared/types";
 
 export type FilterSettings = {
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilter[];
+	stepFilterGroups?: StepFilterGroup[];
+	stepFilters?: StepFilter[];
 };
 
 export type FilterSettingsWithPotentiallyDeprecatedOperand = {
-  stepFilterGroups?: StepFilterGroup[];
-  stepFilters?: StepFilterWithPotentiallyDeprecatedOperand[];
+	stepFilterGroups?: StepFilterGroup[];
+	stepFilters?: StepFilterWithPotentiallyDeprecatedOperand[];
 };

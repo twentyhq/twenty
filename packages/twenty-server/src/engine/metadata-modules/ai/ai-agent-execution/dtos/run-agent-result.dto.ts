@@ -1,16 +1,16 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import GraphQLJSON from 'graphql-type-json';
-import { type RunAgentResult } from 'twenty-shared/application';
+import GraphQLJSON from "graphql-type-json";
+import { type RunAgentResult } from "twenty-shared/application";
 
-@ObjectType('RunAgentResult')
+@ObjectType("RunAgentResult")
 export class RunAgentResultDTO implements RunAgentResult {
-  @Field(() => GraphQLJSON, { nullable: true })
-  result: object | null;
+	@Field(() => GraphQLJSON, { nullable: true })
+	result: object | null;
 
-  @Field(() => String, { nullable: true })
-  error: string | null;
+	@Field(() => String, { nullable: true })
+	error: string | null;
 
-  @Field()
-  success: boolean;
+	@Field()
+	success: boolean;
 }

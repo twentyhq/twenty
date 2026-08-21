@@ -1,1 +1,1 @@
-export type AnimationDimension = 'width' | 'height';
+export type AnimationDimension = "width" | "height";

@@ -1,9 +1,9 @@
-import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graph-widget-bar-chart/constants/BarChartConstants';
+import { BAR_CHART_CONSTANTS } from "@/page-layout/widgets/graph/graph-widget-bar-chart/constants/BarChartConstants";
 
 export const computeMinHeightPerTick = ({
-  axisFontSize,
+	axisFontSize,
 }: {
-  axisFontSize: number;
+	axisFontSize: number;
 }): number => {
-  return axisFontSize * BAR_CHART_CONSTANTS.MIN_TICK_SPACING_HEIGHT_RATIO;
+	return axisFontSize * BAR_CHART_CONSTANTS.MIN_TICK_SPACING_HEIGHT_RATIO;
 };

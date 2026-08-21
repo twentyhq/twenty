@@ -1,1 +1,1 @@
-export { ViewFilterGroupLogicalOperator } from '~/generated-metadata/graphql';
+export { ViewFilterGroupLogicalOperator } from "~/generated-metadata/graphql";

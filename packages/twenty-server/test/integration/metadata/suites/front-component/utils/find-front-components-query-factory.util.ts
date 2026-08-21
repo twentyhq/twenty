@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 const DEFAULT_FRONT_COMPONENTS_GQL_FIELDS = `
   id
@@ -9,9 +9,9 @@ const DEFAULT_FRONT_COMPONENTS_GQL_FIELDS = `
 `;
 
 export const findFrontComponentsQueryFactory = ({
-  gqlFields = DEFAULT_FRONT_COMPONENTS_GQL_FIELDS,
+	gqlFields = DEFAULT_FRONT_COMPONENTS_GQL_FIELDS,
 }: Partial<PerformMetadataQueryParams<undefined>>) => ({
-  query: gql`
+	query: gql`
     query FrontComponents {
       frontComponents {
         ${gqlFields}

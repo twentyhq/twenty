@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { Suspense, lazy } from 'react';
-import { Section } from 'twenty-ui/layout';
+import { styled } from "@linaria/react";
+import { Suspense, lazy } from "react";
+import { Section } from "twenty-ui/layout";
 
-import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
+import { FrontComponentSkeletonLoader } from "@/front-components/components/FrontComponentSkeletonLoader";
 
 const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
+	import("@/front-components/components/FrontComponentRenderer").then(
+		(module) => ({ default: module.FrontComponentRenderer }),
+	),
 );
 
 const StyledRendererContainer = styled.div`
@@ -17,22 +17,22 @@ const StyledRendererContainer = styled.div`
 `;
 
 type SettingsApplicationCustomSettingsSectionProps = {
-  frontComponentId: string;
+	frontComponentId: string;
 };
 
 export const SettingsApplicationCustomSettingsSection = ({
-  frontComponentId,
+	frontComponentId,
 }: SettingsApplicationCustomSettingsSectionProps) => {
-  return (
-    <Section>
-      <StyledRendererContainer>
-        <Suspense fallback={<FrontComponentSkeletonLoader />}>
-          <FrontComponentRenderer
-            frontComponentId={frontComponentId}
-            loadingFallback={<FrontComponentSkeletonLoader />}
-          />
-        </Suspense>
-      </StyledRendererContainer>
-    </Section>
-  );
+	return (
+		<Section>
+			<StyledRendererContainer>
+				<Suspense fallback={<FrontComponentSkeletonLoader />}>
+					<FrontComponentRenderer
+						frontComponentId={frontComponentId}
+						loadingFallback={<FrontComponentSkeletonLoader />}
+					/>
+				</Suspense>
+			</StyledRendererContainer>
+		</Section>
+	);
 };

@@ -3,6 +3,6 @@
 // coexist (the AI section becomes a panel-only chat — a scene threshold,
 // not a layout breakpoint).
 export const PRODUCT_HERO_SCENE = {
-  darkSurface: '#141414',
-  panelOnlyMaxQuery: '(max-width: 599.98px)',
+	darkSurface: "#141414",
+	panelOnlyMaxQuery: "(max-width: 599.98px)",
 };

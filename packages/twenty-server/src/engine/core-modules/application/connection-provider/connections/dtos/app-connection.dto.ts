@@ -1,4 +1,4 @@
-import { type AppConnection } from 'twenty-shared/application';
+import { type AppConnection } from "twenty-shared/application";
 
 // Wire shape returned to apps from POST /apps/connections/list and /get.
 // Re-exported under the `…Dto` suffix to follow the server-side naming

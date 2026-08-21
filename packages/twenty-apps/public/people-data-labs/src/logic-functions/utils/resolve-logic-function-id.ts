@@ -1,11 +1,11 @@
 export const resolveLogicFunctionId = ({
-  logicFunctions,
-  universalIdentifier,
+	logicFunctions,
+	universalIdentifier,
 }: {
-  logicFunctions: { id: string; universalIdentifier?: string | null }[];
-  universalIdentifier: string;
+	logicFunctions: { id: string; universalIdentifier?: string | null }[];
+	universalIdentifier: string;
 }): string | undefined =>
-  logicFunctions.find(
-    (logicFunction) =>
-      logicFunction.universalIdentifier === universalIdentifier,
-  )?.id;
+	logicFunctions.find(
+		(logicFunction) =>
+			logicFunction.universalIdentifier === universalIdentifier,
+	)?.id;

@@ -1,4 +1,4 @@
 export type MessageChannelMessageAssociationFolderAssociation = {
-  messageChannelMessageAssociationId: string;
-  messageFolderIds: string[];
+	messageChannelMessageAssociationId: string;
+	messageFolderIds: string[];
 };

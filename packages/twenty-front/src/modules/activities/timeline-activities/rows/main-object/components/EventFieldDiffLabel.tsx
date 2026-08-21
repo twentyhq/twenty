@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { Icon123, useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { Icon123, useIcons } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventFieldDiffLabelProps = {
-  fieldMetadataItem: FieldMetadataItem;
+	fieldMetadataItem: FieldMetadataItem;
 };
 
 const StyledUpdatedFieldContainer = styled.div`
@@ -24,20 +24,20 @@ const StyledUpdatedFieldIconContainer = styled.div`
 `;
 
 export const EventFieldDiffLabel = ({
-  fieldMetadataItem,
+	fieldMetadataItem,
 }: EventFieldDiffLabelProps) => {
-  const { getIcon } = useIcons();
+	const { getIcon } = useIcons();
 
-  const IconComponent = fieldMetadataItem?.icon
-    ? getIcon(fieldMetadataItem?.icon)
-    : Icon123;
+	const IconComponent = fieldMetadataItem?.icon
+		? getIcon(fieldMetadataItem?.icon)
+		: Icon123;
 
-  return (
-    <StyledUpdatedFieldContainer>
-      <StyledUpdatedFieldIconContainer>
-        <IconComponent />
-      </StyledUpdatedFieldIconContainer>
-      {fieldMetadataItem.label}
-    </StyledUpdatedFieldContainer>
-  );
+	return (
+		<StyledUpdatedFieldContainer>
+			<StyledUpdatedFieldIconContainer>
+				<IconComponent />
+			</StyledUpdatedFieldIconContainer>
+			{fieldMetadataItem.label}
+		</StyledUpdatedFieldContainer>
+	);
 };

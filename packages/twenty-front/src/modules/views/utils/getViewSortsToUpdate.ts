@@ -1,29 +1,29 @@
-import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
-import { isDefined } from 'twenty-shared/utils';
-import { type ViewSort } from '@/views/types/ViewSort';
-import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { areViewSortsEqual } from "@/views/utils/areViewSortsEqual";
+import { isDefined } from "twenty-shared/utils";
+import { type ViewSort } from "@/views/types/ViewSort";
+import { compareStrictlyExceptForNullAndUndefined } from "~/utils/compareStrictlyExceptForNullAndUndefined";
 
 export const getViewSortsToUpdate = (
-  currentViewSorts: ViewSort[],
-  newViewSorts: ViewSort[],
+	currentViewSorts: ViewSort[],
+	newViewSorts: ViewSort[],
 ) => {
-  return newViewSorts.filter((newViewSort) => {
-    const correspondingViewSort = currentViewSorts.find((currentViewSort) =>
-      compareStrictlyExceptForNullAndUndefined(
-        currentViewSort.id,
-        newViewSort.id,
-      ),
-    );
+	return newViewSorts.filter((newViewSort) => {
+		const correspondingViewSort = currentViewSorts.find((currentViewSort) =>
+			compareStrictlyExceptForNullAndUndefined(
+				currentViewSort.id,
+				newViewSort.id,
+			),
+		);
 
-    if (!isDefined(correspondingViewSort)) {
-      return false;
-    }
+		if (!isDefined(correspondingViewSort)) {
+			return false;
+		}
 
-    const shouldUpdateBecauseViewSortIsDifferent = !areViewSortsEqual(
-      newViewSort,
-      correspondingViewSort,
-    );
+		const shouldUpdateBecauseViewSortIsDifferent = !areViewSortsEqual(
+			newViewSort,
+			correspondingViewSort,
+		);
 
-    return shouldUpdateBecauseViewSortIsDifferent;
-  });
+		return shouldUpdateBecauseViewSortIsDifferent;
+	});
 };

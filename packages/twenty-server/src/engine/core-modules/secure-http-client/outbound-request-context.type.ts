@@ -1,7 +1,7 @@
-import { type OutboundRequestSource } from './outbound-request-source.type';
+import { type OutboundRequestSource } from "./outbound-request-source.type";
 
 export type OutboundRequestContext = {
-  workspaceId: string;
-  source: OutboundRequestSource;
-  userId?: string;
+	workspaceId: string;
+	source: OutboundRequestSource;
+	userId?: string;
 };

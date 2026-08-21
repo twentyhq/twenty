@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
-import { createAnimationFrameLoop } from '@/platform/motion';
+import { createAnimationFrameLoop } from "@/platform/motion";
 
-import { useTimeoutRegistry } from '../stage/use-timeout-registry';
+import { useTimeoutRegistry } from "../stage/use-timeout-registry";
 import {
-  getTerminalSendButtonHintPosition,
-  type TerminalSendButtonHintPosition,
-} from './terminal-send-button-hint-position';
+	getTerminalSendButtonHintPosition,
+	type TerminalSendButtonHintPosition,
+} from "./terminal-send-button-hint-position";
 
 // Ported as-is: the hint shows whenever send is live (fading in after the
 // ready delay) and dismisses on send hover/click or any pointer-down
@@ -17,122 +17,122 @@ const HINT_READY_DELAY_MS = 400;
 const TERMINAL_SHELL_SELECTOR = '[data-terminal-shell="true"]';
 
 export const useTerminalSendButtonHint = ({
-  disabled,
-  isReset,
+	disabled,
+	isReset,
 }: {
-  disabled?: boolean;
-  isReset: boolean;
+	disabled?: boolean;
+	isReset: boolean;
 }) => {
-  const [hintDismissed, setHintDismissed] = useState(false);
-  const [hintPosition, setHintPosition] =
-    useState<TerminalSendButtonHintPosition | null>(null);
-  const [hintReady, setHintReady] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const timeoutRegistry = useTimeoutRegistry();
-  const dismissHint = useCallback(() => setHintDismissed(true), []);
-  const showHint = !hintDismissed && !isReset && disabled !== true;
+	const [hintDismissed, setHintDismissed] = useState(false);
+	const [hintPosition, setHintPosition] =
+		useState<TerminalSendButtonHintPosition | null>(null);
+	const [hintReady, setHintReady] = useState(false);
+	const buttonRef = useRef<HTMLButtonElement>(null);
+	const timeoutRegistry = useTimeoutRegistry();
+	const dismissHint = useCallback(() => setHintDismissed(true), []);
+	const showHint = !hintDismissed && !isReset && disabled !== true;
 
-  useLayoutEffect(() => {
-    if (!showHint) {
-      setHintPosition(null);
-      setHintReady(false);
+	useLayoutEffect(() => {
+		if (!showHint) {
+			setHintPosition(null);
+			setHintReady(false);
 
-      return;
-    }
+			return;
+		}
 
-    let lastLeft = Number.NaN;
-    let lastTop = Number.NaN;
-    const cancelReadyTimer = timeoutRegistry.schedule(
-      () => setHintReady(true),
-      HINT_READY_DELAY_MS,
-    );
+		let lastLeft = Number.NaN;
+		let lastTop = Number.NaN;
+		const cancelReadyTimer = timeoutRegistry.schedule(
+			() => setHintReady(true),
+			HINT_READY_DELAY_MS,
+		);
 
-    const positionLoop = createAnimationFrameLoop({
-      onFrame: () => {
-        if (document.hidden) {
-          return false;
-        }
+		const positionLoop = createAnimationFrameLoop({
+			onFrame: () => {
+				if (document.hidden) {
+					return false;
+				}
 
-        const button = buttonRef.current;
+				const button = buttonRef.current;
 
-        if (button !== null) {
-          const rect = button.getBoundingClientRect();
+				if (button !== null) {
+					const rect = button.getBoundingClientRect();
 
-          if (rect.width > 0) {
-            const nextPosition = getTerminalSendButtonHintPosition({
-              bottom: rect.bottom,
-              right: rect.right,
-            });
+					if (rect.width > 0) {
+						const nextPosition = getTerminalSendButtonHintPosition({
+							bottom: rect.bottom,
+							right: rect.right,
+						});
 
-            if (
-              nextPosition.left !== lastLeft ||
-              nextPosition.top !== lastTop
-            ) {
-              lastLeft = nextPosition.left;
-              lastTop = nextPosition.top;
-              setHintPosition(nextPosition);
-            }
-          }
-        }
+						if (
+							nextPosition.left !== lastLeft ||
+							nextPosition.top !== lastTop
+						) {
+							lastLeft = nextPosition.left;
+							lastTop = nextPosition.top;
+							setHintPosition(nextPosition);
+						}
+					}
+				}
 
-        return true;
-      },
-    });
+				return true;
+			},
+		});
 
-    const startPositionLoop = () => {
-      if (!document.hidden) {
-        positionLoop.start();
-      }
-    };
+		const startPositionLoop = () => {
+			if (!document.hidden) {
+				positionLoop.start();
+			}
+		};
 
-    const handleVisibility = () => {
-      if (document.hidden) {
-        positionLoop.stop();
+		const handleVisibility = () => {
+			if (document.hidden) {
+				positionLoop.stop();
 
-        return;
-      }
+				return;
+			}
 
-      startPositionLoop();
-    };
+			startPositionLoop();
+		};
 
-    const handleTerminalInteraction = (event: PointerEvent) => {
-      const button = buttonRef.current;
-      const terminalShell = button?.closest(TERMINAL_SHELL_SELECTOR);
+		const handleTerminalInteraction = (event: PointerEvent) => {
+			const button = buttonRef.current;
+			const terminalShell = button?.closest(TERMINAL_SHELL_SELECTOR);
 
-      if (terminalShell === null || terminalShell === undefined) {
-        return;
-      }
+			if (terminalShell === null || terminalShell === undefined) {
+				return;
+			}
 
-      if (!(event.target instanceof Node)) {
-        return;
-      }
+			if (!(event.target instanceof Node)) {
+				return;
+			}
 
-      if (terminalShell.contains(event.target)) {
-        setHintDismissed(true);
-      }
-    };
+			if (terminalShell.contains(event.target)) {
+				setHintDismissed(true);
+			}
+		};
 
-    startPositionLoop();
-    document.addEventListener('visibilitychange', handleVisibility);
-    window.addEventListener('pointerdown', handleTerminalInteraction, true);
+		startPositionLoop();
+		document.addEventListener("visibilitychange", handleVisibility);
+		window.addEventListener("pointerdown", handleTerminalInteraction, true);
 
-    return () => {
-      positionLoop.stop();
-      cancelReadyTimer();
-      document.removeEventListener('visibilitychange', handleVisibility);
-      window.removeEventListener(
-        'pointerdown',
-        handleTerminalInteraction,
-        true,
-      );
-    };
-  }, [showHint, timeoutRegistry]);
+		return () => {
+			positionLoop.stop();
+			cancelReadyTimer();
+			document.removeEventListener("visibilitychange", handleVisibility);
+			window.removeEventListener(
+				"pointerdown",
+				handleTerminalInteraction,
+				true,
+			);
+		};
+	}, [showHint, timeoutRegistry]);
 
-  return {
-    buttonRef,
-    dismissHint,
-    hintPosition,
-    hintReady,
-    showHint,
-  };
+	return {
+		buttonRef,
+		dismissHint,
+		hintPosition,
+		hintReady,
+		showHint,
+	};
 };

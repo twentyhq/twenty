@@ -1,14 +1,14 @@
-import { parse } from 'graphql';
+import { parse } from "graphql";
 
-import { computeGraphQLDirectExecutionQueryCost } from 'src/engine/api/graphql/direct-execution/utils/compute-graphql-direct-execution-query-cost.util';
-import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
-import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
-import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
-import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { computeGraphQLDirectExecutionQueryCost } from "src/engine/api/graphql/direct-execution/utils/compute-graphql-direct-execution-query-cost.util";
+import { extractArgumentsFromAst } from "src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util";
+import { graphQLBuildFragmentMap } from "src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util";
+import { graphQLExtractTopLevelFields } from "src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util";
+import { RESOLVER_METHOD_NAMES } from "src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names";
 
-describe('computeGraphQLDirectExecutionQueryCost', () => {
-  it('multiplies selected fields by the requested row count', () => {
-    const document = parse(`
+describe("computeGraphQLDirectExecutionQueryCost", () => {
+	it("multiplies selected fields by the requested row count", () => {
+		const document = parse(`
       query FindPeople($first: Int!) {
         people(first: $first) {
           edges {
@@ -27,29 +27,29 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
         }
       }
     `);
-    const variables = { first: 25 };
-    const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
+		const variables = { first: 25 };
+		const [field] = graphQLExtractTopLevelFields(document, "FindPeople");
 
-    const result = computeGraphQLDirectExecutionQueryCost({
-      rootFields: [
-        {
-          field,
-          method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: extractArgumentsFromAst(field.arguments, variables),
-        },
-      ],
-      fragmentMap: graphQLBuildFragmentMap(document),
-    });
+		const result = computeGraphQLDirectExecutionQueryCost({
+			rootFields: [
+				{
+					field,
+					method: RESOLVER_METHOD_NAMES.FIND_MANY,
+					args: extractArgumentsFromAst(field.arguments, variables),
+				},
+			],
+			fragmentMap: graphQLBuildFragmentMap(document),
+		});
 
-    expect(result).toEqual({
-      estimatedResultFieldCount: 125,
-      requestedRowCount: 25,
-      selectedLeafFieldCount: 5,
-    });
-  });
+		expect(result).toEqual({
+			estimatedResultFieldCount: 125,
+			requestedRowCount: 25,
+			selectedLeafFieldCount: 5,
+		});
+	});
 
-  it('uses the maximum page size when find many has no explicit limit', () => {
-    const document = parse(`
+	it("uses the maximum page size when find many has no explicit limit", () => {
+		const document = parse(`
       query FindPeople {
         people {
           edges {
@@ -63,28 +63,28 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
         }
       }
     `);
-    const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
+		const [field] = graphQLExtractTopLevelFields(document, "FindPeople");
 
-    const result = computeGraphQLDirectExecutionQueryCost({
-      rootFields: [
-        {
-          field,
-          method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: {},
-        },
-      ],
-      fragmentMap: graphQLBuildFragmentMap(document),
-    });
+		const result = computeGraphQLDirectExecutionQueryCost({
+			rootFields: [
+				{
+					field,
+					method: RESOLVER_METHOD_NAMES.FIND_MANY,
+					args: {},
+				},
+			],
+			fragmentMap: graphQLBuildFragmentMap(document),
+		});
 
-    expect(result).toEqual({
-      estimatedResultFieldCount: 400,
-      requestedRowCount: 200,
-      selectedLeafFieldCount: 2,
-    });
-  });
+		expect(result).toEqual({
+			estimatedResultFieldCount: 400,
+			requestedRowCount: 200,
+			selectedLeafFieldCount: 2,
+		});
+	});
 
-  it('counts fragment fields and combines root resolver costs', () => {
-    const document = parse(`
+	it("counts fragment fields and combines root resolver costs", () => {
+		const document = parse(`
       query FindRecords {
         people(first: 10) {
           edges {
@@ -104,44 +104,44 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
         jobTitle
       }
     `);
-    const fields = graphQLExtractTopLevelFields(document, 'FindRecords');
+		const fields = graphQLExtractTopLevelFields(document, "FindRecords");
 
-    const result = computeGraphQLDirectExecutionQueryCost({
-      rootFields: [
-        {
-          field: fields[0],
-          method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: extractArgumentsFromAst(fields[0].arguments, {}),
-        },
-        {
-          field: fields[1],
-          method: RESOLVER_METHOD_NAMES.FIND_ONE,
-          args: extractArgumentsFromAst(fields[1].arguments, {}),
-        },
-      ],
-      fragmentMap: graphQLBuildFragmentMap(document),
-    });
+		const result = computeGraphQLDirectExecutionQueryCost({
+			rootFields: [
+				{
+					field: fields[0],
+					method: RESOLVER_METHOD_NAMES.FIND_MANY,
+					args: extractArgumentsFromAst(fields[0].arguments, {}),
+				},
+				{
+					field: fields[1],
+					method: RESOLVER_METHOD_NAMES.FIND_ONE,
+					args: extractArgumentsFromAst(fields[1].arguments, {}),
+				},
+			],
+			fragmentMap: graphQLBuildFragmentMap(document),
+		});
 
-    expect(result).toEqual({
-      estimatedResultFieldCount: 22,
-      requestedRowCount: 11,
-      selectedLeafFieldCount: 4,
-    });
-  });
+		expect(result).toEqual({
+			estimatedResultFieldCount: 22,
+			requestedRowCount: 11,
+			selectedLeafFieldCount: 4,
+		});
+	});
 
-  it('computes each shared fragment once', () => {
-    const fragmentCount = 60;
-    const fragmentDefinitions = Array.from(
-      { length: fragmentCount },
-      (_, index) =>
-        index === fragmentCount - 1
-          ? `fragment SharedFragment${index} on Person { id }`
-          : `fragment SharedFragment${index} on Person {
+	it("computes each shared fragment once", () => {
+		const fragmentCount = 60;
+		const fragmentDefinitions = Array.from(
+			{ length: fragmentCount },
+			(_, index) =>
+				index === fragmentCount - 1
+					? `fragment SharedFragment${index} on Person { id }`
+					: `fragment SharedFragment${index} on Person {
               ...SharedFragment${index + 1}
               ...SharedFragment${index + 1}
             }`,
-    ).join('\n');
-    const document = parse(`
+		).join("\n");
+		const document = parse(`
       query FindPeople {
         people(first: 1) {
           edges {
@@ -154,26 +154,26 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
 
       ${fragmentDefinitions}
     `);
-    const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
-    const fragmentMap = graphQLBuildFragmentMap(document);
-    const fragmentLookupSpy = jest.spyOn(fragmentMap, 'get');
+		const [field] = graphQLExtractTopLevelFields(document, "FindPeople");
+		const fragmentMap = graphQLBuildFragmentMap(document);
+		const fragmentLookupSpy = jest.spyOn(fragmentMap, "get");
 
-    const result = computeGraphQLDirectExecutionQueryCost({
-      rootFields: [
-        {
-          field,
-          method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: { first: 1 },
-        },
-      ],
-      fragmentMap,
-    });
+		const result = computeGraphQLDirectExecutionQueryCost({
+			rootFields: [
+				{
+					field,
+					method: RESOLVER_METHOD_NAMES.FIND_MANY,
+					args: { first: 1 },
+				},
+			],
+			fragmentMap,
+		});
 
-    expect(result).toEqual({
-      estimatedResultFieldCount: Number.MAX_SAFE_INTEGER,
-      requestedRowCount: 1,
-      selectedLeafFieldCount: Number.MAX_SAFE_INTEGER,
-    });
-    expect(fragmentLookupSpy).toHaveBeenCalledTimes(fragmentCount);
-  });
+		expect(result).toEqual({
+			estimatedResultFieldCount: Number.MAX_SAFE_INTEGER,
+			requestedRowCount: 1,
+			selectedLeafFieldCount: Number.MAX_SAFE_INTEGER,
+		});
+		expect(fragmentLookupSpy).toHaveBeenCalledTimes(fragmentCount);
+	});
 });

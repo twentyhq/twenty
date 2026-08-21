@@ -1,34 +1,34 @@
-import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
-import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { PreComputedChipGeneratorsContext } from "@/object-metadata/contexts/PreComputedChipGeneratorsContext";
+import { type RecordChipData } from "@/object-record/record-field/ui/types/RecordChipData";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
+import { useContext } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 type UseRecordChipDataArgs = {
-  objectNameSingular: string;
-  record: ObjectRecord;
+	objectNameSingular: string;
+	record: ObjectRecord;
 };
 type UseRecordChipDataReturnType = {
-  recordChipData: RecordChipData;
+	recordChipData: RecordChipData;
 };
 export const useRecordChipData = ({
-  objectNameSingular,
-  record,
+	objectNameSingular,
+	record,
 }: UseRecordChipDataArgs): UseRecordChipDataReturnType => {
-  const { identifierChipGeneratorPerObject } = useContext(
-    PreComputedChipGeneratorsContext,
-  );
+	const { identifierChipGeneratorPerObject } = useContext(
+		PreComputedChipGeneratorsContext,
+	);
 
-  const identifierChipGenerator =
-    identifierChipGeneratorPerObject[objectNameSingular];
+	const identifierChipGenerator =
+		identifierChipGeneratorPerObject[objectNameSingular];
 
-  if (!isDefined(identifierChipGenerator)) {
-    throw new Error(
-      `No identifier chip generator found for object name singular: ${objectNameSingular}`,
-    );
-  }
+	if (!isDefined(identifierChipGenerator)) {
+		throw new Error(
+			`No identifier chip generator found for object name singular: ${objectNameSingular}`,
+		);
+	}
 
-  return {
-    recordChipData: identifierChipGenerator(record),
-  };
+	return {
+		recordChipData: identifierChipGenerator(record),
+	};
 };

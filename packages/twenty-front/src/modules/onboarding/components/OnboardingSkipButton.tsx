@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSkipButton = styled.button`
   background-color: transparent;
@@ -16,19 +16,19 @@ const StyledSkipButton = styled.button`
 `;
 
 type OnboardingSkipButtonProps = {
-  onClick: () => void;
-  disabled?: boolean;
+	onClick: () => void;
+	disabled?: boolean;
 };
 
 export const OnboardingSkipButton = ({
-  onClick,
-  disabled,
+	onClick,
+	disabled,
 }: OnboardingSkipButtonProps) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  return (
-    <StyledSkipButton type="button" onClick={onClick} disabled={disabled}>
-      {t`Skip`}
-    </StyledSkipButton>
-  );
+	return (
+		<StyledSkipButton type="button" onClick={onClick} disabled={disabled}>
+			{t`Skip`}
+		</StyledSkipButton>
+	);
 };

@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import React from 'react';
-import { CardContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import React from "react";
+import { CardContent } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledRowContentContainer = styled.div`
   > div {
@@ -19,24 +19,24 @@ const StyledRowContentContainer = styled.div`
 `;
 
 export const ActivityRow = ({
-  children,
-  onClick,
-  disabled,
+	children,
+	onClick,
+	disabled,
 }: React.PropsWithChildren<{
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  disabled?: boolean;
+	onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+	disabled?: boolean;
 }>) => {
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (disabled !== true) {
-      onClick?.(event);
-    }
-  };
+	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (disabled !== true) {
+			onClick?.(event);
+		}
+	};
 
-  return (
-    <StyledRowContentContainer>
-      <CardContent onClick={handleClick} isClickable={disabled !== true}>
-        {children}
-      </CardContent>
-    </StyledRowContentContainer>
-  );
+	return (
+		<StyledRowContentContainer>
+			<CardContent onClick={handleClick} isClickable={disabled !== true}>
+				{children}
+			</CardContent>
+		</StyledRowContentContainer>
+	);
 };

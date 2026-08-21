@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledOnboardingStepPage = styled.div`
   align-items: center;

@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '../preview-font-size';
-import { type CellSelectColor } from '../types';
+import { previewFontSize } from "../preview-font-size";
+import { type CellSelectColor } from "../types";
 
 const TagPill = styled.span<{ $background: string; $color: string }>`
   align-items: center;
@@ -23,19 +23,19 @@ const TagPill = styled.span<{ $background: string; $color: string }>`
 `;
 
 export function PreviewTag({
-  color,
-  label,
+	color,
+	label,
 }: {
-  color?: CellSelectColor;
-  label: string;
+	color?: CellSelectColor;
+	label: string;
 }) {
-  const tagColor = color ?? 'gray';
-  return (
-    <TagPill
-      $background={THEME_LIGHT.tag.background[tagColor]}
-      $color={THEME_LIGHT.tag.text[tagColor]}
-    >
-      {label}
-    </TagPill>
-  );
+	const tagColor = color ?? "gray";
+	return (
+		<TagPill
+			$background={THEME_LIGHT.tag.background[tagColor]}
+			$color={THEME_LIGHT.tag.text[tagColor]}
+		>
+			{label}
+		</TagPill>
+	);
 }

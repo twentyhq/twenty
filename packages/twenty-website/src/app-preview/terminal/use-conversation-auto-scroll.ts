@@ -1,62 +1,62 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 import {
-  createAnimationFrameLoop,
-  getReducedMotionSnapshot,
-} from '@/platform/motion';
+	createAnimationFrameLoop,
+	getReducedMotionSnapshot,
+} from "@/platform/motion";
 
-import { scrollConversationElementToBottom } from './conversation-scroll';
+import { scrollConversationElementToBottom } from "./conversation-scroll";
 
 const getSafeReducedMotionSnapshot = (): boolean =>
-  typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-    ? getReducedMotionSnapshot()
-    : true;
+	typeof window !== "undefined" && typeof window.matchMedia === "function"
+		? getReducedMotionSnapshot()
+		: true;
 
 export const useConversationAutoScroll = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+	const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const element = scrollRef.current;
+	useEffect(() => {
+		const element = scrollRef.current;
 
-    if (element === null) {
-      return undefined;
-    }
+		if (element === null) {
+			return undefined;
+		}
 
-    const scrollTask = createAnimationFrameLoop({
-      onFrame: () => {
-        scrollConversationElementToBottom({
-          element,
-          prefersReducedMotion: getSafeReducedMotionSnapshot(),
-        });
+		const scrollTask = createAnimationFrameLoop({
+			onFrame: () => {
+				scrollConversationElementToBottom({
+					element,
+					prefersReducedMotion: getSafeReducedMotionSnapshot(),
+				});
 
-        return false;
-      },
-    });
-    const scheduleScroll = scrollTask.start;
+				return false;
+			},
+		});
+		const scheduleScroll = scrollTask.start;
 
-    scheduleScroll();
+		scheduleScroll();
 
-    if (typeof MutationObserver === 'undefined') {
-      return () => {
-        scrollTask.stop();
-      };
-    }
+		if (typeof MutationObserver === "undefined") {
+			return () => {
+				scrollTask.stop();
+			};
+		}
 
-    const observer = new MutationObserver(scheduleScroll);
+		const observer = new MutationObserver(scheduleScroll);
 
-    observer.observe(element, {
-      characterData: true,
-      childList: true,
-      subtree: true,
-    });
+		observer.observe(element, {
+			characterData: true,
+			childList: true,
+			subtree: true,
+		});
 
-    return () => {
-      observer.disconnect();
-      scrollTask.stop();
-    };
-  }, []);
+		return () => {
+			observer.disconnect();
+			scrollTask.stop();
+		};
+	}, []);
 
-  return scrollRef;
+	return scrollRef;
 };

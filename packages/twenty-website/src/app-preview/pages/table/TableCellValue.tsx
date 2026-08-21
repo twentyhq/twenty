@@ -1,34 +1,34 @@
-import { styled } from '@linaria/react';
-import { IconCheck, IconCopy, IconPencil, IconX } from '@tabler/icons-react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { IconCheck, IconCopy, IconPencil, IconX } from "@tabler/icons-react";
+import { type ReactNode } from "react";
 
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { TableCheckbox } from './TableCheckbox';
-import { Chip, type ChipVariant } from '../../primitives/Chip';
-import { FaviconLogo } from '../../primitives/FaviconLogo';
-import { getInitials } from '../../primitives/get-initials';
-import { MiniIcon } from '../../primitives/MiniIcon';
-import { PersonAvatar } from '../../primitives/PersonAvatar';
-import { PreviewAvatar } from '../../primitives/PreviewAvatar';
-import { PreviewRoundedLink } from '../../primitives/PreviewRoundedLink';
-import { PreviewTag } from '../../primitives/PreviewTag';
+import { TableCheckbox } from "./TableCheckbox";
+import { Chip, type ChipVariant } from "../../primitives/Chip";
+import { FaviconLogo } from "../../primitives/FaviconLogo";
+import { getInitials } from "../../primitives/get-initials";
+import { MiniIcon } from "../../primitives/MiniIcon";
+import { PersonAvatar } from "../../primitives/PersonAvatar";
+import { PreviewAvatar } from "../../primitives/PreviewAvatar";
+import { PreviewRoundedLink } from "../../primitives/PreviewRoundedLink";
+import { PreviewTag } from "../../primitives/PreviewTag";
 import {
-  type CellEntity,
-  type CellLink,
-  type CellPerson,
-  type CellRelation,
-  type CellText,
-  type CellValue,
-} from '../../types';
+	type CellEntity,
+	type CellLink,
+	type CellPerson,
+	type CellRelation,
+	type CellText,
+	type CellValue,
+} from "../../types";
 
 // The floating row action sits over the cell's right padding.
 const CELL_HORIZONTAL_PADDING = 8;
 const HOVER_ACTION_EDGE_INSET = 4;
 const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
-  'createdBy',
-  'accountOwner',
+	"createdBy",
+	"accountOwner",
 ]);
 
 const FirstColumnCellLayout = styled.div`
@@ -90,7 +90,7 @@ const HoverActions = styled.div<{ $visible: boolean }>`
   position: absolute;
   right: ${HOVER_ACTION_EDGE_INSET - CELL_HORIZONTAL_PADDING}px;
   top: 4px;
-  transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
+  transform: translateX(${({ $visible }) => ($visible ? "0" : "4px")});
   transition:
     opacity 0.14s ease,
     transform 0.14s ease;
@@ -117,219 +117,219 @@ const MultiChipStack = styled.div`
 `;
 
 function HoverAction({
-  icon,
-  visible,
+	icon,
+	visible,
 }: {
-  icon: typeof IconCopy;
-  visible: boolean;
+	icon: typeof IconCopy;
+	visible: boolean;
 }) {
-  return (
-    <HoverActions $visible={visible}>
-      <MiniAction aria-hidden>
-        <MiniIcon icon={icon} color={THEME_LIGHT.font.color.secondary} />
-      </MiniAction>
-    </HoverActions>
-  );
+	return (
+		<HoverActions $visible={visible}>
+			<MiniAction aria-hidden>
+				<MiniIcon icon={icon} color={THEME_LIGHT.font.color.secondary} />
+			</MiniAction>
+		</HoverActions>
+	);
 }
 
 function PersonTokenCell({
-  isFirstColumn = false,
-  token,
-  hovered = false,
-  variant = 'highlighted',
+	isFirstColumn = false,
+	token,
+	hovered = false,
+	variant = "highlighted",
 }: {
-  hovered?: boolean;
-  isFirstColumn?: boolean;
-  token: CellPerson;
-  variant?: ChipVariant;
+	hovered?: boolean;
+	isFirstColumn?: boolean;
+	token: CellPerson;
+	variant?: ChipVariant;
 }) {
-  const content = (
-    <Chip
-      clickable={false}
-      label={token.name}
-      leftComponent={<PersonAvatar person={token} />}
-      variant={variant}
-    />
-  );
-  if (isFirstColumn) {
-    return (
-      <FirstColumnCellLayout>
-        <TableCheckbox />
-        {content}
-        <HoverAction icon={IconCopy} visible={hovered} />
-      </FirstColumnCellLayout>
-    );
-  }
-  return (
-    <CellHoverAnchor>
-      {content}
-      <HoverAction icon={IconCopy} visible={hovered} />
-    </CellHoverAnchor>
-  );
+	const content = (
+		<Chip
+			clickable={false}
+			label={token.name}
+			leftComponent={<PersonAvatar person={token} />}
+			variant={variant}
+		/>
+	);
+	if (isFirstColumn) {
+		return (
+			<FirstColumnCellLayout>
+				<TableCheckbox />
+				{content}
+				<HoverAction icon={IconCopy} visible={hovered} />
+			</FirstColumnCellLayout>
+		);
+	}
+	return (
+		<CellHoverAnchor>
+			{content}
+			<HoverAction icon={IconCopy} visible={hovered} />
+		</CellHoverAnchor>
+	);
 }
 
 function EntityCellComponent({
-  cell,
-  hovered,
-  isFirstColumn,
+	cell,
+	hovered,
+	isFirstColumn,
 }: {
-  cell: CellEntity;
-  hovered: boolean;
-  isFirstColumn: boolean;
+	cell: CellEntity;
+	hovered: boolean;
+	isFirstColumn: boolean;
 }) {
-  const content = (
-    <Chip
-      clickable={false}
-      label={cell.name}
-      leftComponent={<FaviconLogo domain={cell.domain} label={cell.name} />}
-      variant="highlighted"
-    />
-  );
-  if (isFirstColumn) {
-    return (
-      <FirstColumnCellLayout>
-        <TableCheckbox />
-        {content}
-        <HoverAction icon={IconPencil} visible={hovered} />
-      </FirstColumnCellLayout>
-    );
-  }
-  return (
-    <CellHoverAnchor>
-      {content}
-      <HoverAction icon={IconPencil} visible={hovered} />
-    </CellHoverAnchor>
-  );
+	const content = (
+		<Chip
+			clickable={false}
+			label={cell.name}
+			leftComponent={<FaviconLogo domain={cell.domain} label={cell.name} />}
+			variant="highlighted"
+		/>
+	);
+	if (isFirstColumn) {
+		return (
+			<FirstColumnCellLayout>
+				<TableCheckbox />
+				{content}
+				<HoverAction icon={IconPencil} visible={hovered} />
+			</FirstColumnCellLayout>
+		);
+	}
+	return (
+		<CellHoverAnchor>
+			{content}
+			<HoverAction icon={IconPencil} visible={hovered} />
+		</CellHoverAnchor>
+	);
 }
 
 function RelationCellComponent({ cell }: { cell: CellRelation }) {
-  return (
-    <CellHoverAnchor>
-      <MultiChipStack>
-        {cell.items.map((item) => (
-          <Chip
-            key={item.name}
-            clickable={false}
-            label={item.name}
-            leftComponent={
-              <PreviewAvatar tone={item.tone}>
-                {item.shortLabel ?? getInitials(item.name)}
-              </PreviewAvatar>
-            }
-            variant="highlighted"
-          />
-        ))}
-      </MultiChipStack>
-    </CellHoverAnchor>
-  );
+	return (
+		<CellHoverAnchor>
+			<MultiChipStack>
+				{cell.items.map((item) => (
+					<Chip
+						key={item.name}
+						clickable={false}
+						label={item.name}
+						leftComponent={
+							<PreviewAvatar tone={item.tone}>
+								{item.shortLabel ?? getInitials(item.name)}
+							</PreviewAvatar>
+						}
+						variant="highlighted"
+					/>
+				))}
+			</MultiChipStack>
+		</CellHoverAnchor>
+	);
 }
 
 function TextCellComponent({
-  cell,
-  isFirstColumn,
+	cell,
+	isFirstColumn,
 }: {
-  cell: CellText;
-  isFirstColumn: boolean;
+	cell: CellText;
+	isFirstColumn: boolean;
 }) {
-  if (!isFirstColumn) {
-    return <InlineText>{cell.value}</InlineText>;
-  }
-  const content = cell.shortLabel ? (
-    <Chip
-      clickable={false}
-      label={cell.value}
-      leftComponent={
-        <PreviewAvatar tone={cell.tone}>{cell.shortLabel}</PreviewAvatar>
-      }
-      variant="highlighted"
-    />
-  ) : (
-    <Chip clickable={false} label={cell.value} variant="highlighted" />
-  );
-  return (
-    <FirstColumnCellLayout>
-      <TableCheckbox />
-      {content}
-    </FirstColumnCellLayout>
-  );
+	if (!isFirstColumn) {
+		return <InlineText>{cell.value}</InlineText>;
+	}
+	const content = cell.shortLabel ? (
+		<Chip
+			clickable={false}
+			label={cell.value}
+			leftComponent={
+				<PreviewAvatar tone={cell.tone}>{cell.shortLabel}</PreviewAvatar>
+			}
+			variant="highlighted"
+		/>
+	) : (
+		<Chip clickable={false} label={cell.value} variant="highlighted" />
+	);
+	return (
+		<FirstColumnCellLayout>
+			<TableCheckbox />
+			{content}
+		</FirstColumnCellLayout>
+	);
 }
 
 function LinkCellComponent({ cell }: { cell: CellLink }) {
-  const label =
-    cell.label ??
-    (cell.kind === 'social' && cell.value.startsWith('@')
-      ? cell.value
-      : cell.value);
-  return (
-    <CellHoverAnchor>
-      <PreviewRoundedLink label={label} />
-    </CellHoverAnchor>
-  );
+	const label =
+		cell.label ??
+		(cell.kind === "social" && cell.value.startsWith("@")
+			? cell.value
+			: cell.value);
+	return (
+		<CellHoverAnchor>
+			<PreviewRoundedLink label={label} />
+		</CellHoverAnchor>
+	);
 }
 
 export function renderTableCellValue({
-  cell,
-  columnId,
-  hovered,
-  isFirstColumn,
+	cell,
+	columnId,
+	hovered,
+	isFirstColumn,
 }: {
-  cell: CellValue;
-  columnId: string;
-  hovered: boolean;
-  isFirstColumn: boolean;
+	cell: CellValue;
+	columnId: string;
+	hovered: boolean;
+	isFirstColumn: boolean;
 }): ReactNode {
-  const showHoverAction = !ROW_HOVER_ACTION_DISABLED_COLUMNS.has(columnId);
-  const personChipVariant: ChipVariant =
-    columnId === 'createdBy' ? 'transparent' : 'highlighted';
+	const showHoverAction = !ROW_HOVER_ACTION_DISABLED_COLUMNS.has(columnId);
+	const personChipVariant: ChipVariant =
+		columnId === "createdBy" ? "transparent" : "highlighted";
 
-  switch (cell.type) {
-    case 'text':
-      return <TextCellComponent cell={cell} isFirstColumn={isFirstColumn} />;
-    case 'number':
-      return <RightAlignedText>{cell.value}</RightAlignedText>;
-    case 'currency':
-      return <RightAlignedText>{cell.value}</RightAlignedText>;
-    case 'link':
-      return <LinkCellComponent cell={cell} />;
-    case 'boolean':
-      return (
-        <BooleanRow>
-          {cell.value ? (
-            <MiniIcon
-              icon={IconCheck}
-              color={THEME_LIGHT.font.color.primary}
-              size={11}
-            />
-          ) : (
-            <MiniIcon
-              icon={IconX}
-              color={THEME_LIGHT.font.color.primary}
-              size={11}
-            />
-          )}
-          <InlineText>{cell.value ? 'True' : 'False'}</InlineText>
-        </BooleanRow>
-      );
-    case 'select':
-      return <PreviewTag color={cell.color} label={cell.value} />;
-    case 'person':
-      return (
-        <PersonTokenCell
-          hovered={hovered && showHoverAction}
-          isFirstColumn={isFirstColumn}
-          token={cell}
-          variant={personChipVariant}
-        />
-      );
-    case 'entity':
-      return (
-        <EntityCellComponent
-          cell={cell}
-          hovered={hovered && showHoverAction}
-          isFirstColumn={isFirstColumn}
-        />
-      );
-    case 'relation':
-      return <RelationCellComponent cell={cell} />;
-  }
+	switch (cell.type) {
+		case "text":
+			return <TextCellComponent cell={cell} isFirstColumn={isFirstColumn} />;
+		case "number":
+			return <RightAlignedText>{cell.value}</RightAlignedText>;
+		case "currency":
+			return <RightAlignedText>{cell.value}</RightAlignedText>;
+		case "link":
+			return <LinkCellComponent cell={cell} />;
+		case "boolean":
+			return (
+				<BooleanRow>
+					{cell.value ? (
+						<MiniIcon
+							icon={IconCheck}
+							color={THEME_LIGHT.font.color.primary}
+							size={11}
+						/>
+					) : (
+						<MiniIcon
+							icon={IconX}
+							color={THEME_LIGHT.font.color.primary}
+							size={11}
+						/>
+					)}
+					<InlineText>{cell.value ? "True" : "False"}</InlineText>
+				</BooleanRow>
+			);
+		case "select":
+			return <PreviewTag color={cell.color} label={cell.value} />;
+		case "person":
+			return (
+				<PersonTokenCell
+					hovered={hovered && showHoverAction}
+					isFirstColumn={isFirstColumn}
+					token={cell}
+					variant={personChipVariant}
+				/>
+			);
+		case "entity":
+			return (
+				<EntityCellComponent
+					cell={cell}
+					hovered={hovered && showHoverAction}
+					isFirstColumn={isFirstColumn}
+				/>
+			);
+		case "relation":
+			return <RelationCellComponent cell={cell} />;
+	}
 }

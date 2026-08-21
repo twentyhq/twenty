@@ -1,30 +1,30 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook } from "@testing-library/react";
 
-import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { useGetObjectOrderByField } from "@/object-metadata/hooks/useGetObjectOrderByField";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useGetObjectOrderByField', () => {
-  it('should work as expected', () => {
-    const { result } = renderHook(
-      () => {
-        const { getObjectOrderByField } = useGetObjectOrderByField({
-          objectNameSingular: 'person',
-        });
+describe("useGetObjectOrderByField", () => {
+	it("should work as expected", () => {
+		const { result } = renderHook(
+			() => {
+				const { getObjectOrderByField } = useGetObjectOrderByField({
+					objectNameSingular: "person",
+				});
 
-        return getObjectOrderByField('AscNullsLast');
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+				return getObjectOrderByField("AscNullsLast");
+			},
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    expect(result.current).toEqual([
-      { name: { firstName: 'AscNullsLast' } },
-      { name: { lastName: 'AscNullsLast' } },
-    ]);
-  });
+		expect(result.current).toEqual([
+			{ name: { firstName: "AscNullsLast" } },
+			{ name: { lastName: "AscNullsLast" } },
+		]);
+	});
 });

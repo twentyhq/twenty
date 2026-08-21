@@ -1,4 +1,4 @@
 export type NavigationMenuItemToolContext = {
-  workspaceId: string;
-  userWorkspaceId?: string;
+	workspaceId: string;
+	userWorkspaceId?: string;
 };

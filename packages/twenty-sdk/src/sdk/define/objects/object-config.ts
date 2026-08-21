@@ -1,8 +1,8 @@
-import { type ObjectManifest } from 'twenty-shared/application';
+import { type ObjectManifest } from "twenty-shared/application";
 
 export type ObjectConfig = Omit<
-  ObjectManifest,
-  'labelIdentifierFieldMetadataUniversalIdentifier'
+	ObjectManifest,
+	"labelIdentifierFieldMetadataUniversalIdentifier"
 > & {
-  labelIdentifierFieldMetadataUniversalIdentifier?: string;
+	labelIdentifierFieldMetadataUniversalIdentifier?: string;
 };

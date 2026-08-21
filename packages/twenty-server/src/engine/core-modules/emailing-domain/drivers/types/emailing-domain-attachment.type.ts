@@ -1,5 +1,5 @@
 export type EmailingDomainAttachment = {
-  filename: string;
-  content: Buffer;
-  contentType: string;
+	filename: string;
+	content: Buffer;
+	contentType: string;
 };

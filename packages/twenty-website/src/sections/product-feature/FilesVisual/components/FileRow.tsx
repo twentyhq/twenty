@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { IconCalendar, IconDotsVertical } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { IconCalendar, IconDotsVertical } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { FILE_ICONS } from '../data/file-icons';
-import { type FileEntry } from '../types/file-entry';
+import { FILE_ICONS } from "../data/file-icons";
+import { type FileEntry } from "../types/file-entry";
 
 const Row = styled.div`
   align-items: center;
@@ -87,24 +87,24 @@ const Dots = styled.span`
 `;
 
 export function FileRow({ file }: { file: FileEntry }) {
-  const FileGlyphIcon = FILE_ICONS[file.category];
-  return (
-    <Row>
-      <Left>
-        <FileIconBox data-category={file.category}>
-          <FileGlyphIcon size={14} stroke={1.6} />
-        </FileIconBox>
-        <FileName>{file.name}</FileName>
-      </Left>
-      <Right>
-        <CalendarIcon>
-          <IconCalendar size={16} stroke={2} />
-        </CalendarIcon>
-        <DateText>{file.date}</DateText>
-        <Dots>
-          <IconDotsVertical size={16} stroke={2} />
-        </Dots>
-      </Right>
-    </Row>
-  );
+	const FileGlyphIcon = FILE_ICONS[file.category];
+	return (
+		<Row>
+			<Left>
+				<FileIconBox data-category={file.category}>
+					<FileGlyphIcon size={14} stroke={1.6} />
+				</FileIconBox>
+				<FileName>{file.name}</FileName>
+			</Left>
+			<Right>
+				<CalendarIcon>
+					<IconCalendar size={16} stroke={2} />
+				</CalendarIcon>
+				<DateText>{file.date}</DateText>
+				<Dots>
+					<IconDotsVertical size={16} stroke={2} />
+				</Dots>
+			</Right>
+		</Row>
+	);
 }

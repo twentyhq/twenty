@@ -1,3 +1,3 @@
 export type FirefliesSyncCallInput = {
-  transcriptId: string;
+	transcriptId: string;
 };

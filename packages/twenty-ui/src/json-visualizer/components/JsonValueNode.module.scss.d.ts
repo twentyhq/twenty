@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly listItem: 'listItem';
+	readonly listItem: "listItem";
 };
 export default classNames;

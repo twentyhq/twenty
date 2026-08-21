@@ -1,9 +1,9 @@
-import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+import { createAtomFamilyState } from "@/ui/utilities/state/jotai/utils/createAtomFamilyState";
 
 export const commandMenuItemProgressFamilyState = createAtomFamilyState<
-  number | undefined,
-  string
+	number | undefined,
+	string
 >({
-  key: 'commandMenuItemProgressFamilyState',
-  defaultValue: undefined,
+	key: "commandMenuItemProgressFamilyState",
+	defaultValue: undefined,
 });

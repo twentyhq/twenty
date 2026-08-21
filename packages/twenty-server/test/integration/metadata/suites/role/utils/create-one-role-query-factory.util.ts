@@ -1,7 +1,7 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
+import { type CreateRoleInput } from "src/engine/metadata-modules/role/dtos/create-role.input";
 
 export type CreateOneRoleFactoryInput = CreateRoleInput;
 
@@ -23,17 +23,17 @@ const DEFAULT_ROLE_GQL_FIELDS = `
 `;
 
 export const createOneRoleQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_ROLE_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_ROLE_GQL_FIELDS,
 }: PerformMetadataQueryParams<CreateOneRoleFactoryInput>) => ({
-  query: gql`
+	query: gql`
         mutation CreateOneRole($createRoleInput: CreateRoleInput!) {
           createOneRole(createRoleInput: $createRoleInput) {
             ${gqlFields}
           }
         }
       `,
-  variables: {
-    createRoleInput: input,
-  },
+	variables: {
+		createRoleInput: input,
+	},
 });

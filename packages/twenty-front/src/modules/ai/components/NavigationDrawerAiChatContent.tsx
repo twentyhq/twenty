@@ -1,19 +1,19 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
-import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { AiChatThreadDeleteConfirmationModal } from "@/ai/components/AiChatThreadDeleteConfirmationModal";
+import { AiChatThreadFilterDropdown } from "@/ai/components/AiChatThreadFilterDropdown";
+import { AiChatSkeletonLoader } from "@/ai/components/internal/AiChatSkeletonLoader";
+import { NavigationDrawerAiChatThreadSection } from "@/ai/components/NavigationDrawerAiChatThreadSection";
+import { AGENT_CHAT_THREAD_GROUP_BY } from "@/ai/constants/AgentChatThreadGroupBy";
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from "@/ai/constants/AiChatThreadActionsSurface";
+import { useAiChatThreadClick } from "@/ai/hooks/useAiChatThreadClick";
+import { useChatThreads } from "@/ai/hooks/useChatThreads";
+import { agentChatThreadGroupByState } from "@/ai/states/agentChatThreadGroupByState";
+import { currentAiChatThreadState } from "@/ai/states/currentAiChatThreadState";
+import { groupThreadsByDate } from "@/ai/utils/groupThreadsByDate";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -51,73 +51,73 @@ const StyledFetchMoreTrigger = styled.div`
   width: 100%;
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = "AiChatRecents";
 
 export const NavigationDrawerAiChatContent = () => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    resetNavigationStack: true,
-  });
-  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
+	const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+	const { handleThreadClick } = useAiChatThreadClick({
+		resetNavigationStack: true,
+	});
+	const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
 
-  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
+	const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
 
-  if (loading && threads.length === 0) {
-    return (
-      <StyledContainer>
-        <AiChatSkeletonLoader />
-      </StyledContainer>
-    );
-  }
+	if (loading && threads.length === 0) {
+		return (
+			<StyledContainer>
+				<AiChatSkeletonLoader />
+			</StyledContainer>
+		);
+	}
 
-  const isGroupedByDate =
-    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
-  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
+	const isGroupedByDate =
+		agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
+	const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
+	const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
 
-  const filterDropdown = (
-    <AiChatThreadFilterDropdown
-      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-    />
-  );
+	const filterDropdown = (
+		<AiChatThreadFilterDropdown
+			surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+		/>
+	);
 
-  return (
-    <StyledContainer>
-      <StyledThreadList>
-        {shouldRenderDateGroups ? (
-          <StyledSectionsContainer>
-            {dateGroups.map((dateGroup, index) => (
-              <NavigationDrawerAiChatThreadSection
-                key={dateGroup.id}
-                sectionId={`AiChatDateGroup:${dateGroup.id}`}
-                title={dateGroup.title}
-                threads={dateGroup.threads}
-                currentThreadId={currentAiChatThread}
-                onThreadClick={handleThreadClick}
-                rightIcon={index === 0 ? filterDropdown : undefined}
-              />
-            ))}
-          </StyledSectionsContainer>
-        ) : (
-          <NavigationDrawerAiChatThreadSection
-            sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-            title={t`Recents`}
-            threads={threads}
-            currentThreadId={currentAiChatThread}
-            onThreadClick={handleThreadClick}
-            rightIcon={filterDropdown}
-          />
-        )}
-        {threads.length === 0 ? (
-          <StyledEmptyState>{t`No chat`}</StyledEmptyState>
-        ) : null}
-        {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
-      </StyledThreadList>
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledThreadList>
+				{shouldRenderDateGroups ? (
+					<StyledSectionsContainer>
+						{dateGroups.map((dateGroup, index) => (
+							<NavigationDrawerAiChatThreadSection
+								key={dateGroup.id}
+								sectionId={`AiChatDateGroup:${dateGroup.id}`}
+								title={dateGroup.title}
+								threads={dateGroup.threads}
+								currentThreadId={currentAiChatThread}
+								onThreadClick={handleThreadClick}
+								rightIcon={index === 0 ? filterDropdown : undefined}
+							/>
+						))}
+					</StyledSectionsContainer>
+				) : (
+					<NavigationDrawerAiChatThreadSection
+						sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+						title={t`Recents`}
+						threads={threads}
+						currentThreadId={currentAiChatThread}
+						onThreadClick={handleThreadClick}
+						rightIcon={filterDropdown}
+					/>
+				)}
+				{threads.length === 0 ? (
+					<StyledEmptyState>{t`No chat`}</StyledEmptyState>
+				) : null}
+				{hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
+			</StyledThreadList>
+			<AiChatThreadDeleteConfirmationModal
+				surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+			/>
+		</StyledContainer>
+	);
 };

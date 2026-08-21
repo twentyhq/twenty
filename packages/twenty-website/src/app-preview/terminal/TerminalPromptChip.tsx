@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -51,16 +51,16 @@ const ChipLabel = styled.span`
 `;
 
 export function TerminalPromptChip({
-  icon,
-  label,
+	icon,
+	label,
 }: {
-  icon: ReactNode;
-  label: string;
+	icon: ReactNode;
+	label: string;
 }) {
-  return (
-    <ChipRoot type="button">
-      <ChipIcon aria-hidden>{icon}</ChipIcon>
-      <ChipLabel>{label}</ChipLabel>
-    </ChipRoot>
-  );
+	return (
+		<ChipRoot type="button">
+			<ChipIcon aria-hidden>{icon}</ChipIcon>
+			<ChipLabel>{label}</ChipLabel>
+		</ChipRoot>
+	);
 }

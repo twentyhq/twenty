@@ -1,4 +1,4 @@
 export type PositionType = {
-  x: number | null;
-  y: number | null;
+	x: number | null;
+	y: number | null;
 };

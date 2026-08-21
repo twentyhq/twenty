@@ -1,12 +1,12 @@
-import { createRequiredContext } from '~/utils/createRequiredContext';
+import { createRequiredContext } from "~/utils/createRequiredContext";
 
 export type RecordTableRowDraggableContextValue = {
-  isDragging: boolean;
+	isDragging: boolean;
 };
 
 export const [
-  RecordTableRowDraggableContextProvider,
-  useRecordTableRowDraggableContextOrThrow,
+	RecordTableRowDraggableContextProvider,
+	useRecordTableRowDraggableContextOrThrow,
 ] = createRequiredContext<RecordTableRowDraggableContextValue>(
-  'RecordTableRowDraggableContext',
+	"RecordTableRowDraggableContext",
 );

@@ -1,14 +1,14 @@
 export const getAppSlug = (
-  sourcePackage: string | undefined,
-  universalIdentifier: string,
+	sourcePackage: string | undefined,
+	universalIdentifier: string,
 ): string => {
-  if (sourcePackage === undefined || sourcePackage.length === 0) {
-    return universalIdentifier;
-  }
+	if (sourcePackage === undefined || sourcePackage.length === 0) {
+		return universalIdentifier;
+	}
 
-  const lastSegment = sourcePackage.split('/').pop();
+	const lastSegment = sourcePackage.split("/").pop();
 
-  return lastSegment !== undefined && lastSegment.length > 0
-    ? lastSegment
-    : universalIdentifier;
+	return lastSegment !== undefined && lastSegment.length > 0
+		? lastSegment
+		: universalIdentifier;
 };

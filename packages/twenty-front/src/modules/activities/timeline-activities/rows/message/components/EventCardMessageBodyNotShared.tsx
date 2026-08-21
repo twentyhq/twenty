@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
-import { IconLock } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Trans } from "@lingui/react/macro";
+import { IconLock } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledEmailBodyNotSharedContainer = styled.div`
   align-items: center;
@@ -36,20 +36,20 @@ const StyledEmailBodyNotShared = styled.div`
 `;
 
 export const EventCardMessageBodyNotShared = ({
-  notSharedByFullName,
+	notSharedByFullName,
 }: {
-  notSharedByFullName: string;
+	notSharedByFullName: string;
 }) => {
-  return (
-    <StyledEmailBodyNotSharedContainer>
-      <StyledEmailBodyNotShared>
-        <StyledEmailBodyNotSharedIconContainer>
-          <IconLock />
-        </StyledEmailBodyNotSharedIconContainer>
-        <span>
-          <Trans>Not shared by {notSharedByFullName}</Trans>
-        </span>
-      </StyledEmailBodyNotShared>
-    </StyledEmailBodyNotSharedContainer>
-  );
+	return (
+		<StyledEmailBodyNotSharedContainer>
+			<StyledEmailBodyNotShared>
+				<StyledEmailBodyNotSharedIconContainer>
+					<IconLock />
+				</StyledEmailBodyNotSharedIconContainer>
+				<span>
+					<Trans>Not shared by {notSharedByFullName}</Trans>
+				</span>
+			</StyledEmailBodyNotShared>
+		</StyledEmailBodyNotSharedContainer>
+	);
 };

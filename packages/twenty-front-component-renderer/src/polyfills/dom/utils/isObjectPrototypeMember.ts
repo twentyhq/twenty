@@ -1,3 +1,3 @@
 export const isObjectPrototypeMember = (
-  propertyName: string | symbol,
+	propertyName: string | symbol,
 ): boolean => propertyName in Object.prototype;

@@ -1,17 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export const readComponentSourceFromCache = async ({
-  cache,
-  url,
+	cache,
+	url,
 }: {
-  cache: Cache;
-  url: string;
+	cache: Cache;
+	url: string;
 }): Promise<string | undefined> => {
-  try {
-    const cachedResponse = await cache.match(url);
+	try {
+		const cachedResponse = await cache.match(url);
 
-    return isDefined(cachedResponse) ? await cachedResponse.text() : undefined;
-  } catch {
-    return undefined;
-  }
+		return isDefined(cachedResponse) ? await cachedResponse.text() : undefined;
+	} catch {
+		return undefined;
+	}
 };

@@ -1,18 +1,18 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
 
-import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useIcons } from 'twenty-ui/icon';
+import { fieldMetadataItemByIdSelector } from "@/object-metadata/states/fieldMetadataItemByIdSelector";
+import { isFieldMetadataItemLabelIdentifierSelector } from "@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector";
+import { type RecordField } from "@/object-record/record-field/types/RecordField";
+import { shouldCompactRecordTableFirstColumnComponentState } from "@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { useAtomFamilySelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue";
+import { useIcons } from "twenty-ui/icon";
 import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+	MOBILE_VIEWPORT,
+	ThemeContext,
+	themeCssVariables,
+} from "twenty-ui/theme-constants";
 
 const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   align-items: center;
@@ -25,7 +25,7 @@ const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   padding-right: ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: ${({ hideTitle }) => (hideTitle ? 'none' : 'flex')};
+    display: ${({ hideTitle }) => (hideTitle ? "none" : "flex")};
   }
 `;
 
@@ -46,44 +46,44 @@ const StyledText = styled.span`
 `;
 
 type RecordTableColumnHeadProps = {
-  recordField: RecordField;
+	recordField: RecordField;
 };
 
 export const RecordTableColumnHead = ({
-  recordField,
+	recordField,
 }: RecordTableColumnHeadProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
-    fieldMetadataItemByIdSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
-  );
+	const correspondingFieldMetadataItem = useAtomFamilySelectorValue(
+		fieldMetadataItemByIdSelector,
+		{ fieldMetadataItemId: recordField.fieldMetadataItemId },
+	);
 
-  const { getIcon } = useIcons();
-  const Icon = getIcon(
-    correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
-  );
+	const { getIcon } = useIcons();
+	const Icon = getIcon(
+		correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
+	);
 
-  const isLabelIdentifier = useAtomFamilySelectorValue(
-    isFieldMetadataItemLabelIdentifierSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
-  );
+	const isLabelIdentifier = useAtomFamilySelectorValue(
+		isFieldMetadataItemLabelIdentifierSelector,
+		{ fieldMetadataItemId: recordField.fieldMetadataItemId },
+	);
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
-    shouldCompactRecordTableFirstColumnComponentState,
-  );
+	const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
+		shouldCompactRecordTableFirstColumnComponentState,
+	);
 
-  const shouldHideTitle =
-    shouldCompactRecordTableFirstColumn && isLabelIdentifier;
+	const shouldHideTitle =
+		shouldCompactRecordTableFirstColumn && isLabelIdentifier;
 
-  return (
-    <StyledTitle hideTitle={shouldHideTitle}>
-      <StyledIcon>
-        <Icon size={theme.icon.size.md} />
-      </StyledIcon>
-      <StyledText>
-        {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}
-      </StyledText>
-    </StyledTitle>
-  );
+	return (
+		<StyledTitle hideTitle={shouldHideTitle}>
+			<StyledIcon>
+				<Icon size={theme.icon.size.md} />
+			</StyledIcon>
+			<StyledText>
+				{correspondingFieldMetadataItem.foundFieldMetadataItem?.label}
+			</StyledText>
+		</StyledTitle>
+	);
 };

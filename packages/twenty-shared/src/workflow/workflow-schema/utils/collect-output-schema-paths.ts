@@ -1,30 +1,30 @@
-import { isObject } from '@sniptt/guards';
+import { isObject } from "@sniptt/guards";
 
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from "@/workflow/workflow-schema/types/base-output-schema.type";
 
 export const collectOutputSchemaPaths = (
-  schema: BaseOutputSchemaV2,
-  prefix: string[] = [],
+	schema: BaseOutputSchemaV2,
+	prefix: string[] = [],
 ): string[] => {
-  const paths: string[] = [];
+	const paths: string[] = [];
 
-  if (!isObject(schema)) {
-    return paths;
-  }
+	if (!isObject(schema)) {
+		return paths;
+	}
 
-  for (const [key, field] of Object.entries(schema)) {
-    if (!isObject(field)) {
-      continue;
-    }
+	for (const [key, field] of Object.entries(schema)) {
+		if (!isObject(field)) {
+			continue;
+		}
 
-    const currentPath = [...prefix, key];
+		const currentPath = [...prefix, key];
 
-    paths.push(currentPath.join('.'));
+		paths.push(currentPath.join("."));
 
-    if (!field.isLeaf && isObject(field.value)) {
-      paths.push(...collectOutputSchemaPaths(field.value, currentPath));
-    }
-  }
+		if (!field.isLeaf && isObject(field.value)) {
+			paths.push(...collectOutputSchemaPaths(field.value, currentPath));
+		}
+	}
 
-  return paths;
+	return paths;
 };

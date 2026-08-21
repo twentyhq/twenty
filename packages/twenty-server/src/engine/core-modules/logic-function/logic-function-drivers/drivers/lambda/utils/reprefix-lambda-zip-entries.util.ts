@@ -1,36 +1,36 @@
 // Re-wraps zip entries under a new prefix path without extracting to disk.
 export const reprefixLambdaZipEntries = async ({
-  sourceBuffer,
-  prefix,
+	sourceBuffer,
+	prefix,
 }: {
-  sourceBuffer: Buffer;
-  prefix: string;
+	sourceBuffer: Buffer;
+	prefix: string;
 }): Promise<Buffer> => {
-  const { default: unzipper } = await import('unzipper');
-  const archiver = (await import('archiver')).default;
+	const { default: unzipper } = await import("unzipper");
+	const archiver = (await import("archiver")).default;
 
-  const directory = await unzipper.Open.buffer(sourceBuffer);
-  const archive = archiver('zip', { zlib: { level: 9 } });
+	const directory = await unzipper.Open.buffer(sourceBuffer);
+	const archive = archiver("zip", { zlib: { level: 9 } });
 
-  const chunks: Buffer[] = [];
+	const chunks: Buffer[] = [];
 
-  archive.on('data', (chunk: Buffer) => chunks.push(chunk));
+	archive.on("data", (chunk: Buffer) => chunks.push(chunk));
 
-  for (const entry of directory.files) {
-    if (entry.type === 'Directory') {
-      continue;
-    }
+	for (const entry of directory.files) {
+		if (entry.type === "Directory") {
+			continue;
+		}
 
-    archive.append(entry.stream(), {
-      name: `${prefix}/${entry.path}`,
-    });
-  }
+		archive.append(entry.stream(), {
+			name: `${prefix}/${entry.path}`,
+		});
+	}
 
-  await new Promise<void>((resolve, reject) => {
-    archive.on('end', resolve);
-    archive.on('error', reject);
-    void archive.finalize();
-  });
+	await new Promise<void>((resolve, reject) => {
+		archive.on("end", resolve);
+		archive.on("error", reject);
+		void archive.finalize();
+	});
 
-  return Buffer.concat(chunks);
+	return Buffer.concat(chunks);
 };

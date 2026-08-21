@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { useLayoutEffect, useRef } from 'react';
+import { styled } from "@linaria/react";
+import { useLayoutEffect, useRef } from "react";
 
-import { createAnimationFrameLoop } from '@/platform/motion';
-import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
-import { mediaUp } from '@/tokens';
+import { createAnimationFrameLoop } from "@/platform/motion";
+import { HalftoneModel } from "@/platform/visuals/rigs/HalftoneModel";
+import { mediaUp } from "@/tokens";
 
-import { FAQ_BACKDROP } from './faq-backdrop-config';
+import { FAQ_BACKDROP } from "./faq-backdrop-config";
 
 // The authored shell: clipped to the section's right edge, faded, lifted.
 const BackdropShell = styled.div`
@@ -29,7 +29,7 @@ const BackdropShell = styled.div`
      aren't dominated by the artwork. Same physics as the type ramps. */
   width: min(calc(81vw - 101px), 750px);
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     right: -10%;
     transform: translateY(-12%);
     width: 60vw;
@@ -44,57 +44,57 @@ const CanvasMount = styled.div`
 `;
 
 export function FaqBackdrop() {
-  const shellRef = useRef<HTMLDivElement | null>(null);
+	const shellRef = useRef<HTMLDivElement | null>(null);
 
-  // The shell's height freezes at mount and scales with the viewport ratio
-  // (ported): mobile URL-bar resizes would otherwise re-frame the artwork
-  // on every scroll.
-  useLayoutEffect(() => {
-    const shell = shellRef.current;
-    if (!shell) {
-      return;
-    }
+	// The shell's height freezes at mount and scales with the viewport ratio
+	// (ported): mobile URL-bar resizes would otherwise re-frame the artwork
+	// on every scroll.
+	useLayoutEffect(() => {
+		const shell = shellRef.current;
+		if (!shell) {
+			return;
+		}
 
-    const initialHeight = shell.clientHeight;
-    if (initialHeight === 0) {
-      return;
-    }
-    const initialViewportHeight = window.innerHeight || initialHeight;
+		const initialHeight = shell.clientHeight;
+		if (initialHeight === 0) {
+			return;
+		}
+		const initialViewportHeight = window.innerHeight || initialHeight;
 
-    shell.style.bottom = 'auto';
-    shell.style.height = `${initialHeight}px`;
+		shell.style.bottom = "auto";
+		shell.style.height = `${initialHeight}px`;
 
-    const resizeTask = createAnimationFrameLoop({
-      onFrame: () => {
-        const currentViewportHeight =
-          window.innerHeight || initialViewportHeight;
-        const ratio = currentViewportHeight / initialViewportHeight;
-        shell.style.height = `${Math.round(initialHeight * ratio)}px`;
-        return false;
-      },
-    });
+		const resizeTask = createAnimationFrameLoop({
+			onFrame: () => {
+				const currentViewportHeight =
+					window.innerHeight || initialViewportHeight;
+				const ratio = currentViewportHeight / initialViewportHeight;
+				shell.style.height = `${Math.round(initialHeight * ratio)}px`;
+				return false;
+			},
+		});
 
-    const handleWindowResize = () => {
-      resizeTask.stop();
-      resizeTask.start();
-    };
-    window.addEventListener('resize', handleWindowResize);
+		const handleWindowResize = () => {
+			resizeTask.stop();
+			resizeTask.start();
+		};
+		window.addEventListener("resize", handleWindowResize);
 
-    return () => {
-      resizeTask.stop();
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, []);
+		return () => {
+			resizeTask.stop();
+			window.removeEventListener("resize", handleWindowResize);
+		};
+	}, []);
 
-  return (
-    <BackdropShell aria-hidden data-illustration="faq" ref={shellRef}>
-      <CanvasMount>
-        <HalftoneModel
-          initialPose={FAQ_BACKDROP.initialPose}
-          modelUrl={FAQ_BACKDROP.modelUrl}
-          settings={FAQ_BACKDROP.settings}
-        />
-      </CanvasMount>
-    </BackdropShell>
-  );
+	return (
+		<BackdropShell aria-hidden data-illustration="faq" ref={shellRef}>
+			<CanvasMount>
+				<HalftoneModel
+					initialPose={FAQ_BACKDROP.initialPose}
+					modelUrl={FAQ_BACKDROP.modelUrl}
+					settings={FAQ_BACKDROP.settings}
+				/>
+			</CanvasMount>
+		</BackdropShell>
+	);
 }

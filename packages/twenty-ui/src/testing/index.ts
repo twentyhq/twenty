@@ -7,20 +7,20 @@
  *                              |___/
  */
 
-export { A11Y_DEFER_COLOR_CONTRAST } from './a11yParameters';
-export { ComponentStorybookLayout } from './ComponentStorybookLayout';
+export { A11Y_DEFER_COLOR_CONTRAST } from "./a11yParameters";
+export { ComponentStorybookLayout } from "./ComponentStorybookLayout";
 export type {
-  CatalogDimension,
-  CatalogOptions,
-} from './decorators/CatalogDecorator';
-export { CatalogDecorator } from './decorators/CatalogDecorator';
-export { ComponentDecorator } from './decorators/ComponentDecorator';
-export type { RouteParams } from './decorators/ComponentWithRouterDecorator';
+	CatalogDimension,
+	CatalogOptions,
+} from "./decorators/CatalogDecorator";
+export { CatalogDecorator } from "./decorators/CatalogDecorator";
+export { ComponentDecorator } from "./decorators/ComponentDecorator";
+export type { RouteParams } from "./decorators/ComponentWithRouterDecorator";
 export {
-  isRouteParams,
-  computeLocation,
-  ComponentWithRouterDecorator,
-} from './decorators/ComponentWithRouterDecorator';
-export { RouterDecorator } from './decorators/RouterDecorator';
-export { AVATAR_URL_MOCK } from './mocks/avatarUrlMock';
-export type { CatalogStory } from './types/CatalogStory';
+	isRouteParams,
+	computeLocation,
+	ComponentWithRouterDecorator,
+} from "./decorators/ComponentWithRouterDecorator";
+export { RouterDecorator } from "./decorators/RouterDecorator";
+export { AVATAR_URL_MOCK } from "./mocks/avatarUrlMock";
+export type { CatalogStory } from "./types/CatalogStory";

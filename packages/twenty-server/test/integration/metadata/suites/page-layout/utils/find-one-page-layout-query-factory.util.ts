@@ -1,8 +1,8 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type FindOnePageLayoutFactoryInput = {
-  id: string;
+	id: string;
 };
 
 const DEFAULT_PAGE_LAYOUT_GQL_FIELDS = `
@@ -25,17 +25,17 @@ const DEFAULT_PAGE_LAYOUT_GQL_FIELDS = `
 `;
 
 export const findOnePageLayoutQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_PAGE_LAYOUT_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_PAGE_LAYOUT_GQL_FIELDS,
 }: PerformMetadataQueryParams<FindOnePageLayoutFactoryInput>) => ({
-  query: gql`
+	query: gql`
     query GetPageLayout($id: String!) {
       getPageLayout(id: $id) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-  },
+	variables: {
+		id: input.id,
+	},
 });

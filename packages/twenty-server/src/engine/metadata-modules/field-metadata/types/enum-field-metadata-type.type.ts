@@ -1,9 +1,9 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from "twenty-shared/types";
 
 const enumFieldTypes = [
-  FieldMetadataType.SELECT,
-  FieldMetadataType.MULTI_SELECT,
-  FieldMetadataType.RATING,
+	FieldMetadataType.SELECT,
+	FieldMetadataType.MULTI_SELECT,
+	FieldMetadataType.RATING,
 ] as const;
 
 export type EnumFieldMetadataType = (typeof enumFieldTypes)[number];

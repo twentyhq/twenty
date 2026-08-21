@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { IconButton } from 'twenty-ui/input';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { IconButton } from "twenty-ui/input";
+import { IconChevronDown, IconChevronUp } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventCardToggleButtonProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+	isOpen: boolean;
+	setIsOpen: (isOpen: boolean) => void;
 };
 
 const StyledButtonContainer = styled.div`
@@ -13,17 +13,17 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const EventCardToggleButton = ({
-  isOpen,
-  setIsOpen,
+	isOpen,
+	setIsOpen,
 }: EventCardToggleButtonProps) => {
-  return (
-    <StyledButtonContainer>
-      <IconButton
-        Icon={isOpen ? IconChevronUp : IconChevronDown}
-        onClick={() => setIsOpen(!isOpen)}
-        size="small"
-        variant="secondary"
-      />
-    </StyledButtonContainer>
-  );
+	return (
+		<StyledButtonContainer>
+			<IconButton
+				Icon={isOpen ? IconChevronUp : IconChevronDown}
+				onClick={() => setIsOpen(!isOpen)}
+				size="small"
+				variant="secondary"
+			/>
+		</StyledButtonContainer>
+	);
 };

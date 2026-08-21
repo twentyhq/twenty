@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
 
-import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { Button, Checkbox } from 'twenty-ui/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
+import { useUnsubscribeTopics } from "@/activities/emails/hooks/useUnsubscribeTopics";
+import { Button, Checkbox } from "twenty-ui/input";
+import { HorizontalSeparator, Section } from "twenty-ui/layout";
+import { Card } from "twenty-ui/surfaces";
+import { H2Title } from "twenty-ui/typography";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { UnsubscribeTopicVisibility } from "~/generated-metadata/graphql";
 
 const StyledViewport = styled.div`
   align-items: center;
@@ -53,79 +53,79 @@ const StyledTopicRow = styled.div`
 `;
 
 export const SettingsUnsubscribePreview = () => {
-  const { t } = useLingui();
-  const { unsubscribeTopics, loading } = useUnsubscribeTopics();
+	const { t } = useLingui();
+	const { unsubscribeTopics, loading } = useUnsubscribeTopics();
 
-  const publicTopics = unsubscribeTopics.filter(
-    (topic) => topic.visibility === UnsubscribeTopicVisibility.PUBLIC,
-  );
+	const publicTopics = unsubscribeTopics.filter(
+		(topic) => topic.visibility === UnsubscribeTopicVisibility.PUBLIC,
+	);
 
-  const hasPublicTopics = publicTopics.length > 0;
+	const hasPublicTopics = publicTopics.length > 0;
 
-  return (
-    <Section>
-      <H2Title
-        title={t`Unsubscribe page`}
-        description={
-          hasPublicTopics
-            ? t`Preview of the page recipients see when they unsubscribe`
-            : t`Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving.`
-        }
-      />
-      <StyledViewport>
-        {!loading && (
-          <StyledCard rounded>
-            <StyledHeader>
-              <H2Title
-                title={t`Do you want to unsubscribe?`}
-                description={
-                  hasPublicTopics
-                    ? t`Confirm your preferences:`
-                    : t`You will stop receiving these emails.`
-                }
-              />
-            </StyledHeader>
-            {hasPublicTopics ? (
-              <>
-                <StyledTopics>
-                  {publicTopics.map((topic) => (
-                    <StyledTopicRow key={topic.id}>
-                      <Checkbox
-                        checked
-                        onChange={() => {}}
-                        aria-label={topic.name ?? t`Untitled topic`}
-                      />
-                      {topic.name ?? t`Untitled topic`}
-                    </StyledTopicRow>
-                  ))}
-                </StyledTopics>
-                <Button
-                  title={t`Update`}
-                  variant="primary"
-                  accent="blue"
-                  fullWidth
-                  justify="center"
-                />
-                <HorizontalSeparator text={t`Or`} noMargin />
-                <Button
-                  title={t`Unsubscribe all`}
-                  variant="secondary"
-                  fullWidth
-                  justify="center"
-                />
-              </>
-            ) : (
-              <Button
-                title={t`Unsubscribe`}
-                variant="primary"
-                accent="blue"
-                fullWidth
-                justify="center"
-              />
-            )}
-          </StyledCard>
-        )}
-      </StyledViewport>
-    </Section>
-  );
+	return (
+		<Section>
+			<H2Title
+				title={t`Unsubscribe page`}
+				description={
+					hasPublicTopics
+						? t`Preview of the page recipients see when they unsubscribe`
+						: t`Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving.`
+				}
+			/>
+			<StyledViewport>
+				{!loading && (
+					<StyledCard rounded>
+						<StyledHeader>
+							<H2Title
+								title={t`Do you want to unsubscribe?`}
+								description={
+									hasPublicTopics
+										? t`Confirm your preferences:`
+										: t`You will stop receiving these emails.`
+								}
+							/>
+						</StyledHeader>
+						{hasPublicTopics ? (
+							<>
+								<StyledTopics>
+									{publicTopics.map((topic) => (
+										<StyledTopicRow key={topic.id}>
+											<Checkbox
+												checked
+												onChange={() => {}}
+												aria-label={topic.name ?? t`Untitled topic`}
+											/>
+											{topic.name ?? t`Untitled topic`}
+										</StyledTopicRow>
+									))}
+								</StyledTopics>
+								<Button
+									title={t`Update`}
+									variant="primary"
+									accent="blue"
+									fullWidth
+									justify="center"
+								/>
+								<HorizontalSeparator text={t`Or`} noMargin />
+								<Button
+									title={t`Unsubscribe all`}
+									variant="secondary"
+									fullWidth
+									justify="center"
+								/>
+							</>
+						) : (
+							<Button
+								title={t`Unsubscribe`}
+								variant="primary"
+								accent="blue"
+								fullWidth
+								justify="center"
+							/>
+						)}
+					</StyledCard>
+				)}
+			</StyledViewport>
+		</Section>
+	);
 };

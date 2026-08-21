@@ -1,81 +1,81 @@
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import {
-  MetadataWritability,
-  type FieldMetadataType,
-} from 'twenty-shared/types';
+	MetadataWritability,
+	type FieldMetadataType,
+} from "twenty-shared/types";
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from "src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type";
 
 type FlatFieldMetadataOverrides<
-  T extends FieldMetadataType = FieldMetadataType,
+	T extends FieldMetadataType = FieldMetadataType,
 > = Required<
-  Pick<FlatFieldMetadata, 'universalIdentifier' | 'objectMetadataId' | 'type'>
+	Pick<FlatFieldMetadata, "universalIdentifier" | "objectMetadataId" | "type">
 > &
-  Partial<FlatFieldMetadata<T>>;
+	Partial<FlatFieldMetadata<T>>;
 
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
-  overrides: FlatFieldMetadataOverrides<T>,
+	overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-  const createdAt = '2024-01-01T00:00:00.000Z';
+	const createdAt = "2024-01-01T00:00:00.000Z";
 
-  return {
-    calendarViewIds: [],
-    calendarEndViewIds: [],
-    viewFilterIds: [],
-    kanbanAggregateOperationViewIds: [],
-    viewFieldIds: [],
-    fieldPermissionIds: [],
-    createdAt,
-    mainGroupByFieldMetadataViewIds: [],
-    updatedAt: createdAt,
-    defaultValue: null,
-    writability: MetadataWritability.OPEN,
-    options: null,
-    morphId: null,
-    settings: null,
-    description: 'default flat field metadata description',
-    icon: 'icon',
-    id: faker.string.uuid(),
-    isActive: true,
-    isSystemSideEffect: false,
-    name: 'flatFieldMetadataName',
-    label: 'flat field metadata label',
-    isNullable: true,
-    isUnique: false,
-    isUIEditable: true,
-    isLabelSyncedWithName: false,
-    isSystem: false,
-    overrides: null,
-    workspaceId: faker.string.uuid(),
-    applicationId: faker.string.uuid(),
-    relationTargetFieldMetadataId: null,
-    relationTargetObjectMetadataId: null,
-    applicationUniversalIdentifier: faker.string.uuid(),
-    objectMetadataUniversalIdentifier: faker.string.uuid(),
-    relationTargetObjectMetadataUniversalIdentifier: null,
-    relationTargetFieldMetadataUniversalIdentifier: null,
-    viewFilterUniversalIdentifiers: [],
-    viewFieldUniversalIdentifiers: [],
-    fieldPermissionUniversalIdentifiers: [],
-    kanbanAggregateOperationViewUniversalIdentifiers: [],
-    calendarViewUniversalIdentifiers: [],
-    calendarEndViewUniversalIdentifiers: [],
-    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    viewSortIds: [],
-    viewSortUniversalIdentifiers: [],
-    searchFieldMetadataIds: [],
-    searchFieldMetadataUniversalIdentifiers: [],
-    universalSettings: null,
-    ...overrides,
-  };
+	return {
+		calendarViewIds: [],
+		calendarEndViewIds: [],
+		viewFilterIds: [],
+		kanbanAggregateOperationViewIds: [],
+		viewFieldIds: [],
+		fieldPermissionIds: [],
+		createdAt,
+		mainGroupByFieldMetadataViewIds: [],
+		updatedAt: createdAt,
+		defaultValue: null,
+		writability: MetadataWritability.OPEN,
+		options: null,
+		morphId: null,
+		settings: null,
+		description: "default flat field metadata description",
+		icon: "icon",
+		id: faker.string.uuid(),
+		isActive: true,
+		isSystemSideEffect: false,
+		name: "flatFieldMetadataName",
+		label: "flat field metadata label",
+		isNullable: true,
+		isUnique: false,
+		isUIEditable: true,
+		isLabelSyncedWithName: false,
+		isSystem: false,
+		overrides: null,
+		workspaceId: faker.string.uuid(),
+		applicationId: faker.string.uuid(),
+		relationTargetFieldMetadataId: null,
+		relationTargetObjectMetadataId: null,
+		applicationUniversalIdentifier: faker.string.uuid(),
+		objectMetadataUniversalIdentifier: faker.string.uuid(),
+		relationTargetObjectMetadataUniversalIdentifier: null,
+		relationTargetFieldMetadataUniversalIdentifier: null,
+		viewFilterUniversalIdentifiers: [],
+		viewFieldUniversalIdentifiers: [],
+		fieldPermissionUniversalIdentifiers: [],
+		kanbanAggregateOperationViewUniversalIdentifiers: [],
+		calendarViewUniversalIdentifiers: [],
+		calendarEndViewUniversalIdentifiers: [],
+		mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+		viewSortIds: [],
+		viewSortUniversalIdentifiers: [],
+		searchFieldMetadataIds: [],
+		searchFieldMetadataUniversalIdentifiers: [],
+		universalSettings: null,
+		...overrides,
+	};
 };
 
 export const getStandardFlatFieldMetadataMock = (
-  overrides: Omit<FlatFieldMetadataOverrides, 'isCustom' | 'isSystem'>,
+	overrides: Omit<FlatFieldMetadataOverrides, "isCustom" | "isSystem">,
 ) => {
-  return getFlatFieldMetadataMock({
-    overrides: {},
-    isSystem: true,
-    ...overrides,
-  });
+	return getFlatFieldMetadataMock({
+		overrides: {},
+		isSystem: true,
+		...overrides,
+	});
 };

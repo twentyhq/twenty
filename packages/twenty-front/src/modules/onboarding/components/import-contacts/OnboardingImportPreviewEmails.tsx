@@ -1,14 +1,14 @@
 import {
-  type ImportContactsPreviewCalendarEvent,
-  IMPORT_CONTACTS_PREVIEW_CALENDAR_EVENTS,
-} from '@/onboarding/constants/ImportContactsPreviewCalendarEvents';
+	type ImportContactsPreviewCalendarEvent,
+	IMPORT_CONTACTS_PREVIEW_CALENDAR_EVENTS,
+} from "@/onboarding/constants/ImportContactsPreviewCalendarEvents";
 import {
-  type ImportContactsPreviewEmail,
-  IMPORT_CONTACTS_PREVIEW_EMAILS,
-} from '@/onboarding/constants/ImportContactsPreviewEmails';
-import { styled } from '@linaria/react';
-import { IconStar } from 'twenty-ui/icon';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+	type ImportContactsPreviewEmail,
+	IMPORT_CONTACTS_PREVIEW_EMAILS,
+} from "@/onboarding/constants/ImportContactsPreviewEmails";
+import { styled } from "@linaria/react";
+import { IconStar } from "twenty-ui/icon";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 const EMAIL_ROW_HEIGHT = 32;
 const EMAIL_CHECKBOX_SIZE = 12;
@@ -32,9 +32,9 @@ const StyledEmailRow = styled.div<{ isUnread: boolean }>`
   background-color: ${themeCssVariables.background.primary};
   box-sizing: border-box;
   color: ${({ isUnread }) =>
-    isUnread
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
+		isUnread
+			? themeCssVariables.font.color.primary
+			: themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
@@ -61,32 +61,32 @@ const StyledEmailStar = styled.div`
 
 const StyledEmailSender = styled.span<{ isUnread: boolean }>`
   font-weight: ${({ isUnread }) =>
-    isUnread
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
+		isUnread
+			? themeCssVariables.font.weight.medium
+			: themeCssVariables.font.weight.regular};
 `;
 
 const StyledEmailSubject = styled.span`
   color: ${themeCssVariables.font.color.secondary};
 `;
 
-const StyledEventCard = styled.div<{ color: 'orange' | 'sky' }>`
+const StyledEventCard = styled.div<{ color: "orange" | "sky" }>`
   background-color: ${({ color }) =>
-    color === 'orange'
-      ? themeCssVariables.color.orange3
-      : themeCssVariables.color.sky3};
+		color === "orange"
+			? themeCssVariables.color.orange3
+			: themeCssVariables.color.sky3};
   border-left: 2px solid
     ${({ color }) =>
-      color === 'orange'
-        ? themeCssVariables.color.orange11
-        : themeCssVariables.color.sky11};
+			color === "orange"
+				? themeCssVariables.color.orange11
+				: themeCssVariables.color.sky11};
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   color: ${({ color }) =>
-    color === 'orange'
-      ? themeCssVariables.color.orange11
-      : themeCssVariables.color.sky11};
+		color === "orange"
+			? themeCssVariables.color.orange11
+			: themeCssVariables.color.sky11};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
@@ -110,58 +110,58 @@ const StyledEventTime = styled.span`
 `;
 
 const EVENT_CARD_POSITIONS: Record<
-  ImportContactsPreviewCalendarEvent['color'],
-  { top: number; left: number; rotate: number }
+	ImportContactsPreviewCalendarEvent["color"],
+	{ top: number; left: number; rotate: number }
 > = {
-  orange: { top: 160, left: 22, rotate: -7 },
-  sky: { top: -4, left: 44, rotate: 10 },
+	orange: { top: 160, left: 22, rotate: -7 },
+	sky: { top: -4, left: 44, rotate: 10 },
 };
 
 const EmailRow = ({ email }: { email: ImportContactsPreviewEmail }) => (
-  <StyledEmailRow isUnread={email.isUnread}>
-    <StyledEmailCheckbox />
-    <StyledEmailStar>
-      <IconStar
-        size={EMAIL_STAR_SIZE}
-        color={themeCssVariables.font.color.light}
-      />
-    </StyledEmailStar>
-    <StyledEmailSender isUnread={email.isUnread}>
-      {email.sender}
-    </StyledEmailSender>
-    <StyledEmailSubject>{email.subject}</StyledEmailSubject>
-  </StyledEmailRow>
+	<StyledEmailRow isUnread={email.isUnread}>
+		<StyledEmailCheckbox />
+		<StyledEmailStar>
+			<IconStar
+				size={EMAIL_STAR_SIZE}
+				color={themeCssVariables.font.color.light}
+			/>
+		</StyledEmailStar>
+		<StyledEmailSender isUnread={email.isUnread}>
+			{email.sender}
+		</StyledEmailSender>
+		<StyledEmailSubject>{email.subject}</StyledEmailSubject>
+	</StyledEmailRow>
 );
 
 const EventCard = ({
-  event,
+	event,
 }: {
-  event: ImportContactsPreviewCalendarEvent;
+	event: ImportContactsPreviewCalendarEvent;
 }) => {
-  const position = EVENT_CARD_POSITIONS[event.color];
+	const position = EVENT_CARD_POSITIONS[event.color];
 
-  return (
-    <StyledEventCard
-      color={event.color}
-      style={{
-        top: position.top,
-        left: position.left,
-        transform: `rotate(${position.rotate}deg)`,
-      }}
-    >
-      <StyledEventTitle>{event.title}</StyledEventTitle>
-      <StyledEventTime>{event.time}</StyledEventTime>
-    </StyledEventCard>
-  );
+	return (
+		<StyledEventCard
+			color={event.color}
+			style={{
+				top: position.top,
+				left: position.left,
+				transform: `rotate(${position.rotate}deg)`,
+			}}
+		>
+			<StyledEventTitle>{event.title}</StyledEventTitle>
+			<StyledEventTime>{event.time}</StyledEventTime>
+		</StyledEventCard>
+	);
 };
 
 export const OnboardingImportPreviewEmails = () => (
-  <StyledColumn>
-    {IMPORT_CONTACTS_PREVIEW_EMAILS.map((email) => (
-      <EmailRow key={email.id} email={email} />
-    ))}
-    {IMPORT_CONTACTS_PREVIEW_CALENDAR_EVENTS.map((event) => (
-      <EventCard key={event.id} event={event} />
-    ))}
-  </StyledColumn>
+	<StyledColumn>
+		{IMPORT_CONTACTS_PREVIEW_EMAILS.map((email) => (
+			<EmailRow key={email.id} email={email} />
+		))}
+		{IMPORT_CONTACTS_PREVIEW_CALENDAR_EVENTS.map((event) => (
+			<EventCard key={event.id} event={event} />
+		))}
+	</StyledColumn>
 );

@@ -1,5 +1,5 @@
-describe('useOpenUpdateMultipleRecordsPageInSidePanel', () => {
-  it('should work', () => {
-    expect(true).toBe(true);
-  });
+describe("useOpenUpdateMultipleRecordsPageInSidePanel", () => {
+	it("should work", () => {
+		expect(true).toBe(true);
+	});
 });

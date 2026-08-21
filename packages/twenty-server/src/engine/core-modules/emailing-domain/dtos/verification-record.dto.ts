@@ -1,19 +1,19 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('VerificationRecord')
+@ObjectType("VerificationRecord")
 export class VerificationRecordDTO {
-  @Field(() => String)
-  type: 'TXT' | 'CNAME' | 'MX';
+	@Field(() => String)
+	type: "TXT" | "CNAME" | "MX";
 
-  @Field(() => String)
-  key: string;
+	@Field(() => String)
+	key: string;
 
-  @Field(() => String)
-  value: string;
+	@Field(() => String)
+	value: string;
 
-  @Field(() => Number, { nullable: true })
-  priority?: number;
+	@Field(() => Number, { nullable: true })
+	priority?: number;
 
-  @Field(() => String, { nullable: true })
-  status?: string;
+	@Field(() => String, { nullable: true })
+	status?: string;
 }

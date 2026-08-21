@@ -1,5 +1,5 @@
-import { WorkflowCard } from '@/workflow/workflow-diagram/components/WorkflowCard';
+import { WorkflowCard } from "@/workflow/workflow-diagram/components/WorkflowCard";
 
 export const WorkflowWidget = () => {
-  return <WorkflowCard />;
+	return <WorkflowCard />;
 };

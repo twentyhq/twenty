@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { read, type WorkBook } from 'xlsx-ugnis';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { read, type WorkBook } from "xlsx-ugnis";
 
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
-import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
-import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { useNumberFormat } from "@/localization/hooks/useNumberFormat";
+import { SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY } from "@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity";
+import { useSpreadsheetImportInternal } from "@/spreadsheet-import/hooks/useSpreadsheetImportInternal";
+import { useDownloadFakeRecords } from "@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords";
+import { readFileAsync } from "@/spreadsheet-import/utils/readFilesAsync";
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { MainButton } from "twenty-ui/input";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -107,102 +107,102 @@ const StyledButtonsContainer = styled.div`
 `;
 
 type DropZoneProps = {
-  onContinue: (data: WorkBook, file: File) => void;
-  isLoading: boolean;
+	onContinue: (data: WorkBook, file: File) => void;
+	isLoading: boolean;
 };
 
 export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
-  const { maxFileSize, dateFormat, parseRaw } = useSpreadsheetImportInternal();
-  const { formatNumber } = useNumberFormat();
+	const { maxFileSize, dateFormat, parseRaw } = useSpreadsheetImportInternal();
+	const { formatNumber } = useNumberFormat();
 
-  const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+	const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { downloadSample } = useDownloadFakeRecords();
+	const { downloadSample } = useDownloadFakeRecords();
 
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-    noClick: true,
-    noKeyboard: true,
-    maxFiles: 1,
-    maxSize: maxFileSize,
-    accept: {
-      'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
-        '.xlsx',
-      ],
-      'text/csv': ['.csv'],
-    },
-    onDropRejected: (fileRejections) => {
-      setLoading(false);
-      fileRejections.forEach((fileRejection) => {
-        const fileName = fileRejection.file.name;
-        enqueueErrorSnackBar({
-          message: t`${fileName} upload rejected`,
-          options: {
-            detailedMessage: fileRejection.errors[0].message,
-          },
-        });
-      });
-    },
-    onDropAccepted: async ([file]) => {
-      setLoading(true);
-      const arrayBuffer = await readFileAsync(file);
-      const workbook = read(arrayBuffer, {
-        cellDates: true,
-        codepage: 65001, // UTF-8 codepage
-        dateNF: dateFormat,
-        raw: parseRaw,
-        dense: true,
-      });
-      setLoading(false);
-      onContinue(workbook, file);
-    },
-  });
+	const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+		noClick: true,
+		noKeyboard: true,
+		maxFiles: 1,
+		maxSize: maxFileSize,
+		accept: {
+			"application/vnd.ms-excel": [".xls"],
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+				".xlsx",
+			],
+			"text/csv": [".csv"],
+		},
+		onDropRejected: (fileRejections) => {
+			setLoading(false);
+			fileRejections.forEach((fileRejection) => {
+				const fileName = fileRejection.file.name;
+				enqueueErrorSnackBar({
+					message: t`${fileName} upload rejected`,
+					options: {
+						detailedMessage: fileRejection.errors[0].message,
+					},
+				});
+			});
+		},
+		onDropAccepted: async ([file]) => {
+			setLoading(true);
+			const arrayBuffer = await readFileAsync(file);
+			const workbook = read(arrayBuffer, {
+				cellDates: true,
+				codepage: 65001, // UTF-8 codepage
+				dateNF: dateFormat,
+				raw: parseRaw,
+				dense: true,
+			});
+			setLoading(false);
+			onContinue(workbook, file);
+		},
+	});
 
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const formatSpreadsheetMaxRecordImportCapacity = formatNumber(
-    SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY,
-  );
+	const formatSpreadsheetMaxRecordImportCapacity = formatNumber(
+		SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY,
+	);
 
-  return (
-    <StyledContainer
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...getRootProps()}
-    >
-      {isDragActive && <StyledOverlay />}
-      <input
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...getInputProps()}
-      />
-      {isDragActive ? (
-        <StyledText>
-          <Trans>Drop file here...</Trans>
-        </StyledText>
-      ) : loading || isLoading ? (
-        <StyledText>
-          <Trans>Processing...</Trans>
-        </StyledText>
-      ) : (
-        <>
-          <StyledText>
-            <Trans>Upload .xlsx, .xls or .csv file</Trans>
-          </StyledText>
-          <StyledButtonsContainer>
-            <MainButton onClick={open} title={t`Select file`} fullWidth />
-            <MainButton
-              onClick={downloadSample}
-              title={t`Download sample`}
-              variant="secondary"
-              fullWidth
-            />
-          </StyledButtonsContainer>
-          <StyledFooterText>
-            {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}
-          </StyledFooterText>
-        </>
-      )}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer
+			// oxlint-disable-next-line react/jsx-props-no-spreading
+			{...getRootProps()}
+		>
+			{isDragActive && <StyledOverlay />}
+			<input
+				// oxlint-disable-next-line react/jsx-props-no-spreading
+				{...getInputProps()}
+			/>
+			{isDragActive ? (
+				<StyledText>
+					<Trans>Drop file here...</Trans>
+				</StyledText>
+			) : loading || isLoading ? (
+				<StyledText>
+					<Trans>Processing...</Trans>
+				</StyledText>
+			) : (
+				<>
+					<StyledText>
+						<Trans>Upload .xlsx, .xls or .csv file</Trans>
+					</StyledText>
+					<StyledButtonsContainer>
+						<MainButton onClick={open} title={t`Select file`} fullWidth />
+						<MainButton
+							onClick={downloadSample}
+							title={t`Download sample`}
+							variant="secondary"
+							fullWidth
+						/>
+					</StyledButtonsContainer>
+					<StyledFooterText>
+						{t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}
+					</StyledFooterText>
+				</>
+			)}
+		</StyledContainer>
+	);
 };

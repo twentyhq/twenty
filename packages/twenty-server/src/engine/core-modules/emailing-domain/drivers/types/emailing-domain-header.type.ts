@@ -1,4 +1,4 @@
 export type EmailingDomainHeader = {
-  name: string;
-  value: string;
+	name: string;
+	value: string;
 };

@@ -1,9 +1,9 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export type RecordGroupContextProps = {
-  recordGroupId: string;
+	recordGroupId: string;
 };
 
 export const RecordGroupContext = createContext<RecordGroupContextProps>(
-  {} as RecordGroupContextProps,
+	{} as RecordGroupContextProps,
 );

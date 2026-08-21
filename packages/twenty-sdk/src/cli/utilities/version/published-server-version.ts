@@ -1,4 +1,4 @@
 export type PublishedServerVersion = {
-  name: string;
-  lastUpdatedAt: Date;
+	name: string;
+	lastUpdatedAt: Date;
 };

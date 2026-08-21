@@ -1,39 +1,39 @@
-import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { findRecordNodesByFilter } from "test/integration/utils/find-records-by-filter.util";
 
 export const findImportedMessageSubjects = async (
-  subjects: string[],
+	subjects: string[],
 ): Promise<string[]> => {
-  const messages = await findRecordNodesByFilter<{ subject: string }>(
-    'message',
-    'messages',
-    'subject',
-    { subject: { in: subjects } },
-  );
+	const messages = await findRecordNodesByFilter<{ subject: string }>(
+		"message",
+		"messages",
+		"subject",
+		{ subject: { in: subjects } },
+	);
 
-  return messages.map((message) => message.subject).sort();
+	return messages.map((message) => message.subject).sort();
 };
 
 export const findImportedCalendarEventTitles = async (
-  titles: string[],
+	titles: string[],
 ): Promise<string[]> => {
-  const events = await findRecordNodesByFilter<{ title: string }>(
-    'calendarEvent',
-    'calendarEvents',
-    'title',
-    { title: { in: titles } },
-  );
+	const events = await findRecordNodesByFilter<{ title: string }>(
+		"calendarEvent",
+		"calendarEvents",
+		"title",
+		{ title: { in: titles } },
+	);
 
-  return events.map((event) => event.title).sort();
+	return events.map((event) => event.title).sort();
 };
 
 export const findCreatedPeopleEmails = async (
-  primaryEmails: string[],
+	primaryEmails: string[],
 ): Promise<string[]> => {
-  const people = await findRecordNodesByFilter<{
-    emails: { primaryEmail: string };
-  }>('person', 'people', 'emails { primaryEmail }', {
-    emails: { primaryEmail: { in: primaryEmails } },
-  });
+	const people = await findRecordNodesByFilter<{
+		emails: { primaryEmail: string };
+	}>("person", "people", "emails { primaryEmail }", {
+		emails: { primaryEmail: { in: primaryEmails } },
+	});
 
-  return people.map((person) => person.emails.primaryEmail).sort();
+	return people.map((person) => person.emails.primaryEmail).sort();
 };

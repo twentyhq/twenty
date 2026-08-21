@@ -1,394 +1,394 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import crypto from 'crypto';
-import { promises as fs } from 'fs';
-import { dirname, join } from 'path';
-import { type QueryRunner } from 'typeorm';
-import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import crypto from "crypto";
+import { promises as fs } from "fs";
+import { dirname, join } from "path";
+import { type QueryRunner } from "typeorm";
+import { FileFolder } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
 
-import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { FileStorageExceptionCode } from "src/engine/core-modules/file-storage/interfaces/file-storage-exception";
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileStorageService } from "src/engine/core-modules/file-storage/services/file-storage.service";
 import {
-  getLogicFunctionSeedProjectFiles,
-  LogicFunctionSeedProjectFile,
-} from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-project-files.util';
+	getLogicFunctionSeedProjectFiles,
+	LogicFunctionSeedProjectFile,
+} from "src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-project-files.util";
 import {
-  LogicFunctionException,
-  LogicFunctionExceptionCode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+	LogicFunctionException,
+	LogicFunctionExceptionCode,
+} from "src/engine/metadata-modules/logic-function/logic-function.exception";
+import { streamToBuffer } from "src/utils/stream-to-buffer";
 
 type Identifier = {
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
+	workspaceId: string;
+	applicationUniversalIdentifier: string;
 };
 
 type SeedSourceFilesParams = Identifier & {
-  sourceHandlerPath: string;
-  builtHandlerPath: string;
+	sourceHandlerPath: string;
+	builtHandlerPath: string;
 };
 
 type SeedSourceFilesResult = {
-  handlerName: string;
-  checksum: string;
+	handlerName: string;
+	checksum: string;
 };
 
 type UpdateSourceFilesParams = Omit<
-  SeedSourceFilesParams,
-  'builtHandlerPath'
+	SeedSourceFilesParams,
+	"builtHandlerPath"
 > & {
-  sourceHandlerCode: string;
-  queryRunner?: QueryRunner;
+	sourceHandlerCode: string;
+	queryRunner?: QueryRunner;
 };
 
 type GetSourceCodeParams = Identifier & {
-  sourceHandlerPath: string;
+	sourceHandlerPath: string;
 };
 
 type GetBuiltCodeParams = Identifier & {
-  builtHandlerPath: string;
+	builtHandlerPath: string;
 };
 
 type CopySourceParams = Identifier & {
-  fromSourceHandlerPath: string;
-  toSourceHandlerPath: string;
-  fromBuiltHandlerPath: string;
-  toBuiltHandlerPath: string;
+	fromSourceHandlerPath: string;
+	toSourceHandlerPath: string;
+	fromBuiltHandlerPath: string;
+	toBuiltHandlerPath: string;
 };
 
 @Injectable()
 export class LogicFunctionResourceService {
-  constructor(private readonly fileStorageService: FileStorageService) {}
+	constructor(private readonly fileStorageService: FileStorageService) {}
 
-  async seedSourceFiles({
-    workspaceId,
-    applicationUniversalIdentifier,
-    sourceHandlerPath,
-    builtHandlerPath,
-  }: SeedSourceFilesParams): Promise<SeedSourceFilesResult> {
-    const seedProjectFiles = await getLogicFunctionSeedProjectFiles();
+	async seedSourceFiles({
+		workspaceId,
+		applicationUniversalIdentifier,
+		sourceHandlerPath,
+		builtHandlerPath,
+	}: SeedSourceFilesParams): Promise<SeedSourceFilesResult> {
+		const seedProjectFiles = await getLogicFunctionSeedProjectFiles();
 
-    const sourceFiles = seedProjectFiles.filter(
-      (file: LogicFunctionSeedProjectFile) => file.name.endsWith('index.ts'),
-    );
-    const builtFiles = seedProjectFiles.filter(
-      (file: LogicFunctionSeedProjectFile) => file.name.endsWith('.mjs'),
-    );
+		const sourceFiles = seedProjectFiles.filter(
+			(file: LogicFunctionSeedProjectFile) => file.name.endsWith("index.ts"),
+		);
+		const builtFiles = seedProjectFiles.filter(
+			(file: LogicFunctionSeedProjectFile) => file.name.endsWith(".mjs"),
+		);
 
-    if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
-      throw new LogicFunctionException(
-        'Logic function seed project should have one index.ts file and one index.mjs file',
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT,
-      );
-    }
+		if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
+			throw new LogicFunctionException(
+				"Logic function seed project should have one index.ts file and one index.mjs file",
+				LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT,
+			);
+		}
 
-    const sourceFile = sourceFiles[0];
-    const builtFile = builtFiles[0];
+		const sourceFile = sourceFiles[0];
+		const builtFile = builtFiles[0];
 
-    await this.fileStorageService.writeFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: sourceHandlerPath,
-      sourceFile: sourceFile.content,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
+		await this.fileStorageService.writeFile({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.Source,
+			resourcePath: sourceHandlerPath,
+			sourceFile: sourceFile.content,
+			settings: {
+				isTemporaryFile: false,
+				toDelete: false,
+			},
+		});
 
-    await this.fileStorageService.writeFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: builtHandlerPath,
-      sourceFile: builtFile.content,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
+		await this.fileStorageService.writeFile({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.BuiltLogicFunction,
+			resourcePath: builtHandlerPath,
+			sourceFile: builtFile.content,
+			settings: {
+				isTemporaryFile: false,
+				toDelete: false,
+			},
+		});
 
-    const checksum = crypto
-      .createHash('md5')
-      .update(builtFile.content)
-      .digest('hex');
+		const checksum = crypto
+			.createHash("md5")
+			.update(builtFile.content)
+			.digest("hex");
 
-    return {
-      handlerName: 'main',
-      checksum,
-    };
-  }
+		return {
+			handlerName: "main",
+			checksum,
+		};
+	}
 
-  async uploadSourceFile({
-    sourceHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-    sourceHandlerCode,
-    queryRunner,
-  }: UpdateSourceFilesParams): Promise<void> {
-    await this.fileStorageService.writeFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: sourceHandlerPath,
-      sourceFile: sourceHandlerCode,
-      settings: { isTemporaryFile: false, toDelete: false },
-      queryRunner,
-    });
-  }
+	async uploadSourceFile({
+		sourceHandlerPath,
+		workspaceId,
+		applicationUniversalIdentifier,
+		sourceHandlerCode,
+		queryRunner,
+	}: UpdateSourceFilesParams): Promise<void> {
+		await this.fileStorageService.writeFile({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.Source,
+			resourcePath: sourceHandlerPath,
+			sourceFile: sourceHandlerCode,
+			settings: { isTemporaryFile: false, toDelete: false },
+			queryRunner,
+		});
+	}
 
-  async deleteSourceFile({
-    sourceHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: GetSourceCodeParams): Promise<void> {
-    await this.fileStorageService.deleteFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: sourceHandlerPath,
-    });
-  }
+	async deleteSourceFile({
+		sourceHandlerPath,
+		workspaceId,
+		applicationUniversalIdentifier,
+	}: GetSourceCodeParams): Promise<void> {
+		await this.fileStorageService.deleteFile({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.Source,
+			resourcePath: sourceHandlerPath,
+		});
+	}
 
-  async uploadBuiltFile({
-    workspaceId,
-    applicationUniversalIdentifier,
-    builtHandlerPath,
-    builtCode,
-  }: Identifier & {
-    builtHandlerPath: string;
-    builtCode: string;
-  }): Promise<void> {
-    await this.fileStorageService.writeFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: builtHandlerPath,
-      sourceFile: builtCode,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-  }
+	async uploadBuiltFile({
+		workspaceId,
+		applicationUniversalIdentifier,
+		builtHandlerPath,
+		builtCode,
+	}: Identifier & {
+		builtHandlerPath: string;
+		builtCode: string;
+	}): Promise<void> {
+		await this.fileStorageService.writeFile({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.BuiltLogicFunction,
+			resourcePath: builtHandlerPath,
+			sourceFile: builtCode,
+			settings: {
+				isTemporaryFile: false,
+				toDelete: false,
+			},
+		});
+	}
 
-  async getSourceFile({
-    sourceHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: GetSourceCodeParams): Promise<string | null> {
-    try {
-      return (
-        await streamToBuffer(
-          await this.fileStorageService.readFile({
-            workspaceId,
-            applicationUniversalIdentifier,
-            fileFolder: FileFolder.Source,
-            resourcePath: sourceHandlerPath,
-          }),
-        )
-      ).toString('utf-8');
-    } catch (error) {
-      if (
-        isDefined(error) &&
-        typeof error === 'object' &&
-        'code' in error &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return null;
-      }
-      throw error;
-    }
-  }
+	async getSourceFile({
+		sourceHandlerPath,
+		workspaceId,
+		applicationUniversalIdentifier,
+	}: GetSourceCodeParams): Promise<string | null> {
+		try {
+			return (
+				await streamToBuffer(
+					await this.fileStorageService.readFile({
+						workspaceId,
+						applicationUniversalIdentifier,
+						fileFolder: FileFolder.Source,
+						resourcePath: sourceHandlerPath,
+					}),
+				)
+			).toString("utf-8");
+		} catch (error) {
+			if (
+				isDefined(error) &&
+				typeof error === "object" &&
+				"code" in error &&
+				error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+			) {
+				return null;
+			}
+			throw error;
+		}
+	}
 
-  async copyResources({
-    fromSourceHandlerPath,
-    toSourceHandlerPath,
-    fromBuiltHandlerPath,
-    toBuiltHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: CopySourceParams): Promise<void> {
-    await this.fileStorageService.copy({
-      from: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: fromSourceHandlerPath,
-      },
-      to: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: toSourceHandlerPath,
-      },
-    });
+	async copyResources({
+		fromSourceHandlerPath,
+		toSourceHandlerPath,
+		fromBuiltHandlerPath,
+		toBuiltHandlerPath,
+		workspaceId,
+		applicationUniversalIdentifier,
+	}: CopySourceParams): Promise<void> {
+		await this.fileStorageService.copy({
+			from: {
+				workspaceId,
+				applicationUniversalIdentifier,
+				fileFolder: FileFolder.Source,
+				resourcePath: fromSourceHandlerPath,
+			},
+			to: {
+				workspaceId,
+				applicationUniversalIdentifier,
+				fileFolder: FileFolder.Source,
+				resourcePath: toSourceHandlerPath,
+			},
+		});
 
-    const builtFileExists = await this.fileStorageService.checkFileExists({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: fromBuiltHandlerPath,
-    });
+		const builtFileExists = await this.fileStorageService.checkFileExists({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.BuiltLogicFunction,
+			resourcePath: fromBuiltHandlerPath,
+		});
 
-    if (!builtFileExists) {
-      return;
-    }
+		if (!builtFileExists) {
+			return;
+		}
 
-    await this.fileStorageService.copy({
-      from: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: fromBuiltHandlerPath,
-      },
-      to: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: toBuiltHandlerPath,
-      },
-    });
-  }
+		await this.fileStorageService.copy({
+			from: {
+				workspaceId,
+				applicationUniversalIdentifier,
+				fileFolder: FileFolder.BuiltLogicFunction,
+				resourcePath: fromBuiltHandlerPath,
+			},
+			to: {
+				workspaceId,
+				applicationUniversalIdentifier,
+				fileFolder: FileFolder.BuiltLogicFunction,
+				resourcePath: toBuiltHandlerPath,
+			},
+		});
+	}
 
-  async copyDependenciesInMemory({
-    applicationUniversalIdentifier,
-    workspaceId,
-    inMemoryFolderPath,
-  }: {
-    applicationUniversalIdentifier: string;
-    workspaceId: string;
-    inMemoryFolderPath: string;
-  }) {
-    const yarnLockExists = await this.fileStorageService.checkFileExists({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Dependencies,
-      resourcePath: 'yarn.lock',
-    });
+	async copyDependenciesInMemory({
+		applicationUniversalIdentifier,
+		workspaceId,
+		inMemoryFolderPath,
+	}: {
+		applicationUniversalIdentifier: string;
+		workspaceId: string;
+		inMemoryFolderPath: string;
+	}) {
+		const yarnLockExists = await this.fileStorageService.checkFileExists({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.Dependencies,
+			resourcePath: "yarn.lock",
+		});
 
-    const promises = [];
+		const promises = [];
 
-    promises.push(
-      this.fileStorageService.downloadFile({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'package.json',
-        localPath: join(inMemoryFolderPath, 'package.json'),
-      }),
-    );
+		promises.push(
+			this.fileStorageService.downloadFile({
+				workspaceId,
+				applicationUniversalIdentifier,
+				fileFolder: FileFolder.Dependencies,
+				resourcePath: "package.json",
+				localPath: join(inMemoryFolderPath, "package.json"),
+			}),
+		);
 
-    if (yarnLockExists) {
-      promises.push(
-        this.fileStorageService.downloadFile({
-          workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.Dependencies,
-          resourcePath: 'yarn.lock',
-          localPath: join(inMemoryFolderPath, 'yarn.lock'),
-        }),
-      );
-    } else {
-      const yarnLockPath = join(inMemoryFolderPath, 'yarn.lock');
+		if (yarnLockExists) {
+			promises.push(
+				this.fileStorageService.downloadFile({
+					workspaceId,
+					applicationUniversalIdentifier,
+					fileFolder: FileFolder.Dependencies,
+					resourcePath: "yarn.lock",
+					localPath: join(inMemoryFolderPath, "yarn.lock"),
+				}),
+			);
+		} else {
+			const yarnLockPath = join(inMemoryFolderPath, "yarn.lock");
 
-      promises.push(
-        fs.mkdir(dirname(yarnLockPath), { recursive: true }).then(() =>
-          fs.writeFile(
-            yarnLockPath,
-            `# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
+			promises.push(
+				fs.mkdir(dirname(yarnLockPath), { recursive: true }).then(() =>
+					fs.writeFile(
+						yarnLockPath,
+						`# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
 # yarn lockfile v1
 `,
-            'utf-8',
-          ),
-        ),
-      );
-    }
+						"utf-8",
+					),
+				),
+			);
+		}
 
-    await Promise.all(promises);
+		await Promise.all(promises);
 
-    await this.removeBuildTimeSdkFromDependencies(
-      join(inMemoryFolderPath, 'package.json'),
-    );
-  }
+		await this.removeBuildTimeSdkFromDependencies(
+			join(inMemoryFolderPath, "package.json"),
+		);
+	}
 
-  // twenty-sdk is build-time only and twenty-client-sdk is injected at runtime
-  // by Twenty (Lambda SDK layer / server-served modules), so neither needs to
-  // be resolved by the Lambda yarn install. Apps should already declare them as
-  // devDependencies (skipped by `yarn workspaces focus --production`); this is a
-  // safety net for apps that still list them under "dependencies".
-  private async removeBuildTimeSdkFromDependencies(
-    packageJsonPath: string,
-  ): Promise<void> {
-    const packageJson = JSON.parse(
-      await fs.readFile(packageJsonPath, 'utf-8'),
-    ) as { dependencies?: Record<string, string> };
+	// twenty-sdk is build-time only and twenty-client-sdk is injected at runtime
+	// by Twenty (Lambda SDK layer / server-served modules), so neither needs to
+	// be resolved by the Lambda yarn install. Apps should already declare them as
+	// devDependencies (skipped by `yarn workspaces focus --production`); this is a
+	// safety net for apps that still list them under "dependencies".
+	private async removeBuildTimeSdkFromDependencies(
+		packageJsonPath: string,
+	): Promise<void> {
+		const packageJson = JSON.parse(
+			await fs.readFile(packageJsonPath, "utf-8"),
+		) as { dependencies?: Record<string, string> };
 
-    const dependencies = packageJson.dependencies;
+		const dependencies = packageJson.dependencies;
 
-    if (!isDefined(dependencies)) {
-      return;
-    }
+		if (!isDefined(dependencies)) {
+			return;
+		}
 
-    const packagesToRemove = ['twenty-sdk', 'twenty-client-sdk'];
+		const packagesToRemove = ["twenty-sdk", "twenty-client-sdk"];
 
-    const packagesToRemoveFromDependencies = packagesToRemove.filter(
-      (packageName) => isDefined(dependencies[packageName]),
-    );
+		const packagesToRemoveFromDependencies = packagesToRemove.filter(
+			(packageName) => isDefined(dependencies[packageName]),
+		);
 
-    if (packagesToRemoveFromDependencies.length === 0) {
-      return;
-    }
+		if (packagesToRemoveFromDependencies.length === 0) {
+			return;
+		}
 
-    for (const packageName of packagesToRemoveFromDependencies) {
-      delete dependencies[packageName];
-    }
+		for (const packageName of packagesToRemoveFromDependencies) {
+			delete dependencies[packageName];
+		}
 
-    await fs.writeFile(
-      packageJsonPath,
-      `${JSON.stringify(packageJson, null, 2)}\n`,
-      'utf-8',
-    );
-  }
+		await fs.writeFile(
+			packageJsonPath,
+			`${JSON.stringify(packageJson, null, 2)}\n`,
+			"utf-8",
+		);
+	}
 
-  async getBuiltCode({
-    builtHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: GetBuiltCodeParams): Promise<string> {
-    return (
-      await streamToBuffer(
-        await this.fileStorageService.readFile({
-          workspaceId: workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.BuiltLogicFunction,
-          resourcePath: builtHandlerPath,
-        }),
-      )
-    ).toString('utf-8');
-  }
+	async getBuiltCode({
+		builtHandlerPath,
+		workspaceId,
+		applicationUniversalIdentifier,
+	}: GetBuiltCodeParams): Promise<string> {
+		return (
+			await streamToBuffer(
+				await this.fileStorageService.readFile({
+					workspaceId: workspaceId,
+					applicationUniversalIdentifier,
+					fileFolder: FileFolder.BuiltLogicFunction,
+					resourcePath: builtHandlerPath,
+				}),
+			)
+		).toString("utf-8");
+	}
 
-  async copyBuiltCodeInMemory({
-    builtHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-    inMemoryDestinationPath,
-  }: GetBuiltCodeParams & {
-    inMemoryDestinationPath: string;
-  }): Promise<string> {
-    const localPath = join(inMemoryDestinationPath, builtHandlerPath);
+	async copyBuiltCodeInMemory({
+		builtHandlerPath,
+		workspaceId,
+		applicationUniversalIdentifier,
+		inMemoryDestinationPath,
+	}: GetBuiltCodeParams & {
+		inMemoryDestinationPath: string;
+	}): Promise<string> {
+		const localPath = join(inMemoryDestinationPath, builtHandlerPath);
 
-    await this.fileStorageService.downloadFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: builtHandlerPath,
-      localPath,
-    });
+		await this.fileStorageService.downloadFile({
+			workspaceId,
+			applicationUniversalIdentifier,
+			fileFolder: FileFolder.BuiltLogicFunction,
+			resourcePath: builtHandlerPath,
+			localPath,
+		});
 
-    return localPath;
-  }
+		return localPath;
+	}
 }

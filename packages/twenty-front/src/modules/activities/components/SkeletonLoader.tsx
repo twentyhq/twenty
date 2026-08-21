@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSkeletonContainer = styled.div`
   align-content: flex-start;
@@ -27,83 +27,83 @@ const StyledSkeletonSubSectionContent = styled.div`
 `;
 
 export const SKELETON_LOADER_HEIGHT_SIZES = {
-  standard: {
-    xs: 13,
-    s: 16,
-    m: 24,
-    l: 32,
-    xl: 40,
-  },
-  columns: {
-    s: 84,
-    m: 120,
-    xxl: 542,
-  },
+	standard: {
+		xs: 13,
+		s: 16,
+		m: 24,
+		l: 32,
+		xl: 40,
+	},
+	columns: {
+		s: 84,
+		m: 120,
+		xxl: 542,
+	},
 };
 
 const SkeletonColumnLoader = ({ height }: { height: number }) => {
-  const { theme } = useContext(ThemeContext);
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={80}
-    >
-      <Skeleton width={24} height={height} />
-    </SkeletonTheme>
-  );
+	const { theme } = useContext(ThemeContext);
+	return (
+		<SkeletonTheme
+			baseColor={theme.background.tertiary}
+			highlightColor={theme.background.transparent.lighter}
+			borderRadius={80}
+		>
+			<Skeleton width={24} height={height} />
+		</SkeletonTheme>
+	);
 };
 
 export const SkeletonLoader = ({
-  withSubSections = false,
+	withSubSections = false,
 }: {
-  withSubSections?: boolean;
+	withSubSections?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
-  const skeletonItems = Array.from({ length: 3 }).map((_, index) => ({
-    id: `skeleton-item-${index}`,
-  }));
+	const { theme } = useContext(ThemeContext);
+	const skeletonItems = Array.from({ length: 3 }).map((_, index) => ({
+		id: `skeleton-item-${index}`,
+	}));
 
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <StyledSkeletonContainer>
-        <Skeleton
-          width={440}
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-        {withSubSections &&
-          skeletonItems.map(({ id }, index) => (
-            <StyledSkeletonSubSection key={id}>
-              <SkeletonColumnLoader
-                height={
-                  index === 1
-                    ? SKELETON_LOADER_HEIGHT_SIZES.columns.m
-                    : SKELETON_LOADER_HEIGHT_SIZES.columns.s
-                }
-              />
-              <StyledSkeletonSubSectionContent>
-                <Skeleton
-                  width={400}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                <Skeleton
-                  width={400}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                />
-                {index === 1 && (
-                  <Skeleton
-                    width={400}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                  />
-                )}
-              </StyledSkeletonSubSectionContent>
-            </StyledSkeletonSubSection>
-          ))}
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
-  );
+	return (
+		<SkeletonTheme
+			baseColor={theme.background.tertiary}
+			highlightColor={theme.background.transparent.lighter}
+			borderRadius={4}
+		>
+			<StyledSkeletonContainer>
+				<Skeleton
+					width={440}
+					height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+				/>
+				{withSubSections &&
+					skeletonItems.map(({ id }, index) => (
+						<StyledSkeletonSubSection key={id}>
+							<SkeletonColumnLoader
+								height={
+									index === 1
+										? SKELETON_LOADER_HEIGHT_SIZES.columns.m
+										: SKELETON_LOADER_HEIGHT_SIZES.columns.s
+								}
+							/>
+							<StyledSkeletonSubSectionContent>
+								<Skeleton
+									width={400}
+									height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+								/>
+								<Skeleton
+									width={400}
+									height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+								/>
+								{index === 1 && (
+									<Skeleton
+										width={400}
+										height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+									/>
+								)}
+							</StyledSkeletonSubSectionContent>
+						</StyledSkeletonSubSection>
+					))}
+			</StyledSkeletonContainer>
+		</SkeletonTheme>
+	);
 };

@@ -1,8 +1,8 @@
-import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
+import { getInitialEditorContent } from "@/advanced-text-editor/utils/getInitialEditorContent";
 
-describe('getInitialEditorContent', () => {
-  it('should handle single line text', () => {
-    expect(getInitialEditorContent('Hello world')).toMatchInlineSnapshot(`
+describe("getInitialEditorContent", () => {
+	it("should handle single line text", () => {
+		expect(getInitialEditorContent("Hello world")).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -18,10 +18,10 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle text with newlines', () => {
-    expect(getInitialEditorContent('Line 1\nLine 2')).toMatchInlineSnapshot(`
+	it("should handle text with newlines", () => {
+		expect(getInitialEditorContent("Line 1\nLine 2")).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -44,10 +44,10 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle single variable', () => {
-    expect(getInitialEditorContent('{{user.name}}')).toMatchInlineSnapshot(`
+	it("should handle single variable", () => {
+		expect(getInitialEditorContent("{{user.name}}")).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -65,11 +65,12 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle text with variables', () => {
-    expect(getInitialEditorContent('Hello {{user.name}}, welcome!'))
-      .toMatchInlineSnapshot(`
+	it("should handle text with variables", () => {
+		expect(
+			getInitialEditorContent("Hello {{user.name}}, welcome!"),
+		).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -95,12 +96,12 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle text with multiple variables', () => {
-    expect(
-      getInitialEditorContent('Hello {{user.firstName}} {{user.lastName}}!'),
-    ).toMatchInlineSnapshot(`
+	it("should handle text with multiple variables", () => {
+		expect(
+			getInitialEditorContent("Hello {{user.firstName}} {{user.lastName}}!"),
+		).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -136,12 +137,12 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle newlines with variables', () => {
-    expect(
-      getInitialEditorContent('Hello {{user.name}}\nWelcome to {{app.name}}'),
-    ).toMatchInlineSnapshot(`
+	it("should handle newlines with variables", () => {
+		expect(
+			getInitialEditorContent("Hello {{user.name}}\nWelcome to {{app.name}}"),
+		).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -176,10 +177,10 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle empty strings', () => {
-    expect(getInitialEditorContent('')).toMatchInlineSnapshot(`
+	it("should handle empty strings", () => {
+		expect(getInitialEditorContent("")).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -190,11 +191,12 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle multiple empty parts', () => {
-    expect(getInitialEditorContent('Hello    {{user.name}}    !'))
-      .toMatchInlineSnapshot(`
+	it("should handle multiple empty parts", () => {
+		expect(
+			getInitialEditorContent("Hello    {{user.name}}    !"),
+		).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -220,10 +222,10 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle multiple newlines', () => {
-    expect(getInitialEditorContent('Line1\n\nLine3')).toMatchInlineSnapshot(`
+	it("should handle multiple newlines", () => {
+		expect(getInitialEditorContent("Line1\n\nLine3")).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -249,12 +251,12 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should ignore malformed variable tags', () => {
-    expect(
-      getInitialEditorContent('Hello {{user.name}} and {{invalid}more}} text'),
-    ).toMatchInlineSnapshot(`
+	it("should ignore malformed variable tags", () => {
+		expect(
+			getInitialEditorContent("Hello {{user.name}} and {{invalid}more}} text"),
+		).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -280,10 +282,10 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 
-  it('should handle trailing newlines', () => {
-    expect(getInitialEditorContent('Hello\n')).toMatchInlineSnapshot(`
+	it("should handle trailing newlines", () => {
+		expect(getInitialEditorContent("Hello\n")).toMatchInlineSnapshot(`
 {
   "content": [
     {
@@ -302,5 +304,5 @@ describe('getInitialEditorContent', () => {
   "type": "doc",
 }
 `);
-  });
+	});
 });

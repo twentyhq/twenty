@@ -1,14 +1,14 @@
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from "@/onboarding/constants/OnboardingContentBlockWidth";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { isDefined } from "twenty-shared/utils";
+import { IconChevronLeft, IconCoins, IconInfoCircle } from "twenty-ui/icon";
+import { LightIconButton } from "twenty-ui/input";
 import {
-  MOBILE_VIEWPORT,
-  themeCssVariables,
-  useTheme,
-} from 'twenty-ui/theme-constants';
+	MOBILE_VIEWPORT,
+	themeCssVariables,
+	useTheme,
+} from "twenty-ui/theme-constants";
 
 const StyledHeader = styled.div`
   align-items: flex-start;
@@ -84,7 +84,7 @@ const StyledCreditsTag = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
   padding: 0 ${themeCssVariables.spacing[2]} 0
-    ${themeCssVariables.spacing['1.5']};
+    ${themeCssVariables.spacing["1.5"]};
 `;
 
 const StyledCreditsCount = styled.span`
@@ -106,61 +106,61 @@ const StyledInfoTag = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
-  padding: 0 ${themeCssVariables.spacing['1.5']} 0
+  padding: 0 ${themeCssVariables.spacing["1.5"]} 0
     ${themeCssVariables.spacing[1]};
 `;
 
 type OnboardingHeaderProps = {
-  onBack?: () => void;
-  isBackDisabled?: boolean;
-  freeCredits?: number;
+	onBack?: () => void;
+	isBackDisabled?: boolean;
+	freeCredits?: number;
 };
 
 export const OnboardingHeader = ({
-  onBack,
-  isBackDisabled,
-  freeCredits,
+	onBack,
+	isBackDisabled,
+	freeCredits,
 }: OnboardingHeaderProps) => {
-  const { t } = useLingui();
-  const theme = useTheme();
+	const { t } = useLingui();
+	const theme = useTheme();
 
-  return (
-    <StyledHeader>
-      <StyledLeftSide>
-        {isDefined(onBack) && (
-          <LightIconButton
-            Icon={IconChevronLeft}
-            accent="tertiary"
-            size="small"
-            onClick={onBack}
-            disabled={isBackDisabled}
-            aria-label={t`Go back`}
-          />
-        )}
-      </StyledLeftSide>
-      <StyledCenter>
-        <StyledLogo />
-      </StyledCenter>
-      <StyledRightSide>
-        {isDefined(freeCredits) && (
-          <StyledFreeCredits>
-            <StyledCreditsTag>
-              <IconCoins
-                size={theme.icon.size.md}
-                color={themeCssVariables.font.color.tertiary}
-              />
-              <StyledCreditsCount>{freeCredits}</StyledCreditsCount>
-              <StyledCreditsLabel>{t`free credits`}</StyledCreditsLabel>
-            </StyledCreditsTag>
-            <StyledInfoTag>
-              <IconInfoCircle
-                size={theme.icon.size.md}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            </StyledInfoTag>
-          </StyledFreeCredits>
-        )}
-      </StyledRightSide>
-    </StyledHeader>
-  );
+	return (
+		<StyledHeader>
+			<StyledLeftSide>
+				{isDefined(onBack) && (
+					<LightIconButton
+						Icon={IconChevronLeft}
+						accent="tertiary"
+						size="small"
+						onClick={onBack}
+						disabled={isBackDisabled}
+						aria-label={t`Go back`}
+					/>
+				)}
+			</StyledLeftSide>
+			<StyledCenter>
+				<StyledLogo />
+			</StyledCenter>
+			<StyledRightSide>
+				{isDefined(freeCredits) && (
+					<StyledFreeCredits>
+						<StyledCreditsTag>
+							<IconCoins
+								size={theme.icon.size.md}
+								color={themeCssVariables.font.color.tertiary}
+							/>
+							<StyledCreditsCount>{freeCredits}</StyledCreditsCount>
+							<StyledCreditsLabel>{t`free credits`}</StyledCreditsLabel>
+						</StyledCreditsTag>
+						<StyledInfoTag>
+							<IconInfoCircle
+								size={theme.icon.size.md}
+								color={themeCssVariables.font.color.tertiary}
+							/>
+						</StyledInfoTag>
+					</StyledFreeCredits>
+				)}
+			</StyledRightSide>
+		</StyledHeader>
+	);
 };

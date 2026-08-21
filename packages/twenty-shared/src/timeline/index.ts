@@ -7,5 +7,5 @@
  *                              |___/
  */
 
-export { parseTimelineActivityAction } from './parseTimelineActivityAction';
-export type { TimelineActivityAction } from './TimelineActivityAction';
+export { parseTimelineActivityAction } from "./parseTimelineActivityAction";
+export type { TimelineActivityAction } from "./TimelineActivityAction";

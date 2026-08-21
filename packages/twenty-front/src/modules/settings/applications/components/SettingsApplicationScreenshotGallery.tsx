@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useState } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsApplicationScreenshotGalleryProps = {
-  screenshots: string[];
-  displayName: string;
+	screenshots: string[];
+	displayName: string;
 };
 
 const StyledGalleryContainer = styled.div`
@@ -46,9 +46,9 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid
     ${({ isSelected }) =>
-      isSelected
-        ? themeCssVariables.color.blue
-        : themeCssVariables.border.color.medium};
+			isSelected
+				? themeCssVariables.color.blue
+				: themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
@@ -68,39 +68,39 @@ const StyledThumbnailImage = styled.img`
 `;
 
 export const SettingsApplicationScreenshotGallery = ({
-  screenshots,
-  displayName,
+	screenshots,
+	displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
-  const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+	const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
 
-  if (screenshots.length === 0) {
-    return null;
-  }
+	if (screenshots.length === 0) {
+		return null;
+	}
 
-  const safeIndex = Math.min(selectedScreenshotIndex, screenshots.length - 1);
+	const safeIndex = Math.min(selectedScreenshotIndex, screenshots.length - 1);
 
-  return (
-    <StyledGalleryContainer>
-      <StyledScreenshotsContainer>
-        <StyledScreenshotImage
-          src={screenshots[safeIndex]}
-          alt={`${displayName} screenshot ${safeIndex + 1}`}
-        />
-      </StyledScreenshotsContainer>
-      <StyledScreenshotThumbnails>
-        {screenshots.slice(0, 6).map((screenshot, index) => (
-          <StyledThumbnail
-            key={index}
-            isSelected={index === selectedScreenshotIndex}
-            onClick={() => setSelectedScreenshotIndex(index)}
-          >
-            <StyledThumbnailImage
-              src={screenshot}
-              alt={`${displayName} thumbnail ${index + 1}`}
-            />
-          </StyledThumbnail>
-        ))}
-      </StyledScreenshotThumbnails>
-    </StyledGalleryContainer>
-  );
+	return (
+		<StyledGalleryContainer>
+			<StyledScreenshotsContainer>
+				<StyledScreenshotImage
+					src={screenshots[safeIndex]}
+					alt={`${displayName} screenshot ${safeIndex + 1}`}
+				/>
+			</StyledScreenshotsContainer>
+			<StyledScreenshotThumbnails>
+				{screenshots.slice(0, 6).map((screenshot, index) => (
+					<StyledThumbnail
+						key={index}
+						isSelected={index === selectedScreenshotIndex}
+						onClick={() => setSelectedScreenshotIndex(index)}
+					>
+						<StyledThumbnailImage
+							src={screenshot}
+							alt={`${displayName} thumbnail ${index + 1}`}
+						/>
+					</StyledThumbnail>
+				))}
+			</StyledScreenshotThumbnails>
+		</StyledGalleryContainer>
+	);
 };

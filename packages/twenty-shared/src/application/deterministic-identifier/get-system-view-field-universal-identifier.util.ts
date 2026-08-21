@@ -1,16 +1,16 @@
-import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { computeDeterministicUuid } from "@/application/deterministic-identifier/compute-deterministic-uuid.util";
 
 export const getSystemViewFieldUniversalIdentifier = ({
-  fieldMetadataApplicationUniversalIdentifier,
-  viewUniversalIdentifier,
-  fieldMetadataUniversalIdentifier,
+	fieldMetadataApplicationUniversalIdentifier,
+	viewUniversalIdentifier,
+	fieldMetadataUniversalIdentifier,
 }: {
-  fieldMetadataApplicationUniversalIdentifier: string;
-  viewUniversalIdentifier: string;
-  fieldMetadataUniversalIdentifier: string;
+	fieldMetadataApplicationUniversalIdentifier: string;
+	viewUniversalIdentifier: string;
+	fieldMetadataUniversalIdentifier: string;
 }): string =>
-  computeDeterministicUuid({
-    entityNamespace: 'viewField',
-    value: `${viewUniversalIdentifier}:${fieldMetadataUniversalIdentifier}`,
-    applicationUniversalIdentifier: fieldMetadataApplicationUniversalIdentifier,
-  });
+	computeDeterministicUuid({
+		entityNamespace: "viewField",
+		value: `${viewUniversalIdentifier}:${fieldMetadataUniversalIdentifier}`,
+		applicationUniversalIdentifier: fieldMetadataApplicationUniversalIdentifier,
+	});

@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type EmailThreadMessageParticipant } from "@/activities/emails/types/EmailThreadMessageParticipant";
+import { getDisplayNameFromParticipant } from "@/activities/emails/utils/getDisplayNameFromParticipant";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EmailThreadMessageReceiversProps = {
-  receivers: EmailThreadMessageParticipant[];
+	receivers: EmailThreadMessageParticipant[];
 };
 
 const StyledThreadMessageReceivers = styled.span`
@@ -19,17 +19,17 @@ const StyledThreadMessageReceivers = styled.span`
 `;
 
 export const EmailThreadMessageReceivers = ({
-  receivers,
+	receivers,
 }: EmailThreadMessageReceiversProps) => {
-  const displayedReceivers = receivers
-    .map((receiver) => getDisplayNameFromParticipant({ participant: receiver }))
-    .join(', ');
+	const displayedReceivers = receivers
+		.map((receiver) => getDisplayNameFromParticipant({ participant: receiver }))
+		.join(", ");
 
-  const body = `to: ${displayedReceivers}`;
+	const body = `to: ${displayedReceivers}`;
 
-  return (
-    <StyledThreadMessageReceivers>
-      <OverflowingTextWithTooltip text={body} />
-    </StyledThreadMessageReceivers>
-  );
+	return (
+		<StyledThreadMessageReceivers>
+			<OverflowingTextWithTooltip text={body} />
+		</StyledThreadMessageReceivers>
+	);
 };

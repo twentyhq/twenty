@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { useRef, useState } from 'react';
+import { styled } from "@linaria/react";
+import { useRef, useState } from "react";
 
 import {
-  ScrollProgressEffect,
-  useBreakpointStepSync,
-  useMediaQuery,
-} from '@/platform/motion';
-import { BREAKPOINT_PX, mediaUp, spacing } from '@/tokens';
-import { SectionShell } from '@/ui';
+	ScrollProgressEffect,
+	useBreakpointStepSync,
+	useMediaQuery,
+} from "@/platform/motion";
+import { BREAKPOINT_PX, mediaUp, spacing } from "@/tokens";
+import { SectionShell } from "@/ui";
 
-import { HomeStepperLottie } from './components/HomeStepperLottie';
-import { HomeStepperSteps } from './components/HomeStepperSteps';
-import { HomeStepperVisualFrame } from './components/HomeStepperVisualFrame';
-import { STEPPER_STEPS } from './data/stepper.data';
+import { HomeStepperLottie } from "./components/HomeStepperLottie";
+import { HomeStepperSteps } from "./components/HomeStepperSteps";
+import { HomeStepperVisualFrame } from "./components/HomeStepperVisualFrame";
+import { STEPPER_STEPS } from "./data/stepper.data";
 
 const ScrollStage = styled.div`
   display: grid;
@@ -22,7 +22,7 @@ const ScrollStage = styled.div`
   min-width: 0;
   row-gap: ${spacing(10)};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: start;
     column-gap: ${spacing(10)};
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -36,7 +36,7 @@ const VisualColumn = styled.div`
 
   order: -1;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     align-self: start;
     display: flex;
@@ -56,50 +56,50 @@ const VisualMeasure = styled.div`
   min-width: 0;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     margin-inline: 0;
     max-width: 672px;
   }
 `;
 
 export function HomeStepper() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isMdUp = useMediaQuery(`(min-width: ${BREAKPOINT_PX.md}px)`);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const {
-    activeStepIndex,
-    localProgress,
-    mobileStepIndex,
-    setMobileStepIndex,
-  } = useBreakpointStepSync(isMdUp, scrollProgress, STEPPER_STEPS.length);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
+	const isMdUp = useMediaQuery(`(min-width: ${BREAKPOINT_PX.md}px)`);
+	const [scrollProgress, setScrollProgress] = useState(0);
+	const {
+		activeStepIndex,
+		localProgress,
+		mobileStepIndex,
+		setMobileStepIndex,
+	} = useBreakpointStepSync(isMdUp, scrollProgress, STEPPER_STEPS.length);
 
-  const visualScrollProgress = isMdUp
-    ? scrollProgress
-    : (mobileStepIndex + 0.5) / STEPPER_STEPS.length;
+	const visualScrollProgress = isMdUp
+		? scrollProgress
+		: (mobileStepIndex + 0.5) / STEPPER_STEPS.length;
 
-  return (
-    <SectionShell scheme="muted">
-      <ScrollProgressEffect
-        enabled={isMdUp}
-        onScrollProgress={setScrollProgress}
-        scrollContainerRef={scrollContainerRef}
-      />
-      <ScrollStage ref={scrollContainerRef}>
-        <HomeStepperSteps
-          activeStepIndex={activeStepIndex}
-          layoutMode={isMdUp ? 'scroll' : 'swipe'}
-          localProgress={localProgress}
-          onMobileStepIndexChange={setMobileStepIndex}
-          steps={STEPPER_STEPS}
-        />
-        <VisualColumn>
-          <VisualMeasure>
-            <HomeStepperVisualFrame>
-              <HomeStepperLottie scrollProgress={visualScrollProgress} />
-            </HomeStepperVisualFrame>
-          </VisualMeasure>
-        </VisualColumn>
-      </ScrollStage>
-    </SectionShell>
-  );
+	return (
+		<SectionShell scheme="muted">
+			<ScrollProgressEffect
+				enabled={isMdUp}
+				onScrollProgress={setScrollProgress}
+				scrollContainerRef={scrollContainerRef}
+			/>
+			<ScrollStage ref={scrollContainerRef}>
+				<HomeStepperSteps
+					activeStepIndex={activeStepIndex}
+					layoutMode={isMdUp ? "scroll" : "swipe"}
+					localProgress={localProgress}
+					onMobileStepIndexChange={setMobileStepIndex}
+					steps={STEPPER_STEPS}
+				/>
+				<VisualColumn>
+					<VisualMeasure>
+						<HomeStepperVisualFrame>
+							<HomeStepperLottie scrollProgress={visualScrollProgress} />
+						</HomeStepperVisualFrame>
+					</VisualMeasure>
+				</VisualColumn>
+			</ScrollStage>
+		</SectionShell>
+	);
 }

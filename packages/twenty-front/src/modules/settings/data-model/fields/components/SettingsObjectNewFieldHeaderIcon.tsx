@@ -1,8 +1,8 @@
 import {
-  ObjectMetadataIcon,
-  type ObjectMetadataIconInput,
-} from '@/object-metadata/components/ObjectMetadataIcon';
-import { styled } from '@linaria/react';
+	ObjectMetadataIcon,
+	type ObjectMetadataIconInput,
+} from "@/object-metadata/components/ObjectMetadataIcon";
+import { styled } from "@linaria/react";
 
 const StyledObjectIconContainer = styled.div`
   display: flex;
@@ -11,13 +11,13 @@ const StyledObjectIconContainer = styled.div`
 `;
 
 type SettingsObjectNewFieldHeaderIconProps = {
-  objectMetadataItem: ObjectMetadataIconInput;
+	objectMetadataItem: ObjectMetadataIconInput;
 };
 
 export const SettingsObjectNewFieldHeaderIcon = ({
-  objectMetadataItem,
+	objectMetadataItem,
 }: SettingsObjectNewFieldHeaderIconProps) => (
-  <StyledObjectIconContainer>
-    <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-  </StyledObjectIconContainer>
+	<StyledObjectIconContainer>
+		<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+	</StyledObjectIconContainer>
 );

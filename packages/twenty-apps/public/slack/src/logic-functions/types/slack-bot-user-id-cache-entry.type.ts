@@ -1,4 +1,4 @@
 export type SlackBotUserIdCacheEntry = {
-  botUserId: string;
-  expiresAt: number;
+	botUserId: string;
+	expiresAt: number;
 };

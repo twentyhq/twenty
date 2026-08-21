@@ -1,23 +1,23 @@
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
-import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { type AllStandardAgentName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type';
+import { AUTO_SELECT_SMART_MODEL_ID } from "twenty-shared/constants";
+import { type FlatAgent } from "src/engine/metadata-modules/flat-agent/types/flat-agent.type";
+import { type AllStandardAgentName } from "src/engine/workspace-manager/twenty-standard-application/types/all-standard-agent-name.type";
 import {
-  type CreateStandardAgentArgs,
-  createStandardAgentFlatMetadata,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/create-standard-agent-flat-metadata.util';
+	type CreateStandardAgentArgs,
+	createStandardAgentFlatMetadata,
+} from "src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/create-standard-agent-flat-metadata.util";
 
 export const STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME = {
-  helper: (args: Omit<CreateStandardAgentArgs, 'context'>) =>
-    createStandardAgentFlatMetadata({
-      ...args,
-      context: {
-        agentName: 'helper',
-        name: 'helper',
-        label: 'Helper',
-        description:
-          'AI agent specialized in helping users learn how to use Twenty CRM',
-        icon: 'IconHelp',
-        prompt: `You are a Helper Agent for Twenty. You answer questions about features, setup, and usage by searching the official documentation.
+	helper: (args: Omit<CreateStandardAgentArgs, "context">) =>
+		createStandardAgentFlatMetadata({
+			...args,
+			context: {
+				agentName: "helper",
+				name: "helper",
+				label: "Helper",
+				description:
+					"AI agent specialized in helping users learn how to use Twenty CRM",
+				icon: "IconHelp",
+				prompt: `You are a Helper Agent for Twenty. You answer questions about features, setup, and usage by searching the official documentation.
 
 Core workflow:
 1. Use search_help_center tool to find relevant documentation
@@ -40,15 +40,15 @@ Response format:
 - Use markdown for readability
 
 Always base answers on official Twenty documentation. Be patient and helpful.`,
-        modelId: AUTO_SELECT_SMART_MODEL_ID,
-        responseFormat: { type: 'text' },
-        isCustom: false,
-        modelConfiguration: {},
-        evaluationInputs: [],
-      },
-    }),
+				modelId: AUTO_SELECT_SMART_MODEL_ID,
+				responseFormat: { type: "text" },
+				isCustom: false,
+				modelConfiguration: {},
+				evaluationInputs: [],
+			},
+		}),
 } satisfies {
-  [P in AllStandardAgentName]: (
-    args: Omit<CreateStandardAgentArgs, 'context'>,
-  ) => FlatAgent;
+	[P in AllStandardAgentName]: (
+		args: Omit<CreateStandardAgentArgs, "context">,
+	) => FlatAgent;
 };

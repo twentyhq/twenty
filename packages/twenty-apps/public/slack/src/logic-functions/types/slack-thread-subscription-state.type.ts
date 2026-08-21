@@ -1,1 +1,1 @@
-export type SlackThreadSubscriptionState = 'active' | 'expired' | 'none';
+export type SlackThreadSubscriptionState = "active" | "expired" | "none";

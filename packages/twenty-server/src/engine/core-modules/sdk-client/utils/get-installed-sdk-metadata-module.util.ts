@@ -1,12 +1,12 @@
-import { createHash } from 'crypto';
-import * as fs from 'fs/promises';
-import { join } from 'path';
+import { createHash } from "crypto";
+import * as fs from "fs/promises";
+import { join } from "path";
 
-import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-package-dirname';
+import { SDK_CLIENT_PACKAGE_DIRNAME } from "src/engine/core-modules/sdk-client/constants/sdk-client-package-dirname";
 
 export type InstalledSdkMetadataModule = {
-  moduleBuffer: Buffer;
-  checksum: string;
+	moduleBuffer: Buffer;
+	checksum: string;
 };
 
 // Warmed once at bootstrap (SdkClientModule.onApplicationBootstrap) and treated
@@ -16,17 +16,17 @@ export type InstalledSdkMetadataModule = {
 let installedSdkMetadataModule: InstalledSdkMetadataModule | undefined;
 
 export const getInstalledSdkMetadataModule =
-  async (): Promise<InstalledSdkMetadataModule> => {
-    if (!installedSdkMetadataModule) {
-      const moduleBuffer = await fs.readFile(
-        join(SDK_CLIENT_PACKAGE_DIRNAME, 'dist', 'metadata.mjs'),
-      );
+	async (): Promise<InstalledSdkMetadataModule> => {
+		if (!installedSdkMetadataModule) {
+			const moduleBuffer = await fs.readFile(
+				join(SDK_CLIENT_PACKAGE_DIRNAME, "dist", "metadata.mjs"),
+			);
 
-      installedSdkMetadataModule = {
-        moduleBuffer,
-        checksum: createHash('sha256').update(moduleBuffer).digest('hex'),
-      };
-    }
+			installedSdkMetadataModule = {
+				moduleBuffer,
+				checksum: createHash("sha256").update(moduleBuffer).digest("hex"),
+			};
+		}
 
-    return installedSdkMetadataModule;
-  };
+		return installedSdkMetadataModule;
+	};

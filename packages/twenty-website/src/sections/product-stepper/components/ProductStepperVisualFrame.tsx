@@ -1,10 +1,10 @@
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import NextImage from 'next/image';
-import { type ReactNode } from 'react';
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import NextImage from "next/image";
+import { type ReactNode } from "react";
 
-const BACKGROUND_SRC = '/images/product/stepper/background.webp';
-const SHAPE_SRC = '/images/product/stepper/background-shape.webp';
+const BACKGROUND_SRC = "/images/product/stepper/background.webp";
+const SHAPE_SRC = "/images/product/stepper/background-shape.webp";
 
 const FrameRoot = styled.div`
   aspect-ratio: 672 / 705;
@@ -46,32 +46,32 @@ const SlideArea = styled.div`
 `;
 
 export function ProductStepperVisualFrame({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }) {
-  return (
-    <FrameRoot>
-      <ShapeOverlay aria-hidden>
-        <NextImage
-          alt=""
-          className={shapeImageClassName}
-          fill
-          priority={false}
-          sizes="(min-width: 921px) 50vw, 100vw"
-          src={SHAPE_SRC}
-        />
-      </ShapeOverlay>
-      <PatternBackdrop aria-hidden>
-        <NextImage
-          alt=""
-          className={patternImageClassName}
-          fill
-          sizes="(min-width: 921px) 50vw, 100vw"
-          src={BACKGROUND_SRC}
-        />
-      </PatternBackdrop>
-      <SlideArea>{children}</SlideArea>
-    </FrameRoot>
-  );
+	return (
+		<FrameRoot>
+			<ShapeOverlay aria-hidden>
+				<NextImage
+					alt=""
+					className={shapeImageClassName}
+					fill
+					priority={false}
+					sizes="(min-width: 921px) 50vw, 100vw"
+					src={SHAPE_SRC}
+				/>
+			</ShapeOverlay>
+			<PatternBackdrop aria-hidden>
+				<NextImage
+					alt=""
+					className={patternImageClassName}
+					fill
+					sizes="(min-width: 921px) 50vw, 100vw"
+					src={BACKGROUND_SRC}
+				/>
+			</PatternBackdrop>
+			<SlideArea>{children}</SlideArea>
+		</FrameRoot>
+	);
 }

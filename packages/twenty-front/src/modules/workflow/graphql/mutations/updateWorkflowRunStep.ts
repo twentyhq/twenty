@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPDATE_WORKFLOW_RUN_STEP = gql`
   mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {

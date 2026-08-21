@@ -1,39 +1,39 @@
-import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
-import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
-import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
-import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
-import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
-import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
-import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type Editor } from '@tiptap/core';
-import { type ComponentType, useEffect, useId, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconMaximize } from 'twenty-ui/icon';
-import { Field, LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { AdvancedTextEditor } from "@/advanced-text-editor/components/AdvancedTextEditor";
+import { useAdvancedTextEditor } from "@/advanced-text-editor/hooks/useAdvancedTextEditor";
+import { type AdvancedTextEditorComponentProps } from "@/advanced-text-editor/types/AdvancedTextEditorComponentProps";
+import { type AdvancedTextEditorProfile } from "@/advanced-text-editor/types/AdvancedTextEditorProfile";
+import { type UploadedImage } from "@/advanced-text-editor/types/UploadedImage";
+import { serializeAdvancedTextEditorDocument } from "@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument";
+import { FormFieldInputContainer } from "@/ui/input/components/FormFieldInputContainer";
+import { type VariablePickerComponent } from "@/ui/input/types/VariablePickerComponent";
+import { useFullScreenModal } from "@/ui/layout/fullscreen/hooks/useFullScreenModal";
+import { type BreadcrumbProps } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+import { usePushFocusItemToFocusStack } from "@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack";
+import { useRemoveFocusItemFromFocusStackById } from "@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById";
+import { FocusComponentType } from "@/ui/utilities/focus/types/FocusComponentType";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type Editor } from "@tiptap/core";
+import { type ComponentType, useEffect, useId, useState } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { IconMaximize } from "twenty-ui/icon";
+import { Field, LightIconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { useIsMobile } from "twenty-ui/utilities";
 
 const StyledAdvancedTextFieldContainerWrapper = styled.div<{
-  hasFieldChrome: boolean;
+	hasFieldChrome: boolean;
 }>`
   display: flex;
   flex-direction: column;
   flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
-  min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
+  min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? "auto" : "0")};
 
   /* Document editors stretch to their available height; field editors keep
      their intrinsic height so they compose naturally inside forms. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
-    min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
+    min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? "auto" : "0")};
   }
 `;
 
@@ -46,16 +46,16 @@ const StyledAdvancedTextFieldFieldContainer = styled.div`
 `;
 
 const StyledAdvancedTextFieldInnerContainer = styled.div<{
-  hasFieldChrome: boolean;
+	hasFieldChrome: boolean;
 }>`
   background-color: ${({ hasFieldChrome }) =>
-    hasFieldChrome ? themeCssVariables.background.transparent.lighter : 'none'};
+		hasFieldChrome ? themeCssVariables.background.transparent.lighter : "none"};
   border: ${({ hasFieldChrome }) =>
-    hasFieldChrome
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
+		hasFieldChrome
+			? `1px solid ${themeCssVariables.border.color.medium}`
+			: "none"};
   border-radius: ${({ hasFieldChrome }) =>
-    hasFieldChrome ? themeCssVariables.border.radius.md : '0'};
+		hasFieldChrome ? themeCssVariables.border.radius.md : "0"};
   box-sizing: border-box;
 
   display: flex;
@@ -65,14 +65,14 @@ const StyledAdvancedTextFieldInnerContainer = styled.div<{
 `;
 
 const StyledEditorActionButtonContainer = styled.div<{
-  hasVariablePicker?: boolean;
+	hasVariablePicker?: boolean;
 }>`
   margin-top: ${themeCssVariables.spacing[1]};
   position: absolute;
   right: ${({ hasVariablePicker }) =>
-    hasVariablePicker
-      ? `calc(${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing[2]})`
-      : themeCssVariables.spacing[1]};
+		hasVariablePicker
+			? `calc(${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing[2]})`
+			: themeCssVariables.spacing[1]};
   top: ${themeCssVariables.spacing[0]};
   z-index: 1;
 `;
@@ -88,195 +88,195 @@ const StyledFullScreenEditorContainer = styled.div`
 `;
 
 type FormAdvancedTextFieldInputProps = {
-  label?: string;
-  error?: string;
-  hint?: string;
-  defaultValue: string | undefined | null;
-  onChange?: (value: string) => void;
-  readonly?: boolean;
-  placeholder?: string;
-  VariablePicker?: VariablePickerComponent;
-  onImageUpload?: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
-  profile: AdvancedTextEditorProfile;
-  EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
-  minHeight?: number;
-  enableFullScreen?: boolean;
-  fullScreenBreadcrumbs?: BreadcrumbProps['links'];
-  onEditorReady?: (editor: Editor | null) => void;
+	label?: string;
+	error?: string;
+	hint?: string;
+	defaultValue: string | undefined | null;
+	onChange?: (value: string) => void;
+	readonly?: boolean;
+	placeholder?: string;
+	VariablePicker?: VariablePickerComponent;
+	onImageUpload?: (file: File) => Promise<UploadedImage>;
+	onImageUploadError?: (error: Error, file: File) => void;
+	profile: AdvancedTextEditorProfile;
+	EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
+	minHeight?: number;
+	enableFullScreen?: boolean;
+	fullScreenBreadcrumbs?: BreadcrumbProps["links"];
+	onEditorReady?: (editor: Editor | null) => void;
 };
 
 export const FormAdvancedTextFieldInput = ({
-  label,
-  error,
-  hint,
-  defaultValue,
-  placeholder,
-  onChange,
-  readonly,
-  VariablePicker,
-  onImageUpload,
-  onImageUploadError,
-  profile,
-  EditorComponent = AdvancedTextEditor,
-  minHeight,
-  enableFullScreen,
-  fullScreenBreadcrumbs,
-  onEditorReady,
+	label,
+	error,
+	hint,
+	defaultValue,
+	placeholder,
+	onChange,
+	readonly,
+	VariablePicker,
+	onImageUpload,
+	onImageUploadError,
+	profile,
+	EditorComponent = AdvancedTextEditor,
+	minHeight,
+	enableFullScreen,
+	fullScreenBreadcrumbs,
+	onEditorReady,
 }: FormAdvancedTextFieldInputProps) => {
-  const { chrome, minHeight: profileMinHeight } = profile;
+	const { chrome, minHeight: profileMinHeight } = profile;
 
-  const editorMinHeight = minHeight ?? profileMinHeight;
-  const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
+	const editorMinHeight = minHeight ?? profileMinHeight;
+	const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
 
-  const instanceId = useId();
-  const isMobile = useIsMobile();
-  const [isFullScreen, setIsFullScreen] = useState(false);
+	const instanceId = useId();
+	const isMobile = useIsMobile();
+	const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const { t } = useLingui();
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+	const { t } = useLingui();
+	const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+	const { removeFocusItemFromFocusStackById } =
+		useRemoveFocusItemFromFocusStackById();
 
-  const editor = useAdvancedTextEditor(
-    {
-      profile,
-      placeholder: placeholder,
-      readonly,
-      defaultValue,
-      onUpdate: (editor) => {
-        onChange?.(serializeAdvancedTextEditorDocument(editor));
-      },
-      onFocus: () => {
-        pushFocusItemToFocusStack({
-          focusId: instanceId,
-          component: {
-            type: FocusComponentType.FORM_FIELD_INPUT,
-            instanceId: instanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-      },
-      onBlur: () => {
-        removeFocusItemFromFocusStackById({ focusId: instanceId });
-      },
-      onImageUpload,
-      onImageUploadError,
-    },
-    [isFullScreen],
-  );
+	const editor = useAdvancedTextEditor(
+		{
+			profile,
+			placeholder: placeholder,
+			readonly,
+			defaultValue,
+			onUpdate: (editor) => {
+				onChange?.(serializeAdvancedTextEditorDocument(editor));
+			},
+			onFocus: () => {
+				pushFocusItemToFocusStack({
+					focusId: instanceId,
+					component: {
+						type: FocusComponentType.FORM_FIELD_INPUT,
+						instanceId: instanceId,
+					},
+					globalHotkeysConfig: {
+						enableGlobalHotkeysConflictingWithKeyboard: false,
+					},
+				});
+			},
+			onBlur: () => {
+				removeFocusItemFromFocusStackById({ focusId: instanceId });
+			},
+			onImageUpload,
+			onImageUploadError,
+		},
+		[isFullScreen],
+	);
 
-  useEffect(() => {
-    onEditorReady?.(editor);
+	useEffect(() => {
+		onEditorReady?.(editor);
 
-    return () => {
-      onEditorReady?.(null);
-    };
-  }, [editor, onEditorReady]);
+		return () => {
+			onEditorReady?.(null);
+		};
+	}, [editor, onEditorReady]);
 
-  const handleEnterFullScreen = () => {
-    setIsFullScreen(true);
-  };
+	const handleEnterFullScreen = () => {
+		setIsFullScreen(true);
+	};
 
-  const handleExitFullScreen = () => {
-    setIsFullScreen(false);
-  };
+	const handleExitFullScreen = () => {
+		setIsFullScreen(false);
+	};
 
-  const handleVariableTagInsert = (variableName: string) => {
-    if (!isDefined(editor)) {
-      throw new Error(
-        'Expected the editor to be defined when a variable is selected',
-      );
-    }
+	const handleVariableTagInsert = (variableName: string) => {
+		if (!isDefined(editor)) {
+			throw new Error(
+				"Expected the editor to be defined when a variable is selected",
+			);
+		}
 
-    editor.commands.insertVariableTag(variableName);
-  };
+		editor.commands.insertVariableTag(variableName);
+	};
 
-  const defaultBreadcrumbs: BreadcrumbProps['links'] = [
-    {
-      children: t`Text Editor`,
-    },
-  ];
+	const defaultBreadcrumbs: BreadcrumbProps["links"] = [
+		{
+			children: t`Text Editor`,
+		},
+	];
 
-  const breadcrumbLinks = fullScreenBreadcrumbs || defaultBreadcrumbs;
+	const breadcrumbLinks = fullScreenBreadcrumbs || defaultBreadcrumbs;
 
-  const { renderFullScreenModal } = useFullScreenModal({
-    links: breadcrumbLinks,
-    onClose: handleExitFullScreen,
-    hasClosePageButton: !isMobile,
-  });
+	const { renderFullScreenModal } = useFullScreenModal({
+		links: breadcrumbLinks,
+		onClose: handleExitFullScreen,
+		hasClosePageButton: !isMobile,
+	});
 
-  if (!isDefined(editor)) {
-    return null;
-  }
+	if (!isDefined(editor)) {
+		return null;
+	}
 
-  const fullScreenOverlay = isFullScreenEnabled
-    ? renderFullScreenModal(
-        <div data-globally-prevent-click-outside="true">
-          <StyledFullScreenEditorContainer>
-            <EditorComponent
-              editor={editor}
-              readonly={readonly}
-              minHeight={editorMinHeight}
-            />
-          </StyledFullScreenEditorContainer>
-        </div>,
-        isFullScreen,
-      )
-    : null;
+	const fullScreenOverlay = isFullScreenEnabled
+		? renderFullScreenModal(
+				<div data-globally-prevent-click-outside="true">
+					<StyledFullScreenEditorContainer>
+						<EditorComponent
+							editor={editor}
+							readonly={readonly}
+							minHeight={editorMinHeight}
+						/>
+					</StyledFullScreenEditorContainer>
+				</div>,
+				isFullScreen,
+			)
+		: null;
 
-  return (
-    <>
-      <StyledAdvancedTextFieldContainerWrapper
-        hasFieldChrome={chrome === 'field'}
-      >
-        <FormFieldInputContainer>
-          {label ? <Field.Label>{label}</Field.Label> : null}
+	return (
+		<>
+			<StyledAdvancedTextFieldContainerWrapper
+				hasFieldChrome={chrome === "field"}
+			>
+				<FormFieldInputContainer>
+					{label ? <Field.Label>{label}</Field.Label> : null}
 
-          <StyledAdvancedTextFieldFieldContainer>
-            <StyledAdvancedTextFieldInnerContainer
-              hasFieldChrome={chrome === 'field'}
-            >
-              {!isFullScreen && (
-                <EditorComponent
-                  editor={editor}
-                  readonly={readonly}
-                  minHeight={editorMinHeight}
-                />
-              )}
+					<StyledAdvancedTextFieldFieldContainer>
+						<StyledAdvancedTextFieldInnerContainer
+							hasFieldChrome={chrome === "field"}
+						>
+							{!isFullScreen && (
+								<EditorComponent
+									editor={editor}
+									readonly={readonly}
+									minHeight={editorMinHeight}
+								/>
+							)}
 
-              {isFullScreenEnabled && (
-                <StyledEditorActionButtonContainer
-                  hasVariablePicker={isDefined(VariablePicker) && !readonly}
-                >
-                  {!readonly && !isFullScreen && (
-                    <LightIconButton
-                      Icon={IconMaximize}
-                      size="small"
-                      onClick={handleEnterFullScreen}
-                      accent="tertiary"
-                    />
-                  )}
-                </StyledEditorActionButtonContainer>
-              )}
+							{isFullScreenEnabled && (
+								<StyledEditorActionButtonContainer
+									hasVariablePicker={isDefined(VariablePicker) && !readonly}
+								>
+									{!readonly && !isFullScreen && (
+										<LightIconButton
+											Icon={IconMaximize}
+											size="small"
+											onClick={handleEnterFullScreen}
+											accent="tertiary"
+										/>
+									)}
+								</StyledEditorActionButtonContainer>
+							)}
 
-              {VariablePicker && !readonly ? (
-                <VariablePicker
-                  instanceId={instanceId}
-                  multiline={true}
-                  onVariableSelect={handleVariableTagInsert}
-                />
-              ) : null}
-            </StyledAdvancedTextFieldInnerContainer>
-          </StyledAdvancedTextFieldFieldContainer>
-          {hint && <Field.Description>{hint}</Field.Description>}
-          {error && <Field.Error match>{error}</Field.Error>}
-        </FormFieldInputContainer>
-      </StyledAdvancedTextFieldContainerWrapper>
+							{VariablePicker && !readonly ? (
+								<VariablePicker
+									instanceId={instanceId}
+									multiline={true}
+									onVariableSelect={handleVariableTagInsert}
+								/>
+							) : null}
+						</StyledAdvancedTextFieldInnerContainer>
+					</StyledAdvancedTextFieldFieldContainer>
+					{hint && <Field.Description>{hint}</Field.Description>}
+					{error && <Field.Error match>{error}</Field.Error>}
+				</FormFieldInputContainer>
+			</StyledAdvancedTextFieldContainerWrapper>
 
-      {fullScreenOverlay}
-    </>
-  );
+			{fullScreenOverlay}
+		</>
+	);
 };

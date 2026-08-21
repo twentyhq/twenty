@@ -1,5 +1,5 @@
 export interface Gate {
-  featureFlag: string;
-  excludeFromDatabase?: boolean;
-  excludeFromWorkspaceApi?: boolean;
+	featureFlag: string;
+	excludeFromDatabase?: boolean;
+	excludeFromWorkspaceApi?: boolean;
 }

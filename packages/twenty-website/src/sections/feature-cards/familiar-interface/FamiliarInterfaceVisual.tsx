@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { IconChevronDown, IconList, IconPlus } from '@tabler/icons-react';
-import { useRef, type RefObject } from 'react';
+import { styled } from "@linaria/react";
+import { IconChevronDown, IconList, IconPlus } from "@tabler/icons-react";
+import { useRef, type RefObject } from "react";
 
-import { useScaleToFit } from '@/platform/motion';
-import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/HalftoneCardBackdrop';
-import { EASING, FONT_WEIGHT } from '@/tokens';
-import { FAMILIAR_INTERFACE_SCENE } from '@/tokens/feature-scenes/familiar-interface-scene';
+import { useScaleToFit } from "@/platform/motion";
+import { HalftoneCardBackdrop } from "@/platform/visuals/rigs/HalftoneCardBackdrop";
+import { EASING, FONT_WEIGHT } from "@/tokens";
+import { FAMILIAR_INTERFACE_SCENE } from "@/tokens/feature-scenes/familiar-interface-scene";
 
 import {
-  FAMILIAR_INTERFACE_CARDS,
-  type FamiliarCardId,
-} from './familiar-interface-cards-data';
-import { GrabCursorIcon } from './GrabCursorIcon';
-import { OpportunityPreviewCard } from './OpportunityCard';
-import { useOpportunityDrag, type LaneIndex } from './use-opportunity-drag';
+	FAMILIAR_INTERFACE_CARDS,
+	type FamiliarCardId,
+} from "./familiar-interface-cards-data";
+import { GrabCursorIcon } from "./GrabCursorIcon";
+import { OpportunityPreviewCard } from "./OpportunityCard";
+import { useOpportunityDrag, type LaneIndex } from "./use-opportunity-drag";
 
 const SCENE = FAMILIAR_INTERFACE_SCENE;
 const TABLER_STROKE = 1.6;
@@ -186,17 +186,17 @@ const LaneHeader = styled.div`
   }
 `;
 
-const LanePill = styled.span<{ $tone: 'pink' | 'purple' }>`
+const LanePill = styled.span<{ $tone: "pink" | "purple" }>`
   align-items: center;
   background: ${({ $tone }) =>
-    $tone === 'pink'
-      ? SCENE.colors.laneLabelPinkSurface
-      : SCENE.colors.laneLabelPurpleSurface};
+		$tone === "pink"
+			? SCENE.colors.laneLabelPinkSurface
+			: SCENE.colors.laneLabelPurpleSurface};
   border-radius: 4px;
   color: ${({ $tone }) =>
-    $tone === 'pink'
-      ? SCENE.colors.laneLabelPink
-      : SCENE.colors.laneLabelPurple};
+		$tone === "pink"
+			? SCENE.colors.laneLabelPink
+			: SCENE.colors.laneLabelPurple};
   display: inline-flex;
   font-family: ${SCENE.appFont};
   font-size: 13px;
@@ -258,8 +258,8 @@ const DragCursor = styled.div<{ $active: boolean }>`
   top: 0;
   transform: translate3d(
     ${({ $active }) =>
-      HAND_CURSOR_IDLE_POSITION.x +
-      ($active ? HAND_CURSOR_HOVER_SHIFT_X : 0)}px,
+			HAND_CURSOR_IDLE_POSITION.x +
+			($active ? HAND_CURSOR_HOVER_SHIFT_X : 0)}px,
     0,
     0
   );
@@ -280,8 +280,8 @@ const DragCursorInner = styled.div<{ $active: boolean }>`
   transform: translate3d(
       0,
       ${({ $active }) =>
-        HAND_CURSOR_IDLE_POSITION.y +
-        ($active ? HAND_CURSOR_HOVER_SHIFT_Y : 0)}px,
+				HAND_CURSOR_IDLE_POSITION.y +
+				($active ? HAND_CURSOR_HOVER_SHIFT_Y : 0)}px,
       0
     )
     rotate(
@@ -296,13 +296,13 @@ const DragCursorInner = styled.div<{ $active: boolean }>`
 `;
 
 const LaneDraggableCard = styled.div<{ $dragging: boolean }>`
-  cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
+  cursor: ${({ $dragging }) => ($dragging ? "grabbing" : "grab")};
   touch-action: none;
   user-select: none;
 `;
 
 const DraggableCardShell = styled.div<{ $dragging: boolean }>`
-  cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
+  cursor: ${({ $dragging }) => ($dragging ? "grabbing" : "grab")};
   left: 0;
   pointer-events: auto;
   position: absolute;
@@ -314,161 +314,161 @@ const DraggableCardShell = styled.div<{ $dragging: boolean }>`
 `;
 
 export function FamiliarInterfaceVisual({
-  active = false,
-  backgroundImageSrc,
-  pointerTargetRef,
+	active = false,
+	backgroundImageSrc,
+	pointerTargetRef,
 }: {
-  active?: boolean;
-  backgroundImageSrc: string;
-  pointerTargetRef?: RefObject<HTMLElement | null>;
+	active?: boolean;
+	backgroundImageSrc: string;
+	pointerTargetRef?: RefObject<HTMLElement | null>;
 }) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const interactionLayerRef = useRef<HTMLDivElement>(null);
-  const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
-  const {
-    activeCardId,
-    dragOffset,
-    draggedCardId,
-    draggingCardShellRef,
-    handleCapturedPointerCancel,
-    handleCapturedPointerMove,
-    handleCapturedPointerUp,
-    handleLostPointerCapture,
-    handlePointerDown,
-    hasDraggedCard,
-    isDragging,
-    laneBodyRefs,
-    laneCardRefs,
-    laneCards,
-  } = useOpportunityDrag({ interactionLayerRef });
+	const rootRef = useRef<HTMLDivElement>(null);
+	const interactionLayerRef = useRef<HTMLDivElement>(null);
+	const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
+	const {
+		activeCardId,
+		dragOffset,
+		draggedCardId,
+		draggingCardShellRef,
+		handleCapturedPointerCancel,
+		handleCapturedPointerMove,
+		handleCapturedPointerUp,
+		handleLostPointerCapture,
+		handlePointerDown,
+		hasDraggedCard,
+		isDragging,
+		laneBodyRefs,
+		laneCardRefs,
+		laneCards,
+	} = useOpportunityDrag({ interactionLayerRef });
 
-  const showHandCursor =
-    !hasDraggedCard && !isDragging && activeCardId === null;
+	const showHandCursor =
+		!hasDraggedCard && !isDragging && activeCardId === null;
 
-  const renderLaneCard = (cardId: FamiliarCardId) => {
-    const card = FAMILIAR_INTERFACE_CARDS.opportunityCards[cardId];
-    const isActiveCard = activeCardId === cardId;
-    const isDraggedCard = draggedCardId === cardId;
+	const renderLaneCard = (cardId: FamiliarCardId) => {
+		const card = FAMILIAR_INTERFACE_CARDS.opportunityCards[cardId];
+		const isActiveCard = activeCardId === cardId;
+		const isDraggedCard = draggedCardId === cardId;
 
-    return (
-      <LaneDraggableCard
-        key={cardId}
-        $dragging={isDraggedCard}
-        ref={(element) => {
-          laneCardRefs.current[cardId] = element;
-        }}
-        onPointerDown={(event) => {
-          handlePointerDown(event, cardId);
-        }}
-        style={isDraggedCard ? { visibility: 'hidden' } : undefined}
-      >
-        <OpportunityPreviewCard
-          data={card}
-          variant={isActiveCard ? 'active' : 'board'}
-        />
-      </LaneDraggableCard>
-    );
-  };
+		return (
+			<LaneDraggableCard
+				key={cardId}
+				$dragging={isDraggedCard}
+				ref={(element) => {
+					laneCardRefs.current[cardId] = element;
+				}}
+				onPointerDown={(event) => {
+					handlePointerDown(event, cardId);
+				}}
+				style={isDraggedCard ? { visibility: "hidden" } : undefined}
+			>
+				<OpportunityPreviewCard
+					data={card}
+					variant={isActiveCard ? "active" : "board"}
+				/>
+			</LaneDraggableCard>
+		);
+	};
 
-  const renderLaneBody = (laneIndex: LaneIndex) => (
-    <LaneBody
-      ref={(element) => {
-        laneBodyRefs.current[laneIndex] = element;
-      }}
-    >
-      {laneCards[laneIndex].map((cardId) => renderLaneCard(cardId))}
-      <AddCardRow>
-        <IconPlus aria-hidden size={12} stroke={TABLER_STROKE} />
-        New
-      </AddCardRow>
-    </LaneBody>
-  );
+	const renderLaneBody = (laneIndex: LaneIndex) => (
+		<LaneBody
+			ref={(element) => {
+				laneBodyRefs.current[laneIndex] = element;
+			}}
+		>
+			{laneCards[laneIndex].map((cardId) => renderLaneCard(cardId))}
+			<AddCardRow>
+				<IconPlus aria-hidden size={12} stroke={TABLER_STROKE} />
+				New
+			</AddCardRow>
+		</LaneBody>
+	);
 
-  return (
-    <VisualRoot aria-hidden="true" ref={rootRef}>
-      <SceneViewport $sceneScale={sceneScale}>
-        <SceneFrame>
-          <SceneBackdrop>
-            <HalftoneCardBackdrop
-              active={active}
-              config={SCENE.backdrop}
-              imageUrl={backgroundImageSrc}
-              pointerTargetRef={pointerTargetRef ?? rootRef}
-            />
-          </SceneBackdrop>
-          <BoardGroup $active={active}>
-            <BoardSurface>
-              <BoardTitleRow>
-                <ViewSwitcher>
-                  <ViewSwitcherIcon>
-                    <IconList aria-hidden size={16} stroke={TABLER_STROKE} />
-                  </ViewSwitcherIcon>
-                  <BoardTitleMeta>
-                    <BoardTitleText>All opportunities</BoardTitleText>
-                    <BoardTitleDot />
-                    <BoardTitleCount>9</BoardTitleCount>
-                  </BoardTitleMeta>
-                  <IconChevronDown
-                    aria-hidden
-                    color={SCENE.colors.textLight}
-                    size={14}
-                    stroke={TABLER_STROKE}
-                  />
-                </ViewSwitcher>
-              </BoardTitleRow>
+	return (
+		<VisualRoot aria-hidden="true" ref={rootRef}>
+			<SceneViewport $sceneScale={sceneScale}>
+				<SceneFrame>
+					<SceneBackdrop>
+						<HalftoneCardBackdrop
+							active={active}
+							config={SCENE.backdrop}
+							imageUrl={backgroundImageSrc}
+							pointerTargetRef={pointerTargetRef ?? rootRef}
+						/>
+					</SceneBackdrop>
+					<BoardGroup $active={active}>
+						<BoardSurface>
+							<BoardTitleRow>
+								<ViewSwitcher>
+									<ViewSwitcherIcon>
+										<IconList aria-hidden size={16} stroke={TABLER_STROKE} />
+									</ViewSwitcherIcon>
+									<BoardTitleMeta>
+										<BoardTitleText>All opportunities</BoardTitleText>
+										<BoardTitleDot />
+										<BoardTitleCount>9</BoardTitleCount>
+									</BoardTitleMeta>
+									<IconChevronDown
+										aria-hidden
+										color={SCENE.colors.textLight}
+										size={14}
+										stroke={TABLER_STROKE}
+									/>
+								</ViewSwitcher>
+							</BoardTitleRow>
 
-              <ColumnsHeaderGrid>
-                <LaneHeader>
-                  <LanePill $tone="pink">Identified</LanePill>
-                  <LaneCount>{laneCards[0].length}</LaneCount>
-                </LaneHeader>
-                <LaneHeader>
-                  <LanePill $tone="purple">Qualified</LanePill>
-                  <LaneCount>{laneCards[1].length}</LaneCount>
-                </LaneHeader>
-              </ColumnsHeaderGrid>
+							<ColumnsHeaderGrid>
+								<LaneHeader>
+									<LanePill $tone="pink">Identified</LanePill>
+									<LaneCount>{laneCards[0].length}</LaneCount>
+								</LaneHeader>
+								<LaneHeader>
+									<LanePill $tone="purple">Qualified</LanePill>
+									<LaneCount>{laneCards[1].length}</LaneCount>
+								</LaneHeader>
+							</ColumnsHeaderGrid>
 
-              <ColumnsGrid>
-                {renderLaneBody(0)}
-                {renderLaneBody(1)}
-              </ColumnsGrid>
-            </BoardSurface>
+							<ColumnsGrid>
+								{renderLaneBody(0)}
+								{renderLaneBody(1)}
+							</ColumnsGrid>
+						</BoardSurface>
 
-            <InteractionLayer
-              ref={interactionLayerRef}
-              onLostPointerCapture={handleLostPointerCapture}
-              onPointerCancel={handleCapturedPointerCancel}
-              onPointerMove={handleCapturedPointerMove}
-              onPointerUp={handleCapturedPointerUp}
-            >
-              {showHandCursor ? (
-                <DragCursor $active={active}>
-                  <DragCursorInner $active={active}>
-                    <GrabCursorIcon size={72} />
-                  </DragCursorInner>
-                </DragCursor>
-              ) : null}
+						<InteractionLayer
+							ref={interactionLayerRef}
+							onLostPointerCapture={handleLostPointerCapture}
+							onPointerCancel={handleCapturedPointerCancel}
+							onPointerMove={handleCapturedPointerMove}
+							onPointerUp={handleCapturedPointerUp}
+						>
+							{showHandCursor ? (
+								<DragCursor $active={active}>
+									<DragCursorInner $active={active}>
+										<GrabCursorIcon size={72} />
+									</DragCursorInner>
+								</DragCursor>
+							) : null}
 
-              {draggedCardId !== null ? (
-                <DraggableCardShell
-                  $dragging={isDragging}
-                  ref={draggingCardShellRef}
-                  style={{
-                    transform: `translate3d(${dragOffset.x}px, ${dragOffset.y}px, 0)`,
-                  }}
-                >
-                  <OpportunityPreviewCard
-                    data={
-                      FAMILIAR_INTERFACE_CARDS.opportunityCards[draggedCardId]
-                    }
-                    variant="active"
-                  />
-                </DraggableCardShell>
-              ) : null}
-            </InteractionLayer>
-          </BoardGroup>
-        </SceneFrame>
-      </SceneViewport>
-    </VisualRoot>
-  );
+							{draggedCardId !== null ? (
+								<DraggableCardShell
+									$dragging={isDragging}
+									ref={draggingCardShellRef}
+									style={{
+										transform: `translate3d(${dragOffset.x}px, ${dragOffset.y}px, 0)`,
+									}}
+								>
+									<OpportunityPreviewCard
+										data={
+											FAMILIAR_INTERFACE_CARDS.opportunityCards[draggedCardId]
+										}
+										variant="active"
+									/>
+								</DraggableCardShell>
+							) : null}
+						</InteractionLayer>
+					</BoardGroup>
+				</SceneFrame>
+			</SceneViewport>
+		</VisualRoot>
+	);
 }

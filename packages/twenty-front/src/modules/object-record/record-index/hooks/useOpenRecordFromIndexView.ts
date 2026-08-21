@@ -1,102 +1,102 @@
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
-import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useSidePanelMenu } from "@/side-panel/hooks/useSidePanelMenu";
+import { useOpenRecordInSidePanel } from "@/side-panel/hooks/useOpenRecordInSidePanel";
+import { sidePanelPageState } from "@/side-panel/states/sidePanelPageState";
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from "@/context-store/constants/MainContextStoreInstanceId";
+import { contextStoreRecordShowParentViewComponentState } from "@/context-store/states/contextStoreRecordShowParentViewComponentState";
+import { currentRecordFilterGroupsComponentState } from "@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState";
+import { currentRecordFiltersComponentState } from "@/object-record/record-filter/states/currentRecordFiltersComponentState";
+import { useRecordIndexContextOrThrow } from "@/object-record/record-index/contexts/RecordIndexContext";
+import { useResolveOpenRecordIn } from "@/object-record/record-index/hooks/useResolveOpenRecordIn";
+import { currentRecordSortsComponentState } from "@/object-record/record-sort/states/currentRecordSortsComponentState";
+import { useAtomComponentStateCallbackState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState";
+import { useStore } from "jotai";
+import { useCallback } from "react";
+import { AppPath, OpenRecordIn, SidePanelPages } from "twenty-shared/types";
+import { useNavigateApp } from "~/hooks/useNavigateApp";
 
 export const useOpenRecordFromIndexView = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
+	const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+	const { objectNameSingular } = useRecordIndexContextOrThrow();
 
-  const navigate = useNavigateApp();
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+	const navigate = useNavigateApp();
+	const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
+	const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
 
-  const currentRecordFilters = useAtomComponentStateCallbackState(
-    currentRecordFiltersComponentState,
-    recordIndexId,
-  );
+	const currentRecordFilters = useAtomComponentStateCallbackState(
+		currentRecordFiltersComponentState,
+		recordIndexId,
+	);
 
-  const currentRecordSorts = useAtomComponentStateCallbackState(
-    currentRecordSortsComponentState,
-    recordIndexId,
-  );
+	const currentRecordSorts = useAtomComponentStateCallbackState(
+		currentRecordSortsComponentState,
+		recordIndexId,
+	);
 
-  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
-    currentRecordFilterGroupsComponentState,
-    recordIndexId,
-  );
+	const currentRecordFilterGroups = useAtomComponentStateCallbackState(
+		currentRecordFilterGroupsComponentState,
+		recordIndexId,
+	);
 
-  const { closeSidePanelMenu } = useSidePanelMenu();
+	const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const store = useStore();
+	const store = useStore();
 
-  const openRecordFromIndexView = useCallback(
-    ({ recordId }: { recordId: string }) => {
-      const parentViewFilters = store.get(currentRecordFilters);
+	const openRecordFromIndexView = useCallback(
+		({ recordId }: { recordId: string }) => {
+			const parentViewFilters = store.get(currentRecordFilters);
 
-      const parentViewSorts = store.get(currentRecordSorts);
+			const parentViewSorts = store.get(currentRecordSorts);
 
-      const parentViewFilterGroups = store.get(currentRecordFilterGroups);
+			const parentViewFilterGroups = store.get(currentRecordFilterGroups);
 
-      store.set(
-        contextStoreRecordShowParentViewComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-        {
-          parentViewComponentId: recordIndexId,
-          parentViewObjectNameSingular: objectNameSingular,
-          parentViewFilterGroups,
-          parentViewFilters,
-          parentViewSorts,
-        },
-      );
+			store.set(
+				contextStoreRecordShowParentViewComponentState.atomFamily({
+					instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+				}),
+				{
+					parentViewComponentId: recordIndexId,
+					parentViewObjectNameSingular: objectNameSingular,
+					parentViewFilterGroups,
+					parentViewFilters,
+					parentViewSorts,
+				},
+			);
 
-      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
-        openRecordInSidePanel({
-          recordId,
-          objectNameSingular,
-          resetNavigationStack: true,
-        });
-      } else {
-        const isSidePanelAiChat =
-          store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
+			if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
+				openRecordInSidePanel({
+					recordId,
+					objectNameSingular,
+					resetNavigationStack: true,
+				});
+			} else {
+				const isSidePanelAiChat =
+					store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
 
-        if (!isSidePanelAiChat) {
-          closeSidePanelMenu();
-        }
+				if (!isSidePanelAiChat) {
+					closeSidePanelMenu();
+				}
 
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
-      }
-    },
-    [
-      currentRecordFilters,
-      currentRecordSorts,
-      currentRecordFilterGroups,
-      recordIndexId,
-      objectNameSingular,
-      navigate,
-      openRecordInSidePanel,
-      openRecordIn,
-      closeSidePanelMenu,
-      store,
-    ],
-  );
+				navigate(AppPath.RecordShowPage, {
+					objectNameSingular,
+					objectRecordId: recordId,
+				});
+			}
+		},
+		[
+			currentRecordFilters,
+			currentRecordSorts,
+			currentRecordFilterGroups,
+			recordIndexId,
+			objectNameSingular,
+			navigate,
+			openRecordInSidePanel,
+			openRecordIn,
+			closeSidePanelMenu,
+			store,
+		],
+	);
 
-  return { openRecordFromIndexView };
+	return { openRecordFromIndexView };
 };

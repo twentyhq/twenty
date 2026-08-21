@@ -1,19 +1,19 @@
 import {
-  type IconComponent,
-  IconGoogle,
-  IconKey,
-  IconMicrosoftOutlook,
-} from 'twenty-ui/icon';
+	type IconComponent,
+	IconGoogle,
+	IconKey,
+	IconMicrosoftOutlook,
+} from "twenty-ui/icon";
 export const guessSSOIdentityProviderIconByUrl = (
-  url: string,
+	url: string,
 ): IconComponent => {
-  if (url.includes('google')) {
-    return IconGoogle;
-  }
+	if (url.includes("google")) {
+		return IconGoogle;
+	}
 
-  if (url.includes('microsoft')) {
-    return IconMicrosoftOutlook;
-  }
+	if (url.includes("microsoft")) {
+		return IconMicrosoftOutlook;
+	}
 
-  return IconKey;
+	return IconKey;
 };

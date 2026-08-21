@@ -1,4 +1,4 @@
 export type SlackThreadReference = {
-  channelId: string;
-  threadTimestamp: string;
+	channelId: string;
+	threadTimestamp: string;
 };

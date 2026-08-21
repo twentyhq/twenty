@@ -1,5 +1,5 @@
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutTab } from "@/page-layout/types/PageLayoutTab";
 
-export type FlatPageLayoutTab = Omit<PageLayoutTab, 'widgets'> & {
-  pageLayoutId: string;
+export type FlatPageLayoutTab = Omit<PageLayoutTab, "widgets"> & {
+	pageLayoutId: string;
 };

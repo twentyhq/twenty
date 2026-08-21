@@ -1,7 +1,7 @@
-import { type CallRecordingStatus } from '~/generated/graphql';
+import { type CallRecordingStatus } from "~/generated/graphql";
 
 export type CalendarEventCallRecording = {
-  id: string;
-  status: CallRecordingStatus;
-  applicationId?: string | null;
+	id: string;
+	status: CallRecordingStatus;
+	applicationId?: string | null;
 };

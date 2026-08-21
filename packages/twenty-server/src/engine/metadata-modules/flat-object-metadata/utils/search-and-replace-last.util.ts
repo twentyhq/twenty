@@ -1,19 +1,19 @@
 export const searchAndReplaceLast = ({
-  replace,
-  search,
-  source,
+	replace,
+	search,
+	source,
 }: {
-  source: string;
-  search: string;
-  replace: string;
+	source: string;
+	search: string;
+	replace: string;
 }) => {
-  const lastIndex = source.lastIndexOf(search);
+	const lastIndex = source.lastIndexOf(search);
 
-  if (lastIndex === -1) return source;
+	if (lastIndex === -1) return source;
 
-  return (
-    source.slice(0, lastIndex) +
-    replace +
-    source.slice(lastIndex + search.length)
-  );
+	return (
+		source.slice(0, lastIndex) +
+		replace +
+		source.slice(lastIndex + search.length)
+	);
 };

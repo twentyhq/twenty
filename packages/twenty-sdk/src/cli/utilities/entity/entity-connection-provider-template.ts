@@ -1,20 +1,20 @@
-import { kebabCase } from '@/cli/utilities/string/kebab-case';
-import { v4 } from 'uuid';
+import { kebabCase } from "@/cli/utilities/string/kebab-case";
+import { v4 } from "uuid";
 
 export const getConnectionProviderBaseFile = ({
-  name,
-  universalIdentifier = v4(),
+	name,
+	universalIdentifier = v4(),
 }: {
-  name: string;
-  universalIdentifier?: string;
+	name: string;
+	universalIdentifier?: string;
 }) => {
-  const kebabCaseName = kebabCase(name);
-  const upperKey = kebabCaseName.toUpperCase().replace(/-/g, '_');
-  // Escape backslashes and single quotes so a name like "Bob's app" produces
-  // a valid TS literal in the generated file.
-  const escapedDisplayName = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+	const kebabCaseName = kebabCase(name);
+	const upperKey = kebabCaseName.toUpperCase().replace(/-/g, "_");
+	// Escape backslashes and single quotes so a name like "Bob's app" produces
+	// a valid TS literal in the generated file.
+	const escapedDisplayName = name.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
-  return `import { defineConnectionProvider } from 'twenty-sdk/define';
+	return `import { defineConnectionProvider } from 'twenty-sdk/define';
 
 export const ${upperKey}_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';

@@ -1,7 +1,7 @@
-import { useInstantiateSupportChat } from '@/support/hooks/useInstantiateSupportChat';
+import { useInstantiateSupportChat } from "@/support/hooks/useInstantiateSupportChat";
 
 export const SupportChatEffect = () => {
-  useInstantiateSupportChat();
+	useInstantiateSupportChat();
 
-  return null;
+	return null;
 };

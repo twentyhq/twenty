@@ -1,13 +1,13 @@
 type ImportMissingFirefliesCallsCounts = {
-  importedCallCount: number;
-  erroredCallCount: number;
-  skippedCallCount: number;
+	importedCallCount: number;
+	erroredCallCount: number;
+	skippedCallCount: number;
 };
 
 export type ImportMissingFirefliesCallsResult =
-  | (ImportMissingFirefliesCallsCounts & {
-      status: 'completed';
-    })
-  | (ImportMissingFirefliesCallsCounts & {
-      status: 'retryable-error';
-    });
+	| (ImportMissingFirefliesCallsCounts & {
+			status: "completed";
+	  })
+	| (ImportMissingFirefliesCallsCounts & {
+			status: "retryable-error";
+	  });

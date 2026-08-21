@@ -1,8 +1,8 @@
-import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
-import { type TimelineCalendarEventParticipant } from '~/generated/graphql';
+import { type CalendarEventParticipant } from "@/activities/calendar/types/CalendarEventParticipant";
+import { type TimelineCalendarEventParticipant } from "~/generated/graphql";
 
 export const isTimelineCalendarEventParticipant = (
-  participant: CalendarEventParticipant | TimelineCalendarEventParticipant,
+	participant: CalendarEventParticipant | TimelineCalendarEventParticipant,
 ): participant is TimelineCalendarEventParticipant => {
-  return 'avatarUrl' in participant;
+	return "avatarUrl" in participant;
 };

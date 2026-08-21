@@ -1,7 +1,7 @@
-import { t } from '@lingui/core/macro';
+import { t } from "@lingui/core/macro";
 
 export const getCustomApplicationDescription =
-  (): string => t`Host your workspace's customizations and overrides.
+	(): string => t`Host your workspace's customizations and overrides.
 
 #### What it includes
 Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.

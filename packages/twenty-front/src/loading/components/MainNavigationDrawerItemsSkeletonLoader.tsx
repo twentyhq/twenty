@@ -1,9 +1,9 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { SKELETON_LOADER_HEIGHT_SIZES } from "@/activities/components/SkeletonLoader";
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { ThemeContext } from "twenty-ui/theme-constants";
 
 const StyledSkeletonContainer = styled.div`
   align-items: flex-start;
@@ -19,34 +19,34 @@ const fillSkeletonContainer = css`
 `;
 
 export const MainNavigationDrawerItemsSkeletonLoader = ({
-  title,
-  length,
+	title,
+	length,
 }: {
-  title?: boolean;
-  length: number;
+	title?: boolean;
+	length: number;
 }) => {
-  const { theme } = useContext(ThemeContext);
-  return (
-    <StyledSkeletonContainer>
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
-        borderRadius={4}
-      >
-        {title && (
-          <Skeleton
-            width={48}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.xs}
-          />
-        )}
-        {Array.from({ length }).map((_, index) => (
-          <Skeleton
-            key={index}
-            containerClassName={fillSkeletonContainer}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-        ))}
-      </SkeletonTheme>
-    </StyledSkeletonContainer>
-  );
+	const { theme } = useContext(ThemeContext);
+	return (
+		<StyledSkeletonContainer>
+			<SkeletonTheme
+				baseColor={theme.background.tertiary}
+				highlightColor={theme.background.transparent.lighter}
+				borderRadius={4}
+			>
+				{title && (
+					<Skeleton
+						width={48}
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.xs}
+					/>
+				)}
+				{Array.from({ length }).map((_, index) => (
+					<Skeleton
+						key={index}
+						containerClassName={fillSkeletonContainer}
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+					/>
+				))}
+			</SkeletonTheme>
+		</StyledSkeletonContainer>
+	);
 };

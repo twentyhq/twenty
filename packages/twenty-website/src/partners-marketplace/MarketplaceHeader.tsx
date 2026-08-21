@@ -1,12 +1,12 @@
-import { msg } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+import { styled } from "@linaria/react";
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { mediaUp, spacing } from '@/tokens';
-import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
+import { mediaUp, spacing } from "@/tokens";
+import { Body, Eyebrow, Heading, SectionShell } from "@/ui";
 
-import { MarketplaceBriefLink } from './MarketplaceBriefLink';
+import { MarketplaceBriefLink } from "./MarketplaceBriefLink";
 
 // Left-aligned page intro on the shared hero rhythm (the old marketplace
 // header's larger one-off top padding normalizes onto rhythm="hero", the
@@ -19,7 +19,7 @@ const HeaderStack = styled.div`
     margin-top: ${spacing(4)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     & > * + * {
       margin-top: ${spacing(6)};
     }
@@ -31,29 +31,29 @@ const HeaderBody = styled.div`
 `;
 
 export function MarketplaceHeader() {
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <SectionShell rhythm="hero" scheme="light">
-      <HeaderStack>
-        <Eyebrow>{i18n._(msg`Marketplace`)}</Eyebrow>
-        <Heading as="h1" size="lg" weight="light">
-          {i18n._(msg`Find your *Twenty partner*`)}
-        </Heading>
-        <HeaderBody>
-          <Body muted size="md">
-            <Trans>
-              Twenty&apos;s certified partners help teams migrate, customise,
-              and operate the open source CRM across regions, languages, and
-              deployment models. Browse profiles and book a call, or{' '}
-              <MarketplaceBriefLink href="/partners/brief">
-                tell us what you need
-              </MarketplaceBriefLink>{' '}
-              and we&apos;ll match you.
-            </Trans>
-          </Body>
-        </HeaderBody>
-      </HeaderStack>
-    </SectionShell>
-  );
+	return (
+		<SectionShell rhythm="hero" scheme="light">
+			<HeaderStack>
+				<Eyebrow>{i18n._(msg`Marketplace`)}</Eyebrow>
+				<Heading as="h1" size="lg" weight="light">
+					{i18n._(msg`Find your *Twenty partner*`)}
+				</Heading>
+				<HeaderBody>
+					<Body muted size="md">
+						<Trans>
+							Twenty&apos;s certified partners help teams migrate, customise,
+							and operate the open source CRM across regions, languages, and
+							deployment models. Browse profiles and book a call, or{" "}
+							<MarketplaceBriefLink href="/partners/brief">
+								tell us what you need
+							</MarketplaceBriefLink>{" "}
+							and we&apos;ll match you.
+						</Trans>
+					</Body>
+				</HeaderBody>
+			</HeaderStack>
+		</SectionShell>
+	);
 }

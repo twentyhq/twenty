@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import { NavigationMenu } from '@base-ui/react/navigation-menu';
-import { IconChevronDown } from '@tabler/icons-react';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { Fragment } from 'react';
+import { NavigationMenu } from "@base-ui/react/navigation-menu";
+import { IconChevronDown } from "@tabler/icons-react";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { Fragment } from "react";
 
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
-import { useUnlocalizedPathname } from '@/platform/i18n/use-unlocalized-pathname';
-import { VerticalDivider } from '@/ui';
+import { LocalizedLink } from "@/platform/i18n/LocalizedLink";
+import { useUnlocalizedPathname } from "@/platform/i18n/use-unlocalized-pathname";
+import { VerticalDivider } from "@/ui";
 import {
-  SHADOW,
-  EASING,
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  semanticColor,
-  spacing,
-  Z_INDEX,
-} from '@/tokens';
+	SHADOW,
+	EASING,
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	radius,
+	semanticColor,
+	spacing,
+	Z_INDEX,
+} from "@/tokens";
 
-import { type MenuNavItem } from '../types/menu-nav-item';
-import { MenuDropdown } from './MenuDropdown';
+import { type MenuNavItem } from "../types/menu-nav-item";
+import { MenuDropdown } from "./MenuDropdown";
 
 const NavList = styled(NavigationMenu.List)`
   display: none;
   list-style: none;
   padding: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     column-gap: ${spacing(8)};
     display: grid;
@@ -45,7 +45,7 @@ const navItemStyles = `
   border: none;
   color: ${semanticColor.ink};
   cursor: pointer;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0;
@@ -65,14 +65,14 @@ const navItemStyles = `
   }
 
   &:hover {
-    color: ${color('blue')};
+    color: ${color("blue")};
   }
 
   &[data-active] {
-    color: ${color('blue')};
+    color: ${color("blue")};
 
     &::after {
-      background: ${color('blue')};
+      background: ${color("blue")};
       bottom: -6px;
       content: '';
       height: 2px;
@@ -83,7 +83,7 @@ const navItemStyles = `
   }
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
+    outline: 1px solid ${color("blue")};
     outline-offset: 1px;
   }
 `;
@@ -103,7 +103,7 @@ const NavTrigger = styled(NavigationMenu.Trigger)`
   }
 
   &[data-popup-open] {
-    color: ${color('blue')};
+    color: ${color("blue")};
   }
 `;
 
@@ -145,51 +145,51 @@ const DropdownPopup = styled(NavigationMenu.Popup)`
 `;
 
 export type MenuNavProps = {
-  items: readonly MenuNavItem[];
+	items: readonly MenuNavItem[];
 };
 
 export function MenuNav({ items }: MenuNavProps) {
-  const { i18n } = useLingui();
-  const pathname = useUnlocalizedPathname();
+	const { i18n } = useLingui();
+	const pathname = useUnlocalizedPathname();
 
-  return (
-    <NavigationMenu.Root aria-label={i18n._(msg`Primary`)}>
-      <NavList>
-        {items.map((item, index) => (
-          <Fragment key={i18n._(item.label)}>
-            {index > 0 && <VerticalDivider aria-hidden />}
-            <NavigationMenu.Item>
-              {item.children === undefined ? (
-                <NavLink
-                  data-active={pathname === item.href ? '' : undefined}
-                  render={<LocalizedLink href={item.href ?? '/'} />}
-                >
-                  {i18n._(item.label)}
-                </NavLink>
-              ) : (
-                <>
-                  <NavTrigger>
-                    {i18n._(item.label)}
-                    <TriggerChevron>
-                      <IconChevronDown size={12} stroke={2} />
-                    </TriggerChevron>
-                  </NavTrigger>
-                  <NavigationMenu.Content>
-                    <MenuDropdown items={item.children} />
-                  </NavigationMenu.Content>
-                </>
-              )}
-            </NavigationMenu.Item>
-          </Fragment>
-        ))}
-      </NavList>
-      <NavigationMenu.Portal>
-        <DropdownPositioner align="start" sideOffset={16}>
-          <DropdownPopup>
-            <NavigationMenu.Viewport />
-          </DropdownPopup>
-        </DropdownPositioner>
-      </NavigationMenu.Portal>
-    </NavigationMenu.Root>
-  );
+	return (
+		<NavigationMenu.Root aria-label={i18n._(msg`Primary`)}>
+			<NavList>
+				{items.map((item, index) => (
+					<Fragment key={i18n._(item.label)}>
+						{index > 0 && <VerticalDivider aria-hidden />}
+						<NavigationMenu.Item>
+							{item.children === undefined ? (
+								<NavLink
+									data-active={pathname === item.href ? "" : undefined}
+									render={<LocalizedLink href={item.href ?? "/"} />}
+								>
+									{i18n._(item.label)}
+								</NavLink>
+							) : (
+								<>
+									<NavTrigger>
+										{i18n._(item.label)}
+										<TriggerChevron>
+											<IconChevronDown size={12} stroke={2} />
+										</TriggerChevron>
+									</NavTrigger>
+									<NavigationMenu.Content>
+										<MenuDropdown items={item.children} />
+									</NavigationMenu.Content>
+								</>
+							)}
+						</NavigationMenu.Item>
+					</Fragment>
+				))}
+			</NavList>
+			<NavigationMenu.Portal>
+				<DropdownPositioner align="start" sideOffset={16}>
+					<DropdownPopup>
+						<NavigationMenu.Viewport />
+					</DropdownPopup>
+				</DropdownPositioner>
+			</NavigationMenu.Portal>
+		</NavigationMenu.Root>
+	);
 }

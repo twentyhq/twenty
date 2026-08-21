@@ -1,11 +1,11 @@
 export const generateDuplicatedTimestamps = (): {
-  createdAt: string;
-  updatedAt: string;
+	createdAt: string;
+	updatedAt: string;
 } => {
-  const now = new Date().toISOString();
+	const now = new Date().toISOString();
 
-  return {
-    createdAt: now,
-    updatedAt: now,
-  };
+	return {
+		createdAt: now,
+		updatedAt: now,
+	};
 };

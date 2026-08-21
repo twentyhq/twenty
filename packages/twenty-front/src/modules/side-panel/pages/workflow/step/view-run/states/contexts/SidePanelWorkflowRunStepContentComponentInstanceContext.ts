@@ -1,6 +1,6 @@
-import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
+import { createComponentInstanceContext } from "@/ui/utilities/state/component-state/utils/createComponentInstanceContext";
 
 export const SidePanelWorkflowRunStepContentComponentInstanceContext =
-  createComponentInstanceContext({
-    instanceId: '',
-  });
+	createComponentInstanceContext({
+		instanceId: "",
+	});

@@ -1,57 +1,57 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
-import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
-import { useSortsFromQueryParams } from '@/views/hooks/internal/useSortsFromQueryParams';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useHasFiltersInQueryParams } from "@/views/hooks/internal/useHasFiltersInQueryParams";
+import { useSortsFromQueryParams } from "@/views/hooks/internal/useSortsFromQueryParams";
+import { useGetCurrentViewOnly } from "@/views/hooks/useGetCurrentViewOnly";
 
 export const QueryParamsCleanupEffect = () => {
-  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
-  const { hasSortsQueryParams, objectMetadataItem } = useSortsFromQueryParams();
+	const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
+	const { hasSortsQueryParams, objectMetadataItem } = useSortsFromQueryParams();
 
-  const { currentView } = useGetCurrentViewOnly();
+	const { currentView } = useGetCurrentViewOnly();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-  const [hasCleanedQueryParams, setHasCleanedQueryParams] = useState(false);
+	const [hasCleanedQueryParams, setHasCleanedQueryParams] = useState(false);
 
-  const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
-    currentView?.objectMetadataId !== objectMetadataItem.id;
+	const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
+		currentView?.objectMetadataId !== objectMetadataItem.id;
 
-  useEffect(() => {
-    if (
-      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem ||
-      hasCleanedQueryParams
-    ) {
-      return;
-    }
+	useEffect(() => {
+		if (
+			currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem ||
+			hasCleanedQueryParams
+		) {
+			return;
+		}
 
-    if (!hasFiltersQueryParams && !hasSortsQueryParams) {
-      return;
-    }
+		if (!hasFiltersQueryParams && !hasSortsQueryParams) {
+			return;
+		}
 
-    const newParams = new URLSearchParams(searchParams);
+		const newParams = new URLSearchParams(searchParams);
 
-    Array.from(newParams.keys()).forEach((key) => {
-      if (
-        key.startsWith('filter[') ||
-        key.startsWith('filterGroup[') ||
-        key.startsWith('sort[')
-      ) {
-        newParams.delete(key);
-      }
-    });
+		Array.from(newParams.keys()).forEach((key) => {
+			if (
+				key.startsWith("filter[") ||
+				key.startsWith("filterGroup[") ||
+				key.startsWith("sort[")
+			) {
+				newParams.delete(key);
+			}
+		});
 
-    setSearchParams(newParams, { replace: true });
-    setHasCleanedQueryParams(true);
-  }, [
-    currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
-    hasFiltersQueryParams,
-    hasSortsQueryParams,
-    hasCleanedQueryParams,
-    searchParams,
-    setSearchParams,
-  ]);
+		setSearchParams(newParams, { replace: true });
+		setHasCleanedQueryParams(true);
+	}, [
+		currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
+		hasFiltersQueryParams,
+		hasSortsQueryParams,
+		hasCleanedQueryParams,
+		searchParams,
+		setSearchParams,
+	]);
 
-  return null;
+	return null;
 };

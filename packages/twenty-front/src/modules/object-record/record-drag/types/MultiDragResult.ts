@@ -1,5 +1,5 @@
-import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
+import { type RecordWithPosition } from "@/object-record/utils/computeNewPositionOfDraggedRecord";
 
 export type MultiDragResult = {
-  recordUpdates: RecordWithPosition[];
+	recordUpdates: RecordWithPosition[];
 };

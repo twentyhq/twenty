@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { GRADIENT } from '@/tokens';
-import { SectionShell } from '@/ui';
+import { GRADIENT } from "@/tokens";
+import { SectionShell } from "@/ui";
 
-import { PricingBoard } from './PricingBoard';
-import { PricingIntro } from './PricingIntro';
+import { PricingBoard } from "./PricingBoard";
+import { PricingIntro } from "./PricingIntro";
 
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};
@@ -31,18 +31,18 @@ const IntroSlot = styled.div`
 `;
 
 export function PricingPlans() {
-  return (
-    <SectionShell
-      background={<GradientBackdrop />}
-      rhythm="hero"
-      scheme="muted"
-    >
-      <PlansStack>
-        <IntroSlot>
-          <PricingIntro />
-        </IntroSlot>
-        <PricingBoard />
-      </PlansStack>
-    </SectionShell>
-  );
+	return (
+		<SectionShell
+			background={<GradientBackdrop />}
+			rhythm="hero"
+			scheme="muted"
+		>
+			<PlansStack>
+				<IntroSlot>
+					<PricingIntro />
+				</IntroSlot>
+				<PricingBoard />
+			</PlansStack>
+		</SectionShell>
+	);
 }

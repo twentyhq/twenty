@@ -1,4 +1,4 @@
 export type SlackUnfurlOptions = {
-  unfurlLinks?: boolean;
-  unfurlMedia?: boolean;
+	unfurlLinks?: boolean;
+	unfurlMedia?: boolean;
 };

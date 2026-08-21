@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { IconArrowRight, IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { IconArrowRight, IconGoogle, IconMicrosoft } from "twenty-ui/icon";
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 const SYNC_BADGE_LOGO_SIZE = 16;
 
@@ -35,18 +35,18 @@ const StyledTwentyLogo = styled.img`
 `;
 
 export const OnboardingImportPreviewSyncBadge = () => {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  return (
-    <StyledBadge>
-      <IconGoogle size={theme.icon.size.md} />
-      <IconMicrosoft size={theme.icon.size.md} />
-      <StyledDivider />
-      <IconArrowRight
-        size={theme.icon.size.md}
-        color={themeCssVariables.font.color.tertiary}
-      />
-      <StyledTwentyLogo src="/images/integrations/twenty-logo.svg" alt="" />
-    </StyledBadge>
-  );
+	return (
+		<StyledBadge>
+			<IconGoogle size={theme.icon.size.md} />
+			<IconMicrosoft size={theme.icon.size.md} />
+			<StyledDivider />
+			<IconArrowRight
+				size={theme.icon.size.md}
+				color={themeCssVariables.font.color.tertiary}
+			/>
+			<StyledTwentyLogo src="/images/integrations/twenty-logo.svg" alt="" />
+		</StyledBadge>
+	);
 };

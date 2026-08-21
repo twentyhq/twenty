@@ -1,5 +1,5 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 export const hasUserSelectedSidePanelListItemState = createAtomState({
-  key: 'hasUserSelectedSidePanelListItemState',
-  defaultValue: false,
+	key: "hasUserSelectedSidePanelListItemState",
+	defaultValue: false,
 });

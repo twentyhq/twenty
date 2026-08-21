@@ -1,36 +1,36 @@
-import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared/utils';
+import gql from "graphql-tag";
+import { capitalize } from "twenty-shared/utils";
 
 type MergeManyOperationFactoryParams = {
-  objectMetadataPluralName: string;
-  gqlFields: string;
-  ids: string[];
-  conflictPriorityIndex: number;
-  dryRun?: boolean;
+	objectMetadataPluralName: string;
+	gqlFields: string;
+	ids: string[];
+	conflictPriorityIndex: number;
+	dryRun?: boolean;
 };
 
 export const mergeManyOperationFactory = ({
-  objectMetadataPluralName,
-  gqlFields,
-  ids,
-  conflictPriorityIndex,
-  dryRun = false,
+	objectMetadataPluralName,
+	gqlFields,
+	ids,
+	conflictPriorityIndex,
+	dryRun = false,
 }: MergeManyOperationFactoryParams) => {
-  const capitalizedObjectName = capitalize(objectMetadataPluralName);
-  const mutationName = `merge${capitalizedObjectName}`;
+	const capitalizedObjectName = capitalize(objectMetadataPluralName);
+	const mutationName = `merge${capitalizedObjectName}`;
 
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation Merge${capitalizedObjectName}($ids: [UUID!]!, $conflictPriorityIndex: Int!, $dryRun: Boolean! = false) {
         ${mutationName}(ids: $ids, conflictPriorityIndex: $conflictPriorityIndex, dryRun: $dryRun) {
           ${gqlFields}
         }
       }
     `,
-    variables: {
-      ids,
-      conflictPriorityIndex,
-      dryRun,
-    },
-  };
+		variables: {
+			ids,
+			conflictPriorityIndex,
+			dryRun,
+		},
+	};
 };

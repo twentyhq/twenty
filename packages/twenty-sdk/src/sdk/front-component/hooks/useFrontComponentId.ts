@@ -1,10 +1,10 @@
-import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
-import { useFrontComponentExecutionContext } from './useFrontComponentExecutionContext';
+import { type FrontComponentExecutionContext } from "../types/FrontComponentExecutionContext";
+import { useFrontComponentExecutionContext } from "./useFrontComponentExecutionContext";
 
 const selectFrontComponentId = (
-  context: FrontComponentExecutionContext,
+	context: FrontComponentExecutionContext,
 ): string => context.frontComponentId;
 
 export const useFrontComponentId = (): string => {
-  return useFrontComponentExecutionContext(selectFrontComponentId);
+	return useFrontComponentExecutionContext(selectFrontComponentId);
 };

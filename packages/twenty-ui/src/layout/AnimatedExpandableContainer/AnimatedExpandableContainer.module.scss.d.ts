@@ -1,5 +1,5 @@
 declare const classNames: {
-  readonly panel: 'panel';
-  readonly contained: 'contained';
+	readonly panel: "panel";
+	readonly contained: "contained";
 };
 export default classNames;

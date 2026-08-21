@@ -1,10 +1,10 @@
-import gql from 'graphql-tag';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import gql from "graphql-tag";
+import { makeGraphqlAPIRequest } from "test/integration/graphql/utils/make-graphql-api-request.util";
+import { createOneFieldMetadata } from "test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util";
+import { createOneObjectMetadata } from "test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util";
+import { deleteOneObjectMetadata } from "test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util";
+import { updateOneObjectMetadata } from "test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util";
+import { FieldMetadataType } from "twenty-shared/types";
 
 const createRecordsQuery = gql`
   mutation CreateRecords(
@@ -47,373 +47,373 @@ const createRecordsWithPositionQuery = gql`
   }
 `;
 
-describe('upsert (createMany with upsert:true)', () => {
-  let createdObjectMetadataId = '';
+describe("upsert (createMany with upsert:true)", () => {
+	let createdObjectMetadataId = "";
 
-  beforeEach(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'testRecordObject',
-        namePlural: 'testRecordObjects',
-        labelSingular: 'Test Record Object',
-        labelPlural: 'Test Record Objects',
-        icon: 'IconTestRecord',
-      },
-    });
+	beforeEach(async () => {
+		const {
+			data: {
+				createOneObject: { id: objectMetadataId },
+			},
+		} = await createOneObjectMetadata({
+			input: {
+				nameSingular: "testRecordObject",
+				namePlural: "testRecordObjects",
+				labelSingular: "Test Record Object",
+				labelPlural: "Test Record Objects",
+				icon: "IconTestRecord",
+			},
+		});
 
-    createdObjectMetadataId = objectMetadataId;
+		createdObjectMetadataId = objectMetadataId;
 
-    await createOneFieldMetadata({
-      input: {
-        name: 'firstUniqueTestField',
-        label: 'First Unique Test Field',
-        type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
-        isUnique: true,
-      },
-      gqlFields: `
+		await createOneFieldMetadata({
+			input: {
+				name: "firstUniqueTestField",
+				label: "First Unique Test Field",
+				type: FieldMetadataType.TEXT,
+				objectMetadataId: createdObjectMetadataId,
+				isUnique: true,
+			},
+			gqlFields: `
         id
         name
         label
         type
         isUnique
       `,
-    });
+		});
 
-    await createOneFieldMetadata({
-      input: {
-        name: 'secondUniqueTestField',
-        label: 'Second Unique Test Field',
-        type: FieldMetadataType.TEXT,
-        objectMetadataId: createdObjectMetadataId,
-        isUnique: true,
-      },
-      gqlFields: `
+		await createOneFieldMetadata({
+			input: {
+				name: "secondUniqueTestField",
+				label: "Second Unique Test Field",
+				type: FieldMetadataType.TEXT,
+				objectMetadataId: createdObjectMetadataId,
+				isUnique: true,
+			},
+			gqlFields: `
         id
         name
         label
         type
         isUnique
       `,
-    });
-  });
+		});
+	});
 
-  afterEach(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: createdObjectMetadataId,
-        updatePayload: {
-          isActive: false,
-        },
-      },
-    });
-    await deleteOneObjectMetadata({
-      input: { idToDelete: createdObjectMetadataId },
-    });
-  });
+	afterEach(async () => {
+		await updateOneObjectMetadata({
+			expectToFail: false,
+			input: {
+				idToUpdate: createdObjectMetadataId,
+				updatePayload: {
+					isActive: false,
+				},
+			},
+		});
+		await deleteOneObjectMetadata({
+			input: { idToDelete: createdObjectMetadataId },
+		});
+	});
 
-  it('should update many records', async () => {
-    await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'firstUniqueTestField1',
-            secondUniqueTestField: 'secondUniqueTestField1',
-            name: 'record1',
-          },
-          {
-            firstUniqueTestField: 'firstUniqueTestField2',
-            secondUniqueTestField: 'secondUniqueTestField2',
-            name: 'record2',
-          },
-        ],
-        upsert: false,
-      },
-    });
+	it("should update many records", async () => {
+		await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "firstUniqueTestField1",
+						secondUniqueTestField: "secondUniqueTestField1",
+						name: "record1",
+					},
+					{
+						firstUniqueTestField: "firstUniqueTestField2",
+						secondUniqueTestField: "secondUniqueTestField2",
+						name: "record2",
+					},
+				],
+				upsert: false,
+			},
+		});
 
-    const updatedRecordsResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'firstUniqueTestField1',
-            name: 'updatedRecord1',
-          },
-          {
-            firstUniqueTestField: 'firstUniqueTestField2',
-            name: 'updatedRecord2',
-          },
-        ],
-        upsert: true,
-      },
-    });
+		const updatedRecordsResponse = await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "firstUniqueTestField1",
+						name: "updatedRecord1",
+					},
+					{
+						firstUniqueTestField: "firstUniqueTestField2",
+						name: "updatedRecord2",
+					},
+				],
+				upsert: true,
+			},
+		});
 
-    const updatedRecords =
-      updatedRecordsResponse.body.data.createTestRecordObjects;
+		const updatedRecords =
+			updatedRecordsResponse.body.data.createTestRecordObjects;
 
-    expect(updatedRecords).toHaveLength(2);
+		expect(updatedRecords).toHaveLength(2);
 
-    const record1 = updatedRecords.find(
-      (record: any) => record.firstUniqueTestField === 'firstUniqueTestField1',
-    );
-    const record2 = updatedRecords.find(
-      (record: any) => record.firstUniqueTestField === 'firstUniqueTestField2',
-    );
+		const record1 = updatedRecords.find(
+			(record: any) => record.firstUniqueTestField === "firstUniqueTestField1",
+		);
+		const record2 = updatedRecords.find(
+			(record: any) => record.firstUniqueTestField === "firstUniqueTestField2",
+		);
 
-    expect(record1).toEqual({
-      id: expect.any(String),
-      firstUniqueTestField: 'firstUniqueTestField1',
-      secondUniqueTestField: 'secondUniqueTestField1',
-      name: 'updatedRecord1',
-      deletedAt: null,
-    });
+		expect(record1).toEqual({
+			id: expect.any(String),
+			firstUniqueTestField: "firstUniqueTestField1",
+			secondUniqueTestField: "secondUniqueTestField1",
+			name: "updatedRecord1",
+			deletedAt: null,
+		});
 
-    expect(record2).toEqual({
-      id: expect.any(String),
-      firstUniqueTestField: 'firstUniqueTestField2',
-      secondUniqueTestField: 'secondUniqueTestField2',
-      name: 'updatedRecord2',
-      deletedAt: null,
-    });
-  });
+		expect(record2).toEqual({
+			id: expect.any(String),
+			firstUniqueTestField: "firstUniqueTestField2",
+			secondUniqueTestField: "secondUniqueTestField2",
+			name: "updatedRecord2",
+			deletedAt: null,
+		});
+	});
 
-  it('should throw an error when multiple records with the same unique field values are found', async () => {
-    await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'firstUniqueTestField1',
-            secondUniqueTestField: 'secondUniqueTestField1',
-            name: 'record1',
-          },
-          {
-            firstUniqueTestField: 'firstUniqueTestField2',
-            secondUniqueTestField: 'secondUniqueTestField2',
-            name: 'record2',
-          },
-        ],
-        upsert: false,
-      },
-    });
+	it("should throw an error when multiple records with the same unique field values are found", async () => {
+		await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "firstUniqueTestField1",
+						secondUniqueTestField: "secondUniqueTestField1",
+						name: "record1",
+					},
+					{
+						firstUniqueTestField: "firstUniqueTestField2",
+						secondUniqueTestField: "secondUniqueTestField2",
+						name: "record2",
+					},
+				],
+				upsert: false,
+			},
+		});
 
-    const upsertResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'firstUniqueTestField1',
-            secondUniqueTestField: 'secondUniqueTestField2',
-            name: 'conflictingRecord',
-          },
-        ],
-        upsert: true,
-      },
-    });
+		const upsertResponse = await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "firstUniqueTestField1",
+						secondUniqueTestField: "secondUniqueTestField2",
+						name: "conflictingRecord",
+					},
+				],
+				upsert: true,
+			},
+		});
 
-    expect(upsertResponse.body.errors).toBeDefined();
-    expect(upsertResponse.body.errors[0].message).toContain(
-      'Multiple records found with the same unique field values',
-    );
-    expect(upsertResponse.body.errors[0].extensions.code).toBe(
-      'BAD_USER_INPUT',
-    );
-  });
+		expect(upsertResponse.body.errors).toBeDefined();
+		expect(upsertResponse.body.errors[0].message).toContain(
+			"Multiple records found with the same unique field values",
+		);
+		expect(upsertResponse.body.errors[0].extensions.code).toBe(
+			"BAD_USER_INPUT",
+		);
+	});
 
-  it('should restore a soft-deleted record matched on its unique fields only', async () => {
-    const createResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'softDeletedByUniqueFields',
-            secondUniqueTestField: 'softDeletedByUniqueFieldsSecond',
-            name: 'originalRecord',
-          },
-        ],
-        upsert: false,
-      },
-    });
+	it("should restore a soft-deleted record matched on its unique fields only", async () => {
+		const createResponse = await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "softDeletedByUniqueFields",
+						secondUniqueTestField: "softDeletedByUniqueFieldsSecond",
+						name: "originalRecord",
+					},
+				],
+				upsert: false,
+			},
+		});
 
-    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+		const createdRecord = createResponse.body.data.createTestRecordObjects[0];
 
-    await makeGraphqlAPIRequest({
-      query: deleteRecordsQuery,
-      variables: {
-        filter: { id: { eq: createdRecord.id } },
-      },
-    });
+		await makeGraphqlAPIRequest({
+			query: deleteRecordsQuery,
+			variables: {
+				filter: { id: { eq: createdRecord.id } },
+			},
+		});
 
-    const upsertResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'softDeletedByUniqueFields',
-            secondUniqueTestField: 'softDeletedByUniqueFieldsSecond',
-          },
-        ],
-        upsert: true,
-      },
-    });
+		const upsertResponse = await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "softDeletedByUniqueFields",
+						secondUniqueTestField: "softDeletedByUniqueFieldsSecond",
+					},
+				],
+				upsert: true,
+			},
+		});
 
-    const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
+		const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
 
-    expect(upsertedRecord.id).toEqual(createdRecord.id);
-    expect(upsertedRecord.deletedAt).toBeNull();
-    expect(upsertedRecord.name).toEqual('originalRecord');
-  });
+		expect(upsertedRecord.id).toEqual(createdRecord.id);
+		expect(upsertedRecord.deletedAt).toBeNull();
+		expect(upsertedRecord.name).toEqual("originalRecord");
+	});
 
-  it('should update and restore updated soft-deleted record', async () => {
-    const createResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'softDeletedRecord',
-            secondUniqueTestField: 'softDeletedSecondField',
-            name: 'originalRecord',
-          },
-        ],
-        upsert: false,
-      },
-    });
+	it("should update and restore updated soft-deleted record", async () => {
+		const createResponse = await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "softDeletedRecord",
+						secondUniqueTestField: "softDeletedSecondField",
+						name: "originalRecord",
+					},
+				],
+				upsert: false,
+			},
+		});
 
-    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+		const createdRecord = createResponse.body.data.createTestRecordObjects[0];
 
-    const deleteResponse = await makeGraphqlAPIRequest({
-      query: deleteRecordsQuery,
-      variables: {
-        filter: { id: { eq: createdRecord.id } },
-      },
-    });
+		const deleteResponse = await makeGraphqlAPIRequest({
+			query: deleteRecordsQuery,
+			variables: {
+				filter: { id: { eq: createdRecord.id } },
+			},
+		});
 
-    const updateResponse = await makeGraphqlAPIRequest({
-      query: createRecordsQuery,
-      variables: {
-        data: [{ id: createdRecord.id, name: 'updatedRecord' }],
-        upsert: true,
-      },
-    });
+		const updateResponse = await makeGraphqlAPIRequest({
+			query: createRecordsQuery,
+			variables: {
+				data: [{ id: createdRecord.id, name: "updatedRecord" }],
+				upsert: true,
+			},
+		});
 
-    expect(
-      deleteResponse.body.data.deleteTestRecordObjects[0].deletedAt,
-    ).toEqual(expect.any(String));
-    expect(
-      updateResponse.body.data.createTestRecordObjects[0].deletedAt,
-    ).toBeNull();
-    expect(updateResponse.body.data.createTestRecordObjects[0].id).toEqual(
-      createdRecord.id,
-    );
-  });
+		expect(
+			deleteResponse.body.data.deleteTestRecordObjects[0].deletedAt,
+		).toEqual(expect.any(String));
+		expect(
+			updateResponse.body.data.createTestRecordObjects[0].deletedAt,
+		).toBeNull();
+		expect(updateResponse.body.data.createTestRecordObjects[0].id).toEqual(
+			createdRecord.id,
+		);
+	});
 
-  it('should not change the position of an existing record when upserting without a position', async () => {
-    const createResponse = await makeGraphqlAPIRequest({
-      query: createRecordsWithPositionQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'positionTestField',
-            secondUniqueTestField: 'positionTestSecondField',
-            name: 'originalRecord',
-          },
-        ],
-        upsert: false,
-      },
-    });
+	it("should not change the position of an existing record when upserting without a position", async () => {
+		const createResponse = await makeGraphqlAPIRequest({
+			query: createRecordsWithPositionQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "positionTestField",
+						secondUniqueTestField: "positionTestSecondField",
+						name: "originalRecord",
+					},
+				],
+				upsert: false,
+			},
+		});
 
-    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
-    const initialPosition = createdRecord.position;
+		const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+		const initialPosition = createdRecord.position;
 
-    expect(typeof initialPosition).toBe('number');
+		expect(typeof initialPosition).toBe("number");
 
-    const upsertResponse = await makeGraphqlAPIRequest({
-      query: createRecordsWithPositionQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'positionTestField',
-            name: 'updatedRecord',
-          },
-        ],
-        upsert: true,
-      },
-    });
+		const upsertResponse = await makeGraphqlAPIRequest({
+			query: createRecordsWithPositionQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "positionTestField",
+						name: "updatedRecord",
+					},
+				],
+				upsert: true,
+			},
+		});
 
-    const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
+		const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
 
-    expect(upsertedRecord.id).toEqual(createdRecord.id);
-    expect(upsertedRecord.name).toEqual('updatedRecord');
-    expect(upsertedRecord.position).toEqual(initialPosition);
-  });
+		expect(upsertedRecord.id).toEqual(createdRecord.id);
+		expect(upsertedRecord.name).toEqual("updatedRecord");
+		expect(upsertedRecord.position).toEqual(initialPosition);
+	});
 
-  it('should auto-assign a position when an upsert creates a new record', async () => {
-    const upsertResponse = await makeGraphqlAPIRequest({
-      query: createRecordsWithPositionQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'insertedViaUpsertField',
-            secondUniqueTestField: 'insertedViaUpsertSecondField',
-            name: 'insertedRecord',
-          },
-        ],
-        upsert: true,
-      },
-    });
+	it("should auto-assign a position when an upsert creates a new record", async () => {
+		const upsertResponse = await makeGraphqlAPIRequest({
+			query: createRecordsWithPositionQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "insertedViaUpsertField",
+						secondUniqueTestField: "insertedViaUpsertSecondField",
+						name: "insertedRecord",
+					},
+				],
+				upsert: true,
+			},
+		});
 
-    const insertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
+		const insertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
 
-    expect(insertedRecord.id).toEqual(expect.any(String));
-    expect(typeof insertedRecord.position).toBe('number');
-  });
+		expect(insertedRecord.id).toEqual(expect.any(String));
+		expect(typeof insertedRecord.position).toBe("number");
+	});
 
-  it('should update the position of an existing record when upserting with a position', async () => {
-    const createResponse = await makeGraphqlAPIRequest({
-      query: createRecordsWithPositionQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'updatePositionTestField',
-            secondUniqueTestField: 'updatePositionTestSecondField',
-            name: 'originalRecord',
-            position: 1,
-          },
-        ],
-        upsert: false,
-      },
-    });
+	it("should update the position of an existing record when upserting with a position", async () => {
+		const createResponse = await makeGraphqlAPIRequest({
+			query: createRecordsWithPositionQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "updatePositionTestField",
+						secondUniqueTestField: "updatePositionTestSecondField",
+						name: "originalRecord",
+						position: 1,
+					},
+				],
+				upsert: false,
+			},
+		});
 
-    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+		const createdRecord = createResponse.body.data.createTestRecordObjects[0];
 
-    expect(createdRecord.position).toEqual(1);
+		expect(createdRecord.position).toEqual(1);
 
-    const newPosition = 5;
+		const newPosition = 5;
 
-    const upsertResponse = await makeGraphqlAPIRequest({
-      query: createRecordsWithPositionQuery,
-      variables: {
-        data: [
-          {
-            firstUniqueTestField: 'updatePositionTestField',
-            name: 'updatedRecord',
-            position: newPosition,
-          },
-        ],
-        upsert: true,
-      },
-    });
+		const upsertResponse = await makeGraphqlAPIRequest({
+			query: createRecordsWithPositionQuery,
+			variables: {
+				data: [
+					{
+						firstUniqueTestField: "updatePositionTestField",
+						name: "updatedRecord",
+						position: newPosition,
+					},
+				],
+				upsert: true,
+			},
+		});
 
-    const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
+		const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
 
-    expect(upsertedRecord.id).toEqual(createdRecord.id);
-    expect(upsertedRecord.name).toEqual('updatedRecord');
-    expect(upsertedRecord.position).toEqual(newPosition);
-  });
+		expect(upsertedRecord.id).toEqual(createdRecord.id);
+		expect(upsertedRecord.name).toEqual("updatedRecord");
+		expect(upsertedRecord.position).toEqual(newPosition);
+	});
 });

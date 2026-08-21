@@ -1,26 +1,26 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { DASHBOARD_GQL_FIELDS } from './dashboard-gql-fields.constants';
+import { DASHBOARD_GQL_FIELDS } from "./dashboard-gql-fields.constants";
 
 export type DuplicateOneDashboardFactoryInput = {
-  id: string;
+	id: string;
 };
 
 export const duplicateOneDashboardQueryFactory = ({
-  input,
-  gqlFields = DASHBOARD_GQL_FIELDS,
+	input,
+	gqlFields = DASHBOARD_GQL_FIELDS,
 }: {
-  input: DuplicateOneDashboardFactoryInput;
-  gqlFields?: string;
+	input: DuplicateOneDashboardFactoryInput;
+	gqlFields?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation DuplicateDashboard($id: UUID!) {
       duplicateDashboard(id: $id) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-  },
+	variables: {
+		id: input.id,
+	},
 });

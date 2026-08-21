@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { IconTransform } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { IconTransform } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledIndicatorContainer = styled.div`
   align-items: center;
@@ -17,14 +17,14 @@ const StyledIconTextContainer = styled.div`
 `;
 
 export const AiChatCompactionIndicator = () => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledIndicatorContainer>
-      <StyledIconTextContainer>
-        <IconTransform size={theme.icon.size.sm} />
-        <div>The conversation has been compacted</div>
-      </StyledIconTextContainer>
-    </StyledIndicatorContainer>
-  );
+	return (
+		<StyledIndicatorContainer>
+			<StyledIconTextContainer>
+				<IconTransform size={theme.icon.size.sm} />
+				<div>The conversation has been compacted</div>
+			</StyledIconTextContainer>
+		</StyledIndicatorContainer>
+	);
 };

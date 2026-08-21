@@ -1,9 +1,9 @@
-import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
-import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { createAtomComponentState } from "@/ui/utilities/state/jotai/utils/createAtomComponentState";
+import { WorkflowVisualizerComponentInstanceContext } from "@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext";
 
 export const workflowRunDiagramAutomaticallyOpenedStepsComponentState =
-  createAtomComponentState<{ stepId: string; isInSidePanel: boolean }[]>({
-    key: 'workflowRunDiagramAutomaticallyOpenedStepsComponentState',
-    defaultValue: [],
-    componentInstanceContext: WorkflowVisualizerComponentInstanceContext,
-  });
+	createAtomComponentState<{ stepId: string; isInSidePanel: boolean }[]>({
+		key: "workflowRunDiagramAutomaticallyOpenedStepsComponentState",
+		defaultValue: [],
+		componentInstanceContext: WorkflowVisualizerComponentInstanceContext,
+	});

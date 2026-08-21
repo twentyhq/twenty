@@ -1,11 +1,11 @@
-import { type Email as ParsedMail } from 'postal-mime';
+import { type Email as ParsedMail } from "postal-mime";
 
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageBodyText } from "src/modules/messaging/message-import-manager/utils/extract-message-body-text.util";
 
-describe('extractMessageBodyText', () => {
-  it('should extract text from plain text emails with lot of reply quotations', () => {
-    const parsed: ParsedMail = {
-      text: `Hi John,
+describe("extractMessageBodyText", () => {
+	it("should extract text from plain text emails with lot of reply quotations", () => {
+		const parsed: ParsedMail = {
+			text: `Hi John,
 
 Thank you for contacting Developer Support, this is Erica again. I hope you are having a good day. 
 
@@ -90,17 +90,17 @@ Developer Support
 >>>
 >>> -John
 `,
-      attachments: [],
-      headers: [],
-      headerLines: [],
-    };
+			attachments: [],
+			headers: [],
+			headerLines: [],
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toBe(`Hi John,
+		expect(result).toBe(`Hi John,
 
 Thank you for contacting Developer Support, this is Erica again. I hope you are having a good day.
 
@@ -114,11 +114,11 @@ Best Regards,
 
 Erica
 Developer Support`);
-  });
+	});
 
-  it('should handle email with reply quotations (Titan email style)', () => {
-    const parsed: ParsedMail = {
-      text: `just a follow up
+	it("should handle email with reply quotations (Titan email style)", () => {
+		const parsed: ParsedMail = {
+			text: `just a follow up
         
         
           On Aug 18 2025, at 4:06 pm, neo@titanemailtest.xyz wrote:
@@ -128,22 +128,22 @@ Developer Support`);
            Dear Colleagues,This is a reminder that the updated security policy goes into effect starting next Monday.  All employees must reset their corporate VPN credentials and enable two-factor authentication by then.  Please reach out to the IT helpdesk if you experience any issues during the setup.  Regards,  IT Department
         
       `,
-      attachments: [],
-      headers: [],
-      headerLines: [],
-    };
+			attachments: [],
+			headers: [],
+			headerLines: [],
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toBe('just a follow up');
-  });
+		expect(result).toBe("just a follow up");
+	});
 
-  it('should handle html email with reply quotations', () => {
-    const parsed: ParsedMail = {
-      html: `<div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">just a follow up</div><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><img class="flm-open" width="0" height="0" style="border:0;width:0;height:0;" data-open-tracking-src="{{track-read-receipt}}"><div class="fr-inner gmail_quote flockmail-quote flockmail-quote-id-<186307386731076608.0.v2@titan.email>">
+	it("should handle html email with reply quotations", () => {
+		const parsed: ParsedMail = {
+			html: `<div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">just a follow up</div><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><img class="flm-open" width="0" height="0" style="border:0;width:0;height:0;" data-open-tracking-src="{{track-read-receipt}}"><div class="fr-inner gmail_quote flockmail-quote flockmail-quote-id-<186307386731076608.0.v2@titan.email>">
         <br>
         <div dir="ltr">
           On Aug 18 2025, at 4:06 pm, neo@titanemailtest.xyz wrote:
@@ -153,40 +153,40 @@ Developer Support`);
            <div id="isPasted" fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box">Dear Colleagues,</div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"><br fr-original-style="" style="user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"></div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box">This is a reminder that the updated security policy goes into effect starting next Monday. &nbsp;</div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box">All employees must reset their corporate VPN credentials and enable two-factor authentication by then. &nbsp;</div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"><br fr-original-style="" style="user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"></div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box">Please reach out to the IT helpdesk if you experience any issues during the setup. &nbsp;</div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"><br fr-original-style="" style="user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"></div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box">Regards, &nbsp;</div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box">IT Department</div><div fr-original-style="" style="display:block;user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"><br fr-original-style="" style="user-select:inherit;scrollbar-color:var(--scrollbar-active-color) #0000;box-sizing:border-box"></div>
         </blockquote>
       </div>`,
-      attachments: [],
-      headers: [],
-      headerLines: [],
-    };
+			attachments: [],
+			headers: [],
+			headerLines: [],
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toBe('just a follow up');
-  });
+		expect(result).toBe("just a follow up");
+	});
 
-  it('should return empty string when no text or html content', () => {
-    const parsed: ParsedMail = {
-      attachments: [],
-      headers: [],
-      headerLines: [],
-    };
+	it("should return empty string when no text or html content", () => {
+		const parsed: ParsedMail = {
+			attachments: [],
+			headers: [],
+			headerLines: [],
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toBe('');
-  });
+		expect(result).toBe("");
+	});
 
-  it('should preserve new lines in html email', () => {
-    const parsed: ParsedMail = {
-      attachments: [],
-      headers: [],
-      headerLines: [],
-      html: `<html><head><style>
+	it("should preserve new lines in html email", () => {
+		const parsed: ParsedMail = {
+			attachments: [],
+			headers: [],
+			headerLines: [],
+			html: `<html><head><style>
   html, body {
     font-size: 14.5px;
     line-height: 1.5;
@@ -302,50 +302,50 @@ Developer Support`);
   }
 
   </style></head><body><div id="inbox-html-wrapper"><div id="isPasted" fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Hi Sarah,</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">I wanted to quickly follow up regarding the Q3 marketing campaign results. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Let’s schedule a short call early next week to discuss adjustments before the Q4 push. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Would Monday 10 AM work for you?</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Best regards, &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">John</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><img class="flm-open" width="0" height="0" style="border: 0px; width: 0px; height: 0px; max-width: 100vw;" data-open-tracking-src="{{track-read-receipt}}"></div></body></html>`,
-    };
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toEqual(
-      `Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.\nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.\n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.\nWould Monday 10 AM work for you?\n\nBest regards,\nJohn`,
-    );
-  });
+		expect(result).toEqual(
+			`Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.\nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.\n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.\nWould Monday 10 AM work for you?\n\nBest regards,\nJohn`,
+		);
+	});
 
-  it('should prefer text over html when both are available', () => {
-    const parsed: ParsedMail = {
-      text: 'Plain text content\n\nOn 2023-01-01, user@example.com wrote:\n> Reply',
-      html: '<html><body><p>HTML content</p></body></html>',
-      attachments: [],
-      headers: [],
-      headerLines: [],
-    };
+	it("should prefer text over html when both are available", () => {
+		const parsed: ParsedMail = {
+			text: "Plain text content\n\nOn 2023-01-01, user@example.com wrote:\n> Reply",
+			html: "<html><body><p>HTML content</p></body></html>",
+			attachments: [],
+			headers: [],
+			headerLines: [],
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toBe('Plain text content');
-  });
+		expect(result).toBe("Plain text content");
+	});
 
-  it('should preserve percent sequences instead of URI-decoding the body', () => {
-    const parsed: ParsedMail = {
-      text: 'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
-      attachments: [],
-      headers: [],
-      headerLines: [],
-    };
+	it("should preserve percent sequences instead of URI-decoding the body", () => {
+		const parsed: ParsedMail = {
+			text: "See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut",
+			attachments: [],
+			headers: [],
+			headerLines: [],
+		};
 
-    const result = extractMessageBodyText({
-      text: parsed.text,
-      html: parsed.html,
-    });
+		const result = extractMessageBodyText({
+			text: parsed.text,
+			html: parsed.html,
+		});
 
-    expect(result).toBe(
-      'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
-    );
-  });
+		expect(result).toBe(
+			"See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut",
+		);
+	});
 });

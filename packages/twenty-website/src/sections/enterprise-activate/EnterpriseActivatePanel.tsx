@@ -1,11 +1,11 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { Suspense } from 'react';
+import { msg } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
+import { Suspense } from "react";
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { Body, SectionShell } from '@/ui';
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
+import { Body, SectionShell } from "@/ui";
 
-import { EnterpriseActivateClient } from './EnterpriseActivateClient';
+import { EnterpriseActivateClient } from "./EnterpriseActivateClient";
 
 const ReadingColumn = styled.div`
   margin-inline: auto;
@@ -14,17 +14,17 @@ const ReadingColumn = styled.div`
 `;
 
 export function EnterpriseActivatePanel() {
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <SectionShell scheme="light">
-      <ReadingColumn>
-        <Suspense
-          fallback={<Body size="sm">{i18n._(msg`Loading activation…`)}</Body>}
-        >
-          <EnterpriseActivateClient />
-        </Suspense>
-      </ReadingColumn>
-    </SectionShell>
-  );
+	return (
+		<SectionShell scheme="light">
+			<ReadingColumn>
+				<Suspense
+					fallback={<Body size="sm">{i18n._(msg`Loading activation…`)}</Body>}
+				>
+					<EnterpriseActivateClient />
+				</Suspense>
+			</ReadingColumn>
+		</SectionShell>
+	);
 }

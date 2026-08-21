@@ -1,1 +1,1 @@
-export type CallRecorderPolicyRequiredReason = 'RECORDING_ENABLED';
+export type CallRecorderPolicyRequiredReason = "RECORDING_ENABLED";

@@ -1,12 +1,12 @@
 /* @license Enterprise */
 
-import { type RowLevelPermissionPredicateGroupLogicalOperator } from '@/types/RowLevelPermissionPredicateGroupLogicalOperator';
+import { type RowLevelPermissionPredicateGroupLogicalOperator } from "@/types/RowLevelPermissionPredicateGroupLogicalOperator";
 
 export type RowLevelPermissionPredicateGroup = {
-  id: string;
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: string;
-  parentRowLevelPermissionPredicateGroupId: string | null;
-  positionInRowLevelPermissionPredicateGroup: number | null;
-  roleId: string;
+	id: string;
+	logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+	objectMetadataId: string;
+	parentRowLevelPermissionPredicateGroupId: string | null;
+	positionInRowLevelPermissionPredicateGroup: number | null;
+	roleId: string;
 };

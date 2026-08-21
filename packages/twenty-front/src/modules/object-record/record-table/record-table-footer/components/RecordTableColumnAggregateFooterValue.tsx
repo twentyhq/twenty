@@ -1,10 +1,10 @@
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
-import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { RECORD_TABLE_ROW_HEIGHT } from "@/object-record/record-table/constants/RecordTableRowHeight";
+import { useAggregateRecordsForRecordTableColumnFooter } from "@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter";
+import { styled } from "@linaria/react";
+import { Trans } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { isDefined } from "twenty-shared/utils";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
 
 const StyledText = styled.span`
   align-items: center;
@@ -44,35 +44,35 @@ const StyledValue = styled.div`
 `;
 
 export const RecordTableColumnAggregateFooterValue = ({
-  dropdownId,
-  fieldMetadataId,
+	dropdownId,
+	fieldMetadataId,
 }: {
-  dropdownId: string;
-  fieldMetadataId: string;
+	dropdownId: string;
+	fieldMetadataId: string;
 }) => {
-  const sanitizedId = `tooltip-${dropdownId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
+	const sanitizedId = `tooltip-${dropdownId.replace(/[^a-zA-Z0-9-_]/g, "-")}`;
 
-  const { aggregateValue, aggregateLabel, isLoading } =
-    useAggregateRecordsForRecordTableColumnFooter(fieldMetadataId);
+	const { aggregateValue, aggregateLabel, isLoading } =
+		useAggregateRecordsForRecordTableColumnFooter(fieldMetadataId);
 
-  return (
-    <>
-      {isDefined(aggregateValue) || isLoading ? (
-        <StyledValueContainer>
-          {isLoading ? (
-            <></>
-          ) : (
-            <>
-              <OverflowingTextWithTooltip text={aggregateLabel} />
-              <StyledValue>{aggregateValue}</StyledValue>
-            </>
-          )}
-        </StyledValueContainer>
-      ) : (
-        <StyledText id={sanitizedId}>
-          <Trans>Calculate</Trans>
-        </StyledText>
-      )}
-    </>
-  );
+	return (
+		<>
+			{isDefined(aggregateValue) || isLoading ? (
+				<StyledValueContainer>
+					{isLoading ? (
+						<></>
+					) : (
+						<>
+							<OverflowingTextWithTooltip text={aggregateLabel} />
+							<StyledValue>{aggregateValue}</StyledValue>
+						</>
+					)}
+				</StyledValueContainer>
+			) : (
+				<StyledText id={sanitizedId}>
+					<Trans>Calculate</Trans>
+				</StyledText>
+			)}
+		</>
+	);
 };

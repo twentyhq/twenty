@@ -1,11 +1,11 @@
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { useLayoutRenderingContext } from "@/ui/layout/contexts/LayoutRenderingContext";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { PageLayoutType } from "~/generated-metadata/graphql";
 
 const StyledListItem = styled.div<{
-  noHorizontalPadding?: boolean;
-  isDropdownOpen?: boolean;
+	noHorizontalPadding?: boolean;
+	isDropdownOpen?: boolean;
 }>`
   align-items: center;
   display: flex;
@@ -13,14 +13,14 @@ const StyledListItem = styled.div<{
   height: ${themeCssVariables.spacing[10]};
   justify-content: space-between;
   padding-left: ${({ noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
+		noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
   padding-right: ${({ noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
+		noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
 
   .displayOnHover {
     opacity: ${({ isDropdownOpen }) => (isDropdownOpen ? 1 : 0)};
     pointer-events: ${({ isDropdownOpen }) =>
-      isDropdownOpen ? 'auto' : 'none'};
+			isDropdownOpen ? "auto" : "none"};
     transition: opacity
       calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
   }
@@ -32,28 +32,28 @@ const StyledListItem = styled.div<{
 `;
 
 type RecordDetailRecordsListItemContainerProps = {
-  children: React.ReactNode;
-  className?: string;
-  isDropdownOpen?: boolean;
+	children: React.ReactNode;
+	className?: string;
+	isDropdownOpen?: boolean;
 };
 
 export const RecordDetailRecordsListItemContainer = ({
-  children,
-  className,
-  isDropdownOpen,
+	children,
+	className,
+	isDropdownOpen,
 }: RecordDetailRecordsListItemContainerProps) => {
-  const layoutRenderingContext = useLayoutRenderingContext();
+	const layoutRenderingContext = useLayoutRenderingContext();
 
-  const isInRecordPageLayout =
-    layoutRenderingContext?.layoutType === PageLayoutType.RECORD_PAGE;
+	const isInRecordPageLayout =
+		layoutRenderingContext?.layoutType === PageLayoutType.RECORD_PAGE;
 
-  return (
-    <StyledListItem
-      className={className}
-      noHorizontalPadding={isInRecordPageLayout}
-      isDropdownOpen={isDropdownOpen}
-    >
-      {children}
-    </StyledListItem>
-  );
+	return (
+		<StyledListItem
+			className={className}
+			noHorizontalPadding={isInRecordPageLayout}
+			isDropdownOpen={isDropdownOpen}
+		>
+			{children}
+		</StyledListItem>
+	);
 };

@@ -1,7 +1,7 @@
 export const shouldDisplayVariable = ({
-  isDeprecated,
-  hasValue,
+	isDeprecated,
+	hasValue,
 }: {
-  isDeprecated: boolean;
-  hasValue: boolean;
+	isDeprecated: boolean;
+	hasValue: boolean;
 }): boolean => !isDeprecated || hasValue;

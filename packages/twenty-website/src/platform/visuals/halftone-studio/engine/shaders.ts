@@ -247,8 +247,8 @@ const halftoneFragmentShader = `
 `;
 
 export const HALFTONE_SHADERS = {
-  passThroughVertex: passThroughVertexShader,
-  blurFragment: blurFragmentShader,
-  imagePassthrough: imagePassthroughFragmentShader,
-  halftoneFragment: halftoneFragmentShader,
+	passThroughVertex: passThroughVertexShader,
+	blurFragment: blurFragmentShader,
+	imagePassthrough: imagePassthroughFragmentShader,
+	halftoneFragment: halftoneFragmentShader,
 };

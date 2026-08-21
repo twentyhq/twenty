@@ -1,6 +1,6 @@
-import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type SyncableEntityOptions } from "@/application/syncableEntityOptionsType";
 
 export type IndexFieldManifest = SyncableEntityOptions & {
-  fieldUniversalIdentifier: string;
-  subFieldName?: string;
+	fieldUniversalIdentifier: string;
+	subFieldName?: string;
 };

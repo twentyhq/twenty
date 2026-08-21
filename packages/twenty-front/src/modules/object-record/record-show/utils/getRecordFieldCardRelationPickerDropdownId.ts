@@ -1,14 +1,14 @@
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldDefinition } from "@/object-record/record-field/ui/types/FieldDefinition";
+import { type FieldMetadata } from "@/object-record/record-field/ui/types/FieldMetadata";
 
 type GetRecordFieldCardRelationPickerDropdownIdArgs = {
-  fieldDefinition: FieldDefinition<FieldMetadata>;
-  recordId: string;
-  instanceId: string;
+	fieldDefinition: FieldDefinition<FieldMetadata>;
+	recordId: string;
+	instanceId: string;
 };
 export const getRecordFieldCardRelationPickerDropdownId = ({
-  fieldDefinition,
-  recordId,
-  instanceId,
+	fieldDefinition,
+	recordId,
+	instanceId,
 }: GetRecordFieldCardRelationPickerDropdownIdArgs) =>
-  `record-field-card-relation-picker:${instanceId}:${fieldDefinition.fieldMetadataId}:${recordId}`;
+	`record-field-card-relation-picker:${instanceId}:${fieldDefinition.fieldMetadataId}:${recordId}`;

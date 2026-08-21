@@ -1,4 +1,4 @@
 export type FirefliesSearchCallsInput = {
-  keyword: string;
-  limit?: number;
+	keyword: string;
+	limit?: number;
 };

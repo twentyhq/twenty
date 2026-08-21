@@ -1,16 +1,16 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import { isNonEmptyString } from "@sniptt/guards";
+import { tipTapDocumentToMarkdown } from "twenty-shared/utils";
 
 export const buildWorkspaceInstructionsSection = (
-  instructions: string,
+	instructions: string,
 ): string => {
-  const projectedInstructions = tipTapDocumentToMarkdown(instructions).trim();
+	const projectedInstructions = tipTapDocumentToMarkdown(instructions).trim();
 
-  if (!isNonEmptyString(projectedInstructions)) {
-    return '';
-  }
+	if (!isNonEmptyString(projectedInstructions)) {
+		return "";
+	}
 
-  return `
+	return `
 ## Workspace Instructions
 
 The following are custom instructions provided by the workspace administrator:

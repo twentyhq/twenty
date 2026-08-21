@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { IconCheck, IconX } from 'twenty-ui/icon';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { IconCheck, IconX } from "twenty-ui/icon";
 const iconSizeSm = 14;
 
 const StyledBooleanFieldValue = styled.div`
@@ -8,7 +8,7 @@ const StyledBooleanFieldValue = styled.div`
 `;
 
 type BooleanDisplayProps = {
-  value: boolean | null | undefined;
+	value: boolean | null | undefined;
 };
 
 const StyledContainer = styled.div`
@@ -18,18 +18,18 @@ const StyledContainer = styled.div`
 `;
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
-  if (value === null || value === undefined) {
-    return <StyledContainer />;
-  }
+	if (value === null || value === undefined) {
+		return <StyledContainer />;
+	}
 
-  const isTrue = value === true;
+	const isTrue = value === true;
 
-  return (
-    <StyledContainer>
-      {isTrue ? <IconCheck size={iconSizeSm} /> : <IconX size={iconSizeSm} />}
-      <StyledBooleanFieldValue>
-        {isTrue ? t`True` : t`False`}
-      </StyledBooleanFieldValue>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			{isTrue ? <IconCheck size={iconSizeSm} /> : <IconX size={iconSizeSm} />}
+			<StyledBooleanFieldValue>
+				{isTrue ? t`True` : t`False`}
+			</StyledBooleanFieldValue>
+		</StyledContainer>
+	);
 };

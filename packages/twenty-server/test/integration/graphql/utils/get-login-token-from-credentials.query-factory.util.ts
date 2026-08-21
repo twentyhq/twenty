@@ -1,18 +1,18 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 export type GetLoginTokenFromCredentialsFactoryInput = {
-  email: string;
-  password: string;
-  origin: string;
+	email: string;
+	password: string;
+	origin: string;
 };
 
 export const getLoginTokenFromCredentialsQueryFactory = ({
-  email,
-  password,
-  origin,
+	email,
+	password,
+	origin,
 }: GetLoginTokenFromCredentialsFactoryInput) => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation GetLoginTokenFromCredentials(
         $email: String!
         $password: String!
@@ -29,10 +29,10 @@ export const getLoginTokenFromCredentialsQueryFactory = ({
         }
       }
     `,
-    variables: {
-      email,
-      password,
-      origin,
-    },
-  };
+		variables: {
+			email,
+			password,
+			origin,
+		},
+	};
 };

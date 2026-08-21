@@ -1,1 +1,1 @@
-export type AnimationSize = number | 'fit-content';
+export type AnimationSize = number | "fit-content";

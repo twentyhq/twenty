@@ -1,60 +1,60 @@
-import gql from 'graphql-tag';
-import { useMemo } from 'react';
+import gql from "graphql-tag";
+import { useMemo } from "react";
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
-import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
-import { capitalize } from 'twenty-shared/utils';
+import { useObjectMetadataItem } from "@/object-metadata/hooks/useObjectMetadataItem";
+import { objectMetadataItemsSelector } from "@/object-metadata/states/objectMetadataItemsSelector";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { isAggregationEnabled } from "@/object-metadata/utils/isAggregationEnabled";
+import { mapObjectMetadataToGraphQLQuery } from "@/object-metadata/utils/mapObjectMetadataToGraphQLQuery";
+import { useObjectPermissions } from "@/object-record/hooks/useObjectPermissions";
+import { getFindDuplicateRecordsQueryResponseField } from "@/object-record/utils/getFindDuplicateRecordsQueryResponseField";
+import { capitalize } from "twenty-shared/utils";
 
 export const useFindDuplicateRecordsQuery = ({
-  objectNameSingular,
+	objectNameSingular,
 }: {
-  objectNameSingular: string;
+	objectNameSingular: string;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+	const { objectMetadataItem } = useObjectMetadataItem({
+		objectNameSingular,
+	});
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+	const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+	const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const findDuplicateRecordsQuery = useMemo(
-    () => gql`
+	const findDuplicateRecordsQuery = useMemo(
+		() => gql`
     query FindDuplicate${capitalize(
-      objectMetadataItem.nameSingular,
-    )}($ids: [UUID!]!) {
+			objectMetadataItem.nameSingular,
+		)}($ids: [UUID!]!) {
       ${getFindDuplicateRecordsQueryResponseField(
-        objectMetadataItem.nameSingular,
-      )}(ids: $ids) {
+				objectMetadataItem.nameSingular,
+			)}(ids: $ids) {
         edges {
           node ${mapObjectMetadataToGraphQLQuery({
-            objectMetadataItems,
-            objectMetadataItem,
-            objectPermissionsByObjectMetadataId,
-          })}
+						objectMetadataItems,
+						objectMetadataItem,
+						objectPermissionsByObjectMetadataId,
+					})}
           cursor
         }
         pageInfo {
-          ${isAggregationEnabled(objectMetadataItem) ? 'hasNextPage' : ''}
+          ${isAggregationEnabled(objectMetadataItem) ? "hasNextPage" : ""}
           startCursor
           endCursor
         }
       }
     }
   `,
-    [
-      objectMetadataItem,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    ],
-  );
+		[
+			objectMetadataItem,
+			objectMetadataItems,
+			objectPermissionsByObjectMetadataId,
+		],
+	);
 
-  return {
-    findDuplicateRecordsQuery,
-  };
+	return {
+		findDuplicateRecordsQuery,
+	};
 };

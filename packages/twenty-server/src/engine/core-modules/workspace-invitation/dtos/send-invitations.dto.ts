@@ -1,17 +1,17 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
+import { WorkspaceInvitation } from "src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto";
 
-@ObjectType('SendInvitations')
+@ObjectType("SendInvitations")
 export class SendInvitationsDTO {
-  @Field(() => Boolean, {
-    description: 'Boolean that confirms query was dispatched',
-  })
-  success: boolean;
+	@Field(() => Boolean, {
+		description: "Boolean that confirms query was dispatched",
+	})
+	success: boolean;
 
-  @Field(() => [String])
-  errors: Array<string>;
+	@Field(() => [String])
+	errors: Array<string>;
 
-  @Field(() => [WorkspaceInvitation])
-  result: Array<WorkspaceInvitation>;
+	@Field(() => [WorkspaceInvitation])
+	result: Array<WorkspaceInvitation>;
 }

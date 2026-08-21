@@ -1,10 +1,10 @@
-import { OrderByDirection } from 'twenty-shared/types';
+import { OrderByDirection } from "twenty-shared/types";
 
-import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
+import { isAscendingOrder } from "src/engine/api/utils/is-ascending-order.utils";
 
 export type EffectiveScanOrder = {
-  isAscending: boolean;
-  areNullsScannedLast: boolean;
+	isAscending: boolean;
+	areNullsScannedLast: boolean;
 };
 
 // The single definition of the scan a paginated query performs: backward
@@ -13,17 +13,17 @@ export type EffectiveScanOrder = {
 // the keyset WHERE conditions must derive from this so they cannot disagree —
 // their prior independent encodings are how issue #24333 happened.
 export const getEffectiveScanOrder = (
-  direction: OrderByDirection,
-  isForwardPagination: boolean,
+	direction: OrderByDirection,
+	isForwardPagination: boolean,
 ): EffectiveScanOrder => {
-  const areNullsPresentedLast =
-    direction === OrderByDirection.AscNullsLast ||
-    direction === OrderByDirection.DescNullsLast;
+	const areNullsPresentedLast =
+		direction === OrderByDirection.AscNullsLast ||
+		direction === OrderByDirection.DescNullsLast;
 
-  return {
-    isAscending: isAscendingOrder(direction) === isForwardPagination,
-    areNullsScannedLast: isForwardPagination
-      ? areNullsPresentedLast
-      : !areNullsPresentedLast,
-  };
+	return {
+		isAscending: isAscendingOrder(direction) === isForwardPagination,
+		areNullsScannedLast: isForwardPagination
+			? areNullsPresentedLast
+			: !areNullsPresentedLast,
+	};
 };

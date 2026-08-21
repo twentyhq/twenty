@@ -1,5 +1,5 @@
 export type FakeSlackAssistantTitle = {
-  channelId: string;
-  threadTimestamp: string;
-  title: string;
+	channelId: string;
+	threadTimestamp: string;
+	title: string;
 };

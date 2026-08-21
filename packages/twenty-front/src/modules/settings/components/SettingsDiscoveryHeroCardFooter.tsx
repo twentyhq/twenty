@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode, useContext } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { type IconComponent } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContent = styled.div`
   align-items: center;
@@ -66,42 +66,42 @@ const StyledActionContainer = styled.div`
 `;
 
 type SettingsDiscoveryHeroCardFooterProps = {
-  Icon: IconComponent;
-  title: ReactNode;
-  description?: string;
-  action?: ReactNode;
+	Icon: IconComponent;
+	title: ReactNode;
+	description?: string;
+	action?: ReactNode;
 };
 
 export const SettingsDiscoveryHeroCardFooter = ({
-  Icon,
-  title,
-  description,
-  action,
+	Icon,
+	title,
+	description,
+	action,
 }: SettingsDiscoveryHeroCardFooterProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledContent>
-      <StyledIconContainer>
-        <StyledIcon>
-          <Icon
-            size={theme.icon.size.lg}
-            color={theme.IllustrationIcon.color.gray}
-            stroke={theme.icon.stroke.md}
-          />
-        </StyledIcon>
-      </StyledIconContainer>
-      <StyledTextContainer>
-        <StyledTitle>{title}</StyledTitle>
-        {description && (
-          <StyledDescription>
-            <OverflowingTextWithTooltip text={description} />
-          </StyledDescription>
-        )}
-      </StyledTextContainer>
-      {isDefined(action) && (
-        <StyledActionContainer>{action}</StyledActionContainer>
-      )}
-    </StyledContent>
-  );
+	return (
+		<StyledContent>
+			<StyledIconContainer>
+				<StyledIcon>
+					<Icon
+						size={theme.icon.size.lg}
+						color={theme.IllustrationIcon.color.gray}
+						stroke={theme.icon.stroke.md}
+					/>
+				</StyledIcon>
+			</StyledIconContainer>
+			<StyledTextContainer>
+				<StyledTitle>{title}</StyledTitle>
+				{description && (
+					<StyledDescription>
+						<OverflowingTextWithTooltip text={description} />
+					</StyledDescription>
+				)}
+			</StyledTextContainer>
+			{isDefined(action) && (
+				<StyledActionContainer>{action}</StyledActionContainer>
+			)}
+		</StyledContent>
+	);
 };

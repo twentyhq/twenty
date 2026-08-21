@@ -1,5 +1,5 @@
 export enum ViewFilterGroupLogicalOperator {
-  AND = 'AND',
-  OR = 'OR',
-  NOT = 'NOT',
+	AND = "AND",
+	OR = "OR",
+	NOT = "NOT",
 }

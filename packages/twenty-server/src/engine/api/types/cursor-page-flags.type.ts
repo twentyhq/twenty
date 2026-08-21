@@ -1,4 +1,4 @@
 export type CursorPageFlags = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
+	hasNextPage: boolean;
+	hasPreviousPage: boolean;
 };

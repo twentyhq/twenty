@@ -1,12 +1,12 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 type BuildAttributeCacheKeyInput = {
-  name: string;
-  namespace?: string | null;
+	name: string;
+	namespace?: string | null;
 };
 
 export const buildAttributeCacheKey = ({
-  name,
-  namespace,
+	name,
+	namespace,
 }: BuildAttributeCacheKeyInput): string =>
-  isNonEmptyString(namespace) ? `${namespace}|${name}` : name;
+	isNonEmptyString(namespace) ? `${namespace}|${name}` : name;

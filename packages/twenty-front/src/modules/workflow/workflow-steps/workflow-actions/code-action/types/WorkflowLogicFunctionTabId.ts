@@ -1,6 +1,6 @@
-export type WorkflowLogicFunctionTabIdType = 'code' | 'test';
+export type WorkflowLogicFunctionTabIdType = "code" | "test";
 
 export enum WorkflowLogicFunctionTabId {
-  CODE = 'code',
-  TEST = 'test',
+	CODE = "code",
+	TEST = "test",
 }

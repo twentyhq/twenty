@@ -2,7 +2,7 @@
 // horizontal dash rows with elliptical caps, wave drift, glow halo. Ported
 // verbatim from the old hourglass pipeline.
 export const HALFTONE_ROW_SHADER = {
-  fragment: /* glsl */ `
+	fragment: /* glsl */ `
   precision highp float;
 
   uniform sampler2D tScene;

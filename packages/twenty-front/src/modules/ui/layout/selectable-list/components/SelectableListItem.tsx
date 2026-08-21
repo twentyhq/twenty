@@ -1,10 +1,10 @@
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from "react";
 
-import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { SelectableListItemHotkeyEffect } from "@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect";
+import { isSelectedItemIdComponentFamilyState } from "@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState";
+import { useAtomComponentFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue";
+import { styled } from "@linaria/react";
+import { isDefined } from "twenty-shared/utils";
 
 const StyledListItemContainer = styled.div`
   box-sizing: border-box;
@@ -15,44 +15,44 @@ const StyledListItemContainer = styled.div`
 `;
 
 export type SelectableListItemProps = {
-  itemId: string;
-  children: ReactNode;
-  onEnter?: () => void;
-  className?: string;
+	itemId: string;
+	children: ReactNode;
+	onEnter?: () => void;
+	className?: string;
 };
 
 export const SelectableListItem = ({
-  itemId,
-  children,
-  onEnter,
-  className,
+	itemId,
+	children,
+	onEnter,
+	className,
 }: SelectableListItemProps) => {
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    itemId,
-  );
+	const isSelectedItemId = useAtomComponentFamilyStateValue(
+		isSelectedItemIdComponentFamilyState,
+		itemId,
+	);
 
-  const listItemRef = useRef<HTMLDivElement>(null);
+	const listItemRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isSelectedItemId || !listItemRef.current) {
-      return;
-    }
+	useEffect(() => {
+		if (!isSelectedItemId || !listItemRef.current) {
+			return;
+		}
 
-    listItemRef.current.scrollIntoView?.({
-      behavior: 'auto',
-      block: 'nearest',
-    });
-  }, [isSelectedItemId]);
+		listItemRef.current.scrollIntoView?.({
+			behavior: "auto",
+			block: "nearest",
+		});
+	}, [isSelectedItemId]);
 
-  return (
-    <>
-      {isSelectedItemId && isDefined(onEnter) && (
-        <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
-      )}
-      <StyledListItemContainer ref={listItemRef} className={className}>
-        {children}
-      </StyledListItemContainer>
-    </>
-  );
+	return (
+		<>
+			{isSelectedItemId && isDefined(onEnter) && (
+				<SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
+			)}
+			<StyledListItemContainer ref={listItemRef} className={className}>
+				{children}
+			</StyledListItemContainer>
+		</>
+	);
 };

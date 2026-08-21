@@ -1,9 +1,9 @@
-import styles from './VisibilityHidden.module.scss';
+import styles from "./VisibilityHidden.module.scss";
 
 export const VisibilityHidden = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => {
-  return <span className={styles.root}>{children}</span>;
+	return <span className={styles.root}>{children}</span>;
 };

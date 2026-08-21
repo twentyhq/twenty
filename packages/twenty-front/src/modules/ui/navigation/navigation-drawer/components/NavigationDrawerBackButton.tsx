@@ -1,20 +1,20 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { useContext } from 'react';
-import { IconX } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { currentMobileNavigationDrawerState } from "@/navigation/states/currentMobileNavigationDrawerState";
+import { isNavigationDrawerExpandedState } from "@/ui/navigation/states/isNavigationDrawerExpanded";
+import { navigationDrawerExpandedMemorizedState } from "@/ui/navigation/states/navigationDrawerExpandedMemorizedState";
+import { navigationMemorizedUrlState } from "@/ui/navigation/states/navigationMemorizedUrlState";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
+import { useIsWorkspaceActivationStatusEqualsTo } from "@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo";
+import { WorkspaceActivationStatus } from "twenty-shared/workspace";
+import { useContext } from "react";
+import { IconX } from "twenty-ui/icon";
+import { UndecoratedLink } from "twenty-ui/navigation";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type NavigationDrawerBackButtonProps = {
-  title: string;
+	title: string;
 };
 
 const StyledIconAndButtonContainer = styled.button`
@@ -49,48 +49,48 @@ const StyledContainer = styled.div`
 `;
 
 export const NavigationDrawerBackButton = ({
-  title,
+	title,
 }: NavigationDrawerBackButtonProps) => {
-  const { theme } = useContext(ThemeContext);
-  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
+	const { theme } = useContext(ThemeContext);
+	const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
 
-  const setIsNavigationDrawerExpanded = useSetAtomState(
-    isNavigationDrawerExpandedState,
-  );
-  const setCurrentMobileNavigationDrawer = useSetAtomState(
-    currentMobileNavigationDrawerState,
-  );
-  const navigationDrawerExpandedMemorized = useAtomStateValue(
-    navigationDrawerExpandedMemorizedState,
-  );
+	const setIsNavigationDrawerExpanded = useSetAtomState(
+		isNavigationDrawerExpandedState,
+	);
+	const setCurrentMobileNavigationDrawer = useSetAtomState(
+		currentMobileNavigationDrawerState,
+	);
+	const navigationDrawerExpandedMemorized = useAtomStateValue(
+		navigationDrawerExpandedMemorizedState,
+	);
 
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
-  );
+	const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+		WorkspaceActivationStatus.SUSPENDED,
+	);
 
-  if (isWorkspaceSuspended) {
-    return <StyledContainer />;
-  }
+	if (isWorkspaceSuspended) {
+		return <StyledContainer />;
+	}
 
-  return (
-    <StyledContainer>
-      <UndecoratedLink
-        to={navigationMemorizedUrl}
-        replace
-        onClick={() => {
-          setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized);
-          setCurrentMobileNavigationDrawer('main');
-        }}
-      >
-        <StyledIconAndButtonContainer>
-          <IconX
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={theme.font.color.secondary}
-          />
-          <span>{title}</span>
-        </StyledIconAndButtonContainer>
-      </UndecoratedLink>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<UndecoratedLink
+				to={navigationMemorizedUrl}
+				replace
+				onClick={() => {
+					setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized);
+					setCurrentMobileNavigationDrawer("main");
+				}}
+			>
+				<StyledIconAndButtonContainer>
+					<IconX
+						size={theme.icon.size.md}
+						stroke={theme.icon.stroke.sm}
+						color={theme.font.color.secondary}
+					/>
+					<span>{title}</span>
+				</StyledIconAndButtonContainer>
+			</UndecoratedLink>
+		</StyledContainer>
+	);
 };

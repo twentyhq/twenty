@@ -1,18 +1,18 @@
-import { Command } from 'nest-commander';
+import { Command } from "nest-commander";
 import {
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+	DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+	STANDARD_OBJECTS,
+} from "twenty-shared/metadata";
+import { isDefined } from "twenty-shared/utils";
 
-import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ProvisionedWorkspaceCommandRunner } from "src/database/commands/command-runners/provisioned-workspace.command-runner";
+import { WorkspaceIteratorService } from "src/database/commands/command-runners/workspace-iterator.service";
+import { type RunOnWorkspaceArgs } from "src/database/commands/command-runners/workspace.command-runner";
+import { ApplicationService } from "src/engine/core-modules/application/application.service";
+import { RegisteredWorkspaceCommand } from "src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator";
+import { WorkspaceCacheService } from "src/engine/workspace-cache/services/workspace-cache.service";
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from "src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant";
+import { WorkspaceMigrationValidateBuildAndRunService } from "src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service";
 
 // The default relation fields every object gets point to one of the default
 // relation objects (note/task/attachment/timeline). On standard objects their
@@ -21,146 +21,146 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // IconIconTimelineEvent typo). Custom objects are left untouched on purpose:
 // their relation fields are user-editable.
 const DEFAULT_RELATION_TARGET_UNIVERSAL_IDENTIFIERS = new Set<string>(
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
-    (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
-  ),
+	DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
+		(objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
+	),
 );
 
-@RegisteredWorkspaceCommand('2.14.0', 1799000040000)
+@RegisteredWorkspaceCommand("2.14.0", 1799000040000)
 @Command({
-  name: 'upgrade:2-14:fix-standard-relation-field-labels-icons',
-  description:
-    "Re-sync standard objects' default relation field labels/icons (note/task/attachment/timeline) against the source of truth, healing drift such as the Company timelineActivities IconIconTimelineEvent typo.",
+	name: "upgrade:2-14:fix-standard-relation-field-labels-icons",
+	description:
+		"Re-sync standard objects' default relation field labels/icons (note/task/attachment/timeline) against the source of truth, healing drift such as the Company timelineActivities IconIconTimelineEvent typo.",
 })
 export class FixStandardRelationFieldLabelsIconsCommand extends ProvisionedWorkspaceCommandRunner {
-  constructor(
-    protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {
-    super(workspaceIteratorService);
-  }
+	constructor(
+		protected readonly workspaceIteratorService: WorkspaceIteratorService,
+		private readonly applicationService: ApplicationService,
+		private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+		private readonly workspaceCacheService: WorkspaceCacheService,
+	) {
+		super(workspaceIteratorService);
+	}
 
-  override async runOnWorkspace({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
+	override async runOnWorkspace({
+		workspaceId,
+		options,
+	}: RunOnWorkspaceArgs): Promise<void> {
+		const isDryRun = options.dryRun ?? false;
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
+		const { twentyStandardFlatApplication } =
+			await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+				{ workspaceId },
+			);
 
-    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+		const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+			await this.workspaceCacheService.getOrRecompute(workspaceId, [
+				"flatFieldMetadataMaps",
+			]);
 
-    const now = new Date().toISOString();
+		const now = new Date().toISOString();
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now,
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
+		const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+			computeTwentyStandardApplicationAllFlatEntityMaps({
+				now,
+				workspaceId,
+				twentyStandardApplicationId: twentyStandardFlatApplication.id,
+			});
 
-    const fieldsToUpdate = Object.values(
-      standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (standardField) =>
-          isDefined(
-            standardField.relationTargetObjectMetadataUniversalIdentifier,
-          ) &&
-          DEFAULT_RELATION_TARGET_UNIVERSAL_IDENTIFIERS.has(
-            standardField.relationTargetObjectMetadataUniversalIdentifier,
-          ),
-      )
-      .map((standardField) => {
-        const existingField =
-          existingFlatFieldMetadataMaps.byUniversalIdentifier[
-            standardField.universalIdentifier
-          ];
+		const fieldsToUpdate = Object.values(
+			standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+		)
+			.filter(isDefined)
+			.filter(
+				(standardField) =>
+					isDefined(
+						standardField.relationTargetObjectMetadataUniversalIdentifier,
+					) &&
+					DEFAULT_RELATION_TARGET_UNIVERSAL_IDENTIFIERS.has(
+						standardField.relationTargetObjectMetadataUniversalIdentifier,
+					),
+			)
+			.map((standardField) => {
+				const existingField =
+					existingFlatFieldMetadataMaps.byUniversalIdentifier[
+						standardField.universalIdentifier
+					];
 
-        if (
-          !isDefined(existingField) ||
-          (existingField.label === standardField.label &&
-            existingField.icon === standardField.icon)
-        ) {
-          return undefined;
-        }
+				if (
+					!isDefined(existingField) ||
+					(existingField.label === standardField.label &&
+						existingField.icon === standardField.icon)
+				) {
+					return undefined;
+				}
 
-        return {
-          ...existingField,
-          label: standardField.label,
-          icon: standardField.icon,
-          updatedAt: now,
-        };
-      })
-      .filter(isDefined);
+				return {
+					...existingField,
+					label: standardField.label,
+					icon: standardField.icon,
+					updatedAt: now,
+				};
+			})
+			.filter(isDefined);
 
-    if (fieldsToUpdate.length === 0) {
-      this.logger.log(
-        `Standard relation field labels/icons already up to date for workspace ${workspaceId}`,
-      );
+		if (fieldsToUpdate.length === 0) {
+			this.logger.log(
+				`Standard relation field labels/icons already up to date for workspace ${workspaceId}`,
+			);
 
-      return;
-    }
+			return;
+		}
 
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${fieldsToUpdate.length} standard relation field(s) to heal`,
-    );
+		this.logger.log(
+			`${isDryRun ? "[DRY RUN] " : ""}Workspace ${workspaceId}: ${fieldsToUpdate.length} standard relation field(s) to heal`,
+		);
 
-    if (isDryRun) {
-      return;
-    }
+		if (isDryRun) {
+			return;
+		}
 
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: fieldsToUpdate,
-            },
-          },
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          // These default relation fields are system-owned; mutating their
-          // label/icon is only permitted under a system build.
-          isSystemBuild: true,
-        },
-      );
+		const result =
+			await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+				{
+					allFlatEntityOperationByMetadataName: {
+						fieldMetadata: {
+							flatEntityToCreate: [],
+							flatEntityToDelete: [],
+							flatEntityToUpdate: fieldsToUpdate,
+						},
+					},
+					workspaceId,
+					applicationUniversalIdentifier:
+						twentyStandardFlatApplication.universalIdentifier,
+					// These default relation fields are system-owned; mutating their
+					// label/icon is only permitted under a system build.
+					isSystemBuild: true,
+				},
+			);
 
-    if (result.status === 'fail') {
-      const failureDetails = Object.values(result.report)
-        .flat()
-        .map((failedValidation) => {
-          const errorMessages = failedValidation.errors
-            .map((error) => `${error.code}: ${error.message}`)
-            .join('; ');
+		if (result.status === "fail") {
+			const failureDetails = Object.values(result.report)
+				.flat()
+				.map((failedValidation) => {
+					const errorMessages = failedValidation.errors
+						.map((error) => `${error.code}: ${error.message}`)
+						.join("; ");
 
-          return `[${failedValidation.metadataName}] ${failedValidation.flatEntityMinimalInformation.universalIdentifier ?? failedValidation.flatEntityMinimalInformation.id ?? 'unknown'} -> ${errorMessages}`;
-        })
-        .join('\n');
+					return `[${failedValidation.metadataName}] ${failedValidation.flatEntityMinimalInformation.universalIdentifier ?? failedValidation.flatEntityMinimalInformation.id ?? "unknown"} -> ${errorMessages}`;
+				})
+				.join("\n");
 
-      this.logger.error(
-        `Migration build failed for workspace ${workspaceId} while healing standard relation field labels/icons:\n${failureDetails}`,
-      );
+			this.logger.error(
+				`Migration build failed for workspace ${workspaceId} while healing standard relation field labels/icons:\n${failureDetails}`,
+			);
 
-      throw new Error(
-        `Migration failed for workspace ${workspaceId} while healing standard relation field labels/icons:\n${failureDetails}`,
-      );
-    }
+			throw new Error(
+				`Migration failed for workspace ${workspaceId} while healing standard relation field labels/icons:\n${failureDetails}`,
+			);
+		}
 
-    this.logger.log(
-      `Healed ${fieldsToUpdate.length} standard relation field(s) for workspace ${workspaceId}`,
-    );
-  }
+		this.logger.log(
+			`Healed ${fieldsToUpdate.length} standard relation field(s) for workspace ${workspaceId}`,
+		);
+	}
 }

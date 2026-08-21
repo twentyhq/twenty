@@ -1,3 +1,3 @@
-import { type RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
+import { type RecordGqlFieldsDeprecated } from "./RecordGqlFieldsDeprecated";
 
 export type RecordGqlOperationGqlRecordFields = RecordGqlFieldsDeprecated;

@@ -1,22 +1,22 @@
-import { useRecordFilterField } from '@/object-record/advanced-filter/hooks/useRecordFilterField';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { useRecordFilterField } from "@/object-record/advanced-filter/hooks/useRecordFilterField";
+import { SelectControl } from "@/ui/input/components/SelectControl";
 
 type AdvancedFilterFieldSelectDropdownButtonClickableSelectProps = {
-  recordFilterId: string;
+	recordFilterId: string;
 };
 
 export const AdvancedFilterFieldSelectDropdownButtonClickableSelect = ({
-  recordFilterId,
+	recordFilterId,
 }: AdvancedFilterFieldSelectDropdownButtonClickableSelectProps) => {
-  const { label, icon } = useRecordFilterField(recordFilterId);
+	const { label, icon } = useRecordFilterField(recordFilterId);
 
-  return (
-    <SelectControl
-      selectedOption={{
-        label,
-        value: null,
-        Icon: icon,
-      }}
-    />
-  );
+	return (
+		<SelectControl
+			selectedOption={{
+				label,
+				value: null,
+				Icon: icon,
+			}}
+		/>
+	);
 };

@@ -1,1 +1,1 @@
-export type FirefliesSyncableField = 'transcript' | 'summary';
+export type FirefliesSyncableField = "transcript" | "summary";

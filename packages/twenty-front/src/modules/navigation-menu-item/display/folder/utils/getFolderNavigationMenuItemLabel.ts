@@ -1,7 +1,7 @@
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from "~/generated-metadata/graphql";
 
 export const getFolderNavigationMenuItemLabel = (
-  item: Pick<NavigationMenuItem, 'name'>,
+	item: Pick<NavigationMenuItem, "name">,
 ): string => {
-  return item.name ?? 'Folder';
+	return item.name ?? "Folder";
 };

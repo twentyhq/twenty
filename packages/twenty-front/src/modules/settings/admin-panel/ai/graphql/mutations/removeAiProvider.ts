@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const REMOVE_AI_PROVIDER = gql`
   mutation RemoveAiProvider($providerName: String!) {

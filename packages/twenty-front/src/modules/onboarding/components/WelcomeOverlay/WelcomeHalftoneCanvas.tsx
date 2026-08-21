@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { useCallback, useRef, useState } from 'react';
+import { styled } from "@linaria/react";
+import { useCallback, useRef, useState } from "react";
 
-import { WelcomeHalftoneCanvasEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvasEffect';
+import { WelcomeHalftoneCanvasEffect } from "@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvasEffect";
 
-import './welcomeHalftone.css';
+import "./welcomeHalftone.css";
 
 const StyledCanvas = styled.canvas`
   display: block;
@@ -12,29 +12,29 @@ const StyledCanvas = styled.canvas`
 `;
 
 type WelcomeHalftoneCanvasProps = {
-  isLeaving: boolean;
+	isLeaving: boolean;
 };
 
 export const WelcomeHalftoneCanvas = ({
-  isLeaving,
+	isLeaving,
 }: WelcomeHalftoneCanvasProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [hasWorkerFailed, setHasWorkerFailed] = useState(false);
-  const markWorkerAsFailed = useCallback(() => setHasWorkerFailed(true), []);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [hasWorkerFailed, setHasWorkerFailed] = useState(false);
+	const markWorkerAsFailed = useCallback(() => setHasWorkerFailed(true), []);
 
-  return (
-    <>
-      <StyledCanvas
-        key={hasWorkerFailed ? 'main-thread' : 'worker'}
-        ref={canvasRef}
-        aria-hidden="true"
-      />
-      <WelcomeHalftoneCanvasEffect
-        canvasRef={canvasRef}
-        isLeaving={isLeaving}
-        hasWorkerFailed={hasWorkerFailed}
-        onWorkerFailed={markWorkerAsFailed}
-      />
-    </>
-  );
+	return (
+		<>
+			<StyledCanvas
+				key={hasWorkerFailed ? "main-thread" : "worker"}
+				ref={canvasRef}
+				aria-hidden="true"
+			/>
+			<WelcomeHalftoneCanvasEffect
+				canvasRef={canvasRef}
+				isLeaving={isLeaving}
+				hasWorkerFailed={hasWorkerFailed}
+				onWorkerFailed={markWorkerAsFailed}
+			/>
+		</>
+	);
 };

@@ -1,147 +1,147 @@
-import { ApiClient } from '@/cli/utilities/api/api-client';
-import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import { ApplicationApi } from '@/cli/utilities/api/application-api';
-import { FileApi } from '@/cli/utilities/api/file-api';
-import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
-import { SchemaApi } from '@/cli/utilities/api/schema-api';
-import { type Manifest } from 'twenty-shared/application';
+import { ApiClient } from "@/cli/utilities/api/api-client";
+import { type ApiResponse } from "@/cli/utilities/api/api-response-type";
+import { ApplicationApi } from "@/cli/utilities/api/application-api";
+import { FileApi } from "@/cli/utilities/api/file-api";
+import { LogicFunctionApi } from "@/cli/utilities/api/logic-function-api";
+import { SchemaApi } from "@/cli/utilities/api/schema-api";
+import { type Manifest } from "twenty-shared/application";
 import {
-  type MetadataValidationErrorResponse,
-  type SyncAction,
-} from 'twenty-shared/metadata';
+	type MetadataValidationErrorResponse,
+	type SyncAction,
+} from "twenty-shared/metadata";
 
 type ApiServiceOptions = {
-  disableInterceptors?: boolean;
-  serverUrl?: string;
-  token?: string;
-  skipAuth?: boolean;
+	disableInterceptors?: boolean;
+	serverUrl?: string;
+	token?: string;
+	skipAuth?: boolean;
 };
 
 export class ApiService {
-  private apiClient: ApiClient;
-  private applicationApi: ApplicationApi;
-  private schemaApi: SchemaApi;
-  private logicFunctionApi: LogicFunctionApi;
-  private fileApi: FileApi;
+	private apiClient: ApiClient;
+	private applicationApi: ApplicationApi;
+	private schemaApi: SchemaApi;
+	private logicFunctionApi: LogicFunctionApi;
+	private fileApi: FileApi;
 
-  constructor(options?: ApiServiceOptions) {
-    this.apiClient = new ApiClient(options);
-    this.applicationApi = new ApplicationApi(this.apiClient.client);
-    this.schemaApi = new SchemaApi(this.apiClient.client);
-    this.logicFunctionApi = new LogicFunctionApi(this.apiClient);
-    this.fileApi = new FileApi(this.apiClient.client);
-  }
+	constructor(options?: ApiServiceOptions) {
+		this.apiClient = new ApiClient(options);
+		this.applicationApi = new ApplicationApi(this.apiClient.client);
+		this.schemaApi = new SchemaApi(this.apiClient.client);
+		this.logicFunctionApi = new LogicFunctionApi(this.apiClient);
+		this.fileApi = new FileApi(this.apiClient.client);
+	}
 
-  validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
-    return this.apiClient.validateAuth();
-  }
+	validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
+		return this.apiClient.validateAuth();
+	}
 
-  getWorkspaceFrontendUrl(): Promise<string | null> {
-    return this.apiClient.getWorkspaceFrontendUrl();
-  }
+	getWorkspaceFrontendUrl(): Promise<string | null> {
+		return this.apiClient.getWorkspaceFrontendUrl();
+	}
 
-  refreshToken(): Promise<string | null> {
-    return this.apiClient.refreshToken();
-  }
+	refreshToken(): Promise<string | null> {
+		return this.apiClient.refreshToken();
+	}
 
-  findApplicationRegistrationByUniversalIdentifier(
-    ...args: Parameters<
-      ApplicationApi['findApplicationRegistrationByUniversalIdentifier']
-    >
-  ) {
-    return this.applicationApi.findApplicationRegistrationByUniversalIdentifier(
-      ...args,
-    );
-  }
+	findApplicationRegistrationByUniversalIdentifier(
+		...args: Parameters<
+			ApplicationApi["findApplicationRegistrationByUniversalIdentifier"]
+		>
+	) {
+		return this.applicationApi.findApplicationRegistrationByUniversalIdentifier(
+			...args,
+		);
+	}
 
-  createApplicationRegistration(
-    ...args: Parameters<ApplicationApi['createApplicationRegistration']>
-  ) {
-    return this.applicationApi.createApplicationRegistration(...args);
-  }
+	createApplicationRegistration(
+		...args: Parameters<ApplicationApi["createApplicationRegistration"]>
+	) {
+		return this.applicationApi.createApplicationRegistration(...args);
+	}
 
-  rotateApplicationRegistrationClientSecret(
-    ...args: Parameters<
-      ApplicationApi['rotateApplicationRegistrationClientSecret']
-    >
-  ) {
-    return this.applicationApi.rotateApplicationRegistrationClientSecret(
-      ...args,
-    );
-  }
+	rotateApplicationRegistrationClientSecret(
+		...args: Parameters<
+			ApplicationApi["rotateApplicationRegistrationClientSecret"]
+		>
+	) {
+		return this.applicationApi.rotateApplicationRegistrationClientSecret(
+			...args,
+		);
+	}
 
-  createDevelopmentApplication(
-    ...args: Parameters<ApplicationApi['createDevelopmentApplication']>
-  ) {
-    return this.applicationApi.createDevelopmentApplication(...args);
-  }
+	createDevelopmentApplication(
+		...args: Parameters<ApplicationApi["createDevelopmentApplication"]>
+	) {
+		return this.applicationApi.createDevelopmentApplication(...args);
+	}
 
-  generateApplicationToken(
-    ...args: Parameters<ApplicationApi['generateApplicationToken']>
-  ) {
-    return this.applicationApi.generateApplicationToken(...args);
-  }
+	generateApplicationToken(
+		...args: Parameters<ApplicationApi["generateApplicationToken"]>
+	) {
+		return this.applicationApi.generateApplicationToken(...args);
+	}
 
-  syncApplication(
-    manifest: Manifest,
-    options?: { dryRun?: boolean },
-  ): Promise<
-    ApiResponse<
-      {
-        applicationUniversalIdentifier: string;
-        actions: SyncAction[];
-      },
-      MetadataValidationErrorResponse
-    >
-  > {
-    return this.applicationApi.syncApplication(manifest, options);
-  }
+	syncApplication(
+		manifest: Manifest,
+		options?: { dryRun?: boolean },
+	): Promise<
+		ApiResponse<
+			{
+				applicationUniversalIdentifier: string;
+				actions: SyncAction[];
+			},
+			MetadataValidationErrorResponse
+		>
+	> {
+		return this.applicationApi.syncApplication(manifest, options);
+	}
 
-  uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {
-    return this.applicationApi.uninstallApplication(universalIdentifier);
-  }
+	uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {
+		return this.applicationApi.uninstallApplication(universalIdentifier);
+	}
 
-  syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
-    return this.applicationApi.syncMarketplaceCatalog();
-  }
+	syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
+		return this.applicationApi.syncMarketplaceCatalog();
+	}
 
-  getSchema(options?: {
-    appAccessToken?: string;
-  }): Promise<ApiResponse<string>> {
-    return this.schemaApi.getSchema(options);
-  }
+	getSchema(options?: {
+		appAccessToken?: string;
+	}): Promise<ApiResponse<string>> {
+		return this.schemaApi.getSchema(options);
+	}
 
-  getMetadataSchema(options?: {
-    appAccessToken?: string;
-  }): Promise<ApiResponse<string>> {
-    return this.schemaApi.getMetadataSchema(options);
-  }
+	getMetadataSchema(options?: {
+		appAccessToken?: string;
+	}): Promise<ApiResponse<string>> {
+		return this.schemaApi.getMetadataSchema(options);
+	}
 
-  findLogicFunctions(
-    ...args: Parameters<LogicFunctionApi['findLogicFunctions']>
-  ) {
-    return this.logicFunctionApi.findLogicFunctions(...args);
-  }
+	findLogicFunctions(
+		...args: Parameters<LogicFunctionApi["findLogicFunctions"]>
+	) {
+		return this.logicFunctionApi.findLogicFunctions(...args);
+	}
 
-  executeLogicFunction(
-    ...args: Parameters<LogicFunctionApi['executeLogicFunction']>
-  ) {
-    return this.logicFunctionApi.executeLogicFunction(...args);
-  }
+	executeLogicFunction(
+		...args: Parameters<LogicFunctionApi["executeLogicFunction"]>
+	) {
+		return this.logicFunctionApi.executeLogicFunction(...args);
+	}
 
-  subscribeToLogs(...args: Parameters<LogicFunctionApi['subscribeToLogs']>) {
-    return this.logicFunctionApi.subscribeToLogs(...args);
-  }
+	subscribeToLogs(...args: Parameters<LogicFunctionApi["subscribeToLogs"]>) {
+		return this.logicFunctionApi.subscribeToLogs(...args);
+	}
 
-  uploadAppTarball(...args: Parameters<FileApi['uploadAppTarball']>) {
-    return this.fileApi.uploadAppTarball(...args);
-  }
+	uploadAppTarball(...args: Parameters<FileApi["uploadAppTarball"]>) {
+		return this.fileApi.uploadAppTarball(...args);
+	}
 
-  installTarballApp(...args: Parameters<FileApi['installTarballApp']>) {
-    return this.fileApi.installTarballApp(...args);
-  }
+	installTarballApp(...args: Parameters<FileApi["installTarballApp"]>) {
+		return this.fileApi.installTarballApp(...args);
+	}
 
-  uploadFile(...args: Parameters<FileApi['uploadFile']>) {
-    return this.fileApi.uploadFile(...args);
-  }
+	uploadFile(...args: Parameters<FileApi["uploadFile"]>) {
+		return this.fileApi.uploadFile(...args);
+	}
 }

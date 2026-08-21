@@ -1,85 +1,85 @@
-import { useCallback } from 'react';
-import { v4 } from 'uuid';
+import { useCallback } from "react";
+import { v4 } from "uuid";
 
-import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { t } from '@lingui/core/macro';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { useColumnDefinitionsFromObjectMetadata } from "@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata";
+import { useObjectMetadataItem } from "@/object-metadata/hooks/useObjectMetadataItem";
+import { useUpsertRecordFilter } from "@/object-record/record-filter/hooks/useUpsertRecordFilter";
+import { type RecordFilter } from "@/object-record/record-filter/types/RecordFilter";
+import { isSoftDeleteFilterActiveComponentState } from "@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState";
+import { useAtomComponentStateCallbackState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState";
+import { t } from "@lingui/core/macro";
+import { getFilterTypeFromFieldType, isDefined } from "twenty-shared/utils";
 
-import { useStore } from 'jotai';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { useStore } from "jotai";
+import { ViewFilterOperand } from "twenty-shared/types";
 
 type UseHandleToggleTrashColumnFilterProps = {
-  objectNameSingular: string;
-  viewBarId: string;
-  recordFiltersInstanceId?: string;
+	objectNameSingular: string;
+	viewBarId: string;
+	recordFiltersInstanceId?: string;
 };
 
 export const useHandleToggleTrashColumnFilter = ({
-  viewBarId,
-  objectNameSingular,
-  recordFiltersInstanceId,
+	viewBarId,
+	objectNameSingular,
+	recordFiltersInstanceId,
 }: UseHandleToggleTrashColumnFilterProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+	const { objectMetadataItem } = useObjectMetadataItem({
+		objectNameSingular,
+	});
 
-  const { columnDefinitions } =
-    useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
+	const { columnDefinitions } =
+		useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
-  const isSoftDeleteFilterActiveComponentAtom =
-    useAtomComponentStateCallbackState(
-      isSoftDeleteFilterActiveComponentState,
-      viewBarId,
-    );
+	const isSoftDeleteFilterActiveComponentAtom =
+		useAtomComponentStateCallbackState(
+			isSoftDeleteFilterActiveComponentState,
+			viewBarId,
+		);
 
-  const { upsertRecordFilter } = useUpsertRecordFilter(recordFiltersInstanceId);
+	const { upsertRecordFilter } = useUpsertRecordFilter(recordFiltersInstanceId);
 
-  const handleToggleTrashColumnFilter = useCallback(() => {
-    const trashFieldMetadata = objectMetadataItem.fields.find(
-      (field: { name: string }) => field.name === 'deletedAt',
-    );
+	const handleToggleTrashColumnFilter = useCallback(() => {
+		const trashFieldMetadata = objectMetadataItem.fields.find(
+			(field: { name: string }) => field.name === "deletedAt",
+		);
 
-    if (!isDefined(trashFieldMetadata)) return;
+		if (!isDefined(trashFieldMetadata)) return;
 
-    const correspondingColumnDefinition = columnDefinitions.find(
-      (columnDefinition) =>
-        columnDefinition.fieldMetadataId === trashFieldMetadata.id,
-    );
+		const correspondingColumnDefinition = columnDefinitions.find(
+			(columnDefinition) =>
+				columnDefinition.fieldMetadataId === trashFieldMetadata.id,
+		);
 
-    if (!isDefined(correspondingColumnDefinition)) return;
+		if (!isDefined(correspondingColumnDefinition)) return;
 
-    const filterType = getFilterTypeFromFieldType(
-      correspondingColumnDefinition?.type,
-    );
+		const filterType = getFilterTypeFromFieldType(
+			correspondingColumnDefinition?.type,
+		);
 
-    const newFilter: RecordFilter = {
-      id: v4(),
-      fieldMetadataId: trashFieldMetadata.id,
-      operand: ViewFilterOperand.IS_NOT_EMPTY,
-      displayValue: '',
-      type: filterType,
-      label: t`Deleted`,
-      value: '',
-    };
+		const newFilter: RecordFilter = {
+			id: v4(),
+			fieldMetadataId: trashFieldMetadata.id,
+			operand: ViewFilterOperand.IS_NOT_EMPTY,
+			displayValue: "",
+			type: filterType,
+			label: t`Deleted`,
+			value: "",
+		};
 
-    upsertRecordFilter(newFilter);
-  }, [columnDefinitions, objectMetadataItem, upsertRecordFilter]);
+		upsertRecordFilter(newFilter);
+	}, [columnDefinitions, objectMetadataItem, upsertRecordFilter]);
 
-  const store = useStore();
+	const store = useStore();
 
-  const toggleSoftDeleteFilterState = useCallback(
-    (currentState: boolean) => {
-      store.set(isSoftDeleteFilterActiveComponentAtom, currentState);
-    },
-    [isSoftDeleteFilterActiveComponentAtom, store],
-  );
-  return {
-    handleToggleTrashColumnFilter,
-    toggleSoftDeleteFilterState,
-  };
+	const toggleSoftDeleteFilterState = useCallback(
+		(currentState: boolean) => {
+			store.set(isSoftDeleteFilterActiveComponentAtom, currentState);
+		},
+		[isSoftDeleteFilterActiveComponentAtom, store],
+	);
+	return {
+		handleToggleTrashColumnFilter,
+		toggleSoftDeleteFilterState,
+	};
 };

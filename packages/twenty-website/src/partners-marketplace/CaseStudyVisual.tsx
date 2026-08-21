@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { color, EASING, radius } from '@/tokens';
+import { color, EASING, radius } from "@/tokens";
 
-import { CASE_STUDY_CARD_ASPECT_RATIO } from './case-study-card-aspect-ratio';
-import { CASE_STUDY_MODAL_IMAGE_HEIGHT } from './case-study-modal-image-height';
+import { CASE_STUDY_CARD_ASPECT_RATIO } from "./case-study-card-aspect-ratio";
+import { CASE_STUDY_MODAL_IMAGE_HEIGHT } from "./case-study-modal-image-height";
 
 const VisualFrame = styled.div`
-  background-color: ${color('black-5')};
+  background-color: ${color("black-5")};
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -24,7 +24,7 @@ const VisualFrame = styled.div`
     background: linear-gradient(
       180deg,
       transparent 55%,
-      ${color('black-10')} 100%
+      ${color("black-10")} 100%
     );
     content: '';
     inset: 0;
@@ -43,17 +43,17 @@ const VisualFrame = styled.div`
 `;
 
 export function CaseStudyVisual({
-  alt,
-  imageUrl,
-  size = 'card',
+	alt,
+	imageUrl,
+	size = "card",
 }: {
-  alt?: string;
-  imageUrl: string;
-  size?: 'card' | 'modal';
+	alt?: string;
+	imageUrl: string;
+	size?: "card" | "modal";
 }) {
-  return (
-    <VisualFrame data-size={size}>
-      <img alt={alt ?? ''} loading="lazy" src={imageUrl} />
-    </VisualFrame>
-  );
+	return (
+		<VisualFrame data-size={size}>
+			<img alt={alt ?? ""} loading="lazy" src={imageUrl} />
+		</VisualFrame>
+	);
 }

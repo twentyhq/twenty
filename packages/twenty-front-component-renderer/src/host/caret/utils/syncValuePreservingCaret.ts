@@ -1,24 +1,24 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
 
 export const syncValuePreservingCaret = (
-  element: CaretPreservingElement,
-  nextValue: string,
+	element: CaretPreservingElement,
+	nextValue: string,
 ): void => {
-  if (element.value === nextValue) {
-    return;
-  }
+	if (element.value === nextValue) {
+		return;
+	}
 
-  const isFocused = document.activeElement === element;
-  const start = isFocused ? element.selectionStart : null;
-  const end = isFocused ? element.selectionEnd : null;
+	const isFocused = document.activeElement === element;
+	const start = isFocused ? element.selectionStart : null;
+	const end = isFocused ? element.selectionEnd : null;
 
-  element.value = nextValue;
+	element.value = nextValue;
 
-  if (isFocused && isDefined(start) && isDefined(end)) {
-    try {
-      element.setSelectionRange(start, end);
-    } catch {}
-  }
+	if (isFocused && isDefined(start) && isDefined(end)) {
+		try {
+			element.setSelectionRange(start, end);
+		} catch {}
+	}
 };

@@ -1,1 +1,1 @@
-export { PricingSalesfarce } from './PricingSalesfarce';
+export { PricingSalesfarce } from "./PricingSalesfarce";

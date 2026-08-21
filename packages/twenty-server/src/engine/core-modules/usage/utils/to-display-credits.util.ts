@@ -3,4 +3,4 @@
 export const INTERNAL_CREDITS_PER_DISPLAY_CREDIT = 1_000_000;
 
 export const toDisplayCredits = (internalCredits: number): number =>
-  internalCredits / INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
+	internalCredits / INTERNAL_CREDITS_PER_DISPLAY_CREDIT;

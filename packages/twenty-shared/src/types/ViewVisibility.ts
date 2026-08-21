@@ -1,4 +1,4 @@
 export enum ViewVisibility {
-  WORKSPACE = 'WORKSPACE',
-  UNLISTED = 'UNLISTED',
+	WORKSPACE = "WORKSPACE",
+	UNLISTED = "UNLISTED",
 }

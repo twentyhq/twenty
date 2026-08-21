@@ -1,61 +1,61 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { IconBrandGoogle } from '@ui/icon';
-import { ComponentDecorator } from '@ui/testing';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import { MainButton } from '@ui/input/MainButton/MainButton';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { IconBrandGoogle } from "@ui/icon";
+import { ComponentDecorator } from "@ui/testing";
+import { expect, fn, userEvent, within } from "storybook/test";
+import { MainButton } from "@ui/input/MainButton/MainButton";
 
 const clickJestFn = fn();
 
 const meta: Meta<typeof MainButton> = {
-  title: 'UI/Input/Button/MainButton',
-  component: MainButton,
-  decorators: [ComponentDecorator],
-  args: { title: 'A primary Button', onClick: clickJestFn },
+	title: "UI/Input/Button/MainButton",
+	component: MainButton,
+	decorators: [ComponentDecorator],
+	args: { title: "A primary Button", onClick: clickJestFn },
 };
 
 export default meta;
 type Story = StoryObj<typeof MainButton>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    expect(clickJestFn).toHaveBeenCalledTimes(0);
-    const button = canvas.getByRole('button');
-    await userEvent.click(button);
+		expect(clickJestFn).toHaveBeenCalledTimes(0);
+		const button = canvas.getByRole("button");
+		await userEvent.click(button);
 
-    expect(clickJestFn).toHaveBeenCalledTimes(1);
-  },
+		expect(clickJestFn).toHaveBeenCalledTimes(1);
+	},
 };
 
 export const WithIcon: Story = {
-  args: { Icon: IconBrandGoogle },
+	args: { Icon: IconBrandGoogle },
 };
 
 export const DisabledWithIcon: Story = {
-  args: { ...WithIcon.args, disabled: true },
+	args: { ...WithIcon.args, disabled: true },
 };
 
 export const FullWidth: Story = {
-  args: { fullWidth: true },
+	args: { fullWidth: true },
 };
 
 export const Width: Story = {
-  args: { width: 200 },
+	args: { width: 200 },
 };
 
 export const Secondary: Story = {
-  args: { title: 'A secondary Button', variant: 'secondary' },
+	args: { title: "A secondary Button", variant: "secondary" },
 };
 
 export const SecondaryWithIcon: Story = {
-  args: { ...Secondary.args, ...WithIcon.args },
+	args: { ...Secondary.args, ...WithIcon.args },
 };
 
 export const SecondaryDisabledWithIcon: Story = {
-  args: { ...SecondaryWithIcon.args, disabled: true },
+	args: { ...SecondaryWithIcon.args, disabled: true },
 };
 
 export const SecondaryFullWidth: Story = {
-  args: { ...Secondary.args, ...FullWidth.args },
+	args: { ...Secondary.args, ...FullWidth.args },
 };

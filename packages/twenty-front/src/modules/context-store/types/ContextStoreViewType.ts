@@ -1,5 +1,5 @@
 export enum ContextStoreViewType {
-  Table = 'table',
-  Kanban = 'kanban',
-  Calendar = 'calendar',
+	Table = "table",
+	Kanban = "kanban",
+	Calendar = "calendar",
 }

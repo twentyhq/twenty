@@ -1,65 +1,65 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { useIsSettingsPage } from "@/navigation/hooks/useIsSettingsPage";
+import { useIsNavigationDrawerContentExpanded } from "@/navigation/hooks/useIsNavigationDrawerContentExpanded";
+import { styled } from "@linaria/react";
+import { type ReactNode, useContext } from "react";
 import {
-  type AnimationControls,
-  motion,
-  type TargetAndTransition,
-} from 'framer-motion';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+	type AnimationControls,
+	motion,
+	type TargetAndTransition,
+} from "framer-motion";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const COLLAPSED_GROUP_WIDTH = 24;
 
 const StyledAnimationGroupContainerBase = styled.div<{
-  isCollapsedGroup: boolean;
+	isCollapsedGroup: boolean;
 }>`
   background-color: ${({ isCollapsedGroup }) =>
-    isCollapsedGroup
-      ? themeCssVariables.background.transparent.lighter
-      : 'transparent'};
+		isCollapsedGroup
+			? themeCssVariables.background.transparent.lighter
+			: "transparent"};
   border: ${({ isCollapsedGroup }) =>
-    isCollapsedGroup
-      ? `1px solid ${themeCssVariables.background.transparent.lighter}`
-      : 'none'};
+		isCollapsedGroup
+			? `1px solid ${themeCssVariables.background.transparent.lighter}`
+			: "none"};
   border-radius: ${({ isCollapsedGroup }) =>
-    isCollapsedGroup ? themeCssVariables.border.radius.md : '0'};
+		isCollapsedGroup ? themeCssVariables.border.radius.md : "0"};
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledAnimationGroupContainer = motion.create(
-  StyledAnimationGroupContainerBase,
+	StyledAnimationGroupContainerBase,
 );
 
 type NavigationDrawerItemsCollapsableContainerProps = {
-  isGroup?: boolean;
-  children: ReactNode;
+	isGroup?: boolean;
+	children: ReactNode;
 };
 
 export const NavigationDrawerItemsCollapsableContainer = ({
-  isGroup = false,
-  children,
+	isGroup = false,
+	children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
-  const { theme } = useContext(ThemeContext);
-  const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
+	const { theme } = useContext(ThemeContext);
+	const isSettingsPage = useIsSettingsPage();
+	const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
+	const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
 
-  const animate: AnimationControls | TargetAndTransition = isExpanded
-    ? { width: 'auto' }
-    : { width: COLLAPSED_GROUP_WIDTH };
+	const animate: AnimationControls | TargetAndTransition = isExpanded
+		? { width: "auto" }
+		: { width: COLLAPSED_GROUP_WIDTH };
 
-  return (
-    <StyledAnimationGroupContainer
-      isCollapsedGroup={isGroup && !isExpanded}
-      initial={false}
-      animate={animate}
-      transition={{
-        duration: theme.animation.duration.normal,
-      }}
-    >
-      {children}
-    </StyledAnimationGroupContainer>
-  );
+	return (
+		<StyledAnimationGroupContainer
+			isCollapsedGroup={isGroup && !isExpanded}
+			initial={false}
+			animate={animate}
+			transition={{
+				duration: theme.animation.duration.normal,
+			}}
+		>
+			{children}
+		</StyledAnimationGroupContainer>
+	);
 };

@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconUserCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { isDefined } from "twenty-shared/utils";
+import { IconUserCircle } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
+import { FormFieldPlaceholder } from "@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder";
+import { VariableChipStandalone } from "@/object-record/record-field/ui/form-types/components/VariableChipStandalone";
 
 const StyledTriggerLabel = styled.div`
   align-items: center;
@@ -24,44 +24,44 @@ const StyledPlaceholderContainer = styled.div`
 `;
 
 type FormWorkspaceMemberFilterValueInputTriggerProps = {
-  isVariableValue: boolean;
-  defaultValue?: string | null;
-  isCurrentWorkspaceMemberSelected: boolean;
-  triggerDisplayText: string | null;
-  readonly?: boolean;
-  onUnlinkVariable: () => void;
+	isVariableValue: boolean;
+	defaultValue?: string | null;
+	isCurrentWorkspaceMemberSelected: boolean;
+	triggerDisplayText: string | null;
+	readonly?: boolean;
+	onUnlinkVariable: () => void;
 };
 
 export const FormWorkspaceMemberFilterValueInputTrigger = ({
-  isVariableValue,
-  defaultValue,
-  isCurrentWorkspaceMemberSelected,
-  triggerDisplayText,
-  readonly,
-  onUnlinkVariable,
+	isVariableValue,
+	defaultValue,
+	isCurrentWorkspaceMemberSelected,
+	triggerDisplayText,
+	readonly,
+	onUnlinkVariable,
 }: FormWorkspaceMemberFilterValueInputTriggerProps) => {
-  if (isVariableValue) {
-    return (
-      <VariableChipStandalone
-        rawVariableName={defaultValue ?? ''}
-        onRemove={readonly ? undefined : onUnlinkVariable}
-        isFullRecord
-      />
-    );
-  }
+	if (isVariableValue) {
+		return (
+			<VariableChipStandalone
+				rawVariableName={defaultValue ?? ""}
+				onRemove={readonly ? undefined : onUnlinkVariable}
+				isFullRecord
+			/>
+		);
+	}
 
-  if (isDefined(triggerDisplayText)) {
-    return (
-      <StyledTriggerLabel>
-        {isCurrentWorkspaceMemberSelected && <IconUserCircle size={12} />}
-        {triggerDisplayText}
-      </StyledTriggerLabel>
-    );
-  }
+	if (isDefined(triggerDisplayText)) {
+		return (
+			<StyledTriggerLabel>
+				{isCurrentWorkspaceMemberSelected && <IconUserCircle size={12} />}
+				{triggerDisplayText}
+			</StyledTriggerLabel>
+		);
+	}
 
-  return (
-    <StyledPlaceholderContainer>
-      <FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
-    </StyledPlaceholderContainer>
-  );
+	return (
+		<StyledPlaceholderContainer>
+			<FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
+		</StyledPlaceholderContainer>
+	);
 };

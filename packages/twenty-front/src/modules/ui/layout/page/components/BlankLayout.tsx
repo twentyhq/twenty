@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Outlet } from "react-router-dom";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
-import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
+import { AppErrorBoundary } from "@/error-handler/components/AppErrorBoundary";
+import { AppFullScreenErrorFallback } from "@/error-handler/components/AppFullScreenErrorFallback";
 
 const StyledLayout = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -16,11 +16,11 @@ const StyledLayout = styled.div`
 `;
 
 export const BlankLayout = () => {
-  return (
-    <StyledLayout>
-      <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
-        <Outlet />
-      </AppErrorBoundary>
-    </StyledLayout>
-  );
+	return (
+		<StyledLayout>
+			<AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
+				<Outlet />
+			</AppErrorBoundary>
+		</StyledLayout>
+	);
 };

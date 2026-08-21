@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconChevronDown } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconChevronDown } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { type ColumnMapping } from '../types/column-mapping';
+import { type ColumnMapping } from "../types/column-mapping";
 
 const Row = styled.div`
   border-bottom: 1px solid ${THEME_LIGHT.border.color.medium};
@@ -86,25 +86,25 @@ const FieldIcon = styled.span`
 `;
 
 export function MappingRow({ mapping }: { mapping: ColumnMapping }) {
-  const { Icon, example, field, header } = mapping;
-  const { i18n } = useLingui();
-  return (
-    <Row>
-      <ImportedCell>
-        <ColumnHeader>{header}</ColumnHeader>
-        <ColumnExample>{i18n._(msg`ex: ${example}`)}</ColumnExample>
-      </ImportedCell>
-      <FieldCell>
-        <FieldSelect>
-          <FieldIcon>
-            <Icon size={16} stroke={2} />
-          </FieldIcon>
-          <FieldName>{i18n._(field)}</FieldName>
-          <FieldIcon>
-            <IconChevronDown size={16} stroke={2} />
-          </FieldIcon>
-        </FieldSelect>
-      </FieldCell>
-    </Row>
-  );
+	const { Icon, example, field, header } = mapping;
+	const { i18n } = useLingui();
+	return (
+		<Row>
+			<ImportedCell>
+				<ColumnHeader>{header}</ColumnHeader>
+				<ColumnExample>{i18n._(msg`ex: ${example}`)}</ColumnExample>
+			</ImportedCell>
+			<FieldCell>
+				<FieldSelect>
+					<FieldIcon>
+						<Icon size={16} stroke={2} />
+					</FieldIcon>
+					<FieldName>{i18n._(field)}</FieldName>
+					<FieldIcon>
+						<IconChevronDown size={16} stroke={2} />
+					</FieldIcon>
+				</FieldSelect>
+			</FieldCell>
+		</Row>
+	);
 }

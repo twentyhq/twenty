@@ -1,29 +1,29 @@
-import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type JsonValue } from 'type-fest';
+import { styled } from "@linaria/react";
+import { plural, t } from "@lingui/core/macro";
+import { useState } from "react";
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from "ai";
+import { isDefined } from "twenty-shared/utils";
+import { IconChevronRight, IconCpu } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip, TooltipDelay } from "twenty-ui/surfaces";
+import { JsonTree } from "twenty-ui/json-visualizer";
+import { AnimatedExpandableContainer } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { type JsonValue } from "type-fest";
 
-import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
-import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
-import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
-import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
-import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { AiChatThinkingRow } from "@/ai/components/AiChatThinkingRow";
+import { ShimmeringText } from "@/ai/components/ShimmeringText";
+import { useToolDisplayContext } from "@/ai/hooks/useToolDisplayContext";
+import { getToolIcon } from "@/ai/utils/getToolIcon";
+import { getToolDisplayMessage } from "@/ai/utils/tool-display/get-tool-display-message";
+import { unwrapToolInput } from "@/ai/utils/tool-display/unwrap-tool-input.util";
+import { getActiveReasoningContent } from "@/ai/utils/getActiveReasoningContent";
+import { getLastReasoningContent } from "@/ai/utils/getLastReasoningContent";
+import { isThinkingStepPartActive } from "@/ai/utils/isThinkingStepPartActive";
+import { type ThinkingStepPart } from "@/ai/utils/thinkingStepPart";
+import { TabList } from "@/ui/layout/tab-list/components/TabList";
+import { activeTabIdComponentState } from "@/ui/layout/tab-list/states/activeTabIdComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -78,7 +78,7 @@ const StyledSummaryChevronContainer = styled.div<{ isExpanded: boolean }>`
   color: ${themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
-  transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
+  transform: rotate(${({ isExpanded }) => (isExpanded ? "90deg" : "0deg")});
   transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
 `;
@@ -156,7 +156,7 @@ const StyledChevronContainer = styled.div<{ isExpanded: boolean }>`
   color: ${themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
-  transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
+  transform: rotate(${({ isExpanded }) => (isExpanded ? "90deg" : "0deg")});
   transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
 `;
@@ -172,7 +172,7 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   background: none;
   border: none;
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
+  cursor: ${({ isExpandable }) => (isExpandable ? "pointer" : "default")};
   display: flex;
   font-family: inherit;
   gap: ${themeCssVariables.spacing[2]};
@@ -185,9 +185,9 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
 
   &:hover {
     color: ${({ isExpandable }) =>
-      isExpandable
-        ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.tertiary};
+			isExpandable
+				? themeCssVariables.font.color.primary
+				: themeCssVariables.font.color.tertiary};
   }
 
   &:focus-visible {
@@ -247,244 +247,244 @@ const StyledToolErrorText = styled.p`
   white-space: pre-wrap;
 `;
 
-type ToolDetailsTab = 'output' | 'input';
+type ToolDetailsTab = "output" | "input";
 
 const ThinkingToolStepRow = ({
-  isActive,
-  part,
-  rowIndex,
+	isActive,
+	part,
+	rowIndex,
 }: {
-  isActive: boolean;
-  part: ToolUIPart | DynamicToolUIPart;
-  rowIndex: number;
+	isActive: boolean;
+	part: ToolUIPart | DynamicToolUIPart;
+	rowIndex: number;
 }) => {
-  const { copyToClipboard } = useCopyToClipboard();
-  const [isExpanded, setIsExpanded] = useState(false);
-  const rawToolName = getToolName(part);
-  const { toolInput, toolName } = unwrapToolInput({
-    input: part.input,
-    toolName: rawToolName,
-  });
+	const { copyToClipboard } = useCopyToClipboard();
+	const [isExpanded, setIsExpanded] = useState(false);
+	const rawToolName = getToolName(part);
+	const { toolInput, toolName } = unwrapToolInput({
+		input: part.input,
+		toolName: rawToolName,
+	});
 
-  const displayContext = useToolDisplayContext();
-  const ToolIcon = getToolIcon(toolName);
-  const displayMessage = getToolDisplayMessage({
-    input: part.input,
-    toolName: rawToolName,
-    isFinished: !isActive,
-    displayContext,
-    output: part.output,
-  });
-  const hasError = isDefined(part.errorText);
-  const isExpandable = isDefined(part.output) || hasError;
+	const displayContext = useToolDisplayContext();
+	const ToolIcon = getToolIcon(toolName);
+	const displayMessage = getToolDisplayMessage({
+		input: part.input,
+		toolName: rawToolName,
+		isFinished: !isActive,
+		displayContext,
+		output: part.output,
+	});
+	const hasError = isDefined(part.errorText);
+	const isExpandable = isDefined(part.output) || hasError;
 
-  const outputObj =
-    typeof part.output === 'object' && part.output !== null
-      ? (part.output as Record<string, unknown>)
-      : null;
-  const toolError =
-    typeof outputObj?.error === 'string' ? outputObj.error : null;
-  const toolOutput = toolError ? { error: toolError } : outputObj;
-  const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}-${rowIndex}`;
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    toolTabListComponentInstanceId,
-  );
-  const activeTab: ToolDetailsTab =
-    activeTabId === 'input' ? 'input' : 'output';
-  const toolTabs = [
-    { id: 'output', title: t`Output` },
-    { id: 'input', title: t`Input` },
-  ];
+	const outputObj =
+		typeof part.output === "object" && part.output !== null
+			? (part.output as Record<string, unknown>)
+			: null;
+	const toolError =
+		typeof outputObj?.error === "string" ? outputObj.error : null;
+	const toolOutput = toolError ? { error: toolError } : outputObj;
+	const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}-${rowIndex}`;
+	const activeTabId = useAtomComponentStateValue(
+		activeTabIdComponentState,
+		toolTabListComponentInstanceId,
+	);
+	const activeTab: ToolDetailsTab =
+		activeTabId === "input" ? "input" : "output";
+	const toolTabs = [
+		{ id: "output", title: t`Output` },
+		{ id: "input", title: t`Input` },
+	];
 
-  return (
-    <StyledToolRowContainer>
-      <StyledToolRowButton
-        type="button"
-        isExpandable={isExpandable}
-        onClick={() => {
-          if (!isExpandable) {
-            return;
-          }
+	return (
+		<StyledToolRowContainer>
+			<StyledToolRowButton
+				type="button"
+				isExpandable={isExpandable}
+				onClick={() => {
+					if (!isExpandable) {
+						return;
+					}
 
-          setIsExpanded((previousValue) => !previousValue);
-        }}
-        aria-expanded={isExpandable ? isExpanded : undefined}
-      >
-        <StyledIconContainer>
-          <ToolIcon size={14} />
-        </StyledIconContainer>
-        <StyledRowLabelContainer>
-          <StyledToolRowLabel>
-            {isActive ? (
-              <StyledShimmeringLabel>{displayMessage}</StyledShimmeringLabel>
-            ) : (
-              <OverflowingTextWithTooltip
-                text={displayMessage}
-                tooltipDelay={TooltipDelay.shortDelay}
-              />
-            )}
-          </StyledToolRowLabel>
-          {isExpandable && (
-            <StyledChevronContainer isExpanded={isExpanded}>
-              <IconChevronRight size={14} />
-            </StyledChevronContainer>
-          )}
-        </StyledRowLabelContainer>
-      </StyledToolRowButton>
+					setIsExpanded((previousValue) => !previousValue);
+				}}
+				aria-expanded={isExpandable ? isExpanded : undefined}
+			>
+				<StyledIconContainer>
+					<ToolIcon size={14} />
+				</StyledIconContainer>
+				<StyledRowLabelContainer>
+					<StyledToolRowLabel>
+						{isActive ? (
+							<StyledShimmeringLabel>{displayMessage}</StyledShimmeringLabel>
+						) : (
+							<OverflowingTextWithTooltip
+								text={displayMessage}
+								tooltipDelay={TooltipDelay.shortDelay}
+							/>
+						)}
+					</StyledToolRowLabel>
+					{isExpandable && (
+						<StyledChevronContainer isExpanded={isExpanded}>
+							<IconChevronRight size={14} />
+						</StyledChevronContainer>
+					)}
+				</StyledRowLabelContainer>
+			</StyledToolRowButton>
 
-      {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-          <StyledToolDetailsContainer>
-            {hasError ? (
-              <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
-            ) : (
-              <StyledToolDetailsContent>
-                <StyledToolTabListContainer>
-                  <TabList
-                    tabs={toolTabs}
-                    behaveAsLinks={false}
-                    componentInstanceId={toolTabListComponentInstanceId}
-                  />
-                </StyledToolTabListContainer>
-                <StyledToolJsonContent>
-                  <StyledJsonTreeContainer>
-                    <JsonTree
-                      value={
-                        (activeTab === 'output'
-                          ? toolOutput
-                          : toolInput) as JsonValue
-                      }
-                      shouldExpandNodeInitially={() => false}
-                      emptyArrayLabel={t`Empty Array`}
-                      emptyObjectLabel={t`Empty Object`}
-                      emptyStringLabel={t`[empty string]`}
-                      arrowButtonCollapsedLabel={t`Expand`}
-                      arrowButtonExpandedLabel={t`Collapse`}
-                      onNodeValueClick={copyToClipboard}
-                    />
-                  </StyledJsonTreeContainer>
-                </StyledToolJsonContent>
-              </StyledToolDetailsContent>
-            )}
-          </StyledToolDetailsContainer>
-        </AnimatedExpandableContainer>
-      )}
-    </StyledToolRowContainer>
-  );
+			{isExpandable && (
+				<AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+					<StyledToolDetailsContainer>
+						{hasError ? (
+							<StyledToolErrorText>{part.errorText}</StyledToolErrorText>
+						) : (
+							<StyledToolDetailsContent>
+								<StyledToolTabListContainer>
+									<TabList
+										tabs={toolTabs}
+										behaveAsLinks={false}
+										componentInstanceId={toolTabListComponentInstanceId}
+									/>
+								</StyledToolTabListContainer>
+								<StyledToolJsonContent>
+									<StyledJsonTreeContainer>
+										<JsonTree
+											value={
+												(activeTab === "output"
+													? toolOutput
+													: toolInput) as JsonValue
+											}
+											shouldExpandNodeInitially={() => false}
+											emptyArrayLabel={t`Empty Array`}
+											emptyObjectLabel={t`Empty Object`}
+											emptyStringLabel={t`[empty string]`}
+											arrowButtonCollapsedLabel={t`Expand`}
+											arrowButtonExpandedLabel={t`Collapse`}
+											onNodeValueClick={copyToClipboard}
+										/>
+									</StyledJsonTreeContainer>
+								</StyledToolJsonContent>
+							</StyledToolDetailsContent>
+						)}
+					</StyledToolDetailsContainer>
+				</AnimatedExpandableContainer>
+			)}
+		</StyledToolRowContainer>
+	);
 };
 
 const ThinkingStepRow = ({
-  isActive,
-  part,
-  rowIndex,
+	isActive,
+	part,
+	rowIndex,
 }: {
-  isActive: boolean;
-  part: ThinkingStepPart;
-  rowIndex: number;
+	isActive: boolean;
+	part: ThinkingStepPart;
+	rowIndex: number;
 }) => {
-  if (part.type !== 'reasoning') {
-    return (
-      <ThinkingToolStepRow
-        part={part}
-        isActive={isActive}
-        rowIndex={rowIndex}
-      />
-    );
-  }
+	if (part.type !== "reasoning") {
+		return (
+			<ThinkingToolStepRow
+				part={part}
+				isActive={isActive}
+				rowIndex={rowIndex}
+			/>
+		);
+	}
 
-  if (isActive) {
-    return <AiChatThinkingRow />;
-  }
+	if (isActive) {
+		return <AiChatThinkingRow />;
+	}
 
-  return (
-    <StyledRow>
-      <StyledIconContainer>
-        <IconCpu size={14} />
-      </StyledIconContainer>
-      <StyledRowLabelContainer>
-        <StyledRowLabel>{t`Thought`}</StyledRowLabel>
-      </StyledRowLabelContainer>
-    </StyledRow>
-  );
+	return (
+		<StyledRow>
+			<StyledIconContainer>
+				<IconCpu size={14} />
+			</StyledIconContainer>
+			<StyledRowLabelContainer>
+				<StyledRowLabel>{t`Thought`}</StyledRowLabel>
+			</StyledRowLabelContainer>
+		</StyledRow>
+	);
 };
 
 export const ThinkingStepsDisplay = ({
-  parts,
-  isLastMessageStreaming,
-  hasAssistantTextResponseStarted,
-  isTrailingWhileStreaming = false,
+	parts,
+	isLastMessageStreaming,
+	hasAssistantTextResponseStarted,
+	isTrailingWhileStreaming = false,
 }: {
-  parts: ThinkingStepPart[];
-  isLastMessageStreaming: boolean;
-  hasAssistantTextResponseStarted: boolean;
-  isTrailingWhileStreaming?: boolean;
+	parts: ThinkingStepPart[];
+	isLastMessageStreaming: boolean;
+	hasAssistantTextResponseStarted: boolean;
+	isTrailingWhileStreaming?: boolean;
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+	const [isExpanded, setIsExpanded] = useState(false);
 
-  const stepCount = parts.length;
-  const hasActiveStep = parts.some((part) =>
-    isThinkingStepPartActive(part, isLastMessageStreaming),
-  );
+	const stepCount = parts.length;
+	const hasActiveStep = parts.some((part) =>
+		isThinkingStepPartActive(part, isLastMessageStreaming),
+	);
 
-  const activeReasoningContent = getActiveReasoningContent(parts);
-  const finalReasoningContent = getLastReasoningContent(parts);
-  const reasoningContent = hasActiveStep
-    ? activeReasoningContent
-    : finalReasoningContent;
-  const shouldDisplayReasoningContent = reasoningContent?.trim().length;
-  const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
-  const shouldShowSummaryButton =
-    !hasActiveStep && !shouldKeepExpandedBeforeAnswer;
+	const activeReasoningContent = getActiveReasoningContent(parts);
+	const finalReasoningContent = getLastReasoningContent(parts);
+	const reasoningContent = hasActiveStep
+		? activeReasoningContent
+		: finalReasoningContent;
+	const shouldDisplayReasoningContent = reasoningContent?.trim().length;
+	const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
+	const shouldShowSummaryButton =
+		!hasActiveStep && !shouldKeepExpandedBeforeAnswer;
 
-  const shouldRenderRows =
-    hasActiveStep || isExpanded || shouldKeepExpandedBeforeAnswer;
+	const shouldRenderRows =
+		hasActiveStep || isExpanded || shouldKeepExpandedBeforeAnswer;
 
-  return (
-    <StyledContainer>
-      {shouldShowSummaryButton && (
-        <StyledSummaryButton
-          type="button"
-          aria-expanded={isExpanded}
-          onClick={() => setIsExpanded((previousValue) => !previousValue)}
-        >
-          <StyledSummaryChevronContainer isExpanded={isExpanded}>
-            <IconChevronRight size={14} />
-          </StyledSummaryChevronContainer>
-          <StyledSummaryText>
-            {plural(stepCount, {
-              one: '# step',
-              other: '# steps',
-            })}
-          </StyledSummaryText>
-        </StyledSummaryButton>
-      )}
+	return (
+		<StyledContainer>
+			{shouldShowSummaryButton && (
+				<StyledSummaryButton
+					type="button"
+					aria-expanded={isExpanded}
+					onClick={() => setIsExpanded((previousValue) => !previousValue)}
+				>
+					<StyledSummaryChevronContainer isExpanded={isExpanded}>
+						<IconChevronRight size={14} />
+					</StyledSummaryChevronContainer>
+					<StyledSummaryText>
+						{plural(stepCount, {
+							one: "# step",
+							other: "# steps",
+						})}
+					</StyledSummaryText>
+				</StyledSummaryButton>
+			)}
 
-      {shouldRenderRows && (
-        <StyledStepsContentContainer>
-          <StyledRowsContainer>
-            {parts.map((part, index) => (
-              <ThinkingStepRow
-                key={index}
-                part={part}
-                rowIndex={index}
-                isActive={isThinkingStepPartActive(
-                  part,
-                  isLastMessageStreaming,
-                )}
-              />
-            ))}
-            {isTrailingWhileStreaming && !hasActiveStep && (
-              <AiChatThinkingRow />
-            )}
-          </StyledRowsContainer>
-          {!!shouldDisplayReasoningContent && (
-            <StyledReasoningContainer>
-              <StyledReasoningText>{reasoningContent}</StyledReasoningText>
-            </StyledReasoningContainer>
-          )}
-        </StyledStepsContentContainer>
-      )}
-    </StyledContainer>
-  );
+			{shouldRenderRows && (
+				<StyledStepsContentContainer>
+					<StyledRowsContainer>
+						{parts.map((part, index) => (
+							<ThinkingStepRow
+								key={index}
+								part={part}
+								rowIndex={index}
+								isActive={isThinkingStepPartActive(
+									part,
+									isLastMessageStreaming,
+								)}
+							/>
+						))}
+						{isTrailingWhileStreaming && !hasActiveStep && (
+							<AiChatThinkingRow />
+						)}
+					</StyledRowsContainer>
+					{!!shouldDisplayReasoningContent && (
+						<StyledReasoningContainer>
+							<StyledReasoningText>{reasoningContent}</StyledReasoningText>
+						</StyledReasoningContainer>
+					)}
+				</StyledStepsContentContainer>
+			)}
+		</StyledContainer>
+	);
 };

@@ -1,7 +1,7 @@
-import styles from './AnimatedContainer.module.scss';
+import styles from "./AnimatedContainer.module.scss";
 
 export const AnimatedContainer = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => <div className={styles.container}>{children}</div>;

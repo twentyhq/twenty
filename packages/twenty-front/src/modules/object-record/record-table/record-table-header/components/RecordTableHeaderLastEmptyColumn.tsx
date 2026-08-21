@@ -1,26 +1,26 @@
-import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { cx } from '@linaria/core';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { hasRecordGroupsComponentSelector } from "@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector";
+import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName";
+import { RECORD_TABLE_ROW_HEIGHT } from "@/object-record/record-table/constants/RecordTableRowHeight";
+import { isRecordTableRowActiveComponentFamilyState } from "@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState";
+import { isRecordTableRowFocusActiveComponentState } from "@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState";
+import { isRecordTableRowFocusedComponentFamilyState } from "@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState";
+import { isRecordTableScrolledVerticallyComponentState } from "@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState";
+import { useAtomComponentFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { styled } from "@linaria/react";
+import { cx } from "@linaria/core";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledLastColumnHeader = styled.div<{
-  shouldDisplayBorderBottom: boolean;
+	shouldDisplayBorderBottom: boolean;
 }>`
   background-color: ${themeCssVariables.background.primary};
 
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
-    shouldDisplayBorderBottom
-      ? `1px solid ${themeCssVariables.border.color.light}`
-      : 'none'};
+		shouldDisplayBorderBottom
+			? `1px solid ${themeCssVariables.border.color.light}`
+			: "none"};
   border-left: none !important;
   color: ${themeCssVariables.font.color.tertiary};
 
@@ -31,44 +31,44 @@ const StyledLastColumnHeader = styled.div<{
 `;
 
 export const RecordTableHeaderLastEmptyColumn = () => {
-  const isRecordTableScrolledVertically = useAtomComponentStateValue(
-    isRecordTableScrolledVerticallyComponentState,
-  );
+	const isRecordTableScrolledVertically = useAtomComponentStateValue(
+		isRecordTableScrolledVerticallyComponentState,
+	);
 
-  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
-    isRecordTableRowActiveComponentFamilyState,
-    0,
-  );
+	const isRecordTableRowActive = useAtomComponentFamilyStateValue(
+		isRecordTableRowActiveComponentFamilyState,
+		0,
+	);
 
-  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
-    isRecordTableRowFocusedComponentFamilyState,
-    0,
-  );
+	const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
+		isRecordTableRowFocusedComponentFamilyState,
+		0,
+	);
 
-  const isRecordTableRowFocusActive = useAtomComponentStateValue(
-    isRecordTableRowFocusActiveComponentState,
-  );
+	const isRecordTableRowFocusActive = useAtomComponentStateValue(
+		isRecordTableRowFocusActiveComponentState,
+	);
 
-  const isFirstRowActiveOrFocused =
-    isRecordTableRowActive ||
-    (isRecordTableRowFocused && isRecordTableRowFocusActive);
+	const isFirstRowActiveOrFocused =
+		isRecordTableRowActive ||
+		(isRecordTableRowFocused && isRecordTableRowFocusActive);
 
-  const hasRecordGroups = useAtomComponentSelectorValue(
-    hasRecordGroupsComponentSelector,
-  );
+	const hasRecordGroups = useAtomComponentSelectorValue(
+		hasRecordGroupsComponentSelector,
+	);
 
-  const shouldDisplayBorderBottom =
-    hasRecordGroups ||
-    !isFirstRowActiveOrFocused ||
-    isRecordTableScrolledVertically;
+	const shouldDisplayBorderBottom =
+		hasRecordGroups ||
+		!isFirstRowActiveOrFocused ||
+		isRecordTableScrolledVertically;
 
-  return (
-    <StyledLastColumnHeader
-      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-      className={cx(
-        'header-cell',
-        RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME,
-      )}
-    />
-  );
+	return (
+		<StyledLastColumnHeader
+			shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+			className={cx(
+				"header-cell",
+				RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME,
+			)}
+		/>
+	);
 };

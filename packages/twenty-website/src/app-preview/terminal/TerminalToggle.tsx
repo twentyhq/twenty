@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { ClaudeMark } from '@/icons';
-import { type TerminalView } from './conversation-core';
-import { CursorLogo } from './CursorLogo';
+import { ClaudeMark } from "@/icons";
+import { type TerminalView } from "./conversation-core";
+import { CursorLogo } from "./CursorLogo";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 const editor = APP_PREVIEW_TONES.editor;
@@ -17,10 +17,10 @@ const editor = APP_PREVIEW_TONES.editor;
 const ToggleRoot = styled.div<{ $dark?: boolean }>`
   align-items: center;
   background: ${({ $dark }) =>
-    $dark ? editor.surface.toggleBackground : terminal.toggle.background};
+		$dark ? editor.surface.toggleBackground : terminal.toggle.background};
   border: 1px solid
     ${({ $dark }) =>
-      $dark ? editor.surface.toggleBorder : terminal.toggle.border};
+			$dark ? editor.surface.toggleBorder : terminal.toggle.border};
   border-radius: 9px;
   box-sizing: border-box;
   display: flex;
@@ -34,37 +34,37 @@ const ToggleRoot = styled.div<{ $dark?: boolean }>`
 const SegmentButton = styled.button<{ $active?: boolean; $dark?: boolean }>`
   align-items: center;
   background: ${({ $active, $dark }) => {
-    if (!$active) {
-      return 'transparent';
-    }
-    return $dark
-      ? editor.surface.activeSegmentBackground
-      : terminal.toggle.activeSegmentBackground;
-  }};
+		if (!$active) {
+			return "transparent";
+		}
+		return $dark
+			? editor.surface.activeSegmentBackground
+			: terminal.toggle.activeSegmentBackground;
+	}};
   border: 1px solid
     ${({ $active, $dark }) => {
-      if (!$active) {
-        return 'transparent';
-      }
-      return $dark
-        ? editor.surface.activeSegmentBorder
-        : terminal.toggle.activeSegmentBorder;
-    }};
+			if (!$active) {
+				return "transparent";
+			}
+			return $dark
+				? editor.surface.activeSegmentBorder
+				: terminal.toggle.activeSegmentBorder;
+		}};
   border-radius: 6px;
   box-shadow: ${({ $active, $dark }) => {
-    if (!$active) {
-      return 'none';
-    }
-    return $dark
-      ? editor.surface.activeSegmentShadow
-      : terminal.toggle.activeSegmentShadow;
-  }};
+		if (!$active) {
+			return "none";
+		}
+		return $dark
+			? editor.surface.activeSegmentShadow
+			: terminal.toggle.activeSegmentShadow;
+	}};
   color: ${({ $active, $dark }) => {
-    if ($dark) {
-      return $active ? editor.text.primary : editor.text.dim;
-    }
-    return $active ? terminal.text.primary : terminal.text.secondary;
-  }};
+		if ($dark) {
+			return $active ? editor.text.primary : editor.text.dim;
+		}
+		return $active ? terminal.text.primary : terminal.text.secondary;
+	}};
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
@@ -84,17 +84,17 @@ const SegmentButton = styled.button<{ $active?: boolean; $dark?: boolean }>`
 
   &:hover {
     background: ${({ $active, $dark }) => {
-      if ($active) {
-        return $dark
-          ? editor.surface.activeSegmentBackground
-          : terminal.toggle.activeSegmentBackground;
-      }
-      return $dark
-        ? editor.surface.rowHover
-        : terminal.toggle.inactiveSegmentHoverBackground;
-    }};
+			if ($active) {
+				return $dark
+					? editor.surface.activeSegmentBackground
+					: terminal.toggle.activeSegmentBackground;
+			}
+			return $dark
+				? editor.surface.rowHover
+				: terminal.toggle.inactiveSegmentHoverBackground;
+		}};
     color: ${({ $dark }) =>
-      $dark ? editor.text.primary : terminal.text.primary};
+			$dark ? editor.text.primary : terminal.text.primary};
   }
 `;
 
@@ -109,49 +109,49 @@ const SegmentIconWrap = styled.span`
 `;
 
 export function TerminalToggle({
-  value,
-  onChange,
-  theme = 'light',
+	value,
+	onChange,
+	theme = "light",
 }: {
-  value: TerminalView;
-  onChange?: (value: TerminalView) => void;
-  theme?: 'light' | 'dark';
+	value: TerminalView;
+	onChange?: (value: TerminalView) => void;
+	theme?: "light" | "dark";
 }) {
-  const { i18n } = useLingui();
-  const isDark = theme === 'dark';
+	const { i18n } = useLingui();
+	const isDark = theme === "dark";
 
-  return (
-    <ToggleRoot
-      $dark={isDark}
-      role="tablist"
-      aria-label={i18n._(msg`Terminal mode`)}
-    >
-      <SegmentButton
-        $active={value === 'editor'}
-        $dark={isDark}
-        aria-selected={value === 'editor'}
-        onClick={() => onChange?.('editor')}
-        role="tab"
-        type="button"
-      >
-        <SegmentIconWrap>
-          <CursorLogo size={14} />
-        </SegmentIconWrap>
-        Editor
-      </SegmentButton>
-      <SegmentButton
-        $active={value === 'ai-chat'}
-        $dark={isDark}
-        aria-selected={value === 'ai-chat'}
-        onClick={() => onChange?.('ai-chat')}
-        role="tab"
-        type="button"
-      >
-        <SegmentIconWrap>
-          <ClaudeMark sizePx={14} />
-        </SegmentIconWrap>
-        AI Chat
-      </SegmentButton>
-    </ToggleRoot>
-  );
+	return (
+		<ToggleRoot
+			$dark={isDark}
+			role="tablist"
+			aria-label={i18n._(msg`Terminal mode`)}
+		>
+			<SegmentButton
+				$active={value === "editor"}
+				$dark={isDark}
+				aria-selected={value === "editor"}
+				onClick={() => onChange?.("editor")}
+				role="tab"
+				type="button"
+			>
+				<SegmentIconWrap>
+					<CursorLogo size={14} />
+				</SegmentIconWrap>
+				Editor
+			</SegmentButton>
+			<SegmentButton
+				$active={value === "ai-chat"}
+				$dark={isDark}
+				aria-selected={value === "ai-chat"}
+				onClick={() => onChange?.("ai-chat")}
+				role="tab"
+				type="button"
+			>
+				<SegmentIconWrap>
+					<ClaudeMark sizePx={14} />
+				</SegmentIconWrap>
+				AI Chat
+			</SegmentButton>
+		</ToggleRoot>
+	);
 }

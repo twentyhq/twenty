@@ -1,15 +1,15 @@
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
-import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+import { type AiChatThreadActionsSurface } from "@/ai/types/AiChatThreadActionsSurface";
+import { createAtomFamilyState } from "@/ui/utilities/state/jotai/utils/createAtomFamilyState";
 
 type AiChatThreadPendingDelete = {
-  threadId: string;
-  threadTitle: string;
+	threadId: string;
+	threadTitle: string;
 } | null;
 
 export const aiChatThreadPendingDeleteFamilyState = createAtomFamilyState<
-  AiChatThreadPendingDelete,
-  AiChatThreadActionsSurface
+	AiChatThreadPendingDelete,
+	AiChatThreadActionsSurface
 >({
-  key: 'aiChatThreadPendingDeleteFamilyState',
-  defaultValue: null,
+	key: "aiChatThreadPendingDeleteFamilyState",
+	defaultValue: null,
 });

@@ -1,3 +1,3 @@
 export const getRecordTableHtmlId = (recordTableId: string): string => {
-  return `record-table-${recordTableId}`;
+	return `record-table-${recordTableId}`;
 };

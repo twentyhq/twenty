@@ -1,23 +1,23 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { isDefined } from "twenty-shared/utils";
 
 type GetMockFieldMetadataItemOrThrowProps = {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  fieldName: string;
+	objectMetadataItem: EnrichedObjectMetadataItem;
+	fieldName: string;
 };
 
 export const getMockFieldMetadataItemOrThrow = ({
-  objectMetadataItem,
-  fieldName,
+	objectMetadataItem,
+	fieldName,
 }: GetMockFieldMetadataItemOrThrowProps): FieldMetadataItem => {
-  const fieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.name === fieldName,
-  );
+	const fieldMetadataItem = objectMetadataItem.fields.find(
+		(field) => field.name === fieldName,
+	);
 
-  if (!isDefined(fieldMetadataItem)) {
-    throw new Error(`Field metadata item with name ${fieldName} not found`);
-  }
+	if (!isDefined(fieldMetadataItem)) {
+		throw new Error(`Field metadata item with name ${fieldName} not found`);
+	}
 
-  return fieldMetadataItem;
+	return fieldMetadataItem;
 };

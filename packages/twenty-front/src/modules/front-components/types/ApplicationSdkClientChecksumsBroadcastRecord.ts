@@ -1,4 +1,4 @@
 export type ApplicationSdkClientChecksumsBroadcastRecord = {
-  id: string;
-  sdkClientCoreChecksum?: string | null;
+	id: string;
+	sdkClientCoreChecksum?: string | null;
 };

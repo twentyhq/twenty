@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('WorkflowStepPosition')
+@ObjectType("WorkflowStepPosition")
 export class WorkflowStepPosition {
-  @Field(() => Number)
-  x: number;
+	@Field(() => Number)
+	x: number;
 
-  @Field(() => Number)
-  y: number;
+	@Field(() => Number)
+	y: number;
 }

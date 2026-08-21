@@ -1,1 +1,1 @@
-export { CaseStudyCatalogGrid } from './CaseStudyCatalogGrid';
+export { CaseStudyCatalogGrid } from "./CaseStudyCatalogGrid";

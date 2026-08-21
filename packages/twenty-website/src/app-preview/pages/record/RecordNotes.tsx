@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { EASING } from '@/tokens';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { EASING } from "@/tokens";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { type RecordNote } from '../../types';
+import { type RecordNote } from "../../types";
 
 const NotesHeader = styled.div`
   align-items: center;
@@ -44,21 +44,21 @@ const NotesGrid = styled.div`
 `;
 
 const NoteCard = styled.div<{
-  $highlighted?: boolean;
-  $index: number;
-  $muted?: boolean;
+	$highlighted?: boolean;
+	$index: number;
+	$muted?: boolean;
 }>`
   animation: noteCardAppear 360ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
   background: ${({ $highlighted }) =>
-    $highlighted
-      ? THEME_LIGHT.background.primary
-      : THEME_LIGHT.background.secondary};
+		$highlighted
+			? THEME_LIGHT.background.primary
+			: THEME_LIGHT.background.secondary};
   border: 1px solid
     ${({ $highlighted }) =>
-      $highlighted
-        ? THEME_LIGHT.border.color.medium
-        : THEME_LIGHT.border.color.light};
+			$highlighted
+				? THEME_LIGHT.border.color.medium
+				: THEME_LIGHT.border.color.light};
   border-radius: ${THEME_LIGHT.border.radius.md};
   display: flex;
   flex-direction: column;
@@ -66,7 +66,7 @@ const NoteCard = styled.div<{
   justify-content: space-between;
   opacity: ${({ $muted }) => ($muted ? 0.56 : 1)};
   transform: ${({ $highlighted }) =>
-    $highlighted ? 'translateY(-2px)' : 'none'};
+		$highlighted ? "translateY(-2px)" : "none"};
   transition:
     background 180ms ease,
     border-color 180ms ease,
@@ -74,7 +74,7 @@ const NoteCard = styled.div<{
     opacity 180ms ease,
     transform 180ms ease;
   box-shadow: ${({ $highlighted }) =>
-    $highlighted ? APP_PREVIEW_TONES.recordNoteHighlightShadow : 'none'};
+		$highlighted ? APP_PREVIEW_TONES.recordNoteHighlightShadow : "none"};
 
   @keyframes noteCardAppear {
     from {
@@ -153,53 +153,53 @@ const NoteRelationAvatar = styled.img`
 `;
 
 export function RecordNotes({ notes }: { notes: RecordNote[] }) {
-  const hasHighlightedNotes = notes.some((note) => note.highlighted);
+	const hasHighlightedNotes = notes.some((note) => note.highlighted);
 
-  return (
-    <>
-      <NotesHeader>
-        <NotesCount>All {notes.length}</NotesCount>
-        <AddNoteButton>+ Add note</AddNoteButton>
-      </NotesHeader>
+	return (
+		<>
+			<NotesHeader>
+				<NotesCount>All {notes.length}</NotesCount>
+				<AddNoteButton>+ Add note</AddNoteButton>
+			</NotesHeader>
 
-      <NotesGrid>
-        {notes.map((note, index) => (
-          <NoteCard
-            $highlighted={note.highlighted}
-            $index={index}
-            $muted={hasHighlightedNotes && !note.highlighted}
-            key={note.id}
-          >
-            <NoteContent>
-              <NoteTitle>{note.title}</NoteTitle>
-              <NoteBody>{note.body}</NoteBody>
-            </NoteContent>
-            {note.relation ? (
-              <NoteRelation>
-                <NoteRelationArrow
-                  fill="none"
-                  stroke={THEME_LIGHT.font.color.tertiary}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1"
-                  viewBox="0 0 12 12"
-                >
-                  <path d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5" />
-                </NoteRelationArrow>
-                <NoteRelationLabel>Relations:</NoteRelationLabel>
-                {note.relation.avatarUrl ? (
-                  <NoteRelationAvatar
-                    alt={note.relation.name}
-                    fetchPriority="low"
-                    src={note.relation.avatarUrl}
-                  />
-                ) : null}
-                <NoteRelationName>{note.relation.name}</NoteRelationName>
-              </NoteRelation>
-            ) : null}
-          </NoteCard>
-        ))}
-      </NotesGrid>
-    </>
-  );
+			<NotesGrid>
+				{notes.map((note, index) => (
+					<NoteCard
+						$highlighted={note.highlighted}
+						$index={index}
+						$muted={hasHighlightedNotes && !note.highlighted}
+						key={note.id}
+					>
+						<NoteContent>
+							<NoteTitle>{note.title}</NoteTitle>
+							<NoteBody>{note.body}</NoteBody>
+						</NoteContent>
+						{note.relation ? (
+							<NoteRelation>
+								<NoteRelationArrow
+									fill="none"
+									stroke={THEME_LIGHT.font.color.tertiary}
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="1"
+									viewBox="0 0 12 12"
+								>
+									<path d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5" />
+								</NoteRelationArrow>
+								<NoteRelationLabel>Relations:</NoteRelationLabel>
+								{note.relation.avatarUrl ? (
+									<NoteRelationAvatar
+										alt={note.relation.name}
+										fetchPriority="low"
+										src={note.relation.avatarUrl}
+									/>
+								) : null}
+								<NoteRelationName>{note.relation.name}</NoteRelationName>
+							</NoteRelation>
+						) : null}
+					</NoteCard>
+				))}
+			</NotesGrid>
+		</>
+	);
 }

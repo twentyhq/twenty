@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconCalendar, IconCheck } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconCalendar, IconCheck } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { Chip } from '@/app-preview/primitives/Chip';
-import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { Chip } from "@/app-preview/primitives/Chip";
+import { PersonAvatar } from "@/app-preview/primitives/PersonAvatar";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { type Task } from '../types/task';
+import { type Task } from "../types/task";
 
 const Row = styled.div`
   align-items: center;
@@ -110,58 +110,58 @@ const Due = styled.span`
 `;
 
 export function TaskRow({
-  task,
-  onToggle,
+	task,
+	onToggle,
 }: {
-  task: Task;
-  onToggle: () => void;
+	task: Task;
+	onToggle: () => void;
 }) {
-  const { i18n } = useLingui();
-  const title = i18n._(task.title);
-  const doneFlag = task.done ? '' : undefined;
+	const { i18n } = useLingui();
+	const title = i18n._(task.title);
+	const doneFlag = task.done ? "" : undefined;
 
-  return (
-    <Row>
-      <RowLeft>
-        <CheckboxButton
-          aria-checked={task.done}
-          aria-label={title}
-          data-done={doneFlag}
-          onClick={onToggle}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              onToggle();
-            }
-          }}
-          role="checkbox"
-          tabIndex={0}
-        >
-          <Checkbox data-done={doneFlag}>
-            {task.done ? <IconCheck size={11} stroke={2.5} /> : null}
-          </Checkbox>
-        </CheckboxButton>
-        <Title data-done={doneFlag}>{title}</Title>
-        <Body>{i18n._(task.body)}</Body>
-      </RowLeft>
-      <RowRight>
-        <Due>
-          <IconCalendar size={16} stroke={2} />
-          {task.due}
-        </Due>
-        <Chip
-          label={task.target.name}
-          leftComponent={
-            <PersonAvatar
-              person={{
-                avatarUrl: task.target.avatarUrl,
-                name: task.target.name,
-              }}
-            />
-          }
-          variant="highlighted"
-        />
-      </RowRight>
-    </Row>
-  );
+	return (
+		<Row>
+			<RowLeft>
+				<CheckboxButton
+					aria-checked={task.done}
+					aria-label={title}
+					data-done={doneFlag}
+					onClick={onToggle}
+					onKeyDown={(event) => {
+						if (event.key === "Enter" || event.key === " ") {
+							event.preventDefault();
+							onToggle();
+						}
+					}}
+					role="checkbox"
+					tabIndex={0}
+				>
+					<Checkbox data-done={doneFlag}>
+						{task.done ? <IconCheck size={11} stroke={2.5} /> : null}
+					</Checkbox>
+				</CheckboxButton>
+				<Title data-done={doneFlag}>{title}</Title>
+				<Body>{i18n._(task.body)}</Body>
+			</RowLeft>
+			<RowRight>
+				<Due>
+					<IconCalendar size={16} stroke={2} />
+					{task.due}
+				</Due>
+				<Chip
+					label={task.target.name}
+					leftComponent={
+						<PersonAvatar
+							person={{
+								avatarUrl: task.target.avatarUrl,
+								name: task.target.name,
+							}}
+						/>
+					}
+					variant="highlighted"
+				/>
+			</RowRight>
+		</Row>
+	);
 }

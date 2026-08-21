@@ -1,5 +1,5 @@
 /* oxlint-disable no-console, lingui/no-unlocalized-strings */
-import { graphqlRequest, writeGeneratedFile } from './utils.js';
+import { graphqlRequest, writeGeneratedFile } from "./utils.js";
 
 const FIND_MANY_NAVIGATION_MENU_ITEMS_QUERY = `
   query FindManyNavigationMenuItems {
@@ -28,25 +28,25 @@ const FIND_MANY_NAVIGATION_MENU_ITEMS_QUERY = `
 `;
 
 export const generateNavigationMenuItems = async (token: string) => {
-  console.log('Fetching navigation menu items from /metadata ...');
+	console.log("Fetching navigation menu items from /metadata ...");
 
-  const data = (await graphqlRequest(
-    '/metadata',
-    FIND_MANY_NAVIGATION_MENU_ITEMS_QUERY,
-    token,
-  )) as {
-    navigationMenuItems: Record<string, unknown>[];
-  };
+	const data = (await graphqlRequest(
+		"/metadata",
+		FIND_MANY_NAVIGATION_MENU_ITEMS_QUERY,
+		token,
+	)) as {
+		navigationMenuItems: Record<string, unknown>[];
+	};
 
-  console.log(
-    `  Got ${data.navigationMenuItems.length} navigation menu items.`,
-  );
+	console.log(
+		`  Got ${data.navigationMenuItems.length} navigation menu items.`,
+	);
 
-  writeGeneratedFile(
-    'metadata/navigation-menu-items/mock-navigation-menu-items-data.ts',
-    'mockedNavigationMenuItems',
-    'NavigationMenuItem[]',
-    "import { type NavigationMenuItem } from '~/generated-metadata/graphql';",
-    data.navigationMenuItems,
-  );
+	writeGeneratedFile(
+		"metadata/navigation-menu-items/mock-navigation-menu-items-data.ts",
+		"mockedNavigationMenuItems",
+		"NavigationMenuItem[]",
+		"import { type NavigationMenuItem } from '~/generated-metadata/graphql';",
+		data.navigationMenuItems,
+	);
 };

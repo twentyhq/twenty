@@ -1,1 +1,1 @@
-export type FrontComponentStorageType = 'localStorage' | 'sessionStorage';
+export type FrontComponentStorageType = "localStorage" | "sessionStorage";

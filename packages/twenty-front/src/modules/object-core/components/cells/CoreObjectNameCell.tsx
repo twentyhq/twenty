@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { isNonEmptyString } from "@sniptt/guards";
+import { type IconComponent } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -21,21 +21,21 @@ const StyledIconContainer = styled.span`
 `;
 
 type CoreObjectNameCellProps = {
-  name: string | null | undefined;
-  Icon: IconComponent;
+	name: string | null | undefined;
+	Icon: IconComponent;
 };
 
 export const CoreObjectNameCell = ({ name, Icon }: CoreObjectNameCellProps) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  return (
-    <StyledContainer>
-      <StyledIconContainer>
-        <Icon size={16} />
-      </StyledIconContainer>
-      <OverflowingTextWithTooltip
-        text={isNonEmptyString(name) ? name : t`Untitled`}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledIconContainer>
+				<Icon size={16} />
+			</StyledIconContainer>
+			<OverflowingTextWithTooltip
+				text={isNonEmptyString(name) ? name : t`Untitled`}
+			/>
+		</StyledContainer>
+	);
 };

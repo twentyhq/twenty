@@ -1,5 +1,5 @@
 export const buildBillingUsageCounterAdjustmentPattern = (
-  workspaceId: string,
+	workspaceId: string,
 ): string => {
-  return `available-credits-adjusted:${workspaceId}:*`;
+	return `available-credits-adjusted:${workspaceId}:*`;
 };

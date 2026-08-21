@@ -1,23 +1,23 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { QueueMetricsSeriesDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-series.dto';
-import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
-import { WorkerQueueMetrics } from 'src/engine/core-modules/admin-panel/types/worker-queue-metrics.type';
+import { QueueMetricsSeriesDTO } from "src/engine/core-modules/admin-panel/dtos/queue-metrics-series.dto";
+import { QueueMetricsTimeRange } from "src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum";
+import { WorkerQueueMetrics } from "src/engine/core-modules/admin-panel/types/worker-queue-metrics.type";
 
-@ObjectType('QueueMetricsData')
+@ObjectType("QueueMetricsData")
 export class QueueMetricsDataDTO {
-  @Field(() => String)
-  queueName: string;
+	@Field(() => String)
+	queueName: string;
 
-  @Field(() => Number)
-  workers: number;
+	@Field(() => Number)
+	workers: number;
 
-  @Field(() => QueueMetricsTimeRange)
-  timeRange: QueueMetricsTimeRange;
+	@Field(() => QueueMetricsTimeRange)
+	timeRange: QueueMetricsTimeRange;
 
-  @Field(() => WorkerQueueMetrics, { nullable: true })
-  details: WorkerQueueMetrics | null;
+	@Field(() => WorkerQueueMetrics, { nullable: true })
+	details: WorkerQueueMetrics | null;
 
-  @Field(() => [QueueMetricsSeriesDTO])
-  data: QueueMetricsSeriesDTO[];
+	@Field(() => [QueueMetricsSeriesDTO])
+	data: QueueMetricsSeriesDTO[];
 }

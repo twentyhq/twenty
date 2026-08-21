@@ -1,1 +1,1 @@
-export const COMMON_PRELOAD_TOOLS: string[] = ['search_help_center'];
+export const COMMON_PRELOAD_TOOLS: string[] = ["search_help_center"];

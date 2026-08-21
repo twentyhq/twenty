@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  radius,
-  REDUCED_MOTION,
-  spacing,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	radius,
+	REDUCED_MOTION,
+	spacing,
+} from "@/tokens";
 
-import { type PlansBillingPeriod } from './plans-data';
+import { type PlansBillingPeriod } from "./plans-data";
 
 const ToggleTrack = styled.div`
   align-items: center;
-  background-color: ${color('black-10')};
+  background-color: ${color("black-10")};
   border-radius: ${radius(20)};
   display: inline-flex;
   padding: 2px;
@@ -33,11 +33,11 @@ const ToggleOption = styled.button`
   background-color: transparent;
   border: none;
   border-radius: ${radius(8)};
-  color: ${color('black-60')};
+  color: ${color("black-60")};
   column-gap: ${spacing(2)};
   cursor: pointer;
   display: flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   height: 28px;
@@ -58,8 +58,8 @@ const ToggleOption = styled.button`
   }
 
   &[data-active] {
-    background-color: ${color('white')};
-    color: ${color('black')};
+    background-color: ${color("white")};
+    color: ${color("black")};
   }
 
   ${REDUCED_MOTION} {
@@ -69,11 +69,11 @@ const ToggleOption = styled.button`
 
 const DiscountBadge = styled.span`
   align-items: center;
-  background-color: ${color('blue')};
+  background-color: ${color("blue")};
   border-radius: ${radius(12)};
-  color: ${color('white')};
+  color: ${color("white")};
   display: inline-flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(2.5)};
   font-weight: ${FONT_WEIGHT.medium};
   height: 24px;
@@ -82,37 +82,37 @@ const DiscountBadge = styled.span`
 `;
 
 export function BillingToggle({
-  billing,
-  onBillingChange,
+	billing,
+	onBillingChange,
 }: {
-  billing: PlansBillingPeriod;
-  onBillingChange: (billing: PlansBillingPeriod) => void;
+	billing: PlansBillingPeriod;
+	onBillingChange: (billing: PlansBillingPeriod) => void;
 }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <ToggleTrack aria-label={i18n._(msg`Billing period`)} role="radiogroup">
-      <ToggleOption
-        aria-checked={billing === 'monthly'}
-        data-active={billing === 'monthly' ? '' : undefined}
-        data-period="monthly"
-        onClick={() => onBillingChange('monthly')}
-        role="radio"
-        type="button"
-      >
-        {i18n._(msg`Monthly`)}
-      </ToggleOption>
-      <ToggleOption
-        aria-checked={billing === 'yearly'}
-        data-active={billing === 'yearly' ? '' : undefined}
-        data-period="yearly"
-        onClick={() => onBillingChange('yearly')}
-        role="radio"
-        type="button"
-      >
-        {i18n._(msg`Yearly`)}
-        <DiscountBadge>-25%</DiscountBadge>
-      </ToggleOption>
-    </ToggleTrack>
-  );
+	return (
+		<ToggleTrack aria-label={i18n._(msg`Billing period`)} role="radiogroup">
+			<ToggleOption
+				aria-checked={billing === "monthly"}
+				data-active={billing === "monthly" ? "" : undefined}
+				data-period="monthly"
+				onClick={() => onBillingChange("monthly")}
+				role="radio"
+				type="button"
+			>
+				{i18n._(msg`Monthly`)}
+			</ToggleOption>
+			<ToggleOption
+				aria-checked={billing === "yearly"}
+				data-active={billing === "yearly" ? "" : undefined}
+				data-period="yearly"
+				onClick={() => onBillingChange("yearly")}
+				role="radio"
+				type="button"
+			>
+				{i18n._(msg`Yearly`)}
+				<DiscountBadge>-25%</DiscountBadge>
+			</ToggleOption>
+		</ToggleTrack>
+	);
 }

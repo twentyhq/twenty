@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { type MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { type MessageDescriptor } from "@lingui/core";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
-import { INFORMATIVE_MARKS } from '@/icons';
-import { getMessageDescriptorSource } from '@/platform/i18n/get-message-descriptor-source';
-import { color, EASING, REDUCED_MOTION, spacing } from '@/tokens';
-import { Body } from '@/ui';
+import { INFORMATIVE_MARKS } from "@/icons";
+import { getMessageDescriptorSource } from "@/platform/i18n/get-message-descriptor-source";
+import { color, EASING, REDUCED_MOTION, spacing } from "@/tokens";
+import { Body } from "@/ui";
 
-import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
-import { type FeatureTransitionPhase } from './use-feature-transition';
+import { FEATURE_TRANSITION_TIMING } from "./feature-transition-timing";
+import { type FeatureTransitionPhase } from "./use-feature-transition";
 
 const FEATURE_SWITCH_ANIMATION_MS =
-  FEATURE_TRANSITION_TIMING.switchMilliseconds;
+	FEATURE_TRANSITION_TIMING.switchMilliseconds;
 const FEATURE_ITEM_STAGGER_MS = FEATURE_TRANSITION_TIMING.staggerMilliseconds;
 
 const FEATURE_ITEM_EXPANDED_HEIGHT = spacing(8);
@@ -51,8 +51,8 @@ const FeatureCheck = styled.span`
 `;
 
 const FeatureItem = styled.li<{
-  $featureIndex: number;
-  $featureSpacing: string;
+	$featureIndex: number;
+	$featureSpacing: string;
 }>`
   @keyframes pricingFeatureItemEnter {
     from {
@@ -117,63 +117,63 @@ const FeatureItem = styled.li<{
 `;
 
 function getLayoutMinHeight(maxBullets: number) {
-  if (maxBullets <= 0) {
-    return '0px';
-  }
-  return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxBullets}) + (${FEATURE_ITEM_SPACING} * ${maxBullets - 1}))`;
+	if (maxBullets <= 0) {
+		return "0px";
+	}
+	return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxBullets}) + (${FEATURE_ITEM_SPACING} * ${maxBullets - 1}))`;
 }
 
 function getAnimationMinHeight(maxBullets: number) {
-  if (maxBullets <= 0) {
-    return '0px';
-  }
-  return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxBullets}) + (${FEATURE_ITEM_SPACING} * ${maxBullets - 1}))`;
+	if (maxBullets <= 0) {
+		return "0px";
+	}
+	return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxBullets}) + (${FEATURE_ITEM_SPACING} * ${maxBullets - 1}))`;
 }
 
 export function PlanFeatureList({
-  comparisonBulletTexts,
-  maxBullets,
-  phase,
-  visibleBullets,
+	comparisonBulletTexts,
+	maxBullets,
+	phase,
+	visibleBullets,
 }: {
-  comparisonBulletTexts: Set<string>;
-  maxBullets: number;
-  phase: FeatureTransitionPhase;
-  visibleBullets: MessageDescriptor[];
+	comparisonBulletTexts: Set<string>;
+	maxBullets: number;
+	phase: FeatureTransitionPhase;
+	visibleBullets: MessageDescriptor[];
 }) {
-  const { i18n } = useLingui();
-  const CheckMark = INFORMATIVE_MARKS.check;
+	const { i18n } = useLingui();
+	const CheckMark = INFORMATIVE_MARKS.check;
 
-  return (
-    <FeaturesViewport
-      $featuresHeight={
-        phase === 'stable'
-          ? getLayoutMinHeight(maxBullets)
-          : getAnimationMinHeight(maxBullets)
-      }
-    >
-      <FeatureList data-state={phase}>
-        {visibleBullets.map((bullet, bulletNumber) => (
-          <FeatureItem
-            $featureIndex={bulletNumber}
-            $featureSpacing={bulletNumber > 0 ? FEATURE_ITEM_SPACING : '0px'}
-            data-state={
-              phase === 'stable' ||
-              comparisonBulletTexts.has(getMessageDescriptorSource(bullet))
-                ? 'stable'
-                : phase
-            }
-            key={getMessageDescriptorSource(bullet)}
-          >
-            <FeatureCheck>
-              <CheckMark color={color('blue')} sizePx={16} strokeWidth={1.5} />
-            </FeatureCheck>
-            <Body as="span" size="sm">
-              {i18n._(bullet)}
-            </Body>
-          </FeatureItem>
-        ))}
-      </FeatureList>
-    </FeaturesViewport>
-  );
+	return (
+		<FeaturesViewport
+			$featuresHeight={
+				phase === "stable"
+					? getLayoutMinHeight(maxBullets)
+					: getAnimationMinHeight(maxBullets)
+			}
+		>
+			<FeatureList data-state={phase}>
+				{visibleBullets.map((bullet, bulletNumber) => (
+					<FeatureItem
+						$featureIndex={bulletNumber}
+						$featureSpacing={bulletNumber > 0 ? FEATURE_ITEM_SPACING : "0px"}
+						data-state={
+							phase === "stable" ||
+							comparisonBulletTexts.has(getMessageDescriptorSource(bullet))
+								? "stable"
+								: phase
+						}
+						key={getMessageDescriptorSource(bullet)}
+					>
+						<FeatureCheck>
+							<CheckMark color={color("blue")} sizePx={16} strokeWidth={1.5} />
+						</FeatureCheck>
+						<Body as="span" size="sm">
+							{i18n._(bullet)}
+						</Body>
+					</FeatureItem>
+				))}
+			</FeatureList>
+		</FeaturesViewport>
+	);
 }

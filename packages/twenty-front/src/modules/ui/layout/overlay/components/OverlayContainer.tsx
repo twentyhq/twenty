@@ -1,10 +1,10 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { styled } from "@linaria/react";
 
 // oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const OverlayContainer = styled.div<{
-  borderRadius?: 'sm' | 'md';
-  hasDangerBorder?: boolean;
+	borderRadius?: "sm" | "md";
+	hasDangerBorder?: boolean;
 }>`
   align-items: center;
   backdrop-filter: ${themeCssVariables.blur.medium};
@@ -13,10 +13,10 @@ export const OverlayContainer = styled.div<{
 
   border: 1px solid
     ${({ hasDangerBorder }) =>
-      themeCssVariables.border.color[hasDangerBorder ? 'danger' : 'medium']};
+			themeCssVariables.border.color[hasDangerBorder ? "danger" : "medium"]};
 
   border-radius: ${({ borderRadius }) =>
-    themeCssVariables.border.radius[borderRadius ?? 'md']};
+		themeCssVariables.border.radius[borderRadius ?? "md"]};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
 

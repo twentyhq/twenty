@@ -1,1 +1,1 @@
-export const TWENTY_STANDARD_APPLICATION_NAME = 'Standard';
+export const TWENTY_STANDARD_APPLICATION_NAME = "Standard";

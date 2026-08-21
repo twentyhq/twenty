@@ -1,1 +1,1 @@
-export type FieldIdentifierType = 'label' | 'image';
+export type FieldIdentifierType = "label" | "image";

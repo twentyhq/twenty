@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 const PromptTextRow = styled.div<{ $clickable?: boolean }>`
   align-items: flex-start;
-  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
   display: flex;
   flex: 1 1 auto;
   min-width: 0;
@@ -16,9 +16,9 @@ const PromptTextRow = styled.div<{ $clickable?: boolean }>`
 
 const PromptText = styled.p<{ $isPlaceholder?: boolean }>`
   color: ${({ $isPlaceholder }) =>
-    $isPlaceholder
-      ? APP_PREVIEW_TONES.terminal.text.muted
-      : APP_PREVIEW_TONES.terminal.text.prompt};
+		$isPlaceholder
+			? APP_PREVIEW_TONES.terminal.text.muted
+			: APP_PREVIEW_TONES.terminal.text.prompt};
   font-family: ${APP_PREVIEW_STAGE.terminalFont.ui};
   font-size: 13px;
   font-weight: 400;
@@ -45,26 +45,26 @@ const PromptText = styled.p<{ $isPlaceholder?: boolean }>`
 `;
 
 export function TerminalPromptMessage({
-  isClickable,
-  isEasterEggVisible = false,
-  isPlaceholder,
-  onClick,
-  text,
+	isClickable,
+	isEasterEggVisible = false,
+	isPlaceholder,
+	onClick,
+	text,
 }: {
-  isClickable?: boolean;
-  isEasterEggVisible?: boolean;
-  isPlaceholder?: boolean;
-  onClick?: () => void;
-  text: string;
+	isClickable?: boolean;
+	isEasterEggVisible?: boolean;
+	isPlaceholder?: boolean;
+	onClick?: () => void;
+	text: string;
 }) {
-  return (
-    <PromptTextRow $clickable={isClickable} onClick={onClick}>
-      <PromptText
-        key={isEasterEggVisible ? `egg-${text}` : 'base'}
-        $isPlaceholder={isPlaceholder}
-      >
-        {text}
-      </PromptText>
-    </PromptTextRow>
-  );
+	return (
+		<PromptTextRow $clickable={isClickable} onClick={onClick}>
+			<PromptText
+				key={isEasterEggVisible ? `egg-${text}` : "base"}
+				$isPlaceholder={isPlaceholder}
+			>
+				{text}
+			</PromptText>
+		</PromptTextRow>
+	);
 }

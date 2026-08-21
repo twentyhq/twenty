@@ -1,12 +1,12 @@
 type ResourcePathValidationSuccess = {
-  isValid: true;
+	isValid: true;
 };
 
 type ResourcePathValidationFailure = {
-  isValid: false;
-  error: string;
+	isValid: false;
+	error: string;
 };
 
 export type ResourcePathValidationResult =
-  | ResourcePathValidationSuccess
-  | ResourcePathValidationFailure;
+	| ResourcePathValidationSuccess
+	| ResourcePathValidationFailure;

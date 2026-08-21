@@ -1,120 +1,120 @@
-import { PassThrough, Readable } from 'stream';
+import { PassThrough, Readable } from "stream";
 
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { streamToBuffer } from "src/utils/stream-to-buffer";
 
-describe('streamToBuffer', () => {
-  describe('successful scenarios', () => {
-    it('should convert a stream with single chunk to buffer', async () => {
-      const testData = 'Hello, World!';
-      const stream = Readable.from([Buffer.from(testData)]);
+describe("streamToBuffer", () => {
+	describe("successful scenarios", () => {
+		it("should convert a stream with single chunk to buffer", async () => {
+			const testData = "Hello, World!";
+			const stream = Readable.from([Buffer.from(testData)]);
 
-      const result = await streamToBuffer(stream);
+			const result = await streamToBuffer(stream);
 
-      expect(result.toString()).toBe(testData);
-    });
+			expect(result.toString()).toBe(testData);
+		});
 
-    it('should convert a stream with multiple chunks to buffer', async () => {
-      const chunks = ['Hello, ', 'World', '!'];
-      const stream = Readable.from(chunks.map((chunk) => Buffer.from(chunk)));
+		it("should convert a stream with multiple chunks to buffer", async () => {
+			const chunks = ["Hello, ", "World", "!"];
+			const stream = Readable.from(chunks.map((chunk) => Buffer.from(chunk)));
 
-      const result = await streamToBuffer(stream);
+			const result = await streamToBuffer(stream);
 
-      expect(result.toString()).toBe('Hello, World!');
-    });
+			expect(result.toString()).toBe("Hello, World!");
+		});
 
-    it('should handle empty stream', async () => {
-      const stream = Readable.from([]);
+		it("should handle empty stream", async () => {
+			const stream = Readable.from([]);
 
-      const result = await streamToBuffer(stream);
+			const result = await streamToBuffer(stream);
 
-      expect(result.length).toBe(0);
-      expect(result.toString()).toBe('');
-    });
-  });
+			expect(result.length).toBe(0);
+			expect(result.toString()).toBe("");
+		});
+	});
 
-  describe('error scenarios', () => {
-    it('should reject when stream is already ended', async () => {
-      const stream = Readable.from([Buffer.from('test')]);
+	describe("error scenarios", () => {
+		it("should reject when stream is already ended", async () => {
+			const stream = Readable.from([Buffer.from("test")]);
 
-      await streamToBuffer(stream);
+			await streamToBuffer(stream);
 
-      await expect(streamToBuffer(stream)).rejects.toThrow(
-        'Stream has already ended',
-      );
-    });
+			await expect(streamToBuffer(stream)).rejects.toThrow(
+				"Stream has already ended",
+			);
+		});
 
-    it('should reject when stream is not readable (destroyed)', async () => {
-      const stream = new PassThrough();
+		it("should reject when stream is not readable (destroyed)", async () => {
+			const stream = new PassThrough();
 
-      stream.destroy();
+			stream.destroy();
 
-      await expect(streamToBuffer(stream)).rejects.toThrow(
-        'Stream is not readable',
-      );
-    });
+			await expect(streamToBuffer(stream)).rejects.toThrow(
+				"Stream is not readable",
+			);
+		});
 
-    it('should reject when stream emits an error', async () => {
-      const stream = new PassThrough();
-      const testError = new Error('Stream error');
+		it("should reject when stream emits an error", async () => {
+			const stream = new PassThrough();
+			const testError = new Error("Stream error");
 
-      const promise = streamToBuffer(stream);
+			const promise = streamToBuffer(stream);
 
-      stream.write(Buffer.from('partial'));
-      stream.emit('error', testError);
+			stream.write(Buffer.from("partial"));
+			stream.emit("error", testError);
 
-      await expect(promise).rejects.toThrow('Stream error');
-    });
+			await expect(promise).rejects.toThrow("Stream error");
+		});
 
-    it('should reject when stream closes before end', async () => {
-      const stream = new PassThrough();
+		it("should reject when stream closes before end", async () => {
+			const stream = new PassThrough();
 
-      const promise = streamToBuffer(stream);
+			const promise = streamToBuffer(stream);
 
-      stream.write(Buffer.from('data'));
-      stream.destroy();
+			stream.write(Buffer.from("data"));
+			stream.destroy();
 
-      await expect(promise).rejects.toThrow('Stream closed before end');
-    });
-  });
+			await expect(promise).rejects.toThrow("Stream closed before end");
+		});
+	});
 
-  describe('maxSizeBytes', () => {
-    it('should accept stream within size limit', async () => {
-      const data = 'Hello, World!';
-      const stream = Readable.from([Buffer.from(data)]);
+	describe("maxSizeBytes", () => {
+		it("should accept stream within size limit", async () => {
+			const data = "Hello, World!";
+			const stream = Readable.from([Buffer.from(data)]);
 
-      const result = await streamToBuffer(stream, 100);
+			const result = await streamToBuffer(stream, 100);
 
-      expect(result.toString()).toBe(data);
-    });
+			expect(result.toString()).toBe(data);
+		});
 
-    it('should reject when stream exceeds maxSizeBytes', async () => {
-      const stream = new PassThrough();
+		it("should reject when stream exceeds maxSizeBytes", async () => {
+			const stream = new PassThrough();
 
-      const promise = streamToBuffer(stream, 10);
+			const promise = streamToBuffer(stream, 10);
 
-      stream.write(Buffer.from('12345'));
-      stream.write(Buffer.from('678901'));
+			stream.write(Buffer.from("12345"));
+			stream.write(Buffer.from("678901"));
 
-      await expect(promise).rejects.toThrow(
-        'Stream exceeds maximum allowed size of 10 bytes',
-      );
-    });
+			await expect(promise).rejects.toThrow(
+				"Stream exceeds maximum allowed size of 10 bytes",
+			);
+		});
 
-    it('should reject on a single chunk exceeding maxSizeBytes', async () => {
-      const stream = Readable.from([Buffer.from('this is too long')]);
+		it("should reject on a single chunk exceeding maxSizeBytes", async () => {
+			const stream = Readable.from([Buffer.from("this is too long")]);
 
-      await expect(streamToBuffer(stream, 5)).rejects.toThrow(
-        'Stream exceeds maximum allowed size of 5 bytes',
-      );
-    });
+			await expect(streamToBuffer(stream, 5)).rejects.toThrow(
+				"Stream exceeds maximum allowed size of 5 bytes",
+			);
+		});
 
-    it('should accept stream exactly at maxSizeBytes', async () => {
-      const data = '12345';
-      const stream = Readable.from([Buffer.from(data)]);
+		it("should accept stream exactly at maxSizeBytes", async () => {
+			const data = "12345";
+			const stream = Readable.from([Buffer.from(data)]);
 
-      const result = await streamToBuffer(stream, 5);
+			const result = await streamToBuffer(stream, 5);
 
-      expect(result.toString()).toBe(data);
-    });
-  });
+			expect(result.toString()).toBe(data);
+		});
+	});
 });

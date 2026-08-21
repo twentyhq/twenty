@@ -1,7 +1,7 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const isOnboardingCheckoutPendingState = createAtomState<boolean>({
-  key: 'isOnboardingCheckoutPendingState',
-  defaultValue: false,
-  useSessionStorage: true,
+	key: "isOnboardingCheckoutPendingState",
+	defaultValue: false,
+	useSessionStorage: true,
 });

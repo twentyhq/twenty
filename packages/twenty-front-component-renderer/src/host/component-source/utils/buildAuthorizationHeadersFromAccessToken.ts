@@ -1,8 +1,8 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const buildAuthorizationHeadersFromAccessToken = (
-  applicationAccessToken?: string,
+	applicationAccessToken?: string,
 ): Record<string, string> | undefined =>
-  isNonEmptyString(applicationAccessToken)
-    ? { Authorization: `Bearer ${applicationAccessToken}` }
-    : undefined;
+	isNonEmptyString(applicationAccessToken)
+		? { Authorization: `Bearer ${applicationAccessToken}` }
+		: undefined;

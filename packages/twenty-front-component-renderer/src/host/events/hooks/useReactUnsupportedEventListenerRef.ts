@@ -1,18 +1,18 @@
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 
-import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
-import { type ReactUnsupportedEventHandlers } from '@/host/events/types/ReactUnsupportedEventHandlers';
-import { createReactUnsupportedEventListenerRef } from '@/host/events/utils/createReactUnsupportedEventListenerRef';
+import { type ElementRefCallback } from "@/host/elements/types/ElementRefCallback";
+import { type ReactUnsupportedEventHandlers } from "@/host/events/types/ReactUnsupportedEventHandlers";
+import { createReactUnsupportedEventListenerRef } from "@/host/events/utils/createReactUnsupportedEventListenerRef";
 
 export const useReactUnsupportedEventListenerRef = (
-  reactUnsupportedEventHandlers: ReactUnsupportedEventHandlers,
+	reactUnsupportedEventHandlers: ReactUnsupportedEventHandlers,
 ): ElementRefCallback => {
-  const latestHandlersRef = useRef(reactUnsupportedEventHandlers);
-  latestHandlersRef.current = reactUnsupportedEventHandlers;
+	const latestHandlersRef = useRef(reactUnsupportedEventHandlers);
+	latestHandlersRef.current = reactUnsupportedEventHandlers;
 
-  const [reactUnsupportedEventListenerRef] = useState(() =>
-    createReactUnsupportedEventListenerRef(latestHandlersRef),
-  );
+	const [reactUnsupportedEventListenerRef] = useState(() =>
+		createReactUnsupportedEventListenerRef(latestHandlersRef),
+	);
 
-  return reactUnsupportedEventListenerRef;
+	return reactUnsupportedEventListenerRef;
 };

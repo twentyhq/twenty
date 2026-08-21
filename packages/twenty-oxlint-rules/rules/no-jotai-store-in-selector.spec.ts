@@ -1,13 +1,13 @@
-import { RuleTester } from 'oxlint/plugins-dev';
+import { RuleTester } from "oxlint/plugins-dev";
 
-import { rule, RULE_NAME } from './no-jotai-store-in-selector';
+import { rule, RULE_NAME } from "./no-jotai-store-in-selector";
 
 const ruleTester = new RuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    {
-      code: `
+	valid: [
+		{
+			code: `
         const mySelector = createAtomComponentSelector({
           key: 'mySelector',
           get: ({ instanceId }) => ({ get }) => {
@@ -17,9 +17,9 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-    },
-    {
-      code: `
+		},
+		{
+			code: `
         const mySelector = createAtomComponentFamilySelector({
           key: 'mySelector',
           get: ({ instanceId, familyKey }) => ({ get }) => {
@@ -29,16 +29,16 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-    },
-    {
-      code: `
+		},
+		{
+			code: `
         const value = jotaiStore.get(someState.atom);
       `,
-    },
-  ],
-  invalid: [
-    {
-      code: `
+		},
+	],
+	invalid: [
+		{
+			code: `
         const mySelector = createAtomComponentSelector({
           key: 'mySelector',
           get: ({ instanceId }) => ({ get }) => {
@@ -48,10 +48,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [{ messageId: 'noJotaiStoreInSelector' }],
-    },
-    {
-      code: `
+			errors: [{ messageId: "noJotaiStoreInSelector" }],
+		},
+		{
+			code: `
         const mySelector = createAtomComponentFamilySelector({
           key: 'mySelector',
           get: ({ instanceId, familyKey }) => ({ get }) => {
@@ -61,10 +61,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [{ messageId: 'noJotaiStoreInSelector' }],
-    },
-    {
-      code: `
+			errors: [{ messageId: "noJotaiStoreInSelector" }],
+		},
+		{
+			code: `
         const mySelector = createAtomComponentSelector({
           key: 'mySelector',
           get: ({ instanceId }) => ({ get }) => {
@@ -74,10 +74,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [{ messageId: 'noJotaiStoreInSelector' }],
-    },
-    {
-      code: `
+			errors: [{ messageId: "noJotaiStoreInSelector" }],
+		},
+		{
+			code: `
         const mySelector = createAtomComponentFamilySelector({
           key: 'mySelector',
           get: ({ instanceId, familyKey }) => ({ get }) => {
@@ -88,10 +88,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [
-        { messageId: 'noJotaiStoreInSelector' },
-        { messageId: 'noJotaiStoreInSelector' },
-      ],
-    },
-  ],
+			errors: [
+				{ messageId: "noJotaiStoreInSelector" },
+				{ messageId: "noJotaiStoreInSelector" },
+			],
+		},
+	],
 });

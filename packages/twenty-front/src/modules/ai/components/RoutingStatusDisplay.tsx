@@ -1,12 +1,12 @@
-import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
-import { type DataMessagePart } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { RoutingDebugDisplay } from "@/ai/components/RoutingDebugDisplay";
+import { ShimmeringText } from "@/ai/components/ShimmeringText";
+import { styled } from "@linaria/react";
+import { useContext, useState } from "react";
+import { type DataMessagePart } from "twenty-shared/ai";
+import { isDefined } from "twenty-shared/utils";
+import { IconChevronDown, IconChevronUp, IconCpu } from "twenty-ui/icon";
+import { AnimatedExpandableContainer } from "twenty-ui/layout";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   background: none;
   border: none;
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'auto')};
+  cursor: ${({ isExpandable }) => (isExpandable ? "pointer" : "auto")};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]} 0;
@@ -27,9 +27,9 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
 
   &:hover {
     color: ${({ isExpandable }) =>
-      isExpandable
-        ? themeCssVariables.font.color.secondary
-        : themeCssVariables.font.color.tertiary};
+			isExpandable
+				? themeCssVariables.font.color.secondary
+				: themeCssVariables.font.color.tertiary};
   }
 `;
 
@@ -58,59 +58,59 @@ const StyledContentContainer = styled.div`
 `;
 
 export const RoutingStatusDisplay = ({
-  data,
+	data,
 }: {
-  data: DataMessagePart['routing-status'];
+	data: DataMessagePart["routing-status"];
 }) => {
-  const { theme } = useContext(ThemeContext);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const isLoading = data.state === 'loading';
-  const isDebugMode = process.env.IS_DEBUG_MODE === 'true';
-  const isExpandable =
-    isDebugMode && data.state === 'routed' && isDefined(data.debug);
+	const { theme } = useContext(ThemeContext);
+	const [isExpanded, setIsExpanded] = useState(false);
+	const isLoading = data.state === "loading";
+	const isDebugMode = process.env.IS_DEBUG_MODE === "true";
+	const isExpandable =
+		isDebugMode && data.state === "routed" && isDefined(data.debug);
 
-  if (data.state === 'error') {
-    return null;
-  }
+	if (data.state === "error") {
+		return null;
+	}
 
-  if (isLoading) {
-    return (
-      <StyledContainer>
-        <StyledIconTextContainer>
-          <IconCpu size={theme.icon.size.sm} />
-          <ShimmeringText>
-            <StyledDisplayMessage>{data.text}</StyledDisplayMessage>
-          </ShimmeringText>
-        </StyledIconTextContainer>
-      </StyledContainer>
-    );
-  }
+	if (isLoading) {
+		return (
+			<StyledContainer>
+				<StyledIconTextContainer>
+					<IconCpu size={theme.icon.size.sm} />
+					<ShimmeringText>
+						<StyledDisplayMessage>{data.text}</StyledDisplayMessage>
+					</ShimmeringText>
+				</StyledIconTextContainer>
+			</StyledContainer>
+		);
+	}
 
-  return (
-    <StyledContainer>
-      <StyledToggleButton
-        onClick={() => isExpandable && setIsExpanded(!isExpanded)}
-        isExpandable={!!isExpandable}
-      >
-        <StyledIconTextContainer>
-          <IconCpu size={theme.icon.size.sm} />
-          <StyledDisplayMessage>{data.text}</StyledDisplayMessage>
-        </StyledIconTextContainer>
-        {isExpandable &&
-          (isExpanded ? (
-            <IconChevronUp size={theme.icon.size.sm} />
-          ) : (
-            <IconChevronDown size={theme.icon.size.sm} />
-          ))}
-      </StyledToggleButton>
+	return (
+		<StyledContainer>
+			<StyledToggleButton
+				onClick={() => isExpandable && setIsExpanded(!isExpanded)}
+				isExpandable={!!isExpandable}
+			>
+				<StyledIconTextContainer>
+					<IconCpu size={theme.icon.size.sm} />
+					<StyledDisplayMessage>{data.text}</StyledDisplayMessage>
+				</StyledIconTextContainer>
+				{isExpandable &&
+					(isExpanded ? (
+						<IconChevronUp size={theme.icon.size.sm} />
+					) : (
+						<IconChevronDown size={theme.icon.size.sm} />
+					))}
+			</StyledToggleButton>
 
-      {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-          <StyledContentContainer>
-            <RoutingDebugDisplay debug={data.debug!} />
-          </StyledContentContainer>
-        </AnimatedExpandableContainer>
-      )}
-    </StyledContainer>
-  );
+			{isExpandable && (
+				<AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+					<StyledContentContainer>
+						<RoutingDebugDisplay debug={data.debug!} />
+					</StyledContentContainer>
+				</AnimatedExpandableContainer>
+			)}
+		</StyledContainer>
+	);
 };

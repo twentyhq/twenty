@@ -1,29 +1,29 @@
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { getRecordFilterOperands } from "@/object-record/record-filter/utils/getRecordFilterOperands";
 import {
-  type FilterableAndTSVectorFieldType,
-  ViewFilterOperand as RecordFilterOperand,
-} from 'twenty-shared/types';
+	type FilterableAndTSVectorFieldType,
+	ViewFilterOperand as RecordFilterOperand,
+} from "twenty-shared/types";
 
 export const getDefaultAdvancedFilterOperand = ({
-  filterType,
-  subFieldName,
+	filterType,
+	subFieldName,
 }: {
-  filterType: FilterableAndTSVectorFieldType;
-  subFieldName?: string | null;
+	filterType: FilterableAndTSVectorFieldType;
+	subFieldName?: string | null;
 }): RecordFilterOperand => {
-  const availableOperands = getRecordFilterOperands({
-    filterType,
-    subFieldName,
-  });
+	const availableOperands = getRecordFilterOperands({
+		filterType,
+		subFieldName,
+	});
 
-  const isDateFilterType = filterType === 'DATE' || filterType === 'DATE_TIME';
+	const isDateFilterType = filterType === "DATE" || filterType === "DATE_TIME";
 
-  if (
-    isDateFilterType &&
-    availableOperands.includes(RecordFilterOperand.IS_RELATIVE)
-  ) {
-    return RecordFilterOperand.IS_RELATIVE;
-  }
+	if (
+		isDateFilterType &&
+		availableOperands.includes(RecordFilterOperand.IS_RELATIVE)
+	) {
+		return RecordFilterOperand.IS_RELATIVE;
+	}
 
-  return availableOperands[0];
+	return availableOperands[0];
 };

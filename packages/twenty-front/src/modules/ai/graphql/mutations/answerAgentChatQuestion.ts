@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ANSWER_AGENT_CHAT_QUESTION = gql`
   mutation AnswerAgentChatQuestion(

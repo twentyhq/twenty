@@ -1,17 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 import {
-  frontComponentHostCommunicationApi,
-  type UnmountFrontComponentFunction,
-} from '../globals/frontComponentHostCommunicationApi';
+	frontComponentHostCommunicationApi,
+	type UnmountFrontComponentFunction,
+} from "../globals/frontComponentHostCommunicationApi";
 
 export const unmountFrontComponent: UnmountFrontComponentFunction = () => {
-  const unmountFrontComponentFunction =
-    frontComponentHostCommunicationApi.unmountFrontComponent;
+	const unmountFrontComponentFunction =
+		frontComponentHostCommunicationApi.unmountFrontComponent;
 
-  if (!isDefined(unmountFrontComponentFunction)) {
-    throw new Error('unmountFrontComponentFunction is not set');
-  }
+	if (!isDefined(unmountFrontComponentFunction)) {
+		throw new Error("unmountFrontComponentFunction is not set");
+	}
 
-  return unmountFrontComponentFunction();
+	return unmountFrontComponentFunction();
 };

@@ -1,7 +1,7 @@
-import { type ThemeColor } from '@ui/theme';
+import { type ThemeColor } from "@ui/theme";
 
 export const getMainColorNameFromPaletteColorName = (
-  paletteColorName: string,
+	paletteColorName: string,
 ): ThemeColor => {
-  return paletteColorName.replace(/\d+$/, '') as ThemeColor;
+	return paletteColorName.replace(/\d+$/, "") as ThemeColor;
 };

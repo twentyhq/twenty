@@ -1,8 +1,8 @@
-import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
+import { type FirefliesTranscript } from "src/logic-functions/types/fireflies-transcript.type";
 import {
-  firefliesApiRequest,
-  type FirefliesApiResult,
-} from 'src/logic-functions/utils/fireflies-api-request';
+	firefliesApiRequest,
+	type FirefliesApiResult,
+} from "src/logic-functions/utils/fireflies-api-request";
 
 const SUMMARY_QUERY = `
   query Transcript($transcriptId: String!) {
@@ -29,33 +29,33 @@ const SUMMARY_QUERY = `
 `;
 
 type FirefliesSummaryResponse = {
-  transcript: FirefliesTranscript | null;
+	transcript: FirefliesTranscript | null;
 };
 
 export const fetchFirefliesSummary = async ({
-  apiKey,
-  transcriptId,
+	apiKey,
+	transcriptId,
 }: {
-  apiKey: string;
-  transcriptId: string;
+	apiKey: string;
+	transcriptId: string;
 }): Promise<FirefliesApiResult<FirefliesTranscript>> => {
-  const result = await firefliesApiRequest<FirefliesSummaryResponse>({
-    apiKey,
-    query: SUMMARY_QUERY,
-    variables: { transcriptId },
-  });
+	const result = await firefliesApiRequest<FirefliesSummaryResponse>({
+		apiKey,
+		query: SUMMARY_QUERY,
+		variables: { transcriptId },
+	});
 
-  if (!result.ok) {
-    return result;
-  }
+	if (!result.ok) {
+		return result;
+	}
 
-  if (result.data.transcript === null) {
-    return {
-      ok: false,
-      status: 404,
-      errorMessage: `Fireflies transcript ${transcriptId} not found (may have been deleted or access was revoked)`,
-    };
-  }
+	if (result.data.transcript === null) {
+		return {
+			ok: false,
+			status: 404,
+			errorMessage: `Fireflies transcript ${transcriptId} not found (may have been deleted or access was revoked)`,
+		};
+	}
 
-  return { ok: true, status: result.status, data: result.data.transcript };
+	return { ok: true, status: result.status, data: result.data.transcript };
 };

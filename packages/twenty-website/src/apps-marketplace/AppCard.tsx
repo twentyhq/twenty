@@ -1,31 +1,31 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { type CSSProperties } from "react";
 
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+import { LocalizedLink } from "@/platform/i18n/LocalizedLink";
 import {
-  color,
-  EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  SHADOW,
-  spacing,
-} from '@/tokens';
-import { Button } from '@/ui';
+	color,
+	EASING,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	radius,
+	REDUCED_MOTION,
+	semanticColor,
+	SHADOW,
+	spacing,
+} from "@/tokens";
+import { Button } from "@/ui";
 
-import { AppLogo } from './AppLogo';
-import { buildAppInstallUrl } from './build-app-install-url';
-import { type MarketplaceApp } from './marketplace-app';
+import { AppLogo } from "./AppLogo";
+import { buildAppInstallUrl } from "./build-app-install-url";
+import { type MarketplaceApp } from "./marketplace-app";
 
 type AppCardStyle = CSSProperties & {
-  '--app-card-index': number;
+	"--app-card-index": number;
 };
 
 const CardArticle = styled.article`
@@ -42,7 +42,7 @@ const CardArticle = styled.article`
 
   animation: appCardEnter 700ms ${EASING.standard} both;
   animation-delay: calc(var(--app-card-index) * 90ms + 180ms);
-  background-color: ${color('white')};
+  background-color: ${color("white")};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   display: flex;
@@ -91,7 +91,7 @@ const HeaderText = styled.div`
 
 const AppName = styled.h3`
   color: ${semanticColor.ink};
-  font-family: ${fontFamily('serif')};
+  font-family: ${fontFamily("serif")};
   font-size: ${fontSize(6)};
   font-weight: ${FONT_WEIGHT.light};
   letter-spacing: -0.02em;
@@ -118,7 +118,7 @@ const NameLink = styled(LocalizedLink)`
 
 const CategoryEyebrow = styled.span`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.08em;
@@ -131,7 +131,7 @@ const Tagline = styled.p`
   -webkit-line-clamp: 3;
   color: ${semanticColor.inkMuted};
   display: -webkit-box;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   line-height: ${fontSize(5.5)};
   overflow: hidden;
@@ -148,7 +148,7 @@ const CtaRow = styled.div`
 
 const LearnMoreLink = styled(LocalizedLink)`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.02em;
@@ -162,46 +162,46 @@ const LearnMoreLink = styled(LocalizedLink)`
 `;
 
 type AppCardProps = {
-  app: MarketplaceApp;
-  index: number;
+	app: MarketplaceApp;
+	index: number;
 };
 
 export function AppCard({ app, index }: AppCardProps) {
-  const { i18n } = useLingui();
-  const headingId = `app-card-heading-${app.slug}`;
-  const style: AppCardStyle = { '--app-card-index': index };
-  const detailHref = `/apps/${app.slug}`;
+	const { i18n } = useLingui();
+	const headingId = `app-card-heading-${app.slug}`;
+	const style: AppCardStyle = { "--app-card-index": index };
+	const detailHref = `/apps/${app.slug}`;
 
-  return (
-    <CardArticle aria-labelledby={headingId} style={style}>
-      <CardHeader>
-        <AppLogo name={app.name} logoUrl={app.logoUrl} />
-        <HeaderText>
-          <AppName id={headingId}>
-            <NameLink href={detailHref}>{app.name}</NameLink>
-          </AppName>
-          {app.category.length > 0 && (
-            <CategoryEyebrow>{app.category}</CategoryEyebrow>
-          )}
-        </HeaderText>
-      </CardHeader>
+	return (
+		<CardArticle aria-labelledby={headingId} style={style}>
+			<CardHeader>
+				<AppLogo name={app.name} logoUrl={app.logoUrl} />
+				<HeaderText>
+					<AppName id={headingId}>
+						<NameLink href={detailHref}>{app.name}</NameLink>
+					</AppName>
+					{app.category.length > 0 && (
+						<CategoryEyebrow>{app.category}</CategoryEyebrow>
+					)}
+				</HeaderText>
+			</CardHeader>
 
-      <Tagline>{app.tagline}</Tagline>
+			<Tagline>{app.tagline}</Tagline>
 
-      <CtaRow>
-        <Button
-          href={buildAppInstallUrl(app.universalIdentifier)}
-          label={i18n._(msg`Install`)}
-          variant="filled"
-          size="small"
-        />
-        <LearnMoreLink
-          href={detailHref}
-          aria-label={i18n._(msg`Learn more about ${app.name}`)}
-        >
-          {i18n._(msg`Learn more`)}
-        </LearnMoreLink>
-      </CtaRow>
-    </CardArticle>
-  );
+			<CtaRow>
+				<Button
+					href={buildAppInstallUrl(app.universalIdentifier)}
+					label={i18n._(msg`Install`)}
+					variant="filled"
+					size="small"
+				/>
+				<LearnMoreLink
+					href={detailHref}
+					aria-label={i18n._(msg`Learn more about ${app.name}`)}
+				>
+					{i18n._(msg`Learn more`)}
+				</LearnMoreLink>
+			</CtaRow>
+		</CardArticle>
+	);
 }

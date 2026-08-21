@@ -1,29 +1,29 @@
-import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
-import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
-import { Select } from '@/ui/input/components/Select';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { lazy, Suspense, useState } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { IconList } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { WidgetSkeletonLoader } from "@/page-layout/widgets/components/WidgetSkeletonLoader";
+import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from "@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions";
+import { Select } from "@/ui/input/components/Select";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { lazy, Suspense, useState } from "react";
+import { SettingsPath } from "twenty-shared/types";
+import { getSettingsPath } from "twenty-shared/utils";
+import { IconList } from "twenty-ui/icon";
+import { H2Title } from "twenty-ui/typography";
+import { Button } from "twenty-ui/input";
+import { Section } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 import {
-  type AdminPanelWorkerQueueHealth,
-  QueueMetricsTimeRange,
-} from '~/generated-admin/graphql';
+	type AdminPanelWorkerQueueHealth,
+	QueueMetricsTimeRange,
+} from "~/generated-admin/graphql";
 
 const SettingsAdminWorkerMetricsGraph = lazy(() =>
-  import('./SettingsAdminWorkerMetricsGraph').then((module) => ({
-    default: module.SettingsAdminWorkerMetricsGraph,
-  })),
+	import("./SettingsAdminWorkerMetricsGraph").then((module) => ({
+		default: module.SettingsAdminWorkerMetricsGraph,
+	})),
 );
 
 type SettingsAdminWorkerQueueMetricsSectionProps = {
-  queue: AdminPanelWorkerQueueHealth;
+	queue: AdminPanelWorkerQueueHealth;
 };
 
 const StyledControlsContainer = styled.div`
@@ -45,46 +45,46 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsAdminWorkerQueueMetricsSection = ({
-  queue,
+	queue,
 }: SettingsAdminWorkerQueueMetricsSectionProps) => {
-  const [timeRange, setTimeRange] = useState(QueueMetricsTimeRange.OneHour);
+	const [timeRange, setTimeRange] = useState(QueueMetricsTimeRange.OneHour);
 
-  return (
-    <StyledContainer>
-      <Section>
-        <StyledControlsContainer>
-          <H2Title title={queue.queueName} description={t`Queue performance`} />
-          <StyledRightControls>
-            <Button
-              Icon={IconList}
-              title={t`View Jobs`}
-              size="small"
-              variant="secondary"
-              to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
-                queueName: queue.queueName,
-              })}
-            />
-            <Select
-              dropdownId={`timerange-${queue.queueName}`}
-              value={timeRange}
-              options={WORKER_QUEUE_METRICS_SELECT_OPTIONS.map((option) => ({
-                ...option,
-                label: t(option.label),
-              }))}
-              onChange={setTimeRange}
-              needIconCheck
-              selectSizeVariant="small"
-            />
-          </StyledRightControls>
-        </StyledControlsContainer>
-      </Section>
-      <Suspense fallback={<WidgetSkeletonLoader />}>
-        <SettingsAdminWorkerMetricsGraph
-          queueName={queue.queueName}
-          timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
-        />
-      </Suspense>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<Section>
+				<StyledControlsContainer>
+					<H2Title title={queue.queueName} description={t`Queue performance`} />
+					<StyledRightControls>
+						<Button
+							Icon={IconList}
+							title={t`View Jobs`}
+							size="small"
+							variant="secondary"
+							to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
+								queueName: queue.queueName,
+							})}
+						/>
+						<Select
+							dropdownId={`timerange-${queue.queueName}`}
+							value={timeRange}
+							options={WORKER_QUEUE_METRICS_SELECT_OPTIONS.map((option) => ({
+								...option,
+								label: t(option.label),
+							}))}
+							onChange={setTimeRange}
+							needIconCheck
+							selectSizeVariant="small"
+						/>
+					</StyledRightControls>
+				</StyledControlsContainer>
+			</Section>
+			<Suspense fallback={<WidgetSkeletonLoader />}>
+				<SettingsAdminWorkerMetricsGraph
+					queueName={queue.queueName}
+					timeRange={timeRange}
+					onTimeRangeChange={setTimeRange}
+				/>
+			</Suspense>
+		</StyledContainer>
+	);
 };

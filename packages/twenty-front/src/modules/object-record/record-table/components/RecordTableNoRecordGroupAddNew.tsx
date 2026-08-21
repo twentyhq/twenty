@@ -1,114 +1,114 @@
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
-import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
-import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
-import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
-import { useCallback, useContext } from 'react';
-import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
+import { useObjectPermissionsForObject } from "@/object-record/hooks/useObjectPermissionsForObject";
+import { hasAnySoftDeleteFilterOnViewComponentSelector } from "@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView";
+import { useUpsertRecordsInStore } from "@/object-record/record-store/hooks/useUpsertRecordsInStore";
+import { useRecordTableContextOrThrow } from "@/object-record/record-table/contexts/RecordTableContext";
+import { useCreateNewIndexRecord } from "@/object-record/record-table/hooks/useCreateNewIndexRecord";
+import { isRecordTableCellsNonEditableComponentState } from "@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState";
+import { RecordTableActionRow } from "@/object-record/record-table/record-table-row/components/RecordTableActionRow";
+import { RecordTableWidgetNestedRelationAddNewRow } from "@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow";
+import { RecordTableWidgetContext } from "@/object-record/record-table-widget/contexts/RecordTableWidgetContext";
+import { canCreateRecordsForObjectMetadataItem } from "@/object-record/utils/canCreateRecordsForObjectMetadataItem";
+import { useLoadRecordsToVirtualRows } from "@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows";
+import { totalNumberOfRecordsToVirtualizeComponentState } from "@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { t } from "@lingui/core/macro";
+import { useCallback, useContext } from "react";
+import { type ObjectRecord } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
+import { IconPlus } from "twenty-ui/icon";
 
 export const RecordTableNoRecordGroupAddNew = () => {
-  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
+	const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
-  const nestedRelationCreateThrough = useContext(
-    RecordTableWidgetContext,
-  )?.nestedRelationCreateThrough;
+	const nestedRelationCreateThrough = useContext(
+		RecordTableWidgetContext,
+	)?.nestedRelationCreateThrough;
 
-  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
-    isRecordTableCellsNonEditableComponentState,
-  );
+	const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+		isRecordTableCellsNonEditableComponentState,
+	);
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
-    objectMetadataItem,
-  });
+	const { createNewIndexRecord } = useCreateNewIndexRecord({
+		objectMetadataItem,
+	});
 
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
+	const objectPermissions = useObjectPermissionsForObject(
+		objectMetadataItem.id,
+	);
 
-  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
-    hasAnySoftDeleteFilterOnViewComponentSelector,
-  );
+	const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
+		hasAnySoftDeleteFilterOnViewComponentSelector,
+	);
 
-  const totalNumberOfRecordsToVirtualize = useAtomComponentStateValue(
-    totalNumberOfRecordsToVirtualizeComponentState,
-  );
+	const totalNumberOfRecordsToVirtualize = useAtomComponentStateValue(
+		totalNumberOfRecordsToVirtualizeComponentState,
+	);
 
-  const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+	const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
+	const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const handleCreateRecord = useCallback(
-    async (recordInput?: Partial<ObjectRecord>) => {
-      const createdRecord = await createNewIndexRecord({
-        position: 'last',
-        ...recordInput,
-      });
+	const handleCreateRecord = useCallback(
+		async (recordInput?: Partial<ObjectRecord>) => {
+			const createdRecord = await createNewIndexRecord({
+				position: "last",
+				...recordInput,
+			});
 
-      upsertRecordsInStore({ partialRecords: [createdRecord] });
+			upsertRecordsInStore({ partialRecords: [createdRecord] });
 
-      if (isDefined(totalNumberOfRecordsToVirtualize)) {
-        loadRecordsToVirtualRows({
-          records: [createdRecord],
-          startingRealIndex: totalNumberOfRecordsToVirtualize,
-        });
-      }
-    },
-    [
-      createNewIndexRecord,
-      upsertRecordsInStore,
-      loadRecordsToVirtualRows,
-      totalNumberOfRecordsToVirtualize,
-    ],
-  );
+			if (isDefined(totalNumberOfRecordsToVirtualize)) {
+				loadRecordsToVirtualRows({
+					records: [createdRecord],
+					startingRealIndex: totalNumberOfRecordsToVirtualize,
+				});
+			}
+		},
+		[
+			createNewIndexRecord,
+			upsertRecordsInStore,
+			loadRecordsToVirtualRows,
+			totalNumberOfRecordsToVirtualize,
+		],
+	);
 
-  if (isRecordTableCellsNonEditable) {
-    return null;
-  }
+	if (isRecordTableCellsNonEditable) {
+		return null;
+	}
 
-  if (hasAnySoftDeleteFilterOnView) {
-    return null;
-  }
+	if (hasAnySoftDeleteFilterOnView) {
+		return null;
+	}
 
-  if (
-    !canCreateRecordsForObjectMetadataItem({
-      objectPermissions,
-      objectMetadataItem,
-    })
-  ) {
-    return null;
-  }
+	if (
+		!canCreateRecordsForObjectMetadataItem({
+			objectPermissions,
+			objectMetadataItem,
+		})
+	) {
+		return null;
+	}
 
-  if (isDefined(nestedRelationCreateThrough)) {
-    return (
-      <RecordTableWidgetNestedRelationAddNewRow
-        dropdownId={`${recordTableId}-nested-relation-add-new`}
-        nestedRelationCreateThrough={nestedRelationCreateThrough}
-        onRelationRecordSelected={(relationRecordId) =>
-          handleCreateRecord({
-            [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
-              relationRecordId,
-          })
-        }
-      />
-    );
-  }
+	if (isDefined(nestedRelationCreateThrough)) {
+		return (
+			<RecordTableWidgetNestedRelationAddNewRow
+				dropdownId={`${recordTableId}-nested-relation-add-new`}
+				nestedRelationCreateThrough={nestedRelationCreateThrough}
+				onRelationRecordSelected={(relationRecordId) =>
+					handleCreateRecord({
+						[nestedRelationCreateThrough.nestedRelationJoinColumnName]:
+							relationRecordId,
+					})
+				}
+			/>
+		);
+	}
 
-  return (
-    <RecordTableActionRow
-      onClick={() => handleCreateRecord()}
-      LeftIcon={IconPlus}
-      text={t`Add New`}
-    />
-  );
+	return (
+		<RecordTableActionRow
+			onClick={() => handleCreateRecord()}
+			LeftIcon={IconPlus}
+			text={t`Add New`}
+		/>
+	);
 };

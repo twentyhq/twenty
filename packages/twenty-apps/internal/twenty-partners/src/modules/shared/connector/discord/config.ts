@@ -1,4 +1,4 @@
-export const DISCORD_WEBHOOK_ENV_VAR = 'DISCORD_WEBHOOK_URL';
+export const DISCORD_WEBHOOK_ENV_VAR = "DISCORD_WEBHOOK_URL";
 
 // Generous bound on the Discord call. The trigger runs out-of-band on the
 // worker (no user waiting), so this only needs to stay under the function's

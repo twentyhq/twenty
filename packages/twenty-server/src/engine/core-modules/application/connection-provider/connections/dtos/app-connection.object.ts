@@ -1,33 +1,33 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 
-import { type AppConnection } from 'twenty-shared/application';
+import { type AppConnection } from "twenty-shared/application";
 
-@ObjectType('AppConnection')
+@ObjectType("AppConnection")
 export class AppConnectionObjectDto implements AppConnection {
-  @Field(() => ID)
-  id: string;
+	@Field(() => ID)
+	id: string;
 
-  @Field()
-  providerName: string;
+	@Field()
+	providerName: string;
 
-  @Field()
-  name: string;
+	@Field()
+	name: string;
 
-  @Field()
-  handle: string;
+	@Field()
+	handle: string;
 
-  @Field(() => String)
-  visibility: 'user' | 'workspace';
+	@Field(() => String)
+	visibility: "user" | "workspace";
 
-  @Field()
-  userWorkspaceId: string;
+	@Field()
+	userWorkspaceId: string;
 
-  @Field()
-  accessToken: string;
+	@Field()
+	accessToken: string;
 
-  @Field(() => [String])
-  scopes: string[];
+	@Field(() => [String])
+	scopes: string[];
 
-  @Field(() => String, { nullable: true })
-  authFailedAt: string | null;
+	@Field(() => String, { nullable: true })
+	authFailedAt: string | null;
 }

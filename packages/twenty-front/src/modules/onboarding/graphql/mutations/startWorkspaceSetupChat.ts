@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const START_WORKSPACE_SETUP_CHAT = gql`
   mutation StartWorkspaceSetupChat(

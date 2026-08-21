@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
-import { useState } from 'react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useState } from "react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { EASING } from '@/tokens';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { EASING } from "@/tokens";
 
-import { type DashboardStage } from '../types/dashboard-stage';
+import { type DashboardStage } from "../types/dashboard-stage";
 
 const SIZE = 160;
 const STROKE = 18;
@@ -169,85 +169,85 @@ const ItemLabel = styled.span`
 `;
 
 export function DonutChart({
-  active,
-  stages,
+	active,
+	stages,
 }: {
-  active: boolean;
-  stages: DashboardStage[];
+	active: boolean;
+	stages: DashboardStage[];
 }) {
-  const { i18n } = useLingui();
-  const [page, setPage] = useState(0);
-  const total = stages.reduce((sum, stage) => sum + stage.value, 0);
-  const pageCount = Math.ceil(stages.length / LEGEND_PAGE_SIZE);
-  const visibleStages = stages.slice(
-    page * LEGEND_PAGE_SIZE,
-    page * LEGEND_PAGE_SIZE + LEGEND_PAGE_SIZE,
-  );
+	const { i18n } = useLingui();
+	const [page, setPage] = useState(0);
+	const total = stages.reduce((sum, stage) => sum + stage.value, 0);
+	const pageCount = Math.ceil(stages.length / LEGEND_PAGE_SIZE);
+	const visibleStages = stages.slice(
+		page * LEGEND_PAGE_SIZE,
+		page * LEGEND_PAGE_SIZE + LEGEND_PAGE_SIZE,
+	);
 
-  let cumulative = 0;
-  const slices = stages.map((stage) => {
-    const arc = total > 0 ? (stage.value / total) * CIRCUMFERENCE : 0;
-    const startAngle = -90 + (total > 0 ? cumulative / total : 0) * 360;
-    cumulative += stage.value;
-    return { arc, stage, startAngle };
-  });
+	let cumulative = 0;
+	const slices = stages.map((stage) => {
+		const arc = total > 0 ? (stage.value / total) * CIRCUMFERENCE : 0;
+		const startAngle = -90 + (total > 0 ? cumulative / total : 0) * 360;
+		cumulative += stage.value;
+		return { arc, stage, startAngle };
+	});
 
-  return (
-    <Root>
-      <ChartArea>
-        <Ring
-          style={{
-            opacity: active ? 1 : 0,
-            transform: active ? 'scale(1)' : 'scale(0.85)',
-          }}
-          viewBox={`0 0 ${SIZE} ${SIZE}`}
-        >
-          {slices.map(({ arc, stage, startAngle }) => {
-            const visibleArc = stage.value > 0 ? Math.max(arc - GAP, 0.5) : 0;
-            return (
-              <Slice
-                key={stage.id}
-                cx={CENTER}
-                cy={CENTER}
-                data-tone={stage.tone}
-                r={RADIUS}
-                strokeDasharray={`${visibleArc} ${CIRCUMFERENCE - visibleArc}`}
-                strokeWidth={STROKE}
-                transform={`rotate(${startAngle} ${CENTER} ${CENTER})`}
-              />
-            );
-          })}
-        </Ring>
-        <Center>
-          <CenterValue>{total}</CenterValue>
-          <CenterLabel>{i18n._(msg`Total`)}</CenterLabel>
-        </Center>
-      </ChartArea>
-      <Legend>
-        <Pager>
-          <PagerArrow
-            onClick={() =>
-              setPage((current) => (current - 1 + pageCount) % pageCount)
-            }
-          >
-            <IconChevronLeft size={14} stroke={1.8} />
-          </PagerArrow>
-          <PagerText>
-            {page + 1}/{pageCount}
-          </PagerText>
-          <PagerArrow
-            onClick={() => setPage((current) => (current + 1) % pageCount)}
-          >
-            <IconChevronRight size={14} stroke={1.8} />
-          </PagerArrow>
-        </Pager>
-        {visibleStages.map((stage) => (
-          <Item key={stage.id}>
-            <ItemDot data-tone={stage.tone} />
-            <ItemLabel>{i18n._(stage.label)}</ItemLabel>
-          </Item>
-        ))}
-      </Legend>
-    </Root>
-  );
+	return (
+		<Root>
+			<ChartArea>
+				<Ring
+					style={{
+						opacity: active ? 1 : 0,
+						transform: active ? "scale(1)" : "scale(0.85)",
+					}}
+					viewBox={`0 0 ${SIZE} ${SIZE}`}
+				>
+					{slices.map(({ arc, stage, startAngle }) => {
+						const visibleArc = stage.value > 0 ? Math.max(arc - GAP, 0.5) : 0;
+						return (
+							<Slice
+								key={stage.id}
+								cx={CENTER}
+								cy={CENTER}
+								data-tone={stage.tone}
+								r={RADIUS}
+								strokeDasharray={`${visibleArc} ${CIRCUMFERENCE - visibleArc}`}
+								strokeWidth={STROKE}
+								transform={`rotate(${startAngle} ${CENTER} ${CENTER})`}
+							/>
+						);
+					})}
+				</Ring>
+				<Center>
+					<CenterValue>{total}</CenterValue>
+					<CenterLabel>{i18n._(msg`Total`)}</CenterLabel>
+				</Center>
+			</ChartArea>
+			<Legend>
+				<Pager>
+					<PagerArrow
+						onClick={() =>
+							setPage((current) => (current - 1 + pageCount) % pageCount)
+						}
+					>
+						<IconChevronLeft size={14} stroke={1.8} />
+					</PagerArrow>
+					<PagerText>
+						{page + 1}/{pageCount}
+					</PagerText>
+					<PagerArrow
+						onClick={() => setPage((current) => (current + 1) % pageCount)}
+					>
+						<IconChevronRight size={14} stroke={1.8} />
+					</PagerArrow>
+				</Pager>
+				{visibleStages.map((stage) => (
+					<Item key={stage.id}>
+						<ItemDot data-tone={stage.tone} />
+						<ItemLabel>{i18n._(stage.label)}</ItemLabel>
+					</Item>
+				))}
+			</Legend>
+		</Root>
+	);
 }

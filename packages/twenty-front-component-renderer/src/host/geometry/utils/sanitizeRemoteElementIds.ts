@@ -1,11 +1,11 @@
-import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from "@sniptt/guards";
 
 export const sanitizeRemoteElementIds = (
-  remoteElementIds: unknown,
+	remoteElementIds: unknown,
 ): string[] => {
-  if (!isArray(remoteElementIds)) {
-    return [];
-  }
+	if (!isArray(remoteElementIds)) {
+		return [];
+	}
 
-  return remoteElementIds.filter(isNonEmptyString);
+	return remoteElementIds.filter(isNonEmptyString);
 };

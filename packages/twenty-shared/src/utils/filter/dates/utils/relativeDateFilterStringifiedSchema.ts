@@ -1,44 +1,44 @@
-import { relativeDateFilterSchema } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
-import { isNonEmptyArray } from '@sniptt/guards';
-import z from 'zod';
+import { relativeDateFilterSchema } from "@/utils/filter/dates/utils/relativeDateFilterSchema";
+import { isNonEmptyArray } from "@sniptt/guards";
+import z from "zod";
 
 const REGEX_FOR_RELATIVE_DATE_FILTER_STRINGIFIED_PARSING =
-  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|QUARTER|HOUR|MINUTE|SECOND)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
+	/((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK|QUARTER|HOUR|MINUTE|SECOND)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
 
 export const relativeDateFilterStringifiedSchema = z
-  .string()
-  .transform((value, context) => {
-    const regexForParsingStringifiedRelativeDateFilter = new RegExp(
-      REGEX_FOR_RELATIVE_DATE_FILTER_STRINGIFIED_PARSING,
-    );
+	.string()
+	.transform((value, context) => {
+		const regexForParsingStringifiedRelativeDateFilter = new RegExp(
+			REGEX_FOR_RELATIVE_DATE_FILTER_STRINGIFIED_PARSING,
+		);
 
-    const result = regexForParsingStringifiedRelativeDateFilter.exec(value);
+		const result = regexForParsingStringifiedRelativeDateFilter.exec(value);
 
-    if (!isNonEmptyArray(result)) {
-      context.addIssue(
-        `Cannot parse stringified inline relative date filter, value : "${value}"`,
-      );
+		if (!isNonEmptyArray(result)) {
+			context.addIssue(
+				`Cannot parse stringified inline relative date filter, value : "${value}"`,
+			);
 
-      return z.NEVER;
-    }
+			return z.NEVER;
+		}
 
-    const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
+		const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
 
-    const parseResult = relativeDateFilterSchema.safeParse({
-      direction,
-      amount,
-      unit,
-      timezone,
-      firstDayOfTheWeek,
-    });
+		const parseResult = relativeDateFilterSchema.safeParse({
+			direction,
+			amount,
+			unit,
+			timezone,
+			firstDayOfTheWeek,
+		});
 
-    if (!parseResult.success) {
-      context.addIssue(
-        `Cannot parse stringified inline relative date filter, value : "${value}"`,
-      );
+		if (!parseResult.success) {
+			context.addIssue(
+				`Cannot parse stringified inline relative date filter, value : "${value}"`,
+			);
 
-      return z.NEVER;
-    }
+			return z.NEVER;
+		}
 
-    return parseResult.data;
-  });
+		return parseResult.data;
+	});

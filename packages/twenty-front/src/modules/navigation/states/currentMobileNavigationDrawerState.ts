@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const currentMobileNavigationDrawerState = createAtomState<
-  'main' | 'settings'
+	"main" | "settings"
 >({
-  key: 'currentMobileNavigationDrawerState',
-  defaultValue: 'main',
+	key: "currentMobileNavigationDrawerState",
+	defaultValue: "main",
 });

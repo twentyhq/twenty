@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { IconChevronDown } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconChevronDown } from "@tabler/icons-react";
 
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { APP_PREVIEW_CHROME } from "@/app-preview/app-preview-chrome";
 
-import { SidebarItem } from './SidebarItem';
-import { MiniIcon } from '../primitives/MiniIcon';
-import { renderPreviewIcon } from '../primitives/PreviewIcon';
-import { type SidebarFolderDef } from '../types';
+import { SidebarItem } from "./SidebarItem";
+import { MiniIcon } from "../primitives/MiniIcon";
+import { renderPreviewIcon } from "../primitives/PreviewIcon";
+import { type SidebarFolderDef } from "../types";
 
 const FolderButton = styled.button<{ $expanded?: boolean }>`
   align-items: center;
   appearance: none;
   background: ${({ $expanded }) =>
-    $expanded ? THEME_LIGHT.background.transparent.light : 'transparent'};
+		$expanded ? THEME_LIGHT.background.transparent.light : "transparent"};
   border: 0;
   border-radius: ${THEME_LIGHT.border.radius.sm};
   cursor: pointer;
@@ -59,7 +59,7 @@ const FolderChevron = styled.div<{ $expanded?: boolean }>`
   display: flex;
   flex: 0 0 auto;
   margin-left: auto;
-  transform: rotate(${({ $expanded }) => ($expanded ? '0deg' : '-90deg')});
+  transform: rotate(${({ $expanded }) => ($expanded ? "0deg" : "-90deg")});
   transition: transform 0.16s ease;
 `;
 
@@ -80,57 +80,57 @@ const BranchLine = styled.div`
 `;
 
 export function SidebarFolder({
-  expanded,
-  folder,
-  onSelectItem,
-  onToggleExpanded,
-  selectedItemId,
+	expanded,
+	folder,
+	onSelectItem,
+	onToggleExpanded,
+	selectedItemId,
 }: {
-  expanded: boolean;
-  folder: SidebarFolderDef;
-  onSelectItem?: (itemId: string) => void;
-  onToggleExpanded?: () => void;
-  selectedItemId?: string;
+	expanded: boolean;
+	folder: SidebarFolderDef;
+	onSelectItem?: (itemId: string) => void;
+	onToggleExpanded?: () => void;
+	selectedItemId?: string;
 }) {
-  const visibleItems = folder.items.filter((item) => !item.hidden);
-  const hasActiveChild = visibleItems.some(
-    (item) => item.id === selectedItemId,
-  );
+	const visibleItems = folder.items.filter((item) => !item.hidden);
+	const hasActiveChild = visibleItems.some(
+		(item) => item.id === selectedItemId,
+	);
 
-  return (
-    <>
-      <FolderButton
-        $expanded={expanded || hasActiveChild}
-        onClick={onToggleExpanded}
-        type="button"
-      >
-        <FolderRowMain>
-          {renderPreviewIcon(folder.icon)}
-          <FolderText>{folder.label}</FolderText>
-        </FolderRowMain>
-        <FolderChevron $expanded={expanded}>
-          <MiniIcon
-            color={THEME_LIGHT.font.color.tertiary}
-            icon={IconChevronDown}
-            size={12}
-          />
-        </FolderChevron>
-      </FolderButton>
-      {expanded ? (
-        <ChildStack>
-          <BranchLine />
-          {visibleItems.map((item, index) => (
-            <SidebarItem
-              active={item.id === selectedItemId}
-              depth={1}
-              isLastChild={index === visibleItems.length - 1}
-              item={item}
-              key={item.id}
-              onSelect={onSelectItem}
-            />
-          ))}
-        </ChildStack>
-      ) : null}
-    </>
-  );
+	return (
+		<>
+			<FolderButton
+				$expanded={expanded || hasActiveChild}
+				onClick={onToggleExpanded}
+				type="button"
+			>
+				<FolderRowMain>
+					{renderPreviewIcon(folder.icon)}
+					<FolderText>{folder.label}</FolderText>
+				</FolderRowMain>
+				<FolderChevron $expanded={expanded}>
+					<MiniIcon
+						color={THEME_LIGHT.font.color.tertiary}
+						icon={IconChevronDown}
+						size={12}
+					/>
+				</FolderChevron>
+			</FolderButton>
+			{expanded ? (
+				<ChildStack>
+					<BranchLine />
+					{visibleItems.map((item, index) => (
+						<SidebarItem
+							active={item.id === selectedItemId}
+							depth={1}
+							isLastChild={index === visibleItems.length - 1}
+							item={item}
+							key={item.id}
+							onSelect={onSelectItem}
+						/>
+					))}
+				</ChildStack>
+			) : null}
+		</>
+	);
 }

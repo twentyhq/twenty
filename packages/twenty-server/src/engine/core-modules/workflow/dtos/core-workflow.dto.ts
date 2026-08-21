@@ -1,24 +1,24 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('CoreWorkflowDTO')
+@ObjectType("CoreWorkflowDTO")
 export class CoreWorkflowDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String, { nullable: true })
-  name: string | null;
+	@Field(() => String, { nullable: true })
+	name: string | null;
 
-  @Field(() => [String])
-  statuses: string[];
+	@Field(() => [String])
+	statuses: string[];
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId: string | null;
+	@Field(() => UUIDScalarType, { nullable: true })
+	applicationId: string | null;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  workspaceWorkflowId: string | null;
+	@Field(() => UUIDScalarType, { nullable: true })
+	workspaceWorkflowId: string | null;
 
-  @Field(() => String)
-  updatedAt: string;
+	@Field(() => String)
+	updatedAt: string;
 }

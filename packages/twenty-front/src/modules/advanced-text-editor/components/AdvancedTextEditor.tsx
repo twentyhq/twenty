@@ -1,16 +1,16 @@
-import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
-import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
-import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
-import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
-import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
-import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
-import { styled } from '@linaria/react';
-import { EditorContent } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ImageBubbleMenu } from "@/advanced-text-editor/components/ImageBubbleMenu";
+import { LinkBubbleMenu } from "@/advanced-text-editor/components/LinkBubbleMenu";
+import { TextBubbleMenu } from "@/advanced-text-editor/components/TextBubbleMenu";
+import { type AdvancedTextEditorComponentProps } from "@/advanced-text-editor/types/AdvancedTextEditorComponentProps";
+import { hasEditorExtension } from "@/advanced-text-editor/utils/hasEditorExtension";
+import { FORM_FIELD_PLACEHOLDER_STYLES } from "@/ui/input/constants/FormFieldPlaceholderStyles";
+import { styled } from "@linaria/react";
+import { EditorContent } from "@tiptap/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledEditorContainer = styled.div<{
-  readonly?: boolean;
-  minHeight: number;
+	readonly?: boolean;
+	minHeight: number;
 }>`
   box-sizing: border-box;
   display: flex;
@@ -29,9 +29,9 @@ const StyledEditorContainer = styled.div<{
     border: none !important;
     box-sizing: border-box;
     color: ${({ readonly }) =>
-      readonly
-        ? themeCssVariables.font.color.secondary
-        : themeCssVariables.font.color.primary};
+			readonly
+				? themeCssVariables.font.color.secondary
+				: themeCssVariables.font.color.primary};
     font-family: ${themeCssVariables.font.family};
     font-size: ${themeCssVariables.font.size.sm};
     font-weight: ${themeCssVariables.font.weight.regular};
@@ -134,36 +134,36 @@ const StyledEditorContainer = styled.div<{
 `;
 
 const TEXT_BUBBLE_MENU_EXTENSION_NAMES = [
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'bulletList',
-  'orderedList',
-  'heading',
-  'link',
+	"bold",
+	"italic",
+	"underline",
+	"strike",
+	"bulletList",
+	"orderedList",
+	"heading",
+	"link",
 ];
 
 type AdvancedTextEditorProps = AdvancedTextEditorComponentProps;
 
 export const AdvancedTextEditor = ({
-  readonly,
-  editor,
-  minHeight,
+	readonly,
+	editor,
+	minHeight,
 }: AdvancedTextEditorProps) => {
-  const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
-    (extensionName) => hasEditorExtension(editor, extensionName),
-  );
+	const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
+		(extensionName) => hasEditorExtension(editor, extensionName),
+	);
 
-  return (
-    <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
-      <EditorContent className="editor-content" editor={editor} />
-      {hasEditorExtension(editor, 'image') &&
-        !hasEditorExtension(editor, 'section') && (
-          <ImageBubbleMenu editor={editor} />
-        )}
-      {hasTextBubbleMenu && <TextBubbleMenu editor={editor} />}
-      {hasEditorExtension(editor, 'link') && <LinkBubbleMenu editor={editor} />}
-    </StyledEditorContainer>
-  );
+	return (
+		<StyledEditorContainer readonly={readonly} minHeight={minHeight}>
+			<EditorContent className="editor-content" editor={editor} />
+			{hasEditorExtension(editor, "image") &&
+				!hasEditorExtension(editor, "section") && (
+					<ImageBubbleMenu editor={editor} />
+				)}
+			{hasTextBubbleMenu && <TextBubbleMenu editor={editor} />}
+			{hasEditorExtension(editor, "link") && <LinkBubbleMenu editor={editor} />}
+		</StyledEditorContainer>
+	);
 };

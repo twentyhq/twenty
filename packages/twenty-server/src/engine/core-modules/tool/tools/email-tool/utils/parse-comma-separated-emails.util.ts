@@ -1,14 +1,14 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export const parseCommaSeparatedEmails = (
-  value: string | undefined,
+	value: string | undefined,
 ): string[] => {
-  if (!isDefined(value)) {
-    return [];
-  }
+	if (!isDefined(value)) {
+		return [];
+	}
 
-  return value
-    .split(',')
-    .map((email) => email.trim())
-    .filter((email) => email.length > 0);
+	return value
+		.split(",")
+		.map((email) => email.trim())
+		.filter((email) => email.length > 0);
 };

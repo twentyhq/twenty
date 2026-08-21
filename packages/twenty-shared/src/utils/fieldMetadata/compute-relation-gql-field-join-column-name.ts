@@ -1,39 +1,39 @@
-import { computeMorphRelationGqlFieldName } from '@/utils/fieldMetadata/compute-morph-relation-gql-field-name';
+import { computeMorphRelationGqlFieldName } from "@/utils/fieldMetadata/compute-morph-relation-gql-field-name";
 
 enum RelationType {
-  MANY_TO_ONE = 'MANY_TO_ONE',
-  ONE_TO_MANY = 'ONE_TO_MANY',
+	MANY_TO_ONE = "MANY_TO_ONE",
+	ONE_TO_MANY = "ONE_TO_MANY",
 }
 
 type ComputeRelationGqlFieldJoinColumnNameArgs = {
-  name: string;
+	name: string;
 };
 
 export const computeRelationGqlFieldJoinColumnName = ({
-  name,
+	name,
 }: ComputeRelationGqlFieldJoinColumnNameArgs): string => {
-  return `${name}Id`;
+	return `${name}Id`;
 };
 
 type ComputeMorphRelationGqlFieldJoinColumnNameArgs = {
-  fieldName: string;
-  relationType: RelationType;
-  targetObjectMetadataNameSingular: string;
-  targetObjectMetadataNamePlural: string;
+	fieldName: string;
+	relationType: RelationType;
+	targetObjectMetadataNameSingular: string;
+	targetObjectMetadataNamePlural: string;
 };
 
 export const computeMorphRelationGqlFieldJoinColumnName = ({
-  fieldName,
-  relationType,
-  targetObjectMetadataNameSingular,
-  targetObjectMetadataNamePlural,
+	fieldName,
+	relationType,
+	targetObjectMetadataNameSingular,
+	targetObjectMetadataNamePlural,
 }: ComputeMorphRelationGqlFieldJoinColumnNameArgs): string => {
-  const morphGqlFieldName = computeMorphRelationGqlFieldName({
-    fieldName,
-    relationType,
-    targetObjectMetadataNameSingular,
-    targetObjectMetadataNamePlural,
-  });
+	const morphGqlFieldName = computeMorphRelationGqlFieldName({
+		fieldName,
+		relationType,
+		targetObjectMetadataNameSingular,
+		targetObjectMetadataNamePlural,
+	});
 
-  return computeRelationGqlFieldJoinColumnName({ name: morphGqlFieldName });
+	return computeRelationGqlFieldJoinColumnName({ name: morphGqlFieldName });
 };

@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
+import { useRecordIndexContextOrThrow } from "@/object-record/record-index/contexts/RecordIndexContext";
+import { useTriggerInitialRecordTableDataLoad } from "@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad";
 
 export const RecordTableRecordLimitReloadEffect = () => {
-  const { recordLimit } = useRecordIndexContextOrThrow();
+	const { recordLimit } = useRecordIndexContextOrThrow();
 
-  const { triggerInitialRecordTableDataLoad } =
-    useTriggerInitialRecordTableDataLoad();
+	const { triggerInitialRecordTableDataLoad } =
+		useTriggerInitialRecordTableDataLoad();
 
-  const [previousRecordLimit, setPreviousRecordLimit] = useState(recordLimit);
+	const [previousRecordLimit, setPreviousRecordLimit] = useState(recordLimit);
 
-  useEffect(() => {
-    if (previousRecordLimit === recordLimit) {
-      return;
-    }
+	useEffect(() => {
+		if (previousRecordLimit === recordLimit) {
+			return;
+		}
 
-    setPreviousRecordLimit(recordLimit);
+		setPreviousRecordLimit(recordLimit);
 
-    void triggerInitialRecordTableDataLoad();
-  }, [recordLimit, previousRecordLimit, triggerInitialRecordTableDataLoad]);
+		void triggerInitialRecordTableDataLoad();
+	}, [recordLimit, previousRecordLimit, triggerInitialRecordTableDataLoad]);
 
-  return null;
+	return null;
 };

@@ -1,9 +1,11 @@
-import type { AuthenticationProvider } from '@microsoft/microsoft-graph-client';
+import type { AuthenticationProvider } from "@microsoft/microsoft-graph-client";
 
-export class MicrosoftOAuth2ClientAuthProvider implements AuthenticationProvider {
-  constructor(private readonly accessToken: string) {}
+export class MicrosoftOAuth2ClientAuthProvider
+	implements AuthenticationProvider
+{
+	constructor(private readonly accessToken: string) {}
 
-  public async getAccessToken(): Promise<string> {
-    return this.accessToken;
-  }
+	public async getAccessToken(): Promise<string> {
+		return this.accessToken;
+	}
 }

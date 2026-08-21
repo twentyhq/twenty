@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledLogo = styled.img`
   animation: onboardingPulsingLogo 0.8s ease-in-out infinite alternate;
@@ -23,5 +23,5 @@ const StyledLogo = styled.img`
 `;
 
 export const OnboardingPulsingLogo = () => (
-  <StyledLogo src="/images/integrations/twenty-logo.svg" alt="" />
+	<StyledLogo src="/images/integrations/twenty-logo.svg" alt="" />
 );

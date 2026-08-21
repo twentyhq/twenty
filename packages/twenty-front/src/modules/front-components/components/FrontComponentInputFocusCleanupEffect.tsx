@@ -1,21 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackById } from "@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById";
 
 type FrontComponentInputFocusCleanupEffectProps = {
-  focusId: string;
+	focusId: string;
 };
 
 export const FrontComponentInputFocusCleanupEffect = ({
-  focusId,
+	focusId,
 }: FrontComponentInputFocusCleanupEffectProps) => {
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+	const { removeFocusItemFromFocusStackById } =
+		useRemoveFocusItemFromFocusStackById();
 
-  useEffect(
-    () => () => removeFocusItemFromFocusStackById({ focusId }),
-    [focusId, removeFocusItemFromFocusStackById],
-  );
+	useEffect(
+		() => () => removeFocusItemFromFocusStackById({ focusId }),
+		[focusId, removeFocusItemFromFocusStackById],
+	);
 
-  return null;
+	return null;
 };

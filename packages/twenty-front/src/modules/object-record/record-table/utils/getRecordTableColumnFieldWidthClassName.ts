@@ -1,5 +1,5 @@
 export const getRecordTableColumnFieldWidthClassName = (
-  recordFieldIndex: number,
+	recordFieldIndex: number,
 ) => {
-  return `record-table-column-field-${recordFieldIndex}`;
+	return `record-table-column-field-${recordFieldIndex}`;
 };

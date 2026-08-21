@@ -1,40 +1,40 @@
-import { type TabPresentation } from '@/page-layout/types/TabPresentation';
-import { PageLayoutType } from '~/generated-metadata/graphql';
-import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { type TabPresentation } from "@/page-layout/types/TabPresentation";
+import { PageLayoutType } from "~/generated-metadata/graphql";
+import { type WidgetCardVariant } from "~/modules/page-layout/widgets/types/WidgetCardVariant";
 
 type GetWidgetCardVariantParams = {
-  presentation: TabPresentation;
-  isInPinnedTab: boolean;
-  pageLayoutType: PageLayoutType | null;
-  isMobile: boolean;
-  isInSidePanel: boolean;
+	presentation: TabPresentation;
+	isInPinnedTab: boolean;
+	pageLayoutType: PageLayoutType | null;
+	isMobile: boolean;
+	isInSidePanel: boolean;
 };
 
 export const getWidgetCardVariant = ({
-  presentation,
-  isInPinnedTab,
-  pageLayoutType,
-  isMobile,
-  isInSidePanel,
+	presentation,
+	isInPinnedTab,
+	pageLayoutType,
+	isMobile,
+	isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
-  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
+	const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
 
-  if (isSideColumnContext) {
-    return 'side-column';
-  }
+	if (isSideColumnContext) {
+		return "side-column";
+	}
 
-  if (presentation === 'solo') {
-    return 'solo';
-  }
+	if (presentation === "solo") {
+		return "solo";
+	}
 
-  switch (pageLayoutType) {
-    case PageLayoutType.DASHBOARD:
-      return 'dashboard';
-    case PageLayoutType.STANDALONE_PAGE:
-      return 'standalone';
-    case PageLayoutType.RECORD_PAGE:
-    case PageLayoutType.RECORD_INDEX:
-    case null:
-      return 'record-page';
-  }
+	switch (pageLayoutType) {
+		case PageLayoutType.DASHBOARD:
+			return "dashboard";
+		case PageLayoutType.STANDALONE_PAGE:
+			return "standalone";
+		case PageLayoutType.RECORD_PAGE:
+		case PageLayoutType.RECORD_INDEX:
+		case null:
+			return "record-page";
+	}
 };

@@ -1,1 +1,1 @@
-export const WORKFLOW_TIMEZONE = 'UTC';
+export const WORKFLOW_TIMEZONE = "UTC";

@@ -1,7 +1,7 @@
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemOption } from "@/object-metadata/types/FieldMetadataItem";
 
 export const convertOptionsToBulkText = (
-  options: FieldMetadataItemOption[],
+	options: FieldMetadataItemOption[],
 ): string => {
-  return options.map((option) => option.label).join('\n');
+	return options.map((option) => option.label).join("\n");
 };

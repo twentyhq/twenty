@@ -1,410 +1,410 @@
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
-import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
-import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
-import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { buildBaseManifest } from "test/integration/metadata/suites/application/utils/build-base-manifest.util";
+import { buildDefaultObjectManifest } from "test/integration/metadata/suites/application/utils/build-default-object-manifest.util";
+import { cleanupApplicationAndAppRegistration } from "test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util";
+import { setupApplicationForSync } from "test/integration/metadata/suites/application/utils/setup-application-for-sync.util";
+import { syncApplication } from "test/integration/metadata/suites/application/utils/sync-application.util";
+import { findManyObjectMetadataWithIndexes } from "test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util";
+import { findManyObjectMetadata } from "test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util";
+import { findRoles } from "test/integration/metadata/suites/role/utils/find-roles.util";
+import { findSkills } from "test/integration/metadata/suites/skill/utils/find-skills.util";
+import { extractRecordIdsAndDatesAsExpectAny } from "test/utils/extract-record-ids-and-dates-as-expect-any";
 import {
-  type FieldManifest,
-  getSystemRelationFieldUniversalIdentifier,
-  type Manifest,
-} from 'twenty-shared/application';
+	type FieldManifest,
+	getSystemRelationFieldUniversalIdentifier,
+	type Manifest,
+} from "twenty-shared/application";
 import {
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { v4 as uuidv4 } from 'uuid';
+	DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+	STANDARD_OBJECTS,
+} from "twenty-shared/metadata";
+import { FieldMetadataType } from "twenty-shared/types";
+import { v4 as uuidv4 } from "uuid";
 
-const TEST_APP_ID = '0c17e907-f32a-4526-98e4-9addd4302b1a';
+const TEST_APP_ID = "0c17e907-f32a-4526-98e4-9addd4302b1a";
 const TEST_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
 const TEST_SKILL_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
-  applicationUniversalIdentifier: TEST_APP_ID,
-  nameSingular: 'ticket',
-  namePlural: 'tickets',
-  labelSingular: 'Ticket',
-  labelPlural: 'Tickets',
-  description: 'A support ticket',
-  icon: 'IconTicket',
+	applicationUniversalIdentifier: TEST_APP_ID,
+	nameSingular: "ticket",
+	namePlural: "tickets",
+	labelSingular: "Ticket",
+	labelPlural: "Tickets",
+	description: "A support ticket",
+	icon: "IconTicket",
 });
 
 const TEST_SKILL = {
-  universalIdentifier: TEST_SKILL_ID,
-  name: 'test-skill',
-  label: 'Test Skill',
-  description: 'A skill for testing',
-  icon: 'IconBrain',
-  content: '# Test Skill\n\nThis is a test skill.',
+	universalIdentifier: TEST_SKILL_ID,
+	name: "test-skill",
+	label: "Test Skill",
+	description: "A skill for testing",
+	icon: "IconBrain",
+	content: "# Test Skill\n\nThis is a test skill.",
 };
 
 const TEST_FIELD: FieldManifest = {
-  universalIdentifier: TEST_FIELD_ID,
-  type: FieldMetadataType.TEXT,
-  name: 'description',
-  label: 'Description',
-  description: 'Ticket description',
-  icon: 'IconFileDescription',
-  objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+	universalIdentifier: TEST_FIELD_ID,
+	type: FieldMetadataType.TEXT,
+	name: "description",
+	label: "Description",
+	description: "Ticket description",
+	icon: "IconFileDescription",
+	objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
 };
 
 const buildManifest = (
-  overrides?: Partial<Pick<Manifest, 'fields' | 'skills' | 'objects'>>,
+	overrides?: Partial<Pick<Manifest, "fields" | "skills" | "objects">>,
 ) =>
-  buildBaseManifest({
-    appId: TEST_APP_ID,
-    roleId: TEST_ROLE_ID,
-    overrides: {
-      objects: [TEST_OBJECT],
-      skills: [TEST_SKILL],
-      fields: [TEST_FIELD],
-      ...overrides,
-    },
-  });
+	buildBaseManifest({
+		appId: TEST_APP_ID,
+		roleId: TEST_ROLE_ID,
+		overrides: {
+			objects: [TEST_OBJECT],
+			skills: [TEST_SKILL],
+			fields: [TEST_FIELD],
+			...overrides,
+		},
+	});
 
-describe('syncApplication', () => {
-  beforeEach(async () => {
-    await setupApplicationForSync({
-      applicationUniversalIdentifier: TEST_APP_ID,
-      name: 'Test Application',
-      description: 'A test application',
-      sourcePath: 'test-sync',
-    });
-  }, 60000);
+describe("syncApplication", () => {
+	beforeEach(async () => {
+		await setupApplicationForSync({
+			applicationUniversalIdentifier: TEST_APP_ID,
+			name: "Test Application",
+			description: "A test application",
+			sourcePath: "test-sync",
+		});
+	}, 60000);
 
-  afterEach(async () => {
-    await cleanupApplicationAndAppRegistration({
-      applicationUniversalIdentifier: TEST_APP_ID,
-    });
-  });
+	afterEach(async () => {
+		await cleanupApplicationAndAppRegistration({
+			applicationUniversalIdentifier: TEST_APP_ID,
+		});
+	});
 
-  it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {
-    const { data: firstSyncData } = await syncApplication({
-      manifest: buildManifest(),
-      expectToFail: false,
-    });
+	it("should return workspace migration actions on initial sync then on second sync with field rename and new role", async () => {
+		const { data: firstSyncData } = await syncApplication({
+			manifest: buildManifest(),
+			expectToFail: false,
+		});
 
-    expect(firstSyncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstSyncData),
-    );
+		expect(firstSyncData).toMatchSnapshot(
+			extractRecordIdsAndDatesAsExpectAny(firstSyncData),
+		);
 
-    const { objects: objectsAfterSync } = await findManyObjectMetadata({
-      input: {
-        filter: {},
-        paging: { first: 100 },
-      },
-      gqlFields:
-        'id nameSingular namePlural labelSingular labelPlural description icon',
-      expectToFail: false,
-    });
+		const { objects: objectsAfterSync } = await findManyObjectMetadata({
+			input: {
+				filter: {},
+				paging: { first: 100 },
+			},
+			gqlFields:
+				"id nameSingular namePlural labelSingular labelPlural description icon",
+			expectToFail: false,
+		});
 
-    const ticketObject = objectsAfterSync.find(
-      (obj) => obj.nameSingular === 'ticket',
-    );
+		const ticketObject = objectsAfterSync.find(
+			(obj) => obj.nameSingular === "ticket",
+		);
 
-    expect(ticketObject).toBeDefined();
-    expect(ticketObject).toMatchObject({
-      nameSingular: 'ticket',
-      namePlural: 'tickets',
-      labelSingular: 'Ticket',
-      labelPlural: 'Tickets',
-      description: 'A support ticket',
-      icon: 'IconTicket',
-    });
+		expect(ticketObject).toBeDefined();
+		expect(ticketObject).toMatchObject({
+			nameSingular: "ticket",
+			namePlural: "tickets",
+			labelSingular: "Ticket",
+			labelPlural: "Tickets",
+			description: "A support ticket",
+			icon: "IconTicket",
+		});
 
-    const objects = await findManyObjectMetadataWithIndexes({
-      expectToFail: false,
-    });
+		const objects = await findManyObjectMetadataWithIndexes({
+			expectToFail: false,
+		});
 
-    const fieldsAfterSync = objects.find(
-      (o) => o.universalIdentifier === TEST_OBJECT.universalIdentifier,
-    )?.fieldsList;
+		const fieldsAfterSync = objects.find(
+			(o) => o.universalIdentifier === TEST_OBJECT.universalIdentifier,
+		)?.fieldsList;
 
-    const descriptionField = fieldsAfterSync?.find(
-      (f) => f.universalIdentifier === TEST_FIELD_ID,
-    );
+		const descriptionField = fieldsAfterSync?.find(
+			(f) => f.universalIdentifier === TEST_FIELD_ID,
+		);
 
-    expect(descriptionField).toBeDefined();
-    expect(descriptionField).toMatchObject({
-      name: 'description',
-      label: 'Description',
-      type: FieldMetadataType.TEXT,
-      description: 'Ticket description',
-      icon: 'IconFileDescription',
-    });
+		expect(descriptionField).toBeDefined();
+		expect(descriptionField).toMatchObject({
+			name: "description",
+			label: "Description",
+			type: FieldMetadataType.TEXT,
+			description: "Ticket description",
+			icon: "IconFileDescription",
+		});
 
-    const { data: rolesAfterSync } = await findRoles({
-      gqlFields: 'id label description universalIdentifier',
-      expectToFail: false,
-    });
+		const { data: rolesAfterSync } = await findRoles({
+			gqlFields: "id label description universalIdentifier",
+			expectToFail: false,
+		});
 
-    const testRole = rolesAfterSync.getRoles.find(
-      (role) => role.universalIdentifier === TEST_ROLE_ID,
-    );
+		const testRole = rolesAfterSync.getRoles.find(
+			(role) => role.universalIdentifier === TEST_ROLE_ID,
+		);
 
-    const { data: skillsAfterSync } = await findSkills({
-      gqlFields: 'id name label description content icon',
-      expectToFail: false,
-      input: undefined,
-    });
+		const { data: skillsAfterSync } = await findSkills({
+			gqlFields: "id name label description content icon",
+			expectToFail: false,
+			input: undefined,
+		});
 
-    const testSkill = skillsAfterSync.skills.find(
-      (skill) => skill.name === 'test-skill',
-    );
+		const testSkill = skillsAfterSync.skills.find(
+			(skill) => skill.name === "test-skill",
+		);
 
-    expect(testRole).toBeDefined();
-    expect(testRole).toMatchObject({
-      label: 'Test Role',
-      description: 'A test role',
-    });
+		expect(testRole).toBeDefined();
+		expect(testRole).toMatchObject({
+			label: "Test Role",
+			description: "A test role",
+		});
 
-    expect(testSkill).toBeDefined();
-    expect(testSkill).toMatchObject({
-      name: 'test-skill',
-      label: 'Test Skill',
-      description: 'A skill for testing',
-      icon: 'IconBrain',
-      content: '# Test Skill\n\nThis is a test skill.',
-    });
-  }, 60000);
+		expect(testSkill).toBeDefined();
+		expect(testSkill).toMatchObject({
+			name: "test-skill",
+			label: "Test Skill",
+			description: "A skill for testing",
+			icon: "IconBrain",
+			content: "# Test Skill\n\nThis is a test skill.",
+		});
+	}, 60000);
 
-  // The snapshot masks every identifier as Any<String>, so it cannot catch a
-  // regression in the deterministic universal identifiers of the default
-  // relations. This test recomputes them and asserts the emitted migration
-  // actions carry them exactly, on both sides of each relation.
-  it('should provision the four engine-owned default relations on initial sync', async () => {
-    const NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR = {
-      timelineActivity: 'timelineActivities',
-      attachment: 'attachments',
-      noteTarget: 'noteTargets',
-      taskTarget: 'taskTargets',
-    } as const;
+	// The snapshot masks every identifier as Any<String>, so it cannot catch a
+	// regression in the deterministic universal identifiers of the default
+	// relations. This test recomputes them and asserts the emitted migration
+	// actions carry them exactly, on both sides of each relation.
+	it("should provision the four engine-owned default relations on initial sync", async () => {
+		const NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR = {
+			timelineActivity: "timelineActivities",
+			attachment: "attachments",
+			noteTarget: "noteTargets",
+			taskTarget: "taskTargets",
+		} as const;
 
-    const { data: syncData } = await syncApplication({
-      manifest: buildManifest(),
-      expectToFail: false,
-    });
+		const { data: syncData } = await syncApplication({
+			manifest: buildManifest(),
+			expectToFail: false,
+		});
 
-    type FlatFieldEntity = {
-      universalIdentifier: string;
-      name?: string;
-      type?: string;
-      isSystem?: boolean;
-      isSystemSideEffect?: boolean;
-      morphId?: string | null;
-      objectMetadataUniversalIdentifier?: string;
-      relationTargetObjectMetadataUniversalIdentifier?: string | null;
-      relationTargetFieldMetadataUniversalIdentifier?: string | null;
-      universalSettings?: { joinColumnName?: string } | null;
-      universalFlatIndexFieldMetadatas?: {
-        fieldMetadataUniversalIdentifier: string;
-      }[];
-    };
-    type FlatEntityAction = {
-      type: string;
-      metadataName: string;
-      flatEntity: FlatFieldEntity;
-      // A relation field create action carries its reverse field inline.
-      relatedUniversalFlatFieldMetadata?: FlatFieldEntity;
-    };
+		type FlatFieldEntity = {
+			universalIdentifier: string;
+			name?: string;
+			type?: string;
+			isSystem?: boolean;
+			isSystemSideEffect?: boolean;
+			morphId?: string | null;
+			objectMetadataUniversalIdentifier?: string;
+			relationTargetObjectMetadataUniversalIdentifier?: string | null;
+			relationTargetFieldMetadataUniversalIdentifier?: string | null;
+			universalSettings?: { joinColumnName?: string } | null;
+			universalFlatIndexFieldMetadatas?: {
+				fieldMetadataUniversalIdentifier: string;
+			}[];
+		};
+		type FlatEntityAction = {
+			type: string;
+			metadataName: string;
+			flatEntity: FlatFieldEntity;
+			// A relation field create action carries its reverse field inline.
+			relatedUniversalFlatFieldMetadata?: FlatFieldEntity;
+		};
 
-    const actions = (
-      syncData as {
-        syncApplication: { actions: FlatEntityAction[] };
-      }
-    ).syncApplication.actions;
+		const actions = (
+			syncData as {
+				syncApplication: { actions: FlatEntityAction[] };
+			}
+		).syncApplication.actions;
 
-    const fieldCreateActionByUniversalIdentifier = Object.fromEntries(
-      actions
-        .filter(
-          (action) =>
-            action.metadataName === 'fieldMetadata' && action.type === 'create',
-        )
-        .map((action) => [action.flatEntity.universalIdentifier, action]),
-    );
-    const indexCreateActions = actions.filter(
-      (action) => action.metadataName === 'index' && action.type === 'create',
-    );
+		const fieldCreateActionByUniversalIdentifier = Object.fromEntries(
+			actions
+				.filter(
+					(action) =>
+						action.metadataName === "fieldMetadata" && action.type === "create",
+				)
+				.map((action) => [action.flatEntity.universalIdentifier, action]),
+		);
+		const indexCreateActions = actions.filter(
+			(action) => action.metadataName === "index" && action.type === "create",
+		);
 
-    for (const standardObjectNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
-      const standardObjectUniversalIdentifier =
-        STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier;
-      const standardObjectNamePlural =
-        NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR[
-          standardObjectNameSingular
-        ];
+		for (const standardObjectNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
+			const standardObjectUniversalIdentifier =
+				STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier;
+			const standardObjectNamePlural =
+				NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR[
+					standardObjectNameSingular
+				];
 
-      const forwardUniversalIdentifier =
-        getSystemRelationFieldUniversalIdentifier({
-          applicationUniversalIdentifier: TEST_APP_ID,
-          objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-          relationTargetObjectUniversalIdentifier:
-            standardObjectUniversalIdentifier,
-        });
-      const reverseUniversalIdentifier =
-        getSystemRelationFieldUniversalIdentifier({
-          applicationUniversalIdentifier: TEST_APP_ID,
-          objectUniversalIdentifier: standardObjectUniversalIdentifier,
-          relationTargetObjectUniversalIdentifier:
-            TEST_OBJECT.universalIdentifier,
-        });
+			const forwardUniversalIdentifier =
+				getSystemRelationFieldUniversalIdentifier({
+					applicationUniversalIdentifier: TEST_APP_ID,
+					objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+					relationTargetObjectUniversalIdentifier:
+						standardObjectUniversalIdentifier,
+				});
+			const reverseUniversalIdentifier =
+				getSystemRelationFieldUniversalIdentifier({
+					applicationUniversalIdentifier: TEST_APP_ID,
+					objectUniversalIdentifier: standardObjectUniversalIdentifier,
+					relationTargetObjectUniversalIdentifier:
+						TEST_OBJECT.universalIdentifier,
+				});
 
-      // Forward RELATION field on the ticket, named after the standard
-      // object's namePlural, under the name-free universal identifier.
-      const forwardCreateAction =
-        fieldCreateActionByUniversalIdentifier[forwardUniversalIdentifier];
+			// Forward RELATION field on the ticket, named after the standard
+			// object's namePlural, under the name-free universal identifier.
+			const forwardCreateAction =
+				fieldCreateActionByUniversalIdentifier[forwardUniversalIdentifier];
 
-      expect(forwardCreateAction?.flatEntity).toMatchObject({
-        name: standardObjectNamePlural,
-        type: FieldMetadataType.RELATION,
-        // Engine-owned (isSystemSideEffect) but not isSystem: the engine
-        // rename/delete cascades must pass the validator system-field gates.
-        isSystem: false,
-        isSystemSideEffect: true,
-        objectMetadataUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-        relationTargetObjectMetadataUniversalIdentifier:
-          standardObjectUniversalIdentifier,
-        relationTargetFieldMetadataUniversalIdentifier:
-          reverseUniversalIdentifier,
-      });
+			expect(forwardCreateAction?.flatEntity).toMatchObject({
+				name: standardObjectNamePlural,
+				type: FieldMetadataType.RELATION,
+				// Engine-owned (isSystemSideEffect) but not isSystem: the engine
+				// rename/delete cascades must pass the validator system-field gates.
+				isSystem: false,
+				isSystemSideEffect: true,
+				objectMetadataUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+				relationTargetObjectMetadataUniversalIdentifier:
+					standardObjectUniversalIdentifier,
+				relationTargetFieldMetadataUniversalIdentifier:
+					reverseUniversalIdentifier,
+			});
 
-      // Reverse MORPH_RELATION field on the standard object, carried inline on
-      // the forward create action, under the name-free deterministic universal
-      // identifier, with the engine-pinned targetMorphId and the join column.
-      expect(
-        forwardCreateAction?.relatedUniversalFlatFieldMetadata,
-      ).toMatchObject({
-        name: 'targetTicket',
-        type: FieldMetadataType.MORPH_RELATION,
-        isSystem: false,
-        isSystemSideEffect: true,
-        universalIdentifier: reverseUniversalIdentifier,
-        morphId:
-          STANDARD_OBJECTS[standardObjectNameSingular].morphIds.targetMorphId
-            .morphId,
-        objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
-        relationTargetObjectMetadataUniversalIdentifier:
-          TEST_OBJECT.universalIdentifier,
-        relationTargetFieldMetadataUniversalIdentifier:
-          forwardUniversalIdentifier,
-        universalSettings: expect.objectContaining({
-          joinColumnName: 'targetTicketId',
-        }),
-      });
+			// Reverse MORPH_RELATION field on the standard object, carried inline on
+			// the forward create action, under the name-free deterministic universal
+			// identifier, with the engine-pinned targetMorphId and the join column.
+			expect(
+				forwardCreateAction?.relatedUniversalFlatFieldMetadata,
+			).toMatchObject({
+				name: "targetTicket",
+				type: FieldMetadataType.MORPH_RELATION,
+				isSystem: false,
+				isSystemSideEffect: true,
+				universalIdentifier: reverseUniversalIdentifier,
+				morphId:
+					STANDARD_OBJECTS[standardObjectNameSingular].morphIds.targetMorphId
+						.morphId,
+				objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+				relationTargetObjectMetadataUniversalIdentifier:
+					TEST_OBJECT.universalIdentifier,
+				relationTargetFieldMetadataUniversalIdentifier:
+					forwardUniversalIdentifier,
+				universalSettings: expect.objectContaining({
+					joinColumnName: "targetTicketId",
+				}),
+			});
 
-      // Engine-owned join-column index backing the reverse field.
-      const reverseJoinColumnIndexAction = indexCreateActions.find((action) =>
-        action.flatEntity.universalFlatIndexFieldMetadatas?.some(
-          (indexFieldMetadata) =>
-            indexFieldMetadata.fieldMetadataUniversalIdentifier ===
-            reverseUniversalIdentifier,
-        ),
-      );
+			// Engine-owned join-column index backing the reverse field.
+			const reverseJoinColumnIndexAction = indexCreateActions.find((action) =>
+				action.flatEntity.universalFlatIndexFieldMetadatas?.some(
+					(indexFieldMetadata) =>
+						indexFieldMetadata.fieldMetadataUniversalIdentifier ===
+						reverseUniversalIdentifier,
+				),
+			);
 
-      expect(reverseJoinColumnIndexAction).toBeDefined();
-      expect(reverseJoinColumnIndexAction?.flatEntity).toMatchObject({
-        isSystemSideEffect: true,
-        objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
-      });
-    }
-  }, 60000);
+			expect(reverseJoinColumnIndexAction).toBeDefined();
+			expect(reverseJoinColumnIndexAction?.flatEntity).toMatchObject({
+				isSystemSideEffect: true,
+				objectMetadataUniversalIdentifier: standardObjectUniversalIdentifier,
+			});
+		}
+	}, 60000);
 
-  it('should delete old field and create equivalent one when field universalIdentifier changes', async () => {
-    const originalFieldId = '8abbef24-f8c3-41d5-826b-73a02825e712';
-    const updatedFieldId = 'a4262080-673d-430a-883b-c5d04610abf1';
+	it("should delete old field and create equivalent one when field universalIdentifier changes", async () => {
+		const originalFieldId = "8abbef24-f8c3-41d5-826b-73a02825e712";
+		const updatedFieldId = "a4262080-673d-430a-883b-c5d04610abf1";
 
-    const testObject = buildDefaultObjectManifest({
-      applicationUniversalIdentifier: TEST_APP_ID,
-      universalIdentifier: '8fc4bfec-01d8-4404-bd1a-dc90fe8e7699',
-      nameSingular: 'ticket',
-      namePlural: 'tickets',
-      labelSingular: 'Ticket',
-      labelPlural: 'Tickets',
-      description: 'A support ticket',
-      icon: 'IconTicket',
-    });
+		const testObject = buildDefaultObjectManifest({
+			applicationUniversalIdentifier: TEST_APP_ID,
+			universalIdentifier: "8fc4bfec-01d8-4404-bd1a-dc90fe8e7699",
+			nameSingular: "ticket",
+			namePlural: "tickets",
+			labelSingular: "Ticket",
+			labelPlural: "Tickets",
+			description: "A support ticket",
+			icon: "IconTicket",
+		});
 
-    const baseField: FieldManifest = {
-      universalIdentifier: originalFieldId,
-      type: FieldMetadataType.TEXT,
-      name: 'description',
-      label: 'Description',
-      description: 'Ticket description',
-      icon: 'IconFileDescription',
-      objectUniversalIdentifier: testObject.universalIdentifier,
-    };
+		const baseField: FieldManifest = {
+			universalIdentifier: originalFieldId,
+			type: FieldMetadataType.TEXT,
+			name: "description",
+			label: "Description",
+			description: "Ticket description",
+			icon: "IconFileDescription",
+			objectUniversalIdentifier: testObject.universalIdentifier,
+		};
 
-    const { data: firstSyncData } = await syncApplication({
-      manifest: buildBaseManifest({
-        appId: TEST_APP_ID,
-        roleId: TEST_ROLE_ID,
-        overrides: {
-          objects: [testObject],
-          fields: [baseField],
-        },
-      }),
-      expectToFail: false,
-    });
+		const { data: firstSyncData } = await syncApplication({
+			manifest: buildBaseManifest({
+				appId: TEST_APP_ID,
+				roleId: TEST_ROLE_ID,
+				overrides: {
+					objects: [testObject],
+					fields: [baseField],
+				},
+			}),
+			expectToFail: false,
+		});
 
-    expect(firstSyncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstSyncData),
-    );
+		expect(firstSyncData).toMatchSnapshot(
+			extractRecordIdsAndDatesAsExpectAny(firstSyncData),
+		);
 
-    const { data: secondSyncData } = await syncApplication({
-      manifest: buildBaseManifest({
-        appId: TEST_APP_ID,
-        roleId: TEST_ROLE_ID,
-        overrides: {
-          objects: [testObject],
-          fields: [
-            {
-              ...baseField,
-              universalIdentifier: updatedFieldId,
-            },
-          ],
-        },
-      }),
-      expectToFail: false,
-    });
+		const { data: secondSyncData } = await syncApplication({
+			manifest: buildBaseManifest({
+				appId: TEST_APP_ID,
+				roleId: TEST_ROLE_ID,
+				overrides: {
+					objects: [testObject],
+					fields: [
+						{
+							...baseField,
+							universalIdentifier: updatedFieldId,
+						},
+					],
+				},
+			}),
+			expectToFail: false,
+		});
 
-    expect(secondSyncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(secondSyncData),
-    );
-  }, 60000);
+		expect(secondSyncData).toMatchSnapshot(
+			extractRecordIdsAndDatesAsExpectAny(secondSyncData),
+		);
+	}, 60000);
 
-  it('should create a TEXT field on the standard Company object', async () => {
-    const companyFieldId = uuidv4();
+	it("should create a TEXT field on the standard Company object", async () => {
+		const companyFieldId = uuidv4();
 
-    const manifest = buildManifest({
-      skills: [],
-      objects: [],
-      fields: [
-        {
-          universalIdentifier: companyFieldId,
-          type: FieldMetadataType.TEXT,
-          name: 'industry',
-          label: 'Industry',
-          description: 'The industry of the company',
-          icon: 'IconBuildingFactory2',
-          objectUniversalIdentifier:
-            STANDARD_OBJECTS.company.universalIdentifier,
-        },
-      ],
-    });
+		const manifest = buildManifest({
+			skills: [],
+			objects: [],
+			fields: [
+				{
+					universalIdentifier: companyFieldId,
+					type: FieldMetadataType.TEXT,
+					name: "industry",
+					label: "Industry",
+					description: "The industry of the company",
+					icon: "IconBuildingFactory2",
+					objectUniversalIdentifier:
+						STANDARD_OBJECTS.company.universalIdentifier,
+				},
+			],
+		});
 
-    const { data: syncData } = await syncApplication({
-      manifest,
-      expectToFail: false,
-    });
+		const { data: syncData } = await syncApplication({
+			manifest,
+			expectToFail: false,
+		});
 
-    expect(syncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(syncData),
-    );
-  }, 60000);
+		expect(syncData).toMatchSnapshot(
+			extractRecordIdsAndDatesAsExpectAny(syncData),
+		);
+	}, 60000);
 });

@@ -1,23 +1,23 @@
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useComputeRecordRelationFilterDisplayValue } from '@/views/hooks/useComputeRecordRelationFilterDisplayValue';
+import { type RecordFilter } from "@/object-record/record-filter/types/RecordFilter";
+import { SelectControl } from "@/ui/input/components/SelectControl";
+import { useComputeRecordRelationFilterDisplayValue } from "@/views/hooks/useComputeRecordRelationFilterDisplayValue";
 
 type AdvancedFilterRelationValueInputClickableSelectProps = {
-  recordFilter: RecordFilter;
+	recordFilter: RecordFilter;
 };
 
 export const AdvancedFilterRelationValueInputClickableSelect = ({
-  recordFilter,
+	recordFilter,
 }: AdvancedFilterRelationValueInputClickableSelectProps) => {
-  const { displayValue } = useComputeRecordRelationFilterDisplayValue({
-    recordFilter,
-  });
+	const { displayValue } = useComputeRecordRelationFilterDisplayValue({
+		recordFilter,
+	});
 
-  return (
-    <SelectControl
-      selectedOption={{ label: displayValue, value: null }}
-      textAccent="default"
-      isDisabled={false}
-    />
-  );
+	return (
+		<SelectControl
+			selectedOption={{ label: displayValue, value: null }}
+			textAccent="default"
+			isDisabled={false}
+		/>
+	);
 };

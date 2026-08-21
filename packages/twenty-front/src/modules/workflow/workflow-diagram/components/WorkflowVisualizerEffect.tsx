@@ -1,33 +1,33 @@
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useSetAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useSetAtomComponentState";
+import { useWorkflowWithCurrentVersion } from "@/workflow/hooks/useWorkflowWithCurrentVersion";
+import { workflowVisualizerWorkflowIdComponentState } from "@/workflow/states/workflowVisualizerWorkflowIdComponentState";
+import { workflowVisualizerWorkflowVersionIdComponentState } from "@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState";
+import { useEffect } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 export const WorkflowVisualizerEffect = ({
-  workflowId,
+	workflowId,
 }: {
-  workflowId: string;
+	workflowId: string;
 }) => {
-  const setWorkflowVisualizerWorkflowId = useSetAtomComponentState(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
-    workflowVisualizerWorkflowVersionIdComponentState,
-  );
+	const setWorkflowVisualizerWorkflowId = useSetAtomComponentState(
+		workflowVisualizerWorkflowIdComponentState,
+	);
+	const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
+		workflowVisualizerWorkflowVersionIdComponentState,
+	);
 
-  const workflow = useWorkflowWithCurrentVersion(workflowId);
+	const workflow = useWorkflowWithCurrentVersion(workflowId);
 
-  useEffect(() => {
-    setWorkflowVisualizerWorkflowId(workflowId);
-  }, [setWorkflowVisualizerWorkflowId, workflowId]);
+	useEffect(() => {
+		setWorkflowVisualizerWorkflowId(workflowId);
+	}, [setWorkflowVisualizerWorkflowId, workflowId]);
 
-  useEffect(() => {
-    if (isDefined(workflow)) {
-      setWorkflowVisualizerWorkflowVersionId(workflow.currentVersion.id);
-    }
-  }, [setWorkflowVisualizerWorkflowVersionId, workflow]);
+	useEffect(() => {
+		if (isDefined(workflow)) {
+			setWorkflowVisualizerWorkflowVersionId(workflow.currentVersion.id);
+		}
+	}, [setWorkflowVisualizerWorkflowVersionId, workflow]);
 
-  return null;
+	return null;
 };

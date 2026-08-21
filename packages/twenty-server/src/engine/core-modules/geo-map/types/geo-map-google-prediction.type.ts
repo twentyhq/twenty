@@ -1,4 +1,4 @@
 export type GeoMapGooglePrediction = {
-  description: string;
-  place_id: string;
+	description: string;
+	place_id: string;
 };

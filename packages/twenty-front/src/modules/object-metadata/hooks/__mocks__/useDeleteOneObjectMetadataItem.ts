@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { gql } from "@apollo/client";
+import { ObjectOpenRecordIn } from "twenty-shared/types";
 
 export const query = gql`
   mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
@@ -25,23 +25,23 @@ export const query = gql`
   }
 `;
 
-export const variables = { idToDelete: 'idToDelete' };
+export const variables = { idToDelete: "idToDelete" };
 
 export const responseData = {
-  id: '',
-  nameSingular: '',
-  namePlural: '',
-  labelSingular: '',
-  labelPlural: '',
-  description: '',
-  icon: '',
-  color: null,
-  isActive: true,
-  isSearchable: false,
-  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
-  createdAt: '',
-  updatedAt: '',
-  labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
-  imageIdentifierFieldMetadataId: '',
-  applicationId: null,
+	id: "",
+	nameSingular: "",
+	namePlural: "",
+	labelSingular: "",
+	labelPlural: "",
+	description: "",
+	icon: "",
+	color: null,
+	isActive: true,
+	isSearchable: false,
+	openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+	createdAt: "",
+	updatedAt: "",
+	labelIdentifierFieldMetadataId: "20202020-72ba-4e11-a36d-e17b544541e1",
+	imageIdentifierFieldMetadataId: "",
+	applicationId: null,
 };

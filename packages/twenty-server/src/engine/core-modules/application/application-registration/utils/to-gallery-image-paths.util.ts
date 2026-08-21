@@ -1,13 +1,13 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type ApplicationManifest } from "twenty-shared/application";
 
 export const toGalleryImagePaths = (
-  application: ApplicationManifest | undefined,
+	application: ApplicationManifest | undefined,
 ): string[] => {
-  const galleryImages = application?.galleryImages;
+	const galleryImages = application?.galleryImages;
 
-  if (galleryImages && galleryImages.length > 0) {
-    return galleryImages;
-  }
+	if (galleryImages && galleryImages.length > 0) {
+		return galleryImages;
+	}
 
-  return application?.screenshots ?? [];
+	return application?.screenshots ?? [];
 };

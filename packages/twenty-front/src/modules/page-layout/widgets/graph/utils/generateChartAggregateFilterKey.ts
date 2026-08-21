@@ -1,7 +1,7 @@
 export const generateChartAggregateFilterKey = (
-  rangeMin?: number | null,
-  rangeMax?: number | null,
-  omitNullValues?: boolean | null,
+	rangeMin?: number | null,
+	rangeMax?: number | null,
+	omitNullValues?: boolean | null,
 ): string => {
-  return `${rangeMin ?? ''}-${rangeMax ?? ''}-${omitNullValues ?? ''}`;
+	return `${rangeMin ?? ""}-${rangeMax ?? ""}-${omitNullValues ?? ""}`;
 };

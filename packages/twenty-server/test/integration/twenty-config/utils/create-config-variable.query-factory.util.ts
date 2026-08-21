@@ -1,24 +1,24 @@
-import { gql } from 'graphql-tag';
-import { type ConfigVariableValue } from 'twenty-shared/types';
+import { gql } from "graphql-tag";
+import { type ConfigVariableValue } from "twenty-shared/types";
 
 export type CreateConfigVariableFactoryInput = {
-  key: string;
-  value: ConfigVariableValue;
+	key: string;
+	value: ConfigVariableValue;
 };
 
 export const createConfigVariableQueryFactory = ({
-  key,
-  value,
+	key,
+	value,
 }: CreateConfigVariableFactoryInput) => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
         createDatabaseConfigVariable(key: $key, value: $value)
       }
     `,
-    variables: {
-      key,
-      value,
-    },
-  };
+		variables: {
+			key,
+			value,
+		},
+	};
 };

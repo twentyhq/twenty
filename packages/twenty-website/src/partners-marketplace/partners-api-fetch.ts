@@ -4,36 +4,36 @@
 const REVALIDATE_SECONDS = 300;
 
 type PartnersApiFetchOptions = {
-  /** Profile pages are force-dynamic; skip the Data Cache so edits show immediately. */
-  cache?: RequestCache;
+	/** Profile pages are force-dynamic; skip the Data Cache so edits show immediately. */
+	cache?: RequestCache;
 };
 
 export async function partnersApiFetch(
-  path: string,
-  options: PartnersApiFetchOptions = {},
+	path: string,
+	options: PartnersApiFetchOptions = {},
 ): Promise<unknown> {
-  const baseUrl = process.env.TWENTY_PARTNERS_API_URL;
-  const apiKey = process.env.TWENTY_PARTNERS_API_KEY;
-  if (baseUrl === undefined || apiKey === undefined) {
-    throw new Error('TWENTY_PARTNERS_API_URL / TWENTY_PARTNERS_API_KEY unset');
-  }
+	const baseUrl = process.env.TWENTY_PARTNERS_API_URL;
+	const apiKey = process.env.TWENTY_PARTNERS_API_KEY;
+	if (baseUrl === undefined || apiKey === undefined) {
+		throw new Error("TWENTY_PARTNERS_API_URL / TWENTY_PARTNERS_API_KEY unset");
+	}
 
-  const response = await fetch(`${baseUrl.replace(/\/$/, '')}${path}`, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    ...(options.cache === 'no-store'
-      ? { cache: 'no-store' as const }
-      : { next: { revalidate: REVALIDATE_SECONDS } }),
-  });
+	const response = await fetch(`${baseUrl.replace(/\/$/, "")}${path}`, {
+		headers: {
+			Accept: "application/json",
+			Authorization: `Bearer ${apiKey}`,
+		},
+		...(options.cache === "no-store"
+			? { cache: "no-store" as const }
+			: { next: { revalidate: REVALIDATE_SECONDS } }),
+	});
 
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(
-      `Twenty partners API ${response.status} ${path}: ${body.slice(0, 300)}`,
-    );
-  }
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(
+			`Twenty partners API ${response.status} ${path}: ${body.slice(0, 300)}`,
+		);
+	}
 
-  return response.json();
+	return response.json();
 }

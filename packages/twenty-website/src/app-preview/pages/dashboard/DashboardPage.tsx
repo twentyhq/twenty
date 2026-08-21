@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
-import { EASING, mediaUp, REDUCED_MOTION } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { EASING, mediaUp, REDUCED_MOTION } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { DASHBOARD_CHARTS } from './DashboardCharts';
-import { PREVIEW_SKELETON } from '../../primitives/PreviewSkeleton';
-import { type DashboardKpi, type DashboardPageDefinition } from '../../types';
+import { DASHBOARD_CHARTS } from "./DashboardCharts";
+import { PREVIEW_SKELETON } from "../../primitives/PreviewSkeleton";
+import { type DashboardKpi, type DashboardPageDefinition } from "../../types";
 
 const DashboardGrid = styled.div`
   display: grid;
@@ -23,7 +23,7 @@ const DashboardGrid = styled.div`
   min-height: 0;
   padding: 8px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-template-areas:
       'kpis line line'
       'bar bar donut';
@@ -83,7 +83,7 @@ const KpiStack = styled.div`
   grid-area: kpis;
   min-width: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-template-rows: repeat(3, minmax(0, 1fr));
   }
 `;
@@ -111,9 +111,9 @@ const KpiValue = styled.span`
 const KpiTrend = styled.span<{ $up: boolean }>`
   align-items: center;
   color: ${({ $up }) =>
-    $up
-      ? APP_PREVIEW_TONES.dashboardChart.trendUp
-      : APP_PREVIEW_TONES.dashboardChart.trendDown};
+		$up
+			? APP_PREVIEW_TONES.dashboardChart.trendUp
+			: APP_PREVIEW_TONES.dashboardChart.trendDown};
   display: inline-flex;
   flex-shrink: 0;
   font-family: var(--font-product), sans-serif;
@@ -135,96 +135,96 @@ const DonutCard = styled(WidgetCard)`
 `;
 
 function KpiWidget({ kpi }: { kpi: DashboardKpi }) {
-  const isUp = kpi.trend?.direction === 'up';
-  return (
-    <KpiCard>
-      <WidgetTitle>{kpi.title}</WidgetTitle>
-      <KpiValueRow>
-        <KpiValue>{kpi.value}</KpiValue>
-        {kpi.trend ? (
-          <KpiTrend $up={isUp}>
-            {isUp ? (
-              <IconTrendingUp size={14} stroke={THEME_LIGHT.icon.stroke.md} />
-            ) : (
-              <IconTrendingDown size={14} stroke={THEME_LIGHT.icon.stroke.md} />
-            )}
-            {kpi.trend.value}
-          </KpiTrend>
-        ) : null}
-      </KpiValueRow>
-    </KpiCard>
-  );
+	const isUp = kpi.trend?.direction === "up";
+	return (
+		<KpiCard>
+			<WidgetTitle>{kpi.title}</WidgetTitle>
+			<KpiValueRow>
+				<KpiValue>{kpi.value}</KpiValue>
+				{kpi.trend ? (
+					<KpiTrend $up={isUp}>
+						{isUp ? (
+							<IconTrendingUp size={14} stroke={THEME_LIGHT.icon.stroke.md} />
+						) : (
+							<IconTrendingDown size={14} stroke={THEME_LIGHT.icon.stroke.md} />
+						)}
+						{kpi.trend.value}
+					</KpiTrend>
+				) : null}
+			</KpiValueRow>
+		</KpiCard>
+	);
 }
 
 function KpiSkeleton() {
-  return (
-    <KpiCard>
-      <PREVIEW_SKELETON.Bar $height={11} $width="55%" />
-      <PREVIEW_SKELETON.Bar $height={20} $width="45%" />
-    </KpiCard>
-  );
+	return (
+		<KpiCard>
+			<PREVIEW_SKELETON.Bar $height={11} $width="55%" />
+			<PREVIEW_SKELETON.Bar $height={20} $width="45%" />
+		</KpiCard>
+	);
 }
 
 function ChartSkeleton() {
-  return (
-    <>
-      <PREVIEW_SKELETON.Bar $height={11} $width="48%" />
-      <PREVIEW_SKELETON.Block />
-    </>
-  );
+	return (
+		<>
+			<PREVIEW_SKELETON.Bar $height={11} $width="48%" />
+			<PREVIEW_SKELETON.Block />
+		</>
+	);
 }
 
 export function DashboardPage({ page }: { page: DashboardPageDefinition }) {
-  const { kpis, lineChart, barChart, donutChart, generating } = page.dashboard;
-  return (
-    <DashboardGrid>
-      {kpis.length > 0 ? (
-        <KpiStack>
-          {kpis.map((kpi) =>
-            generating ? (
-              <KpiSkeleton key={kpi.id} />
-            ) : (
-              <KpiWidget key={kpi.id} kpi={kpi} />
-            ),
-          )}
-        </KpiStack>
-      ) : null}
-      {lineChart ? (
-        <LineCard>
-          {generating ? (
-            <ChartSkeleton />
-          ) : (
-            <>
-              <WidgetTitle>{lineChart.title}</WidgetTitle>
-              <DASHBOARD_CHARTS.Line data={lineChart} />
-            </>
-          )}
-        </LineCard>
-      ) : null}
-      {barChart ? (
-        <BarCard>
-          {generating ? (
-            <ChartSkeleton />
-          ) : (
-            <>
-              <WidgetTitle>{barChart.title}</WidgetTitle>
-              <DASHBOARD_CHARTS.Bar data={barChart} />
-            </>
-          )}
-        </BarCard>
-      ) : null}
-      {donutChart ? (
-        <DonutCard>
-          {generating ? (
-            <ChartSkeleton />
-          ) : (
-            <>
-              <WidgetTitle>{donutChart.title}</WidgetTitle>
-              <DASHBOARD_CHARTS.Donut data={donutChart} />
-            </>
-          )}
-        </DonutCard>
-      ) : null}
-    </DashboardGrid>
-  );
+	const { kpis, lineChart, barChart, donutChart, generating } = page.dashboard;
+	return (
+		<DashboardGrid>
+			{kpis.length > 0 ? (
+				<KpiStack>
+					{kpis.map((kpi) =>
+						generating ? (
+							<KpiSkeleton key={kpi.id} />
+						) : (
+							<KpiWidget key={kpi.id} kpi={kpi} />
+						),
+					)}
+				</KpiStack>
+			) : null}
+			{lineChart ? (
+				<LineCard>
+					{generating ? (
+						<ChartSkeleton />
+					) : (
+						<>
+							<WidgetTitle>{lineChart.title}</WidgetTitle>
+							<DASHBOARD_CHARTS.Line data={lineChart} />
+						</>
+					)}
+				</LineCard>
+			) : null}
+			{barChart ? (
+				<BarCard>
+					{generating ? (
+						<ChartSkeleton />
+					) : (
+						<>
+							<WidgetTitle>{barChart.title}</WidgetTitle>
+							<DASHBOARD_CHARTS.Bar data={barChart} />
+						</>
+					)}
+				</BarCard>
+			) : null}
+			{donutChart ? (
+				<DonutCard>
+					{generating ? (
+						<ChartSkeleton />
+					) : (
+						<>
+							<WidgetTitle>{donutChart.title}</WidgetTitle>
+							<DASHBOARD_CHARTS.Donut data={donutChart} />
+						</>
+					)}
+				</DonutCard>
+			) : null}
+		</DashboardGrid>
+	);
 }

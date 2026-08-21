@@ -1,23 +1,23 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook } from "@testing-library/react";
 
-import { useFirstMountState } from '~/hooks/useFirstMountState';
+import { useFirstMountState } from "~/hooks/useFirstMountState";
 
-describe('useFirstMountState', () => {
-  it('should return true on first mount', () => {
-    const { result } = renderHook(() => {
-      return useFirstMountState();
-    });
+describe("useFirstMountState", () => {
+	it("should return true on first mount", () => {
+		const { result } = renderHook(() => {
+			return useFirstMountState();
+		});
 
-    expect(result.current).toBe(true);
-  });
+		expect(result.current).toBe(true);
+	});
 
-  it('should return false on second mount', () => {
-    const { result, rerender } = renderHook(() => {
-      return useFirstMountState();
-    });
+	it("should return false on second mount", () => {
+		const { result, rerender } = renderHook(() => {
+			return useFirstMountState();
+		});
 
-    rerender();
+		rerender();
 
-    expect(result.current).toBe(false);
-  });
+		expect(result.current).toBe(false);
+	});
 });

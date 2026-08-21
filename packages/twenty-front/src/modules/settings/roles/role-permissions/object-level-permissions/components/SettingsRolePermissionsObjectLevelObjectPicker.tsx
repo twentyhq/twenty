@@ -1,20 +1,20 @@
 /* oxlint-disable twenty/no-navigate-prefer-link */
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
-import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
-import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { ObjectMetadataIcon } from "@/object-metadata/components/ObjectMetadataIcon";
+import { useGetIsMetadataItemCustom } from "@/object-metadata/hooks/useGetIsMetadataItemCustom";
+import { SettingsCard } from "@/settings/components/SettingsCard";
+import { useFilterObjectMetadataItemsWithPermissionOverride } from "@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride";
+import { useObjectMetadataItemsThatCanHavePermission } from "@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission";
+import { SettingsTextInput } from "@/ui/input/components/SettingsTextInput";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useContext, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { SettingsPath } from "twenty-shared/types";
+import { IconSearch } from "twenty-ui/icon";
+import { H2Title } from "twenty-ui/typography";
+import { Section } from "twenty-ui/layout";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
+import { useNavigateSettings } from "~/hooks/useNavigateSettings";
 
 const StyledTypeSelectContainer = styled.div`
   display: flex;
@@ -50,131 +50,131 @@ const StyledSearchInputContainer = styled.div`
 `;
 
 export const SettingsRolePermissionsObjectLevelObjectPicker = ({
-  roleId,
+	roleId,
 }: {
-  roleId: string;
+	roleId: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
-  const navigate = useNavigateSettings();
-  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
-  const [searchParams] = useSearchParams();
-  const fromAgentId = searchParams.get('fromAgent');
-  const [searchFilter, setSearchFilter] = useState('');
+	const { theme } = useContext(ThemeContext);
+	const navigate = useNavigateSettings();
+	const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+	const [searchParams] = useSearchParams();
+	const fromAgentId = searchParams.get("fromAgent");
+	const [searchFilter, setSearchFilter] = useState("");
 
-  const { objectMetadataItemsThatCanHavePermission } =
-    useObjectMetadataItemsThatCanHavePermission();
+	const { objectMetadataItemsThatCanHavePermission } =
+		useObjectMetadataItemsThatCanHavePermission();
 
-  const handleSearchChange = (text: string) => {
-    setSearchFilter(text);
-  };
+	const handleSearchChange = (text: string) => {
+		setSearchFilter(text);
+	};
 
-  const handleSelectObjectMetadata = (objectMetadataId: string) => {
-    navigate(
-      SettingsPath.RoleObjectLevel,
-      { roleId, objectMetadataId },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
-    );
-  };
+	const handleSelectObjectMetadata = (objectMetadataId: string) => {
+		navigate(
+			SettingsPath.RoleObjectLevel,
+			{ roleId, objectMetadataId },
+			fromAgentId ? { fromAgent: fromAgentId } : undefined,
+		);
+	};
 
-  const { filterObjectMetadataItemsWithPermissionOverride } =
-    useFilterObjectMetadataItemsWithPermissionOverride({
-      roleId,
-    });
+	const { filterObjectMetadataItemsWithPermissionOverride } =
+		useFilterObjectMetadataItemsWithPermissionOverride({
+			roleId,
+		});
 
-  const objectMetadataItemIdsWithPermission =
-    objectMetadataItemsThatCanHavePermission
-      .filter(filterObjectMetadataItemsWithPermissionOverride)
-      .map((objectMetadataItem) => objectMetadataItem.id);
+	const objectMetadataItemIdsWithPermission =
+		objectMetadataItemsThatCanHavePermission
+			.filter(filterObjectMetadataItemsWithPermissionOverride)
+			.map((objectMetadataItem) => objectMetadataItem.id);
 
-  const filteredObjectMetadataItems =
-    objectMetadataItemsThatCanHavePermission.filter(
-      (objectMetadataItem) =>
-        objectMetadataItem.labelPlural
-          .toLowerCase()
-          .includes(searchFilter.toLowerCase()) &&
-        !objectMetadataItemIdsWithPermission.includes(objectMetadataItem.id),
-    );
+	const filteredObjectMetadataItems =
+		objectMetadataItemsThatCanHavePermission.filter(
+			(objectMetadataItem) =>
+				objectMetadataItem.labelPlural
+					.toLowerCase()
+					.includes(searchFilter.toLowerCase()) &&
+				!objectMetadataItemIdsWithPermission.includes(objectMetadataItem.id),
+		);
 
-  const standardObjects = filteredObjectMetadataItems.filter(
-    (item) => !getIsMetadataItemCustom(item),
-  );
-  const customObjects = filteredObjectMetadataItems.filter((item) =>
-    getIsMetadataItemCustom(item),
-  );
+	const standardObjects = filteredObjectMetadataItems.filter(
+		(item) => !getIsMetadataItemCustom(item),
+	);
+	const customObjects = filteredObjectMetadataItems.filter((item) =>
+		getIsMetadataItemCustom(item),
+	);
 
-  return (
-    <StyledTypeSelectContainer>
-      <Section>
-        <StyledSearchContainer>
-          <StyledSearchInputContainer>
-            <SettingsTextInput
-              instanceId="role-permissions-object-search"
-              value={searchFilter}
-              onChange={handleSearchChange}
-              placeholder={t`Search an object`}
-              fullWidth
-              LeftIcon={IconSearch}
-              sizeVariant="lg"
-            />
-          </StyledSearchInputContainer>
-        </StyledSearchContainer>
-      </Section>
+	return (
+		<StyledTypeSelectContainer>
+			<Section>
+				<StyledSearchContainer>
+					<StyledSearchInputContainer>
+						<SettingsTextInput
+							instanceId="role-permissions-object-search"
+							value={searchFilter}
+							onChange={handleSearchChange}
+							placeholder={t`Search an object`}
+							fullWidth
+							LeftIcon={IconSearch}
+							sizeVariant="lg"
+						/>
+					</StyledSearchInputContainer>
+				</StyledSearchContainer>
+			</Section>
 
-      {standardObjects.length > 0 && (
-        <Section>
-          <H2Title
-            title={t`Standard`}
-            description={t`All the standard objects`}
-          />
-          <StyledContainer>
-            {standardObjects.map((objectMetadataItem) => (
-              <StyledCardContainer
-                key={objectMetadataItem.id}
-                onClick={() =>
-                  handleSelectObjectMetadata(objectMetadataItem.id)
-                }
-              >
-                <SettingsCard
-                  Icon={
-                    <ObjectMetadataIcon
-                      objectMetadataItem={objectMetadataItem}
-                      size={theme.icon.size.lg}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  }
-                  title={objectMetadataItem.labelPlural}
-                />
-              </StyledCardContainer>
-            ))}
-          </StyledContainer>
-        </Section>
-      )}
-      {customObjects.length > 0 && (
-        <Section>
-          <H2Title title={t`Custom`} description={t`All your custom objects`} />
-          <StyledContainer>
-            {customObjects.map((objectMetadataItem) => (
-              <StyledCardContainer
-                key={objectMetadataItem.id}
-                onClick={() =>
-                  handleSelectObjectMetadata(objectMetadataItem.id)
-                }
-              >
-                <SettingsCard
-                  Icon={
-                    <ObjectMetadataIcon
-                      objectMetadataItem={objectMetadataItem}
-                      size={theme.icon.size.lg}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  }
-                  title={objectMetadataItem.labelPlural}
-                />
-              </StyledCardContainer>
-            ))}
-          </StyledContainer>
-        </Section>
-      )}
-    </StyledTypeSelectContainer>
-  );
+			{standardObjects.length > 0 && (
+				<Section>
+					<H2Title
+						title={t`Standard`}
+						description={t`All the standard objects`}
+					/>
+					<StyledContainer>
+						{standardObjects.map((objectMetadataItem) => (
+							<StyledCardContainer
+								key={objectMetadataItem.id}
+								onClick={() =>
+									handleSelectObjectMetadata(objectMetadataItem.id)
+								}
+							>
+								<SettingsCard
+									Icon={
+										<ObjectMetadataIcon
+											objectMetadataItem={objectMetadataItem}
+											size={theme.icon.size.lg}
+											stroke={theme.icon.stroke.sm}
+										/>
+									}
+									title={objectMetadataItem.labelPlural}
+								/>
+							</StyledCardContainer>
+						))}
+					</StyledContainer>
+				</Section>
+			)}
+			{customObjects.length > 0 && (
+				<Section>
+					<H2Title title={t`Custom`} description={t`All your custom objects`} />
+					<StyledContainer>
+						{customObjects.map((objectMetadataItem) => (
+							<StyledCardContainer
+								key={objectMetadataItem.id}
+								onClick={() =>
+									handleSelectObjectMetadata(objectMetadataItem.id)
+								}
+							>
+								<SettingsCard
+									Icon={
+										<ObjectMetadataIcon
+											objectMetadataItem={objectMetadataItem}
+											size={theme.icon.size.lg}
+											stroke={theme.icon.stroke.sm}
+										/>
+									}
+									title={objectMetadataItem.labelPlural}
+								/>
+							</StyledCardContainer>
+						))}
+					</StyledContainer>
+				</Section>
+			)}
+		</StyledTypeSelectContainer>
+	);
 };

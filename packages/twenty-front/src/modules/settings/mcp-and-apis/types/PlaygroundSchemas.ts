@@ -1,4 +1,4 @@
 export enum PlaygroundSchemas {
-  METADATA = 'metadata',
-  CORE = 'core',
+	METADATA = "metadata",
+	CORE = "core",
 }

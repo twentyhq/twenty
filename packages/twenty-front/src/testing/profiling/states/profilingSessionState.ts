@@ -1,10 +1,10 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
-import { type ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
+import { type ProfilingDataPoint } from "~/testing/profiling/types/ProfilingDataPoint";
 
 export const profilingSessionState = createAtomState<
-  Record<string, ProfilingDataPoint[]>
+	Record<string, ProfilingDataPoint[]>
 >({
-  key: 'profilingSessionState',
-  defaultValue: {},
+	key: "profilingSessionState",
+	defaultValue: {},
 });

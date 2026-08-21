@@ -1,41 +1,41 @@
-import { computeMetadataNameFromLabel } from '@/metadata/utils/compute-metadata-name-from-label.util';
+import { computeMetadataNameFromLabel } from "@/metadata/utils/compute-metadata-name-from-label.util";
 
-describe('computeMetadataNameFromLabel', () => {
-  it('should convert a label to camelCase', () => {
-    expect(computeMetadataNameFromLabel({ label: 'My Custom Field' })).toBe(
-      'myCustomField',
-    );
-  });
+describe("computeMetadataNameFromLabel", () => {
+	it("should convert a label to camelCase", () => {
+		expect(computeMetadataNameFromLabel({ label: "My Custom Field" })).toBe(
+			"myCustomField",
+		);
+	});
 
-  it('should convert a label to camelCase', () => {
-    expect(computeMetadataNameFromLabel({ label: 'My CreatedAt Field' })).toBe(
-      'myCreatedatField',
-    );
-  });
+	it("should convert a label to camelCase", () => {
+		expect(computeMetadataNameFromLabel({ label: "My CreatedAt Field" })).toBe(
+			"myCreatedatField",
+		);
+	});
 
-  it('should return empty string for empty label', () => {
-    expect(computeMetadataNameFromLabel({ label: '' })).toBe('');
-  });
+	it("should return empty string for empty label", () => {
+		expect(computeMetadataNameFromLabel({ label: "" })).toBe("");
+	});
 
-  it('should prefix numeric labels with n', () => {
-    expect(computeMetadataNameFromLabel({ label: '123 Field' })).toBe(
-      'n123Field',
-    );
-  });
+	it("should prefix numeric labels with n", () => {
+		expect(computeMetadataNameFromLabel({ label: "123 Field" })).toBe(
+			"n123Field",
+		);
+	});
 
-  it('should add Custom suffix for reserved words', () => {
-    const result = computeMetadataNameFromLabel({ label: 'Name' });
+	it("should add Custom suffix for reserved words", () => {
+		const result = computeMetadataNameFromLabel({ label: "Name" });
 
-    expect(typeof result).toBe('string');
-    expect(result.length).toBeGreaterThan(0);
-  });
+		expect(typeof result).toBe("string");
+		expect(result.length).toBeGreaterThan(0);
+	});
 
-  it('should skip custom suffix when applyCustomSuffix is false', () => {
-    const result = computeMetadataNameFromLabel({
-      label: 'My Field',
-      applyCustomSuffix: false,
-    });
+	it("should skip custom suffix when applyCustomSuffix is false", () => {
+		const result = computeMetadataNameFromLabel({
+			label: "My Field",
+			applyCustomSuffix: false,
+		});
 
-    expect(result).toBe('myField');
-  });
+		expect(result).toBe("myField");
+	});
 });

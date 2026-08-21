@@ -1,28 +1,28 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useContext } from "react";
 
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { IconBox } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ObjectMetadataIcon } from "@/object-metadata/components/ObjectMetadataIcon";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { SettingsItemTypeTag } from "@/settings/components/SettingsItemTypeTag";
+import { IconBox } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 export type SettingsDataModelObjectPreviewProps = {
-  className?: string;
-  objectMetadataItems: Pick<
-    EnrichedObjectMetadataItem,
-    | 'icon'
-    | 'labelSingular'
-    | 'labelPlural'
-    | 'applicationId'
-    | 'isRemote'
-    | 'nameSingular'
-    | 'color'
-    | 'isSystem'
-  >[];
-  pluralizeLabel?: boolean;
+	className?: string;
+	objectMetadataItems: Pick<
+		EnrichedObjectMetadataItem,
+		| "icon"
+		| "labelSingular"
+		| "labelPlural"
+		| "applicationId"
+		| "isRemote"
+		| "nameSingular"
+		| "color"
+		| "isSystem"
+	>[];
+	pluralizeLabel?: boolean;
 };
 
 const StyledObjectPreview = styled.div`
@@ -59,109 +59,109 @@ const StyledSeparator = styled.div`
 `;
 
 type SettingsDataModelObjectPreviewItemProps = {
-  objectMetadataItem: Pick<
-    EnrichedObjectMetadataItem,
-    | 'icon'
-    | 'labelSingular'
-    | 'labelPlural'
-    | 'applicationId'
-    | 'isRemote'
-    | 'nameSingular'
-    | 'color'
-    | 'isSystem'
-  >;
-  pluralizeLabel: boolean;
-  index: number;
+	objectMetadataItem: Pick<
+		EnrichedObjectMetadataItem,
+		| "icon"
+		| "labelSingular"
+		| "labelPlural"
+		| "applicationId"
+		| "isRemote"
+		| "nameSingular"
+		| "color"
+		| "isSystem"
+	>;
+	pluralizeLabel: boolean;
+	index: number;
 };
 
 const SettingsDataModelObjectPreviewItem = ({
-  objectMetadataItem,
-  pluralizeLabel = true,
-  index,
+	objectMetadataItem,
+	pluralizeLabel = true,
+	index,
 }: SettingsDataModelObjectPreviewItemProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <>
-      {index > 0 && <StyledSeparator />}
-      <StyledObjectPreview key={`${objectMetadataItem.labelSingular}-${index}`}>
-        <StyledObjectName>
-          <StyledIconContainer>
-            <ObjectMetadataIcon
-              objectMetadataItem={objectMetadataItem}
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.md}
-            />
-          </StyledIconContainer>
-          <OverflowingTextWithTooltip
-            text={
-              pluralizeLabel
-                ? objectMetadataItem.labelPlural
-                : objectMetadataItem.labelSingular
-            }
-          />
-        </StyledObjectName>
-        <SettingsItemTypeTag item={objectMetadataItem} />
-      </StyledObjectPreview>
-    </>
-  );
+	return (
+		<>
+			{index > 0 && <StyledSeparator />}
+			<StyledObjectPreview key={`${objectMetadataItem.labelSingular}-${index}`}>
+				<StyledObjectName>
+					<StyledIconContainer>
+						<ObjectMetadataIcon
+							objectMetadataItem={objectMetadataItem}
+							size={theme.icon.size.sm}
+							stroke={theme.icon.stroke.md}
+						/>
+					</StyledIconContainer>
+					<OverflowingTextWithTooltip
+						text={
+							pluralizeLabel
+								? objectMetadataItem.labelPlural
+								: objectMetadataItem.labelSingular
+						}
+					/>
+				</StyledObjectName>
+				<SettingsItemTypeTag item={objectMetadataItem} />
+			</StyledObjectPreview>
+		</>
+	);
 };
 
 const SettingsDataModelObjectPreviewOtherObjects = ({
-  selected,
+	selected,
 }: {
-  selected: number;
+	selected: number;
 }) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <>
-      <StyledSeparator />
-      <StyledObjectPreview key={`other-objects`}>
-        <StyledObjectName>
-          <StyledIconContainer>
-            <IconBox
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.md}
-              color={theme.font.color.tertiary}
-            />
-          </StyledIconContainer>
-          <StyledOverflowingTextWithTooltip>
-            <OverflowingTextWithTooltip text={t`Other objects`} />
-          </StyledOverflowingTextWithTooltip>
-        </StyledObjectName>
-        <StyledNumber>
-          <OverflowingTextWithTooltip text={`${selected - 3}`} />
-        </StyledNumber>
-      </StyledObjectPreview>
-    </>
-  );
+	return (
+		<>
+			<StyledSeparator />
+			<StyledObjectPreview key={`other-objects`}>
+				<StyledObjectName>
+					<StyledIconContainer>
+						<IconBox
+							size={theme.icon.size.sm}
+							stroke={theme.icon.stroke.md}
+							color={theme.font.color.tertiary}
+						/>
+					</StyledIconContainer>
+					<StyledOverflowingTextWithTooltip>
+						<OverflowingTextWithTooltip text={t`Other objects`} />
+					</StyledOverflowingTextWithTooltip>
+				</StyledObjectName>
+				<StyledNumber>
+					<OverflowingTextWithTooltip text={`${selected - 3}`} />
+				</StyledNumber>
+			</StyledObjectPreview>
+		</>
+	);
 };
 
 export const SettingsDataModelObjectPreview = ({
-  objectMetadataItems,
-  pluralizeLabel = true,
+	objectMetadataItems,
+	pluralizeLabel = true,
 }: SettingsDataModelObjectPreviewProps) => {
-  let selected = 0;
+	let selected = 0;
 
-  return (
-    <>
-      {objectMetadataItems.map((objectMetadataItem, index) => {
-        selected++;
-        return selected <= 3 ? (
-          <SettingsDataModelObjectPreviewItem
-            key={`${objectMetadataItem.labelSingular}-${index}`}
-            objectMetadataItem={objectMetadataItem}
-            pluralizeLabel={pluralizeLabel}
-            index={index}
-          />
-        ) : (
-          <></>
-        );
-      })}
-      {selected > 3 && (
-        <SettingsDataModelObjectPreviewOtherObjects selected={selected} />
-      )}
-    </>
-  );
+	return (
+		<>
+			{objectMetadataItems.map((objectMetadataItem, index) => {
+				selected++;
+				return selected <= 3 ? (
+					<SettingsDataModelObjectPreviewItem
+						key={`${objectMetadataItem.labelSingular}-${index}`}
+						objectMetadataItem={objectMetadataItem}
+						pluralizeLabel={pluralizeLabel}
+						index={index}
+					/>
+				) : (
+					<></>
+				);
+			})}
+			{selected > 3 && (
+				<SettingsDataModelObjectPreviewOtherObjects selected={selected} />
+			)}
+		</>
+	);
 };

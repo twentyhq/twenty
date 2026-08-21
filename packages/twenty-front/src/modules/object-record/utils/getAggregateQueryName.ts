@@ -1,9 +1,9 @@
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from "twenty-shared/utils";
 export const getAggregateQueryName = (
-  objectMetadataNamePlural: string,
+	objectMetadataNamePlural: string,
 ): string => {
-  if (!isDefined(objectMetadataNamePlural)) {
-    throw new Error('objectMetadataNamePlural is required');
-  }
-  return `Aggregate${capitalize(objectMetadataNamePlural)}`;
+	if (!isDefined(objectMetadataNamePlural)) {
+		throw new Error("objectMetadataNamePlural is required");
+	}
+	return `Aggregate${capitalize(objectMetadataNamePlural)}`;
 };

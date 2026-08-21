@@ -14,6 +14,6 @@
 // trust mrmime. This policy is reactive: extend it the day we observe a real
 // wrong-mime persisted by an exercised code path, not in anticipation.
 export const TWENTY_MIME_POLICY: Record<string, string> = {
-  ts: 'application/typescript',
-  tsx: 'application/typescript',
+	ts: "application/typescript",
+	tsx: "application/typescript",
 };

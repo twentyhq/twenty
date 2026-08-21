@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { IconFolder, IconGitBranch } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconFolder, IconGitBranch } from "@tabler/icons-react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { TerminalPromptChip } from './TerminalPromptChip';
-import { TerminalSendButton } from './TerminalSendButton';
+import { TerminalPromptChip } from "./TerminalPromptChip";
+import { TerminalSendButton } from "./TerminalSendButton";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -59,36 +59,36 @@ const MythosButton = styled.button`
 `;
 
 export function TerminalPromptFooter({
-  isChatFinished,
-  onReset,
-  onSend,
-  sendDisabled,
+	isChatFinished,
+	onReset,
+	onSend,
+	sendDisabled,
 }: {
-  isChatFinished?: boolean;
-  onReset?: () => void;
-  onSend?: () => void;
-  sendDisabled?: boolean;
+	isChatFinished?: boolean;
+	onReset?: () => void;
+	onSend?: () => void;
+	sendDisabled?: boolean;
 }) {
-  return (
-    <PromptFooter>
-      <ChipRow>
-        <TerminalPromptChip
-          icon={<IconFolder size={13} stroke={1.8} />}
-          label="~/code/my-twenty-app"
-        />
-        <TerminalPromptChip
-          icon={<IconGitBranch size={13} stroke={1.8} />}
-          label="main"
-        />
-      </ChipRow>
-      <ActionRow>
-        <MythosButton type="button">Mythos</MythosButton>
-        <TerminalSendButton
-          disabled={isChatFinished ? false : sendDisabled}
-          mode={isChatFinished ? 'reset' : 'send'}
-          onClick={isChatFinished ? onReset : onSend}
-        />
-      </ActionRow>
-    </PromptFooter>
-  );
+	return (
+		<PromptFooter>
+			<ChipRow>
+				<TerminalPromptChip
+					icon={<IconFolder size={13} stroke={1.8} />}
+					label="~/code/my-twenty-app"
+				/>
+				<TerminalPromptChip
+					icon={<IconGitBranch size={13} stroke={1.8} />}
+					label="main"
+				/>
+			</ChipRow>
+			<ActionRow>
+				<MythosButton type="button">Mythos</MythosButton>
+				<TerminalSendButton
+					disabled={isChatFinished ? false : sendDisabled}
+					mode={isChatFinished ? "reset" : "send"}
+					onClick={isChatFinished ? onReset : onSend}
+				/>
+			</ActionRow>
+		</PromptFooter>
+	);
 }

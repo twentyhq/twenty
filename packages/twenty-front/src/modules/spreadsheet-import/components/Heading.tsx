@@ -1,11 +1,11 @@
-import React from 'react';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import React from "react";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export type HeadingProps = {
-  title: string;
-  description?: string;
-  className?: string;
+	title: string;
+	description?: string;
+	className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -30,8 +30,8 @@ const StyledDescription = styled.span`
 `;
 
 export const Heading = ({ title, description, className }: HeadingProps) => (
-  <StyledContainer className={className}>
-    <StyledTitle>{title}</StyledTitle>
-    {description && <StyledDescription>{description}</StyledDescription>}
-  </StyledContainer>
+	<StyledContainer className={className}>
+		<StyledTitle>{title}</StyledTitle>
+		{description && <StyledDescription>{description}</StyledDescription>}
+	</StyledContainer>
 );

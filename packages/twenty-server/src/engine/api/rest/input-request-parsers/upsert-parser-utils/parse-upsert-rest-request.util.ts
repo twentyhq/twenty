@@ -1,13 +1,13 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from "src/engine/api/rest/types/authenticated-request";
 
 export const parseUpsertRestRequest = (
-  request: AuthenticatedRequest,
+	request: AuthenticatedRequest,
 ): boolean => {
-  if (!isDefined(request.query.upsert)) {
-    return false;
-  }
+	if (!isDefined(request.query.upsert)) {
+		return false;
+	}
 
-  return request.query.upsert === 'true';
+	return request.query.upsert === "true";
 };

@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { EASING } from '@/tokens';
+import { EASING } from "@/tokens";
 
 const TabSection = styled.div`
   display: flex;
@@ -91,12 +91,12 @@ const ActivityRowBox = styled.div<{ $index: number }>`
 // The activity-tab chrome every list panel (tasks, files, emails,
 // calendar) composes: section scroller, counted header, bordered card.
 export const RECORD_PANEL_CHROME = {
-  ActivityRowBox,
-  ListCard,
-  TabAddButton,
-  TabHeader,
-  TabHeaderCount,
-  TabHeaderLabel,
-  TabHeaderTitle,
-  TabSection,
+	ActivityRowBox,
+	ListCard,
+	TabAddButton,
+	TabHeader,
+	TabHeaderCount,
+	TabHeaderLabel,
+	TabHeaderTitle,
+	TabSection,
 };

@@ -1,14 +1,14 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { Dropdown } from "@/ui/layout/dropdown/components/Dropdown";
+import { DropdownContent } from "@/ui/layout/dropdown/components/DropdownContent";
+import { DropdownMenuItemsContainer } from "@/ui/layout/dropdown/components/DropdownMenuItemsContainer";
+import { useCloseDropdown } from "@/ui/layout/dropdown/hooks/useCloseDropdown";
 
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { IconChevronDown } from "twenty-ui/icon";
+import { type SelectOption } from "twenty-ui/input";
+import { MenuItemSelect } from "twenty-ui/navigation";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
@@ -30,57 +30,57 @@ const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
 `;
 
 export type DropdownMenuInnerSelectProps = {
-  selectedOption: SelectOption;
-  onChange: (value: SelectOption) => void;
-  options: SelectOption[];
-  dropdownId: string;
-  widthInPixels?: number;
+	selectedOption: SelectOption;
+	onChange: (value: SelectOption) => void;
+	options: SelectOption[];
+	dropdownId: string;
+	widthInPixels?: number;
 };
 
 export const DropdownMenuInnerSelect = ({
-  selectedOption,
-  onChange,
-  options,
-  dropdownId,
-  widthInPixels,
+	selectedOption,
+	onChange,
+	options,
+	dropdownId,
+	widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { closeDropdown } = useCloseDropdown();
+	const { theme } = useContext(ThemeContext);
+	const { closeDropdown } = useCloseDropdown();
 
-  return (
-    <Dropdown
-      clickableComponent={
-        <StyledDropdownMenuInnerSelectDropdownButton>
-          <span>{selectedOption.label}</span>
-          <IconChevronDown size={theme.icon.size.sm} />
-        </StyledDropdownMenuInnerSelectDropdownButton>
-      }
-      dropdownComponents={
-        <DropdownContent widthInPixels={widthInPixels}>
-          <DropdownMenuItemsContainer>
-            {options.map((selectOption) => (
-              <MenuItemSelect
-                key={`dropdown-menu-inner-select-item-${selectOption.value}`}
-                onClick={() => {
-                  onChange(selectOption);
-                  closeDropdown(dropdownId);
-                }}
-                text={selectOption.label}
-                disabled={selectOption.disabled}
-                selected={selectOption.value === selectedOption.value}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      globalHotkeysConfig={{
-        enableGlobalHotkeysWithModifiers: false,
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      }}
-      dropdownId={dropdownId}
-      dropdownOffset={{
-        x: 8,
-      }}
-    />
-  );
+	return (
+		<Dropdown
+			clickableComponent={
+				<StyledDropdownMenuInnerSelectDropdownButton>
+					<span>{selectedOption.label}</span>
+					<IconChevronDown size={theme.icon.size.sm} />
+				</StyledDropdownMenuInnerSelectDropdownButton>
+			}
+			dropdownComponents={
+				<DropdownContent widthInPixels={widthInPixels}>
+					<DropdownMenuItemsContainer>
+						{options.map((selectOption) => (
+							<MenuItemSelect
+								key={`dropdown-menu-inner-select-item-${selectOption.value}`}
+								onClick={() => {
+									onChange(selectOption);
+									closeDropdown(dropdownId);
+								}}
+								text={selectOption.label}
+								disabled={selectOption.disabled}
+								selected={selectOption.value === selectedOption.value}
+							/>
+						))}
+					</DropdownMenuItemsContainer>
+				</DropdownContent>
+			}
+			globalHotkeysConfig={{
+				enableGlobalHotkeysWithModifiers: false,
+				enableGlobalHotkeysConflictingWithKeyboard: false,
+			}}
+			dropdownId={dropdownId}
+			dropdownOffset={{
+				x: 8,
+			}}
+		/>
+	);
 };

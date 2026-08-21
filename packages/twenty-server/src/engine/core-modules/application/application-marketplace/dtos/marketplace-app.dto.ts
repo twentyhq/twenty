@@ -1,49 +1,49 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
 import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+	IsBoolean,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	MaxLength,
+} from "class-validator";
 
-@ObjectType('MarketplaceApp')
+@ObjectType("MarketplaceApp")
 export class MarketplaceAppDTO {
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  id: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	id: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  name: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	name: string;
 
-  @IsString()
-  @Field()
-  @MaxLength(160)
-  description: string;
+	@IsString()
+	@Field()
+	@MaxLength(160)
+	description: string;
 
-  @IsString()
-  @Field()
-  author: string;
+	@IsString()
+	@Field()
+	author: string;
 
-  @IsString()
-  @Field()
-  category: string;
+	@IsString()
+	@Field()
+	category: string;
 
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  logoUrl?: string;
+	@IsOptional()
+	@IsString()
+	@Field({ nullable: true })
+	logoUrl?: string;
 
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  sourcePackage?: string;
+	@IsOptional()
+	@IsString()
+	@Field({ nullable: true })
+	sourcePackage?: string;
 
-  @IsBoolean()
-  @Field(() => Boolean)
-  isVetted: boolean;
+	@IsBoolean()
+	@Field(() => Boolean)
+	isVetted: boolean;
 }

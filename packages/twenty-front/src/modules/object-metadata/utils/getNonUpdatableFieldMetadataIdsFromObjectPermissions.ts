@@ -1,15 +1,15 @@
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from "twenty-shared/types";
 
 type GetNonUpdatableFieldMetadataIdsFromObjectPermissionsArgs = {
-  objectPermissions: ObjectPermissions;
+	objectPermissions: ObjectPermissions;
 };
 
 export const getNonUpdatableFieldMetadataIdsFromObjectPermissions = ({
-  objectPermissions,
+	objectPermissions,
 }: GetNonUpdatableFieldMetadataIdsFromObjectPermissionsArgs): string[] => {
-  const restrictedFields = objectPermissions.restrictedFields;
+	const restrictedFields = objectPermissions.restrictedFields;
 
-  return Object.entries(restrictedFields)
-    .filter(([_, restrictedField]) => restrictedField.canUpdate === false)
-    .map(([fieldMetadataId]) => fieldMetadataId);
+	return Object.entries(restrictedFields)
+		.filter(([_, restrictedField]) => restrictedField.canUpdate === false)
+		.map(([fieldMetadataId]) => fieldMetadataId);
 };

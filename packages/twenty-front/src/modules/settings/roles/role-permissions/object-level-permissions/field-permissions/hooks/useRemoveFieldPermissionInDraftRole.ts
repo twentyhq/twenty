@@ -1,28 +1,28 @@
-import { getRoleWithRemovedFieldPermission } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithRemovedFieldPermission';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { getRoleWithRemovedFieldPermission } from "@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithRemovedFieldPermission";
+import { settingsDraftRoleFamilyState } from "@/settings/roles/states/settingsDraftRoleFamilyState";
+import { useStore } from "jotai";
+import { useCallback } from "react";
 
 export const useRemoveFieldPermissionInDraftRole = () => {
-  const store = useStore();
+	const store = useStore();
 
-  const removeFieldPermissionInDraftRole = useCallback(
-    (roleId: string, fieldPermissionFieldMetadataId: string) => {
-      const currentSettingsDraftRole = store.get(
-        settingsDraftRoleFamilyState.atomFamily(roleId),
-      );
+	const removeFieldPermissionInDraftRole = useCallback(
+		(roleId: string, fieldPermissionFieldMetadataId: string) => {
+			const currentSettingsDraftRole = store.get(
+				settingsDraftRoleFamilyState.atomFamily(roleId),
+			);
 
-      const newRole = getRoleWithRemovedFieldPermission(
-        currentSettingsDraftRole,
-        fieldPermissionFieldMetadataId,
-      );
+			const newRole = getRoleWithRemovedFieldPermission(
+				currentSettingsDraftRole,
+				fieldPermissionFieldMetadataId,
+			);
 
-      store.set(settingsDraftRoleFamilyState.atomFamily(roleId), newRole);
-    },
-    [store],
-  );
+			store.set(settingsDraftRoleFamilyState.atomFamily(roleId), newRole);
+		},
+		[store],
+	);
 
-  return {
-    removeFieldPermissionInDraftRole,
-  };
+	return {
+		removeFieldPermissionInDraftRole,
+	};
 };

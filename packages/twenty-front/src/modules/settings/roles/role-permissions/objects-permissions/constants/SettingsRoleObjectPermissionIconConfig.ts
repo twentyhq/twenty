@@ -1,44 +1,44 @@
 import {
-  type IconComponent,
-  IconEye,
-  IconEyeOff,
-  IconPencil,
-  IconPencilOff,
-  IconTrash,
-  IconTrashOff,
-  IconTrashX,
-  IconTrashXOff,
-} from 'twenty-ui/icon';
+	type IconComponent,
+	IconEye,
+	IconEyeOff,
+	IconPencil,
+	IconPencilOff,
+	IconTrash,
+	IconTrashOff,
+	IconTrashX,
+	IconTrashXOff,
+} from "twenty-ui/icon";
 
 type SettingsRoleObjectPermissionIconConfig = {
-  Icon: IconComponent;
-  IconForbidden: IconComponent;
+	Icon: IconComponent;
+	IconForbidden: IconComponent;
 };
 
 export type SettingsRoleObjectPermissionKey =
-  | 'canReadObjectRecords'
-  | 'canUpdateObjectRecords'
-  | 'canSoftDeleteObjectRecords'
-  | 'canDestroyObjectRecords';
+	| "canReadObjectRecords"
+	| "canUpdateObjectRecords"
+	| "canSoftDeleteObjectRecords"
+	| "canDestroyObjectRecords";
 
 export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
-  SettingsRoleObjectPermissionKey,
-  SettingsRoleObjectPermissionIconConfig
+	SettingsRoleObjectPermissionKey,
+	SettingsRoleObjectPermissionIconConfig
 > = {
-  canReadObjectRecords: {
-    Icon: IconEye,
-    IconForbidden: IconEyeOff,
-  },
-  canUpdateObjectRecords: {
-    Icon: IconPencil,
-    IconForbidden: IconPencilOff,
-  },
-  canSoftDeleteObjectRecords: {
-    Icon: IconTrash,
-    IconForbidden: IconTrashOff,
-  },
-  canDestroyObjectRecords: {
-    Icon: IconTrashX,
-    IconForbidden: IconTrashXOff,
-  },
+	canReadObjectRecords: {
+		Icon: IconEye,
+		IconForbidden: IconEyeOff,
+	},
+	canUpdateObjectRecords: {
+		Icon: IconPencil,
+		IconForbidden: IconPencilOff,
+	},
+	canSoftDeleteObjectRecords: {
+		Icon: IconTrash,
+		IconForbidden: IconTrashOff,
+	},
+	canDestroyObjectRecords: {
+		Icon: IconTrashX,
+		IconForbidden: IconTrashXOff,
+	},
 };

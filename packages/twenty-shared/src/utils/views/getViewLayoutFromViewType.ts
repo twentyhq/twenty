@@ -1,21 +1,21 @@
-import { ViewType } from '@/types';
+import { ViewType } from "@/types";
 
 type ViewTypeValue = `${ViewType}`;
 
 const VIEW_TYPE_TO_LAYOUT_MAPPING: Record<ViewTypeValue, ViewTypeValue> = {
-  [ViewType.TABLE]: ViewType.TABLE,
-  [ViewType.KANBAN]: ViewType.KANBAN,
-  [ViewType.CALENDAR]: ViewType.CALENDAR,
-  [ViewType.LIST]: ViewType.LIST,
-  [ViewType.FIELDS_WIDGET]: ViewType.FIELDS_WIDGET,
-  [ViewType.TABLE_WIDGET]: ViewType.TABLE,
-  [ViewType.KANBAN_WIDGET]: ViewType.KANBAN,
-  [ViewType.LIST_WIDGET]: ViewType.LIST,
-  [ViewType.CALENDAR_WIDGET]: ViewType.CALENDAR,
+	[ViewType.TABLE]: ViewType.TABLE,
+	[ViewType.KANBAN]: ViewType.KANBAN,
+	[ViewType.CALENDAR]: ViewType.CALENDAR,
+	[ViewType.LIST]: ViewType.LIST,
+	[ViewType.FIELDS_WIDGET]: ViewType.FIELDS_WIDGET,
+	[ViewType.TABLE_WIDGET]: ViewType.TABLE,
+	[ViewType.KANBAN_WIDGET]: ViewType.KANBAN,
+	[ViewType.LIST_WIDGET]: ViewType.LIST,
+	[ViewType.CALENDAR_WIDGET]: ViewType.CALENDAR,
 };
 
 export const getViewLayoutFromViewType = (
-  viewType: ViewTypeValue,
+	viewType: ViewTypeValue,
 ): ViewTypeValue => {
-  return VIEW_TYPE_TO_LAYOUT_MAPPING[viewType];
+	return VIEW_TYPE_TO_LAYOUT_MAPPING[viewType];
 };

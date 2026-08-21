@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const DELETE_APPROVED_ACCESS_DOMAIN = gql`
   mutation DeleteApprovedAccessDomain(

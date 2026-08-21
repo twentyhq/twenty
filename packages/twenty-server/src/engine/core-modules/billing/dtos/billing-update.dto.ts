@@ -1,18 +1,18 @@
 /* @license Enterprise */
 
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from "src/engine/core-modules/billing/entities/billing-subscription.entity";
 
-@ObjectType('BillingUpdate')
+@ObjectType("BillingUpdate")
 export class BillingUpdateDTO {
-  @Field(() => BillingSubscriptionEntity, {
-    description: 'Current billing subscription',
-  })
-  currentBillingSubscription: BillingSubscriptionEntity;
+	@Field(() => BillingSubscriptionEntity, {
+		description: "Current billing subscription",
+	})
+	currentBillingSubscription: BillingSubscriptionEntity;
 
-  @Field(() => [BillingSubscriptionEntity], {
-    description: 'All billing subscriptions',
-  })
-  billingSubscriptions: BillingSubscriptionEntity[];
+	@Field(() => [BillingSubscriptionEntity], {
+		description: "All billing subscriptions",
+	})
+	billingSubscriptions: BillingSubscriptionEntity[];
 }

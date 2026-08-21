@@ -1,32 +1,32 @@
-import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import request from "supertest";
+import { updateWorkflowVersionTrigger } from "test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util";
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { SEED_APPLE_WORKSPACE_ID } from "src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant";
 
 const client = request(`http://localhost:${APP_PORT}`);
 
 const graphql = (query: string, variables?: object) =>
-  client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .send({ query, variables });
+	client
+		.post("/graphql")
+		.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+		.send({ query, variables });
 
-describe('workflow lifecycle core mirror with an active version (e2e)', () => {
-  let workflowId: string;
-  let alreadyDestroyed = false;
+describe("workflow lifecycle core mirror with an active version (e2e)", () => {
+	let workflowId: string;
+	let alreadyDestroyed = false;
 
-  const coreVersionRowCount = async (): Promise<number> => {
-    const rows = await global.testDataSource.query(
-      `SELECT "id" FROM core."workflowVersion"
+	const coreVersionRowCount = async (): Promise<number> => {
+		const rows = await global.testDataSource.query(
+			`SELECT "id" FROM core."workflowVersion"
        WHERE "workspaceId" = $1 AND "workflowId" = $2`,
-      [SEED_APPLE_WORKSPACE_ID, workflowId],
-    );
+			[SEED_APPLE_WORKSPACE_ID, workflowId],
+		);
 
-    return rows.length;
-  };
+		return rows.length;
+	};
 
-  beforeAll(async () => {
-    const createResponse = await graphql(`
+	beforeAll(async () => {
+		const createResponse = await graphql(`
       mutation {
         createWorkflow(data: { name: "Lifecycle Mirror" }) {
           id
@@ -34,11 +34,11 @@ describe('workflow lifecycle core mirror with an active version (e2e)', () => {
       }
     `);
 
-    expect(createResponse.body.errors).toBeUndefined();
-    workflowId = createResponse.body.data.createWorkflow.id;
+		expect(createResponse.body.errors).toBeUndefined();
+		workflowId = createResponse.body.data.createWorkflow.id;
 
-    const getResponse = await graphql(
-      `
+		const getResponse = await graphql(
+			`
         query GetWorkflow($id: UUID!) {
           workflow(filter: { id: { eq: $id } }) {
             versions {
@@ -51,25 +51,25 @@ describe('workflow lifecycle core mirror with an active version (e2e)', () => {
           }
         }
       `,
-      { id: workflowId },
-    );
+			{ id: workflowId },
+		);
 
-    const workflowVersionId =
-      getResponse.body.data.workflow.versions.edges[0].node.id;
+		const workflowVersionId =
+			getResponse.body.data.workflow.versions.edges[0].node.id;
 
-    await updateWorkflowVersionTrigger({
-      workflowVersionId,
-      trigger: {
-        name: 'Manual Trigger',
-        type: 'MANUAL',
-        settings: { outputSchema: {} },
-        nextStepIds: [],
-        position: { x: 0, y: 0 },
-      },
-    });
+		await updateWorkflowVersionTrigger({
+			workflowVersionId,
+			trigger: {
+				name: "Manual Trigger",
+				type: "MANUAL",
+				settings: { outputSchema: {} },
+				nextStepIds: [],
+				position: { x: 0, y: 0 },
+			},
+		});
 
-    const stepResponse = await graphql(
-      `
+		const stepResponse = await graphql(
+			`
         mutation CreateWorkflowVersionStep(
           $input: CreateWorkflowVersionStepInput!
         ) {
@@ -78,91 +78,91 @@ describe('workflow lifecycle core mirror with an active version (e2e)', () => {
           }
         }
       `,
-      {
-        input: {
-          workflowVersionId,
-          stepType: 'FIND_RECORDS',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
+			{
+				input: {
+					workflowVersionId,
+					stepType: "FIND_RECORDS",
+					parentStepId: "trigger",
+					position: { x: 200, y: 0 },
+				},
+			},
+		);
 
-    expect(stepResponse.body.errors).toBeUndefined();
+		expect(stepResponse.body.errors).toBeUndefined();
 
-    const activateResponse = await graphql(
-      `
+		const activateResponse = await graphql(
+			`
         mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
           activateWorkflowVersion(workflowVersionId: $workflowVersionId)
         }
       `,
-      { workflowVersionId },
-    );
+			{ workflowVersionId },
+		);
 
-    expect(activateResponse.body.errors).toBeUndefined();
-    expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
-  });
+		expect(activateResponse.body.errors).toBeUndefined();
+		expect(activateResponse.body.data.activateWorkflowVersion).toBe(true);
+	});
 
-  afterAll(async () => {
-    if (workflowId && !alreadyDestroyed) {
-      await graphql(
-        `
+	afterAll(async () => {
+		if (workflowId && !alreadyDestroyed) {
+			await graphql(
+				`
           mutation DestroyWorkflow($id: ID!) {
             destroyWorkflow(id: $id) {
               id
             }
           }
         `,
-        { id: workflowId },
-      );
-    }
-  });
+				{ id: workflowId },
+			);
+		}
+	});
 
-  it('removes the core version row on delete, recreates it on restore, removes it on destroy', async () => {
-    // the v1 version created with the workflow is mirrored to core
-    expect(await coreVersionRowCount()).toBeGreaterThan(0);
+	it("removes the core version row on delete, recreates it on restore, removes it on destroy", async () => {
+		// the v1 version created with the workflow is mirrored to core
+		expect(await coreVersionRowCount()).toBeGreaterThan(0);
 
-    const deleteResponse = await graphql(
-      `
+		const deleteResponse = await graphql(
+			`
         mutation DeleteWorkflow($id: ID!) {
           deleteWorkflow(id: $id) {
             id
           }
         }
       `,
-      { id: workflowId },
-    );
+			{ id: workflowId },
+		);
 
-    expect(deleteResponse.body.errors).toBeUndefined();
-    expect(await coreVersionRowCount()).toBe(0);
+		expect(deleteResponse.body.errors).toBeUndefined();
+		expect(await coreVersionRowCount()).toBe(0);
 
-    const restoreResponse = await graphql(
-      `
+		const restoreResponse = await graphql(
+			`
         mutation RestoreWorkflow($id: ID!) {
           restoreWorkflow(id: $id) {
             id
           }
         }
       `,
-      { id: workflowId },
-    );
+			{ id: workflowId },
+		);
 
-    expect(restoreResponse.body.errors).toBeUndefined();
-    expect(await coreVersionRowCount()).toBeGreaterThan(0);
+		expect(restoreResponse.body.errors).toBeUndefined();
+		expect(await coreVersionRowCount()).toBeGreaterThan(0);
 
-    const destroyResponse = await graphql(
-      `
+		const destroyResponse = await graphql(
+			`
         mutation DestroyWorkflow($id: ID!) {
           destroyWorkflow(id: $id) {
             id
           }
         }
       `,
-      { id: workflowId },
-    );
+			{ id: workflowId },
+		);
 
-    expect(destroyResponse.body.errors).toBeUndefined();
-    alreadyDestroyed = true;
-    expect(await coreVersionRowCount()).toBe(0);
-  });
+		expect(destroyResponse.body.errors).toBeUndefined();
+		alreadyDestroyed = true;
+		expect(await coreVersionRowCount()).toBe(0);
+	});
 });

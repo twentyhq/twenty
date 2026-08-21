@@ -1,17 +1,17 @@
-import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
-import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
-import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
+import { useCreateRecordPageFieldWidget } from "@/page-layout/hooks/useCreateRecordPageFieldWidget";
+import { useCreateRecordPageFieldsWidget } from "@/page-layout/hooks/useCreateRecordPageFieldsWidget";
+import { useNavigateToMoreWidgets } from "@/page-layout/hooks/useNavigateToMoreWidgets";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useContext } from "react";
 import {
-  IconListDetails,
-  IconListSearch,
-  IconPlus,
-  IconSquarePlus,
-} from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+	IconListDetails,
+	IconListSearch,
+	IconPlus,
+	IconSquarePlus,
+} from "twenty-ui/icon";
+import { MenuItem } from "twenty-ui/navigation";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;
@@ -45,47 +45,47 @@ const StyledMenuItemList = styled.div`
 `;
 
 export const RecordPageAddWidgetSection = () => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
+	const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
 
-  const { createRecordPageFieldWidget } = useCreateRecordPageFieldWidget();
+	const { createRecordPageFieldWidget } = useCreateRecordPageFieldWidget();
 
-  const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
+	const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
 
-  return (
-    <StyledContainer>
-      <StyledHeader>
-        <IconSquarePlus
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.md}
-          color={theme.font.color.extraLight}
-        />
-        {t`Add widget`}
-      </StyledHeader>
-      <StyledMenuItemList>
-        <MenuItem
-          LeftIcon={IconListDetails}
-          withIconContainer
-          text={t`Fields group`}
-          contextualText={t`Group multiple fields from this record`}
-          onClick={createRecordPageFieldsWidget}
-        />
-        <MenuItem
-          LeftIcon={IconListSearch}
-          withIconContainer
-          text={t`Field`}
-          contextualText={t`Single field with smart formats`}
-          onClick={createRecordPageFieldWidget}
-        />
-        <MenuItem
-          LeftIcon={IconPlus}
-          withIconContainer
-          text={t`More widgets`}
-          hasSubMenu
-          onClick={navigateToMoreWidgets}
-        />
-      </StyledMenuItemList>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledHeader>
+				<IconSquarePlus
+					size={theme.icon.size.md}
+					stroke={theme.icon.stroke.md}
+					color={theme.font.color.extraLight}
+				/>
+				{t`Add widget`}
+			</StyledHeader>
+			<StyledMenuItemList>
+				<MenuItem
+					LeftIcon={IconListDetails}
+					withIconContainer
+					text={t`Fields group`}
+					contextualText={t`Group multiple fields from this record`}
+					onClick={createRecordPageFieldsWidget}
+				/>
+				<MenuItem
+					LeftIcon={IconListSearch}
+					withIconContainer
+					text={t`Field`}
+					contextualText={t`Single field with smart formats`}
+					onClick={createRecordPageFieldWidget}
+				/>
+				<MenuItem
+					LeftIcon={IconPlus}
+					withIconContainer
+					text={t`More widgets`}
+					hasSubMenu
+					onClick={navigateToMoreWidgets}
+				/>
+			</StyledMenuItemList>
+		</StyledContainer>
+	);
 };

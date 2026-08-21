@@ -1,7 +1,7 @@
-import { type MessageDescriptor } from '@lingui/core';
+import { type MessageDescriptor } from "@lingui/core";
 
 export type OnboardingInstallableApp = {
-  universalIdentifier: string;
-  label: MessageDescriptor;
-  description: MessageDescriptor;
+	universalIdentifier: string;
+	label: MessageDescriptor;
+	description: MessageDescriptor;
 };

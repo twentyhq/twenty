@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const workflowVariableReferenceSchema = z
-  .string()
-  .regex(
-    /^{{[^{}]+}}$/,
-    'Expected a workflow variable reference like {{stepId.path}}',
-  );
+	.string()
+	.regex(
+		/^{{[^{}]+}}$/,
+		"Expected a workflow variable reference like {{stepId.path}}",
+	);

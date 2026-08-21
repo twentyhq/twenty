@@ -1,64 +1,64 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+	FlatEntityMapsException,
+	FlatEntityMapsExceptionCode,
+} from "src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception";
+import { type SyncableFlatEntity } from "src/engine/metadata-modules/flat-entity/types/flat-entity-from.type";
+import { type FlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type";
 
 type AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<
-  T extends SyncableFlatEntity,
+	T extends SyncableFlatEntity,
 > = {
-  flatEntity: T;
-  flatEntityMapsToMutate: FlatEntityMaps<T>;
+	flatEntity: T;
+	flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
-  T extends SyncableFlatEntity,
+	T extends SyncableFlatEntity,
 >({
-  flatEntity,
-  flatEntityMapsToMutate,
+	flatEntity,
+	flatEntityMapsToMutate,
 }: AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  if (
-    isDefined(
-      flatEntityMapsToMutate.byUniversalIdentifier[
-        flatEntity.universalIdentifier
-      ],
-    )
-  ) {
-    throw new FlatEntityMapsException(
-      `addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: ${flatEntity.universalIdentifier})`,
-      FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
-      {
-        context: {
-          universalIdentifier: flatEntity.universalIdentifier,
-          id: flatEntity.id,
-          applicationId: flatEntity.applicationId,
-          operation: 'add',
-        },
-      },
-    );
-  }
+	if (
+		isDefined(
+			flatEntityMapsToMutate.byUniversalIdentifier[
+				flatEntity.universalIdentifier
+			],
+		)
+	) {
+		throw new FlatEntityMapsException(
+			`addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: ${flatEntity.universalIdentifier})`,
+			FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
+			{
+				context: {
+					universalIdentifier: flatEntity.universalIdentifier,
+					id: flatEntity.id,
+					applicationId: flatEntity.applicationId,
+					operation: "add",
+				},
+			},
+		);
+	}
 
-  flatEntityMapsToMutate.byUniversalIdentifier[flatEntity.universalIdentifier] =
-    flatEntity;
+	flatEntityMapsToMutate.byUniversalIdentifier[flatEntity.universalIdentifier] =
+		flatEntity;
 
-  flatEntityMapsToMutate.universalIdentifierById[flatEntity.id] =
-    flatEntity.universalIdentifier;
+	flatEntityMapsToMutate.universalIdentifierById[flatEntity.id] =
+		flatEntity.universalIdentifier;
 
-  if (isDefined(flatEntity.applicationId)) {
-    const existingUniversalIdentifiers =
-      flatEntityMapsToMutate.universalIdentifiersByApplicationId[
-        flatEntity.applicationId
-      ];
+	if (isDefined(flatEntity.applicationId)) {
+		const existingUniversalIdentifiers =
+			flatEntityMapsToMutate.universalIdentifiersByApplicationId[
+				flatEntity.applicationId
+			];
 
-    if (isDefined(existingUniversalIdentifiers)) {
-      existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
-    } else {
-      flatEntityMapsToMutate.universalIdentifiersByApplicationId[
-        flatEntity.applicationId
-      ] = [flatEntity.universalIdentifier];
-    }
-  }
+		if (isDefined(existingUniversalIdentifiers)) {
+			existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
+		} else {
+			flatEntityMapsToMutate.universalIdentifiersByApplicationId[
+				flatEntity.applicationId
+			] = [flatEntity.universalIdentifier];
+		}
+	}
 };

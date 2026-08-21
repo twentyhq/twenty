@@ -1,19 +1,19 @@
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useEffect } from 'react';
+import { useUpsertRecordsInStore } from "@/object-record/record-store/hooks/useUpsertRecordsInStore";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
+import { useEffect } from "react";
 
 type RecordListUpsertRecordsInStoreEffectProps = {
-  records: ObjectRecord[];
+	records: ObjectRecord[];
 };
 
 export const RecordListUpsertRecordsInStoreEffect = ({
-  records,
+	records,
 }: RecordListUpsertRecordsInStoreEffectProps) => {
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+	const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  useEffect(() => {
-    upsertRecordsInStore({ partialRecords: records });
-  }, [records, upsertRecordsInStore]);
+	useEffect(() => {
+		upsertRecordsInStore({ partialRecords: records });
+	}, [records, upsertRecordsInStore]);
 
-  return null;
+	return null;
 };

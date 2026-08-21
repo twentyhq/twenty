@@ -1,8 +1,8 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { isHiddenSystemField } from "@/object-metadata/utils/isHiddenSystemField";
 
 export const filterUserFacingFieldMetadataItems = (
-  field: FieldMetadataItem,
+	field: FieldMetadataItem,
 ) => {
-  return !isHiddenSystemField(field);
+	return !isHiddenSystemField(field);
 };

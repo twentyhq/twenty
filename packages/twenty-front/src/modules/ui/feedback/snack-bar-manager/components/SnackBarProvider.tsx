@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { styled } from "@linaria/react";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { useIsMobile } from "@/ui/utilities/responsive/hooks/useIsMobile";
 
-import { snackBarInternalComponentState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { SnackBar } from './SnackBar';
+import { snackBarInternalComponentState } from "@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState";
+import { RootStackingContextZIndices } from "@/ui/layout/constants/RootStackingContextZIndices";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
+import { SnackBar } from "./SnackBar";
 
 const StyledSnackBarContainer = styled.div`
   bottom: ${themeCssVariables.spacing[3]};
@@ -27,68 +27,68 @@ const StyledSnackBarContainer = styled.div`
 `;
 
 export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
-  const snackBarInternal = useAtomComponentStateValue(
-    snackBarInternalComponentState,
-  );
+	const snackBarInternal = useAtomComponentStateValue(
+		snackBarInternalComponentState,
+	);
 
-  const { handleSnackBarClose } = useSnackBar();
-  const isMobile = useIsMobile();
+	const { handleSnackBarClose } = useSnackBar();
+	const isMobile = useIsMobile();
 
-  const variants = {
-    out: {
-      opacity: 0,
-      y: isMobile ? -40 : 40,
-    },
-    in: {
-      opacity: 1,
-      y: 0,
-    },
-  };
+	const variants = {
+		out: {
+			opacity: 0,
+			y: isMobile ? -40 : 40,
+		},
+		in: {
+			opacity: 1,
+			y: 0,
+		},
+	};
 
-  return (
-    <>
-      {children}
-      <StyledSnackBarContainer>
-        <AnimatePresence>
-          {snackBarInternal.queue.map(
-            ({
-              duration,
-              icon,
-              id,
-              message,
-              detailedMessage,
-              variant,
-              buttonLabel,
-              buttonOnClick,
-              buttonTo,
-            }) => (
-              <motion.div
-                key={id}
-                variants={variants}
-                initial="out"
-                animate="in"
-                exit="out"
-                transition={{ duration: 0.5 }}
-                layout
-              >
-                <SnackBar
-                  {...{
-                    duration,
-                    icon,
-                    message,
-                    detailedMessage,
-                    variant,
-                    buttonLabel,
-                    buttonOnClick,
-                    buttonTo,
-                  }}
-                  onClose={() => handleSnackBarClose(id)}
-                />
-              </motion.div>
-            ),
-          )}
-        </AnimatePresence>
-      </StyledSnackBarContainer>
-    </>
-  );
+	return (
+		<>
+			{children}
+			<StyledSnackBarContainer>
+				<AnimatePresence>
+					{snackBarInternal.queue.map(
+						({
+							duration,
+							icon,
+							id,
+							message,
+							detailedMessage,
+							variant,
+							buttonLabel,
+							buttonOnClick,
+							buttonTo,
+						}) => (
+							<motion.div
+								key={id}
+								variants={variants}
+								initial="out"
+								animate="in"
+								exit="out"
+								transition={{ duration: 0.5 }}
+								layout
+							>
+								<SnackBar
+									{...{
+										duration,
+										icon,
+										message,
+										detailedMessage,
+										variant,
+										buttonLabel,
+										buttonOnClick,
+										buttonTo,
+									}}
+									onClose={() => handleSnackBarClose(id)}
+								/>
+							</motion.div>
+						),
+					)}
+				</AnimatePresence>
+			</StyledSnackBarContainer>
+		</>
+	);
 };

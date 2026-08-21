@@ -1,36 +1,36 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('MinimalObjectMetadata')
+@ObjectType("MinimalObjectMetadata")
 export class MinimalObjectMetadataDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field()
-  nameSingular: string;
+	@Field()
+	nameSingular: string;
 
-  @Field()
-  namePlural: string;
+	@Field()
+	namePlural: string;
 
-  @Field()
-  labelSingular: string;
+	@Field()
+	labelSingular: string;
 
-  @Field()
-  labelPlural: string;
+	@Field()
+	labelPlural: string;
 
-  @Field({ nullable: true })
-  icon?: string;
+	@Field({ nullable: true })
+	icon?: string;
 
-  @Field({ nullable: true })
-  color?: string;
+	@Field({ nullable: true })
+	color?: string;
 
-  @Field()
-  isActive: boolean;
+	@Field()
+	isActive: boolean;
 
-  @Field()
-  isSystem: boolean;
+	@Field()
+	isSystem: boolean;
 
-  @Field()
-  isRemote: boolean;
+	@Field()
+	isRemote: boolean;
 }

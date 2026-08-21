@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { type MessageDescriptor } from '@lingui/core';
-import { type MouseEvent as ReactMouseEvent } from 'react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { type MessageDescriptor } from "@lingui/core";
+import { type MouseEvent as ReactMouseEvent } from "react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
 
-import { FlyingTrafficLights } from './FlyingTrafficLights';
-import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './TrafficLightDefinitions';
-import { useTrafficLightsEscape } from './use-traffic-lights-escape';
+import { FlyingTrafficLights } from "./FlyingTrafficLights";
+import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from "./TrafficLightDefinitions";
+import { useTrafficLightsEscape } from "./use-traffic-lights-escape";
 
 // The macOS window controls, ported as-is: every instance (app window AND
 // terminal) is escape-capable — the prompt egg's window event sends all
 // six dots flying. Zoom triple-click is the terminal's functional
 // jump-to-end; close and minimize press but do nothing.
 const DOT_ARIA_LABELS: Record<
-  (typeof TRAFFIC_LIGHT_DOT_DEFINITIONS)[number]['label'],
-  MessageDescriptor
+	(typeof TRAFFIC_LIGHT_DOT_DEFINITIONS)[number]["label"],
+	MessageDescriptor
 > = {
-  Close: msg`Close`,
-  Minimize: msg`Minimize`,
-  Zoom: msg`Zoom`,
+	Close: msg`Close`,
+	Minimize: msg`Minimize`,
+	Zoom: msg`Zoom`,
 };
 
 const Container = styled.div`
@@ -82,57 +82,57 @@ const Dot = styled.button<{ $background: string; $backgroundActive: string }>`
 `;
 
 export function TrafficLights({
-  onZoomTripleClick,
+	onZoomTripleClick,
 }: {
-  onZoomTripleClick?: () => void;
+	onZoomTripleClick?: () => void;
 } = {}) {
-  const { i18n } = useLingui();
-  const {
-    handleCatchDot,
-    handlePopAnimationEnd,
-    isEscaping,
-    portalReady,
-    returnedDots,
-    returningDots,
-    setFlyingRef,
-    setOriginalRef,
-  } = useTrafficLightsEscape();
+	const { i18n } = useLingui();
+	const {
+		handleCatchDot,
+		handlePopAnimationEnd,
+		isEscaping,
+		portalReady,
+		returnedDots,
+		returningDots,
+		setFlyingRef,
+		setOriginalRef,
+	} = useTrafficLightsEscape();
 
-  const handleZoomClick = (event: ReactMouseEvent<HTMLElement>) => {
-    if (event.detail === 3) {
-      onZoomTripleClick?.();
-    }
-  };
+	const handleZoomClick = (event: ReactMouseEvent<HTMLElement>) => {
+		if (event.detail === 3) {
+			onZoomTripleClick?.();
+		}
+	};
 
-  return (
-    <Container aria-label={i18n._(msg`Window controls`)}>
-      {TRAFFIC_LIGHT_DOT_DEFINITIONS.map(
-        ({ background, backgroundActive, Glyph, label }, index) => (
-          <Dot
-            $background={background}
-            $backgroundActive={backgroundActive}
-            aria-label={i18n._(DOT_ARIA_LABELS[label])}
-            data-escaping={
-              isEscaping && !returnedDots[index] ? 'true' : 'false'
-            }
-            key={label}
-            onClick={label === 'Zoom' ? handleZoomClick : undefined}
-            ref={setOriginalRef(index)}
-            type="button"
-          >
-            <Glyph />
-          </Dot>
-        ),
-      )}
-      <FlyingTrafficLights
-        onCatchDot={handleCatchDot}
-        onPopAnimationEnd={handlePopAnimationEnd}
-        portalReady={portalReady}
-        returningDots={returningDots}
-        returnedDots={returnedDots}
-        setFlyingRef={setFlyingRef}
-        visible={isEscaping}
-      />
-    </Container>
-  );
+	return (
+		<Container aria-label={i18n._(msg`Window controls`)}>
+			{TRAFFIC_LIGHT_DOT_DEFINITIONS.map(
+				({ background, backgroundActive, Glyph, label }, index) => (
+					<Dot
+						$background={background}
+						$backgroundActive={backgroundActive}
+						aria-label={i18n._(DOT_ARIA_LABELS[label])}
+						data-escaping={
+							isEscaping && !returnedDots[index] ? "true" : "false"
+						}
+						key={label}
+						onClick={label === "Zoom" ? handleZoomClick : undefined}
+						ref={setOriginalRef(index)}
+						type="button"
+					>
+						<Glyph />
+					</Dot>
+				),
+			)}
+			<FlyingTrafficLights
+				onCatchDot={handleCatchDot}
+				onPopAnimationEnd={handlePopAnimationEnd}
+				portalReady={portalReady}
+				returningDots={returningDots}
+				returnedDots={returnedDots}
+				setFlyingRef={setFlyingRef}
+				visible={isEscaping}
+			/>
+		</Container>
+	);
 }

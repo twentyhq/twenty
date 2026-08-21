@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const threadIdCreatedFromDraftState = createAtomState<string | null>({
-  key: 'ai/threadIdCreatedFromDraftState',
-  defaultValue: null,
+	key: "ai/threadIdCreatedFromDraftState",
+	defaultValue: null,
 });

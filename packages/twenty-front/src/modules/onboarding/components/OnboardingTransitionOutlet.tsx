@@ -1,15 +1,15 @@
-import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
-import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
+import { ONBOARDING_MOTION_SLIDE_OFFSET } from "@/onboarding/constants/OnboardingMotionSlideOffset";
+import { useOnboardingMotionTransition } from "@/onboarding/hooks/useOnboardingMotionTransition";
+import { onboardingNavigationDirectionState } from "@/onboarding/states/onboardingNavigationDirectionState";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
 import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  type Variants,
-} from 'framer-motion';
-import { useLocation, useOutlet } from 'react-router-dom';
+	AnimatePresence,
+	motion,
+	useReducedMotion,
+	type Variants,
+} from "framer-motion";
+import { useLocation, useOutlet } from "react-router-dom";
 
 const StyledTransitionContainer = styled.div`
   display: flex;
@@ -29,46 +29,46 @@ const StyledTransitionPage = styled(motion.div)`
 `;
 
 const transitionPageVariants: Variants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: (exitSlideOffset: number) => ({
-    opacity: 0,
-    y: exitSlideOffset,
-    pointerEvents: 'none',
-  }),
+	initial: { opacity: 0 },
+	animate: { opacity: 1 },
+	exit: (exitSlideOffset: number) => ({
+		opacity: 0,
+		y: exitSlideOffset,
+		pointerEvents: "none",
+	}),
 };
 
 export const OnboardingTransitionOutlet = () => {
-  const { pathname } = useLocation();
-  const outlet = useOutlet();
-  const shouldReduceMotion = useReducedMotion();
-  const transition = useOnboardingMotionTransition();
-  const onboardingNavigationDirection = useAtomStateValue(
-    onboardingNavigationDirectionState,
-  );
+	const { pathname } = useLocation();
+	const outlet = useOutlet();
+	const shouldReduceMotion = useReducedMotion();
+	const transition = useOnboardingMotionTransition();
+	const onboardingNavigationDirection = useAtomStateValue(
+		onboardingNavigationDirectionState,
+	);
 
-  const directionalExitSlideOffset =
-    onboardingNavigationDirection === 'backward'
-      ? ONBOARDING_MOTION_SLIDE_OFFSET
-      : -ONBOARDING_MOTION_SLIDE_OFFSET;
+	const directionalExitSlideOffset =
+		onboardingNavigationDirection === "backward"
+			? ONBOARDING_MOTION_SLIDE_OFFSET
+			: -ONBOARDING_MOTION_SLIDE_OFFSET;
 
-  const exitSlideOffset = shouldReduceMotion ? 0 : directionalExitSlideOffset;
+	const exitSlideOffset = shouldReduceMotion ? 0 : directionalExitSlideOffset;
 
-  return (
-    <StyledTransitionContainer>
-      <AnimatePresence custom={exitSlideOffset}>
-        <StyledTransitionPage
-          key={pathname}
-          custom={exitSlideOffset}
-          variants={transitionPageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={transition}
-        >
-          {outlet}
-        </StyledTransitionPage>
-      </AnimatePresence>
-    </StyledTransitionContainer>
-  );
+	return (
+		<StyledTransitionContainer>
+			<AnimatePresence custom={exitSlideOffset}>
+				<StyledTransitionPage
+					key={pathname}
+					custom={exitSlideOffset}
+					variants={transitionPageVariants}
+					initial="initial"
+					animate="animate"
+					exit="exit"
+					transition={transition}
+				>
+					{outlet}
+				</StyledTransitionPage>
+			</AnimatePresence>
+		</StyledTransitionContainer>
+	);
 };

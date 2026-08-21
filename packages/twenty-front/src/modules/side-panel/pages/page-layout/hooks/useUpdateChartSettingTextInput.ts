@@ -1,23 +1,23 @@
-import { type CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
-import { getConfigKeyFromSettingId } from '@/side-panel/pages/page-layout/utils/getConfigKeyFromSettingId';
-import { useUpdateCurrentWidgetConfig } from './useUpdateCurrentWidgetConfig';
+import { type CHART_CONFIGURATION_SETTING_IDS } from "@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds";
+import { getConfigKeyFromSettingId } from "@/side-panel/pages/page-layout/utils/getConfigKeyFromSettingId";
+import { useUpdateCurrentWidgetConfig } from "./useUpdateCurrentWidgetConfig";
 
 export const useUpdateChartSettingTextInput = (pageLayoutId: string) => {
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
+	const { updateCurrentWidgetConfig } =
+		useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const updateChartSettingTextInput = (
-    settingId: CHART_CONFIGURATION_SETTING_IDS,
-    value: string,
-  ) => {
-    const configKey = getConfigKeyFromSettingId(settingId);
+	const updateChartSettingTextInput = (
+		settingId: CHART_CONFIGURATION_SETTING_IDS,
+		value: string,
+	) => {
+		const configKey = getConfigKeyFromSettingId(settingId);
 
-    updateCurrentWidgetConfig({
-      configToUpdate: {
-        [configKey]: value,
-      },
-    });
-  };
+		updateCurrentWidgetConfig({
+			configToUpdate: {
+				[configKey]: value,
+			},
+		});
+	};
 
-  return { updateChartSettingTextInput };
+	return { updateChartSettingTextInput };
 };

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_WORKSPACE_CREATION_DEFAULTS = gql`
   query GetWorkspaceCreationDefaults {

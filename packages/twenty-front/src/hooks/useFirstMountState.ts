@@ -1,14 +1,14 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
 export const useFirstMountState = (): boolean => {
-  // oxlint-disable-next-line twenty/no-state-useref
-  const isFirst = useRef(true);
+	// oxlint-disable-next-line twenty/no-state-useref
+	const isFirst = useRef(true);
 
-  if (isFirst.current) {
-    isFirst.current = false;
+	if (isFirst.current) {
+		isFirst.current = false;
 
-    return true;
-  }
+		return true;
+	}
 
-  return isFirst.current;
+	return isFirst.current;
 };

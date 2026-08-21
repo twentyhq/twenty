@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
 
-import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
-import { TintedIconTile } from 'twenty-ui/data-display';
-import { IconBuildingSkyscraper, IconChevronDown } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { TopBar } from "@/ui/layout/top-bar/components/TopBar";
+import { TintedIconTile } from "twenty-ui/data-display";
+import { IconBuildingSkyscraper, IconChevronDown } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledViewPicker = styled.div`
   align-items: center;
@@ -31,28 +31,28 @@ const StyledRightAction = styled.div`
 `;
 
 export const BackgroundMockViewBar = () => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <TopBar
-      leftComponent={
-        <StyledViewPicker>
-          <TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />
-          <span>All Companies</span>
-          <StyledViewPickerCount>· 599</StyledViewPickerCount>
-          <IconChevronDown
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-          />
-        </StyledViewPicker>
-      }
-      rightComponent={
-        <>
-          <StyledRightAction>Filter</StyledRightAction>
-          <StyledRightAction>Sort</StyledRightAction>
-          <StyledRightAction>Options</StyledRightAction>
-        </>
-      }
-    />
-  );
+	return (
+		<TopBar
+			leftComponent={
+				<StyledViewPicker>
+					<TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />
+					<span>All Companies</span>
+					<StyledViewPickerCount>· 599</StyledViewPickerCount>
+					<IconChevronDown
+						size={theme.icon.size.sm}
+						stroke={theme.icon.stroke.sm}
+					/>
+				</StyledViewPicker>
+			}
+			rightComponent={
+				<>
+					<StyledRightAction>Filter</StyledRightAction>
+					<StyledRightAction>Sort</StyledRightAction>
+					<StyledRightAction>Options</StyledRightAction>
+				</>
+			}
+		/>
+	);
 };

@@ -1,4 +1,4 @@
-export const PENDING_FILE_CLEANUP_CRON_PATTERN = '0 * * * *';
+export const PENDING_FILE_CLEANUP_CRON_PATTERN = "0 * * * *";
 
 // A pending file only becomes reapable long after its upload URL has expired,
 // so the cleanup can never race a legitimate in-flight upload.

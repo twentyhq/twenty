@@ -1,5 +1,5 @@
 export const turnIntoUndefinedIfWhitespacesOnly = (
-  value: string,
+	value: string,
 ): string | undefined => {
-  return value.trim() === '' ? undefined : value;
+	return value.trim() === "" ? undefined : value;
 };

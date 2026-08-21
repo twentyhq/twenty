@@ -1,10 +1,10 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 type NavigationMenuItemDragContextType = {
-  isDragging: boolean;
+	isDragging: boolean;
 };
 
 export const NavigationMenuItemDragContext =
-  createContext<NavigationMenuItemDragContextType>({
-    isDragging: false,
-  });
+	createContext<NavigationMenuItemDragContextType>({
+		isDragging: false,
+	});

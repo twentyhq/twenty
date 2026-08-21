@@ -1,114 +1,114 @@
 import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-  type MockInstance,
-} from 'vitest';
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+	type MockInstance,
+} from "vitest";
 
-import { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
-import { getConnection } from '@/sdk/logic-function/connections/get-connection';
-import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+import { AppConnectionAuthFailedError } from "@/sdk/logic-function/connections/errors/app-connection-auth-failed.error";
+import { getConnection } from "@/sdk/logic-function/connections/get-connection";
+import { type AppConnection } from "@/sdk/logic-function/connections/types/app-connection.type";
 
 const buildConnection = (
-  overrides: Partial<AppConnection> = {},
+	overrides: Partial<AppConnection> = {},
 ): AppConnection => ({
-  id: 'c-1',
-  providerName: 'linear',
-  name: 'Linear #1',
-  handle: 'octocat@example.com',
-  visibility: 'user',
-  userWorkspaceId: 'uws-me',
-  accessToken: 'fresh',
-  scopes: ['read'],
-  authFailedAt: null,
-  ...overrides,
+	id: "c-1",
+	providerName: "linear",
+	name: "Linear #1",
+	handle: "octocat@example.com",
+	visibility: "user",
+	userWorkspaceId: "uws-me",
+	accessToken: "fresh",
+	scopes: ["read"],
+	authFailedAt: null,
+	...overrides,
 });
 
-describe('getConnection', () => {
-  let fetchSpy: MockInstance<typeof fetch>;
+describe("getConnection", () => {
+	let fetchSpy: MockInstance<typeof fetch>;
 
-  beforeEach(() => {
-    process.env.TWENTY_API_URL = 'https://api.test';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'app-token';
-    fetchSpy = vi.spyOn(globalThis, 'fetch');
-  });
+	beforeEach(() => {
+		process.env.TWENTY_API_URL = "https://api.test";
+		process.env.TWENTY_APP_ACCESS_TOKEN = "app-token";
+		fetchSpy = vi.spyOn(globalThis, "fetch");
+	});
 
-  afterEach(() => {
-    delete process.env.TWENTY_API_URL;
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
-    fetchSpy.mockRestore();
-  });
+	afterEach(() => {
+		delete process.env.TWENTY_API_URL;
+		delete process.env.TWENTY_APP_ACCESS_TOKEN;
+		fetchSpy.mockRestore();
+	});
 
-  it('queries appConnection by id over GraphQL and returns the response', async () => {
-    const connection = buildConnection({ id: 'persisted' });
+	it("queries appConnection by id over GraphQL and returns the response", async () => {
+		const connection = buildConnection({ id: "persisted" });
 
-    fetchSpy.mockResolvedValue(
-      new Response(JSON.stringify({ data: { appConnection: connection } }), {
-        status: 200,
-      }),
-    );
+		fetchSpy.mockResolvedValue(
+			new Response(JSON.stringify({ data: { appConnection: connection } }), {
+				status: 200,
+			}),
+		);
 
-    const result = await getConnection('persisted');
+		const result = await getConnection("persisted");
 
-    expect(result).toEqual(connection);
+		expect(result).toEqual(connection);
 
-    const [url, requestInit] = fetchSpy.mock.calls[0];
+		const [url, requestInit] = fetchSpy.mock.calls[0];
 
-    expect(url).toBe('https://api.test/metadata');
-    expect(requestInit).toEqual(
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          Authorization: 'Bearer app-token',
-        }),
-      }),
-    );
+		expect(url).toBe("https://api.test/metadata");
+		expect(requestInit).toEqual(
+			expect.objectContaining({
+				method: "POST",
+				headers: expect.objectContaining({
+					Authorization: "Bearer app-token",
+				}),
+			}),
+		);
 
-    const sentBody = JSON.parse(requestInit?.body as string);
+		const sentBody = JSON.parse(requestInit?.body as string);
 
-    expect(sentBody.query).toContain('appConnection(id: $id)');
-    expect(sentBody.variables).toEqual({ id: 'persisted' });
-  });
+		expect(sentBody.query).toContain("appConnection(id: $id)");
+		expect(sentBody.variables).toEqual({ id: "persisted" });
+	});
 
-  it('throws AppConnectionAuthFailedError when the connection needs reconnect', async () => {
-    fetchSpy.mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          data: {
-            appConnection: buildConnection({
-              id: 'broken',
-              authFailedAt: '2024-01-02T00:00:00.000Z',
-            }),
-          },
-        }),
-        { status: 200 },
-      ),
-    );
+	it("throws AppConnectionAuthFailedError when the connection needs reconnect", async () => {
+		fetchSpy.mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					data: {
+						appConnection: buildConnection({
+							id: "broken",
+							authFailedAt: "2024-01-02T00:00:00.000Z",
+						}),
+					},
+				}),
+				{ status: 200 },
+			),
+		);
 
-    const error = await getConnection('broken').catch((caught) => caught);
+		const error = await getConnection("broken").catch((caught) => caught);
 
-    expect(error).toBeInstanceOf(AppConnectionAuthFailedError);
-    expect((error as AppConnectionAuthFailedError).connectionId).toBe('broken');
-  });
+		expect(error).toBeInstanceOf(AppConnectionAuthFailedError);
+		expect((error as AppConnectionAuthFailedError).connectionId).toBe("broken");
+	});
 
-  it('surfaces non-2xx HTTP responses as a regular Error', async () => {
-    fetchSpy.mockResolvedValue(
-      new Response('not found', { status: 404, statusText: 'Not Found' }),
-    );
+	it("surfaces non-2xx HTTP responses as a regular Error", async () => {
+		fetchSpy.mockResolvedValue(
+			new Response("not found", { status: 404, statusText: "Not Found" }),
+		);
 
-    await expect(getConnection('missing')).rejects.toThrow(/HTTP 404/);
-  });
+		await expect(getConnection("missing")).rejects.toThrow(/HTTP 404/);
+	});
 
-  it('throws when the runtime env vars are missing', async () => {
-    delete process.env.TWENTY_API_URL;
+	it("throws when the runtime env vars are missing", async () => {
+		delete process.env.TWENTY_API_URL;
 
-    await expect(getConnection('any')).rejects.toThrow(
-      /requires the app runtime env vars/,
-    );
+		await expect(getConnection("any")).rejects.toThrow(
+			/requires the app runtime env vars/,
+		);
 
-    expect(fetchSpy).not.toHaveBeenCalled();
-  });
+		expect(fetchSpy).not.toHaveBeenCalled();
+	});
 });

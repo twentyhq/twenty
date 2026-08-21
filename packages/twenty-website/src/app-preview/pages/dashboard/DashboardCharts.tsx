@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { useEffect, useId, useState, type CSSProperties } from 'react';
+import { styled } from "@linaria/react";
+import { useEffect, useId, useState, type CSSProperties } from "react";
 
-import { createAnimationFrameLoop } from '@/platform/motion';
-import { EASING, REDUCED_MOTION } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { createAnimationFrameLoop } from "@/platform/motion";
+import { EASING, REDUCED_MOTION } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 import {
-  type DashboardBarChart as DashboardBarChartData,
-  type DashboardDonutChart as DashboardDonutChartData,
-  type DashboardLineChart as DashboardLineChartData,
-} from '../../types';
+	type DashboardBarChart as DashboardBarChartData,
+	type DashboardDonutChart as DashboardDonutChartData,
+	type DashboardLineChart as DashboardLineChartData,
+} from "../../types";
 
 const ACCENT = APP_PREVIEW_TONES.dashboardChart.accent;
 
@@ -89,79 +89,79 @@ const LineSvg = styled.svg`
 `;
 
 function DashboardLineChart({ data }: { data: DashboardLineChartData }) {
-  const [drawn, setDrawn] = useState(false);
-  const gradientId = `dashboard-line-fill-${useId().replace(/:/g, '')}`;
+	const [drawn, setDrawn] = useState(false);
+	const gradientId = `dashboard-line-fill-${useId().replace(/:/g, "")}`;
 
-  useEffect(() => {
-    const task = createAnimationFrameLoop({
-      onFrame: () => {
-        setDrawn(true);
-        return false;
-      },
-    });
-    task.start();
-    return () => task.stop();
-  }, []);
+	useEffect(() => {
+		const task = createAnimationFrameLoop({
+			onFrame: () => {
+				setDrawn(true);
+				return false;
+			},
+		});
+		task.start();
+		return () => task.stop();
+	}, []);
 
-  const max = Math.max(...data.values);
-  const min = Math.min(...data.values);
-  const range = max - min || 1;
-  const stepX = (LINE_W - LINE_PAD * 2) / (data.values.length - 1);
-  const points = data.values.map((value, index) => {
-    const x = LINE_PAD + index * stepX;
-    const y = LINE_PAD + (LINE_H - LINE_PAD * 2) * (1 - (value - min) / range);
-    return [x, y] as [number, number];
-  });
-  const linePath = points
-    .map(
-      ([x, y], index) =>
-        `${index === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`,
-    )
-    .join(' ');
-  const lastX = points[points.length - 1][0];
-  const firstX = points[0][0];
-  const areaPath = `${linePath} L${lastX.toFixed(1)} ${LINE_H - LINE_PAD} L${firstX.toFixed(1)} ${LINE_H - LINE_PAD} Z`;
+	const max = Math.max(...data.values);
+	const min = Math.min(...data.values);
+	const range = max - min || 1;
+	const stepX = (LINE_W - LINE_PAD * 2) / (data.values.length - 1);
+	const points = data.values.map((value, index) => {
+		const x = LINE_PAD + index * stepX;
+		const y = LINE_PAD + (LINE_H - LINE_PAD * 2) * (1 - (value - min) / range);
+		return [x, y] as [number, number];
+	});
+	const linePath = points
+		.map(
+			([x, y], index) =>
+				`${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`,
+		)
+		.join(" ");
+	const lastX = points[points.length - 1][0];
+	const firstX = points[0][0];
+	const areaPath = `${linePath} L${lastX.toFixed(1)} ${LINE_H - LINE_PAD} L${firstX.toFixed(1)} ${LINE_H - LINE_PAD} Z`;
 
-  return (
-    <ChartFrame>
-      <PlotArea>
-        <Gridlines $bottom={0} aria-hidden>
-          {GRID_LINES.map((line) => (
-            <GridLine key={line} />
-          ))}
-        </Gridlines>
-        <LineSvg
-          aria-hidden
-          preserveAspectRatio="none"
-          viewBox={`0 0 ${LINE_W} ${LINE_H}`}
-        >
-          <defs>
-            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={ACCENT} stopOpacity="0.22" />
-              <stop offset="100%" stopColor={ACCENT} stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path
-            className="line-area"
-            d={areaPath}
-            fill={`url(#${gradientId})`}
-            style={{ opacity: drawn ? 1 : 0 }}
-          />
-          <path
-            className="line-stroke"
-            d={linePath}
-            fill="none"
-            stroke={ACCENT}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            style={{ opacity: drawn ? 1 : 0 }}
-            vectorEffect="non-scaling-stroke"
-          />
-        </LineSvg>
-      </PlotArea>
-    </ChartFrame>
-  );
+	return (
+		<ChartFrame>
+			<PlotArea>
+				<Gridlines $bottom={0} aria-hidden>
+					{GRID_LINES.map((line) => (
+						<GridLine key={line} />
+					))}
+				</Gridlines>
+				<LineSvg
+					aria-hidden
+					preserveAspectRatio="none"
+					viewBox={`0 0 ${LINE_W} ${LINE_H}`}
+				>
+					<defs>
+						<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+							<stop offset="0%" stopColor={ACCENT} stopOpacity="0.22" />
+							<stop offset="100%" stopColor={ACCENT} stopOpacity="0" />
+						</linearGradient>
+					</defs>
+					<path
+						className="line-area"
+						d={areaPath}
+						fill={`url(#${gradientId})`}
+						style={{ opacity: drawn ? 1 : 0 }}
+					/>
+					<path
+						className="line-stroke"
+						d={linePath}
+						fill="none"
+						stroke={ACCENT}
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						style={{ opacity: drawn ? 1 : 0 }}
+						vectorEffect="non-scaling-stroke"
+					/>
+				</LineSvg>
+			</PlotArea>
+		</ChartFrame>
+	);
 }
 
 const BarColumns = styled.div`
@@ -220,28 +220,28 @@ const Bar = styled.div<{ $heightPct: number; $index: number }>`
 `;
 
 function DashboardBarChart({ data }: { data: DashboardBarChartData }) {
-  const max = Math.max(...data.bars.map((bar) => bar.value)) || 1;
-  return (
-    <ChartFrame>
-      <PlotArea>
-        <Gridlines $bottom={22} aria-hidden>
-          {GRID_LINES.map((line) => (
-            <GridLine key={line} />
-          ))}
-        </Gridlines>
-        <BarColumns>
-          {data.bars.map((bar, index) => (
-            <BarColumn key={bar.label}>
-              <BarTrack>
-                <Bar $heightPct={(bar.value / max) * 100} $index={index} />
-              </BarTrack>
-              <AxisLabel>{bar.label}</AxisLabel>
-            </BarColumn>
-          ))}
-        </BarColumns>
-      </PlotArea>
-    </ChartFrame>
-  );
+	const max = Math.max(...data.bars.map((bar) => bar.value)) || 1;
+	return (
+		<ChartFrame>
+			<PlotArea>
+				<Gridlines $bottom={22} aria-hidden>
+					{GRID_LINES.map((line) => (
+						<GridLine key={line} />
+					))}
+				</Gridlines>
+				<BarColumns>
+					{data.bars.map((bar, index) => (
+						<BarColumn key={bar.label}>
+							<BarTrack>
+								<Bar $heightPct={(bar.value / max) * 100} $index={index} />
+							</BarTrack>
+							<AxisLabel>{bar.label}</AxisLabel>
+						</BarColumn>
+					))}
+				</BarColumns>
+			</PlotArea>
+		</ChartFrame>
+	);
 }
 
 const DONUT_RADIUS = 15.915;
@@ -345,61 +345,61 @@ const LegendLabel = styled.span`
 `;
 
 function DashboardDonutChart({ data }: { data: DashboardDonutChartData }) {
-  const total = data.slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
-  let cumulative = 0;
-  return (
-    <DonutWrap>
-      <DonutFigure>
-        <DonutSvg aria-hidden viewBox="0 0 36 36">
-          {data.slices.map((slice, index) => {
-            const pct = (slice.value / total) * 100;
-            const drawn = Math.max(pct - DONUT_GAP, 0.5);
-            const offset = -cumulative;
-            cumulative += pct;
-            return (
-              <circle
-                className="donut-slice"
-                cx="18"
-                cy="18"
-                fill="none"
-                key={slice.label}
-                pathLength={100}
-                r={DONUT_RADIUS}
-                stroke={slice.color}
-                strokeDasharray={`${drawn} ${100 - drawn}`}
-                strokeDashoffset={offset}
-                strokeLinecap="round"
-                strokeWidth="3.4"
-                style={
-                  {
-                    '--slice-pct': drawn,
-                    '--slice-rest': 100 - drawn,
-                    animationDelay: `${index * 120}ms`,
-                  } as CSSProperties
-                }
-              />
-            );
-          })}
-        </DonutSvg>
-        <DonutCenter>
-          <DonutValue>{data.centerValue}</DonutValue>
-          <DonutLabel>{data.centerLabel}</DonutLabel>
-        </DonutCenter>
-      </DonutFigure>
-      <DonutLegend>
-        {data.slices.map((slice) => (
-          <LegendRow key={slice.label}>
-            <LegendDot $color={slice.color} />
-            <LegendLabel>{slice.label}</LegendLabel>
-          </LegendRow>
-        ))}
-      </DonutLegend>
-    </DonutWrap>
-  );
+	const total = data.slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
+	let cumulative = 0;
+	return (
+		<DonutWrap>
+			<DonutFigure>
+				<DonutSvg aria-hidden viewBox="0 0 36 36">
+					{data.slices.map((slice, index) => {
+						const pct = (slice.value / total) * 100;
+						const drawn = Math.max(pct - DONUT_GAP, 0.5);
+						const offset = -cumulative;
+						cumulative += pct;
+						return (
+							<circle
+								className="donut-slice"
+								cx="18"
+								cy="18"
+								fill="none"
+								key={slice.label}
+								pathLength={100}
+								r={DONUT_RADIUS}
+								stroke={slice.color}
+								strokeDasharray={`${drawn} ${100 - drawn}`}
+								strokeDashoffset={offset}
+								strokeLinecap="round"
+								strokeWidth="3.4"
+								style={
+									{
+										"--slice-pct": drawn,
+										"--slice-rest": 100 - drawn,
+										animationDelay: `${index * 120}ms`,
+									} as CSSProperties
+								}
+							/>
+						);
+					})}
+				</DonutSvg>
+				<DonutCenter>
+					<DonutValue>{data.centerValue}</DonutValue>
+					<DonutLabel>{data.centerLabel}</DonutLabel>
+				</DonutCenter>
+			</DonutFigure>
+			<DonutLegend>
+				{data.slices.map((slice) => (
+					<LegendRow key={slice.label}>
+						<LegendDot $color={slice.color} />
+						<LegendLabel>{slice.label}</LegendLabel>
+					</LegendRow>
+				))}
+			</DonutLegend>
+		</DonutWrap>
+	);
 }
 
 export const DASHBOARD_CHARTS = {
-  Line: DashboardLineChart,
-  Bar: DashboardBarChart,
-  Donut: DashboardDonutChart,
+	Line: DashboardLineChart,
+	Bar: DashboardBarChart,
+	Donut: DashboardDonutChart,
 };

@@ -1,4 +1,4 @@
 export type GlobalHotkeysConfig = {
-  enableGlobalHotkeysWithModifiers: boolean;
-  enableGlobalHotkeysConflictingWithKeyboard: boolean;
+	enableGlobalHotkeysWithModifiers: boolean;
+	enableGlobalHotkeysConflictingWithKeyboard: boolean;
 };

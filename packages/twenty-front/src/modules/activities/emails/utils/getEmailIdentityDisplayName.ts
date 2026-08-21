@@ -1,16 +1,16 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const getEmailIdentityDisplayName = ({
-  personName,
-  workspaceMemberName,
-  displayName,
-  handle,
+	personName,
+	workspaceMemberName,
+	displayName,
+	handle,
 }: {
-  personName?: string;
-  workspaceMemberName?: string;
-  displayName?: string;
-  handle?: string;
+	personName?: string;
+	workspaceMemberName?: string;
+	displayName?: string;
+	handle?: string;
 }): string =>
-  [workspaceMemberName, personName, displayName, handle].find(
-    isNonEmptyString,
-  ) ?? 'Unknown';
+	[workspaceMemberName, personName, displayName, handle].find(
+		isNonEmptyString,
+	) ?? "Unknown";

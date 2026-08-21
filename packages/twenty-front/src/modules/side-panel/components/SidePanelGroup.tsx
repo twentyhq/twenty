@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import React from 'react';
-import { Label } from 'twenty-ui/typography';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import React from "react";
+import { Label } from "twenty-ui/typography";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledGroupHeadingContainer = styled.div`
   align-items: center;
@@ -20,20 +20,20 @@ const StyledGroup = styled.div`
 `;
 
 type SidePanelGroupProps = {
-  heading: string;
-  children: React.ReactNode | React.ReactNode[];
+	heading: string;
+	children: React.ReactNode | React.ReactNode[];
 };
 
 export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
-  if (!isDefined(children) || !React.Children.count(children)) {
-    return null;
-  }
-  return (
-    <>
-      <StyledGroupHeadingContainer>
-        <Label>{heading}</Label>
-      </StyledGroupHeadingContainer>
-      <StyledGroup>{children}</StyledGroup>
-    </>
-  );
+	if (!isDefined(children) || !React.Children.count(children)) {
+		return null;
+	}
+	return (
+		<>
+			<StyledGroupHeadingContainer>
+				<Label>{heading}</Label>
+			</StyledGroupHeadingContainer>
+			<StyledGroup>{children}</StyledGroup>
+		</>
+	);
 };

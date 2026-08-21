@@ -1,141 +1,141 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/isObjectWithId';
-import { type ExtractedTargetRecord } from '@/object-record/record-field/ui/utils/junction/types/ExtractedTargetRecord';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { isObjectWithId } from "@/object-record/record-field/ui/utils/junction/isObjectWithId";
+import { type ExtractedTargetRecord } from "@/object-record/record-field/ui/utils/junction/types/ExtractedTargetRecord";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
+import { FieldMetadataType } from "twenty-shared/types";
 import {
-  computeMorphRelationGqlFieldName,
-  isDefined,
-} from 'twenty-shared/utils';
+	computeMorphRelationGqlFieldName,
+	isDefined,
+} from "twenty-shared/utils";
 
 type ExtractTargetRecordsFromJunctionArgs = {
-  junctionRecords: ObjectRecord[] | undefined | null;
-  targetFields: FieldMetadataItem[];
-  objectMetadataItems: EnrichedObjectMetadataItem[];
-  includeRecord?: boolean;
+	junctionRecords: ObjectRecord[] | undefined | null;
+	targetFields: FieldMetadataItem[];
+	objectMetadataItems: EnrichedObjectMetadataItem[];
+	includeRecord?: boolean;
 };
 
 const tryExtractFromField = (
-  junctionRecord: ObjectRecord,
-  fieldName: string,
-  objectMetadataId: string,
-  includeRecord: boolean,
+	junctionRecord: ObjectRecord,
+	fieldName: string,
+	objectMetadataId: string,
+	includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
-  const targetObject = junctionRecord[fieldName];
+	const targetObject = junctionRecord[fieldName];
 
-  if (!isObjectWithId(targetObject)) {
-    return null;
-  }
+	if (!isObjectWithId(targetObject)) {
+		return null;
+	}
 
-  return {
-    recordId: targetObject.id,
-    objectMetadataId,
-    ...(includeRecord && { record: targetObject }),
-  };
+	return {
+		recordId: targetObject.id,
+		objectMetadataId,
+		...(includeRecord && { record: targetObject }),
+	};
 };
 
 const extractFromTargetFields = (
-  junctionRecord: ObjectRecord,
-  targetFields: FieldMetadataItem[],
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-  includeRecord: boolean,
+	junctionRecord: ObjectRecord,
+	targetFields: FieldMetadataItem[],
+	objectMetadataItems: EnrichedObjectMetadataItem[],
+	includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
-  for (const targetField of targetFields) {
-    if (targetField.type === FieldMetadataType.MORPH_RELATION) {
-      const result = extractFromMorphRelationField(
-        junctionRecord,
-        targetField,
-        objectMetadataItems,
-        includeRecord,
-      );
-      if (isDefined(result)) {
-        return result;
-      }
-      continue;
-    }
+	for (const targetField of targetFields) {
+		if (targetField.type === FieldMetadataType.MORPH_RELATION) {
+			const result = extractFromMorphRelationField(
+				junctionRecord,
+				targetField,
+				objectMetadataItems,
+				includeRecord,
+			);
+			if (isDefined(result)) {
+				return result;
+			}
+			continue;
+		}
 
-    const targetObjectMetadata = objectMetadataItems.find(
-      (item) => item.id === targetField.relation?.targetObjectMetadata.id,
-    );
+		const targetObjectMetadata = objectMetadataItems.find(
+			(item) => item.id === targetField.relation?.targetObjectMetadata.id,
+		);
 
-    if (isDefined(targetObjectMetadata)) {
-      const result = tryExtractFromField(
-        junctionRecord,
-        targetField.name,
-        targetObjectMetadata.id,
-        includeRecord,
-      );
-      if (isDefined(result)) {
-        return result;
-      }
-    }
-  }
+		if (isDefined(targetObjectMetadata)) {
+			const result = tryExtractFromField(
+				junctionRecord,
+				targetField.name,
+				targetObjectMetadata.id,
+				includeRecord,
+			);
+			if (isDefined(result)) {
+				return result;
+			}
+		}
+	}
 
-  return null;
+	return null;
 };
 
 const extractFromMorphRelationField = (
-  junctionRecord: ObjectRecord,
-  targetField: FieldMetadataItem,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-  includeRecord: boolean,
+	junctionRecord: ObjectRecord,
+	targetField: FieldMetadataItem,
+	objectMetadataItems: EnrichedObjectMetadataItem[],
+	includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
-  const morphRelations = targetField.morphRelations;
+	const morphRelations = targetField.morphRelations;
 
-  if (!Array.isArray(morphRelations) || morphRelations.length === 0) {
-    return null;
-  }
+	if (!Array.isArray(morphRelations) || morphRelations.length === 0) {
+		return null;
+	}
 
-  for (const morphRelation of morphRelations) {
-    const computedFieldName = computeMorphRelationGqlFieldName({
-      fieldName: morphRelation.sourceFieldMetadata.name,
-      relationType: morphRelation.type,
-      targetObjectMetadataNameSingular:
-        morphRelation.targetObjectMetadata.nameSingular,
-      targetObjectMetadataNamePlural:
-        morphRelation.targetObjectMetadata.namePlural,
-    });
+	for (const morphRelation of morphRelations) {
+		const computedFieldName = computeMorphRelationGqlFieldName({
+			fieldName: morphRelation.sourceFieldMetadata.name,
+			relationType: morphRelation.type,
+			targetObjectMetadataNameSingular:
+				morphRelation.targetObjectMetadata.nameSingular,
+			targetObjectMetadataNamePlural:
+				morphRelation.targetObjectMetadata.namePlural,
+		});
 
-    const targetObjectMetadata = objectMetadataItems.find(
-      (item) => item.id === morphRelation.targetObjectMetadata.id,
-    );
+		const targetObjectMetadata = objectMetadataItems.find(
+			(item) => item.id === morphRelation.targetObjectMetadata.id,
+		);
 
-    if (isDefined(targetObjectMetadata)) {
-      const result = tryExtractFromField(
-        junctionRecord,
-        computedFieldName,
-        targetObjectMetadata.id,
-        includeRecord,
-      );
-      if (isDefined(result)) {
-        return result;
-      }
-    }
-  }
+		if (isDefined(targetObjectMetadata)) {
+			const result = tryExtractFromField(
+				junctionRecord,
+				computedFieldName,
+				targetObjectMetadata.id,
+				includeRecord,
+			);
+			if (isDefined(result)) {
+				return result;
+			}
+		}
+	}
 
-  return null;
+	return null;
 };
 
 export const extractTargetRecordsFromJunction = ({
-  junctionRecords,
-  targetFields,
-  objectMetadataItems,
-  includeRecord = false,
+	junctionRecords,
+	targetFields,
+	objectMetadataItems,
+	includeRecord = false,
 }: ExtractTargetRecordsFromJunctionArgs): ExtractedTargetRecord[] => {
-  if (!Array.isArray(junctionRecords) || targetFields.length === 0) {
-    return [];
-  }
+	if (!Array.isArray(junctionRecords) || targetFields.length === 0) {
+		return [];
+	}
 
-  return junctionRecords
-    .filter(isDefined)
-    .map((junctionRecord) =>
-      extractFromTargetFields(
-        junctionRecord,
-        targetFields,
-        objectMetadataItems,
-        includeRecord,
-      ),
-    )
-    .filter(isDefined);
+	return junctionRecords
+		.filter(isDefined)
+		.map((junctionRecord) =>
+			extractFromTargetFields(
+				junctionRecord,
+				targetFields,
+				objectMetadataItems,
+				includeRecord,
+			),
+		)
+		.filter(isDefined);
 };

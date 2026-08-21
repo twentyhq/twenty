@@ -1,5 +1,5 @@
-import { removeVariablesFromJson } from '@/workflow/workflow-variables/utils/removeVariablesFromJson';
+import { removeVariablesFromJson } from "@/workflow/workflow-variables/utils/removeVariablesFromJson";
 
 export const parseHttpJsonBodyWithoutVariablesOrThrow = (value: string) => {
-  return JSON.parse(removeVariablesFromJson(value));
+	return JSON.parse(removeVariablesFromJson(value));
 };

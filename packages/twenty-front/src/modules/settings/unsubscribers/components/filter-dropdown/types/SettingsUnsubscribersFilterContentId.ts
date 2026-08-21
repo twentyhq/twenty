@@ -1,1 +1,1 @@
-export type SettingsUnsubscribersFilterContentId = 'reason' | 'topic';
+export type SettingsUnsubscribersFilterContentId = "reason" | "topic";

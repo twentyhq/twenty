@@ -1,1 +1,1 @@
-export { FieldMetadataType as FieldType } from 'twenty-shared/types';
+export { FieldMetadataType as FieldType } from "twenty-shared/types";

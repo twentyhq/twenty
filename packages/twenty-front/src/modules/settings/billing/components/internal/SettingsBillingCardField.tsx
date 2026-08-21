@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { type TablerIconsProps } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { type TablerIconsProps } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 const StyledBillingFieldRow = styled.div`
   align-items: center;
@@ -59,49 +59,49 @@ const StyledScheduledChangeItem = styled.div`
 `;
 
 type BillingFieldRowProps = {
-  Icon: (props: TablerIconsProps) => ReactNode;
-  label: string;
-  children: ReactNode;
+	Icon: (props: TablerIconsProps) => ReactNode;
+	label: string;
+	children: ReactNode;
 };
 
 export const BillingFieldRow = ({
-  Icon,
-  label,
-  children,
+	Icon,
+	label,
+	children,
 }: BillingFieldRowProps) => {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  return (
-    <StyledBillingFieldRow>
-      <StyledBillingFieldLabel>
-        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        <OverflowingTextWithTooltip text={label} />
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{children}</StyledBillingFieldValue>
-    </StyledBillingFieldRow>
-  );
+	return (
+		<StyledBillingFieldRow>
+			<StyledBillingFieldLabel>
+				<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+				<OverflowingTextWithTooltip text={label} />
+			</StyledBillingFieldLabel>
+			<StyledBillingFieldValue>{children}</StyledBillingFieldValue>
+		</StyledBillingFieldRow>
+	);
 };
 
 export type ScheduledBillingChangeFieldProps = {
-  Icon: (props: TablerIconsProps) => ReactNode;
-  label: string;
-  value: string;
+	Icon: (props: TablerIconsProps) => ReactNode;
+	label: string;
+	value: string;
 };
 
 export const ScheduledBillingChangeField = ({
-  Icon,
-  label,
-  value,
+	Icon,
+	label,
+	value,
 }: ScheduledBillingChangeFieldProps) => {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  return (
-    <StyledScheduledChangeItem>
-      <StyledBillingFieldLabel>
-        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        <OverflowingTextWithTooltip text={label} />
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
-    </StyledScheduledChangeItem>
-  );
+	return (
+		<StyledScheduledChangeItem>
+			<StyledBillingFieldLabel>
+				<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+				<OverflowingTextWithTooltip text={label} />
+			</StyledBillingFieldLabel>
+			<StyledBillingFieldValue>{value}</StyledBillingFieldValue>
+		</StyledScheduledChangeItem>
+	);
 };

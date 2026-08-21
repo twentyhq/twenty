@@ -1,18 +1,18 @@
-import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { InputLabel, Checkbox } from 'twenty-ui/input';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconBrandX, IconWorld } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { aiModelsState } from "@/client-config/states/aiModelsState";
+import { InputLabel, Checkbox } from "twenty-ui/input";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useContext } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { IconBrandX, IconWorld } from "twenty-ui/icon";
+import { Section } from "twenty-ui/layout";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   display: flex;
   height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
@@ -22,9 +22,9 @@ const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${({ disabled }) =>
-      disabled
-        ? 'transparent'
-        : themeCssVariables.background.transparent.light};
+			disabled
+				? "transparent"
+				: themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -35,113 +35,113 @@ const StyledCheckboxLabel = styled.div`
 `;
 
 type ModelConfiguration = {
-  webSearch?: {
-    enabled: boolean;
-    configuration?: Record<string, unknown>;
-  };
-  twitterSearch?: {
-    enabled: boolean;
-    configuration?: Record<string, unknown>;
-  };
+	webSearch?: {
+		enabled: boolean;
+		configuration?: Record<string, unknown>;
+	};
+	twitterSearch?: {
+		enabled: boolean;
+		configuration?: Record<string, unknown>;
+	};
 };
 
 type SettingsAgentModelCapabilitiesProps = {
-  selectedModelId: string;
-  modelConfiguration: ModelConfiguration;
-  onConfigurationChange: (configuration: ModelConfiguration) => void;
-  disabled?: boolean;
+	selectedModelId: string;
+	modelConfiguration: ModelConfiguration;
+	onConfigurationChange: (configuration: ModelConfiguration) => void;
+	disabled?: boolean;
 };
 
 export const SettingsAgentModelCapabilities = ({
-  selectedModelId,
-  modelConfiguration,
-  onConfigurationChange,
-  disabled = false,
+	selectedModelId,
+	modelConfiguration,
+	onConfigurationChange,
+	disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
-  const { theme } = useContext(ThemeContext);
-  const aiModels = useAtomStateValue(aiModelsState);
+	const { theme } = useContext(ThemeContext);
+	const aiModels = useAtomStateValue(aiModelsState);
 
-  const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
-  const nativeCapabilities = selectedModel?.nativeCapabilities;
+	const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
+	const nativeCapabilities = selectedModel?.nativeCapabilities;
 
-  if (!isDefined(nativeCapabilities)) {
-    return null;
-  }
+	if (!isDefined(nativeCapabilities)) {
+		return null;
+	}
 
-  const showNativeWebSearch = nativeCapabilities.webSearch;
-  const showNativeTwitterSearch = nativeCapabilities.twitterSearch;
+	const showNativeWebSearch = nativeCapabilities.webSearch;
+	const showNativeTwitterSearch = nativeCapabilities.twitterSearch;
 
-  if (!showNativeWebSearch && !showNativeTwitterSearch) {
-    return null;
-  }
+	if (!showNativeWebSearch && !showNativeTwitterSearch) {
+		return null;
+	}
 
-  const handleCapabilityToggle = (
-    capability: 'webSearch' | 'twitterSearch',
-    enabled: boolean,
-  ) => {
-    if (disabled) {
-      return;
-    }
+	const handleCapabilityToggle = (
+		capability: "webSearch" | "twitterSearch",
+		enabled: boolean,
+	) => {
+		if (disabled) {
+			return;
+		}
 
-    onConfigurationChange({
-      ...modelConfiguration,
-      [capability]: {
-        enabled,
-        configuration: modelConfiguration[capability]?.configuration || {},
-      },
-    });
-  };
+		onConfigurationChange({
+			...modelConfiguration,
+			[capability]: {
+				enabled,
+				configuration: modelConfiguration[capability]?.configuration || {},
+			},
+		});
+	};
 
-  const capabilities = [
-    ...(showNativeWebSearch
-      ? [
-          {
-            key: 'webSearch' as const,
-            label: t`Web Search`,
-            Icon: IconWorld,
-            enabled: modelConfiguration.webSearch?.enabled || false,
-          },
-        ]
-      : []),
-    ...(showNativeTwitterSearch
-      ? [
-          {
-            key: 'twitterSearch' as const,
-            label: t`Twitter/X Search`,
-            Icon: IconBrandX,
-            enabled: modelConfiguration.twitterSearch?.enabled || false,
-          },
-        ]
-      : []),
-  ];
+	const capabilities = [
+		...(showNativeWebSearch
+			? [
+					{
+						key: "webSearch" as const,
+						label: t`Web Search`,
+						Icon: IconWorld,
+						enabled: modelConfiguration.webSearch?.enabled || false,
+					},
+				]
+			: []),
+		...(showNativeTwitterSearch
+			? [
+					{
+						key: "twitterSearch" as const,
+						label: t`Twitter/X Search`,
+						Icon: IconBrandX,
+						enabled: modelConfiguration.twitterSearch?.enabled || false,
+					},
+				]
+			: []),
+	];
 
-  return (
-    <Section>
-      <InputLabel>{t`Enable model-specific features`}</InputLabel>
-      <div>
-        {capabilities.map((capability) => (
-          <StyledCheckboxContainer
-            disabled={disabled}
-            key={capability.key}
-            onClick={() =>
-              handleCapabilityToggle(capability.key, !capability.enabled)
-            }
-          >
-            <StyledCheckboxLabel>
-              <capability.Icon size={theme.icon.size.sm} />
-              <span>{capability.label}</span>
-            </StyledCheckboxLabel>
-            <Checkbox
-              checked={capability.enabled}
-              onChange={(event) => {
-                event.stopPropagation();
-                handleCapabilityToggle(capability.key, event.target.checked);
-              }}
-              disabled={disabled}
-            />
-          </StyledCheckboxContainer>
-        ))}
-      </div>
-    </Section>
-  );
+	return (
+		<Section>
+			<InputLabel>{t`Enable model-specific features`}</InputLabel>
+			<div>
+				{capabilities.map((capability) => (
+					<StyledCheckboxContainer
+						disabled={disabled}
+						key={capability.key}
+						onClick={() =>
+							handleCapabilityToggle(capability.key, !capability.enabled)
+						}
+					>
+						<StyledCheckboxLabel>
+							<capability.Icon size={theme.icon.size.sm} />
+							<span>{capability.label}</span>
+						</StyledCheckboxLabel>
+						<Checkbox
+							checked={capability.enabled}
+							onChange={(event) => {
+								event.stopPropagation();
+								handleCapabilityToggle(capability.key, event.target.checked);
+							}}
+							disabled={disabled}
+						/>
+					</StyledCheckboxContainer>
+				))}
+			</div>
+		</Section>
+	);
 };

@@ -1,11 +1,11 @@
-import gql from 'graphql-tag';
-import { WIDGET_CONFIGURATION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { WIDGET_CONFIGURATION_GQL_FIELDS } from "test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
+import { type UpdatePageLayoutWidgetInput } from "src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input";
 
 export type UpdateOnePageLayoutWidgetFactoryInput = {
-  id: string;
+	id: string;
 } & UpdatePageLayoutWidgetInput;
 
 const DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
@@ -29,29 +29,29 @@ const DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
 `;
 
 export const updateOnePageLayoutWidgetQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS,
 }: PerformMetadataQueryParams<UpdateOnePageLayoutWidgetFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation UpdatePageLayoutWidget($id: String!, $input: UpdatePageLayoutWidgetInput!) {
       updatePageLayoutWidget(id: $id, input: $input) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-    input: {
-      pageLayoutTabId: input.pageLayoutTabId,
-      title: input.title,
-      type: input.type,
-      objectMetadataId: input.objectMetadataId,
-      gridPosition: input.gridPosition,
-      position: input.position,
-      configuration: input.configuration,
-      conditionalDisplay: input.conditionalDisplay,
-      conditionalAvailabilityExpression:
-        input.conditionalAvailabilityExpression,
-    },
-  },
+	variables: {
+		id: input.id,
+		input: {
+			pageLayoutTabId: input.pageLayoutTabId,
+			title: input.title,
+			type: input.type,
+			objectMetadataId: input.objectMetadataId,
+			gridPosition: input.gridPosition,
+			position: input.position,
+			configuration: input.configuration,
+			conditionalDisplay: input.conditionalDisplay,
+			conditionalAvailabilityExpression:
+				input.conditionalAvailabilityExpression,
+		},
+	},
 });

@@ -1,15 +1,15 @@
 export const getEmailChannelDomain = (
-  handle: string | null | undefined,
+	handle: string | null | undefined,
 ): string | undefined => {
-  if (handle === null || handle === undefined) {
-    return undefined;
-  }
+	if (handle === null || handle === undefined) {
+		return undefined;
+	}
 
-  const lastAtIndex = handle.lastIndexOf('@');
+	const lastAtIndex = handle.lastIndexOf("@");
 
-  if (lastAtIndex === -1) {
-    return undefined;
-  }
+	if (lastAtIndex === -1) {
+		return undefined;
+	}
 
-  return handle.slice(lastAtIndex + 1).toLowerCase();
+	return handle.slice(lastAtIndex + 1).toLowerCase();
 };

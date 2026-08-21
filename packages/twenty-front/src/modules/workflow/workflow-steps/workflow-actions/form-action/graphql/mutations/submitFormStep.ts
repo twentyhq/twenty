@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const SUBMIT_FORM_STEP = gql`
   mutation SubmitFormStep($input: SubmitFormStepInput!) {

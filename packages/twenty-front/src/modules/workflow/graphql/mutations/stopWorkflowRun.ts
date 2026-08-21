@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const STOP_WORKFLOW_RUN = gql`
   mutation StopWorkflowRun($workflowRunId: UUID!) {

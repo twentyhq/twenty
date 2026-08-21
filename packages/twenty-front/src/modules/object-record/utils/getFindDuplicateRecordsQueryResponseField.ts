@@ -1,3 +1,3 @@
 export const getFindDuplicateRecordsQueryResponseField = (
-  objectNameSingular: string,
+	objectNameSingular: string,
 ) => `${objectNameSingular}Duplicates`;

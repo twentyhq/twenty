@@ -1,18 +1,18 @@
-import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import gql from "graphql-tag";
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
 export const createCustomRoleWithObjectPermissions = async (options: {
-  label: string;
-  canReadPerson?: boolean;
-  canReadCompany?: boolean;
-  canReadOpportunities?: boolean;
-  canUpdatePerson?: boolean;
-  canUpdateCompany?: boolean;
-  canUpdateOpportunities?: boolean;
-  hasAllObjectRecordsReadPermission?: boolean;
+	label: string;
+	canReadPerson?: boolean;
+	canReadCompany?: boolean;
+	canReadOpportunities?: boolean;
+	canUpdatePerson?: boolean;
+	canUpdateCompany?: boolean;
+	canUpdateOpportunities?: boolean;
+	hasAllObjectRecordsReadPermission?: boolean;
 }) => {
-  const createRoleOperation = {
-    query: gql`
+	const createRoleOperation = {
+		query: gql`
         mutation CreateOneRole {
           createOneRole(createRoleInput: {
             label: "${options.label}"
@@ -28,16 +28,16 @@ export const createCustomRoleWithObjectPermissions = async (options: {
           }
         }
       `,
-  };
+	};
 
-  const response = await makeMetadataAPIRequest(createRoleOperation);
+	const response = await makeMetadataAPIRequest(createRoleOperation);
 
-  expect(response.body.errors).toBeUndefined();
-  expect(response.body.data.createOneRole).toBeDefined();
-  const roleId = response.body.data.createOneRole.id;
+	expect(response.body.errors).toBeUndefined();
+	expect(response.body.data.createOneRole).toBeDefined();
+	const roleId = response.body.data.createOneRole.id;
 
-  const getObjectMetadataOperation = {
-    query: gql`
+	const getObjectMetadataOperation = {
+		query: gql`
       query {
         objects(paging: { first: 1000 }) {
           edges {
@@ -49,74 +49,74 @@ export const createCustomRoleWithObjectPermissions = async (options: {
         }
       }
     `,
-  };
+	};
 
-  const objectMetadataResponse = await makeMetadataAPIRequest(
-    getObjectMetadataOperation,
-  );
-  const objects = objectMetadataResponse.body.data.objects.edges;
+	const objectMetadataResponse = await makeMetadataAPIRequest(
+		getObjectMetadataOperation,
+	);
+	const objects = objectMetadataResponse.body.data.objects.edges;
 
-  const personObjectId = objects.find(
-    (obj: any) => obj.node.nameSingular === 'person',
-  )?.node.id;
-  const companyObjectId = objects.find(
-    (obj: any) => obj.node.nameSingular === 'company',
-  )?.node.id;
-  const opportunityObjectId = objects.find(
-    (obj: any) => obj.node.nameSingular === 'opportunity',
-  )?.node.id;
+	const personObjectId = objects.find(
+		(obj: any) => obj.node.nameSingular === "person",
+	)?.node.id;
+	const companyObjectId = objects.find(
+		(obj: any) => obj.node.nameSingular === "company",
+	)?.node.id;
+	const opportunityObjectId = objects.find(
+		(obj: any) => obj.node.nameSingular === "opportunity",
+	)?.node.id;
 
-  const objectPermissions = [];
+	const objectPermissions = [];
 
-  if (
-    options.canReadPerson !== undefined ||
-    options.canUpdatePerson !== undefined
-  ) {
-    objectPermissions.push({
-      objectMetadataId: personObjectId,
-      canReadObjectRecords: options.canReadPerson,
-      canUpdateObjectRecords:
-        options.canUpdatePerson === undefined ? false : options.canUpdatePerson,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    });
-  }
+	if (
+		options.canReadPerson !== undefined ||
+		options.canUpdatePerson !== undefined
+	) {
+		objectPermissions.push({
+			objectMetadataId: personObjectId,
+			canReadObjectRecords: options.canReadPerson,
+			canUpdateObjectRecords:
+				options.canUpdatePerson === undefined ? false : options.canUpdatePerson,
+			canSoftDeleteObjectRecords: false,
+			canDestroyObjectRecords: false,
+		});
+	}
 
-  if (
-    options.canReadCompany !== undefined ||
-    options.canUpdateCompany !== undefined
-  ) {
-    objectPermissions.push({
-      objectMetadataId: companyObjectId,
-      canReadObjectRecords: options.canReadCompany,
-      canUpdateObjectRecords:
-        options.canUpdateCompany === undefined
-          ? false
-          : options.canUpdateCompany,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    });
-  }
+	if (
+		options.canReadCompany !== undefined ||
+		options.canUpdateCompany !== undefined
+	) {
+		objectPermissions.push({
+			objectMetadataId: companyObjectId,
+			canReadObjectRecords: options.canReadCompany,
+			canUpdateObjectRecords:
+				options.canUpdateCompany === undefined
+					? false
+					: options.canUpdateCompany,
+			canSoftDeleteObjectRecords: false,
+			canDestroyObjectRecords: false,
+		});
+	}
 
-  if (
-    options.canReadOpportunities !== undefined ||
-    options.canUpdateOpportunities !== undefined
-  ) {
-    objectPermissions.push({
-      objectMetadataId: opportunityObjectId,
-      canReadObjectRecords: options.canReadOpportunities,
-      canUpdateObjectRecords:
-        options.canUpdateOpportunities === undefined
-          ? false
-          : options.canUpdateOpportunities,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    });
-  }
+	if (
+		options.canReadOpportunities !== undefined ||
+		options.canUpdateOpportunities !== undefined
+	) {
+		objectPermissions.push({
+			objectMetadataId: opportunityObjectId,
+			canReadObjectRecords: options.canReadOpportunities,
+			canUpdateObjectRecords:
+				options.canUpdateOpportunities === undefined
+					? false
+					: options.canUpdateOpportunities,
+			canSoftDeleteObjectRecords: false,
+			canDestroyObjectRecords: false,
+		});
+	}
 
-  if (objectPermissions.length > 0) {
-    const upsertObjectPermissionsOperation = {
-      query: gql`
+	if (objectPermissions.length > 0) {
+		const upsertObjectPermissionsOperation = {
+			query: gql`
         mutation UpsertObjectPermissions(
           $roleId: UUID!
           $objectPermissions: [ObjectPermissionInput!]!
@@ -132,19 +132,19 @@ export const createCustomRoleWithObjectPermissions = async (options: {
           }
         }
       `,
-      variables: {
-        roleId,
-        objectPermissions,
-      },
-    };
+			variables: {
+				roleId,
+				objectPermissions,
+			},
+		};
 
-    await makeMetadataAPIRequest(upsertObjectPermissionsOperation);
-  }
+		await makeMetadataAPIRequest(upsertObjectPermissionsOperation);
+	}
 
-  return {
-    roleId,
-    personObjectId,
-    companyObjectId,
-    opportunityObjectId,
-  };
+	return {
+		roleId,
+		personObjectId,
+		companyObjectId,
+		opportunityObjectId,
+	};
 };

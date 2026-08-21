@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import { createDecipheriv, createHash } from 'crypto';
+import { createDecipheriv, createHash } from "crypto";
 
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { JwtTokenTypeEnum } from "src/engine/core-modules/auth/types/jwt-token-type.enum";
+import { JwtWrapperService } from "src/engine/core-modules/jwt/services/jwt-wrapper.service";
+import { type PlaintextString } from "src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type";
 
 // TODO: delete this util once the 2.5 cross-upgrade window closes and every
 // `core.twoFactorAuthenticationMethod.secret` row is known to be in the
@@ -19,33 +19,33 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
  */
 @Injectable()
 export class SimpleSecretEncryptionUtil {
-  private readonly algorithm = 'aes-256-cbc';
-  private readonly keyLength = 32;
+	private readonly algorithm = "aes-256-cbc";
+	private readonly keyLength = 32;
 
-  constructor(private readonly jwtWrapperService: JwtWrapperService) {}
+	constructor(private readonly jwtWrapperService: JwtWrapperService) {}
 
-  async decryptSecret(
-    encryptedSecret: string,
-    purpose: string,
-  ): Promise<PlaintextString> {
-    const appSecret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.KEY_ENCRYPTION_KEY,
-      purpose,
-    );
+	async decryptSecret(
+		encryptedSecret: string,
+		purpose: string,
+	): Promise<PlaintextString> {
+		const appSecret = this.jwtWrapperService.generateAppSecret(
+			JwtTokenTypeEnum.KEY_ENCRYPTION_KEY,
+			purpose,
+		);
 
-    const encryptionKey = createHash('sha256')
-      .update(appSecret)
-      .digest()
-      .slice(0, this.keyLength);
+		const encryptionKey = createHash("sha256")
+			.update(appSecret)
+			.digest()
+			.slice(0, this.keyLength);
 
-    const [ivHex, encryptedData] = encryptedSecret.split(':');
-    const iv = Buffer.from(ivHex, 'hex');
+		const [ivHex, encryptedData] = encryptedSecret.split(":");
+		const iv = Buffer.from(ivHex, "hex");
 
-    const decipher = createDecipheriv(this.algorithm, encryptionKey, iv);
-    let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+		const decipher = createDecipheriv(this.algorithm, encryptionKey, iv);
+		let decrypted = decipher.update(encryptedData, "hex", "utf8");
 
-    decrypted += decipher.final('utf8');
+		decrypted += decipher.final("utf8");
 
-    return decrypted as PlaintextString;
-  }
+		return decrypted as PlaintextString;
+	}
 }

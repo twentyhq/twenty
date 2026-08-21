@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { mediaUp } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { mediaUp } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { renderPage } from '../pages/RenderPage';
-import { PreviewNavbar } from './PreviewNavbar';
-import { PreviewSidebar, type DesktopSidebarMode } from './PreviewSidebar';
-import { PreviewViewbar } from './PreviewViewbar';
+import { renderPage } from "../pages/RenderPage";
+import { PreviewNavbar } from "./PreviewNavbar";
+import { PreviewSidebar, type DesktopSidebarMode } from "./PreviewSidebar";
+import { PreviewViewbar } from "./PreviewViewbar";
 import {
-  type NavbarAction,
-  type PageDefinition,
-  type SidebarEntry,
-  type SidebarItemDef,
-} from '../types';
+	type NavbarAction,
+	type PageDefinition,
+	type SidebarEntry,
+	type SidebarItemDef,
+} from "../types";
 
 const AppLayout = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const RightPane = styled.div`
   padding-top: 12px;
   row-gap: 12px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding-right: 12px;
   }
 `;
@@ -92,90 +92,90 @@ const PanelOnlyRoot = styled.div`
 `;
 
 export function PreviewAppLayout({
-  activeItem,
-  activeItemId,
-  compactWorkflowPage = false,
-  desktopSidebarMode = 'expanded',
-  favorites,
-  highlightedItemId = null,
-  navbarActions,
-  navbarLabel,
-  onSelectPageItem,
-  onToggleFolder,
-  openFolderIds,
-  page,
-  panelOnly = false,
-  revealedObjectIds,
-  rightAside,
-  workspaceEntries,
+	activeItem,
+	activeItemId,
+	compactWorkflowPage = false,
+	desktopSidebarMode = "expanded",
+	favorites,
+	highlightedItemId = null,
+	navbarActions,
+	navbarLabel,
+	onSelectPageItem,
+	onToggleFolder,
+	openFolderIds,
+	page,
+	panelOnly = false,
+	revealedObjectIds,
+	rightAside,
+	workspaceEntries,
 }: {
-  activeItem?: SidebarItemDef;
-  activeItemId: string;
-  compactWorkflowPage?: boolean;
-  desktopSidebarMode?: DesktopSidebarMode;
-  favorites: SidebarItemDef[];
-  highlightedItemId?: string | null;
-  navbarActions?: NavbarAction[];
-  navbarLabel: string;
-  onSelectPageItem?: (itemId: string) => void;
-  onToggleFolder?: (folderId: string) => void;
-  openFolderIds?: string[];
-  page: PageDefinition;
-  panelOnly?: boolean;
-  revealedObjectIds: string[];
-  rightAside?: ReactNode;
-  workspaceEntries: SidebarEntry[];
+	activeItem?: SidebarItemDef;
+	activeItemId: string;
+	compactWorkflowPage?: boolean;
+	desktopSidebarMode?: DesktopSidebarMode;
+	favorites: SidebarItemDef[];
+	highlightedItemId?: string | null;
+	navbarActions?: NavbarAction[];
+	navbarLabel: string;
+	onSelectPageItem?: (itemId: string) => void;
+	onToggleFolder?: (folderId: string) => void;
+	openFolderIds?: string[];
+	page: PageDefinition;
+	panelOnly?: boolean;
+	revealedObjectIds: string[];
+	rightAside?: ReactNode;
+	workspaceEntries: SidebarEntry[];
 }) {
-  if (panelOnly && rightAside !== undefined) {
-    return <PanelOnlyRoot>{rightAside}</PanelOnlyRoot>;
-  }
+	if (panelOnly && rightAside !== undefined) {
+		return <PanelOnlyRoot>{rightAside}</PanelOnlyRoot>;
+	}
 
-  const showViewbar =
-    page.type !== 'dashboard' &&
-    page.type !== 'record' &&
-    page.type !== 'workflow';
-  const resolvedDesktopSidebarMode =
-    page.type === 'record' ? 'collapsed' : desktopSidebarMode;
+	const showViewbar =
+		page.type !== "dashboard" &&
+		page.type !== "record" &&
+		page.type !== "workflow";
+	const resolvedDesktopSidebarMode =
+		page.type === "record" ? "collapsed" : desktopSidebarMode;
 
-  return (
-    <AppLayout>
-      <PreviewSidebar
-        desktopMode={resolvedDesktopSidebarMode}
-        favorites={favorites}
-        highlightedItemId={highlightedItemId}
-        onSelectPageItem={onSelectPageItem}
-        onToggleFolder={onToggleFolder}
-        openFolderIds={openFolderIds}
-        selectedItemId={activeItemId}
-        workspace={workspaceEntries}
-      />
-      <RightPane>
-        <PreviewNavbar
-          activeItem={activeItem}
-          activeItemLabel={navbarLabel}
-          navbarActions={navbarActions}
-          revealedObjectIds={revealedObjectIds}
-        />
-        <ContentRow>
-          <IndexSurface
-            data-compact-workflow={compactWorkflowPage ? '' : undefined}
-          >
-            {showViewbar ? (
-              <PreviewViewbar
-                actions={page.header.actions ?? []}
-                count={page.header.count}
-                pageType={page.type}
-                showListIcon={page.header.showListIcon ?? false}
-                title={page.header.title}
-              />
-            ) : null}
-            {renderPage(page)}
-          </IndexSurface>
-          {rightAside !== undefined ? (
-            <AsideSlot>{rightAside}</AsideSlot>
-          ) : null}
-        </ContentRow>
-      </RightPane>
-    </AppLayout>
-  );
+	return (
+		<AppLayout>
+			<PreviewSidebar
+				desktopMode={resolvedDesktopSidebarMode}
+				favorites={favorites}
+				highlightedItemId={highlightedItemId}
+				onSelectPageItem={onSelectPageItem}
+				onToggleFolder={onToggleFolder}
+				openFolderIds={openFolderIds}
+				selectedItemId={activeItemId}
+				workspace={workspaceEntries}
+			/>
+			<RightPane>
+				<PreviewNavbar
+					activeItem={activeItem}
+					activeItemLabel={navbarLabel}
+					navbarActions={navbarActions}
+					revealedObjectIds={revealedObjectIds}
+				/>
+				<ContentRow>
+					<IndexSurface
+						data-compact-workflow={compactWorkflowPage ? "" : undefined}
+					>
+						{showViewbar ? (
+							<PreviewViewbar
+								actions={page.header.actions ?? []}
+								count={page.header.count}
+								pageType={page.type}
+								showListIcon={page.header.showListIcon ?? false}
+								title={page.header.title}
+							/>
+						) : null}
+						{renderPage(page)}
+					</IndexSurface>
+					{rightAside !== undefined ? (
+						<AsideSlot>{rightAside}</AsideSlot>
+					) : null}
+				</ContentRow>
+			</RightPane>
+		</AppLayout>
+	);
 }

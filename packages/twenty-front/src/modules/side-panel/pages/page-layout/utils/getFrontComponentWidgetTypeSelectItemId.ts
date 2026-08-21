@@ -1,3 +1,3 @@
 export const getFrontComponentWidgetTypeSelectItemId = (
-  frontComponentId: string,
+	frontComponentId: string,
 ): string => `front-component-${frontComponentId}`;

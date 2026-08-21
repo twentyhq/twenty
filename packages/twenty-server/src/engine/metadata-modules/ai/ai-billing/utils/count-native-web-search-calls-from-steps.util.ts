@@ -1,15 +1,15 @@
-import { type StepResult, type ToolSet } from 'ai';
+import { type StepResult, type ToolSet } from "ai";
 
-const WEB_SEARCH_TOOL_NAME = 'web_search';
+const WEB_SEARCH_TOOL_NAME = "web_search";
 
 export const countNativeWebSearchCallsFromSteps = (
-  steps: StepResult<ToolSet>[],
+	steps: StepResult<ToolSet>[],
 ): number =>
-  steps.reduce(
-    (count, step) =>
-      count +
-      step.toolCalls.filter(
-        (toolCall) => toolCall.toolName === WEB_SEARCH_TOOL_NAME,
-      ).length,
-    0,
-  );
+	steps.reduce(
+		(count, step) =>
+			count +
+			step.toolCalls.filter(
+				(toolCall) => toolCall.toolName === WEB_SEARCH_TOOL_NAME,
+			).length,
+		0,
+	);

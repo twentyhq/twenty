@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { SettingsPath } from "twenty-shared/types";
+import { getSettingsPath } from "twenty-shared/utils";
+import { IconChevronDown, IconChevronRight } from "twenty-ui/icon";
+import { AnimatedExpandableContainer } from "twenty-ui/layout";
+import { Card } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledAccordionHeaderButton = styled.button`
   align-items: center;
@@ -61,70 +61,70 @@ const StyledWorkspaceLink = styled(Link)`
 `;
 
 type WorkspaceUpgradeRefItem = {
-  id: string;
-  name?: string | null;
+	id: string;
+	name?: string | null;
 };
 
 type SettingsAdminWorkspacesByHealthAccordionProps = {
-  filledLabel: string;
-  emptyLabel: string;
-  workspaces: WorkspaceUpgradeRefItem[];
-  defaultExpanded?: boolean;
+	filledLabel: string;
+	emptyLabel: string;
+	workspaces: WorkspaceUpgradeRefItem[];
+	defaultExpanded?: boolean;
 };
 
 export const SettingsAdminWorkspacesByHealthAccordion = ({
-  filledLabel,
-  emptyLabel,
-  workspaces,
-  defaultExpanded = false,
+	filledLabel,
+	emptyLabel,
+	workspaces,
+	defaultExpanded = false,
 }: SettingsAdminWorkspacesByHealthAccordionProps) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  const hasWorkspaces = workspaces.length > 0;
+	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+	const hasWorkspaces = workspaces.length > 0;
 
-  return (
-    <Card rounded={true}>
-      {hasWorkspaces ? (
-        <StyledAccordionHeaderButton
-          onClick={() => setIsExpanded((currentValue) => !currentValue)}
-        >
-          <span>{filledLabel}</span>
-          {isExpanded ? (
-            <IconChevronDown size={16} />
-          ) : (
-            <IconChevronRight size={16} />
-          )}
-        </StyledAccordionHeaderButton>
-      ) : (
-        <StyledAccordionHeaderButtonDisabled>
-          <span>{emptyLabel}</span>
-        </StyledAccordionHeaderButtonDisabled>
-      )}
-      {hasWorkspaces && (
-        <AnimatedExpandableContainer
-          isExpanded={isExpanded}
-          dimension="height"
-          mode="scroll-height"
-        >
-          <StyledAccordionContent>
-            <StyledWorkspaceList>
-              {workspaces.map((workspace) => (
-                <StyledWorkspaceListItem key={workspace.id}>
-                  <StyledWorkspaceLink
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelWorkspaceDetail,
-                      { workspaceId: workspace.id },
-                    )}
-                  >
-                    {workspace.name ?? t`Unknown workspace`}
-                    {' - '}
-                    {workspace.id}
-                  </StyledWorkspaceLink>
-                </StyledWorkspaceListItem>
-              ))}
-            </StyledWorkspaceList>
-          </StyledAccordionContent>
-        </AnimatedExpandableContainer>
-      )}
-    </Card>
-  );
+	return (
+		<Card rounded={true}>
+			{hasWorkspaces ? (
+				<StyledAccordionHeaderButton
+					onClick={() => setIsExpanded((currentValue) => !currentValue)}
+				>
+					<span>{filledLabel}</span>
+					{isExpanded ? (
+						<IconChevronDown size={16} />
+					) : (
+						<IconChevronRight size={16} />
+					)}
+				</StyledAccordionHeaderButton>
+			) : (
+				<StyledAccordionHeaderButtonDisabled>
+					<span>{emptyLabel}</span>
+				</StyledAccordionHeaderButtonDisabled>
+			)}
+			{hasWorkspaces && (
+				<AnimatedExpandableContainer
+					isExpanded={isExpanded}
+					dimension="height"
+					mode="scroll-height"
+				>
+					<StyledAccordionContent>
+						<StyledWorkspaceList>
+							{workspaces.map((workspace) => (
+								<StyledWorkspaceListItem key={workspace.id}>
+									<StyledWorkspaceLink
+										to={getSettingsPath(
+											SettingsPath.AdminPanelWorkspaceDetail,
+											{ workspaceId: workspace.id },
+										)}
+									>
+										{workspace.name ?? t`Unknown workspace`}
+										{" - "}
+										{workspace.id}
+									</StyledWorkspaceLink>
+								</StyledWorkspaceListItem>
+							))}
+						</StyledWorkspaceList>
+					</StyledAccordionContent>
+				</AnimatedExpandableContainer>
+			)}
+		</Card>
+	);
 };

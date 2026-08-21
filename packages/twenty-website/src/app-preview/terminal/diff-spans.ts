@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 const Added = styled.span`
   color: ${APP_PREVIEW_TONES.terminal.text.diffAdded};

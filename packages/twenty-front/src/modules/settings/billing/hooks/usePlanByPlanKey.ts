@@ -1,16 +1,16 @@
-import { type BillingPlanKey } from '~/generated-metadata/graphql';
-import { findOrThrow } from 'twenty-shared/utils';
-import { usePlans } from './usePlans';
+import { type BillingPlanKey } from "~/generated-metadata/graphql";
+import { findOrThrow } from "twenty-shared/utils";
+import { usePlans } from "./usePlans";
 
 export const usePlanByPlanKey = () => {
-  const { listPlans } = usePlans();
+	const { listPlans } = usePlans();
 
-  const getPlanByPlanKey = (planKey: BillingPlanKey) =>
-    findOrThrow(
-      listPlans(),
-      (plan) => plan.planKey === planKey,
-      new Error(`Plan ${planKey} not found`),
-    );
+	const getPlanByPlanKey = (planKey: BillingPlanKey) =>
+		findOrThrow(
+			listPlans(),
+			(plan) => plan.planKey === planKey,
+			new Error(`Plan ${planKey} not found`),
+		);
 
-  return { getPlanByPlanKey };
+	return { getPlanByPlanKey };
 };

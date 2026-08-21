@@ -1,13 +1,13 @@
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { removeSqlDDLInjection } from "src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util";
 
 type ComputePostgresEnumNameParams = {
-  tableName: string;
-  columnName: string;
+	tableName: string;
+	columnName: string;
 };
 
 export const computePostgresEnumName = ({
-  tableName,
-  columnName,
+	tableName,
+	columnName,
 }: ComputePostgresEnumNameParams): string => {
-  return removeSqlDDLInjection(`${tableName}_${columnName}_enum`);
+	return removeSqlDDLInjection(`${tableName}_${columnName}_enum`);
 };

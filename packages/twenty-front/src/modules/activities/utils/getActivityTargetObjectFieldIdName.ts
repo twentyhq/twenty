@@ -1,9 +1,9 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 
 export const getActivityTargetObjectFieldIdName = ({
-  nameSingular,
+	nameSingular,
 }: {
-  nameSingular: string;
+	nameSingular: string;
 }) => {
-  return `target${capitalize(nameSingular)}Id`;
+	return `target${capitalize(nameSingular)}Id`;
 };

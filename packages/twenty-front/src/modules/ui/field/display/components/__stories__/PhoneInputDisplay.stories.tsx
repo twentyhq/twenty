@@ -1,16 +1,16 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentWithRouterDecorator } from "~/testing/decorators/ComponentWithRouterDecorator";
 
-import { PhoneDisplay } from '@/ui/field/display/components/PhoneDisplay'; // Adjust the import path as needed
+import { PhoneDisplay } from "@/ui/field/display/components/PhoneDisplay"; // Adjust the import path as needed
 
 const meta: Meta = {
-  title: 'UI/Input/PhoneInputDisplay/PhoneInputDisplay',
-  component: PhoneDisplay,
-  decorators: [ComponentWithRouterDecorator],
-  args: {
-    value: '+33788901234',
-  },
+	title: "UI/Input/PhoneInputDisplay/PhoneInputDisplay",
+	component: PhoneDisplay,
+	decorators: [ComponentWithRouterDecorator],
+	args: {
+		value: "+33788901234",
+	},
 };
 
 export default meta;

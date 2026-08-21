@@ -1,9 +1,9 @@
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnection } from "@/object-record/graphql/types/RecordGqlConnection";
 
 export type RecordGqlGroupByConnection = RecordGqlConnection & {
-  groupByDimensionValues: string[];
+	groupByDimensionValues: string[];
 };
 
 export type RecordGqlOperationGroupByResult = {
-  [objectNamePlural: string]: RecordGqlGroupByConnection[];
+	[objectNamePlural: string]: RecordGqlGroupByConnection[];
 };

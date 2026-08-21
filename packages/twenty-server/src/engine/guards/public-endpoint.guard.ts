@@ -1,8 +1,8 @@
 import {
-  type CanActivate,
-  type ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+	type CanActivate,
+	type ExecutionContext,
+	Injectable,
+} from "@nestjs/common";
 
 /**
  * Guard that explicitly marks an endpoint as public/unprotected.
@@ -13,8 +13,8 @@ import {
  */
 @Injectable()
 export class PublicEndpointGuard implements CanActivate {
-  canActivate(_context: ExecutionContext): boolean {
-    // Always allow access - this is an explicit marker for public endpoints
-    return true;
-  }
+	canActivate(_context: ExecutionContext): boolean {
+		// Always allow access - this is an explicit marker for public endpoints
+		return true;
+	}
 }

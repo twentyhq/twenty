@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { styled } from "@linaria/react";
+import { useState } from "react";
 
-import { HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
+import { HERO_COMPOSITION, mediaUp, spacing } from "@/tokens";
 
-import { BillingToggle } from './BillingToggle';
-import { PlanCard } from './PlanCard';
-import { PLANS_DATA, type PlansBillingPeriod } from './plans-data';
-import { SelfHostToggle } from './SelfHostToggle';
-import { usePricingState } from '@/pricing-state';
+import { BillingToggle } from "./BillingToggle";
+import { PlanCard } from "./PlanCard";
+import { PLANS_DATA, type PlansBillingPeriod } from "./plans-data";
+import { SelfHostToggle } from "./SelfHostToggle";
+import { usePricingState } from "@/pricing-state";
 
 // The interactive island below the intro: the switcher and the cards.
 // It sits 32px under the intro (the hero's intro-to-CTA gap); the cards
@@ -30,7 +30,7 @@ const ControlsRow = styled.div`
     margin-top: ${spacing(4)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     grid-template-columns: 1fr auto 1fr;
 
@@ -43,7 +43,7 @@ const ControlsRow = styled.div`
 const BillingToggleSlot = styled.div`
   justify-self: center;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-column: 2;
     /* Nudged right of dead-centre so it does not read as left of the
        Selfhosting control that sits on the row's right. */
@@ -54,7 +54,7 @@ const BillingToggleSlot = styled.div`
 const SelfHostToggleSlot = styled.div`
   justify-self: end;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-column: 3;
   }
 `;
@@ -66,7 +66,7 @@ const CardsGrid = styled.div`
   row-gap: ${spacing(4)};
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     column-gap: ${spacing(6)};
     grid-template-columns: repeat(3, minmax(0, 1fr));
     row-gap: 0;
@@ -74,46 +74,46 @@ const CardsGrid = styled.div`
 `;
 
 export function PricingBoard() {
-  const [billing, setBilling] = useState<PlansBillingPeriod>('yearly');
-  const { hosting, setHosting } = usePricingState();
+	const [billing, setBilling] = useState<PlansBillingPeriod>("yearly");
+	const { hosting, setHosting } = usePricingState();
 
-  const maxBullets = Math.max(
-    PLANS_DATA.pro.cells[hosting][billing].featureBullets.length,
-    PLANS_DATA.organization.cells[hosting][billing].featureBullets.length,
-    PLANS_DATA.enterprise.cells[hosting][billing].featureBullets.length,
-  );
+	const maxBullets = Math.max(
+		PLANS_DATA.pro.cells[hosting][billing].featureBullets.length,
+		PLANS_DATA.organization.cells[hosting][billing].featureBullets.length,
+		PLANS_DATA.enterprise.cells[hosting][billing].featureBullets.length,
+	);
 
-  return (
-    <Board>
-      <ControlsRow>
-        <BillingToggleSlot>
-          <BillingToggle billing={billing} onBillingChange={setBilling} />
-        </BillingToggleSlot>
-        <SelfHostToggleSlot>
-          <SelfHostToggle hosting={hosting} onHostingChange={setHosting} />
-        </SelfHostToggleSlot>
-      </ControlsRow>
-      <CardsGrid>
-        <PlanCard
-          billing={billing}
-          hosting={hosting}
-          maxBullets={maxBullets}
-          tierId="pro"
-        />
-        <PlanCard
-          billing={billing}
-          highlighted
-          hosting={hosting}
-          maxBullets={maxBullets}
-          tierId="organization"
-        />
-        <PlanCard
-          billing={billing}
-          hosting={hosting}
-          maxBullets={maxBullets}
-          tierId="enterprise"
-        />
-      </CardsGrid>
-    </Board>
-  );
+	return (
+		<Board>
+			<ControlsRow>
+				<BillingToggleSlot>
+					<BillingToggle billing={billing} onBillingChange={setBilling} />
+				</BillingToggleSlot>
+				<SelfHostToggleSlot>
+					<SelfHostToggle hosting={hosting} onHostingChange={setHosting} />
+				</SelfHostToggleSlot>
+			</ControlsRow>
+			<CardsGrid>
+				<PlanCard
+					billing={billing}
+					hosting={hosting}
+					maxBullets={maxBullets}
+					tierId="pro"
+				/>
+				<PlanCard
+					billing={billing}
+					highlighted
+					hosting={hosting}
+					maxBullets={maxBullets}
+					tierId="organization"
+				/>
+				<PlanCard
+					billing={billing}
+					hosting={hosting}
+					maxBullets={maxBullets}
+					tierId="enterprise"
+				/>
+			</CardsGrid>
+		</Board>
+	);
 }

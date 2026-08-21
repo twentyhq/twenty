@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  radius,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	radius,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 
 export type ChipOption<TValue extends string> = {
-  label: string;
-  value: TValue;
+	label: string;
+	value: TValue;
 };
 
 const PillGroup = styled.div`
@@ -31,7 +31,7 @@ const Pill = styled.button`
   border-radius: ${radius(8)};
   color: ${semanticColor.ink};
   cursor: pointer;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.regular};
   line-height: 1.2;
@@ -44,49 +44,49 @@ const Pill = styled.button`
   }
 
   &[data-invalid] {
-    border-color: ${color('error')};
+    border-color: ${color("error")};
   }
 
   &:focus-visible {
-    outline: 2px solid ${color('blue')};
+    outline: 2px solid ${color("blue")};
     outline-offset: 2px;
   }
 `;
 
 export function ChipMultiSelect<TValue extends string>({
-  ariaLabel,
-  invalid = false,
-  onToggle,
-  options,
-  values,
+	ariaLabel,
+	invalid = false,
+	onToggle,
+	options,
+	values,
 }: {
-  ariaLabel: string;
-  invalid?: boolean;
-  onToggle: (value: TValue) => void;
-  options: readonly ChipOption<TValue>[];
-  values: readonly TValue[];
+	ariaLabel: string;
+	invalid?: boolean;
+	onToggle: (value: TValue) => void;
+	options: readonly ChipOption<TValue>[];
+	values: readonly TValue[];
 }) {
-  return (
-    <PillGroup
-      aria-invalid={invalid ? true : undefined}
-      aria-label={ariaLabel}
-      role="group"
-    >
-      {options.map((option) => {
-        const selected = values.includes(option.value);
-        return (
-          <Pill
-            aria-pressed={selected}
-            data-invalid={invalid && !selected ? '' : undefined}
-            data-selected={selected ? '' : undefined}
-            key={option.value}
-            onClick={() => onToggle(option.value)}
-            type="button"
-          >
-            {option.label}
-          </Pill>
-        );
-      })}
-    </PillGroup>
-  );
+	return (
+		<PillGroup
+			aria-invalid={invalid ? true : undefined}
+			aria-label={ariaLabel}
+			role="group"
+		>
+			{options.map((option) => {
+				const selected = values.includes(option.value);
+				return (
+					<Pill
+						aria-pressed={selected}
+						data-invalid={invalid && !selected ? "" : undefined}
+						data-selected={selected ? "" : undefined}
+						key={option.value}
+						onClick={() => onToggle(option.value)}
+						type="button"
+					>
+						{option.label}
+					</Pill>
+				);
+			})}
+		</PillGroup>
+	);
 }

@@ -1,20 +1,20 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
-import { type IframeConfiguration } from 'twenty-shared/types';
+import { IsIn, IsNotEmpty, IsOptional, IsString, IsUrl } from "class-validator";
+import { type IframeConfiguration } from "twenty-shared/types";
 
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetConfigurationType } from "src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type";
 
-@ObjectType('IframeConfiguration')
+@ObjectType("IframeConfiguration")
 export class IframeConfigurationDTO implements IframeConfiguration {
-  @Field(() => WidgetConfigurationType)
-  @IsIn([WidgetConfigurationType.IFRAME])
-  @IsNotEmpty()
-  configurationType: WidgetConfigurationType.IFRAME;
+	@Field(() => WidgetConfigurationType)
+	@IsIn([WidgetConfigurationType.IFRAME])
+	@IsNotEmpty()
+	configurationType: WidgetConfigurationType.IFRAME;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  @IsUrl()
-  url?: string;
+	@Field(() => String, { nullable: true })
+	@IsString()
+	@IsOptional()
+	@IsUrl()
+	url?: string;
 }

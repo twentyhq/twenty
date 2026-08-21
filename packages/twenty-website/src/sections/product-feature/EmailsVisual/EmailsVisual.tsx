@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconPlus } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconPlus } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { RecordTabHeader } from '../components/RecordTabHeader';
-import { ThreadRow } from './components/ThreadRow';
-import { THREADS } from './data/threads';
+import { RecordTabHeader } from "../components/RecordTabHeader";
+import { ThreadRow } from "./components/ThreadRow";
+import { THREADS } from "./data/threads";
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -76,27 +76,27 @@ const ThreadCard = styled.div`
 `;
 
 export function EmailsVisual({ active: _active }: { active: boolean }) {
-  const { i18n } = useLingui();
-  return (
-    <Root>
-      <RecordTabHeader active="Emails" />
-      <Panel>
-        <InboxHeader>
-          <InboxTitle>
-            {i18n._(msg`Inbox`)}
-            <InboxCount>{THREADS.length}</InboxCount>
-          </InboxTitle>
-          <ComposeButton>
-            <IconPlus size={12} stroke={2} />
-            {i18n._(msg`Compose`)}
-          </ComposeButton>
-        </InboxHeader>
-        <ThreadCard>
-          {THREADS.map((thread) => (
-            <ThreadRow key={thread.date} thread={thread} />
-          ))}
-        </ThreadCard>
-      </Panel>
-    </Root>
-  );
+	const { i18n } = useLingui();
+	return (
+		<Root>
+			<RecordTabHeader active="Emails" />
+			<Panel>
+				<InboxHeader>
+					<InboxTitle>
+						{i18n._(msg`Inbox`)}
+						<InboxCount>{THREADS.length}</InboxCount>
+					</InboxTitle>
+					<ComposeButton>
+						<IconPlus size={12} stroke={2} />
+						{i18n._(msg`Compose`)}
+					</ComposeButton>
+				</InboxHeader>
+				<ThreadCard>
+					{THREADS.map((thread) => (
+						<ThreadRow key={thread.date} thread={thread} />
+					))}
+				</ThreadCard>
+			</Panel>
+		</Root>
+	);
 }

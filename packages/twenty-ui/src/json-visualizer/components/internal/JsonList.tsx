@@ -1,17 +1,17 @@
-import { clsx } from 'clsx';
+import { clsx } from "clsx";
 
-import styles from './JsonList.module.scss';
+import styles from "./JsonList.module.scss";
 
 export const JsonList = ({
-  depth,
-  className,
-  children,
+	depth,
+	className,
+	children,
 }: {
-  depth: number;
-  className?: string;
-  children?: React.ReactNode;
+	depth: number;
+	className?: string;
+	children?: React.ReactNode;
 }) => (
-  <ul className={clsx(styles.list, depth > 0 && styles.nested, className)}>
-    {children}
-  </ul>
+	<ul className={clsx(styles.list, depth > 0 && styles.nested, className)}>
+		{children}
+	</ul>
 );

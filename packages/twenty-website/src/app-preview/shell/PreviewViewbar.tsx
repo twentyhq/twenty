@@ -1,16 +1,16 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconChevronDown,
-  IconLayoutKanban,
-  IconList,
-} from '@tabler/icons-react';
+	IconChevronDown,
+	IconLayoutKanban,
+	IconList,
+} from "@tabler/icons-react";
 
-import { mediaUp } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { mediaUp } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { MiniIcon } from '../primitives/MiniIcon';
-import { type PageType } from '../types';
+import { MiniIcon } from "../primitives/MiniIcon";
+import { type PageType } from "../types";
 
 const ViewbarBar = styled.div`
   align-items: center;
@@ -35,7 +35,7 @@ const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
   min-width: 0;
   overflow: hidden;
   padding-right: 4px;
-  padding-left: ${({ $tableAligned }) => ($tableAligned ? '0' : '4px')};
+  padding-left: ${({ $tableAligned }) => ($tableAligned ? "0" : "4px")};
 `;
 
 const ViewName = styled.span`
@@ -72,7 +72,7 @@ const ViewActions = styled.div`
   position: relative;
   z-index: 1;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: flex;
   }
 `;
@@ -92,56 +92,56 @@ const ViewAction = styled.span`
 `;
 
 type PreviewViewbarProps = {
-  actions: string[];
-  count?: number;
-  pageType: PageType;
-  showListIcon: boolean;
-  title: string;
+	actions: string[];
+	count?: number;
+	pageType: PageType;
+	showListIcon: boolean;
+	title: string;
 };
 
 export function PreviewViewbar({
-  actions,
-  count,
-  pageType,
-  showListIcon,
-  title,
+	actions,
+	count,
+	pageType,
+	showListIcon,
+	title,
 }: PreviewViewbarProps) {
-  const showPageCount = count !== undefined;
-  const isTableAligned = pageType === 'table' && showListIcon;
+	const showPageCount = count !== undefined;
+	const isTableAligned = pageType === "table" && showListIcon;
 
-  return (
-    <ViewbarBar>
-      <ViewSwitcher $tableAligned={isTableAligned} aria-hidden>
-        {showListIcon ? (
-          <>
-            <MiniIcon
-              icon={pageType === 'kanban' ? IconLayoutKanban : IconList}
-              color={THEME_LIGHT.font.color.secondary}
-              size={16}
-            />
-            <ViewName>{title}</ViewName>
-            {showPageCount ? (
-              <>
-                <TinyDot />
-                <ViewCount>{count}</ViewCount>
-                <MiniIcon
-                  icon={IconChevronDown}
-                  color={THEME_LIGHT.font.color.light}
-                />
-              </>
-            ) : null}
-          </>
-        ) : (
-          <ViewName>{title}</ViewName>
-        )}
-      </ViewSwitcher>
-      {actions.length > 0 ? (
-        <ViewActions>
-          {actions.map((action) => (
-            <ViewAction key={action}>{action}</ViewAction>
-          ))}
-        </ViewActions>
-      ) : null}
-    </ViewbarBar>
-  );
+	return (
+		<ViewbarBar>
+			<ViewSwitcher $tableAligned={isTableAligned} aria-hidden>
+				{showListIcon ? (
+					<>
+						<MiniIcon
+							icon={pageType === "kanban" ? IconLayoutKanban : IconList}
+							color={THEME_LIGHT.font.color.secondary}
+							size={16}
+						/>
+						<ViewName>{title}</ViewName>
+						{showPageCount ? (
+							<>
+								<TinyDot />
+								<ViewCount>{count}</ViewCount>
+								<MiniIcon
+									icon={IconChevronDown}
+									color={THEME_LIGHT.font.color.light}
+								/>
+							</>
+						) : null}
+					</>
+				) : (
+					<ViewName>{title}</ViewName>
+				)}
+			</ViewSwitcher>
+			{actions.length > 0 ? (
+				<ViewActions>
+					{actions.map((action) => (
+						<ViewAction key={action}>{action}</ViewAction>
+					))}
+				</ViewActions>
+			) : null}
+		</ViewbarBar>
+	);
 }

@@ -1,14 +1,14 @@
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { useNumberFormat } from "@/localization/hooks/useNumberFormat";
 
-import { EllipsisDisplay } from 'twenty-ui/data-display';
+import { EllipsisDisplay } from "twenty-ui/data-display";
 
 type MoneyDisplayProps = {
-  value: number | null;
+	value: number | null;
 };
 
 export const MoneyDisplay = ({ value }: MoneyDisplayProps) => {
-  const { formatNumber } = useNumberFormat();
-  return (
-    <EllipsisDisplay>{value ? `$${formatNumber(value)}` : ''}</EllipsisDisplay>
-  );
+	const { formatNumber } = useNumberFormat();
+	return (
+		<EllipsisDisplay>{value ? `$${formatNumber(value)}` : ""}</EllipsisDisplay>
+	);
 };

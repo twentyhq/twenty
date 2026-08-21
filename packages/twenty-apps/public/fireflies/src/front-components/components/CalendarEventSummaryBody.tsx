@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { isUndefined } from "@sniptt/guards";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { SummaryMarkdown } from 'src/front-components/components/SummaryMarkdown';
-import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
+import { SummaryMarkdown } from "src/front-components/components/SummaryMarkdown";
+import { TranscriptErrorBox } from "src/front-components/components/TranscriptErrorBox";
 
 const StyledCenteredState = styled.div`
   align-items: center;
@@ -18,36 +18,36 @@ const StyledCenteredState = styled.div`
 `;
 
 type CalendarEventSummaryBodyProps = {
-  summaryMarkdown: string | undefined;
-  isCalendarEventSummaryQueryLoading: boolean;
-  errorMessage: string | undefined;
+	summaryMarkdown: string | undefined;
+	isCalendarEventSummaryQueryLoading: boolean;
+	errorMessage: string | undefined;
 };
 
 export const CalendarEventSummaryBody = ({
-  summaryMarkdown,
-  isCalendarEventSummaryQueryLoading,
-  errorMessage,
+	summaryMarkdown,
+	isCalendarEventSummaryQueryLoading,
+	errorMessage,
 }: CalendarEventSummaryBodyProps) => {
-  if (!isUndefined(errorMessage)) {
-    return (
-      <TranscriptErrorBox
-        title="Failed to load the summary"
-        description={errorMessage}
-      />
-    );
-  }
+	if (!isUndefined(errorMessage)) {
+		return (
+			<TranscriptErrorBox
+				title="Failed to load the summary"
+				description={errorMessage}
+			/>
+		);
+	}
 
-  if (isCalendarEventSummaryQueryLoading) {
-    return <StyledCenteredState>Loading summary…</StyledCenteredState>;
-  }
+	if (isCalendarEventSummaryQueryLoading) {
+		return <StyledCenteredState>Loading summary…</StyledCenteredState>;
+	}
 
-  if (isUndefined(summaryMarkdown)) {
-    return (
-      <StyledCenteredState>
-        No summary for this calendar event yet.
-      </StyledCenteredState>
-    );
-  }
+	if (isUndefined(summaryMarkdown)) {
+		return (
+			<StyledCenteredState>
+				No summary for this calendar event yet.
+			</StyledCenteredState>
+		);
+	}
 
-  return <SummaryMarkdown markdown={summaryMarkdown} />;
+	return <SummaryMarkdown markdown={summaryMarkdown} />;
 };

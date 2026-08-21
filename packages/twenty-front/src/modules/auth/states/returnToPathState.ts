@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const returnToPathState = createAtomState<string>({
-  key: 'returnToPathState',
-  defaultValue: '',
+	key: "returnToPathState",
+	defaultValue: "",
 });

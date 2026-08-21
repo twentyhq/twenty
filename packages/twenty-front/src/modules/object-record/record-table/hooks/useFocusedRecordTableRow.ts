@@ -1,172 +1,172 @@
-import { useCallback } from 'react';
-import { useStore } from 'jotai';
+import { useCallback } from "react";
+import { useStore } from "jotai";
 
-import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
-import { getRecordTableRowFocusId } from '@/object-record/record-table/record-table-row/utils/getRecordTableRowFocusId';
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
-import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
-import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { isDefined } from 'twenty-shared/utils';
+import { useUnfocusRecordTableCell } from "@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell";
+import { getRecordTableRowFocusId } from "@/object-record/record-table/record-table-row/utils/getRecordTableRowFocusId";
+import { RecordTableComponentInstanceContext } from "@/object-record/record-table/states/context/RecordTableComponentInstanceContext";
+import { focusedRecordTableRowIndexComponentState } from "@/object-record/record-table/states/focusedRecordTableRowIndexComponentState";
+import { isRecordTableCellFocusActiveComponentState } from "@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState";
+import { isRecordTableRowFocusActiveComponentState } from "@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState";
+import { isRecordTableRowFocusedComponentFamilyState } from "@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState";
+import { recordTableFocusPositionComponentState } from "@/object-record/record-table/states/recordTableFocusPositionComponentState";
+import { usePushFocusItemToFocusStack } from "@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack";
+import { useRemoveFocusItemFromFocusStackById } from "@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById";
+import { FocusComponentType } from "@/ui/utilities/focus/types/FocusComponentType";
+import { useAvailableComponentInstanceIdOrThrow } from "@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow";
+import { useAtomComponentFamilyStateCallbackState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState";
+import { useAtomComponentStateCallbackState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState";
+import { isDefined } from "twenty-shared/utils";
 
 export const useFocusedRecordTableRow = (recordTableId?: string) => {
-  const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
-    RecordTableComponentInstanceContext,
-    recordTableId,
-  );
+	const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
+		RecordTableComponentInstanceContext,
+		recordTableId,
+	);
 
-  const isRowFocusedState = useAtomComponentFamilyStateCallbackState(
-    isRecordTableRowFocusedComponentFamilyState,
-    recordTableIdFromContext,
-  );
+	const isRowFocusedState = useAtomComponentFamilyStateCallbackState(
+		isRecordTableRowFocusedComponentFamilyState,
+		recordTableIdFromContext,
+	);
 
-  const store = useStore();
-  const focusedRowIndex = useAtomComponentStateCallbackState(
-    focusedRecordTableRowIndexComponentState,
-    recordTableIdFromContext,
-  );
+	const store = useStore();
+	const focusedRowIndex = useAtomComponentStateCallbackState(
+		focusedRecordTableRowIndexComponentState,
+		recordTableIdFromContext,
+	);
 
-  const isRowFocusActive = useAtomComponentStateCallbackState(
-    isRecordTableRowFocusActiveComponentState,
-    recordTableIdFromContext,
-  );
+	const isRowFocusActive = useAtomComponentStateCallbackState(
+		isRecordTableRowFocusActiveComponentState,
+		recordTableIdFromContext,
+	);
 
-  const focusedCellPosition = useAtomComponentStateCallbackState(
-    recordTableFocusPositionComponentState,
-    recordTableIdFromContext,
-  );
+	const focusedCellPosition = useAtomComponentStateCallbackState(
+		recordTableFocusPositionComponentState,
+		recordTableIdFromContext,
+	);
 
-  const isRecordTableCellFocusActive = useAtomComponentStateCallbackState(
-    isRecordTableCellFocusActiveComponentState,
-    recordTableIdFromContext,
-  );
+	const isRecordTableCellFocusActive = useAtomComponentStateCallbackState(
+		isRecordTableCellFocusActiveComponentState,
+		recordTableIdFromContext,
+	);
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+	const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+	const { removeFocusItemFromFocusStackById } =
+		useRemoveFocusItemFromFocusStackById();
 
-  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(
-    recordTableIdFromContext,
-  );
+	const { unfocusRecordTableCell } = useUnfocusRecordTableCell(
+		recordTableIdFromContext,
+	);
 
-  const unfocusRecordTableRow = useCallback(() => {
-    const currentFocusedRowIndex = store.get(focusedRowIndex);
+	const unfocusRecordTableRow = useCallback(() => {
+		const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-    if (!isDefined(currentFocusedRowIndex)) {
-      return;
-    }
+		if (!isDefined(currentFocusedRowIndex)) {
+			return;
+		}
 
-    const focusId = getRecordTableRowFocusId({
-      recordTableId: recordTableIdFromContext,
-      rowIndex: currentFocusedRowIndex,
-    });
+		const focusId = getRecordTableRowFocusId({
+			recordTableId: recordTableIdFromContext,
+			rowIndex: currentFocusedRowIndex,
+		});
 
-    removeFocusItemFromFocusStackById({
-      focusId,
-    });
+		removeFocusItemFromFocusStackById({
+			focusId,
+		});
 
-    store.set(focusedRowIndex, null);
-    store.set(isRowFocusedState(currentFocusedRowIndex), false);
-    store.set(isRowFocusActive, false);
-  }, [
-    store,
-    focusedRowIndex,
-    isRowFocusedState,
-    isRowFocusActive,
-    recordTableIdFromContext,
-    removeFocusItemFromFocusStackById,
-  ]);
+		store.set(focusedRowIndex, null);
+		store.set(isRowFocusedState(currentFocusedRowIndex), false);
+		store.set(isRowFocusActive, false);
+	}, [
+		store,
+		focusedRowIndex,
+		isRowFocusedState,
+		isRowFocusActive,
+		recordTableIdFromContext,
+		removeFocusItemFromFocusStackById,
+	]);
 
-  const focusRecordTableRow = useCallback(
-    (rowIndex: number) => {
-      const currentFocusedRowIndex = store.get(focusedRowIndex);
+	const focusRecordTableRow = useCallback(
+		(rowIndex: number) => {
+			const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-      if (
-        isDefined(currentFocusedRowIndex) &&
-        currentFocusedRowIndex !== rowIndex
-      ) {
-        store.set(isRowFocusedState(currentFocusedRowIndex), false);
+			if (
+				isDefined(currentFocusedRowIndex) &&
+				currentFocusedRowIndex !== rowIndex
+			) {
+				store.set(isRowFocusedState(currentFocusedRowIndex), false);
 
-        const focusId = getRecordTableRowFocusId({
-          recordTableId: recordTableIdFromContext,
-          rowIndex: currentFocusedRowIndex,
-        });
+				const focusId = getRecordTableRowFocusId({
+					recordTableId: recordTableIdFromContext,
+					rowIndex: currentFocusedRowIndex,
+				});
 
-        removeFocusItemFromFocusStackById({
-          focusId,
-        });
-      }
+				removeFocusItemFromFocusStackById({
+					focusId,
+				});
+			}
 
-      const focusId = getRecordTableRowFocusId({
-        recordTableId: recordTableIdFromContext,
-        rowIndex,
-      });
+			const focusId = getRecordTableRowFocusId({
+				recordTableId: recordTableIdFromContext,
+				rowIndex,
+			});
 
-      pushFocusItemToFocusStack({
-        focusId,
-        component: {
-          type: FocusComponentType.RECORD_TABLE_ROW,
-          instanceId: focusId,
-        },
-      });
+			pushFocusItemToFocusStack({
+				focusId,
+				component: {
+					type: FocusComponentType.RECORD_TABLE_ROW,
+					instanceId: focusId,
+				},
+			});
 
-      store.set(focusedRowIndex, rowIndex);
-      store.set(isRowFocusedState(rowIndex), true);
-      store.set(isRowFocusActive, true);
-    },
-    [
-      store,
-      focusedRowIndex,
-      recordTableIdFromContext,
-      pushFocusItemToFocusStack,
-      isRowFocusedState,
-      isRowFocusActive,
-      removeFocusItemFromFocusStackById,
-    ],
-  );
+			store.set(focusedRowIndex, rowIndex);
+			store.set(isRowFocusedState(rowIndex), true);
+			store.set(isRowFocusActive, true);
+		},
+		[
+			store,
+			focusedRowIndex,
+			recordTableIdFromContext,
+			pushFocusItemToFocusStack,
+			isRowFocusedState,
+			isRowFocusActive,
+			removeFocusItemFromFocusStackById,
+		],
+	);
 
-  const restoreRecordTableRowFocusFromCellPosition = useCallback(() => {
-    const currentFocusedRowIndex = store.get(focusedRowIndex);
+	const restoreRecordTableRowFocusFromCellPosition = useCallback(() => {
+		const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-    const currentFocusedCellPosition = store.get(focusedCellPosition);
+		const currentFocusedCellPosition = store.get(focusedCellPosition);
 
-    const currentIsRecordTableCellFocusActive = store.get(
-      isRecordTableCellFocusActive,
-    );
+		const currentIsRecordTableCellFocusActive = store.get(
+			isRecordTableCellFocusActive,
+		);
 
-    if (
-      !isDefined(currentFocusedCellPosition) ||
-      !currentIsRecordTableCellFocusActive
-    ) {
-      return;
-    }
+		if (
+			!isDefined(currentFocusedCellPosition) ||
+			!currentIsRecordTableCellFocusActive
+		) {
+			return;
+		}
 
-    unfocusRecordTableCell();
+		unfocusRecordTableCell();
 
-    if (isDefined(currentFocusedRowIndex)) {
-      focusRecordTableRow(currentFocusedCellPosition.row);
-    }
-  }, [
-    store,
-    focusedRowIndex,
-    focusedCellPosition,
-    isRecordTableCellFocusActive,
-    unfocusRecordTableCell,
-    focusRecordTableRow,
-  ]);
+		if (isDefined(currentFocusedRowIndex)) {
+			focusRecordTableRow(currentFocusedCellPosition.row);
+		}
+	}, [
+		store,
+		focusedRowIndex,
+		focusedCellPosition,
+		isRecordTableCellFocusActive,
+		unfocusRecordTableCell,
+		focusRecordTableRow,
+	]);
 
-  return {
-    focusRecordTableRow,
-    unfocusRecordTableRow,
-    restoreRecordTableRowFocusFromCellPosition,
-  };
+	return {
+		focusRecordTableRow,
+		unfocusRecordTableRow,
+		restoreRecordTableRowFocusFromCellPosition,
+	};
 };

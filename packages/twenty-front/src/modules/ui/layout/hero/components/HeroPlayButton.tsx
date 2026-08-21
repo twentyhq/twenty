@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { IconPlayerPlay } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { IconPlayerPlay } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type HeroPlayButtonProps = {
-  onClick?: () => void;
-  ariaLabel?: string;
-  className?: string;
+	onClick?: () => void;
+	ariaLabel?: string;
+	className?: string;
 };
 
 const StyledButton = styled.button`
@@ -43,20 +43,20 @@ const StyledButton = styled.button`
 `;
 
 export const HeroPlayButton = ({
-  onClick,
-  ariaLabel = 'Play video',
-  className,
+	onClick,
+	ariaLabel = "Play video",
+	className,
 }: HeroPlayButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledButton
-      type="button"
-      onClick={onClick}
-      aria-label={ariaLabel}
-      className={className}
-    >
-      <IconPlayerPlay size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
-    </StyledButton>
-  );
+	return (
+		<StyledButton
+			type="button"
+			onClick={onClick}
+			aria-label={ariaLabel}
+			className={className}
+		>
+			<IconPlayerPlay size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
+		</StyledButton>
+	);
 };

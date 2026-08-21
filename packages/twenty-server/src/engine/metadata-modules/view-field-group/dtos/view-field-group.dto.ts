@@ -1,53 +1,53 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ViewFieldGroupOverrides } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
-import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { type ViewFieldGroupOverrides } from "src/engine/metadata-modules/view-field-group/entities/view-field-group.entity";
+import { ViewFieldDTO } from "src/engine/metadata-modules/view-field/dtos/view-field.dto";
 
-@ObjectType('ViewFieldGroup')
+@ObjectType("ViewFieldGroup")
 export class ViewFieldGroupDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field({ nullable: false })
-  name: string;
+	@Field({ nullable: false })
+	name: string;
 
-  @Field({ nullable: false, defaultValue: 0 })
-  position: number;
+	@Field({ nullable: false, defaultValue: 0 })
+	position: number;
 
-  @Field({ nullable: false, defaultValue: true })
-  isVisible: boolean;
+	@Field({ nullable: false, defaultValue: true })
+	isVisible: boolean;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  viewId: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	viewId: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  workspaceId: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	workspaceId: string;
 
-  @HideField()
-  applicationId: string;
+	@HideField()
+	applicationId: string;
 
-  @Field()
-  createdAt: Date;
+	@Field()
+	createdAt: Date;
 
-  @Field()
-  updatedAt: Date;
+	@Field()
+	updatedAt: Date;
 
-  @Field(() => Boolean, { nullable: false })
-  isActive: boolean;
+	@Field(() => Boolean, { nullable: false })
+	isActive: boolean;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+	@Field(() => Date, { nullable: true })
+	deletedAt?: Date | null;
 
-  @Field(() => [ViewFieldDTO])
-  viewFields?: ViewFieldDTO[];
+	@Field(() => [ViewFieldDTO])
+	viewFields?: ViewFieldDTO[];
 
-  @Field(() => Boolean, {
-    nullable: false,
-    deprecationReason: 'isOverridden is deprecated',
-  })
-  isOverridden: boolean;
+	@Field(() => Boolean, {
+		nullable: false,
+		deprecationReason: "isOverridden is deprecated",
+	})
+	isOverridden: boolean;
 
-  @HideField()
-  overrides?: ViewFieldGroupOverrides | null;
+	@HideField()
+	overrides?: ViewFieldGroupOverrides | null;
 }

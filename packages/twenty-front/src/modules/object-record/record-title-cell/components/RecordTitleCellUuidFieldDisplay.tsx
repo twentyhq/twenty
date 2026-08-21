@@ -1,11 +1,11 @@
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FieldContext } from "@/object-record/record-field/ui/contexts/FieldContext";
+import { recordStoreFamilyState } from "@/object-record/record-store/states/recordStoreFamilyState";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { type RecordTitleCellContainerType } from "@/object-record/record-title-cell/types/RecordTitleCellContainerType";
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -22,19 +22,19 @@ const StyledDiv = styled.div`
 `;
 
 export const RecordTitleCellUuidFieldDisplay = ({
-  containerType: _containerType,
+	containerType: _containerType,
 }: {
-  containerType: RecordTitleCellContainerType;
+	containerType: RecordTitleCellContainerType;
 }) => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+	const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+	const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const uuidValue = recordStore?.[fieldDefinition.metadata.fieldName] ?? '';
+	const uuidValue = recordStore?.[fieldDefinition.metadata.fieldName] ?? "";
 
-  return (
-    <StyledDiv>
-      <OverflowingTextWithTooltip text={uuidValue} />
-    </StyledDiv>
-  );
+	return (
+		<StyledDiv>
+			<OverflowingTextWithTooltip text={uuidValue} />
+		</StyledDiv>
+	);
 };

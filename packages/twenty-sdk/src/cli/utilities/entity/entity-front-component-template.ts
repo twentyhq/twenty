@@ -1,16 +1,16 @@
-import { kebabCase } from '@/cli/utilities/string/kebab-case';
-import { v4 } from 'uuid';
+import { kebabCase } from "@/cli/utilities/string/kebab-case";
+import { v4 } from "uuid";
 
 export const getFrontComponentBaseFile = ({
-  name,
-  universalIdentifier = v4(),
+	name,
+	universalIdentifier = v4(),
 }: {
-  name: string;
-  universalIdentifier?: string;
+	name: string;
+	universalIdentifier?: string;
 }) => {
-  const kebabCaseName = kebabCase(name);
+	const kebabCaseName = kebabCase(name);
 
-  return `import { defineFrontComponent } from 'twenty-sdk/define';
+	return `import { defineFrontComponent } from 'twenty-sdk/define';
 
 // React component - implement your UI here
 const Component = () => {

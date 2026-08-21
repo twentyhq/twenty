@@ -1,4 +1,4 @@
-import { TOOL_USAGE_STRATEGY } from 'src/engine/metadata-modules/ai/ai-agent/constants/tool-usage-strategy.const';
+import { TOOL_USAGE_STRATEGY } from "src/engine/metadata-modules/ai/ai-agent/constants/tool-usage-strategy.const";
 
 export const WORKFLOW_BASE_SYSTEM_PROMPT = `You are executing as part of a workflow automation in Twenty CRM.
 

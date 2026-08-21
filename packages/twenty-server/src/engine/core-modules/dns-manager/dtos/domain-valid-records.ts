@@ -1,36 +1,36 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
 @ObjectType()
 class DomainRecord {
-  @Field(() => String)
-  validationType: 'ssl' | 'redirection';
+	@Field(() => String)
+	validationType: "ssl" | "redirection";
 
-  @Field(() => String)
-  type: 'cname';
+	@Field(() => String)
+	type: "cname";
 
-  @Field(() => String)
-  status: string;
+	@Field(() => String)
+	status: string;
 
-  @Field(() => String)
-  key: string;
+	@Field(() => String)
+	key: string;
 
-  @Field(() => String)
-  value: string;
+	@Field(() => String)
+	value: string;
 }
 
 @ObjectType()
 export class DomainValidRecords {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String)
-  domain: string;
+	@Field(() => String)
+	domain: string;
 
-  @Field(() => [DomainRecord])
-  records: Array<DomainRecord>;
+	@Field(() => [DomainRecord])
+	records: Array<DomainRecord>;
 
-  @Field(() => Boolean, { nullable: true })
-  isCustomDomainEnabled?: boolean;
+	@Field(() => Boolean, { nullable: true })
+	isCustomDomainEnabled?: boolean;
 }

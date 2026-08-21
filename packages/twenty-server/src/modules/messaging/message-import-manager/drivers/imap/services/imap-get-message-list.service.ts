@@ -1,250 +1,250 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 
-import { type ImapFlow } from 'imapflow';
-import { isDefined } from 'twenty-shared/utils';
+import { type ImapFlow } from "imapflow";
+import { isDefined } from "twenty-shared/utils";
 
-import { MessageFolderImportPolicy } from 'twenty-shared/types';
-import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+import { MessageFolderImportPolicy } from "twenty-shared/types";
+import { MessageFolder } from "src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface";
 
 import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
-import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
-import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
-import { resolveMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
-import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
-import { isImapMailboxNotFoundError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-mailbox-not-found-error.util';
-import { normalizeImapUnicode } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util';
-import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
-import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
+	MessageImportDriverException,
+	MessageImportDriverExceptionCode,
+} from "src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception";
+import { ImapClientProvider } from "src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider";
+import { ImapMessageListFetchErrorHandler } from "src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service";
+import { ImapSyncService } from "src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service";
+import { createSyncCursor } from "src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util";
+import { resolveMailboxState } from "src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util";
+import { getImapFolderPath } from "src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util";
+import { isImapMailboxNotFoundError } from "src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-mailbox-not-found-error.util";
+import { normalizeImapUnicode } from "src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util";
+import { parseSyncCursor } from "src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util";
+import { type GetMessageListsArgs } from "src/modules/messaging/message-import-manager/types/get-message-lists-args.type";
 import {
-  type GetMessageListsResponse,
-  type GetOneMessageListResponse,
-} from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
+	type GetMessageListsResponse,
+	type GetOneMessageListResponse,
+} from "src/modules/messaging/message-import-manager/types/get-message-lists-response.type";
 
 @Injectable()
 export class ImapGetMessageListService {
-  private readonly logger = new Logger(ImapGetMessageListService.name);
+	private readonly logger = new Logger(ImapGetMessageListService.name);
 
-  constructor(
-    private readonly imapClientProvider: ImapClientProvider,
-    private readonly imapSyncService: ImapSyncService,
-    private readonly errorHandler: ImapMessageListFetchErrorHandler,
-  ) {}
+	constructor(
+		private readonly imapClientProvider: ImapClientProvider,
+		private readonly imapSyncService: ImapSyncService,
+		private readonly errorHandler: ImapMessageListFetchErrorHandler,
+	) {}
 
-  async getMessageLists({
-    connectedAccount,
-    messageFolders,
-    messageChannel,
-  }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    const foldersToProcess =
-      messageChannel.messageFolderImportPolicy ===
-      MessageFolderImportPolicy.SELECTED_FOLDERS
-        ? messageFolders.filter((folder) => folder.isSynced)
-        : messageFolders;
+	async getMessageLists({
+		connectedAccount,
+		messageFolders,
+		messageChannel,
+	}: GetMessageListsArgs): Promise<GetMessageListsResponse> {
+		const foldersToProcess =
+			messageChannel.messageFolderImportPolicy ===
+			MessageFolderImportPolicy.SELECTED_FOLDERS
+				? messageFolders.filter((folder) => folder.isSynced)
+				: messageFolders;
 
-    if (foldersToProcess.length === 0) {
-      this.logger.warn(
-        `Connected account ${connectedAccount.id}: No folders to process`,
-      );
+		if (foldersToProcess.length === 0) {
+			this.logger.warn(
+				`Connected account ${connectedAccount.id}: No folders to process`,
+			);
 
-      return [];
-    }
+			return [];
+		}
 
-    const client = await this.imapClientProvider.getClient(connectedAccount.id);
+		const client = await this.imapClientProvider.getClient(connectedAccount.id);
 
-    try {
-      const results: GetMessageListsResponse = [];
+		try {
+			const results: GetMessageListsResponse = [];
 
-      for (const folder of foldersToProcess) {
-        try {
-          const response = await this.getMessageList(client, folder);
+			for (const folder of foldersToProcess) {
+				try {
+					const response = await this.getMessageList(client, folder);
 
-          results.push({ ...response, folderId: folder.id });
-        } catch (error) {
-          if (isImapMailboxNotFoundError(error)) {
-            this.logger.warn(
-              `Skipping unavailable mailbox for folder ${folder.name}`,
-            );
-            continue;
-          }
+					results.push({ ...response, folderId: folder.id });
+				} catch (error) {
+					if (isImapMailboxNotFoundError(error)) {
+						this.logger.warn(
+							`Skipping unavailable mailbox for folder ${folder.name}`,
+						);
+						continue;
+					}
 
-          throw error;
-        }
-      }
+					throw error;
+				}
+			}
 
-      return results;
-    } catch (error) {
-      this.logger.error(
-        `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
-    } finally {
-      await this.imapClientProvider.closeClient(client);
-    }
-  }
+			return results;
+		} catch (error) {
+			this.logger.error(
+				`Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
+			);
+			this.errorHandler.handleError(error);
+			throw error;
+		} finally {
+			await this.imapClientProvider.closeClient(client);
+		}
+	}
 
-  private async getMessageList(
-    client: ImapFlow,
-    folder: MessageFolder,
-  ): Promise<GetOneMessageListResponse> {
-    const messageExternalIdPrefix = getImapFolderPath(folder.externalId);
+	private async getMessageList(
+		client: ImapFlow,
+		folder: MessageFolder,
+	): Promise<GetOneMessageListResponse> {
+		const messageExternalIdPrefix = getImapFolderPath(folder.externalId);
 
-    if (!isDefined(messageExternalIdPrefix)) {
-      throw new MessageImportDriverException(
-        `Folder ${folder.name} has no path`,
-        MessageImportDriverExceptionCode.NOT_FOUND,
-      );
-    }
+		if (!isDefined(messageExternalIdPrefix)) {
+			throw new MessageImportDriverException(
+				`Folder ${folder.name} has no path`,
+				MessageImportDriverExceptionCode.NOT_FOUND,
+			);
+		}
 
-    const folderPath = normalizeImapUnicode(messageExternalIdPrefix, client);
+		const folderPath = normalizeImapUnicode(messageExternalIdPrefix, client);
 
-    if (await this.canSkipFolderSync(client, folder)) {
-      this.logger.log(`Skipping folder ${folder.name}: no new messages`);
+		if (await this.canSkipFolderSync(client, folder)) {
+			this.logger.log(`Skipping folder ${folder.name}: no new messages`);
 
-      return {
-        messageExternalIds: [],
-        messageExternalIdsToDelete: [],
-        nextSyncCursor: folder.syncCursor ?? '',
-        previousSyncCursor: folder.syncCursor,
-        folderId: folder.id,
-      };
-    }
+			return {
+				messageExternalIds: [],
+				messageExternalIdsToDelete: [],
+				nextSyncCursor: folder.syncCursor ?? "",
+				previousSyncCursor: folder.syncCursor,
+				folderId: folder.id,
+			};
+		}
 
-    this.logger.log(`Processing folder: ${folder.name}`);
+		this.logger.log(`Processing folder: ${folder.name}`);
 
-    const previousCursor = parseSyncCursor(folder.syncCursor);
+		const previousCursor = parseSyncCursor(folder.syncCursor);
 
-    const lock = await client.getMailboxLock(folderPath);
+		const lock = await client.getMailboxLock(folderPath);
 
-    try {
-      const mailbox = client.mailbox;
+		try {
+			const mailbox = client.mailbox;
 
-      if (!mailbox || typeof mailbox === 'boolean') {
-        throw new MessageImportDriverException(
-          `Invalid mailbox state for folder ${folderPath}`,
-          MessageImportDriverExceptionCode.UNKNOWN,
-        );
-      }
+			if (!mailbox || typeof mailbox === "boolean") {
+				throw new MessageImportDriverException(
+					`Invalid mailbox state for folder ${folderPath}`,
+					MessageImportDriverExceptionCode.UNKNOWN,
+				);
+			}
 
-      const mailboxState = await resolveMailboxState(
-        client,
-        folderPath,
-        mailbox,
-      );
+			const mailboxState = await resolveMailboxState(
+				client,
+				folderPath,
+				mailbox,
+			);
 
-      const { messageUids } = await this.imapSyncService.syncFolder(
-        client,
-        folderPath,
-        previousCursor,
-        mailboxState,
-      );
+			const { messageUids } = await this.imapSyncService.syncFolder(
+				client,
+				folderPath,
+				previousCursor,
+				mailboxState,
+			);
 
-      const nextCursor = createSyncCursor(
-        messageUids,
-        previousCursor,
-        mailboxState,
-      );
+			const nextCursor = createSyncCursor(
+				messageUids,
+				previousCursor,
+				mailboxState,
+			);
 
-      const messageExternalIds = messageUids
-        .sort((a, b) => b - a)
-        .map((uid) => `${messageExternalIdPrefix}:${uid}`);
+			const messageExternalIds = messageUids
+				.sort((a, b) => b - a)
+				.map((uid) => `${messageExternalIdPrefix}:${uid}`);
 
-      return {
-        messageExternalIds,
-        messageExternalIdsToDelete: [],
-        nextSyncCursor: JSON.stringify(nextCursor),
-        previousSyncCursor: folder.syncCursor,
-        folderId: folder.id,
-      };
-    } catch (error) {
-      if (isImapMailboxNotFoundError(error)) {
-        throw error;
-      }
+			return {
+				messageExternalIds,
+				messageExternalIdsToDelete: [],
+				nextSyncCursor: JSON.stringify(nextCursor),
+				previousSyncCursor: folder.syncCursor,
+				folderId: folder.id,
+			};
+		} catch (error) {
+			if (isImapMailboxNotFoundError(error)) {
+				throw error;
+			}
 
-      this.logger.error(
-        `Error syncing folder ${folder.name}: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
-    } finally {
-      lock.release();
-    }
-  }
+			this.logger.error(
+				`Error syncing folder ${folder.name}: ${error.message}`,
+			);
+			this.errorHandler.handleError(error);
+			throw error;
+		} finally {
+			lock.release();
+		}
+	}
 
-  private async canSkipFolderSync(
-    client: ImapFlow,
-    folder: MessageFolder,
-  ): Promise<boolean> {
-    const folderPath = getImapFolderPath(folder.externalId, client);
-    const previousCursor = parseSyncCursor(folder.syncCursor);
+	private async canSkipFolderSync(
+		client: ImapFlow,
+		folder: MessageFolder,
+	): Promise<boolean> {
+		const folderPath = getImapFolderPath(folder.externalId, client);
+		const previousCursor = parseSyncCursor(folder.syncCursor);
 
-    if (!isDefined(folderPath) || !isDefined(previousCursor)) {
-      return false;
-    }
+		if (!isDefined(folderPath) || !isDefined(previousCursor)) {
+			return false;
+		}
 
-    try {
-      const supportsCondstore = client.capabilities.has('CONDSTORE');
+		try {
+			const supportsCondstore = client.capabilities.has("CONDSTORE");
 
-      const status = await client.status(folderPath, {
-        uidNext: true,
-        uidValidity: true,
-        ...(supportsCondstore && { highestModseq: true }),
-      });
+			const status = await client.status(folderPath, {
+				uidNext: true,
+				uidValidity: true,
+				...(supportsCondstore && { highestModseq: true }),
+			});
 
-      if (!isDefined(status.uidValidity)) {
-        this.logger.debug(
-          `Folder ${folderPath}: Server missing UIDVALIDITY. Sync required.`,
-        );
+			if (!isDefined(status.uidValidity)) {
+				this.logger.debug(
+					`Folder ${folderPath}: Server missing UIDVALIDITY. Sync required.`,
+				);
 
-        return false;
-      }
+				return false;
+			}
 
-      if (!isDefined(status.uidNext)) {
-        this.logger.debug(
-          `Folder ${folderPath}: Server missing UIDNEXT. Sync required.`,
-        );
+			if (!isDefined(status.uidNext)) {
+				this.logger.debug(
+					`Folder ${folderPath}: Server missing UIDNEXT. Sync required.`,
+				);
 
-        return false;
-      }
+				return false;
+			}
 
-      const uidNext = Number(status.uidNext);
-      const uidValidity = Number(status.uidValidity);
+			const uidNext = Number(status.uidNext);
+			const uidValidity = Number(status.uidValidity);
 
-      if (previousCursor.uidValidity !== uidValidity) {
-        this.logger.debug(
-          `Folder ${folderPath}: UIDVALIDITY changed (${previousCursor.uidValidity} → ${uidValidity}). Full sync required.`,
-        );
+			if (previousCursor.uidValidity !== uidValidity) {
+				this.logger.debug(
+					`Folder ${folderPath}: UIDVALIDITY changed (${previousCursor.uidValidity} → ${uidValidity}). Full sync required.`,
+				);
 
-        return false;
-      }
+				return false;
+			}
 
-      const hasModSeqChanged =
-        isDefined(previousCursor.modSeq) &&
-        isDefined(status.highestModseq) &&
-        previousCursor.modSeq !== status.highestModseq.toString();
+			const hasModSeqChanged =
+				isDefined(previousCursor.modSeq) &&
+				isDefined(status.highestModseq) &&
+				previousCursor.modSeq !== status.highestModseq.toString();
 
-      if (hasModSeqChanged) {
-        this.logger.debug(
-          `Folder ${folderPath}: MODSEQ changed (${previousCursor.modSeq} → ${status.highestModseq}). Sync required.`,
-        );
+			if (hasModSeqChanged) {
+				this.logger.debug(
+					`Folder ${folderPath}: MODSEQ changed (${previousCursor.modSeq} → ${status.highestModseq}). Sync required.`,
+				);
 
-        return false;
-      }
+				return false;
+			}
 
-      const maxUid = Math.max(0, uidNext - 1);
+			const maxUid = Math.max(0, uidNext - 1);
 
-      return previousCursor.highestUid >= maxUid;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to get status for folder ${folderPath}: ${error.message}`,
-      );
+			return previousCursor.highestUid >= maxUid;
+		} catch (error) {
+			this.logger.warn(
+				`Failed to get status for folder ${folderPath}: ${error.message}`,
+			);
 
-      return false;
-    }
-  }
+			return false;
+		}
+	}
 }

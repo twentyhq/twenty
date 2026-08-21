@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const FIND_APPLICATION_CONNECTION_PROVIDERS = gql`
   query ApplicationConnectionProviders($applicationId: UUID!) {

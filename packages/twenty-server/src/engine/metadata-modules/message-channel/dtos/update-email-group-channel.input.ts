@@ -1,16 +1,16 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { Field, InputType } from "@nestjs/graphql";
+import { IsOptional, IsString, MaxLength } from "class-validator";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@InputType('UpdateEmailGroupChannelInput')
+@InputType("UpdateEmailGroupChannelInput")
 export class UpdateEmailGroupChannelInput {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  displayName?: string | null;
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	@IsString()
+	@MaxLength(255)
+	displayName?: string | null;
 }

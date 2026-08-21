@@ -1,3 +1,3 @@
 export enum ViewKey {
-  INDEX = 'INDEX',
+	INDEX = "INDEX",
 }

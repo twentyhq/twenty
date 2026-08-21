@@ -1,19 +1,19 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-import-ongoing-sync-timeout.constant';
+import { CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT } from "src/modules/calendar/calendar-event-import-manager/constants/calendar-import-ongoing-sync-timeout.constant";
 
 export const isSyncStale = (syncStageStartedAt?: string | null): boolean => {
-  if (!isDefined(syncStageStartedAt)) {
-    return true;
-  }
+	if (!isDefined(syncStageStartedAt)) {
+		return true;
+	}
 
-  const syncStageStartedTime = new Date(syncStageStartedAt).getTime();
+	const syncStageStartedTime = new Date(syncStageStartedAt).getTime();
 
-  if (isNaN(syncStageStartedTime)) {
-    throw new Error('Invalid date format');
-  }
+	if (isNaN(syncStageStartedTime)) {
+		throw new Error("Invalid date format");
+	}
 
-  return (
-    Date.now() - syncStageStartedTime > CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT
-  );
+	return (
+		Date.now() - syncStageStartedTime > CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT
+	);
 };

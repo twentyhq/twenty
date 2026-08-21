@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import { Accordion } from '@base-ui/react/accordion';
-import { useLingui } from '@lingui/react';
+import { Accordion } from "@base-ui/react/accordion";
+import { useLingui } from "@lingui/react";
 
-import { MinusMark, PlusMark } from '@/icons';
-import { styled } from '@linaria/react';
+import { MinusMark, PlusMark } from "@/icons";
+import { styled } from "@linaria/react";
 
 import {
-  EASING,
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  spacing,
-  DURATION,
-} from '@/tokens';
+	EASING,
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	radius,
+	spacing,
+	DURATION,
+} from "@/tokens";
 
-import { type FaqQuestion } from './faq.data';
+import { type FaqQuestion } from "./faq.data";
 
 const AccordionList = styled.div`
   margin-inline: auto;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     width: 66%;
   }
 `;
 
 const QuestionText = styled.span`
-  color: ${color('white-40')};
+  color: ${color("white-40")};
   font-size: ${fontSize(8)};
   font-weight: ${FONT_WEIGHT.regular};
   grid-column: 3;
@@ -54,12 +54,12 @@ const MarkerLayer = styled.span`
   width: 14px;
 
   &[data-layer='outline'] {
-    border: 1px solid ${color('white')};
+    border: 1px solid ${color("white")};
     opacity: 1;
   }
 
   &[data-layer='fill'] {
-    background-color: ${color('white')};
+    background-color: ${color("white")};
     opacity: 0;
   }
 `;
@@ -79,9 +79,9 @@ const ToggleContainer = styled.span`
 
 const ToggleVisual = styled.span`
   align-items: center;
-  border: 1px solid ${color('white-40')};
+  border: 1px solid ${color("white-40")};
   border-radius: ${radius(2)};
-  color: ${color('white-80')};
+  color: ${color("white-80")};
   display: inline-flex;
   height: 36px;
   justify-content: center;
@@ -123,12 +123,12 @@ const RowTrigger = styled.button`
   width: 100%;
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
+    outline: 1px solid ${color("blue")};
     outline-offset: 1px;
   }
 
   &:hover [data-question] {
-    color: ${color('white')};
+    color: ${color("white")};
   }
 
   &:hover [data-layer='outline'] {
@@ -140,7 +140,7 @@ const RowTrigger = styled.button`
   }
 
   &:hover [data-toggle] {
-    border-color: ${color('white')};
+    border-color: ${color("white")};
     transform: scale(1.08);
   }
 
@@ -150,14 +150,14 @@ const RowTrigger = styled.button`
 `;
 
 const ItemRow = styled.div`
-  border-top: 1px solid ${color('white-40')};
+  border-top: 1px solid ${color("white-40")};
   display: grid;
   grid-template-columns: 14px 12px 1fr 32px 36px;
   padding-block: ${spacing(6)};
   row-gap: ${spacing(2)};
 
   &[data-open] [data-question] {
-    color: ${color('white')};
+    color: ${color("white")};
   }
 
   &[data-open] [data-layer='outline'] {
@@ -178,7 +178,7 @@ const ItemRow = styled.div`
     transform: scale(1);
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-template-columns: 14px 60px 1fr 80px 36px;
     row-gap: ${spacing(4)};
   }
@@ -214,55 +214,55 @@ const AnswerInner = styled.div`
 `;
 
 const AnswerText = styled.div`
-  color: ${color('white')};
-  font-family: ${fontFamily('sans')};
+  color: ${color("white")};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   line-height: 1.5;
 `;
 
 export type FaqItemsProps = {
-  questions: readonly FaqQuestion[];
+	questions: readonly FaqQuestion[];
 };
 
 export function FaqItems({ questions }: FaqItemsProps) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <Accordion.Root render={<AccordionList />}>
-      {questions.map((faqQuestion, index) => (
-        <Accordion.Item
-          key={faqQuestion.question.id}
-          render={<ItemRow />}
-          value={`faq-${index}`}
-        >
-          <Accordion.Header render={<Header />}>
-            <Accordion.Trigger render={<RowTrigger type="button" />}>
-              <MarkerContainer aria-hidden>
-                <MarkerLayer data-layer="outline" />
-                <MarkerLayer data-layer="fill" />
-              </MarkerContainer>
-              <QuestionText data-question>
-                {i18n._(faqQuestion.question)}
-              </QuestionText>
-              <ToggleContainer aria-hidden>
-                <ToggleVisual data-toggle>
-                  <ToggleIconLayer data-icon="plus">
-                    <PlusMark sizePx={12} />
-                  </ToggleIconLayer>
-                  <ToggleIconLayer data-icon="minus">
-                    <MinusMark sizePx={12} />
-                  </ToggleIconLayer>
-                </ToggleVisual>
-              </ToggleContainer>
-            </Accordion.Trigger>
-          </Accordion.Header>
-          <Accordion.Panel keepMounted render={<AnswerWrapper />}>
-            <AnswerInner>
-              <AnswerText>{i18n._(faqQuestion.answer)}</AnswerText>
-            </AnswerInner>
-          </Accordion.Panel>
-        </Accordion.Item>
-      ))}
-    </Accordion.Root>
-  );
+	return (
+		<Accordion.Root render={<AccordionList />}>
+			{questions.map((faqQuestion, index) => (
+				<Accordion.Item
+					key={faqQuestion.question.id}
+					render={<ItemRow />}
+					value={`faq-${index}`}
+				>
+					<Accordion.Header render={<Header />}>
+						<Accordion.Trigger render={<RowTrigger type="button" />}>
+							<MarkerContainer aria-hidden>
+								<MarkerLayer data-layer="outline" />
+								<MarkerLayer data-layer="fill" />
+							</MarkerContainer>
+							<QuestionText data-question>
+								{i18n._(faqQuestion.question)}
+							</QuestionText>
+							<ToggleContainer aria-hidden>
+								<ToggleVisual data-toggle>
+									<ToggleIconLayer data-icon="plus">
+										<PlusMark sizePx={12} />
+									</ToggleIconLayer>
+									<ToggleIconLayer data-icon="minus">
+										<MinusMark sizePx={12} />
+									</ToggleIconLayer>
+								</ToggleVisual>
+							</ToggleContainer>
+						</Accordion.Trigger>
+					</Accordion.Header>
+					<Accordion.Panel keepMounted render={<AnswerWrapper />}>
+						<AnswerInner>
+							<AnswerText>{i18n._(faqQuestion.answer)}</AnswerText>
+						</AnswerInner>
+					</Accordion.Panel>
+				</Accordion.Item>
+			))}
+		</Accordion.Root>
+	);
 }

@@ -1,18 +1,18 @@
-import { IMPORT_CONTACTS_PREVIEW_COMPANIES } from '@/onboarding/constants/ImportContactsPreviewCompanies';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+import { IMPORT_CONTACTS_PREVIEW_COMPANIES } from "@/onboarding/constants/ImportContactsPreviewCompanies";
+import { getAbsoluteImageUrl } from "~/utils/image/getAbsoluteImageUrl";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { getLogoUrlFromDomainName } from "twenty-shared/utils";
 import {
-  Avatar,
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
-import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+	Avatar,
+	Chip,
+	ChipAccent,
+	ChipSize,
+	ChipVariant,
+} from "twenty-ui/data-display";
+import { IconBuildingSkyscraper, IconPlus } from "twenty-ui/icon";
+import { Checkbox } from "twenty-ui/input";
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 const PREVIEW_ROW_HEIGHT = 32;
 
@@ -51,48 +51,48 @@ const StyledHeaderTitle = styled.div`
 `;
 
 export const OnboardingImportPreviewCompanies = () => {
-  const { t } = useLingui();
-  const theme = useTheme();
+	const { t } = useLingui();
+	const theme = useTheme();
 
-  return (
-    <StyledColumn>
-      <StyledRow>
-        <Checkbox checked={false} hoverable />
-        <StyledHeaderTitle>
-          <IconBuildingSkyscraper
-            size={theme.icon.size.md}
-            color={themeCssVariables.font.color.tertiary}
-          />
-          {t`Companies`}
-        </StyledHeaderTitle>
-        <IconPlus
-          size={theme.icon.size.md}
-          color={themeCssVariables.font.color.tertiary}
-        />
-      </StyledRow>
-      {IMPORT_CONTACTS_PREVIEW_COMPANIES.map((company) => (
-        <StyledRow key={company.id}>
-          <Checkbox checked={false} hoverable />
-          <Chip
-            label={company.name}
-            size={ChipSize.Small}
-            variant={ChipVariant.Transparent}
-            accent={ChipAccent.TextPrimary}
-            clickable={false}
-            leftComponent={
-              <Avatar
-                type="squared"
-                size="md"
-                placeholder={company.name}
-                placeholderColorSeed={company.id}
-                avatarUrl={getAbsoluteImageUrl(
-                  getLogoUrlFromDomainName(company.domainName),
-                )}
-              />
-            }
-          />
-        </StyledRow>
-      ))}
-    </StyledColumn>
-  );
+	return (
+		<StyledColumn>
+			<StyledRow>
+				<Checkbox checked={false} hoverable />
+				<StyledHeaderTitle>
+					<IconBuildingSkyscraper
+						size={theme.icon.size.md}
+						color={themeCssVariables.font.color.tertiary}
+					/>
+					{t`Companies`}
+				</StyledHeaderTitle>
+				<IconPlus
+					size={theme.icon.size.md}
+					color={themeCssVariables.font.color.tertiary}
+				/>
+			</StyledRow>
+			{IMPORT_CONTACTS_PREVIEW_COMPANIES.map((company) => (
+				<StyledRow key={company.id}>
+					<Checkbox checked={false} hoverable />
+					<Chip
+						label={company.name}
+						size={ChipSize.Small}
+						variant={ChipVariant.Transparent}
+						accent={ChipAccent.TextPrimary}
+						clickable={false}
+						leftComponent={
+							<Avatar
+								type="squared"
+								size="md"
+								placeholder={company.name}
+								placeholderColorSeed={company.id}
+								avatarUrl={getAbsoluteImageUrl(
+									getLogoUrlFromDomainName(company.domainName),
+								)}
+							/>
+						}
+					/>
+				</StyledRow>
+			))}
+		</StyledColumn>
+	);
 };

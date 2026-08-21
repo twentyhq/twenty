@@ -1,4 +1,4 @@
 export enum RecordTitleCellContainerType {
-  PageHeader = 'page-header',
-  ShowPage = 'show-page',
+	PageHeader = "page-header",
+	ShowPage = "show-page",
 }

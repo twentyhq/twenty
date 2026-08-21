@@ -1,22 +1,24 @@
-import { type MigrationInterface, type QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from "typeorm";
 
-export class RemoveAgentHandoffTable1763805513241 implements MigrationInterface {
-  name = 'RemoveAgentHandoffTable1763805513241';
+export class RemoveAgentHandoffTable1763805513241
+	implements MigrationInterface
+{
+	name = "RemoveAgentHandoffTable1763805513241";
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DROP TABLE IF EXISTS "core"."agentHandoff" CASCADE`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" ALTER COLUMN "responseFormat" SET DEFAULT '{"type":"text"}'`,
-    );
-  }
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`DROP TABLE IF EXISTS "core"."agentHandoff" CASCADE`,
+		);
+		await queryRunner.query(
+			`ALTER TABLE "core"."agent" ALTER COLUMN "responseFormat" SET DEFAULT '{"type":"text"}'`,
+		);
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" ALTER COLUMN "responseFormat" DROP DEFAULT`,
-    );
-    await queryRunner.query(`CREATE TABLE "core"."agentHandoff" (
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`ALTER TABLE "core"."agent" ALTER COLUMN "responseFormat" DROP DEFAULT`,
+		);
+		await queryRunner.query(`CREATE TABLE "core"."agentHandoff" (
             "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
             "fromAgentId" uuid NOT NULL,
             "toAgentId" uuid NOT NULL,
@@ -30,5 +32,5 @@ export class RemoveAgentHandoffTable1763805513241 implements MigrationInterface 
             CONSTRAINT "FK_agentHandoff_toAgent" FOREIGN KEY ("toAgentId") REFERENCES "core"."agent"("id") ON DELETE CASCADE,
             CONSTRAINT "FK_agentHandoff_workspace" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
         )`);
-  }
+	}
 }

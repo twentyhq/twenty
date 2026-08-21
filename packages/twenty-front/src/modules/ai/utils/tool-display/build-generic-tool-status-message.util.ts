@@ -1,16 +1,16 @@
-import { t } from '@lingui/core/macro';
+import { t } from "@lingui/core/macro";
 
-import { pickStatusLabel } from '@/ai/utils/tool-display/pick-status-label.util';
+import { pickStatusLabel } from "@/ai/utils/tool-display/pick-status-label.util";
 
 export const buildGenericToolStatusMessage = ({
-  label,
-  isFinished,
+	label,
+	isFinished,
 }: {
-  label: string;
-  isFinished: boolean;
+	label: string;
+	isFinished: boolean;
 }): string =>
-  pickStatusLabel({
-    isFinished,
-    loadingLabel: t`Running ${label}`,
-    completedLabel: t`Ran ${label}`,
-  });
+	pickStatusLabel({
+		isFinished,
+		loadingLabel: t`Running ${label}`,
+		completedLabel: t`Ran ${label}`,
+	});

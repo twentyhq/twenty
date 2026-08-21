@@ -4,8 +4,8 @@
 // slug as an idempotency/upsert key (partnerIdBySlug), so the algorithm must
 // never change for existing data.
 export const slugify = (s: string): string =>
-  s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+	s
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");

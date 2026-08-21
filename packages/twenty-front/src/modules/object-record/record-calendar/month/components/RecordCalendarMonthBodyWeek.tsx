@@ -1,13 +1,13 @@
-import { RecordCalendarMonthBodyDay } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyDay';
-import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { eachDayOfInterval, endOfWeek } from 'date-fns';
-import { type Temporal } from 'temporal-polyfill';
+import { RecordCalendarMonthBodyDay } from "@/object-record/record-calendar/month/components/RecordCalendarMonthBodyDay";
+import { useRecordCalendarMonthContextOrThrow } from "@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { eachDayOfInterval, endOfWeek } from "date-fns";
+import { type Temporal } from "temporal-polyfill";
 import {
-  turnJSDateToPlainDate,
-  turnPlainDateToShiftedDateInSystemTimeZone,
-} from 'twenty-shared/utils';
+	turnJSDateToPlainDate,
+	turnPlainDateToShiftedDateInSystemTimeZone,
+} from "twenty-shared/utils";
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -20,29 +20,29 @@ const StyledContainer = styled.div`
 `;
 
 type RecordCalendarMonthBodyWeekProps = {
-  startDayOfWeek: Temporal.PlainDate;
+	startDayOfWeek: Temporal.PlainDate;
 };
 
 export const RecordCalendarMonthBodyWeek = ({
-  startDayOfWeek,
+	startDayOfWeek,
 }: RecordCalendarMonthBodyWeekProps) => {
-  const { weekStartsOnDayIndex } = useRecordCalendarMonthContextOrThrow();
+	const { weekStartsOnDayIndex } = useRecordCalendarMonthContextOrThrow();
 
-  const daysOfWeek = eachDayOfInterval({
-    start: turnPlainDateToShiftedDateInSystemTimeZone(startDayOfWeek),
-    end: endOfWeek(turnPlainDateToShiftedDateInSystemTimeZone(startDayOfWeek), {
-      weekStartsOn: weekStartsOnDayIndex,
-    }),
-  });
+	const daysOfWeek = eachDayOfInterval({
+		start: turnPlainDateToShiftedDateInSystemTimeZone(startDayOfWeek),
+		end: endOfWeek(turnPlainDateToShiftedDateInSystemTimeZone(startDayOfWeek), {
+			weekStartsOn: weekStartsOnDayIndex,
+		}),
+	});
 
-  return (
-    <StyledContainer>
-      {daysOfWeek.map((day, index) => (
-        <RecordCalendarMonthBodyDay
-          key={`day-${index}`}
-          day={turnJSDateToPlainDate(day)}
-        />
-      ))}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			{daysOfWeek.map((day, index) => (
+				<RecordCalendarMonthBodyDay
+					key={`day-${index}`}
+					day={turnJSDateToPlainDate(day)}
+				/>
+			))}
+		</StyledContainer>
+	);
 };

@@ -1,39 +1,39 @@
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError } from "twenty-shared/utils";
 
-import { MAX_HOST_FETCH_RESPONSE_BODY_BYTES } from '@/host/fetch/constants/MaxHostFetchResponseBodyBytes';
-import { type HostFetchResult } from '@/types/HostFetchResult';
+import { MAX_HOST_FETCH_RESPONSE_BODY_BYTES } from "@/host/fetch/constants/MaxHostFetchResponseBodyBytes";
+import { type HostFetchResult } from "@/types/HostFetchResult";
 
 const responseTooLargeError = (): CustomError =>
-  new CustomError(
-    `Front component host fetch response exceeds the ${MAX_HOST_FETCH_RESPONSE_BODY_BYTES} bytes limit`,
-    'FRONT_COMPONENT_HOST_FETCH_RESPONSE_TOO_LARGE',
-  );
+	new CustomError(
+		`Front component host fetch response exceeds the ${MAX_HOST_FETCH_RESPONSE_BODY_BYTES} bytes limit`,
+		"FRONT_COMPONENT_HOST_FETCH_RESPONSE_TOO_LARGE",
+	);
 
 export const serializeResponseToHostFetchResult = async (
-  response: Response,
+	response: Response,
 ): Promise<HostFetchResult> => {
-  const contentLength = Number(response.headers.get('content-length') ?? 0);
+	const contentLength = Number(response.headers.get("content-length") ?? 0);
 
-  if (contentLength > MAX_HOST_FETCH_RESPONSE_BODY_BYTES) {
-    throw responseTooLargeError();
-  }
+	if (contentLength > MAX_HOST_FETCH_RESPONSE_BODY_BYTES) {
+		throw responseTooLargeError();
+	}
 
-  const body = await response.text();
+	const body = await response.text();
 
-  if (new Blob([body]).size > MAX_HOST_FETCH_RESPONSE_BODY_BYTES) {
-    throw responseTooLargeError();
-  }
+	if (new Blob([body]).size > MAX_HOST_FETCH_RESPONSE_BODY_BYTES) {
+		throw responseTooLargeError();
+	}
 
-  const responseHeaders: Record<string, string> = {};
+	const responseHeaders: Record<string, string> = {};
 
-  response.headers.forEach((value, key) => {
-    responseHeaders[key] = value;
-  });
+	response.headers.forEach((value, key) => {
+		responseHeaders[key] = value;
+	});
 
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    headers: responseHeaders,
-    body,
-  };
+	return {
+		status: response.status,
+		statusText: response.statusText,
+		headers: responseHeaders,
+		body,
+	};
 };

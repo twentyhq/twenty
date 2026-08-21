@@ -1,12 +1,12 @@
-import { iconPickerState } from '@/ui/input/states/iconPickerState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { iconPickerState } from "@/ui/input/states/iconPickerState";
+import { useAtomState } from "@/ui/utilities/state/jotai/hooks/useAtomState";
 
 export const useIconPicker = () => {
-  const [iconPicker, setIconPicker] = useAtomState(iconPickerState);
+	const [iconPicker, setIconPicker] = useAtomState(iconPickerState);
 
-  return {
-    Icon: iconPicker.Icon,
-    iconKey: iconPicker.iconKey,
-    setIconPicker,
-  };
+	return {
+		Icon: iconPicker.Icon,
+		iconKey: iconPicker.iconKey,
+		setIconPicker,
+	};
 };

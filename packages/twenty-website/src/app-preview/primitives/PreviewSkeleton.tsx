@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { REDUCED_MOTION } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { REDUCED_MOTION } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
 const SkeletonBase = styled.div`
   animation: previewSkeletonShimmer 1.4s ease infinite;
@@ -30,14 +30,14 @@ const SkeletonBase = styled.div`
 `;
 
 const Bar = styled(SkeletonBase)<{
-  $height?: number;
-  $radius?: number;
-  $width?: string;
+	$height?: number;
+	$radius?: number;
+	$width?: string;
 }>`
   border-radius: ${({ $radius = 4 }) => `${$radius}px`};
   flex-shrink: 0;
   height: ${({ $height = 10 }) => `${$height}px`};
-  width: ${({ $width = '100%' }) => $width};
+  width: ${({ $width = "100%" }) => $width};
 `;
 
 const Circle = styled(SkeletonBase)<{ $size: number }>`

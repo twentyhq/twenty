@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  radius,
-  spacing,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	radius,
+	spacing,
+} from "@/tokens";
 
-import { CheckMark } from '@/icons';
+import { CheckMark } from "@/icons";
 
-import { type PlansHostingMode } from '@/pricing-state';
+import { type PlansHostingMode } from "@/pricing-state";
 
 const ToggleRow = styled.label`
   align-items: center;
@@ -30,8 +30,8 @@ const ToggleRow = styled.label`
 
 const Checkbox = styled.span`
   align-items: center;
-  background-color: ${color('black-5')};
-  border: 1px solid ${color('blue')};
+  background-color: ${color("black-5")};
+  border: 1px solid ${color("blue")};
   border-radius: ${radius(1)};
   display: grid;
   height: 16px;
@@ -39,8 +39,8 @@ const Checkbox = styled.span`
   width: 16px;
 
   &[data-checked] {
-    background-color: ${color('blue')};
-    color: ${color('white')};
+    background-color: ${color("blue")};
+    color: ${color("white")};
   }
 `;
 
@@ -52,34 +52,34 @@ const HiddenInput = styled.input`
 `;
 
 const LabelText = styled.span`
-  color: ${color('black-80')};
-  font-family: ${fontFamily('sans')};
+  color: ${color("black-80")};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.regular};
   line-height: 1;
 `;
 
 export function SelfHostToggle({
-  hosting,
-  onHostingChange,
+	hosting,
+	onHostingChange,
 }: {
-  hosting: PlansHostingMode;
-  onHostingChange: (hosting: PlansHostingMode) => void;
+	hosting: PlansHostingMode;
+	onHostingChange: (hosting: PlansHostingMode) => void;
 }) {
-  const { i18n } = useLingui();
-  const isSelfHost = hosting === 'selfHost';
+	const { i18n } = useLingui();
+	const isSelfHost = hosting === "selfHost";
 
-  return (
-    <ToggleRow>
-      <HiddenInput
-        checked={isSelfHost}
-        onChange={() => onHostingChange(isSelfHost ? 'cloud' : 'selfHost')}
-        type="checkbox"
-      />
-      <LabelText>{i18n._(msg`Selfhosting`)}</LabelText>
-      <Checkbox data-checked={isSelfHost ? '' : undefined}>
-        {isSelfHost ? <CheckMark /> : null}
-      </Checkbox>
-    </ToggleRow>
-  );
+	return (
+		<ToggleRow>
+			<HiddenInput
+				checked={isSelfHost}
+				onChange={() => onHostingChange(isSelfHost ? "cloud" : "selfHost")}
+				type="checkbox"
+			/>
+			<LabelText>{i18n._(msg`Selfhosting`)}</LabelText>
+			<Checkbox data-checked={isSelfHost ? "" : undefined}>
+				{isSelfHost ? <CheckMark /> : null}
+			</Checkbox>
+		</ToggleRow>
+	);
 }

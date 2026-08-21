@@ -1,3 +1,3 @@
-import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
+import { SettingsSubdomain } from "@/settings/domains/components/SettingsSubdomain";
 
 export const SettingsSubdomainPage = () => <SettingsSubdomain />;

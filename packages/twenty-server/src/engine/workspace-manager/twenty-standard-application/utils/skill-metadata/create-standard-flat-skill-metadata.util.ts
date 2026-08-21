@@ -1,22 +1,22 @@
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { type AllStandardSkillName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-skill-name.type';
+import { type FlatSkill } from "src/engine/metadata-modules/flat-skill/types/flat-skill.type";
+import { type AllStandardSkillName } from "src/engine/workspace-manager/twenty-standard-application/types/all-standard-skill-name.type";
 import {
-  type CreateStandardSkillArgs,
-  createStandardSkillFlatMetadata,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-skill-flat-metadata.util';
+	type CreateStandardSkillArgs,
+	createStandardSkillFlatMetadata,
+} from "src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-skill-flat-metadata.util";
 
 export const STANDARD_FLAT_SKILL_METADATA_BUILDERS_BY_SKILL_NAME = {
-  'workflow-building': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'workflow-building',
-        name: 'workflow-building',
-        label: 'Workflow Building',
-        description:
-          'Creating and managing automation workflows with triggers and steps',
-        icon: 'IconSettingsAutomation',
-        content: `# Workflow Building Skill
+	"workflow-building": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "workflow-building",
+				name: "workflow-building",
+				label: "Workflow Building",
+				description:
+					"Creating and managing automation workflows with triggers and steps",
+				icon: "IconSettingsAutomation",
+				content: `# Workflow Building Skill
 
 You help users create and manage automation workflows.
 
@@ -128,21 +128,21 @@ Do NOT call \`validate_workflow\` after every change:
 - Ensure workflow logic remains coherent
 
 Prioritize user understanding and workflow effectiveness.`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'data-manipulation': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'data-manipulation',
-        name: 'data-manipulation',
-        label: 'Data Manipulation',
-        description:
-          'Searching, filtering, creating, and updating records across all objects',
-        icon: 'IconDatabase',
-        content: `# Data Manipulation Skill
+	"data-manipulation": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "data-manipulation",
+				name: "data-manipulation",
+				label: "Data Manipulation",
+				description:
+					"Searching, filtering, creating, and updating records across all objects",
+				icon: "IconDatabase",
+				content: `# Data Manipulation Skill
 
 You explore and manage data across companies, people, opportunities, tasks, notes, and custom objects.
 
@@ -257,21 +257,21 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
 Every tool round-trip re-sends the ENTIRE conversation (system prompt, loaded skills, and all prior tool inputs/outputs) as new input tokens, so a long thread makes every later step progressively more expensive. When the user finishes an import and moves on to a distinct objective (e.g. field configuration, segmentation, dashboards, or a second unrelated import), suggest starting a NEW thread for it rather than continuing in the same one, which resets the context and keeps cost low. Keep a single import (inspect, confirm, validate, write, report) within one thread.
 
 Prioritize data integrity and provide clear feedback on operations performed.`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'workspace-demo-seeding': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'workspace-demo-seeding',
-        name: 'workspace-demo-seeding',
-        label: 'Workspace Demo Seeding',
-        description:
-          'Seeding demo metadata and data for workspace setup and testing purposes',
-        icon: 'IconDatabase',
-        content: `# Workspace Demo Seeding Skill
+	"workspace-demo-seeding": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "workspace-demo-seeding",
+				name: "workspace-demo-seeding",
+				label: "Workspace Demo Seeding",
+				description:
+					"Seeding demo metadata and data for workspace setup and testing purposes",
+				icon: "IconDatabase",
+				content: `# Workspace Demo Seeding Skill
 You will transform the existing standard workspace into a fully custom demo tailored to the user's business type.
 
 The goal is to tell a coherent and realistic story with the data: custom fields added to standard objects, new custom objects for domain-specific entities, rich relations, seeded and updated records, views, and enrichment data (emails, calendar events, tasks, notes, files) that make the workspace feel like a real company in operation.
@@ -400,21 +400,21 @@ Navigate to each view after creating it. Wait 3 seconds.
 
 Loop STEP 8 for all the custom objects
 `,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'dashboard-building': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'dashboard-building',
-        name: 'dashboard-building',
-        label: 'Dashboard Building',
-        description:
-          'Creating and managing dashboards with widgets and layouts',
-        icon: 'IconLayoutDashboard',
-        content: `# Dashboard Building Skill
+	"dashboard-building": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "dashboard-building",
+				name: "dashboard-building",
+				label: "Dashboard Building",
+				description:
+					"Creating and managing dashboards with widgets and layouts",
+				icon: "IconLayoutDashboard",
+				content: `# Dashboard Building Skill
 
 You help users create and manage dashboards with widgets.
 
@@ -557,21 +557,21 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - Start simple, add complexity as needed
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'metadata-building': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'metadata-building',
-        name: 'metadata-building',
-        label: 'Metadata Building',
-        description:
-          'Managing the data model: creating objects, fields, and relations',
-        icon: 'IconBuildingSkyscraper',
-        content: `# Metadata Building Skill
+	"metadata-building": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "metadata-building",
+				name: "metadata-building",
+				label: "Metadata Building",
+				description:
+					"Managing the data model: creating objects, fields, and relations",
+				icon: "IconBuildingSkyscraper",
+				content: `# Metadata Building Skill
 
 You help users manage their workspace data model by creating, updating, and organizing custom objects and fields.
 
@@ -637,20 +637,20 @@ You help users manage their workspace data model by creating, updating, and orga
 - Provide clear feedback on operations performed
 
 Prioritize data model integrity and user understanding.`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  research: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'research',
-        name: 'research',
-        label: 'Research',
-        description: 'Finding information and gathering facts from the web',
-        icon: 'IconSearch',
-        content: `# Research Skill
+	research: (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "research",
+				name: "research",
+				label: "Research",
+				description: "Finding information and gathering facts from the web",
+				icon: "IconSearch",
+				content: `# Research Skill
 
 You find information and gather facts from the web.
 
@@ -677,21 +677,21 @@ You find information and gather facts from the web.
 - Include relevant sources
 
 Be persistent in finding accurate information.`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'code-interpreter': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'code-interpreter',
-        name: 'code-interpreter',
-        label: 'Code Interpreter',
-        description:
-          'Python code execution for data analysis, complex multi-step operations, and efficient bulk processing via MCP bridge',
-        icon: 'IconCode',
-        content: `# Code Interpreter Skill
+	"code-interpreter": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "code-interpreter",
+				name: "code-interpreter",
+				label: "Code Interpreter",
+				description:
+					"Python code execution for data analysis, complex multi-step operations, and efficient bulk processing via MCP bridge",
+				icon: "IconCode",
+				content: `# Code Interpreter Skill
 
 You have access to the \`code_interpreter\` tool to execute Python code in a sandboxed environment.
 
@@ -842,21 +842,21 @@ company_ids = twenty.lookup_by('companies', 'name', ['Acme', 'Globex'])
 \`\`\`
 
 For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill for the full recipe.`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  xlsx: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'xlsx',
-        name: 'xlsx',
-        label: 'Excel & Spreadsheets',
-        description:
-          'Excel/spreadsheet creation, editing, and analysis with formulas, formatting, and visualization',
-        icon: 'IconFileSpreadsheet',
-        content: `# Excel Processing Skill
+	xlsx: (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "xlsx",
+				name: "xlsx",
+				label: "Excel & Spreadsheets",
+				description:
+					"Excel/spreadsheet creation, editing, and analysis with formulas, formatting, and visualization",
+				icon: "IconFileSpreadsheet",
+				content: `# Excel Processing Skill
 
 **IMPORTANT**: Save all output files to \`/home/user/output/\` for them to be downloadable.
 
@@ -979,21 +979,21 @@ If errors found, fix them and recalculate again.
 | Create Excel | openpyxl | \`Workbook()\` |
 | Add formula | openpyxl | \`sheet['B2'] = '=SUM(A1:A10)'\` |
 | Recalculate | script | \`python /home/user/scripts/xlsx/recalc.py file.xlsx\` |`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  pdf: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'pdf',
-        name: 'pdf',
-        label: 'PDF Processing',
-        description:
-          'PDF form filling, field extraction, table parsing, and validation',
-        icon: 'IconFileTypePdf',
-        content: `# PDF Processing Skill
+	pdf: (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "pdf",
+				name: "pdf",
+				label: "PDF Processing",
+				description:
+					"PDF form filling, field extraction, table parsing, and validation",
+				icon: "IconFileTypePdf",
+				content: `# PDF Processing Skill
 
 **IMPORTANT**: Save all output files to \`/home/user/output/\` for them to be downloadable.
 
@@ -1116,21 +1116,21 @@ writer.write('/home/user/output/page1.pdf')
 | Validate fill | script | \`python create_validation_image.py filled.pdf\` |
 | Create PDF | reportlab | \`canvas.Canvas('out.pdf')\` |
 | Merge PDFs | PyPDF2 | \`PdfMerger()\` |`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  docx: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'docx',
-        name: 'docx',
-        label: 'Word Documents',
-        description:
-          'Word document creation, editing, template processing, and OOXML manipulation',
-        icon: 'IconFileTypeDocx',
-        content: `# Word Document Processing Skill
+	docx: (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "docx",
+				name: "docx",
+				label: "Word Documents",
+				description:
+					"Word document creation, editing, template processing, and OOXML manipulation",
+				icon: "IconFileTypeDocx",
+				content: `# Word Document Processing Skill
 
 **IMPORTANT**: Save all output files to \`/home/user/output/\` for them to be downloadable.
 
@@ -1274,21 +1274,21 @@ para.paragraph_format.space_after = Pt(12)
 | Unpack for editing | script | \`python unpack.py doc.docx ./out/\` |
 | Repack | script | \`python pack.py ./out/ doc.docx\` |
 | Validate | script | \`python validate.py doc.docx\` |`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'view-building': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'view-building',
-        name: 'view-building',
-        label: 'View Building',
-        description:
-          'Creating and configuring views (table, board/kanban, calendar) for objects to organize and visualize records',
-        icon: 'IconLayoutBoard',
-        content: `# View Building Skill
+	"view-building": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "view-building",
+				name: "view-building",
+				label: "View Building",
+				description:
+					"Creating and configuring views (table, board/kanban, calendar) for objects to organize and visualize records",
+				icon: "IconLayoutBoard",
+				content: `# View Building Skill
 
 You help users create and configure views to organize how they see their records.
 
@@ -1367,21 +1367,21 @@ Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipel
 - Suggest the most relevant view type based on the object's fields
 - After creating a view, always configure useful view fields and navigate to it
 - Explain what each view type does so users can make informed choices`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'view-filters-and-sorts': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'view-filters-and-sorts',
-        name: 'view-filters-and-sorts',
-        label: 'View Filters & Sorts',
-        description:
-          'Adding filters and sorts to views to focus on relevant records based on user needs',
-        icon: 'IconFilter',
-        content: `# View Filters & Sorts Skill
+	"view-filters-and-sorts": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "view-filters-and-sorts",
+				name: "view-filters-and-sorts",
+				label: "View Filters & Sorts",
+				description:
+					"Adding filters and sorts to views to focus on relevant records based on user needs",
+				icon: "IconFilter",
+				content: `# View Filters & Sorts Skill
 
 You help users add filters and sorts to their views so they see the most relevant records.
 
@@ -1492,21 +1492,21 @@ Some fields have sub-fields that can be filtered:
 - Suggest sorts that complement the filters (e.g., if filtering overdue tasks, sort by dueAt ASC)
 - Explain what the filters do so users understand the results
 - If complex filtering is needed (AND + OR), explain the logic clearly`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  'custom-objects-cleanup': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'custom-objects-cleanup',
-        name: 'custom-objects-cleanup',
-        label: 'Custom Objects Cleanup',
-        description:
-          'Archiving custom objects from a workspace (e.g. dev seed objects like pets, rockets)',
-        icon: 'IconArchive',
-        content: `# Custom Objects Cleanup Skill
+	"custom-objects-cleanup": (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "custom-objects-cleanup",
+				name: "custom-objects-cleanup",
+				label: "Custom Objects Cleanup",
+				description:
+					"Archiving custom objects from a workspace (e.g. dev seed objects like pets, rockets)",
+				icon: "IconArchive",
+				content: `# Custom Objects Cleanup Skill
 
 You help users archive custom objects from their workspace, such as objects created by the dev seed (pets, rockets, survey results, etc.) or any other custom objects.
 
@@ -1540,21 +1540,21 @@ You help users archive custom objects from their workspace, such as objects crea
 - Be clear about what will be archived and that it is reversible
 - If an object has relations to other objects, mention this before archiving
 - Archive all confirmed objects in a single batch call using update_many_object_metadata`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  pptx: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'pptx',
-        name: 'pptx',
-        label: 'PowerPoint',
-        description:
-          'PowerPoint creation, editing, templates, thumbnails, and slide manipulation',
-        icon: 'IconPresentation',
-        content: `# PowerPoint Processing Skill
+	pptx: (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "pptx",
+				name: "pptx",
+				label: "PowerPoint",
+				description:
+					"PowerPoint creation, editing, templates, thumbnails, and slide manipulation",
+				icon: "IconPresentation",
+				content: `# PowerPoint Processing Skill
 
 **IMPORTANT**: Save all output files to \`/home/user/output/\` for them to be downloadable.
 
@@ -1716,21 +1716,21 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
 | Get slide inventory | script | \`python inventory.py pres.pptx\` |
 | Reorder slides | script | \`python rearrange.py pres.pptx '[2,1,3]' out.pptx\` |
 | Find/replace | script | \`python replace.py pres.pptx '{...}' out.pptx\` |`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 
-  roles: (args: Omit<CreateStandardSkillArgs, 'context'>) =>
-    createStandardSkillFlatMetadata({
-      ...args,
-      context: {
-        skillName: 'roles',
-        name: 'roles',
-        label: 'Roles',
-        description:
-          'Managing roles and permissions: who can read, edit and delete what',
-        icon: 'IconLockAccess',
-        content: `# Roles Skill
+	roles: (args: Omit<CreateStandardSkillArgs, "context">) =>
+		createStandardSkillFlatMetadata({
+			...args,
+			context: {
+				skillName: "roles",
+				name: "roles",
+				label: "Roles",
+				description:
+					"Managing roles and permissions: who can read, edit and delete what",
+				icon: "IconLockAccess",
+				content: `# Roles Skill
 
 You help users manage roles and permissions in their workspace. Roles live under Settings > Members > Roles in the UI.
 
@@ -1816,11 +1816,11 @@ When the user names a person, resolve them to a workspace member first and resta
 ## After mutating
 
 Report what changed in plain terms: which role, what it can now do, and who is affected. If you changed overrides, restate the objects that are still overridden so the user can see nothing was dropped.`,
-        isCustom: false,
-      },
-    }),
+				isCustom: false,
+			},
+		}),
 } satisfies {
-  [P in AllStandardSkillName]: (
-    args: Omit<CreateStandardSkillArgs, 'context'>,
-  ) => FlatSkill;
+	[P in AllStandardSkillName]: (
+		args: Omit<CreateStandardSkillArgs, "context">,
+	) => FlatSkill;
 };

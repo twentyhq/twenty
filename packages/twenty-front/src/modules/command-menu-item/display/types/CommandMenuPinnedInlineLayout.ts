@@ -1,4 +1,4 @@
 export type CommandMenuPinnedInlineLayout = {
-  containerWidth: number;
-  commandMenuItemWidthsByKey: Record<string, number>;
+	containerWidth: number;
+	commandMenuItemWidthsByKey: Record<string, number>;
 };

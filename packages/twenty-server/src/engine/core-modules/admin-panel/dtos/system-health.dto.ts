@@ -1,22 +1,22 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
-import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
+import { AdminPanelHealthServiceStatus } from "src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum";
+import { HealthIndicatorId } from "src/engine/core-modules/admin-panel/enums/health-indicator-id.enum";
 
-@ObjectType('SystemHealthService')
+@ObjectType("SystemHealthService")
 export class SystemHealthServiceDTO {
-  @Field(() => HealthIndicatorId)
-  id: HealthIndicatorId;
+	@Field(() => HealthIndicatorId)
+	id: HealthIndicatorId;
 
-  @Field(() => String)
-  label: string;
+	@Field(() => String)
+	label: string;
 
-  @Field(() => AdminPanelHealthServiceStatus)
-  status: AdminPanelHealthServiceStatus;
+	@Field(() => AdminPanelHealthServiceStatus)
+	status: AdminPanelHealthServiceStatus;
 }
 
-@ObjectType('SystemHealth')
+@ObjectType("SystemHealth")
 export class SystemHealthDTO {
-  @Field(() => [SystemHealthServiceDTO])
-  services: SystemHealthServiceDTO[];
+	@Field(() => [SystemHealthServiceDTO])
+	services: SystemHealthServiceDTO[];
 }

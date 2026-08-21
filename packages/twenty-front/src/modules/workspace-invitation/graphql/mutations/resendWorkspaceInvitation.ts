@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const RESEND_WORKSPACE_INVITATION = gql`
   mutation ResendWorkspaceInvitation($appTokenId: String!) {

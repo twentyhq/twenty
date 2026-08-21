@@ -1,33 +1,33 @@
-import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/AnimatedFormattedNumber';
-import { SettingsBillingPlanComparisonTableRow } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow';
-import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from '@/settings/billing/constants/SettingsBillingComparedPlanKeys';
-import { SETTINGS_BILLING_PLAN_COMPARISON_ROWS } from '@/settings/billing/constants/SettingsBillingPlanComparisonRows';
-import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
+import { AnimatedFormattedNumber } from "@/settings/billing/components/internal/AnimatedFormattedNumber";
+import { SettingsBillingPlanComparisonTableRow } from "@/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow";
+import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from "@/settings/billing/constants/SettingsBillingComparedPlanKeys";
+import { SETTINGS_BILLING_PLAN_COMPARISON_ROWS } from "@/settings/billing/constants/SettingsBillingPlanComparisonRows";
+import { type SettingsBillingPlanAction } from "@/settings/billing/types/settingsBillingPlanAction.type";
 import {
-  type SettingsBillingPlanInterval,
-  type SettingsBillingPlanPrices,
-} from '@/settings/billing/types/settingsBillingPlanComparison.type';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useLingui } from '@lingui/react/macro';
-import { styled } from '@linaria/react';
+	type SettingsBillingPlanInterval,
+	type SettingsBillingPlanPrices,
+} from "@/settings/billing/types/settingsBillingPlanComparison.type";
+import { useNumberFormat } from "@/localization/hooks/useNumberFormat";
+import { useLingui } from "@lingui/react/macro";
+import { styled } from "@linaria/react";
 import {
-  Button,
-  SegmentedControl,
-  type SegmentedControlOption,
-} from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	Button,
+	SegmentedControl,
+	type SegmentedControlOption,
+} from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 import {
-  BillingPlanKey,
-  SubscriptionInterval,
-} from '~/generated-metadata/graphql';
+	BillingPlanKey,
+	SubscriptionInterval,
+} from "~/generated-metadata/graphql";
 
 type SettingsBillingPlanComparisonTableProps = {
-  billingInterval: SettingsBillingPlanInterval;
-  onBillingIntervalChange: (
-    billingInterval: SettingsBillingPlanInterval,
-  ) => void;
-  planActions: Record<BillingPlanKey, SettingsBillingPlanAction>;
-  planPrices: SettingsBillingPlanPrices;
+	billingInterval: SettingsBillingPlanInterval;
+	onBillingIntervalChange: (
+		billingInterval: SettingsBillingPlanInterval,
+	) => void;
+	planActions: Record<BillingPlanKey, SettingsBillingPlanAction>;
+	planPrices: SettingsBillingPlanPrices;
 };
 
 const STICKY_HEADER_TOP_OFFSET = themeCssVariables.spacing[6];
@@ -147,102 +147,102 @@ const StyledActionSlot = styled.div`
 `;
 
 export const SettingsBillingPlanComparisonTable = ({
-  billingInterval,
-  onBillingIntervalChange,
-  planActions,
-  planPrices,
+	billingInterval,
+	onBillingIntervalChange,
+	planActions,
+	planPrices,
 }: SettingsBillingPlanComparisonTableProps) => {
-  const { t } = useLingui();
-  const { formatNumber } = useNumberFormat();
+	const { t } = useLingui();
+	const { formatNumber } = useNumberFormat();
 
-  const formatAnimatedPrice = (value: number) =>
-    formatNumber(Math.max(0, value));
+	const formatAnimatedPrice = (value: number) =>
+		formatNumber(Math.max(0, value));
 
-  const billingIntervalOptions = [
-    {
-      label: t`Annual`,
-      value: SubscriptionInterval.Year,
-    },
-    {
-      label: t`Monthly`,
-      value: SubscriptionInterval.Month,
-    },
-  ] satisfies SegmentedControlOption<SettingsBillingPlanInterval>[];
+	const billingIntervalOptions = [
+		{
+			label: t`Annual`,
+			value: SubscriptionInterval.Year,
+		},
+		{
+			label: t`Monthly`,
+			value: SubscriptionInterval.Month,
+		},
+	] satisfies SegmentedControlOption<SettingsBillingPlanInterval>[];
 
-  return (
-    <StyledContentContainer>
-      <StyledComparisonTable>
-        <StyledStickyHeaderContainer>
-          <StyledComparisonHeaderGrid>
-            <StyledHeaderCell>
-              <StyledHeaderText>
-                <StyledComparisonTitle>{t`Compare plans`}</StyledComparisonTitle>
-                <StyledPlanSubtitle>
-                  {billingInterval === SubscriptionInterval.Year
-                    ? t`Save 25% when billed yearly`
-                    : t`Billed monthly`}
-                </StyledPlanSubtitle>
-              </StyledHeaderText>
-              <SegmentedControl
-                ariaLabel={t`Billing period`}
-                itemWidth="content"
-                onChange={onBillingIntervalChange}
-                options={billingIntervalOptions}
-                value={billingInterval}
-              />
-            </StyledHeaderCell>
+	return (
+		<StyledContentContainer>
+			<StyledComparisonTable>
+				<StyledStickyHeaderContainer>
+					<StyledComparisonHeaderGrid>
+						<StyledHeaderCell>
+							<StyledHeaderText>
+								<StyledComparisonTitle>{t`Compare plans`}</StyledComparisonTitle>
+								<StyledPlanSubtitle>
+									{billingInterval === SubscriptionInterval.Year
+										? t`Save 25% when billed yearly`
+										: t`Billed monthly`}
+								</StyledPlanSubtitle>
+							</StyledHeaderText>
+							<SegmentedControl
+								ariaLabel={t`Billing period`}
+								itemWidth="content"
+								onChange={onBillingIntervalChange}
+								options={billingIntervalOptions}
+								value={billingInterval}
+							/>
+						</StyledHeaderCell>
 
-            {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => {
-              const action = planActions[planKey];
-              const price = planPrices[planKey][billingInterval];
+						{SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => {
+							const action = planActions[planKey];
+							const price = planPrices[planKey][billingInterval];
 
-              return (
-                <StyledHeaderCell key={planKey}>
-                  <StyledHeaderText>
-                    <StyledPlanTitle>
-                      {planKey === BillingPlanKey.PRO
-                        ? t`Pro plan`
-                        : t`Organization`}
-                    </StyledPlanTitle>
-                    <StyledPriceLine>
-                      <StyledPrice>
-                        $
-                        <AnimatedFormattedNumber
-                          value={price}
-                          formatValue={formatAnimatedPrice}
-                        />
-                      </StyledPrice>
-                      <StyledPriceSuffix>{t`/user per month`}</StyledPriceSuffix>
-                    </StyledPriceLine>
-                  </StyledHeaderText>
-                  <StyledActionSlot>
-                    <Button
-                      Icon={action.Icon}
-                      title={action.title}
-                      variant={action.variant}
-                      accent={action.accent ?? 'default'}
-                      size="small"
-                      disabled={action.disabled}
-                      isLoading={action.isLoading}
-                      onClick={action.onClick}
-                    />
-                  </StyledActionSlot>
-                </StyledHeaderCell>
-              );
-            })}
-          </StyledComparisonHeaderGrid>
-        </StyledStickyHeaderContainer>
+							return (
+								<StyledHeaderCell key={planKey}>
+									<StyledHeaderText>
+										<StyledPlanTitle>
+											{planKey === BillingPlanKey.PRO
+												? t`Pro plan`
+												: t`Organization`}
+										</StyledPlanTitle>
+										<StyledPriceLine>
+											<StyledPrice>
+												$
+												<AnimatedFormattedNumber
+													value={price}
+													formatValue={formatAnimatedPrice}
+												/>
+											</StyledPrice>
+											<StyledPriceSuffix>{t`/user per month`}</StyledPriceSuffix>
+										</StyledPriceLine>
+									</StyledHeaderText>
+									<StyledActionSlot>
+										<Button
+											Icon={action.Icon}
+											title={action.title}
+											variant={action.variant}
+											accent={action.accent ?? "default"}
+											size="small"
+											disabled={action.disabled}
+											isLoading={action.isLoading}
+											onClick={action.onClick}
+										/>
+									</StyledActionSlot>
+								</StyledHeaderCell>
+							);
+						})}
+					</StyledComparisonHeaderGrid>
+				</StyledStickyHeaderContainer>
 
-        <StyledComparisonBodyGrid>
-          {SETTINGS_BILLING_PLAN_COMPARISON_ROWS.map((row, rowIndex) => (
-            <SettingsBillingPlanComparisonTableRow
-              key={`row-${rowIndex}`}
-              hasTopBorder={rowIndex > 0}
-              row={row}
-            />
-          ))}
-        </StyledComparisonBodyGrid>
-      </StyledComparisonTable>
-    </StyledContentContainer>
-  );
+				<StyledComparisonBodyGrid>
+					{SETTINGS_BILLING_PLAN_COMPARISON_ROWS.map((row, rowIndex) => (
+						<SettingsBillingPlanComparisonTableRow
+							key={`row-${rowIndex}`}
+							hasTopBorder={rowIndex > 0}
+							row={row}
+						/>
+					))}
+				</StyledComparisonBodyGrid>
+			</StyledComparisonTable>
+		</StyledContentContainer>
+	);
 };

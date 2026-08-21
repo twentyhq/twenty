@@ -1,7 +1,7 @@
 export type DiscordToolResult = {
-  success: boolean;
-  message: string;
-  error?: string;
-  messageId?: string;
-  channelId?: string;
+	success: boolean;
+	message: string;
+	error?: string;
+	messageId?: string;
+	channelId?: string;
 };

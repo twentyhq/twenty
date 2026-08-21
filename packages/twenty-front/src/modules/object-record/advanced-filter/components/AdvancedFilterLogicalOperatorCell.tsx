@@ -1,10 +1,10 @@
-import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
-import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { AdvancedFilterLogicalOperatorDropdown } from "@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown";
+import { type RecordFilterGroup } from "@/object-record/record-filter-group/types/RecordFilterGroup";
 
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { capitalize } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { capitalize } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledText = styled.div`
   align-items: center;
@@ -22,27 +22,27 @@ const StyledContainer = styled.div`
 `;
 
 type AdvancedFilterLogicalOperatorCellProps = {
-  index: number;
-  recordFilterGroup: RecordFilterGroup;
+	index: number;
+	recordFilterGroup: RecordFilterGroup;
 };
 
 export const AdvancedFilterLogicalOperatorCell = ({
-  index,
-  recordFilterGroup,
+	index,
+	recordFilterGroup,
 }: AdvancedFilterLogicalOperatorCellProps) => {
-  return (
-    <StyledContainer>
-      {index === 0 ? (
-        <StyledText>{t`Where`}</StyledText>
-      ) : index === 1 ? (
-        <AdvancedFilterLogicalOperatorDropdown
-          recordFilterGroup={recordFilterGroup}
-        />
-      ) : (
-        <StyledText>
-          {capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
-        </StyledText>
-      )}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			{index === 0 ? (
+				<StyledText>{t`Where`}</StyledText>
+			) : index === 1 ? (
+				<AdvancedFilterLogicalOperatorDropdown
+					recordFilterGroup={recordFilterGroup}
+				/>
+			) : (
+				<StyledText>
+					{capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
+				</StyledText>
+			)}
+		</StyledContainer>
+	);
 };

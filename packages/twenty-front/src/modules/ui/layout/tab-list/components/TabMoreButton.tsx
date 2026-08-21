@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { TabButton } from 'twenty-ui/input';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { IconChevronDown } from "twenty-ui/icon";
+import { TabButton } from "twenty-ui/input";
 
-import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
+import { TAB_LIST_HEIGHT } from "@/ui/layout/tab-list/constants/TabListHeight";
 
 const StyledTabMoreButtonContainer = styled.div`
   display: flex;
@@ -11,23 +11,23 @@ const StyledTabMoreButtonContainer = styled.div`
 `;
 
 export const TabMoreButton = ({
-  hiddenTabsCount,
-  active,
-  className,
+	hiddenTabsCount,
+	active,
+	className,
 }: {
-  hiddenTabsCount: number;
-  active: boolean;
-  className?: string;
+	hiddenTabsCount: number;
+	active: boolean;
+	className?: string;
 }) => {
-  return (
-    <StyledTabMoreButtonContainer>
-      <TabButton
-        id="tab-more-button"
-        active={active}
-        title={`+${hiddenTabsCount} ${t`More`}`}
-        RightIcon={IconChevronDown}
-        className={className}
-      />
-    </StyledTabMoreButtonContainer>
-  );
+	return (
+		<StyledTabMoreButtonContainer>
+			<TabButton
+				id="tab-more-button"
+				active={active}
+				title={`+${hiddenTabsCount} ${t`More`}`}
+				RightIcon={IconChevronDown}
+				className={className}
+			/>
+		</StyledTabMoreButtonContainer>
+	);
 };

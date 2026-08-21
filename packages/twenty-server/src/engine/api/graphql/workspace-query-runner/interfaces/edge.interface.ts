@@ -1,4 +1,4 @@
 export interface IEdge<T> {
-  cursor: string;
-  node: T;
+	cursor: string;
+	node: T;
 }

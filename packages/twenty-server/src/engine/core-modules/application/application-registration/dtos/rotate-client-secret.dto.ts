@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('RotateClientSecret')
+@ObjectType("RotateClientSecret")
 export class RotateClientSecretDTO {
-  @Field()
-  clientSecret: string;
+	@Field()
+	clientSecret: string;
 }

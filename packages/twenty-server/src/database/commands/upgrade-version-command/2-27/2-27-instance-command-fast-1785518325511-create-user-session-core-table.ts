@@ -1,15 +1,15 @@
-import { type QueryRunner } from 'typeorm';
+import { type QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { type FastInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface";
 
-@RegisteredInstanceCommand('2.27.0', 1785518325511)
+@RegisteredInstanceCommand("2.27.0", 1785518325511)
 export class CreateUserSessionCoreTableFastInstanceCommand
-  implements FastInstanceCommand
+	implements FastInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "core"."userSession" (
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`CREATE TABLE IF NOT EXISTS "core"."userSession" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "tokenHash" text NOT NULL,
         "userId" uuid NOT NULL,
@@ -35,29 +35,29 @@ export class CreateUserSessionCoreTableFastInstanceCommand
         CONSTRAINT "FK_USER_SESSION_USER_WORKSPACE_ID" FOREIGN KEY ("userWorkspaceId")
           REFERENCES "core"."userWorkspace"("id") ON DELETE CASCADE
       )`,
-    );
+		);
 
-    await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_USER_SESSION_TOKEN_HASH_UNIQUE" ON "core"."userSession" ("tokenHash")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_USER_ID" ON "core"."userSession" ("userId")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_WORKSPACE_ID" ON "core"."userSession" ("workspaceId")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_USER_WORKSPACE_ID" ON "core"."userSession" ("userWorkspaceId")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_EXPIRES_AT" ON "core"."userSession" ("expiresAt")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_REVOKED_AT" ON "core"."userSession" ("revokedAt")`,
-    );
-  }
+		await queryRunner.query(
+			`CREATE UNIQUE INDEX IF NOT EXISTS "IDX_USER_SESSION_TOKEN_HASH_UNIQUE" ON "core"."userSession" ("tokenHash")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_USER_ID" ON "core"."userSession" ("userId")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_WORKSPACE_ID" ON "core"."userSession" ("workspaceId")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_USER_WORKSPACE_ID" ON "core"."userSession" ("userWorkspaceId")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_EXPIRES_AT" ON "core"."userSession" ("expiresAt")`,
+		);
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_USER_SESSION_REVOKED_AT" ON "core"."userSession" ("revokedAt")`,
+		);
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."userSession"`);
-  }
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(`DROP TABLE IF EXISTS "core"."userSession"`);
+	}
 }

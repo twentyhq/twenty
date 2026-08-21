@@ -1,3 +1,3 @@
-import { type Webhook } from '~/generated-metadata/graphql';
+import { type Webhook } from "~/generated-metadata/graphql";
 
 export type FlatWebhook = Webhook;

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const REVOKE_SIGNING_KEY = gql`
   mutation RevokeSigningKey($id: UUID!) {

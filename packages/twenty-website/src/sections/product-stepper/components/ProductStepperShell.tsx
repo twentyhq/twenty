@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { useRef, type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { useRef, type ReactNode } from "react";
 
-import { useScaleToFit } from '@/platform/motion';
-import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
+import { useScaleToFit } from "@/platform/motion";
+import { PRODUCT_STEPPER_SCENE } from "@/tokens/feature-scenes/product-stepper-scene";
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 
@@ -54,44 +54,44 @@ const SvgLayer = styled.svg`
 `;
 
 function Shell({ active, children }: { active: boolean; children: ReactNode }) {
-  return <Wrapper data-active={active ? '' : undefined}>{children}</Wrapper>;
+	return <Wrapper data-active={active ? "" : undefined}>{children}</Wrapper>;
 }
 
 function StageFit({
-  baseScale = 1,
-  children,
-  designHeight,
-  designWidth,
-  zoom = 1,
+	baseScale = 1,
+	children,
+	designHeight,
+	designWidth,
+	zoom = 1,
 }: {
-  baseScale?: number;
-  children: ReactNode;
-  designHeight: number;
-  designWidth: number;
-  zoom?: number;
+	baseScale?: number;
+	children: ReactNode;
+	designHeight: number;
+	designWidth: number;
+	zoom?: number;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const fit = useScaleToFit(containerRef, designWidth, designHeight, 1);
-  const scale = Math.min(baseScale, zoom * fit || baseScale);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const fit = useScaleToFit(containerRef, designWidth, designHeight, 1);
+	const scale = Math.min(baseScale, zoom * fit || baseScale);
 
-  return (
-    <StageFitContainer ref={containerRef}>
-      <StageBox
-        style={{
-          height: designHeight,
-          transform: `scale(${scale})`,
-          width: designWidth,
-        }}
-      >
-        {children}
-      </StageBox>
-    </StageFitContainer>
-  );
+	return (
+		<StageFitContainer ref={containerRef}>
+			<StageBox
+				style={{
+					height: designHeight,
+					transform: `scale(${scale})`,
+					width: designWidth,
+				}}
+			>
+				{children}
+			</StageBox>
+		</StageFitContainer>
+	);
 }
 
 export const STEPPER_SHELL_CHROME = {
-  Canvas,
-  Shell,
-  StageFit,
-  SvgLayer,
+	Canvas,
+	Shell,
+	StageFit,
+	SvgLayer,
 };

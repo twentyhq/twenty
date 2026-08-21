@@ -1,18 +1,18 @@
-import { getObjectPermissionsForObject } from '~/modules/object-metadata/utils/getObjectPermissionsForObject';
+import { getObjectPermissionsForObject } from "~/modules/object-metadata/utils/getObjectPermissionsForObject";
 
-import { useMemo } from 'react';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { useObjectPermissions } from './useObjectPermissions';
+import { useMemo } from "react";
+import { type ObjectPermissions } from "twenty-shared/types";
+import { useObjectPermissions } from "./useObjectPermissions";
 
 export const useObjectPermissionsForObject = (
-  objectMetadataId: string,
+	objectMetadataId: string,
 ): ObjectPermissions & { objectMetadataId: string } => {
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+	const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  return useMemo(() => {
-    return getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      objectMetadataId,
-    );
-  }, [objectPermissionsByObjectMetadataId, objectMetadataId]);
+	return useMemo(() => {
+		return getObjectPermissionsForObject(
+			objectPermissionsByObjectMetadataId,
+			objectMetadataId,
+		);
+	}, [objectPermissionsByObjectMetadataId, objectMetadataId]);
 };

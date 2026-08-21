@@ -1,30 +1,30 @@
-import { styled } from '@linaria/react';
-import { type Node, type NodeProps } from '@xyflow/react';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { styled } from "@linaria/react";
+import { type Node, type NodeProps } from "@xyflow/react";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectFieldRow } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useNumberFormat } from "@/localization/hooks/useNumberFormat";
+import { ObjectMetadataIcon } from "@/object-metadata/components/ObjectMetadataIcon";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { isHiddenSystemField } from "@/object-metadata/utils/isHiddenSystemField";
+import { useFindManyRecords } from "@/object-record/hooks/useFindManyRecords";
+import { ObjectFieldRow } from "@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField";
+import { FieldMetadataType } from "~/generated-metadata/graphql";
 
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
-import '@xyflow/react/dist/style.css';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { SettingsItemTypeTag } from "@/settings/components/SettingsItemTypeTag";
+import { ObjectFieldRowWithoutRelation } from "@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation";
+import "@xyflow/react/dist/style.css";
+import { SettingsPath } from "twenty-shared/types";
+import { getSettingsPath, isDefined } from "twenty-shared/utils";
+import { IconChevronDown, IconChevronUp } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsDataModelOverviewObjectNode = Node<
-  EnrichedObjectMetadataItem,
-  'object'
+	EnrichedObjectMetadataItem,
+	"object"
 >;
 type SettingsDataModelOverviewObjectProps =
-  NodeProps<SettingsDataModelOverviewObjectNode>;
+	NodeProps<SettingsDataModelOverviewObjectNode>;
 
 const StyledNode = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -62,7 +62,7 @@ const StyledInnerCard = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-flow: column nowrap;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
   padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]} 0;
 `;
 
@@ -107,80 +107,80 @@ const StyledObjectLinkContainer = styled.div`
 `;
 
 export const SettingsDataModelOverviewObject = ({
-  data: objectMetadataItem,
+	data: objectMetadataItem,
 }: SettingsDataModelOverviewObjectProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { formatNumber } = useNumberFormat();
-  const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
+	const { theme } = useContext(ThemeContext);
+	const { formatNumber } = useNumberFormat();
+	const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
-  const { totalCount } = useFindManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+	const { totalCount } = useFindManyRecords({
+		objectNameSingular: objectMetadataItem.nameSingular,
+	});
 
-  const fields = objectMetadataItem.fields.filter(
-    (x) => !isHiddenSystemField(x) && x.isActive,
-  );
+	const fields = objectMetadataItem.fields.filter(
+		(x) => !isHiddenSystemField(x) && x.isActive,
+	);
 
-  const countNonRelation = fields.filter(
-    (x) => x.type !== FieldMetadataType.RELATION,
-  ).length;
+	const countNonRelation = fields.filter(
+		(x) => x.type !== FieldMetadataType.RELATION,
+	).length;
 
-  return (
-    <StyledNode>
-      <StyledHeader>
-        <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          <StyledObjectLinkContainer>
-            <Link
-              to={getSettingsPath(SettingsPath.Objects, {
-                objectNamePlural: objectMetadataItem.namePlural,
-              })}
-            >
-              <ObjectMetadataIcon
-                objectMetadataItem={objectMetadataItem}
-                size={theme.icon.size.md}
-              />
-              {objectMetadataItem.labelPlural}
-            </Link>
-          </StyledObjectLinkContainer>
-          <StyledObjectInstanceCount>
-            {' '}
-            · {isDefined(totalCount) ? formatNumber(totalCount) : totalCount}
-          </StyledObjectInstanceCount>
-        </StyledObjectName>
-        <SettingsItemTypeTag item={objectMetadataItem} />
-      </StyledHeader>
+	return (
+		<StyledNode>
+			<StyledHeader>
+				<StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
+					<StyledObjectLinkContainer>
+						<Link
+							to={getSettingsPath(SettingsPath.Objects, {
+								objectNamePlural: objectMetadataItem.namePlural,
+							})}
+						>
+							<ObjectMetadataIcon
+								objectMetadataItem={objectMetadataItem}
+								size={theme.icon.size.md}
+							/>
+							{objectMetadataItem.labelPlural}
+						</Link>
+					</StyledObjectLinkContainer>
+					<StyledObjectInstanceCount>
+						{" "}
+						· {isDefined(totalCount) ? formatNumber(totalCount) : totalCount}
+					</StyledObjectInstanceCount>
+				</StyledObjectName>
+				<SettingsItemTypeTag item={objectMetadataItem} />
+			</StyledHeader>
 
-      <StyledInnerCard>
-        {fields
-          .filter((x) => x.type === FieldMetadataType.RELATION)
-          .map((field) => (
-            <StyledCardRow key={field.id}>
-              <ObjectFieldRow field={field} />
-            </StyledCardRow>
-          ))}
-        {countNonRelation > 0 && (
-          <>
-            <StyledCardRowOther
-              onClick={() => setOtherFieldsExpanded(!otherFieldsExpanded)}
-            >
-              {otherFieldsExpanded ? (
-                <IconChevronUp size={theme.icon.size.md} />
-              ) : (
-                <IconChevronDown size={theme.icon.size.md} />
-              )}
-              <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
-            </StyledCardRowOther>
-            {otherFieldsExpanded &&
-              fields
-                .filter((x) => x.type !== FieldMetadataType.RELATION)
-                .map((field) => (
-                  <StyledCardRow key={field.id}>
-                    <ObjectFieldRowWithoutRelation field={field} />
-                  </StyledCardRow>
-                ))}
-          </>
-        )}
-      </StyledInnerCard>
-    </StyledNode>
-  );
+			<StyledInnerCard>
+				{fields
+					.filter((x) => x.type === FieldMetadataType.RELATION)
+					.map((field) => (
+						<StyledCardRow key={field.id}>
+							<ObjectFieldRow field={field} />
+						</StyledCardRow>
+					))}
+				{countNonRelation > 0 && (
+					<>
+						<StyledCardRowOther
+							onClick={() => setOtherFieldsExpanded(!otherFieldsExpanded)}
+						>
+							{otherFieldsExpanded ? (
+								<IconChevronUp size={theme.icon.size.md} />
+							) : (
+								<IconChevronDown size={theme.icon.size.md} />
+							)}
+							<StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
+						</StyledCardRowOther>
+						{otherFieldsExpanded &&
+							fields
+								.filter((x) => x.type !== FieldMetadataType.RELATION)
+								.map((field) => (
+									<StyledCardRow key={field.id}>
+										<ObjectFieldRowWithoutRelation field={field} />
+									</StyledCardRow>
+								))}
+					</>
+				)}
+			</StyledInnerCard>
+		</StyledNode>
+	);
 };

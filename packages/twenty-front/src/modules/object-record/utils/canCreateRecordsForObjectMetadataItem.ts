@@ -1,13 +1,13 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { isObjectMetadataReadOnly } from "@/object-record/read-only/utils/isObjectMetadataReadOnly";
+import { type ObjectPermission } from "~/generated-metadata/graphql";
 
 type CanCreateRecordsForObjectMetadataItemParams = {
-  objectPermissions?: ObjectPermission;
-  objectMetadataItem: Pick<
-    EnrichedObjectMetadataItem,
-    'isUICreatable' | 'isUIEditable' | 'isSystem' | 'isRemote' | 'applicationId'
-  >;
+	objectPermissions?: ObjectPermission;
+	objectMetadataItem: Pick<
+		EnrichedObjectMetadataItem,
+		"isUICreatable" | "isUIEditable" | "isSystem" | "isRemote" | "applicationId"
+	>;
 };
 
 // Single predicate for every generic "create a record" UI affordance.
@@ -19,11 +19,11 @@ type CanCreateRecordsForObjectMetadataItemParams = {
 // There is no CREATE permission yet, so canUpdateObjectRecords (checked
 // through isObjectMetadataReadOnly) acts as a proxy.
 export const canCreateRecordsForObjectMetadataItem = ({
-  objectPermissions,
-  objectMetadataItem,
+	objectPermissions,
+	objectMetadataItem,
 }: CanCreateRecordsForObjectMetadataItemParams): boolean => {
-  return (
-    objectMetadataItem.isUICreatable &&
-    !isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem })
-  );
+	return (
+		objectMetadataItem.isUICreatable &&
+		!isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem })
+	);
 };

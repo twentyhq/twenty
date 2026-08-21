@@ -1,5 +1,5 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export const ParentClickOutsideIdContext = createContext<string | undefined>(
-  undefined,
+	undefined,
 );

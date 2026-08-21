@@ -1,5 +1,5 @@
 export type AskQuestionOption = {
-  label: string;
-  description?: string;
-  isRecommended?: boolean;
+	label: string;
+	description?: string;
+	isRecommended?: boolean;
 };

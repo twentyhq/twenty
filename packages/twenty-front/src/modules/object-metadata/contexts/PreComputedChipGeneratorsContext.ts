@@ -1,23 +1,23 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordChipData } from "@/object-record/record-field/ui/types/RecordChipData";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
 
 export type ChipGeneratorPerObjectNameSingularPerFieldName = Record<
-  string,
-  Record<string, (record: ObjectRecord) => RecordChipData>
+	string,
+	Record<string, (record: ObjectRecord) => RecordChipData>
 >;
 
 export type IdentifierChipGeneratorPerObject = Partial<
-  Record<string, (record: ObjectRecord) => RecordChipData>
+	Record<string, (record: ObjectRecord) => RecordChipData>
 >;
 
 export type PreComputedChipGeneratorsContextProps = {
-  chipGeneratorPerObjectPerField: ChipGeneratorPerObjectNameSingularPerFieldName;
-  identifierChipGeneratorPerObject: IdentifierChipGeneratorPerObject;
+	chipGeneratorPerObjectPerField: ChipGeneratorPerObjectNameSingularPerFieldName;
+	identifierChipGeneratorPerObject: IdentifierChipGeneratorPerObject;
 };
 
 export const PreComputedChipGeneratorsContext =
-  createContext<PreComputedChipGeneratorsContextProps>(
-    {} as PreComputedChipGeneratorsContextProps,
-  );
+	createContext<PreComputedChipGeneratorsContextProps>(
+		{} as PreComputedChipGeneratorsContextProps,
+	);

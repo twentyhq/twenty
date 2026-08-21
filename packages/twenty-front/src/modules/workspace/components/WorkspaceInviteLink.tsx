@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useLingui } from '@lingui/react/macro';
-import { IconLink } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { SettingsTextInput } from "@/ui/input/components/SettingsTextInput";
+import { useLingui } from "@lingui/react/macro";
+import { IconLink } from "twenty-ui/icon";
+import { Button } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -19,35 +19,35 @@ const StyledLinkContainer = styled.div`
 `;
 
 type WorkspaceInviteLinkProps = {
-  inviteLink: string;
+	inviteLink: string;
 };
 
 export const WorkspaceInviteLink = ({
-  inviteLink,
+	inviteLink,
 }: WorkspaceInviteLinkProps) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const { copyToClipboard } = useCopyToClipboard();
+	const { copyToClipboard } = useCopyToClipboard();
 
-  return (
-    <StyledContainer data-chromatic="ignore">
-      <StyledLinkContainer>
-        <SettingsTextInput
-          instanceId="workspace-invite-link"
-          value={inviteLink}
-          disabled
-          fullWidth
-        />
-      </StyledLinkContainer>
-      <Button
-        Icon={IconLink}
-        variant="primary"
-        accent="blue"
-        title={t`Copy link`}
-        onClick={() => {
-          copyToClipboard(inviteLink, t`Link copied to clipboard`);
-        }}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer data-chromatic="ignore">
+			<StyledLinkContainer>
+				<SettingsTextInput
+					instanceId="workspace-invite-link"
+					value={inviteLink}
+					disabled
+					fullWidth
+				/>
+			</StyledLinkContainer>
+			<Button
+				Icon={IconLink}
+				variant="primary"
+				accent="blue"
+				title={t`Copy link`}
+				onClick={() => {
+					copyToClipboard(inviteLink, t`Link copied to clipboard`);
+				}}
+			/>
+		</StyledContainer>
+	);
 };

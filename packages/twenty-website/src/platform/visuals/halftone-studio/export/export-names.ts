@@ -1,56 +1,56 @@
 function toPascalCase(value: string) {
-  const tokens = value
-    .replace(/\.[^.]+$/, '')
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[^a-zA-Z0-9]+/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+	const tokens = value
+		.replace(/\.[^.]+$/, "")
+		.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+		.replace(/[^a-zA-Z0-9]+/g, " ")
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean);
 
-  const joined = tokens
-    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
-    .join('');
+	const joined = tokens
+		.map((token) => token.charAt(0).toUpperCase() + token.slice(1))
+		.join("");
 
-  if (!joined) {
-    return 'HalftoneDashes';
-  }
+	if (!joined) {
+		return "HalftoneDashes";
+	}
 
-  return /^[A-Za-z_]/.test(joined) ? joined : `Halftone${joined}`;
+	return /^[A-Za-z_]/.test(joined) ? joined : `Halftone${joined}`;
 }
 
 function normalizeExportComponentName(
-  value: string | null | undefined,
-  fallback = 'HalftoneDashes',
+	value: string | null | undefined,
+	fallback = "HalftoneDashes",
 ) {
-  return toPascalCase(value?.trim() || fallback);
+	return toPascalCase(value?.trim() || fallback);
 }
 
 function toKebabCase(value: string) {
-  const normalized = value
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-    .replace(/([a-zA-Z])([0-9])/g, '$1-$2')
-    .replace(/([0-9])([a-zA-Z])/g, '$1-$2')
-    .replace(/[^a-zA-Z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .toLowerCase();
+	const normalized = value
+		.replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+		.replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+		.replace(/([a-zA-Z])([0-9])/g, "$1-$2")
+		.replace(/([0-9])([a-zA-Z])/g, "$1-$2")
+		.replace(/[^a-zA-Z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.toLowerCase();
 
-  return normalized || 'halftone-dashes';
+	return normalized || "halftone-dashes";
 }
 
 function resolveExportArtifactNames(
-  value: string | null | undefined,
-  fallback = 'HalftoneDashes',
+	value: string | null | undefined,
+	fallback = "HalftoneDashes",
 ) {
-  const componentName = normalizeExportComponentName(value, fallback);
+	const componentName = normalizeExportComponentName(value, fallback);
 
-  return {
-    componentName,
-    fileBaseName: toKebabCase(componentName),
-  };
+	return {
+		componentName,
+		fileBaseName: toKebabCase(componentName),
+	};
 }
 
 export const HALFTONE_EXPORT_NAMES = {
-  normalizeComponentName: normalizeExportComponentName,
-  resolveArtifactNames: resolveExportArtifactNames,
+	normalizeComponentName: normalizeExportComponentName,
+	resolveArtifactNames: resolveExportArtifactNames,
 };

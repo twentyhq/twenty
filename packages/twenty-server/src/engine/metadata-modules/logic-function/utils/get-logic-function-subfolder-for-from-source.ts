@@ -1,5 +1,5 @@
 export const getLogicFunctionSubfolderForFromSource = (
-  logicFunctionId: string,
+	logicFunctionId: string,
 ) => {
-  return logicFunctionId;
+	return logicFunctionId;
 };

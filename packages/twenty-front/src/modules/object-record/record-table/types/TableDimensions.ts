@@ -1,4 +1,4 @@
 export type TablePosition = {
-  numberOfRows: number;
-  numberOfColumns: number;
+	numberOfRows: number;
+	numberOfColumns: number;
 };

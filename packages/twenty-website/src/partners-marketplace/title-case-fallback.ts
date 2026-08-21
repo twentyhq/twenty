@@ -3,9 +3,9 @@
 // maps cover the known vocabulary; this only catches values added CRM-side
 // before the site syncs.
 export const titleCaseFallback = (raw: string): string =>
-  raw
-    .toLowerCase()
-    .split(/[_\s]+/)
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+	raw
+		.toLowerCase()
+		.split(/[_\s]+/)
+		.filter(Boolean)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");

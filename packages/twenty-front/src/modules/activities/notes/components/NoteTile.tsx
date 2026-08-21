@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
 
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
-import { type Note } from '@/activities/types/Note';
-import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
-import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ActivityTargetsInlineCell } from "@/activities/inline-cell/components/ActivityTargetsInlineCell";
+import { useActivityTargetsComponentInstanceId } from "@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId";
+import { type Note } from "@/activities/types/Note";
+import { getActivityPreview } from "@/activities/utils/getActivityPreview";
+import { useOpenRecordInSidePanel } from "@/side-panel/hooks/useOpenRecordInSidePanel";
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { RecordFieldsScopeContextProvider } from "@/object-record/record-field-list/contexts/RecordFieldsScopeContext";
+import { FieldContextProvider } from "@/object-record/record-field/ui/components/FieldContextProvider";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -66,54 +66,54 @@ const StyledFooter = styled.div`
 `;
 
 export const NoteTile = ({
-  note,
-  isSingleNote,
+	note,
+	isSingleNote,
 }: {
-  note: Note;
-  isSingleNote: boolean;
+	note: Note;
+	isSingleNote: boolean;
 }) => {
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+	const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
+	const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
-  const baseComponentInstanceId = `note-card-${note.id}-targets`;
-  const componentInstanceId = useActivityTargetsComponentInstanceId(
-    baseComponentInstanceId,
-  );
+	const baseComponentInstanceId = `note-card-${note.id}-targets`;
+	const componentInstanceId = useActivityTargetsComponentInstanceId(
+		baseComponentInstanceId,
+	);
 
-  return (
-    <StyledCard isSingleNote={isSingleNote}>
-      <StyledCardDetailsContainer
-        onClick={() =>
-          openRecordInSidePanel({
-            recordId: note.id,
-            objectNameSingular: CoreObjectNameSingular.Note,
-          })
-        }
-      >
-        <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
-        <StyledCardContent>{body}</StyledCardContent>
-      </StyledCardDetailsContainer>
-      <StyledFooter>
-        <FieldContextProvider
-          objectNameSingular={CoreObjectNameSingular.Note}
-          objectRecordId={note.id}
-          fieldMetadataName="noteTargets"
-          fieldPosition={0}
-        >
-          <RecordFieldsScopeContextProvider
-            value={{
-              scopeInstanceId: note.id,
-            }}
-          >
-            <ActivityTargetsInlineCell
-              componentInstanceId={componentInstanceId}
-              activityRecordId={note.id}
-              activityObjectNameSingular={CoreObjectNameSingular.Note}
-            />
-          </RecordFieldsScopeContextProvider>
-        </FieldContextProvider>
-      </StyledFooter>
-    </StyledCard>
-  );
+	return (
+		<StyledCard isSingleNote={isSingleNote}>
+			<StyledCardDetailsContainer
+				onClick={() =>
+					openRecordInSidePanel({
+						recordId: note.id,
+						objectNameSingular: CoreObjectNameSingular.Note,
+					})
+				}
+			>
+				<StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
+				<StyledCardContent>{body}</StyledCardContent>
+			</StyledCardDetailsContainer>
+			<StyledFooter>
+				<FieldContextProvider
+					objectNameSingular={CoreObjectNameSingular.Note}
+					objectRecordId={note.id}
+					fieldMetadataName="noteTargets"
+					fieldPosition={0}
+				>
+					<RecordFieldsScopeContextProvider
+						value={{
+							scopeInstanceId: note.id,
+						}}
+					>
+						<ActivityTargetsInlineCell
+							componentInstanceId={componentInstanceId}
+							activityRecordId={note.id}
+							activityObjectNameSingular={CoreObjectNameSingular.Note}
+						/>
+					</RecordFieldsScopeContextProvider>
+				</FieldContextProvider>
+			</StyledFooter>
+		</StyledCard>
+	);
 };

@@ -1,8 +1,8 @@
 export type FeatureVisualKey =
-  | 'contacts'
-  | 'dashboard'
-  | 'emails'
-  | 'files'
-  | 'import'
-  | 'pipeline'
-  | 'tasks';
+	| "contacts"
+	| "dashboard"
+	| "emails"
+	| "files"
+	| "import"
+	| "pipeline"
+	| "tasks";

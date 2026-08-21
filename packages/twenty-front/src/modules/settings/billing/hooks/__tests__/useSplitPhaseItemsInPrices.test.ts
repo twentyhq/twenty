@@ -1,7 +1,7 @@
-import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { useSplitPhaseItemsInPrices } from "@/settings/billing/hooks/useSplitPhaseItemsInPrices";
 
-describe('useSplitPhaseItemsInPrices', () => {
-  it('should be a function', () => {
-    expect(typeof useSplitPhaseItemsInPrices).toBe('function');
-  });
+describe("useSplitPhaseItemsInPrices", () => {
+	it("should be a function", () => {
+		expect(typeof useSplitPhaseItemsInPrices).toBe("function");
+	});
 });

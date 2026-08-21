@@ -1,10 +1,10 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { capitalize } from 'twenty-shared/utils';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { capitalize } from "twenty-shared/utils";
 
 export const getCombinedFindManyRecordsQueryFilteringPart = (
-  objectMetadataItem: EnrichedObjectMetadataItem,
+	objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
-  return `${objectMetadataItem.namePlural}(
+	return `${objectMetadataItem.namePlural}(
   filter: $filter${capitalize(objectMetadataItem.nameSingular)},
   orderBy: $orderBy${capitalize(objectMetadataItem.nameSingular)},
   after: $after${capitalize(objectMetadataItem.nameSingular)},

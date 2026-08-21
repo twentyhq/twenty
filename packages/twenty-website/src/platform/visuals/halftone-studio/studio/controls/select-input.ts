@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { fontFamily } from '@/tokens';
+import { fontFamily } from "@/tokens";
 
 // The dark studio's native <select>, shared by SelectControl and the Design
 // tab's grouped source picker (which needs <optgroup> children of its own).
@@ -17,7 +17,7 @@ export const SelectInput = styled.select`
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: 11px;
   height: 24px;
   outline: none;

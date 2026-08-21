@@ -1,15 +1,15 @@
-import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
-import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
+import { FormBooleanFieldInput } from "@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput";
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { WorkflowStepDecorator } from "~/testing/decorators/WorkflowStepDecorator";
+import { MOCKED_STEP_ID } from "~/testing/mock-data/workflow";
 
 const meta: Meta<typeof FormBooleanFieldInput> = {
-  title: 'UI/Data/Field/Form/Input/FormBooleanFieldInput',
-  component: FormBooleanFieldInput,
-  args: {},
-  argTypes: {},
-  decorators: [WorkflowStepDecorator],
+	title: "UI/Data/Field/Form/Input/FormBooleanFieldInput",
+	component: FormBooleanFieldInput,
+	args: {},
+	argTypes: {},
+	decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -17,170 +17,170 @@ export default meta;
 type Story = StoryObj<typeof FormBooleanFieldInput>;
 
 export const Default: Story = {
-  args: {},
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByText('Select a value');
-  },
+		await canvas.findByText("Select a value");
+	},
 };
 
 export const WithLabel: Story = {
-  args: {
-    label: 'Boolean',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		label: "Boolean",
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByText('Boolean');
-  },
+		await canvas.findByText("Boolean");
+	},
 };
 
 export const EmptyByDefault: Story = {
-  args: {
-    defaultValue: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		defaultValue: undefined,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByText('Select a value');
-  },
+		await canvas.findByText("Select a value");
+	},
 };
 
 export const TrueByDefault: Story = {
-  args: {
-    defaultValue: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		defaultValue: true,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByText('True');
-  },
+		await canvas.findByText("True");
+	},
 };
 
 export const FalseByDefault: Story = {
-  args: {
-    defaultValue: false,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		defaultValue: false,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByText('False');
-  },
+		await canvas.findByText("False");
+	},
 };
 
 export const WithVariablePicker: Story = {
-  args: {
-    VariablePicker: () => <div>VariablePicker</div>,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		VariablePicker: () => <div>VariablePicker</div>,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    const variablePicker = await canvas.findByText('VariablePicker');
+		const variablePicker = await canvas.findByText("VariablePicker");
 
-    expect(variablePicker).toBeVisible();
-  },
+		expect(variablePicker).toBeVisible();
+	},
 };
 
 export const Disabled: Story = {
-  args: {
-    readonly: true,
-    defaultValue: false,
-    VariablePicker: () => <div>VariablePicker</div>,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		readonly: true,
+		defaultValue: false,
+		VariablePicker: () => <div>VariablePicker</div>,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    const toggle = await canvas.findByText('False');
-    expect(toggle).toBeVisible();
+		const toggle = await canvas.findByText("False");
+		expect(toggle).toBeVisible();
 
-    await userEvent.click(toggle);
+		await userEvent.click(toggle);
 
-    expect(toggle).toHaveTextContent('False');
+		expect(toggle).toHaveTextContent("False");
 
-    const variablePicker = canvas.queryByText('VariablePicker');
-    expect(variablePicker).not.toBeInTheDocument();
-  },
+		const variablePicker = canvas.queryByText("VariablePicker");
+		expect(variablePicker).not.toBeInTheDocument();
+	},
 };
 
 export const ChangesValueToTrue: Story = {
-  args: {
-    defaultValue: undefined,
-    label: 'Boolean',
-    onChange: fn(),
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+	args: {
+		defaultValue: undefined,
+		label: "Boolean",
+		onChange: fn(),
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
 
-    const select = await canvas.findByText('Select a value');
+		const select = await canvas.findByText("Select a value");
 
-    await userEvent.click(select);
+		await userEvent.click(select);
 
-    const trueOption = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('True');
+		const trueOption = await within(
+			canvasElement.ownerDocument.body,
+		).findByText("True");
 
-    await userEvent.click(trueOption);
+		await userEvent.click(trueOption);
 
-    await waitFor(() => {
-      expect(args.onChange).toHaveBeenCalledWith(true);
-    });
-  },
+		await waitFor(() => {
+			expect(args.onChange).toHaveBeenCalledWith(true);
+		});
+	},
 };
 
 export const ChangesValueToFalse: Story = {
-  args: {
-    defaultValue: undefined,
-    label: 'Boolean',
-    onChange: fn(),
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+	args: {
+		defaultValue: undefined,
+		label: "Boolean",
+		onChange: fn(),
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
 
-    const select = await canvas.findByText('Select a value');
+		const select = await canvas.findByText("Select a value");
 
-    await userEvent.click(select);
+		await userEvent.click(select);
 
-    const falseOption = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('False');
+		const falseOption = await within(
+			canvasElement.ownerDocument.body,
+		).findByText("False");
 
-    await userEvent.click(falseOption);
+		await userEvent.click(falseOption);
 
-    await waitFor(() => {
-      expect(args.onChange).toHaveBeenCalledWith(false);
-    });
-  },
+		await waitFor(() => {
+			expect(args.onChange).toHaveBeenCalledWith(false);
+		});
+	},
 };
 
 export const ChangesValueToVariable: Story = {
-  args: {
-    defaultValue: undefined,
-    label: 'Boolean',
-    VariablePicker: ({ onVariableSelect }) => {
-      return (
-        <button
-          onClick={() => {
-            onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
-          }}
-        >
-          Add variable
-        </button>
-      );
-    },
-    onChange: fn(),
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+	args: {
+		defaultValue: undefined,
+		label: "Boolean",
+		VariablePicker: ({ onVariableSelect }) => {
+			return (
+				<button
+					onClick={() => {
+						onVariableSelect(`{{${MOCKED_STEP_ID}.name}}`);
+					}}
+				>
+					Add variable
+				</button>
+			);
+		},
+		onChange: fn(),
+	},
+	play: async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
 
-    const addVariableButton = await canvas.findByRole('button', {
-      name: 'Add variable',
-    });
+		const addVariableButton = await canvas.findByRole("button", {
+			name: "Add variable",
+		});
 
-    await userEvent.click(addVariableButton);
+		await userEvent.click(addVariableButton);
 
-    await waitFor(() => {
-      expect(args.onChange).toHaveBeenCalledWith(`{{${MOCKED_STEP_ID}.name}}`);
-    });
-  },
+		await waitFor(() => {
+			expect(args.onChange).toHaveBeenCalledWith(`{{${MOCKED_STEP_ID}.name}}`);
+		});
+	},
 };

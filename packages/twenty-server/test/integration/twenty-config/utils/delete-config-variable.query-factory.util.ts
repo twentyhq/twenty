@@ -1,20 +1,20 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 export type DeleteConfigVariableFactoryInput = {
-  key: string;
+	key: string;
 };
 
 export const deleteConfigVariableQueryFactory = ({
-  key,
+	key,
 }: DeleteConfigVariableFactoryInput) => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation DeleteDatabaseConfigVariable($key: String!) {
         deleteDatabaseConfigVariable(key: $key)
       }
     `,
-    variables: {
-      key,
-    },
-  };
+		variables: {
+			key,
+		},
+	};
 };

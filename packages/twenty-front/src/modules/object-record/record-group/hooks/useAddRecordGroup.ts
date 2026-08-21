@@ -1,92 +1,92 @@
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
-import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
-import { type ViewGroup } from '@/views/types/ViewGroup';
-import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { useContextStoreObjectMetadataItemOrThrow } from "@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow";
+import { contextStoreCurrentViewIdComponentState } from "@/context-store/states/contextStoreCurrentViewIdComponentState";
+import { useSetRecordGroups } from "@/object-record/record-group/hooks/useSetRecordGroups";
+import { useAtomComponentStateCallbackState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState";
+import { usePerformViewGroupAPIPersist } from "@/views/hooks/internal/usePerformViewGroupAPIPersist";
+import { useCanPersistViewChanges } from "@/views/hooks/useCanPersistViewChanges";
+import { useGetViewFromState } from "@/views/hooks/useGetViewFromState";
+import { type ViewGroup } from "@/views/types/ViewGroup";
+import { useStore } from "jotai";
+import { isDefined } from "twenty-shared/utils";
+import { v4 } from "uuid";
+import { isUndefinedOrNull } from "~/utils/isUndefinedOrNull";
 
 export const useAddRecordGroup = () => {
-  const { canPersistChanges } = useCanPersistViewChanges();
-  const { performViewGroupAPICreate } = usePerformViewGroupAPIPersist();
-  const { getViewFromState } = useGetViewFromState();
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
+	const { canPersistChanges } = useCanPersistViewChanges();
+	const { performViewGroupAPICreate } = usePerformViewGroupAPIPersist();
+	const { getViewFromState } = useGetViewFromState();
+	const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+	const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
-  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
-    contextStoreCurrentViewIdComponentState,
-  );
+	const currentViewIdCallbackState = useAtomComponentStateCallbackState(
+		contextStoreCurrentViewIdComponentState,
+	);
 
-  const store = useStore();
+	const store = useStore();
 
-  const addRecordGroup = async (recordId: string) => {
-    if (!canPersistChanges) {
-      return;
-    }
+	const addRecordGroup = async (recordId: string) => {
+		if (!canPersistChanges) {
+			return;
+		}
 
-    const currentViewId = store.get(currentViewIdCallbackState);
+		const currentViewId = store.get(currentViewIdCallbackState);
 
-    if (!currentViewId) {
-      return;
-    }
+		if (!currentViewId) {
+			return;
+		}
 
-    const view = getViewFromState(currentViewId);
+		const view = getViewFromState(currentViewId);
 
-    if (
-      isUndefinedOrNull(view) ||
-      !isDefined(view.mainGroupByFieldMetadataId)
-    ) {
-      return;
-    }
+		if (
+			isUndefinedOrNull(view) ||
+			!isDefined(view.mainGroupByFieldMetadataId)
+		) {
+			return;
+		}
 
-    const recordAlreadyHasGroup = view.viewGroups.some(
-      (viewGroup) => viewGroup.fieldValue === recordId,
-    );
+		const recordAlreadyHasGroup = view.viewGroups.some(
+			(viewGroup) => viewGroup.fieldValue === recordId,
+		);
 
-    if (recordAlreadyHasGroup) {
-      return;
-    }
+		if (recordAlreadyHasGroup) {
+			return;
+		}
 
-    const maxPosition = view.viewGroups.reduce(
-      (max, viewGroup) => Math.max(max, viewGroup.position),
-      -1,
-    );
+		const maxPosition = view.viewGroups.reduce(
+			(max, viewGroup) => Math.max(max, viewGroup.position),
+			-1,
+		);
 
-    const newViewGroup: ViewGroup = {
-      id: v4(),
-      fieldValue: recordId,
-      isVisible: true,
-      position: maxPosition + 1,
-    };
+		const newViewGroup: ViewGroup = {
+			id: v4(),
+			fieldValue: recordId,
+			isVisible: true,
+			position: maxPosition + 1,
+		};
 
-    const result = await performViewGroupAPICreate({
-      inputs: [
-        {
-          id: newViewGroup.id,
-          viewId: currentViewId,
-          fieldValue: newViewGroup.fieldValue,
-          isVisible: newViewGroup.isVisible,
-          position: newViewGroup.position,
-        },
-      ],
-    });
+		const result = await performViewGroupAPICreate({
+			inputs: [
+				{
+					id: newViewGroup.id,
+					viewId: currentViewId,
+					fieldValue: newViewGroup.fieldValue,
+					isVisible: newViewGroup.isVisible,
+					position: newViewGroup.position,
+				},
+			],
+		});
 
-    if (result.status !== 'successful') {
-      return;
-    }
+		if (result.status !== "successful") {
+			return;
+		}
 
-    setRecordGroupsFromViewGroups({
-      viewId: currentViewId,
-      mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
-      viewGroups: [...view.viewGroups, newViewGroup],
-      objectMetadataItem,
-    });
-  };
+		setRecordGroupsFromViewGroups({
+			viewId: currentViewId,
+			mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
+			viewGroups: [...view.viewGroups, newViewGroup],
+			objectMetadataItem,
+		});
+	};
 
-  return { addRecordGroup };
+	return { addRecordGroup };
 };

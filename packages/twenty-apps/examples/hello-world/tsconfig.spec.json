@@ -1,17 +1,9 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "composite": true,
-    "types": [
-      "vitest/globals"
-    ]
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"composite": true,
+		"types": ["vitest/globals"]
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist"]
 }

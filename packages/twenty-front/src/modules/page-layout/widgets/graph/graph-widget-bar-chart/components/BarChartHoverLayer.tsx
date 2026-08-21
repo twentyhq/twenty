@@ -1,16 +1,16 @@
-import { BarChartHoverLayerEffect } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/BarChartHoverLayerEffect';
-import { type BarChartSlice } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSlice';
-import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { styled } from '@linaria/react';
-import { useRef } from 'react';
-import { type BarChartLayout } from '~/generated-metadata/graphql';
+import { BarChartHoverLayerEffect } from "@/page-layout/widgets/graph/graph-widget-bar-chart/components/BarChartHoverLayerEffect";
+import { type BarChartSlice } from "@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSlice";
+import { type ChartMargins } from "@/page-layout/widgets/graph/types/ChartMargins";
+import { styled } from "@linaria/react";
+import { useRef } from "react";
+import { type BarChartLayout } from "~/generated-metadata/graphql";
 
 type BarChartHoverLayerProps = {
-  hoveredSlice: BarChartSlice | null;
-  chartWidth: number;
-  chartHeight: number;
-  margins: ChartMargins;
-  layout: BarChartLayout;
+	hoveredSlice: BarChartSlice | null;
+	chartWidth: number;
+	chartHeight: number;
+	margins: ChartMargins;
+	layout: BarChartLayout;
 };
 
 const StyledHoverCanvas = styled.canvas`
@@ -21,25 +21,25 @@ const StyledHoverCanvas = styled.canvas`
 `;
 
 export const BarChartHoverLayer = ({
-  hoveredSlice,
-  chartWidth,
-  chartHeight,
-  margins,
-  layout,
+	hoveredSlice,
+	chartWidth,
+	chartHeight,
+	margins,
+	layout,
 }: BarChartHoverLayerProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  return (
-    <>
-      <StyledHoverCanvas ref={canvasRef} />
-      <BarChartHoverLayerEffect
-        hoveredSlice={hoveredSlice}
-        chartHeight={chartHeight}
-        chartWidth={chartWidth}
-        layout={layout}
-        margins={margins}
-        canvasRef={canvasRef}
-      />
-    </>
-  );
+	return (
+		<>
+			<StyledHoverCanvas ref={canvasRef} />
+			<BarChartHoverLayerEffect
+				hoveredSlice={hoveredSlice}
+				chartHeight={chartHeight}
+				chartWidth={chartWidth}
+				layout={layout}
+				margins={margins}
+				canvasRef={canvasRef}
+			/>
+		</>
+	);
 };

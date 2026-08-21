@@ -1,14 +1,14 @@
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type ConnectedAccountEntity } from "src/engine/metadata-modules/connected-account/entities/connected-account.entity";
 
 export const isConnectedAccountUsableByCaller = ({
-  connectedAccount,
-  userWorkspaceId,
+	connectedAccount,
+	userWorkspaceId,
 }: {
-  connectedAccount: Pick<
-    ConnectedAccountEntity,
-    'visibility' | 'userWorkspaceId'
-  >;
-  userWorkspaceId: string;
+	connectedAccount: Pick<
+		ConnectedAccountEntity,
+		"visibility" | "userWorkspaceId"
+	>;
+	userWorkspaceId: string;
 }): boolean =>
-  connectedAccount.visibility === 'workspace' ||
-  connectedAccount.userWorkspaceId === userWorkspaceId;
+	connectedAccount.visibility === "workspace" ||
+	connectedAccount.userWorkspaceId === userWorkspaceId;

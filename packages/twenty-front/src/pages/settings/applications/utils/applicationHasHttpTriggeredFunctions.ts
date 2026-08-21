@@ -1,10 +1,10 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { type Application } from '~/generated-metadata/graphql';
+import { type Application } from "~/generated-metadata/graphql";
 
 export const applicationHasHttpTriggeredFunctions = (
-  application?: Pick<Application, 'logicFunctions'>,
+	application?: Pick<Application, "logicFunctions">,
 ): boolean =>
-  (application?.logicFunctions ?? []).some((logicFunction) =>
-    isDefined(logicFunction.httpRouteTriggerSettings),
-  );
+	(application?.logicFunctions ?? []).some((logicFunction) =>
+		isDefined(logicFunction.httpRouteTriggerSettings),
+	);

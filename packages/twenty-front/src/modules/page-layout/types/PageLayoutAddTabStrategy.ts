@@ -1,4 +1,4 @@
 export type PageLayoutAddTabStrategy = {
-  mode: 'direct' | 'dropdown';
-  onCreate: () => void;
+	mode: "direct" | "dropdown";
+	onCreate: () => void;
 };

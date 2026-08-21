@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
   query {

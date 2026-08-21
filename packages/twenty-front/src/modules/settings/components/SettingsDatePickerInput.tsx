@@ -1,30 +1,30 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useId, useRef, useState } from 'react';
-import { Temporal } from 'temporal-polyfill';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useId, useRef, useState } from "react";
+import { Temporal } from "temporal-polyfill";
 import {
-  autoUpdate,
-  FloatingPortal,
-  offset,
-  flip,
-  useFloating,
-} from '@floating-ui/react';
+	autoUpdate,
+	FloatingPortal,
+	offset,
+	flip,
+	useFloating,
+} from "@floating-ui/react";
 
 import {
-  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-  DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from 'twenty-shared/utils';
-import { IconCalendar } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
+	DateTimePicker,
+	MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+	MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+} from "@/ui/input/components/internal/date/components/DateTimePicker";
+import { useUserTimezone } from "@/ui/input/components/internal/date/hooks/useUserTimezone";
+import { OverlayContainer } from "@/ui/layout/overlay/components/OverlayContainer";
+import { ParentClickOutsideIdContext } from "@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext";
+import { useListenClickOutside } from "@/ui/utilities/pointer-event/hooks/useListenClickOutside";
+import { isDefined } from "twenty-shared/utils";
+import { IconCalendar } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-const SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID = 'settings-date-picker-floating';
+const SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID = "settings-date-picker-floating";
 
 const StyledInputContainer = styled.div`
   position: relative;
@@ -37,9 +37,9 @@ const StyledInput = styled.div<{ hasValue: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${({ hasValue }) =>
-    hasValue
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.light};
+		hasValue
+			? themeCssVariables.font.color.primary
+			: themeCssVariables.font.color.light};
   cursor: pointer;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -65,125 +65,125 @@ const StyledIconContainer = styled.div`
 `;
 
 export type SettingsDatePickerInputProps = {
-  label?: string;
-  instanceId?: string;
-  value: Date | undefined;
-  onChange: (date: Date | undefined) => void;
-  placeholder?: string;
+	label?: string;
+	instanceId?: string;
+	value: Date | undefined;
+	onChange: (date: Date | undefined) => void;
+	placeholder?: string;
 };
 
 export const SettingsDatePickerInput = ({
-  label,
-  instanceId,
-  value,
-  onChange,
-  placeholder,
+	label,
+	instanceId,
+	value,
+	onChange,
+	placeholder,
 }: SettingsDatePickerInputProps) => {
-  const { t } = useLingui();
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { userTimezone } = useUserTimezone();
-  const generatedId = useId();
+	const { t } = useLingui();
+	const [isOpen, setIsOpen] = useState(false);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const { userTimezone } = useUserTimezone();
+	const generatedId = useId();
 
-  const pickerInstanceId = instanceId ?? label ?? generatedId;
+	const pickerInstanceId = instanceId ?? label ?? generatedId;
 
-  const { refs, floatingStyles } = useFloating({
-    open: isOpen,
-    placement: 'bottom-start',
-    middleware: [offset(4), flip()],
-    whileElementsMounted: autoUpdate,
-  });
+	const { refs, floatingStyles } = useFloating({
+		open: isOpen,
+		placement: "bottom-start",
+		middleware: [offset(4), flip()],
+		whileElementsMounted: autoUpdate,
+	});
 
-  const handleClose = () => {
-    setIsOpen(false);
-  };
+	const handleClose = () => {
+		setIsOpen(false);
+	};
 
-  useListenClickOutside({
-    refs: [containerRef],
-    listenerId: `settings-date-picker-${pickerInstanceId}`,
-    callback: handleClose,
-    enabled: isOpen,
-    excludedClickOutsideIds: [
-      SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID,
-      DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-      MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-      MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-    ],
-  });
+	useListenClickOutside({
+		refs: [containerRef],
+		listenerId: `settings-date-picker-${pickerInstanceId}`,
+		callback: handleClose,
+		enabled: isOpen,
+		excludedClickOutsideIds: [
+			SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID,
+			DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
+			MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+			MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+		],
+	});
 
-  const handleDateTimeChange = (newDateTime: Temporal.ZonedDateTime | null) => {
-    if (isDefined(newDateTime)) {
-      onChange(new Date(newDateTime.epochMilliseconds));
-    }
-  };
+	const handleDateTimeChange = (newDateTime: Temporal.ZonedDateTime | null) => {
+		if (isDefined(newDateTime)) {
+			onChange(new Date(newDateTime.epochMilliseconds));
+		}
+	};
 
-  const handleDateTimeClose = (_newDateTime: Temporal.ZonedDateTime | null) => {
-    handleClose();
-  };
+	const handleDateTimeClose = (_newDateTime: Temporal.ZonedDateTime | null) => {
+		handleClose();
+	};
 
-  const handleClear = () => {
-    onChange(undefined);
-    handleClose();
-  };
+	const handleClear = () => {
+		onChange(undefined);
+		handleClose();
+	};
 
-  const formatDisplayValue = (date: Date | undefined): string => {
-    if (!isDefined(date)) {
-      return placeholder ?? t`Select date & time`;
-    }
+	const formatDisplayValue = (date: Date | undefined): string => {
+		if (!isDefined(date)) {
+			return placeholder ?? t`Select date & time`;
+		}
 
-    return date.toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: userTimezone,
-    });
-  };
+		return date.toLocaleString(undefined, {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			timeZone: userTimezone,
+		});
+	};
 
-  const zonedDateTime = isDefined(value)
-    ? Temporal.Instant.fromEpochMilliseconds(
-        value.getTime(),
-      ).toZonedDateTimeISO(userTimezone)
-    : null;
+	const zonedDateTime = isDefined(value)
+		? Temporal.Instant.fromEpochMilliseconds(
+				value.getTime(),
+			).toZonedDateTimeISO(userTimezone)
+		: null;
 
-  return (
-    <StyledInputContainer ref={containerRef}>
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInput
-        ref={refs.setReference}
-        hasValue={isDefined(value)}
-        onClick={() => setIsOpen(true)}
-      >
-        <StyledIconContainer>
-          <IconCalendar size={16} />
-        </StyledIconContainer>
-        {formatDisplayValue(value)}
-      </StyledInput>
-      {isOpen && (
-        <FloatingPortal>
-          <div
-            ref={refs.setFloating}
-            style={floatingStyles}
-            data-click-outside-id={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
-          >
-            <OverlayContainer>
-              <ParentClickOutsideIdContext.Provider
-                value={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
-              >
-                <DateTimePicker
-                  instanceId={`settings-date-picker-${pickerInstanceId}`}
-                  date={zonedDateTime}
-                  onChange={handleDateTimeChange}
-                  onClose={handleDateTimeClose}
-                  onClear={handleClear}
-                  clearable
-                />
-              </ParentClickOutsideIdContext.Provider>
-            </OverlayContainer>
-          </div>
-        </FloatingPortal>
-      )}
-    </StyledInputContainer>
-  );
+	return (
+		<StyledInputContainer ref={containerRef}>
+			{label && <StyledLabel>{label}</StyledLabel>}
+			<StyledInput
+				ref={refs.setReference}
+				hasValue={isDefined(value)}
+				onClick={() => setIsOpen(true)}
+			>
+				<StyledIconContainer>
+					<IconCalendar size={16} />
+				</StyledIconContainer>
+				{formatDisplayValue(value)}
+			</StyledInput>
+			{isOpen && (
+				<FloatingPortal>
+					<div
+						ref={refs.setFloating}
+						style={floatingStyles}
+						data-click-outside-id={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
+					>
+						<OverlayContainer>
+							<ParentClickOutsideIdContext.Provider
+								value={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
+							>
+								<DateTimePicker
+									instanceId={`settings-date-picker-${pickerInstanceId}`}
+									date={zonedDateTime}
+									onChange={handleDateTimeChange}
+									onClose={handleDateTimeClose}
+									onClear={handleClear}
+									clearable
+								/>
+							</ParentClickOutsideIdContext.Provider>
+						</OverlayContainer>
+					</div>
+				</FloatingPortal>
+			)}
+		</StyledInputContainer>
+	);
 };

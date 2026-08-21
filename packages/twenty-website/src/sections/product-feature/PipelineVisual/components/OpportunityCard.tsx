@@ -1,21 +1,21 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconBuildingSkyscraper,
-  IconCalendarEvent,
-  IconCreativeCommonsSa,
-  IconCurrencyDollar,
-  IconUser,
-} from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+	IconBuildingSkyscraper,
+	IconCalendarEvent,
+	IconCreativeCommonsSa,
+	IconCurrencyDollar,
+	IconUser,
+} from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { PreviewAvatar } from '@/app-preview/primitives/PreviewAvatar';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { PreviewAvatar } from "@/app-preview/primitives/PreviewAvatar";
 
-import { type DealData } from '../types/deal-data';
-import { CompanyChip } from './CompanyChip';
-import { CreatedByChip } from './CreatedByChip';
-import { DealPersonChip } from './DealPersonChip';
-import { FieldRow } from './FieldRow';
+import { type DealData } from "../types/deal-data";
+import { CompanyChip } from "./CompanyChip";
+import { CreatedByChip } from "./CreatedByChip";
+import { DealPersonChip } from "./DealPersonChip";
+import { FieldRow } from "./FieldRow";
 
 const CardHeader = styled.div`
   align-items: center;
@@ -111,42 +111,42 @@ const HoverableValue = styled.div`
 `;
 
 export function OpportunityCard({ data }: { data: DealData }) {
-  return (
-    <>
-      <CardHeader>
-        <CardIdentifier>
-          <PreviewAvatar size={16} tone={data.avatarTone}>
-            {data.title.charAt(0)}
-          </PreviewAvatar>
-          <CardTitle>{data.title}</CardTitle>
-        </CardIdentifier>
-        <CardCheckbox className="deal-card-checkbox">
-          <CheckboxBox />
-        </CardCheckbox>
-      </CardHeader>
-      <CardFields>
-        <FieldRow icon={IconCurrencyDollar}>
-          <HoverableValue>
-            <FieldText>{data.amount}</FieldText>
-          </HoverableValue>
-        </FieldRow>
-        <FieldRow icon={IconCreativeCommonsSa}>
-          <HoverableValue data-readonly="">
-            <CreatedByChip actor={data.createdBy} />
-          </HoverableValue>
-        </FieldRow>
-        <FieldRow icon={IconCalendarEvent}>
-          <HoverableValue>
-            <FieldText>{data.date}</FieldText>
-          </HoverableValue>
-        </FieldRow>
-        <FieldRow icon={IconBuildingSkyscraper}>
-          <CompanyChip company={data.company} />
-        </FieldRow>
-        <FieldRow icon={IconUser}>
-          <DealPersonChip person={data.contact} />
-        </FieldRow>
-      </CardFields>
-    </>
-  );
+	return (
+		<>
+			<CardHeader>
+				<CardIdentifier>
+					<PreviewAvatar size={16} tone={data.avatarTone}>
+						{data.title.charAt(0)}
+					</PreviewAvatar>
+					<CardTitle>{data.title}</CardTitle>
+				</CardIdentifier>
+				<CardCheckbox className="deal-card-checkbox">
+					<CheckboxBox />
+				</CardCheckbox>
+			</CardHeader>
+			<CardFields>
+				<FieldRow icon={IconCurrencyDollar}>
+					<HoverableValue>
+						<FieldText>{data.amount}</FieldText>
+					</HoverableValue>
+				</FieldRow>
+				<FieldRow icon={IconCreativeCommonsSa}>
+					<HoverableValue data-readonly="">
+						<CreatedByChip actor={data.createdBy} />
+					</HoverableValue>
+				</FieldRow>
+				<FieldRow icon={IconCalendarEvent}>
+					<HoverableValue>
+						<FieldText>{data.date}</FieldText>
+					</HoverableValue>
+				</FieldRow>
+				<FieldRow icon={IconBuildingSkyscraper}>
+					<CompanyChip company={data.company} />
+				</FieldRow>
+				<FieldRow icon={IconUser}>
+					<DealPersonChip person={data.contact} />
+				</FieldRow>
+			</CardFields>
+		</>
+	);
 }

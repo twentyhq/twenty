@@ -1,23 +1,23 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
 import {
-  color,
-  EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  GRADIENT,
-  mediaUp,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	color,
+	EASING,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	GRADIENT,
+	mediaUp,
+	radius,
+	REDUCED_MOTION,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 
-import { type PartnerService } from './marketplace-partner';
-import { ProfileSectionTitle } from './ProfileSectionTitle';
+import { type PartnerService } from "./marketplace-partner";
+import { ProfileSectionTitle } from "./ProfileSectionTitle";
 
 const Section = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ const ServicesGrid = styled.div`
   gap: ${spacing(3.5)};
   grid-template-columns: minmax(0, 1fr);
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 `;
@@ -81,7 +81,7 @@ const ServiceCard = styled.article`
   }
 
   &::before {
-    background: ${color('blue')};
+    background: ${color("blue")};
     content: '';
     display: block;
     flex-shrink: 0;
@@ -91,8 +91,8 @@ const ServiceCard = styled.article`
   }
 
   &:hover {
-    border-color: ${color('blue')}33;
-    box-shadow: 0 10px 28px ${color('black-10')};
+    border-color: ${color("blue")}33;
+    box-shadow: 0 10px 28px ${color("black-10")};
     transform: translateY(-2px);
   }
 
@@ -124,7 +124,7 @@ const ServiceCap = styled.div`
 
   ${ServiceCard}:hover & {
     background:
-      linear-gradient(90deg, ${color('blue')}0d, transparent 72%),
+      linear-gradient(90deg, ${color("blue")}0d, transparent 72%),
       ${GRADIENT.heroGlow};
   }
 `;
@@ -139,7 +139,7 @@ const ServiceBody = styled.div`
 
 const ServiceTitle = styled.h3`
   color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: 1.25;
@@ -147,38 +147,38 @@ const ServiceTitle = styled.h3`
 
 const ServiceDescription = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.75)};
   line-height: 1.52;
 `;
 
 export function PartnerServices({
-  services,
+	services,
 }: {
-  services: readonly PartnerService[];
+	services: readonly PartnerService[];
 }) {
-  if (services.length === 0) {
-    return null;
-  }
+	if (services.length === 0) {
+		return null;
+	}
 
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <Section aria-labelledby="partner-services-heading">
-      <ProfileSectionTitle id="partner-services-heading">
-        {i18n._(msg`Services`)}
-      </ProfileSectionTitle>
-      <ServicesGrid>
-        {services.map((service) => (
-          <ServiceCard key={service.title}>
-            <ServiceCap aria-hidden="true" />
-            <ServiceBody>
-              <ServiceTitle>{service.title}</ServiceTitle>
-              <ServiceDescription>{service.description}</ServiceDescription>
-            </ServiceBody>
-          </ServiceCard>
-        ))}
-      </ServicesGrid>
-    </Section>
-  );
+	return (
+		<Section aria-labelledby="partner-services-heading">
+			<ProfileSectionTitle id="partner-services-heading">
+				{i18n._(msg`Services`)}
+			</ProfileSectionTitle>
+			<ServicesGrid>
+				{services.map((service) => (
+					<ServiceCard key={service.title}>
+						<ServiceCap aria-hidden="true" />
+						<ServiceBody>
+							<ServiceTitle>{service.title}</ServiceTitle>
+							<ServiceDescription>{service.description}</ServiceDescription>
+						</ServiceBody>
+					</ServiceCard>
+				))}
+			</ServicesGrid>
+		</Section>
+	);
 }

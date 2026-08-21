@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { mediaUp } from '@/tokens';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { mediaUp } from "@/tokens";
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { WindowBar } from './WindowBar';
+import { WindowBar } from "./WindowBar";
 
 const FrameRoot = styled.div`
   align-items: stretch;
@@ -26,23 +26,23 @@ const Shell = styled.div<{ $compact: boolean; $floatingShadow: boolean }>`
   border: 1px solid ${THEME_LIGHT.border.color.medium};
   border-radius: ${APP_PREVIEW_STAGE.frame.borderRadiusPx}px;
   box-shadow: ${({ $floatingShadow }) =>
-    $floatingShadow
-      ? APP_PREVIEW_STAGE.shadow.mobileFloating
-      : APP_PREVIEW_STAGE.shadow.mobileResting};
+		$floatingShadow
+			? APP_PREVIEW_STAGE.shadow.mobileFloating
+			: APP_PREVIEW_STAGE.shadow.mobileResting};
   display: flex;
   flex-direction: column;
   height: 100%;
   max-width: ${({ $compact }) =>
-    $compact ? 'none' : `${APP_PREVIEW_STAGE.frame.maxWidthPx}px`};
+		$compact ? "none" : `${APP_PREVIEW_STAGE.frame.maxWidthPx}px`};
   overflow: hidden;
   position: relative;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     box-shadow: ${({ $floatingShadow }) =>
-      $floatingShadow
-        ? APP_PREVIEW_STAGE.shadow.floating
-        : APP_PREVIEW_STAGE.shadow.resting};
+			$floatingShadow
+				? APP_PREVIEW_STAGE.shadow.floating
+				: APP_PREVIEW_STAGE.shadow.resting};
   }
 `;
 
@@ -56,20 +56,20 @@ const Content = styled.div`
 // The static product frame: the non-interactive presentation the
 // product pages mount (the home hero uses AppWindow).
 export function ProductFrame({
-  children,
-  compact = false,
-  floatingShadow = false,
+	children,
+	compact = false,
+	floatingShadow = false,
 }: {
-  children: ReactNode;
-  compact?: boolean;
-  floatingShadow?: boolean;
+	children: ReactNode;
+	compact?: boolean;
+	floatingShadow?: boolean;
 }) {
-  return (
-    <FrameRoot>
-      <Shell $compact={compact} $floatingShadow={floatingShadow}>
-        <WindowBar />
-        <Content>{children}</Content>
-      </Shell>
-    </FrameRoot>
-  );
+	return (
+		<FrameRoot>
+			<Shell $compact={compact} $floatingShadow={floatingShadow}>
+				<WindowBar />
+				<Content>{children}</Content>
+			</Shell>
+		</FrameRoot>
+	);
 }

@@ -1,52 +1,52 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from "twenty-shared/types";
 
-import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
+import { type FlatApplicationVariable } from "src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type";
+import { getFlatFieldMetadataMock } from "src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock";
+import { flatEntityToScalarFlatEntity } from "src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util";
 
-describe('flatEntityToScalarFlatEntity', () => {
-  it('should return only scalar and structural properties, excluding universal extras', () => {
-    const flatEntity = getFlatFieldMetadataMock({
-      id: 'field-metadata-id',
-      workspaceId: 'workspace-id',
-      applicationId: 'application-id',
-      universalIdentifier: 'universal-identifier',
-      applicationUniversalIdentifier: 'app-universal-id',
-      objectMetadataId: 'object-metadata-id',
-      objectMetadataUniversalIdentifier: 'object-universal-id',
-      type: FieldMetadataType.TEXT,
-      defaultValue: "'default-value'",
-      description: 'test description',
-      icon: 'IconTest',
-      isActive: true,
-      isLabelSyncedWithName: false,
-      isUnique: false,
-      label: 'Test Label',
-      name: 'testField',
-      options: null,
-      overrides: null,
-      settings: null,
-      universalSettings: null,
-      isSystem: false,
-      isUIEditable: true,
-      isNullable: true,
-      relationTargetFieldMetadataId: 'relation-target-field-id',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'relation-target-field-universal-id',
-      relationTargetObjectMetadataId: 'relation-target-object-id',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'relation-target-object-universal-id',
-      morphId: null,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-01T00:00:00.000Z',
-    });
+describe("flatEntityToScalarFlatEntity", () => {
+	it("should return only scalar and structural properties, excluding universal extras", () => {
+		const flatEntity = getFlatFieldMetadataMock({
+			id: "field-metadata-id",
+			workspaceId: "workspace-id",
+			applicationId: "application-id",
+			universalIdentifier: "universal-identifier",
+			applicationUniversalIdentifier: "app-universal-id",
+			objectMetadataId: "object-metadata-id",
+			objectMetadataUniversalIdentifier: "object-universal-id",
+			type: FieldMetadataType.TEXT,
+			defaultValue: "'default-value'",
+			description: "test description",
+			icon: "IconTest",
+			isActive: true,
+			isLabelSyncedWithName: false,
+			isUnique: false,
+			label: "Test Label",
+			name: "testField",
+			options: null,
+			overrides: null,
+			settings: null,
+			universalSettings: null,
+			isSystem: false,
+			isUIEditable: true,
+			isNullable: true,
+			relationTargetFieldMetadataId: "relation-target-field-id",
+			relationTargetFieldMetadataUniversalIdentifier:
+				"relation-target-field-universal-id",
+			relationTargetObjectMetadataId: "relation-target-object-id",
+			relationTargetObjectMetadataUniversalIdentifier:
+				"relation-target-object-universal-id",
+			morphId: null,
+			createdAt: "2025-01-01T00:00:00.000Z",
+			updatedAt: "2025-01-01T00:00:00.000Z",
+		});
 
-    const result = flatEntityToScalarFlatEntity({
-      metadataName: 'fieldMetadata',
-      flatEntity,
-    });
+		const result = flatEntityToScalarFlatEntity({
+			metadataName: "fieldMetadata",
+			flatEntity,
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "applicationId": "application-id",
   "createdAt": "2025-01-01T00:00:00.000Z",
@@ -77,55 +77,55 @@ describe('flatEntityToScalarFlatEntity', () => {
   "writability": "OPEN",
 }
 `);
-  });
+	});
 
-  it('should preserve secret application variable value instead of masking it', () => {
-    const encryptedValue = 'dGVzdC1lbmNyeXB0ZWQtdmFsdWUtd2l0aC1pdi1wcmVmaXg=';
+	it("should preserve secret application variable value instead of masking it", () => {
+		const encryptedValue = "dGVzdC1lbmNyeXB0ZWQtdmFsdWUtd2l0aC1pdi1wcmVmaXg=";
 
-    const flatEntity = {
-      id: 'app-var-id',
-      workspaceId: 'workspace-id',
-      applicationId: 'application-id',
-      universalIdentifier: 'app-var-universal-id',
-      applicationUniversalIdentifier: 'app-universal-id',
-      key: 'API_SECRET',
-      value: encryptedValue,
-      description: 'An API secret key',
-      isSecret: true,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-01T00:00:00.000Z',
-    } as unknown as FlatApplicationVariable;
+		const flatEntity = {
+			id: "app-var-id",
+			workspaceId: "workspace-id",
+			applicationId: "application-id",
+			universalIdentifier: "app-var-universal-id",
+			applicationUniversalIdentifier: "app-universal-id",
+			key: "API_SECRET",
+			value: encryptedValue,
+			description: "An API secret key",
+			isSecret: true,
+			createdAt: "2025-01-01T00:00:00.000Z",
+			updatedAt: "2025-01-01T00:00:00.000Z",
+		} as unknown as FlatApplicationVariable;
 
-    const result = flatEntityToScalarFlatEntity({
-      metadataName: 'applicationVariable',
-      flatEntity,
-    });
+		const result = flatEntityToScalarFlatEntity({
+			metadataName: "applicationVariable",
+			flatEntity,
+		});
 
-    expect(result.value).toBe(encryptedValue);
-  });
+		expect(result.value).toBe(encryptedValue);
+	});
 
-  it('should preserve non-secret application variable value', () => {
-    const plainValue = 'https://example.com';
+	it("should preserve non-secret application variable value", () => {
+		const plainValue = "https://example.com";
 
-    const flatEntity = {
-      id: 'app-var-id',
-      workspaceId: 'workspace-id',
-      applicationId: 'application-id',
-      universalIdentifier: 'app-var-universal-id',
-      applicationUniversalIdentifier: 'app-universal-id',
-      key: 'PUBLIC_URL',
-      value: plainValue,
-      description: 'A public URL',
-      isSecret: false,
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: '2025-01-01T00:00:00.000Z',
-    } as unknown as FlatApplicationVariable;
+		const flatEntity = {
+			id: "app-var-id",
+			workspaceId: "workspace-id",
+			applicationId: "application-id",
+			universalIdentifier: "app-var-universal-id",
+			applicationUniversalIdentifier: "app-universal-id",
+			key: "PUBLIC_URL",
+			value: plainValue,
+			description: "A public URL",
+			isSecret: false,
+			createdAt: "2025-01-01T00:00:00.000Z",
+			updatedAt: "2025-01-01T00:00:00.000Z",
+		} as unknown as FlatApplicationVariable;
 
-    const result = flatEntityToScalarFlatEntity({
-      metadataName: 'applicationVariable',
-      flatEntity,
-    });
+		const result = flatEntityToScalarFlatEntity({
+			metadataName: "applicationVariable",
+			flatEntity,
+		});
 
-    expect(result.value).toBe(plainValue);
-  });
+		expect(result.value).toBe(plainValue);
+	});
 });

@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledSettingsTextInput = styled.input`
   background-color: ${() => themeCssVariables.background.transparent.lighter};

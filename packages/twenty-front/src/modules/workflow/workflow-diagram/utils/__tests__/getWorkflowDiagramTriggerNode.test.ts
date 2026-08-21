@@ -1,21 +1,21 @@
-import { type WorkflowTrigger } from '@/workflow/types/Workflow';
-import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
+import { type WorkflowTrigger } from "@/workflow/types/Workflow";
+import { getWorkflowDiagramTriggerNode } from "@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode";
 
-describe('getWorkflowDiagramTriggerNode', () => {
-  describe('MANUAL trigger type', () => {
-    it('should create trigger node with default label when trigger name is not provided', () => {
-      const trigger: WorkflowTrigger = {
-        type: 'MANUAL',
-        settings: {
-          objectType: 'person',
-          outputSchema: {},
-          icon: 'IconUser',
-        },
-      };
+describe("getWorkflowDiagramTriggerNode", () => {
+	describe("MANUAL trigger type", () => {
+		it("should create trigger node with default label when trigger name is not provided", () => {
+			const trigger: WorkflowTrigger = {
+				type: "MANUAL",
+				settings: {
+					objectType: "person",
+					outputSchema: {},
+					icon: "IconUser",
+				},
+			};
 
-      const result = getWorkflowDiagramTriggerNode({ trigger });
+			const result = getWorkflowDiagramTriggerNode({ trigger });
 
-      expect(result).toMatchInlineSnapshot(`
+			expect(result).toMatchInlineSnapshot(`
 {
   "data": {
     "hasNextStepIds": false,
@@ -36,27 +36,27 @@ describe('getWorkflowDiagramTriggerNode', () => {
   },
 }
 `);
-    });
-  });
+		});
+	});
 
-  describe('CRON trigger type', () => {
-    it('should create trigger node for CRON trigger', () => {
-      const trigger: WorkflowTrigger = {
-        type: 'CRON',
-        settings: {
-          type: 'DAYS',
-          schedule: {
-            day: 1,
-            hour: 9,
-            minute: 0,
-          },
-          outputSchema: {},
-        },
-      };
+	describe("CRON trigger type", () => {
+		it("should create trigger node for CRON trigger", () => {
+			const trigger: WorkflowTrigger = {
+				type: "CRON",
+				settings: {
+					type: "DAYS",
+					schedule: {
+						day: 1,
+						hour: 9,
+						minute: 0,
+					},
+					outputSchema: {},
+				},
+			};
 
-      const result = getWorkflowDiagramTriggerNode({ trigger });
+			const result = getWorkflowDiagramTriggerNode({ trigger });
 
-      expect(result).toMatchInlineSnapshot(`
+			expect(result).toMatchInlineSnapshot(`
         {
           "data": {
             "hasNextStepIds": false,
@@ -77,24 +77,24 @@ describe('getWorkflowDiagramTriggerNode', () => {
           },
         }
       `);
-    });
-  });
+		});
+	});
 
-  describe('WEBHOOK trigger type', () => {
-    it('should create trigger node for WEBHOOK trigger', () => {
-      const trigger: WorkflowTrigger = {
-        type: 'WEBHOOK',
-        settings: {
-          httpMethod: 'POST',
-          outputSchema: {},
-          expectedBody: {},
-          authentication: 'API_KEY',
-        },
-      };
+	describe("WEBHOOK trigger type", () => {
+		it("should create trigger node for WEBHOOK trigger", () => {
+			const trigger: WorkflowTrigger = {
+				type: "WEBHOOK",
+				settings: {
+					httpMethod: "POST",
+					outputSchema: {},
+					expectedBody: {},
+					authentication: "API_KEY",
+				},
+			};
 
-      const result = getWorkflowDiagramTriggerNode({ trigger });
+			const result = getWorkflowDiagramTriggerNode({ trigger });
 
-      expect(result).toMatchInlineSnapshot(`
+			expect(result).toMatchInlineSnapshot(`
         {
           "data": {
             "hasNextStepIds": false,
@@ -115,23 +115,23 @@ describe('getWorkflowDiagramTriggerNode', () => {
           },
         }
       `);
-    });
-  });
+		});
+	});
 
-  describe('DATABASE_EVENT trigger type', () => {
-    it('should create trigger node for DATABASE_EVENT trigger with created event', () => {
-      const trigger: WorkflowTrigger = {
-        type: 'DATABASE_EVENT',
-        settings: {
-          eventName: 'company.created',
-          outputSchema: {},
-          objectType: 'company',
-        },
-      };
+	describe("DATABASE_EVENT trigger type", () => {
+		it("should create trigger node for DATABASE_EVENT trigger with created event", () => {
+			const trigger: WorkflowTrigger = {
+				type: "DATABASE_EVENT",
+				settings: {
+					eventName: "company.created",
+					outputSchema: {},
+					objectType: "company",
+				},
+			};
 
-      const result = getWorkflowDiagramTriggerNode({ trigger });
+			const result = getWorkflowDiagramTriggerNode({ trigger });
 
-      expect(result).toMatchInlineSnapshot(`
+			expect(result).toMatchInlineSnapshot(`
         {
           "data": {
             "hasNextStepIds": false,
@@ -152,21 +152,21 @@ describe('getWorkflowDiagramTriggerNode', () => {
           },
         }
       `);
-    });
+		});
 
-    it('should create trigger node with empty label for DATABASE_EVENT trigger with unknown event', () => {
-      const trigger: WorkflowTrigger = {
-        type: 'DATABASE_EVENT',
-        settings: {
-          eventName: 'company.unknownEvent',
-          outputSchema: {},
-          objectType: 'company',
-        },
-      };
+		it("should create trigger node with empty label for DATABASE_EVENT trigger with unknown event", () => {
+			const trigger: WorkflowTrigger = {
+				type: "DATABASE_EVENT",
+				settings: {
+					eventName: "company.unknownEvent",
+					outputSchema: {},
+					objectType: "company",
+				},
+			};
 
-      const result = getWorkflowDiagramTriggerNode({ trigger });
+			const result = getWorkflowDiagramTriggerNode({ trigger });
 
-      expect(result).toMatchInlineSnapshot(`
+			expect(result).toMatchInlineSnapshot(`
         {
           "data": {
             "hasNextStepIds": false,
@@ -187,24 +187,24 @@ describe('getWorkflowDiagramTriggerNode', () => {
           },
         }
       `);
-    });
-  });
+		});
+	});
 
-  describe('custom trigger name', () => {
-    it('should use custom name when trigger name is provided', () => {
-      const trigger: WorkflowTrigger = {
-        type: 'MANUAL',
-        name: 'Custom Trigger Name',
-        settings: {
-          objectType: 'person',
-          outputSchema: {},
-          icon: 'IconUser',
-        },
-      };
+	describe("custom trigger name", () => {
+		it("should use custom name when trigger name is provided", () => {
+			const trigger: WorkflowTrigger = {
+				type: "MANUAL",
+				name: "Custom Trigger Name",
+				settings: {
+					objectType: "person",
+					outputSchema: {},
+					icon: "IconUser",
+				},
+			};
 
-      const result = getWorkflowDiagramTriggerNode({ trigger });
+			const result = getWorkflowDiagramTriggerNode({ trigger });
 
-      expect(result).toMatchInlineSnapshot(`
+			expect(result).toMatchInlineSnapshot(`
 {
   "data": {
     "hasNextStepIds": false,
@@ -225,19 +225,19 @@ describe('getWorkflowDiagramTriggerNode', () => {
   },
 }
 `);
-    });
-  });
+		});
+	});
 
-  describe('default case', () => {
-    it('should throw error for unsupported trigger type', () => {
-      const trigger = {
-        type: 'UNSUPPORTED_TYPE',
-        settings: {},
-      } as unknown as WorkflowTrigger;
+	describe("default case", () => {
+		it("should throw error for unsupported trigger type", () => {
+			const trigger = {
+				type: "UNSUPPORTED_TYPE",
+				settings: {},
+			} as unknown as WorkflowTrigger;
 
-      expect(() => getWorkflowDiagramTriggerNode({ trigger })).toThrow(
-        'Expected the trigger "{"type":"UNSUPPORTED_TYPE","settings":{}}" to be supported.',
-      );
-    });
-  });
+			expect(() => getWorkflowDiagramTriggerNode({ trigger })).toThrow(
+				'Expected the trigger "{"type":"UNSUPPORTED_TYPE","settings":{}}" to be supported.',
+			);
+		});
+	});
 });

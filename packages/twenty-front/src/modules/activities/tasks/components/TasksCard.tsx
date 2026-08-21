@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { TaskGroups } from "@/activities/tasks/components/TaskGroups";
+import { ObjectFilterDropdownComponentInstanceContext } from "@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext";
+import { useTargetRecord } from "@/ui/layout/contexts/useTargetRecord";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -13,15 +13,15 @@ const StyledContainer = styled.div`
 `;
 
 export const TasksCard = () => {
-  const targetRecord = useTargetRecord();
+	const targetRecord = useTargetRecord();
 
-  return (
-    <StyledContainer>
-      <ObjectFilterDropdownComponentInstanceContext.Provider
-        value={{ instanceId: 'entity-tasks-filter-instance' }}
-      >
-        <TaskGroups targetableObject={targetRecord} />
-      </ObjectFilterDropdownComponentInstanceContext.Provider>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<ObjectFilterDropdownComponentInstanceContext.Provider
+				value={{ instanceId: "entity-tasks-filter-instance" }}
+			>
+				<TaskGroups targetableObject={targetRecord} />
+			</ObjectFilterDropdownComponentInstanceContext.Provider>
+		</StyledContainer>
+	);
 };

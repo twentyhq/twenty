@@ -1,55 +1,55 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
-import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type KeyboardEvent, useContext, useMemo, useState } from "react";
+import { type AskQuestionAnswer, type AskQuestionItem } from "twenty-shared/ai";
+import { isDefined } from "twenty-shared/utils";
+import { AppTooltip, TooltipDelay } from "twenty-ui/surfaces";
 import {
-  IconArrowUp,
-  IconChevronLeft,
-  IconChevronRightPipe,
-  IconInfoCircle,
-  type IconComponent,
-  IconSquareNumber1,
-  IconSquareNumber2,
-  IconSquareNumber3,
-  IconSquareNumber4,
-  IconSquareNumber5,
-  IconSquareNumber6,
-  IconSquareNumber7,
-  IconSquareNumber8,
-  IconSquareNumber9,
-} from 'twenty-ui/icon';
+	IconArrowUp,
+	IconChevronLeft,
+	IconChevronRightPipe,
+	IconInfoCircle,
+	type IconComponent,
+	IconSquareNumber1,
+	IconSquareNumber2,
+	IconSquareNumber3,
+	IconSquareNumber4,
+	IconSquareNumber5,
+	IconSquareNumber6,
+	IconSquareNumber7,
+	IconSquareNumber8,
+	IconSquareNumber9,
+} from "twenty-ui/icon";
 import {
-  LightIconButton,
-  RoundedIconButton,
-  type SelectOption,
-} from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+	LightIconButton,
+	RoundedIconButton,
+	type SelectOption,
+} from "twenty-ui/input";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
-import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
-import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
-import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
-import { Select } from '@/ui/input/components/Select';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { AgentChatFileUploadButton } from "@/ai/components/internal/AgentChatFileUploadButton";
+import { AiChatContextUsageButton } from "@/ai/components/internal/AiChatContextUsageButton";
+import { AiChatQuestionOtherOption } from "@/ai/components/internal/AiChatQuestionOtherOption";
+import { TextWithChatReferences } from "@/ai/components/TextWithChatReferences";
+import { useAgentChatModelId } from "@/ai/hooks/useAgentChatModelId";
+import { useAiModelOptions } from "@/ai/hooks/useAiModelOptions";
+import { useSubmitQuestionAnswer } from "@/ai/hooks/useSubmitQuestionAnswer";
+import { useWorkspaceAiModelAvailability } from "@/ai/hooks/useWorkspaceAiModelAvailability";
+import { agentChatUserSelectedModelState } from "@/ai/states/agentChatUserSelectedModelState";
+import { type AgentChatPendingQuestion } from "@/ai/types/AgentChatPendingQuestion";
+import { Select } from "@/ui/input/components/Select";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
 
 const NUMBER_ICONS: IconComponent[] = [
-  IconSquareNumber1,
-  IconSquareNumber2,
-  IconSquareNumber3,
-  IconSquareNumber4,
-  IconSquareNumber5,
-  IconSquareNumber6,
-  IconSquareNumber7,
-  IconSquareNumber8,
-  IconSquareNumber9,
+	IconSquareNumber1,
+	IconSquareNumber2,
+	IconSquareNumber3,
+	IconSquareNumber4,
+	IconSquareNumber5,
+	IconSquareNumber6,
+	IconSquareNumber7,
+	IconSquareNumber8,
+	IconSquareNumber9,
 ];
 
 const StyledCard = styled.div`
@@ -104,15 +104,15 @@ const StyledPagerLabel = styled.span`
 const StyledOptionsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
 `;
 
 const StyledOptionRow = styled.div<{ isHighlighted: boolean }>`
   align-items: center;
   background: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
+		isHighlighted
+			? themeCssVariables.background.transparent.light
+			: "transparent"};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   cursor: pointer;
@@ -178,7 +178,7 @@ const StyledActionsRow = styled.div`
 const StyledLeftActions = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
 `;
 
 const StyledRightActions = styled.div`
@@ -188,354 +188,354 @@ const StyledRightActions = styled.div`
 `;
 
 const areAllQuestionsAnswered = (
-  questions: AskQuestionItem[],
-  selectedByQuestion: Record<number, number[]>,
-  freeTextByQuestion: Record<number, string>,
-  otherSelectedByQuestion: Record<number, boolean>,
+	questions: AskQuestionItem[],
+	selectedByQuestion: Record<number, number[]>,
+	freeTextByQuestion: Record<number, string>,
+	otherSelectedByQuestion: Record<number, boolean>,
 ) =>
-  questions.every(
-    (_, index) =>
-      (selectedByQuestion[index]?.length ?? 0) > 0 ||
-      (otherSelectedByQuestion[index] &&
-        (freeTextByQuestion[index] ?? '').trim().length > 0),
-  );
+	questions.every(
+		(_, index) =>
+			(selectedByQuestion[index]?.length ?? 0) > 0 ||
+			(otherSelectedByQuestion[index] &&
+				(freeTextByQuestion[index] ?? "").trim().length > 0),
+	);
 
 type AiChatQuestionCardProps = {
-  pendingQuestion: AgentChatPendingQuestion;
+	pendingQuestion: AgentChatPendingQuestion;
 };
 
 export const AiChatQuestionCard = ({
-  pendingQuestion,
+	pendingQuestion,
 }: AiChatQuestionCardProps) => {
-  const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-  const { messageId, toolCallId, questions } = pendingQuestion;
+	const { t } = useLingui();
+	const { theme } = useContext(ThemeContext);
+	const { messageId, toolCallId, questions } = pendingQuestion;
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedByQuestion, setSelectedByQuestion] = useState<
-    Record<number, number[]>
-  >({});
-  const [freeTextByQuestion, setFreeTextByQuestion] = useState<
-    Record<number, string>
-  >({});
-  const [otherSelectedByQuestion, setOtherSelectedByQuestion] = useState<
-    Record<number, boolean>
-  >({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const [selectedByQuestion, setSelectedByQuestion] = useState<
+		Record<number, number[]>
+	>({});
+	const [freeTextByQuestion, setFreeTextByQuestion] = useState<
+		Record<number, string>
+	>({});
+	const [otherSelectedByQuestion, setOtherSelectedByQuestion] = useState<
+		Record<number, boolean>
+	>({});
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { submitAnswer } = useSubmitQuestionAnswer();
+	const { submitAnswer } = useSubmitQuestionAnswer();
 
-  const { options: modelOptions, pinnedOption } = useAiModelOptions({
-    variant: 'pinned-default',
-  });
-  const { enabledModels } = useWorkspaceAiModelAvailability();
-  const hasNoEnabledModels = enabledModels.length === 0;
-  const { selectedModelId } = useAgentChatModelId();
-  const setAgentChatUserSelectedModel = useSetAtomState(
-    agentChatUserSelectedModelState,
-  );
-  const defaultPinnedOption: SelectOption<string | null> | undefined =
-    pinnedOption ? { ...pinnedOption, value: null } : undefined;
+	const { options: modelOptions, pinnedOption } = useAiModelOptions({
+		variant: "pinned-default",
+	});
+	const { enabledModels } = useWorkspaceAiModelAvailability();
+	const hasNoEnabledModels = enabledModels.length === 0;
+	const { selectedModelId } = useAgentChatModelId();
+	const setAgentChatUserSelectedModel = useSetAtomState(
+		agentChatUserSelectedModelState,
+	);
+	const defaultPinnedOption: SelectOption<string | null> | undefined =
+		pinnedOption ? { ...pinnedOption, value: null } : undefined;
 
-  const currentQuestion = questions[currentIndex];
-  const hasMultipleQuestions = questions.length > 1;
-  const isLastQuestion = currentIndex === questions.length - 1;
+	const currentQuestion = questions[currentIndex];
+	const hasMultipleQuestions = questions.length > 1;
+	const isLastQuestion = currentIndex === questions.length - 1;
 
-  const buildAnswers = (
-    selected: Record<number, number[]>,
-    otherSelected: Record<number, boolean>,
-  ): AskQuestionAnswer[] =>
-    questions.map((_, index) => {
-      const trimmedFreeText = (freeTextByQuestion[index] ?? '').trim();
-      const shouldIncludeFreeText =
-        (otherSelected[index] ?? false) && trimmedFreeText.length > 0;
+	const buildAnswers = (
+		selected: Record<number, number[]>,
+		otherSelected: Record<number, boolean>,
+	): AskQuestionAnswer[] =>
+		questions.map((_, index) => {
+			const trimmedFreeText = (freeTextByQuestion[index] ?? "").trim();
+			const shouldIncludeFreeText =
+				(otherSelected[index] ?? false) && trimmedFreeText.length > 0;
 
-      return {
-        questionIndex: index,
-        selectedOptionIndices: selected[index] ?? [],
-        freeText: shouldIncludeFreeText ? trimmedFreeText : undefined,
-      };
-    });
+			return {
+				questionIndex: index,
+				selectedOptionIndices: selected[index] ?? [],
+				freeText: shouldIncludeFreeText ? trimmedFreeText : undefined,
+			};
+		});
 
-  const submit = async (answers: AskQuestionAnswer[]) => {
-    if (isSubmitting) {
-      return;
-    }
+	const submit = async (answers: AskQuestionAnswer[]) => {
+		if (isSubmitting) {
+			return;
+		}
 
-    setIsSubmitting(true);
-    await submitAnswer({ messageId, toolCallId, answers });
-    setIsSubmitting(false);
-  };
+		setIsSubmitting(true);
+		await submitAnswer({ messageId, toolCallId, answers });
+		setIsSubmitting(false);
+	};
 
-  const handleSelectOption = (optionIndex: number) => {
-    if (currentQuestion.allowMultiSelect === true) {
-      setSelectedByQuestion((previous) => {
-        const current = previous[currentIndex] ?? [];
-        const next = current.includes(optionIndex)
-          ? current.filter((value) => value !== optionIndex)
-          : [...current, optionIndex];
+	const handleSelectOption = (optionIndex: number) => {
+		if (currentQuestion.allowMultiSelect === true) {
+			setSelectedByQuestion((previous) => {
+				const current = previous[currentIndex] ?? [];
+				const next = current.includes(optionIndex)
+					? current.filter((value) => value !== optionIndex)
+					: [...current, optionIndex];
 
-        return { ...previous, [currentIndex]: next };
-      });
+				return { ...previous, [currentIndex]: next };
+			});
 
-      return;
-    }
+			return;
+		}
 
-    const nextSelected = {
-      ...selectedByQuestion,
-      [currentIndex]: [optionIndex],
-    };
-    const nextOtherSelected = {
-      ...otherSelectedByQuestion,
-      [currentIndex]: false,
-    };
+		const nextSelected = {
+			...selectedByQuestion,
+			[currentIndex]: [optionIndex],
+		};
+		const nextOtherSelected = {
+			...otherSelectedByQuestion,
+			[currentIndex]: false,
+		};
 
-    setSelectedByQuestion(nextSelected);
-    setOtherSelectedByQuestion(nextOtherSelected);
+		setSelectedByQuestion(nextSelected);
+		setOtherSelectedByQuestion(nextOtherSelected);
 
-    if (!isLastQuestion) {
-      setCurrentIndex(currentIndex + 1);
+		if (!isLastQuestion) {
+			setCurrentIndex(currentIndex + 1);
 
-      return;
-    }
+			return;
+		}
 
-    if (
-      areAllQuestionsAnswered(
-        questions,
-        nextSelected,
-        freeTextByQuestion,
-        nextOtherSelected,
-      )
-    ) {
-      void submit(buildAnswers(nextSelected, nextOtherSelected));
-    }
-  };
+		if (
+			areAllQuestionsAnswered(
+				questions,
+				nextSelected,
+				freeTextByQuestion,
+				nextOtherSelected,
+			)
+		) {
+			void submit(buildAnswers(nextSelected, nextOtherSelected));
+		}
+	};
 
-  const selectOther = () => {
-    setOtherSelectedByQuestion((previous) => ({
-      ...previous,
-      [currentIndex]: true,
-    }));
+	const selectOther = () => {
+		setOtherSelectedByQuestion((previous) => ({
+			...previous,
+			[currentIndex]: true,
+		}));
 
-    if (currentQuestion.allowMultiSelect !== true) {
-      setSelectedByQuestion((previous) => ({
-        ...previous,
-        [currentIndex]: [],
-      }));
-    }
-  };
+		if (currentQuestion.allowMultiSelect !== true) {
+			setSelectedByQuestion((previous) => ({
+				...previous,
+				[currentIndex]: [],
+			}));
+		}
+	};
 
-  const handleToggleOther = () => {
-    if (
-      currentQuestion.allowMultiSelect === true &&
-      otherSelectedByQuestion[currentIndex]
-    ) {
-      setOtherSelectedByQuestion((previous) => ({
-        ...previous,
-        [currentIndex]: false,
-      }));
+	const handleToggleOther = () => {
+		if (
+			currentQuestion.allowMultiSelect === true &&
+			otherSelectedByQuestion[currentIndex]
+		) {
+			setOtherSelectedByQuestion((previous) => ({
+				...previous,
+				[currentIndex]: false,
+			}));
 
-      return;
-    }
+			return;
+		}
 
-    selectOther();
-  };
+		selectOther();
+	};
 
-  const handleOtherTextChange = (value: string) => {
-    setFreeTextByQuestion((previous) => ({
-      ...previous,
-      [currentIndex]: value,
-    }));
+	const handleOtherTextChange = (value: string) => {
+		setFreeTextByQuestion((previous) => ({
+			...previous,
+			[currentIndex]: value,
+		}));
 
-    if (value.trim().length > 0) {
-      selectOther();
-    }
-  };
+		if (value.trim().length > 0) {
+			selectOther();
+		}
+	};
 
-  const allQuestionsAnswered = useMemo(
-    () =>
-      areAllQuestionsAnswered(
-        questions,
-        selectedByQuestion,
-        freeTextByQuestion,
-        otherSelectedByQuestion,
-      ),
-    [
-      questions,
-      selectedByQuestion,
-      freeTextByQuestion,
-      otherSelectedByQuestion,
-    ],
-  );
+	const allQuestionsAnswered = useMemo(
+		() =>
+			areAllQuestionsAnswered(
+				questions,
+				selectedByQuestion,
+				freeTextByQuestion,
+				otherSelectedByQuestion,
+			),
+		[
+			questions,
+			selectedByQuestion,
+			freeTextByQuestion,
+			otherSelectedByQuestion,
+		],
+	);
 
-  const handleSend = () => {
-    if (!allQuestionsAnswered) {
-      return;
-    }
+	const handleSend = () => {
+		if (!allQuestionsAnswered) {
+			return;
+		}
 
-    void submit(buildAnswers(selectedByQuestion, otherSelectedByQuestion));
-  };
+		void submit(buildAnswers(selectedByQuestion, otherSelectedByQuestion));
+	};
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
+	const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+		if (event.key === "Enter" && !event.shiftKey) {
+			event.preventDefault();
 
-      if (!isLastQuestion) {
-        setCurrentIndex(currentIndex + 1);
+			if (!isLastQuestion) {
+				setCurrentIndex(currentIndex + 1);
 
-        return;
-      }
+				return;
+			}
 
-      handleSend();
-    }
-  };
+			handleSend();
+		}
+	};
 
-  return (
-    <StyledCard>
-      <StyledQuestionSection>
-        <StyledQuestionHeaderRow>
-          <StyledQuestionText>
-            <TextWithChatReferences text={currentQuestion.question} />
-          </StyledQuestionText>
-          {hasMultipleQuestions && (
-            <StyledPager>
-              <LightIconButton
-                Icon={IconChevronLeft}
-                size="small"
-                disabled={currentIndex === 0}
-                onClick={() =>
-                  setCurrentIndex((index) => Math.max(0, index - 1))
-                }
-              />
-              <StyledPagerLabel>
-                {currentIndex + 1}/{questions.length}
-              </StyledPagerLabel>
-              <LightIconButton
-                Icon={IconChevronRightPipe}
-                size="small"
-                disabled={isLastQuestion}
-                onClick={() =>
-                  setCurrentIndex((index) =>
-                    Math.min(questions.length - 1, index + 1),
-                  )
-                }
-              />
-            </StyledPager>
-          )}
-        </StyledQuestionHeaderRow>
+	return (
+		<StyledCard>
+			<StyledQuestionSection>
+				<StyledQuestionHeaderRow>
+					<StyledQuestionText>
+						<TextWithChatReferences text={currentQuestion.question} />
+					</StyledQuestionText>
+					{hasMultipleQuestions && (
+						<StyledPager>
+							<LightIconButton
+								Icon={IconChevronLeft}
+								size="small"
+								disabled={currentIndex === 0}
+								onClick={() =>
+									setCurrentIndex((index) => Math.max(0, index - 1))
+								}
+							/>
+							<StyledPagerLabel>
+								{currentIndex + 1}/{questions.length}
+							</StyledPagerLabel>
+							<LightIconButton
+								Icon={IconChevronRightPipe}
+								size="small"
+								disabled={isLastQuestion}
+								onClick={() =>
+									setCurrentIndex((index) =>
+										Math.min(questions.length - 1, index + 1),
+									)
+								}
+							/>
+						</StyledPager>
+					)}
+				</StyledQuestionHeaderRow>
 
-        <StyledOptionsList>
-          {currentQuestion.options.map((option, optionIndex) => {
-            const NumberIcon =
-              NUMBER_ICONS[optionIndex] ??
-              NUMBER_ICONS[NUMBER_ICONS.length - 1];
-            const isSelected = (
-              selectedByQuestion[currentIndex] ?? []
-            ).includes(optionIndex);
-            const hasSelection =
-              (selectedByQuestion[currentIndex] ?? []).length > 0 ||
-              (otherSelectedByQuestion[currentIndex] ?? false);
-            const isHighlighted =
-              isSelected || (!hasSelection && option.isRecommended === true);
-            const tooltipId = `ask-question-option-${toolCallId}-${currentIndex}-${optionIndex}`;
+				<StyledOptionsList>
+					{currentQuestion.options.map((option, optionIndex) => {
+						const NumberIcon =
+							NUMBER_ICONS[optionIndex] ??
+							NUMBER_ICONS[NUMBER_ICONS.length - 1];
+						const isSelected = (
+							selectedByQuestion[currentIndex] ?? []
+						).includes(optionIndex);
+						const hasSelection =
+							(selectedByQuestion[currentIndex] ?? []).length > 0 ||
+							(otherSelectedByQuestion[currentIndex] ?? false);
+						const isHighlighted =
+							isSelected || (!hasSelection && option.isRecommended === true);
+						const tooltipId = `ask-question-option-${toolCallId}-${currentIndex}-${optionIndex}`;
 
-            return (
-              <StyledOptionRow
-                key={optionIndex}
-                isHighlighted={isHighlighted}
-                role="button"
-                tabIndex={0}
-                onClick={() => handleSelectOption(optionIndex)}
-                onKeyDown={(event) => {
-                  if (event.target !== event.currentTarget) {
-                    return;
-                  }
+						return (
+							<StyledOptionRow
+								key={optionIndex}
+								isHighlighted={isHighlighted}
+								role="button"
+								tabIndex={0}
+								onClick={() => handleSelectOption(optionIndex)}
+								onKeyDown={(event) => {
+									if (event.target !== event.currentTarget) {
+										return;
+									}
 
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    handleSelectOption(optionIndex);
-                  }
-                }}
-              >
-                <StyledOptionLeft>
-                  <NumberIcon
-                    size={theme.icon.size.sm}
-                    color={themeCssVariables.font.color.tertiary}
-                  />
-                  <StyledOptionLabel>
-                    <TextWithChatReferences text={option.label} />
-                  </StyledOptionLabel>
-                  {option.isRecommended === true && (
-                    <StyledRecommended>· {t`Recommended`}</StyledRecommended>
-                  )}
-                </StyledOptionLeft>
-                {isDefined(option.description) && (
-                  <>
-                    <span
-                      id={tooltipId}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <LightIconButton
-                        Icon={IconInfoCircle}
-                        size="small"
-                        accent="tertiary"
-                      />
-                    </span>
-                    <AppTooltip
-                      anchorSelect={`#${tooltipId}`}
-                      content={option.description}
-                      delay={TooltipDelay.shortDelay}
-                      place="left"
-                    />
-                  </>
-                )}
-              </StyledOptionRow>
-            );
-          })}
-          <AiChatQuestionOtherOption
-            NumberIcon={
-              NUMBER_ICONS[currentQuestion.options.length] ??
-              NUMBER_ICONS[NUMBER_ICONS.length - 1]
-            }
-            isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
-            value={freeTextByQuestion[currentIndex] ?? ''}
-            onChange={handleOtherTextChange}
-            onSelect={handleToggleOther}
-            onTextareaKeyDown={handleKeyDown}
-          />
-        </StyledOptionsList>
-      </StyledQuestionSection>
+									if (event.key === "Enter" || event.key === " ") {
+										event.preventDefault();
+										handleSelectOption(optionIndex);
+									}
+								}}
+							>
+								<StyledOptionLeft>
+									<NumberIcon
+										size={theme.icon.size.sm}
+										color={themeCssVariables.font.color.tertiary}
+									/>
+									<StyledOptionLabel>
+										<TextWithChatReferences text={option.label} />
+									</StyledOptionLabel>
+									{option.isRecommended === true && (
+										<StyledRecommended>· {t`Recommended`}</StyledRecommended>
+									)}
+								</StyledOptionLeft>
+								{isDefined(option.description) && (
+									<>
+										<span
+											id={tooltipId}
+											onClick={(event) => event.stopPropagation()}
+										>
+											<LightIconButton
+												Icon={IconInfoCircle}
+												size="small"
+												accent="tertiary"
+											/>
+										</span>
+										<AppTooltip
+											anchorSelect={`#${tooltipId}`}
+											content={option.description}
+											delay={TooltipDelay.shortDelay}
+											place="left"
+										/>
+									</>
+								)}
+							</StyledOptionRow>
+						);
+					})}
+					<AiChatQuestionOtherOption
+						NumberIcon={
+							NUMBER_ICONS[currentQuestion.options.length] ??
+							NUMBER_ICONS[NUMBER_ICONS.length - 1]
+						}
+						isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
+						value={freeTextByQuestion[currentIndex] ?? ""}
+						onChange={handleOtherTextChange}
+						onSelect={handleToggleOther}
+						onTextareaKeyDown={handleKeyDown}
+					/>
+				</StyledOptionsList>
+			</StyledQuestionSection>
 
-      <StyledDivider />
+			<StyledDivider />
 
-      <StyledComposerSection>
-        <StyledActionsRow>
-          <StyledLeftActions>
-            <AgentChatFileUploadButton />
-            <AiChatContextUsageButton />
-          </StyledLeftActions>
-          <StyledRightActions>
-            <Select
-              dropdownId="ai-chat-question-model-select"
-              value={selectedModelId}
-              onChange={setAgentChatUserSelectedModel}
-              options={modelOptions}
-              pinnedOption={defaultPinnedOption}
-              disabled={hasNoEnabledModels}
-              selectSizeVariant="small"
-              showContextualTextInControl={false}
-              withSearchInput
-              dropdownOffset={{ x: 0, y: 8 }}
-            />
-            <RoundedIconButton
-              Icon={IconArrowUp}
-              size="medium"
-              onClick={handleSend}
-              disabled={!allQuestionsAnswered || isSubmitting}
-            />
-          </StyledRightActions>
-        </StyledActionsRow>
-      </StyledComposerSection>
-    </StyledCard>
-  );
+			<StyledComposerSection>
+				<StyledActionsRow>
+					<StyledLeftActions>
+						<AgentChatFileUploadButton />
+						<AiChatContextUsageButton />
+					</StyledLeftActions>
+					<StyledRightActions>
+						<Select
+							dropdownId="ai-chat-question-model-select"
+							value={selectedModelId}
+							onChange={setAgentChatUserSelectedModel}
+							options={modelOptions}
+							pinnedOption={defaultPinnedOption}
+							disabled={hasNoEnabledModels}
+							selectSizeVariant="small"
+							showContextualTextInControl={false}
+							withSearchInput
+							dropdownOffset={{ x: 0, y: 8 }}
+						/>
+						<RoundedIconButton
+							Icon={IconArrowUp}
+							size="medium"
+							onClick={handleSend}
+							disabled={!allQuestionsAnswered || isSubmitting}
+						/>
+					</StyledRightActions>
+				</StyledActionsRow>
+			</StyledComposerSection>
+		</StyledCard>
+	);
 };

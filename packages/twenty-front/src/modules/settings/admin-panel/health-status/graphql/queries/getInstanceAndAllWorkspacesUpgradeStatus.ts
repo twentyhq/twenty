@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_INSTANCE_AND_ALL_WORKSPACES_UPGRADE_STATUS = gql`
   query GetInstanceAndAllWorkspacesUpgradeStatus {

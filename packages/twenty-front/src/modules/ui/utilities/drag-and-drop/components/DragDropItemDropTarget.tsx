@@ -1,24 +1,24 @@
-import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode, useContext } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
-import { type DragDropItemDropTargetOrientation } from '@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation';
+import { DragDropItemDndContext } from "@/ui/utilities/drag-and-drop/context/DragDropItemDndContext";
+import { type DragDropItemDropTargetOrientation } from "@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation";
 
 const StyledDropTarget = styled.div<{
-  $compact?: boolean;
-  $overlay?: boolean;
-  $seamAligned?: boolean;
+	$compact?: boolean;
+	$overlay?: boolean;
+	$seamAligned?: boolean;
 }>`
   // The line normally nudges up into the gap the dragged item opens; seam-aligned
   // targets drop the nudge so the line sits exactly on the boundary between two
   // bordered cells instead of overlapping the leading one's border.
   --drop-line-nudge: ${({ $seamAligned }) =>
-    $seamAligned ? '0px' : themeCssVariables.spacing[1]};
+		$seamAligned ? "0px" : themeCssVariables.spacing[1]};
   min-height: ${({ $compact }) =>
-    $compact ? '0' : themeCssVariables.spacing[2]};
-  position: ${({ $overlay }) => ($overlay ? 'absolute' : 'relative')};
+		$compact ? "0" : themeCssVariables.spacing[2]};
+  position: ${({ $overlay }) => ($overlay ? "absolute" : "relative")};
   transition: background-color 120ms ease-out;
 
   &[data-orientation='vertical'] {
@@ -84,47 +84,47 @@ const StyledDropTarget = styled.div<{
 `;
 
 type DragDropItemDropTargetProps = {
-  children?: ReactNode;
-  compact?: boolean;
-  droppableId?: string;
-  index: number;
-  orientation?: DragDropItemDropTargetOrientation;
-  overlay?: boolean;
-  // Centers the line on the seam between two cells; use for bordered items where
-  // the default gap nudge would overlap the leading cell's border.
-  seamAligned?: boolean;
+	children?: ReactNode;
+	compact?: boolean;
+	droppableId?: string;
+	index: number;
+	orientation?: DragDropItemDropTargetOrientation;
+	overlay?: boolean;
+	// Centers the line on the seam between two cells; use for bordered items where
+	// the default gap nudge would overlap the leading cell's border.
+	seamAligned?: boolean;
 };
 
 export const DragDropItemDropTarget = ({
-  children,
-  compact = false,
-  droppableId,
-  index,
-  orientation,
-  overlay = false,
-  seamAligned = false,
+	children,
+	compact = false,
+	droppableId,
+	index,
+	orientation,
+	overlay = false,
+	seamAligned = false,
 }: DragDropItemDropTargetProps) => {
-  const { activeDropTargetIndex, activeDroppableId } = useContext(
-    DragDropItemDndContext,
-  );
+	const { activeDropTargetIndex, activeDroppableId } = useContext(
+		DragDropItemDndContext,
+	);
 
-  const matchesDroppable =
-    !isDefined(droppableId) || activeDroppableId === droppableId;
+	const matchesDroppable =
+		!isDefined(droppableId) || activeDroppableId === droppableId;
 
-  const isDragOver = activeDropTargetIndex === index && matchesDroppable;
+	const isDragOver = activeDropTargetIndex === index && matchesDroppable;
 
-  return (
-    <StyledDropTarget
-      $compact={compact}
-      $overlay={overlay}
-      $seamAligned={seamAligned}
-      data-orientation={orientation}
-      data-leading={
-        orientation === 'horizontal' && index === 0 ? 'true' : undefined
-      }
-      data-drag-over={isDragOver ? 'true' : undefined}
-    >
-      {children}
-    </StyledDropTarget>
-  );
+	return (
+		<StyledDropTarget
+			$compact={compact}
+			$overlay={overlay}
+			$seamAligned={seamAligned}
+			data-orientation={orientation}
+			data-leading={
+				orientation === "horizontal" && index === 0 ? "true" : undefined
+			}
+			data-drag-over={isDragOver ? "true" : undefined}
+		>
+			{children}
+		</StyledDropTarget>
+	);
 };

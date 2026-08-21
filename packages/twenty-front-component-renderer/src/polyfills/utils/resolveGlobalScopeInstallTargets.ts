@@ -1,15 +1,15 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { resolvePolyfillWindow } from '@/polyfills/utils/resolvePolyfillWindow';
+import { resolvePolyfillWindow } from "@/polyfills/utils/resolvePolyfillWindow";
 
 export const resolveGlobalScopeInstallTargets = (
-  globalScope: Record<string, unknown>,
+	globalScope: Record<string, unknown>,
 ): Record<string, unknown>[] => {
-  const polyfillWindow = resolvePolyfillWindow(globalScope);
+	const polyfillWindow = resolvePolyfillWindow(globalScope);
 
-  if (isDefined(polyfillWindow)) {
-    return [globalScope, polyfillWindow];
-  }
+	if (isDefined(polyfillWindow)) {
+		return [globalScope, polyfillWindow];
+	}
 
-  return [globalScope];
+	return [globalScope];
 };

@@ -1,9 +1,9 @@
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type Temporal } from 'temporal-polyfill';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useUserTimezone } from "@/ui/input/components/internal/date/hooks/useUserTimezone";
+import { getTimezoneAbbreviationForZonedDateTime } from "@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime";
+import { styled } from "@linaria/react";
+import { isNonEmptyString } from "@sniptt/guards";
+import { type Temporal } from "temporal-polyfill";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledTimezoneAbbreviation = styled.span<{ hasError?: boolean }>`
   background: transparent;
@@ -16,31 +16,31 @@ const StyledTimezoneAbbreviation = styled.span<{ hasError?: boolean }>`
 `;
 
 export const TimeZoneAbbreviation = ({
-  instant,
-  timeZone,
+	instant,
+	timeZone,
 }: {
-  instant: Temporal.Instant;
-  timeZone?: string;
+	instant: Temporal.Instant;
+	timeZone?: string;
 }) => {
-  const { isSystemTimezone, userTimezone, systemTimeZone } = useUserTimezone();
+	const { isSystemTimezone, userTimezone, systemTimeZone } = useUserTimezone();
 
-  const zonedDate = instant.toZonedDateTimeISO(timeZone ?? userTimezone);
+	const zonedDate = instant.toZonedDateTimeISO(timeZone ?? userTimezone);
 
-  const shouldUseParamsTimeZone =
-    isNonEmptyString(timeZone) && systemTimeZone !== timeZone;
+	const shouldUseParamsTimeZone =
+		isNonEmptyString(timeZone) && systemTimeZone !== timeZone;
 
-  const shouldShowTimezoneAbbreviation =
-    !isSystemTimezone || shouldUseParamsTimeZone;
+	const shouldShowTimezoneAbbreviation =
+		!isSystemTimezone || shouldUseParamsTimeZone;
 
-  const timezoneSuffix = shouldShowTimezoneAbbreviation
-    ? ` ${getTimezoneAbbreviationForZonedDateTime(zonedDate)}`
-    : '';
+	const timezoneSuffix = shouldShowTimezoneAbbreviation
+		? ` ${getTimezoneAbbreviationForZonedDateTime(zonedDate)}`
+		: "";
 
-  if (!shouldShowTimezoneAbbreviation) {
-    return <></>;
-  }
+	if (!shouldShowTimezoneAbbreviation) {
+		return <></>;
+	}
 
-  return (
-    <StyledTimezoneAbbreviation>{timezoneSuffix}</StyledTimezoneAbbreviation>
-  );
+	return (
+		<StyledTimezoneAbbreviation>{timezoneSuffix}</StyledTimezoneAbbreviation>
+	);
 };

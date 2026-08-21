@@ -1,23 +1,23 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type DeleteOneAgentFactoryInput = {
-  id: string;
+	id: string;
 };
 
 export const deleteOneAgentQueryFactory = ({
-  input,
+	input,
 }: PerformMetadataQueryParams<DeleteOneAgentFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation DeleteOneAgent($input: AgentIdInput!) {
       deleteOneAgent(input: $input) {
         id
       }
     }
   `,
-  variables: {
-    input: {
-      id: input.id,
-    },
-  },
+	variables: {
+		input: {
+			id: input.id,
+		},
+	},
 });

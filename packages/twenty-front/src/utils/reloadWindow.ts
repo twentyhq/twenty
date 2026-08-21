@@ -1,3 +1,3 @@
 export const reloadWindow = () => {
-  window.location.reload();
+	window.location.reload();
 };

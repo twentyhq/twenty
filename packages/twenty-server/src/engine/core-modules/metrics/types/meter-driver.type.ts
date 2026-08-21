@@ -1,5 +1,5 @@
 export enum MeterDriver {
-  OpenTelemetry = 'opentelemetry',
-  Console = 'console',
-  Prometheus = 'prometheus',
+	OpenTelemetry = "opentelemetry",
+	Console = "console",
+	Prometheus = "prometheus",
 }

@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { Info } from 'twenty-ui/feedback';
+import { styled } from "@linaria/react";
+import { Info } from "twenty-ui/feedback";
 
 const StyledFullWidthInfo = styled.div`
   & > * {
@@ -8,11 +8,11 @@ const StyledFullWidthInfo = styled.div`
 `;
 
 type DpaNoticeProps = {
-  text: string;
+	text: string;
 };
 
 export const DpaNotice = ({ text }: DpaNoticeProps) => (
-  <StyledFullWidthInfo>
-    <Info accent="danger" text={text} />
-  </StyledFullWidthInfo>
+	<StyledFullWidthInfo>
+		<Info accent="danger" text={text} />
+	</StyledFullWidthInfo>
 );

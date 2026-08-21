@@ -1,22 +1,22 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
-import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
-import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
-import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { Table } from '@/ui/layout/table/components/Table';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { SettingsRolePermissionsObjectLevelTableHeader } from "@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader";
+import { SettingsRolePermissionsObjectLevelTableRow } from "@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow";
+import { useFilterObjectMetadataItemsWithPermissionOverride } from "@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride";
+import { useObjectMetadataItemsThatCanHavePermission } from "@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission";
+import { settingsDraftRoleFamilyState } from "@/settings/roles/states/settingsDraftRoleFamilyState";
+import { Table } from "@/ui/layout/table/components/Table";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { TableCell } from "@/ui/layout/table/components/TableCell";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useMemo } from "react";
+import { SettingsPath } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
+import { IconPlus } from "twenty-ui/icon";
+import { Button } from "twenty-ui/input";
+import { Section } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { useNavigateSettings } from "~/hooks/useNavigateSettings";
 
 const StyledCreateObjectOverrideSectionContainer = styled.div`
   > * {
@@ -34,122 +34,122 @@ const StyledTableRows = styled.div`
 `;
 
 type SettingsRolePermissionsObjectLevelSectionProps = {
-  roleId: string;
-  isEditable: boolean;
-  fromAgentId?: string;
-  objectMetadataItemsFromMarketplaceApp?: EnrichedObjectMetadataItem[];
+	roleId: string;
+	isEditable: boolean;
+	fromAgentId?: string;
+	objectMetadataItemsFromMarketplaceApp?: EnrichedObjectMetadataItem[];
 };
 
 export const SettingsRolePermissionsObjectLevelSection = ({
-  roleId,
-  fromAgentId,
-  isEditable,
-  objectMetadataItemsFromMarketplaceApp,
+	roleId,
+	fromAgentId,
+	isEditable,
+	objectMetadataItemsFromMarketplaceApp,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
-  const navigateSettings = useNavigateSettings();
+	const navigateSettings = useNavigateSettings();
 
-  const settingsDraftRole = useAtomFamilyStateValue(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
+	const settingsDraftRole = useAtomFamilyStateValue(
+		settingsDraftRoleFamilyState,
+		roleId,
+	);
 
-  const { objectMetadataItemsThatCanHavePermission } =
-    useObjectMetadataItemsThatCanHavePermission();
+	const { objectMetadataItemsThatCanHavePermission } =
+		useObjectMetadataItemsThatCanHavePermission();
 
-  const allObjectMetadataItems = useMemo(() => {
-    if (
-      !isDefined(objectMetadataItemsFromMarketplaceApp) ||
-      objectMetadataItemsFromMarketplaceApp.length === 0
-    ) {
-      return objectMetadataItemsThatCanHavePermission;
-    }
+	const allObjectMetadataItems = useMemo(() => {
+		if (
+			!isDefined(objectMetadataItemsFromMarketplaceApp) ||
+			objectMetadataItemsFromMarketplaceApp.length === 0
+		) {
+			return objectMetadataItemsThatCanHavePermission;
+		}
 
-    const existingIds = new Set(
-      objectMetadataItemsThatCanHavePermission.map((item) => item.id),
-    );
+		const existingIds = new Set(
+			objectMetadataItemsThatCanHavePermission.map((item) => item.id),
+		);
 
-    const additionalObjectMetadataItemsFromApp =
-      objectMetadataItemsFromMarketplaceApp.filter(
-        (item) => !existingIds.has(item.id),
-      );
+		const additionalObjectMetadataItemsFromApp =
+			objectMetadataItemsFromMarketplaceApp.filter(
+				(item) => !existingIds.has(item.id),
+			);
 
-    return [
-      ...objectMetadataItemsThatCanHavePermission,
-      ...additionalObjectMetadataItemsFromApp,
-    ];
-  }, [
-    objectMetadataItemsThatCanHavePermission,
-    objectMetadataItemsFromMarketplaceApp,
-  ]);
+		return [
+			...objectMetadataItemsThatCanHavePermission,
+			...additionalObjectMetadataItemsFromApp,
+		];
+	}, [
+		objectMetadataItemsThatCanHavePermission,
+		objectMetadataItemsFromMarketplaceApp,
+	]);
 
-  const { filterObjectMetadataItemsWithPermissionOverride } =
-    useFilterObjectMetadataItemsWithPermissionOverride({
-      roleId,
-    });
+	const { filterObjectMetadataItemsWithPermissionOverride } =
+		useFilterObjectMetadataItemsWithPermissionOverride({
+			roleId,
+		});
 
-  const objectMetadataItemsWithPermissionOverride =
-    allObjectMetadataItems.filter(
-      filterObjectMetadataItemsWithPermissionOverride,
-    );
+	const objectMetadataItemsWithPermissionOverride =
+		allObjectMetadataItems.filter(
+			filterObjectMetadataItemsWithPermissionOverride,
+		);
 
-  const allObjectsHaveSetPermission =
-    objectMetadataItemsWithPermissionOverride.length ===
-    allObjectMetadataItems.length;
+	const allObjectsHaveSetPermission =
+		objectMetadataItemsWithPermissionOverride.length ===
+		allObjectMetadataItems.length;
 
-  const handleAddRule = () => {
-    navigateSettings(
-      SettingsPath.RoleAddObjectLevel,
-      { roleId },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
-    );
-  };
+	const handleAddRule = () => {
+		navigateSettings(
+			SettingsPath.RoleAddObjectLevel,
+			{ roleId },
+			fromAgentId ? { fromAgent: fromAgentId } : undefined,
+		);
+	};
 
-  const hasObjectPermissions =
-    isDefined(objectMetadataItemsWithPermissionOverride) &&
-    objectMetadataItemsWithPermissionOverride?.length > 0;
+	const hasObjectPermissions =
+		isDefined(objectMetadataItemsWithPermissionOverride) &&
+		objectMetadataItemsWithPermissionOverride?.length > 0;
 
-  return (
-    <Section>
-      <Table>
-        <SettingsRolePermissionsObjectLevelTableHeader
-          showPermissionsLabel={hasObjectPermissions}
-        />
-        <StyledTableRows>
-          {hasObjectPermissions ? (
-            objectMetadataItemsWithPermissionOverride.map(
-              (objectMetadataItem) => (
-                <SettingsRolePermissionsObjectLevelTableRow
-                  key={objectMetadataItem.id}
-                  objectMetadataItem={objectMetadataItem}
-                  roleId={roleId}
-                  fromAgentId={fromAgentId}
-                  isEditable={isEditable}
-                />
-              ),
-            )
-          ) : (
-            <TableCell color={themeCssVariables.font.color.tertiary}>
-              {t`No permissions have been set for individual objects.`}
-            </TableCell>
-          )}
-        </StyledTableRows>
-      </Table>
-      {isEditable && (
-        <StyledCreateObjectOverrideSectionContainer>
-          <Section>
-            <Button
-              Icon={IconPlus}
-              title={t`Add rule`}
-              variant="secondary"
-              size="small"
-              disabled={
-                !settingsDraftRole.isEditable || allObjectsHaveSetPermission
-              }
-              onClick={handleAddRule}
-            />
-          </Section>
-        </StyledCreateObjectOverrideSectionContainer>
-      )}
-    </Section>
-  );
+	return (
+		<Section>
+			<Table>
+				<SettingsRolePermissionsObjectLevelTableHeader
+					showPermissionsLabel={hasObjectPermissions}
+				/>
+				<StyledTableRows>
+					{hasObjectPermissions ? (
+						objectMetadataItemsWithPermissionOverride.map(
+							(objectMetadataItem) => (
+								<SettingsRolePermissionsObjectLevelTableRow
+									key={objectMetadataItem.id}
+									objectMetadataItem={objectMetadataItem}
+									roleId={roleId}
+									fromAgentId={fromAgentId}
+									isEditable={isEditable}
+								/>
+							),
+						)
+					) : (
+						<TableCell color={themeCssVariables.font.color.tertiary}>
+							{t`No permissions have been set for individual objects.`}
+						</TableCell>
+					)}
+				</StyledTableRows>
+			</Table>
+			{isEditable && (
+				<StyledCreateObjectOverrideSectionContainer>
+					<Section>
+						<Button
+							Icon={IconPlus}
+							title={t`Add rule`}
+							variant="secondary"
+							size="small"
+							disabled={
+								!settingsDraftRole.isEditable || allObjectsHaveSetPermission
+							}
+							onClick={handleAddRule}
+						/>
+					</Section>
+				</StyledCreateObjectOverrideSectionContainer>
+			)}
+		</Section>
+	);
 };

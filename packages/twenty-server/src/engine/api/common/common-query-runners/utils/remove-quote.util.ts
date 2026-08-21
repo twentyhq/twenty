@@ -1,9 +1,9 @@
 const removeQuotes = (string: string): string => {
-  return string.replace(/["']/g, '');
+	return string.replace(/["']/g, "");
 };
 
 export const formatColumnNameAsAlias = (
-  columnNameWithQuotes: string,
+	columnNameWithQuotes: string,
 ): string => {
-  return removeQuotes(columnNameWithQuotes).replace(/\./g, '_');
+	return removeQuotes(columnNameWithQuotes).replace(/\./g, "_");
 };

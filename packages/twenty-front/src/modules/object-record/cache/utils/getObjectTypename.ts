@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 export const getObjectTypename = (objectNameSingular: string) => {
-  return capitalize(objectNameSingular);
+	return capitalize(objectNameSingular);
 };

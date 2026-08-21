@@ -1,26 +1,26 @@
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useHasPermissionFlag } from "@/settings/roles/hooks/useHasPermissionFlag";
+import { useGetCurrentViewOnly } from "@/views/hooks/useGetCurrentViewOnly";
 import {
-  ViewVisibility,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+	ViewVisibility,
+	PermissionFlagType,
+} from "~/generated-metadata/graphql";
 
 export const useCanPersistViewChanges = () => {
-  const { currentView } = useGetCurrentViewOnly();
-  const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
+	const { currentView } = useGetCurrentViewOnly();
+	const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
-  if (!currentView) {
-    return { canPersistChanges: false };
-  }
+	if (!currentView) {
+		return { canPersistChanges: false };
+	}
 
-  // Users with VIEWS permission can persist all views
-  if (hasViewsPermission) {
-    return { canPersistChanges: true };
-  }
+	// Users with VIEWS permission can persist all views
+	if (hasViewsPermission) {
+		return { canPersistChanges: true };
+	}
 
-  // Users without VIEWS permission can only persist unlisted views
-  // (which are always their own, filtered by backend)
-  const canPersistChanges = currentView.visibility === ViewVisibility.UNLISTED;
+	// Users without VIEWS permission can only persist unlisted views
+	// (which are always their own, filtered by backend)
+	const canPersistChanges = currentView.visibility === ViewVisibility.UNLISTED;
 
-  return { canPersistChanges };
+	return { canPersistChanges };
 };

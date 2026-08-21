@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { REDUCED_MOTION } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { REDUCED_MOTION } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { WORKFLOW_THEME } from './workflow-theme';
-import { type WorkflowBranchLabelDef } from '../../types';
+import { WORKFLOW_THEME } from "./workflow-theme";
+import { type WorkflowBranchLabelDef } from "../../types";
 
 const colors = WORKFLOW_THEME.colors;
 
@@ -26,7 +26,7 @@ const BranchLabelPill = styled.div<{ $centered?: boolean }>`
   padding: 0 4px;
   position: absolute;
   transform: ${({ $centered }) =>
-    $centered ? 'translate(-50%, -50%)' : 'none'};
+		$centered ? "translate(-50%, -50%)" : "none"};
   z-index: 2;
 
   @keyframes workflowBranchLabelAppear {
@@ -44,12 +44,12 @@ const BranchLabelPill = styled.div<{ $centered?: boolean }>`
 `;
 
 export function WorkflowBranchLabel({ text, x, y }: WorkflowBranchLabelDef) {
-  return (
-    <BranchLabelPill
-      $centered={text === 'completed'}
-      style={{ left: x, top: y }}
-    >
-      {text}
-    </BranchLabelPill>
-  );
+	return (
+		<BranchLabelPill
+			$centered={text === "completed"}
+			style={{ left: x, top: y }}
+		>
+			{text}
+		</BranchLabelPill>
+	);
 }

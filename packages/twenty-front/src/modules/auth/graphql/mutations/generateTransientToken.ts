@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GENERATE_ONE_TRANSIENT_TOKEN = gql`
   mutation generateTransientToken {

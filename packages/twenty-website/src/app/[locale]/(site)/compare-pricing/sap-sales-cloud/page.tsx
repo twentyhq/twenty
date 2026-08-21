@@ -1,31 +1,31 @@
-import { getCommunityStats } from '@/platform/community';
+import { getCommunityStats } from "@/platform/community";
 import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/platform/i18n/get-route-i18n';
-import { buildRouteMetadata } from '@/platform/seo';
-import { ComparePage } from '@/sections/compare/ComparePage';
-import { COMPARISONS } from '@/sections/compare/compare-data';
-import { Menu } from '@/sections/menu';
+	getRouteI18n,
+	type LocaleRouteParams,
+} from "@/platform/i18n/get-route-i18n";
+import { buildRouteMetadata } from "@/platform/seo";
+import { ComparePage } from "@/sections/compare/ComparePage";
+import { COMPARISONS } from "@/sections/compare/compare-data";
+import { Menu } from "@/sections/menu";
 
-export const generateMetadata = buildRouteMetadata('comparePricingSap');
+export const generateMetadata = buildRouteMetadata("comparePricingSap");
 
 export default async function CompareSapPricingPage({
-  params,
+	params,
 }: {
-  params: Promise<LocaleRouteParams>;
+	params: Promise<LocaleRouteParams>;
 }) {
-  const [, communityStats] = await Promise.all([
-    getRouteI18n(params),
-    getCommunityStats(),
-  ]);
+	const [, communityStats] = await Promise.all([
+		getRouteI18n(params),
+		getCommunityStats(),
+	]);
 
-  return (
-    <>
-      <Menu communityStats={communityStats} scheme="muted" />
-      <main>
-        <ComparePage comparison={COMPARISONS.sap} />
-      </main>
-    </>
-  );
+	return (
+		<>
+			<Menu communityStats={communityStats} scheme="muted" />
+			<main>
+				<ComparePage comparison={COMPARISONS.sap} />
+			</main>
+		</>
+	);
 }

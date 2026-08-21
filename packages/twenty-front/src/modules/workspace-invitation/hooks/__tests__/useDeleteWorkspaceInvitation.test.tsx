@@ -1,38 +1,38 @@
-import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
-import { renderHook } from '@testing-library/react';
-import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { useDeleteWorkspaceInvitation } from "@/workspace-invitation/hooks/useDeleteWorkspaceInvitation";
+import { renderHook } from "@testing-library/react";
+import { GetWorkspaceInvitationsDocument } from "~/generated-metadata/graphql";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const mutationCallSpy = jest.fn();
 
-jest.mock('@apollo/client/react', () => ({
-  ...jest.requireActual('@apollo/client/react'),
-  useMutation: () => [mutationCallSpy],
+jest.mock("@apollo/client/react", () => ({
+	...jest.requireActual("@apollo/client/react"),
+	useMutation: () => [mutationCallSpy],
 }));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useDeleteWorkspaceInvitation', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+describe("useDeleteWorkspaceInvitation", () => {
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
-  it('Delete Workspace Invitation', async () => {
-    const params = { appTokenId: 'test' };
-    renderHook(
-      () => {
-        const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
-        deleteWorkspaceInvitation(params);
-      },
-      { wrapper: Wrapper },
-    );
+	it("Delete Workspace Invitation", async () => {
+		const params = { appTokenId: "test" };
+		renderHook(
+			() => {
+				const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
+				deleteWorkspaceInvitation(params);
+			},
+			{ wrapper: Wrapper },
+		);
 
-    expect(mutationCallSpy).toHaveBeenCalledWith({
-      onError: expect.any(Function),
-      refetchQueries: [GetWorkspaceInvitationsDocument],
-      variables: params,
-    });
-  });
+		expect(mutationCallSpy).toHaveBeenCalledWith({
+			onError: expect.any(Function),
+			refetchQueries: [GetWorkspaceInvitationsDocument],
+			variables: params,
+		});
+	});
 });

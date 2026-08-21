@@ -1,10 +1,10 @@
-import { createRequiredContext } from '~/utils/createRequiredContext';
+import { createRequiredContext } from "~/utils/createRequiredContext";
 
 export type PageLayoutEditModeContextType = {
-  isInEditMode: boolean;
+	isInEditMode: boolean;
 };
 
 export const [PageLayoutEditModeProviderContext, usePageLayoutEditModeContext] =
-  createRequiredContext<PageLayoutEditModeContextType>(
-    'PageLayoutEditModeContext',
-  );
+	createRequiredContext<PageLayoutEditModeContextType>(
+		"PageLayoutEditModeContext",
+	);

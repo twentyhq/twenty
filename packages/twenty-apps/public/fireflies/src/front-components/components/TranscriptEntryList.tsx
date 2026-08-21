@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { TranscriptEntryListItem } from 'src/front-components/components/TranscriptEntryListItem';
-import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
+import { TranscriptEntryListItem } from "src/front-components/components/TranscriptEntryListItem";
+import { type TranscriptEntry } from "src/front-components/types/transcript-entry.type";
 
 const StyledTranscriptContainer = styled.div`
   display: flex;
@@ -13,13 +13,13 @@ const StyledTranscriptContainer = styled.div`
 `;
 
 type TranscriptEntryListProps = {
-  entries: TranscriptEntry[];
+	entries: TranscriptEntry[];
 };
 
 export const TranscriptEntryList = ({ entries }: TranscriptEntryListProps) => (
-  <StyledTranscriptContainer>
-    {entries.map((entry, entryIndex) => (
-      <TranscriptEntryListItem key={entryIndex} entry={entry} />
-    ))}
-  </StyledTranscriptContainer>
+	<StyledTranscriptContainer>
+		{entries.map((entry, entryIndex) => (
+			<TranscriptEntryListItem key={entryIndex} entry={entry} />
+		))}
+	</StyledTranscriptContainer>
 );

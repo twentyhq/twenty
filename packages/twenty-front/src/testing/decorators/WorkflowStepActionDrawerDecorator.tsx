@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { type Decorator } from '@storybook/react-vite';
+import { styled } from "@linaria/react";
+import { type Decorator } from "@storybook/react-vite";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -7,7 +7,7 @@ const StyledWrapper = styled.div`
 `;
 
 export const WorkflowStepActionDrawerDecorator: Decorator = (Story) => (
-  <StyledWrapper>
-    <Story />
-  </StyledWrapper>
+	<StyledWrapper>
+		<Story />
+	</StyledWrapper>
 );

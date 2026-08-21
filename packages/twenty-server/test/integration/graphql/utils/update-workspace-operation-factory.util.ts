@@ -1,18 +1,18 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { type UpdateWorkspaceInput } from "src/engine/core-modules/workspace/dtos/update-workspace-input";
 
 export const updateWorkspaceOperationFactory = ({
-  data,
+	data,
 }: {
-  data: UpdateWorkspaceInput;
+	data: UpdateWorkspaceInput;
 }) => ({
-  query: gql`
+	query: gql`
     mutation UpdateWorkspace($data: UpdateWorkspaceInput!) {
       updateWorkspace(data: $data) {
         id
       }
     }
   `,
-  variables: { data },
+	variables: { data },
 });

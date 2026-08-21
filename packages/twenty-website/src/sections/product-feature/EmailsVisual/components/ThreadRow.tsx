@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { PersonAvatar } from '@/app-preview/primitives/PersonAvatar';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { PersonAvatar } from "@/app-preview/primitives/PersonAvatar";
 
-import { type EmailThread } from '../types/email-thread';
+import { type EmailThread } from "../types/email-thread";
 
 const Row = styled.div`
   align-items: center;
@@ -88,34 +88,34 @@ const ReceivedAt = styled.span`
 `;
 
 export function ThreadRow({ thread }: { thread: EmailThread }) {
-  const { i18n } = useLingui();
-  return (
-    <Row>
-      <Sender>
-        <AvatarStack>
-          {thread.participants.map((participant) => (
-            <PersonAvatar
-              key={participant.name}
-              person={{
-                avatarUrl: participant.avatarUrl,
-                name: participant.name,
-              }}
-              size={16}
-            />
-          ))}
-        </AvatarStack>
-        <SenderNames>
-          {thread.participants
-            .map((participant) => participant.name)
-            .join(', ')}
-        </SenderNames>
-        <MessageCount>{thread.messageCount}</MessageCount>
-      </Sender>
-      <SubjectBody>
-        <Subject>{i18n._(thread.subject)}</Subject>
-        <Preview>{i18n._(thread.preview)}</Preview>
-      </SubjectBody>
-      <ReceivedAt>{thread.date}</ReceivedAt>
-    </Row>
-  );
+	const { i18n } = useLingui();
+	return (
+		<Row>
+			<Sender>
+				<AvatarStack>
+					{thread.participants.map((participant) => (
+						<PersonAvatar
+							key={participant.name}
+							person={{
+								avatarUrl: participant.avatarUrl,
+								name: participant.name,
+							}}
+							size={16}
+						/>
+					))}
+				</AvatarStack>
+				<SenderNames>
+					{thread.participants
+						.map((participant) => participant.name)
+						.join(", ")}
+				</SenderNames>
+				<MessageCount>{thread.messageCount}</MessageCount>
+			</Sender>
+			<SubjectBody>
+				<Subject>{i18n._(thread.subject)}</Subject>
+				<Preview>{i18n._(thread.preview)}</Preview>
+			</SubjectBody>
+			<ReceivedAt>{thread.date}</ReceivedAt>
+		</Row>
+	);
 }

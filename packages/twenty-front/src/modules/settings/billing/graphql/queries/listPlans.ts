@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
-import { BILLING_PRICE_METERED_FRAGMENT } from '@/settings/billing/graphql/fragments/billingPriceMeteredFragment';
-import { BILLING_PRICE_LICENSED_FRAGMENT } from '@/settings/billing/graphql/fragments/billingPriceLicensedFragment';
+import { gql } from "@apollo/client";
+import { BILLING_PRICE_METERED_FRAGMENT } from "@/settings/billing/graphql/fragments/billingPriceMeteredFragment";
+import { BILLING_PRICE_LICENSED_FRAGMENT } from "@/settings/billing/graphql/fragments/billingPriceLicensedFragment";
 
 export const LIST_PLANS = gql`
   query listPlans {

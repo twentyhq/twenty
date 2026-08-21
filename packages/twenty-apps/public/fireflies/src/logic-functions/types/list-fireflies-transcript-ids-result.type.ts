@@ -1,10 +1,10 @@
 export type ListFirefliesTranscriptIdsResult =
-  | {
-      ok: true;
-      transcriptIds: string[];
-    }
-  | {
-      ok: false;
-      status: number;
-      errorMessage: string;
-    };
+	| {
+			ok: true;
+			transcriptIds: string[];
+	  }
+	| {
+			ok: false;
+			status: number;
+			errorMessage: string;
+	  };

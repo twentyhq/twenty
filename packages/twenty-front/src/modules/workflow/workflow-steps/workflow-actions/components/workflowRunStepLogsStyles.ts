@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
+import { MONOSPACE_FONT_FAMILY } from "@/ui/theme/constants/MonospaceFontFamily";
 
 export const StyledSummaryCard = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -42,17 +42,17 @@ export const StyledBadgeGroup = styled.div`
 export const StyledStatusBadge = styled.span<{ isSuccess: boolean }>`
   align-items: center;
   background: ${({ isSuccess }) =>
-    isSuccess
-      ? themeCssVariables.background.transparent.success
-      : themeCssVariables.background.transparent.danger};
+		isSuccess
+			? themeCssVariables.background.transparent.success
+			: themeCssVariables.background.transparent.danger};
   border-radius: ${themeCssVariables.border.radius.xs};
   color: ${({ isSuccess }) =>
-    isSuccess ? themeCssVariables.color.green : themeCssVariables.color.red};
+		isSuccess ? themeCssVariables.color.green : themeCssVariables.color.red};
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing["0.5"]} ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledMetricsRow = styled.div`

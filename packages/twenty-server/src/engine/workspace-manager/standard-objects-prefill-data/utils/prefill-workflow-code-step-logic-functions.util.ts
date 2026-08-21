@@ -1,23 +1,23 @@
-import { v5 as uuidv5 } from 'uuid';
+import { v5 as uuidv5 } from "uuid";
 
 const CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE =
-  'd41b0a2d-aa97-44dc-ad5d-89774164af27';
+	"d41b0a2d-aa97-44dc-ad5d-89774164af27";
 
 export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds = (
-  workspaceId: string,
+	workspaceId: string,
 ) => ({
-  extractDomainLogicFunctionId: uuidv5(
-    `${workspaceId}:create-company-when-adding-new-person:extract-domain`,
-    CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE,
-  ),
-  findMatchingCompanyByDomainLogicFunctionId: uuidv5(
-    `${workspaceId}:create-company-when-adding-new-person:find-matching-company-by-domain`,
-    CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE,
-  ),
-  isPersonalEmailLogicFunctionId: uuidv5(
-    `${workspaceId}:create-company-when-adding-new-person:is-personal-email`,
-    CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE,
-  ),
+	extractDomainLogicFunctionId: uuidv5(
+		`${workspaceId}:create-company-when-adding-new-person:extract-domain`,
+		CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE,
+	),
+	findMatchingCompanyByDomainLogicFunctionId: uuidv5(
+		`${workspaceId}:create-company-when-adding-new-person:find-matching-company-by-domain`,
+		CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE,
+	),
+	isPersonalEmailLogicFunctionId: uuidv5(
+		`${workspaceId}:create-company-when-adding-new-person:is-personal-email`,
+		CREATE_COMPANY_WHEN_ADDING_NEW_PERSON_LOGIC_FUNCTION_ID_NAMESPACE,
+	),
 });
 
 const EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE = `const psl = require('psl');
@@ -144,43 +144,43 @@ export const main = async (params) => {
 };`;
 
 export type PrefilledWorkflowCodeStepLogicFunctionDefinition = {
-  id: string;
-  name: string;
-  description: string;
-  sourceHandlerCode: string;
+	id: string;
+	name: string;
+	description: string;
+	sourceHandlerCode: string;
 };
 
 export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions =
-  (workspaceId: string): PrefilledWorkflowCodeStepLogicFunctionDefinition[] => {
-    const {
-      extractDomainLogicFunctionId,
-      findMatchingCompanyByDomainLogicFunctionId,
-      isPersonalEmailLogicFunctionId,
-    } =
-      getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds(workspaceId);
+	(workspaceId: string): PrefilledWorkflowCodeStepLogicFunctionDefinition[] => {
+		const {
+			extractDomainLogicFunctionId,
+			findMatchingCompanyByDomainLogicFunctionId,
+			isPersonalEmailLogicFunctionId,
+		} =
+			getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds(workspaceId);
 
-    return [
-      {
-        id: extractDomainLogicFunctionId,
-        name: 'Extract domain from email',
-        description:
-          'Extracts a normalized company domain and URL from a person email address.',
-        sourceHandlerCode: EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE,
-      },
-      {
-        id: findMatchingCompanyByDomainLogicFunctionId,
-        name: 'Find matching company by domain',
-        description:
-          'Finds an existing company whose website matches a normalized registrable domain.',
-        sourceHandlerCode:
-          FIND_MATCHING_COMPANY_BY_DOMAIN_LOGIC_FUNCTION_SOURCE,
-      },
-      {
-        id: isPersonalEmailLogicFunctionId,
-        name: 'Is this a personal email?',
-        description:
-          'Detects whether an email address belongs to a common personal email provider.',
-        sourceHandlerCode: IS_PERSONAL_EMAIL_LOGIC_FUNCTION_SOURCE,
-      },
-    ];
-  };
+		return [
+			{
+				id: extractDomainLogicFunctionId,
+				name: "Extract domain from email",
+				description:
+					"Extracts a normalized company domain and URL from a person email address.",
+				sourceHandlerCode: EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE,
+			},
+			{
+				id: findMatchingCompanyByDomainLogicFunctionId,
+				name: "Find matching company by domain",
+				description:
+					"Finds an existing company whose website matches a normalized registrable domain.",
+				sourceHandlerCode:
+					FIND_MATCHING_COMPANY_BY_DOMAIN_LOGIC_FUNCTION_SOURCE,
+			},
+			{
+				id: isPersonalEmailLogicFunctionId,
+				name: "Is this a personal email?",
+				description:
+					"Detects whether an email address belongs to a common personal email provider.",
+				sourceHandlerCode: IS_PERSONAL_EMAIL_LOGIC_FUNCTION_SOURCE,
+			},
+		];
+	};

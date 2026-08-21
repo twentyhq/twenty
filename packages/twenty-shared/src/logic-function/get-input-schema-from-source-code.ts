@@ -1,24 +1,25 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from "@/utils/validation/isDefined";
 import {
-  DEFAULT_TOOL_INPUT_SCHEMA,
-  type InputJsonSchema,
-} from '@/logic-function';
+	DEFAULT_TOOL_INPUT_SCHEMA,
+	type InputJsonSchema,
+} from "@/logic-function";
 
 export const getInputSchemaFromSourceCode = async (
-  sourceCode: string,
+	sourceCode: string,
 ): Promise<InputJsonSchema> => {
-  const { getFunctionInputSchema } =
-    await import('./get-function-input-schema');
-  const inputSchema = getFunctionInputSchema(sourceCode);
+	const { getFunctionInputSchema } = await import(
+		"./get-function-input-schema"
+	);
+	const inputSchema = getFunctionInputSchema(sourceCode);
 
-  const firstParam = inputSchema[0];
+	const firstParam = inputSchema[0];
 
-  if (firstParam?.type === 'object' && isDefined(firstParam.properties)) {
-    return {
-      type: 'object',
-      properties: firstParam.properties,
-    };
-  }
+	if (firstParam?.type === "object" && isDefined(firstParam.properties)) {
+		return {
+			type: "object",
+			properties: firstParam.properties,
+		};
+	}
 
-  return DEFAULT_TOOL_INPUT_SCHEMA;
+	return DEFAULT_TOOL_INPUT_SCHEMA;
 };

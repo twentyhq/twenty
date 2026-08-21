@@ -1,39 +1,39 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { mapObjectMetadataToGraphQLQuery } from "@/object-metadata/utils/mapObjectMetadataToGraphQLQuery";
 import {
-  type ObjectPermissions,
-  type RecordGqlOperationGqlRecordFields,
-} from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+	type ObjectPermissions,
+	type RecordGqlOperationGqlRecordFields,
+} from "twenty-shared/types";
+import { capitalize } from "twenty-shared/utils";
 
 export const generateGroupByRecordsQuery = ({
-  objectMetadataItem,
-  objectMetadataItems,
-  recordGqlFields,
-  computeReferences,
-  objectPermissionsByObjectMetadataId,
+	objectMetadataItem,
+	objectMetadataItems,
+	recordGqlFields,
+	computeReferences,
+	objectPermissionsByObjectMetadataId,
 }: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
-  computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+	objectMetadataItem: EnrichedObjectMetadataItem;
+	objectMetadataItems: EnrichedObjectMetadataItem[];
+	recordGqlFields?: RecordGqlOperationGqlRecordFields;
+	computeReferences?: boolean;
+	objectPermissionsByObjectMetadataId: Record<
+		string,
+		ObjectPermissions & { objectMetadataId: string }
+	>;
 }) => gql`
 query GroupBy${capitalize(
-  objectMetadataItem.namePlural,
+	objectMetadataItem.namePlural,
 )}($groupBy: [${capitalize(
-  objectMetadataItem.nameSingular,
+	objectMetadataItem.nameSingular,
 )}GroupByInput!]!, $filter: ${capitalize(
-  objectMetadataItem.nameSingular,
+	objectMetadataItem.nameSingular,
 )}FilterInput, $orderBy: [${capitalize(
-  objectMetadataItem.nameSingular,
+	objectMetadataItem.nameSingular,
 )}OrderByWithGroupByInput!], $orderByForRecords: [${capitalize(
-  objectMetadataItem.nameSingular,
+	objectMetadataItem.nameSingular,
 )}OrderByInput], $viewId: UUID) {
   ${objectMetadataItem.namePlural}GroupBy(
     groupBy: $groupBy
@@ -44,12 +44,12 @@ query GroupBy${capitalize(
   ) {
     edges {
       node ${mapObjectMetadataToGraphQLQuery({
-        objectMetadataItems,
-        objectMetadataItem,
-        recordGqlFields,
-        computeReferences,
-        objectPermissionsByObjectMetadataId,
-      })}
+				objectMetadataItems,
+				objectMetadataItem,
+				recordGqlFields,
+				computeReferences,
+				objectPermissionsByObjectMetadataId,
+			})}
       cursor
     }
     pageInfo {

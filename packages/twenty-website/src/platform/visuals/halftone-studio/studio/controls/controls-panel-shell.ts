@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { fontFamily, FONT_WEIGHT, mediaUp } from '@/tokens';
+import { fontFamily, FONT_WEIGHT, mediaUp } from "@/tokens";
 
-import { TAB_LABEL_WIDTH } from './controls-form-constants';
+import { TAB_LABEL_WIDTH } from "./controls-form-constants";
 
 const PanelShell = styled.aside<{ $collapsed?: boolean }>`
   background: rgba(18, 18, 22, 0.88);
@@ -17,15 +17,15 @@ const PanelShell = styled.aside<{ $collapsed?: boolean }>`
   color: rgba(255, 255, 255, 0.7);
   display: flex;
   flex-direction: column;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: 11px;
-  height: ${(props) => (props.$collapsed ? 'auto' : '100%')};
+  height: ${(props) => (props.$collapsed ? "auto" : "100%")};
   overflow: hidden;
-  width: ${(props) => (props.$collapsed ? 'auto' : '100%')};
+  width: ${(props) => (props.$collapsed ? "auto" : "100%")};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     width: ${(props) =>
-      props.$collapsed ? 'auto' : 'min(320px, calc(100vw - 32px))'};
+			props.$collapsed ? "auto" : "min(320px, calc(100vw - 32px))"};
   }
 `;
 
@@ -41,7 +41,7 @@ const ValueDisplay = styled.div`
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.85);
   display: flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: 11px;
   min-height: 31px;
   overflow: hidden;
@@ -97,7 +97,7 @@ const ExportNameInput = styled.input`
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.85);
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: 11px;
   margin-bottom: 14px;
   outline: none;
@@ -123,7 +123,7 @@ const ExportPreview = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
   color: rgba(255, 255, 255, 0.55);
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: 10px;
   line-height: 1.5;
   margin-bottom: 14px;
@@ -135,20 +135,20 @@ const ExportPreview = styled.div`
 const ExportButton = styled.button<{ $primary?: boolean }>`
   align-items: center;
   background: ${(props) =>
-    props.$primary ? 'rgba(255, 255, 255, 0.24)' : 'rgba(255, 255, 255, 0.2)'};
+		props.$primary ? "rgba(255, 255, 255, 0.24)" : "rgba(255, 255, 255, 0.2)"};
   border: none;
   border-radius: 8px;
   color: ${(props) =>
-    props.$primary ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.8)'};
+		props.$primary ? "rgba(255, 255, 255, 0.92)" : "rgba(255, 255, 255, 0.8)"};
   cursor: pointer;
   display: flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: 11px;
   font-weight: ${FONT_WEIGHT.medium};
   gap: 8px;
   justify-content: center;
   line-height: normal;
-  margin-top: ${(props) => (props.$primary ? '0' : '8px')};
+  margin-top: ${(props) => (props.$primary ? "0" : "8px")};
   padding: 7px 12px;
   transition:
     background-color 0.15s ease,
@@ -158,17 +158,17 @@ const ExportButton = styled.button<{ $primary?: boolean }>`
 
   &:hover {
     background: ${(props) =>
-      props.$primary
-        ? 'rgba(255, 255, 255, 0.28)'
-        : 'rgba(255, 255, 255, 0.24)'};
+			props.$primary
+				? "rgba(255, 255, 255, 0.28)"
+				: "rgba(255, 255, 255, 0.24)"};
     color: rgba(255, 255, 255, 0.92);
   }
 
   &:active {
     background: ${(props) =>
-      props.$primary
-        ? 'rgba(255, 255, 255, 0.3)'
-        : 'rgba(255, 255, 255, 0.28)'};
+			props.$primary
+				? "rgba(255, 255, 255, 0.3)"
+				: "rgba(255, 255, 255, 0.28)"};
     transform: translateY(1px);
   }
 
@@ -200,16 +200,16 @@ const SmallBody = styled.p`
 `;
 
 export const CONTROLS_PANEL_SHELL = {
-  PanelShell,
-  ControlGrid,
-  ValueDisplay,
-  ShapeRow,
-  ColorControlRow,
-  ColorControlLabel,
-  UploadButton,
-  ExportNameInput,
-  ExportPreview,
-  ExportButton,
-  ExportNote,
-  SmallBody,
+	PanelShell,
+	ControlGrid,
+	ValueDisplay,
+	ShapeRow,
+	ColorControlRow,
+	ColorControlLabel,
+	UploadButton,
+	ExportNameInput,
+	ExportPreview,
+	ExportButton,
+	ExportNote,
+	SmallBody,
 };

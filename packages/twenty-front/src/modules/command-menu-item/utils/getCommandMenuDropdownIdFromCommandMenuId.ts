@@ -1,5 +1,5 @@
 export const getCommandMenuDropdownIdFromCommandMenuId = (
-  commandMenuId: string,
+	commandMenuId: string,
 ) => {
-  return `command-menu-dropdown-${commandMenuId}`;
+	return `command-menu-dropdown-${commandMenuId}`;
 };

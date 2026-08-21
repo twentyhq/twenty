@@ -1,1 +1,1 @@
-export type MoveFocusDirection = 'up' | 'down' | 'left' | 'right';
+export type MoveFocusDirection = "up" | "down" | "left" | "right";

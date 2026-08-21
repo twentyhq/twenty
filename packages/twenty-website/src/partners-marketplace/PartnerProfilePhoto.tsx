@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { color, radius } from '@/tokens';
+import { color, radius } from "@/tokens";
 
-import { isSafeHttpUrl } from './is-safe-http-url';
-import { PartnerAvatar } from './PartnerAvatar';
+import { isSafeHttpUrl } from "./is-safe-http-url";
+import { PartnerAvatar } from "./PartnerAvatar";
 
 // Squared tile, not a circle: it reads as a studio/brand image and matches the
 // rectangular rail + crosshair geometry instead of fighting it.
@@ -24,7 +24,7 @@ const RealPhoto = styled.img`
 const AvatarSizer = styled.div`
   align-items: center;
   aspect-ratio: 1 / 1;
-  background-color: ${color('blue-5')};
+  background-color: ${color("blue-5")};
   border-radius: ${radius(2)};
   display: flex;
   justify-content: center;
@@ -33,25 +33,25 @@ const AvatarSizer = styled.div`
 `;
 
 export function PartnerProfilePhoto({
-  name,
-  slug,
-  profilePictureUrl,
+	name,
+	slug,
+	profilePictureUrl,
 }: {
-  name: string;
-  slug: string;
-  profilePictureUrl: string;
+	name: string;
+	slug: string;
+	profilePictureUrl: string;
 }) {
-  if (isSafeHttpUrl(profilePictureUrl)) {
-    return (
-      <PhotoWrapper>
-        <RealPhoto alt={name} src={profilePictureUrl} />
-      </PhotoWrapper>
-    );
-  }
+	if (isSafeHttpUrl(profilePictureUrl)) {
+		return (
+			<PhotoWrapper>
+				<RealPhoto alt={name} src={profilePictureUrl} />
+			</PhotoWrapper>
+		);
+	}
 
-  return (
-    <AvatarSizer>
-      <PartnerAvatar name={name} slug={slug} />
-    </AvatarSizer>
-  );
+	return (
+		<AvatarSizer>
+			<PartnerAvatar name={name} slug={slug} />
+		</AvatarSizer>
+	);
 }

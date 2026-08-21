@@ -1,46 +1,46 @@
-import { t } from '@lingui/core/macro';
-import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
-import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldMenuItem';
-import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
-import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { styled } from '@linaria/react';
-import { parsePhoneNumber, type E164Number } from 'libphonenumber-js';
-import ReactPhoneNumberInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import { t } from "@lingui/core/macro";
+import { usePhonesField } from "@/object-record/record-field/ui/meta-types/hooks/usePhonesField";
+import { PhonesFieldMenuItem } from "@/object-record/record-field/ui/meta-types/input/components/PhonesFieldMenuItem";
+import { recordFieldInputIsFieldInErrorComponentState } from "@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState";
+import { phoneSchema } from "@/object-record/record-field/ui/validation-schemas/phoneSchema";
+import { useSetAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useSetAtomComponentState";
+import { styled } from "@linaria/react";
+import { parsePhoneNumber, type E164Number } from "libphonenumber-js";
+import ReactPhoneNumberInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
-import { MultiItemFieldInput } from './MultiItemFieldInput';
+import { MultiItemFieldInput } from "./MultiItemFieldInput";
 
-import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import { FieldInputEventContext } from "@/object-record/record-field/ui/contexts/FieldInputEventContext";
+import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from "@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId";
+import { createPhonesFromFieldValue } from "@/object-record/record-field/ui/meta-types/input/utils/phonesUtils";
 import {
-  type FieldPhonesValue,
-  type PhoneRecord,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
-import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
-import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
-import { useContext } from 'react';
-import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+	type FieldPhonesValue,
+	type PhoneRecord,
+} from "@/object-record/record-field/ui/types/FieldMetadata";
+import { phonesFieldValueSchema } from "@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema";
+import { PhoneCountryPickerDropdownButton } from "@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton";
+import { useContext } from "react";
+import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from "twenty-shared/constants";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { FieldMetadataType } from "~/generated-metadata/graphql";
+import { stripSimpleQuotesFromString } from "~/utils/string/stripSimpleQuotesFromString";
 
 const StyledCustomPhoneInputContainer = styled.div<{
-  hasItem: boolean;
-  hasError?: boolean;
+	hasItem: boolean;
+	hasError?: boolean;
 }>`
   background-color: ${({ hasItem }) =>
-    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
+		hasItem ? themeCssVariables.background.transparent.lighter : "transparent"};
   border: ${({ hasItem, hasError }) =>
-    hasItem
-      ? hasError
-        ? `1px solid ${themeCssVariables.border.color.danger}`
-        : `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
-  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
-  height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
+		hasItem
+			? hasError
+				? `1px solid ${themeCssVariables.border.color.danger}`
+				: `1px solid ${themeCssVariables.border.color.medium}`
+			: "none"};
+  border-radius: ${({ hasItem }) => (hasItem ? "4px" : "0")};
+  height: ${({ hasItem }) => (hasItem ? "30px" : "auto")};
 `;
 
 const StyledCustomPhoneInputWrapper = styled.div`
@@ -78,163 +78,163 @@ const StyledCustomPhoneInputWrapper = styled.div`
 `;
 
 export const PhonesFieldInput = () => {
-  const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
+	const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
-  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
-    FieldInputEventContext,
-  );
+	const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
+		FieldInputEventContext,
+	);
 
-  const phones = createPhonesFromFieldValue(draftValue);
+	const phones = createPhonesFromFieldValue(draftValue);
 
-  const defaultCountry = stripSimpleQuotesFromString(
-    fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-  );
+	const defaultCountry = stripSimpleQuotesFromString(
+		fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+	);
 
-  const maxNumberOfValues =
-    fieldDefinition.metadata.settings?.maxNumberOfValues ??
-    MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+	const maxNumberOfValues =
+		fieldDefinition.metadata.settings?.maxNumberOfValues ??
+		MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const parseArrayToPhonesValue = (phones: PhoneRecord[]) => {
-    const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
+	const parseArrayToPhonesValue = (phones: PhoneRecord[]) => {
+		const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
 
-    const nextValue: FieldPhonesValue = {
-      primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
-      primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
-      primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
-      additionalPhones: nextAdditionalPhones,
-    };
-    const parseResponse = phonesFieldValueSchema.safeParse(nextValue);
-    if (parseResponse.success) {
-      return parseResponse.data;
-    }
-  };
+		const nextValue: FieldPhonesValue = {
+			primaryPhoneNumber: nextPrimaryPhone?.number ?? "",
+			primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? "",
+			primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? "",
+			additionalPhones: nextAdditionalPhones,
+		};
+		const parseResponse = phonesFieldValueSchema.safeParse(nextValue);
+		if (parseResponse.success) {
+			return parseResponse.data;
+		}
+	};
 
-  const handlePhonesChange = (updatedPhones: PhoneRecord[]) => {
-    const nextValue = parseArrayToPhonesValue(updatedPhones);
+	const handlePhonesChange = (updatedPhones: PhoneRecord[]) => {
+		const nextValue = parseArrayToPhonesValue(updatedPhones);
 
-    if (isDefined(nextValue)) {
-      setDraftValue(nextValue);
-    }
-  };
+		if (isDefined(nextValue)) {
+			setDraftValue(nextValue);
+		}
+	};
 
-  const validateInput = (input: string) => ({
-    isValid: phoneSchema.safeParse(input).success,
-    errorMessage: '',
-  });
+	const validateInput = (input: string) => ({
+		isValid: phoneSchema.safeParse(input).success,
+		errorMessage: "",
+	});
 
-  const getShowPrimaryIcon = (index: number) =>
-    index === 0 && phones.length > 1;
-  const getShowSetAsPrimaryButton = (index: number) => index > 0;
+	const getShowPrimaryIcon = (index: number) =>
+		index === 0 && phones.length > 1;
+	const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
-    recordFieldInputIsFieldInErrorComponentState,
-  );
+	const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
+		recordFieldInputIsFieldInErrorComponentState,
+	);
 
-  const handleError = (hasError: boolean, values: any[]) => {
-    setRecordFieldInputIsFieldInError(hasError && values.length === 0);
-  };
+	const handleError = (hasError: boolean, values: any[]) => {
+		setRecordFieldInputIsFieldInError(hasError && values.length === 0);
+	};
 
-  const handleClickOutside = (
-    updatedPhones: PhoneRecord[],
-    event: MouseEvent | TouchEvent,
-  ) => {
-    onClickOutside?.({
-      newValue: parseArrayToPhonesValue(updatedPhones),
-      event,
-    });
-  };
+	const handleClickOutside = (
+		updatedPhones: PhoneRecord[],
+		event: MouseEvent | TouchEvent,
+	) => {
+		onClickOutside?.({
+			newValue: parseArrayToPhonesValue(updatedPhones),
+			event,
+		});
+	};
 
-  const handleEscape = (updatedPhones: PhoneRecord[]) => {
-    onEscape?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
-  };
+	const handleEscape = (updatedPhones: PhoneRecord[]) => {
+		onEscape?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+	};
 
-  const handleEnter = (updatedPhones: PhoneRecord[]) => {
-    onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
-  };
+	const handleEnter = (updatedPhones: PhoneRecord[]) => {
+		onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+	};
 
-  const handleSubmit = (updatedPhones: PhoneRecord[]) => {
-    onSubmit?.({
-      newValue: parseArrayToPhonesValue(updatedPhones),
-      skipClose: true,
-    });
-  };
+	const handleSubmit = (updatedPhones: PhoneRecord[]) => {
+		onSubmit?.({
+			newValue: parseArrayToPhonesValue(updatedPhones),
+			skipClose: true,
+		});
+	};
 
-  return (
-    <MultiItemFieldInput
-      items={phones}
-      onChange={handlePhonesChange}
-      onClickOutside={handleClickOutside}
-      onEscape={handleEscape}
-      onEnter={handleEnter}
-      onSubmit={handleSubmit}
-      placeholder={t`Phone`}
-      fieldMetadataType={FieldMetadataType.PHONES}
-      validateInput={validateInput}
-      formatInput={(input) => {
-        if (input === '') {
-          return {
-            number: '',
-            callingCode: '',
-            countryCode: '',
-          };
-        }
+	return (
+		<MultiItemFieldInput
+			items={phones}
+			onChange={handlePhonesChange}
+			onClickOutside={handleClickOutside}
+			onEscape={handleEscape}
+			onEnter={handleEnter}
+			onSubmit={handleSubmit}
+			placeholder={t`Phone`}
+			fieldMetadataType={FieldMetadataType.PHONES}
+			validateInput={validateInput}
+			formatInput={(input) => {
+				if (input === "") {
+					return {
+						number: "",
+						callingCode: "",
+						countryCode: "",
+					};
+				}
 
-        const phone = parsePhoneNumber(input);
-        if (phone !== undefined) {
-          return {
-            number: phone.nationalNumber,
-            callingCode: `+${phone.countryCallingCode}`,
-            countryCode: phone.country as string,
-          };
-        }
+				const phone = parsePhoneNumber(input);
+				if (phone !== undefined) {
+					return {
+						number: phone.nationalNumber,
+						callingCode: `+${phone.countryCallingCode}`,
+						countryCode: phone.country as string,
+					};
+				}
 
-        return {
-          number: '',
-          callingCode: '',
-          countryCode: '',
-        };
-      }}
-      renderItem={({
-        value: phone,
-        index,
-        handleEdit,
-        handleSetPrimary,
-        handleDelete,
-      }) => (
-        <PhonesFieldMenuItem
-          key={index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-          showPrimaryIcon={getShowPrimaryIcon(index)}
-          showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
-          phone={phone}
-          onEdit={handleEdit}
-          onSetAsPrimary={handleSetPrimary}
-          onDelete={handleDelete}
-        />
-      )}
-      renderInput={({ value, onChange, autoFocus, placeholder, hasError }) => {
-        return (
-          <StyledCustomPhoneInputContainer
-            hasItem={!!phones.length}
-            hasError={hasError}
-          >
-            <StyledCustomPhoneInputWrapper>
-              <ReactPhoneNumberInput
-                autoFocus={autoFocus}
-                placeholder={placeholder}
-                value={value as E164Number}
-                onChange={onChange as unknown as (newValue: E164Number) => void}
-                international={true}
-                withCountryCallingCode={true}
-                countrySelectComponent={PhoneCountryPickerDropdownButton}
-                defaultCountry={defaultCountry}
-              />
-            </StyledCustomPhoneInputWrapper>
-          </StyledCustomPhoneInputContainer>
-        );
-      }}
-      onError={handleError}
-      maxItemCount={maxNumberOfValues}
-    />
-  );
+				return {
+					number: "",
+					callingCode: "",
+					countryCode: "",
+				};
+			}}
+			renderItem={({
+				value: phone,
+				index,
+				handleEdit,
+				handleSetPrimary,
+				handleDelete,
+			}) => (
+				<PhonesFieldMenuItem
+					key={index}
+					dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+					showPrimaryIcon={getShowPrimaryIcon(index)}
+					showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
+					phone={phone}
+					onEdit={handleEdit}
+					onSetAsPrimary={handleSetPrimary}
+					onDelete={handleDelete}
+				/>
+			)}
+			renderInput={({ value, onChange, autoFocus, placeholder, hasError }) => {
+				return (
+					<StyledCustomPhoneInputContainer
+						hasItem={!!phones.length}
+						hasError={hasError}
+					>
+						<StyledCustomPhoneInputWrapper>
+							<ReactPhoneNumberInput
+								autoFocus={autoFocus}
+								placeholder={placeholder}
+								value={value as E164Number}
+								onChange={onChange as unknown as (newValue: E164Number) => void}
+								international={true}
+								withCountryCallingCode={true}
+								countrySelectComponent={PhoneCountryPickerDropdownButton}
+								defaultCountry={defaultCountry}
+							/>
+						</StyledCustomPhoneInputWrapper>
+					</StyledCustomPhoneInputContainer>
+				);
+			}}
+			onError={handleError}
+			maxItemCount={maxNumberOfValues}
+		/>
+	);
 };

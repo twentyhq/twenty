@@ -1,5 +1,5 @@
 export const buildBillingUsageAvailableCreditsCachePattern = (
-  workspaceId: string,
+	workspaceId: string,
 ): string => {
-  return `available-credits:${workspaceId}:*`;
+	return `available-credits:${workspaceId}:*`;
 };

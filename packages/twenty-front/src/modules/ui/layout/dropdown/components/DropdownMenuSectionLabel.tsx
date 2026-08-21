@@ -1,5 +1,5 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { styled } from "@linaria/react";
 
 const StyledDropdownMenuSectionLabel = styled.div`
   align-items: center;
@@ -17,15 +17,15 @@ const StyledDropdownMenuSectionLabel = styled.div`
 `;
 
 export type DropdownMenuSectionLabelProps = {
-  label: string;
+	label: string;
 };
 
 export const DropdownMenuSectionLabel = ({
-  label,
+	label,
 }: DropdownMenuSectionLabelProps) => {
-  return (
-    <StyledDropdownMenuSectionLabel data-dropdown-menu-section-label>
-      {label}
-    </StyledDropdownMenuSectionLabel>
-  );
+	return (
+		<StyledDropdownMenuSectionLabel data-dropdown-menu-section-label>
+			{label}
+		</StyledDropdownMenuSectionLabel>
+	);
 };

@@ -1,14 +1,14 @@
 type IndexLike = {
-  isUnique: boolean;
-  isSystemSideEffect: boolean;
-  flatIndexFieldMetadatas?: Array<{
-    fieldMetadataId: string;
-    subFieldName: string | null;
-  }>;
-  indexFieldMetadatas?: Array<{
-    fieldMetadataId: string;
-    subFieldName: string | null;
-  }>;
+	isUnique: boolean;
+	isSystemSideEffect: boolean;
+	flatIndexFieldMetadatas?: Array<{
+		fieldMetadataId: string;
+		subFieldName: string | null;
+	}>;
+	indexFieldMetadatas?: Array<{
+		fieldMetadataId: string;
+		subFieldName: string | null;
+	}>;
 };
 
 // A field is "unique" iff a UNIQUE IndexMetadata that the engine owns as the
@@ -30,21 +30,21 @@ type IndexLike = {
 // Centralized so the cache builder, REST controller, and any future consumer
 // agree on the rule.
 export const computeUniqueFieldMetadataIdsFromIndexes = (
-  indexes: ReadonlyArray<IndexLike>,
+	indexes: ReadonlyArray<IndexLike>,
 ): Set<string> => {
-  const set = new Set<string>();
+	const set = new Set<string>();
 
-  for (const index of indexes) {
-    if (!index.isUnique) continue;
-    if (!index.isSystemSideEffect) continue;
+	for (const index of indexes) {
+		if (!index.isUnique) continue;
+		if (!index.isSystemSideEffect) continue;
 
-    const fields = index.flatIndexFieldMetadatas ?? index.indexFieldMetadatas;
+		const fields = index.flatIndexFieldMetadatas ?? index.indexFieldMetadatas;
 
-    if (fields?.length !== 1) continue;
-    if (fields[0].subFieldName !== null) continue;
+		if (fields?.length !== 1) continue;
+		if (fields[0].subFieldName !== null) continue;
 
-    set.add(fields[0].fieldMetadataId);
-  }
+		set.add(fields[0].fieldMetadataId);
+	}
 
-  return set;
+	return set;
 };

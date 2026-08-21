@@ -1,4 +1,4 @@
-import { cssVariableName } from './css-variable-name';
+import { cssVariableName } from "./css-variable-name";
 
 export const radius = (multiplier: number): string =>
-  `calc(var(${cssVariableName.radiusBase}) * ${multiplier})`;
+	`calc(var(${cssVariableName.radiusBase}) * ${multiplier})`;

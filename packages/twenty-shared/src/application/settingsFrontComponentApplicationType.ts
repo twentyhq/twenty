@@ -1,3 +1,3 @@
 export type SettingsFrontComponentApplicationManifest = {
-  universalIdentifier: string;
+	universalIdentifier: string;
 };

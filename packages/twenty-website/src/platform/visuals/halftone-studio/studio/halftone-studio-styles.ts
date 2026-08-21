@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { LocalizedLink } from '@/platform/i18n';
-import { fontFamily, mediaUp } from '@/tokens';
+import { LocalizedLink } from "@/platform/i18n";
+import { fontFamily, mediaUp } from "@/tokens";
 
 const DESKTOP_CONTROLS_PANEL_WIDTH = 320;
 const DESKTOP_CONTROLS_PANEL_OFFSET = 20;
 const DESKTOP_CONTROLS_PANEL_FOOTPRINT =
-  DESKTOP_CONTROLS_PANEL_WIDTH + DESKTOP_CONTROLS_PANEL_OFFSET;
+	DESKTOP_CONTROLS_PANEL_WIDTH + DESKTOP_CONTROLS_PANEL_OFFSET;
 
 const StudioShell = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};
@@ -26,11 +26,11 @@ const ContentRegion = styled.div<{ $panelOpen: boolean }>`
   transition: width 0.18s ease;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     width: ${(props) =>
-      props.$panelOpen
-        ? `calc(100% - ${DESKTOP_CONTROLS_PANEL_FOOTPRINT}px)`
-        : '100%'};
+			props.$panelOpen
+				? `calc(100% - ${DESKTOP_CONTROLS_PANEL_FOOTPRINT}px)`
+				: "100%"};
   }
 `;
 
@@ -47,12 +47,12 @@ const LogoLink = styled(LocalizedLink)`
   z-index: 2;
 `;
 
-const Hint = styled.div<{ $tone: 'dark' | 'light'; $visible: boolean }>`
+const Hint = styled.div<{ $tone: "dark" | "light"; $visible: boolean }>`
   color: ${(props) =>
-    props.$tone === 'dark'
-      ? 'rgba(255, 255, 255, 0.34)'
-      : 'rgba(0, 0, 0, 0.3)'};
-  font-family: ${fontFamily('mono')};
+		props.$tone === "dark"
+			? "rgba(255, 255, 255, 0.34)"
+			: "rgba(0, 0, 0, 0.3)"};
+  font-family: ${fontFamily("mono")};
   font-size: 11px;
   left: 50%;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
@@ -65,20 +65,20 @@ const Hint = styled.div<{ $tone: 'dark' | 'light'; $visible: boolean }>`
 `;
 
 const Status = styled.div<{
-  $error: boolean;
-  $tone: 'dark' | 'light';
-  $visible: boolean;
+	$error: boolean;
+	$tone: "dark" | "light";
+	$visible: boolean;
 }>`
   color: ${(props) => {
-    if (props.$error) {
-      return 'rgba(214, 66, 66, 0.92)';
-    }
+		if (props.$error) {
+			return "rgba(214, 66, 66, 0.92)";
+		}
 
-    return props.$tone === 'dark'
-      ? 'rgba(255, 255, 255, 0.62)'
-      : 'rgba(0, 0, 0, 0.55)';
-  }};
-  font-family: ${fontFamily('mono')};
+		return props.$tone === "dark"
+			? "rgba(255, 255, 255, 0.62)"
+			: "rgba(0, 0, 0, 0.55)";
+	}};
+  font-family: ${fontFamily("mono")};
   font-size: 11px;
   left: 50%;
   opacity: ${(props) => (props.$visible ? 1 : 0)};
@@ -103,7 +103,7 @@ const ControlsPositioner = styled.div`
   top: auto;
   z-index: 3;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     bottom: 20px;
     height: calc(100vh - 40px);
     height: calc(100dvh - 40px);
@@ -114,11 +114,11 @@ const ControlsPositioner = styled.div`
 `;
 
 const ControlsPanelFrame = styled.div<{ $visible: boolean }>`
-  height: ${(props) => (props.$visible ? '100%' : 'auto')};
+  height: ${(props) => (props.$visible ? "100%" : "auto")};
   pointer-events: auto;
-  width: ${(props) => (props.$visible ? '100%' : 'auto')};
+  width: ${(props) => (props.$visible ? "100%" : "auto")};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     width: auto;
   }
 `;
@@ -128,13 +128,13 @@ const HiddenFileInput = styled.input`
 `;
 
 export const STUDIO_STYLES = {
-  Shell: StudioShell,
-  ContentRegion,
-  CanvasLayer,
-  LogoLink,
-  Hint,
-  Status,
-  ControlsPositioner,
-  ControlsPanelFrame,
-  HiddenFileInput,
+	Shell: StudioShell,
+	ContentRegion,
+	CanvasLayer,
+	LogoLink,
+	Hint,
+	Status,
+	ControlsPositioner,
+	ControlsPanelFrame,
+	HiddenFileInput,
 };

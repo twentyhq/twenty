@@ -1,7 +1,7 @@
-import { RecordCalendarMonthBodyWeek } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBodyWeek';
-import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RecordCalendarMonthBodyWeek } from "@/object-record/record-calendar/month/components/RecordCalendarMonthBodyWeek";
+import { useRecordCalendarMonthContextOrThrow } from "@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
@@ -13,16 +13,16 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonthBody = () => {
-  const { weekFirstDays } = useRecordCalendarMonthContextOrThrow();
+	const { weekFirstDays } = useRecordCalendarMonthContextOrThrow();
 
-  return (
-    <StyledContainer>
-      {weekFirstDays.map((weekFirstDay) => (
-        <RecordCalendarMonthBodyWeek
-          key={`week-${weekFirstDay.toString()}`}
-          startDayOfWeek={weekFirstDay}
-        />
-      ))}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			{weekFirstDays.map((weekFirstDay) => (
+				<RecordCalendarMonthBodyWeek
+					key={`week-${weekFirstDay.toString()}`}
+					startDayOfWeek={weekFirstDay}
+				/>
+			))}
+		</StyledContainer>
+	);
 };

@@ -1,24 +1,24 @@
-import { type ViewFilter } from '@/views/types/ViewFilter';
-import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
+import { type ViewFilter } from "@/views/types/ViewFilter";
+import { compareStrictlyExceptForNullAndUndefined } from "~/utils/compareStrictlyExceptForNullAndUndefined";
 
 export const areViewFiltersEqual = (
-  viewFilterA: ViewFilter,
-  viewFilterB: ViewFilter,
+	viewFilterA: ViewFilter,
+	viewFilterB: ViewFilter,
 ) => {
-  const propertiesToCompare: (keyof ViewFilter)[] = [
-    'fieldMetadataId',
-    'viewFilterGroupId',
-    'positionInViewFilterGroup',
-    'value',
-    'operand',
-    'subFieldName',
-    'relationTargetFieldMetadataId',
-  ];
+	const propertiesToCompare: (keyof ViewFilter)[] = [
+		"fieldMetadataId",
+		"viewFilterGroupId",
+		"positionInViewFilterGroup",
+		"value",
+		"operand",
+		"subFieldName",
+		"relationTargetFieldMetadataId",
+	];
 
-  return propertiesToCompare.every((property) =>
-    compareStrictlyExceptForNullAndUndefined(
-      viewFilterA[property],
-      viewFilterB[property],
-    ),
-  );
+	return propertiesToCompare.every((property) =>
+		compareStrictlyExceptForNullAndUndefined(
+			viewFilterA[property],
+			viewFilterB[property],
+		),
+	);
 };

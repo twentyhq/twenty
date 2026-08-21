@@ -1,1 +1,1 @@
-export type SettingsFieldTypeCategoryType = 'Basic' | 'Advanced' | 'Relation';
+export type SettingsFieldTypeCategoryType = "Basic" | "Advanced" | "Relation";

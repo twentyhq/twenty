@@ -1,11 +1,11 @@
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { type DashboardKpi } from '../types/dashboard-kpi';
+import { type DashboardKpi } from "../types/dashboard-kpi";
 
 const Body = styled.div`
   align-items: flex-start;
@@ -53,22 +53,22 @@ const TrendPercent = styled.span`
 `;
 
 export function KpiCard({ kpi }: { kpi: DashboardKpi }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <Body>
-      <Label>{i18n._(kpi.label)}</Label>
-      <Value>{kpi.value}</Value>
-      <Trend>
-        <TrendIcon data-direction={kpi.trendDirection}>
-          {kpi.trendDirection === 'up' ? (
-            <IconTrendingUp size={14} stroke={2} />
-          ) : (
-            <IconTrendingDown size={14} stroke={2} />
-          )}
-        </TrendIcon>
-        <TrendPercent>{kpi.trendPercent}%</TrendPercent>
-      </Trend>
-    </Body>
-  );
+	return (
+		<Body>
+			<Label>{i18n._(kpi.label)}</Label>
+			<Value>{kpi.value}</Value>
+			<Trend>
+				<TrendIcon data-direction={kpi.trendDirection}>
+					{kpi.trendDirection === "up" ? (
+						<IconTrendingUp size={14} stroke={2} />
+					) : (
+						<IconTrendingDown size={14} stroke={2} />
+					)}
+				</TrendIcon>
+				<TrendPercent>{kpi.trendPercent}%</TrendPercent>
+			</Trend>
+		</Body>
+	);
 }

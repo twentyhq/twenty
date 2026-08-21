@@ -1,45 +1,45 @@
-'use client';
+"use client";
 
-import { Drawer } from '@base-ui/react/drawer';
-import { IconChevronDown } from '@tabler/icons-react';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { Fragment, useState } from 'react';
+import { Drawer } from "@base-ui/react/drawer";
+import { IconChevronDown } from "@tabler/icons-react";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { Fragment, useState } from "react";
 
-import { formatCompactCount } from '@/platform/community/format-compact-count';
-import { type CommunityStats } from '@/platform/community';
-import { useLocale } from '@/platform/i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+import { formatCompactCount } from "@/platform/community/format-compact-count";
+import { type CommunityStats } from "@/platform/community";
+import { useLocale } from "@/platform/i18n";
+import { LocalizedLink } from "@/platform/i18n/LocalizedLink";
 import {
-  buildSchemeDeclarations,
-  color,
-  EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  type Scheme,
-  semanticColor,
-  spacing,
-  Z_INDEX,
-} from '@/tokens';
-import { Button, ExternalArrow, ExternalLink, VerticalDivider } from '@/ui';
+	buildSchemeDeclarations,
+	color,
+	EASING,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	type Scheme,
+	semanticColor,
+	spacing,
+	Z_INDEX,
+} from "@/tokens";
+import { Button, ExternalArrow, ExternalLink, VerticalDivider } from "@/ui";
 
-import { MENU } from '../data/menu';
-import { type MenuNavItem } from '../types/menu-nav-item';
-import { type MenuSocialLink } from '../types/menu-social-link';
+import { MENU } from "../data/menu";
+import { type MenuNavItem } from "../types/menu-nav-item";
+import { type MenuSocialLink } from "../types/menu-social-link";
 
 const DrawerPanel = styled(Drawer.Popup)`
   &[data-scheme='light'] {
-    ${buildSchemeDeclarations('light')}
+    ${buildSchemeDeclarations("light")}
   }
 
   &[data-scheme='muted'] {
-    ${buildSchemeDeclarations('muted')}
+    ${buildSchemeDeclarations("muted")}
   }
 
   &[data-scheme='dark'] {
-    ${buildSchemeDeclarations('dark')}
+    ${buildSchemeDeclarations("dark")}
   }
 
   background-color: ${semanticColor.surface};
@@ -83,7 +83,7 @@ const drawerItemStyles = `
   color: ${semanticColor.ink};
   cursor: pointer;
   display: block;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(8)};
   font-weight: ${FONT_WEIGHT.light};
   letter-spacing: 0;
@@ -95,7 +95,7 @@ const drawerItemStyles = `
   width: 100%;
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
+    outline: 1px solid ${color("blue")};
     outline-offset: 1px;
   }
 `;
@@ -133,7 +133,7 @@ const drawerChildStyles = `
   align-items: center;
   color: ${semanticColor.inkMuted};
   display: flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
   gap: ${spacing(2)};
@@ -141,7 +141,7 @@ const drawerChildStyles = `
   text-transform: uppercase;
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
+    outline: 1px solid ${color("blue")};
     outline-offset: 1px;
   }
 `;
@@ -183,7 +183,7 @@ const SocialAnchor = styled(ExternalLink)`
   color: ${semanticColor.ink};
   column-gap: ${spacing(3)};
   display: grid;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   grid-auto-flow: column;
@@ -192,109 +192,109 @@ const SocialAnchor = styled(ExternalLink)`
   white-space: nowrap;
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
+    outline: 1px solid ${color("blue")};
     outline-offset: 1px;
   }
 `;
 
 export type MenuDrawerProps = {
-  navItems: readonly MenuNavItem[];
-  scheme: Scheme;
-  socialLinks: readonly MenuSocialLink[];
-  stats: CommunityStats;
+	navItems: readonly MenuNavItem[];
+	scheme: Scheme;
+	socialLinks: readonly MenuSocialLink[];
+	stats: CommunityStats;
 };
 
 export function MenuDrawer({
-  navItems,
-  scheme,
-  socialLinks,
-  stats,
+	navItems,
+	scheme,
+	socialLinks,
+	stats,
 }: MenuDrawerProps) {
-  const { i18n } = useLingui();
-  const locale = useLocale();
-  const [isGroupExpanded, setIsGroupExpanded] = useState(false);
+	const { i18n } = useLingui();
+	const locale = useLocale();
+	const [isGroupExpanded, setIsGroupExpanded] = useState(false);
 
-  return (
-    <Drawer.Portal>
-      <DrawerPanel
-        aria-label={i18n._(msg`Navigation menu`)}
-        data-scheme={scheme}
-      >
-        <DrawerNav aria-label={i18n._(msg`Primary`)}>
-          {navItems.map((item, index) => (
-            <Fragment key={i18n._(item.label)}>
-              {index > 0 && <DottedSeparator aria-hidden />}
-              {item.children === undefined ? (
-                <Drawer.Close
-                  nativeButton={false}
-                  render={<DrawerNavLink href={item.href ?? '/'} />}
-                >
-                  {i18n._(item.label)}
-                </Drawer.Close>
-              ) : (
-                <div>
-                  <DrawerGroupToggle
-                    data-expanded={isGroupExpanded ? '' : undefined}
-                    onClick={() => setIsGroupExpanded((previous) => !previous)}
-                    type="button"
-                  >
-                    {i18n._(item.label)}
-                    <IconChevronDown size={20} stroke={1.6} />
-                  </DrawerGroupToggle>
-                  {isGroupExpanded && (
-                    <DrawerGroupChildren>
-                      {item.children.map((child) =>
-                        child.external === true ? (
-                          <DrawerChildAnchor href={child.href} key={child.href}>
-                            {i18n._(child.label)}
-                            <ExternalArrow />
-                          </DrawerChildAnchor>
-                        ) : (
-                          <Drawer.Close
-                            key={child.href}
-                            nativeButton={false}
-                            render={<DrawerChildLink href={child.href} />}
-                          >
-                            {i18n._(child.label)}
-                          </Drawer.Close>
-                        ),
-                      )}
-                    </DrawerGroupChildren>
-                  )}
-                </div>
-              )}
-            </Fragment>
-          ))}
-        </DrawerNav>
-        <CtaRow>
-          <Button
-            href={MENU.appUrl}
-            label={i18n._(msg`Log in`)}
-            size="small"
-            variant="outlined"
-          />
-        </CtaRow>
-        <SocialRow>
-          {socialLinks.map((link, index) => {
-            const IconComponent = link.icon;
-            return (
-              <Fragment key={link.href}>
-                {index > 0 && <VerticalDivider aria-hidden />}
-                <SocialAnchor
-                  aria-label={i18n._(link.ariaLabel)}
-                  href={link.href}
-                >
-                  <IconComponent aria-hidden size={16} />
-                  {link.statKey
-                    ? formatCompactCount(stats[link.statKey], locale)
-                    : null}
-                  {link.statKey ? <ExternalArrow /> : null}
-                </SocialAnchor>
-              </Fragment>
-            );
-          })}
-        </SocialRow>
-      </DrawerPanel>
-    </Drawer.Portal>
-  );
+	return (
+		<Drawer.Portal>
+			<DrawerPanel
+				aria-label={i18n._(msg`Navigation menu`)}
+				data-scheme={scheme}
+			>
+				<DrawerNav aria-label={i18n._(msg`Primary`)}>
+					{navItems.map((item, index) => (
+						<Fragment key={i18n._(item.label)}>
+							{index > 0 && <DottedSeparator aria-hidden />}
+							{item.children === undefined ? (
+								<Drawer.Close
+									nativeButton={false}
+									render={<DrawerNavLink href={item.href ?? "/"} />}
+								>
+									{i18n._(item.label)}
+								</Drawer.Close>
+							) : (
+								<div>
+									<DrawerGroupToggle
+										data-expanded={isGroupExpanded ? "" : undefined}
+										onClick={() => setIsGroupExpanded((previous) => !previous)}
+										type="button"
+									>
+										{i18n._(item.label)}
+										<IconChevronDown size={20} stroke={1.6} />
+									</DrawerGroupToggle>
+									{isGroupExpanded && (
+										<DrawerGroupChildren>
+											{item.children.map((child) =>
+												child.external === true ? (
+													<DrawerChildAnchor href={child.href} key={child.href}>
+														{i18n._(child.label)}
+														<ExternalArrow />
+													</DrawerChildAnchor>
+												) : (
+													<Drawer.Close
+														key={child.href}
+														nativeButton={false}
+														render={<DrawerChildLink href={child.href} />}
+													>
+														{i18n._(child.label)}
+													</Drawer.Close>
+												),
+											)}
+										</DrawerGroupChildren>
+									)}
+								</div>
+							)}
+						</Fragment>
+					))}
+				</DrawerNav>
+				<CtaRow>
+					<Button
+						href={MENU.appUrl}
+						label={i18n._(msg`Log in`)}
+						size="small"
+						variant="outlined"
+					/>
+				</CtaRow>
+				<SocialRow>
+					{socialLinks.map((link, index) => {
+						const IconComponent = link.icon;
+						return (
+							<Fragment key={link.href}>
+								{index > 0 && <VerticalDivider aria-hidden />}
+								<SocialAnchor
+									aria-label={i18n._(link.ariaLabel)}
+									href={link.href}
+								>
+									<IconComponent aria-hidden size={16} />
+									{link.statKey
+										? formatCompactCount(stats[link.statKey], locale)
+										: null}
+									{link.statKey ? <ExternalArrow /> : null}
+								</SocialAnchor>
+							</Fragment>
+						);
+					})}
+				</SocialRow>
+			</DrawerPanel>
+		</Drawer.Portal>
+	);
 }

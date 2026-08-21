@@ -1,7 +1,7 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
 
 export const getGroupByQueryResultGqlFieldName = (
-  objectMetadataItem: EnrichedObjectMetadataItem,
+	objectMetadataItem: EnrichedObjectMetadataItem,
 ): string => {
-  return `${objectMetadataItem.namePlural}GroupBy`;
+	return `${objectMetadataItem.namePlural}GroupBy`;
 };

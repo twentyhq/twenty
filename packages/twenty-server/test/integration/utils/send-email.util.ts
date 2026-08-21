@@ -1,22 +1,22 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
 type SendEmailInput = {
-  connectedAccountId: string;
-  to: string;
-  cc?: string;
-  bcc?: string;
-  subject: string;
-  body: string;
-  inReplyTo?: string;
-  draftMessageId?: string;
+	connectedAccountId: string;
+	to: string;
+	cc?: string;
+	bcc?: string;
+	subject: string;
+	body: string;
+	inReplyTo?: string;
+	draftMessageId?: string;
 };
 
 type SendEmailResult = {
-  success: boolean;
-  error?: string;
-  messageThreadId?: string;
+	success: boolean;
+	error?: string;
+	messageThreadId?: string;
 };
 
 const SEND_EMAIL_MUTATION = gql`
@@ -30,14 +30,14 @@ const SEND_EMAIL_MUTATION = gql`
 `;
 
 export const sendEmail = async (
-  input: SendEmailInput,
+	input: SendEmailInput,
 ): Promise<SendEmailResult> => {
-  const response = await makeMetadataAPIRequest({
-    query: SEND_EMAIL_MUTATION,
-    variables: { input },
-  });
+	const response = await makeMetadataAPIRequest({
+		query: SEND_EMAIL_MUTATION,
+		variables: { input },
+	});
 
-  expect(response.body.errors).toBeUndefined();
+	expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.sendEmail;
+	return response.body.data.sendEmail;
 };

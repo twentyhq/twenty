@@ -1,4 +1,4 @@
 export type MessageDescriptor = {
-  message: string;
-  context?: string;
+	message: string;
+	context?: string;
 };

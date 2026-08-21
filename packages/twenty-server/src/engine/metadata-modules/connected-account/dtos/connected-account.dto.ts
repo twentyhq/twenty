@@ -1,113 +1,113 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from "@nestjs/graphql";
 
 import {
-  IsArray,
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+	IsArray,
+	IsDateString,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	IsUUID,
+} from "class-validator";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { type ImapSmtpCaldavParams } from "src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type";
 
-@ObjectType('ConnectedAccountDTO')
+@ObjectType("ConnectedAccountDTO")
 export class ConnectedAccountDTO {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  id: string;
+	@IsUUID()
+	@IsNotEmpty()
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  handle: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	handle: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  provider: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	provider: string;
 
-  @HideField()
-  accessToken: string | null;
+	@HideField()
+	accessToken: string | null;
 
-  @HideField()
-  refreshToken: string | null;
+	@HideField()
+	refreshToken: string | null;
 
-  @IsDateString()
-  @IsOptional()
-  @Field(() => Date, { nullable: true })
-  lastCredentialsRefreshedAt: Date | null;
+	@IsDateString()
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	lastCredentialsRefreshedAt: Date | null;
 
-  @IsDateString()
-  @IsOptional()
-  @Field(() => Date, { nullable: true })
-  authFailedAt: Date | null;
+	@IsDateString()
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	authFailedAt: Date | null;
 
-  // Set when the account is frozen after its owner is removed from the
-  // workspace: synced data is kept but the account is read-only.
-  @IsDateString()
-  @IsOptional()
-  @Field(() => Date, { nullable: true })
-  archivedAt: Date | null;
+	// Set when the account is frozen after its owner is removed from the
+	// workspace: synced data is kept but the account is read-only.
+	@IsDateString()
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	archivedAt: Date | null;
 
-  @IsArray()
-  @IsOptional()
-  @Field(() => [String], { nullable: true })
-  handleAliases: string[] | null;
+	@IsArray()
+	@IsOptional()
+	@Field(() => [String], { nullable: true })
+	handleAliases: string[] | null;
 
-  @IsArray()
-  @IsOptional()
-  @Field(() => [String], { nullable: true })
-  scopes: string[] | null;
+	@IsArray()
+	@IsOptional()
+	@Field(() => [String], { nullable: true })
+	scopes: string[] | null;
 
-  @HideField()
-  connectionParameters: ImapSmtpCaldavParams | null;
+	@HideField()
+	connectionParameters: ImapSmtpCaldavParams | null;
 
-  @IsDateString()
-  @IsOptional()
-  @Field(() => Date, { nullable: true })
-  lastSignedInAt: Date | null;
+	@IsDateString()
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	lastSignedInAt: Date | null;
 
-  @HideField()
-  oidcTokenClaims: Record<string, unknown> | null;
+	@HideField()
+	oidcTokenClaims: Record<string, unknown> | null;
 
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  userWorkspaceId: string;
+	@IsUUID()
+	@IsNotEmpty()
+	@Field(() => UUIDScalarType)
+	userWorkspaceId: string;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  connectionProviderId: string | null;
+	@IsUUID()
+	@IsOptional()
+	@Field(() => UUIDScalarType, { nullable: true })
+	connectionProviderId: string | null;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId: string | null;
+	@IsUUID()
+	@IsOptional()
+	@Field(() => UUIDScalarType, { nullable: true })
+	applicationId: string | null;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  name: string | null;
+	@IsString()
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	name: string | null;
 
-  // 'user' = private to the connecting user.
-  // 'workspace' = shared with all members.
-  // Named `visibility` to disambiguate from the OAuth `scopes` array.
-  @IsString()
-  @Field(() => String)
-  visibility: string;
+	// 'user' = private to the connecting user.
+	// 'workspace' = shared with all members.
+	// Named `visibility` to disambiguate from the OAuth `scopes` array.
+	@IsString()
+	@Field(() => String)
+	visibility: string;
 
-  @HideField()
-  workspaceId: string;
+	@HideField()
+	workspaceId: string;
 
-  @IsDateString()
-  @Field()
-  createdAt: Date;
+	@IsDateString()
+	@Field()
+	createdAt: Date;
 
-  @IsDateString()
-  @Field()
-  updatedAt: Date;
+	@IsDateString()
+	@Field()
+	updatedAt: Date;
 }

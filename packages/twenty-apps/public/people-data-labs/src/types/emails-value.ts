@@ -1,4 +1,4 @@
 export type EmailsValue = {
-  primaryEmail: string;
-  additionalEmails: string[] | null;
+	primaryEmail: string;
+	additionalEmails: string[] | null;
 };

@@ -1,76 +1,76 @@
-import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
-import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { getFieldPreviewValue } from "@/settings/data-model/fields/preview/utils/getFieldPreviewValue";
+import { getSettingsFieldTypeConfig } from "@/settings/data-model/utils/getSettingsFieldTypeConfig";
+import { FieldMetadataType } from "~/generated-metadata/graphql";
+import { getTestEnrichedObjectMetadataItemsMock } from "~/testing/utils/getTestEnrichedObjectMetadataItemsMock";
 
 const mockedCompanyObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'company',
-  );
+	getTestEnrichedObjectMetadataItemsMock().find(
+		(item) => item.nameSingular === "company",
+	);
 
 const mockedPersonObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'person',
-  );
+	getTestEnrichedObjectMetadataItemsMock().find(
+		(item) => item.nameSingular === "person",
+	);
 
-describe('getFieldPreviewValue', () => {
-  it("returns the field's defaultValue from metadata if it exists", () => {
-    const fieldName = 'idealCustomerProfile';
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
-      ({ name }) => name === fieldName,
-    );
+describe("getFieldPreviewValue", () => {
+	it("returns the field's defaultValue from metadata if it exists", () => {
+		const fieldName = "idealCustomerProfile";
+		const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
+			({ name }) => name === fieldName,
+		);
 
-    if (!fieldMetadataItem) {
-      throw new Error(`Field '${fieldName}' not found`);
-    }
+		if (!fieldMetadataItem) {
+			throw new Error(`Field '${fieldName}' not found`);
+		}
 
-    const result = getFieldPreviewValue({
-      fieldType: fieldMetadataItem.type,
-      fieldSettings: fieldMetadataItem.settings,
-      defaultValue: fieldMetadataItem.defaultValue,
-    });
+		const result = getFieldPreviewValue({
+			fieldType: fieldMetadataItem.type,
+			fieldSettings: fieldMetadataItem.settings,
+			defaultValue: fieldMetadataItem.defaultValue,
+		});
 
-    expect(result).toBe(false);
-  });
+		expect(result).toBe(false);
+	});
 
-  it('returns a placeholder defaultValue if the field metadata does not have a defaultValue', () => {
-    const fieldName = 'employees';
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
-      ({ name }) => name === fieldName,
-    );
+	it("returns a placeholder defaultValue if the field metadata does not have a defaultValue", () => {
+		const fieldName = "employees";
+		const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
+			({ name }) => name === fieldName,
+		);
 
-    if (!fieldMetadataItem) {
-      throw new Error(`Field '${fieldName}' not found`);
-    }
+		if (!fieldMetadataItem) {
+			throw new Error(`Field '${fieldName}' not found`);
+		}
 
-    const result = getFieldPreviewValue({
-      fieldType: fieldMetadataItem.type,
-      fieldSettings: fieldMetadataItem.settings,
-      defaultValue: fieldMetadataItem.defaultValue,
-    });
+		const result = getFieldPreviewValue({
+			fieldType: fieldMetadataItem.type,
+			fieldSettings: fieldMetadataItem.settings,
+			defaultValue: fieldMetadataItem.defaultValue,
+		});
 
-    expect(result).toBe(2000);
-    expect(result).toBe(
-      getSettingsFieldTypeConfig(FieldMetadataType.NUMBER).exampleValues?.[0],
-    );
-  });
+		expect(result).toBe(2000);
+		expect(result).toBe(
+			getSettingsFieldTypeConfig(FieldMetadataType.NUMBER).exampleValues?.[0],
+		);
+	});
 
-  it('returns null if the field is supported in Settings but has no pre-configured placeholder defaultValue', () => {
-    const fieldName = 'company';
-    const fieldMetadataItem = mockedPersonObjectMetadataItem?.fields.find(
-      ({ name }) => name === fieldName,
-    );
+	it("returns null if the field is supported in Settings but has no pre-configured placeholder defaultValue", () => {
+		const fieldName = "company";
+		const fieldMetadataItem = mockedPersonObjectMetadataItem?.fields.find(
+			({ name }) => name === fieldName,
+		);
 
-    if (!fieldMetadataItem) {
-      throw new Error(`Field '${fieldName}' not found`);
-    }
+		if (!fieldMetadataItem) {
+			throw new Error(`Field '${fieldName}' not found`);
+		}
 
-    const result = getFieldPreviewValue({
-      fieldType: fieldMetadataItem.type,
-      fieldSettings: fieldMetadataItem.settings,
-      defaultValue: fieldMetadataItem.defaultValue,
-    });
+		const result = getFieldPreviewValue({
+			fieldType: fieldMetadataItem.type,
+			fieldSettings: fieldMetadataItem.settings,
+			defaultValue: fieldMetadataItem.defaultValue,
+		});
 
-    expect(result).toBeNull();
-  });
+		expect(result).toBeNull();
+	});
 });

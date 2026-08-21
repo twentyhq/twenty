@@ -1,5 +1,5 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 export const isCaptchaScriptLoadedState = createAtomState<boolean>({
-  key: 'isCaptchaScriptLoadedState',
-  defaultValue: false,
+	key: "isCaptchaScriptLoadedState",
+	defaultValue: false,
 });

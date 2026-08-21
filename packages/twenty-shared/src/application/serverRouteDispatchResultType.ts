@@ -1,5 +1,5 @@
 export type ServerRouteDispatchResult = {
-  workspaceId: string;
-  targetLogicFunctionUniversalIdentifier: string;
-  payload?: object;
+	workspaceId: string;
+	targetLogicFunctionUniversalIdentifier: string;
+	payload?: object;
 };

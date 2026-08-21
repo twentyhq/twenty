@@ -1,42 +1,42 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const getFunctionsBaseUrl = ({
-  serverBaseUrl,
-  publicFunctionDomain,
-  workspaceSubdomain,
+	serverBaseUrl,
+	publicFunctionDomain,
+	workspaceSubdomain,
 }: {
-  serverBaseUrl: string;
-  publicFunctionDomain?: string | null;
-  workspaceSubdomain?: string | null;
+	serverBaseUrl: string;
+	publicFunctionDomain?: string | null;
+	workspaceSubdomain?: string | null;
 }): string => {
-  if (
-    isNonEmptyString(publicFunctionDomain) &&
-    isNonEmptyString(workspaceSubdomain)
-  ) {
-    return `https://${workspaceSubdomain}.${publicFunctionDomain}`;
-  }
+	if (
+		isNonEmptyString(publicFunctionDomain) &&
+		isNonEmptyString(workspaceSubdomain)
+	) {
+		return `https://${workspaceSubdomain}.${publicFunctionDomain}`;
+	}
 
-  return `${serverBaseUrl}/s`;
+	return `${serverBaseUrl}/s`;
 };
 
 export const getLogicFunctionHttpUrl = ({
-  path,
-  serverBaseUrl,
-  publicFunctionDomain,
-  workspaceSubdomain,
+	path,
+	serverBaseUrl,
+	publicFunctionDomain,
+	workspaceSubdomain,
 }: {
-  path: string;
-  serverBaseUrl: string;
-  publicFunctionDomain?: string | null;
-  workspaceSubdomain?: string | null;
+	path: string;
+	serverBaseUrl: string;
+	publicFunctionDomain?: string | null;
+	workspaceSubdomain?: string | null;
 }): string => {
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 
-  const functionsBaseUrl = getFunctionsBaseUrl({
-    serverBaseUrl,
-    publicFunctionDomain,
-    workspaceSubdomain,
-  });
+	const functionsBaseUrl = getFunctionsBaseUrl({
+		serverBaseUrl,
+		publicFunctionDomain,
+		workspaceSubdomain,
+	});
 
-  return `${functionsBaseUrl}${normalizedPath}`;
+	return `${functionsBaseUrl}${normalizedPath}`;
 };

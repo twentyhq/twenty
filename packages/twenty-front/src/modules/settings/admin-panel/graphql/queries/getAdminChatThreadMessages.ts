@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
   query GetAdminChatThreadMessages($threadId: UUID!) {

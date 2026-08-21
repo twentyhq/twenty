@@ -1,11 +1,11 @@
 export const normalizeFrontComponentSharedDependencies = (
-  dependencies: string[],
+	dependencies: string[],
 ): string[] => {
-  const normalizedDependencies = new Set(dependencies);
+	const normalizedDependencies = new Set(dependencies);
 
-  if (normalizedDependencies.has('react')) {
-    normalizedDependencies.add('react/jsx-runtime');
-  }
+	if (normalizedDependencies.has("react")) {
+		normalizedDependencies.add("react/jsx-runtime");
+	}
 
-  return [...normalizedDependencies].sort();
+	return [...normalizedDependencies].sort();
 };

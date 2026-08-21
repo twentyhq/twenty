@@ -1,10 +1,10 @@
-import { keyframes } from '@emotion/react';
-import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { keyframes } from "@emotion/react";
+import styled from "@emotion/styled";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const SKELETON_ENTRY_COUNT = 3;
-const SKELETON_BAR_HEIGHT = '16px';
-const SKELETON_BORDER_RADIUS = '4px';
+const SKELETON_BAR_HEIGHT = "16px";
+const SKELETON_BORDER_RADIUS = "4px";
 
 const skeletonHighlightSweep = keyframes`
   100% {
@@ -74,25 +74,25 @@ const StyledSkeletonContainer = styled.div`
 `;
 
 export const RecordingSkeletonLoader = () => {
-  const skeletonEntries = Array.from(
-    { length: SKELETON_ENTRY_COUNT },
-    (_, skeletonEntryIndex) => skeletonEntryIndex,
-  );
+	const skeletonEntries = Array.from(
+		{ length: SKELETON_ENTRY_COUNT },
+		(_, skeletonEntryIndex) => skeletonEntryIndex,
+	);
 
-  return (
-    <StyledSkeletonContainer aria-hidden="true">
-      {skeletonEntries.map((skeletonEntryIndex) => (
-        <StyledSkeletonEntry key={skeletonEntryIndex}>
-          <StyledSkeletonEntryHeader>
-            <StyledSkeletonAvatar />
-            <StyledSkeletonSpeakerBar />
-          </StyledSkeletonEntryHeader>
-          <StyledSkeletonTextBar $width="100%" />
-          <StyledSkeletonTextBar
-            $width={skeletonEntryIndex % 2 === 0 ? '75%' : '55%'}
-          />
-        </StyledSkeletonEntry>
-      ))}
-    </StyledSkeletonContainer>
-  );
+	return (
+		<StyledSkeletonContainer aria-hidden="true">
+			{skeletonEntries.map((skeletonEntryIndex) => (
+				<StyledSkeletonEntry key={skeletonEntryIndex}>
+					<StyledSkeletonEntryHeader>
+						<StyledSkeletonAvatar />
+						<StyledSkeletonSpeakerBar />
+					</StyledSkeletonEntryHeader>
+					<StyledSkeletonTextBar $width="100%" />
+					<StyledSkeletonTextBar
+						$width={skeletonEntryIndex % 2 === 0 ? "75%" : "55%"}
+					/>
+				</StyledSkeletonEntry>
+			))}
+		</StyledSkeletonContainer>
+	);
 };

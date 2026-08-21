@@ -1,39 +1,39 @@
 import {
-  Injectable,
-  type CanActivate,
-  type ExecutionContext,
-} from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
+	Injectable,
+	type CanActivate,
+	type ExecutionContext,
+} from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
 
-import { ViewVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from "twenty-shared/types";
 
-import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
+import { ViewAccessService } from "src/engine/metadata-modules/view-permissions/services/view-access.service";
 
 @Injectable()
 export class CreateViewPermissionGuard implements CanActivate {
-  constructor(private readonly viewAccessService: ViewAccessService) {}
+	constructor(private readonly viewAccessService: ViewAccessService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const gqlContext = GqlExecutionContext.create(context);
-    const request = gqlContext.getContext().req;
+	async canActivate(context: ExecutionContext): Promise<boolean> {
+		const gqlContext = GqlExecutionContext.create(context);
+		const request = gqlContext.getContext().req;
 
-    let visibility: ViewVisibility = ViewVisibility.WORKSPACE;
+		let visibility: ViewVisibility = ViewVisibility.WORKSPACE;
 
-    const args = gqlContext.getArgs();
+		const args = gqlContext.getArgs();
 
-    if (args?.input?.visibility) {
-      visibility = args.input.visibility as ViewVisibility;
-    }
+		if (args?.input?.visibility) {
+			visibility = args.input.visibility as ViewVisibility;
+		}
 
-    if (!args?.input && request.body?.visibility) {
-      visibility = request.body.visibility as ViewVisibility;
-    }
+		if (!args?.input && request.body?.visibility) {
+			visibility = request.body.visibility as ViewVisibility;
+		}
 
-    return this.viewAccessService.canUserCreateView(
-      visibility,
-      request.userWorkspaceId,
-      request.workspace.id,
-      request.apiKey?.id,
-    );
-  }
+		return this.viewAccessService.canUserCreateView(
+			visibility,
+			request.userWorkspaceId,
+			request.workspace.id,
+			request.apiKey?.id,
+		);
+	}
 }

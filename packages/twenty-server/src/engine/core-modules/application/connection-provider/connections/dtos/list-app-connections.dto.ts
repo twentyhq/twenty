@@ -1,17 +1,17 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from "class-validator";
 
 export class ListAppConnectionsDto {
-  @IsString()
-  @IsOptional()
-  providerName?: string;
+	@IsString()
+	@IsOptional()
+	providerName?: string;
 
-  // Optional UUID filter — when set, only credentials owned by this user are
-  // returned. The privacy filter on the server still applies on top of this.
-  @IsUUID()
-  @IsOptional()
-  userWorkspaceId?: string;
+	// Optional UUID filter — when set, only credentials owned by this user are
+	// returned. The privacy filter on the server still applies on top of this.
+	@IsUUID()
+	@IsOptional()
+	userWorkspaceId?: string;
 
-  @IsString()
-  @IsOptional()
-  visibility?: 'user' | 'workspace';
+	@IsString()
+	@IsOptional()
+	visibility?: "user" | "workspace";
 }

@@ -1,12 +1,12 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { ComponentDecorator } from '@ui/testing';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { ComponentDecorator } from "@ui/testing";
 
-import { HorizontalSeparator } from '@ui/layout/HorizontalSeparator/HorizontalSeparator';
+import { HorizontalSeparator } from "@ui/layout/HorizontalSeparator/HorizontalSeparator";
 
 const meta: Meta<typeof HorizontalSeparator> = {
-  title: 'UI/Layout/HorizontalSeparator',
-  component: HorizontalSeparator,
-  decorators: [ComponentDecorator],
+	title: "UI/Layout/HorizontalSeparator",
+	component: HorizontalSeparator,
+	decorators: [ComponentDecorator],
 };
 
 export default meta;

@@ -1,12 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { type EnqueueJobResult } from 'twenty-shared/application';
+import { type EnqueueJobResult } from "twenty-shared/application";
 
-@ObjectType('EnqueueJobResult')
+@ObjectType("EnqueueJobResult")
 export class EnqueueJobResultDTO implements EnqueueJobResult {
-  @Field()
-  enqueued: boolean;
+	@Field()
+	enqueued: boolean;
 
-  @Field()
-  logicFunctionUniversalIdentifier: string;
+	@Field()
+	logicFunctionUniversalIdentifier: string;
 }

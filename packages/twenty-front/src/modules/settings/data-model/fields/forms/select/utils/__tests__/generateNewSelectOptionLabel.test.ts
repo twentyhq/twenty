@@ -1,28 +1,28 @@
-import { generateNewSelectOptionLabel } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel';
+import { generateNewSelectOptionLabel } from "@/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel";
 
-describe('generateNewSelectOptionLabel', () => {
-  it('generates a new select option label', () => {
-    const options = [
-      { label: 'Option 1' },
-      { label: 'Option 2' },
-      { label: 'Lorem ipsum' },
-    ];
+describe("generateNewSelectOptionLabel", () => {
+	it("generates a new select option label", () => {
+		const options = [
+			{ label: "Option 1" },
+			{ label: "Option 2" },
+			{ label: "Lorem ipsum" },
+		];
 
-    const newLabel = generateNewSelectOptionLabel(options);
+		const newLabel = generateNewSelectOptionLabel(options);
 
-    expect(newLabel).toBe('Option 4');
-  });
+		expect(newLabel).toBe("Option 4");
+	});
 
-  it('iterates until it finds an unique label', () => {
-    const options = [
-      { label: 'Option 1' },
-      { label: 'Option 2' },
-      { label: 'Option 4' },
-      { label: 'Option 5' },
-    ];
+	it("iterates until it finds an unique label", () => {
+		const options = [
+			{ label: "Option 1" },
+			{ label: "Option 2" },
+			{ label: "Option 4" },
+			{ label: "Option 5" },
+		];
 
-    const newLabel = generateNewSelectOptionLabel(options);
+		const newLabel = generateNewSelectOptionLabel(options);
 
-    expect(newLabel).toBe('Option 6');
-  });
+		expect(newLabel).toBe("Option 6");
+	});
 });

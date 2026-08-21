@@ -1,4 +1,4 @@
 export type PageLayoutTabWidgetDropData = {
-  type: 'tab-widget-drop';
-  tabId: string;
+	type: "tab-widget-drop";
+	tabId: string;
 };

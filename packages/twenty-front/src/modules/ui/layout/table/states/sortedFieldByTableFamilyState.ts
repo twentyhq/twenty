@@ -1,14 +1,14 @@
-import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+import { type TableSortValue } from "@/ui/layout/table/types/TableSortValue";
+import { createAtomFamilyState } from "@/ui/utilities/state/jotai/utils/createAtomFamilyState";
 
 export type SortedFieldByTableFamilyStateKey = {
-  tableId: string;
+	tableId: string;
 };
 
 export const sortedFieldByTableFamilyState = createAtomFamilyState<
-  TableSortValue | null,
-  SortedFieldByTableFamilyStateKey
+	TableSortValue | null,
+	SortedFieldByTableFamilyStateKey
 >({
-  key: 'sortedFieldByTableFamilyState',
-  defaultValue: null,
+	key: "sortedFieldByTableFamilyState",
+	defaultValue: null,
 });

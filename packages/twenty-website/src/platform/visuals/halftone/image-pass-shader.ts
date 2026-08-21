@@ -3,7 +3,7 @@
 // imageFit: 0 contain, 1 cover, 2 width (full horizontal span; wider
 // containers crop top/bottom around verticalAnchor). Ported verbatim.
 export const IMAGE_PASS_SHADER = {
-  fragment: /* glsl */ `
+	fragment: /* glsl */ `
   precision highp float;
 
   uniform sampler2D tImage;

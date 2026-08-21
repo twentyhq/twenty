@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { type PointerEvent as ReactPointerEvent } from 'react';
+import { styled } from "@linaria/react";
+import { type PointerEvent as ReactPointerEvent } from "react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { type WindowResizeHandle } from '../stage/window-geometry';
+import { type WindowResizeHandle } from "../stage/window-geometry";
 
 type StartTerminalResize = (
-  handle: WindowResizeHandle,
+	handle: WindowResizeHandle,
 ) => (event: ReactPointerEvent<HTMLElement>) => void;
 
 const AFFORDANCE = APP_PREVIEW_TONES.terminal.surface.resizeAffordance;
@@ -122,32 +122,32 @@ const ResizeEdgeRight = styled(ResizeEdgeBase)`
 `;
 
 export function TerminalResizeHandles({
-  onStartResize,
+	onStartResize,
 }: {
-  onStartResize: StartTerminalResize;
+	onStartResize: StartTerminalResize;
 }) {
-  return (
-    <>
-      <ResizeEdgeTop onPointerDown={onStartResize('top')} />
-      <ResizeEdgeRight onPointerDown={onStartResize('right')} />
-      <ResizeEdgeBottom onPointerDown={onStartResize('bottom')} />
-      <ResizeEdgeLeft onPointerDown={onStartResize('left')} />
-      <ResizeCornerTopLeft
-        aria-hidden
-        onPointerDown={onStartResize('top-left')}
-      />
-      <ResizeCornerTopRight
-        aria-hidden
-        onPointerDown={onStartResize('top-right')}
-      />
-      <ResizeCornerBottomLeft
-        aria-hidden
-        onPointerDown={onStartResize('bottom-left')}
-      />
-      <ResizeCornerBottomRight
-        aria-hidden
-        onPointerDown={onStartResize('bottom-right')}
-      />
-    </>
-  );
+	return (
+		<>
+			<ResizeEdgeTop onPointerDown={onStartResize("top")} />
+			<ResizeEdgeRight onPointerDown={onStartResize("right")} />
+			<ResizeEdgeBottom onPointerDown={onStartResize("bottom")} />
+			<ResizeEdgeLeft onPointerDown={onStartResize("left")} />
+			<ResizeCornerTopLeft
+				aria-hidden
+				onPointerDown={onStartResize("top-left")}
+			/>
+			<ResizeCornerTopRight
+				aria-hidden
+				onPointerDown={onStartResize("top-right")}
+			/>
+			<ResizeCornerBottomLeft
+				aria-hidden
+				onPointerDown={onStartResize("bottom-left")}
+			/>
+			<ResizeCornerBottomRight
+				aria-hidden
+				onPointerDown={onStartResize("bottom-right")}
+			/>
+		</>
+	);
 }

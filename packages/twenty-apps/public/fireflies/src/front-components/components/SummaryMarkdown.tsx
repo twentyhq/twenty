@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { useMemo } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { SummaryInlineSegments } from 'src/front-components/components/SummaryInlineSegments';
-import { parseSummaryMarkdownBlocks } from 'src/front-components/utils/parse-summary-markdown-blocks.util';
+import { SummaryInlineSegments } from "src/front-components/components/SummaryInlineSegments";
+import { parseSummaryMarkdownBlocks } from "src/front-components/utils/parse-summary-markdown-blocks.util";
 
 const TOP_LEVEL_HEADING_MAX = 2;
 
@@ -20,9 +20,9 @@ const StyledSummary = styled.div`
 const StyledHeading = styled.h3<{ $isTopLevel: boolean }>`
   color: ${() => themeCssVariables.font.color.primary};
   font-size: ${({ $isTopLevel }) =>
-    $isTopLevel
-      ? themeCssVariables.font.size.md
-      : themeCssVariables.font.size.sm};
+		$isTopLevel
+			? themeCssVariables.font.size.md
+			: themeCssVariables.font.size.sm};
   font-weight: ${() => themeCssVariables.font.weight.medium};
   margin: 0;
   margin-top: ${() => themeCssVariables.spacing[1]};
@@ -41,47 +41,47 @@ const StyledList = styled.ul`
 `;
 
 type SummaryMarkdownProps = {
-  markdown: string;
+	markdown: string;
 };
 
 export const SummaryMarkdown = ({ markdown }: SummaryMarkdownProps) => {
-  const blocks = useMemo(
-    () => parseSummaryMarkdownBlocks(markdown),
-    [markdown],
-  );
+	const blocks = useMemo(
+		() => parseSummaryMarkdownBlocks(markdown),
+		[markdown],
+	);
 
-  return (
-    <StyledSummary>
-      {blocks.map((block, index) => {
-        if (block.type === 'heading') {
-          return (
-            <StyledHeading
-              key={index}
-              $isTopLevel={block.level <= TOP_LEVEL_HEADING_MAX}
-            >
-              <SummaryInlineSegments segments={block.segments} />
-            </StyledHeading>
-          );
-        }
+	return (
+		<StyledSummary>
+			{blocks.map((block, index) => {
+				if (block.type === "heading") {
+					return (
+						<StyledHeading
+							key={index}
+							$isTopLevel={block.level <= TOP_LEVEL_HEADING_MAX}
+						>
+							<SummaryInlineSegments segments={block.segments} />
+						</StyledHeading>
+					);
+				}
 
-        if (block.type === 'list') {
-          return (
-            <StyledList key={index}>
-              {block.items.map((item, itemIndex) => (
-                <li key={itemIndex}>
-                  <SummaryInlineSegments segments={item} />
-                </li>
-              ))}
-            </StyledList>
-          );
-        }
+				if (block.type === "list") {
+					return (
+						<StyledList key={index}>
+							{block.items.map((item, itemIndex) => (
+								<li key={itemIndex}>
+									<SummaryInlineSegments segments={item} />
+								</li>
+							))}
+						</StyledList>
+					);
+				}
 
-        return (
-          <StyledParagraph key={index}>
-            <SummaryInlineSegments segments={block.segments} />
-          </StyledParagraph>
-        );
-      })}
-    </StyledSummary>
-  );
+				return (
+					<StyledParagraph key={index}>
+						<SummaryInlineSegments segments={block.segments} />
+					</StyledParagraph>
+				);
+			})}
+		</StyledSummary>
+	);
 };

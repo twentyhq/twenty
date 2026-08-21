@@ -1,6 +1,6 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useEffect } from 'react';
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { useEffect } from "react";
 
 // Utility hook to show an error snackbar when a query returns an error.
 // Replaces the removed onError callback from useQuery in Apollo v4.
@@ -11,20 +11,20 @@ import { useEffect } from 'react';
 // useEffect calls. Keep this hook only for call sites that need a custom
 // error message (e.g. useWebhookForm, SettingsAdminWorkerMetricsGraph).
 export const useSnackBarOnQueryError = (
-  error: Error | CombinedGraphQLErrors | undefined,
-  message?: string,
+	error: Error | CombinedGraphQLErrors | undefined,
+	message?: string,
 ) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+	const { enqueueErrorSnackBar } = useSnackBar();
 
-  useEffect(() => {
-    if (!error) return;
+	useEffect(() => {
+		if (!error) return;
 
-    enqueueErrorSnackBar(
-      message
-        ? { message }
-        : CombinedGraphQLErrors.is(error)
-          ? { apolloError: error }
-          : { message: error.message },
-    );
-  }, [error, enqueueErrorSnackBar, message]);
+		enqueueErrorSnackBar(
+			message
+				? { message }
+				: CombinedGraphQLErrors.is(error)
+					? { apolloError: error }
+					: { message: error.message },
+		);
+	}, [error, enqueueErrorSnackBar, message]);
 };

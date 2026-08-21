@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { TerminalPromptFooter } from './TerminalPromptFooter';
-import { TerminalPromptMessage } from './TerminalPromptMessage';
-import { useTerminalPromptEasterEgg } from './use-terminal-prompt-easter-egg';
+import { TerminalPromptFooter } from "./TerminalPromptFooter";
+import { TerminalPromptMessage } from "./TerminalPromptMessage";
+import { useTerminalPromptEasterEgg } from "./use-terminal-prompt-easter-egg";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -70,51 +70,51 @@ const PromptBox = styled.div`
 `;
 
 export function TerminalPromptBox({
-  promptText,
-  promptIsPlaceholder,
-  onSend,
-  sendDisabled,
-  isChatFinished,
-  onReset,
+	promptText,
+	promptIsPlaceholder,
+	onSend,
+	sendDisabled,
+	isChatFinished,
+	onReset,
 }: {
-  promptText: string;
-  promptIsPlaceholder?: boolean;
-  onSend?: () => void;
-  sendDisabled?: boolean;
-  isChatFinished?: boolean;
-  onReset?: () => void;
+	promptText: string;
+	promptIsPlaceholder?: boolean;
+	onSend?: () => void;
+	sendDisabled?: boolean;
+	isChatFinished?: boolean;
+	onReset?: () => void;
 }) {
-  const {
-    easterEggMessage,
-    handleAnimationEnd,
-    handleClick: handleEasterEggClick,
-    isWiggling,
-  } = useTerminalPromptEasterEgg({
-    enabled: isChatFinished === true,
-  });
-  const showEasterEgg = easterEggMessage !== null;
-  const displayText = easterEggMessage ?? promptText;
+	const {
+		easterEggMessage,
+		handleAnimationEnd,
+		handleClick: handleEasterEggClick,
+		isWiggling,
+	} = useTerminalPromptEasterEgg({
+		enabled: isChatFinished === true,
+	});
+	const showEasterEgg = easterEggMessage !== null;
+	const displayText = easterEggMessage ?? promptText;
 
-  return (
-    <PromptArea>
-      <PromptBox
-        data-wiggle={isWiggling ? 'true' : 'false'}
-        onAnimationEnd={handleAnimationEnd}
-      >
-        <TerminalPromptMessage
-          isClickable={isChatFinished}
-          isEasterEggVisible={showEasterEgg}
-          isPlaceholder={promptIsPlaceholder}
-          onClick={handleEasterEggClick}
-          text={displayText}
-        />
-        <TerminalPromptFooter
-          isChatFinished={isChatFinished}
-          onReset={onReset}
-          onSend={onSend}
-          sendDisabled={sendDisabled}
-        />
-      </PromptBox>
-    </PromptArea>
-  );
+	return (
+		<PromptArea>
+			<PromptBox
+				data-wiggle={isWiggling ? "true" : "false"}
+				onAnimationEnd={handleAnimationEnd}
+			>
+				<TerminalPromptMessage
+					isClickable={isChatFinished}
+					isEasterEggVisible={showEasterEgg}
+					isPlaceholder={promptIsPlaceholder}
+					onClick={handleEasterEggClick}
+					text={displayText}
+				/>
+				<TerminalPromptFooter
+					isChatFinished={isChatFinished}
+					onReset={onReset}
+					onSend={onSend}
+					sendDisabled={sendDisabled}
+				/>
+			</PromptBox>
+		</PromptArea>
+	);
 }

@@ -1,4 +1,4 @@
 export enum RecordFilterGroupLogicalOperator {
-  AND = 'AND',
-  OR = 'OR',
+	AND = "AND",
+	OR = "OR",
 }

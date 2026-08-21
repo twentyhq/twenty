@@ -1,23 +1,23 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const createUpsertObjectPermissionsOperation = (
-  roleId: string,
-  objectPermissions: Array<{
-    objectMetadataId: string;
-    canReadObjectRecords?: boolean;
-    canUpdateObjectRecords?: boolean;
-    canSoftDeleteObjectRecords?: boolean;
-    canDestroyObjectRecords?: boolean;
-  }>,
-  selectedFields: string[] = [
-    'objectMetadataId',
-    'canReadObjectRecords',
-    'canUpdateObjectRecords',
-    'canSoftDeleteObjectRecords',
-    'canDestroyObjectRecords',
-  ],
+	roleId: string,
+	objectPermissions: Array<{
+		objectMetadataId: string;
+		canReadObjectRecords?: boolean;
+		canUpdateObjectRecords?: boolean;
+		canSoftDeleteObjectRecords?: boolean;
+		canDestroyObjectRecords?: boolean;
+	}>,
+	selectedFields: string[] = [
+		"objectMetadataId",
+		"canReadObjectRecords",
+		"canUpdateObjectRecords",
+		"canSoftDeleteObjectRecords",
+		"canDestroyObjectRecords",
+	],
 ) => ({
-  query: gql`
+	query: gql`
       mutation UpsertObjectPermissions(
         $roleId: UUID!
         $objectPermissions: [ObjectPermissionInput!]!
@@ -28,12 +28,12 @@ export const createUpsertObjectPermissionsOperation = (
             objectPermissions: $objectPermissions
           }
         ) {
-          ${selectedFields.join('\n')}
+          ${selectedFields.join("\n")}
         }
       }
     `,
-  variables: {
-    roleId,
-    objectPermissions,
-  },
+	variables: {
+		roleId,
+		objectPermissions,
+	},
 });

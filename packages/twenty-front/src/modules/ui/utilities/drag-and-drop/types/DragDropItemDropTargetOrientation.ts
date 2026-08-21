@@ -1,1 +1,1 @@
-export type DragDropItemDropTargetOrientation = 'vertical' | 'horizontal';
+export type DragDropItemDropTargetOrientation = "vertical" | "horizontal";

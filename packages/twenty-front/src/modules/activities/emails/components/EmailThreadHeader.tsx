@@ -1,14 +1,14 @@
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { dateLocaleState } from "~/localization/states/dateLocaleState";
+import { beautifyPastDateRelativeToNow } from "~/utils/date-utils";
 
 type EmailThreadHeaderProps = {
-  subject: string;
-  lastMessageSentAt: string;
+	subject: string;
+	lastMessageSentAt: string;
 };
 
 const StyledContainer = styled.div`
@@ -41,25 +41,25 @@ const StyledContent = styled.span`
 `;
 
 export const EmailThreadHeader = ({
-  subject,
-  lastMessageSentAt,
+	subject,
+	lastMessageSentAt,
 }: EmailThreadHeaderProps) => {
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const lastMessageSentAtFormatted = beautifyPastDateRelativeToNow(
-    lastMessageSentAt,
-    localeCatalog,
-  );
+	const { localeCatalog } = useAtomStateValue(dateLocaleState);
+	const lastMessageSentAtFormatted = beautifyPastDateRelativeToNow(
+		lastMessageSentAt,
+		localeCatalog,
+	);
 
-  return (
-    <StyledContainer>
-      <StyledHead>
-        <StyledHeading>{subject}</StyledHeading>
-        {lastMessageSentAt && (
-          <StyledContent>
-            {t`Last message ${lastMessageSentAtFormatted}`}
-          </StyledContent>
-        )}
-      </StyledHead>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledHead>
+				<StyledHeading>{subject}</StyledHeading>
+				{lastMessageSentAt && (
+					<StyledContent>
+						{t`Last message ${lastMessageSentAtFormatted}`}
+					</StyledContent>
+				)}
+			</StyledHead>
+		</StyledContainer>
+	);
 };

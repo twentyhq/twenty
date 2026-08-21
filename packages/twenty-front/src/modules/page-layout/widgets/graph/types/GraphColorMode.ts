@@ -1,4 +1,4 @@
 export type GraphColorMode =
-  | 'explicitSingleColor'
-  | 'selectFieldOptionColors'
-  | 'automaticPalette';
+	| "explicitSingleColor"
+	| "selectFieldOptionColors"
+	| "automaticPalette";

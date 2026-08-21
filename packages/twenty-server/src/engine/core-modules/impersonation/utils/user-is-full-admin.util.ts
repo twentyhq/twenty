@@ -1,5 +1,5 @@
-import { type ImpersonationAuthorizationUser } from 'src/engine/core-modules/impersonation/utils/impersonation-authorization-user.type';
+import { type ImpersonationAuthorizationUser } from "src/engine/core-modules/impersonation/utils/impersonation-authorization-user.type";
 
 export const userIsFullAdmin = (
-  user: ImpersonationAuthorizationUser,
+	user: ImpersonationAuthorizationUser,
 ): boolean => user.canAccessFullAdminPanel === true;

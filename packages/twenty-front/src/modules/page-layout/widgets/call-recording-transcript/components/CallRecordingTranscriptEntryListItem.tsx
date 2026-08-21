@@ -1,10 +1,10 @@
-import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { formatCallRecordingTranscriptTimestamp } from "@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { Avatar, Chip, ChipVariant } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { type CallRecordingParsedTranscriptEntry } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
 
 const StyledEntry = styled.li`
   display: flex;
@@ -35,37 +35,37 @@ const StyledText = styled.p`
 `;
 
 type CallRecordingTranscriptEntryListItemProps = {
-  entry: CallRecordingParsedTranscriptEntry;
+	entry: CallRecordingParsedTranscriptEntry;
 };
 
 export const CallRecordingTranscriptEntryListItem = ({
-  entry,
+	entry,
 }: CallRecordingTranscriptEntryListItemProps) => {
-  const speakerName = entry.speakerName ?? t`Unknown speaker`;
+	const speakerName = entry.speakerName ?? t`Unknown speaker`;
 
-  return (
-    <StyledEntry>
-      <StyledEntryHeader>
-        <Chip
-          clickable={false}
-          label={speakerName}
-          variant={ChipVariant.Transparent}
-          leftComponent={
-            <Avatar
-              placeholder={speakerName}
-              placeholderColorSeed={speakerName}
-              size="sm"
-              type="rounded"
-            />
-          }
-        />
-        {isDefined(entry.startSeconds) && (
-          <StyledTimestamp>
-            {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
-          </StyledTimestamp>
-        )}
-      </StyledEntryHeader>
-      <StyledText>{entry.text}</StyledText>
-    </StyledEntry>
-  );
+	return (
+		<StyledEntry>
+			<StyledEntryHeader>
+				<Chip
+					clickable={false}
+					label={speakerName}
+					variant={ChipVariant.Transparent}
+					leftComponent={
+						<Avatar
+							placeholder={speakerName}
+							placeholderColorSeed={speakerName}
+							size="sm"
+							type="rounded"
+						/>
+					}
+				/>
+				{isDefined(entry.startSeconds) && (
+					<StyledTimestamp>
+						{formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
+					</StyledTimestamp>
+				)}
+			</StyledEntryHeader>
+			<StyledText>{entry.text}</StyledText>
+		</StyledEntry>
+	);
 };

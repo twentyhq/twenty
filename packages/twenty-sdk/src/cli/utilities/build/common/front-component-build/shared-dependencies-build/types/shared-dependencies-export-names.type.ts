@@ -1,4 +1,4 @@
 export type SharedDependenciesExportNames = {
-  namedExports: string[];
-  hasDefaultExport: boolean;
+	namedExports: string[];
+	hasDefaultExport: boolean;
 };

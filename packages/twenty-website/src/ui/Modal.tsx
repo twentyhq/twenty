@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Dialog } from '@base-ui/react/dialog';
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { Dialog } from "@base-ui/react/dialog";
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
-import { MODAL_SURFACE, mediaUp, radius, spacing, Z_INDEX } from '@/tokens';
+import { MODAL_SURFACE, mediaUp, radius, spacing, Z_INDEX } from "@/tokens";
 
 const Backdrop = styled(Dialog.Backdrop)`
   align-items: center;
@@ -42,44 +42,44 @@ const Popup = styled(Dialog.Popup)`
   width: var(--modal-panel-width, min(100%, 720px));
   z-index: ${Z_INDEX.modal};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding: ${spacing(6)} ${spacing(6)} ${spacing(8)};
   }
 `;
 
 export type ModalProps = {
-  // Names the dialog when its content has no Dialog.Title (the partner wizard);
-  // omit it when the content renders its own Dialog.Title (the Cal modal).
-  ariaLabel?: string;
-  children: ReactNode;
-  className?: string;
-  onClose: () => void;
-  open: boolean;
+	// Names the dialog when its content has no Dialog.Title (the partner wizard);
+	// omit it when the content renders its own Dialog.Title (the Cal modal).
+	ariaLabel?: string;
+	children: ReactNode;
+	className?: string;
+	onClose: () => void;
+	open: boolean;
 };
 
 // The site's one dark dialog shell: a blurred backdrop and a centred near-black
 // panel. Consumers supply the content (and either a Dialog.Title or ariaLabel
 // for the accessible name).
 export function Modal({
-  ariaLabel,
-  children,
-  className,
-  onClose,
-  open,
+	ariaLabel,
+	children,
+	className,
+	onClose,
+	open,
 }: ModalProps) {
-  return (
-    <Dialog.Root
-      open={open}
-      onOpenChange={(nextOpen) => {
-        if (!nextOpen) onClose();
-      }}
-    >
-      <Dialog.Portal>
-        <Backdrop />
-        <Popup aria-label={ariaLabel} className={className}>
-          {children}
-        </Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
+	return (
+		<Dialog.Root
+			open={open}
+			onOpenChange={(nextOpen) => {
+				if (!nextOpen) onClose();
+			}}
+		>
+			<Dialog.Portal>
+				<Backdrop />
+				<Popup aria-label={ariaLabel} className={className}>
+					{children}
+				</Popup>
+			</Dialog.Portal>
+		</Dialog.Root>
+	);
 }

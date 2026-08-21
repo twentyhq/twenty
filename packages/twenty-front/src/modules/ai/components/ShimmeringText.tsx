@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledShimmeringText = styled.div`
   -webkit-background-clip: text;
@@ -28,15 +28,15 @@ const StyledShimmeringText = styled.div`
 `;
 
 export const ShimmeringText = ({
-  children,
-  className,
+	children,
+	className,
 }: {
-  children: React.ReactNode;
-  className?: string;
+	children: React.ReactNode;
+	className?: string;
 }) => {
-  return (
-    <StyledShimmeringText className={className}>
-      {children}
-    </StyledShimmeringText>
-  );
+	return (
+		<StyledShimmeringText className={className}>
+			{children}
+		</StyledShimmeringText>
+	);
 };

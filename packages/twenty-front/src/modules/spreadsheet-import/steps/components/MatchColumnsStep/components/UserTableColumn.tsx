@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { type ImportedRow } from '@/spreadsheet-import/types';
+import { type ImportedRow } from "@/spreadsheet-import/types";
 
-import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { isDefined } from 'twenty-shared/utils';
+import { type SpreadsheetColumn } from "@/spreadsheet-import/types/SpreadsheetColumn";
+import { isDefined } from "twenty-shared/utils";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,23 +31,23 @@ const StyledExample = styled.span`
 `;
 
 type UserTableColumnProps = {
-  column: SpreadsheetColumn;
-  importedRow: ImportedRow;
+	column: SpreadsheetColumn;
+	importedRow: ImportedRow;
 };
 
 export const UserTableColumn = ({
-  column,
-  importedRow,
+	column,
+	importedRow,
 }: UserTableColumnProps) => {
-  const { header } = column;
-  const firstDefinedValue = importedRow.find(isDefined);
+	const { header } = column;
+	const firstDefinedValue = importedRow.find(isDefined);
 
-  return (
-    <StyledContainer>
-      <StyledValue>{header}</StyledValue>
-      {firstDefinedValue && (
-        <StyledExample>{`ex: ${firstDefinedValue}`}</StyledExample>
-      )}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledValue>{header}</StyledValue>
+			{firstDefinedValue && (
+				<StyledExample>{`ex: ${firstDefinedValue}`}</StyledExample>
+			)}
+		</StyledContainer>
+	);
 };

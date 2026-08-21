@@ -1,19 +1,19 @@
 export type RecallBotStatusChange = {
-  code: string;
-  subCode?: string | undefined;
-  createdAt: string | undefined;
+	code: string;
+	subCode?: string | undefined;
+	createdAt: string | undefined;
 };
 
 export type RecallBotRecording = {
-  id: string | undefined;
-  startedAt: string | undefined;
-  completedAt: string | undefined;
+	id: string | undefined;
+	startedAt: string | undefined;
+	completedAt: string | undefined;
 };
 
 // Parsed once at the recall-api boundary so flows never handle raw provider records.
 export type RecallBotSnapshot = {
-  id: string | undefined;
-  metadata: Record<string, unknown>;
-  statusChanges: RecallBotStatusChange[];
-  recordings: RecallBotRecording[];
+	id: string | undefined;
+	metadata: Record<string, unknown>;
+	statusChanges: RecallBotStatusChange[];
+	recordings: RecallBotRecording[];
 };

@@ -1,4 +1,4 @@
 export type PropertySchema = {
-  type: 'string' | 'number' | 'boolean';
-  optional: boolean;
+	type: "string" | "number" | "boolean";
+	optional: boolean;
 };

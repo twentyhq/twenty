@@ -1,1 +1,1 @@
-export const GENERATED_DIR = 'generated';
+export const GENERATED_DIR = "generated";

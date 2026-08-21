@@ -1,9 +1,9 @@
-import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
+import { type CompositeProperty, FieldMetadataType } from "twenty-shared/types";
 
 export const isCompositePropertySupportedInGroupBy = (
-  property: CompositeProperty,
+	property: CompositeProperty,
 ): boolean => {
-  return (
-    property.hidden !== true && property.type !== FieldMetadataType.RAW_JSON
-  );
+	return (
+		property.hidden !== true && property.type !== FieldMetadataType.RAW_JSON
+	);
 };

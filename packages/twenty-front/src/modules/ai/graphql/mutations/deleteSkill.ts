@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
-import { SKILL_FRAGMENT } from '@/ai/graphql/fragments/skillFragment';
+import { SKILL_FRAGMENT } from "@/ai/graphql/fragments/skillFragment";
 
 export const DELETE_SKILL = gql`
   ${SKILL_FRAGMENT}

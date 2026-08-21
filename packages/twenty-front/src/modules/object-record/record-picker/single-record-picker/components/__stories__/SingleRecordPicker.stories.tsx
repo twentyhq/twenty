@@ -1,15 +1,15 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { expect, userEvent, within } from "storybook/test";
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { ObjectMetadataItemsDecorator } from "~/testing/decorators/ObjectMetadataItemsDecorator";
+import { SnackBarDecorator } from "~/testing/decorators/SnackBarDecorator";
+import { graphqlMocks } from "~/testing/graphqlMocks";
+import { sleep } from "~/utils/sleep";
 
-import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
-import { IconUserCircle } from 'twenty-ui/icon';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { SingleRecordPicker } from "@/object-record/record-picker/single-record-picker/components/SingleRecordPicker";
+import { IconUserCircle } from "twenty-ui/icon";
+import { ComponentDecorator } from "twenty-ui/testing";
 
 // const records = allMockPersonRecords.map<SearchRecord>((person) => ({
 //   id: person.id,
@@ -31,21 +31,21 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 // );
 
 const meta: Meta<typeof SingleRecordPicker> = {
-  title: 'UI/RecordPicker/SingleRecordPicker',
-  component: SingleRecordPicker,
-  decorators: [
-    ComponentDecorator,
-    ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-  ],
-  args: {
-    objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
-    componentInstanceId: 'single-record-picker',
-  },
-  argTypes: {},
-  parameters: {
-    msw: graphqlMocks,
-  },
+	title: "UI/RecordPicker/SingleRecordPicker",
+	component: SingleRecordPicker,
+	decorators: [
+		ComponentDecorator,
+		ObjectMetadataItemsDecorator,
+		SnackBarDecorator,
+	],
+	args: {
+		objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
+		componentInstanceId: "single-record-picker",
+	},
+	argTypes: {},
+	parameters: {
+		msw: graphqlMocks,
+	},
 };
 
 export default meta;
@@ -56,21 +56,21 @@ export const Default: Story = {};
 export const WithSelectedRecord: Story = {};
 
 export const WithEmptyOption: Story = {
-  args: {
-    EmptyIcon: IconUserCircle,
-    emptyLabel: 'Nobody',
-  },
+	args: {
+		EmptyIcon: IconUserCircle,
+		emptyLabel: "Nobody",
+	},
 };
 
 export const WithSearchFilter: Story = {
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    const searchInput = await canvas.findByRole('textbox');
+	play: async ({ canvasElement, step }) => {
+		const canvas = within(canvasElement);
+		const searchInput = await canvas.findByRole("textbox");
 
-    await step('Enter search text', async () => {
-      await sleep(50);
-      await userEvent.type(searchInput, 'a');
-      await expect(searchInput).toHaveValue('a');
-    });
-  },
+		await step("Enter search text", async () => {
+			await sleep(50);
+			await userEvent.type(searchInput, "a");
+			await expect(searchInput).toHaveValue("a");
+		});
+	},
 };

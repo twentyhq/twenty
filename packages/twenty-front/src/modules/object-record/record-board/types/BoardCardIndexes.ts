@@ -1,4 +1,4 @@
 export type BoardCardIndexes = {
-  rowIndex: number;
-  columnIndex: number;
+	rowIndex: number;
+	columnIndex: number;
 };

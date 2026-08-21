@@ -1,5 +1,5 @@
-import { timelineThreadWithTotalFragment } from '@/activities/emails/graphql/queries/fragments/timelineThreadWithTotalFragment';
-import { gql } from '@apollo/client';
+import { timelineThreadWithTotalFragment } from "@/activities/emails/graphql/queries/fragments/timelineThreadWithTotalFragment";
+import { gql } from "@apollo/client";
 
 export const getTimelineThreadsFromObjectRecord = gql`
   query GetTimelineThreadsFromObjectRecord(

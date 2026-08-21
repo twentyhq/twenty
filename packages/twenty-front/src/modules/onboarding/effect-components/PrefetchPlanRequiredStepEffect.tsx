@@ -1,12 +1,12 @@
-import { useIsPlanRequired } from '@/onboarding/hooks/useIsPlanRequired';
-import { usePreloadStripeForPlanRequiredStep } from '@/onboarding/hooks/usePreloadStripeForPlanRequiredStep';
-import { usePlans } from '@/settings/billing/hooks/usePlans';
+import { useIsPlanRequired } from "@/onboarding/hooks/useIsPlanRequired";
+import { usePreloadStripeForPlanRequiredStep } from "@/onboarding/hooks/usePreloadStripeForPlanRequiredStep";
+import { usePlans } from "@/settings/billing/hooks/usePlans";
 
 export const PrefetchPlanRequiredStepEffect = () => {
-  const isPlanRequired = useIsPlanRequired();
+	const isPlanRequired = useIsPlanRequired();
 
-  usePlans({ skip: !isPlanRequired });
-  usePreloadStripeForPlanRequiredStep();
+	usePlans({ skip: !isPlanRequired });
+	usePreloadStripeForPlanRequiredStep();
 
-  return null;
+	return null;
 };

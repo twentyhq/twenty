@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
+import { CommandShutdownService } from "src/database/commands/command-runners/command-shutdown.service";
 
 @Module({
-  providers: [CommandShutdownService],
-  exports: [CommandShutdownService],
+	providers: [CommandShutdownService],
+	exports: [CommandShutdownService],
 })
 export class CommandShutdownModule {}

@@ -1,65 +1,65 @@
-import { ApiService } from '@/cli/utilities/api/api-service';
-import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
-import { ConfigService } from '@/cli/utilities/config/config-service';
-import { runSafe } from '@/cli/utilities/run-safe';
-import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import { ApiService } from "@/cli/utilities/api/api-service";
+import { readManifestFromFile } from "@/cli/utilities/build/manifest/manifest-reader";
+import { ConfigService } from "@/cli/utilities/config/config-service";
+import { runSafe } from "@/cli/utilities/run-safe";
+import { APP_ERROR_CODES, type CommandResult } from "@/cli/types";
 
 export type AppUninstallOptions = {
-  appPath: string;
-  remote?: string;
+	appPath: string;
+	remote?: string;
 };
 
 const innerAppUninstall = async (
-  options: AppUninstallOptions,
+	options: AppUninstallOptions,
 ): Promise<CommandResult> => {
-  if (options.remote) {
-    ConfigService.setActiveRemote(options.remote);
-  }
+	if (options.remote) {
+		ConfigService.setActiveRemote(options.remote);
+	}
 
-  const configService = new ConfigService();
-  const apiService = new ApiService();
-  const manifest = await readManifestFromFile(options.appPath);
+	const configService = new ConfigService();
+	const apiService = new ApiService();
+	const manifest = await readManifestFromFile(options.appPath);
 
-  if (!manifest) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
-        message: 'Manifest not found. Run `build` or `dev` first.',
-      },
-    };
-  }
+	if (!manifest) {
+		return {
+			success: false,
+			error: {
+				code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
+				message: "Manifest not found. Run `build` or `dev` first.",
+			},
+		};
+	}
 
-  const result = await apiService.uninstallApplication(
-    manifest.application.universalIdentifier,
-  );
+	const result = await apiService.uninstallApplication(
+		manifest.application.universalIdentifier,
+	);
 
-  if (!result.success) {
-    const errorMessage =
-      result.error instanceof Error
-        ? result.error.message
-        : String(result.error ?? 'Unknown error');
+	if (!result.success) {
+		const errorMessage =
+			result.error instanceof Error
+				? result.error.message
+				: String(result.error ?? "Unknown error");
 
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.UNINSTALL_FAILED,
-        message: errorMessage,
-      },
-    };
-  }
+		return {
+			success: false,
+			error: {
+				code: APP_ERROR_CODES.UNINSTALL_FAILED,
+				message: errorMessage,
+			},
+		};
+	}
 
-  await configService.setConfig({
-    appRegistrationId: undefined,
-    appRegistrationClientId: undefined,
-    appAccessToken: undefined,
-    appRefreshToken: undefined,
-  });
+	await configService.setConfig({
+		appRegistrationId: undefined,
+		appRegistrationClientId: undefined,
+		appAccessToken: undefined,
+		appRefreshToken: undefined,
+	});
 
-  return { success: true, data: undefined };
+	return { success: true, data: undefined };
 };
 
 export const appUninstall = (
-  options: AppUninstallOptions,
+	options: AppUninstallOptions,
 ): Promise<CommandResult> =>
-  runSafe(() => innerAppUninstall(options), APP_ERROR_CODES.UNINSTALL_FAILED);
+	runSafe(() => innerAppUninstall(options), APP_ERROR_CODES.UNINSTALL_FAILED);

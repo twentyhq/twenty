@@ -1,17 +1,17 @@
-import { ViewBarFilterDropdownAnyFieldSearchButtonMenuItem } from '@/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem';
-import { useOpenAnyFieldSearchFilterFromViewBar } from '@/views/hooks/useOpenAnyFieldSearchFilterFromViewBar';
+import { ViewBarFilterDropdownAnyFieldSearchButtonMenuItem } from "@/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem";
+import { useOpenAnyFieldSearchFilterFromViewBar } from "@/views/hooks/useOpenAnyFieldSearchFilterFromViewBar";
 
 export const ViewBarFilterDropdownAnyFieldSearchButton = () => {
-  const { openAnyFieldSearchFilterFromViewBar } =
-    useOpenAnyFieldSearchFilterFromViewBar();
+	const { openAnyFieldSearchFilterFromViewBar } =
+		useOpenAnyFieldSearchFilterFromViewBar();
 
-  const handleSearchClick = () => {
-    openAnyFieldSearchFilterFromViewBar();
-  };
+	const handleSearchClick = () => {
+		openAnyFieldSearchFilterFromViewBar();
+	};
 
-  return (
-    <ViewBarFilterDropdownAnyFieldSearchButtonMenuItem
-      onClick={handleSearchClick}
-    />
-  );
+	return (
+		<ViewBarFilterDropdownAnyFieldSearchButtonMenuItem
+			onClick={handleSearchClick}
+		/>
+	);
 };

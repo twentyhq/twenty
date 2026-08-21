@@ -1,1 +1,1 @@
-export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
+export type ModalPadding = "none" | "small" | "medium" | "large";

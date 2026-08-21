@@ -1,22 +1,22 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
 
-import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
-import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
-import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
+import { EventRowDate } from "@/activities/timeline-activities/rows/components/EventRowDate";
+import { type EventRowDynamicComponentProps } from "@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types";
+import { EventRowItem } from "@/activities/timeline-activities/rows/components/EventRowItem";
 import {
-  StyledEventRowContainer,
-  StyledEventRowContent,
-  StyledEventRowLinkedRecord,
-} from '@/activities/timeline-activities/rows/components/EventRowStyles';
-import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { parseTimelineActivityAction } from 'twenty-shared/timeline';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { isNonEmptyString } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	StyledEventRowContainer,
+	StyledEventRowContent,
+	StyledEventRowLinkedRecord,
+} from "@/activities/timeline-activities/rows/components/EventRowStyles";
+import { isTimelineActivityWithLinkedRecord } from "@/activities/timeline-activities/types/TimelineActivity";
+import { useOpenRecordInSidePanel } from "@/side-panel/hooks/useOpenRecordInSidePanel";
+import { parseTimelineActivityAction } from "twenty-shared/timeline";
+import { type CoreObjectNameSingular } from "twenty-shared/types";
+import { useGetRecordFromCache } from "@/object-record/cache/hooks/useGetRecordFromCache";
+import { isNonEmptyString } from "@sniptt/guards";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -32,65 +32,65 @@ export const StyledEventRowItemText = styled.span`
 `;
 
 export const EventRowActivity = ({
-  event,
-  authorFullName,
-  objectNameSingular,
-  createdAt,
+	event,
+	authorFullName,
+	objectNameSingular,
+	createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const eventAction = parseTimelineActivityAction(event.name);
+	const eventAction = parseTimelineActivityAction(event.name);
 
-  const eventObject = objectNameSingular;
+	const eventObject = objectNameSingular;
 
-  if (!isTimelineActivityWithLinkedRecord(event)) {
-    throw new Error('Could not find linked record id for event');
-  }
+	if (!isTimelineActivityWithLinkedRecord(event)) {
+		throw new Error("Could not find linked record id for event");
+	}
 
-  const getActivityFromCache = useGetRecordFromCache({
-    objectNameSingular,
-    recordGqlFields: {
-      id: true,
-      title: true,
-    },
-  });
+	const getActivityFromCache = useGetRecordFromCache({
+		objectNameSingular,
+		recordGqlFields: {
+			id: true,
+			title: true,
+		},
+	});
 
-  const activityInStore = getActivityFromCache(event.linkedRecordId);
+	const activityInStore = getActivityFromCache(event.linkedRecordId);
 
-  const computeActivityTitle = () => {
-    if (isNonEmptyString(activityInStore?.title)) {
-      return activityInStore?.title;
-    }
+	const computeActivityTitle = () => {
+		if (isNonEmptyString(activityInStore?.title)) {
+			return activityInStore?.title;
+		}
 
-    if (isNonEmptyString(event.linkedRecordCachedName)) {
-      return event.linkedRecordCachedName;
-    }
+		if (isNonEmptyString(event.linkedRecordCachedName)) {
+			return event.linkedRecordCachedName;
+		}
 
-    return t`Untitled`;
-  };
-  const activityTitle = computeActivityTitle();
+		return t`Untitled`;
+	};
+	const activityTitle = computeActivityTitle();
 
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+	const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  return (
-    <StyledEventRow>
-      <StyledEventRowContainer>
-        <StyledEventRowContent>
-          <EventRowItem>{authorFullName}</EventRowItem>
-          <EventRowItem variant="action">
-            {t`${eventAction} a related ${eventObject}`}
-          </EventRowItem>
-          <StyledEventRowLinkedRecord
-            onClick={() =>
-              openRecordInSidePanel({
-                recordId: event.linkedRecordId,
-                objectNameSingular,
-              })
-            }
-          >
-            <OverflowingTextWithTooltip text={activityTitle} />
-          </StyledEventRowLinkedRecord>
-        </StyledEventRowContent>
-        <EventRowDate createdAt={createdAt} />
-      </StyledEventRowContainer>
-    </StyledEventRow>
-  );
+	return (
+		<StyledEventRow>
+			<StyledEventRowContainer>
+				<StyledEventRowContent>
+					<EventRowItem>{authorFullName}</EventRowItem>
+					<EventRowItem variant="action">
+						{t`${eventAction} a related ${eventObject}`}
+					</EventRowItem>
+					<StyledEventRowLinkedRecord
+						onClick={() =>
+							openRecordInSidePanel({
+								recordId: event.linkedRecordId,
+								objectNameSingular,
+							})
+						}
+					>
+						<OverflowingTextWithTooltip text={activityTitle} />
+					</StyledEventRowLinkedRecord>
+				</StyledEventRowContent>
+				<EventRowDate createdAt={createdAt} />
+			</StyledEventRowContainer>
+		</StyledEventRow>
+	);
 };

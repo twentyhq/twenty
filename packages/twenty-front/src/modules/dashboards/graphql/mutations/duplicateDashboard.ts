@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const DUPLICATE_DASHBOARD = gql`
   mutation DuplicateDashboard($id: UUID!) {

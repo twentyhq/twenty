@@ -1,10 +1,10 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field } from "@nestjs/graphql";
 
 @ArgsType()
 export class CreateDevelopmentApplicationInput {
-  @Field(() => String)
-  universalIdentifier: string;
+	@Field(() => String)
+	universalIdentifier: string;
 
-  @Field(() => String)
-  name: string;
+	@Field(() => String)
+	name: string;
 }

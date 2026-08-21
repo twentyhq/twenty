@@ -1,25 +1,25 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const buildSignedPath = ({
-  path,
-  token,
+	path,
+	token,
 }: {
-  path: string;
-  token: string;
+	path: string;
+	token: string;
 }) => {
-  if (path.startsWith('https:') || path.startsWith('http:')) {
-    return path;
-  }
+	if (path.startsWith("https:") || path.startsWith("http:")) {
+		return path;
+	}
 
-  const directories = path.split('/');
+	const directories = path.split("/");
 
-  const filename = directories.pop();
+	const filename = directories.pop();
 
-  if (!isNonEmptyString(filename)) {
-    throw new Error(
-      `Filename empty: cannot build signed path from folderPath '${path}'`,
-    );
-  }
+	if (!isNonEmptyString(filename)) {
+		throw new Error(
+			`Filename empty: cannot build signed path from folderPath '${path}'`,
+		);
+	}
 
-  return `${directories.join('/')}/${token}/${filename}`;
+	return `${directories.join("/")}/${token}/${filename}`;
 };

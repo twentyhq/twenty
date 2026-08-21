@@ -1,16 +1,16 @@
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { useLayoutRenderingContext } from "@/ui/layout/contexts/LayoutRenderingContext";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { PageLayoutType } from "~/generated-metadata/graphql";
 
 interface PropertyBoxProps {
-  children: React.ReactNode;
-  className?: string;
-  dataTestId?: string;
+	children: React.ReactNode;
+	className?: string;
+	dataTestId?: string;
 }
 
 const StyledPropertyBoxContainer = styled.div<{
-  noHorizontalPadding?: boolean;
+	noHorizontalPadding?: boolean;
 }>`
   align-self: stretch;
   border-radius: ${themeCssVariables.border.radius.md};
@@ -19,29 +19,29 @@ const StyledPropertyBoxContainer = styled.div<{
   gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[3]};
   padding-left: ${({ noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
+		noHorizontalPadding ? 0 : themeCssVariables.spacing[3]};
   padding-right: ${({ noHorizontalPadding }) =>
-    noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
+		noHorizontalPadding ? 0 : themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const PropertyBox = ({
-  children,
-  className,
-  dataTestId,
+	children,
+	className,
+	dataTestId,
 }: PropertyBoxProps) => {
-  const layoutRenderingContext = useLayoutRenderingContext();
+	const layoutRenderingContext = useLayoutRenderingContext();
 
-  const isInRecordPageLayout =
-    layoutRenderingContext.layoutType === PageLayoutType.RECORD_PAGE;
+	const isInRecordPageLayout =
+		layoutRenderingContext.layoutType === PageLayoutType.RECORD_PAGE;
 
-  return (
-    <StyledPropertyBoxContainer
-      className={className}
-      data-testid={dataTestId}
-      noHorizontalPadding={isInRecordPageLayout}
-    >
-      {children}
-    </StyledPropertyBoxContainer>
-  );
+	return (
+		<StyledPropertyBoxContainer
+			className={className}
+			data-testid={dataTestId}
+			noHorizontalPadding={isInRecordPageLayout}
+		>
+			{children}
+		</StyledPropertyBoxContainer>
+	);
 };

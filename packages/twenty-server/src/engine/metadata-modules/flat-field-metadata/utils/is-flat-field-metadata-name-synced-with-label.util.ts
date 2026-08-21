@@ -1,23 +1,23 @@
-import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
+import { computeMetadataNameFromLabel } from "twenty-shared/metadata";
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
+import { type FlatFieldMetadata } from "src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type";
+import { isCallerTwentyStandardApp } from "src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util";
+import { type WorkspaceMigrationBuilderOptions } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type";
 
 export const isFlatFieldMetadataNameSyncedWithLabel = ({
-  flatFieldMetadata,
-  buildOptions,
+	flatFieldMetadata,
+	buildOptions,
 }: {
-  flatFieldMetadata: Pick<
-    FlatFieldMetadata,
-    'name' | 'isLabelSyncedWithName' | 'label'
-  >;
-  buildOptions: WorkspaceMigrationBuilderOptions;
+	flatFieldMetadata: Pick<
+		FlatFieldMetadata,
+		"name" | "isLabelSyncedWithName" | "label"
+	>;
+	buildOptions: WorkspaceMigrationBuilderOptions;
 }) => {
-  const computedName = computeMetadataNameFromLabel({
-    label: flatFieldMetadata.label,
-    applyCustomSuffix: !isCallerTwentyStandardApp(buildOptions),
-  });
+	const computedName = computeMetadataNameFromLabel({
+		label: flatFieldMetadata.label,
+		applyCustomSuffix: !isCallerTwentyStandardApp(buildOptions),
+	});
 
-  return flatFieldMetadata.name === computedName;
+	return flatFieldMetadata.name === computedName;
 };

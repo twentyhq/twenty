@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const BREADCRUMB_WIDTH = 24;
 const ICON_CENTER_OFFSET = 8;
 
 export type SettingsMessageFoldersBreadcrumbProps = {
-  depth: number;
-  isLast: boolean;
-  parentsIsLastList: boolean[];
+	depth: number;
+	isLast: boolean;
+	parentsIsLastList: boolean[];
 };
 
 const StyledBreadcrumbOverlay = styled.div<{ depth: number }>`
@@ -20,11 +20,11 @@ const StyledBreadcrumbOverlay = styled.div<{ depth: number }>`
 `;
 
 const StyledAncestorLine = styled.div<{
-  index: number;
-  showLine: boolean;
+	index: number;
+	showLine: boolean;
 }>`
   background: ${({ showLine }) =>
-    showLine ? themeCssVariables.border.color.strong : 'transparent'};
+		showLine ? themeCssVariables.border.color.strong : "transparent"};
   height: 28px;
   left: ${({ index }) => index * BREADCRUMB_WIDTH + ICON_CENTER_OFFSET}px;
   position: absolute;
@@ -70,26 +70,26 @@ const StyledVerticalLineBottom = styled.div`
 `;
 
 export const SettingsMessageFoldersBreadcrumb = ({
-  depth,
-  isLast,
-  parentsIsLastList,
+	depth,
+	isLast,
+	parentsIsLastList,
 }: SettingsMessageFoldersBreadcrumbProps) => {
-  const showVerticalBar = !isLast;
+	const showVerticalBar = !isLast;
 
-  return (
-    <StyledBreadcrumbOverlay depth={depth}>
-      {parentsIsLastList.map((parentIsLast, index) => (
-        <StyledAncestorLine
-          key={index}
-          index={index}
-          showLine={!parentIsLast}
-        />
-      ))}
-      <StyledBreadcrumbConnector depth={depth}>
-        <StyledVerticalLineTop />
-        <StyledRoundedCorner />
-        {showVerticalBar && <StyledVerticalLineBottom />}
-      </StyledBreadcrumbConnector>
-    </StyledBreadcrumbOverlay>
-  );
+	return (
+		<StyledBreadcrumbOverlay depth={depth}>
+			{parentsIsLastList.map((parentIsLast, index) => (
+				<StyledAncestorLine
+					key={index}
+					index={index}
+					showLine={!parentIsLast}
+				/>
+			))}
+			<StyledBreadcrumbConnector depth={depth}>
+				<StyledVerticalLineTop />
+				<StyledRoundedCorner />
+				{showVerticalBar && <StyledVerticalLineBottom />}
+			</StyledBreadcrumbConnector>
+		</StyledBreadcrumbOverlay>
+	);
 };

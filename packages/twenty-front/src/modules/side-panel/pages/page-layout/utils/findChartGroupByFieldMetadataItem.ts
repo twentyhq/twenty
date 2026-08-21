@@ -1,17 +1,17 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
 
 export const findChartGroupByFieldMetadataItem = ({
-  fields,
-  fieldMetadataId,
+	fields,
+	fieldMetadataId,
 }: {
-  fields: FieldMetadataItem[] | undefined;
-  fieldMetadataId: string;
+	fields: FieldMetadataItem[] | undefined;
+	fieldMetadataId: string;
 }): FieldMetadataItem | undefined =>
-  fields?.find(
-    (field) =>
-      field.id === fieldMetadataId ||
-      (field.morphRelations ?? []).some(
-        (morphRelation) =>
-          morphRelation.sourceFieldMetadata.id === fieldMetadataId,
-      ),
-  );
+	fields?.find(
+		(field) =>
+			field.id === fieldMetadataId ||
+			(field.morphRelations ?? []).some(
+				(morphRelation) =>
+					morphRelation.sourceFieldMetadata.id === fieldMetadataId,
+			),
+	);

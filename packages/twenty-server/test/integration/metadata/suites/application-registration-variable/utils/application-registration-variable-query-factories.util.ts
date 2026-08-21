@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 const VARIABLE_GQL_FIELDS = `
   id
@@ -13,11 +13,11 @@ const VARIABLE_GQL_FIELDS = `
 `;
 
 export const findApplicationRegistrationVariablesQueryFactory = ({
-  applicationRegistrationId,
+	applicationRegistrationId,
 }: {
-  applicationRegistrationId: string;
+	applicationRegistrationId: string;
 }) => ({
-  query: gql`
+	query: gql`
     query FindApplicationRegistrationVariables(
       $applicationRegistrationId: String!
     ) {
@@ -28,23 +28,23 @@ export const findApplicationRegistrationVariablesQueryFactory = ({
       }
     }
   `,
-  variables: { applicationRegistrationId },
+	variables: { applicationRegistrationId },
 });
 
 export const createApplicationRegistrationVariableMutationFactory = ({
-  applicationRegistrationId,
-  key,
-  value,
-  description,
-  isSecret,
+	applicationRegistrationId,
+	key,
+	value,
+	description,
+	isSecret,
 }: {
-  applicationRegistrationId: string;
-  key: string;
-  value: string;
-  description?: string;
-  isSecret?: boolean;
+	applicationRegistrationId: string;
+	key: string;
+	value: string;
+	description?: string;
+	isSecret?: boolean;
 }) => ({
-  query: gql`
+	query: gql`
     mutation CreateApplicationRegistrationVariable(
       $input: CreateApplicationRegistrationVariableInput!
     ) {
@@ -53,27 +53,27 @@ export const createApplicationRegistrationVariableMutationFactory = ({
       }
     }
   `,
-  variables: {
-    input: {
-      applicationRegistrationId,
-      key,
-      value,
-      ...(description !== undefined && { description }),
-      ...(isSecret !== undefined && { isSecret }),
-    },
-  },
+	variables: {
+		input: {
+			applicationRegistrationId,
+			key,
+			value,
+			...(description !== undefined && { description }),
+			...(isSecret !== undefined && { isSecret }),
+		},
+	},
 });
 
 export const updateApplicationRegistrationVariableMutationFactory = ({
-  id,
-  value,
-  description,
+	id,
+	value,
+	description,
 }: {
-  id: string;
-  value?: string;
-  description?: string;
+	id: string;
+	value?: string;
+	description?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation UpdateApplicationRegistrationVariable(
       $input: UpdateApplicationRegistrationVariableInput!
     ) {
@@ -82,26 +82,26 @@ export const updateApplicationRegistrationVariableMutationFactory = ({
       }
     }
   `,
-  variables: {
-    input: {
-      id,
-      update: {
-        ...(value !== undefined && { value }),
-        ...(description !== undefined && { description }),
-      },
-    },
-  },
+	variables: {
+		input: {
+			id,
+			update: {
+				...(value !== undefined && { value }),
+				...(description !== undefined && { description }),
+			},
+		},
+	},
 });
 
 export const deleteApplicationRegistrationVariableMutationFactory = ({
-  id,
+	id,
 }: {
-  id: string;
+	id: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation DeleteApplicationRegistrationVariable($id: String!) {
       deleteApplicationRegistrationVariable(id: $id)
     }
   `,
-  variables: { id },
+	variables: { id },
 });

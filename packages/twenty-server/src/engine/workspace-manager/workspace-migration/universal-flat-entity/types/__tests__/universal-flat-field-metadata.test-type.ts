@@ -1,131 +1,129 @@
 import {
-  type Equal,
-  type Expect,
-  type HasAllProperties,
-} from 'twenty-shared/testing';
+	type Equal,
+	type Expect,
+	type HasAllProperties,
+} from "twenty-shared/testing";
 import {
-  type FieldMetadataType,
-  type FieldNumberVariant,
-  type NullablePartial,
-  type NumberDataType,
-  type RelationOnDeleteAction,
-  type RelationType,
-  type SerializedRelation,
-} from 'twenty-shared/types';
+	type FieldMetadataType,
+	type FieldNumberVariant,
+	type NullablePartial,
+	type NumberDataType,
+	type RelationOnDeleteAction,
+	type RelationType,
+	type SerializedRelation,
+} from "twenty-shared/types";
 
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatFieldMetadata } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type";
 
 type DefinedRelationUniversalIdentifierRecord = {
-  relationTargetFieldMetadataUniversalIdentifier: string;
-  relationTargetObjectMetadataUniversalIdentifier: string;
+	relationTargetFieldMetadataUniversalIdentifier: string;
+	relationTargetObjectMetadataUniversalIdentifier: string;
 };
 
 type NotDefinedRelationUniversalIdentifierRecord = {
-  relationTargetFieldMetadataUniversalIdentifier: never | null;
-  relationTargetObjectMetadataUniversalIdentifier: never | null;
+	relationTargetFieldMetadataUniversalIdentifier: never | null;
+	relationTargetObjectMetadataUniversalIdentifier: never | null;
 };
 
 type DatePropertiesCastToString = {
-  createdAt: string;
-  updatedAt: string;
+	createdAt: string;
+	updatedAt: string;
 };
 
 type OneToManyUniversalIdentifierArrays = {
-  viewFieldUniversalIdentifiers: string[];
-  viewFilterUniversalIdentifiers: string[];
-  kanbanAggregateOperationViewUniversalIdentifiers: string[];
-  calendarViewUniversalIdentifiers: string[];
-  calendarEndViewUniversalIdentifiers: string[];
-  mainGroupByFieldMetadataViewUniversalIdentifiers: string[];
+	viewFieldUniversalIdentifiers: string[];
+	viewFilterUniversalIdentifiers: string[];
+	kanbanAggregateOperationViewUniversalIdentifiers: string[];
+	calendarViewUniversalIdentifiers: string[];
+	calendarEndViewUniversalIdentifiers: string[];
+	mainGroupByFieldMetadataViewUniversalIdentifiers: string[];
 };
 
 // Narrowed relation universal identifier assertions - verifies conditional typing is preserved
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type RelationUniversalIdentifierAssertions = [
-  Expect<
-    HasAllProperties<
-      UniversalFlatFieldMetadata<FieldMetadataType.UUID>,
-      NotDefinedRelationUniversalIdentifierRecord
-    >
-  >,
-
-  Expect<
-    HasAllProperties<
-      UniversalFlatFieldMetadata<FieldMetadataType.RELATION>,
-      DefinedRelationUniversalIdentifierRecord
-    >
-  >,
-  Expect<
-    HasAllProperties<
-      UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-      DefinedRelationUniversalIdentifierRecord
-    >
-  >,
-
-  Expect<
-    HasAllProperties<
-      UniversalFlatFieldMetadata,
-      NullablePartial<DefinedRelationUniversalIdentifierRecord>
-    >
-  >,
+	Expect<
+		HasAllProperties<
+			UniversalFlatFieldMetadata<FieldMetadataType.UUID>,
+			NotDefinedRelationUniversalIdentifierRecord
+		>
+	>,
+	Expect<
+		HasAllProperties<
+			UniversalFlatFieldMetadata<FieldMetadataType.RELATION>,
+			DefinedRelationUniversalIdentifierRecord
+		>
+	>,
+	Expect<
+		HasAllProperties<
+			UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
+			DefinedRelationUniversalIdentifierRecord
+		>
+	>,
+	Expect<
+		HasAllProperties<
+			UniversalFlatFieldMetadata,
+			NullablePartial<DefinedRelationUniversalIdentifierRecord>
+		>
+	>,
 ];
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type UniversalFlatTransformationAssertions = [
-  Expect<
-    HasAllProperties<UniversalFlatFieldMetadata, DatePropertiesCastToString>
-  >,
-  Expect<
-    HasAllProperties<
-      UniversalFlatFieldMetadata,
-      OneToManyUniversalIdentifierArrays
-    >
-  >,
+	Expect<
+		HasAllProperties<UniversalFlatFieldMetadata, DatePropertiesCastToString>
+	>,
+	Expect<
+		HasAllProperties<
+			UniversalFlatFieldMetadata,
+			OneToManyUniversalIdentifierArrays
+		>
+	>,
 ];
 
 type NarrowedTestCase =
-  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['universalSettings'];
+	UniversalFlatFieldMetadata<FieldMetadataType.RELATION>["universalSettings"];
 
 type NarrowedExpectedResult = {
-  relationType: RelationType;
-  onDelete?: RelationOnDeleteAction | undefined;
-  joinColumnName?: string | null | undefined;
-  junctionTargetFieldUniversalIdentifier?:
-    | SerializedRelation
-    | null
-    | undefined;
-  __JsonbPropertyBrand__?: undefined;
+	relationType: RelationType;
+	onDelete?: RelationOnDeleteAction | undefined;
+	joinColumnName?: string | null | undefined;
+	junctionTargetFieldUniversalIdentifier?:
+		| SerializedRelation
+		| null
+		| undefined;
+	__JsonbPropertyBrand__?: undefined;
 };
 
 type SettingsTestCase = UniversalFlatFieldMetadata<
-  FieldMetadataType.RELATION | FieldMetadataType.NUMBER | FieldMetadataType.TEXT
->['universalSettings'];
+	FieldMetadataType.RELATION | FieldMetadataType.NUMBER | FieldMetadataType.TEXT
+>["universalSettings"];
 
 type SettingsExpectedResult =
-  | {
-      relationType: RelationType;
-      onDelete?: RelationOnDeleteAction | undefined;
-      joinColumnName?: string | null | undefined;
-      junctionTargetFieldUniversalIdentifier?:
-        | SerializedRelation
-        | null
-        | undefined;
-      __JsonbPropertyBrand__?: undefined;
-    }
-  | {
-      dataType?: NumberDataType | undefined;
-      decimals?: number | undefined;
-      type?: FieldNumberVariant | undefined;
-      __JsonbPropertyBrand__?: undefined;
-    }
-  | {
-      displayedMaxRows?: number | undefined;
-      __JsonbPropertyBrand__?: undefined;
-    }
-  | null;
+	| {
+			relationType: RelationType;
+			onDelete?: RelationOnDeleteAction | undefined;
+			joinColumnName?: string | null | undefined;
+			junctionTargetFieldUniversalIdentifier?:
+				| SerializedRelation
+				| null
+				| undefined;
+			__JsonbPropertyBrand__?: undefined;
+	  }
+	| {
+			dataType?: NumberDataType | undefined;
+			decimals?: number | undefined;
+			type?: FieldNumberVariant | undefined;
+			__JsonbPropertyBrand__?: undefined;
+	  }
+	| {
+			displayedMaxRows?: number | undefined;
+			__JsonbPropertyBrand__?: undefined;
+	  }
+	| null;
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
-  Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
-  Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
+	Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
+	Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
 ];

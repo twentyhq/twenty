@@ -1,8 +1,8 @@
-import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDisplay';
-import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AppErrorDisplay } from "@/error-handler/components/internal/AppErrorDisplay";
+import { type AppErrorDisplayProps } from "@/error-handler/types/AppErrorDisplayProps";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type AppFullScreenErrorFallbackProps = AppErrorDisplayProps;
 
@@ -15,17 +15,17 @@ const StyledContainer = styled.div`
 `;
 
 export const AppFullScreenErrorFallback = ({
-  error,
-  resetErrorBoundary,
-  title = t`Sorry, something went wrong`,
+	error,
+	resetErrorBoundary,
+	title = t`Sorry, something went wrong`,
 }: AppFullScreenErrorFallbackProps) => {
-  return (
-    <StyledContainer>
-      <AppErrorDisplay
-        error={error}
-        resetErrorBoundary={resetErrorBoundary}
-        title={title}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<AppErrorDisplay
+				error={error}
+				resetErrorBoundary={resetErrorBoundary}
+				title={title}
+			/>
+		</StyledContainer>
+	);
 };

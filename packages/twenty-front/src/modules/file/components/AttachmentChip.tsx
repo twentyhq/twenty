@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { AvatarOrIcon } from "twenty-ui/data-display";
+import { IconX } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
-import { getFileType } from '@/activities/files/utils/getFileType';
-import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
-import { IconMapping } from '@/file/utils/fileIconMappings';
+import { getFileType } from "@/activities/files/utils/getFileType";
+import { useFileCategoryColors } from "@/file/hooks/useFileCategoryColors";
+import { IconMapping } from "@/file/utils/fileIconMappings";
 
 type AttachmentChipProps = {
-  file: { id: string; name: string };
-  onRemove: () => void;
-  readonly?: boolean;
+	file: { id: string; name: string };
+	onRemove: () => void;
+	readonly?: boolean;
 };
 
 const StyledChip = styled.div<{ deletable: boolean }>`
@@ -60,35 +60,35 @@ const StyledDelete = styled.button`
 `;
 
 export const AttachmentChip = ({
-  file,
-  onRemove,
-  readonly = false,
+	file,
+	onRemove,
+	readonly = false,
 }: AttachmentChipProps) => {
-  const { theme } = useContext(ThemeContext);
-  const iconColors = useFileCategoryColors();
+	const { theme } = useContext(ThemeContext);
+	const iconColors = useFileCategoryColors();
 
-  const handleChipClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-  };
+	const handleChipClick = (event: React.MouseEvent) => {
+		event.stopPropagation();
+	};
 
-  const handleRemoveClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    onRemove();
-  };
+	const handleRemoveClick = (event: React.MouseEvent) => {
+		event.stopPropagation();
+		onRemove();
+	};
 
-  return (
-    <StyledChip deletable={!readonly} onClick={handleChipClick}>
-      <AvatarOrIcon
-        Icon={IconMapping[getFileType(file.name)]}
-        IconBackgroundColor={iconColors[getFileType(file.name)]}
-      />
-      <StyledLabel title={file.name}>{file.name}</StyledLabel>
+	return (
+		<StyledChip deletable={!readonly} onClick={handleChipClick}>
+			<AvatarOrIcon
+				Icon={IconMapping[getFileType(file.name)]}
+				IconBackgroundColor={iconColors[getFileType(file.name)]}
+			/>
+			<StyledLabel title={file.name}>{file.name}</StyledLabel>
 
-      {!readonly && (
-        <StyledDelete onClick={handleRemoveClick}>
-          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-        </StyledDelete>
-      )}
-    </StyledChip>
-  );
+			{!readonly && (
+				<StyledDelete onClick={handleRemoveClick}>
+					<IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+				</StyledDelete>
+			)}
+		</StyledChip>
+	);
 };

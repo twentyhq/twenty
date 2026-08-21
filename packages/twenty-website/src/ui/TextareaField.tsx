@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { fieldControlClassName } from './field-control-style';
+import { fieldControlClassName } from "./field-control-style";
 
 // A multi-line text control sharing the typed-control look, but growing from a
 // min-height rather than the fixed single-line control height.
@@ -13,30 +13,30 @@ const Textarea = styled.textarea`
 `;
 
 export function TextareaField({
-  ariaLabel,
-  invalid = false,
-  name,
-  onValueChange,
-  placeholder,
-  value,
+	ariaLabel,
+	invalid = false,
+	name,
+	onValueChange,
+	placeholder,
+	value,
 }: {
-  ariaLabel: string;
-  invalid?: boolean;
-  name: string;
-  onValueChange: (value: string) => void;
-  placeholder?: string;
-  value: string;
+	ariaLabel: string;
+	invalid?: boolean;
+	name: string;
+	onValueChange: (value: string) => void;
+	placeholder?: string;
+	value: string;
 }) {
-  return (
-    <Textarea
-      aria-invalid={invalid ? true : undefined}
-      aria-label={ariaLabel}
-      autoComplete="off"
-      className={fieldControlClassName}
-      name={name}
-      onChange={(event) => onValueChange(event.target.value)}
-      placeholder={placeholder}
-      value={value}
-    />
-  );
+	return (
+		<Textarea
+			aria-invalid={invalid ? true : undefined}
+			aria-label={ariaLabel}
+			autoComplete="off"
+			className={fieldControlClassName}
+			name={name}
+			onChange={(event) => onValueChange(event.target.value)}
+			placeholder={placeholder}
+			value={value}
+		/>
+	);
 }

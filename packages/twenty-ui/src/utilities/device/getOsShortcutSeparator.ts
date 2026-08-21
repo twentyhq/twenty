@@ -1,6 +1,6 @@
-import { getUserDevice } from '@ui/utilities/device/getUserDevice';
+import { getUserDevice } from "@ui/utilities/device/getUserDevice";
 
 export const getOsShortcutSeparator = () => {
-  const device = getUserDevice();
-  return device === 'mac' ? '' : ' ';
+	const device = getUserDevice();
+	return device === "mac" ? "" : " ";
 };

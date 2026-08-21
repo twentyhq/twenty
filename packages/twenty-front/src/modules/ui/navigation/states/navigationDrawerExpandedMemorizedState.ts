@@ -1,10 +1,10 @@
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT } from "twenty-ui/theme-constants";
 
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 const isMobile = window.innerWidth <= MOBILE_VIEWPORT;
 
 export const navigationDrawerExpandedMemorizedState = createAtomState<boolean>({
-  key: 'navigationDrawerExpandedMemorizedState',
-  defaultValue: !isMobile,
+	key: "navigationDrawerExpandedMemorizedState",
+	defaultValue: !isMobile,
 });

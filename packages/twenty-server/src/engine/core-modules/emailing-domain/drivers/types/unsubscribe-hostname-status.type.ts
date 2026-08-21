@@ -1,5 +1,5 @@
 export enum UnsubscribeHostnameStatus {
-  PENDING = 'PENDING',
-  ACTIVE = 'ACTIVE',
-  FAILED = 'FAILED',
+	PENDING = "PENDING",
+	ACTIVE = "ACTIVE",
+	FAILED = "FAILED",
 }

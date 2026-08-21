@@ -1,22 +1,22 @@
-import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { type Country } from '@/ui/input/components/internal/types/Country';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { styled } from '@linaria/react';
-import { useContext, useEffect, useState } from 'react';
+import { useCountries } from "@/ui/input/components/internal/hooks/useCountries";
+import { type Country } from "@/ui/input/components/internal/types/Country";
+import { Dropdown } from "@/ui/layout/dropdown/components/Dropdown";
+import { styled } from "@linaria/react";
+import { useContext, useEffect, useState } from "react";
 
-import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
+import { PhoneCountryPickerDropdownSelect } from "./PhoneCountryPickerDropdownSelect";
 
-import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import 'react-phone-number-input/style.css';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconWorld } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from "@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId";
+import { useCloseDropdown } from "@/ui/layout/dropdown/hooks/useCloseDropdown";
+import { isDropdownOpenComponentState } from "@/ui/layout/dropdown/states/isDropdownOpenComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import "react-phone-number-input/style.css";
+import { isDefined } from "twenty-shared/utils";
+import { IconChevronDown, IconWorld } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type StyledDropdownButtonProps = {
-  isUnfolded: boolean;
+	isUnfolded: boolean;
 };
 
 const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
@@ -25,7 +25,7 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   border-radius: ${themeCssVariables.border.radius.xs} 0 0
     ${themeCssVariables.border.radius.xs};
   border-right: 1px solid ${themeCssVariables.border.color.medium};
-  color: ${({ color }) => color ?? 'none'};
+  color: ${({ color }) => color ?? "none"};
   cursor: pointer;
 
   display: flex;
@@ -68,58 +68,58 @@ const StyledCheveronIconContainer = styled.div`
 `;
 
 export const PhoneCountryPickerDropdownButton = ({
-  value,
-  onChange,
+	value,
+	onChange,
 }: {
-  value: string;
-  onChange: (countryCode: string) => void;
+	value: string;
+	onChange: (countryCode: string) => void;
 }) => {
-  const [selectedCountry, setSelectedCountry] = useState<Country>();
+	const [selectedCountry, setSelectedCountry] = useState<Country>();
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID,
-  );
+	const isDropdownOpen = useAtomComponentStateValue(
+		isDropdownOpenComponentState,
+		PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID,
+	);
 
-  const { closeDropdown } = useCloseDropdown();
+	const { closeDropdown } = useCloseDropdown();
 
-  const handleChange = (countryCode: string) => {
-    closeDropdown(PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID);
-    onChange(countryCode);
-  };
+	const handleChange = (countryCode: string) => {
+		closeDropdown(PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID);
+		onChange(countryCode);
+	};
 
-  const countries = useCountries();
-  const { theme } = useContext(ThemeContext);
+	const countries = useCountries();
+	const { theme } = useContext(ThemeContext);
 
-  useEffect(() => {
-    const country = countries.find(({ countryCode }) => countryCode === value);
-    if (isDefined(country)) {
-      setSelectedCountry(country);
-    }
-  }, [countries, value]);
+	useEffect(() => {
+		const country = countries.find(({ countryCode }) => countryCode === value);
+		if (isDefined(country)) {
+			setSelectedCountry(country);
+		}
+	}, [countries, value]);
 
-  return (
-    <Dropdown
-      dropdownId={PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID}
-      clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
-          <StyledIconContainer>
-            {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
-            <StyledCheveronIconContainer>
-              <IconChevronDown size={theme.icon.size.sm} />
-            </StyledCheveronIconContainer>
-          </StyledIconContainer>
-        </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <PhoneCountryPickerDropdownSelect
-          countries={countries}
-          selectedCountry={selectedCountry}
-          onChange={handleChange}
-        />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{ x: 0, y: 4 }}
-    />
-  );
+	return (
+		<Dropdown
+			dropdownId={PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID}
+			clickableComponent={
+				<StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+					<StyledIconContainer>
+						{selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
+						<StyledCheveronIconContainer>
+							<IconChevronDown size={theme.icon.size.sm} />
+						</StyledCheveronIconContainer>
+					</StyledIconContainer>
+				</StyledDropdownButtonContainer>
+			}
+			dropdownComponents={
+				<PhoneCountryPickerDropdownSelect
+					countries={countries}
+					selectedCountry={selectedCountry}
+					onChange={handleChange}
+				/>
+			}
+			dropdownPlacement="bottom-start"
+			dropdownOffset={{ x: 0, y: 4 }}
+		/>
+	);
 };

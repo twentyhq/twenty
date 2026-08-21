@@ -1,12 +1,12 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { BecomePartnerButton } from '@/partner-application';
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
-import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
+import { BecomePartnerButton } from "@/partner-application";
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
+import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from "@/tokens";
+import { Body, Button, Heading, HeadingPair, SectionShell } from "@/ui";
 
-import { PartnerVisual } from './PartnerVisual';
+import { PartnerVisual } from "./PartnerVisual";
 
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};
@@ -34,7 +34,7 @@ const HeadingMeasure = styled.div`
   max-width: 360px;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     max-width: 672px;
   }
 `;
@@ -43,7 +43,7 @@ const BodyMeasure = styled.div`
   margin-inline: auto;
   max-width: 360px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     max-width: 500px;
   }
 `;
@@ -61,41 +61,41 @@ const VisualStage = styled.div`
 `;
 
 export function PartnerHero() {
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <SectionShell
-      background={<GradientBackdrop />}
-      rhythm="hero"
-      scheme="light"
-    >
-      <IntroStack>
-        <HeadingPair>
-          <HeadingMeasure>
-            <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Become\n*our partner*`)}
-            </Heading>
-          </HeadingMeasure>
-          <BodyMeasure>
-            <Body muted size="sm">
-              {i18n._(
-                msg`We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
-              )}
-            </Body>
-          </BodyMeasure>
-        </HeadingPair>
-        <CtaRow>
-          <BecomePartnerButton label={msg`Become a partner`} />
-          <Button
-            href="/partners/list"
-            label={i18n._(msg`Find a partner`)}
-            variant="outlined"
-          />
-        </CtaRow>
-      </IntroStack>
-      <VisualStage>
-        <PartnerVisual />
-      </VisualStage>
-    </SectionShell>
-  );
+	return (
+		<SectionShell
+			background={<GradientBackdrop />}
+			rhythm="hero"
+			scheme="light"
+		>
+			<IntroStack>
+				<HeadingPair>
+					<HeadingMeasure>
+						<Heading as="h1" size="lg" weight="light">
+							{i18n._(msg`Become\n*our partner*`)}
+						</Heading>
+					</HeadingMeasure>
+					<BodyMeasure>
+						<Body muted size="sm">
+							{i18n._(
+								msg`We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
+							)}
+						</Body>
+					</BodyMeasure>
+				</HeadingPair>
+				<CtaRow>
+					<BecomePartnerButton label={msg`Become a partner`} />
+					<Button
+						href="/partners/list"
+						label={i18n._(msg`Find a partner`)}
+						variant="outlined"
+					/>
+				</CtaRow>
+			</IntroStack>
+			<VisualStage>
+				<PartnerVisual />
+			</VisualStage>
+		</SectionShell>
+	);
 }

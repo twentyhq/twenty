@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { Loader } from 'twenty-ui/feedback';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Loader } from "twenty-ui/feedback";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -15,10 +15,10 @@ const StyledProgressText = styled.span`
 `;
 
 export const CommandListItemLoader = ({ progress }: { progress: number }) => {
-  return (
-    <StyledContainer>
-      <StyledProgressText>{Math.round(progress)}%</StyledProgressText>
-      <Loader />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledProgressText>{Math.round(progress)}%</StyledProgressText>
+			<Loader />
+		</StyledContainer>
+	);
 };

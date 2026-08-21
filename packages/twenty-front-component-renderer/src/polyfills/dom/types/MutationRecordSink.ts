@@ -1,6 +1,6 @@
-import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
+import { type WorkerMutationRecord } from "@/polyfills/dom/types/WorkerMutationRecord";
 
 export type MutationRecordSink = {
-  enqueueMutationRecord: (record: WorkerMutationRecord) => void;
-  scheduleDelivery: () => void;
+	enqueueMutationRecord: (record: WorkerMutationRecord) => void;
+	scheduleDelivery: () => void;
 };

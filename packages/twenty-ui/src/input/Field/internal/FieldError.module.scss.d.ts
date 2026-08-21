@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly error: 'error';
+	readonly error: "error";
 };
 export default classNames;

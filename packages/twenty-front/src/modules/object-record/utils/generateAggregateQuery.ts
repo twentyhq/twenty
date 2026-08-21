@@ -1,28 +1,28 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
-import { capitalize } from 'twenty-shared/utils';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { type RecordGqlFields } from "@/object-record/graphql/record-gql-fields/types/RecordGqlFields";
+import { getAggregateQueryName } from "@/object-record/utils/getAggregateQueryName";
+import { capitalize } from "twenty-shared/utils";
 
 export const generateAggregateQuery = ({
-  objectMetadataItem,
-  recordGqlFields,
+	objectMetadataItem,
+	recordGqlFields,
 }: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  recordGqlFields: RecordGqlFields;
+	objectMetadataItem: EnrichedObjectMetadataItem;
+	recordGqlFields: RecordGqlFields;
 }) => {
-  const selectedFields = Object.entries(recordGqlFields)
-    .filter(([_, shouldBeQueried]) => Boolean(shouldBeQueried))
-    .map(([fieldName]) => fieldName)
-    .join('\n      ');
+	const selectedFields = Object.entries(recordGqlFields)
+		.filter(([_, shouldBeQueried]) => Boolean(shouldBeQueried))
+		.map(([fieldName]) => fieldName)
+		.join("\n      ");
 
-  return gql`
+	return gql`
     query ${getAggregateQueryName(objectMetadataItem.namePlural)}($filter: ${capitalize(
-      objectMetadataItem.nameSingular,
-    )}FilterInput) {
+			objectMetadataItem.nameSingular,
+		)}FilterInput) {
       ${objectMetadataItem.namePlural}(filter: $filter) {
-        ${selectedFields ? '' : '__typename'}
+        ${selectedFields ? "" : "__typename"}
         ${selectedFields}
       }
     }

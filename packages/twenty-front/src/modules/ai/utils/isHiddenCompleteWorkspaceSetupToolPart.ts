@@ -1,11 +1,11 @@
 import {
-  type ExtendedUIMessagePart,
-  isCompleteWorkspaceSetupToolPart,
-} from 'twenty-shared/ai';
+	type ExtendedUIMessagePart,
+	isCompleteWorkspaceSetupToolPart,
+} from "twenty-shared/ai";
 
 export const isHiddenCompleteWorkspaceSetupToolPart = (
-  part: ExtendedUIMessagePart,
+	part: ExtendedUIMessagePart,
 ): boolean =>
-  isCompleteWorkspaceSetupToolPart(part) &&
-  part.state !== 'output-error' &&
-  part.state !== 'output-denied';
+	isCompleteWorkspaceSetupToolPart(part) &&
+	part.state !== "output-error" &&
+	part.state !== "output-denied";

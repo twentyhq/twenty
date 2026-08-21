@@ -1,17 +1,17 @@
 export const getBoardCardDropBehavior = ({
-  hasRecordSorts,
-  sourceDroppableId,
-  destinationDroppableId,
+	hasRecordSorts,
+	sourceDroppableId,
+	destinationDroppableId,
 }: {
-  hasRecordSorts: boolean;
-  sourceDroppableId: string;
-  destinationDroppableId: string;
+	hasRecordSorts: boolean;
+	sourceDroppableId: string;
+	destinationDroppableId: string;
 }) => {
-  const isMovingInsideSameRecordGroup =
-    sourceDroppableId === destinationDroppableId;
+	const isMovingInsideSameRecordGroup =
+		sourceDroppableId === destinationDroppableId;
 
-  return {
-    shouldBlockDrop: hasRecordSorts && isMovingInsideSameRecordGroup,
-    shouldUpdatePosition: !hasRecordSorts,
-  };
+	return {
+		shouldBlockDrop: hasRecordSorts && isMovingInsideSameRecordGroup,
+		shouldUpdatePosition: !hasRecordSorts,
+	};
 };

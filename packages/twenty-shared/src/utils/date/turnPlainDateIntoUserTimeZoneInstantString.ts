@@ -1,8 +1,8 @@
-import { type Temporal } from 'temporal-polyfill';
+import { type Temporal } from "temporal-polyfill";
 
 export const turnPlainDateIntoUserTimeZoneInstantString = (
-  plainDate: Temporal.PlainDate,
-  userTimeZone: string,
+	plainDate: Temporal.PlainDate,
+	userTimeZone: string,
 ) => {
-  return plainDate.toZonedDateTime(userTimeZone).toInstant().toString();
+	return plainDate.toZonedDateTime(userTimeZone).toInstant().toString();
 };

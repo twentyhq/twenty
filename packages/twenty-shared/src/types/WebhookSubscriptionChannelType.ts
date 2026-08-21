@@ -1,4 +1,4 @@
 export enum WebhookSubscriptionChannelType {
-  MESSAGING = 'messaging',
-  CALENDAR = 'calendar',
+	MESSAGING = "messaging",
+	CALENDAR = "calendar",
 }

@@ -1,11 +1,8 @@
-import {
-  defineCommandMenuItem,
-  numberOfSelectedRecords,
-} from '@/sdk/define';
+import { defineCommandMenuItem, numberOfSelectedRecords } from "@/sdk/define";
 
 export default defineCommandMenuItem({
-  universalIdentifier: 'comparison-operator-cmd',
-  label: 'Comparison Operator',
-  frontComponentUniversalIdentifier: 'comparison-operator',
-  conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+	universalIdentifier: "comparison-operator-cmd",
+	label: "Comparison Operator",
+	frontComponentUniversalIdentifier: "comparison-operator",
+	conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
 });

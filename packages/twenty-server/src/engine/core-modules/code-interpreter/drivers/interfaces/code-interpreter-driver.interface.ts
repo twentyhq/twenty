@@ -1,41 +1,41 @@
 export type InputFile = {
-  filename: string;
-  content: Buffer;
-  mimeType: string;
+	filename: string;
+	content: Buffer;
+	mimeType: string;
 };
 
 export type OutputFile = {
-  filename: string;
-  content: Buffer;
-  mimeType: string;
+	filename: string;
+	content: Buffer;
+	mimeType: string;
 };
 
 export type CodeExecutionResult = {
-  stdout: string;
-  stderr: string;
-  exitCode: number;
-  files: OutputFile[];
-  error?: string;
+	stdout: string;
+	stderr: string;
+	exitCode: number;
+	files: OutputFile[];
+	error?: string;
 };
 
 export type ExecutionContext = {
-  env?: Record<string, string>;
-  sessionId?: string;
+	env?: Record<string, string>;
+	sessionId?: string;
 };
 
 export type StreamCallbacks = {
-  onStdout?: (line: string) => void;
-  onStderr?: (line: string) => void;
-  onResult?: (result: OutputFile) => Promise<void>;
+	onStdout?: (line: string) => void;
+	onStderr?: (line: string) => void;
+	onResult?: (result: OutputFile) => Promise<void>;
 };
 
 export interface CodeInterpreterDriver {
-  execute(
-    code: string,
-    files?: InputFile[],
-    context?: ExecutionContext,
-    callbacks?: StreamCallbacks,
-  ): Promise<CodeExecutionResult>;
-  releaseSession?(sessionId: string): Promise<void>;
-  sweepExpiredSessions?(maxAgeMs: number): Promise<number>;
+	execute(
+		code: string,
+		files?: InputFile[],
+		context?: ExecutionContext,
+		callbacks?: StreamCallbacks,
+	): Promise<CodeExecutionResult>;
+	releaseSession?(sessionId: string): Promise<void>;
+	sweepExpiredSessions?(maxAgeMs: number): Promise<number>;
 }

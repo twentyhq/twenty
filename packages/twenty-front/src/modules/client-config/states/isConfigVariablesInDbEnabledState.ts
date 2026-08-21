@@ -1,5 +1,5 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 export const isConfigVariablesInDbEnabledState = createAtomState<boolean>({
-  key: 'isConfigVariablesInDbEnabled',
-  defaultValue: false,
+	key: "isConfigVariablesInDbEnabled",
+	defaultValue: false,
 });

@@ -1,5 +1,5 @@
 export const getAdvancedFilterObjectFilterDropdownComponentInstanceId = (
-  recordFilterId: string,
+	recordFilterId: string,
 ) => {
-  return `advanced-filter-${recordFilterId}`;
+	return `advanced-filter-${recordFilterId}`;
 };

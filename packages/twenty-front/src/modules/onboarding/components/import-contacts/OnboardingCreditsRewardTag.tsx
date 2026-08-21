@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconCoins } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { IconCoins } from "twenty-ui/icon";
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 const StyledTag = styled.div`
   align-items: center;
@@ -15,7 +15,7 @@ const StyledTag = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
   padding: 0 ${themeCssVariables.spacing[2]} 0
-    ${themeCssVariables.spacing['1.5']};
+    ${themeCssVariables.spacing["1.5"]};
 `;
 
 const StyledLabel = styled.span`
@@ -31,25 +31,25 @@ const StyledSuffix = styled.span`
 `;
 
 type OnboardingCreditsRewardTagProps = {
-  amount: number;
-  suffix?: string;
+	amount: number;
+	suffix?: string;
 };
 
 export const OnboardingCreditsRewardTag = ({
-  amount,
-  suffix,
+	amount,
+	suffix,
 }: OnboardingCreditsRewardTagProps) => {
-  const { t } = useLingui();
-  const theme = useTheme();
+	const { t } = useLingui();
+	const theme = useTheme();
 
-  return (
-    <StyledTag>
-      <IconCoins
-        size={theme.icon.size.md}
-        color={themeCssVariables.color.green9}
-      />
-      <StyledLabel>{t`Earn +${amount}`}</StyledLabel>
-      <StyledSuffix>{suffix ?? t`free credits`}</StyledSuffix>
-    </StyledTag>
-  );
+	return (
+		<StyledTag>
+			<IconCoins
+				size={theme.icon.size.md}
+				color={themeCssVariables.color.green9}
+			/>
+			<StyledLabel>{t`Earn +${amount}`}</StyledLabel>
+			<StyledSuffix>{suffix ?? t`free credits`}</StyledSuffix>
+		</StyledTag>
+	);
 };

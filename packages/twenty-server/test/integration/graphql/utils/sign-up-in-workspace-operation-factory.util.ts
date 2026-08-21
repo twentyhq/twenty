@@ -1,19 +1,19 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const signUpInWorkspaceOperationFactory = ({
-  email,
-  password = 'Test123!@#',
-  workspaceId,
-  workspaceInviteHash,
-  workspacePersonalInviteToken,
+	email,
+	password = "Test123!@#",
+	workspaceId,
+	workspaceInviteHash,
+	workspacePersonalInviteToken,
 }: {
-  email: string;
-  password?: string;
-  workspaceId?: string;
-  workspaceInviteHash?: string;
-  workspacePersonalInviteToken?: string;
+	email: string;
+	password?: string;
+	workspaceId?: string;
+	workspaceInviteHash?: string;
+	workspacePersonalInviteToken?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation SignUpInWorkspace(
       $email: String!
       $password: String!
@@ -40,11 +40,11 @@ export const signUpInWorkspaceOperationFactory = ({
       }
     }
   `,
-  variables: {
-    email,
-    password,
-    workspaceId,
-    workspaceInviteHash,
-    workspacePersonalInviteToken,
-  },
+	variables: {
+		email,
+		password,
+		workspaceId,
+		workspaceInviteHash,
+		workspacePersonalInviteToken,
+	},
 });

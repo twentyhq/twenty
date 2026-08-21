@@ -1,5 +1,5 @@
 export type FunctionInput =
-  | {
-      [name: string]: FunctionInput;
-    }
-  | any;
+	| {
+			[name: string]: FunctionInput;
+	  }
+	| any;

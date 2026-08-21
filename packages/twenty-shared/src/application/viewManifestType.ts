@@ -1,98 +1,98 @@
-import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type SyncableEntityOptions } from "@/application/syncableEntityOptionsType";
 import {
-  type AggregateOperations,
-  type ViewCalendarLayout,
-  type ViewFilterGroupLogicalOperator,
-  type ViewFilterOperand,
-  type ViewKey,
-  type ViewOpenRecordIn,
-  type ViewSortDirection,
-  type ViewType,
-  type ViewVisibility,
-} from '@/types';
+	type AggregateOperations,
+	type ViewCalendarLayout,
+	type ViewFilterGroupLogicalOperator,
+	type ViewFilterOperand,
+	type ViewKey,
+	type ViewOpenRecordIn,
+	type ViewSortDirection,
+	type ViewType,
+	type ViewVisibility,
+} from "@/types";
 
 export type ViewManifestFilterValue =
-  | string
-  | string[]
-  | boolean
-  | number
-  | Record<string, unknown>;
+	| string
+	| string[]
+	| boolean
+	| number
+	| Record<string, unknown>;
 
 export type ViewFieldManifest = SyncableEntityOptions & {
-  fieldMetadataUniversalIdentifier: string;
-  isVisible?: boolean;
-  size?: number;
-  position: number;
-  aggregateOperation?: AggregateOperations;
-  viewFieldGroupUniversalIdentifier?: string;
+	fieldMetadataUniversalIdentifier: string;
+	isVisible?: boolean;
+	size?: number;
+	position: number;
+	aggregateOperation?: AggregateOperations;
+	viewFieldGroupUniversalIdentifier?: string;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {
-  viewUniversalIdentifier: string;
+	viewUniversalIdentifier: string;
 };
 
 export type ViewFilterManifest = SyncableEntityOptions & {
-  fieldMetadataUniversalIdentifier: string;
-  operand: ViewFilterOperand;
-  value: ViewManifestFilterValue;
-  subFieldName?: string;
-  viewFilterGroupUniversalIdentifier?: string;
-  positionInViewFilterGroup?: number;
+	fieldMetadataUniversalIdentifier: string;
+	operand: ViewFilterOperand;
+	value: ViewManifestFilterValue;
+	subFieldName?: string;
+	viewFilterGroupUniversalIdentifier?: string;
+	positionInViewFilterGroup?: number;
 };
 
 export type ViewFilterGroupManifest = SyncableEntityOptions & {
-  logicalOperator: ViewFilterGroupLogicalOperator;
-  parentViewFilterGroupUniversalIdentifier?: string;
-  positionInViewFilterGroup?: number;
+	logicalOperator: ViewFilterGroupLogicalOperator;
+	parentViewFilterGroupUniversalIdentifier?: string;
+	positionInViewFilterGroup?: number;
 };
 
 export type ViewGroupManifest = SyncableEntityOptions & {
-  fieldValue: string;
-  isVisible?: boolean;
-  position: number;
+	fieldValue: string;
+	isVisible?: boolean;
+	position: number;
 };
 
 export type ViewFieldGroupManifest = SyncableEntityOptions & {
-  name?: string;
-  position: number;
-  isVisible?: boolean;
+	name?: string;
+	position: number;
+	isVisible?: boolean;
 };
 
 export type ViewSortManifest = SyncableEntityOptions & {
-  fieldMetadataUniversalIdentifier: string;
-  direction: ViewSortDirection;
-  subFieldName?: string;
+	fieldMetadataUniversalIdentifier: string;
+	direction: ViewSortDirection;
+	subFieldName?: string;
 };
 
 export type ViewManifest = SyncableEntityOptions & {
-  name: string;
-  objectUniversalIdentifier: string;
-  type?: ViewType;
-  /**
-   * @deprecated View keys (INDEX, FIELDS_WIDGET) are reserved for the
-   * engine-owned default views, which the server provisions automatically for
-   * every object. This field is ignored: manifest views are always created as
-   * additional views.
-   */
-  key?: ViewKey;
-  icon?: string;
-  position?: number;
-  isCompact?: boolean;
-  visibility?: ViewVisibility;
-  openRecordIn?: ViewOpenRecordIn;
-  mainGroupByFieldMetadataUniversalIdentifier?: string;
-  shouldHideEmptyGroups?: boolean;
-  anyFieldFilterValue?: string | null;
-  kanbanColumnWidth?: number | null;
-  kanbanAggregateOperation?: AggregateOperations;
-  kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
-  calendarLayout?: ViewCalendarLayout;
-  calendarFieldMetadataUniversalIdentifier?: string;
-  calendarEndFieldMetadataUniversalIdentifier?: string;
-  fields?: ViewFieldManifest[];
-  filters?: ViewFilterManifest[];
-  filterGroups?: ViewFilterGroupManifest[];
-  groups?: ViewGroupManifest[];
-  fieldGroups?: ViewFieldGroupManifest[];
-  sorts?: ViewSortManifest[];
+	name: string;
+	objectUniversalIdentifier: string;
+	type?: ViewType;
+	/**
+	 * @deprecated View keys (INDEX, FIELDS_WIDGET) are reserved for the
+	 * engine-owned default views, which the server provisions automatically for
+	 * every object. This field is ignored: manifest views are always created as
+	 * additional views.
+	 */
+	key?: ViewKey;
+	icon?: string;
+	position?: number;
+	isCompact?: boolean;
+	visibility?: ViewVisibility;
+	openRecordIn?: ViewOpenRecordIn;
+	mainGroupByFieldMetadataUniversalIdentifier?: string;
+	shouldHideEmptyGroups?: boolean;
+	anyFieldFilterValue?: string | null;
+	kanbanColumnWidth?: number | null;
+	kanbanAggregateOperation?: AggregateOperations;
+	kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
+	calendarLayout?: ViewCalendarLayout;
+	calendarFieldMetadataUniversalIdentifier?: string;
+	calendarEndFieldMetadataUniversalIdentifier?: string;
+	fields?: ViewFieldManifest[];
+	filters?: ViewFilterManifest[];
+	filterGroups?: ViewFilterGroupManifest[];
+	groups?: ViewGroupManifest[];
+	fieldGroups?: ViewFieldGroupManifest[];
+	sorts?: ViewSortManifest[];
 };

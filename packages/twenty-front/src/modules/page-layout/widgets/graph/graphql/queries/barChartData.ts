@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const BAR_CHART_DATA = gql`
   query BarChartData($input: BarChartDataInput!) {

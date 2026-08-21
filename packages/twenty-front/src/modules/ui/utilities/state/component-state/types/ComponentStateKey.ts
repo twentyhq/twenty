@@ -1,3 +1,3 @@
 export type ComponentStateKey = {
-  instanceId: string;
+	instanceId: string;
 };

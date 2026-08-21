@@ -1,18 +1,18 @@
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 
-import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
+import { type ElementRefCallback } from "@/host/elements/types/ElementRefCallback";
 
 export const useComposedElementRef = (
-  elementRefs: (ElementRefCallback | undefined)[],
+	elementRefs: (ElementRefCallback | undefined)[],
 ): ElementRefCallback => {
-  const latestElementRefsRef = useRef(elementRefs);
-  latestElementRefsRef.current = elementRefs;
+	const latestElementRefsRef = useRef(elementRefs);
+	latestElementRefsRef.current = elementRefs;
 
-  const [composedElementRef] = useState(() => (element: Element | null) => {
-    for (const elementRef of latestElementRefsRef.current) {
-      elementRef?.(element);
-    }
-  });
+	const [composedElementRef] = useState(() => (element: Element | null) => {
+		for (const elementRef of latestElementRefsRef.current) {
+			elementRef?.(element);
+		}
+	});
 
-  return composedElementRef;
+	return composedElementRef;
 };

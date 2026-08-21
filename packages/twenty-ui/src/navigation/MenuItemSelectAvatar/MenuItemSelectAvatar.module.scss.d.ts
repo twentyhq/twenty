@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly textContainer: 'textContainer';
+	readonly textContainer: "textContainer";
 };
 export default classNames;

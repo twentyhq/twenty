@@ -1,1 +1,1 @@
-export type AskQuestionsToolStatus = 'pending' | 'answered' | 'skipped';
+export type AskQuestionsToolStatus = "pending" | "answered" | "skipped";

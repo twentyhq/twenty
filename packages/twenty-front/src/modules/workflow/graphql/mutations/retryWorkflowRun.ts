@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const RETRY_WORKFLOW_RUN = gql`
   mutation RetryWorkflowRun($workflowRunId: UUID!) {

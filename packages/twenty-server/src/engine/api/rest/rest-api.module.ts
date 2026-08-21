@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { RestApiCoreModule } from 'src/engine/api/rest/core/rest-api-core.module';
+import { RestApiCoreModule } from "src/engine/api/rest/core/rest-api-core.module";
 
 @Module({
-  imports: [RestApiCoreModule],
+	imports: [RestApiCoreModule],
 })
 export class RestApiModule {}

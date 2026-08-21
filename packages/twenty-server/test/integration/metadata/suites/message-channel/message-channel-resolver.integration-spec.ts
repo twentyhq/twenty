@@ -1,14 +1,14 @@
-import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { gql } from "graphql-tag";
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
-import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
-import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
+import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from "src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant";
+import { MESSAGE_CHANNEL_DATA_SEED_IDS } from "src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant";
 
-describe('messageChannelResolver (e2e)', () => {
-  describe('myMessageChannels', () => {
-    it('should return only the current user message channels', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
+describe("messageChannelResolver (e2e)", () => {
+	describe("myMessageChannels", () => {
+		it("should return only the current user message channels", async () => {
+			const response = await makeMetadataAPIRequest({
+				query: gql`
           query MyMessageChannels {
             myMessageChannels {
               id
@@ -19,21 +19,21 @@ describe('messageChannelResolver (e2e)', () => {
             }
           }
         `,
-      });
+			});
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
+			expect(response.status).toBe(200);
+			expect(response.body.errors).toBeUndefined();
 
-      const channels = response.body.data.myMessageChannels;
-      const channelIds = channels.map((channel: { id: string }) => channel.id);
+			const channels = response.body.data.myMessageChannels;
+			const channelIds = channels.map((channel: { id: string }) => channel.id);
 
-      expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
-      expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);
-    });
+			expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
+			expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);
+		});
 
-    it('should filter by connectedAccountId', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
+		it("should filter by connectedAccountId", async () => {
+			const response = await makeMetadataAPIRequest({
+				query: gql`
           query MyMessageChannels($connectedAccountId: UUID) {
             myMessageChannels(connectedAccountId: $connectedAccountId) {
               id
@@ -41,42 +41,42 @@ describe('messageChannelResolver (e2e)', () => {
             }
           }
         `,
-        variables: {
-          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
-        },
-      });
+				variables: {
+					connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+				},
+			});
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
+			expect(response.status).toBe(200);
+			expect(response.body.errors).toBeUndefined();
 
-      const channels = response.body.data.myMessageChannels;
-      const channelIds = channels.map((channel: { id: string }) => channel.id);
+			const channels = response.body.data.myMessageChannels;
+			const channelIds = channels.map((channel: { id: string }) => channel.id);
 
-      expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
-      expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);
-    });
+			expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
+			expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);
+		});
 
-    it('should deny filtering by another user connectedAccountId', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
+		it("should deny filtering by another user connectedAccountId", async () => {
+			const response = await makeMetadataAPIRequest({
+				query: gql`
           query MyMessageChannels($connectedAccountId: UUID) {
             myMessageChannels(connectedAccountId: $connectedAccountId) {
               id
             }
           }
         `,
-        variables: {
-          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
-        },
-      });
+				variables: {
+					connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
+				},
+			});
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
-    });
+			expect(response.status).toBe(200);
+			expect(response.body.errors?.[0]?.extensions?.code).toBe("FORBIDDEN");
+		});
 
-    it('should not return syncCursor', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
+		it("should not return syncCursor", async () => {
+			const response = await makeMetadataAPIRequest({
+				query: gql`
           query MyMessageChannels {
             myMessageChannels {
               id
@@ -84,17 +84,17 @@ describe('messageChannelResolver (e2e)', () => {
             }
           }
         `,
-      });
+			});
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
-    });
-  });
+			expect(response.status).toBe(200);
+			expect(response.body.errors).toBeDefined();
+		});
+	});
 
-  describe('updateMessageChannel', () => {
-    it('should allow updating own channel settings', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
+	describe("updateMessageChannel", () => {
+		it("should allow updating own channel settings", async () => {
+			const response = await makeMetadataAPIRequest({
+				query: gql`
           mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
             updateMessageChannel(input: $input) {
               id
@@ -102,40 +102,40 @@ describe('messageChannelResolver (e2e)', () => {
             }
           }
         `,
-        variables: {
-          input: {
-            id: MESSAGE_CHANNEL_DATA_SEED_IDS.JANE,
-            update: { visibility: 'METADATA' },
-          },
-        },
-      });
+				variables: {
+					input: {
+						id: MESSAGE_CHANNEL_DATA_SEED_IDS.JANE,
+						update: { visibility: "METADATA" },
+					},
+				},
+			});
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updateMessageChannel.visibility).toBe(
-        'METADATA',
-      );
-    });
+			expect(response.status).toBe(200);
+			expect(response.body.errors).toBeUndefined();
+			expect(response.body.data.updateMessageChannel.visibility).toBe(
+				"METADATA",
+			);
+		});
 
-    it('should deny updating another user channel', async () => {
-      const response = await makeMetadataAPIRequest({
-        query: gql`
+		it("should deny updating another user channel", async () => {
+			const response = await makeMetadataAPIRequest({
+				query: gql`
           mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
             updateMessageChannel(input: $input) {
               id
             }
           }
         `,
-        variables: {
-          input: {
-            id: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
-            update: { visibility: 'METADATA' },
-          },
-        },
-      });
+				variables: {
+					input: {
+						id: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
+						update: { visibility: "METADATA" },
+					},
+				},
+			});
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
-    });
-  });
+			expect(response.status).toBe(200);
+			expect(response.body.errors?.[0]?.extensions?.code).toBe("FORBIDDEN");
+		});
+	});
 });

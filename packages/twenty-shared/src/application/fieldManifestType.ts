@@ -1,72 +1,72 @@
-import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type SyncableEntityOptions } from "@/application/syncableEntityOptionsType";
 import {
-  type FieldMetadataDefaultValue,
-  type FieldMetadataOptions,
-  type FieldMetadataType,
-  type FieldMetadataUniversalSettings,
-  type MetadataWritability,
-  type RelationAndMorphRelationFieldMetadataType,
-} from '@/types';
+	type FieldMetadataDefaultValue,
+	type FieldMetadataOptions,
+	type FieldMetadataType,
+	type FieldMetadataUniversalSettings,
+	type MetadataWritability,
+	type RelationAndMorphRelationFieldMetadataType,
+} from "@/types";
 
 type BaseRegularFieldManifest<
-  T extends FieldMetadataType = Exclude<
-    FieldMetadataType,
-    RelationAndMorphRelationFieldMetadataType
-  >,
+	T extends FieldMetadataType = Exclude<
+		FieldMetadataType,
+		RelationAndMorphRelationFieldMetadataType
+	>,
 > = SyncableEntityOptions & {
-  type: T;
-  name: string;
-  label: string;
-  description?: string;
-  icon?: string;
-  options?: FieldMetadataOptions<T>;
-  universalSettings?: FieldMetadataUniversalSettings<T>;
-  isUIEditable?: boolean;
-  writability?: MetadataWritability;
-  isUnique?: boolean;
-  objectUniversalIdentifier: string;
+	type: T;
+	name: string;
+	label: string;
+	description?: string;
+	icon?: string;
+	options?: FieldMetadataOptions<T>;
+	universalSettings?: FieldMetadataUniversalSettings<T>;
+	isUIEditable?: boolean;
+	writability?: MetadataWritability;
+	isUnique?: boolean;
+	objectUniversalIdentifier: string;
 };
 
 type RegularFieldManifestNullability<T extends FieldMetadataType> =
-  | {
-      defaultValue: FieldMetadataDefaultValue<T>;
-      isNullable?: boolean;
-    }
-  | {
-      defaultValue?: FieldMetadataDefaultValue<T>;
-      isNullable?: true;
-    };
+	| {
+			defaultValue: FieldMetadataDefaultValue<T>;
+			isNullable?: boolean;
+	  }
+	| {
+			defaultValue?: FieldMetadataDefaultValue<T>;
+			isNullable?: true;
+	  };
 
 export type RegularFieldManifest<
-  T extends FieldMetadataType = Exclude<
-    FieldMetadataType,
-    RelationAndMorphRelationFieldMetadataType
-  >,
+	T extends FieldMetadataType = Exclude<
+		FieldMetadataType,
+		RelationAndMorphRelationFieldMetadataType
+	>,
 > = BaseRegularFieldManifest<T> & RegularFieldManifestNullability<T>;
 
 export type RelationFieldManifest<
-  T extends RelationAndMorphRelationFieldMetadataType =
-    RelationAndMorphRelationFieldMetadataType,
-> = Omit<BaseRegularFieldManifest<T>, 'universalSettings' | 'type'> & {
-  type: T;
-  isNullable?: boolean;
-  defaultValue?: FieldMetadataDefaultValue<T>;
-  relationTargetFieldMetadataUniversalIdentifier: string;
-  relationTargetObjectMetadataUniversalIdentifier: string;
-  universalSettings: FieldMetadataUniversalSettings<T>;
+	T extends
+		RelationAndMorphRelationFieldMetadataType = RelationAndMorphRelationFieldMetadataType,
+> = Omit<BaseRegularFieldManifest<T>, "universalSettings" | "type"> & {
+	type: T;
+	isNullable?: boolean;
+	defaultValue?: FieldMetadataDefaultValue<T>;
+	relationTargetFieldMetadataUniversalIdentifier: string;
+	relationTargetObjectMetadataUniversalIdentifier: string;
+	universalSettings: FieldMetadataUniversalSettings<T>;
 } & ([T] extends [FieldMetadataType.MORPH_RELATION]
-    ? {
-        morphId: string;
-      }
-    : {
-        morphId?: undefined;
-      });
+		? {
+				morphId: string;
+			}
+		: {
+				morphId?: undefined;
+			});
 
 export type FieldManifest<T extends FieldMetadataType = FieldMetadataType> =
-  T extends RelationAndMorphRelationFieldMetadataType
-    ? RelationFieldManifest<
-        Extract<T, RelationAndMorphRelationFieldMetadataType>
-      >
-    : RegularFieldManifest<
-        Exclude<T, RelationAndMorphRelationFieldMetadataType>
-      >;
+	T extends RelationAndMorphRelationFieldMetadataType
+		? RelationFieldManifest<
+				Extract<T, RelationAndMorphRelationFieldMetadataType>
+			>
+		: RegularFieldManifest<
+				Exclude<T, RelationAndMorphRelationFieldMetadataType>
+			>;

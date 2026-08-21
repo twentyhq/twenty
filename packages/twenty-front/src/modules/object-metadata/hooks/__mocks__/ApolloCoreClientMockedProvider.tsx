@@ -1,16 +1,16 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
-import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { mockedApolloCoreClient } from '~/testing/mockedApolloCoreClient';
+import { ApolloCoreClientContext } from "@/object-metadata/contexts/ApolloCoreClientContext";
+import { mockedApolloCoreClient } from "~/testing/mockedApolloCoreClient";
 
 export const ApolloCoreClientMockedProvider = ({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }) => {
-  return (
-    <ApolloCoreClientContext.Provider value={mockedApolloCoreClient}>
-      {mockedApolloCoreClient ? children : ''}
-    </ApolloCoreClientContext.Provider>
-  );
+	return (
+		<ApolloCoreClientContext.Provider value={mockedApolloCoreClient}>
+			{mockedApolloCoreClient ? children : ""}
+		</ApolloCoreClientContext.Provider>
+	);
 };

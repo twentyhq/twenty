@@ -1,1 +1,1 @@
-export type SlackMessageBodyFormat = 'plain' | 'markdown';
+export type SlackMessageBodyFormat = "plain" | "markdown";

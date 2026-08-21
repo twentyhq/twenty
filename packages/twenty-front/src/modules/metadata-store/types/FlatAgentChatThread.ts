@@ -1,3 +1,3 @@
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThread } from "~/generated-metadata/graphql";
 
 export type FlatAgentChatThread = AgentChatThread;

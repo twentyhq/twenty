@@ -1,83 +1,83 @@
-import { styled } from '@linaria/react';
-import React from 'react';
+import { styled } from "@linaria/react";
+import React from "react";
 
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { ModalStatefulWrapper } from "@/ui/layout/modal/components/ModalStatefulWrapper";
+import { Button } from "twenty-ui/input";
+import { Section } from "twenty-ui/layout";
 import {
-  type ModalOverlay,
-  type ModalPadding,
-  type ModalSize,
-} from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	type ModalOverlay,
+	type ModalPadding,
+	type ModalSize,
+} from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type StyledAppModalBaseProps = React.PropsWithChildren<{
-  modalId: string;
-  size?: ModalSize;
-  padding?: ModalPadding;
-  overlay?: ModalOverlay;
-  dataGloballyPreventClickOutside?: boolean;
+	modalId: string;
+	size?: ModalSize;
+	padding?: ModalPadding;
+	overlay?: ModalOverlay;
+	dataGloballyPreventClickOutside?: boolean;
 }>;
 
 type StyledAppModalProps = StyledAppModalBaseProps &
-  (
-    | { isClosable: true; onClose?: () => void }
-    | { isClosable?: false; onClose?: never }
-  );
+	(
+		| { isClosable: true; onClose?: () => void }
+		| { isClosable?: false; onClose?: never }
+	);
 
 const ModalWrapper = ({
-  modalId,
-  children,
-  size,
-  padding,
-  overlay,
-  dataGloballyPreventClickOutside,
-  isClosable,
-  onClose,
+	modalId,
+	children,
+	size,
+	padding,
+	overlay,
+	dataGloballyPreventClickOutside,
+	isClosable,
+	onClose,
 }: StyledAppModalBaseProps & { isClosable: boolean; onClose?: () => void }) =>
-  isClosable ? (
-    <ModalStatefulWrapper
-      modalInstanceId={modalId}
-      isClosable={true}
-      onClose={onClose}
-      size={size}
-      padding={padding}
-      overlay={overlay}
-      smallBorderRadius
-      narrowWidth
-      autoHeight
-      dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
-    >
-      {children}
-    </ModalStatefulWrapper>
-  ) : (
-    <ModalStatefulWrapper
-      modalInstanceId={modalId}
-      isClosable={false}
-      size={size}
-      padding={padding}
-      overlay={overlay}
-      smallBorderRadius
-      narrowWidth
-      autoHeight
-      dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
-    >
-      {children}
-    </ModalStatefulWrapper>
-  );
+	isClosable ? (
+		<ModalStatefulWrapper
+			modalInstanceId={modalId}
+			isClosable={true}
+			onClose={onClose}
+			size={size}
+			padding={padding}
+			overlay={overlay}
+			smallBorderRadius
+			narrowWidth
+			autoHeight
+			dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
+		>
+			{children}
+		</ModalStatefulWrapper>
+	) : (
+		<ModalStatefulWrapper
+			modalInstanceId={modalId}
+			isClosable={false}
+			size={size}
+			padding={padding}
+			overlay={overlay}
+			smallBorderRadius
+			narrowWidth
+			autoHeight
+			dataGloballyPreventClickOutside={dataGloballyPreventClickOutside}
+		>
+			{children}
+		</ModalStatefulWrapper>
+	);
 
 export const StyledAppModal = (props: StyledAppModalProps) => (
-  <ModalWrapper
-    modalId={props.modalId}
-    size={props.size}
-    padding={props.padding}
-    overlay={props.overlay}
-    dataGloballyPreventClickOutside={props.dataGloballyPreventClickOutside}
-    isClosable={props.isClosable ?? false}
-    onClose={props.isClosable ? props.onClose : undefined}
-  >
-    {props.children}
-  </ModalWrapper>
+	<ModalWrapper
+		modalId={props.modalId}
+		size={props.size}
+		padding={props.padding}
+		overlay={props.overlay}
+		dataGloballyPreventClickOutside={props.dataGloballyPreventClickOutside}
+		isClosable={props.isClosable ?? false}
+		onClose={props.isClosable ? props.onClose : undefined}
+	>
+		{props.children}
+	</ModalWrapper>
 );
 
 const StyledAppModalButtonContainer = styled.div`
@@ -88,12 +88,12 @@ const StyledAppModalButtonContainer = styled.div`
 `;
 
 export const StyledAppModalButton = (
-  props: React.ComponentProps<typeof Button>,
+	props: React.ComponentProps<typeof Button>,
 ) => (
-  <StyledAppModalButtonContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <Button {...props} />
-  </StyledAppModalButtonContainer>
+	<StyledAppModalButtonContainer>
+		{/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+		<Button {...props} />
+	</StyledAppModalButtonContainer>
 );
 
 export const StyledAppModalTitle = styled.div`
@@ -105,11 +105,11 @@ const StyledAppModalSectionContainer = styled.div`
 `;
 
 export const StyledAppModalSection = ({
-  children,
-  ...props
+	children,
+	...props
 }: React.ComponentProps<typeof Section>) => (
-  <StyledAppModalSectionContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <Section {...props}>{children}</Section>
-  </StyledAppModalSectionContainer>
+	<StyledAppModalSectionContainer>
+		{/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+		<Section {...props}>{children}</Section>
+	</StyledAppModalSectionContainer>
 );

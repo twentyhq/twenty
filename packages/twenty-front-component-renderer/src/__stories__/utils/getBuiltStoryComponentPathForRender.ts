@@ -1,11 +1,11 @@
-type StoryComponentVariant = 'react' | 'preact';
+type StoryComponentVariant = "react" | "preact";
 
 export const getBuiltStoryComponentPathForRender = (
-  componentName: string,
-  variant: StoryComponentVariant = 'react',
+	componentName: string,
+	variant: StoryComponentVariant = "react",
 ): string => {
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const basePath = variant === 'preact' ? '/built-preact' : '/built';
+	const origin = typeof window !== "undefined" ? window.location.origin : "";
+	const basePath = variant === "preact" ? "/built-preact" : "/built";
 
-  return `${origin}${basePath}/${componentName}.mjs`;
+	return `${origin}${basePath}/${componentName}.mjs`;
 };

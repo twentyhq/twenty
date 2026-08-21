@@ -1,4 +1,4 @@
 export enum DateAggregateOperations {
-  EARLIEST = 'EARLIEST',
-  LATEST = 'LATEST',
+	EARLIEST = "EARLIEST",
+	LATEST = "LATEST",
 }

@@ -1,24 +1,24 @@
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { styled } from '@linaria/react';
-import { useState } from 'react';
-import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ModalStatefulWrapper } from "@/ui/layout/modal/components/ModalStatefulWrapper";
+import { useModal } from "@/ui/layout/modal/hooks/useModal";
+import { TabList } from "@/ui/layout/tab-list/components/TabList";
+import { styled } from "@linaria/react";
+import { useState } from "react";
+import { type IconComponent, IconX } from "twenty-ui/icon";
+import { IconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export type SettingsCustomizeVideoModalTab = {
-  id: string;
-  title: string;
-  Icon: IconComponent;
-  vimeoId: string;
-  hasSound?: boolean;
+	id: string;
+	title: string;
+	Icon: IconComponent;
+	vimeoId: string;
+	hasSound?: boolean;
 };
 
 type SettingsCustomizeVideoModalProps = {
-  modalInstanceId: string;
-  tabsInstanceId: string;
-  tabs: SettingsCustomizeVideoModalTab[];
+	modalInstanceId: string;
+	tabsInstanceId: string;
+	tabs: SettingsCustomizeVideoModalTab[];
 };
 
 const StyledHeader = styled.div`
@@ -54,55 +54,55 @@ const StyledVideoIframe = styled.iframe`
 `;
 
 export const SettingsCustomizeVideoModal = ({
-  modalInstanceId,
-  tabsInstanceId,
-  tabs,
+	modalInstanceId,
+	tabsInstanceId,
+	tabs,
 }: SettingsCustomizeVideoModalProps) => {
-  const { closeModal } = useModal();
-  const [activeTabId, setActiveTabId] = useState<string>(tabs[0]?.id ?? '');
+	const { closeModal } = useModal();
+	const [activeTabId, setActiveTabId] = useState<string>(tabs[0]?.id ?? "");
 
-  if (tabs.length === 0) {
-    return null;
-  }
+	if (tabs.length === 0) {
+		return null;
+	}
 
-  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
+	const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
 
-  const handleClose = () => {
-    closeModal(modalInstanceId);
-  };
+	const handleClose = () => {
+		closeModal(modalInstanceId);
+	};
 
-  return (
-    <ModalStatefulWrapper
-      modalInstanceId={modalInstanceId}
-      size="large"
-      padding="none"
-      isClosable
-      onClose={handleClose}
-      renderInDocumentBody
-    >
-      <StyledHeader>
-        <StyledTabsContainer>
-          <TabList
-            tabs={tabs}
-            behaveAsLinks={false}
-            componentInstanceId={tabsInstanceId}
-            onChangeTab={(tabId) => setActiveTabId(tabId)}
-          />
-        </StyledTabsContainer>
-        <IconButton Icon={IconX} onClick={handleClose} size="small" />
-      </StyledHeader>
-      <StyledVideoContainer>
-        <StyledVideoIframe
-          key={activeTab.id}
-          src={
-            activeTab.hasSound
-              ? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
-              : `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
-          }
-          allow="autoplay; fullscreen; picture-in-picture"
-          title={activeTab.title}
-        />
-      </StyledVideoContainer>
-    </ModalStatefulWrapper>
-  );
+	return (
+		<ModalStatefulWrapper
+			modalInstanceId={modalInstanceId}
+			size="large"
+			padding="none"
+			isClosable
+			onClose={handleClose}
+			renderInDocumentBody
+		>
+			<StyledHeader>
+				<StyledTabsContainer>
+					<TabList
+						tabs={tabs}
+						behaveAsLinks={false}
+						componentInstanceId={tabsInstanceId}
+						onChangeTab={(tabId) => setActiveTabId(tabId)}
+					/>
+				</StyledTabsContainer>
+				<IconButton Icon={IconX} onClick={handleClose} size="small" />
+			</StyledHeader>
+			<StyledVideoContainer>
+				<StyledVideoIframe
+					key={activeTab.id}
+					src={
+						activeTab.hasSound
+							? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
+							: `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
+					}
+					allow="autoplay; fullscreen; picture-in-picture"
+					title={activeTab.title}
+				/>
+			</StyledVideoContainer>
+		</ModalStatefulWrapper>
+	);
 };

@@ -1,12 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
+import { SearchRecordDTO } from "src/engine/core-modules/search/dtos/search-record.dto";
 
-@ObjectType('SearchResultEdge')
+@ObjectType("SearchResultEdge")
 export class SearchResultEdgeDTO {
-  @Field(() => SearchRecordDTO)
-  node: SearchRecordDTO;
+	@Field(() => SearchRecordDTO)
+	node: SearchRecordDTO;
 
-  @Field(() => String)
-  cursor: string;
+	@Field(() => String)
+	cursor: string;
 }

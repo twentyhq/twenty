@@ -1,118 +1,118 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from "~/generated-metadata/graphql";
 
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { getCurrencyFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
-import { CurrencyCode } from 'twenty-shared/constants';
+import { getTestEnrichedObjectMetadataItemsMock } from "~/testing/utils/getTestEnrichedObjectMetadataItemsMock";
+import { getCurrencyFieldPreviewValue } from "@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue";
+import { CurrencyCode } from "twenty-shared/constants";
 
 const mockedCompanyObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'company',
-  );
+	getTestEnrichedObjectMetadataItemsMock().find(
+		(item) => item.nameSingular === "company",
+	);
 
 const mockedOpportunityObjectMetadataItem =
-  getTestEnrichedObjectMetadataItemsMock().find(
-    (item) => item.nameSingular === 'opportunity',
-  );
+	getTestEnrichedObjectMetadataItemsMock().find(
+		(item) => item.nameSingular === "opportunity",
+	);
 
-describe('getCurrencyFieldPreviewValue', () => {
-  it('returns null if the field is not a Currency field', () => {
-    const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
-      ({ type }) => type !== FieldMetadataType.CURRENCY,
-    );
+describe("getCurrencyFieldPreviewValue", () => {
+	it("returns null if the field is not a Currency field", () => {
+		const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
+			({ type }) => type !== FieldMetadataType.CURRENCY,
+		);
 
-    if (!fieldMetadataItem) {
-      throw new Error('Field not found');
-    }
+		if (!fieldMetadataItem) {
+			throw new Error("Field not found");
+		}
 
-    const previewValue = getCurrencyFieldPreviewValue({ fieldMetadataItem });
+		const previewValue = getCurrencyFieldPreviewValue({ fieldMetadataItem });
 
-    expect(previewValue).toBeNull();
-  });
+		expect(previewValue).toBeNull();
+	});
 
-  const fieldName = 'amount';
-  const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
-    ({ name, type }) =>
-      name === fieldName && type === FieldMetadataType.CURRENCY,
-  );
+	const fieldName = "amount";
+	const fieldMetadataItem = mockedOpportunityObjectMetadataItem?.fields.find(
+		({ name, type }) =>
+			name === fieldName && type === FieldMetadataType.CURRENCY,
+	);
 
-  if (!fieldMetadataItem) {
-    throw new Error(`Field '${fieldName}' not found`);
-  }
+	if (!fieldMetadataItem) {
+		throw new Error(`Field '${fieldName}' not found`);
+	}
 
-  it("returns the parsed defaultValue if a valid defaultValue is found in the field's metadata", () => {
-    const defaultValue = {
-      amountMicros: 3000000000,
-      currencyCode: `'${CurrencyCode.EUR}'`,
-    };
-    const fieldMetadataItemWithDefaultValue = {
-      ...fieldMetadataItem,
-      defaultValue,
-    };
+	it("returns the parsed defaultValue if a valid defaultValue is found in the field's metadata", () => {
+		const defaultValue = {
+			amountMicros: 3000000000,
+			currencyCode: `'${CurrencyCode.EUR}'`,
+		};
+		const fieldMetadataItemWithDefaultValue = {
+			...fieldMetadataItem,
+			defaultValue,
+		};
 
-    const previewValue = getCurrencyFieldPreviewValue({
-      fieldMetadataItem: fieldMetadataItemWithDefaultValue,
-    });
+		const previewValue = getCurrencyFieldPreviewValue({
+			fieldMetadataItem: fieldMetadataItemWithDefaultValue,
+		});
 
-    expect(previewValue).toEqual({
-      amountMicros: defaultValue.amountMicros,
-      currencyCode: CurrencyCode.EUR,
-    });
-  });
+		expect(previewValue).toEqual({
+			amountMicros: defaultValue.amountMicros,
+			currencyCode: CurrencyCode.EUR,
+		});
+	});
 
-  it("returns a placeholder amountMicros if it is empty in the field's metadata defaultValue", () => {
-    const defaultValue = {
-      amountMicros: null,
-      currencyCode: `'${CurrencyCode.EUR}'`,
-    };
-    const fieldMetadataItemWithDefaultValue = {
-      ...fieldMetadataItem,
-      defaultValue,
-    };
+	it("returns a placeholder amountMicros if it is empty in the field's metadata defaultValue", () => {
+		const defaultValue = {
+			amountMicros: null,
+			currencyCode: `'${CurrencyCode.EUR}'`,
+		};
+		const fieldMetadataItemWithDefaultValue = {
+			...fieldMetadataItem,
+			defaultValue,
+		};
 
-    const previewValue = getCurrencyFieldPreviewValue({
-      fieldMetadataItem: fieldMetadataItemWithDefaultValue,
-    });
+		const previewValue = getCurrencyFieldPreviewValue({
+			fieldMetadataItem: fieldMetadataItemWithDefaultValue,
+		});
 
-    expect(previewValue).toEqual({
-      amountMicros: 2000000000,
-      currencyCode: CurrencyCode.EUR,
-    });
-  });
+		expect(previewValue).toEqual({
+			amountMicros: 2000000000,
+			currencyCode: CurrencyCode.EUR,
+		});
+	});
 
-  it("returns a placeholder default value if the defaultValue found in the field's metadata is invalid", () => {
-    const defaultValue = {
-      amountMicros: null,
-      currencyCode: "''",
-    };
-    const fieldMetadataItemWithDefaultValue = {
-      ...fieldMetadataItem,
-      defaultValue,
-    };
+	it("returns a placeholder default value if the defaultValue found in the field's metadata is invalid", () => {
+		const defaultValue = {
+			amountMicros: null,
+			currencyCode: "''",
+		};
+		const fieldMetadataItemWithDefaultValue = {
+			...fieldMetadataItem,
+			defaultValue,
+		};
 
-    const previewValue = getCurrencyFieldPreviewValue({
-      fieldMetadataItem: fieldMetadataItemWithDefaultValue,
-    });
+		const previewValue = getCurrencyFieldPreviewValue({
+			fieldMetadataItem: fieldMetadataItemWithDefaultValue,
+		});
 
-    expect(previewValue).toEqual({
-      amountMicros: 2000000000,
-      currencyCode: CurrencyCode.USD,
-    });
-  });
+		expect(previewValue).toEqual({
+			amountMicros: 2000000000,
+			currencyCode: CurrencyCode.USD,
+		});
+	});
 
-  it("returns a placeholder default value if no defaultValue is found in the field's metadata", () => {
-    const defaultValue = null;
-    const fieldMetadataItemWithDefaultValue = {
-      ...fieldMetadataItem,
-      defaultValue,
-    };
+	it("returns a placeholder default value if no defaultValue is found in the field's metadata", () => {
+		const defaultValue = null;
+		const fieldMetadataItemWithDefaultValue = {
+			...fieldMetadataItem,
+			defaultValue,
+		};
 
-    const previewValue = getCurrencyFieldPreviewValue({
-      fieldMetadataItem: fieldMetadataItemWithDefaultValue,
-    });
+		const previewValue = getCurrencyFieldPreviewValue({
+			fieldMetadataItem: fieldMetadataItemWithDefaultValue,
+		});
 
-    expect(previewValue).toEqual({
-      amountMicros: 2000000000,
-      currencyCode: CurrencyCode.USD,
-    });
-  });
+		expect(previewValue).toEqual({
+			amountMicros: 2000000000,
+			currencyCode: CurrencyCode.USD,
+		});
+	});
 });

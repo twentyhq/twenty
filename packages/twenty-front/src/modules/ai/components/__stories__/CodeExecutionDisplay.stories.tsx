@@ -1,10 +1,10 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { expect, userEvent, within } from "storybook/test";
+import { ComponentDecorator } from "twenty-ui/testing";
 
-import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
-import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { CodeExecutionDisplay } from "@/ai/components/CodeExecutionDisplay";
+import { ARGOS_CAPTURE_DISABLED } from "~/testing/constants/ArgosCaptureDisabled";
+import { SnackBarDecorator } from "~/testing/decorators/SnackBarDecorator";
 
 const samplePythonCode = `import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,107 +29,107 @@ plt.title('Monthly Revenue')
 plt.savefig('revenue_chart.png')`;
 
 const meta: Meta<typeof CodeExecutionDisplay> = {
-  title: 'Modules/AI/CodeExecutionDisplay',
-  component: CodeExecutionDisplay,
-  decorators: [SnackBarDecorator, ComponentDecorator],
-  parameters: {
-    argos: ARGOS_CAPTURE_DISABLED,
-    container: { width: 600 },
-  },
-  args: {
-    code: samplePythonCode,
-    stdout: '',
-    stderr: '',
-    isRunning: false,
-  },
+	title: "Modules/AI/CodeExecutionDisplay",
+	component: CodeExecutionDisplay,
+	decorators: [SnackBarDecorator, ComponentDecorator],
+	parameters: {
+		argos: ARGOS_CAPTURE_DISABLED,
+		container: { width: 600 },
+	},
+	args: {
+		code: samplePythonCode,
+		stdout: "",
+		stderr: "",
+		isRunning: false,
+	},
 };
 
 export default meta;
 type Story = StoryObj<typeof CodeExecutionDisplay>;
 
 export const Running: Story = {
-  args: {
-    code: `print("Processing data...")
+	args: {
+		code: `print("Processing data...")
 import time
 time.sleep(5)
 print("Complete!")`,
-    stdout: 'Processing data...',
-    stderr: '',
-    isRunning: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Running...')).toBeVisible();
-  },
+		stdout: "Processing data...",
+		stderr: "",
+		isRunning: true,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		expect(await canvas.findByText("Running...")).toBeVisible();
+	},
 };
 
 export const Success: Story = {
-  args: {
-    code: samplePythonCode,
-    stdout: 'Total Revenue: $101,900.00\nAverage Monthly: $16,983.33',
-    stderr: '',
-    exitCode: 0,
-    isRunning: false,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Completed')).toBeVisible();
-    expect(await canvas.findByText(/Total Revenue/)).toBeInTheDocument();
-  },
+	args: {
+		code: samplePythonCode,
+		stdout: "Total Revenue: $101,900.00\nAverage Monthly: $16,983.33",
+		stderr: "",
+		exitCode: 0,
+		isRunning: false,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		expect(await canvas.findByText("Completed")).toBeVisible();
+		expect(await canvas.findByText(/Total Revenue/)).toBeInTheDocument();
+	},
 };
 
 export const Error: Story = {
-  args: {
-    code: `import pandas as pd
+	args: {
+		code: `import pandas as pd
 df = pd.read_csv('missing_file.csv')
 print(df.head())`,
-    stdout: '',
-    stderr:
-      'Traceback (most recent call last):\n  File "<stdin>", line 2, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: \'missing_file.csv\'',
-    exitCode: 1,
-    isRunning: false,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(await canvas.findByText('Failed')).toBeVisible();
-  },
+		stdout: "",
+		stderr:
+			"Traceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: 'missing_file.csv'",
+		exitCode: 1,
+		isRunning: false,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		expect(await canvas.findByText("Failed")).toBeVisible();
+	},
 };
 
 export const WithImageFiles: Story = {
-  args: {
-    code: samplePythonCode,
-    stdout: 'Chart generated successfully!',
-    stderr: '',
-    exitCode: 0,
-    isRunning: false,
-    files: [
-      {
-        fileId: '550e8400-e29b-41d4-a716-446655440001',
-        filename: 'revenue_chart.png',
-        url: 'https://picsum.photos/800/480',
-        mimeType: 'image/png',
-      },
-      {
-        fileId: '550e8400-e29b-41d4-a716-446655440002',
-        filename: 'pie_chart.png',
-        url: 'https://picsum.photos/600/400',
-        mimeType: 'image/png',
-      },
-    ],
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    // Text includes file count: "Generated Files (2)"
-    expect(await canvas.findByText(/Generated Files/)).toBeInTheDocument();
-    // Filenames may be truncated, check by title attribute
-    expect(await canvas.findByTitle('revenue_chart.png')).toBeInTheDocument();
-    expect(await canvas.findByTitle('pie_chart.png')).toBeInTheDocument();
-  },
+	args: {
+		code: samplePythonCode,
+		stdout: "Chart generated successfully!",
+		stderr: "",
+		exitCode: 0,
+		isRunning: false,
+		files: [
+			{
+				fileId: "550e8400-e29b-41d4-a716-446655440001",
+				filename: "revenue_chart.png",
+				url: "https://picsum.photos/800/480",
+				mimeType: "image/png",
+			},
+			{
+				fileId: "550e8400-e29b-41d4-a716-446655440002",
+				filename: "pie_chart.png",
+				url: "https://picsum.photos/600/400",
+				mimeType: "image/png",
+			},
+		],
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		// Text includes file count: "Generated Files (2)"
+		expect(await canvas.findByText(/Generated Files/)).toBeInTheDocument();
+		// Filenames may be truncated, check by title attribute
+		expect(await canvas.findByTitle("revenue_chart.png")).toBeInTheDocument();
+		expect(await canvas.findByTitle("pie_chart.png")).toBeInTheDocument();
+	},
 };
 
 export const WithDownloadableFiles: Story = {
-  args: {
-    code: `import pandas as pd
+	args: {
+		code: `import pandas as pd
 
 df = pd.DataFrame({
     'name': ['Alice', 'Bob', 'Charlie'],
@@ -139,73 +139,73 @@ df = pd.DataFrame({
 df.to_csv('report.csv', index=False)
 df.to_json('data.json')
 print("Files exported successfully!")`,
-    stdout: 'Files exported successfully!',
-    stderr: '',
-    exitCode: 0,
-    isRunning: false,
-    files: [
-      {
-        fileId: '550e8400-e29b-41d4-a716-446655440003',
-        filename: 'report.csv',
-        url: 'data:text/csv,name%2Csales%0AAlice%2C1200%0ABob%2C1500',
-        mimeType: 'text/csv',
-      },
-      {
-        fileId: '550e8400-e29b-41d4-a716-446655440004',
-        filename: 'data.json',
-        url: 'data:application/json,%7B%22name%22%3A%5B%22Alice%22%5D%7D',
-        mimeType: 'application/json',
-      },
-    ],
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    // Filenames may be truncated, check by title attribute
-    expect(await canvas.findByTitle('report.csv')).toBeInTheDocument();
-    expect(await canvas.findByTitle('data.json')).toBeInTheDocument();
-  },
+		stdout: "Files exported successfully!",
+		stderr: "",
+		exitCode: 0,
+		isRunning: false,
+		files: [
+			{
+				fileId: "550e8400-e29b-41d4-a716-446655440003",
+				filename: "report.csv",
+				url: "data:text/csv,name%2Csales%0AAlice%2C1200%0ABob%2C1500",
+				mimeType: "text/csv",
+			},
+			{
+				fileId: "550e8400-e29b-41d4-a716-446655440004",
+				filename: "data.json",
+				url: "data:application/json,%7B%22name%22%3A%5B%22Alice%22%5D%7D",
+				mimeType: "application/json",
+			},
+		],
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		// Filenames may be truncated, check by title attribute
+		expect(await canvas.findByTitle("report.csv")).toBeInTheDocument();
+		expect(await canvas.findByTitle("data.json")).toBeInTheDocument();
+	},
 };
 
 export const CodeSectionExpanded: Story = {
-  args: {
-    code: samplePythonCode,
-    stdout: 'Total Revenue: $101,900.00',
-    stderr: '',
-    exitCode: 0,
-    isRunning: false,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	args: {
+		code: samplePythonCode,
+		stdout: "Total Revenue: $101,900.00",
+		stderr: "",
+		exitCode: 0,
+		isRunning: false,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    const codeHeader = await canvas.findByText('Code');
-    await userEvent.click(codeHeader);
+		const codeHeader = await canvas.findByText("Code");
+		await userEvent.click(codeHeader);
 
-    expect(await canvas.findByText('Completed')).toBeVisible();
-  },
+		expect(await canvas.findByText("Completed")).toBeVisible();
+	},
 };
 
 export const EmptyOutput: Story = {
-  args: {
-    code: `x = 1 + 1
+	args: {
+		code: `x = 1 + 1
 y = x * 2
 # No print statements`,
-    stdout: '',
-    stderr: '',
-    exitCode: 0,
-    isRunning: false,
-  },
+		stdout: "",
+		stderr: "",
+		exitCode: 0,
+		isRunning: false,
+	},
 };
 
 export const LongOutput: Story = {
-  args: {
-    code: `for i in range(50):
+	args: {
+		code: `for i in range(50):
     print(f"Processing item {i+1}...")`,
-    stdout: Array.from(
-      { length: 50 },
-      (_, i) => `Processing item ${i + 1}...`,
-    ).join('\n'),
-    stderr: '',
-    exitCode: 0,
-    isRunning: false,
-  },
+		stdout: Array.from(
+			{ length: 50 },
+			(_, i) => `Processing item ${i + 1}...`,
+		).join("\n"),
+		stderr: "",
+		exitCode: 0,
+		isRunning: false,
+	},
 };

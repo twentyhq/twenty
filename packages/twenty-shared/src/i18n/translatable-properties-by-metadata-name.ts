@@ -1,4 +1,4 @@
-import { type AllMetadataName } from '@/metadata/types/all-metadata-name.type';
+import { type AllMetadataName } from "@/metadata/types/all-metadata-name.type";
 
 // The single source of truth for which provider-owned metadata properties are
 // translatable. twenty-server resolves them against a catalog at request time
@@ -9,19 +9,19 @@ import { type AllMetadataName } from '@/metadata/types/all-metadata-name.type';
 // side is a string that is either extracted and never read, or read and never
 // extracted, and both failure modes are silent.
 export const TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
-  objectMetadata: ['labelSingular', 'labelPlural', 'description'],
-  fieldMetadata: ['label', 'description'],
-  view: ['name'],
-  viewFieldGroup: ['name'],
-  pageLayout: ['name'],
-  pageLayoutTab: ['title'],
-  pageLayoutWidget: ['title'],
-  commandMenuItem: ['label', 'shortLabel'],
-  navigationMenuItem: ['name'],
+	objectMetadata: ["labelSingular", "labelPlural", "description"],
+	fieldMetadata: ["label", "description"],
+	view: ["name"],
+	viewFieldGroup: ["name"],
+	pageLayout: ["name"],
+	pageLayoutTab: ["title"],
+	pageLayoutWidget: ["title"],
+	commandMenuItem: ["label", "shortLabel"],
+	navigationMenuItem: ["name"],
 } as const satisfies Partial<Record<AllMetadataName, readonly string[]>>;
 
 export type TranslatableMetadataName =
-  keyof typeof TRANSLATABLE_PROPERTIES_BY_METADATA_NAME;
+	keyof typeof TRANSLATABLE_PROPERTIES_BY_METADATA_NAME;
 
 export type TranslatablePropertyName<T extends TranslatableMetadataName> =
-  (typeof TRANSLATABLE_PROPERTIES_BY_METADATA_NAME)[T][number];
+	(typeof TRANSLATABLE_PROPERTIES_BY_METADATA_NAME)[T][number];

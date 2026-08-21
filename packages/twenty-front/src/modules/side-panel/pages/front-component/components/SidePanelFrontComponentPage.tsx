@@ -1,43 +1,43 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy } from "react";
 
-import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
-import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState';
-import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isDefined } from 'twenty-shared/utils';
+import { FrontComponentSkeletonLoader } from "@/front-components/components/FrontComponentSkeletonLoader";
+import { viewableFrontComponentIdComponentState } from "@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState";
+import { viewableFrontComponentRecordContextComponentState } from "@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { isDefined } from "twenty-shared/utils";
 
 const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
+	import("@/front-components/components/FrontComponentRenderer").then(
+		(module) => ({ default: module.FrontComponentRenderer }),
+	),
 );
 
 export const SidePanelFrontComponentPage = () => {
-  const viewableFrontComponentId = useAtomComponentStateValue(
-    viewableFrontComponentIdComponentState,
-  );
+	const viewableFrontComponentId = useAtomComponentStateValue(
+		viewableFrontComponentIdComponentState,
+	);
 
-  const viewableFrontComponentRecordContext = useAtomComponentStateValue(
-    viewableFrontComponentRecordContextComponentState,
-  );
+	const viewableFrontComponentRecordContext = useAtomComponentStateValue(
+		viewableFrontComponentRecordContextComponentState,
+	);
 
-  if (!isDefined(viewableFrontComponentId)) {
-    return null;
-  }
+	if (!isDefined(viewableFrontComponentId)) {
+		return null;
+	}
 
-  const selectedRecordIds = isDefined(
-    viewableFrontComponentRecordContext?.recordId,
-  )
-    ? [viewableFrontComponentRecordContext.recordId]
-    : undefined;
+	const selectedRecordIds = isDefined(
+		viewableFrontComponentRecordContext?.recordId,
+	)
+		? [viewableFrontComponentRecordContext.recordId]
+		: undefined;
 
-  return (
-    <Suspense fallback={<FrontComponentSkeletonLoader />}>
-      <FrontComponentRenderer
-        frontComponentId={viewableFrontComponentId}
-        selectedRecordIds={selectedRecordIds}
-        loadingFallback={<FrontComponentSkeletonLoader />}
-      />
-    </Suspense>
-  );
+	return (
+		<Suspense fallback={<FrontComponentSkeletonLoader />}>
+			<FrontComponentRenderer
+				frontComponentId={viewableFrontComponentId}
+				selectedRecordIds={selectedRecordIds}
+				loadingFallback={<FrontComponentSkeletonLoader />}
+			/>
+		</Suspense>
+	);
 };

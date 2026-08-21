@@ -1,8 +1,8 @@
-import { SubTitle } from '@/auth/components/SubTitle';
-import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { type OnboardingActivationMessage } from '@/onboarding/types/OnboardingActivationMessage';
-import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
+import { SubTitle } from "@/auth/components/SubTitle";
+import { useOnboardingMotionTransition } from "@/onboarding/hooks/useOnboardingMotionTransition";
+import { type OnboardingActivationMessage } from "@/onboarding/types/OnboardingActivationMessage";
+import { styled } from "@linaria/react";
+import { motion } from "framer-motion";
 
 const STEP_OPACITIES = [1, 0.4, 0.12];
 const VISIBLE_STEP_COUNT = STEP_OPACITIES.length;
@@ -25,36 +25,36 @@ const StyledStepBase = styled.div`
 const StyledStep = motion.create(StyledStepBase);
 
 type OnboardingActivationStepsProps = {
-  messages: OnboardingActivationMessage[];
-  messageIndex: number;
+	messages: OnboardingActivationMessage[];
+	messageIndex: number;
 };
 
 export const OnboardingActivationSteps = ({
-  messages,
-  messageIndex,
+	messages,
+	messageIndex,
 }: OnboardingActivationStepsProps) => {
-  const transition = useOnboardingMotionTransition();
+	const transition = useOnboardingMotionTransition();
 
-  return (
-    <StyledStepsContainer>
-      {messages.map((message, index) => {
-        const stepOffset = index - messageIndex;
-        const isVisible = stepOffset >= 0 && stepOffset < VISIBLE_STEP_COUNT;
+	return (
+		<StyledStepsContainer>
+			{messages.map((message, index) => {
+				const stepOffset = index - messageIndex;
+				const isVisible = stepOffset >= 0 && stepOffset < VISIBLE_STEP_COUNT;
 
-        return (
-          <StyledStep
-            key={message.id}
-            initial={false}
-            animate={{
-              opacity: isVisible ? STEP_OPACITIES[stepOffset] : 0,
-              y: stepOffset * STEP_HEIGHT_IN_PX,
-            }}
-            transition={transition}
-          >
-            <SubTitle>{message.content}</SubTitle>
-          </StyledStep>
-        );
-      })}
-    </StyledStepsContainer>
-  );
+				return (
+					<StyledStep
+						key={message.id}
+						initial={false}
+						animate={{
+							opacity: isVisible ? STEP_OPACITIES[stepOffset] : 0,
+							y: stepOffset * STEP_HEIGHT_IN_PX,
+						}}
+						transition={transition}
+					>
+						<SubTitle>{message.content}</SubTitle>
+					</StyledStep>
+				);
+			})}
+		</StyledStepsContainer>
+	);
 };

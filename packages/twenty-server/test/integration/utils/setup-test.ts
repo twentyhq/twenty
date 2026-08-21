@@ -1,29 +1,29 @@
-import nodeFetch from 'node-fetch';
-import { type JestConfigWithTsJest } from 'ts-jest';
-import 'tsconfig-paths/register';
+import nodeFetch from "node-fetch";
+import { type JestConfigWithTsJest } from "ts-jest";
+import "tsconfig-paths/register";
 
-import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { rawDataSource } from "src/database/typeorm/raw/raw.datasource";
 
-import { assertForcedFeatureFlagsAreEnabled } from './assert-forced-feature-flags-are-enabled.util';
-import { createApp } from './create-app';
+import { assertForcedFeatureFlagsAreEnabled } from "./assert-forced-feature-flags-are-enabled.util";
+import { createApp } from "./create-app";
 
 export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
-  // node-fetch rides node:http, which msw patches; native undici fetch
-  // escapes interception.
-  globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
+	// node-fetch rides node:http, which msw patches; native undici fetch
+	// escapes interception.
+	globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
 
-  const app = await createApp({});
+	const app = await createApp({});
 
-  if (!projectConfig.globals) {
-    throw new Error('No globals found in project config');
-  }
+	if (!projectConfig.globals) {
+		throw new Error("No globals found in project config");
+	}
 
-  await rawDataSource.initialize();
+	await rawDataSource.initialize();
 
-  await assertForcedFeatureFlagsAreEnabled(rawDataSource);
+	await assertForcedFeatureFlagsAreEnabled(rawDataSource);
 
-  await app.listen(projectConfig.globals.APP_PORT as number);
+	await app.listen(projectConfig.globals.APP_PORT as number);
 
-  global.app = app;
-  global.testDataSource = rawDataSource;
+	global.app = app;
+	global.testDataSource = rawDataSource;
 };

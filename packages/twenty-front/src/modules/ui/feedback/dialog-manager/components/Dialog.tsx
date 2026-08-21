@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
-import { Key } from 'ts-key-enum';
+import { styled } from "@linaria/react";
+import { motion } from "framer-motion";
+import { Key } from "ts-key-enum";
 
-import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
-import { DIALOG_FOCUS_ID } from '@/ui/feedback/dialog-manager/constants/DialogFocusId';
-import { DIALOG_LISTENER_ID } from '@/ui/feedback/dialog-manager/constants/DialogListenerId';
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { DIALOG_CLICK_OUTSIDE_ID } from "@/ui/feedback/dialog-manager/constants/DialogClickOutsideId";
+import { DIALOG_FOCUS_ID } from "@/ui/feedback/dialog-manager/constants/DialogFocusId";
+import { DIALOG_LISTENER_ID } from "@/ui/feedback/dialog-manager/constants/DialogListenerId";
+import { RootStackingContextZIndices } from "@/ui/layout/constants/RootStackingContextZIndices";
+import { useHotkeysOnFocusedElement } from "@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement";
+import { useListenClickOutside } from "@/ui/utilities/pointer-event/hooks/useListenClickOutside";
+import { useRef } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { Button } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledDialogOverlayBase = styled.div`
   align-items: center;
@@ -62,116 +62,116 @@ const StyledDialogButtonContainer = styled.div`
 `;
 
 export type DialogButtonOptions = Omit<
-  React.ComponentProps<typeof Button>,
-  'fullWidth'
+	React.ComponentProps<typeof Button>,
+	"fullWidth"
 > & {
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent,
-  ) => void;
-  role?: 'confirm';
+	onClick?: (
+		event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent,
+	) => void;
+	role?: "confirm";
 };
 
 export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
-  title?: string;
-  message?: string;
-  buttons?: DialogButtonOptions[];
-  children?: React.ReactNode;
-  className?: string;
-  onClose?: () => void;
+	title?: string;
+	message?: string;
+	buttons?: DialogButtonOptions[];
+	children?: React.ReactNode;
+	className?: string;
+	onClose?: () => void;
 };
 
 export const Dialog = ({
-  title,
-  message,
-  buttons = [],
-  children,
-  className,
-  onClose,
-  id,
+	title,
+	message,
+	buttons = [],
+	children,
+	className,
+	onClose,
+	id,
 }: DialogProps) => {
-  const dialogVariants = {
-    open: { opacity: 1 },
-    closed: { opacity: 0 },
-  };
+	const dialogVariants = {
+		open: { opacity: 1 },
+		closed: { opacity: 0 },
+	};
 
-  const containerVariants = {
-    open: { y: 0 },
-    closed: { y: '50vh' },
-  };
+	const containerVariants = {
+		open: { y: 0 },
+		closed: { y: "50vh" },
+	};
 
-  const handleEnter = (event: KeyboardEvent) => {
-    const confirmButton = buttons.find((button) => button.role === 'confirm');
+	const handleEnter = (event: KeyboardEvent) => {
+		const confirmButton = buttons.find((button) => button.role === "confirm");
 
-    event.preventDefault();
+		event.preventDefault();
 
-    if (isDefined(confirmButton)) {
-      confirmButton?.onClick?.(event);
-      onClose?.();
-    }
-  };
+		if (isDefined(confirmButton)) {
+			confirmButton?.onClick?.(event);
+			onClose?.();
+		}
+	};
 
-  const handleEscape = (event: KeyboardEvent) => {
-    event.preventDefault();
-    onClose?.();
-  };
+	const handleEscape = (event: KeyboardEvent) => {
+		event.preventDefault();
+		onClose?.();
+	};
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Enter],
-    callback: handleEnter,
-    focusId: DIALOG_FOCUS_ID,
-    dependencies: [buttons],
-  });
+	useHotkeysOnFocusedElement({
+		keys: [Key.Enter],
+		callback: handleEnter,
+		focusId: DIALOG_FOCUS_ID,
+		dependencies: [buttons],
+	});
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Escape],
-    callback: handleEscape,
-    focusId: DIALOG_FOCUS_ID,
-    dependencies: [handleEscape],
-  });
+	useHotkeysOnFocusedElement({
+		keys: [Key.Escape],
+		callback: handleEscape,
+		focusId: DIALOG_FOCUS_ID,
+		dependencies: [handleEscape],
+	});
 
-  const dialogRef = useRef<HTMLDivElement>(null);
+	const dialogRef = useRef<HTMLDivElement>(null);
 
-  useListenClickOutside({
-    refs: [dialogRef],
-    callback: () => {
-      onClose?.();
-    },
-    listenerId: DIALOG_LISTENER_ID,
-  });
+	useListenClickOutside({
+		refs: [dialogRef],
+		callback: () => {
+			onClose?.();
+		},
+		listenerId: DIALOG_LISTENER_ID,
+	});
 
-  return (
-    <StyledDialogOverlay
-      variants={dialogVariants}
-      initial="closed"
-      animate="open"
-      exit="closed"
-      className={className}
-      data-click-outside-id={DIALOG_CLICK_OUTSIDE_ID}
-    >
-      <StyledDialogContainer
-        variants={containerVariants}
-        transition={{ damping: 15, stiffness: 100 }}
-        id={id}
-        ref={dialogRef}
-      >
-        {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
-        {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
-        {children}
-        {buttons.map(({ accent, onClick, role, title: key, variant }) => (
-          <StyledDialogButtonContainer key={key}>
-            <Button
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                onClose?.();
-                onClick?.(event);
-              }}
-              fullWidth={true}
-              variant={variant ?? 'secondary'}
-              title={key}
-              {...{ accent, role }}
-            />
-          </StyledDialogButtonContainer>
-        ))}
-      </StyledDialogContainer>
-    </StyledDialogOverlay>
-  );
+	return (
+		<StyledDialogOverlay
+			variants={dialogVariants}
+			initial="closed"
+			animate="open"
+			exit="closed"
+			className={className}
+			data-click-outside-id={DIALOG_CLICK_OUTSIDE_ID}
+		>
+			<StyledDialogContainer
+				variants={containerVariants}
+				transition={{ damping: 15, stiffness: 100 }}
+				id={id}
+				ref={dialogRef}
+			>
+				{title && <StyledDialogTitle>{title}</StyledDialogTitle>}
+				{message && <StyledDialogMessage>{message}</StyledDialogMessage>}
+				{children}
+				{buttons.map(({ accent, onClick, role, title: key, variant }) => (
+					<StyledDialogButtonContainer key={key}>
+						<Button
+							onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+								onClose?.();
+								onClick?.(event);
+							}}
+							fullWidth={true}
+							variant={variant ?? "secondary"}
+							title={key}
+							{...{ accent, role }}
+						/>
+					</StyledDialogButtonContainer>
+				))}
+			</StyledDialogContainer>
+		</StyledDialogOverlay>
+	);
 };

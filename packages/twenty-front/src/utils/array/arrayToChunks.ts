@@ -1,10 +1,10 @@
 export const arrayToChunks = <T>(array: T[], size: number) => {
-  const arrayCopy = [...array];
-  const results = [];
+	const arrayCopy = [...array];
+	const results = [];
 
-  while (arrayCopy.length) {
-    results.push(arrayCopy.splice(0, size));
-  }
+	while (arrayCopy.length) {
+		results.push(arrayCopy.splice(0, size));
+	}
 
-  return results;
+	return results;
 };

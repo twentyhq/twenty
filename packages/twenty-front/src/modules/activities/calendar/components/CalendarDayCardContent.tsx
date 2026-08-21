@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { differenceInSeconds, endOfDay, format } from 'date-fns';
+import { styled } from "@linaria/react";
+import { differenceInSeconds, endOfDay, format } from "date-fns";
 
-import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
-import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { CardContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type TimelineCalendarEvent } from '~/generated/graphql';
+import { CalendarEventRow } from "@/activities/calendar/components/CalendarEventRow";
+import { getCalendarEventStartDate } from "@/activities/calendar/utils/getCalendarEventStartDate";
+import { CardContent } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { type TimelineCalendarEvent } from "~/generated/graphql";
 
 type CalendarDayCardContentProps = {
-  calendarEvents: TimelineCalendarEvent[];
-  divider?: boolean;
+	calendarEvents: TimelineCalendarEvent[];
+	divider?: boolean;
 };
 
 const StyledCardContentContainer = styled.div`
@@ -61,33 +61,33 @@ const StyledEventRowContainer = styled.div`
 `;
 
 export const CalendarDayCardContent = ({
-  calendarEvents,
-  divider,
+	calendarEvents,
+	divider,
 }: CalendarDayCardContentProps) => {
-  const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
-  const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
+	const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
+	const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
-  const weekDayLabel = format(endOfDayDate, 'EE');
-  const monthDayLabel = format(endOfDayDate, 'dd');
+	const weekDayLabel = format(endOfDayDate, "EE");
+	const monthDayLabel = format(endOfDayDate, "dd");
 
-  return (
-    <StyledCardContentContainer>
-      <StyledDayCardContent
-        divider={divider}
-        style={{ animationDelay: `${Math.max(0, dayEndsIn)}s` }}
-      >
-        <StyledDayContainer>
-          <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
-          <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
-        </StyledDayContainer>
-        <StyledEvents>
-          {calendarEvents.map((calendarEvent) => (
-            <StyledEventRowContainer key={calendarEvent.id}>
-              <CalendarEventRow calendarEvent={calendarEvent} />
-            </StyledEventRowContainer>
-          ))}
-        </StyledEvents>
-      </StyledDayCardContent>
-    </StyledCardContentContainer>
-  );
+	return (
+		<StyledCardContentContainer>
+			<StyledDayCardContent
+				divider={divider}
+				style={{ animationDelay: `${Math.max(0, dayEndsIn)}s` }}
+			>
+				<StyledDayContainer>
+					<StyledWeekDay>{weekDayLabel}</StyledWeekDay>
+					<StyledMonthDay>{monthDayLabel}</StyledMonthDay>
+				</StyledDayContainer>
+				<StyledEvents>
+					{calendarEvents.map((calendarEvent) => (
+						<StyledEventRowContainer key={calendarEvent.id}>
+							<CalendarEventRow calendarEvent={calendarEvent} />
+						</StyledEventRowContainer>
+					))}
+				</StyledEvents>
+			</StyledDayCardContent>
+		</StyledCardContentContainer>
+	);
 };

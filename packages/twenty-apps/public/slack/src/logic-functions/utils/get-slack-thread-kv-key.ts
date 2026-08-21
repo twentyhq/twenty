@@ -1,7 +1,7 @@
 export const getSlackThreadKvKey = ({
-  channelId,
-  threadTimestamp,
+	channelId,
+	threadTimestamp,
 }: {
-  channelId: string;
-  threadTimestamp: string;
+	channelId: string;
+	threadTimestamp: string;
 }): string => `slack-thread:${channelId}:${threadTimestamp}`;

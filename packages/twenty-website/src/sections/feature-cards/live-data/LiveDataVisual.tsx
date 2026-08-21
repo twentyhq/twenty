@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { IconChevronDown, IconList } from '@tabler/icons-react';
-import { useRef, useState, type RefObject } from 'react';
+import { styled } from "@linaria/react";
+import { IconChevronDown, IconList } from "@tabler/icons-react";
+import { useRef, useState, type RefObject } from "react";
 
-import { useScaleToFit } from '@/platform/motion';
-import { HalftoneCardBackdrop } from '@/platform/visuals/rigs/HalftoneCardBackdrop';
-import { EASING, FONT_WEIGHT, fontFamily } from '@/tokens';
-import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
+import { useScaleToFit } from "@/platform/motion";
+import { HalftoneCardBackdrop } from "@/platform/visuals/rigs/HalftoneCardBackdrop";
+import { EASING, FONT_WEIGHT, fontFamily } from "@/tokens";
+import { LIVE_DATA_SCENE } from "@/tokens/feature-scenes/live-data-scene";
 
-import { LiveDataFilterRow } from './LiveDataFilterRow';
-import { LiveDataTable } from './LiveDataTable';
-import { MarkerCursor } from '@/icons';
-import { TomCursor } from './TomCursor';
+import { LiveDataFilterRow } from "./LiveDataFilterRow";
+import { LiveDataTable } from "./LiveDataTable";
+import { MarkerCursor } from "@/icons";
+import { TomCursor } from "./TomCursor";
 import {
-  useLiveDataDemoTimeline,
-  type LiveDataPhase,
-} from './use-live-data-demo-timeline';
-import { useLiveDataFilterLayout } from './use-live-data-filter-layout';
+	useLiveDataDemoTimeline,
+	type LiveDataPhase,
+} from "./use-live-data-demo-timeline";
+import { useLiveDataFilterLayout } from "./use-live-data-filter-layout";
 
 const SCENE = LIVE_DATA_SCENE;
 const SCENE_WIDTH = 411;
@@ -31,37 +31,37 @@ const BOB_MARKER_LEFT = 196;
 const BOB_MARKER_TOP = 372;
 const BOB_ARROW_LEFT_OFFSET = 20;
 const DEFAULT_ADD_FILTER_LEFTS = {
-  docked: 152,
-  parked: 276,
+	docked: 152,
+	parked: 276,
 };
 
 const ALICE_IDLE_MARKER = { left: 238, rotation: 0, top: 90 };
 const BOB_READY_MARKER = {
-  bottom: SCENE_HEIGHT - (BOB_MARKER_TOP + MARKER_CURSOR_HEIGHT / 2),
-  right:
-    SCENE_WIDTH -
-    (BOB_MARKER_LEFT + BOB_ARROW_LEFT_OFFSET + MARKER_CURSOR_WIDTH / 2),
-  rotation: BOB_READY_CURSOR_ROTATION,
+	bottom: SCENE_HEIGHT - (BOB_MARKER_TOP + MARKER_CURSOR_HEIGHT / 2),
+	right:
+		SCENE_WIDTH -
+		(BOB_MARKER_LEFT + BOB_ARROW_LEFT_OFFSET + MARKER_CURSOR_WIDTH / 2),
+	rotation: BOB_READY_CURSOR_ROTATION,
 };
 const BOB_FILTER_MARKER = {
-  bottom: 301,
-  right: 50,
-  rotation: 132,
+	bottom: 301,
+	right: 50,
+	rotation: 132,
 };
 
 const ALICE_MARKER_POSITIONS: Record<
-  LiveDataPhase,
-  { left: number; rotation: number; top: number }
+	LiveDataPhase,
+	{ left: number; rotation: number; top: number }
 > = {
-  idle: ALICE_IDLE_MARKER,
-  'move-to-tag': { left: 286, rotation: -38, top: 246 },
-  'rename-tag': { left: 279, rotation: -18, top: 247 },
-  'return-to-start': ALICE_IDLE_MARKER,
-  'bob-ready': ALICE_IDLE_MARKER,
-  'move-to-filter': ALICE_IDLE_MARKER,
-  'remove-filter': ALICE_IDLE_MARKER,
-  'return-bob': ALICE_IDLE_MARKER,
-  settle: ALICE_IDLE_MARKER,
+	idle: ALICE_IDLE_MARKER,
+	"move-to-tag": { left: 286, rotation: -38, top: 246 },
+	"rename-tag": { left: 279, rotation: -18, top: 247 },
+	"return-to-start": ALICE_IDLE_MARKER,
+	"bob-ready": ALICE_IDLE_MARKER,
+	"move-to-filter": ALICE_IDLE_MARKER,
+	"remove-filter": ALICE_IDLE_MARKER,
+	"return-bob": ALICE_IDLE_MARKER,
+	settle: ALICE_IDLE_MARKER,
 };
 
 const VisualRoot = styled.div`
@@ -108,7 +108,7 @@ const TablePanel = styled.div<{ $active?: boolean }>`
   background: ${SCENE.colors.white};
   border-top-left-radius: 8px;
   box-shadow: ${({ $active }) =>
-    $active ? SCENE.colors.panelActiveShadow : SCENE.colors.panelBorderRing};
+		$active ? SCENE.colors.panelActiveShadow : SCENE.colors.panelBorderRing};
   contain: paint;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
@@ -118,7 +118,7 @@ const TablePanel = styled.div<{ $active?: boolean }>`
   position: absolute;
   right: 0px;
   transform: ${({ $active }) =>
-    `translate3d(0, 0, 0) scale(${$active ? TABLE_PANEL_HOVER_SCALE : 1})`};
+		`translate3d(0, 0, 0) scale(${$active ? TABLE_PANEL_HOVER_SCALE : 1})`};
   transform-origin: bottom right;
   transition:
     box-shadow 260ms ${EASING.standard},
@@ -208,7 +208,7 @@ const TableBodyArea = styled.div`
 
 const MarkerText = styled.span`
   color: ${SCENE.colors.black};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: 20px;
   font-weight: ${FONT_WEIGHT.medium};
   line-height: 17.011px;
@@ -239,7 +239,7 @@ const AnchoredMarkerGroup = styled.div<{ $bottom: number; $right: number }>`
 
 const MarkerCursorSlot = styled.div<{ $pressed?: boolean; $visible?: boolean }>`
   animation: ${({ $pressed, $visible }) =>
-    $pressed && $visible ? `cursor-pop 240ms ${EASING.standard}` : 'none'};
+		$pressed && $visible ? `cursor-pop 240ms ${EASING.standard}` : "none"};
   left: 0;
   opacity: ${({ $visible = true }) => ($visible ? 1 : 0)};
   position: absolute;
@@ -315,7 +315,7 @@ const TomMarkerMotion = styled.div<{ $hovered: boolean }>`
   flex-direction: column;
   gap: 10px;
   transform: ${({ $hovered }) =>
-    $hovered ? 'translate3d(12px, -14px, 0)' : 'translate3d(0, 0, 0)'};
+		$hovered ? "translate3d(12px, -14px, 0)" : "translate3d(0, 0, 0)"};
   transition: transform 260ms ${EASING.standard};
   width: 60px;
   will-change: transform;
@@ -348,7 +348,7 @@ const TomLabel = styled.div`
 const BobMarker = styled.div<{ $hidden?: boolean }>`
   left: ${BOB_MARKER_LEFT}px;
   opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
-  pointer-events: ${({ $hidden }) => ($hidden ? 'none' : 'auto')};
+  pointer-events: ${({ $hidden }) => ($hidden ? "none" : "auto")};
   position: absolute;
   top: ${BOB_MARKER_TOP}px;
   transition: opacity 180ms ease;
@@ -359,7 +359,7 @@ const BobMarker = styled.div<{ $hidden?: boolean }>`
 
 const BobMarkerMotion = styled.div<{ $hovered: boolean }>`
   transform: ${({ $hovered }) =>
-    $hovered ? 'translate3d(-14px, -16px, 0)' : 'translate3d(0, 0, 0)'};
+		$hovered ? "translate3d(-14px, -16px, 0)" : "translate3d(0, 0, 0)"};
   transition: transform 260ms ${EASING.standard};
   will-change: transform;
 `;
@@ -379,7 +379,7 @@ const BobLabel = styled.div<{ $withTopMargin?: boolean }>`
   display: inline-flex;
   height: 38px;
   justify-content: center;
-  margin-top: ${({ $withTopMargin }) => ($withTopMargin ? '10px' : '0')};
+  margin-top: ${({ $withTopMargin }) => ($withTopMargin ? "10px" : "0")};
   min-width: 60px;
   padding: 0 12px;
   position: relative;
@@ -387,175 +387,175 @@ const BobLabel = styled.div<{ $withTopMargin?: boolean }>`
 `;
 
 export function LiveDataVisual({
-  active = false,
-  backgroundImageSrc,
-  pointerTargetRef,
+	active = false,
+	backgroundImageSrc,
+	pointerTargetRef,
 }: {
-  active?: boolean;
-  backgroundImageSrc: string;
-  pointerTargetRef?: RefObject<HTMLElement | null>;
+	active?: boolean;
+	backgroundImageSrc: string;
+	pointerTargetRef?: RefObject<HTMLElement | null>;
 }) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const typeFilterRef = useRef<HTMLDivElement>(null);
-  const employeesFilterRef = useRef<HTMLDivElement>(null);
-  const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
-  const [isBobHovered, setIsBobHovered] = useState(false);
-  const [isTomHovered, setIsTomHovered] = useState(false);
-  const { phase, typedTagLabel } = useLiveDataDemoTimeline(active);
-  const addFilterLefts = useLiveDataFilterLayout(
-    typeFilterRef,
-    employeesFilterRef,
-  );
+	const rootRef = useRef<HTMLDivElement>(null);
+	const typeFilterRef = useRef<HTMLDivElement>(null);
+	const employeesFilterRef = useRef<HTMLDivElement>(null);
+	const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
+	const [isBobHovered, setIsBobHovered] = useState(false);
+	const [isTomHovered, setIsTomHovered] = useState(false);
+	const { phase, typedTagLabel } = useLiveDataDemoTimeline(active);
+	const addFilterLefts = useLiveDataFilterLayout(
+		typeFilterRef,
+		employeesFilterRef,
+	);
 
-  const aliceMarker = ALICE_MARKER_POSITIONS[phase];
-  const bobCursor = active
-    ? phase === 'move-to-filter' || phase === 'remove-filter'
-      ? BOB_FILTER_MARKER
-      : BOB_READY_MARKER
-    : null;
-  const isBobCursorVisible = active;
-  const hasEmployeesFilterBeenRemoved =
-    phase === 'remove-filter' || phase === 'return-bob' || phase === 'settle';
-  const isFirstTagRenamed =
-    phase === 'rename-tag' ||
-    phase === 'return-to-start' ||
-    phase === 'bob-ready' ||
-    phase === 'move-to-filter' ||
-    phase === 'remove-filter' ||
-    phase === 'return-bob' ||
-    phase === 'settle';
-  const isFirstTagHoveredByAlice =
-    phase === 'move-to-tag' || phase === 'rename-tag';
-  const isAddFilterDocked = phase === 'return-bob' || phase === 'settle';
-  const addFilterLeft = isAddFilterDocked
-    ? (addFilterLefts?.docked ?? DEFAULT_ADD_FILTER_LEFTS.docked)
-    : (addFilterLefts?.parked ?? DEFAULT_ADD_FILTER_LEFTS.parked);
-  const viewCount = hasEmployeesFilterBeenRemoved ? 11 : 9;
+	const aliceMarker = ALICE_MARKER_POSITIONS[phase];
+	const bobCursor = active
+		? phase === "move-to-filter" || phase === "remove-filter"
+			? BOB_FILTER_MARKER
+			: BOB_READY_MARKER
+		: null;
+	const isBobCursorVisible = active;
+	const hasEmployeesFilterBeenRemoved =
+		phase === "remove-filter" || phase === "return-bob" || phase === "settle";
+	const isFirstTagRenamed =
+		phase === "rename-tag" ||
+		phase === "return-to-start" ||
+		phase === "bob-ready" ||
+		phase === "move-to-filter" ||
+		phase === "remove-filter" ||
+		phase === "return-bob" ||
+		phase === "settle";
+	const isFirstTagHoveredByAlice =
+		phase === "move-to-tag" || phase === "rename-tag";
+	const isAddFilterDocked = phase === "return-bob" || phase === "settle";
+	const addFilterLeft = isAddFilterDocked
+		? (addFilterLefts?.docked ?? DEFAULT_ADD_FILTER_LEFTS.docked)
+		: (addFilterLefts?.parked ?? DEFAULT_ADD_FILTER_LEFTS.parked);
+	const viewCount = hasEmployeesFilterBeenRemoved ? 11 : 9;
 
-  return (
-    <VisualRoot aria-hidden ref={rootRef}>
-      <SceneViewport $sceneScale={sceneScale}>
-        <SceneFrame>
-          <SceneBackdrop>
-            <HalftoneCardBackdrop
-              active={active}
-              config={SCENE.backdrop}
-              imageUrl={backgroundImageSrc}
-              pointerTargetRef={pointerTargetRef ?? rootRef}
-            />
-          </SceneBackdrop>
-          <SceneContent>
-            <AnimatedMarkerGroup
-              $left={aliceMarker.left}
-              $top={aliceMarker.top}
-            >
-              <MarkerLabelTop>
-                <AliceLabel>
-                  <MarkerText>Alice</MarkerText>
-                </AliceLabel>
-              </MarkerLabelTop>
-              <MarkerCursorSlot $pressed={phase === 'rename-tag'} $visible>
-                <MarkerCursor
-                  color={SCENE.colors.yellow}
-                  rotation={aliceMarker.rotation}
-                />
-              </MarkerCursorSlot>
-            </AnimatedMarkerGroup>
-            {bobCursor ? (
-              <AnchoredMarkerGroup
-                $bottom={bobCursor.bottom}
-                $right={bobCursor.right}
-              >
-                <MarkerCursorSlot $pressed={phase === 'remove-filter'} $visible>
-                  <MarkerCursor
-                    color={SCENE.colors.bobCursor}
-                    rotation={bobCursor.rotation}
-                  />
-                </MarkerCursorSlot>
-                <MarkerLabelBottom>
-                  <BobLabel>
-                    <MarkerText>Bob</MarkerText>
-                  </BobLabel>
-                </MarkerLabelBottom>
-              </AnchoredMarkerGroup>
-            ) : null}
+	return (
+		<VisualRoot aria-hidden ref={rootRef}>
+			<SceneViewport $sceneScale={sceneScale}>
+				<SceneFrame>
+					<SceneBackdrop>
+						<HalftoneCardBackdrop
+							active={active}
+							config={SCENE.backdrop}
+							imageUrl={backgroundImageSrc}
+							pointerTargetRef={pointerTargetRef ?? rootRef}
+						/>
+					</SceneBackdrop>
+					<SceneContent>
+						<AnimatedMarkerGroup
+							$left={aliceMarker.left}
+							$top={aliceMarker.top}
+						>
+							<MarkerLabelTop>
+								<AliceLabel>
+									<MarkerText>Alice</MarkerText>
+								</AliceLabel>
+							</MarkerLabelTop>
+							<MarkerCursorSlot $pressed={phase === "rename-tag"} $visible>
+								<MarkerCursor
+									color={SCENE.colors.yellow}
+									rotation={aliceMarker.rotation}
+								/>
+							</MarkerCursorSlot>
+						</AnimatedMarkerGroup>
+						{bobCursor ? (
+							<AnchoredMarkerGroup
+								$bottom={bobCursor.bottom}
+								$right={bobCursor.right}
+							>
+								<MarkerCursorSlot $pressed={phase === "remove-filter"} $visible>
+									<MarkerCursor
+										color={SCENE.colors.bobCursor}
+										rotation={bobCursor.rotation}
+									/>
+								</MarkerCursorSlot>
+								<MarkerLabelBottom>
+									<BobLabel>
+										<MarkerText>Bob</MarkerText>
+									</BobLabel>
+								</MarkerLabelBottom>
+							</AnchoredMarkerGroup>
+						) : null}
 
-            <TablePanel $active={active}>
-              <ViewRow>
-                <ViewSwitcher>
-                  <ViewSwitcherLeft>
-                    <ViewSwitcherIcon>
-                      <IconList
-                        aria-hidden
-                        color={SCENE.colors.textSecondary}
-                        size={16}
-                        stroke={TABLER_STROKE}
-                      />
-                    </ViewSwitcherIcon>
-                    <ViewLabel>All</ViewLabel>
-                    <ViewDot />
-                    <ViewCount>{viewCount}</ViewCount>
-                  </ViewSwitcherLeft>
-                  <ViewSwitcherChevron>
-                    <IconChevronDown
-                      aria-hidden
-                      color={SCENE.colors.textLight}
-                      size={14}
-                      stroke={TABLER_STROKE}
-                    />
-                  </ViewSwitcherChevron>
-                </ViewSwitcher>
-              </ViewRow>
+						<TablePanel $active={active}>
+							<ViewRow>
+								<ViewSwitcher>
+									<ViewSwitcherLeft>
+										<ViewSwitcherIcon>
+											<IconList
+												aria-hidden
+												color={SCENE.colors.textSecondary}
+												size={16}
+												stroke={TABLER_STROKE}
+											/>
+										</ViewSwitcherIcon>
+										<ViewLabel>All</ViewLabel>
+										<ViewDot />
+										<ViewCount>{viewCount}</ViewCount>
+									</ViewSwitcherLeft>
+									<ViewSwitcherChevron>
+										<IconChevronDown
+											aria-hidden
+											color={SCENE.colors.textLight}
+											size={14}
+											stroke={TABLER_STROKE}
+										/>
+									</ViewSwitcherChevron>
+								</ViewSwitcher>
+							</ViewRow>
 
-              <LiveDataFilterRow
-                addFilterLeft={addFilterLeft}
-                employeesFilterRef={employeesFilterRef}
-                isAddFilterAnimated={addFilterLefts !== null}
-                phase={phase}
-                typeFilterRef={typeFilterRef}
-              />
+							<LiveDataFilterRow
+								addFilterLeft={addFilterLeft}
+								employeesFilterRef={employeesFilterRef}
+								isAddFilterAnimated={addFilterLefts !== null}
+								phase={phase}
+								typeFilterRef={typeFilterRef}
+							/>
 
-              <TableBodyArea>
-                <LiveDataTable
-                  editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ''}
-                  isFirstTagEdited={isFirstTagRenamed}
-                  isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
-                  showExtendedRows={hasEmployeesFilterBeenRemoved}
-                />
-              </TableBodyArea>
-            </TablePanel>
+							<TableBodyArea>
+								<LiveDataTable
+									editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ""}
+									isFirstTagEdited={isFirstTagRenamed}
+									isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
+									showExtendedRows={hasEmployeesFilterBeenRemoved}
+								/>
+							</TableBodyArea>
+						</TablePanel>
 
-            <TomMarker
-              onPointerEnter={() => setIsTomHovered(true)}
-              onPointerLeave={() => setIsTomHovered(false)}
-            >
-              <TomMarkerMotion $hovered={isTomHovered}>
-                <TomArrow>
-                  <TomCursor />
-                </TomArrow>
-                <TomLabel>
-                  <MarkerText>Tom</MarkerText>
-                </TomLabel>
-              </TomMarkerMotion>
-            </TomMarker>
+						<TomMarker
+							onPointerEnter={() => setIsTomHovered(true)}
+							onPointerLeave={() => setIsTomHovered(false)}
+						>
+							<TomMarkerMotion $hovered={isTomHovered}>
+								<TomArrow>
+									<TomCursor />
+								</TomArrow>
+								<TomLabel>
+									<MarkerText>Tom</MarkerText>
+								</TomLabel>
+							</TomMarkerMotion>
+						</TomMarker>
 
-            <BobMarker
-              $hidden={isBobCursorVisible}
-              onPointerEnter={() => setIsBobHovered(true)}
-              onPointerLeave={() => setIsBobHovered(false)}
-            >
-              <BobMarkerMotion $hovered={isBobHovered}>
-                <BobArrow>
-                  <MarkerCursor color={SCENE.colors.bobCursor} rotation={135} />
-                </BobArrow>
-                <BobLabel $withTopMargin>
-                  <MarkerText>Bob</MarkerText>
-                </BobLabel>
-              </BobMarkerMotion>
-            </BobMarker>
-          </SceneContent>
-        </SceneFrame>
-      </SceneViewport>
-    </VisualRoot>
-  );
+						<BobMarker
+							$hidden={isBobCursorVisible}
+							onPointerEnter={() => setIsBobHovered(true)}
+							onPointerLeave={() => setIsBobHovered(false)}
+						>
+							<BobMarkerMotion $hovered={isBobHovered}>
+								<BobArrow>
+									<MarkerCursor color={SCENE.colors.bobCursor} rotation={135} />
+								</BobArrow>
+								<BobLabel $withTopMargin>
+									<MarkerText>Bob</MarkerText>
+								</BobLabel>
+							</BobMarkerMotion>
+						</BobMarker>
+					</SceneContent>
+				</SceneFrame>
+			</SceneViewport>
+		</VisualRoot>
+	);
 }

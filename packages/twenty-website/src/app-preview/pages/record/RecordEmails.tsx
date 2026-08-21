@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { IconPlus } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { IconPlus } from "@tabler/icons-react";
 
-import { type RecordEmail } from '../../types';
-import { AvatarGroup } from './AvatarGroup';
-import { RECORD_PANEL_CHROME } from './RecordPanelChrome';
+import { type RecordEmail } from "../../types";
+import { AvatarGroup } from "./AvatarGroup";
+import { RECORD_PANEL_CHROME } from "./RecordPanelChrome";
 
 const EmailHeading = styled.div`
   align-items: center;
@@ -67,47 +67,47 @@ const ReceivedAt = styled.span`
 `;
 
 const {
-  ActivityRowBox,
-  ListCard,
-  TabAddButton,
-  TabHeader,
-  TabHeaderCount,
-  TabHeaderLabel,
-  TabHeaderTitle,
-  TabSection,
+	ActivityRowBox,
+	ListCard,
+	TabAddButton,
+	TabHeader,
+	TabHeaderCount,
+	TabHeaderLabel,
+	TabHeaderTitle,
+	TabSection,
 } = RECORD_PANEL_CHROME;
 
 export function RecordEmails({ emails }: { emails: RecordEmail[] }) {
-  return (
-    <TabSection>
-      <TabHeader>
-        <TabHeaderLabel>
-          <TabHeaderTitle>Inbox</TabHeaderTitle>
-          <TabHeaderCount>{emails.length}</TabHeaderCount>
-        </TabHeaderLabel>
-        <TabAddButton>
-          <IconPlus size={14} stroke={2} />
-          Compose
-        </TabAddButton>
-      </TabHeader>
-      <ListCard>
-        {emails.map((email, index) => (
-          <ActivityRowBox $index={index} key={email.id}>
-            <EmailHeading>
-              <AvatarGroup people={email.participants} size={16} />
-              <SenderNames>
-                {email.participants.map((person) => person.name).join(', ')}
-              </SenderNames>
-              <ThreadCount>{email.count}</ThreadCount>
-            </EmailHeading>
-            <SubjectBody>
-              <EmailSubject>{email.subject}</EmailSubject>
-              <EmailBody>{email.body}</EmailBody>
-            </SubjectBody>
-            <ReceivedAt>{email.date}</ReceivedAt>
-          </ActivityRowBox>
-        ))}
-      </ListCard>
-    </TabSection>
-  );
+	return (
+		<TabSection>
+			<TabHeader>
+				<TabHeaderLabel>
+					<TabHeaderTitle>Inbox</TabHeaderTitle>
+					<TabHeaderCount>{emails.length}</TabHeaderCount>
+				</TabHeaderLabel>
+				<TabAddButton>
+					<IconPlus size={14} stroke={2} />
+					Compose
+				</TabAddButton>
+			</TabHeader>
+			<ListCard>
+				{emails.map((email, index) => (
+					<ActivityRowBox $index={index} key={email.id}>
+						<EmailHeading>
+							<AvatarGroup people={email.participants} size={16} />
+							<SenderNames>
+								{email.participants.map((person) => person.name).join(", ")}
+							</SenderNames>
+							<ThreadCount>{email.count}</ThreadCount>
+						</EmailHeading>
+						<SubjectBody>
+							<EmailSubject>{email.subject}</EmailSubject>
+							<EmailBody>{email.body}</EmailBody>
+						</SubjectBody>
+						<ReceivedAt>{email.date}</ReceivedAt>
+					</ActivityRowBox>
+				))}
+			</ListCard>
+		</TabSection>
+	);
 }

@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { GUTTER, MAX_CONTENT_WIDTH_PX, mediaUp, spacing } from '@/tokens';
+import { GUTTER, MAX_CONTENT_WIDTH_PX, mediaUp, spacing } from "@/tokens";
 
 // Owns the page's horizontal gutter and max content width. SectionShell is
 // the standard consumer; page chrome (menu, footer) composes it directly.
@@ -13,7 +13,7 @@ export const Container = styled.div`
   padding-inline: ${spacing(GUTTER.base)};
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding-inline: ${spacing(GUTTER.md)};
   }
 

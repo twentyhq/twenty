@@ -1,35 +1,35 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { type ReactNode, useContext } from 'react';
-import { t } from '@lingui/core/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
-import { IconChevronRight } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/data-display';
-import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ReactNode, useContext } from "react";
+import { t } from "@lingui/core/macro";
+import { Card, CardContent } from "twenty-ui/surfaces";
+import { IconChevronRight } from "twenty-ui/icon";
+import { Pill } from "twenty-ui/data-display";
+import { isDefined } from "twenty-shared/utils";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsCardProps = {
-  description?: string;
-  disabled?: boolean;
-  soon?: boolean;
-  Icon: ReactNode;
-  iconColor?: string;
-  onClick?: () => void;
-  title: string;
-  className?: string;
-  Status?: ReactNode;
+	description?: string;
+	disabled?: boolean;
+	soon?: boolean;
+	Icon: ReactNode;
+	iconColor?: string;
+	onClick?: () => void;
+	title: string;
+	className?: string;
+	Status?: ReactNode;
 };
 
 const StyledCardWrapper = styled.div<{
-  disabled?: boolean;
-  clickable?: boolean;
+	disabled?: boolean;
+	clickable?: boolean;
 }>`
   color: ${({ disabled }) =>
-    disabled
-      ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.font.color.tertiary};
+		disabled
+			? themeCssVariables.font.color.extraLight
+			: themeCssVariables.font.color.tertiary};
   cursor: ${({ disabled, clickable }) =>
-    disabled ? 'not-allowed' : clickable ? 'pointer' : 'default'};
+		disabled ? "not-allowed" : clickable ? "pointer" : "default"};
   width: 100%;
 
   > * {
@@ -59,9 +59,9 @@ const StyledHeader = styled.div`
 
 const StyledTitle = styled.div<{ disabled?: boolean }>`
   color: ${({ disabled }) =>
-    disabled
-      ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.font.color.secondary};
+		disabled
+			? themeCssVariables.font.color.extraLight
+			: themeCssVariables.font.color.secondary};
   display: flex;
   flex: 1 0 auto;
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -82,14 +82,14 @@ const StyledDescription = styled.div`
 `;
 
 const StyledIconContainer = styled.div<{
-  disabled?: boolean;
-  iconColor?: string;
+	disabled?: boolean;
+	iconColor?: string;
 }>`
   align-items: center;
   color: ${({ disabled, iconColor }) =>
-    disabled
-      ? themeCssVariables.font.color.extraLight
-      : (iconColor ?? 'inherit')};
+		disabled
+			? themeCssVariables.font.color.extraLight
+			: (iconColor ?? "inherit")};
   display: flex;
   height: 24px;
   justify-content: center;
@@ -97,46 +97,46 @@ const StyledIconContainer = styled.div<{
 `;
 
 export const SettingsCard = ({
-  description,
-  soon,
-  disabled = soon,
-  Icon,
-  iconColor,
-  onClick,
-  title,
-  className,
-  Status,
+	description,
+	soon,
+	disabled = soon,
+	Icon,
+	iconColor,
+	onClick,
+	title,
+	className,
+	Status,
 }: SettingsCardProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledCardWrapper
-      disabled={disabled}
-      clickable={!!onClick}
-      className={className}
-    >
-      <Card onClick={disabled ? undefined : onClick} rounded={true} fullWidth>
-        <StyledCardContentContainer>
-          <CardContent>
-            <StyledHeader>
-              <StyledIconContainer disabled={disabled} iconColor={iconColor}>
-                {Icon}
-              </StyledIconContainer>
-              <StyledTitle disabled={disabled}>
-                {title}
-                {soon && <Pill label={t`Soon`} />}
-              </StyledTitle>
-              {isDefined(Status) && Status}
-              <StyledIconChevronRightContainer>
-                <IconChevronRight size={theme.icon.size.sm} />
-              </StyledIconChevronRightContainer>
-            </StyledHeader>
-            {description && (
-              <StyledDescription>{description}</StyledDescription>
-            )}
-          </CardContent>
-        </StyledCardContentContainer>
-      </Card>
-    </StyledCardWrapper>
-  );
+	return (
+		<StyledCardWrapper
+			disabled={disabled}
+			clickable={!!onClick}
+			className={className}
+		>
+			<Card onClick={disabled ? undefined : onClick} rounded={true} fullWidth>
+				<StyledCardContentContainer>
+					<CardContent>
+						<StyledHeader>
+							<StyledIconContainer disabled={disabled} iconColor={iconColor}>
+								{Icon}
+							</StyledIconContainer>
+							<StyledTitle disabled={disabled}>
+								{title}
+								{soon && <Pill label={t`Soon`} />}
+							</StyledTitle>
+							{isDefined(Status) && Status}
+							<StyledIconChevronRightContainer>
+								<IconChevronRight size={theme.icon.size.sm} />
+							</StyledIconChevronRightContainer>
+						</StyledHeader>
+						{description && (
+							<StyledDescription>{description}</StyledDescription>
+						)}
+					</CardContent>
+				</StyledCardContentContainer>
+			</Card>
+		</StyledCardWrapper>
+	);
 };

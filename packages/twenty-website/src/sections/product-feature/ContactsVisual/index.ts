@@ -1,1 +1,1 @@
-export { ContactsVisual } from './ContactsVisual';
+export { ContactsVisual } from "./ContactsVisual";

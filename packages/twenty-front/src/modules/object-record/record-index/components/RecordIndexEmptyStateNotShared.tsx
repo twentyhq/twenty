@@ -1,15 +1,15 @@
-import { type NonReadableViewFieldInfo } from '@/object-record/record-index/hooks/useHasCurrentViewNonReadableFields';
-import { getNonReadableViewFieldSubTitle } from '@/object-record/record-index/utils/getNonReadableViewFieldSubTitle';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { type NonReadableViewFieldInfo } from "@/object-record/record-index/hooks/useHasCurrentViewNonReadableFields";
+import { getNonReadableViewFieldSubTitle } from "@/object-record/record-index/utils/getNonReadableViewFieldSubTitle";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { isDefined } from "twenty-shared/utils";
 import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+	AnimatedPlaceholder,
+	AnimatedPlaceholderEmptyContainer,
+	AnimatedPlaceholderEmptySubTitle,
+	AnimatedPlaceholderEmptyTextContainer,
+	AnimatedPlaceholderEmptyTitle,
+} from "twenty-ui/feedback";
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
   height: 100%;
@@ -17,29 +17,29 @@ const StyledEmptyPlaceholderOuterContainer = styled.div`
 `;
 
 type RecordIndexEmptyStateNotSharedProps = {
-  nonReadableViewFieldInfo?: NonReadableViewFieldInfo;
+	nonReadableViewFieldInfo?: NonReadableViewFieldInfo;
 };
 
 export const RecordIndexEmptyStateNotShared = ({
-  nonReadableViewFieldInfo,
+	nonReadableViewFieldInfo,
 }: RecordIndexEmptyStateNotSharedProps) => {
-  return (
-    <StyledEmptyPlaceholderOuterContainer>
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="notShared" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {isDefined(nonReadableViewFieldInfo)
-              ? t`View not shared`
-              : t`Object not shared`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {isDefined(nonReadableViewFieldInfo)
-              ? getNonReadableViewFieldSubTitle(nonReadableViewFieldInfo)
-              : t`You don't have access to this object.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
-    </StyledEmptyPlaceholderOuterContainer>
-  );
+	return (
+		<StyledEmptyPlaceholderOuterContainer>
+			<AnimatedPlaceholderEmptyContainer>
+				<AnimatedPlaceholder type="notShared" />
+				<AnimatedPlaceholderEmptyTextContainer>
+					<AnimatedPlaceholderEmptyTitle>
+						{isDefined(nonReadableViewFieldInfo)
+							? t`View not shared`
+							: t`Object not shared`}
+					</AnimatedPlaceholderEmptyTitle>
+					<AnimatedPlaceholderEmptySubTitle>
+						{isDefined(nonReadableViewFieldInfo)
+							? getNonReadableViewFieldSubTitle(nonReadableViewFieldInfo)
+							: t`You don't have access to this object.`}
+					</AnimatedPlaceholderEmptySubTitle>
+				</AnimatedPlaceholderEmptyTextContainer>
+			</AnimatedPlaceholderEmptyContainer>
+		</StyledEmptyPlaceholderOuterContainer>
+	);
 };

@@ -1,12 +1,12 @@
 // Untyped JS mirror of the interaction helpers, baked into exported standalone
 // HTML/components. Keep in sync with engine/interaction-state.ts.
 export const HALFTONE_INTERACTION_RUNTIME_SOURCE = {
-  springStep: `
+	springStep: `
 function applySpringStep(current, target, velocity, strength, damping) {
   const nextVelocity = (velocity + (target - current) * strength) * damping;
   return { value: current + nextVelocity, velocity: nextVelocity };
 }`,
-  reset: `
+	reset: `
 function resetInteractionState(interactionState) {
   interactionState.dragging = false;
   interactionState.mouseX = 0.5;

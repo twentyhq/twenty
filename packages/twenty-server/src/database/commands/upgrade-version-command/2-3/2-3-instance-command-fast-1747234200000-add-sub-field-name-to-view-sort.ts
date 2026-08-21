@@ -1,7 +1,7 @@
-import { QueryRunner } from 'typeorm';
+import { QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { FastInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface";
 
 // The `subFieldName` column is officially introduced in 2.5
 // (see `2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort.ts`),
@@ -19,17 +19,19 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // can trigger that cascade. The 2.5 instance command is idempotent (uses
 // `IF NOT EXISTS`), so cross-upgrade callers see it as a no-op while
 // fresh-from-2.5 install paths still create the column there as before.
-@RegisteredInstanceCommand('2.3.0', 1747234200000)
-export class AddSubFieldNameToViewSortEarlyFastInstanceCommand implements FastInstanceCommand {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."viewSort" ADD COLUMN IF NOT EXISTS "subFieldName" character varying`,
-    );
-  }
+@RegisteredInstanceCommand("2.3.0", 1747234200000)
+export class AddSubFieldNameToViewSortEarlyFastInstanceCommand
+	implements FastInstanceCommand
+{
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`ALTER TABLE "core"."viewSort" ADD COLUMN IF NOT EXISTS "subFieldName" character varying`,
+		);
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."viewSort" DROP COLUMN IF EXISTS "subFieldName"`,
-    );
-  }
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(
+			`ALTER TABLE "core"."viewSort" DROP COLUMN IF EXISTS "subFieldName"`,
+		);
+	}
 }

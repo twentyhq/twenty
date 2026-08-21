@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { StyledEmailFieldLabel } from "@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel";
+import { TextInput } from "@/ui/input/components/TextInput";
 
 const StyledRow = styled.div`
   align-items: center;
@@ -38,37 +38,37 @@ const StyledColorSwatchInput = styled.input`
 const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
-const COLOR_SWATCH_FALLBACK = '#ffffff';
+const COLOR_SWATCH_FALLBACK = "#ffffff";
 
 type EmailColorInputProps = {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
+	label: string;
+	value: string;
+	onChange: (value: string) => void;
+	placeholder?: string;
 };
 
 export const EmailColorInput = ({
-  label,
-  value,
-  onChange,
-  placeholder,
+	label,
+	value,
+	onChange,
+	placeholder,
 }: EmailColorInputProps) => {
-  return (
-    <div>
-      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
-      <StyledRow>
-        <StyledColorSwatchInput
-          type="color"
-          value={HEX_COLOR_PATTERN.test(value) ? value : COLOR_SWATCH_FALLBACK}
-          onChange={(event) => onChange(event.target.value)}
-        />
-        <TextInput
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder ?? COLOR_SWATCH_FALLBACK}
-          fullWidth
-        />
-      </StyledRow>
-    </div>
-  );
+	return (
+		<div>
+			<StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
+			<StyledRow>
+				<StyledColorSwatchInput
+					type="color"
+					value={HEX_COLOR_PATTERN.test(value) ? value : COLOR_SWATCH_FALLBACK}
+					onChange={(event) => onChange(event.target.value)}
+				/>
+				<TextInput
+					value={value}
+					onChange={onChange}
+					placeholder={placeholder ?? COLOR_SWATCH_FALLBACK}
+					fullWidth
+				/>
+			</StyledRow>
+		</div>
+	);
 };

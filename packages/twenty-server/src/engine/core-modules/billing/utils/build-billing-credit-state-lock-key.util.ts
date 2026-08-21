@@ -8,4 +8,4 @@
 // steps, and a reader computing availability in between either counts a grant
 // that the writer then adds again, or installs a balance that predates it.
 export const buildBillingCreditStateLockKey = (workspaceId: string): string =>
-  `billing-credit-state:${workspaceId}`;
+	`billing-credit-state:${workspaceId}`;

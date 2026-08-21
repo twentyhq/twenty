@@ -1,5 +1,5 @@
 /* oxlint-disable no-console */
-import { graphqlRequest, writeGeneratedFile } from './utils.js';
+import { graphqlRequest, writeGeneratedFile } from "./utils.js";
 
 // Apollo Client automatically adds __typename to every object level;
 // raw fetch does not, so we include it explicitly here.
@@ -150,19 +150,19 @@ const METADATA_QUERY = `
 `;
 
 export const generateObjectMetadata = async (token: string) => {
-  console.log('Fetching object metadata from /metadata ...');
+	console.log("Fetching object metadata from /metadata ...");
 
-  const metadata = await graphqlRequest('/metadata', METADATA_QUERY, token);
+	const metadata = await graphqlRequest("/metadata", METADATA_QUERY, token);
 
-  writeGeneratedFile(
-    'metadata/objects/mock-objects-metadata.ts',
-    'mockedStandardObjectMetadataQueryResult',
-    'ObjectMetadataItemsQuery',
-    "import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';",
-    metadata,
-  );
+	writeGeneratedFile(
+		"metadata/objects/mock-objects-metadata.ts",
+		"mockedStandardObjectMetadataQueryResult",
+		"ObjectMetadataItemsQuery",
+		"import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';",
+		metadata,
+	);
 
-  return metadata as {
-    objects: { edges: { node: Record<string, unknown> }[] };
-  };
+	return metadata as {
+		objects: { edges: { node: Record<string, unknown> }[] };
+	};
 };

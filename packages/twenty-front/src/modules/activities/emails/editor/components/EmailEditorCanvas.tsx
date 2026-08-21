@@ -1,9 +1,9 @@
-import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
-import { styled } from '@linaria/react';
-import { useEditorState } from '@tiptap/react';
-import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AdvancedTextEditor } from "@/advanced-text-editor/components/AdvancedTextEditor";
+import { type AdvancedTextEditorComponentProps } from "@/advanced-text-editor/types/AdvancedTextEditorComponentProps";
+import { styled } from "@linaria/react";
+import { useEditorState } from "@tiptap/react";
+import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledCanvasBackdrop = styled.div`
   box-sizing: border-box;
@@ -33,44 +33,44 @@ const StyledCanvasPage = styled.div`
 type EmailEditorCanvasProps = AdvancedTextEditorComponentProps;
 
 export const EmailEditorCanvas = ({
-  editor,
-  readonly,
-  minHeight,
+	editor,
+	readonly,
+	minHeight,
 }: EmailEditorCanvasProps) => {
-  const storedCanvasTheme = useEditorState({
-    editor,
-    selector: ({ editor: currentEditor }) =>
-      resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
-  });
-  const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
+	const storedCanvasTheme = useEditorState({
+		editor,
+		selector: ({ editor: currentEditor }) =>
+			resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
+	});
+	const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
 
-  return (
-    <StyledCanvasBackdrop
-      style={{
-        backgroundColor: canvasTheme.pageBackground,
-        padding: canvasTheme.pagePadding,
-      }}
-    >
-      <StyledCanvasPage
-        style={{
-          backgroundColor: canvasTheme.bodyBackground || undefined,
-          border:
-            canvasTheme.borderWidth !== '' && canvasTheme.borderWidth !== '0px'
-              ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
-              : undefined,
-          borderRadius: canvasTheme.cornerRadius,
-          color: canvasTheme.textColor,
-          padding: canvasTheme.padding,
-          textAlign: canvasTheme.textAlign,
-          width: canvasTheme.width,
-        }}
-      >
-        <AdvancedTextEditor
-          editor={editor}
-          readonly={readonly}
-          minHeight={minHeight}
-        />
-      </StyledCanvasPage>
-    </StyledCanvasBackdrop>
-  );
+	return (
+		<StyledCanvasBackdrop
+			style={{
+				backgroundColor: canvasTheme.pageBackground,
+				padding: canvasTheme.pagePadding,
+			}}
+		>
+			<StyledCanvasPage
+				style={{
+					backgroundColor: canvasTheme.bodyBackground || undefined,
+					border:
+						canvasTheme.borderWidth !== "" && canvasTheme.borderWidth !== "0px"
+							? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
+							: undefined,
+					borderRadius: canvasTheme.cornerRadius,
+					color: canvasTheme.textColor,
+					padding: canvasTheme.padding,
+					textAlign: canvasTheme.textAlign,
+					width: canvasTheme.width,
+				}}
+			>
+				<AdvancedTextEditor
+					editor={editor}
+					readonly={readonly}
+					minHeight={minHeight}
+				/>
+			</StyledCanvasPage>
+		</StyledCanvasBackdrop>
+	);
 };

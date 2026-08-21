@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const VERIFY_EMAILING_DOMAIN = gql`
   mutation VerifyEmailingDomain($id: String!) {

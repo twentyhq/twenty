@@ -1,117 +1,117 @@
-import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { Equal, In, type FindOperator } from 'typeorm';
+import { type ObjectRecord } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
+import { Equal, In, type FindOperator } from "typeorm";
 
 import {
-  type ConflictingFieldGroup,
-  type ConflictingFieldValue,
-  type ConflictingProperty,
-} from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
-import { getValueFromPath } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-value-from-path.util';
+	type ConflictingFieldGroup,
+	type ConflictingFieldValue,
+	type ConflictingProperty,
+} from "src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type";
+import { getValueFromPath } from "src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-value-from-path.util";
 
 type WhereCondition = Record<string, FindOperator<ConflictingFieldValue>>;
 
 const buildCompositeConditionKey = (
-  conditionEntries: [string, ConflictingFieldValue][],
+	conditionEntries: [string, ConflictingFieldValue][],
 ): string => {
-  const sortedEntries = [...conditionEntries].sort(([columnA], [columnB]) =>
-    columnA.localeCompare(columnB),
-  );
+	const sortedEntries = [...conditionEntries].sort(([columnA], [columnB]) =>
+		columnA.localeCompare(columnB),
+	);
 
-  return JSON.stringify(sortedEntries);
+	return JSON.stringify(sortedEntries);
 };
 
 const buildSingleColumnCondition = (
-  records: Partial<ObjectRecord>[],
-  conflictingProperty: ConflictingProperty,
+	records: Partial<ObjectRecord>[],
+	conflictingProperty: ConflictingProperty,
 ): WhereCondition | undefined => {
-  const distinctValues = [
-    ...new Set(
-      records
-        .map((record) => getValueFromPath(record, conflictingProperty.fullPath))
-        .filter(isDefined),
-    ),
-  ];
+	const distinctValues = [
+		...new Set(
+			records
+				.map((record) => getValueFromPath(record, conflictingProperty.fullPath))
+				.filter(isDefined),
+		),
+	];
 
-  if (distinctValues.length === 0) {
-    return undefined;
-  }
+	if (distinctValues.length === 0) {
+		return undefined;
+	}
 
-  return { [conflictingProperty.column]: In(distinctValues) };
+	return { [conflictingProperty.column]: In(distinctValues) };
 };
 
 const buildCompositeConditionEntries = (
-  record: Partial<ObjectRecord>,
-  conflictingProperties: ConflictingProperty[],
+	record: Partial<ObjectRecord>,
+	conflictingProperties: ConflictingProperty[],
 ): [string, ConflictingFieldValue][] | undefined => {
-  const conditionEntries: [string, ConflictingFieldValue][] = [];
+	const conditionEntries: [string, ConflictingFieldValue][] = [];
 
-  for (const conflictingProperty of conflictingProperties) {
-    const fieldValue = getValueFromPath(record, conflictingProperty.fullPath);
+	for (const conflictingProperty of conflictingProperties) {
+		const fieldValue = getValueFromPath(record, conflictingProperty.fullPath);
 
-    if (!isDefined(fieldValue)) {
-      return undefined;
-    }
+		if (!isDefined(fieldValue)) {
+			return undefined;
+		}
 
-    conditionEntries.push([conflictingProperty.column, fieldValue]);
-  }
+		conditionEntries.push([conflictingProperty.column, fieldValue]);
+	}
 
-  return conditionEntries;
+	return conditionEntries;
 };
 
 export const buildWhereConditions = (
-  records: Partial<ObjectRecord>[],
-  conflictingFieldGroups: ConflictingFieldGroup[],
+	records: Partial<ObjectRecord>[],
+	conflictingFieldGroups: ConflictingFieldGroup[],
 ): WhereCondition[] => {
-  const whereConditions: WhereCondition[] = [];
-  const seenCompositeConditionKeys = new Set<string>();
+	const whereConditions: WhereCondition[] = [];
+	const seenCompositeConditionKeys = new Set<string>();
 
-  for (const conflictingFieldGroup of conflictingFieldGroups) {
-    const { conflictingProperties } = conflictingFieldGroup;
+	for (const conflictingFieldGroup of conflictingFieldGroups) {
+		const { conflictingProperties } = conflictingFieldGroup;
 
-    if (conflictingProperties.length === 1) {
-      const condition = buildSingleColumnCondition(
-        records,
-        conflictingProperties[0],
-      );
+		if (conflictingProperties.length === 1) {
+			const condition = buildSingleColumnCondition(
+				records,
+				conflictingProperties[0],
+			);
 
-      if (isDefined(condition)) {
-        whereConditions.push(condition);
-      }
+			if (isDefined(condition)) {
+				whereConditions.push(condition);
+			}
 
-      continue;
-    }
+			continue;
+		}
 
-    for (const record of records) {
-      const conditionEntries = buildCompositeConditionEntries(
-        record,
-        conflictingProperties,
-      );
+		for (const record of records) {
+			const conditionEntries = buildCompositeConditionEntries(
+				record,
+				conflictingProperties,
+			);
 
-      if (!isDefined(conditionEntries)) {
-        continue;
-      }
+			if (!isDefined(conditionEntries)) {
+				continue;
+			}
 
-      const conditionKey = buildCompositeConditionKey(conditionEntries);
+			const conditionKey = buildCompositeConditionKey(conditionEntries);
 
-      if (seenCompositeConditionKeys.has(conditionKey)) {
-        continue;
-      }
+			if (seenCompositeConditionKeys.has(conditionKey)) {
+				continue;
+			}
 
-      seenCompositeConditionKeys.add(conditionKey);
+			seenCompositeConditionKeys.add(conditionKey);
 
-      whereConditions.push(
-        conditionEntries.reduce<WhereCondition>(
-          (accumulator, [column, value]) => {
-            accumulator[column] = Equal(value);
+			whereConditions.push(
+				conditionEntries.reduce<WhereCondition>(
+					(accumulator, [column, value]) => {
+						accumulator[column] = Equal(value);
 
-            return accumulator;
-          },
-          {},
-        ),
-      );
-    }
-  }
+						return accumulator;
+					},
+					{},
+				),
+			);
+		}
+	}
 
-  return whereConditions;
+	return whereConditions;
 };

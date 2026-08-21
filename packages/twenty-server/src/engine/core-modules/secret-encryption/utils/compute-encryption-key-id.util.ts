@@ -1,7 +1,7 @@
-import { createHash } from 'crypto';
+import { createHash } from "crypto";
 
 export const computeEncryptionKeyId = ({
-  rawKey,
+	rawKey,
 }: {
-  rawKey: string;
-}): string => createHash('sha256').update(rawKey).digest('hex').slice(0, 8);
+	rawKey: string;
+}): string => createHash("sha256").update(rawKey).digest("hex").slice(0, 8);

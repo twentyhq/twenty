@@ -1,5 +1,5 @@
 export type CachedCronTrigger = {
-  workspaceId: string;
-  workflowId: string;
-  pattern: string;
+	workspaceId: string;
+	workflowId: string;
+	pattern: string;
 };

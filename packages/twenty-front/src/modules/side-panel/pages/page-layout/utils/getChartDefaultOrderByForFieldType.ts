@@ -1,12 +1,12 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { GraphOrderBy } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from "twenty-shared/types";
+import { GraphOrderBy } from "~/generated-metadata/graphql";
 
 export const getChartDefaultOrderByForFieldType = (
-  fieldType: FieldMetadataType,
+	fieldType: FieldMetadataType,
 ): GraphOrderBy => {
-  const isSelectField = fieldType === FieldMetadataType.SELECT;
+	const isSelectField = fieldType === FieldMetadataType.SELECT;
 
-  return isSelectField
-    ? GraphOrderBy.FIELD_POSITION_ASC
-    : GraphOrderBy.FIELD_ASC;
+	return isSelectField
+		? GraphOrderBy.FIELD_POSITION_ASC
+		: GraphOrderBy.FIELD_ASC;
 };

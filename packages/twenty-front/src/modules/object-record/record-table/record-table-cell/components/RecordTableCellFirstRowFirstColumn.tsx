@@ -1,27 +1,27 @@
-import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { cx } from '@linaria/core';
-import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { TABLE_Z_INDEX } from "@/object-record/record-table/constants/TableZIndex";
+import { getRecordTableColumnFieldWidthClassName } from "@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName";
+import { cx } from "@linaria/core";
+import { styled } from "@linaria/react";
+import { useContext, type ReactNode } from "react";
+import { ThemeContext } from "twenty-ui/theme-constants";
 
 const StyledRecordTableTd = styled.div<{
-  backgroundColor: string;
-  borderColor: string;
-  isDragging?: boolean;
-  fontColor: string;
-  hasRightBorder?: boolean;
-  hasBottomBorder?: boolean;
-  zIndex: number;
+	backgroundColor: string;
+	borderColor: string;
+	isDragging?: boolean;
+	fontColor: string;
+	hasRightBorder?: boolean;
+	hasBottomBorder?: boolean;
+	zIndex: number;
 }>`
   background: ${({ backgroundColor, isDragging }) =>
-    isDragging ? 'transparent' : backgroundColor};
+		isDragging ? "transparent" : backgroundColor};
 
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder, isDragging }) =>
-      hasBottomBorder && !isDragging ? borderColor : 'transparent'};
+			hasBottomBorder && !isDragging ? borderColor : "transparent"};
   border-right: ${({ borderColor, hasRightBorder }) =>
-    hasRightBorder ? `1px solid ${borderColor}` : 'none'};
+		hasRightBorder ? `1px solid ${borderColor}` : "none"};
 
   color: ${({ fontColor }) => fontColor};
 
@@ -33,45 +33,45 @@ const StyledRecordTableTd = styled.div<{
 `;
 
 export const RecordTableCellFirstRowFirstColumn = ({
-  children,
-  isSelected,
-  isDragging,
-  hasRightBorder = true,
-  hasBottomBorder = true,
+	children,
+	isSelected,
+	isDragging,
+	hasRightBorder = true,
+	hasBottomBorder = true,
 }: {
-  children?: ReactNode;
-  isSelected?: boolean;
-  isDragging?: boolean;
-  hasRightBorder?: boolean;
-  hasBottomBorder?: boolean;
+	children?: ReactNode;
+	isSelected?: boolean;
+	isDragging?: boolean;
+	hasRightBorder?: boolean;
+	hasBottomBorder?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const zIndex = TABLE_Z_INDEX.cell.sticky;
+	const zIndex = TABLE_Z_INDEX.cell.sticky;
 
-  const tdBackgroundColor = isSelected
-    ? theme.accent.quaternary
-    : theme.background.primary;
+	const tdBackgroundColor = isSelected
+		? theme.accent.quaternary
+		: theme.background.primary;
 
-  const borderColor = theme.border.color.light;
+	const borderColor = theme.border.color.light;
 
-  const fontColor = theme.font.color.primary;
+	const fontColor = theme.font.color.primary;
 
-  return (
-    <StyledRecordTableTd
-      isDragging={isDragging}
-      backgroundColor={tdBackgroundColor}
-      borderColor={borderColor}
-      fontColor={fontColor}
-      hasRightBorder={hasRightBorder}
-      hasBottomBorder={hasBottomBorder}
-      zIndex={zIndex}
-      className={cx(
-        'table-cell-0-0',
-        getRecordTableColumnFieldWidthClassName(0),
-      )}
-    >
-      {children}
-    </StyledRecordTableTd>
-  );
+	return (
+		<StyledRecordTableTd
+			isDragging={isDragging}
+			backgroundColor={tdBackgroundColor}
+			borderColor={borderColor}
+			fontColor={fontColor}
+			hasRightBorder={hasRightBorder}
+			hasBottomBorder={hasBottomBorder}
+			zIndex={zIndex}
+			className={cx(
+				"table-cell-0-0",
+				getRecordTableColumnFieldWidthClassName(0),
+			)}
+		>
+			{children}
+		</StyledRecordTableTd>
+	);
 };

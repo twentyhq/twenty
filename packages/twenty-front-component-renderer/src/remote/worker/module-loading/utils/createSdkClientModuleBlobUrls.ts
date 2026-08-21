@@ -1,10 +1,10 @@
-import { createJavaScriptModuleBlobUrl } from '@/remote/worker/module-loading/utils/createJavaScriptModuleBlobUrl';
-import { type SdkClientSources } from '@/types/SdkClientSources';
-import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { createJavaScriptModuleBlobUrl } from "@/remote/worker/module-loading/utils/createJavaScriptModuleBlobUrl";
+import { type SdkClientSources } from "@/types/SdkClientSources";
+import { type SdkClientUrls } from "@/types/SdkClientUrls";
 
 export const createSdkClientModuleBlobUrls = (
-  sdkClientSources: SdkClientSources,
+	sdkClientSources: SdkClientSources,
 ): SdkClientUrls => ({
-  core: createJavaScriptModuleBlobUrl(sdkClientSources.core),
-  metadata: createJavaScriptModuleBlobUrl(sdkClientSources.metadata),
+	core: createJavaScriptModuleBlobUrl(sdkClientSources.core),
+	metadata: createJavaScriptModuleBlobUrl(sdkClientSources.metadata),
 });

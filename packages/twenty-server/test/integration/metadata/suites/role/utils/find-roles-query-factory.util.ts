@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 const DEFAULT_ROLE_GQL_FIELDS = `
   id
@@ -19,16 +19,16 @@ const DEFAULT_ROLE_GQL_FIELDS = `
 `;
 
 export const findRolesQueryFactory = ({
-  gqlFields = DEFAULT_ROLE_GQL_FIELDS,
+	gqlFields = DEFAULT_ROLE_GQL_FIELDS,
 }: {
-  gqlFields?: string;
+	gqlFields?: string;
 } = {}) => ({
-  query: gql`
+	query: gql`
     query GetRoles {
       getRoles {
         ${gqlFields}
       }
     }
   `,
-  variables: {},
+	variables: {},
 });

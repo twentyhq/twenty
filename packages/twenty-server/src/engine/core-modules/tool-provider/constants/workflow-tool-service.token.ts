@@ -3,5 +3,5 @@
 // -> WorkflowRunnerModule -> WorkflowExecutorModule -> AiAgentActionModule
 // -> AiAgentExecutionModule -> ToolProviderModule
 export const WORKFLOW_TOOL_SERVICE_TOKEN = Symbol(
-  'WORKFLOW_TOOL_SERVICE_TOKEN',
+	"WORKFLOW_TOOL_SERVICE_TOKEN",
 );

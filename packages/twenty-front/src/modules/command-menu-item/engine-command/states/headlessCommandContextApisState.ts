@@ -1,9 +1,9 @@
-import { type HeadlessCommandContextApi } from '@/command-menu-item/engine-command/types/HeadlessCommandContextApi';
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { type HeadlessCommandContextApi } from "@/command-menu-item/engine-command/types/HeadlessCommandContextApi";
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const headlessCommandContextApisState = createAtomState<
-  Map<string, HeadlessCommandContextApi>
+	Map<string, HeadlessCommandContextApi>
 >({
-  key: 'headlessCommandContextApisState',
-  defaultValue: new Map(),
+	key: "headlessCommandContextApisState",
+	defaultValue: new Map(),
 });

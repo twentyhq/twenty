@@ -1,10 +1,10 @@
 export type CoreEntityVersionEntry<T> = {
-  data: T;
-  lastReadAt: number;
+	data: T;
+	lastReadAt: number;
 };
 
 export type CoreEntityLocalCacheEntry<T> = {
-  versions: Map<string, CoreEntityVersionEntry<T>>;
-  latestHash: string;
-  lastHashCheckedAt: number;
+	versions: Map<string, CoreEntityVersionEntry<T>>;
+	latestHash: string;
+	lastHashCheckedAt: number;
 };

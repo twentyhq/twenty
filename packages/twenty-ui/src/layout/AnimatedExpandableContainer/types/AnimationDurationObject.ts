@@ -1,4 +1,4 @@
 export type AnimationDurationObject = {
-  opacity: number;
-  size: number;
+	opacity: number;
+	size: number;
 };

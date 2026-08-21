@@ -1,48 +1,48 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { FieldFocusContext } from '@/object-record/record-field/ui/contexts/FieldFocusContext';
+import { FieldFocusContext } from "@/object-record/record-field/ui/contexts/FieldFocusContext";
 
 const STATIC_UNFOCUSED_VALUE = {
-  isFocused: false,
-  setIsFocused: () => {},
+	isFocused: false,
+	setIsFocused: () => {},
 };
 
 const STATIC_FOCUSED_VALUE = {
-  isFocused: true,
-  setIsFocused: () => {},
+	isFocused: true,
+	setIsFocused: () => {},
 };
 
 export const FieldFocusContextProvider = ({ children }: any) => {
-  const [isFocused, setIsFocused] = useState(false);
+	const [isFocused, setIsFocused] = useState(false);
 
-  return (
-    <FieldFocusContext.Provider
-      value={{
-        isFocused,
-        setIsFocused,
-      }}
-    >
-      {children}
-    </FieldFocusContext.Provider>
-  );
+	return (
+		<FieldFocusContext.Provider
+			value={{
+				isFocused,
+				setIsFocused,
+			}}
+		>
+			{children}
+		</FieldFocusContext.Provider>
+	);
 };
 
 export const FieldFocusStaticUnfocusedProvider = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => (
-  <FieldFocusContext.Provider value={STATIC_UNFOCUSED_VALUE}>
-    {children}
-  </FieldFocusContext.Provider>
+	<FieldFocusContext.Provider value={STATIC_UNFOCUSED_VALUE}>
+		{children}
+	</FieldFocusContext.Provider>
 );
 
 export const FieldFocusStaticFocusedProvider = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => (
-  <FieldFocusContext.Provider value={STATIC_FOCUSED_VALUE}>
-    {children}
-  </FieldFocusContext.Provider>
+	<FieldFocusContext.Provider value={STATIC_FOCUSED_VALUE}>
+		{children}
+	</FieldFocusContext.Provider>
 );

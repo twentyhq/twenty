@@ -1,4 +1,4 @@
 export type Contact = {
-  handle: string;
-  displayName: string;
+	handle: string;
+	displayName: string;
 };

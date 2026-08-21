@@ -1,37 +1,37 @@
-import { isElementUnderRemoteRoot } from '../isElementUnderRemoteRoot';
+import { isElementUnderRemoteRoot } from "../isElementUnderRemoteRoot";
 
 const createNode = (parentNode: object | null = null) => ({ parentNode });
 
-describe('isElementUnderRemoteRoot', () => {
-  it('should return false when there is no root', () => {
-    expect(isElementUnderRemoteRoot(createNode(), null)).toBe(false);
-  });
+describe("isElementUnderRemoteRoot", () => {
+	it("should return false when there is no root", () => {
+		expect(isElementUnderRemoteRoot(createNode(), null)).toBe(false);
+	});
 
-  it('should return true for the root itself', () => {
-    const root = createNode();
+	it("should return true for the root itself", () => {
+		const root = createNode();
 
-    expect(isElementUnderRemoteRoot(root, root)).toBe(true);
-  });
+		expect(isElementUnderRemoteRoot(root, root)).toBe(true);
+	});
 
-  it('should return true for a nested descendant', () => {
-    const root = createNode();
-    const parent = createNode(root);
-    const child = createNode(parent);
+	it("should return true for a nested descendant", () => {
+		const root = createNode();
+		const parent = createNode(root);
+		const child = createNode(parent);
 
-    expect(isElementUnderRemoteRoot(child, root)).toBe(true);
-  });
+		expect(isElementUnderRemoteRoot(child, root)).toBe(true);
+	});
 
-  it('should return false for a detached element', () => {
-    const root = createNode();
+	it("should return false for a detached element", () => {
+		const root = createNode();
 
-    expect(isElementUnderRemoteRoot(createNode(), root)).toBe(false);
-  });
+		expect(isElementUnderRemoteRoot(createNode(), root)).toBe(false);
+	});
 
-  it('should return false for a sibling subtree outside the root', () => {
-    const body = createNode();
-    const root = createNode(body);
-    const outsider = createNode(body);
+	it("should return false for a sibling subtree outside the root", () => {
+		const body = createNode();
+		const root = createNode(body);
+		const outsider = createNode(body);
 
-    expect(isElementUnderRemoteRoot(outsider, root)).toBe(false);
-  });
+		expect(isElementUnderRemoteRoot(outsider, root)).toBe(false);
+	});
 });

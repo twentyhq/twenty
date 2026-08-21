@@ -1,24 +1,24 @@
-import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
-import { pathExists } from '@/cli/utilities/file/fs-utils';
-import { type ValidationResult } from '@/sdk/define';
-import { createHash } from 'node:crypto';
-import * as esbuild from 'esbuild';
-import { createRequire } from 'module';
-import vm from 'node:vm';
-import path from 'path';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { conditionalAvailabilityTransformPlugin } from "@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin";
+import { pathExists } from "@/cli/utilities/file/fs-utils";
+import { type ValidationResult } from "@/sdk/define";
+import { createHash } from "node:crypto";
+import * as esbuild from "esbuild";
+import { createRequire } from "module";
+import vm from "node:vm";
+import path from "path";
+import { isDefined, isPlainObject } from "twenty-shared/utils";
 
 type CompiledModuleWrapper = (
-  exports: Record<string, unknown>,
-  require: NodeRequire,
-  module: { exports: Record<string, unknown> },
-  filename: string,
-  dirname: string,
+	exports: Record<string, unknown>,
+	require: NodeRequire,
+	module: { exports: Record<string, unknown> },
+	filename: string,
+	dirname: string,
 ) => void;
 
 type CachedCompiledModule = {
-  outputHash: string;
-  wrapper: CompiledModuleWrapper;
+	outputHash: string;
+	wrapper: CompiledModuleWrapper;
 };
 
 // vm.compileFunction pins every function it compiles at the V8 isolate level
@@ -35,142 +35,142 @@ type CachedCompiledModule = {
 const compiledModuleCacheByFilePath = new Map<string, CachedCompiledModule>();
 
 const getCompiledWrapper = (
-  code: string,
-  filePath: string,
+	code: string,
+	filePath: string,
 ): CompiledModuleWrapper => {
-  const outputHash = createHash('sha1').update(code).digest('hex');
+	const outputHash = createHash("sha1").update(code).digest("hex");
 
-  const cachedModule = compiledModuleCacheByFilePath.get(filePath);
+	const cachedModule = compiledModuleCacheByFilePath.get(filePath);
 
-  if (isDefined(cachedModule) && cachedModule.outputHash === outputHash) {
-    return cachedModule.wrapper;
-  }
+	if (isDefined(cachedModule) && cachedModule.outputHash === outputHash) {
+		return cachedModule.wrapper;
+	}
 
-  const compiledWrapper = vm.compileFunction(
-    code,
-    ['exports', 'require', 'module', '__filename', '__dirname'],
-    { filename: filePath },
-  ) as unknown as CompiledModuleWrapper;
+	const compiledWrapper = vm.compileFunction(
+		code,
+		["exports", "require", "module", "__filename", "__dirname"],
+		{ filename: filePath },
+	) as unknown as CompiledModuleWrapper;
 
-  compiledModuleCacheByFilePath.set(filePath, {
-    outputHash,
-    wrapper: compiledWrapper,
-  });
+	compiledModuleCacheByFilePath.set(filePath, {
+		outputHash,
+		wrapper: compiledWrapper,
+	});
 
-  return compiledWrapper;
+	return compiledWrapper;
 };
 
 const MANIFEST_MOCK_MODULES = [
-  'twenty-ui',
-  'twenty-client-sdk/core',
-  'twenty-client-sdk/metadata',
+	"twenty-ui",
+	"twenty-client-sdk/core",
+	"twenty-client-sdk/metadata",
 ];
 
 const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const manifestMockPlugin: esbuild.Plugin = {
-  name: 'manifest-mock',
-  setup: (build) => {
-    const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
-    const filter = new RegExp(`^(${escapedModules.join('|')})(/.*)?$`);
+	name: "manifest-mock",
+	setup: (build) => {
+		const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
+		const filter = new RegExp(`^(${escapedModules.join("|")})(/.*)?$`);
 
-    build.onResolve({ filter }, ({ path: modulePath }) => {
-      if (modulePath.endsWith('.css')) {
-        return null;
-      }
+		build.onResolve({ filter }, ({ path: modulePath }) => {
+			if (modulePath.endsWith(".css")) {
+				return null;
+			}
 
-      return {
-        path: modulePath,
-        namespace: 'manifest-mock',
-      };
-    });
+			return {
+				path: modulePath,
+				namespace: "manifest-mock",
+			};
+		});
 
-    build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
-      contents: 'module.exports = new Proxy({}, { get: () => () => {} });',
-      loader: 'js',
-    }));
-  },
+		build.onLoad({ filter: /.*/, namespace: "manifest-mock" }, () => ({
+			contents: "module.exports = new Proxy({}, { get: () => () => {} });",
+			loader: "js",
+		}));
+	},
 };
 
 export const extractManifestFromFile = async <T>({
-  filePath,
-  appPath,
+	filePath,
+	appPath,
 }: {
-  filePath: string;
-  appPath: string;
+	filePath: string;
+	appPath: string;
 }): Promise<ValidationResult<T>> => {
-  const module = await loadModule({ filePath, appPath });
+	const module = await loadModule({ filePath, appPath });
 
-  return extractDefaultConfigFromModuleOrThrow<T>(module, filePath);
+	return extractDefaultConfigFromModuleOrThrow<T>(module, filePath);
 };
 
 const loadModule = async ({
-  filePath,
-  appPath,
+	filePath,
+	appPath,
 }: {
-  filePath: string;
-  appPath: string;
+	filePath: string;
+	appPath: string;
 }): Promise<Record<string, unknown>> => {
-  const tsconfigPath = path.join(appPath, 'tsconfig.json');
-  const hasTsconfig = await pathExists(tsconfigPath);
+	const tsconfigPath = path.join(appPath, "tsconfig.json");
+	const hasTsconfig = await pathExists(tsconfigPath);
 
-  // Resolve react from the app's node_modules for the alias
-  const appRequire = createRequire(path.join(appPath, 'package.json'));
-  let reactPath: string | undefined;
-  let reactDomPath: string | undefined;
+	// Resolve react from the app's node_modules for the alias
+	const appRequire = createRequire(path.join(appPath, "package.json"));
+	let reactPath: string | undefined;
+	let reactDomPath: string | undefined;
 
-  try {
-    reactPath = path.dirname(appRequire.resolve('react/package.json'));
-    reactDomPath = path.dirname(appRequire.resolve('react-dom/package.json'));
-  } catch {
-    // React not installed in app, will be bundled if used
-  }
+	try {
+		reactPath = path.dirname(appRequire.resolve("react/package.json"));
+		reactDomPath = path.dirname(appRequire.resolve("react-dom/package.json"));
+	} catch {
+		// React not installed in app, will be bundled if used
+	}
 
-  const result = await esbuild.build({
-    entryPoints: [filePath],
-    bundle: true,
-    write: false,
-    format: 'cjs',
-    platform: 'node',
-    target: 'node18',
-    jsx: 'automatic',
-    tsconfig: hasTsconfig ? tsconfigPath : undefined,
-    loader: { '.css': 'empty' },
-    alias: {
-      ...(reactPath && { react: reactPath }),
-      ...(reactDomPath && { 'react-dom': reactDomPath }),
-    },
-    plugins: [conditionalAvailabilityTransformPlugin, manifestMockPlugin],
-    logLevel: 'silent',
-  });
+	const result = await esbuild.build({
+		entryPoints: [filePath],
+		bundle: true,
+		write: false,
+		format: "cjs",
+		platform: "node",
+		target: "node18",
+		jsx: "automatic",
+		tsconfig: hasTsconfig ? tsconfigPath : undefined,
+		loader: { ".css": "empty" },
+		alias: {
+			...(reactPath && { react: reactPath }),
+			...(reactDomPath && { "react-dom": reactDomPath }),
+		},
+		plugins: [conditionalAvailabilityTransformPlugin, manifestMockPlugin],
+		logLevel: "silent",
+	});
 
-  const code = result.outputFiles[0].text;
+	const code = result.outputFiles[0].text;
 
-  const compiledWrapper = getCompiledWrapper(code, filePath);
+	const compiledWrapper = getCompiledWrapper(code, filePath);
 
-  const moduleShim: { exports: Record<string, unknown> } = { exports: {} };
+	const moduleShim: { exports: Record<string, unknown> } = { exports: {} };
 
-  compiledWrapper(
-    moduleShim.exports,
-    appRequire,
-    moduleShim,
-    filePath,
-    path.dirname(filePath),
-  );
+	compiledWrapper(
+		moduleShim.exports,
+		appRequire,
+		moduleShim,
+		filePath,
+		path.dirname(filePath),
+	);
 
-  return moduleShim.exports;
+	return moduleShim.exports;
 };
 
 const extractDefaultConfigFromModuleOrThrow = <T>(
-  module: Record<string, unknown>,
-  filePath: string,
+	module: Record<string, unknown>,
+	filePath: string,
 ): ValidationResult<T> => {
-  if (isDefined(module.default) && isPlainObject(module.default)) {
-    return module.default as ValidationResult<T>;
-  }
+	if (isDefined(module.default) && isPlainObject(module.default)) {
+		return module.default as ValidationResult<T>;
+	}
 
-  throw new Error(
-    `Config file ${filePath} must export a config object default export`,
-  );
+	throw new Error(
+		`Config file ${filePath} must export a config object default export`,
+	);
 };

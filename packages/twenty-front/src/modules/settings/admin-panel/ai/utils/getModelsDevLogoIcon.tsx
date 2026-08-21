@@ -1,34 +1,34 @@
-import { type IconComponent, type IconComponentProps } from 'twenty-ui/icon';
+import { type IconComponent, type IconComponentProps } from "twenty-ui/icon";
 
-import { ModelsDevProviderLogo } from '@/settings/admin-panel/ai/components/ModelsDevProviderLogo';
+import { ModelsDevProviderLogo } from "@/settings/admin-panel/ai/components/ModelsDevProviderLogo";
 
-const MODELS_DEV_LOGO_BASE = 'https://models.dev/logos';
+const MODELS_DEV_LOGO_BASE = "https://models.dev/logos";
 
 const logoIconCache = new Map<string, IconComponent>();
 
 type LogoIconProps = IconComponentProps;
 
 export const getModelsDevLogoIcon = (providerId: string): IconComponent => {
-  const cached = logoIconCache.get(providerId);
+	const cached = logoIconCache.get(providerId);
 
-  if (cached) {
-    return cached;
-  }
+	if (cached) {
+		return cached;
+	}
 
-  const logoUrl = `${MODELS_DEV_LOGO_BASE}/${providerId}.svg`;
+	const logoUrl = `${MODELS_DEV_LOGO_BASE}/${providerId}.svg`;
 
-  const LogoIcon = ({ size = 16, className, style }: LogoIconProps) => (
-    <ModelsDevProviderLogo
-      className={className}
-      logoUrl={logoUrl}
-      size={size}
-      style={style}
-    />
-  );
+	const LogoIcon = ({ size = 16, className, style }: LogoIconProps) => (
+		<ModelsDevProviderLogo
+			className={className}
+			logoUrl={logoUrl}
+			size={size}
+			style={style}
+		/>
+	);
 
-  LogoIcon.displayName = `ModelsDevLogo(${providerId})`;
+	LogoIcon.displayName = `ModelsDevLogo(${providerId})`;
 
-  logoIconCache.set(providerId, LogoIcon);
+	logoIconCache.set(providerId, LogoIcon);
 
-  return LogoIcon;
+	return LogoIcon;
 };

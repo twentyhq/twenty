@@ -1,11 +1,11 @@
-import { notFound } from 'next/navigation';
-import { type DocumentationSupportedLanguage } from 'twenty-shared/constants';
+import { notFound } from "next/navigation";
+import { type DocumentationSupportedLanguage } from "twenty-shared/constants";
 
-import { isWebsiteLocale } from './is-website-locale';
+import { isWebsiteLocale } from "./is-website-locale";
 
 export const resolveLocaleParam = (
-  raw: string,
+	raw: string,
 ): DocumentationSupportedLanguage => {
-  if (!isWebsiteLocale(raw)) notFound();
-  return raw;
+	if (!isWebsiteLocale(raw)) notFound();
+	return raw;
 };

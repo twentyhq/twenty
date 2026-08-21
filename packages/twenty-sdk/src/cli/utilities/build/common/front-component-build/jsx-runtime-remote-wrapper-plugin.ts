@@ -1,4 +1,4 @@
-import type * as esbuild from 'esbuild';
+import type * as esbuild from "esbuild";
 
 const SHARED_HELPERS = `
 export var customElementMap = globalThis.__HTML_TAG_TO_CUSTOM_ELEMENT_TAG__ || {};
@@ -178,106 +178,106 @@ export default Object.assign({}, _React, { createElement: createElement });
 `.trim();
 
 type JsxRuntimeRemoteWrapperPluginOptions = {
-  usePreact?: boolean;
+	usePreact?: boolean;
 };
 
 export const createJsxRuntimeRemoteWrapperPlugin = (
-  options?: JsxRuntimeRemoteWrapperPluginOptions,
+	options?: JsxRuntimeRemoteWrapperPluginOptions,
 ): esbuild.Plugin => {
-  const usePreact = options?.usePreact ?? false;
+	const usePreact = options?.usePreact ?? false;
 
-  const jsxRuntimeModule = usePreact
-    ? 'preact/jsx-runtime'
-    : 'react/jsx-runtime';
-  const reactModule = usePreact ? 'preact/compat' : 'react';
+	const jsxRuntimeModule = usePreact
+		? "preact/jsx-runtime"
+		: "react/jsx-runtime";
+	const reactModule = usePreact ? "preact/compat" : "react";
 
-  return {
-    name: 'jsx-runtime-remote-wrapper',
-    setup: (build) => {
-      let realJsxRuntimePath: string | undefined;
-      let realReactPath: string | undefined;
+	return {
+		name: "jsx-runtime-remote-wrapper",
+		setup: (build) => {
+			let realJsxRuntimePath: string | undefined;
+			let realReactPath: string | undefined;
 
-      build.onResolve({ filter: /^__jsx_shared_helpers__$/ }, () => ({
-        path: '__jsx_shared_helpers__',
-        namespace: 'jsx-shared-helpers',
-      }));
+			build.onResolve({ filter: /^__jsx_shared_helpers__$/ }, () => ({
+				path: "__jsx_shared_helpers__",
+				namespace: "jsx-shared-helpers",
+			}));
 
-      build.onLoad({ filter: /.*/, namespace: 'jsx-shared-helpers' }, () => ({
-        contents: SHARED_HELPERS,
-        loader: 'js' as const,
-      }));
+			build.onLoad({ filter: /.*/, namespace: "jsx-shared-helpers" }, () => ({
+				contents: SHARED_HELPERS,
+				loader: "js" as const,
+			}));
 
-      build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
-        if (args.pluginData?.skipJsxWrapper) {
-          return undefined;
-        }
+			build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
+				if (args.pluginData?.skipJsxWrapper) {
+					return undefined;
+				}
 
-        if (!realJsxRuntimePath) {
-          const resolved = await build.resolve(jsxRuntimeModule, {
-            kind: args.kind,
-            resolveDir: args.resolveDir,
-            pluginData: { skipJsxWrapper: true },
-          });
+				if (!realJsxRuntimePath) {
+					const resolved = await build.resolve(jsxRuntimeModule, {
+						kind: args.kind,
+						resolveDir: args.resolveDir,
+						pluginData: { skipJsxWrapper: true },
+					});
 
-          realJsxRuntimePath = resolved.path;
-        }
+					realJsxRuntimePath = resolved.path;
+				}
 
-        return {
-          path: 'react/jsx-runtime',
-          namespace: 'jsx-runtime-wrapper',
-        };
-      });
+				return {
+					path: "react/jsx-runtime",
+					namespace: "jsx-runtime-wrapper",
+				};
+			});
 
-      build.onResolve({ filter: /^__real_react_jsx_runtime__$/ }, () => {
-        if (!realJsxRuntimePath) {
-          throw new Error(
-            'jsx-runtime-remote-wrapper: real jsx-runtime path not resolved yet',
-          );
-        }
+			build.onResolve({ filter: /^__real_react_jsx_runtime__$/ }, () => {
+				if (!realJsxRuntimePath) {
+					throw new Error(
+						"jsx-runtime-remote-wrapper: real jsx-runtime path not resolved yet",
+					);
+				}
 
-        return { path: realJsxRuntimePath };
-      });
+				return { path: realJsxRuntimePath };
+			});
 
-      build.onLoad({ filter: /.*/, namespace: 'jsx-runtime-wrapper' }, () => ({
-        contents: JSX_RUNTIME_WRAPPER,
-        loader: 'js' as const,
-      }));
+			build.onLoad({ filter: /.*/, namespace: "jsx-runtime-wrapper" }, () => ({
+				contents: JSX_RUNTIME_WRAPPER,
+				loader: "js" as const,
+			}));
 
-      build.onResolve({ filter: /^react$/ }, async (args) => {
-        if (args.pluginData?.skipJsxWrapper) {
-          return undefined;
-        }
+			build.onResolve({ filter: /^react$/ }, async (args) => {
+				if (args.pluginData?.skipJsxWrapper) {
+					return undefined;
+				}
 
-        if (!realReactPath) {
-          const resolved = await build.resolve(reactModule, {
-            kind: args.kind,
-            resolveDir: args.resolveDir,
-            pluginData: { skipJsxWrapper: true },
-          });
+				if (!realReactPath) {
+					const resolved = await build.resolve(reactModule, {
+						kind: args.kind,
+						resolveDir: args.resolveDir,
+						pluginData: { skipJsxWrapper: true },
+					});
 
-          realReactPath = resolved.path;
-        }
+					realReactPath = resolved.path;
+				}
 
-        return {
-          path: 'react',
-          namespace: 'react-wrapper',
-        };
-      });
+				return {
+					path: "react",
+					namespace: "react-wrapper",
+				};
+			});
 
-      build.onResolve({ filter: /^__real_react__$/ }, () => {
-        if (!realReactPath) {
-          throw new Error(
-            'jsx-runtime-remote-wrapper: real react path not resolved yet',
-          );
-        }
+			build.onResolve({ filter: /^__real_react__$/ }, () => {
+				if (!realReactPath) {
+					throw new Error(
+						"jsx-runtime-remote-wrapper: real react path not resolved yet",
+					);
+				}
 
-        return { path: realReactPath };
-      });
+				return { path: realReactPath };
+			});
 
-      build.onLoad({ filter: /.*/, namespace: 'react-wrapper' }, () => ({
-        contents: REACT_WRAPPER,
-        loader: 'js' as const,
-      }));
-    },
-  };
+			build.onLoad({ filter: /.*/, namespace: "react-wrapper" }, () => ({
+				contents: REACT_WRAPPER,
+				loader: "js" as const,
+			}));
+		},
+	};
 };

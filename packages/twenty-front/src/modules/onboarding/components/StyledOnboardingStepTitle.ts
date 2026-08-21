@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledOnboardingStepTitle = styled.h1`
   color: ${themeCssVariables.font.color.primary};

@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly toggleContainer: 'toggleContainer';
+	readonly toggleContainer: "toggleContainer";
 };
 export default classNames;

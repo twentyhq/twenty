@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
 const StyledFieldContainer = styled.div`
   display: flex;
@@ -8,15 +8,15 @@ const StyledFieldContainer = styled.div`
 `;
 
 export const StopPropagationContainer = ({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }) => (
-  <StyledFieldContainer
-    onClick={(e) => {
-      e.stopPropagation();
-    }}
-  >
-    {children}
-  </StyledFieldContainer>
+	<StyledFieldContainer
+		onClick={(e) => {
+			e.stopPropagation();
+		}}
+	>
+		{children}
+	</StyledFieldContainer>
 );

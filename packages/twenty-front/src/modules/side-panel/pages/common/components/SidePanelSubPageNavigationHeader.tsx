@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { IconChevronLeft } from "twenty-ui/icon";
+import { IconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -19,24 +19,24 @@ const StyledText = styled.span`
 `;
 
 type SidePanelSubPageNavigationHeaderProps = {
-  title: string;
-  onBackClick: () => void;
+	title: string;
+	onBackClick: () => void;
 };
 
 export const SidePanelSubPageNavigationHeader = ({
-  onBackClick,
-  title,
+	onBackClick,
+	title,
 }: SidePanelSubPageNavigationHeaderProps) => {
-  return (
-    <StyledContainer>
-      <IconButton
-        onClick={onBackClick}
-        Icon={IconChevronLeft}
-        variant="tertiary"
-        size="small"
-        ariaLabel="Go back"
-      />
-      <StyledText>{title}</StyledText>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<IconButton
+				onClick={onBackClick}
+				Icon={IconChevronLeft}
+				variant="tertiary"
+				size="small"
+				ariaLabel="Go back"
+			/>
+			<StyledText>{title}</StyledText>
+		</StyledContainer>
+	);
 };

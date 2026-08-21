@@ -1,282 +1,282 @@
-import { renderHook } from '@testing-library/react';
-import { act } from 'react';
+import { renderHook } from "@testing-library/react";
+import { act } from "react";
 
-import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
-import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
-import { isMultiDragActiveComponentState } from '@/object-record/record-drag/states/isMultiDragActiveComponentState';
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { useStartRecordDrag } from "@/object-record/record-drag/hooks/useStartRecordDrag";
+import { draggedRecordIdsComponentState } from "@/object-record/record-drag/states/draggedRecordIdsComponentState";
+import { isMultiDragActiveComponentState } from "@/object-record/record-drag/states/isMultiDragActiveComponentState";
+import { originalDragSelectionComponentState } from "@/object-record/record-drag/states/originalDragSelectionComponentState";
+import { primaryDraggedRecordIdComponentState } from "@/object-record/record-drag/states/primaryDraggedRecordIdComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
-describe('useStartRecordDrag', () => {
-  const Wrapper = getJestMetadataAndApolloMocksWrapper({});
+describe("useStartRecordDrag", () => {
+	const Wrapper = getJestMetadataAndApolloMocksWrapper({});
 
-  it('should set single drag state when dragged record is not in selection', () => {
-    const { result } = renderHook(
-      () => {
-        const isMultiDragActive = useAtomComponentStateValue(
-          isMultiDragActiveComponentState,
-        );
-        const draggedRecordIds = useAtomComponentStateValue(
-          draggedRecordIdsComponentState,
-        );
-        const primaryDraggedRecordId = useAtomComponentStateValue(
-          primaryDraggedRecordIdComponentState,
-        );
-        const originalDragSelection = useAtomComponentStateValue(
-          originalDragSelectionComponentState,
-        );
+	it("should set single drag state when dragged record is not in selection", () => {
+		const { result } = renderHook(
+			() => {
+				const isMultiDragActive = useAtomComponentStateValue(
+					isMultiDragActiveComponentState,
+				);
+				const draggedRecordIds = useAtomComponentStateValue(
+					draggedRecordIdsComponentState,
+				);
+				const primaryDraggedRecordId = useAtomComponentStateValue(
+					primaryDraggedRecordIdComponentState,
+				);
+				const originalDragSelection = useAtomComponentStateValue(
+					originalDragSelectionComponentState,
+				);
 
-        const { startRecordDrag } = useStartRecordDrag();
+				const { startRecordDrag } = useStartRecordDrag();
 
-        return {
-          startRecordDrag,
-          isMultiDragActive,
-          draggedRecordIds,
-          primaryDraggedRecordId,
-          originalDragSelection,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+				return {
+					startRecordDrag,
+					isMultiDragActive,
+					draggedRecordIds,
+					primaryDraggedRecordId,
+					originalDragSelection,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const draggedRecordId = 'record-1';
-    const selectedRecordIds = ['record-2', 'record-3'];
+		const draggedRecordId = "record-1";
+		const selectedRecordIds = ["record-2", "record-3"];
 
-    act(() => {
-      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
-    });
+		act(() => {
+			result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
+		});
 
-    expect(result.current.isMultiDragActive).toBe(true);
-    expect(result.current.draggedRecordIds).toEqual(['record-1']);
-    expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalDragSelection).toEqual(['record-1']);
-  });
+		expect(result.current.isMultiDragActive).toBe(true);
+		expect(result.current.draggedRecordIds).toEqual(["record-1"]);
+		expect(result.current.primaryDraggedRecordId).toBe("record-1");
+		expect(result.current.originalDragSelection).toEqual(["record-1"]);
+	});
 
-  it('should set single drag state when only one record is selected', () => {
-    const { result } = renderHook(
-      () => {
-        const isMultiDragActive = useAtomComponentStateValue(
-          isMultiDragActiveComponentState,
-        );
-        const draggedRecordIds = useAtomComponentStateValue(
-          draggedRecordIdsComponentState,
-        );
-        const primaryDraggedRecordId = useAtomComponentStateValue(
-          primaryDraggedRecordIdComponentState,
-        );
-        const originalDragSelection = useAtomComponentStateValue(
-          originalDragSelectionComponentState,
-        );
+	it("should set single drag state when only one record is selected", () => {
+		const { result } = renderHook(
+			() => {
+				const isMultiDragActive = useAtomComponentStateValue(
+					isMultiDragActiveComponentState,
+				);
+				const draggedRecordIds = useAtomComponentStateValue(
+					draggedRecordIdsComponentState,
+				);
+				const primaryDraggedRecordId = useAtomComponentStateValue(
+					primaryDraggedRecordIdComponentState,
+				);
+				const originalDragSelection = useAtomComponentStateValue(
+					originalDragSelectionComponentState,
+				);
 
-        const { startRecordDrag } = useStartRecordDrag();
+				const { startRecordDrag } = useStartRecordDrag();
 
-        return {
-          startRecordDrag,
-          isMultiDragActive,
-          draggedRecordIds,
-          primaryDraggedRecordId,
-          originalDragSelection,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+				return {
+					startRecordDrag,
+					isMultiDragActive,
+					draggedRecordIds,
+					primaryDraggedRecordId,
+					originalDragSelection,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const draggedRecordId = 'record-1';
-    const selectedRecordIds = ['record-1'];
+		const draggedRecordId = "record-1";
+		const selectedRecordIds = ["record-1"];
 
-    act(() => {
-      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
-    });
+		act(() => {
+			result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
+		});
 
-    expect(result.current.isMultiDragActive).toBe(true);
-    expect(result.current.draggedRecordIds).toEqual(['record-1']);
-    expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalDragSelection).toEqual(['record-1']);
-  });
+		expect(result.current.isMultiDragActive).toBe(true);
+		expect(result.current.draggedRecordIds).toEqual(["record-1"]);
+		expect(result.current.primaryDraggedRecordId).toBe("record-1");
+		expect(result.current.originalDragSelection).toEqual(["record-1"]);
+	});
 
-  it('should set multi drag state when multiple records are selected', () => {
-    const { result } = renderHook(
-      () => {
-        const isMultiDragActive = useAtomComponentStateValue(
-          isMultiDragActiveComponentState,
-        );
-        const draggedRecordIds = useAtomComponentStateValue(
-          draggedRecordIdsComponentState,
-        );
-        const primaryDraggedRecordId = useAtomComponentStateValue(
-          primaryDraggedRecordIdComponentState,
-        );
-        const originalDragSelection = useAtomComponentStateValue(
-          originalDragSelectionComponentState,
-        );
+	it("should set multi drag state when multiple records are selected", () => {
+		const { result } = renderHook(
+			() => {
+				const isMultiDragActive = useAtomComponentStateValue(
+					isMultiDragActiveComponentState,
+				);
+				const draggedRecordIds = useAtomComponentStateValue(
+					draggedRecordIdsComponentState,
+				);
+				const primaryDraggedRecordId = useAtomComponentStateValue(
+					primaryDraggedRecordIdComponentState,
+				);
+				const originalDragSelection = useAtomComponentStateValue(
+					originalDragSelectionComponentState,
+				);
 
-        const { startRecordDrag } = useStartRecordDrag();
+				const { startRecordDrag } = useStartRecordDrag();
 
-        return {
-          startRecordDrag,
-          isMultiDragActive,
-          draggedRecordIds,
-          primaryDraggedRecordId,
-          originalDragSelection,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+				return {
+					startRecordDrag,
+					isMultiDragActive,
+					draggedRecordIds,
+					primaryDraggedRecordId,
+					originalDragSelection,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const draggedRecordId = 'record-2';
-    const selectedRecordIds = ['record-1', 'record-2', 'record-3'];
+		const draggedRecordId = "record-2";
+		const selectedRecordIds = ["record-1", "record-2", "record-3"];
 
-    act(() => {
-      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
-    });
+		act(() => {
+			result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
+		});
 
-    expect(result.current.isMultiDragActive).toBe(true);
-    expect(result.current.draggedRecordIds).toEqual([
-      'record-1',
-      'record-2',
-      'record-3',
-    ]);
-    expect(result.current.primaryDraggedRecordId).toBe('record-2');
-    expect(result.current.originalDragSelection).toEqual([
-      'record-1',
-      'record-2',
-      'record-3',
-    ]);
-  });
+		expect(result.current.isMultiDragActive).toBe(true);
+		expect(result.current.draggedRecordIds).toEqual([
+			"record-1",
+			"record-2",
+			"record-3",
+		]);
+		expect(result.current.primaryDraggedRecordId).toBe("record-2");
+		expect(result.current.originalDragSelection).toEqual([
+			"record-1",
+			"record-2",
+			"record-3",
+		]);
+	});
 
-  it('should handle empty selection', () => {
-    const { result } = renderHook(
-      () => {
-        const isMultiDragActive = useAtomComponentStateValue(
-          isMultiDragActiveComponentState,
-        );
-        const draggedRecordIds = useAtomComponentStateValue(
-          draggedRecordIdsComponentState,
-        );
-        const primaryDraggedRecordId = useAtomComponentStateValue(
-          primaryDraggedRecordIdComponentState,
-        );
-        const originalDragSelection = useAtomComponentStateValue(
-          originalDragSelectionComponentState,
-        );
+	it("should handle empty selection", () => {
+		const { result } = renderHook(
+			() => {
+				const isMultiDragActive = useAtomComponentStateValue(
+					isMultiDragActiveComponentState,
+				);
+				const draggedRecordIds = useAtomComponentStateValue(
+					draggedRecordIdsComponentState,
+				);
+				const primaryDraggedRecordId = useAtomComponentStateValue(
+					primaryDraggedRecordIdComponentState,
+				);
+				const originalDragSelection = useAtomComponentStateValue(
+					originalDragSelectionComponentState,
+				);
 
-        const { startRecordDrag } = useStartRecordDrag();
+				const { startRecordDrag } = useStartRecordDrag();
 
-        return {
-          startRecordDrag,
-          isMultiDragActive,
-          draggedRecordIds,
-          primaryDraggedRecordId,
-          originalDragSelection,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+				return {
+					startRecordDrag,
+					isMultiDragActive,
+					draggedRecordIds,
+					primaryDraggedRecordId,
+					originalDragSelection,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const draggedRecordId = 'record-1';
-    const selectedRecordIds: string[] = [];
+		const draggedRecordId = "record-1";
+		const selectedRecordIds: string[] = [];
 
-    act(() => {
-      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
-    });
+		act(() => {
+			result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
+		});
 
-    expect(result.current.isMultiDragActive).toBe(true);
-    expect(result.current.draggedRecordIds).toEqual(['record-1']);
-    expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalDragSelection).toEqual(['record-1']);
-  });
+		expect(result.current.isMultiDragActive).toBe(true);
+		expect(result.current.draggedRecordIds).toEqual(["record-1"]);
+		expect(result.current.primaryDraggedRecordId).toBe("record-1");
+		expect(result.current.originalDragSelection).toEqual(["record-1"]);
+	});
 
-  it('should set single drag state when dragged record is not in selection', () => {
-    const { result } = renderHook(
-      () => {
-        const isMultiDragActive = useAtomComponentStateValue(
-          isMultiDragActiveComponentState,
-        );
-        const draggedRecordIds = useAtomComponentStateValue(
-          draggedRecordIdsComponentState,
-        );
-        const primaryDraggedRecordId = useAtomComponentStateValue(
-          primaryDraggedRecordIdComponentState,
-        );
-        const originalDragSelection = useAtomComponentStateValue(
-          originalDragSelectionComponentState,
-        );
+	it("should set single drag state when dragged record is not in selection", () => {
+		const { result } = renderHook(
+			() => {
+				const isMultiDragActive = useAtomComponentStateValue(
+					isMultiDragActiveComponentState,
+				);
+				const draggedRecordIds = useAtomComponentStateValue(
+					draggedRecordIdsComponentState,
+				);
+				const primaryDraggedRecordId = useAtomComponentStateValue(
+					primaryDraggedRecordIdComponentState,
+				);
+				const originalDragSelection = useAtomComponentStateValue(
+					originalDragSelectionComponentState,
+				);
 
-        const { startRecordDrag } = useStartRecordDrag();
+				const { startRecordDrag } = useStartRecordDrag();
 
-        return {
-          startRecordDrag,
-          isMultiDragActive,
-          draggedRecordIds,
-          primaryDraggedRecordId,
-          originalDragSelection,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+				return {
+					startRecordDrag,
+					isMultiDragActive,
+					draggedRecordIds,
+					primaryDraggedRecordId,
+					originalDragSelection,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const draggedRecordId = 'record-1';
-    const selectedRecordIds = ['record-2', 'record-3'];
+		const draggedRecordId = "record-1";
+		const selectedRecordIds = ["record-2", "record-3"];
 
-    act(() => {
-      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
-    });
+		act(() => {
+			result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
+		});
 
-    expect(result.current.isMultiDragActive).toBe(true);
-    expect(result.current.draggedRecordIds).toEqual(['record-1']);
-    expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalDragSelection).toEqual(['record-1']);
-  });
+		expect(result.current.isMultiDragActive).toBe(true);
+		expect(result.current.draggedRecordIds).toEqual(["record-1"]);
+		expect(result.current.primaryDraggedRecordId).toBe("record-1");
+		expect(result.current.originalDragSelection).toEqual(["record-1"]);
+	});
 
-  it('should set multi drag state when multiple records are selected', () => {
-    const { result } = renderHook(
-      () => {
-        const isMultiDragActive = useAtomComponentStateValue(
-          isMultiDragActiveComponentState,
-        );
-        const draggedRecordIds = useAtomComponentStateValue(
-          draggedRecordIdsComponentState,
-        );
-        const primaryDraggedRecordId = useAtomComponentStateValue(
-          primaryDraggedRecordIdComponentState,
-        );
-        const originalDragSelection = useAtomComponentStateValue(
-          originalDragSelectionComponentState,
-        );
+	it("should set multi drag state when multiple records are selected", () => {
+		const { result } = renderHook(
+			() => {
+				const isMultiDragActive = useAtomComponentStateValue(
+					isMultiDragActiveComponentState,
+				);
+				const draggedRecordIds = useAtomComponentStateValue(
+					draggedRecordIdsComponentState,
+				);
+				const primaryDraggedRecordId = useAtomComponentStateValue(
+					primaryDraggedRecordIdComponentState,
+				);
+				const originalDragSelection = useAtomComponentStateValue(
+					originalDragSelectionComponentState,
+				);
 
-        const { startRecordDrag } = useStartRecordDrag();
+				const { startRecordDrag } = useStartRecordDrag();
 
-        return {
-          startRecordDrag,
-          isMultiDragActive,
-          draggedRecordIds,
-          primaryDraggedRecordId,
-          originalDragSelection,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+				return {
+					startRecordDrag,
+					isMultiDragActive,
+					draggedRecordIds,
+					primaryDraggedRecordId,
+					originalDragSelection,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const draggedRecordId = 'record-2';
-    const selectedRecordIds = ['record-1', 'record-2', 'record-3'];
+		const draggedRecordId = "record-2";
+		const selectedRecordIds = ["record-1", "record-2", "record-3"];
 
-    act(() => {
-      result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
-    });
+		act(() => {
+			result.current.startRecordDrag(draggedRecordId, selectedRecordIds);
+		});
 
-    expect(result.current.isMultiDragActive).toBe(true);
-    expect(result.current.draggedRecordIds).toEqual([
-      'record-1',
-      'record-2',
-      'record-3',
-    ]);
-    expect(result.current.primaryDraggedRecordId).toBe('record-2');
-    expect(result.current.originalDragSelection).toEqual([
-      'record-1',
-      'record-2',
-      'record-3',
-    ]);
-  });
+		expect(result.current.isMultiDragActive).toBe(true);
+		expect(result.current.draggedRecordIds).toEqual([
+			"record-1",
+			"record-2",
+			"record-3",
+		]);
+		expect(result.current.primaryDraggedRecordId).toBe("record-2");
+		expect(result.current.originalDragSelection).toEqual([
+			"record-1",
+			"record-2",
+			"record-3",
+		]);
+	});
 });

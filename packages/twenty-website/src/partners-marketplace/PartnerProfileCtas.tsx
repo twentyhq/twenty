@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { IconArrowUpRight } from '@tabler/icons-react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { IconArrowUpRight } from "@tabler/icons-react";
+import { styled } from "@linaria/react";
 
 import {
-  DURATION,
-  fontFamily,
-  fontSize,
-  radius,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { Button, ExternalLink } from '@/ui';
+	DURATION,
+	fontFamily,
+	fontSize,
+	radius,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { Button, ExternalLink } from "@/ui";
 
-import { isSafeHttpUrl } from './is-safe-http-url';
-import { type PartnerLinks } from './marketplace-partner';
-import { collectPartnerLinks } from './collect-partner-links';
-import { collectPartnerLinkUrls } from './collect-partner-link-urls';
-import { ProfileEyebrow } from './ProfileEyebrow';
+import { isSafeHttpUrl } from "./is-safe-http-url";
+import { type PartnerLinks } from "./marketplace-partner";
+import { collectPartnerLinks } from "./collect-partner-links";
+import { collectPartnerLinkUrls } from "./collect-partner-link-urls";
+import { ProfileEyebrow } from "./ProfileEyebrow";
 
 const Wrapper = styled.div`
   display: flex;
@@ -64,7 +64,7 @@ const PrimaryAction = styled.div`
 
 const SubNote = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(2.75)};
   letter-spacing: 0.03em;
   text-align: center;
@@ -85,7 +85,7 @@ const RailLink = styled(ExternalLink)`
   border-radius: ${radius(1.5)};
   color: ${semanticColor.ink};
   display: flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   gap: ${spacing(2.5)};
   justify-content: space-between;
@@ -115,77 +115,77 @@ const RailLinkIcon = styled(IconArrowUpRight)`
 `;
 
 export function PartnerProfileCtas({
-  calendarLink,
-  links,
-  linkUrls,
-  slug,
+	calendarLink,
+	links,
+	linkUrls,
+	slug,
 }: {
-  calendarLink: string;
-  links: PartnerLinks;
-  linkUrls?: readonly string[];
-  slug: string;
+	calendarLink: string;
+	links: PartnerLinks;
+	linkUrls?: readonly string[];
+	slug: string;
 }) {
-  const { i18n } = useLingui();
-  const calendarHref = isSafeHttpUrl(calendarLink) ? calendarLink : null;
-  const websiteHref =
-    links.website !== null && isSafeHttpUrl(links.website)
-      ? links.website
-      : null;
-  const rawLinkEntries =
-    linkUrls !== undefined && linkUrls.length > 0
-      ? collectPartnerLinkUrls(linkUrls)
-      : collectPartnerLinks(links);
-  const linkEntries = rawLinkEntries.filter((entry) => {
-    if (calendarHref !== null || websiteHref === null) {
-      return true;
-    }
+	const { i18n } = useLingui();
+	const calendarHref = isSafeHttpUrl(calendarLink) ? calendarLink : null;
+	const websiteHref =
+		links.website !== null && isSafeHttpUrl(links.website)
+			? links.website
+			: null;
+	const rawLinkEntries =
+		linkUrls !== undefined && linkUrls.length > 0
+			? collectPartnerLinkUrls(linkUrls)
+			: collectPartnerLinks(links);
+	const linkEntries = rawLinkEntries.filter((entry) => {
+		if (calendarHref !== null || websiteHref === null) {
+			return true;
+		}
 
-    return entry.href !== websiteHref;
-  });
+		return entry.href !== websiteHref;
+	});
 
-  return (
-    <Wrapper>
-      <ProfileEyebrow>{i18n._(msg`Reach out`)}</ProfileEyebrow>
-      <CtaCard>
-        {calendarHref !== null && (
-          <PrimaryAction>
-            <Button
-              href={calendarHref}
-              label={i18n._(msg`Book intro call`)}
-              variant="filled"
-            />
-            <SubNote>{i18n._(msg`30 minutes, no commitment`)}</SubNote>
-          </PrimaryAction>
-        )}
-        {calendarHref === null && websiteHref !== null && (
-          <PrimaryAction>
-            <Button
-              href={websiteHref}
-              label={i18n._(msg`Contact`)}
-              variant="outlined"
-            />
-          </PrimaryAction>
-        )}
-        {linkEntries.length > 0 && (
-          <RailLinks>
-            {linkEntries.map((link) => (
-              <li key={link.href}>
-                <RailLink href={link.href} title={link.label}>
-                  <RailLinkLabel>{link.label}</RailLinkLabel>
-                  <RailLinkIcon aria-hidden="true" size={16} stroke={1.5} />
-                </RailLink>
-              </li>
-            ))}
-          </RailLinks>
-        )}
-        <PrimaryAction>
-          <Button
-            href={`/partners/brief?partner=${encodeURIComponent(slug)}`}
-            label={i18n._(msg`Submit a brief`)}
-            variant="outlined"
-          />
-        </PrimaryAction>
-      </CtaCard>
-    </Wrapper>
-  );
+	return (
+		<Wrapper>
+			<ProfileEyebrow>{i18n._(msg`Reach out`)}</ProfileEyebrow>
+			<CtaCard>
+				{calendarHref !== null && (
+					<PrimaryAction>
+						<Button
+							href={calendarHref}
+							label={i18n._(msg`Book intro call`)}
+							variant="filled"
+						/>
+						<SubNote>{i18n._(msg`30 minutes, no commitment`)}</SubNote>
+					</PrimaryAction>
+				)}
+				{calendarHref === null && websiteHref !== null && (
+					<PrimaryAction>
+						<Button
+							href={websiteHref}
+							label={i18n._(msg`Contact`)}
+							variant="outlined"
+						/>
+					</PrimaryAction>
+				)}
+				{linkEntries.length > 0 && (
+					<RailLinks>
+						{linkEntries.map((link) => (
+							<li key={link.href}>
+								<RailLink href={link.href} title={link.label}>
+									<RailLinkLabel>{link.label}</RailLinkLabel>
+									<RailLinkIcon aria-hidden="true" size={16} stroke={1.5} />
+								</RailLink>
+							</li>
+						))}
+					</RailLinks>
+				)}
+				<PrimaryAction>
+					<Button
+						href={`/partners/brief?partner=${encodeURIComponent(slug)}`}
+						label={i18n._(msg`Submit a brief`)}
+						variant="outlined"
+					/>
+				</PrimaryAction>
+			</CtaCard>
+		</Wrapper>
+	);
 }

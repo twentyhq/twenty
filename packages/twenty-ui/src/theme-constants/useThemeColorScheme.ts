@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { ThemeContext } from './ThemeProvider';
+import { ThemeContext } from "./ThemeProvider";
 
-export const useThemeColorScheme = (): 'light' | 'dark' =>
-  useContext(ThemeContext).colorScheme;
+export const useThemeColorScheme = (): "light" | "dark" =>
+	useContext(ThemeContext).colorScheme;

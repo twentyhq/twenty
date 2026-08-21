@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const DATE_PICKER_CONTAINER_WIDTH = 280;
 
 export const StyledDatePickerContainer = styled.div<{
-  calendarDisabled?: boolean;
-  hideCalendar?: boolean;
+	calendarDisabled?: boolean;
+	hideCalendar?: boolean;
 }>`
   width: ${DATE_PICKER_CONTAINER_WIDTH}px;
 
@@ -172,16 +172,16 @@ export const StyledDatePickerContainer = styled.div<{
     margin: 0;
 
     pointer-events: ${({ calendarDisabled }) =>
-      calendarDisabled ? 'none' : 'auto'};
-    opacity: ${({ calendarDisabled }) => (calendarDisabled ? '0.5' : '1')};
+			calendarDisabled ? "none" : "auto"};
+    opacity: ${({ calendarDisabled }) => (calendarDisabled ? "0.5" : "1")};
 
     display: ${({ hideCalendar }) =>
-      hideCalendar === true ? 'none' : 'visible'};
+			hideCalendar === true ? "none" : "visible"};
   }
 
   & .react-datepicker__day-names {
     display: ${({ hideCalendar }) =>
-      hideCalendar === true ? 'none' : 'visible'};
+			hideCalendar === true ? "none" : "visible"};
   }
 
   & .react-datepicker__day {

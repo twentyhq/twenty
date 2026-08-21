@@ -1,16 +1,16 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { isDefined } from 'twenty-shared/utils';
-import { type AuthToken } from '~/generated-metadata/graphql';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
+import { isDefined } from "twenty-shared/utils";
+import { type AuthToken } from "~/generated-metadata/graphql";
 
 // In-memory only — never persist this bearer token to localStorage.
 export const playgroundApiKeyState = createAtomState<AuthToken | null>({
-  key: 'playgroundApiKeyState',
-  defaultValue: null,
+	key: "playgroundApiKeyState",
+	defaultValue: null,
 });
 
 export const isPlaygroundApiKeyFresh = (
-  token: AuthToken | null,
-  bufferMs = 0,
+	token: AuthToken | null,
+	bufferMs = 0,
 ): token is AuthToken =>
-  isDefined(token) &&
-  new Date(token.expiresAt).getTime() - Date.now() > bufferMs;
+	isDefined(token) &&
+	new Date(token.expiresAt).getTime() - Date.now() > bufferMs;

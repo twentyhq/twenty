@@ -1,18 +1,18 @@
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepBody } from "@/workflow/workflow-steps/components/WorkflowStepBody";
 
 const WorkflowRunStepJsonContainerInner = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => (
-  <WorkflowStepBody
-    display="grid"
-    gridTemplateRows="max-content"
-    rowGap="0"
-    overflow="auto"
-  >
-    {children}
-  </WorkflowStepBody>
+	<WorkflowStepBody
+		display="grid"
+		gridTemplateRows="max-content"
+		rowGap="0"
+		overflow="auto"
+	>
+		{children}
+	</WorkflowStepBody>
 );
 
 export { WorkflowRunStepJsonContainerInner as WorkflowRunStepJsonContainer };

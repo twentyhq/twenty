@@ -1,11 +1,11 @@
-import { parseTipTapJsonDocument } from 'twenty-shared/utils';
+import { parseTipTapJsonDocument } from "twenty-shared/utils";
 
 export const convertTipTapDocumentToBlockNote = (
-  serializedDocument: string,
+	serializedDocument: string,
 ): string => {
-  const document = parseTipTapJsonDocument(serializedDocument);
+	const document = parseTipTapJsonDocument(serializedDocument);
 
-  return document === undefined
-    ? serializedDocument
-    : JSON.stringify(document.content ?? []);
+	return document === undefined
+		? serializedDocument
+		: JSON.stringify(document.content ?? []);
 };

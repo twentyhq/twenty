@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 type GraphWidgetLegendDotProps = {
-  color: string;
-  className?: string;
+	color: string;
+	className?: string;
 };
 
 const StyledDot = styled.div<{ color: string }>`
@@ -14,8 +14,8 @@ const StyledDot = styled.div<{ color: string }>`
 `;
 
 export const GraphWidgetLegendDot = ({
-  color,
-  className,
+	color,
+	className,
 }: GraphWidgetLegendDotProps) => {
-  return <StyledDot color={color} className={className} />;
+	return <StyledDot color={color} className={className} />;
 };

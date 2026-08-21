@@ -1,38 +1,38 @@
-import { useStore } from 'jotai';
-import { useLayoutEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useStore } from "jotai";
+import { useLayoutEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { shouldContinueAiChatInSidePanelState } from "@/ai/states/shouldContinueAiChatInSidePanelState";
+import { shouldOpenAiChatAfterOnboardingState } from "@/onboarding/states/shouldOpenAiChatAfterOnboardingState";
+import { useOpenAskAiPageInSidePanel } from "@/side-panel/hooks/useOpenAskAiPageInSidePanel";
+import { isAiChatPath } from "~/utils/isAiChatPath";
 
 type SidePanelAskAiHandoffEffectProps = {
-  onContinueChatFromFullWidth: () => void;
+	onContinueChatFromFullWidth: () => void;
 };
 
 export const SidePanelAskAiHandoffEffect = ({
-  onContinueChatFromFullWidth,
+	onContinueChatFromFullWidth,
 }: SidePanelAskAiHandoffEffectProps) => {
-  const store = useStore();
-  const { pathname } = useLocation();
-  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+	const store = useStore();
+	const { pathname } = useLocation();
+	const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
-  useLayoutEffect(() => {
-    if (isAiChatPath(pathname)) {
-      return;
-    }
+	useLayoutEffect(() => {
+		if (isAiChatPath(pathname)) {
+			return;
+		}
 
-    if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
-      return;
-    }
+		if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
+			return;
+		}
 
-    store.set(shouldContinueAiChatInSidePanelState.atom, false);
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+		store.set(shouldContinueAiChatInSidePanelState.atom, false);
+		store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
-    onContinueChatFromFullWidth();
-    openAskAiPage({ resetNavigationStack: true });
-  }, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);
+		onContinueChatFromFullWidth();
+		openAskAiPage({ resetNavigationStack: true });
+	}, [pathname, store, openAskAiPage, onContinueChatFromFullWidth]);
 
-  return null;
+	return null;
 };

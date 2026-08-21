@@ -1,16 +1,16 @@
-import { createReactBlockSpec } from '@blocknote/react';
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type ChangeEvent, useRef } from 'react';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { createReactBlockSpec } from "@blocknote/react";
+import { styled } from "@linaria/react";
+import { isNonEmptyString } from "@sniptt/guards";
+import { type ChangeEvent, useRef } from "react";
+import { isUndefinedOrNull } from "~/utils/isUndefinedOrNull";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
-import { getFileType } from '@/activities/files/utils/getFileType';
-import { FileIcon } from '@/file/components/FileIcon';
-import { t } from '@lingui/core/macro';
-import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { type AttachmentFileCategory } from "@/activities/files/types/AttachmentFileCategory";
+import { getFileType } from "@/activities/files/utils/getFileType";
+import { FileIcon } from "@/file/components/FileIcon";
+import { t } from "@lingui/core/macro";
+import { getSafeUrl, isDefined } from "twenty-shared/utils";
+import { Button } from "twenty-ui/input";
 
 const StyledFileInput = styled.input`
   display: none;
@@ -39,86 +39,86 @@ const StyledUploadFileContainer = styled.div`
 `;
 
 export const FileBlock = createReactBlockSpec(
-  {
-    type: 'file',
-    propSchema: {
-      url: {
-        default: '',
-      },
-      name: {
-        default: '',
-      },
-      fileCategory: {
-        default: 'OTHER' as AttachmentFileCategory,
-      },
-    },
-    content: 'none',
-  },
-  {
-    render: ({ block, editor }) => {
-      // oxlint-disable-next-line react-hooks/rules-of-hooks
-      const inputFileRef = useRef<HTMLInputElement>(null);
+	{
+		type: "file",
+		propSchema: {
+			url: {
+				default: "",
+			},
+			name: {
+				default: "",
+			},
+			fileCategory: {
+				default: "OTHER" as AttachmentFileCategory,
+			},
+		},
+		content: "none",
+	},
+	{
+		render: ({ block, editor }) => {
+			// oxlint-disable-next-line react-hooks/rules-of-hooks
+			const inputFileRef = useRef<HTMLInputElement>(null);
 
-      const handleUploadAttachment = async (file: File) => {
-        if (isUndefinedOrNull(file)) {
-          return '';
-        }
-        const fileUrl = await editor.uploadFile?.(file);
+			const handleUploadAttachment = async (file: File) => {
+				if (isUndefinedOrNull(file)) {
+					return "";
+				}
+				const fileUrl = await editor.uploadFile?.(file);
 
-        if (!isNonEmptyString(fileUrl)) {
-          return '';
-        }
+				if (!isNonEmptyString(fileUrl)) {
+					return "";
+				}
 
-        editor.updateBlock(block.id, {
-          props: {
-            ...block.props,
-            url: fileUrl,
-            fileCategory: getFileType(file.name),
-            name: file.name,
-          },
-        });
-      };
-      const handleUploadFileClick = () => {
-        inputFileRef?.current?.click?.();
-      };
-      const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (isDefined(e.target.files))
-          handleUploadAttachment?.(e.target.files[0]);
-      };
+				editor.updateBlock(block.id, {
+					props: {
+						...block.props,
+						url: fileUrl,
+						fileCategory: getFileType(file.name),
+						name: file.name,
+					},
+				});
+			};
+			const handleUploadFileClick = () => {
+				inputFileRef?.current?.click?.();
+			};
+			const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+				if (isDefined(e.target.files))
+					handleUploadAttachment?.(e.target.files[0]);
+			};
 
-      const safeUrl = getSafeUrl(block.props.url);
+			const safeUrl = getSafeUrl(block.props.url);
 
-      if (safeUrl) {
-        return (
-          <StyledFileLine>
-            <FileIcon
-              fileCategory={block.props.fileCategory as AttachmentFileCategory}
-              thumbnailUrl={safeUrl}
-            />
-            <StyledLink
-              href={safeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {block.props.name}
-            </StyledLink>
-          </StyledFileLine>
-        );
-      }
+			if (safeUrl) {
+				return (
+					<StyledFileLine>
+						<FileIcon
+							fileCategory={block.props.fileCategory as AttachmentFileCategory}
+							thumbnailUrl={safeUrl}
+						/>
+						<StyledLink
+							href={safeUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{block.props.name}
+						</StyledLink>
+					</StyledFileLine>
+				);
+			}
 
-      return (
-        <StyledUploadFileContainer>
-          <StyledFileInput
-            ref={inputFileRef}
-            onChange={handleFileChange}
-            type="file"
-          />
-          <Button
-            onClick={handleUploadFileClick}
-            title={t`Upload File`}
-          ></Button>
-        </StyledUploadFileContainer>
-      );
-    },
-  },
+			return (
+				<StyledUploadFileContainer>
+					<StyledFileInput
+						ref={inputFileRef}
+						onChange={handleFileChange}
+						type="file"
+					/>
+					<Button
+						onClick={handleUploadFileClick}
+						title={t`Upload File`}
+					></Button>
+				</StyledUploadFileContainer>
+			);
+		},
+	},
 );

@@ -1,254 +1,254 @@
-import { isDate, isNumber, isString } from '@sniptt/guards';
+import { isDate, isNumber, isString } from "@sniptt/guards";
 import {
-  differenceInCalendarDays,
-  differenceInDays,
-  differenceInYears,
-  format,
-  formatDistance,
-  formatDistanceToNow,
-  isToday,
-  isValid,
-  parseISO,
-  type Locale,
-} from 'date-fns';
+	differenceInCalendarDays,
+	differenceInDays,
+	differenceInYears,
+	format,
+	formatDistance,
+	formatDistanceToNow,
+	isToday,
+	isValid,
+	parseISO,
+	type Locale,
+} from "date-fns";
 
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { DateFormat } from "@/localization/constants/DateFormat";
+import { TimeFormat } from "@/localization/constants/TimeFormat";
+import { CustomError, isDefined } from "twenty-shared/utils";
 
-import { i18n } from '@lingui/core';
-import { plural, t } from '@lingui/core/macro';
-import { logError } from './logError';
+import { i18n } from "@lingui/core";
+import { plural, t } from "@lingui/core/macro";
+import { logError } from "./logError";
 
 // TODO: review all of this with Temporal
 // - also break down this into small files
 export const parseDate = (dateToParse: Date | string | number): Date => {
-  if (dateToParse === 'now') return new Date();
+	if (dateToParse === "now") return new Date();
 
-  let formattedDate: Date | null = null;
+	let formattedDate: Date | null = null;
 
-  if (dateToParse === '' || dateToParse === 0) {
-    throw new CustomError(
-      `Invalid date passed to formatPastDate: "${dateToParse}"`,
-      'INVALID_DATE_FORMAT',
-    );
-  } else if (isString(dateToParse)) {
-    formattedDate = parseISO(dateToParse);
-  } else if (isDate(dateToParse)) {
-    formattedDate = dateToParse;
-  } else if (isNumber(dateToParse)) {
-    formattedDate = new Date(dateToParse);
-  }
+	if (dateToParse === "" || dateToParse === 0) {
+		throw new CustomError(
+			`Invalid date passed to formatPastDate: "${dateToParse}"`,
+			"INVALID_DATE_FORMAT",
+		);
+	} else if (isString(dateToParse)) {
+		formattedDate = parseISO(dateToParse);
+	} else if (isDate(dateToParse)) {
+		formattedDate = dateToParse;
+	} else if (isNumber(dateToParse)) {
+		formattedDate = new Date(dateToParse);
+	}
 
-  if (!formattedDate) {
-    throw new CustomError(
-      `Invalid date passed to formatPastDate: "${dateToParse}"`,
-      'INVALID_DATE_FORMAT',
-    );
-  }
+	if (!formattedDate) {
+		throw new CustomError(
+			`Invalid date passed to formatPastDate: "${dateToParse}"`,
+			"INVALID_DATE_FORMAT",
+		);
+	}
 
-  if (!isValid(formattedDate)) {
-    throw new CustomError(
-      `Invalid date passed to formatPastDate: "${dateToParse}"`,
-      'INVALID_DATE_FORMAT',
-    );
-  }
+	if (!isValid(formattedDate)) {
+		throw new CustomError(
+			`Invalid date passed to formatPastDate: "${dateToParse}"`,
+			"INVALID_DATE_FORMAT",
+		);
+	}
 
-  return formattedDate;
+	return formattedDate;
 };
 
 export const formatDate = (
-  dateToFormat: Date | string | number,
-  formatString: string,
+	dateToFormat: Date | string | number,
+	formatString: string,
 ) => {
-  try {
-    const parsedDate = parseDate(dateToFormat);
-    return format(parsedDate, formatString);
-  } catch (error) {
-    logError(error);
-    return '';
-  }
+	try {
+		const parsedDate = parseDate(dateToFormat);
+		return format(parsedDate, formatString);
+	} catch (error) {
+		logError(error);
+		return "";
+	}
 };
 
 export const beautifyExactDateTime = (
-  dateToBeautify: Date | string | number,
+	dateToBeautify: Date | string | number,
 ) => {
-  const parsedDate = parseDate(dateToBeautify);
-  const isTodayDate = isToday(parsedDate);
-  const dateFormat = isTodayDate ? 'HH:mm' : 'MMM d, yyyy · HH:mm';
-  return formatDate(dateToBeautify, dateFormat);
+	const parsedDate = parseDate(dateToBeautify);
+	const isTodayDate = isToday(parsedDate);
+	const dateFormat = isTodayDate ? "HH:mm" : "MMM d, yyyy · HH:mm";
+	return formatDate(dateToBeautify, dateFormat);
 };
 
 export const beautifyExactDate = (dateToBeautify: Date | string | number) => {
-  const parsedDate = parseDate(dateToBeautify);
-  const isTodayDate = isToday(parsedDate);
-  if (isTodayDate) {
-    return t`Today`;
-  }
-  return formatDate(dateToBeautify, 'MMM d, yyyy');
+	const parsedDate = parseDate(dateToBeautify);
+	const isTodayDate = isToday(parsedDate);
+	if (isTodayDate) {
+		return t`Today`;
+	}
+	return formatDate(dateToBeautify, "MMM d, yyyy");
 };
 
 export const beautifyPastDateRelativeToNow = (
-  pastDate: Date | string | number,
-  locale?: Locale,
+	pastDate: Date | string | number,
+	locale?: Locale,
 ) => {
-  try {
-    const parsedDate = parseDate(pastDate);
-    const now = new Date();
-    const diffInSeconds = Math.abs(
-      (now.getTime() - parsedDate.getTime()) / 1000,
-    );
+	try {
+		const parsedDate = parseDate(pastDate);
+		const now = new Date();
+		const diffInSeconds = Math.abs(
+			(now.getTime() - parsedDate.getTime()) / 1000,
+		);
 
-    if (diffInSeconds < 30) {
-      return t`now`;
-    }
+		if (diffInSeconds < 30) {
+			return t`now`;
+		}
 
-    return formatDistanceToNow(parsedDate, {
-      addSuffix: true,
-      locale,
-      includeSeconds: true,
-    });
-  } catch (error) {
-    logError(error);
-    return '';
-  }
+		return formatDistanceToNow(parsedDate, {
+			addSuffix: true,
+			locale,
+			includeSeconds: true,
+		});
+	} catch (error) {
+		logError(error);
+		return "";
+	}
 };
 
 export const beautifyPastDateRelativeToNowShort = (
-  pastDate: Date | string | number,
+	pastDate: Date | string | number,
 ) => {
-  try {
-    const parsedDate = parseDate(pastDate);
-    const now = new Date();
-    const diffInSeconds = Math.abs(
-      (now.getTime() - parsedDate.getTime()) / 1000,
-    );
+	try {
+		const parsedDate = parseDate(pastDate);
+		const now = new Date();
+		const diffInSeconds = Math.abs(
+			(now.getTime() - parsedDate.getTime()) / 1000,
+		);
 
-    if (diffInSeconds < 60) return t`now`;
+		if (diffInSeconds < 60) return t`now`;
 
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+		const diffInMinutes = Math.floor(diffInSeconds / 60);
+		if (diffInMinutes < 60) return `${diffInMinutes}m`;
 
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h`;
+		const diffInHours = Math.floor(diffInMinutes / 60);
+		if (diffInHours < 24) return `${diffInHours}h`;
 
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d`;
+		const diffInDays = Math.floor(diffInHours / 24);
+		if (diffInDays < 7) return `${diffInDays}d`;
 
-    const diffInWeeks = Math.floor(diffInDays / 7);
-    if (diffInWeeks < 5) return `${diffInWeeks}w`;
+		const diffInWeeks = Math.floor(diffInDays / 7);
+		if (diffInWeeks < 5) return `${diffInWeeks}w`;
 
-    const diffInMonths = Math.floor(diffInDays / 30);
-    if (diffInMonths < 12) return `${diffInMonths}mo`;
+		const diffInMonths = Math.floor(diffInDays / 30);
+		if (diffInMonths < 12) return `${diffInMonths}mo`;
 
-    const diffInYears = Math.floor(diffInDays / 365);
+		const diffInYears = Math.floor(diffInDays / 365);
 
-    return `${diffInYears}y`;
-  } catch (error) {
-    logError(error);
+		return `${diffInYears}y`;
+	} catch (error) {
+		logError(error);
 
-    return '';
-  }
+		return "";
+	}
 };
 
 export const hasDatePassed = (date: Date | string | number) => {
-  try {
-    const parsedDate = parseDate(date);
+	try {
+		const parsedDate = parseDate(date);
 
-    return differenceInCalendarDays(new Date(), parsedDate) >= 1;
-  } catch (error) {
-    logError(error);
-    return false;
-  }
+		return differenceInCalendarDays(new Date(), parsedDate) >= 1;
+	} catch (error) {
+		logError(error);
+		return false;
+	}
 };
 
 export const beautifyDateDiff = (
-  date: string,
-  dateToCompareWith?: string,
-  short = false,
-  locale?: Locale,
+	date: string,
+	dateToCompareWith?: string,
+	short = false,
+	locale?: Locale,
 ) => {
-  if (!short && isDefined(locale)) {
-    const fromDate = new Date(date);
-    const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date();
-    return formatDistance(fromDate, toDate, { locale });
-  }
+	if (!short && isDefined(locale)) {
+		const fromDate = new Date(date);
+		const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date();
+		return formatDistance(fromDate, toDate, { locale });
+	}
 
-  const fromDate = parseISO(date);
-  const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date();
+	const fromDate = parseISO(date);
+	const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date();
 
-  const years = differenceInYears(fromDate, toDate);
-  const startDateForDayCalculation = new Date(toDate);
-  startDateForDayCalculation.setFullYear(
-    startDateForDayCalculation.getFullYear() + years,
-  );
-  const days = differenceInDays(fromDate, startDateForDayCalculation);
+	const years = differenceInYears(fromDate, toDate);
+	const startDateForDayCalculation = new Date(toDate);
+	startDateForDayCalculation.setFullYear(
+		startDateForDayCalculation.getFullYear() + years,
+	);
+	const days = differenceInDays(fromDate, startDateForDayCalculation);
 
-  let result = '';
+	let result = "";
 
-  if (years !== 0) {
-    result = plural(Math.abs(years), {
-      one: `${years} year`,
-      other: `${years} years`,
-    });
+	if (years !== 0) {
+		result = plural(Math.abs(years), {
+			one: `${years} year`,
+			other: `${years} years`,
+		});
 
-    if (short) return result;
-  }
+		if (short) return result;
+	}
 
-  if (years !== 0 && days !== 0) {
-    result += ` ${t`and`} `;
-  }
+	if (years !== 0 && days !== 0) {
+		result += ` ${t`and`} `;
+	}
 
-  if (days !== 0) {
-    const daysPart = plural(Math.abs(days), {
-      one: `${days} day`,
-      other: `${days} days`,
-    });
-    result += daysPart;
-  }
+	if (days !== 0) {
+		const daysPart = plural(Math.abs(days), {
+			one: `${days} day`,
+			other: `${days} days`,
+		});
+		result += daysPart;
+	}
 
-  return result;
+	return result;
 };
 
 export const formatToHumanReadableDate = (date: Date | string) => {
-  const parsedJSDate = parseDate(date);
+	const parsedJSDate = parseDate(date);
 
-  return i18n.date(parsedJSDate, { dateStyle: 'medium' });
+	return i18n.date(parsedJSDate, { dateStyle: "medium" });
 };
 
 const getTimePattern = (timeFormat: TimeFormat) => {
-  return timeFormat === TimeFormat.HOUR_12 ? 'hh:mm a' : 'HH:mm';
+	return timeFormat === TimeFormat.HOUR_12 ? "hh:mm a" : "HH:mm";
 };
 
 export const getDateTimeFormatStringFoDatePickerInputMask = ({
-  dateFormat,
-  timeFormat,
+	dateFormat,
+	timeFormat,
 }: {
-  dateFormat: DateFormat;
-  timeFormat: TimeFormat;
+	dateFormat: DateFormat;
+	timeFormat: TimeFormat;
 }): string => {
-  const timePattern = getTimePattern(timeFormat);
-  switch (dateFormat) {
-    case DateFormat.DAY_FIRST:
-      return `dd/MM/yyyy ${timePattern}`;
-    case DateFormat.YEAR_FIRST:
-      return `yyyy-MM-dd ${timePattern}`;
-    case DateFormat.MONTH_FIRST:
-    default:
-      return `MM/dd/yyyy ${timePattern}`;
-  }
+	const timePattern = getTimePattern(timeFormat);
+	switch (dateFormat) {
+		case DateFormat.DAY_FIRST:
+			return `dd/MM/yyyy ${timePattern}`;
+		case DateFormat.YEAR_FIRST:
+			return `yyyy-MM-dd ${timePattern}`;
+		case DateFormat.MONTH_FIRST:
+		default:
+			return `MM/dd/yyyy ${timePattern}`;
+	}
 };
 
 export const getDateFormatStringForDatePickerInputMask = (
-  dateFormat: DateFormat,
+	dateFormat: DateFormat,
 ): string => {
-  switch (dateFormat) {
-    case DateFormat.DAY_FIRST:
-      return `dd/MM/yyyy`;
-    case DateFormat.YEAR_FIRST:
-      return `yyyy-MM-dd`;
-    case DateFormat.MONTH_FIRST:
-    default:
-      return `MM/dd/yyyy`;
-  }
+	switch (dateFormat) {
+		case DateFormat.DAY_FIRST:
+			return `dd/MM/yyyy`;
+		case DateFormat.YEAR_FIRST:
+			return `yyyy-MM-dd`;
+		case DateFormat.MONTH_FIRST:
+		default:
+			return `MM/dd/yyyy`;
+	}
 };

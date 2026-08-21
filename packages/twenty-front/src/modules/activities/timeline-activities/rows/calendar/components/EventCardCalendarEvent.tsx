@@ -1,30 +1,30 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isUndefined } from '@sniptt/guards';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { isUndefined } from "@sniptt/guards";
 
-import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
-import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
-import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { UserContext } from '@/users/contexts/UserContext';
-import { useContext } from 'react';
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { CalendarEventNotSharedContent } from "@/activities/calendar/components/CalendarEventNotSharedContent";
+import { CalendarEventParticipantsAvatarGroup } from "@/activities/calendar/components/CalendarEventParticipantsAvatarGroup";
+import { type CalendarEvent } from "@/activities/calendar/types/CalendarEvent";
+import { useOpenCalendarEventInSidePanel } from "@/side-panel/hooks/useOpenCalendarEventInSidePanel";
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { useFindOneRecord } from "@/object-record/hooks/useFindOneRecord";
+import { UserContext } from "@/users/contexts/UserContext";
+import { useContext } from "react";
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from "twenty-shared/constants";
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 import {
-  formatToHumanReadableDay,
-  formatToHumanReadableMonth,
-  formatToHumanReadableTime,
-} from '~/utils/format/formatDate';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+	formatToHumanReadableDay,
+	formatToHumanReadableMonth,
+	formatToHumanReadableTime,
+} from "~/utils/format/formatDate";
+import { isUndefinedOrNull } from "~/utils/isUndefinedOrNull";
 
 const StyledEventCardCalendarEventContainer = styled.div<{
-  canOpen?: boolean;
+	canOpen?: boolean;
 }>`
-  cursor: ${({ canOpen }) => (canOpen ? 'pointer' : 'not-allowed')};
+  cursor: ${({ canOpen }) => (canOpen ? "pointer" : "not-allowed")};
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[2]};
@@ -92,127 +92,127 @@ const StyledCalendarEventDateCardDay = styled.div`
 `;
 
 export const EventCardCalendarEvent = ({
-  calendarEventId,
+	calendarEventId,
 }: {
-  calendarEventId: string;
+	calendarEventId: string;
 }) => {
-  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
+	const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
 
-  const {
-    record: calendarEvent,
-    loading,
-    error,
-  } = useFindOneRecord<CalendarEvent>({
-    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
-    objectRecordId: calendarEventId,
-    recordGqlFields: {
-      id: true,
-      title: true,
-      startsAt: true,
-      endsAt: true,
-      calendarEventParticipants: {
-        person: true,
-        workspaceMember: true,
-        handle: true,
-        displayName: true,
-      },
-      callRecordings: {
-        id: true,
-        status: true,
-        applicationId: true,
-      },
-    },
-  });
+	const {
+		record: calendarEvent,
+		loading,
+		error,
+	} = useFindOneRecord<CalendarEvent>({
+		objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+		objectRecordId: calendarEventId,
+		recordGqlFields: {
+			id: true,
+			title: true,
+			startsAt: true,
+			endsAt: true,
+			calendarEventParticipants: {
+				person: true,
+				workspaceMember: true,
+				handle: true,
+				displayName: true,
+			},
+			callRecordings: {
+				id: true,
+				status: true,
+				applicationId: true,
+			},
+		},
+	});
 
-  const { timeZone } = useContext(UserContext);
+	const { timeZone } = useContext(UserContext);
 
-  if (isDefined(error)) {
-    if (CombinedGraphQLErrors.is(error)) {
-      const shouldHideMessageContent = error.errors.some(
-        (e) => e.extensions?.code === 'FORBIDDEN',
-      );
+	if (isDefined(error)) {
+		if (CombinedGraphQLErrors.is(error)) {
+			const shouldHideMessageContent = error.errors.some(
+				(e) => e.extensions?.code === "FORBIDDEN",
+			);
 
-      if (shouldHideMessageContent) {
-        return <CalendarEventNotSharedContent />;
-      }
+			if (shouldHideMessageContent) {
+				return <CalendarEventNotSharedContent />;
+			}
 
-      const shouldHandleNotFound = error.errors.some(
-        (e) => e.extensions?.code === 'NOT_FOUND',
-      );
+			const shouldHandleNotFound = error.errors.some(
+				(e) => e.extensions?.code === "NOT_FOUND",
+			);
 
-      if (shouldHandleNotFound) {
-        return <div>{t`Calendar event not found`}</div>;
-      }
-    }
+			if (shouldHandleNotFound) {
+				return <div>{t`Calendar event not found`}</div>;
+			}
+		}
 
-    return <div>{t`Error loading calendar event`}</div>;
-  }
+		return <div>{t`Error loading calendar event`}</div>;
+	}
 
-  if (loading || isUndefined(calendarEvent)) {
-    return <div>{t`Loading...`}</div>;
-  }
+	if (loading || isUndefined(calendarEvent)) {
+		return <div>{t`Loading...`}</div>;
+	}
 
-  const startsAtDate = calendarEvent?.startsAt;
-  const endsAtDate = calendarEvent?.endsAt;
+	const startsAtDate = calendarEvent?.startsAt;
+	const endsAtDate = calendarEvent?.endsAt;
 
-  if (isUndefinedOrNull(startsAtDate)) {
-    throw new Error("Can't render a calendarEvent without a start date");
-  }
+	if (isUndefinedOrNull(startsAtDate)) {
+		throw new Error("Can't render a calendarEvent without a start date");
+	}
 
-  const startsAtMonth = formatToHumanReadableMonth(startsAtDate, timeZone);
+	const startsAtMonth = formatToHumanReadableMonth(startsAtDate, timeZone);
 
-  const startsAtDay = formatToHumanReadableDay(startsAtDate, timeZone);
+	const startsAtDay = formatToHumanReadableDay(startsAtDate, timeZone);
 
-  const startsAtHour = formatToHumanReadableTime(startsAtDate, timeZone);
-  const endsAtHour = endsAtDate
-    ? formatToHumanReadableTime(endsAtDate, timeZone)
-    : null;
+	const startsAtHour = formatToHumanReadableTime(startsAtDate, timeZone);
+	const endsAtHour = endsAtDate
+		? formatToHumanReadableTime(endsAtDate, timeZone)
+		: null;
 
-  const canOpen =
-    calendarEvent.title !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+	const canOpen =
+		calendarEvent.title !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
 
-  const handleClick = () => {
-    if (canOpen) {
-      openCalendarEventInSidePanel(calendarEventId);
-    }
-  };
+	const handleClick = () => {
+		if (canOpen) {
+			openCalendarEventInSidePanel(calendarEventId);
+		}
+	};
 
-  return (
-    <StyledEventCardCalendarEventContainer
-      onClick={handleClick}
-      canOpen={canOpen}
-    >
-      <StyledCalendarEventDateCard>
-        <StyledCalendarEventDateCardMonth>
-          {startsAtMonth}
-        </StyledCalendarEventDateCardMonth>
-        <StyledCalendarEventDateCardDay>
-          {startsAtDay}
-        </StyledCalendarEventDateCardDay>
-      </StyledCalendarEventDateCard>
-      <StyledCalendarEventContent>
-        <StyledCalendarEventTop>
-          {calendarEvent.title ===
-          FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ? (
-            <CalendarEventNotSharedContent />
-          ) : (
-            <StyledCalendarEventTitle>
-              {calendarEvent.title}
-            </StyledCalendarEventTitle>
-          )}
-          {(!!calendarEvent.calendarEventParticipants?.length ||
-            !!calendarEvent.callRecordings?.length) && (
-            <CalendarEventParticipantsAvatarGroup
-              participants={calendarEvent.calendarEventParticipants ?? []}
-              callRecordings={calendarEvent.callRecordings}
-            />
-          )}
-        </StyledCalendarEventTop>
+	return (
+		<StyledEventCardCalendarEventContainer
+			onClick={handleClick}
+			canOpen={canOpen}
+		>
+			<StyledCalendarEventDateCard>
+				<StyledCalendarEventDateCardMonth>
+					{startsAtMonth}
+				</StyledCalendarEventDateCardMonth>
+				<StyledCalendarEventDateCardDay>
+					{startsAtDay}
+				</StyledCalendarEventDateCardDay>
+			</StyledCalendarEventDateCard>
+			<StyledCalendarEventContent>
+				<StyledCalendarEventTop>
+					{calendarEvent.title ===
+					FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ? (
+						<CalendarEventNotSharedContent />
+					) : (
+						<StyledCalendarEventTitle>
+							{calendarEvent.title}
+						</StyledCalendarEventTitle>
+					)}
+					{(!!calendarEvent.calendarEventParticipants?.length ||
+						!!calendarEvent.callRecordings?.length) && (
+						<CalendarEventParticipantsAvatarGroup
+							participants={calendarEvent.calendarEventParticipants ?? []}
+							callRecordings={calendarEvent.callRecordings}
+						/>
+					)}
+				</StyledCalendarEventTop>
 
-        <StyledCalendarEventBody>
-          {startsAtHour} {endsAtHour && <>→ {endsAtHour}</>}
-        </StyledCalendarEventBody>
-      </StyledCalendarEventContent>
-    </StyledEventCardCalendarEventContainer>
-  );
+				<StyledCalendarEventBody>
+					{startsAtHour} {endsAtHour && <>→ {endsAtHour}</>}
+				</StyledCalendarEventBody>
+			</StyledCalendarEventContent>
+		</StyledEventCardCalendarEventContainer>
+	);
 };

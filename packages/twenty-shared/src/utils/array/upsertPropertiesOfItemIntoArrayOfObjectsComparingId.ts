@@ -1,31 +1,31 @@
-import { findById } from '@/utils/array/findById';
+import { findById } from "@/utils/array/findById";
 
 export const upsertPropertiesOfItemIntoArrayOfObjectsComparingId = <
-  T extends { id: string },
+	T extends { id: string },
 >(
-  arrayToUpsertInto: T[],
-  propertiesToUpsert: Partial<T> & { id: string },
+	arrayToUpsertInto: T[],
+	propertiesToUpsert: Partial<T> & { id: string },
 ): T[] => {
-  const alreadyExistingItemIndex = arrayToUpsertInto.findIndex(
-    findById(propertiesToUpsert.id),
-  );
+	const alreadyExistingItemIndex = arrayToUpsertInto.findIndex(
+		findById(propertiesToUpsert.id),
+	);
 
-  const shouldReplaceItem = alreadyExistingItemIndex > -1;
+	const shouldReplaceItem = alreadyExistingItemIndex > -1;
 
-  if (shouldReplaceItem) {
-    const newArray = [...arrayToUpsertInto];
+	if (shouldReplaceItem) {
+		const newArray = [...arrayToUpsertInto];
 
-    const itemToUpsert = {
-      ...arrayToUpsertInto[alreadyExistingItemIndex],
-      ...propertiesToUpsert,
-    } as T;
+		const itemToUpsert = {
+			...arrayToUpsertInto[alreadyExistingItemIndex],
+			...propertiesToUpsert,
+		} as T;
 
-    newArray.splice(alreadyExistingItemIndex, 1, itemToUpsert);
+		newArray.splice(alreadyExistingItemIndex, 1, itemToUpsert);
 
-    return newArray;
-  } else {
-    return arrayToUpsertInto.concat({
-      ...propertiesToUpsert,
-    } as T);
-  }
+		return newArray;
+	} else {
+		return arrayToUpsertInto.concat({
+			...propertiesToUpsert,
+		} as T);
+	}
 };

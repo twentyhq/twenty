@@ -1,11 +1,11 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field } from "@nestjs/graphql";
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from "class-validator";
 
 @ArgsType()
 export class GetAuthTokensFromLoginTokenInput {
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  loginToken: string;
+	@Field(() => String)
+	@IsNotEmpty()
+	@IsString()
+	loginToken: string;
 }

@@ -1,5 +1,5 @@
 export type ObjectRecordQueryProgress = {
-  processedRecordCount?: number;
-  totalRecordCount?: number;
-  displayType?: 'percentage' | 'number';
+	processedRecordCount?: number;
+	totalRecordCount?: number;
+	displayType?: "percentage" | "number";
 };

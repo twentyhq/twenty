@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SubscriptionInterval } from '~/generated-metadata/graphql';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { SubscriptionInterval } from "~/generated-metadata/graphql";
 
 type SubscriptionPriceProps = {
-  type: SubscriptionInterval;
-  price: number;
+	type: SubscriptionInterval;
+	price: number;
 };
 
 const StyledPriceSpan = styled.span`
@@ -22,34 +22,34 @@ const StyledPriceUnitSpan = styled.span`
 `;
 
 const formatYearlyPriceToMonthly = (price: number): number => {
-  const monthlyPrice = price / 12;
+	const monthlyPrice = price / 12;
 
-  return Number.isInteger(monthlyPrice)
-    ? monthlyPrice
-    : Number(monthlyPrice.toFixed(2));
+	return Number.isInteger(monthlyPrice)
+		? monthlyPrice
+		: Number(monthlyPrice.toFixed(2));
 };
 
 export const SubscriptionPrice = ({ type, price }: SubscriptionPriceProps) => {
-  const { t } = useLingui();
-  const pricePerSeat =
-    type === SubscriptionInterval.Year
-      ? formatYearlyPriceToMonthly(price)
-      : price;
+	const { t } = useLingui();
+	const pricePerSeat =
+		type === SubscriptionInterval.Year
+			? formatYearlyPriceToMonthly(price)
+			: price;
 
-  let priceUnit = '';
-  switch (type) {
-    case SubscriptionInterval.Month:
-      priceUnit = t`seat / month`;
-      break;
-    case SubscriptionInterval.Year:
-      priceUnit = t`seat / month - billed yearly`;
-      break;
-  }
+	let priceUnit = "";
+	switch (type) {
+		case SubscriptionInterval.Month:
+			priceUnit = t`seat / month`;
+			break;
+		case SubscriptionInterval.Year:
+			priceUnit = t`seat / month - billed yearly`;
+			break;
+	}
 
-  return (
-    <>
-      <StyledPriceSpan>{`$${pricePerSeat}`}</StyledPriceSpan>
-      <StyledPriceUnitSpan>{priceUnit}</StyledPriceUnitSpan>
-    </>
-  );
+	return (
+		<>
+			<StyledPriceSpan>{`$${pricePerSeat}`}</StyledPriceSpan>
+			<StyledPriceUnitSpan>{priceUnit}</StyledPriceUnitSpan>
+		</>
+	);
 };

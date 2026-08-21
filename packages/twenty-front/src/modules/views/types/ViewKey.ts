@@ -1,1 +1,1 @@
-export { ViewKey } from '~/generated-metadata/graphql';
+export { ViewKey } from "~/generated-metadata/graphql";

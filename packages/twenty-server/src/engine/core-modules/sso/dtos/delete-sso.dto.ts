@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('DeleteSso')
+@ObjectType("DeleteSso")
 export class DeleteSsoDTO {
-  @Field(() => UUIDScalarType)
-  identityProviderId: string;
+	@Field(() => UUIDScalarType)
+	identityProviderId: string;
 }

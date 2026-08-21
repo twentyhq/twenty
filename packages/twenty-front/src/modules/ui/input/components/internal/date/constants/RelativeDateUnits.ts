@@ -1,9 +1,9 @@
-import { type RelativeDateFilterUnit } from 'twenty-shared/utils';
+import { type RelativeDateFilterUnit } from "twenty-shared/utils";
 
 export const RELATIVE_DATE_UNITS: RelativeDateFilterUnit[] = [
-  'DAY',
-  'WEEK',
-  'MONTH',
-  'QUARTER',
-  'YEAR',
+	"DAY",
+	"WEEK",
+	"MONTH",
+	"QUARTER",
+	"YEAR",
 ];

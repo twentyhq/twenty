@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const EVALUATE_AGENT_TURN = gql`
   mutation EvaluateAgentTurn($turnId: UUID!) {

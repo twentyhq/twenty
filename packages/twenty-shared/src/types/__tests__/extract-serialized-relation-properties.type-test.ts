@@ -1,76 +1,70 @@
-import { type Equal, type Expect } from '@/testing';
-import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
-import { type SerializedRelation } from '@/types/SerializedRelation.type';
+import { type Equal, type Expect } from "@/testing";
+import { type ExtractSerializedRelationProperties } from "@/types/ExtractSerializedRelationProperties.type";
+import { type SerializedRelation } from "@/types/SerializedRelation.type";
 
 type TestedRecord = {
-  plainString: string;
-  plainNumber: number;
-  plainBoolean: boolean;
-  plainObject: { id: string };
-  plainArray: string[];
-  plainUnknown: unknown;
-  plainStringNullable: string | null;
-  plainStringOptional?: string;
+	plainString: string;
+	plainNumber: number;
+	plainBoolean: boolean;
+	plainObject: { id: string };
+	plainArray: string[];
+	plainUnknown: unknown;
+	plainStringNullable: string | null;
+	plainStringOptional?: string;
 
-  relation: SerializedRelation;
-  relationNullable: SerializedRelation | null;
-  relationUndefinable: SerializedRelation | undefined;
-  relationOptional?: SerializedRelation;
-  relationOptionalNullable?: SerializedRelation | null;
+	relation: SerializedRelation;
+	relationNullable: SerializedRelation | null;
+	relationUndefinable: SerializedRelation | undefined;
+	relationOptional?: SerializedRelation;
+	relationOptionalNullable?: SerializedRelation | null;
 };
 
 type TestResult = ExtractSerializedRelationProperties<TestedRecord>;
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
-  Expect<
-    Equal<
-      TestResult,
-      | 'relation'
-      | 'relationNullable'
-      | 'relationUndefinable'
-      | 'relationOptional'
-      | 'relationOptionalNullable'
-    >
-  >,
-
-  Expect<
-    Equal<ExtractSerializedRelationProperties<{ a: string; b: number }>, never>
-  >,
-
-  Expect<Equal<ExtractSerializedRelationProperties<string>, never>>,
-  Expect<Equal<ExtractSerializedRelationProperties<number>, never>>,
-  Expect<Equal<ExtractSerializedRelationProperties<null>, never>>,
-
-  Expect<Equal<ExtractSerializedRelationProperties<object>, never>>,
-
-  Expect<
-    Equal<
-      ExtractSerializedRelationProperties<
-        { a: SerializedRelation } | { b: SerializedRelation }
-      >,
-      'a' | 'b'
-    >
-  >,
-
-  Expect<
-    Equal<
-      ExtractSerializedRelationProperties<{ rel: SerializedRelation } | string>,
-      'rel'
-    >
-  >,
-
-  // Types with string index signatures should return never
-  // (string index signatures shouldn't be mistaken for the brand)
-  Expect<
-    Equal<ExtractSerializedRelationProperties<Record<string, string>>, never>
-  >,
-  Expect<
-    Equal<
-      ExtractSerializedRelationProperties<
-        Record<string, { type: string; description?: string }>
-      >,
-      never
-    >
-  >,
+	Expect<
+		Equal<
+			TestResult,
+			| "relation"
+			| "relationNullable"
+			| "relationUndefinable"
+			| "relationOptional"
+			| "relationOptionalNullable"
+		>
+	>,
+	Expect<
+		Equal<ExtractSerializedRelationProperties<{ a: string; b: number }>, never>
+	>,
+	Expect<Equal<ExtractSerializedRelationProperties<string>, never>>,
+	Expect<Equal<ExtractSerializedRelationProperties<number>, never>>,
+	Expect<Equal<ExtractSerializedRelationProperties<null>, never>>,
+	Expect<Equal<ExtractSerializedRelationProperties<object>, never>>,
+	Expect<
+		Equal<
+			ExtractSerializedRelationProperties<
+				{ a: SerializedRelation } | { b: SerializedRelation }
+			>,
+			"a" | "b"
+		>
+	>,
+	Expect<
+		Equal<
+			ExtractSerializedRelationProperties<{ rel: SerializedRelation } | string>,
+			"rel"
+		>
+	>,
+	// Types with string index signatures should return never
+	// (string index signatures shouldn't be mistaken for the brand)
+	Expect<
+		Equal<ExtractSerializedRelationProperties<Record<string, string>>, never>
+	>,
+	Expect<
+		Equal<
+			ExtractSerializedRelationProperties<
+				Record<string, { type: string; description?: string }>
+			>,
+			never
+		>
+	>,
 ];

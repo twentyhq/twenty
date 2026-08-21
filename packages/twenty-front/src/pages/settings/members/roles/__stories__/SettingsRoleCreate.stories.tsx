@@ -1,23 +1,23 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
 import {
-  PageDecorator,
-  type PageDecoratorArgs,
-} from '~/testing/decorators/PageDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+	PageDecorator,
+	type PageDecoratorArgs,
+} from "~/testing/decorators/PageDecorator";
+import { graphqlMocks } from "~/testing/graphqlMocks";
 
-import { SettingsRoleCreate } from '~/pages/settings/members/roles/SettingsRoleCreate';
+import { SettingsRoleCreate } from "~/pages/settings/members/roles/SettingsRoleCreate";
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Roles/SettingsRoleCreate',
-  component: SettingsRoleCreate,
-  decorators: [PageDecorator],
-  args: {
-    routePath: '/settings/members/roles/create',
-  },
-  parameters: {
-    msw: graphqlMocks,
-  },
+	title: "Pages/Settings/Roles/SettingsRoleCreate",
+	component: SettingsRoleCreate,
+	decorators: [PageDecorator],
+	args: {
+		routePath: "/settings/members/roles/create",
+	},
+	parameters: {
+		msw: graphqlMocks,
+	},
 };
 
 export default meta;

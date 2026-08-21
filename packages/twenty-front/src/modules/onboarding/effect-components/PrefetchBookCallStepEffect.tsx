@@ -1,7 +1,7 @@
-import { usePreloadCalForBookCallStep } from '@/onboarding/hooks/usePreloadCalForBookCallStep';
+import { usePreloadCalForBookCallStep } from "@/onboarding/hooks/usePreloadCalForBookCallStep";
 
 export const PrefetchBookCallStepEffect = () => {
-  usePreloadCalForBookCallStep();
+	usePreloadCalForBookCallStep();
 
-  return null;
+	return null;
 };

@@ -1,14 +1,14 @@
-import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx';
-import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
-import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
-import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from "@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx";
+import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from "@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx";
+import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from "@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx";
+import { GraphWidgetLegendDot } from "@/page-layout/widgets/graph/components/GraphWidgetLegendDot";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { isNonEmptyString } from "@sniptt/guards";
+import { useContext } from "react";
+import { isDefined } from "twenty-shared/utils";
+import { IconArrowUpRight } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledTooltip = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -90,14 +90,14 @@ const StyledTooltipRowRightContent = styled.div`
 
 const StyledTooltipLabel = styled.span<{ isHighlighted?: boolean }>`
   color: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.font.color.secondary
-      : themeCssVariables.font.color.tertiary};
+		isHighlighted
+			? themeCssVariables.font.color.secondary
+			: themeCssVariables.font.color.tertiary};
   flex: 1;
   font-weight: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
+		isHighlighted
+			? themeCssVariables.font.weight.medium
+			: themeCssVariables.font.weight.regular};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -111,101 +111,101 @@ const StyledNoDataMessage = styled.span`
 
 const StyledTooltipValue = styled.span<{ isHighlighted?: boolean }>`
   color: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.font.color.tertiary
-      : themeCssVariables.font.color.extraLight};
+		isHighlighted
+			? themeCssVariables.font.color.tertiary
+			: themeCssVariables.font.color.extraLight};
   flex-shrink: 0;
   font-weight: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.font.weight.semiBold
-      : themeCssVariables.font.weight.medium};
+		isHighlighted
+			? themeCssVariables.font.weight.semiBold
+			: themeCssVariables.font.weight.medium};
   white-space: nowrap;
 `;
 
 const StyledHorizontalSectionPadding = styled.div<{
-  addTop?: boolean;
-  addBottom?: boolean;
+	addTop?: boolean;
+	addBottom?: boolean;
 }>`
   margin-bottom: ${({ addBottom }) =>
-    addBottom ? themeCssVariables.spacing[1] : 0};
+		addBottom ? themeCssVariables.spacing[1] : 0};
   margin-top: ${({ addTop }) => (addTop ? themeCssVariables.spacing[1] : 0)};
   padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
 export type GraphWidgetTooltipItem = {
-  key: string;
-  label: string;
-  formattedValue: string;
-  value: number;
-  dotColor: string;
+	key: string;
+	label: string;
+	formattedValue: string;
+	value: number;
+	dotColor: string;
 };
 
 type GraphWidgetTooltipProps = {
-  items: GraphWidgetTooltipItem[];
-  indexLabel?: string;
-  highlightedKey?: string;
-  onGraphWidgetTooltipClick?: () => void;
+	items: GraphWidgetTooltipItem[];
+	indexLabel?: string;
+	highlightedKey?: string;
+	onGraphWidgetTooltipClick?: () => void;
 };
 
 export const GraphWidgetTooltip = ({
-  items,
-  indexLabel,
-  highlightedKey,
-  onGraphWidgetTooltipClick,
+	items,
+	indexLabel,
+	highlightedKey,
+	onGraphWidgetTooltipClick,
 }: GraphWidgetTooltipProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const filteredItems = items.filter(
-    (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
-  );
+	const filteredItems = items.filter(
+		(item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
+	);
 
-  const hasData = filteredItems.length > 0;
-  const shouldHighlight = filteredItems.length > 1;
-  const shouldShowClickFooter = hasData && isDefined(onGraphWidgetTooltipClick);
+	const hasData = filteredItems.length > 0;
+	const shouldHighlight = filteredItems.length > 1;
+	const shouldShowClickFooter = hasData && isDefined(onGraphWidgetTooltipClick);
 
-  return (
-    <StyledTooltip>
-      <StyledHorizontalSectionPadding addTop addBottom={!shouldShowClickFooter}>
-        <StyledTooltipContent>
-          {indexLabel && (
-            <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
-          )}
-          <StyledTooltipRowContainer>
-            {filteredItems.length === 0 ? (
-              <StyledNoDataMessage>{t`No data`}</StyledNoDataMessage>
-            ) : (
-              filteredItems.map((item) => {
-                const isHighlighted =
-                  shouldHighlight && highlightedKey === item.key;
-                return (
-                  <StyledTooltipRow key={item.key}>
-                    <GraphWidgetLegendDot color={item.dotColor} />
-                    <StyledTooltipRowRightContent>
-                      <StyledTooltipLabel isHighlighted={isHighlighted}>
-                        {item.label}
-                      </StyledTooltipLabel>
-                      <StyledTooltipValue isHighlighted={isHighlighted}>
-                        {item.formattedValue}
-                      </StyledTooltipValue>
-                    </StyledTooltipRowRightContent>
-                  </StyledTooltipRow>
-                );
-              })
-            )}
-          </StyledTooltipRowContainer>
-        </StyledTooltipContent>
-      </StyledHorizontalSectionPadding>
-      {shouldShowClickFooter && (
-        <>
-          <StyledTooltipSeparator />
-          <StyledHorizontalSectionPadding addBottom>
-            <StyledTooltipLink onClick={onGraphWidgetTooltipClick}>
-              <span>{t`Click to see data`}</span>
-              <IconArrowUpRight size={theme.icon.size.sm} />
-            </StyledTooltipLink>
-          </StyledHorizontalSectionPadding>
-        </>
-      )}
-    </StyledTooltip>
-  );
+	return (
+		<StyledTooltip>
+			<StyledHorizontalSectionPadding addTop addBottom={!shouldShowClickFooter}>
+				<StyledTooltipContent>
+					{indexLabel && (
+						<StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
+					)}
+					<StyledTooltipRowContainer>
+						{filteredItems.length === 0 ? (
+							<StyledNoDataMessage>{t`No data`}</StyledNoDataMessage>
+						) : (
+							filteredItems.map((item) => {
+								const isHighlighted =
+									shouldHighlight && highlightedKey === item.key;
+								return (
+									<StyledTooltipRow key={item.key}>
+										<GraphWidgetLegendDot color={item.dotColor} />
+										<StyledTooltipRowRightContent>
+											<StyledTooltipLabel isHighlighted={isHighlighted}>
+												{item.label}
+											</StyledTooltipLabel>
+											<StyledTooltipValue isHighlighted={isHighlighted}>
+												{item.formattedValue}
+											</StyledTooltipValue>
+										</StyledTooltipRowRightContent>
+									</StyledTooltipRow>
+								);
+							})
+						)}
+					</StyledTooltipRowContainer>
+				</StyledTooltipContent>
+			</StyledHorizontalSectionPadding>
+			{shouldShowClickFooter && (
+				<>
+					<StyledTooltipSeparator />
+					<StyledHorizontalSectionPadding addBottom>
+						<StyledTooltipLink onClick={onGraphWidgetTooltipClick}>
+							<span>{t`Click to see data`}</span>
+							<IconArrowUpRight size={theme.icon.size.sm} />
+						</StyledTooltipLink>
+					</StyledHorizontalSectionPadding>
+				</>
+			)}
+		</StyledTooltip>
+	);
 };

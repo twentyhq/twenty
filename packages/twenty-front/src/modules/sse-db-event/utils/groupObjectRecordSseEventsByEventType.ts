@@ -1,27 +1,27 @@
 import {
-  type DatabaseEventAction,
-  type ObjectRecordEvent,
-} from '~/generated-metadata/graphql';
+	type DatabaseEventAction,
+	type ObjectRecordEvent,
+} from "~/generated-metadata/graphql";
 
 export const groupObjectRecordSseEventsByEventType = ({
-  objectRecordEvents,
+	objectRecordEvents,
 }: {
-  objectRecordEvents: ObjectRecordEvent[];
+	objectRecordEvents: ObjectRecordEvent[];
 }) => {
-  const objectRecordEventsByEventType = new Map<
-    DatabaseEventAction,
-    ObjectRecordEvent[]
-  >();
+	const objectRecordEventsByEventType = new Map<
+		DatabaseEventAction,
+		ObjectRecordEvent[]
+	>();
 
-  for (const objectRecordEvent of objectRecordEvents) {
-    const existingObjectRecordEvents =
-      objectRecordEventsByEventType.get(objectRecordEvent.action) ?? [];
+	for (const objectRecordEvent of objectRecordEvents) {
+		const existingObjectRecordEvents =
+			objectRecordEventsByEventType.get(objectRecordEvent.action) ?? [];
 
-    objectRecordEventsByEventType.set(objectRecordEvent.action, [
-      ...existingObjectRecordEvents,
-      objectRecordEvent,
-    ]);
-  }
+		objectRecordEventsByEventType.set(objectRecordEvent.action, [
+			...existingObjectRecordEvents,
+			objectRecordEvent,
+		]);
+	}
 
-  return { objectRecordEventsByEventType };
+	return { objectRecordEventsByEventType };
 };

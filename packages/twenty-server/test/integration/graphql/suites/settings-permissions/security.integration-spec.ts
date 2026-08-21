@@ -1,10 +1,10 @@
-import { gql } from 'graphql-tag';
-import request from 'supertest';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { gql } from "graphql-tag";
+import request from "supertest";
+import { makeMetadataAPIRequestWithFileUpload } from "test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util";
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { ErrorCode } from "src/engine/core-modules/graphql/utils/graphql-errors.util";
+import { PermissionsExceptionMessage } from "src/engine/metadata-modules/permissions/permissions.exception";
 
 const uploadWorkspaceLogoMutation = gql`
   mutation UploadWorkspaceLogo($file: Upload!) {
@@ -17,11 +17,11 @@ const uploadWorkspaceLogoMutation = gql`
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('Security permissions', () => {
-  let originalWorkspaceState: Record<string, unknown>;
+describe("Security permissions", () => {
+	let originalWorkspaceState: Record<string, unknown>;
 
-  beforeAll(async () => {
-    const query = gql`
+	beforeAll(async () => {
+		const query = gql`
       query getWorkspace {
         currentWorkspace {
           displayName
@@ -36,13 +36,13 @@ describe('Security permissions', () => {
       }
     `;
 
-    const response = await makeMetadataAPIRequest({ query });
+		const response = await makeMetadataAPIRequest({ query });
 
-    originalWorkspaceState = response.body.data.currentWorkspace;
-  });
+		originalWorkspaceState = response.body.data.currentWorkspace;
+	});
 
-  afterAll(async () => {
-    const restoreQuery = gql`
+	afterAll(async () => {
+		const restoreQuery = gql`
         mutation updateWorkspace {
           updateWorkspace(data: {
             displayName: "${originalWorkspaceState.displayName}",
@@ -58,14 +58,14 @@ describe('Security permissions', () => {
         }
       `;
 
-    await makeMetadataAPIRequest({ query: restoreQuery });
-  });
+		await makeMetadataAPIRequest({ query: restoreQuery });
+	});
 
-  describe('security permissions', () => {
-    describe('microsoft auth', () => {
-      it('should update workspace when user has permission (admin role)', async () => {
-        const queryData = {
-          query: `
+	describe("security permissions", () => {
+		describe("microsoft auth", () => {
+			it("should update workspace when user has permission (admin role)", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { isMicrosoftAuthEnabled: false }) {
               id
@@ -73,28 +73,28 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.isMicrosoftAuthEnabled).toBe(false);
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.isMicrosoftAuthEnabled).toBe(false);
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { isMicrosoftAuthEnabled: true }) {
               id
@@ -102,30 +102,30 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
 
-    describe('google auth', () => {
-      it('should update workspace when user has permission (admin role)', async () => {
-        const queryData = {
-          query: `
+		describe("google auth", () => {
+			it("should update workspace when user has permission (admin role)", async () => {
+				const queryData = {
+					query: `
             mutation updateWorkspace {
               updateWorkspace(data: { isGoogleAuthEnabled: false }) {
                 id
@@ -133,28 +133,28 @@ describe('Security permissions', () => {
               }
             }
           `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.isGoogleAuthEnabled).toBe(false);
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.isGoogleAuthEnabled).toBe(false);
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
             mutation updateWorkspace {
               updateWorkspace(data: { isGoogleAuthEnabled: true }) {
                 id
@@ -162,30 +162,30 @@ describe('Security permissions', () => {
               }
             }
           `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
 
-    describe('password auth', () => {
-      it('should update workspace when user has permission (admin role)', async () => {
-        const queryData = {
-          query: `
+		describe("password auth", () => {
+			it("should update workspace when user has permission (admin role)", async () => {
+				const queryData = {
+					query: `
             mutation updateWorkspace {
               updateWorkspace(data: { isPasswordAuthEnabled: false }) {
                 id
@@ -193,28 +193,28 @@ describe('Security permissions', () => {
               }
             }
           `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.isPasswordAuthEnabled).toBe(false);
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.isPasswordAuthEnabled).toBe(false);
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
             mutation updateWorkspace {
               updateWorkspace(data: { isPasswordAuthEnabled: true }) {
                 id
@@ -222,29 +222,29 @@ describe('Security permissions', () => {
               }
             }
           `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
-    describe('public invite link', () => {
-      it('should update isPublicInviteLinkEnabled when user has permission (admin role)', async () => {
-        const queryData = {
-          query: `
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
+		describe("public invite link", () => {
+			it("should update isPublicInviteLinkEnabled when user has permission (admin role)", async () => {
+				const queryData = {
+					query: `
             mutation updateWorkspace {
               updateWorkspace(data: { isPublicInviteLinkEnabled: false }) {
                 id
@@ -252,28 +252,28 @@ describe('Security permissions', () => {
               }
             }
           `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.isPublicInviteLinkEnabled).toBe(false);
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.isPublicInviteLinkEnabled).toBe(false);
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
             mutation updateWorkspace {
               updateWorkspace(data: { isPublicInviteLinkEnabled: true }) {
                 id
@@ -281,32 +281,32 @@ describe('Security permissions', () => {
               }
             }
           `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
-  });
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
+	});
 
-  describe('workspace permissions', () => {
-    describe('delete workspace', () => {
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+	describe("workspace permissions", () => {
+		describe("delete workspace", () => {
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
                 mutation DeleteCurrentWorkspace {
           deleteCurrentWorkspace {
             id
@@ -314,29 +314,29 @@ describe('Security permissions', () => {
           }
         }
         `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
-    describe('display name update', () => {
-      it('should update workspace display name when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
+		describe("display name update", () => {
+			it("should update workspace display name when user has workspace settings permission", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { displayName: "New Workspace Name" }) {
               id
@@ -344,28 +344,28 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.displayName).toBe('New Workspace Name');
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.displayName).toBe("New Workspace Name");
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { displayName: "Another New Workspace Name" }) {
               id
@@ -373,30 +373,30 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
 
-    describe('subdomain update', () => {
-      it('should update workspace subdomain when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
+		describe("subdomain update", () => {
+			it("should update workspace subdomain when user has workspace settings permission", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { subdomain: "new-subdomain" }) {
               id
@@ -404,28 +404,28 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.subdomain).toBe('new-subdomain');
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.subdomain).toBe("new-subdomain");
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { subdomain: "another-new-subdomain" }) {
               id
@@ -433,30 +433,30 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
 
-    describe('custom domain update', () => {
-      it('should update workspace custom domain when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
+		describe("custom domain update", () => {
+			it("should update workspace custom domain when user has workspace settings permission", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { customDomain: null }) {
               id
@@ -464,28 +464,28 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+				return client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeDefined();
+						expect(res.body.errors).toBeUndefined();
+					})
+					.expect((res) => {
+						const data = res.body.data.updateWorkspace;
 
-            expect(data).toBeDefined();
-            expect(data.customDomain).toBe(null);
-          });
-      });
+						expect(data).toBeDefined();
+						expect(data.customDomain).toBe(null);
+					});
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const queryData = {
+					query: `
           mutation updateWorkspace {
             updateWorkspace(data: { customDomain: "another-new-custom-domain" }) {
               id
@@ -493,63 +493,63 @@ describe('Security permissions', () => {
             }
           }
         `,
-        };
+				};
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-    });
+				await client
+					.post("/metadata")
+					.set("Authorization", `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+					.send(queryData)
+					.expect(200)
+					.expect((res) => {
+						expect(res.body.data).toBeNull();
+						expect(res.body.errors).toBeDefined();
+						expect(res.body.errors[0].message).toBe(
+							PermissionsExceptionMessage.PERMISSION_DENIED,
+						);
+						expect(res.body.errors[0].extensions.code).toBe(
+							ErrorCode.FORBIDDEN,
+						);
+					});
+			});
+		});
 
-    describe('logo update', () => {
-      beforeAll(() => {
-        jest.useRealTimers();
-      });
+		describe("logo update", () => {
+			beforeAll(() => {
+				jest.useRealTimers();
+			});
 
-      afterAll(() => {
-        jest.useFakeTimers();
-      });
+			afterAll(() => {
+				jest.useFakeTimers();
+			});
 
-      it('should update workspace logo when user has workspace settings permission', async () => {
-        const testImageBuffer = Buffer.from(
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-          'base64',
-        );
+			it("should update workspace logo when user has workspace settings permission", async () => {
+				const testImageBuffer = Buffer.from(
+					"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+					"base64",
+				);
 
-        const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
-          {
-            query: uploadWorkspaceLogoMutation,
-            variables: { file: null },
-          },
-          {
-            field: 'file',
-            buffer: testImageBuffer,
-            filename: 'test-logo.png',
-            contentType: 'image/png',
-          },
-          APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        );
+				const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
+					{
+						query: uploadWorkspaceLogoMutation,
+						variables: { file: null },
+					},
+					{
+						field: "file",
+						buffer: testImageBuffer,
+						filename: "test-logo.png",
+						contentType: "image/png",
+					},
+					APPLE_JANE_ADMIN_ACCESS_TOKEN,
+				);
 
-        expect(uploadResponse.status).toBe(200);
-        expect(uploadResponse.body.errors).toBeUndefined();
-        expect(uploadResponse.body.data).toBeDefined();
-        expect(uploadResponse.body.data.uploadWorkspaceLogo).toBeDefined();
-        expect(uploadResponse.body.data.uploadWorkspaceLogo.id).toBeDefined();
-        expect(uploadResponse.body.data.uploadWorkspaceLogo.url).toBeDefined();
+				expect(uploadResponse.status).toBe(200);
+				expect(uploadResponse.body.errors).toBeUndefined();
+				expect(uploadResponse.body.data).toBeDefined();
+				expect(uploadResponse.body.data.uploadWorkspaceLogo).toBeDefined();
+				expect(uploadResponse.body.data.uploadWorkspaceLogo.id).toBeDefined();
+				expect(uploadResponse.body.data.uploadWorkspaceLogo.url).toBeDefined();
 
-        const getWorkspaceQuery = gql`
+				const getWorkspaceQuery = gql`
           query GetWorkspace {
             currentWorkspace {
               logo
@@ -557,43 +557,43 @@ describe('Security permissions', () => {
           }
         `;
 
-        const workspaceResponse = await makeMetadataAPIRequest({
-          query: getWorkspaceQuery,
-        });
+				const workspaceResponse = await makeMetadataAPIRequest({
+					query: getWorkspaceQuery,
+				});
 
-        expect(workspaceResponse.body.data.currentWorkspace.logo).toBeDefined();
-      });
+				expect(workspaceResponse.body.data.currentWorkspace.logo).toBeDefined();
+			});
 
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const testImageBuffer = Buffer.from(
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-          'base64',
-        );
+			it("should throw a permission error when user does not have permission (member role)", async () => {
+				const testImageBuffer = Buffer.from(
+					"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+					"base64",
+				);
 
-        const response = await makeMetadataAPIRequestWithFileUpload(
-          {
-            query: uploadWorkspaceLogoMutation,
-            variables: { file: null },
-          },
-          {
-            field: 'file',
-            buffer: testImageBuffer,
-            filename: 'test-logo.png',
-            contentType: 'image/png',
-          },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        );
+				const response = await makeMetadataAPIRequestWithFileUpload(
+					{
+						query: uploadWorkspaceLogoMutation,
+						variables: { file: null },
+					},
+					{
+						field: "file",
+						buffer: testImageBuffer,
+						filename: "test-logo.png",
+						contentType: "image/png",
+					},
+					APPLE_JONY_MEMBER_ACCESS_TOKEN,
+				);
 
-        expect(response.status).toBe(200);
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-        );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
-      });
-    });
-  });
+				expect(response.status).toBe(200);
+				expect(response.body.data).toBeNull();
+				expect(response.body.errors).toBeDefined();
+				expect(response.body.errors[0].message).toBe(
+					PermissionsExceptionMessage.PERMISSION_DENIED,
+				);
+				expect(response.body.errors[0].extensions.code).toBe(
+					ErrorCode.FORBIDDEN,
+				);
+			});
+		});
+	});
 });

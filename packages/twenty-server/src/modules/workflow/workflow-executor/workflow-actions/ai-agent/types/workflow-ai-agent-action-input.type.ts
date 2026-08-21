@@ -1,4 +1,4 @@
 export type WorkflowAiAgentActionInput = {
-  agentId?: string;
-  prompt?: string;
+	agentId?: string;
+	prompt?: string;
 };

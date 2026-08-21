@@ -1,2 +1,2 @@
-export { PartnerTestimonials } from './PartnerTestimonials';
-export { Testimonials } from './Testimonials';
+export { PartnerTestimonials } from "./PartnerTestimonials";
+export { Testimonials } from "./Testimonials";

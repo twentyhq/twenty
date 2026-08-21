@@ -1,13 +1,13 @@
-import { type ConnectionParametersInput } from '~/generated-metadata/graphql';
+import { type ConnectionParametersInput } from "~/generated-metadata/graphql";
 
 export const isProtocolConfigured = (
-  config: ConnectionParametersInput,
+	config: ConnectionParametersInput,
 ): boolean => {
-  return Boolean(config?.host?.trim() && config?.password?.trim());
+	return Boolean(config?.host?.trim() && config?.password?.trim());
 };
 
 export const isProtocolConfiguredForUpdate = (
-  config: ConnectionParametersInput,
+	config: ConnectionParametersInput,
 ): boolean => {
-  return Boolean(config?.host?.trim());
+	return Boolean(config?.host?.trim());
 };

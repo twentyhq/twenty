@@ -1,5 +1,5 @@
 export const getMultipleRecordPickerSelectableListId = (
-  multipleRecordPickerComponentInstanceId: string,
+	multipleRecordPickerComponentInstanceId: string,
 ) => {
-  return `${multipleRecordPickerComponentInstanceId}-selectable-list`;
+	return `${multipleRecordPickerComponentInstanceId}-selectable-list`;
 };

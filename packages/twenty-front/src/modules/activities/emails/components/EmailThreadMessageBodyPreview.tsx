@@ -1,6 +1,6 @@
-import React from 'react';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import React from "react";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledThreadMessageBodyPreview = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -11,13 +11,13 @@ const StyledThreadMessageBodyPreview = styled.div`
 `;
 
 type EmailThreadMessageBodyPreviewProps = {
-  body: string;
+	body: string;
 };
 
 export const EmailThreadMessageBodyPreview = ({
-  body,
+	body,
 }: EmailThreadMessageBodyPreviewProps) => {
-  return (
-    <StyledThreadMessageBodyPreview>{body}</StyledThreadMessageBodyPreview>
-  );
+	return (
+		<StyledThreadMessageBodyPreview>{body}</StyledThreadMessageBodyPreview>
+	);
 };

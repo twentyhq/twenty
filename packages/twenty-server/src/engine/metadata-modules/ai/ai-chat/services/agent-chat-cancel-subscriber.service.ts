@@ -1,8 +1,8 @@
-import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleDestroy } from "@nestjs/common";
 
-import type { Redis } from 'ioredis';
+import type { Redis } from "ioredis";
 
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { RedisClientService } from "src/engine/core-modules/redis-client/redis-client.service";
 
 // Single shared Redis subscriber connection per process for AI stream
 // cancellation. Multiplexes all cancel channels onto one connection
@@ -10,45 +10,45 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 // concurrent streams are running.
 @Injectable()
 export class AgentChatCancelSubscriberService implements OnModuleDestroy {
-  private readonly logger = new Logger(AgentChatCancelSubscriberService.name);
-  private subscriber: Redis | null = null;
-  private readonly callbacks = new Map<string, () => void>();
+	private readonly logger = new Logger(AgentChatCancelSubscriberService.name);
+	private subscriber: Redis | null = null;
+	private readonly callbacks = new Map<string, () => void>();
 
-  constructor(private readonly redisClientService: RedisClientService) {}
+	constructor(private readonly redisClientService: RedisClientService) {}
 
-  private ensureSubscriber(): Redis {
-    if (!this.subscriber) {
-      this.subscriber = this.redisClientService.getClient().duplicate();
-      this.subscriber.on('message', (channel: string) => {
-        const callback = this.callbacks.get(channel);
+	private ensureSubscriber(): Redis {
+		if (!this.subscriber) {
+			this.subscriber = this.redisClientService.getClient().duplicate();
+			this.subscriber.on("message", (channel: string) => {
+				const callback = this.callbacks.get(channel);
 
-        if (callback) {
-          callback();
-          this.callbacks.delete(channel);
-          this.subscriber?.unsubscribe(channel).catch(() => {});
-        }
-      });
-    }
+				if (callback) {
+					callback();
+					this.callbacks.delete(channel);
+					this.subscriber?.unsubscribe(channel).catch(() => {});
+				}
+			});
+		}
 
-    return this.subscriber;
-  }
+		return this.subscriber;
+	}
 
-  async subscribe(channel: string, onCancel: () => void): Promise<void> {
-    this.callbacks.set(channel, onCancel);
-    await this.ensureSubscriber().subscribe(channel);
-  }
+	async subscribe(channel: string, onCancel: () => void): Promise<void> {
+		this.callbacks.set(channel, onCancel);
+		await this.ensureSubscriber().subscribe(channel);
+	}
 
-  async unsubscribe(channel: string): Promise<void> {
-    this.callbacks.delete(channel);
-    await this.subscriber?.unsubscribe(channel).catch(() => {});
-  }
+	async unsubscribe(channel: string): Promise<void> {
+		this.callbacks.delete(channel);
+		await this.subscriber?.unsubscribe(channel).catch(() => {});
+	}
 
-  async onModuleDestroy(): Promise<void> {
-    if (this.subscriber) {
-      await this.subscriber.quit().catch(() => {});
-      this.subscriber = null;
-    }
+	async onModuleDestroy(): Promise<void> {
+		if (this.subscriber) {
+			await this.subscriber.quit().catch(() => {});
+			this.subscriber = null;
+		}
 
-    this.callbacks.clear();
-  }
+		this.callbacks.clear();
+	}
 }

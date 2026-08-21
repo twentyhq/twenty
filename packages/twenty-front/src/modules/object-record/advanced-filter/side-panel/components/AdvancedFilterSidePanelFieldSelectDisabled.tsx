@@ -1,23 +1,23 @@
-import { useRecordFilterField } from '@/object-record/advanced-filter/hooks/useRecordFilterField';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { useRecordFilterField } from "@/object-record/advanced-filter/hooks/useRecordFilterField";
+import { SelectControl } from "@/ui/input/components/SelectControl";
 
 type AdvancedFilterSidePanelFieldSelectDisabledProps = {
-  recordFilterId: string;
+	recordFilterId: string;
 };
 
 export const AdvancedFilterSidePanelFieldSelectDisabled = ({
-  recordFilterId,
+	recordFilterId,
 }: AdvancedFilterSidePanelFieldSelectDisabledProps) => {
-  const { label, icon } = useRecordFilterField(recordFilterId);
+	const { label, icon } = useRecordFilterField(recordFilterId);
 
-  return (
-    <SelectControl
-      selectedOption={{
-        label,
-        value: null,
-        Icon: icon,
-      }}
-      isDisabled
-    />
-  );
+	return (
+		<SelectControl
+			selectedOption={{
+				label,
+				value: null,
+				Icon: icon,
+			}}
+			isDisabled
+		/>
+	);
 };

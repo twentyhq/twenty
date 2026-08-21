@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { IconLock } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Trans } from "@lingui/react/macro";
+import { useContext } from "react";
+import { IconLock } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -23,12 +23,12 @@ const StyledContainer = styled.div`
 `;
 
 export const ForbiddenFieldDisplay = () => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledContainer>
-      <IconLock size={theme.icon.size.sm} />
-      <Trans>Not shared</Trans>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<IconLock size={theme.icon.size.sm} />
+			<Trans>Not shared</Trans>
+		</StyledContainer>
+	);
 };

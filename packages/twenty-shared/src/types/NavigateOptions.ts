@@ -1,4 +1,4 @@
 export type NavigateOptions = {
-  replace?: boolean;
-  state?: unknown;
+	replace?: boolean;
+	state?: unknown;
 };

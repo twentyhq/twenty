@@ -1,121 +1,121 @@
 import {
-  type WorkflowStep,
-  type WorkflowTrigger,
-} from '@/workflow/types/Workflow';
-import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
-import { v4 as uuidv4 } from 'uuid';
+	type WorkflowStep,
+	type WorkflowTrigger,
+} from "@/workflow/types/Workflow";
+import { generateWorkflowRunDiagram } from "@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram";
+import { FieldMetadataType } from "twenty-shared/types";
+import { StepStatus, type WorkflowRunStepInfos } from "twenty-shared/workflow";
+import { v4 as uuidv4 } from "uuid";
 
-jest.mock('uuid', () => ({
-  ...jest.requireActual('uuid'),
-  v4: jest.fn(),
+jest.mock("uuid", () => ({
+	...jest.requireActual("uuid"),
+	v4: jest.fn(),
 }));
 
 beforeEach(() => {
-  let counter = 0;
-  (uuidv4 as jest.Mock).mockImplementation(
-    () => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
-  );
+	let counter = 0;
+	(uuidv4 as jest.Mock).mockImplementation(
+		() => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
+	);
 });
 
 afterAll(() => {
-  jest.resetAllMocks();
+	jest.resetAllMocks();
 });
 
-describe('generateWorkflowRunDiagram', () => {
-  it('marks node as failed when the last attempt failed', () => {
-    const trigger: WorkflowTrigger = {
-      name: 'Company created',
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'company.created',
-        outputSchema: {},
-      },
-      nextStepIds: ['step1'],
-    };
+describe("generateWorkflowRunDiagram", () => {
+	it("marks node as failed when the last attempt failed", () => {
+		const trigger: WorkflowTrigger = {
+			name: "Company created",
+			type: "DATABASE_EVENT",
+			settings: {
+				eventName: "company.created",
+				outputSchema: {},
+			},
+			nextStepIds: ["step1"],
+		};
 
-    const steps: WorkflowStep[] = [
-      {
-        id: 'step1',
-        name: 'Step 1',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step2'],
-      },
-      {
-        id: 'step2',
-        name: 'Step 2',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step3'],
-      },
-      {
-        id: 'step3',
-        name: 'Step 3',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: undefined,
-      },
-    ];
+		const steps: WorkflowStep[] = [
+			{
+				id: "step1",
+				name: "Step 1",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step2"],
+			},
+			{
+				id: "step2",
+				name: "Step 2",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step3"],
+			},
+			{
+				id: "step3",
+				name: "Step 3",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: undefined,
+			},
+		];
 
-    const stepInfos: WorkflowRunStepInfos = {
-      trigger: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step1: {
-        error: '',
-        status: StepStatus.FAILED,
-      },
-      step2: {
-        status: StepStatus.NOT_STARTED,
-      },
-      step3: {
-        status: StepStatus.NOT_STARTED,
-      },
-    };
+		const stepInfos: WorkflowRunStepInfos = {
+			trigger: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step1: {
+				error: "",
+				status: StepStatus.FAILED,
+			},
+			step2: {
+				status: StepStatus.NOT_STARTED,
+			},
+			step3: {
+				status: StepStatus.NOT_STARTED,
+			},
+		};
 
-    const result = generateWorkflowRunDiagram({
-      trigger,
-      steps,
-      stepInfos,
-    });
+		const result = generateWorkflowRunDiagram({
+			trigger,
+			steps,
+			stepInfos,
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "diagram": {
     "edges": [
@@ -256,102 +256,102 @@ describe('generateWorkflowRunDiagram', () => {
   "stepToOpenByDefault": undefined,
 }
 `);
-  });
+	});
 
-  it('marks all nodes as successful when each node has an output', () => {
-    const trigger: WorkflowTrigger = {
-      name: 'Company created',
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'company.created',
-        outputSchema: {},
-      },
-      nextStepIds: ['step1'],
-    };
+	it("marks all nodes as successful when each node has an output", () => {
+		const trigger: WorkflowTrigger = {
+			name: "Company created",
+			type: "DATABASE_EVENT",
+			settings: {
+				eventName: "company.created",
+				outputSchema: {},
+			},
+			nextStepIds: ["step1"],
+		};
 
-    const steps: WorkflowStep[] = [
-      {
-        id: 'step1',
-        name: 'Step 1',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step2'],
-      },
-      {
-        id: 'step2',
-        name: 'Step 2',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step3'],
-      },
-      {
-        id: 'step3',
-        name: 'Step 3',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: undefined,
-      },
-    ];
+		const steps: WorkflowStep[] = [
+			{
+				id: "step1",
+				name: "Step 1",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step2"],
+			},
+			{
+				id: "step2",
+				name: "Step 2",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step3"],
+			},
+			{
+				id: "step3",
+				name: "Step 3",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: undefined,
+			},
+		];
 
-    const stepInfos: WorkflowRunStepInfos = {
-      trigger: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step1: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step2: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step3: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-    };
+		const stepInfos: WorkflowRunStepInfos = {
+			trigger: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step1: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step2: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step3: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+		};
 
-    const result = generateWorkflowRunDiagram({
-      trigger,
-      steps,
-      stepInfos,
-    });
+		const result = generateWorkflowRunDiagram({
+			trigger,
+			steps,
+			stepInfos,
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "diagram": {
     "edges": [
@@ -492,102 +492,102 @@ describe('generateWorkflowRunDiagram', () => {
   "stepToOpenByDefault": undefined,
 }
 `);
-  });
+	});
 
-  it('marks node as running and all other ones as not-executed when no output is available at all', () => {
-    const trigger: WorkflowTrigger = {
-      name: 'Company created',
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'company.created',
-        outputSchema: {},
-      },
-      nextStepIds: ['step1'],
-    };
+	it("marks node as running and all other ones as not-executed when no output is available at all", () => {
+		const trigger: WorkflowTrigger = {
+			name: "Company created",
+			type: "DATABASE_EVENT",
+			settings: {
+				eventName: "company.created",
+				outputSchema: {},
+			},
+			nextStepIds: ["step1"],
+		};
 
-    const steps: WorkflowStep[] = [
-      {
-        id: 'step1',
-        name: 'Step 1',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step2'],
-      },
-      {
-        id: 'step2',
-        name: 'Step 2',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step3'],
-      },
-      {
-        id: 'step3',
-        name: 'Step 3',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: undefined,
-      },
-    ];
+		const steps: WorkflowStep[] = [
+			{
+				id: "step1",
+				name: "Step 1",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step2"],
+			},
+			{
+				id: "step2",
+				name: "Step 2",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step3"],
+			},
+			{
+				id: "step3",
+				name: "Step 3",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: undefined,
+			},
+		];
 
-    const stepInfos: WorkflowRunStepInfos = {
-      trigger: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step1: {
-        error: '',
-        status: StepStatus.RUNNING,
-      },
-      step2: {
-        error: '',
-        status: StepStatus.NOT_STARTED,
-      },
-      step3: {
-        error: '',
-        status: StepStatus.NOT_STARTED,
-      },
-    };
+		const stepInfos: WorkflowRunStepInfos = {
+			trigger: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step1: {
+				error: "",
+				status: StepStatus.RUNNING,
+			},
+			step2: {
+				error: "",
+				status: StepStatus.NOT_STARTED,
+			},
+			step3: {
+				error: "",
+				status: StepStatus.NOT_STARTED,
+			},
+		};
 
-    const result = generateWorkflowRunDiagram({
-      trigger,
-      steps,
-      stepInfos,
-    });
+		const result = generateWorkflowRunDiagram({
+			trigger,
+			steps,
+			stepInfos,
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "diagram": {
     "edges": [
@@ -728,120 +728,120 @@ describe('generateWorkflowRunDiagram', () => {
   "stepToOpenByDefault": undefined,
 }
 `);
-  });
+	});
 
-  it("marks node as running and all other ones as not-executed when a node doesn't have an attached output", () => {
-    const trigger: WorkflowTrigger = {
-      name: 'Company created',
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'company.created',
-        outputSchema: {},
-      },
-      nextStepIds: ['step1'],
-    };
+	it("marks node as running and all other ones as not-executed when a node doesn't have an attached output", () => {
+		const trigger: WorkflowTrigger = {
+			name: "Company created",
+			type: "DATABASE_EVENT",
+			settings: {
+				eventName: "company.created",
+				outputSchema: {},
+			},
+			nextStepIds: ["step1"],
+		};
 
-    const steps: WorkflowStep[] = [
-      {
-        id: 'step1',
-        name: 'Step 1',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step2'],
-      },
-      {
-        id: 'step2',
-        name: 'Step 2',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step3'],
-      },
-      {
-        id: 'step3',
-        name: 'Step 3',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: ['step4'],
-      },
-      {
-        id: 'step4',
-        name: 'Step 4',
-        type: 'CODE',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: {
-            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            logicFunctionInput: {},
-          },
-          outputSchema: {},
-        },
-        nextStepIds: undefined,
-      },
-    ];
+		const steps: WorkflowStep[] = [
+			{
+				id: "step1",
+				name: "Step 1",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step2"],
+			},
+			{
+				id: "step2",
+				name: "Step 2",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step3"],
+			},
+			{
+				id: "step3",
+				name: "Step 3",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: ["step4"],
+			},
+			{
+				id: "step4",
+				name: "Step 4",
+				type: "CODE",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: {
+						logicFunctionId: "a5434be2-c10b-465c-acec-46492782a997",
+						logicFunctionInput: {},
+					},
+					outputSchema: {},
+				},
+				nextStepIds: undefined,
+			},
+		];
 
-    const stepInfos: WorkflowRunStepInfos = {
-      trigger: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step1: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step2: {
-        result: {},
-        status: StepStatus.RUNNING,
-      },
-      step3: {
-        result: {},
-        status: StepStatus.NOT_STARTED,
-      },
-    };
+		const stepInfos: WorkflowRunStepInfos = {
+			trigger: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step1: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step2: {
+				result: {},
+				status: StepStatus.RUNNING,
+			},
+			step3: {
+				result: {},
+				status: StepStatus.NOT_STARTED,
+			},
+		};
 
-    const result = generateWorkflowRunDiagram({
-      trigger,
-      steps,
-      stepInfos,
-    });
+		const result = generateWorkflowRunDiagram({
+			trigger,
+			steps,
+			stepInfos,
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "diagram": {
     "edges": [
@@ -1019,71 +1019,71 @@ describe('generateWorkflowRunDiagram', () => {
   "stepToOpenByDefault": undefined,
 }
 `);
-  });
+	});
 
-  it('marks node as running when a Form step is pending and return its data as the stepToOpenByDefault object', () => {
-    const trigger: WorkflowTrigger = {
-      name: 'Company created',
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'company.created',
-        outputSchema: {},
-      },
-      nextStepIds: ['step1'],
-    };
-    const steps: WorkflowStep[] = [
-      {
-        id: 'step1',
-        name: 'Step 1',
-        type: 'FORM',
-        valid: true,
-        settings: {
-          errorHandlingOptions: {
-            retryOnFailure: { value: true },
-            continueOnFailure: { value: false },
-          },
-          input: [
-            {
-              id: 'field-1',
-              name: 'text',
-              label: 'Text Field',
-              type: FieldMetadataType.TEXT,
-              placeholder: 'Enter text',
-              settings: {},
-            },
-          ],
-          outputSchema: {},
-        },
-        nextStepIds: undefined,
-      },
-    ];
+	it("marks node as running when a Form step is pending and return its data as the stepToOpenByDefault object", () => {
+		const trigger: WorkflowTrigger = {
+			name: "Company created",
+			type: "DATABASE_EVENT",
+			settings: {
+				eventName: "company.created",
+				outputSchema: {},
+			},
+			nextStepIds: ["step1"],
+		};
+		const steps: WorkflowStep[] = [
+			{
+				id: "step1",
+				name: "Step 1",
+				type: "FORM",
+				valid: true,
+				settings: {
+					errorHandlingOptions: {
+						retryOnFailure: { value: true },
+						continueOnFailure: { value: false },
+					},
+					input: [
+						{
+							id: "field-1",
+							name: "text",
+							label: "Text Field",
+							type: FieldMetadataType.TEXT,
+							placeholder: "Enter text",
+							settings: {},
+						},
+					],
+					outputSchema: {},
+				},
+				nextStepIds: undefined,
+			},
+		];
 
-    const stepInfos: WorkflowRunStepInfos = {
-      trigger: {
-        result: {},
-        status: StepStatus.SUCCESS,
-      },
-      step1: {
-        result: {},
-        status: StepStatus.PENDING,
-      },
-      step2: {
-        result: {},
-        status: StepStatus.NOT_STARTED,
-      },
-      step3: {
-        result: {},
-        status: StepStatus.NOT_STARTED,
-      },
-    };
+		const stepInfos: WorkflowRunStepInfos = {
+			trigger: {
+				result: {},
+				status: StepStatus.SUCCESS,
+			},
+			step1: {
+				result: {},
+				status: StepStatus.PENDING,
+			},
+			step2: {
+				result: {},
+				status: StepStatus.NOT_STARTED,
+			},
+			step3: {
+				result: {},
+				status: StepStatus.NOT_STARTED,
+			},
+		};
 
-    const result = generateWorkflowRunDiagram({
-      trigger,
-      steps,
-      stepInfos,
-    });
+		const result = generateWorkflowRunDiagram({
+			trigger,
+			steps,
+			stepInfos,
+		});
 
-    expect(result).toMatchInlineSnapshot(`
+		expect(result).toMatchInlineSnapshot(`
 {
   "diagram": {
     "edges": [
@@ -1164,5 +1164,5 @@ describe('generateWorkflowRunDiagram', () => {
   },
 }
 `);
-  });
+	});
 });

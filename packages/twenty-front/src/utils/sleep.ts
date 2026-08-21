@@ -1,8 +1,8 @@
 export const sleep = async (
-  ms: number,
-  callback?: (resolve: (value: any) => void) => void,
+	ms: number,
+	callback?: (resolve: (value: any) => void) => void,
 ) =>
-  new Promise((resolve) => {
-    const handler = callback ? () => callback(resolve) : resolve;
-    setTimeout(handler, ms);
-  });
+	new Promise((resolve) => {
+		const handler = callback ? () => callback(resolve) : resolve;
+		setTimeout(handler, ms);
+	});

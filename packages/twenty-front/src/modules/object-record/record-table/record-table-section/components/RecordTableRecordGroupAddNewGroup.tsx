@@ -1,12 +1,12 @@
-import { AddRecordGroupButton } from '@/object-record/record-group/components/AddRecordGroupButton';
-import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
-import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AddRecordGroupButton } from "@/object-record/record-group/components/AddRecordGroupButton";
+import { canAddRecordGroupForFieldMetadataItem } from "@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem";
+import { recordIndexGroupFieldMetadataItemComponentState } from "@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState";
+import { isRecordTableCellsNonEditableComponentState } from "@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-const RECORD_TABLE_ADD_GROUP_DROPDOWN_ID = 'record-table-add-group-dropdown';
+const RECORD_TABLE_ADD_GROUP_DROPDOWN_ID = "record-table-add-group-dropdown";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,30 +14,30 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordTableRecordGroupAddNewGroup = () => {
-  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
-    recordIndexGroupFieldMetadataItemComponentState,
-  );
+	const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+		recordIndexGroupFieldMetadataItemComponentState,
+	);
 
-  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
-    isRecordTableCellsNonEditableComponentState,
-  );
+	const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+		isRecordTableCellsNonEditableComponentState,
+	);
 
-  if (isRecordTableCellsNonEditable) {
-    return null;
-  }
+	if (isRecordTableCellsNonEditable) {
+		return null;
+	}
 
-  if (
-    !canAddRecordGroupForFieldMetadataItem(recordIndexGroupFieldMetadataItem)
-  ) {
-    return null;
-  }
+	if (
+		!canAddRecordGroupForFieldMetadataItem(recordIndexGroupFieldMetadataItem)
+	) {
+		return null;
+	}
 
-  return (
-    <StyledContainer>
-      <AddRecordGroupButton
-        fieldMetadataItem={recordIndexGroupFieldMetadataItem}
-        dropdownId={RECORD_TABLE_ADD_GROUP_DROPDOWN_ID}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<AddRecordGroupButton
+				fieldMetadataItem={recordIndexGroupFieldMetadataItem}
+				dropdownId={RECORD_TABLE_ADD_GROUP_DROPDOWN_ID}
+			/>
+		</StyledContainer>
+	);
 };

@@ -1,6 +1,6 @@
 type ViewFieldPosition = {
-  universalIdentifier: string;
-  position: number;
+	universalIdentifier: string;
+	position: number;
 };
 
 // The label identifier's column has to sit strictly below every other column of
@@ -14,40 +14,43 @@ type ViewFieldPosition = {
 // order and move above the standard ones, so they cannot tie with the label
 // identifier either.
 export const computeViewFieldPositionsAlignedToStandard = ({
-  existingViewFields,
-  standardPositionByUniversalIdentifier,
+	existingViewFields,
+	standardPositionByUniversalIdentifier,
 }: {
-  existingViewFields: ViewFieldPosition[];
-  standardPositionByUniversalIdentifier: Record<string, number>;
+	existingViewFields: ViewFieldPosition[];
+	standardPositionByUniversalIdentifier: Record<string, number>;
 }): ViewFieldPosition[] => {
-  const standardPositions = Object.values(standardPositionByUniversalIdentifier);
+	const standardPositions = Object.values(
+		standardPositionByUniversalIdentifier,
+	);
 
-  if (standardPositions.length === 0) {
-    return [];
-  }
+	if (standardPositions.length === 0) {
+		return [];
+	}
 
-  const highestStandardPosition = Math.max(...standardPositions);
+	const highestStandardPosition = Math.max(...standardPositions);
 
-  const customUniversalIdentifiers = existingViewFields
-    .filter(
-      ({ universalIdentifier }) =>
-        standardPositionByUniversalIdentifier[universalIdentifier] === undefined,
-    )
-    .sort((a, b) => a.position - b.position)
-    .map(({ universalIdentifier }) => universalIdentifier);
+	const customUniversalIdentifiers = existingViewFields
+		.filter(
+			({ universalIdentifier }) =>
+				standardPositionByUniversalIdentifier[universalIdentifier] ===
+				undefined,
+		)
+		.sort((a, b) => a.position - b.position)
+		.map(({ universalIdentifier }) => universalIdentifier);
 
-  return existingViewFields.flatMap(({ universalIdentifier, position }) => {
-    const standardPosition =
-      standardPositionByUniversalIdentifier[universalIdentifier];
+	return existingViewFields.flatMap(({ universalIdentifier, position }) => {
+		const standardPosition =
+			standardPositionByUniversalIdentifier[universalIdentifier];
 
-    const targetPosition =
-      standardPosition ??
-      highestStandardPosition +
-        1 +
-        customUniversalIdentifiers.indexOf(universalIdentifier);
+		const targetPosition =
+			standardPosition ??
+			highestStandardPosition +
+				1 +
+				customUniversalIdentifiers.indexOf(universalIdentifier);
 
-    return targetPosition === position
-      ? []
-      : [{ universalIdentifier, position: targetPosition }];
-  });
+		return targetPosition === position
+			? []
+			: [{ universalIdentifier, position: targetPosition }];
+	});
 };

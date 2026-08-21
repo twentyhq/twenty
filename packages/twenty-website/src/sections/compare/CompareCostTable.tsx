@@ -1,25 +1,25 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { INFORMATIVE_MARKS } from '@/icons';
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { INFORMATIVE_MARKS } from "@/icons";
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { ExternalLink } from '@/ui';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { ExternalLink } from "@/ui";
 
-import { type CompetitorComparison } from './compare-data';
+import { type CompetitorComparison } from "./compare-data";
 
 const CheckMark = INFORMATIVE_MARKS.check;
 
 const REPORT_INACCURACY_URL =
-  'https://github.com/twentyhq/twenty/issues/new/choose';
+	"https://github.com/twentyhq/twenty/issues/new/choose";
 
 // On narrow viewports the three-column grid scrolls horizontally instead of
 // squeezing the price cells.
@@ -42,7 +42,7 @@ const GridRow = styled.div`
 
 const HeadCell = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(5.5)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: ${spacing(7)};
@@ -64,7 +64,7 @@ const FeatureCell = styled.div`
 `;
 
 const FeatureName = styled.span`
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
 `;
@@ -72,10 +72,10 @@ const FeatureName = styled.span`
 const FeatureDescription = styled.span`
   color: ${semanticColor.inkMuted};
   display: none;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: block;
   }
 `;
@@ -92,20 +92,20 @@ const ValueCell = styled.div`
 `;
 
 const CompetitorPrice = styled.span`
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
 `;
 
 const CompetitorDetail = styled.span`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
 `;
 
 const SourceLink = styled(ExternalLink)`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3)};
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -123,13 +123,13 @@ const IncludedRow = styled.div`
 `;
 
 const IncludedText = styled.span`
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
 `;
 
 const SourceNote = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
   line-height: ${spacing(5.5)};
   margin-top: ${spacing(6)};
@@ -147,63 +147,63 @@ const ReportLink = styled(ExternalLink)`
 `;
 
 export function CompareCostTable({
-  comparison,
+	comparison,
 }: {
-  comparison: CompetitorComparison;
+	comparison: CompetitorComparison;
 }) {
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <div>
-      <TableScroller>
-        <TableScope>
-          <GridRow>
-            <HeadCell>{i18n._(msg`Feature`)}</HeadCell>
-            <HeadCell data-tier>
-              {i18n._(comparison.competitorColumnLabel)}
-            </HeadCell>
-            <HeadCell data-tier>{i18n._(msg`On Twenty`)}</HeadCell>
-          </GridRow>
-          {comparison.rows.map((row) => (
-            <GridRow key={i18n._(row.feature)}>
-              <FeatureCell>
-                <FeatureName>{i18n._(row.feature)}</FeatureName>
-                <FeatureDescription>
-                  {i18n._(row.description)}
-                </FeatureDescription>
-              </FeatureCell>
-              <ValueCell>
-                <CompetitorPrice>
-                  {i18n._(row.competitor.price)}
-                </CompetitorPrice>
-                <CompetitorDetail>
-                  {i18n._(row.competitor.detail)}
-                </CompetitorDetail>
-                {row.competitor.sourceUrl !== undefined ? (
-                  <SourceLink
-                    href={row.competitor.sourceUrl}
-                    rel="nofollow noreferrer"
-                  >
-                    {i18n._(msg`source`)}
-                  </SourceLink>
-                ) : null}
-              </ValueCell>
-              <ValueCell>
-                <IncludedRow>
-                  <CheckMark color={color('blue')} sizePx={16} />
-                  <IncludedText>{i18n._(row.twenty.detail)}</IncludedText>
-                </IncludedRow>
-              </ValueCell>
-            </GridRow>
-          ))}
-        </TableScope>
-      </TableScroller>
-      <SourceNote>
-        {i18n._(comparison.sourceNote)}{' '}
-        <ReportLink href={REPORT_INACCURACY_URL}>
-          {i18n._(msg`Spotted an inaccuracy? Tell us and we will fix it.`)}
-        </ReportLink>
-      </SourceNote>
-    </div>
-  );
+	return (
+		<div>
+			<TableScroller>
+				<TableScope>
+					<GridRow>
+						<HeadCell>{i18n._(msg`Feature`)}</HeadCell>
+						<HeadCell data-tier>
+							{i18n._(comparison.competitorColumnLabel)}
+						</HeadCell>
+						<HeadCell data-tier>{i18n._(msg`On Twenty`)}</HeadCell>
+					</GridRow>
+					{comparison.rows.map((row) => (
+						<GridRow key={i18n._(row.feature)}>
+							<FeatureCell>
+								<FeatureName>{i18n._(row.feature)}</FeatureName>
+								<FeatureDescription>
+									{i18n._(row.description)}
+								</FeatureDescription>
+							</FeatureCell>
+							<ValueCell>
+								<CompetitorPrice>
+									{i18n._(row.competitor.price)}
+								</CompetitorPrice>
+								<CompetitorDetail>
+									{i18n._(row.competitor.detail)}
+								</CompetitorDetail>
+								{row.competitor.sourceUrl !== undefined ? (
+									<SourceLink
+										href={row.competitor.sourceUrl}
+										rel="nofollow noreferrer"
+									>
+										{i18n._(msg`source`)}
+									</SourceLink>
+								) : null}
+							</ValueCell>
+							<ValueCell>
+								<IncludedRow>
+									<CheckMark color={color("blue")} sizePx={16} />
+									<IncludedText>{i18n._(row.twenty.detail)}</IncludedText>
+								</IncludedRow>
+							</ValueCell>
+						</GridRow>
+					))}
+				</TableScope>
+			</TableScroller>
+			<SourceNote>
+				{i18n._(comparison.sourceNote)}{" "}
+				<ReportLink href={REPORT_INACCURACY_URL}>
+					{i18n._(msg`Spotted an inaccuracy? Tell us and we will fix it.`)}
+				</ReportLink>
+			</SourceNote>
+		</div>
+	);
 }

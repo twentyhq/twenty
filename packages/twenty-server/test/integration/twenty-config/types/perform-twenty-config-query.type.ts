@@ -1,4 +1,4 @@
 export type PerformTwentyConfigQueryParams<T> = {
-  input: T;
-  expectToFail?: boolean;
+	input: T;
+	expectToFail?: boolean;
 };

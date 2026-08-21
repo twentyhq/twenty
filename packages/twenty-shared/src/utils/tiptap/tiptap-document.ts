@@ -1,5 +1,5 @@
-import { type TipTapNode } from './tiptap-node';
+import { type TipTapNode } from "./tiptap-node";
 
 export type TipTapDocument = TipTapNode & {
-  type: 'doc';
+	type: "doc";
 };

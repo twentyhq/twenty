@@ -1,20 +1,20 @@
-export type RunAgentMessageRole = 'user' | 'assistant';
+export type RunAgentMessageRole = "user" | "assistant";
 
 export type RunAgentMessage = {
-  role: RunAgentMessageRole;
-  content: string;
+	role: RunAgentMessageRole;
+	content: string;
 };
 
 export type RunAgentInput = {
-  agentUniversalIdentifier: string;
-  runAsWorkspaceMemberId?: string;
+	agentUniversalIdentifier: string;
+	runAsWorkspaceMemberId?: string;
 } & (
-  | { prompt: string; messages?: never }
-  | { messages: RunAgentMessage[]; prompt?: never }
+	| { prompt: string; messages?: never }
+	| { messages: RunAgentMessage[]; prompt?: never }
 );
 
 export type RunAgentResult = {
-  result: object | null;
-  error: string | null;
-  success: boolean;
+	result: object | null;
+	error: string | null;
+	success: boolean;
 };

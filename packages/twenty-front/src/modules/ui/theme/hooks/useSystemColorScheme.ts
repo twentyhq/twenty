@@ -1,35 +1,35 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { type ColorScheme } from "@/workspace-member/types/WorkspaceMember";
+import { isUndefinedOrNull } from "~/utils/isUndefinedOrNull";
 
 export const useSystemColorScheme = (): ColorScheme => {
-  const mediaQuery = useMemo(
-    () => window.matchMedia('(prefers-color-scheme: dark)'),
-    [],
-  );
+	const mediaQuery = useMemo(
+		() => window.matchMedia("(prefers-color-scheme: dark)"),
+		[],
+	);
 
-  const [preferredColorScheme, setPreferredColorScheme] = useState<ColorScheme>(
-    isUndefinedOrNull(window.matchMedia) || !mediaQuery.matches
-      ? 'Light'
-      : 'Dark',
-  );
+	const [preferredColorScheme, setPreferredColorScheme] = useState<ColorScheme>(
+		isUndefinedOrNull(window.matchMedia) || !mediaQuery.matches
+			? "Light"
+			: "Dark",
+	);
 
-  useEffect(() => {
-    if (isUndefinedOrNull(window.matchMedia)) {
-      return;
-    }
+	useEffect(() => {
+		if (isUndefinedOrNull(window.matchMedia)) {
+			return;
+		}
 
-    const handleChange = (event: MediaQueryListEvent): void => {
-      setPreferredColorScheme(event.matches ? 'Dark' : 'Light');
-    };
+		const handleChange = (event: MediaQueryListEvent): void => {
+			setPreferredColorScheme(event.matches ? "Dark" : "Light");
+		};
 
-    mediaQuery.addEventListener('change', handleChange);
+		mediaQuery.addEventListener("change", handleChange);
 
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, [mediaQuery]);
+		return () => {
+			mediaQuery.removeEventListener("change", handleChange);
+		};
+	}, [mediaQuery]);
 
-  return preferredColorScheme;
+	return preferredColorScheme;
 };

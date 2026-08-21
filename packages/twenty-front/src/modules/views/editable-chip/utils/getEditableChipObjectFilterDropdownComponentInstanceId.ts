@@ -1,9 +1,9 @@
 type GetEditableChipObjectFilterDropdownComponentInstanceIdProps = {
-  recordFilterId: string;
+	recordFilterId: string;
 };
 
 export const getEditableChipObjectFilterDropdownComponentInstanceId = ({
-  recordFilterId,
+	recordFilterId,
 }: GetEditableChipObjectFilterDropdownComponentInstanceIdProps) => {
-  return `editable-filter-${recordFilterId}`;
+	return `editable-filter-${recordFilterId}`;
 };

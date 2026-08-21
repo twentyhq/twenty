@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const RENAME_CHAT_THREAD = gql`
   mutation RenameChatThread($id: UUID!, $title: String!) {

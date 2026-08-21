@@ -1,1 +1,1 @@
-export type CursorPaginationDirection = 'forward' | 'backward';
+export type CursorPaginationDirection = "forward" | "backward";

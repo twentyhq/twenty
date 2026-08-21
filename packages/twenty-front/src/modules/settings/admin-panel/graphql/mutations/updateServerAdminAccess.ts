@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPDATE_SERVER_ADMIN_ACCESS = gql`
   mutation UpdateServerAdminAccess(

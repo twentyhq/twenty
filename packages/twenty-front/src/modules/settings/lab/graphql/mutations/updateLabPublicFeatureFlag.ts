@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPDATE_LAB_PUBLIC_FEATURE_FLAG = gql`
   mutation UpdateLabPublicFeatureFlag(

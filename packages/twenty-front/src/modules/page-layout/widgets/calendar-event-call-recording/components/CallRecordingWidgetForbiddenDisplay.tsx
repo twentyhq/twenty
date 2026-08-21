@@ -1,7 +1,7 @@
-import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
-import { styled } from '@linaria/react';
+import { PageLayoutWidgetForbiddenDisplay } from "@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay";
+import { useCurrentWidget } from "@/page-layout/widgets/hooks/useCurrentWidget";
+import { type WidgetAccessDenialInfo } from "@/page-layout/widgets/types/WidgetAccessDenialInfo";
+import { styled } from "@linaria/react";
 
 const StyledForbiddenContainer = styled.div`
   align-items: center;
@@ -10,20 +10,20 @@ const StyledForbiddenContainer = styled.div`
 `;
 
 type CallRecordingWidgetForbiddenDisplayProps = {
-  restriction: WidgetAccessDenialInfo;
+	restriction: WidgetAccessDenialInfo;
 };
 
 export const CallRecordingWidgetForbiddenDisplay = ({
-  restriction,
+	restriction,
 }: CallRecordingWidgetForbiddenDisplayProps) => {
-  const widget = useCurrentWidget();
+	const widget = useCurrentWidget();
 
-  return (
-    <StyledForbiddenContainer>
-      <PageLayoutWidgetForbiddenDisplay
-        widgetId={widget.id}
-        restriction={restriction}
-      />
-    </StyledForbiddenContainer>
-  );
+	return (
+		<StyledForbiddenContainer>
+			<PageLayoutWidgetForbiddenDisplay
+				widgetId={widget.id}
+				restriction={restriction}
+			/>
+		</StyledForbiddenContainer>
+	);
 };

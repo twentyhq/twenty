@@ -1,5 +1,5 @@
 export type DroppableData = {
-  droppableId: string;
-  index: number;
-  insertBeforeItemId?: string;
+	droppableId: string;
+	index: number;
+	insertBeforeItemId?: string;
 };

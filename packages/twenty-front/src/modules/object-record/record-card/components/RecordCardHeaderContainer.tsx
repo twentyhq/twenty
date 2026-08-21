@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledBoardCardHeaderContainer = styled.div<{
-  isCompact: boolean;
-  padding?: string;
+	isCompact: boolean;
+	padding?: string;
 }>`
   align-items: center;
   display: flex;
@@ -12,8 +12,8 @@ export const StyledBoardCardHeaderContainer = styled.div<{
   height: 32px;
   justify-content: space-between;
   padding: ${({ padding, isCompact }) =>
-    padding ??
-    `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} ${isCompact ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
+		padding ??
+		`${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} ${isCompact ? themeCssVariables.spacing[2] : themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`};
   transition: padding ease-in-out 160ms;
 
   img {

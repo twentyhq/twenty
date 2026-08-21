@@ -1,35 +1,35 @@
-import { type EnterpriseInstanceType } from 'twenty-shared/constants';
+import { type EnterpriseInstanceType } from "twenty-shared/constants";
 
 export type EnterpriseKeyPayload = {
-  sub: string;
-  licensee: string;
-  iat: number;
+	sub: string;
+	licensee: string;
+	iat: number;
 };
 
 export type EnterpriseValidityPayload = {
-  sub: string;
-  status: 'valid';
-  iat: number;
-  exp: number;
+	sub: string;
+	status: "valid";
+	iat: number;
+	exp: number;
 };
 
 export type EnterpriseLicenseInfo = {
-  isValid: boolean;
-  licensee: string | null;
-  expiresAt: Date | null;
-  subscriptionId: string | null;
+	isValid: boolean;
+	licensee: string | null;
+	expiresAt: Date | null;
+	subscriptionId: string | null;
 };
 
 export type EnterpriseInstanceMetadata = {
-  serverId: string | null;
-  instanceType: EnterpriseInstanceType;
-  serverUrl: string | null;
-  appVersion: string | null;
-  nodeEnv: string | null;
-  telemetryEnabled: boolean | null;
-  workspaceCount: number | null;
-  activeUserWorkspaceCount: number | null;
-  distinctUserCount: number | null;
-  adminContactEmail: string | null;
-  sentAt: string;
+	serverId: string | null;
+	instanceType: EnterpriseInstanceType;
+	serverUrl: string | null;
+	appVersion: string | null;
+	nodeEnv: string | null;
+	telemetryEnabled: boolean | null;
+	workspaceCount: number | null;
+	activeUserWorkspaceCount: number | null;
+	distinctUserCount: number | null;
+	adminContactEmail: string | null;
+	sentAt: string;
 };

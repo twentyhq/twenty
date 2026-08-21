@@ -1,23 +1,23 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
 
 type GetObjectNavigationMenuItemSecondaryLabelProps = {
-  objectMetadataItems: Pick<
-    EnrichedObjectMetadataItem,
-    'nameSingular' | 'labelSingular'
-  >[];
-  navigationMenuItemObjectNameSingular: string;
+	objectMetadataItems: Pick<
+		EnrichedObjectMetadataItem,
+		"nameSingular" | "labelSingular"
+	>[];
+	navigationMenuItemObjectNameSingular: string;
 };
 
 export const getObjectNavigationMenuItemSecondaryLabel = ({
-  objectMetadataItems,
-  navigationMenuItemObjectNameSingular,
+	objectMetadataItems,
+	navigationMenuItemObjectNameSingular,
 }: GetObjectNavigationMenuItemSecondaryLabelProps) => {
-  if (navigationMenuItemObjectNameSingular === 'view') {
-    return 'View';
-  }
+	if (navigationMenuItemObjectNameSingular === "view") {
+		return "View";
+	}
 
-  return objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === navigationMenuItemObjectNameSingular,
-  )?.labelSingular;
+	return objectMetadataItems.find(
+		(objectMetadataItem) =>
+			objectMetadataItem.nameSingular === navigationMenuItemObjectNameSingular,
+	)?.labelSingular;
 };

@@ -1,1 +1,1 @@
-export type EnrichStatus = 'MATCHED' | 'NOT_FOUND' | 'ERROR' | 'SKIPPED';
+export type EnrichStatus = "MATCHED" | "NOT_FOUND" | "ERROR" | "SKIPPED";

@@ -1,27 +1,27 @@
 import {
-  isPlaygroundApiKeyFresh,
-  playgroundApiKeyState,
-} from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
-import { PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { explorerPlugin } from '@graphiql/plugin-explorer';
-import '@graphiql/plugin-explorer/style.css';
-import { createGraphiQLFetcher } from '@graphiql/toolkit';
-import { GraphiQL } from 'graphiql';
-import 'graphiql/style.css';
-import { useContext } from 'react';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+	isPlaygroundApiKeyFresh,
+	playgroundApiKeyState,
+} from "@/settings/mcp-and-apis/states/playgroundApiKeyState";
+import { PlaygroundSchemas } from "@/settings/mcp-and-apis/types/PlaygroundSchemas";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
+import { explorerPlugin } from "@graphiql/plugin-explorer";
+import "@graphiql/plugin-explorer/style.css";
+import { createGraphiQLFetcher } from "@graphiql/toolkit";
+import { GraphiQL } from "graphiql";
+import "graphiql/style.css";
+import { useContext } from "react";
+import { REACT_APP_SERVER_BASE_URL } from "~/config";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type GraphQLPlaygroundProps = {
-  onError(): void;
-  schema: PlaygroundSchemas;
+	onError(): void;
+	schema: PlaygroundSchemas;
 };
 
 export const schemaToPath = {
-  [PlaygroundSchemas.CORE]: 'graphql',
-  [PlaygroundSchemas.METADATA]: 'metadata',
+	[PlaygroundSchemas.CORE]: "graphql",
+	[PlaygroundSchemas.METADATA]: "metadata",
 };
 
 const StyledGraphiQLContainer = styled.div`
@@ -35,40 +35,40 @@ const StyledGraphiQLContainer = styled.div`
 `;
 
 export const GraphQLPlayground = ({
-  onError,
-  schema,
+	onError,
+	schema,
 }: GraphQLPlaygroundProps) => {
-  const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
-  const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + schemaToPath[schema];
+	const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
+	const baseUrl = REACT_APP_SERVER_BASE_URL + "/" + schemaToPath[schema];
 
-  const { colorScheme } = useContext(ThemeContext);
+	const { colorScheme } = useContext(ThemeContext);
 
-  if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
-    onError();
-    return null;
-  }
+	if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
+		onError();
+		return null;
+	}
 
-  const explorer = explorerPlugin({
-    showAttribution: true,
-  });
+	const explorer = explorerPlugin({
+		showAttribution: true,
+	});
 
-  const fetcher = createGraphiQLFetcher({
-    url: baseUrl,
-    headers: {
-      Authorization: `Bearer ${playgroundApiKey.token}`,
-    },
-  });
+	const fetcher = createGraphiQLFetcher({
+		url: baseUrl,
+		headers: {
+			Authorization: `Bearer ${playgroundApiKey.token}`,
+		},
+	});
 
-  return (
-    <StyledGraphiQLContainer>
-      <GraphiQL
-        forcedTheme={colorScheme}
-        plugins={[explorer]}
-        fetcher={fetcher}
-        defaultHeaders={JSON.stringify({
-          Authorization: `Bearer ${playgroundApiKey.token}`,
-        })}
-      />
-    </StyledGraphiQLContainer>
-  );
+	return (
+		<StyledGraphiQLContainer>
+			<GraphiQL
+				forcedTheme={colorScheme}
+				plugins={[explorer]}
+				fetcher={fetcher}
+				defaultHeaders={JSON.stringify({
+					Authorization: `Bearer ${playgroundApiKey.token}`,
+				})}
+			/>
+		</StyledGraphiQLContainer>
+	);
 };

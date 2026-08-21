@@ -1,17 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 type ApplicationLike = {
-  id?: string | null;
+	id?: string | null;
 };
 
 type WorkspaceLike = {
-  workspaceCustomApplication?: { id?: string | null } | null;
+	workspaceCustomApplication?: { id?: string | null } | null;
 };
 
 export const isWorkspaceCustomApplication = (
-  application: ApplicationLike | null | undefined,
-  currentWorkspace: WorkspaceLike | null | undefined,
+	application: ApplicationLike | null | undefined,
+	currentWorkspace: WorkspaceLike | null | undefined,
 ): boolean =>
-  isDefined(application?.id) &&
-  isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
-  currentWorkspace.workspaceCustomApplication.id === application.id;
+	isDefined(application?.id) &&
+	isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
+	currentWorkspace.workspaceCustomApplication.id === application.id;

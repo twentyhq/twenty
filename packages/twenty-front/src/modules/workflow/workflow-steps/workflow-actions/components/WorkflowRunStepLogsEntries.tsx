@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type WorkflowRunStepLog } from "twenty-shared/workflow";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
+import { MONOSPACE_FONT_FAMILY } from "@/ui/theme/constants/MonospaceFontFamily";
 import {
-  StyledSection,
-  StyledSectionTitle,
-} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
+	StyledSection,
+	StyledSectionTitle,
+} from "@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles";
 
 const StyledEntriesList = styled.div`
   background: ${themeCssVariables.background.tertiary};
@@ -27,7 +27,7 @@ const StyledEntryRow = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: max-content max-content 1fr;
-  padding: ${themeCssVariables.spacing['0.5']} 0;
+  padding: ${themeCssVariables.spacing["0.5"]} 0;
 `;
 
 const StyledTimestamp = styled.span`
@@ -37,20 +37,20 @@ const StyledTimestamp = styled.span`
 
 const StyledLevelBadge = styled.span<{ level: string }>`
   background: ${({ level }) => {
-    if (level === 'error')
-      return themeCssVariables.background.transparent.danger;
-    if (level === 'warn')
-      return themeCssVariables.background.transparent.orange;
-    if (level === 'info') return themeCssVariables.background.transparent.blue;
-    return themeCssVariables.background.transparent.light;
-  }};
+		if (level === "error")
+			return themeCssVariables.background.transparent.danger;
+		if (level === "warn")
+			return themeCssVariables.background.transparent.orange;
+		if (level === "info") return themeCssVariables.background.transparent.blue;
+		return themeCssVariables.background.transparent.light;
+	}};
   border-radius: ${themeCssVariables.border.radius.xs};
   color: ${({ level }) => {
-    if (level === 'error') return themeCssVariables.color.red;
-    if (level === 'warn') return themeCssVariables.color.orange;
-    if (level === 'info') return themeCssVariables.color.blue;
-    return themeCssVariables.font.color.tertiary;
-  }};
+		if (level === "error") return themeCssVariables.color.red;
+		if (level === "warn") return themeCssVariables.color.orange;
+		if (level === "info") return themeCssVariables.color.blue;
+		return themeCssVariables.font.color.tertiary;
+	}};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   padding: 0 ${themeCssVariables.spacing[1]};
@@ -63,48 +63,48 @@ const StyledMessage = styled.span`
 `;
 
 const formatTimestamp = (timestamp: string): string => {
-  const date = new Date(timestamp);
+	const date = new Date(timestamp);
 
-  if (Number.isNaN(date.getTime())) {
-    return timestamp;
-  }
+	if (Number.isNaN(date.getTime())) {
+		return timestamp;
+	}
 
-  return date.toLocaleTimeString();
+	return date.toLocaleTimeString();
 };
 
 export const WorkflowRunStepLogsEntries = ({
-  entries,
-  onlyLatestIteration = false,
+	entries,
+	onlyLatestIteration = false,
 }: {
-  entries: WorkflowRunStepLog['entries'];
-  onlyLatestIteration?: boolean;
+	entries: WorkflowRunStepLog["entries"];
+	onlyLatestIteration?: boolean;
 }) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  if (entries.length === 0) {
-    return null;
-  }
+	if (entries.length === 0) {
+		return null;
+	}
 
-  const sectionTitle = onlyLatestIteration
-    ? t`Entries (${entries.length}, latest iteration only)`
-    : t`Entries (${entries.length})`;
+	const sectionTitle = onlyLatestIteration
+		? t`Entries (${entries.length}, latest iteration only)`
+		: t`Entries (${entries.length})`;
 
-  return (
-    <StyledSection>
-      <StyledSectionTitle>{sectionTitle}</StyledSectionTitle>
-      <StyledEntriesList>
-        {entries.map((entry, index) => (
-          <StyledEntryRow key={`${entry.timestamp}-${index}`}>
-            <StyledTimestamp>
-              {formatTimestamp(entry.timestamp)}
-            </StyledTimestamp>
-            <StyledLevelBadge level={entry.level}>
-              {entry.level}
-            </StyledLevelBadge>
-            <StyledMessage>{entry.message}</StyledMessage>
-          </StyledEntryRow>
-        ))}
-      </StyledEntriesList>
-    </StyledSection>
-  );
+	return (
+		<StyledSection>
+			<StyledSectionTitle>{sectionTitle}</StyledSectionTitle>
+			<StyledEntriesList>
+				{entries.map((entry, index) => (
+					<StyledEntryRow key={`${entry.timestamp}-${index}`}>
+						<StyledTimestamp>
+							{formatTimestamp(entry.timestamp)}
+						</StyledTimestamp>
+						<StyledLevelBadge level={entry.level}>
+							{entry.level}
+						</StyledLevelBadge>
+						<StyledMessage>{entry.message}</StyledMessage>
+					</StyledEntryRow>
+				))}
+			</StyledEntriesList>
+		</StyledSection>
+	);
 };

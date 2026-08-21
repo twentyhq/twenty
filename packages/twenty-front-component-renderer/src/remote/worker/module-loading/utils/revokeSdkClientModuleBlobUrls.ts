@@ -1,8 +1,8 @@
-import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { type SdkClientUrls } from "@/types/SdkClientUrls";
 
 export const revokeSdkClientModuleBlobUrls = (
-  sdkModuleBlobUrls: SdkClientUrls,
+	sdkModuleBlobUrls: SdkClientUrls,
 ): void => {
-  URL.revokeObjectURL(sdkModuleBlobUrls.core);
-  URL.revokeObjectURL(sdkModuleBlobUrls.metadata);
+	URL.revokeObjectURL(sdkModuleBlobUrls.core);
+	URL.revokeObjectURL(sdkModuleBlobUrls.metadata);
 };

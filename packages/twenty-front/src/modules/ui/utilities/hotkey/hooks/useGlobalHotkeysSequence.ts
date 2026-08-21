@@ -1,76 +1,76 @@
-import { type Options, useHotkeys } from 'react-hotkeys-hook';
-import { type Keys } from 'react-hotkeys-hook/dist/types';
+import { type Options, useHotkeys } from "react-hotkeys-hook";
+import { type Keys } from "react-hotkeys-hook/dist/types";
 
-import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
+import { pendingHotkeyState } from "@/ui/utilities/hotkey/states/internal/pendingHotkeysState";
 
-import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { isDefined } from 'twenty-shared/utils';
+import { useGlobalHotkeysCallback } from "@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback";
+import { useAtomState } from "@/ui/utilities/state/jotai/hooks/useAtomState";
+import { isDefined } from "twenty-shared/utils";
 
 export const useGlobalHotkeysSequence = (
-  firstKey: Keys,
-  secondKey: Keys,
-  sequenceCallback: () => void,
-  options: Options = {
-    enableOnContentEditable: true,
-    enableOnFormTags: true,
-    preventDefault: true,
-  },
-  deps: any[] = [],
+	firstKey: Keys,
+	secondKey: Keys,
+	sequenceCallback: () => void,
+	options: Options = {
+		enableOnContentEditable: true,
+		enableOnFormTags: true,
+		preventDefault: true,
+	},
+	deps: any[] = [],
 ) => {
-  const [pendingHotkey, setPendingHotkey] = useAtomState(pendingHotkeyState);
+	const [pendingHotkey, setPendingHotkey] = useAtomState(pendingHotkeyState);
 
-  const callGlobalHotkeysCallback = useGlobalHotkeysCallback();
+	const callGlobalHotkeysCallback = useGlobalHotkeysCallback();
 
-  useHotkeys(
-    firstKey,
-    (keyboardEvent, hotkeysEvent) => {
-      callGlobalHotkeysCallback({
-        keyboardEvent,
-        hotkeysEvent,
-        containsModifier: false,
-        callback: () => {
-          setPendingHotkey(firstKey);
-        },
-        preventDefault: Boolean(options.preventDefault),
-      });
-    },
-    {
-      enableOnContentEditable: options.enableOnContentEditable,
-      enableOnFormTags: options.enableOnFormTags,
-    },
-    [setPendingHotkey],
-  );
+	useHotkeys(
+		firstKey,
+		(keyboardEvent, hotkeysEvent) => {
+			callGlobalHotkeysCallback({
+				keyboardEvent,
+				hotkeysEvent,
+				containsModifier: false,
+				callback: () => {
+					setPendingHotkey(firstKey);
+				},
+				preventDefault: Boolean(options.preventDefault),
+			});
+		},
+		{
+			enableOnContentEditable: options.enableOnContentEditable,
+			enableOnFormTags: options.enableOnFormTags,
+		},
+		[setPendingHotkey],
+	);
 
-  useHotkeys(
-    secondKey,
-    (keyboardEvent, hotkeysEvent) => {
-      callGlobalHotkeysCallback({
-        keyboardEvent,
-        hotkeysEvent,
-        containsModifier: false,
-        callback: () => {
-          if (pendingHotkey !== firstKey) {
-            return;
-          }
+	useHotkeys(
+		secondKey,
+		(keyboardEvent, hotkeysEvent) => {
+			callGlobalHotkeysCallback({
+				keyboardEvent,
+				hotkeysEvent,
+				containsModifier: false,
+				callback: () => {
+					if (pendingHotkey !== firstKey) {
+						return;
+					}
 
-          setPendingHotkey(null);
+					setPendingHotkey(null);
 
-          if (isDefined(options.preventDefault)) {
-            keyboardEvent.stopImmediatePropagation();
-            keyboardEvent.stopPropagation();
-            keyboardEvent.preventDefault();
-          }
+					if (isDefined(options.preventDefault)) {
+						keyboardEvent.stopImmediatePropagation();
+						keyboardEvent.stopPropagation();
+						keyboardEvent.preventDefault();
+					}
 
-          sequenceCallback();
-        },
-        preventDefault: false,
-      });
-    },
-    {
-      enableOnContentEditable: options.enableOnContentEditable,
-      enableOnFormTags: options.enableOnFormTags,
-    },
-    [pendingHotkey, setPendingHotkey, ...deps],
-  );
+					sequenceCallback();
+				},
+				preventDefault: false,
+			});
+		},
+		{
+			enableOnContentEditable: options.enableOnContentEditable,
+			enableOnFormTags: options.enableOnFormTags,
+		},
+		[pendingHotkey, setPendingHotkey, ...deps],
+	);
 };

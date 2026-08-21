@@ -1,4 +1,4 @@
-import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
+import { joinColumnNameForManyToOneMorphRelationField1 } from "test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util";
 
 export const TEST_OBJECT_GQL_FIELDS = `
     id
@@ -8,7 +8,7 @@ export const TEST_OBJECT_GQL_FIELDS = `
         id
     }
     ${joinColumnNameForManyToOneMorphRelationField1}
-    ${joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')}{
+    ${joinColumnNameForManyToOneMorphRelationField1.replace("Id", "")}{
         id
     }
     uuidField

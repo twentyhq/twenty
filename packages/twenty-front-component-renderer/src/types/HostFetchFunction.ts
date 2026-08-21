@@ -1,6 +1,6 @@
-import { type HostFetchInput } from '@/types/HostFetchInput';
-import { type HostFetchResult } from '@/types/HostFetchResult';
+import { type HostFetchInput } from "@/types/HostFetchInput";
+import { type HostFetchResult } from "@/types/HostFetchResult";
 
 export type HostFetchFunction = (
-  input: HostFetchInput,
+	input: HostFetchInput,
 ) => Promise<HostFetchResult>;

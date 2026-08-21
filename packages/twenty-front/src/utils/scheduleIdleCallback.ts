@@ -1,19 +1,19 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export const scheduleIdleCallback = (
-  callback: () => void,
-  { timeout }: { timeout: number },
+	callback: () => void,
+	{ timeout }: { timeout: number },
 ): (() => void) => {
-  const requestIdleCallbackFn: typeof window.requestIdleCallback | undefined =
-    window.requestIdleCallback;
+	const requestIdleCallbackFn: typeof window.requestIdleCallback | undefined =
+		window.requestIdleCallback;
 
-  if (isDefined(requestIdleCallbackFn)) {
-    const handle = requestIdleCallbackFn(callback, { timeout });
+	if (isDefined(requestIdleCallbackFn)) {
+		const handle = requestIdleCallbackFn(callback, { timeout });
 
-    return () => window.cancelIdleCallback(handle);
-  }
+		return () => window.cancelIdleCallback(handle);
+	}
 
-  const handle = window.setTimeout(callback, timeout);
+	const handle = window.setTimeout(callback, timeout);
 
-  return () => window.clearTimeout(handle);
+	return () => window.clearTimeout(handle);
 };

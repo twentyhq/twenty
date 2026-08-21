@@ -1,7 +1,7 @@
-import { RATING_VALUES } from 'twenty-shared/constants';
-import { type FieldRatingValue } from 'twenty-shared/types';
+import { RATING_VALUES } from "twenty-shared/constants";
+import { type FieldRatingValue } from "twenty-shared/types";
 
 export const isFieldRatingValue = (
-  fieldValue: unknown,
+	fieldValue: unknown,
 ): fieldValue is FieldRatingValue =>
-  RATING_VALUES.includes(fieldValue as NonNullable<FieldRatingValue>);
+	RATING_VALUES.includes(fieldValue as NonNullable<FieldRatingValue>);

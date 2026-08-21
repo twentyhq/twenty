@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 export const getCreateManyRecordsMutationResponseField = (
-  objectNamePlural: string,
+	objectNamePlural: string,
 ) => `create${capitalize(objectNamePlural)}`;

@@ -1,1 +1,1 @@
-export const UNSUBSCRIBE_COMMAND_SUBJECT = 'unsubscribe';
+export const UNSUBSCRIBE_COMMAND_SUBJECT = "unsubscribe";

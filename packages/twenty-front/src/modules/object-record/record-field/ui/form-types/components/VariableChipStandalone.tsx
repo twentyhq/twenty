@@ -1,6 +1,6 @@
-import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { VariableChip } from "@/object-record/record-field/ui/form-types/components/VariableChip";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -9,23 +9,23 @@ const StyledContainer = styled.div`
 `;
 
 type VariableChipStandaloneProps = {
-  rawVariableName: string;
-  onRemove?: () => void;
-  isFullRecord?: boolean;
+	rawVariableName: string;
+	onRemove?: () => void;
+	isFullRecord?: boolean;
 };
 
 export const VariableChipStandalone = ({
-  rawVariableName,
-  onRemove,
-  isFullRecord,
+	rawVariableName,
+	onRemove,
+	isFullRecord,
 }: VariableChipStandaloneProps) => {
-  return (
-    <StyledContainer>
-      <VariableChip
-        rawVariableName={rawVariableName}
-        onRemove={onRemove}
-        isFullRecord={isFullRecord}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<VariableChip
+				rawVariableName={rawVariableName}
+				onRemove={onRemove}
+				isFullRecord={isFullRecord}
+			/>
+		</StyledContainer>
+	);
 };

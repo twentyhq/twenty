@@ -1,7 +1,7 @@
 export type UninstallPayload = {
-  version?: string;
+	version?: string;
 };
 
 export type UninstallHandler = (
-  payload: UninstallPayload,
+	payload: UninstallPayload,
 ) => any | Promise<any>;

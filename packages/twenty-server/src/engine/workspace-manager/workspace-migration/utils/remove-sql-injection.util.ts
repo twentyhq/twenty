@@ -2,92 +2,92 @@
 // Use ONLY for generating safe identifier names (e.g. enum names from table+column).
 // For SQL escaping, use escapeIdentifier or escapeLiteral instead.
 export const removeSqlDDLInjection = (value: string): string => {
-  return value.replace(/[^a-zA-Z0-9_]/g, '');
+	return value.replace(/[^a-zA-Z0-9_]/g, "");
 };
 
 // PostgreSQL standard identifier quoting: wraps in double quotes and
 // doubles any internal double-quote characters.
 // e.g. my"table → "my""table"
 export const escapeIdentifier = (identifier: string): string => {
-  if (identifier.includes('\0')) {
-    throw new Error('Null bytes are not allowed in PostgreSQL identifiers');
-  }
+	if (identifier.includes("\0")) {
+		throw new Error("Null bytes are not allowed in PostgreSQL identifiers");
+	}
 
-  return '"' + identifier.replace(/"/g, '""') + '"';
+	return '"' + identifier.replace(/"/g, '""') + '"';
 };
 
 const FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS = [
-  '\0',
-  ';',
-  '--',
-  '/*',
-  '*/',
-  '$',
+	"\0",
+	";",
+	"--",
+	"/*",
+	"*/",
+	"$",
 ];
 
 const hasBalancedParentheses = (expression: string): boolean => {
-  let depth = 0;
-  let context: 'code' | 'string' | 'identifier' = 'code';
+	let depth = 0;
+	let context: "code" | "string" | "identifier" = "code";
 
-  for (let index = 0; index < expression.length; index++) {
-    const character = expression[index];
+	for (let index = 0; index < expression.length; index++) {
+		const character = expression[index];
 
-    if (context === 'string') {
-      if (character === "'") {
-        if (expression[index + 1] === "'") {
-          index++;
-        } else {
-          context = 'code';
-        }
-      }
-      continue;
-    }
+		if (context === "string") {
+			if (character === "'") {
+				if (expression[index + 1] === "'") {
+					index++;
+				} else {
+					context = "code";
+				}
+			}
+			continue;
+		}
 
-    if (context === 'identifier') {
-      if (character === '"') {
-        if (expression[index + 1] === '"') {
-          index++;
-        } else {
-          context = 'code';
-        }
-      }
-      continue;
-    }
+		if (context === "identifier") {
+			if (character === '"') {
+				if (expression[index + 1] === '"') {
+					index++;
+				} else {
+					context = "code";
+				}
+			}
+			continue;
+		}
 
-    if (character === "'") {
-      context = 'string';
-    } else if (character === '"') {
-      context = 'identifier';
-    } else if (character === '(') {
-      depth++;
-    } else if (character === ')') {
-      depth--;
+		if (character === "'") {
+			context = "string";
+		} else if (character === '"') {
+			context = "identifier";
+		} else if (character === "(") {
+			depth++;
+		} else if (character === ")") {
+			depth--;
 
-      if (depth < 0) {
-        return false;
-      }
-    }
-  }
+			if (depth < 0) {
+				return false;
+			}
+		}
+	}
 
-  return depth === 0 && context === 'code';
+	return depth === 0 && context === "code";
 };
 
 export const isSafeTsVectorExpression = (expression: string): boolean => {
-  const hasForbiddenToken = FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS.some(
-    (token) => expression.includes(token),
-  );
+	const hasForbiddenToken = FORBIDDEN_TS_VECTOR_EXPRESSION_TOKENS.some(
+		(token) => expression.includes(token),
+	);
 
-  if (hasForbiddenToken) {
-    return false;
-  }
+	if (hasForbiddenToken) {
+		return false;
+	}
 
-  return hasBalancedParentheses(expression);
+	return hasBalancedParentheses(expression);
 };
 
 export const assertSafeTsVectorExpression = (expression: string): void => {
-  if (!isSafeTsVectorExpression(expression)) {
-    throw new Error('Unsafe tsvector expression detected');
-  }
+	if (!isSafeTsVectorExpression(expression)) {
+		throw new Error("Unsafe tsvector expression detected");
+	}
 };
 
 // PostgreSQL standard literal quoting: wraps in single quotes and
@@ -95,29 +95,29 @@ export const assertSafeTsVectorExpression = (expression: string): void => {
 // backslashes are present (standard_conforming_strings safety).
 // e.g. it's → 'it''s'
 export const escapeLiteral = (value: string): string => {
-  if (value.includes('\0')) {
-    throw new Error('Null bytes are not allowed in PostgreSQL string literals');
-  }
+	if (value.includes("\0")) {
+		throw new Error("Null bytes are not allowed in PostgreSQL string literals");
+	}
 
-  let hasBackslash = false;
-  let escaped = "'";
+	let hasBackslash = false;
+	let escaped = "'";
 
-  for (const char of value) {
-    if (char === "'") {
-      escaped += "''";
-    } else if (char === '\\') {
-      escaped += '\\\\';
-      hasBackslash = true;
-    } else {
-      escaped += char;
-    }
-  }
+	for (const char of value) {
+		if (char === "'") {
+			escaped += "''";
+		} else if (char === "\\") {
+			escaped += "\\\\";
+			hasBackslash = true;
+		} else {
+			escaped += char;
+		}
+	}
 
-  escaped += "'";
+	escaped += "'";
 
-  if (hasBackslash) {
-    escaped = 'E' + escaped;
-  }
+	if (hasBackslash) {
+		escaped = "E" + escaped;
+	}
 
-  return escaped;
+	return escaped;
 };

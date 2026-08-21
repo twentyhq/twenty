@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { Status } from 'twenty-ui/data-display';
-import { AppTooltip } from 'twenty-ui/surfaces';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { Status } from "twenty-ui/data-display";
+import { AppTooltip } from "twenty-ui/surfaces";
+import { type ThemeColor } from "twenty-ui/theme";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -10,28 +10,28 @@ const StyledContainer = styled.div`
 `;
 
 type PageLayoutWidgetStatusDisplayProps = {
-  tooltipId: string;
-  text: string;
-  tooltipContent: string;
-  color?: ThemeColor;
+	tooltipId: string;
+	text: string;
+	tooltipContent: string;
+	color?: ThemeColor;
 };
 
 export const PageLayoutWidgetStatusDisplay = ({
-  tooltipId,
-  text,
-  tooltipContent,
-  color = 'red',
+	tooltipId,
+	text,
+	tooltipContent,
+	color = "red",
 }: PageLayoutWidgetStatusDisplayProps) => {
-  return (
-    <StyledContainer>
-      <div id={tooltipId}>
-        <Status color={color} text={text} />
-      </div>
-      <AppTooltip
-        anchorSelect={`#${tooltipId}`}
-        content={tooltipContent}
-        place="top"
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<div id={tooltipId}>
+				<Status color={color} text={text} />
+			</div>
+			<AppTooltip
+				anchorSelect={`#${tooltipId}`}
+				content={tooltipContent}
+				place="top"
+			/>
+		</StyledContainer>
+	);
 };

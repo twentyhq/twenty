@@ -1,42 +1,42 @@
-import { Marked } from 'marked';
+import { Marked } from "marked";
 
 // A Markdown renderer hardened for untrusted template content: raw HTML is
 // dropped and only http(s)/mailto links survive, so the output is safe to
 // inject into the page or the front-end viewer.
 const escapeHtml = (value: string): string =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+	value
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;");
 
 const markdown = new Marked({ async: false, gfm: true, breaks: true });
 
 markdown.use({
-  renderer: {
-    html() {
-      return '';
-    },
-    // Drop images entirely — they would emit <img> tags pointing at arbitrary
-    // external URLs, which the "no raw HTML" contract is meant to prevent.
-    image() {
-      return '';
-    },
-    link({ href, text }: { href: string; text: string }) {
-      const isSafe = /^(https?:|mailto:)/i.test(href ?? '');
-      // Escape both values: href lands in an attribute and text in element
-      // content, so unescaped input would otherwise inject markup.
-      const safeText = escapeHtml(text ?? '');
+	renderer: {
+		html() {
+			return "";
+		},
+		// Drop images entirely — they would emit <img> tags pointing at arbitrary
+		// external URLs, which the "no raw HTML" contract is meant to prevent.
+		image() {
+			return "";
+		},
+		link({ href, text }: { href: string; text: string }) {
+			const isSafe = /^(https?:|mailto:)/i.test(href ?? "");
+			// Escape both values: href lands in an attribute and text in element
+			// content, so unescaped input would otherwise inject markup.
+			const safeText = escapeHtml(text ?? "");
 
-      return isSafe
-        ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${safeText}</a>`
-        : safeText;
-    },
-  },
+			return isSafe
+				? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${safeText}</a>`
+				: safeText;
+		},
+	},
 });
 
 export const documentContentToHtml = (content: string): string =>
-  markdown.parse(content) as string;
+	markdown.parse(content) as string;
 
 // The "paper" styling only (no `body` rules), so it is safe to inject inside a
 // front component without leaking styles onto the host page.
@@ -78,7 +78,7 @@ export const DOCUMENT_PAPER_CSS = `
 // Inner markup for the styled "paper": renders the template content only, with
 // no title header or footer chrome.
 export const documentPaperHtml = (content: string): string =>
-  `<article class="doc-paper">
+	`<article class="doc-paper">
       <div class="doc-body">
         ${documentContentToHtml(content)}
       </div>
@@ -94,7 +94,10 @@ const PAGE_BODY_CSS = `
 `;
 
 // A complete, printable HTML page for the public view route.
-export const documentHtmlPage = (title: string, content: string): string => `<!doctype html>
+export const documentHtmlPage = (
+	title: string,
+	content: string,
+): string => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />

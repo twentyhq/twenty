@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly cardHeader: 'cardHeader';
+	readonly cardHeader: "cardHeader";
 };
 export default classNames;

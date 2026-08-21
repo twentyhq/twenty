@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 import {
-  buildSchemeDeclarations,
-  MAX_CONTENT_WIDTH_PX,
-  type Scheme,
-  semanticColor,
-} from '@/tokens';
+	buildSchemeDeclarations,
+	MAX_CONTENT_WIDTH_PX,
+	type Scheme,
+	semanticColor,
+} from "@/tokens";
 
 const CAP_HEIGHT_PX = 20;
 
@@ -17,14 +17,14 @@ const NOTCH_GROW = 518;
 const RIGHT_FLAT_GROW = 343;
 
 const NOTCH_MAX_WIDTH_PX = Math.round(
-  (NOTCH_GROW / (LEFT_FLAT_GROW + NOTCH_GROW + RIGHT_FLAT_GROW)) *
-    (MAX_CONTENT_WIDTH_PX - LEFT_SLOPE_WIDTH_PX - RIGHT_SLOPE_WIDTH_PX),
+	(NOTCH_GROW / (LEFT_FLAT_GROW + NOTCH_GROW + RIGHT_FLAT_GROW)) *
+		(MAX_CONTENT_WIDTH_PX - LEFT_SLOPE_WIDTH_PX - RIGHT_SLOPE_WIDTH_PX),
 );
 
 const LEFT_SLOPE_PATH =
-  'M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z';
+	"M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z";
 const RIGHT_SLOPE_PATH =
-  'M0 20 A40 40 0 0 1 12.63 17.953 L60.418 2.047 A40 40 0 0 1 73.048 0 L73.048 20 Z';
+	"M0 20 A40 40 0 0 1 12.63 17.953 L60.418 2.047 A40 40 0 0 1 73.048 0 L73.048 20 Z";
 
 const ShapeRow = styled.div`
   display: flex;
@@ -79,51 +79,51 @@ const ShapeLayer = styled.div`
   z-index: -1;
 
   &[data-card-scheme='light'] {
-    ${buildSchemeDeclarations('light')}
+    ${buildSchemeDeclarations("light")}
   }
 
   &[data-card-scheme='muted'] {
-    ${buildSchemeDeclarations('muted')}
+    ${buildSchemeDeclarations("muted")}
   }
 
   &[data-card-scheme='dark'] {
-    ${buildSchemeDeclarations('dark')}
+    ${buildSchemeDeclarations("dark")}
   }
 `;
 
 export function NotchedCardShape({
-  cardScheme = 'light',
+	cardScheme = "light",
 }: {
-  cardScheme?: Scheme;
+	cardScheme?: Scheme;
 }) {
-  return (
-    <ShapeLayer aria-hidden data-card-scheme={cardScheme}>
-      <ShapeRow>
-        <FlatRun data-edge="left" />
-        <svg
-          fill="none"
-          height={CAP_HEIGHT_PX}
-          preserveAspectRatio="none"
-          viewBox={`0 0 74.222 ${CAP_HEIGHT_PX}`}
-          width={LEFT_SLOPE_WIDTH_PX}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d={LEFT_SLOPE_PATH} fill={semanticColor.surface} />
-        </svg>
-        <Plateau />
-        <svg
-          fill="none"
-          height={CAP_HEIGHT_PX}
-          preserveAspectRatio="none"
-          viewBox={`0 0 73.048 ${CAP_HEIGHT_PX}`}
-          width={RIGHT_SLOPE_WIDTH_PX}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d={RIGHT_SLOPE_PATH} fill={semanticColor.surface} />
-        </svg>
-        <FlatRun data-edge="right" />
-      </ShapeRow>
-      <BodyFill />
-    </ShapeLayer>
-  );
+	return (
+		<ShapeLayer aria-hidden data-card-scheme={cardScheme}>
+			<ShapeRow>
+				<FlatRun data-edge="left" />
+				<svg
+					fill="none"
+					height={CAP_HEIGHT_PX}
+					preserveAspectRatio="none"
+					viewBox={`0 0 74.222 ${CAP_HEIGHT_PX}`}
+					width={LEFT_SLOPE_WIDTH_PX}
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path d={LEFT_SLOPE_PATH} fill={semanticColor.surface} />
+				</svg>
+				<Plateau />
+				<svg
+					fill="none"
+					height={CAP_HEIGHT_PX}
+					preserveAspectRatio="none"
+					viewBox={`0 0 73.048 ${CAP_HEIGHT_PX}`}
+					width={RIGHT_SLOPE_WIDTH_PX}
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path d={RIGHT_SLOPE_PATH} fill={semanticColor.surface} />
+				</svg>
+				<FlatRun data-edge="right" />
+			</ShapeRow>
+			<BodyFill />
+		</ShapeLayer>
+	);
 }

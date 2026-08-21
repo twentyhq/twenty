@@ -1,19 +1,19 @@
-import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
-import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
-import { styled } from '@linaria/react';
-import { ResponsivePie } from '@nivo/pie';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { CHART_MOTION_CONFIG } from "@/page-layout/widgets/graph/constants/ChartMotionConfig";
+import { GraphWidgetLegendDot } from "@/page-layout/widgets/graph/components/GraphWidgetLegendDot";
+import { useUsageValueFormatter } from "@/settings/usage/hooks/useUsageValueFormatter";
+import { styled } from "@linaria/react";
+import { ResponsivePie } from "@nivo/pie";
+import { useContext } from "react";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type UsagePieChartDatum = {
-  id: string;
-  value: number;
-  color: string;
+	id: string;
+	value: number;
+	color: string;
 };
 
 type UsagePieChartProps = {
-  data: UsagePieChartDatum[];
+	data: UsagePieChartDatum[];
 };
 
 const StyledContainer = styled.div`
@@ -51,39 +51,39 @@ const StyledTooltipValue = styled.span`
 `;
 
 export const UsagePieChart = ({ data }: UsagePieChartProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { formatUsageValue } = useUsageValueFormatter();
+	const { theme } = useContext(ThemeContext);
+	const { formatUsageValue } = useUsageValueFormatter();
 
-  return (
-    <StyledContainer>
-      <ResponsivePie
-        data={data}
-        margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
-        innerRadius={0.6}
-        padAngle={0.5}
-        cornerRadius={2}
-        colors={data.map((item) => item.color)}
-        enableArcLabels={false}
-        enableArcLinkLabels={true}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor={theme.font.color.secondary}
-        arcLinkLabelsColor={{ from: 'color' }}
-        arcLinkLabelsDiagonalLength={10}
-        arcLinkLabelsStraightLength={10}
-        animate
-        motionConfig={CHART_MOTION_CONFIG}
-        tooltip={({ datum }) => (
-          <StyledTooltip>
-            <StyledTooltipRow>
-              <GraphWidgetLegendDot color={datum.color} />
-              <StyledTooltipLabel>{String(datum.id)}</StyledTooltipLabel>
-              <StyledTooltipValue>
-                {formatUsageValue(datum.value)}
-              </StyledTooltipValue>
-            </StyledTooltipRow>
-          </StyledTooltip>
-        )}
-      />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<ResponsivePie
+				data={data}
+				margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
+				innerRadius={0.6}
+				padAngle={0.5}
+				cornerRadius={2}
+				colors={data.map((item) => item.color)}
+				enableArcLabels={false}
+				enableArcLinkLabels={true}
+				arcLinkLabelsSkipAngle={10}
+				arcLinkLabelsTextColor={theme.font.color.secondary}
+				arcLinkLabelsColor={{ from: "color" }}
+				arcLinkLabelsDiagonalLength={10}
+				arcLinkLabelsStraightLength={10}
+				animate
+				motionConfig={CHART_MOTION_CONFIG}
+				tooltip={({ datum }) => (
+					<StyledTooltip>
+						<StyledTooltipRow>
+							<GraphWidgetLegendDot color={datum.color} />
+							<StyledTooltipLabel>{String(datum.id)}</StyledTooltipLabel>
+							<StyledTooltipValue>
+								{formatUsageValue(datum.value)}
+							</StyledTooltipValue>
+						</StyledTooltipRow>
+					</StyledTooltip>
+				)}
+			/>
+		</StyledContainer>
+	);
 };

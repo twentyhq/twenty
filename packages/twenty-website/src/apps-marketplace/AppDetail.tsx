@@ -1,21 +1,21 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
 import {
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	radius,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { Body, Button, ExternalLink, Heading, SectionShell } from "@/ui";
 
-import { AppLogo } from './AppLogo';
-import { buildAppInstallUrl } from './build-app-install-url';
-import { type MarketplaceAppDetail } from './marketplace-app';
+import { AppLogo } from "./AppLogo";
+import { buildAppInstallUrl } from "./build-app-install-url";
+import { type MarketplaceAppDetail } from "./marketplace-app";
 
 const HeroRow = styled.div`
   align-items: flex-start;
@@ -23,7 +23,7 @@ const HeroRow = styled.div`
   flex-direction: column;
   gap: ${spacing(6)};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     flex-direction: row;
     gap: ${spacing(8)};
@@ -39,7 +39,7 @@ const HeroText = styled.div`
 
 const CategoryEyebrow = styled.span`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.08em;
@@ -61,7 +61,7 @@ const VettedBadge = styled.span`
   border-radius: ${radius(4)};
   color: ${semanticColor.inkMuted};
   display: inline-flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(2)};
   font-weight: ${FONT_WEIGHT.medium};
   gap: ${spacing(2)};
@@ -75,7 +75,7 @@ const ContentGrid = styled.div`
   gap: ${spacing(8)};
   grid-template-columns: 1fr;
 
-  ${mediaUp('lg')} {
+  ${mediaUp("lg")} {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 `;
@@ -122,7 +122,7 @@ const DetailRow = styled.div`
 
 const DetailLabel = styled.span`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(2)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.06em;
@@ -131,14 +131,14 @@ const DetailLabel = styled.span`
 
 const DetailValue = styled.span`
   color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   word-break: break-word;
 `;
 
 const DetailLink = styled(ExternalLink)`
   color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   text-decoration: underline;
   word-break: break-word;
@@ -152,94 +152,94 @@ const Divider = styled.hr`
 `;
 
 type AppDetailProps = {
-  app: MarketplaceAppDetail;
+	app: MarketplaceAppDetail;
 };
 
 export function AppDetail({ app }: AppDetailProps) {
-  const i18n = getServerI18n();
-  const installUrl = buildAppInstallUrl(app.universalIdentifier);
+	const i18n = getServerI18n();
+	const installUrl = buildAppInstallUrl(app.universalIdentifier);
 
-  return (
-    <>
-      <SectionShell rhythm="hero" scheme="light">
-        <HeroRow>
-          <AppLogo
-            name={app.name}
-            logoUrl={app.logoUrl}
-            size={96}
-            loading="eager"
-          />
-          <HeroText>
-            {app.category.length > 0 && (
-              <CategoryEyebrow>{app.category}</CategoryEyebrow>
-            )}
-            <Heading as="h1" size="lg" weight="light">
-              {app.name}
-            </Heading>
-            <Body muted size="md">
-              {app.tagline}
-            </Body>
-            <HeroActions>
-              <Button
-                href={installUrl}
-                label={i18n._(msg`Install`)}
-                variant="filled"
-              />
-              <VettedBadge>{i18n._(msg`Vetted by Twenty`)}</VettedBadge>
-            </HeroActions>
-          </HeroText>
-        </HeroRow>
-      </SectionShell>
+	return (
+		<>
+			<SectionShell rhythm="hero" scheme="light">
+				<HeroRow>
+					<AppLogo
+						name={app.name}
+						logoUrl={app.logoUrl}
+						size={96}
+						loading="eager"
+					/>
+					<HeroText>
+						{app.category.length > 0 && (
+							<CategoryEyebrow>{app.category}</CategoryEyebrow>
+						)}
+						<Heading as="h1" size="lg" weight="light">
+							{app.name}
+						</Heading>
+						<Body muted size="md">
+							{app.tagline}
+						</Body>
+						<HeroActions>
+							<Button
+								href={installUrl}
+								label={i18n._(msg`Install`)}
+								variant="filled"
+							/>
+							<VettedBadge>{i18n._(msg`Vetted by Twenty`)}</VettedBadge>
+						</HeroActions>
+					</HeroText>
+				</HeroRow>
+			</SectionShell>
 
-      <SectionShell rhythm="section" scheme="light">
-        <ContentGrid>
-          <MainColumn>
-            {app.screenshots.length > 0 && (
-              <ScreenshotList>
-                {app.screenshots.map((screenshot) => (
-                  <Screenshot
-                    key={screenshot}
-                    src={screenshot}
-                    alt={i18n._(msg`${app.name} screenshot`)}
-                    loading="lazy"
-                  />
-                ))}
-              </ScreenshotList>
-            )}
-          </MainColumn>
+			<SectionShell rhythm="section" scheme="light">
+				<ContentGrid>
+					<MainColumn>
+						{app.screenshots.length > 0 && (
+							<ScreenshotList>
+								{app.screenshots.map((screenshot) => (
+									<Screenshot
+										key={screenshot}
+										src={screenshot}
+										alt={i18n._(msg`${app.name} screenshot`)}
+										loading="lazy"
+									/>
+								))}
+							</ScreenshotList>
+						)}
+					</MainColumn>
 
-          <Sidebar>
-            <Button
-              href={installUrl}
-              label={i18n._(msg`Install on Twenty`)}
-              variant="filled"
-            />
-            <Divider aria-hidden="true" />
-            <DetailRow>
-              <DetailLabel>{i18n._(msg`Developer`)}</DetailLabel>
-              <DetailValue>{app.author}</DetailValue>
-            </DetailRow>
-            {app.category.length > 0 && (
-              <DetailRow>
-                <DetailLabel>{i18n._(msg`Category`)}</DetailLabel>
-                <DetailValue>{app.category}</DetailValue>
-              </DetailRow>
-            )}
-            {app.sourcePackage !== undefined && (
-              <DetailRow>
-                <DetailLabel>{i18n._(msg`Package`)}</DetailLabel>
-                <DetailValue>{app.sourcePackage}</DetailValue>
-              </DetailRow>
-            )}
-            {app.websiteUrl !== undefined && (
-              <DetailRow>
-                <DetailLabel>{i18n._(msg`Website`)}</DetailLabel>
-                <DetailLink href={app.websiteUrl}>{app.websiteUrl}</DetailLink>
-              </DetailRow>
-            )}
-          </Sidebar>
-        </ContentGrid>
-      </SectionShell>
-    </>
-  );
+					<Sidebar>
+						<Button
+							href={installUrl}
+							label={i18n._(msg`Install on Twenty`)}
+							variant="filled"
+						/>
+						<Divider aria-hidden="true" />
+						<DetailRow>
+							<DetailLabel>{i18n._(msg`Developer`)}</DetailLabel>
+							<DetailValue>{app.author}</DetailValue>
+						</DetailRow>
+						{app.category.length > 0 && (
+							<DetailRow>
+								<DetailLabel>{i18n._(msg`Category`)}</DetailLabel>
+								<DetailValue>{app.category}</DetailValue>
+							</DetailRow>
+						)}
+						{app.sourcePackage !== undefined && (
+							<DetailRow>
+								<DetailLabel>{i18n._(msg`Package`)}</DetailLabel>
+								<DetailValue>{app.sourcePackage}</DetailValue>
+							</DetailRow>
+						)}
+						{app.websiteUrl !== undefined && (
+							<DetailRow>
+								<DetailLabel>{i18n._(msg`Website`)}</DetailLabel>
+								<DetailLink href={app.websiteUrl}>{app.websiteUrl}</DetailLink>
+							</DetailRow>
+						)}
+					</Sidebar>
+				</ContentGrid>
+			</SectionShell>
+		</>
+	);
 }

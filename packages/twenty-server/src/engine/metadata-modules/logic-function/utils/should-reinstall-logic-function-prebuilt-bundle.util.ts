@@ -1,27 +1,27 @@
-import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionExecutionMode } from "src/engine/metadata-modules/logic-function/logic-function.entity";
 import {
-  isLogicFunctionReadyForPrebuiltInstall,
-  type LogicFunctionPrebuiltStateFields,
-} from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+	isLogicFunctionReadyForPrebuiltInstall,
+	type LogicFunctionPrebuiltStateFields,
+} from "src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util";
 
 export const shouldReinstallLogicFunctionPrebuiltBundle = ({
-  existingLogicFunction,
-  newLogicFunction,
+	existingLogicFunction,
+	newLogicFunction,
 }: {
-  existingLogicFunction: LogicFunctionPrebuiltStateFields;
-  newLogicFunction: LogicFunctionPrebuiltStateFields;
+	existingLogicFunction: LogicFunctionPrebuiltStateFields;
+	newLogicFunction: LogicFunctionPrebuiltStateFields;
 }): boolean => {
-  if (!isLogicFunctionReadyForPrebuiltInstall(newLogicFunction)) {
-    return false;
-  }
+	if (!isLogicFunctionReadyForPrebuiltInstall(newLogicFunction)) {
+		return false;
+	}
 
-  if (
-    existingLogicFunction.executionMode ===
-      LogicFunctionExecutionMode.PREBUILT &&
-    existingLogicFunction.checksum === newLogicFunction.checksum
-  ) {
-    return false;
-  }
+	if (
+		existingLogicFunction.executionMode ===
+			LogicFunctionExecutionMode.PREBUILT &&
+		existingLogicFunction.checksum === newLogicFunction.checksum
+	) {
+		return false;
+	}
 
-  return true;
+	return true;
 };

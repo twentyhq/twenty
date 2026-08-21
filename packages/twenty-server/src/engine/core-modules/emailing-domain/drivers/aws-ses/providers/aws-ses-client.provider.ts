@@ -1,45 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 import {
-  SESv2Client as SESClient,
-  type SESv2ClientConfig as SESClientConfig,
-} from '@aws-sdk/client-sesv2';
+	SESv2Client as SESClient,
+	type SESv2ClientConfig as SESClientConfig,
+} from "@aws-sdk/client-sesv2";
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
+import { TwentyConfigService } from "src/engine/core-modules/twenty-config/twenty-config.service";
+import { buildAwsRequestHandlerOptions } from "src/utils/aws-request-handler.util";
 
 @Injectable()
 export class AwsSesClientProvider {
-  private sesClient: SESClient | null = null;
+	private sesClient: SESClient | null = null;
 
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+	constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  public getSESClient(): SESClient {
-    if (!this.sesClient) {
-      const config: SESClientConfig = {
-        region: this.twentyConfigService.get('AWS_SES_REGION'),
-        requestHandler: buildAwsRequestHandlerOptions(),
-      };
+	public getSESClient(): SESClient {
+		if (!this.sesClient) {
+			const config: SESClientConfig = {
+				region: this.twentyConfigService.get("AWS_SES_REGION"),
+				requestHandler: buildAwsRequestHandlerOptions(),
+			};
 
-      const accessKeyId = this.twentyConfigService.get('AWS_SES_ACCESS_KEY_ID');
-      const secretAccessKey = this.twentyConfigService.get(
-        'AWS_SES_SECRET_ACCESS_KEY',
-      );
-      const sessionToken = this.twentyConfigService.get(
-        'AWS_SES_SESSION_TOKEN',
-      );
+			const accessKeyId = this.twentyConfigService.get("AWS_SES_ACCESS_KEY_ID");
+			const secretAccessKey = this.twentyConfigService.get(
+				"AWS_SES_SECRET_ACCESS_KEY",
+			);
+			const sessionToken = this.twentyConfigService.get(
+				"AWS_SES_SESSION_TOKEN",
+			);
 
-      if (accessKeyId && secretAccessKey) {
-        config.credentials = {
-          accessKeyId,
-          secretAccessKey,
-          ...(sessionToken ? { sessionToken } : {}),
-        };
-      }
+			if (accessKeyId && secretAccessKey) {
+				config.credentials = {
+					accessKeyId,
+					secretAccessKey,
+					...(sessionToken ? { sessionToken } : {}),
+				};
+			}
 
-      this.sesClient = new SESClient(config);
-    }
+			this.sesClient = new SESClient(config);
+		}
 
-    return this.sesClient;
-  }
+		return this.sesClient;
+	}
 }

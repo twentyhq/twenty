@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
 
-import { IconChevronDown } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type FieldWidgetShowMoreButtonProps = {
-  remainingCount: number;
-  onClick: () => void;
+	remainingCount: number;
+	onClick: () => void;
 };
 
 const StyledButton = styled.button`
@@ -37,15 +37,15 @@ const StyledIconContainer = styled.span`
 `;
 
 export const FieldWidgetShowMoreButton = ({
-  remainingCount,
-  onClick,
+	remainingCount,
+	onClick,
 }: FieldWidgetShowMoreButtonProps) => {
-  return (
-    <StyledButton data-testid="field-widget-show-more-button" onClick={onClick}>
-      <StyledIconContainer>
-        <IconChevronDown />
-      </StyledIconContainer>
-      {t`More (${remainingCount})`}
-    </StyledButton>
-  );
+	return (
+		<StyledButton data-testid="field-widget-show-more-button" onClick={onClick}>
+			<StyledIconContainer>
+				<IconChevronDown />
+			</StyledIconContainer>
+			{t`More (${remainingCount})`}
+		</StyledButton>
+	);
 };

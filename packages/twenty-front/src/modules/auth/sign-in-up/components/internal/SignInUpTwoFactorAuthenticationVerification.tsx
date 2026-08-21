@@ -1,34 +1,34 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { useAuth } from '@/auth/hooks/useAuth';
+import { useAuth } from "@/auth/hooks/useAuth";
 import {
-  type OTPFormValues,
-  useTwoFactorAuthenticationForm,
-} from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
-import { loginTokenState } from '@/auth/states/loginTokenState';
+	type OTPFormValues,
+	useTwoFactorAuthenticationForm,
+} from "@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm";
+import { loginTokenState } from "@/auth/states/loginTokenState";
 import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
+	SignInUpStep,
+	signInUpStepState,
+} from "@/auth/states/signInUpStepState";
 import {
-  StyledTwoFactorInstructions,
-  StyledTwoFactorMainContent,
-} from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationStyles';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { OTPInput, type SlotProps } from 'input-otp';
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
-import { AppPath } from 'twenty-shared/types';
-import { MainButton } from 'twenty-ui/input';
-import { ClickToActionLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+	StyledTwoFactorInstructions,
+	StyledTwoFactorMainContent,
+} from "@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationStyles";
+import { useReadCaptchaToken } from "@/captcha/hooks/useReadCaptchaToken";
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from "@/onboarding/constants/OnboardingContentBlockWidth";
+import { useCaptcha } from "@/client-config/hooks/useCaptcha";
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { OTPInput, type SlotProps } from "input-otp";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
+import { AppPath } from "twenty-shared/types";
+import { MainButton } from "twenty-ui/input";
+import { ClickToActionLink } from "twenty-ui/navigation";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { useNavigateApp } from "~/hooks/useNavigateApp";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
 
 const StyledForm = styled.form`
   align-items: center;
@@ -48,11 +48,11 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   height: 3.5rem;
   justify-content: center;
   outline-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.border.color.strong
-      : themeCssVariables.border.color.medium};
-  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
-  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
+		isActive
+			? themeCssVariables.border.color.strong
+			: themeCssVariables.border.color.medium};
+  outline-style: ${({ isActive }) => (isActive ? "solid" : "none")};
+  outline-width: ${({ isActive }) => (isActive ? "1px" : "0")};
 
   &:first-of-type {
     border-bottom-left-radius: 0.375rem;
@@ -82,14 +82,14 @@ const StyledPlaceholderChar = styled.div`
 `;
 
 export const Slot = (props: SlotProps) => {
-  return (
-    <StyledSlot isActive={props.isActive}>
-      <StyledPlaceholderChar>
-        {props.char ?? props.placeholderChar}
-      </StyledPlaceholderChar>
-      {props.hasFakeCaret && <FakeCaret />}
-    </StyledSlot>
-  );
+	return (
+		<StyledSlot isActive={props.isActive}>
+			<StyledPlaceholderChar>
+				{props.char ?? props.placeholderChar}
+			</StyledPlaceholderChar>
+			{props.hasFakeCaret && <FakeCaret />}
+		</StyledSlot>
+	);
 };
 
 const StyledCaretContainer = styled.div`
@@ -119,11 +119,11 @@ const StyledCaret = styled.div`
 `;
 
 const FakeCaret = () => {
-  return (
-    <StyledCaretContainer>
-      <StyledCaret />
-    </StyledCaretContainer>
-  );
+	return (
+		<StyledCaretContainer>
+			<StyledCaret />
+		</StyledCaretContainer>
+	);
 };
 
 const StyledDashContainer = styled.div`
@@ -142,11 +142,11 @@ const StyledDash = styled.div`
 `;
 
 const FakeDash = () => {
-  return (
-    <StyledDashContainer>
-      <StyledDash />
-    </StyledDashContainer>
-  );
+	return (
+		<StyledDashContainer>
+			<StyledDash />
+		</StyledDashContainer>
+	);
 };
 
 const StyledOTPContainer = styled.div`
@@ -167,114 +167,114 @@ const StyledActionBackLinkContainer = styled.div`
 `;
 
 export const SignInUpTOTPVerification = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { getAuthTokensFromOTP } = useAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
+	const { getAuthTokensFromOTP } = useAuth();
+	const { enqueueErrorSnackBar } = useSnackBar();
 
-  const navigate = useNavigateApp();
-  const { readCaptchaToken } = useReadCaptchaToken();
-  const { isCaptchaReady } = useCaptcha();
-  const loginToken = useAtomStateValue(loginTokenState);
-  const setSignInUpStep = useSetAtomState(signInUpStepState);
-  const { t } = useLingui();
+	const navigate = useNavigateApp();
+	const { readCaptchaToken } = useReadCaptchaToken();
+	const { isCaptchaReady } = useCaptcha();
+	const loginToken = useAtomStateValue(loginTokenState);
+	const setSignInUpStep = useSetAtomState(signInUpStepState);
+	const { t } = useLingui();
 
-  const { form } = useTwoFactorAuthenticationForm();
+	const { form } = useTwoFactorAuthenticationForm();
 
-  const submitOTP = async (values: OTPFormValues) => {
-    setIsLoading(true);
-    try {
-      if (!isCaptchaReady) {
-        enqueueErrorSnackBar({
-          message: t`Captcha (anti-bot check) is still loading, try again`,
-        });
-        setIsLoading(false);
-        return;
-      }
+	const submitOTP = async (values: OTPFormValues) => {
+		setIsLoading(true);
+		try {
+			if (!isCaptchaReady) {
+				enqueueErrorSnackBar({
+					message: t`Captcha (anti-bot check) is still loading, try again`,
+				});
+				setIsLoading(false);
+				return;
+			}
 
-      const captchaToken = readCaptchaToken();
+			const captchaToken = readCaptchaToken();
 
-      if (!loginToken) {
-        return navigate(AppPath.SignInUp);
-      }
+			if (!loginToken) {
+				return navigate(AppPath.SignInUp);
+			}
 
-      await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
-    } catch {
-      form.setValue('otp', '');
+			await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
+		} catch {
+			form.setValue("otp", "");
 
-      enqueueErrorSnackBar({
-        message: t`Invalid verification code. Please try again.`,
-        options: {
-          dedupeKey: 'invalid-otp-dedupe-key',
-        },
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+			enqueueErrorSnackBar({
+				message: t`Invalid verification code. Please try again.`,
+				options: {
+					dedupeKey: "invalid-otp-dedupe-key",
+				},
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  const handleBack = () => {
-    setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
-  };
+	const handleBack = () => {
+		setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+	};
 
-  return (
-    <StyledForm onSubmit={form.handleSubmit(submitOTP)}>
-      <StyledTwoFactorInstructions>
-        <Trans>Paste the code below</Trans>
-      </StyledTwoFactorInstructions>
-      <StyledTwoFactorMainContent>
-        {/* // oxlint-disable-next-line react/jsx-props-no-spreading */}
-        <Controller
-          name="otp"
-          control={form.control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <OTPInput
-              maxLength={6}
-              onBlur={onBlur}
-              onChange={onChange}
-              value={value}
-              autoFocus
-              render={({ slots }) => (
-                <StyledOTPContainer>
-                  <StyledSlotGroup>
-                    {slots.slice(0, 3).map((slot, idx) => (
-                      <Slot
-                        key={idx}
-                        // oxlint-disable-next-line react/jsx-props-no-spreading
-                        {...slot}
-                      />
-                    ))}
-                  </StyledSlotGroup>
+	return (
+		<StyledForm onSubmit={form.handleSubmit(submitOTP)}>
+			<StyledTwoFactorInstructions>
+				<Trans>Paste the code below</Trans>
+			</StyledTwoFactorInstructions>
+			<StyledTwoFactorMainContent>
+				{/* // oxlint-disable-next-line react/jsx-props-no-spreading */}
+				<Controller
+					name="otp"
+					control={form.control}
+					render={({ field: { onChange, onBlur, value } }) => (
+						<OTPInput
+							maxLength={6}
+							onBlur={onBlur}
+							onChange={onChange}
+							value={value}
+							autoFocus
+							render={({ slots }) => (
+								<StyledOTPContainer>
+									<StyledSlotGroup>
+										{slots.slice(0, 3).map((slot, idx) => (
+											<Slot
+												key={idx}
+												// oxlint-disable-next-line react/jsx-props-no-spreading
+												{...slot}
+											/>
+										))}
+									</StyledSlotGroup>
 
-                  <FakeDash />
+									<FakeDash />
 
-                  <StyledSlotGroup>
-                    {slots.slice(3).map((slot, idx) => (
-                      <Slot
-                        key={idx}
-                        // oxlint-disable-next-line react/jsx-props-no-spreading
-                        {...slot}
-                      />
-                    ))}
-                  </StyledSlotGroup>
-                </StyledOTPContainer>
-              )}
-            />
-          )}
-        />
-      </StyledTwoFactorMainContent>
-      <MainButton
-        title={t`Submit`}
-        type="submit"
-        variant="primary"
-        fullWidth
-        disabled={isLoading}
-      />
-      <StyledActionBackLinkContainer>
-        <ClickToActionLink onClick={handleBack}>
-          <Trans>Back</Trans>
-        </ClickToActionLink>
-      </StyledActionBackLinkContainer>
-    </StyledForm>
-  );
+									<StyledSlotGroup>
+										{slots.slice(3).map((slot, idx) => (
+											<Slot
+												key={idx}
+												// oxlint-disable-next-line react/jsx-props-no-spreading
+												{...slot}
+											/>
+										))}
+									</StyledSlotGroup>
+								</StyledOTPContainer>
+							)}
+						/>
+					)}
+				/>
+			</StyledTwoFactorMainContent>
+			<MainButton
+				title={t`Submit`}
+				type="submit"
+				variant="primary"
+				fullWidth
+				disabled={isLoading}
+			/>
+			<StyledActionBackLinkContainer>
+				<ClickToActionLink onClick={handleBack}>
+					<Trans>Back</Trans>
+				</ClickToActionLink>
+			</StyledActionBackLinkContainer>
+		</StyledForm>
+	);
 };

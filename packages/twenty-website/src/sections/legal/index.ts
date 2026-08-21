@@ -1,3 +1,3 @@
-export { LegalDocument } from './LegalDocument';
-export { PrivacyPolicyDocument } from './PrivacyPolicyDocument';
-export { TermsDocument } from './TermsDocument';
+export { LegalDocument } from "./LegalDocument";
+export { PrivacyPolicyDocument } from "./PrivacyPolicyDocument";
+export { TermsDocument } from "./TermsDocument";

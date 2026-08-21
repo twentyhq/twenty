@@ -1,31 +1,31 @@
-import { styled } from '@linaria/react';
-import { Suspense, lazy, useContext, type ComponentType } from 'react';
-import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { styled } from "@linaria/react";
+import { Suspense, lazy, useContext, type ComponentType } from "react";
+import type { DatePickerProps as ReactDatePickerLibProps } from "react-datepicker";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared/constants';
+import { SKELETON_LOADER_HEIGHT_SIZES } from "@/activities/components/SkeletonLoader";
+import { currentWorkspaceMemberState } from "@/auth/states/currentWorkspaceMemberState";
+import { CalendarStartDay } from "twenty-shared/constants";
 
-import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
-import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
+import { detectCalendarStartDay } from "@/localization/utils/detection/detectCalendarStartDay";
+import { DatePickerHeader } from "@/ui/input/components/internal/date/components/DatePickerHeader";
 import {
-  DATE_PICKER_CONTAINER_WIDTH,
-  StyledDatePickerContainer,
-} from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import 'react-datepicker/dist/react-datepicker.css';
+	DATE_PICKER_CONTAINER_WIDTH,
+	StyledDatePickerContainer,
+} from "@/ui/input/components/internal/date/components/StyledDatePickerContainer";
+import { useCloseDropdown } from "@/ui/layout/dropdown/hooks/useCloseDropdown";
+import "react-datepicker/dist/react-datepicker.css";
 
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Temporal } from 'temporal-polyfill';
-import { type Nullable } from 'twenty-shared/types';
-import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { Temporal } from "temporal-polyfill";
+import { type Nullable } from "twenty-shared/types";
+import { isDefined, turnJSDateToPlainDate } from "twenty-shared/utils";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
-  'date-picker-month-and-year-dropdown-month-select';
+	"date-picker-month-and-year-dropdown-month-select";
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
-  'date-picker-month-and-year-dropdown-year-select';
+	"date-picker-month-and-year-dropdown-year-select";
 
 const DATE_PICKER_SKELETON_PADDING = 16;
 
@@ -49,181 +49,181 @@ const StyledDatePickerFallback = styled.div`
 `;
 
 type DatePickerWithoutCalendarProps = {
-  instanceId: string;
+	instanceId: string;
 
-  date: Nullable<string>;
+	date: Nullable<string>;
 
-  onClose?: (date: string | null) => void;
-  onChange?: (date: string | null) => void;
+	onClose?: (date: string | null) => void;
+	onChange?: (date: string | null) => void;
 
-  onEnter?: (date: string | null) => void;
-  onEscape?: (date: string | null) => void;
-  keyboardEventsDisabled?: boolean;
+	onEnter?: (date: string | null) => void;
+	onEscape?: (date: string | null) => void;
+	keyboardEventsDisabled?: boolean;
 };
 
 type DatePickerPropsType = ReactDatePickerLibProps;
 
 const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
-  import('react-datepicker').then((mod) => ({
-    // react-datepicker ships CJS; under vite 8 this dynamic import's `default`
-    // can be the module namespace ({ default: Component }) rather than the
-    // component itself, so unwrap a nested default when present.
-    default: ((mod.default as any)?.default ??
-      mod.default) as unknown as ComponentType<DatePickerPropsType>,
-  })),
+	import("react-datepicker").then((mod) => ({
+		// react-datepicker ships CJS; under vite 8 this dynamic import's `default`
+		// can be the module namespace ({ default: Component }) rather than the
+		// component itself, so unwrap a nested default when present.
+		default: ((mod.default as any)?.default ??
+			mod.default) as unknown as ComponentType<DatePickerPropsType>,
+	})),
 );
 
 export const DatePickerWithoutCalendar = ({
-  date,
-  onChange,
-  onClose,
+	date,
+	onChange,
+	onClose,
 }: DatePickerWithoutCalendarProps) => {
-  const { theme } = useContext(ThemeContext);
-  const plainDate = isDefined(date) ? Temporal.PlainDate.from(date) : null;
+	const { theme } = useContext(ThemeContext);
+	const plainDate = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+	const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
+	const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
+	const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const closeDropdowns = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-  };
+	const closeDropdowns = () => {
+		closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+		closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
+	};
 
-  const handleClose = (newDate: string) => {
-    closeDropdowns();
-    onClose?.(newDate);
-  };
+	const handleClose = (newDate: string) => {
+		closeDropdowns();
+		onClose?.(newDate);
+	};
 
-  const handleChangeMonth = (month: number) => {
-    const newDate = plainDate?.with({ month: month });
+	const handleChangeMonth = (month: number) => {
+		const newDate = plainDate?.with({ month: month });
 
-    onChange?.(newDate?.toString() ?? null);
-  };
+		onChange?.(newDate?.toString() ?? null);
+	};
 
-  const handleAddMonth = () => {
-    const newDate = plainDate?.add({ months: 1 });
+	const handleAddMonth = () => {
+		const newDate = plainDate?.add({ months: 1 });
 
-    onChange?.(newDate?.toString() ?? null);
-  };
+		onChange?.(newDate?.toString() ?? null);
+	};
 
-  const handleSubtractMonth = () => {
-    const newDate = plainDate?.subtract({ months: 1 });
+	const handleSubtractMonth = () => {
+		const newDate = plainDate?.subtract({ months: 1 });
 
-    onChange?.(newDate?.toString() ?? null);
-  };
+		onChange?.(newDate?.toString() ?? null);
+	};
 
-  const handleChangeYear = (year: number) => {
-    const newDate = plainDate?.with({ year: year });
+	const handleChangeYear = (year: number) => {
+		const newDate = plainDate?.with({ year: year });
 
-    onChange?.(newDate?.toString() ?? null);
-  };
+		onChange?.(newDate?.toString() ?? null);
+	};
 
-  const handleDateChange = (datePicked: Date | null) => {
-    if (!isDefined(datePicked)) {
-      return;
-    }
-    const plainDatePicked = turnJSDateToPlainDate(datePicked);
+	const handleDateChange = (datePicked: Date | null) => {
+		if (!isDefined(datePicked)) {
+			return;
+		}
+		const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
-    onChange?.(plainDatePicked.toString());
-  };
+		onChange?.(plainDatePicked.toString());
+	};
 
-  const handleDateSelect = (datePicked: Date | null) => {
-    if (!isDefined(datePicked)) {
-      return;
-    }
-    const plainDatePicked = turnJSDateToPlainDate(datePicked);
+	const handleDateSelect = (datePicked: Date | null) => {
+		if (!isDefined(datePicked)) {
+			return;
+		}
+		const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
-    handleClose?.(plainDatePicked.toString());
-  };
+		handleClose?.(plainDatePicked.toString());
+	};
 
-  const calendarStartDay =
-    currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM
-      ? CalendarStartDay[detectCalendarStartDay()]
-      : (currentWorkspaceMember?.calendarStartDay ?? undefined);
+	const calendarStartDay =
+		currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM
+			? CalendarStartDay[detectCalendarStartDay()]
+			: (currentWorkspaceMember?.calendarStartDay ?? undefined);
 
-  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const dateShiftedToISOString = plainDate
-    ?.toZonedDateTime(systemTimeZone)
-    .toInstant()
-    .toString();
+	const dateShiftedToISOString = plainDate
+		?.toZonedDateTime(systemTimeZone)
+		.toInstant()
+		.toString();
 
-  const dateForDatePicker = isDefined(dateShiftedToISOString)
-    ? new Date(dateShiftedToISOString)
-    : null;
+	const dateForDatePicker = isDefined(dateShiftedToISOString)
+		? new Date(dateShiftedToISOString)
+		: null;
 
-  return (
-    <StyledDatePickerContainer hideCalendar={true}>
-      <div>
-        <Suspense
-          fallback={
-            <StyledDatePickerFallback>
-              <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
-                borderRadius={2}
-              >
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={
-                    DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
-                  }
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-              </SkeletonTheme>
-            </StyledDatePickerFallback>
-          }
-        >
-          <ReactDatePicker
-            open={true}
-            selected={dateForDatePicker}
-            openToDate={dateForDatePicker ?? undefined}
-            disabledKeyboardNavigation
-            onChange={handleDateChange}
-            calendarStartDay={
-              calendarStartDay as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
-            }
-            renderCustomHeader={({
-              prevMonthButtonDisabled,
-              nextMonthButtonDisabled,
-            }) => (
-              <>
-                <DatePickerHeader
-                  date={plainDate?.toString() ?? null}
-                  onChange={onChange}
-                  onChangeMonth={handleChangeMonth}
-                  onChangeYear={handleChangeYear}
-                  onAddMonth={handleAddMonth}
-                  onSubtractMonth={handleSubtractMonth}
-                  prevMonthButtonDisabled={prevMonthButtonDisabled}
-                  nextMonthButtonDisabled={nextMonthButtonDisabled}
-                  hideInput={true}
-                />
-                <StyledSpacer />
-              </>
-            )}
-            onSelect={handleDateSelect}
-          />
-        </Suspense>
-      </div>
-    </StyledDatePickerContainer>
-  );
+	return (
+		<StyledDatePickerContainer hideCalendar={true}>
+			<div>
+				<Suspense
+					fallback={
+						<StyledDatePickerFallback>
+							<SkeletonTheme
+								baseColor={theme.background.tertiary}
+								highlightColor={theme.background.transparent.lighter}
+								borderRadius={2}
+							>
+								<Skeleton
+									width={
+										DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+									}
+									height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+								/>
+								<Skeleton
+									width={
+										DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+									}
+									height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+								/>
+								<Skeleton
+									width={
+										DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+									}
+									height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+								/>
+								<Skeleton
+									width={
+										DATE_PICKER_CONTAINER_WIDTH - DATE_PICKER_SKELETON_PADDING
+									}
+									height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+								/>
+							</SkeletonTheme>
+						</StyledDatePickerFallback>
+					}
+				>
+					<ReactDatePicker
+						open={true}
+						selected={dateForDatePicker}
+						openToDate={dateForDatePicker ?? undefined}
+						disabledKeyboardNavigation
+						onChange={handleDateChange}
+						calendarStartDay={
+							calendarStartDay as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+						}
+						renderCustomHeader={({
+							prevMonthButtonDisabled,
+							nextMonthButtonDisabled,
+						}) => (
+							<>
+								<DatePickerHeader
+									date={plainDate?.toString() ?? null}
+									onChange={onChange}
+									onChangeMonth={handleChangeMonth}
+									onChangeYear={handleChangeYear}
+									onAddMonth={handleAddMonth}
+									onSubtractMonth={handleSubtractMonth}
+									prevMonthButtonDisabled={prevMonthButtonDisabled}
+									nextMonthButtonDisabled={nextMonthButtonDisabled}
+									hideInput={true}
+								/>
+								<StyledSpacer />
+							</>
+						)}
+						onSelect={handleDateSelect}
+					/>
+				</Suspense>
+			</div>
+		</StyledDatePickerContainer>
+	);
 };

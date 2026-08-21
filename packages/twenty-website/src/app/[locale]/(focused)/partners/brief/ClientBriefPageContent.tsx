@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { ClientBriefWizard } from '@/client-brief';
-import { buildSchemeContext, mediaUp, MODAL_SURFACE, spacing } from '@/tokens';
+import { ClientBriefWizard } from "@/client-brief";
+import { buildSchemeContext, mediaUp, MODAL_SURFACE, spacing } from "@/tokens";
 
 const BriefBackground = styled.div`
-  ${buildSchemeContext('dark')}
+  ${buildSchemeContext("dark")}
   align-items: center;
   background: ${MODAL_SURFACE.panel};
   display: flex;
@@ -20,21 +20,21 @@ const BriefContainer = styled.div`
   padding: ${spacing(5)} ${spacing(4)};
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding: ${spacing(6)};
   }
 `;
 
 export function ClientBriefPageContent({
-  partnerSlug,
+	partnerSlug,
 }: {
-  partnerSlug?: string;
+	partnerSlug?: string;
 }) {
-  return (
-    <BriefBackground data-scheme="dark">
-      <BriefContainer>
-        <ClientBriefWizard partnerSlug={partnerSlug} />
-      </BriefContainer>
-    </BriefBackground>
-  );
+	return (
+		<BriefBackground data-scheme="dark">
+			<BriefContainer>
+				<ClientBriefWizard partnerSlug={partnerSlug} />
+			</BriefContainer>
+		</BriefBackground>
+	);
 }

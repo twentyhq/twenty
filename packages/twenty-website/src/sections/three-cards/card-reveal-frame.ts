@@ -1,9 +1,9 @@
-import { clampProgress } from '@/platform/motion';
+import { clampProgress } from "@/platform/motion";
 
 export type CardRevealFrame = {
-  opacity: number;
-  scale: number;
-  translateYPx: number;
+	opacity: number;
+	scale: number;
+	translateYPx: number;
 };
 
 // The authored choreography, verbatim: cards rise 200px into place at
@@ -18,25 +18,25 @@ const STAGGER = 0.25;
 const easeOutQuint = (value: number) => 1 - (1 - value) ** 5;
 
 export const cardReveal = {
-  // Progress runs while the grid's top edge travels from the viewport
-  // bottom to 20% of the viewport height.
-  progressForGridTop(gridTopPx: number, viewportHeightPx: number): number {
-    const startEdge = viewportHeightPx;
-    const endEdge = viewportHeightPx * END_EDGE_RATIO;
-    return clampProgress((startEdge - gridTopPx) / (startEdge - endEdge));
-  },
+	// Progress runs while the grid's top edge travels from the viewport
+	// bottom to 20% of the viewport height.
+	progressForGridTop(gridTopPx: number, viewportHeightPx: number): number {
+		const startEdge = viewportHeightPx;
+		const endEdge = viewportHeightPx * END_EDGE_RATIO;
+		return clampProgress((startEdge - gridTopPx) / (startEdge - endEdge));
+	},
 
-  frameAt(progress: number, cardIndex: number): CardRevealFrame {
-    const delay = cardIndex * STAGGER;
-    const localProgress = clampProgress(
-      (progress - delay) / Math.max(1 - delay, Number.EPSILON),
-    );
-    const eased = easeOutQuint(localProgress);
+	frameAt(progress: number, cardIndex: number): CardRevealFrame {
+		const delay = cardIndex * STAGGER;
+		const localProgress = clampProgress(
+			(progress - delay) / Math.max(1 - delay, Number.EPSILON),
+		);
+		const eased = easeOutQuint(localProgress);
 
-    return {
-      opacity: clampProgress(localProgress / OPACITY_RAMP),
-      scale: INITIAL_SCALE + eased * (1 - INITIAL_SCALE),
-      translateYPx: (1 - eased) * INITIAL_TRANSLATE_Y_PX,
-    };
-  },
+		return {
+			opacity: clampProgress(localProgress / OPACITY_RAMP),
+			scale: INITIAL_SCALE + eased * (1 - INITIAL_SCALE),
+			translateYPx: (1 - eased) * INITIAL_TRANSLATE_Y_PX,
+		};
+	},
 };

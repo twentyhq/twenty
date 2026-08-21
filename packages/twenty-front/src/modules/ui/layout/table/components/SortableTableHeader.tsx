@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
-import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { IconArrowDown, IconArrowUp, type IconComponent } from 'twenty-ui/icon';
+import { TableHeader } from "@/ui/layout/table/components/TableHeader";
+import { TableHeaderText } from "@/ui/layout/table/components/TableHeaderText";
+import { sortedFieldByTableFamilyState } from "@/ui/layout/table/states/sortedFieldByTableFamilyState";
+import { type TableSortValue } from "@/ui/layout/table/types/TableSortValue";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { useSetAtomFamilyState } from "@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState";
+import { IconArrowDown, IconArrowUp, type IconComponent } from "twenty-ui/icon";
 
 const StyledSortIconContainer = styled.span`
   align-items: center;
@@ -15,69 +15,69 @@ const StyledSortIconContainer = styled.span`
 `;
 
 export const SortableTableHeader = ({
-  tableId,
-  fieldName,
-  label,
-  align = 'left',
-  initialSort,
-  Icon,
+	tableId,
+	fieldName,
+	label,
+	align = "left",
+	initialSort,
+	Icon,
 }: {
-  tableId: string;
-  fieldName: string;
-  label: string;
-  align?: 'left' | 'center' | 'right';
-  initialSort?: TableSortValue;
-  Icon?: IconComponent;
+	tableId: string;
+	fieldName: string;
+	label: string;
+	align?: "left" | "center" | "right";
+	initialSort?: TableSortValue;
+	Icon?: IconComponent;
 }) => {
-  const sortedFieldByTable = useAtomFamilyStateValue(
-    sortedFieldByTableFamilyState,
-    {
-      tableId,
-    },
-  );
-  const setSortedFieldByTable = useSetAtomFamilyState(
-    sortedFieldByTableFamilyState,
-    { tableId },
-  );
+	const sortedFieldByTable = useAtomFamilyStateValue(
+		sortedFieldByTableFamilyState,
+		{
+			tableId,
+		},
+	);
+	const setSortedFieldByTable = useSetAtomFamilyState(
+		sortedFieldByTableFamilyState,
+		{ tableId },
+	);
 
-  const sortValue = sortedFieldByTable ?? initialSort;
+	const sortValue = sortedFieldByTable ?? initialSort;
 
-  const isSortOnThisField = sortValue?.fieldName === fieldName;
+	const isSortOnThisField = sortValue?.fieldName === fieldName;
 
-  const sortDirection = isSortOnThisField ? sortValue.orderBy : null;
+	const sortDirection = isSortOnThisField ? sortValue.orderBy : null;
 
-  const isAsc =
-    sortDirection === 'AscNullsLast' || sortDirection === 'AscNullsFirst';
-  const isDesc =
-    sortDirection === 'DescNullsLast' || sortDirection === 'DescNullsFirst';
+	const isAsc =
+		sortDirection === "AscNullsLast" || sortDirection === "AscNullsFirst";
+	const isDesc =
+		sortDirection === "DescNullsLast" || sortDirection === "DescNullsFirst";
 
-  const isSortActive = isAsc || isDesc;
+	const isSortActive = isAsc || isDesc;
 
-  const handleClick = () => {
-    setSortedFieldByTable({
-      fieldName,
-      orderBy: isSortOnThisField
-        ? sortValue.orderBy === 'AscNullsLast'
-          ? 'DescNullsLast'
-          : 'AscNullsLast'
-        : 'DescNullsLast',
-    });
-  };
+	const handleClick = () => {
+		setSortedFieldByTable({
+			fieldName,
+			orderBy: isSortOnThisField
+				? sortValue.orderBy === "AscNullsLast"
+					? "DescNullsLast"
+					: "AscNullsLast"
+				: "DescNullsLast",
+		});
+	};
 
-  return (
-    <TableHeader align={align} onClick={handleClick}>
-      {isSortActive && align === 'right' ? (
-        <StyledSortIconContainer>
-          {isAsc ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />}
-        </StyledSortIconContainer>
-      ) : null}
-      {Icon && <Icon size={14} />}
-      <TableHeaderText>{label}</TableHeaderText>
-      {isSortActive && align === 'left' ? (
-        <StyledSortIconContainer>
-          {isAsc ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />}
-        </StyledSortIconContainer>
-      ) : null}
-    </TableHeader>
-  );
+	return (
+		<TableHeader align={align} onClick={handleClick}>
+			{isSortActive && align === "right" ? (
+				<StyledSortIconContainer>
+					{isAsc ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />}
+				</StyledSortIconContainer>
+			) : null}
+			{Icon && <Icon size={14} />}
+			<TableHeaderText>{label}</TableHeaderText>
+			{isSortActive && align === "left" ? (
+				<StyledSortIconContainer>
+					{isAsc ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />}
+				</StyledSortIconContainer>
+			) : null}
+		</TableHeader>
+	);
 };

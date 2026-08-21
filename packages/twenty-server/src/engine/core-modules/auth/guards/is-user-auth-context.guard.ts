@@ -1,10 +1,10 @@
 import {
-  type UserWorkspaceAuthContext,
-  type WorkspaceAuthContext,
-} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+	type UserWorkspaceAuthContext,
+	type WorkspaceAuthContext,
+} from "src/engine/core-modules/auth/types/workspace-auth-context.type";
 
 export const isUserAuthContext = (
-  context: WorkspaceAuthContext,
+	context: WorkspaceAuthContext,
 ): context is UserWorkspaceAuthContext => {
-  return context.type === 'user';
+	return context.type === "user";
 };

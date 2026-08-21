@@ -1,16 +1,16 @@
-import { msg } from '@lingui/core/macro';
+import { msg } from "@lingui/core/macro";
 
-import { AppPreview } from '@/app-preview/AppPreview';
-import { TalkToUsButton } from '@/contact-cal';
+import { AppPreview } from "@/app-preview/AppPreview";
+import { TalkToUsButton } from "@/contact-cal";
 
-import { HeroBackdrop } from './HeroBackdrop';
-import { styled } from '@linaria/react';
+import { HeroBackdrop } from "./HeroBackdrop";
+import { styled } from "@linaria/react";
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { SITE_URLS } from '@/platform/site-urls';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { GRADIENT, HERO_COMPOSITION, spacing } from '@/tokens';
-import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
+import { getServerI18n } from "@/platform/i18n/get-server-i18n";
+import { SITE_URLS } from "@/platform/site-urls";
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { GRADIENT, HERO_COMPOSITION, spacing } from "@/tokens";
+import { Body, Button, Heading, HeadingPair, SectionShell } from "@/ui";
 
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};
@@ -73,45 +73,45 @@ const CtaRow = styled.div`
 `;
 
 export function HomeHero() {
-  const i18n = getServerI18n();
+	const i18n = getServerI18n();
 
-  return (
-    <SectionShell
-      background={
-        <GradientBackdrop>
-          <HeroBackdrop />
-        </GradientBackdrop>
-      }
-      fullBleedBackground
-      rhythm="hero"
-      scheme="muted"
-    >
-      <IntroStack data-halftone-exclude="">
-        <HeadingPair>
-          <HeadingMeasure>
-            <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Build your Enterprise CRM *at AI Speed*`)}
-            </Heading>
-          </HeadingMeasure>
-          <BodyMeasure>
-            <Body muted size="sm">
-              {i18n._(
-                msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
-              )}
-            </Body>
-          </BodyMeasure>
-        </HeadingPair>
-        <CtaRow>
-          <Button
-            href={SITE_URLS.appWelcome}
-            label={i18n._(msg`Get started`)}
-          />
-          <TalkToUsButton label={msg`Talk to us`} variant="outlined" />
-        </CtaRow>
-      </IntroStack>
-      <MockupStage data-mockup-stage="">
-        <AppPreview />
-      </MockupStage>
-    </SectionShell>
-  );
+	return (
+		<SectionShell
+			background={
+				<GradientBackdrop>
+					<HeroBackdrop />
+				</GradientBackdrop>
+			}
+			fullBleedBackground
+			rhythm="hero"
+			scheme="muted"
+		>
+			<IntroStack data-halftone-exclude="">
+				<HeadingPair>
+					<HeadingMeasure>
+						<Heading as="h1" size="lg" weight="light">
+							{i18n._(msg`Build your Enterprise CRM *at AI Speed*`)}
+						</Heading>
+					</HeadingMeasure>
+					<BodyMeasure>
+						<Body muted size="sm">
+							{i18n._(
+								msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
+							)}
+						</Body>
+					</BodyMeasure>
+				</HeadingPair>
+				<CtaRow>
+					<Button
+						href={SITE_URLS.appWelcome}
+						label={i18n._(msg`Get started`)}
+					/>
+					<TalkToUsButton label={msg`Talk to us`} variant="outlined" />
+				</CtaRow>
+			</IntroStack>
+			<MockupStage data-mockup-stage="">
+				<AppPreview />
+			</MockupStage>
+		</SectionShell>
+	);
 }

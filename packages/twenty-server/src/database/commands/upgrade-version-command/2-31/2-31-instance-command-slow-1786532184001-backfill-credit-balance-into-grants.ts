@@ -1,9 +1,9 @@
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { SlowInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface";
 
-const BACKFILL_IDEMPOTENCY_KEY_PREFIX = 'backfill-credit-balance:';
+const BACKFILL_IDEMPOTENCY_KEY_PREFIX = "backfill-credit-balance:";
 
 // Turns the single billingCustomer.creditBalanceMicro number into one grant per
 // workspace. Until this runs, BillingCreditGrantService falls back to the
@@ -12,32 +12,32 @@ const BACKFILL_IDEMPOTENCY_KEY_PREFIX = 'backfill-credit-balance:';
 //
 // The column keeps being written as a mirror of the ledger until it is dropped
 // in a later release, so this stays reversible.
-@RegisteredInstanceCommand('2.31.0', 1786532184001, { type: 'slow' })
+@RegisteredInstanceCommand("2.31.0", 1786532184001, { type: "slow" })
 export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
-  implements SlowInstanceCommand
+	implements SlowInstanceCommand
 {
-  async runDataMigration(dataSource: DataSource): Promise<void> {
-    const presentTables = await dataSource.query(
-      `SELECT tablename FROM pg_tables
+	async runDataMigration(dataSource: DataSource): Promise<void> {
+		const presentTables = await dataSource.query(
+			`SELECT tablename FROM pg_tables
         WHERE schemaname = 'core'
           AND tablename IN ('billingCreditGrant', 'billingCustomer', 'billingSubscription')`,
-    );
+		);
 
-    // Nothing to move on an instance without billing: neither the ledger nor
-    // the column it mirrors exists there.
-    if (presentTables.length < 3) {
-      return;
-    }
+		// Nothing to move on an instance without billing: neither the ledger nor
+		// the column it mirrors exists there.
+		if (presentTables.length < 3) {
+			return;
+		}
 
-    // Expiry follows the workspace's current period, but never lands in the
-    // past: a backfilled grant that expires on creation would silently delete
-    // the balance it was meant to preserve.
-    //
-    // billingCustomer has no foreign key to workspace, so it outlives deleted
-    // workspaces, while billingCreditGrant does have one. Without the join
-    // those orphans fail the insert and take the whole upgrade down with them.
-    await dataSource.query(
-      `INSERT INTO "core"."billingCreditGrant" (
+		// Expiry follows the workspace's current period, but never lands in the
+		// past: a backfilled grant that expires on creation would silently delete
+		// the balance it was meant to preserve.
+		//
+		// billingCustomer has no foreign key to workspace, so it outlives deleted
+		// workspaces, while billingCreditGrant does have one. Without the join
+		// those orphans fail the insert and take the whole upgrade down with them.
+		await dataSource.query(
+			`INSERT INTO "core"."billingCreditGrant" (
         "workspaceId", "amountMicro", "type", "effectiveAt", "expiresAt", "reason", "idempotencyKey"
       )
       SELECT
@@ -66,29 +66,29 @@ export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
         ON "workspace"."id" = "billingCustomer"."workspaceId"
       WHERE "billingCustomer"."creditBalanceMicro" > 0
       ON CONFLICT ("idempotencyKey") DO NOTHING`,
-      [BACKFILL_IDEMPOTENCY_KEY_PREFIX],
-    );
-  }
+			[BACKFILL_IDEMPOTENCY_KEY_PREFIX],
+		);
+	}
 
-  public async up(_queryRunner: QueryRunner): Promise<void> {
-    return;
-  }
+	public async up(_queryRunner: QueryRunner): Promise<void> {
+		return;
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    // An instance without billing never grew the table, so deleting from it
-    // unconditionally would fail the rollback on exactly the instances that
-    // had nothing to roll back.
-    const isLedgerPresent = await queryRunner.query(
-      `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
-    );
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		// An instance without billing never grew the table, so deleting from it
+		// unconditionally would fail the rollback on exactly the instances that
+		// had nothing to roll back.
+		const isLedgerPresent = await queryRunner.query(
+			`SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCreditGrant'`,
+		);
 
-    if (isLedgerPresent.length === 0) {
-      return;
-    }
+		if (isLedgerPresent.length === 0) {
+			return;
+		}
 
-    await queryRunner.query(
-      `DELETE FROM "core"."billingCreditGrant" WHERE "idempotencyKey" LIKE $1`,
-      [`${BACKFILL_IDEMPOTENCY_KEY_PREFIX}%`],
-    );
-  }
+		await queryRunner.query(
+			`DELETE FROM "core"."billingCreditGrant" WHERE "idempotencyKey" LIKE $1`,
+			[`${BACKFILL_IDEMPOTENCY_KEY_PREFIX}%`],
+		);
+	}
 }

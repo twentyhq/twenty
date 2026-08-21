@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const agentChatStreamLastEventTimestampState = createAtomState<
-  number | null
+	number | null
 >({
-  key: 'agentChatStreamLastEventTimestampState',
-  defaultValue: null,
+	key: "agentChatStreamLastEventTimestampState",
+	defaultValue: null,
 });

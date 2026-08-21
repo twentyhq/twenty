@@ -1,4 +1,4 @@
 export enum MessageSuppressionSource {
-  WEBHOOK = 'WEBHOOK',
-  SYSTEM = 'SYSTEM',
+	WEBHOOK = "WEBHOOK",
+	SYSTEM = "SYSTEM",
 }

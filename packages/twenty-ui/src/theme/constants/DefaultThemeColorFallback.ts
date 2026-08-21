@@ -1,3 +1,3 @@
-import { type ThemeColor } from './MainColorNames';
+import { type ThemeColor } from "./MainColorNames";
 
-export const DEFAULT_THEME_COLOR_FALLBACK: ThemeColor = 'gray';
+export const DEFAULT_THEME_COLOR_FALLBACK: ThemeColor = "gray";

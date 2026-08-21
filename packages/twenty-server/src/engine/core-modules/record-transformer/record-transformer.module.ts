@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
 
-import { RecordInputTransformerService } from './services/record-input-transformer.service';
+import { RecordInputTransformerService } from "./services/record-input-transformer.service";
 
 @Module({
-  providers: [RecordInputTransformerService],
-  exports: [RecordInputTransformerService],
+	providers: [RecordInputTransformerService],
+	exports: [RecordInputTransformerService],
 })
 export class RecordTransformerModule {}

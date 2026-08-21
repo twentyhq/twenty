@@ -1,1 +1,1 @@
-export type PageLayoutVerticalListViewerVariant = 'default' | 'side-column';
+export type PageLayoutVerticalListViewerVariant = "default" | "side-column";

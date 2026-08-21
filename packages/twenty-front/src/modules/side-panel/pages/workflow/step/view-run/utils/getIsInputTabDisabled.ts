@@ -1,15 +1,15 @@
-import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { type WorkflowRunStepStatus } from "@/workflow/types/Workflow";
+import { TRIGGER_STEP_ID } from "twenty-shared/workflow";
 
 export const getIsInputTabDisabled = ({
-  stepExecutionStatus,
-  workflowSelectedNode,
+	stepExecutionStatus,
+	workflowSelectedNode,
 }: {
-  workflowSelectedNode: string;
-  stepExecutionStatus: WorkflowRunStepStatus;
+	workflowSelectedNode: string;
+	stepExecutionStatus: WorkflowRunStepStatus;
 }) => {
-  return (
-    workflowSelectedNode === TRIGGER_STEP_ID ||
-    stepExecutionStatus === 'NOT_STARTED'
-  );
+	return (
+		workflowSelectedNode === TRIGGER_STEP_ID ||
+		stepExecutionStatus === "NOT_STARTED"
+	);
 };

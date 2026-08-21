@@ -1,4 +1,4 @@
 export type DealCompany = {
-  domain: string;
-  name: string;
+	domain: string;
+	name: string;
 };

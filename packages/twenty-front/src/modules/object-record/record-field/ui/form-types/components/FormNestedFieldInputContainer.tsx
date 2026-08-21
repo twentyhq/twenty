@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledFormNestedFieldInputContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -12,4 +12,4 @@ const StyledFormNestedFieldInputContainer = styled.div`
 `;
 
 export const FormNestedFieldInputContainer =
-  StyledFormNestedFieldInputContainer;
+	StyledFormNestedFieldInputContainer;

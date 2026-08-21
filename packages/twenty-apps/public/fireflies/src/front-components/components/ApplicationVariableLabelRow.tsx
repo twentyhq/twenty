@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { Pill } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { Pill } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledLabelRow = styled.div`
   align-items: center;
@@ -17,18 +17,18 @@ const StyledLabel = styled.label`
 `;
 
 type ApplicationVariableLabelRowProps = {
-  variableKey: string;
-  isDeprecated: boolean;
-  inputId: string;
+	variableKey: string;
+	isDeprecated: boolean;
+	inputId: string;
 };
 
 export const ApplicationVariableLabelRow = ({
-  variableKey,
-  isDeprecated,
-  inputId,
+	variableKey,
+	isDeprecated,
+	inputId,
 }: ApplicationVariableLabelRowProps) => (
-  <StyledLabelRow>
-    <StyledLabel htmlFor={inputId}>{variableKey}</StyledLabel>
-    {isDeprecated && <Pill label="Deprecated" />}
-  </StyledLabelRow>
+	<StyledLabelRow>
+		<StyledLabel htmlFor={inputId}>{variableKey}</StyledLabel>
+		{isDeprecated && <Pill label="Deprecated" />}
+	</StyledLabelRow>
 );

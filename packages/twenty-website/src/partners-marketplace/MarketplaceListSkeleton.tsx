@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 import {
-  color,
-  mediaUp,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { SectionShell } from '@/ui';
+	color,
+	mediaUp,
+	radius,
+	REDUCED_MOTION,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { SectionShell } from "@/ui";
 
 const AVATAR_SIZE_PX = 48;
 const SKELETON_CARD_COUNT = 6;
@@ -38,18 +38,18 @@ const CardGrid = styled.div`
   gap: ${spacing(6)};
   grid-template-columns: 1fr;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     gap: ${spacing(8)};
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  ${mediaUp('lg')} {
+  ${mediaUp("lg")} {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;
 
 const CardShell = styled.div`
-  background-color: ${color('white')};
+  background-color: ${color("white")};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   display: flex;
@@ -97,7 +97,7 @@ const IntroBlock = styled.div`
 
 const IntroLine = styled(SkeletonBlock)<{ $width?: string }>`
   height: ${spacing(3.5)};
-  width: ${({ $width = '100%' }) => $width};
+  width: ${({ $width = "100%" }) => $width};
 `;
 
 const CardFoot = styled.div`
@@ -122,36 +122,36 @@ const CtaBar = styled(SkeletonBlock)`
 `;
 
 function PartnerCardSkeleton() {
-  return (
-    <CardShell aria-hidden="true">
-      <CardTop>
-        <AvatarBlock />
-        <HeaderText>
-          <NameBar />
-          <LocationBar />
-        </HeaderText>
-      </CardTop>
-      <IntroBlock>
-        <IntroLine />
-        <IntroLine />
-        <IntroLine $width="78%" />
-      </IntroBlock>
-      <CardFoot>
-        <ScopeBar />
-        <CtaBar />
-      </CardFoot>
-    </CardShell>
-  );
+	return (
+		<CardShell aria-hidden="true">
+			<CardTop>
+				<AvatarBlock />
+				<HeaderText>
+					<NameBar />
+					<LocationBar />
+				</HeaderText>
+			</CardTop>
+			<IntroBlock>
+				<IntroLine />
+				<IntroLine />
+				<IntroLine $width="78%" />
+			</IntroBlock>
+			<CardFoot>
+				<ScopeBar />
+				<CtaBar />
+			</CardFoot>
+		</CardShell>
+	);
 }
 
 export function MarketplaceListSkeleton() {
-  return (
-    <SectionShell rhythm="section" scheme="light">
-      <CardGrid>
-        {Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
-          <PartnerCardSkeleton key={index} />
-        ))}
-      </CardGrid>
-    </SectionShell>
-  );
+	return (
+		<SectionShell rhythm="section" scheme="light">
+			<CardGrid>
+				{Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
+					<PartnerCardSkeleton key={index} />
+				))}
+			</CardGrid>
+		</SectionShell>
+	);
 }

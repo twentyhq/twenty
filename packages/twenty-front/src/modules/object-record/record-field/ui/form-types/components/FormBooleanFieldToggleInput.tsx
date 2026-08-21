@@ -1,18 +1,18 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
-import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
-import { Field, Toggle } from 'twenty-ui/input';
-import { styled } from '@linaria/react';
-import { useId } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FormFieldInputContainer } from "@/ui/input/components/FormFieldInputContainer";
+import { FormFieldInputInnerContainer } from "@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer";
+import { FormFieldInputRowContainer } from "@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer";
+import { Field, Toggle } from "twenty-ui/input";
+import { styled } from "@linaria/react";
+import { useId } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type FormBooleanFieldToggleInputProps = {
-  label?: string;
-  description: string;
-  hint?: string;
-  value: boolean;
-  onChange: (value: boolean) => void;
-  disabled?: boolean;
+	label?: string;
+	description: string;
+	hint?: string;
+	value: boolean;
+	onChange: (value: boolean) => void;
+	disabled?: boolean;
 };
 
 const StyledDescription = styled.span`
@@ -40,39 +40,39 @@ const StyledToggleContainer = styled.div`
 `;
 
 export const FormBooleanFieldToggleInput = ({
-  label,
-  description,
-  hint,
-  value,
-  onChange,
-  disabled,
+	label,
+	description,
+	hint,
+	value,
+	onChange,
+	disabled,
 }: FormBooleanFieldToggleInputProps) => {
-  const instanceId = useId();
+	const instanceId = useId();
 
-  return (
-    <FormFieldInputContainer>
-      {label ? <Field.Label>{label}</Field.Label> : null}
+	return (
+		<FormFieldInputContainer>
+			{label ? <Field.Label>{label}</Field.Label> : null}
 
-      <FormFieldInputRowContainer>
-        <FormFieldInputInnerContainer
-          formFieldInputInstanceId={instanceId}
-          hasRightElement
-          preventFocusStackUpdate
-        >
-          <StyledDescription>{description}</StyledDescription>
-        </FormFieldInputInnerContainer>
+			<FormFieldInputRowContainer>
+				<FormFieldInputInnerContainer
+					formFieldInputInstanceId={instanceId}
+					hasRightElement
+					preventFocusStackUpdate
+				>
+					<StyledDescription>{description}</StyledDescription>
+				</FormFieldInputInnerContainer>
 
-        <StyledToggleContainer>
-          <Toggle
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            toggleSize="small"
-          />
-        </StyledToggleContainer>
-      </FormFieldInputRowContainer>
+				<StyledToggleContainer>
+					<Toggle
+						value={value}
+						onChange={onChange}
+						disabled={disabled}
+						toggleSize="small"
+					/>
+				</StyledToggleContainer>
+			</FormFieldInputRowContainer>
 
-      {hint && <Field.Description>{hint}</Field.Description>}
-    </FormFieldInputContainer>
-  );
+			{hint && <Field.Description>{hint}</Field.Description>}
+		</FormFieldInputContainer>
+	);
 };

@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode, useContext } from "react";
+import { Link } from "react-router-dom";
+import { isDefined } from "twenty-shared/utils";
+import { IconChevronRight, type IconComponent } from "twenty-ui/icon";
+import { CardContent } from "twenty-ui/surfaces";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledRowContainer = styled.div`
   > * {
@@ -70,68 +70,68 @@ const StyledLinkContainer = styled.div`
 `;
 
 type SettingsListItemCardContentProps = {
-  label: string;
-  description?: string;
-  divider?: boolean;
-  LeftIcon?: IconComponent;
-  LeftIconColor?: string;
-  onClick?: () => void;
-  rightComponent: ReactNode;
-  to?: string;
+	label: string;
+	description?: string;
+	divider?: boolean;
+	LeftIcon?: IconComponent;
+	LeftIconColor?: string;
+	onClick?: () => void;
+	rightComponent: ReactNode;
+	to?: string;
 };
 
 export const SettingsListItemCardContent = ({
-  label,
-  description,
-  divider,
-  LeftIcon,
-  LeftIconColor,
-  onClick,
-  rightComponent,
-  to,
+	label,
+	description,
+	divider,
+	LeftIcon,
+	LeftIconColor,
+	onClick,
+	rightComponent,
+	to,
 }: SettingsListItemCardContentProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const content = (
-    <StyledRowContainer>
-      <CardContent
-        onClick={onClick}
-        divider={divider}
-        isClickable={!!onClick || !!to}
-        hasHoverHighlight={!!to}
-      >
-        {!!LeftIcon && (
-          <LeftIcon
-            size={theme.icon.size.md}
-            color={LeftIconColor ?? 'currentColor'}
-          />
-        )}
-        <StyledContent>
-          <StyledLabel>{label}</StyledLabel>
-          {!!description && (
-            <StyledDescription>{description}</StyledDescription>
-          )}
-        </StyledContent>
-        <StyledRightContainer>
-          {rightComponent}
-          {!!to && (
-            <IconChevronRight
-              size={theme.icon.size.md}
-              color={theme.font.color.tertiary}
-            />
-          )}
-        </StyledRightContainer>
-      </CardContent>
-    </StyledRowContainer>
-  );
+	const content = (
+		<StyledRowContainer>
+			<CardContent
+				onClick={onClick}
+				divider={divider}
+				isClickable={!!onClick || !!to}
+				hasHoverHighlight={!!to}
+			>
+				{!!LeftIcon && (
+					<LeftIcon
+						size={theme.icon.size.md}
+						color={LeftIconColor ?? "currentColor"}
+					/>
+				)}
+				<StyledContent>
+					<StyledLabel>{label}</StyledLabel>
+					{!!description && (
+						<StyledDescription>{description}</StyledDescription>
+					)}
+				</StyledContent>
+				<StyledRightContainer>
+					{rightComponent}
+					{!!to && (
+						<IconChevronRight
+							size={theme.icon.size.md}
+							color={theme.font.color.tertiary}
+						/>
+					)}
+				</StyledRightContainer>
+			</CardContent>
+		</StyledRowContainer>
+	);
 
-  if (isDefined(to)) {
-    return (
-      <StyledLinkContainer>
-        <Link to={to}>{content}</Link>
-      </StyledLinkContainer>
-    );
-  }
+	if (isDefined(to)) {
+		return (
+			<StyledLinkContainer>
+				<Link to={to}>{content}</Link>
+			</StyledLinkContainer>
+		);
+	}
 
-  return content;
+	return content;
 };

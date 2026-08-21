@@ -1,6 +1,6 @@
-import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { type FrontComponentHostThreadExports } from "@/types/FrontComponentHostThreadExports";
 
 export type GeometryObservationTransport = Pick<
-  FrontComponentHostThreadExports,
-  'observeElementGeometry' | 'unobserveElementGeometry'
+	FrontComponentHostThreadExports,
+	"observeElementGeometry" | "unobserveElementGeometry"
 >;

@@ -1,5 +1,5 @@
 export type OrderBy =
-  | 'AscNullsLast'
-  | 'DescNullsLast'
-  | 'AscNullsFirst'
-  | 'DescNullsFirst';
+	| "AscNullsLast"
+	| "DescNullsLast"
+	| "AscNullsFirst"
+	| "DescNullsFirst";

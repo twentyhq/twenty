@@ -1,6 +1,6 @@
-import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from "@/activities/types/ActivityTargetableEntity";
 
 export type TargetRecordIdentifier = Pick<
-  ActivityTargetableObject,
-  'id' | 'targetObjectNameSingular'
+	ActivityTargetableObject,
+	"id" | "targetObjectNameSingular"
 >;

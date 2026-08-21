@@ -1,7 +1,7 @@
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from "react-router-dom";
 
-import { useCreateRootAppRouter } from '@/app/hooks/useCreateRootAppRouter';
+import { useCreateRootAppRouter } from "@/app/hooks/useCreateRootAppRouter";
 
 export const RootApp = () => {
-  return <RouterProvider router={useCreateRootAppRouter()} />;
+	return <RouterProvider router={useCreateRootAppRouter()} />;
 };

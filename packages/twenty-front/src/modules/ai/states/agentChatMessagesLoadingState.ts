@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const agentChatMessagesLoadingState = createAtomState({
-  key: 'agentChatMessagesLoadingState',
-  defaultValue: false,
+	key: "agentChatMessagesLoadingState",
+	defaultValue: false,
 });

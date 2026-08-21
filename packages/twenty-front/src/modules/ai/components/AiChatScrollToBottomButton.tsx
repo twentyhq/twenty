@@ -1,11 +1,11 @@
-import { agentChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
-import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconArrowDown } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { agentChatIsScrolledToBottomComponentSelector } from "@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector";
+import { scrollAiChatToBottom } from "@/ai/utils/scrollAiChatToBottom";
+import { useScrollWrapperHTMLElement } from "@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { styled } from "@linaria/react";
+import { isDefined } from "twenty-shared/utils";
+import { IconArrowDown } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledScrollToBottomButton = styled.button<{ isVisible: boolean }>`
   align-items: center;
@@ -22,7 +22,7 @@ const StyledScrollToBottomButton = styled.button<{ isVisible: boolean }>`
   justify-content: center;
   left: 50%;
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  pointer-events: ${({ isVisible }) => (isVisible ? 'auto' : 'none')};
+  pointer-events: ${({ isVisible }) => (isVisible ? "auto" : "none")};
   position: absolute;
   transform: translateX(-50%);
   transition:
@@ -37,26 +37,26 @@ const StyledScrollToBottomButton = styled.button<{ isVisible: boolean }>`
 `;
 
 export const AiChatScrollToBottomButton = () => {
-  const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
-    agentChatIsScrolledToBottomComponentSelector,
-  );
+	const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
+		agentChatIsScrolledToBottomComponentSelector,
+	);
 
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
+	const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  const handleClick = () => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
+	const handleClick = () => {
+		const { scrollWrapperElement } = getScrollWrapperElement();
 
-    if (isDefined(scrollWrapperElement)) {
-      scrollAiChatToBottom(scrollWrapperElement);
-    }
-  };
+		if (isDefined(scrollWrapperElement)) {
+			scrollAiChatToBottom(scrollWrapperElement);
+		}
+	};
 
-  return (
-    <StyledScrollToBottomButton
-      isVisible={!agentChatIsScrolledToBottom}
-      onClick={handleClick}
-    >
-      <IconArrowDown size={16} />
-    </StyledScrollToBottomButton>
-  );
+	return (
+		<StyledScrollToBottomButton
+			isVisible={!agentChatIsScrolledToBottom}
+			onClick={handleClick}
+		>
+			<IconArrowDown size={16} />
+		</StyledScrollToBottomButton>
+	);
 };

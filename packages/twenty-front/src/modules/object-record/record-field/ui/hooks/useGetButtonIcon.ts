@@ -1,12 +1,12 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
+import { getFieldButtonIcon } from "@/object-record/record-field/ui/utils/getFieldButtonIcon";
 
-import { type IconComponent } from 'twenty-ui/icon';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { type IconComponent } from "twenty-ui/icon";
+import { FieldContext } from "@/object-record/record-field/ui/contexts/FieldContext";
 
 export const useGetButtonIcon = (): IconComponent | undefined => {
-  const { fieldDefinition } = useContext(FieldContext);
+	const { fieldDefinition } = useContext(FieldContext);
 
-  return getFieldButtonIcon(fieldDefinition);
+	return getFieldButtonIcon(fieldDefinition);
 };

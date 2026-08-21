@@ -1,31 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { unmountFrontComponent, useFrontComponentId } from '..';
+import { unmountFrontComponent, useFrontComponentId } from "..";
 
 export type CommandProps = {
-  execute: () => void | Promise<void>;
+	execute: () => void | Promise<void>;
 };
 
 export const Command = ({ execute }: CommandProps) => {
-  const [hasExecuted, setHasExecuted] = useState(false);
+	const [hasExecuted, setHasExecuted] = useState(false);
 
-  const frontComponentId = useFrontComponentId();
+	const frontComponentId = useFrontComponentId();
 
-  useEffect(() => {
-    if (hasExecuted) {
-      return;
-    }
+	useEffect(() => {
+		if (hasExecuted) {
+			return;
+		}
 
-    setHasExecuted(true);
+		setHasExecuted(true);
 
-    const run = async () => {
-      await execute();
+		const run = async () => {
+			await execute();
 
-      await unmountFrontComponent();
-    };
+			await unmountFrontComponent();
+		};
 
-    run();
-  }, [execute, hasExecuted, frontComponentId]);
+		run();
+	}, [execute, hasExecuted, frontComponentId]);
 
-  return null;
+	return null;
 };

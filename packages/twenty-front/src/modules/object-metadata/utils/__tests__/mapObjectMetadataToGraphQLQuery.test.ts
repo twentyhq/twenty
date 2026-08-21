@@ -1,50 +1,50 @@
-import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
+import { mapObjectMetadataToGraphQLQuery } from "@/object-metadata/utils/mapObjectMetadataToGraphQLQuery";
+import { getTestEnrichedObjectMetadataItemsMock } from "~/testing/utils/getTestEnrichedObjectMetadataItemsMock";
+import { normalizeGQLQuery } from "~/utils/normalizeGQLQuery";
 
 const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
-  (item) => item.nameSingular === 'person',
+	(item) => item.nameSingular === "person",
 );
 
 if (!personObjectMetadataItem) {
-  throw new Error('Object metadata not found');
+	throw new Error("Object metadata not found");
 }
 
-describe('mapObjectMetadataToGraphQLQuery', () => {
-  it('should query only specified recordGqlFields', async () => {
-    const res = mapObjectMetadataToGraphQLQuery({
-      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
-      objectMetadataItem: personObjectMetadataItem,
-      recordGqlFields: {
-        company: true,
-        xLink: true,
-        id: true,
-        createdAt: true,
-        city: true,
-        email: true,
-        jobTitle: true,
-        name: true,
-        phone: true,
-        linkedinLink: true,
-        updatedAt: true,
-        avatarUrl: true,
-        companyId: true,
-      },
-      objectPermissionsByObjectMetadataId: {
-        [personObjectMetadataItem.id]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          objectMetadataId: personObjectMetadataItem.id,
-          restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
-        },
-      },
-    });
-    expect(normalizeGQLQuery(res)).toEqual(
-      normalizeGQLQuery(`{
+describe("mapObjectMetadataToGraphQLQuery", () => {
+	it("should query only specified recordGqlFields", async () => {
+		const res = mapObjectMetadataToGraphQLQuery({
+			objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+			objectMetadataItem: personObjectMetadataItem,
+			recordGqlFields: {
+				company: true,
+				xLink: true,
+				id: true,
+				createdAt: true,
+				city: true,
+				email: true,
+				jobTitle: true,
+				name: true,
+				phone: true,
+				linkedinLink: true,
+				updatedAt: true,
+				avatarUrl: true,
+				companyId: true,
+			},
+			objectPermissionsByObjectMetadataId: {
+				[personObjectMetadataItem.id]: {
+					canReadObjectRecords: true,
+					canUpdateObjectRecords: true,
+					canSoftDeleteObjectRecords: true,
+					canDestroyObjectRecords: true,
+					objectMetadataId: personObjectMetadataItem.id,
+					restrictedFields: {},
+					rowLevelPermissionPredicates: [],
+					rowLevelPermissionPredicateGroups: [],
+				},
+			},
+		});
+		expect(normalizeGQLQuery(res)).toEqual(
+			normalizeGQLQuery(`{
     __typename
     name
     {
@@ -128,29 +128,29 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       secondaryLinks
     }
     }`),
-    );
-  });
+		);
+	});
 
-  it('should load only specified operation fields nested', async () => {
-    const res = mapObjectMetadataToGraphQLQuery({
-      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
-      objectMetadataItem: personObjectMetadataItem,
-      recordGqlFields: { company: { id: true }, id: true, name: true },
-      objectPermissionsByObjectMetadataId: {
-        [personObjectMetadataItem.id]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          objectMetadataId: personObjectMetadataItem.id,
-          restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
-        },
-      },
-    });
-    expect(normalizeGQLQuery(res)).toEqual(
-      normalizeGQLQuery(`{
+	it("should load only specified operation fields nested", async () => {
+		const res = mapObjectMetadataToGraphQLQuery({
+			objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+			objectMetadataItem: personObjectMetadataItem,
+			recordGqlFields: { company: { id: true }, id: true, name: true },
+			objectPermissionsByObjectMetadataId: {
+				[personObjectMetadataItem.id]: {
+					canReadObjectRecords: true,
+					canUpdateObjectRecords: true,
+					canSoftDeleteObjectRecords: true,
+					canDestroyObjectRecords: true,
+					objectMetadataId: personObjectMetadataItem.id,
+					restrictedFields: {},
+					rowLevelPermissionPredicates: [],
+					rowLevelPermissionPredicateGroups: [],
+				},
+			},
+		});
+		expect(normalizeGQLQuery(res)).toEqual(
+			normalizeGQLQuery(`{
 __typename
 id
 company
@@ -164,6 +164,6 @@ name
   lastName
 }
 }`),
-    );
-  });
+		);
+	});
 });

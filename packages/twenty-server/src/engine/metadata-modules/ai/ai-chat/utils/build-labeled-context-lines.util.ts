@@ -1,19 +1,19 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export const buildLabeledContextLines = ({
-  requiredFirstLine,
-  optionalLines,
+	requiredFirstLine,
+	optionalLines,
 }: {
-  requiredFirstLine: string;
-  optionalLines: [string, string | number | null][];
+	requiredFirstLine: string;
+	optionalLines: [string, string | number | null][];
 }): string => {
-  const lines = [requiredFirstLine];
+	const lines = [requiredFirstLine];
 
-  for (const [label, value] of optionalLines) {
-    if (isDefined(value)) {
-      lines.push(`${label}: ${value}`);
-    }
-  }
+	for (const [label, value] of optionalLines) {
+		if (isDefined(value)) {
+			lines.push(`${label}: ${value}`);
+		}
+	}
 
-  return lines.join('\n');
+	return lines.join("\n");
 };

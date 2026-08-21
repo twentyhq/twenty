@@ -1,5 +1,5 @@
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { styled } from '@linaria/react';
+import { DropdownMenuItemsContainer } from "@/ui/layout/dropdown/components/DropdownMenuItemsContainer";
+import { styled } from "@linaria/react";
 
 const PAGE_LAYOUT_DROPDOWN_CONTENT_MAX_HEIGHT = 340;
 
@@ -12,7 +12,7 @@ export const StyledPageLayoutDropdownContentContainer = styled.div`
 `;
 
 export const StyledPageLayoutDropdownMenuItemsContainer = styled(
-  DropdownMenuItemsContainer,
+	DropdownMenuItemsContainer,
 )`
   flex: 1;
   min-height: 0;

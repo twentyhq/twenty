@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const APPLICATION_REGISTRATION_FRAGMENT = gql`
   fragment ApplicationRegistrationFragment on ApplicationRegistration {

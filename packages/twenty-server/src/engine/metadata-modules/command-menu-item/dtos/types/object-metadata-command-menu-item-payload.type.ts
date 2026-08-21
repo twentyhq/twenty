@@ -1,3 +1,3 @@
 export type ObjectMetadataCommandMenuItemPayload = {
-  objectMetadataItemId: string;
+	objectMetadataItemId: string;
 };

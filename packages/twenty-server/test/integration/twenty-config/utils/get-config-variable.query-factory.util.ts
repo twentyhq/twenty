@@ -1,14 +1,14 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 export type GetConfigVariableFactoryInput = {
-  key: string;
+	key: string;
 };
 
 export const getConfigVariableQueryFactory = ({
-  key,
+	key,
 }: GetConfigVariableFactoryInput) => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       query GetDatabaseConfigVariable($key: String!) {
         getDatabaseConfigVariable(key: $key) {
           name
@@ -22,8 +22,8 @@ export const getConfigVariableQueryFactory = ({
         }
       }
     `,
-    variables: {
-      key,
-    },
-  };
+		variables: {
+			key,
+		},
+	};
 };

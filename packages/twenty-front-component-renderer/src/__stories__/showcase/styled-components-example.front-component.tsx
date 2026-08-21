@@ -1,6 +1,6 @@
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useState } from 'react';
-import styled from 'styled-components';
+import { defineFrontComponent } from "twenty-sdk/define";
+import { useState } from "react";
+import styled from "styled-components";
 
 const Card = styled.div`
   padding: 24px;
@@ -56,13 +56,13 @@ const ButtonRow = styled.div`
   gap: 8px;
 `;
 
-const StyledButton = styled.button<{ $variant?: 'outline' }>`
+const StyledButton = styled.button<{ $variant?: "outline" }>`
   padding: 8px 16px;
   background-color: ${({ $variant }) =>
-    $variant === 'outline' ? 'transparent' : '#ec4899'};
-  color: ${({ $variant }) => ($variant === 'outline' ? '#9d174d' : 'white')};
+		$variant === "outline" ? "transparent" : "#ec4899"};
+  color: ${({ $variant }) => ($variant === "outline" ? "#9d174d" : "white")};
   border: ${({ $variant }) =>
-    $variant === 'outline' ? '1px solid #ec4899' : 'none'};
+		$variant === "outline" ? "1px solid #ec4899" : "none"};
   border-radius: 6px;
   font-weight: 600;
   font-size: 13px;
@@ -70,38 +70,38 @@ const StyledButton = styled.button<{ $variant?: 'outline' }>`
 `;
 
 const StyledComponentsComponent = () => {
-  const [count, setCount] = useState(0);
+	const [count, setCount] = useState(0);
 
-  return (
-    <Card data-testid="styled-components-component">
-      <Heading>Styled Components</Heading>
-      <Description>
-        CSS-in-JS with tagged templates and automatic critical CSS extraction.
-      </Description>
-      <ChipRow>
-        <Chip $color="#ec4899">Badge</Chip>
-        <Chip $color="#8b5cf6">Styled</Chip>
-        <Chip $color="#f59e0b">Outline</Chip>
-      </ChipRow>
-      <Count data-testid="styled-components-count">Count: {count}</Count>
-      <ButtonRow>
-        <StyledButton
-          data-testid="styled-components-button"
-          onClick={() => setCount((previous) => previous + 1)}
-        >
-          Increment
-        </StyledButton>
-        <StyledButton $variant="outline" onClick={() => setCount(0)}>
-          Reset
-        </StyledButton>
-      </ButtonRow>
-    </Card>
-  );
+	return (
+		<Card data-testid="styled-components-component">
+			<Heading>Styled Components</Heading>
+			<Description>
+				CSS-in-JS with tagged templates and automatic critical CSS extraction.
+			</Description>
+			<ChipRow>
+				<Chip $color="#ec4899">Badge</Chip>
+				<Chip $color="#8b5cf6">Styled</Chip>
+				<Chip $color="#f59e0b">Outline</Chip>
+			</ChipRow>
+			<Count data-testid="styled-components-count">Count: {count}</Count>
+			<ButtonRow>
+				<StyledButton
+					data-testid="styled-components-button"
+					onClick={() => setCount((previous) => previous + 1)}
+				>
+					Increment
+				</StyledButton>
+				<StyledButton $variant="outline" onClick={() => setCount(0)}>
+					Reset
+				</StyledButton>
+			</ButtonRow>
+		</Card>
+	);
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'test-styled-0000-0000-0000-000000000007',
-  name: 'styled-components-component',
-  description: 'A front component using styled-components',
-  component: StyledComponentsComponent,
+	universalIdentifier: "test-styled-0000-0000-0000-000000000007",
+	name: "styled-components-component",
+	description: "A front component using styled-components",
+	component: StyledComponentsComponent,
 });

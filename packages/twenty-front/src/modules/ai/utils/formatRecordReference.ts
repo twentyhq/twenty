@@ -1,1 +1,1 @@
-export { formatRecordReference } from 'twenty-shared/ai';
+export { formatRecordReference } from "twenty-shared/ai";

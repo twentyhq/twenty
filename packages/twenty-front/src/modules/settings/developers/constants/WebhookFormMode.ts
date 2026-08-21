@@ -1,4 +1,4 @@
 export enum WebhookFormMode {
-  Create = 'create',
-  Edit = 'edit',
+	Create = "create",
+	Edit = "edit",
 }

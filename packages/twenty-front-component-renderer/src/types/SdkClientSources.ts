@@ -1,4 +1,4 @@
 export type SdkClientSources = {
-  core: string;
-  metadata: string;
+	core: string;
+	metadata: string;
 };

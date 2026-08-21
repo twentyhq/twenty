@@ -1,1 +1,1 @@
-export type ModalOverlay = 'light' | 'dark' | 'transparent';
+export type ModalOverlay = "light" | "dark" | "transparent";

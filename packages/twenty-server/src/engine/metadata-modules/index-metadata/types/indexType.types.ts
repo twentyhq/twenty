@@ -1,4 +1,4 @@
 export enum IndexType {
-  BTREE = 'BTREE',
-  GIN = 'GIN',
+	BTREE = "BTREE",
+	GIN = "GIN",
 }

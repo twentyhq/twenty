@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT = gql`
   fragment RowLevelPermissionPredicateGroupFragment on RowLevelPermissionPredicateGroup {

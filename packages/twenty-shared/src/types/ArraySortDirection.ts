@@ -1,1 +1,1 @@
-export type ArraySortDirection = 'asc' | 'desc';
+export type ArraySortDirection = "asc" | "desc";

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { styled } from "@linaria/react";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
-import { TooltipPositionEffect } from './TooltipPositionEffect';
+import { TooltipPositionEffect } from "./TooltipPositionEffect";
 
 const LabelWithInfoRow = styled.span`
   align-items: center;
@@ -75,79 +75,79 @@ const InfoTooltipBubble = styled.span`
 `;
 
 type LabelWithTooltipProps = {
-  description: string;
-  label: ReactNode;
+	description: string;
+	label: ReactNode;
 };
 
 export function LabelWithTooltip({
-  description,
-  label,
+	description,
+	label,
 }: LabelWithTooltipProps) {
-  const buttonReference = useRef<HTMLButtonElement>(null);
-  const tooltipId = useId();
-  const [isMounted, setIsMounted] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({
-    left: 0,
-    top: 0,
-  });
+	const buttonReference = useRef<HTMLButtonElement>(null);
+	const tooltipId = useId();
+	const [isMounted, setIsMounted] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+	const [tooltipPosition, setTooltipPosition] = useState({
+		left: 0,
+		top: 0,
+	});
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
 
-  return (
-    <LabelWithInfoRow>
-      <TooltipPositionEffect
-        buttonRef={buttonReference}
-        isOpen={isOpen}
-        setTooltipPosition={setTooltipPosition}
-      />
-      <span>{label}</span>
-      <InfoTooltipRoot>
-        <InfoTooltipButton
-          aria-describedby={isOpen ? tooltipId : undefined}
-          aria-label={description}
-          onBlur={() => setIsOpen(false)}
-          onFocus={() => setIsOpen(true)}
-          onMouseEnter={() => setIsOpen(true)}
-          onMouseLeave={() => setIsOpen(false)}
-          ref={buttonReference}
-          type="button"
-        >
-          <svg
-            aria-hidden="true"
-            fill="none"
-            height="14"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            width="14"
-          >
-            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-            <path d="M12 9h.01" />
-            <path d="M11 12h1v4h1" />
-          </svg>
-        </InfoTooltipButton>
-        {isMounted && isOpen
-          ? createPortal(
-              <InfoTooltipBubble
-                id={tooltipId}
-                role="tooltip"
-                style={{
-                  left: tooltipPosition.left,
-                  top: tooltipPosition.top,
-                  transform: 'translateX(-50%)',
-                }}
-              >
-                {description}
-              </InfoTooltipBubble>,
-              document.body,
-            )
-          : null}
-      </InfoTooltipRoot>
-    </LabelWithInfoRow>
-  );
+	return (
+		<LabelWithInfoRow>
+			<TooltipPositionEffect
+				buttonRef={buttonReference}
+				isOpen={isOpen}
+				setTooltipPosition={setTooltipPosition}
+			/>
+			<span>{label}</span>
+			<InfoTooltipRoot>
+				<InfoTooltipButton
+					aria-describedby={isOpen ? tooltipId : undefined}
+					aria-label={description}
+					onBlur={() => setIsOpen(false)}
+					onFocus={() => setIsOpen(true)}
+					onMouseEnter={() => setIsOpen(true)}
+					onMouseLeave={() => setIsOpen(false)}
+					ref={buttonReference}
+					type="button"
+				>
+					<svg
+						aria-hidden="true"
+						fill="none"
+						height="14"
+						stroke="currentColor"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						viewBox="0 0 24 24"
+						width="14"
+					>
+						<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+						<path d="M12 9h.01" />
+						<path d="M11 12h1v4h1" />
+					</svg>
+				</InfoTooltipButton>
+				{isMounted && isOpen
+					? createPortal(
+							<InfoTooltipBubble
+								id={tooltipId}
+								role="tooltip"
+								style={{
+									left: tooltipPosition.left,
+									top: tooltipPosition.top,
+									transform: "translateX(-50%)",
+								}}
+							>
+								{description}
+							</InfoTooltipBubble>,
+							document.body,
+						)
+					: null}
+			</InfoTooltipRoot>
+		</LabelWithInfoRow>
+	);
 }

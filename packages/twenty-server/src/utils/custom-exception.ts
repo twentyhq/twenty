@@ -1,42 +1,42 @@
-import { type MessageDescriptor } from '@lingui/core';
-import { CustomError } from 'twenty-shared/utils';
+import { type MessageDescriptor } from "@lingui/core";
+import { CustomError } from "twenty-shared/utils";
 
 const CommonExceptionCode = {
-  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+	INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
 } as const;
 
 export const appendCommonExceptionCode = <
-  SpecificExceptionCode = Record<string, string>,
+	SpecificExceptionCode = Record<string, string>,
 >(
-  specificExceptionCode: SpecificExceptionCode,
+	specificExceptionCode: SpecificExceptionCode,
 ) => {
-  return {
-    ...CommonExceptionCode,
-    ...specificExceptionCode,
-  } as const;
+	return {
+		...CommonExceptionCode,
+		...specificExceptionCode,
+	} as const;
 };
 
 export abstract class CustomException<
-  ExceptionCode extends string = string,
-  ExceptionMessage extends string = string,
+	ExceptionCode extends string = string,
+	ExceptionMessage extends string = string,
 > extends CustomError {
-  code: ExceptionCode;
-  userFriendlyMessage: MessageDescriptor;
-  statusCode?: number;
+	code: ExceptionCode;
+	userFriendlyMessage: MessageDescriptor;
+	statusCode?: number;
 
-  constructor(
-    message: ExceptionMessage,
-    code: ExceptionCode,
-    {
-      userFriendlyMessage,
-      statusCode,
-    }: { userFriendlyMessage: MessageDescriptor; statusCode?: number },
-  ) {
-    super(message);
-    this.code = code;
-    this.userFriendlyMessage = userFriendlyMessage;
-    this.statusCode = statusCode;
-  }
+	constructor(
+		message: ExceptionMessage,
+		code: ExceptionCode,
+		{
+			userFriendlyMessage,
+			statusCode,
+		}: { userFriendlyMessage: MessageDescriptor; statusCode?: number },
+	) {
+		super(message);
+		this.code = code;
+		this.userFriendlyMessage = userFriendlyMessage;
+		this.statusCode = statusCode;
+	}
 }
 
 /**

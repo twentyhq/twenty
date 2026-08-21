@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { useState } from 'react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { useState } from "react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { RecordTabHeader } from '../components/RecordTabHeader';
-import { AddTaskButton } from './components/AddTaskButton';
-import { TaskRow } from './components/TaskRow';
-import { TASKS } from './data/tasks';
-import { toggleTaskDone } from './utils/toggle-task-done';
+import { RecordTabHeader } from "../components/RecordTabHeader";
+import { AddTaskButton } from "./components/AddTaskButton";
+import { TaskRow } from "./components/TaskRow";
+import { TASKS } from "./data/tasks";
+import { toggleTaskDone } from "./utils/toggle-task-done";
 
 const Root = styled.div`
   background-color: ${THEME_LIGHT.background.primary};
@@ -65,45 +65,45 @@ const GroupCard = styled.div`
 `;
 
 export function TasksVisual({ active: _active }: { active: boolean }) {
-  const { i18n } = useLingui();
-  const [tasks, setTasks] = useState(TASKS);
+	const { i18n } = useLingui();
+	const [tasks, setTasks] = useState(TASKS);
 
-  const handleToggle = (id: string) => {
-    setTasks((previous) => toggleTaskDone(previous, id));
-  };
+	const handleToggle = (id: string) => {
+		setTasks((previous) => toggleTaskDone(previous, id));
+	};
 
-  const groups = [
-    { id: 'todo', items: tasks.filter((task) => !task.done), label: msg`TODO` },
-    { id: 'done', items: tasks.filter((task) => task.done), label: msg`DONE` },
-  ];
+	const groups = [
+		{ id: "todo", items: tasks.filter((task) => !task.done), label: msg`TODO` },
+		{ id: "done", items: tasks.filter((task) => task.done), label: msg`DONE` },
+	];
 
-  return (
-    <Root>
-      <RecordTabHeader active="Tasks" />
-      <Panel>
-        {groups.map((group) =>
-          group.items.length > 0 ? (
-            <Group key={group.id}>
-              <GroupHeader>
-                <span>
-                  {i18n._(group.label)}
-                  <GroupCount>{group.items.length}</GroupCount>
-                </span>
-                {group.id === 'todo' && <AddTaskButton />}
-              </GroupHeader>
-              <GroupCard>
-                {group.items.map((task) => (
-                  <TaskRow
-                    key={task.id}
-                    onToggle={() => handleToggle(task.id)}
-                    task={task}
-                  />
-                ))}
-              </GroupCard>
-            </Group>
-          ) : null,
-        )}
-      </Panel>
-    </Root>
-  );
+	return (
+		<Root>
+			<RecordTabHeader active="Tasks" />
+			<Panel>
+				{groups.map((group) =>
+					group.items.length > 0 ? (
+						<Group key={group.id}>
+							<GroupHeader>
+								<span>
+									{i18n._(group.label)}
+									<GroupCount>{group.items.length}</GroupCount>
+								</span>
+								{group.id === "todo" && <AddTaskButton />}
+							</GroupHeader>
+							<GroupCard>
+								{group.items.map((task) => (
+									<TaskRow
+										key={task.id}
+										onToggle={() => handleToggle(task.id)}
+										task={task}
+									/>
+								))}
+							</GroupCard>
+						</Group>
+					) : null,
+				)}
+			</Panel>
+		</Root>
+	);
 }

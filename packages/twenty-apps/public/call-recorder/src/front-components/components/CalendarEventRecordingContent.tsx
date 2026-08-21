@@ -1,15 +1,15 @@
-import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
-import { IconLink } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { isNonEmptyArray } from "@sniptt/guards";
+import { useMemo, useState } from "react";
+import { IconLink } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { CalendarEventRecordingBody } from 'src/front-components/components/CalendarEventRecordingBody';
-import { CopyToClipboardButton } from 'src/front-components/components/CopyToClipboardButton';
-import { useCalendarEventParticipants } from 'src/front-components/hooks/use-calendar-event-participants';
-import { useCalendarEventRecording } from 'src/front-components/hooks/use-calendar-event-recording';
-import { buildTranscriptPlainText } from 'src/front-components/utils/build-transcript-plain-text.util';
-import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
+import { CalendarEventRecordingBody } from "src/front-components/components/CalendarEventRecordingBody";
+import { CopyToClipboardButton } from "src/front-components/components/CopyToClipboardButton";
+import { useCalendarEventParticipants } from "src/front-components/hooks/use-calendar-event-participants";
+import { useCalendarEventRecording } from "src/front-components/hooks/use-calendar-event-recording";
+import { buildTranscriptPlainText } from "src/front-components/utils/build-transcript-plain-text.util";
+import { parseTranscriptEntries } from "src/front-components/utils/parse-transcript-entries.util";
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
@@ -63,86 +63,86 @@ const StyledRecordingContentFrame = styled.div`
 `;
 
 type CalendarEventRecordingContentProps = {
-  calendarEventId: string;
+	calendarEventId: string;
 };
 
 export const CalendarEventRecordingContent = ({
-  calendarEventId,
+	calendarEventId,
 }: CalendarEventRecordingContentProps) => {
-  const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
+	const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
 
-  const updateCurrentTimeSeconds = (videoCurrentTimeSeconds: number) => {
-    const nextCurrentTimeSeconds =
-      Math.floor(
-        videoCurrentTimeSeconds / TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS,
-      ) * TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS;
+	const updateCurrentTimeSeconds = (videoCurrentTimeSeconds: number) => {
+		const nextCurrentTimeSeconds =
+			Math.floor(
+				videoCurrentTimeSeconds / TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS,
+			) * TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS;
 
-    setCurrentTimeSeconds((previousCurrentTimeSeconds) =>
-      previousCurrentTimeSeconds === nextCurrentTimeSeconds
-        ? previousCurrentTimeSeconds
-        : nextCurrentTimeSeconds,
-    );
-  };
+		setCurrentTimeSeconds((previousCurrentTimeSeconds) =>
+			previousCurrentTimeSeconds === nextCurrentTimeSeconds
+				? previousCurrentTimeSeconds
+				: nextCurrentTimeSeconds,
+		);
+	};
 
-  const {
-    transcript,
-    videoFile,
-    isCalendarEventRecordingQueryLoading,
-    errorMessage,
-    refetchCalendarEventRecording,
-  } = useCalendarEventRecording(calendarEventId);
-  const { calendarEventParticipants } =
-    useCalendarEventParticipants(calendarEventId);
+	const {
+		transcript,
+		videoFile,
+		isCalendarEventRecordingQueryLoading,
+		errorMessage,
+		refetchCalendarEventRecording,
+	} = useCalendarEventRecording(calendarEventId);
+	const { calendarEventParticipants } =
+		useCalendarEventParticipants(calendarEventId);
 
-  const handleVideoRetry = () => {
-    setCurrentTimeSeconds(0);
-    refetchCalendarEventRecording();
-  };
+	const handleVideoRetry = () => {
+		setCurrentTimeSeconds(0);
+		refetchCalendarEventRecording();
+	};
 
-  const videoFileUrl = videoFile?.url ?? undefined;
+	const videoFileUrl = videoFile?.url ?? undefined;
 
-  const transcriptPlainText = useMemo(() => {
-    const entries = parseTranscriptEntries(transcript);
+	const transcriptPlainText = useMemo(() => {
+		const entries = parseTranscriptEntries(transcript);
 
-    if (!isNonEmptyArray(entries)) {
-      return undefined;
-    }
+		if (!isNonEmptyArray(entries)) {
+			return undefined;
+		}
 
-    return buildTranscriptPlainText({ entries, calendarEventParticipants });
-  }, [transcript, calendarEventParticipants]);
+		return buildTranscriptPlainText({ entries, calendarEventParticipants });
+	}, [transcript, calendarEventParticipants]);
 
-  return (
-    <StyledRecordingShell>
-      <StyledRecordingHeader>
-        <StyledRecordingTitle>Recording and Transcript</StyledRecordingTitle>
-        <StyledRecordingHeaderActions>
-          <CopyToClipboardButton
-            textToCopy={transcriptPlainText}
-            ariaLabel="Copy transcript"
-          />
-          <CopyToClipboardButton
-            textToCopy={videoFileUrl}
-            ariaLabel="Copy video download link"
-            Icon={IconLink}
-          />
-        </StyledRecordingHeaderActions>
-      </StyledRecordingHeader>
-      <StyledRecordingBody>
-        <StyledRecordingContentFrame>
-          <CalendarEventRecordingBody
-            transcript={transcript}
-            videoFileUrl={videoFileUrl}
-            isCalendarEventRecordingQueryLoading={
-              isCalendarEventRecordingQueryLoading
-            }
-            errorMessage={errorMessage}
-            currentTimeSeconds={currentTimeSeconds}
-            calendarEventParticipants={calendarEventParticipants}
-            onVideoTimeUpdate={updateCurrentTimeSeconds}
-            onVideoRetry={handleVideoRetry}
-          />
-        </StyledRecordingContentFrame>
-      </StyledRecordingBody>
-    </StyledRecordingShell>
-  );
+	return (
+		<StyledRecordingShell>
+			<StyledRecordingHeader>
+				<StyledRecordingTitle>Recording and Transcript</StyledRecordingTitle>
+				<StyledRecordingHeaderActions>
+					<CopyToClipboardButton
+						textToCopy={transcriptPlainText}
+						ariaLabel="Copy transcript"
+					/>
+					<CopyToClipboardButton
+						textToCopy={videoFileUrl}
+						ariaLabel="Copy video download link"
+						Icon={IconLink}
+					/>
+				</StyledRecordingHeaderActions>
+			</StyledRecordingHeader>
+			<StyledRecordingBody>
+				<StyledRecordingContentFrame>
+					<CalendarEventRecordingBody
+						transcript={transcript}
+						videoFileUrl={videoFileUrl}
+						isCalendarEventRecordingQueryLoading={
+							isCalendarEventRecordingQueryLoading
+						}
+						errorMessage={errorMessage}
+						currentTimeSeconds={currentTimeSeconds}
+						calendarEventParticipants={calendarEventParticipants}
+						onVideoTimeUpdate={updateCurrentTimeSeconds}
+						onVideoRetry={handleVideoRetry}
+					/>
+				</StyledRecordingContentFrame>
+			</StyledRecordingBody>
+		</StyledRecordingShell>
+	);
 };

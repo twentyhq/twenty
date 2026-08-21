@@ -1,8 +1,8 @@
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { type ExtendedUIMessage } from "twenty-shared/ai";
 
-import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
+import { type ExtractedFile } from "src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type";
 
 export type ExtractCodeInterpreterFilesResult = {
-  processedMessages: ExtendedUIMessage[];
-  extractedFiles: ExtractedFile[];
+	processedMessages: ExtendedUIMessage[];
+	extractedFiles: ExtractedFile[];
 };

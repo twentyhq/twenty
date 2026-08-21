@@ -1,4 +1,4 @@
 export type DraggableData = {
-  sourceDroppableId?: string;
-  sourceIndex?: number;
+	sourceDroppableId?: string;
+	sourceIndex?: number;
 };

@@ -1,12 +1,12 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from "~/generated-metadata/graphql";
 
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldDefinition } from "@/object-record/record-field/ui/types/FieldDefinition";
 import {
-  type FieldArrayMetadata,
-  type FieldMetadata,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
+	type FieldArrayMetadata,
+	type FieldMetadata,
+} from "@/object-record/record-field/ui/types/FieldMetadata";
 
 export const isFieldArray = (
-  field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
+	field: Pick<FieldDefinition<FieldMetadata>, "type">,
 ): field is FieldDefinition<FieldArrayMetadata> =>
-  field.type === FieldMetadataType.ARRAY;
+	field.type === FieldMetadataType.ARRAY;

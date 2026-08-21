@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { PersonAvatar } from '../../primitives/PersonAvatar';
-import { type RecordParticipant } from '../../types';
+import { PersonAvatar } from "../../primitives/PersonAvatar";
+import { type RecordParticipant } from "../../types";
 
 const AvatarStack = styled.div`
   align-items: center;
@@ -10,23 +10,23 @@ const AvatarStack = styled.div`
 `;
 
 const AvatarWrap = styled.div<{ $index: number }>`
-  margin-left: ${({ $index }) => ($index === 0 ? '0' : '-4px')};
+  margin-left: ${({ $index }) => ($index === 0 ? "0" : "-4px")};
 `;
 
 export function AvatarGroup({
-  people,
-  size,
+	people,
+	size,
 }: {
-  people: RecordParticipant[];
-  size: number;
+	people: RecordParticipant[];
+	size: number;
 }) {
-  return (
-    <AvatarStack>
-      {people.slice(0, 3).map((person, index) => (
-        <AvatarWrap $index={index} key={person.name}>
-          <PersonAvatar person={{ ...person, kind: 'person' }} size={size} />
-        </AvatarWrap>
-      ))}
-    </AvatarStack>
-  );
+	return (
+		<AvatarStack>
+			{people.slice(0, 3).map((person, index) => (
+				<AvatarWrap $index={index} key={person.name}>
+					<PersonAvatar person={{ ...person, kind: "person" }} size={size} />
+				</AvatarWrap>
+			))}
+		</AvatarStack>
+	);
 }

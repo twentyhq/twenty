@@ -1,4 +1,4 @@
 export type SlackApiCall = {
-  method: string;
-  args: Record<string, unknown>;
+	method: string;
+	args: Record<string, unknown>;
 };

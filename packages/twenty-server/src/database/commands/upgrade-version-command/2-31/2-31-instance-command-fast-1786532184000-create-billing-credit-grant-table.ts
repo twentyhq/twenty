@@ -1,7 +1,7 @@
-import { QueryRunner } from 'typeorm';
+import { QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { FastInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface";
 
 // Creates core."billingCreditGrant" backing BillingCreditGrantEntity.
 // Constraint names reproduce the ones TypeORM generated for this entity so the
@@ -9,36 +9,36 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 //   npx nx run twenty-server:database:migrate:generate --name create-billing-credit-grant-table --type fast
 // which also reported pre-existing drift on other billing tables, left alone
 // here on purpose.
-@RegisteredInstanceCommand('2.31.0', 1786532184000)
+@RegisteredInstanceCommand("2.31.0", 1786532184000)
 export class CreateBillingCreditGrantTableFastInstanceCommand
-  implements FastInstanceCommand
+	implements FastInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    // Billing entities only exist when billing is enabled, so an instance
-    // without billing must not grow a billing table its entity set has no
-    // counterpart for.
-    const isBillingSchemaPresent = await queryRunner.query(
-      `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
-    );
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		// Billing entities only exist when billing is enabled, so an instance
+		// without billing must not grow a billing table its entity set has no
+		// counterpart for.
+		const isBillingSchemaPresent = await queryRunner.query(
+			`SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
+		);
 
-    if (isBillingSchemaPresent.length === 0) {
-      return;
-    }
+		if (isBillingSchemaPresent.length === 0) {
+			return;
+		}
 
-    await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."billingCreditGrant_type_enum" AS ENUM ('ROLLOVER', 'ONBOARDING_REWARD', 'COMPENSATION', 'SALES'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
-    );
+		await queryRunner.query(
+			`DO $$ BEGIN CREATE TYPE "core"."billingCreditGrant_type_enum" AS ENUM ('ROLLOVER', 'ONBOARDING_REWARD', 'COMPENSATION', 'SALES'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+		);
 
-    // An instance that ran a pre-release build of this command has the type
-    // already, so the create above is swallowed and its value set is whatever
-    // that build declared. Reconcile rather than leave a value the entity can
-    // write but the type does not accept.
-    await queryRunner.query(
-      `ALTER TYPE "core"."billingCreditGrant_type_enum" ADD VALUE IF NOT EXISTS 'SALES'`,
-    );
+		// An instance that ran a pre-release build of this command has the type
+		// already, so the create above is swallowed and its value set is whatever
+		// that build declared. Reconcile rather than leave a value the entity can
+		// write but the type does not accept.
+		await queryRunner.query(
+			`ALTER TYPE "core"."billingCreditGrant_type_enum" ADD VALUE IF NOT EXISTS 'SALES'`,
+		);
 
-    await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "core"."billingCreditGrant" (
+		await queryRunner.query(
+			`CREATE TABLE IF NOT EXISTS "core"."billingCreditGrant" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
         "amountMicro" bigint NOT NULL,
@@ -56,28 +56,28 @@ export class CreateBillingCreditGrantTableFastInstanceCommand
         CONSTRAINT "PK_eef2376084c6ef14cf8a6ffb3c4" PRIMARY KEY ("id"),
         CONSTRAINT "FK_e516eeab5b1dda05b823f235041" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
       )`,
-    );
+		);
 
-    // Nulls never conflict in a Postgres unique index, so grants without an
-    // idempotency key are unconstrained.
-    await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_BILLING_CREDIT_GRANT_IDEMPOTENCY_KEY_UNIQUE"
+		// Nulls never conflict in a Postgres unique index, so grants without an
+		// idempotency key are unconstrained.
+		await queryRunner.query(
+			`CREATE UNIQUE INDEX IF NOT EXISTS "IDX_BILLING_CREDIT_GRANT_IDEMPOTENCY_KEY_UNIQUE"
         ON "core"."billingCreditGrant" ("idempotencyKey")`,
-    );
+		);
 
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_BILLING_CREDIT_GRANT_WORKSPACE_ID_EXPIRES_AT"
+		await queryRunner.query(
+			`CREATE INDEX IF NOT EXISTS "IDX_BILLING_CREDIT_GRANT_WORKSPACE_ID_EXPIRES_AT"
         ON "core"."billingCreditGrant" ("workspaceId", "expiresAt")`,
-    );
-  }
+		);
+	}
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."billingCreditGrant"`);
+	public async down(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(`DROP TABLE IF EXISTS "core"."billingCreditGrant"`);
 
-    // After the table, which depends on it. Leaving it behind would make a
-    // later re-run reuse the old value set rather than create the current one.
-    await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."billingCreditGrant_type_enum"`,
-    );
-  }
+		// After the table, which depends on it. Leaving it behind would make a
+		// later re-run reuse the old value set rather than create the current one.
+		await queryRunner.query(
+			`DROP TYPE IF EXISTS "core"."billingCreditGrant_type_enum"`,
+		);
+	}
 }

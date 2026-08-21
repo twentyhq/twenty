@@ -1,22 +1,22 @@
 import {
-  StyledSettingsCardContent,
-  StyledSettingsCardThirdLine,
-  StyledSettingsCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Link } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type MarketplaceApp } from '~/generated-metadata/graphql';
-import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+	StyledSettingsCardContent,
+	StyledSettingsCardThirdLine,
+	StyledSettingsCardTitle,
+} from "@/settings/components/SettingsOptions/SettingsCardContentBase";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { Link } from "react-router-dom";
+import { SettingsPath } from "twenty-shared/types";
+import { getSettingsPath } from "twenty-shared/utils";
+import { Avatar } from "twenty-ui/data-display";
+import { Card } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { type MarketplaceApp } from "~/generated-metadata/graphql";
+import { getApplicationDescriptionSummary } from "~/pages/settings/applications/utils/getApplicationDescriptionSummary";
+import { getAbsoluteImageUrl } from "~/utils/image/getAbsoluteImageUrl";
 
 type SettingsAvailableApplicationCardProps = {
-  application: MarketplaceApp;
+	application: MarketplaceApp;
 };
 
 const StyledLinkContainer = styled.div`
@@ -45,40 +45,40 @@ const StyledDescription = styled.div`
 `;
 
 export const SettingsAvailableApplicationCard = ({
-  application,
+	application,
 }: SettingsAvailableApplicationCardProps) => {
-  const descriptionSummary = getApplicationDescriptionSummary(
-    application.description,
-  );
+	const descriptionSummary = getApplicationDescriptionSummary(
+		application.description,
+	);
 
-  return (
-    <StyledLinkContainer>
-      <Link
-        to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-          availableApplicationId: application.id,
-        })}
-      >
-        <Card rounded fullWidth>
-          <StyledSettingsCardContent alignItems="flex-start" fullHeight>
-            <Avatar
-              avatarUrl={getAbsoluteImageUrl(application.logoUrl || null)}
-              placeholder={application.name}
-              placeholderColorSeed={application.name}
-              size="lg"
-              type="squared"
-            />
-            <div>
-              <StyledSettingsCardTitle>
-                {application.name}
-              </StyledSettingsCardTitle>
-              <StyledDescription>{descriptionSummary}</StyledDescription>
-              <StyledSettingsCardThirdLine>
-                {t`by {author}`} {application.author}
-              </StyledSettingsCardThirdLine>
-            </div>
-          </StyledSettingsCardContent>
-        </Card>
-      </Link>
-    </StyledLinkContainer>
-  );
+	return (
+		<StyledLinkContainer>
+			<Link
+				to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+					availableApplicationId: application.id,
+				})}
+			>
+				<Card rounded fullWidth>
+					<StyledSettingsCardContent alignItems="flex-start" fullHeight>
+						<Avatar
+							avatarUrl={getAbsoluteImageUrl(application.logoUrl || null)}
+							placeholder={application.name}
+							placeholderColorSeed={application.name}
+							size="lg"
+							type="squared"
+						/>
+						<div>
+							<StyledSettingsCardTitle>
+								{application.name}
+							</StyledSettingsCardTitle>
+							<StyledDescription>{descriptionSummary}</StyledDescription>
+							<StyledSettingsCardThirdLine>
+								{t`by {author}`} {application.author}
+							</StyledSettingsCardThirdLine>
+						</div>
+					</StyledSettingsCardContent>
+				</Card>
+			</Link>
+		</StyledLinkContainer>
+	);
 };

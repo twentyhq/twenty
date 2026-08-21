@@ -1,44 +1,44 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isDefined } from 'twenty-shared/utils';
-import { WidgetType } from '~/generated-metadata/graphql';
+import { type PageLayoutWidget } from "@/page-layout/types/PageLayoutWidget";
+import { isDefined } from "twenty-shared/utils";
+import { WidgetType } from "~/generated-metadata/graphql";
 
 export const extractFieldMetadataIdsFromWidget = (
-  widget: PageLayoutWidget,
+	widget: PageLayoutWidget,
 ): string[] => {
-  if (widget.type !== WidgetType.GRAPH || !isDefined(widget.configuration)) {
-    return [];
-  }
+	if (widget.type !== WidgetType.GRAPH || !isDefined(widget.configuration)) {
+		return [];
+	}
 
-  const config = widget.configuration;
+	const config = widget.configuration;
 
-  switch (config.__typename) {
-    case 'BarChartConfiguration':
-      return [
-        config.aggregateFieldMetadataId,
-        config.primaryAxisGroupByFieldMetadataId,
-        config.secondaryAxisGroupByFieldMetadataId,
-      ].filter(isDefined);
+	switch (config.__typename) {
+		case "BarChartConfiguration":
+			return [
+				config.aggregateFieldMetadataId,
+				config.primaryAxisGroupByFieldMetadataId,
+				config.secondaryAxisGroupByFieldMetadataId,
+			].filter(isDefined);
 
-    case 'LineChartConfiguration':
-      return [
-        config.aggregateFieldMetadataId,
-        config.primaryAxisGroupByFieldMetadataId,
-        config.secondaryAxisGroupByFieldMetadataId,
-      ].filter(isDefined);
+		case "LineChartConfiguration":
+			return [
+				config.aggregateFieldMetadataId,
+				config.primaryAxisGroupByFieldMetadataId,
+				config.secondaryAxisGroupByFieldMetadataId,
+			].filter(isDefined);
 
-    case 'PieChartConfiguration':
-      return [
-        config.aggregateFieldMetadataId,
-        config.groupByFieldMetadataId,
-      ].filter(isDefined);
+		case "PieChartConfiguration":
+			return [
+				config.aggregateFieldMetadataId,
+				config.groupByFieldMetadataId,
+			].filter(isDefined);
 
-    case 'AggregateChartConfiguration':
-      return [config.aggregateFieldMetadataId].filter(isDefined);
+		case "AggregateChartConfiguration":
+			return [config.aggregateFieldMetadataId].filter(isDefined);
 
-    case 'IframeConfiguration':
-      return [];
+		case "IframeConfiguration":
+			return [];
 
-    default:
-      return [];
-  }
+		default:
+			return [];
+	}
 };

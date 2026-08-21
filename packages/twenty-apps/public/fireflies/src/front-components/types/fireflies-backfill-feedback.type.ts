@@ -1,4 +1,4 @@
 export type FirefliesBackfillFeedback = {
-  variant: 'success' | 'error';
-  message: string;
+	variant: "success" | "error";
+	message: string;
 };

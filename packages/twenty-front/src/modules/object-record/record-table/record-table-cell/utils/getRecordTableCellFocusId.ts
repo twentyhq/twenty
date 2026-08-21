@@ -1,11 +1,11 @@
-import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { type TableCellPosition } from "@/object-record/record-table/types/TableCellPosition";
 
 export const getRecordTableCellFocusId = ({
-  recordTableId,
-  cellPosition,
+	recordTableId,
+	cellPosition,
 }: {
-  recordTableId: string;
-  cellPosition: TableCellPosition;
+	recordTableId: string;
+	cellPosition: TableCellPosition;
 }) => {
-  return `${recordTableId}-cell-${cellPosition.row}-${cellPosition.column}`;
+	return `${recordTableId}-cell-${cellPosition.row}-${cellPosition.column}`;
 };

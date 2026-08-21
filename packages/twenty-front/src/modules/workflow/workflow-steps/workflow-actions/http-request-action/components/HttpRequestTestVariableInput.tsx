@@ -1,14 +1,14 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { type WorkflowStep } from '@/workflow/types/Workflow';
-import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
-import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FormFieldInputContainer } from "@/ui/input/components/FormFieldInputContainer";
+import { FormTextFieldInput } from "@/object-record/record-field/ui/form-types/components/FormTextFieldInput";
+import { type WorkflowStep } from "@/workflow/types/Workflow";
+import { getWorkflowVariablesUsedInStep } from "@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep";
+import { type HttpRequestFormData } from "@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { useSetAtomFamilyState } from "@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState";
+import { httpRequestTestDataFamilyState } from "@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState";
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledVariableInputsContainer = styled.div`
   display: flex;
@@ -17,74 +17,74 @@ const StyledVariableInputsContainer = styled.div`
 `;
 
 type HttpRequestTestVariableInputProps = {
-  httpRequestFormData: HttpRequestFormData;
-  actionId: string;
-  readonly?: boolean;
+	httpRequestFormData: HttpRequestFormData;
+	actionId: string;
+	readonly?: boolean;
 };
 
 export const HttpRequestTestVariableInput = ({
-  httpRequestFormData,
-  actionId,
-  readonly,
+	httpRequestFormData,
+	actionId,
+	readonly,
 }: HttpRequestTestVariableInputProps) => {
-  const httpRequestTestData = useAtomFamilyStateValue(
-    httpRequestTestDataFamilyState,
-    actionId,
-  );
-  const setHttpRequestTestData = useSetAtomFamilyState(
-    httpRequestTestDataFamilyState,
-    actionId,
-  );
-  const mockStep: WorkflowStep = {
-    id: 'test-step',
-    name: 'Test Step',
-    type: 'HTTP_REQUEST',
-    valid: true,
-    settings: {
-      input: httpRequestFormData,
-      outputSchema: {},
-      errorHandlingOptions: {
-        retryOnFailure: { value: false },
-        continueOnFailure: { value: false },
-      },
-    },
-  };
+	const httpRequestTestData = useAtomFamilyStateValue(
+		httpRequestTestDataFamilyState,
+		actionId,
+	);
+	const setHttpRequestTestData = useSetAtomFamilyState(
+		httpRequestTestDataFamilyState,
+		actionId,
+	);
+	const mockStep: WorkflowStep = {
+		id: "test-step",
+		name: "Test Step",
+		type: "HTTP_REQUEST",
+		valid: true,
+		settings: {
+			input: httpRequestFormData,
+			outputSchema: {},
+			errorHandlingOptions: {
+				retryOnFailure: { value: false },
+				continueOnFailure: { value: false },
+			},
+		},
+	};
 
-  const variablesUsed = getWorkflowVariablesUsedInStep({ step: mockStep });
-  const variableArray = Array.from(variablesUsed);
+	const variablesUsed = getWorkflowVariablesUsedInStep({ step: mockStep });
+	const variableArray = Array.from(variablesUsed);
 
-  const handleVariableChange = (variablePath: string, value: string) => {
-    setHttpRequestTestData((prev) => ({
-      ...prev,
-      variableValues: {
-        ...prev.variableValues,
-        [variablePath]: value,
-      },
-    }));
-  };
+	const handleVariableChange = (variablePath: string, value: string) => {
+		setHttpRequestTestData((prev) => ({
+			...prev,
+			variableValues: {
+				...prev.variableValues,
+				[variablePath]: value,
+			},
+		}));
+	};
 
-  if (variableArray.length === 0) {
-    return null;
-  }
+	if (variableArray.length === 0) {
+		return null;
+	}
 
-  return (
-    <FormFieldInputContainer>
-      <StyledVariableInputsContainer>
-        {variableArray.map((variablePath) => (
-          <FormTextFieldInput
-            key={variablePath}
-            label={`${variablePath}`}
-            placeholder={t`Enter test value`}
-            readonly={readonly}
-            defaultValue={
-              httpRequestTestData.variableValues[variablePath] || ''
-            }
-            onChange={(value) =>
-              handleVariableChange(variablePath, value || '')
-            }
-          />
-        ))}
-      </StyledVariableInputsContainer>
-    </FormFieldInputContainer>
-  );
+	return (
+		<FormFieldInputContainer>
+			<StyledVariableInputsContainer>
+				{variableArray.map((variablePath) => (
+					<FormTextFieldInput
+						key={variablePath}
+						label={`${variablePath}`}
+						placeholder={t`Enter test value`}
+						readonly={readonly}
+						defaultValue={
+							httpRequestTestData.variableValues[variablePath] || ""
+						}
+						onChange={(value) =>
+							handleVariableChange(variablePath, value || "")
+						}
+					/>
+				))}
+			</StyledVariableInputsContainer>
+		</FormFieldInputContainer>
+	);
 };

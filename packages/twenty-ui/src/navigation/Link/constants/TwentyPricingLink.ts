@@ -1,1 +1,1 @@
-export const TWENTY_PRICING_LINK = 'https://twenty.com/pricing';
+export const TWENTY_PRICING_LINK = "https://twenty.com/pricing";

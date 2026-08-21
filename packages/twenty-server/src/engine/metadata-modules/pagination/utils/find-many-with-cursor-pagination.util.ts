@@ -1,10 +1,10 @@
-import { type ObjectLiteral, type SelectQueryBuilder } from 'typeorm';
+import { type ObjectLiteral, type SelectQueryBuilder } from "typeorm";
 
-import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
-import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
-import { paginateMetadataQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util';
-import { parseGraphqlMetadataPagination } from 'src/engine/metadata-modules/pagination/utils/parse-graphql-metadata-pagination.util';
-import { toCursorConnection } from 'src/engine/metadata-modules/pagination/utils/to-cursor-connection.util';
+import { type CursorConnection } from "src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory";
+import { type CursorPagingInput } from "src/engine/metadata-modules/pagination/dtos/cursor-paging.input";
+import { paginateMetadataQueryBuilder } from "src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util";
+import { parseGraphqlMetadataPagination } from "src/engine/metadata-modules/pagination/utils/parse-graphql-metadata-pagination.util";
+import { toCursorConnection } from "src/engine/metadata-modules/pagination/utils/to-cursor-connection.util";
 
 type EntityWithId = ObjectLiteral & { id: string };
 
@@ -13,27 +13,27 @@ type EntityWithId = ObjectLiteral & { id: string };
 // id DESC, which both the objects and fields queries used as default sort
 // with sorting disabled. Cursors are keyset cursors on id.
 export const findManyWithCursorPagination = async <
-  TEntity extends EntityWithId,
+	TEntity extends EntityWithId,
 >({
-  queryBuilder,
-  alias,
-  paging,
-  defaultResultSize,
-  maxResultsSize,
+	queryBuilder,
+	alias,
+	paging,
+	defaultResultSize,
+	maxResultsSize,
 }: {
-  queryBuilder: SelectQueryBuilder<TEntity>;
-  alias: string;
-  paging: CursorPagingInput | undefined;
-  defaultResultSize?: number;
-  maxResultsSize?: number;
+	queryBuilder: SelectQueryBuilder<TEntity>;
+	alias: string;
+	paging: CursorPagingInput | undefined;
+	defaultResultSize?: number;
+	maxResultsSize?: number;
 }): Promise<CursorConnection<TEntity>> => {
-  const pagination = parseGraphqlMetadataPagination({
-    paging,
-    defaultResultSize,
-    maxResultsSize,
-  });
+	const pagination = parseGraphqlMetadataPagination({
+		paging,
+		defaultResultSize,
+		maxResultsSize,
+	});
 
-  return toCursorConnection(
-    await paginateMetadataQueryBuilder({ queryBuilder, alias, pagination }),
-  );
+	return toCursorConnection(
+		await paginateMetadataQueryBuilder({ queryBuilder, alias, pagination }),
+	);
 };

@@ -1,11 +1,11 @@
-import request from 'supertest';
+import request from "supertest";
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('workspaceMembersResolver (e2e)', () => {
-  it('should find many workspaceMembers', () => {
-    const queryData = {
-      query: `
+describe("workspaceMembersResolver (e2e)", () => {
+	it("should find many workspaceMembers", () => {
+		const queryData = {
+			query: `
         query workspaceMembers {
           workspaceMembers {
             edges {
@@ -27,41 +27,41 @@ describe('workspaceMembersResolver (e2e)', () => {
           }
         }
       `,
-    };
+		};
 
-    return client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(queryData)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data).toBeDefined();
-        expect(res.body.errors).toBeUndefined();
-      })
-      .expect((res) => {
-        const data = res.body.data.workspaceMembers;
+		return client
+			.post("/graphql")
+			.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+			.send(queryData)
+			.expect(200)
+			.expect((res) => {
+				expect(res.body.data).toBeDefined();
+				expect(res.body.errors).toBeUndefined();
+			})
+			.expect((res) => {
+				const data = res.body.data.workspaceMembers;
 
-        expect(data).toBeDefined();
-        expect(Array.isArray(data.edges)).toBe(true);
+				expect(data).toBeDefined();
+				expect(Array.isArray(data.edges)).toBe(true);
 
-        const edges = data.edges;
+				const edges = data.edges;
 
-        if (edges.length > 0) {
-          const workspaceMembers = edges[0].node;
+				if (edges.length > 0) {
+					const workspaceMembers = edges[0].node;
 
-          expect(workspaceMembers).toHaveProperty('id');
-          expect(workspaceMembers).toHaveProperty('colorScheme');
-          expect(workspaceMembers).toHaveProperty('avatarUrl');
-          expect(workspaceMembers).toHaveProperty('locale');
-          expect(workspaceMembers).toHaveProperty('timeZone');
-          expect(workspaceMembers).toHaveProperty('dateFormat');
-          expect(workspaceMembers).toHaveProperty('timeFormat');
-          expect(workspaceMembers).toHaveProperty('userEmail');
-          expect(workspaceMembers).toHaveProperty('userId');
-          expect(workspaceMembers).toHaveProperty('createdAt');
-          expect(workspaceMembers).toHaveProperty('updatedAt');
-          expect(workspaceMembers).toHaveProperty('deletedAt');
-        }
-      });
-  });
+					expect(workspaceMembers).toHaveProperty("id");
+					expect(workspaceMembers).toHaveProperty("colorScheme");
+					expect(workspaceMembers).toHaveProperty("avatarUrl");
+					expect(workspaceMembers).toHaveProperty("locale");
+					expect(workspaceMembers).toHaveProperty("timeZone");
+					expect(workspaceMembers).toHaveProperty("dateFormat");
+					expect(workspaceMembers).toHaveProperty("timeFormat");
+					expect(workspaceMembers).toHaveProperty("userEmail");
+					expect(workspaceMembers).toHaveProperty("userId");
+					expect(workspaceMembers).toHaveProperty("createdAt");
+					expect(workspaceMembers).toHaveProperty("updatedAt");
+					expect(workspaceMembers).toHaveProperty("deletedAt");
+				}
+			});
+	});
 });

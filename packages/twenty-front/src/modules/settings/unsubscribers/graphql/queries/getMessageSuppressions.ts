@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const MESSAGE_SUPPRESSIONS = gql`
   query MessageSuppressions($input: FindMessageSuppressionsInput!) {

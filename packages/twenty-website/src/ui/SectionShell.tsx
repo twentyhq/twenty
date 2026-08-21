@@ -1,17 +1,17 @@
-import { css } from '@linaria/core';
-import { type ReactNode } from 'react';
+import { css } from "@linaria/core";
+import { type ReactNode } from "react";
 
 import {
-  buildSchemeContext,
-  MAX_CONTENT_WIDTH_PX,
-  mediaUp,
-  RHYTHM,
-  type Scheme,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	buildSchemeContext,
+	MAX_CONTENT_WIDTH_PX,
+	mediaUp,
+	RHYTHM,
+	type Scheme,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 
-import { Container } from './Container';
+import { Container } from "./Container";
 
 const sectionShellClassName = css`
   background-color: ${semanticColor.surface};
@@ -24,7 +24,7 @@ const sectionShellClassName = css`
     padding-block: ${spacing(RHYTHM.section.top.base)}
       ${spacing(RHYTHM.section.bottom.base)};
 
-    ${mediaUp('md')} {
+    ${mediaUp("md")} {
       padding-block: ${spacing(RHYTHM.section.top.md)}
         ${spacing(RHYTHM.section.bottom.md)};
     }
@@ -39,7 +39,7 @@ const sectionShellClassName = css`
     padding-block: ${spacing(RHYTHM.spacious.top.base)}
       ${spacing(RHYTHM.spacious.bottom.base)};
 
-    ${mediaUp('md')} {
+    ${mediaUp("md")} {
       padding-block: ${spacing(RHYTHM.spacious.top.md)}
         ${spacing(RHYTHM.spacious.bottom.md)};
     }
@@ -49,22 +49,22 @@ const sectionShellClassName = css`
     padding-block: ${spacing(RHYTHM.hero.top.base)}
       ${spacing(RHYTHM.hero.bottom.base)};
 
-    ${mediaUp('md')} {
+    ${mediaUp("md")} {
       padding-block: ${spacing(RHYTHM.hero.top.md)}
         ${spacing(RHYTHM.hero.bottom.md)};
     }
   }
 
   &[data-scheme='light'] {
-    ${buildSchemeContext('light')}
+    ${buildSchemeContext("light")}
   }
 
   &[data-scheme='muted'] {
-    ${buildSchemeContext('muted')}
+    ${buildSchemeContext("muted")}
   }
 
   &[data-scheme='dark'] {
-    ${buildSchemeContext('dark')}
+    ${buildSchemeContext("dark")}
   }
 
   &[data-scheme='light']:not([data-rhythm='flush'])
@@ -103,54 +103,54 @@ const contentLayerClassName = css`
 `;
 
 export type SectionShellProps = {
-  ariaLabel?: string;
-  background?: ReactNode;
-  children: ReactNode;
-  connectsUp?: boolean;
-  flushInline?: boolean;
-  fullBleedBackground?: boolean;
-  keepsTopRhythm?: boolean;
-  rhythm?: 'section' | 'hero' | 'spacious' | 'flush';
-  scheme?: Scheme;
+	ariaLabel?: string;
+	background?: ReactNode;
+	children: ReactNode;
+	connectsUp?: boolean;
+	flushInline?: boolean;
+	fullBleedBackground?: boolean;
+	keepsTopRhythm?: boolean;
+	rhythm?: "section" | "hero" | "spacious" | "flush";
+	scheme?: Scheme;
 };
 
 export function SectionShell({
-  ariaLabel,
-  background,
-  children,
-  connectsUp = false,
-  flushInline = false,
-  fullBleedBackground = false,
-  keepsTopRhythm = false,
-  rhythm = 'section',
-  scheme = 'light',
+	ariaLabel,
+	background,
+	children,
+	connectsUp = false,
+	flushInline = false,
+	fullBleedBackground = false,
+	keepsTopRhythm = false,
+	rhythm = "section",
+	scheme = "light",
 }: SectionShellProps) {
-  return (
-    <section
-      aria-label={ariaLabel}
-      className={sectionShellClassName}
-      data-connect-up={connectsUp ? '' : undefined}
-      data-keep-top-rhythm={keepsTopRhythm ? '' : undefined}
-      data-menu-surface=""
-      data-rhythm={rhythm}
-      data-scheme={scheme}
-    >
-      {background !== undefined && (
-        <div
-          aria-hidden
-          className={backgroundLayerClassName}
-          data-background-layer=""
-          data-full-bleed={fullBleedBackground ? '' : undefined}
-        >
-          {background}
-        </div>
-      )}
-      <Container
-        className={contentLayerClassName}
-        data-flush-inline={flushInline ? '' : undefined}
-      >
-        {children}
-      </Container>
-    </section>
-  );
+	return (
+		<section
+			aria-label={ariaLabel}
+			className={sectionShellClassName}
+			data-connect-up={connectsUp ? "" : undefined}
+			data-keep-top-rhythm={keepsTopRhythm ? "" : undefined}
+			data-menu-surface=""
+			data-rhythm={rhythm}
+			data-scheme={scheme}
+		>
+			{background !== undefined && (
+				<div
+					aria-hidden
+					className={backgroundLayerClassName}
+					data-background-layer=""
+					data-full-bleed={fullBleedBackground ? "" : undefined}
+				>
+					{background}
+				</div>
+			)}
+			<Container
+				className={contentLayerClassName}
+				data-flush-inline={flushInline ? "" : undefined}
+			>
+				{children}
+			</Container>
+		</section>
+	);
 }

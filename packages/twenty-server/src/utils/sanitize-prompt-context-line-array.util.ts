@@ -1,19 +1,19 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
-import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-line.util';
+import { sanitizePromptContextLine } from "src/utils/sanitize-prompt-context-line.util";
 
 export const sanitizePromptContextLineArray = ({
-  value,
-  maxLength,
-  maxItems,
+	value,
+	maxLength,
+	maxItems,
 }: {
-  value: unknown;
-  maxLength: number;
-  maxItems: number;
+	value: unknown;
+	maxLength: number;
+	maxItems: number;
 }): string[] =>
-  Array.isArray(value)
-    ? value
-        .map((item) => sanitizePromptContextLine({ value: item, maxLength }))
-        .filter(isNonEmptyString)
-        .slice(0, maxItems)
-    : [];
+	Array.isArray(value)
+		? value
+				.map((item) => sanitizePromptContextLine({ value: item, maxLength }))
+				.filter(isNonEmptyString)
+				.slice(0, maxItems)
+		: [];

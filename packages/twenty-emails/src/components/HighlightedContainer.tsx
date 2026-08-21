@@ -1,29 +1,29 @@
-import { Column, Container, Row } from 'react-email';
-import React, { type JSX } from 'react';
+import { Column, Container, Row } from "react-email";
+import React, { type JSX } from "react";
 
-import { canvasTheme } from 'src/common-style';
+import { canvasTheme } from "src/common-style";
 
 type HighlightedContainerProps = {
-  children: JSX.Element | JSX.Element[] | string;
+	children: JSX.Element | JSX.Element[] | string;
 };
 
 const highlightedContainerStyle = {
-  background: canvasTheme.background.colors.highlight,
-  border: `1px solid ${canvasTheme.border.color.highlighted}`,
-  borderRadius: canvasTheme.border.radius.md,
-  padding: '24px 48px',
+	background: canvasTheme.background.colors.highlight,
+	border: `1px solid ${canvasTheme.border.color.highlighted}`,
+	borderRadius: canvasTheme.border.radius.md,
+	padding: "24px 48px",
 } as React.CSSProperties;
 
 export const HighlightedContainer = ({
-  children,
+	children,
 }: HighlightedContainerProps) => {
-  return (
-    <Container style={highlightedContainerStyle}>
-      {React.Children.map(children, (child) => (
-        <Row>
-          <Column align="center">{child}</Column>
-        </Row>
-      ))}
-    </Container>
-  );
+	return (
+		<Container style={highlightedContainerStyle}>
+			{React.Children.map(children, (child) => (
+				<Row>
+					<Column align="center">{child}</Column>
+				</Row>
+			))}
+		</Container>
+	);
 };

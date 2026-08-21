@@ -1,17 +1,17 @@
-import { type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from "twenty-shared/types";
 
 type AggregateValues = {
-  [key: string]: string;
+	[key: string]: string;
 };
 
 type GroupByDimensionValues = {
-  groupByDimensionValues: string[];
+	groupByDimensionValues: string[];
 };
 
 type Records = {
-  records?: ObjectRecord[];
+	records?: ObjectRecord[];
 };
 
 export type CommonGroupByOutputItem = GroupByDimensionValues &
-  AggregateValues &
-  Records;
+	AggregateValues &
+	Records;

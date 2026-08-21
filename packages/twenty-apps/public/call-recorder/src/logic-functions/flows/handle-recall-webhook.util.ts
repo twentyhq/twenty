@@ -1,356 +1,353 @@
-import { isUndefined } from '@sniptt/guards';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isUndefined } from "@sniptt/guards";
+import { type CoreApiClient } from "twenty-client-sdk/core";
 
-import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
-import { requestCallRecordingArtifactsImport } from 'src/logic-functions/data/request-call-recording-artifacts-import.util';
-import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
-import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
-import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
+import { CallRecordingStatus } from "src/logic-functions/constants/call-recording-status";
+import { findCallRecordingsByFilter } from "src/logic-functions/data/find-call-recordings-by-filter.util";
+import { requestCallRecordingArtifactsImport } from "src/logic-functions/data/request-call-recording-artifacts-import.util";
+import { isCallRecordingStatusDowngrade } from "src/logic-functions/domain/is-call-recording-status-downgrade.util";
+import { isRecallRecordingDoneSignal } from "src/logic-functions/domain/is-recall-recording-done-signal.util";
+import { mapRecallStatusCodeToCallRecordingStatus } from "src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util";
 import {
-  parseRecallWebhookEvent,
-  type RecallWebhookBody,
-  type RecallWebhookEvent,
-} from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
-import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+	parseRecallWebhookEvent,
+	type RecallWebhookBody,
+	type RecallWebhookEvent,
+} from "src/logic-functions/recall-api/parse-recall-webhook-event.util";
+import { type CallRecordingRecord } from "src/logic-functions/types/call-recording-record.type";
+import { type CallRecordingUpdateFields } from "src/logic-functions/types/call-recording-update-fields.type";
+import { updateCallRecording } from "src/logic-functions/data/update-call-recording.util";
 
 type RecallWebhookHandlerResult =
-  | {
-      status: 'updated';
-      callRecordingId: string;
-      event: string;
-      callRecordingStatus: string;
-    }
-  | {
-      status: 'queued';
-      callRecordingId: string;
-      event: string;
-    }
-  | {
-      status: 'skipped';
-      event: string | null;
-      reason: string;
-    };
+	| {
+			status: "updated";
+			callRecordingId: string;
+			event: string;
+			callRecordingStatus: string;
+	  }
+	| {
+			status: "queued";
+			callRecordingId: string;
+			event: string;
+	  }
+	| {
+			status: "skipped";
+			event: string | null;
+			reason: string;
+	  };
 
 export const handleRecallWebhook = async ({
-  client,
-  body,
+	client,
+	body,
 }: {
-  client: CoreApiClient;
-  body: RecallWebhookBody;
+	client: CoreApiClient;
+	body: RecallWebhookBody;
 }): Promise<RecallWebhookHandlerResult> => {
-  const webhookEvent = parseRecallWebhookEvent(body);
+	const webhookEvent = parseRecallWebhookEvent(body);
 
-  if (isUndefined(webhookEvent)) {
-    return {
-      status: 'skipped',
-      event: null,
-      reason: 'missing event type',
-    };
-  }
+	if (isUndefined(webhookEvent)) {
+		return {
+			status: "skipped",
+			event: null,
+			reason: "missing event type",
+		};
+	}
 
-  const { event } = webhookEvent;
+	const { event } = webhookEvent;
 
-  if (event === 'transcript.done' || event === 'transcript.failed') {
-    return queueCallRecordingArtifactsImport({ client, webhookEvent });
-  }
+	if (event === "transcript.done" || event === "transcript.failed") {
+		return queueCallRecordingArtifactsImport({ client, webhookEvent });
+	}
 
-  return handleRecallStatusEvent({ client, webhookEvent });
+	return handleRecallStatusEvent({ client, webhookEvent });
 };
 
 const handleRecallStatusEvent = async ({
-  client,
-  webhookEvent,
+	client,
+	webhookEvent,
 }: {
-  client: CoreApiClient;
-  webhookEvent: RecallWebhookEvent;
+	client: CoreApiClient;
+	webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
-  const { event, statusCode, statusSubCode } = webhookEvent;
-  const mappedCallRecordingStatus = mapRecallEventToCallRecordingStatus({
-    event,
-    statusCode,
-    statusSubCode,
-  });
+	const { event, statusCode, statusSubCode } = webhookEvent;
+	const mappedCallRecordingStatus = mapRecallEventToCallRecordingStatus({
+		event,
+		statusCode,
+		statusSubCode,
+	});
 
-  if (isUndefined(mappedCallRecordingStatus)) {
-    return {
-      status: 'skipped',
-      event,
-      reason: `unsupported Recall event status ${statusCode ?? event}`,
-    };
-  }
+	if (isUndefined(mappedCallRecordingStatus)) {
+		return {
+			status: "skipped",
+			event,
+			reason: `unsupported Recall event status ${statusCode ?? event}`,
+		};
+	}
 
-  const callRecording = await findMatchingCallRecording({
-    client,
-    webhookEvent,
-  });
+	const callRecording = await findMatchingCallRecording({
+		client,
+		webhookEvent,
+	});
 
-  if (isUndefined(callRecording)) {
-    return {
-      status: 'skipped',
-      event,
-      reason: 'no matching call recording',
-    };
-  }
+	if (isUndefined(callRecording)) {
+		return {
+			status: "skipped",
+			event,
+			reason: "no matching call recording",
+		};
+	}
 
-  const callRecordingStatus = resolveStatusAgainstKnownRecording({
-    mappedStatus: mappedCallRecordingStatus,
-    statusCode,
-    callRecording,
-    webhookEvent,
-  });
+	const callRecordingStatus = resolveStatusAgainstKnownRecording({
+		mappedStatus: mappedCallRecordingStatus,
+		statusCode,
+		callRecording,
+		webhookEvent,
+	});
 
-  if (
-    isCallRecordingStatusDowngrade({
-      fromStatus: callRecording.status,
-      toStatus: callRecordingStatus,
-    })
-  ) {
-    return {
-      status: 'skipped',
-      event,
-      reason: `stale status event (${callRecording.status} -> ${callRecordingStatus})`,
-    };
-  }
+	if (
+		isCallRecordingStatusDowngrade({
+			fromStatus: callRecording.status,
+			toStatus: callRecordingStatus,
+		})
+	) {
+		return {
+			status: "skipped",
+			event,
+			reason: `stale status event (${callRecording.status} -> ${callRecordingStatus})`,
+		};
+	}
 
-  const updateData: CallRecordingUpdateFields = {
-    ...(isUndefined(webhookEvent.externalBotId)
-      ? {}
-      : { externalBotId: webhookEvent.externalBotId }),
-    ...buildExternalRecordingIdUpdate(webhookEvent),
-    ...buildCallRecordingStatusUpdate({
-      reason: getRecallWebhookFailureReason(webhookEvent),
-      status: callRecordingStatus,
-    }),
-    ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
-  };
+	const updateData: CallRecordingUpdateFields = {
+		...(isUndefined(webhookEvent.externalBotId)
+			? {}
+			: { externalBotId: webhookEvent.externalBotId }),
+		...buildExternalRecordingIdUpdate(webhookEvent),
+		...buildCallRecordingStatusUpdate({
+			reason: getRecallWebhookFailureReason(webhookEvent),
+			status: callRecordingStatus,
+		}),
+		...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
+	};
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: updateData,
-  });
+	await updateCallRecording(client, {
+		id: callRecording.id,
+		data: updateData,
+	});
 
-  if (
-    isRecallRecordingDoneSignal({
-      event,
-      statusCode,
-    })
-  ) {
-    await requestCallRecordingArtifactsImportOrThrow({
-      callRecordingId: callRecording.id,
-    });
-  }
+	if (
+		isRecallRecordingDoneSignal({
+			event,
+			statusCode,
+		})
+	) {
+		await requestCallRecordingArtifactsImportOrThrow({
+			callRecordingId: callRecording.id,
+		});
+	}
 
-  return {
-    status: 'updated',
-    event,
-    callRecordingId: callRecording.id,
-    callRecordingStatus: updateData.status ?? callRecordingStatus,
-  };
+	return {
+		status: "updated",
+		event,
+		callRecordingId: callRecording.id,
+		callRecordingStatus: updateData.status ?? callRecordingStatus,
+	};
 };
 
 const queueCallRecordingArtifactsImport = async ({
-  client,
-  webhookEvent,
+	client,
+	webhookEvent,
 }: {
-  client: CoreApiClient;
-  webhookEvent: RecallWebhookEvent;
+	client: CoreApiClient;
+	webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
-  const callRecording = await findMatchingCallRecording({
-    client,
-    webhookEvent,
-  });
+	const callRecording = await findMatchingCallRecording({
+		client,
+		webhookEvent,
+	});
 
-  if (isUndefined(callRecording)) {
-    console.warn(
-      `[call-recorder] skipping Recall ${webhookEvent.event} webhook: no matching call recording for bot ${webhookEvent.externalBotId ?? 'unknown'}`,
-    );
+	if (isUndefined(callRecording)) {
+		console.warn(
+			`[call-recorder] skipping Recall ${webhookEvent.event} webhook: no matching call recording for bot ${webhookEvent.externalBotId ?? "unknown"}`,
+		);
 
-    return {
-      status: 'skipped',
-      event: webhookEvent.event,
-      reason: 'no matching call recording',
-    };
-  }
+		return {
+			status: "skipped",
+			event: webhookEvent.event,
+			reason: "no matching call recording",
+		};
+	}
 
-  await requestCallRecordingArtifactsImportOrThrow({
-    callRecordingId: callRecording.id,
-  });
+	await requestCallRecordingArtifactsImportOrThrow({
+		callRecordingId: callRecording.id,
+	});
 
-  return {
-    status: 'queued',
-    event: webhookEvent.event,
-    callRecordingId: callRecording.id,
-  };
+	return {
+		status: "queued",
+		event: webhookEvent.event,
+		callRecordingId: callRecording.id,
+	};
 };
 
 const requestCallRecordingArtifactsImportOrThrow = async ({
-  callRecordingId,
+	callRecordingId,
 }: {
-  callRecordingId: string;
+	callRecordingId: string;
 }): Promise<void> => {
-  const importRequested = await requestCallRecordingArtifactsImport({
-    callRecordingId,
-    requestedAt: new Date().toISOString(),
-  });
+	const importRequested = await requestCallRecordingArtifactsImport({
+		callRecordingId,
+		requestedAt: new Date().toISOString(),
+	});
 
-  if (!importRequested) {
-    throw new Error(
-      `failed to request artifact import for call recording ${callRecordingId}`,
-    );
-  }
+	if (!importRequested) {
+		throw new Error(
+			`failed to request artifact import for call recording ${callRecordingId}`,
+		);
+	}
 };
 
 const findMatchingCallRecording = async ({
-  client,
-  webhookEvent,
+	client,
+	webhookEvent,
 }: {
-  client: CoreApiClient;
-  webhookEvent: RecallWebhookEvent;
+	client: CoreApiClient;
+	webhookEvent: RecallWebhookEvent;
 }): Promise<CallRecordingRecord | undefined> => {
-  if (!isUndefined(webhookEvent.callRecordingIdFromMetadata)) {
-    return (
-      await findCallRecordingsByFilter(client, {
-        id: { eq: webhookEvent.callRecordingIdFromMetadata },
-      })
-    )[0];
-  }
+	if (!isUndefined(webhookEvent.callRecordingIdFromMetadata)) {
+		return (
+			await findCallRecordingsByFilter(client, {
+				id: { eq: webhookEvent.callRecordingIdFromMetadata },
+			})
+		)[0];
+	}
 
-  if (isUndefined(webhookEvent.externalBotId)) {
-    return undefined;
-  }
+	if (isUndefined(webhookEvent.externalBotId)) {
+		return undefined;
+	}
 
-  return (
-    await findCallRecordingsByFilter(client, {
-      externalBotId: { eq: webhookEvent.externalBotId },
-    })
-  )[0];
+	return (
+		await findCallRecordingsByFilter(client, {
+			externalBotId: { eq: webhookEvent.externalBotId },
+		})
+	)[0];
 };
 
 // Mirrors the snapshot extractor: a known recording artifact rules out NOT_RECORDED.
 const resolveStatusAgainstKnownRecording = ({
-  mappedStatus,
-  statusCode,
-  callRecording,
-  webhookEvent,
+	mappedStatus,
+	statusCode,
+	callRecording,
+	webhookEvent,
 }: {
-  mappedStatus: CallRecordingStatus;
-  statusCode: string | undefined;
-  callRecording: CallRecordingRecord;
-  webhookEvent: RecallWebhookEvent;
+	mappedStatus: CallRecordingStatus;
+	statusCode: string | undefined;
+	callRecording: CallRecordingRecord;
+	webhookEvent: RecallWebhookEvent;
 }): CallRecordingStatus => {
-  const hasKnownRecording =
-    !isUndefined(callRecording.externalRecordingId) ||
-    !isUndefined(webhookEvent.externalRecordingId);
+	const hasKnownRecording =
+		!isUndefined(callRecording.externalRecordingId) ||
+		!isUndefined(webhookEvent.externalRecordingId);
 
-  if (
-    mappedStatus !== CallRecordingStatus.NOT_RECORDED ||
-    !hasKnownRecording
-  ) {
-    return mappedStatus;
-  }
+	if (mappedStatus !== CallRecordingStatus.NOT_RECORDED || !hasKnownRecording) {
+		return mappedStatus;
+	}
 
-  return statusCode === 'fatal'
-    ? CallRecordingStatus.FAILED
-    : CallRecordingStatus.PROCESSING;
+	return statusCode === "fatal"
+		? CallRecordingStatus.FAILED
+		: CallRecordingStatus.PROCESSING;
 };
 
 const mapRecallEventToCallRecordingStatus = ({
-  event,
-  statusCode,
-  statusSubCode,
+	event,
+	statusCode,
+	statusSubCode,
 }: {
-  event: string;
-  statusCode: string | undefined;
-  statusSubCode: string | undefined;
+	event: string;
+	statusCode: string | undefined;
+	statusSubCode: string | undefined;
 }): CallRecordingStatus | undefined => {
-  if (event === 'recording.done') {
-    return CallRecordingStatus.PROCESSING;
-  }
+	if (event === "recording.done") {
+		return CallRecordingStatus.PROCESSING;
+	}
 
-  if (event === 'recording.failed') {
-    return CallRecordingStatus.FAILED;
-  }
+	if (event === "recording.failed") {
+		return CallRecordingStatus.FAILED;
+	}
 
-  return mapRecallStatusCodeToCallRecordingStatus({
-    statusCode,
-    statusSubCode,
-  });
+	return mapRecallStatusCodeToCallRecordingStatus({
+		statusCode,
+		statusSubCode,
+	});
 };
 
 const buildRecordingTimestampsUpdate = ({
-  webhookEvent,
-  callRecording,
+	webhookEvent,
+	callRecording,
 }: {
-  webhookEvent: RecallWebhookEvent;
-  callRecording: CallRecordingRecord;
+	webhookEvent: RecallWebhookEvent;
+	callRecording: CallRecordingRecord;
 }): { startedAt?: string; endedAt?: string } => {
-  const { event, statusCode, statusTimestamp } = webhookEvent;
+	const { event, statusCode, statusTimestamp } = webhookEvent;
 
-  const impliesRecordingStarted = statusCode === 'in_call_recording';
-  const impliesRecordingEnded =
-    event === 'recording.done' ||
-    statusCode === 'call_ended' ||
-    statusCode === 'done';
+	const impliesRecordingStarted = statusCode === "in_call_recording";
+	const impliesRecordingEnded =
+		event === "recording.done" ||
+		statusCode === "call_ended" ||
+		statusCode === "done";
 
-  const startedAt =
-    webhookEvent.recordingStartedAt ??
-    (impliesRecordingStarted ? statusTimestamp : undefined);
-  const endedAt =
-    webhookEvent.recordingEndedAt ??
-    (impliesRecordingEnded ? statusTimestamp : undefined);
+	const startedAt =
+		webhookEvent.recordingStartedAt ??
+		(impliesRecordingStarted ? statusTimestamp : undefined);
+	const endedAt =
+		webhookEvent.recordingEndedAt ??
+		(impliesRecordingEnded ? statusTimestamp : undefined);
 
-  return {
-    ...(!isUndefined(startedAt) && isUndefined(callRecording.startedAt)
-      ? { startedAt }
-      : {}),
-    ...(!isUndefined(endedAt) && isUndefined(callRecording.endedAt)
-      ? { endedAt }
-      : {}),
-  };
+	return {
+		...(!isUndefined(startedAt) && isUndefined(callRecording.startedAt)
+			? { startedAt }
+			: {}),
+		...(!isUndefined(endedAt) && isUndefined(callRecording.endedAt)
+			? { endedAt }
+			: {}),
+	};
 };
 
 const buildExternalRecordingIdUpdate = (
-  webhookEvent: RecallWebhookEvent,
+	webhookEvent: RecallWebhookEvent,
 ): { externalRecordingId?: string } =>
-  isUndefined(webhookEvent.externalRecordingId)
-    ? {}
-    : { externalRecordingId: webhookEvent.externalRecordingId };
+	isUndefined(webhookEvent.externalRecordingId)
+		? {}
+		: { externalRecordingId: webhookEvent.externalRecordingId };
 
 type UnavailableCallRecordingStatus =
-  | CallRecordingStatus.FAILED
-  | CallRecordingStatus.NOT_RECORDED;
+	| CallRecordingStatus.FAILED
+	| CallRecordingStatus.NOT_RECORDED;
 
 type CallRecordingStatusUpdate =
-  | {
-      status: Exclude<CallRecordingStatus, UnavailableCallRecordingStatus>;
-    }
-  | {
-      status: UnavailableCallRecordingStatus;
-      callRecorderFailureReason: string;
-    };
+	| {
+			status: Exclude<CallRecordingStatus, UnavailableCallRecordingStatus>;
+	  }
+	| {
+			status: UnavailableCallRecordingStatus;
+			callRecorderFailureReason: string;
+	  };
 
 const buildCallRecordingStatusUpdate = ({
-  reason,
-  status,
+	reason,
+	status,
 }: {
-  reason: string;
-  status: CallRecordingStatus;
+	reason: string;
+	status: CallRecordingStatus;
 }): CallRecordingStatusUpdate => {
-  if (
-    status === CallRecordingStatus.FAILED ||
-    status === CallRecordingStatus.NOT_RECORDED
-  ) {
-    return { status, callRecorderFailureReason: reason };
-  }
+	if (
+		status === CallRecordingStatus.FAILED ||
+		status === CallRecordingStatus.NOT_RECORDED
+	) {
+		return { status, callRecorderFailureReason: reason };
+	}
 
-  return { status };
+	return { status };
 };
 
 const getRecallWebhookFailureReason = ({
-  event,
-  statusCode,
-  statusSubCode,
+	event,
+	statusCode,
+	statusSubCode,
 }: RecallWebhookEvent): string => statusSubCode ?? statusCode ?? event;

@@ -1,4 +1,4 @@
 export type GenerateDescriptorOptions = {
-  includeSchemas?: boolean;
-  toolNames?: Set<string>;
+	includeSchemas?: boolean;
+	toolNames?: Set<string>;
 };

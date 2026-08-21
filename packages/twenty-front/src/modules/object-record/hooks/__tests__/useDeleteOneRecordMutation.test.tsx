@@ -1,8 +1,8 @@
-import { renderHook } from '@testing-library/react';
-import { print } from 'graphql';
+import { renderHook } from "@testing-library/react";
+import { print } from "graphql";
 
-import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { useDeleteOneRecordMutation } from "@/object-record/hooks/useDeleteOneRecordMutation";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const expectedQueryTemplate = `
   mutation DeleteOnePerson($idToDelete: UUID!) {
@@ -12,35 +12,35 @@ const expectedQueryTemplate = `
       id
     }
   }
-`.replace(/\s/g, '');
+`.replace(/\s/g, "");
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useDeleteOneRecordMutation', () => {
-  it('should return a valid deleteOneRecordMutation', () => {
-    const objectNameSingular = 'person';
+describe("useDeleteOneRecordMutation", () => {
+	it("should return a valid deleteOneRecordMutation", () => {
+		const objectNameSingular = "person";
 
-    const { result } = renderHook(
-      () =>
-        useDeleteOneRecordMutation({
-          objectNameSingular,
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+		const { result } = renderHook(
+			() =>
+				useDeleteOneRecordMutation({
+					objectNameSingular,
+				}),
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    const { deleteOneRecordMutation } = result.current;
+		const { deleteOneRecordMutation } = result.current;
 
-    expect(deleteOneRecordMutation).toBeDefined();
+		expect(deleteOneRecordMutation).toBeDefined();
 
-    const printedReceivedQuery = print(deleteOneRecordMutation).replace(
-      /\s/g,
-      '',
-    );
+		const printedReceivedQuery = print(deleteOneRecordMutation).replace(
+			/\s/g,
+			"",
+		);
 
-    expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
-  });
+		expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+	});
 });

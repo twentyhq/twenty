@@ -1,9 +1,9 @@
 import {
-  type CommandMenuItemPayload,
-  type PathCommandMenuItemPayload,
-} from '~/generated-metadata/graphql';
+	type CommandMenuItemPayload,
+	type PathCommandMenuItemPayload,
+} from "~/generated-metadata/graphql";
 
 export const isPathCommandMenuItemPayload = (
-  payload: CommandMenuItemPayload,
+	payload: CommandMenuItemPayload,
 ): payload is PathCommandMenuItemPayload =>
-  payload.__typename === 'PathCommandMenuItemPayload';
+	payload.__typename === "PathCommandMenuItemPayload";

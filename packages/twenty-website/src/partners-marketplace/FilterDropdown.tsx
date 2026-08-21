@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { Popover } from '@base-ui/react/popover';
-import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconChevronDown } from '@tabler/icons-react';
+import { Popover } from "@base-ui/react/popover";
+import { type MessageDescriptor } from "@lingui/core";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconChevronDown } from "@tabler/icons-react";
 
 import {
-  color,
-  fontFamily,
-  fontSize,
-  radius,
-  semanticColor,
-  SHADOW,
-  spacing,
-  Z_INDEX,
-} from '@/tokens';
+	color,
+	fontFamily,
+	fontSize,
+	radius,
+	semanticColor,
+	SHADOW,
+	spacing,
+	Z_INDEX,
+} from "@/tokens";
 
 const Chevron = styled.span`
   align-items: center;
@@ -31,10 +31,10 @@ const Trigger = styled(Popover.Trigger)`
   background: transparent;
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(1.5)};
-  color: ${color('black-80')};
+  color: ${color("black-80")};
   cursor: pointer;
   display: inline-flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
   gap: ${spacing(1.5)};
   line-height: ${fontSize(4)};
@@ -45,16 +45,16 @@ const Trigger = styled(Popover.Trigger)`
   white-space: nowrap;
 
   &[data-active] {
-    border-color: ${color('black-40')};
+    border-color: ${color("black-40")};
     color: ${semanticColor.ink};
   }
 
   &:hover {
-    background: ${color('black-5')};
+    background: ${color("black-5")};
   }
 
   &:focus-visible {
-    outline: 2px solid ${color('black-40')};
+    outline: 2px solid ${color("black-40")};
     outline-offset: 2px;
   }
 
@@ -68,7 +68,7 @@ const Positioner = styled(Popover.Positioner)`
 `;
 
 const Popup = styled(Popover.Popup)`
-  background: ${color('white')};
+  background: ${color("white")};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   box-shadow: ${SHADOW.card};
@@ -87,10 +87,10 @@ const OptionList = styled.div`
 const OptionRow = styled.label`
   align-items: center;
   border-radius: ${radius(1)};
-  color: ${color('black-80')};
+  color: ${color("black-80")};
   cursor: pointer;
   display: flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
   gap: ${spacing(2)};
   line-height: ${fontSize(4)};
@@ -99,12 +99,12 @@ const OptionRow = styled.label`
   user-select: none;
 
   &:hover {
-    background: ${color('black-5')};
+    background: ${color("black-5")};
   }
 `;
 
 const Checkbox = styled.input`
-  accent-color: ${color('black')};
+  accent-color: ${color("black")};
   border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(0.5)};
   cursor: pointer;
@@ -114,55 +114,55 @@ const Checkbox = styled.input`
 `;
 
 export function FilterDropdown<TValue extends string>({
-  label,
-  options,
-  optionLabels,
-  selected,
-  onToggle,
+	label,
+	options,
+	optionLabels,
+	selected,
+	onToggle,
 }: {
-  label: MessageDescriptor;
-  options: readonly TValue[];
-  optionLabels: Record<TValue, MessageDescriptor>;
-  selected: ReadonlySet<TValue>;
-  onToggle: (value: TValue) => void;
+	label: MessageDescriptor;
+	options: readonly TValue[];
+	optionLabels: Record<TValue, MessageDescriptor>;
+	selected: ReadonlySet<TValue>;
+	onToggle: (value: TValue) => void;
 }) {
-  const { i18n } = useLingui();
-  const labelText = i18n._(label);
-  const hasSelection = selected.size > 0;
+	const { i18n } = useLingui();
+	const labelText = i18n._(label);
+	const hasSelection = selected.size > 0;
 
-  return (
-    <Popover.Root>
-      <Trigger
-        aria-label={
-          hasSelection
-            ? i18n._(msg`${labelText} filter, ${selected.size} selected`)
-            : i18n._(msg`${labelText} filter`)
-        }
-        data-active={hasSelection ? '' : undefined}
-      >
-        {hasSelection ? `${labelText} · ${selected.size}` : labelText}
-        <Chevron aria-hidden>
-          <IconChevronDown size={14} strokeWidth={2} />
-        </Chevron>
-      </Trigger>
-      <Popover.Portal>
-        <Positioner align="start" side="bottom" sideOffset={6}>
-          <Popup>
-            <OptionList role="group" aria-label={labelText}>
-              {options.map((option) => (
-                <OptionRow key={option}>
-                  <Checkbox
-                    checked={selected.has(option)}
-                    onChange={() => onToggle(option)}
-                    type="checkbox"
-                  />
-                  {i18n._(optionLabels[option])}
-                </OptionRow>
-              ))}
-            </OptionList>
-          </Popup>
-        </Positioner>
-      </Popover.Portal>
-    </Popover.Root>
-  );
+	return (
+		<Popover.Root>
+			<Trigger
+				aria-label={
+					hasSelection
+						? i18n._(msg`${labelText} filter, ${selected.size} selected`)
+						: i18n._(msg`${labelText} filter`)
+				}
+				data-active={hasSelection ? "" : undefined}
+			>
+				{hasSelection ? `${labelText} · ${selected.size}` : labelText}
+				<Chevron aria-hidden>
+					<IconChevronDown size={14} strokeWidth={2} />
+				</Chevron>
+			</Trigger>
+			<Popover.Portal>
+				<Positioner align="start" side="bottom" sideOffset={6}>
+					<Popup>
+						<OptionList role="group" aria-label={labelText}>
+							{options.map((option) => (
+								<OptionRow key={option}>
+									<Checkbox
+										checked={selected.has(option)}
+										onChange={() => onToggle(option)}
+										type="checkbox"
+									/>
+									{i18n._(optionLabels[option])}
+								</OptionRow>
+							))}
+						</OptionList>
+					</Popup>
+				</Positioner>
+			</Popover.Portal>
+		</Popover.Root>
+	);
 }

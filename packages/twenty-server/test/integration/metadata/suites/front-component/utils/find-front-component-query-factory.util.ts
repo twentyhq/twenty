@@ -1,8 +1,8 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type FindFrontComponentFactoryInput = {
-  id: string;
+	id: string;
 };
 
 const DEFAULT_FRONT_COMPONENT_GQL_FIELDS = `
@@ -14,17 +14,17 @@ const DEFAULT_FRONT_COMPONENT_GQL_FIELDS = `
 `;
 
 export const findFrontComponentQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_FRONT_COMPONENT_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_FRONT_COMPONENT_GQL_FIELDS,
 }: PerformMetadataQueryParams<FindFrontComponentFactoryInput>) => ({
-  query: gql`
+	query: gql`
     query FrontComponent($id: UUID!) {
       frontComponent(id: $id) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-  },
+	variables: {
+		id: input.id,
+	},
 });

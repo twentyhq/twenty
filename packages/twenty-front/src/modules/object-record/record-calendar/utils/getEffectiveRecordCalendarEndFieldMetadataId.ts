@@ -1,10 +1,10 @@
 type GetEffectiveRecordCalendarEndFieldMetadataIdArgs = {
-  calendarEndFieldMetadataId: string | null | undefined;
-  isCalendarWeekViewEnabled: boolean;
+	calendarEndFieldMetadataId: string | null | undefined;
+	isCalendarWeekViewEnabled: boolean;
 };
 
 export const getEffectiveRecordCalendarEndFieldMetadataId = ({
-  calendarEndFieldMetadataId,
-  isCalendarWeekViewEnabled,
+	calendarEndFieldMetadataId,
+	isCalendarWeekViewEnabled,
 }: GetEffectiveRecordCalendarEndFieldMetadataIdArgs) =>
-  isCalendarWeekViewEnabled ? (calendarEndFieldMetadataId ?? null) : null;
+	isCalendarWeekViewEnabled ? (calendarEndFieldMetadataId ?? null) : null;

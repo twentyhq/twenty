@@ -1,5 +1,5 @@
 /* oxlint-disable no-console, lingui/no-unlocalized-strings */
-import { graphqlRequest, writeGeneratedFile } from './utils.js';
+import { graphqlRequest, writeGeneratedFile } from "./utils.js";
 
 const FIND_ALL_VIEWS_QUERY = `
   query FindAllViews {
@@ -98,23 +98,23 @@ const FIND_ALL_VIEWS_QUERY = `
 `;
 
 export const generateViews = async (token: string) => {
-  console.log('Fetching views from /metadata ...');
+	console.log("Fetching views from /metadata ...");
 
-  const data = (await graphqlRequest(
-    '/metadata',
-    FIND_ALL_VIEWS_QUERY,
-    token,
-  )) as {
-    getViews: Record<string, unknown>[];
-  };
+	const data = (await graphqlRequest(
+		"/metadata",
+		FIND_ALL_VIEWS_QUERY,
+		token,
+	)) as {
+		getViews: Record<string, unknown>[];
+	};
 
-  console.log(`  Got ${data.getViews.length} views.`);
+	console.log(`  Got ${data.getViews.length} views.`);
 
-  writeGeneratedFile(
-    'metadata/views/mock-views-data.ts',
-    'mockedViews',
-    'ViewWithRelations[]',
-    "import { type ViewWithRelations } from '@/views/types/ViewWithRelations';",
-    data.getViews,
-  );
+	writeGeneratedFile(
+		"metadata/views/mock-views-data.ts",
+		"mockedViews",
+		"ViewWithRelations[]",
+		"import { type ViewWithRelations } from '@/views/types/ViewWithRelations';",
+		data.getViews,
+	);
 };

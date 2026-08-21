@@ -1,59 +1,59 @@
-import { getMetadataStorage } from 'class-validator';
+import { getMetadataStorage } from "class-validator";
 
 let installed = false;
 
 export const enableValidationMetadataCache = (): void => {
-  if (installed) {
-    return;
-  }
-  installed = true;
+	if (installed) {
+		return;
+	}
+	installed = true;
 
-  const storage = getMetadataStorage();
-  const computeTargetValidationMetadatas =
-    storage.getTargetValidationMetadatas.bind(storage);
+	const storage = getMetadataStorage();
+	const computeTargetValidationMetadatas =
+		storage.getTargetValidationMetadatas.bind(storage);
 
-  type ValidationMetadatas = ReturnType<
-    typeof computeTargetValidationMetadatas
-  >;
+	type ValidationMetadatas = ReturnType<
+		typeof computeTargetValidationMetadatas
+	>;
 
-  const cacheByTarget = new WeakMap<object, Map<string, ValidationMetadatas>>();
+	const cacheByTarget = new WeakMap<object, Map<string, ValidationMetadatas>>();
 
-  storage.getTargetValidationMetadatas = (
-    targetConstructor,
-    targetSchema,
-    always,
-    strictGroups,
-    groups,
-  ) => {
-    let cacheByArgs = cacheByTarget.get(targetConstructor);
+	storage.getTargetValidationMetadatas = (
+		targetConstructor,
+		targetSchema,
+		always,
+		strictGroups,
+		groups,
+	) => {
+		let cacheByArgs = cacheByTarget.get(targetConstructor);
 
-    if (cacheByArgs === undefined) {
-      cacheByArgs = new Map();
-      cacheByTarget.set(targetConstructor, cacheByArgs);
-    }
+		if (cacheByArgs === undefined) {
+			cacheByArgs = new Map();
+			cacheByTarget.set(targetConstructor, cacheByArgs);
+		}
 
-    const cacheKey = `${targetSchema}|${always}|${strictGroups}|${[
-      ...(groups ?? []),
-    ]
-      .sort()
-      .join(',')}`;
+		const cacheKey = `${targetSchema}|${always}|${strictGroups}|${[
+			...(groups ?? []),
+		]
+			.sort()
+			.join(",")}`;
 
-    const cached = cacheByArgs.get(cacheKey);
+		const cached = cacheByArgs.get(cacheKey);
 
-    if (cached !== undefined) {
-      return cached;
-    }
+		if (cached !== undefined) {
+			return cached;
+		}
 
-    const metadatas = computeTargetValidationMetadatas(
-      targetConstructor,
-      targetSchema,
-      always,
-      strictGroups,
-      groups,
-    );
+		const metadatas = computeTargetValidationMetadatas(
+			targetConstructor,
+			targetSchema,
+			always,
+			strictGroups,
+			groups,
+		);
 
-    cacheByArgs.set(cacheKey, metadatas);
+		cacheByArgs.set(cacheKey, metadatas);
 
-    return metadatas;
-  };
+		return metadatas;
+	};
 };

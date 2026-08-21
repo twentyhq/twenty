@@ -1,36 +1,36 @@
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getActivityTargetObjectFieldIdName } from "@/activities/utils/getActivityTargetObjectFieldIdName";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
 
 export const generateActivityTargetMorphFieldKeys = (
-  objectMetadataItems: EnrichedObjectMetadataItem[],
+	objectMetadataItems: EnrichedObjectMetadataItem[],
 ) => {
-  const targetableObjectMetadataItems = objectMetadataItems.filter(
-    (objectMetadataItem) =>
-      objectMetadataItem.isActive && !objectMetadataItem.isSystem,
-  );
+	const targetableObjectMetadataItems = objectMetadataItems.filter(
+		(objectMetadataItem) =>
+			objectMetadataItem.isActive && !objectMetadataItem.isSystem,
+	);
 
-  const targetableObjects = Object.fromEntries(
-    targetableObjectMetadataItems.map((objectMetadataItem) => {
-      const targetFieldIdName = getActivityTargetObjectFieldIdName({
-        nameSingular: objectMetadataItem.nameSingular,
-      });
+	const targetableObjects = Object.fromEntries(
+		targetableObjectMetadataItems.map((objectMetadataItem) => {
+			const targetFieldIdName = getActivityTargetObjectFieldIdName({
+				nameSingular: objectMetadataItem.nameSingular,
+			});
 
-      return [targetFieldIdName.replace(/Id$/, ''), true];
-    }),
-  );
+			return [targetFieldIdName.replace(/Id$/, ""), true];
+		}),
+	);
 
-  const targetableObjectIds = Object.fromEntries(
-    targetableObjectMetadataItems.map((objectMetadataItem) => {
-      const targetFieldIdName = getActivityTargetObjectFieldIdName({
-        nameSingular: objectMetadataItem.nameSingular,
-      });
+	const targetableObjectIds = Object.fromEntries(
+		targetableObjectMetadataItems.map((objectMetadataItem) => {
+			const targetFieldIdName = getActivityTargetObjectFieldIdName({
+				nameSingular: objectMetadataItem.nameSingular,
+			});
 
-      return [targetFieldIdName, true];
-    }),
-  );
+			return [targetFieldIdName, true];
+		}),
+	);
 
-  return {
-    ...targetableObjects,
-    ...targetableObjectIds,
-  };
+	return {
+		...targetableObjects,
+		...targetableObjectIds,
+	};
 };

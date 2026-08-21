@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { semanticColor } from '@/tokens';
+import { semanticColor } from "@/tokens";
 
 // The 10px hairline that separates inline items (nav groups, social chips).
 export const VerticalDivider = styled.span`

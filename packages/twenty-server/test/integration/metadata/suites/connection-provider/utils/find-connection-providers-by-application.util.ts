@@ -1,23 +1,23 @@
-import { type StoredOAuthConnectionProviderConfig } from 'twenty-shared/application';
+import { type StoredOAuthConnectionProviderConfig } from "twenty-shared/application";
 
 type ConnectionProviderRow = {
-  id: string;
-  universalIdentifier: string;
-  applicationId: string;
-  workspaceId: string;
-  name: string;
-  displayName: string;
-  type: string;
-  oauthConfig: StoredOAuthConnectionProviderConfig | null;
-  onConnectLogicFunctionUniversalIdentifier: string | null;
-  onDisconnectLogicFunctionUniversalIdentifier: string | null;
+	id: string;
+	universalIdentifier: string;
+	applicationId: string;
+	workspaceId: string;
+	name: string;
+	displayName: string;
+	type: string;
+	oauthConfig: StoredOAuthConnectionProviderConfig | null;
+	onConnectLogicFunctionUniversalIdentifier: string | null;
+	onDisconnectLogicFunctionUniversalIdentifier: string | null;
 };
 
 export const findConnectionProvidersByApplication = async (
-  applicationUniversalIdentifier: string,
+	applicationUniversalIdentifier: string,
 ): Promise<ConnectionProviderRow[]> => {
-  return globalThis.testDataSource.query(
-    `SELECT cp.id, cp."universalIdentifier", cp."applicationId",
+	return globalThis.testDataSource.query(
+		`SELECT cp.id, cp."universalIdentifier", cp."applicationId",
             cp."workspaceId", cp.name, cp."displayName", cp.type,
             cp."oauthConfig", cp."onConnectLogicFunctionUniversalIdentifier",
             cp."onDisconnectLogicFunctionUniversalIdentifier"
@@ -25,6 +25,6 @@ export const findConnectionProvidersByApplication = async (
        JOIN core."application" app ON app.id = cp."applicationId"
       WHERE app."universalIdentifier" = $1
    ORDER BY cp.name`,
-    [applicationUniversalIdentifier],
-  );
+		[applicationUniversalIdentifier],
+	);
 };

@@ -1,15 +1,15 @@
-import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
-import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
-import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
-import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { styled } from '@linaria/react';
-import { Navigate } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { MobileHomeAiChatSection } from "@/ai/components/MobileHomeAiChatSection";
+import { MainNavigationDrawerNavigationContent } from "@/navigation/components/MainNavigationDrawerNavigationContent";
+import { useDefaultHomePagePath } from "@/navigation/hooks/useDefaultHomePagePath";
+import { useHasPermissionFlag } from "@/settings/roles/hooks/useHasPermissionFlag";
+import { MultiWorkspaceDropdownButton } from "@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton";
+import { NavigationDrawerFixedContent } from "@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent";
+import { NavigationDrawerScrollableContent } from "@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent";
+import { useIsMobile } from "@/ui/utilities/responsive/hooks/useIsMobile";
+import { styled } from "@linaria/react";
+import { Navigate } from "react-router-dom";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { PermissionFlagType } from "~/generated-metadata/graphql";
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -29,27 +29,27 @@ const StyledSections = styled.div`
 `;
 
 export const MobileHomePage = () => {
-  const isMobile = useIsMobile();
-  const { defaultHomePagePath } = useDefaultHomePagePath();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+	const isMobile = useIsMobile();
+	const { defaultHomePagePath } = useDefaultHomePagePath();
+	const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  // Desktop keeps the drawer, so the page has nothing to show there.
-  if (!isMobile) {
-    return <Navigate to={defaultHomePagePath} replace />;
-  }
+	// Desktop keeps the drawer, so the page has nothing to show there.
+	if (!isMobile) {
+		return <Navigate to={defaultHomePagePath} replace />;
+	}
 
-  return (
-    <StyledContainer>
-      <NavigationDrawerFixedContent>
-        <MultiWorkspaceDropdownButton />
-      </NavigationDrawerFixedContent>
+	return (
+		<StyledContainer>
+			<NavigationDrawerFixedContent>
+				<MultiWorkspaceDropdownButton />
+			</NavigationDrawerFixedContent>
 
-      <NavigationDrawerScrollableContent>
-        <StyledSections>
-          <MainNavigationDrawerNavigationContent />
-          {hasAiPermission && <MobileHomeAiChatSection />}
-        </StyledSections>
-      </NavigationDrawerScrollableContent>
-    </StyledContainer>
-  );
+			<NavigationDrawerScrollableContent>
+				<StyledSections>
+					<MainNavigationDrawerNavigationContent />
+					{hasAiPermission && <MobileHomeAiChatSection />}
+				</StyledSections>
+			</NavigationDrawerScrollableContent>
+		</StyledContainer>
+	);
 };

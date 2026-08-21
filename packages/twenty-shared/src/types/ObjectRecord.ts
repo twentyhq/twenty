@@ -1,4 +1,4 @@
 export interface ObjectRecord {
-  id: string;
-  [key: string]: any;
+	id: string;
+	[key: string]: any;
 }

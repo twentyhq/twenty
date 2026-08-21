@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 const StyledRecordTableCellHoveredPortal = styled.div`
   height: 100%;

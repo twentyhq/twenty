@@ -1,43 +1,43 @@
-import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordOrderBy } from "src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface";
 
-import { type ObjectRecordProperties } from './object-record-properties.type';
+import { type ObjectRecordProperties } from "./object-record-properties.type";
 
 export type CreateRecordInput = {
-  objectName: string;
-  objectRecord: ObjectRecordProperties;
-  upsert?: boolean;
+	objectName: string;
+	objectRecord: ObjectRecordProperties;
+	upsert?: boolean;
 };
 
 export type UpdateRecordInput = {
-  objectName: string;
-  objectRecordId: string;
-  objectRecord: ObjectRecordProperties;
-  fieldsToUpdate?: string[];
+	objectName: string;
+	objectRecordId: string;
+	objectRecord: ObjectRecordProperties;
+	fieldsToUpdate?: string[];
 };
 
 export type DeleteRecordInput = {
-  objectName: string;
-  objectRecordId: string;
+	objectName: string;
+	objectRecordId: string;
 };
 
 export type FindRecordsInput = {
-  objectName: string;
-  filter?: {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    recordFilterGroups?: any;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    recordFilters?: any;
-  };
-  orderBy?: {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    recordSorts?: any;
-    gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
-  };
-  limit?: number;
-  offset?: number;
+	objectName: string;
+	filter?: {
+		// oxlint-disable-next-line typescript/no-explicit-any
+		recordFilterGroups?: any;
+		// oxlint-disable-next-line typescript/no-explicit-any
+		recordFilters?: any;
+	};
+	orderBy?: {
+		// oxlint-disable-next-line typescript/no-explicit-any
+		recordSorts?: any;
+		gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
+	};
+	limit?: number;
+	offset?: number;
 };
 
 export type UpsertRecordInput = {
-  objectName: string;
-  objectRecord: ObjectRecordProperties;
+	objectName: string;
+	objectRecord: ObjectRecordProperties;
 };

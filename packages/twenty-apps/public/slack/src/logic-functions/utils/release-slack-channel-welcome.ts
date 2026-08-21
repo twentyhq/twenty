@@ -1,9 +1,9 @@
-import { kv } from 'twenty-sdk/logic-function';
+import { kv } from "twenty-sdk/logic-function";
 
-import { getSlackChannelWelcomeKvKey } from 'src/logic-functions/utils/get-slack-channel-welcome-kv-key';
+import { getSlackChannelWelcomeKvKey } from "src/logic-functions/utils/get-slack-channel-welcome-kv-key";
 
 export const releaseSlackChannelWelcome = async (
-  channelId: string,
+	channelId: string,
 ): Promise<void> => {
-  await kv.delete(getSlackChannelWelcomeKvKey(channelId));
+	await kv.delete(getSlackChannelWelcomeKvKey(channelId));
 };

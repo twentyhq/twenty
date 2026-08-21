@@ -1,7 +1,7 @@
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { type Ref } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
+import { type Ref } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledOuterContainer = styled.div`
   align-items: center;
@@ -27,36 +27,36 @@ const StyledEmptyPlaceholderField = styled.div`
 `;
 
 export type EditableCellDisplayContainerProps = {
-  focus?: boolean;
-  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  scrollRef?: Ref<HTMLDivElement>;
-  isHovered?: boolean;
-  onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  placeholderForEmptyCell?: string;
+	focus?: boolean;
+	onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+	scrollRef?: Ref<HTMLDivElement>;
+	isHovered?: boolean;
+	onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+	placeholderForEmptyCell?: string;
 };
 
 export const RecordTableCellDisplayContainer = ({
-  children,
-  focus,
-  onClick,
-  scrollRef,
-  onContextMenu,
-  placeholderForEmptyCell,
+	children,
+	focus,
+	onClick,
+	scrollRef,
+	onContextMenu,
+	placeholderForEmptyCell,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
-  <StyledOuterContainer
-    data-testid={
-      focus ? 'editable-cell-focus-mode' : 'editable-cell-display-mode'
-    }
-    onClick={onClick}
-    ref={scrollRef}
-    onContextMenu={onContextMenu}
-  >
-    {placeholderForEmptyCell ? (
-      <StyledEmptyPlaceholderField>
-        {t`Set ${placeholderForEmptyCell}`}
-      </StyledEmptyPlaceholderField>
-    ) : (
-      <StyledInnerContainer>{children}</StyledInnerContainer>
-    )}
-  </StyledOuterContainer>
+	<StyledOuterContainer
+		data-testid={
+			focus ? "editable-cell-focus-mode" : "editable-cell-display-mode"
+		}
+		onClick={onClick}
+		ref={scrollRef}
+		onContextMenu={onContextMenu}
+	>
+		{placeholderForEmptyCell ? (
+			<StyledEmptyPlaceholderField>
+				{t`Set ${placeholderForEmptyCell}`}
+			</StyledEmptyPlaceholderField>
+		) : (
+			<StyledInnerContainer>{children}</StyledInnerContainer>
+		)}
+	</StyledOuterContainer>
 );

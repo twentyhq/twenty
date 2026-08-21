@@ -1,9 +1,9 @@
-import { AgentChatProviderContent } from '@/ai/components/AgentChatProviderContent';
+import { AgentChatProviderContent } from "@/ai/components/AgentChatProviderContent";
 
 export const AgentChatProvider = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => {
-  return <AgentChatProviderContent>{children}</AgentChatProviderContent>;
+	return <AgentChatProviderContent>{children}</AgentChatProviderContent>;
 };

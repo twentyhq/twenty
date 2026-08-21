@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
 export enum BillingPriceType {
-  ONE_TIME = 'ONE_TIME',
-  RECURRING = 'RECURRING',
+	ONE_TIME = "ONE_TIME",
+	RECURRING = "RECURRING",
 }

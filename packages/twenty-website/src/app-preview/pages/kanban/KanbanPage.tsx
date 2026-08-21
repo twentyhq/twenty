@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { KanbanLane } from './KanbanLane';
-import { type KanbanPageDefinition } from '../../types';
+import { KanbanLane } from "./KanbanLane";
+import { type KanbanPageDefinition } from "../../types";
 
 // The product's RECORD_BOARD_COLUMN_WIDTH.
 const KANBAN_LANE_WIDTH_PX = 200;
@@ -28,27 +28,27 @@ const BoardCanvas = styled.div<{ $laneCount: number }>`
   );
   min-height: 100%;
   min-width: ${({ $laneCount }) =>
-    `max(100%, ${$laneCount * KANBAN_LANE_WIDTH_PX + 16}px)`};
+		`max(100%, ${$laneCount * KANBAN_LANE_WIDTH_PX + 16}px)`};
   padding: 0 8px;
   width: 100%;
 `;
 
 export function KanbanPage({ page }: { page: KanbanPageDefinition }) {
-  return (
-    <BoardShell
-      aria-label={`Interactive preview of the ${page.header.title} board`}
-    >
-      <BoardCanvas $laneCount={page.lanes.length}>
-        {page.lanes.map((lane, index) => (
-          <KanbanLane
-            generating={page.generating}
-            index={index}
-            isLast={index === page.lanes.length - 1}
-            key={lane.id}
-            lane={lane}
-          />
-        ))}
-      </BoardCanvas>
-    </BoardShell>
-  );
+	return (
+		<BoardShell
+			aria-label={`Interactive preview of the ${page.header.title} board`}
+		>
+			<BoardCanvas $laneCount={page.lanes.length}>
+				{page.lanes.map((lane, index) => (
+					<KanbanLane
+						generating={page.generating}
+						index={index}
+						isLast={index === page.lanes.length - 1}
+						key={lane.id}
+						lane={lane}
+					/>
+				))}
+			</BoardCanvas>
+		</BoardShell>
+	);
 }

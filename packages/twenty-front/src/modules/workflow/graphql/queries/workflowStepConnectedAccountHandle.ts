@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE = gql`
   query WorkflowStepConnectedAccountHandle($connectedAccountId: UUID!) {

@@ -1,8 +1,8 @@
 import {
-  type CanActivate,
-  type ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+	type CanActivate,
+	type ExecutionContext,
+	Injectable,
+} from "@nestjs/common";
 
 // Guard that explicitly marks an endpoint as having custom permission logic
 // This guard always returns true and serves as documentation that the endpoint
@@ -17,7 +17,7 @@ import {
 // - Dynamic permission requirements (depends on object type, record ownership, etc.)
 @Injectable()
 export class CustomPermissionGuard implements CanActivate {
-  canActivate(_context: ExecutionContext): boolean {
-    return true;
-  }
+	canActivate(_context: ExecutionContext): boolean {
+		return true;
+	}
 }

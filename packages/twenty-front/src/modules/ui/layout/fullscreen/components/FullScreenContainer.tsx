@@ -1,18 +1,18 @@
-import { type JSX } from 'react';
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
+import { type JSX } from "react";
+import { PageHeader } from "@/ui/layout/page/components/PageHeader";
+import { PAGE_BAR_MIN_HEIGHT } from "@/ui/layout/page/constants/PageBarMinHeight";
 import {
-  Breadcrumb,
-  type BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { styled } from '@linaria/react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	Breadcrumb,
+	type BreadcrumbProps,
+} from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+import { styled } from "@linaria/react";
+import { useIsMobile } from "twenty-ui/utilities";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type FullScreenContainerProps = {
-  children: JSX.Element | JSX.Element[];
-  links: BreadcrumbProps['links'];
-  exitFullScreen(): void;
+	children: JSX.Element | JSX.Element[];
+	links: BreadcrumbProps["links"];
+	exitFullScreen(): void;
 };
 
 const StyledFullScreen = styled.div`
@@ -35,22 +35,22 @@ const StyledPageHeaderContainer = styled.div`
 `;
 
 export const FullScreenContainer = ({
-  children,
-  links,
-  exitFullScreen,
+	children,
+	links,
+	exitFullScreen,
 }: FullScreenContainerProps) => {
-  const isMobile = useIsMobile();
+	const isMobile = useIsMobile();
 
-  return (
-    <StyledFullScreen>
-      <StyledPageHeaderContainer>
-        <PageHeader
-          title={<Breadcrumb links={links} />}
-          hasClosePageButton={!isMobile}
-          onClosePage={exitFullScreen}
-        />
-      </StyledPageHeaderContainer>
-      <StyledMainContainer>{children}</StyledMainContainer>
-    </StyledFullScreen>
-  );
+	return (
+		<StyledFullScreen>
+			<StyledPageHeaderContainer>
+				<PageHeader
+					title={<Breadcrumb links={links} />}
+					hasClosePageButton={!isMobile}
+					onClosePage={exitFullScreen}
+				/>
+			</StyledPageHeaderContainer>
+			<StyledMainContainer>{children}</StyledMainContainer>
+		</StyledFullScreen>
+	);
 };

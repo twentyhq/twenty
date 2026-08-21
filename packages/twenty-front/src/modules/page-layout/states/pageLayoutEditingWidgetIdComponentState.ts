@@ -1,11 +1,11 @@
-import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
+import { createAtomComponentState } from "@/ui/utilities/state/jotai/utils/createAtomComponentState";
 
-import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
+import { PageLayoutComponentInstanceContext } from "./contexts/PageLayoutComponentInstanceContext";
 
 export const pageLayoutEditingWidgetIdComponentState = createAtomComponentState<
-  string | null
+	string | null
 >({
-  key: 'pageLayoutEditingWidgetIdComponentState',
-  defaultValue: null,
-  componentInstanceContext: PageLayoutComponentInstanceContext,
+	key: "pageLayoutEditingWidgetIdComponentState",
+	defaultValue: null,
+	componentInstanceContext: PageLayoutComponentInstanceContext,
 });

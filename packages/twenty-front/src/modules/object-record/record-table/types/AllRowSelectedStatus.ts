@@ -1,1 +1,1 @@
-export type AllRowsSelectedStatus = 'none' | 'some' | 'all';
+export type AllRowsSelectedStatus = "none" | "some" | "all";

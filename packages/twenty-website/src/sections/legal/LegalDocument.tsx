@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { Heading, SectionShell } from '@/ui';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { Heading, SectionShell } from "@/ui";
 
 const Column = styled.div`
   margin-inline: auto;
@@ -29,7 +29,7 @@ const Prose = styled.div`
 
   h2 {
     color: ${semanticColor.ink};
-    font-family: ${fontFamily('sans')};
+    font-family: ${fontFamily("sans")};
     font-size: ${fontSize(6)};
     font-weight: ${FONT_WEIGHT.medium};
     line-height: 1.3;
@@ -38,7 +38,7 @@ const Prose = styled.div`
 
   h3 {
     color: ${semanticColor.ink};
-    font-family: ${fontFamily('sans')};
+    font-family: ${fontFamily("sans")};
     font-size: ${fontSize(5)};
     font-weight: ${FONT_WEIGHT.medium};
     line-height: 1.35;
@@ -46,8 +46,8 @@ const Prose = styled.div`
   }
 
   p {
-    color: ${color('black-80')};
-    font-family: ${fontFamily('sans')};
+    color: ${color("black-80")};
+    font-family: ${fontFamily("sans")};
     font-size: ${fontSize(4)};
     line-height: 1.65;
     margin-top: ${spacing(4)};
@@ -55,8 +55,8 @@ const Prose = styled.div`
 
   ul,
   ol {
-    color: ${color('black-80')};
-    font-family: ${fontFamily('sans')};
+    color: ${color("black-80")};
+    font-family: ${fontFamily("sans")};
     font-size: ${fontSize(4)};
     line-height: 1.65;
     margin-top: ${spacing(4)};
@@ -81,27 +81,27 @@ const Prose = styled.div`
   }
 
   a {
-    color: ${color('blue')};
+    color: ${color("blue")};
     text-decoration: underline;
     text-underline-offset: 2px;
   }
 `;
 
 export function LegalDocument({
-  children,
-  title,
+	children,
+	title,
 }: {
-  children: ReactNode;
-  title: string;
+	children: ReactNode;
+	title: string;
 }) {
-  return (
-    <SectionShell rhythm="section" scheme="light">
-      <Column>
-        <Heading as="h1" size="lg" weight="light">
-          {title}
-        </Heading>
-        <Prose>{children}</Prose>
-      </Column>
-    </SectionShell>
-  );
+	return (
+		<SectionShell rhythm="section" scheme="light">
+			<Column>
+				<Heading as="h1" size="lg" weight="light">
+					{title}
+				</Heading>
+				<Prose>{children}</Prose>
+			</Column>
+		</SectionShell>
+	);
 }

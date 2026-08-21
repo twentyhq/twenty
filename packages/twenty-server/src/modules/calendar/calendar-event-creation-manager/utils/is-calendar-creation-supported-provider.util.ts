@@ -1,8 +1,8 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from "twenty-shared/types";
 
 export const isCalendarCreationSupportedProvider = (
-  provider: ConnectedAccountProvider,
+	provider: ConnectedAccountProvider,
 ): boolean =>
-  provider === ConnectedAccountProvider.GOOGLE ||
-  provider === ConnectedAccountProvider.MICROSOFT ||
-  provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV;
+	provider === ConnectedAccountProvider.GOOGLE ||
+	provider === ConnectedAccountProvider.MICROSOFT ||
+	provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV;

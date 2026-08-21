@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const agentChatLastDiffSyncedThreadState = createAtomState<
-  string | null
+	string | null
 >({
-  key: 'ai/agentChatLastDiffSyncedThreadState',
-  defaultValue: null,
+	key: "ai/agentChatLastDiffSyncedThreadState",
+	defaultValue: null,
 });

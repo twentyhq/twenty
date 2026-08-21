@@ -1,25 +1,25 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from "class-validator";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { ApplicationRegistrationSourceType } from "src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum";
 
-@ObjectType('ApplicationRegistrationSummary')
+@ObjectType("ApplicationRegistrationSummary")
 export class ApplicationRegistrationSummaryDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  latestAvailableVersion?: string;
+	@IsOptional()
+	@IsString()
+	@Field({ nullable: true })
+	latestAvailableVersion?: string;
 
-  @Field(() => ApplicationRegistrationSourceType)
-  sourceType: ApplicationRegistrationSourceType;
+	@Field(() => ApplicationRegistrationSourceType)
+	sourceType: ApplicationRegistrationSourceType;
 
-  @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  logoUrl?: string | null;
+	@IsOptional()
+	@IsString()
+	@Field(() => String, { nullable: true })
+	logoUrl?: string | null;
 }

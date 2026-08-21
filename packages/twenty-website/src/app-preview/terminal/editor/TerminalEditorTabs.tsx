@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { IconX } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconX } from "@tabler/icons-react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { type EditorFile } from './editor-types';
+import { type EditorFile } from "./editor-types";
 
 const editor = APP_PREVIEW_TONES.editor;
 
@@ -25,7 +25,7 @@ const TabBar = styled.div`
 const Tab = styled.div<{ $active?: boolean }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? editor.surface.activeTab : 'transparent'};
+		$active ? editor.surface.activeTab : "transparent"};
   border-right: 1px solid ${editor.surface.tabBarBorder};
   cursor: pointer;
   display: flex;
@@ -38,7 +38,7 @@ const Tab = styled.div<{ $active?: boolean }>`
 
   &::before {
     background: ${({ $active }) =>
-      $active ? editor.surface.activeTabAccent : 'transparent'};
+			$active ? editor.surface.activeTabAccent : "transparent"};
     content: '';
     height: 1px;
     left: 0;
@@ -49,7 +49,7 @@ const Tab = styled.div<{ $active?: boolean }>`
 
   &:hover {
     background: ${({ $active }) =>
-      $active ? editor.surface.activeTab : editor.surface.tabHover};
+			$active ? editor.surface.activeTab : editor.surface.tabHover};
   }
 `;
 
@@ -81,41 +81,41 @@ const TabClose = styled.span`
 `;
 
 export function TerminalEditorTabs({
-  activeFileId,
-  files,
-  onCloseFile,
-  onSelectFile,
+	activeFileId,
+	files,
+	onCloseFile,
+	onSelectFile,
 }: {
-  activeFileId: string;
-  files: ReadonlyArray<EditorFile>;
-  onCloseFile: (fileId: string) => void;
-  onSelectFile: (fileId: string) => void;
+	activeFileId: string;
+	files: ReadonlyArray<EditorFile>;
+	onCloseFile: (fileId: string) => void;
+	onSelectFile: (fileId: string) => void;
 }) {
-  return (
-    <TabBar>
-      {files.map((file) => {
-        const isActive = file.id === activeFileId;
+	return (
+		<TabBar>
+			{files.map((file) => {
+				const isActive = file.id === activeFileId;
 
-        return (
-          <Tab
-            key={file.id}
-            $active={isActive}
-            onClick={() => onSelectFile(file.id)}
-          >
-            <TabFileIcon>TS</TabFileIcon>
-            <TabTitle $active={isActive}>{file.name}</TabTitle>
-            <TabClose
-              aria-hidden
-              onClick={(event) => {
-                event.stopPropagation();
-                onCloseFile(file.id);
-              }}
-            >
-              <IconX size={12} stroke={1.8} />
-            </TabClose>
-          </Tab>
-        );
-      })}
-    </TabBar>
-  );
+				return (
+					<Tab
+						key={file.id}
+						$active={isActive}
+						onClick={() => onSelectFile(file.id)}
+					>
+						<TabFileIcon>TS</TabFileIcon>
+						<TabTitle $active={isActive}>{file.name}</TabTitle>
+						<TabClose
+							aria-hidden
+							onClick={(event) => {
+								event.stopPropagation();
+								onCloseFile(file.id);
+							}}
+						>
+							<IconX size={12} stroke={1.8} />
+						</TabClose>
+					</Tab>
+				);
+			})}
+		</TabBar>
+	);
 }

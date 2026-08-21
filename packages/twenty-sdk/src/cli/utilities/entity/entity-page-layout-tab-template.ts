@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export const getPageLayoutTabBaseFile = ({ name }: { name: string }) => {
-  return `import { definePageLayoutTab, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+	return `import { definePageLayoutTab, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 export default definePageLayoutTab({
   universalIdentifier: '${uuidv4()}',

@@ -1,1 +1,1 @@
-export type ProductStepperVisualKey = 'dataModel' | 'layout' | 'workflow';
+export type ProductStepperVisualKey = "dataModel" | "layout" | "workflow";

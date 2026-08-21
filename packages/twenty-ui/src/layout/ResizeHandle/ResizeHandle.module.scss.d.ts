@@ -1,5 +1,5 @@
 declare const classNames: {
-  readonly area: 'area';
-  readonly bar: 'bar';
+	readonly area: "area";
+	readonly bar: "bar";
 };
 export default classNames;

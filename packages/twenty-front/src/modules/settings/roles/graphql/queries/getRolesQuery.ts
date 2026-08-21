@@ -1,13 +1,13 @@
-import { AGENT_FRAGMENT } from '@/ai/graphql/fragments/agentFragment';
-import { API_KEY_FOR_ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/apiKeyForRoleFragment';
-import { FIELD_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/fieldPermissionFragment';
-import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
-import { ROLE_PERMISSION_FLAG_FRAGMENT } from '@/settings/roles/graphql/fragments/rolePermissionFlagFragment';
-import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
-import { ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT } from '@/settings/roles/graphql/fragments/rowLevelPermissionPredicateFragment';
-import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT } from '@/settings/roles/graphql/fragments/rowLevelPermissionPredicateGroupFragment';
-import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
-import { gql } from '@apollo/client';
+import { AGENT_FRAGMENT } from "@/ai/graphql/fragments/agentFragment";
+import { API_KEY_FOR_ROLE_FRAGMENT } from "@/settings/roles/graphql/fragments/apiKeyForRoleFragment";
+import { FIELD_PERMISSION_FRAGMENT } from "@/settings/roles/graphql/fragments/fieldPermissionFragment";
+import { OBJECT_PERMISSION_FRAGMENT } from "@/settings/roles/graphql/fragments/objectPermissionFragment";
+import { ROLE_PERMISSION_FLAG_FRAGMENT } from "@/settings/roles/graphql/fragments/rolePermissionFlagFragment";
+import { ROLE_FRAGMENT } from "@/settings/roles/graphql/fragments/roleFragment";
+import { ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT } from "@/settings/roles/graphql/fragments/rowLevelPermissionPredicateFragment";
+import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT } from "@/settings/roles/graphql/fragments/rowLevelPermissionPredicateGroupFragment";
+import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from "@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment";
+import { gql } from "@apollo/client";
 
 export const GET_ROLES = gql`
   ${PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT}

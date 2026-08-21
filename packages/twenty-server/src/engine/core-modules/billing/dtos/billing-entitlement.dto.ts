@@ -1,18 +1,18 @@
 /* @license Enterprise */
 
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from "src/engine/core-modules/billing/enums/billing-entitlement-key.enum";
 
 registerEnumType(BillingEntitlementKey, {
-  name: 'BillingEntitlementKey',
+	name: "BillingEntitlementKey",
 });
 
-@ObjectType('BillingEntitlement')
+@ObjectType("BillingEntitlement")
 export class BillingEntitlementDTO {
-  @Field(() => BillingEntitlementKey)
-  key: BillingEntitlementKey;
+	@Field(() => BillingEntitlementKey)
+	key: BillingEntitlementKey;
 
-  @Field(() => Boolean)
-  value: boolean;
+	@Field(() => Boolean)
+	value: boolean;
 }

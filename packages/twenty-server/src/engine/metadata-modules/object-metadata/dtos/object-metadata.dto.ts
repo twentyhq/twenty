@@ -1,102 +1,102 @@
 import {
-  Field,
-  HideField,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+	Field,
+	HideField,
+	ObjectType,
+	registerEnumType,
+} from "@nestjs/graphql";
 
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { ObjectOpenRecordIn } from "twenty-shared/types";
 
-import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
+import { type WorkspaceEntityDuplicateCriteria } from "src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type";
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { type ObjectMetadataOverrides } from "src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type";
 
-registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
+registerEnumType(ObjectOpenRecordIn, { name: "ObjectOpenRecordIn" });
 
-@ObjectType('Object')
+@ObjectType("Object")
 export class ObjectMetadataDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field()
-  universalIdentifier: string;
+	@Field()
+	universalIdentifier: string;
 
-  @Field()
-  nameSingular: string;
+	@Field()
+	nameSingular: string;
 
-  @Field()
-  namePlural: string;
+	@Field()
+	namePlural: string;
 
-  @Field()
-  labelSingular: string;
+	@Field()
+	labelSingular: string;
 
-  @Field()
-  labelPlural: string;
+	@Field()
+	labelPlural: string;
 
-  @Field({ nullable: true })
-  description?: string;
+	@Field({ nullable: true })
+	description?: string;
 
-  @Field({ nullable: true })
-  icon?: string;
+	@Field({ nullable: true })
+	icon?: string;
 
-  @HideField()
-  overrides?: ObjectMetadataOverrides | null;
+	@HideField()
+	overrides?: ObjectMetadataOverrides | null;
 
-  @Field({ nullable: true })
-  shortcut?: string;
+	@Field({ nullable: true })
+	shortcut?: string;
 
-  @Field({ nullable: true })
-  color?: string;
+	@Field({ nullable: true })
+	color?: string;
 
-  @Field()
-  isRemote: boolean;
+	@Field()
+	isRemote: boolean;
 
-  @Field()
-  isActive: boolean;
+	@Field()
+	isActive: boolean;
 
-  @Field()
-  isSystem: boolean;
+	@Field()
+	isSystem: boolean;
 
-  @Field()
-  isUIEditable: boolean;
+	@Field()
+	isUIEditable: boolean;
 
-  @Field()
-  isUICreatable: boolean;
+	@Field()
+	isUICreatable: boolean;
 
-  // Deprecated alias kept for one release: stays exposed (and filterable via
-  // ObjectFilter) so external API consumers are not broken.
-  @Field({
-    deprecationReason: 'Use isUIEditable',
-  })
-  isUIReadOnly: boolean;
+	// Deprecated alias kept for one release: stays exposed (and filterable via
+	// ObjectFilter) so external API consumers are not broken.
+	@Field({
+		deprecationReason: "Use isUIEditable",
+	})
+	isUIReadOnly: boolean;
 
-  @Field()
-  isSearchable: boolean;
+	@Field()
+	isSearchable: boolean;
 
-  @Field(() => ObjectOpenRecordIn)
-  openRecordIn: ObjectOpenRecordIn;
+	@Field(() => ObjectOpenRecordIn)
+	openRecordIn: ObjectOpenRecordIn;
 
-  @HideField()
-  workspaceId: string;
+	@HideField()
+	workspaceId: string;
 
-  @Field(() => UUIDScalarType)
-  applicationId: string;
+	@Field(() => UUIDScalarType)
+	applicationId: string;
 
-  @Field()
-  createdAt: Date;
+	@Field()
+	createdAt: Date;
 
-  @Field()
-  updatedAt: Date;
+	@Field()
+	updatedAt: Date;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  labelIdentifierFieldMetadataId?: string | null;
+	@Field(() => UUIDScalarType, { nullable: true })
+	labelIdentifierFieldMetadataId?: string | null;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  imageIdentifierFieldMetadataId?: string | null;
+	@Field(() => UUIDScalarType, { nullable: true })
+	imageIdentifierFieldMetadataId?: string | null;
 
-  @Field()
-  isLabelSyncedWithName: boolean;
+	@Field()
+	isLabelSyncedWithName: boolean;
 
-  @Field(() => [[String]], { nullable: true })
-  duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
+	@Field(() => [[String]], { nullable: true })
+	duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
 }

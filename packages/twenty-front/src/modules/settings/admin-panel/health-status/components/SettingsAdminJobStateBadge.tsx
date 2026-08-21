@@ -1,21 +1,21 @@
-import { styled } from '@linaria/react';
-import { Tag, type TagColor } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { JobState } from '~/generated-admin/graphql';
+import { styled } from "@linaria/react";
+import { Tag, type TagColor } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { JobState } from "~/generated-admin/graphql";
 
 type SettingsAdminJobStateBadgeProps = {
-  state: JobState;
-  attemptsMade?: number;
+	state: JobState;
+	attemptsMade?: number;
 };
 
 const JOB_STATE_COLORS: Record<JobState, TagColor> = {
-  [JobState.COMPLETED]: 'green',
-  [JobState.FAILED]: 'red',
-  [JobState.ACTIVE]: 'blue',
-  [JobState.WAITING]: 'gray',
-  [JobState.DELAYED]: 'orange',
-  [JobState.PRIORITIZED]: 'blue',
-  [JobState.WAITING_CHILDREN]: 'gray',
+	[JobState.COMPLETED]: "green",
+	[JobState.FAILED]: "red",
+	[JobState.ACTIVE]: "blue",
+	[JobState.WAITING]: "gray",
+	[JobState.DELAYED]: "orange",
+	[JobState.PRIORITIZED]: "blue",
+	[JobState.WAITING_CHILDREN]: "gray",
 };
 
 const StyledContainer = styled.div`
@@ -31,23 +31,23 @@ const StyledAttemptBadge = styled.span`
   color: ${themeCssVariables.font.color.danger};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.medium};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing["0.5"]} ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 `;
 
 export const SettingsAdminJobStateBadge = ({
-  state,
-  attemptsMade = 1,
+	state,
+	attemptsMade = 1,
 }: SettingsAdminJobStateBadgeProps) => {
-  const color = JOB_STATE_COLORS[state] || 'gray';
-  const showAttempts = attemptsMade > 1;
+	const color = JOB_STATE_COLORS[state] || "gray";
+	const showAttempts = attemptsMade > 1;
 
-  return (
-    <StyledContainer>
-      <Tag color={color} text={state} />
-      {showAttempts && (
-        <StyledAttemptBadge>{attemptsMade} attempts</StyledAttemptBadge>
-      )}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<Tag color={color} text={state} />
+			{showAttempts && (
+				<StyledAttemptBadge>{attemptsMade} attempts</StyledAttemptBadge>
+			)}
+		</StyledContainer>
+	);
 };

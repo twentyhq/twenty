@@ -1,4 +1,4 @@
 export type ImpersonationAuthorizationUser = {
-  canImpersonate: boolean;
-  canAccessFullAdminPanel: boolean;
+	canImpersonate: boolean;
+	canAccessFullAdminPanel: boolean;
 };

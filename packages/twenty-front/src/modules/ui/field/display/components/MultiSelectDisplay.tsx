@@ -1,8 +1,8 @@
-import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isDefined } from 'twenty-shared/utils';
-import { styled } from '@linaria/react';
-import { Tag } from 'twenty-ui/data-display';
-import { type SelectOption } from 'twenty-ui/input';
+import { type FieldMultiSelectValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { isDefined } from "twenty-shared/utils";
+import { styled } from "@linaria/react";
+import { Tag } from "twenty-ui/data-display";
+import { type SelectOption } from "twenty-ui/input";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -18,29 +18,29 @@ const StyledContainer = styled.div`
 `;
 
 export const MultiSelectDisplay = ({
-  values,
-  options,
+	values,
+	options,
 }: {
-  values: FieldMultiSelectValue | undefined;
-  options: SelectOption[];
+	values: FieldMultiSelectValue | undefined;
+	options: SelectOption[];
 }) => {
-  const selectedOptions = values
-    ? options?.filter((option) => values.includes(option.value))
-    : [];
+	const selectedOptions = values
+		? options?.filter((option) => values.includes(option.value))
+		: [];
 
-  if (!isDefined(selectedOptions)) return null;
+	if (!isDefined(selectedOptions)) return null;
 
-  return (
-    <StyledContainer>
-      {selectedOptions.map((selectedOption, index) => (
-        <Tag
-          preventShrink
-          key={index}
-          color={selectedOption.color ?? 'transparent'}
-          text={selectedOption.label}
-          Icon={selectedOption.Icon ?? undefined}
-        />
-      ))}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			{selectedOptions.map((selectedOption, index) => (
+				<Tag
+					preventShrink
+					key={index}
+					color={selectedOption.color ?? "transparent"}
+					text={selectedOption.label}
+					Icon={selectedOption.Icon ?? undefined}
+				/>
+			))}
+		</StyledContainer>
+	);
 };

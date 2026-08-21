@@ -1,7 +1,7 @@
 export const buildAlphabeticalRankByKey = (
-  keys: string[],
+	keys: string[],
 ): Map<string, number> => {
-  const uniqueSortedKeys = [...new Set(keys)].sort();
+	const uniqueSortedKeys = [...new Set(keys)].sort();
 
-  return new Map(uniqueSortedKeys.map((key, rank) => [key, rank]));
+	return new Map(uniqueSortedKeys.map((key, rank) => [key, rank]));
 };

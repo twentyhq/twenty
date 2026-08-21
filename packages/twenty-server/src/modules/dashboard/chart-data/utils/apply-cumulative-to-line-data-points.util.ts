@@ -1,20 +1,20 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export const applyCumulativeToLineDataPoints = <
-  TDataPoint extends { y: number | null },
+	TDataPoint extends { y: number | null },
 >(
-  dataPoints: TDataPoint[],
+	dataPoints: TDataPoint[],
 ): TDataPoint[] => {
-  const result: TDataPoint[] = [];
-  let runningTotal = 0;
+	const result: TDataPoint[] = [];
+	let runningTotal = 0;
 
-  for (const dataPoint of dataPoints) {
-    if (isDefined(dataPoint.y)) {
-      runningTotal += dataPoint.y;
-    }
+	for (const dataPoint of dataPoints) {
+		if (isDefined(dataPoint.y)) {
+			runningTotal += dataPoint.y;
+		}
 
-    result.push({ ...dataPoint, y: runningTotal });
-  }
+		result.push({ ...dataPoint, y: runningTotal });
+	}
 
-  return result;
+	return result;
 };

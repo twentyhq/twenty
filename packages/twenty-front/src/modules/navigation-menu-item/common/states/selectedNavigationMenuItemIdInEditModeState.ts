@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const selectedNavigationMenuItemIdInEditModeState = createAtomState<
-  string | null
+	string | null
 >({
-  key: 'selectedNavigationMenuItemIdInEditModeState',
-  defaultValue: null,
+	key: "selectedNavigationMenuItemIdInEditModeState",
+	defaultValue: null,
 });

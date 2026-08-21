@@ -1,3 +1,3 @@
 export type RelationUpdatePayload = {
-  targetObjectMetadataId: string;
+	targetObjectMetadataId: string;
 };

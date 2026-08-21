@@ -1,20 +1,20 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { ExternalLink } from '@/ui';
+import { ExternalLink } from "@/ui";
 import {
-  color,
-  EASING,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  MODAL_SURFACE,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  SHADOW,
-  spacing,
-  Z_INDEX,
-} from '@/tokens';
+	color,
+	EASING,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	MODAL_SURFACE,
+	radius,
+	REDUCED_MOTION,
+	semanticColor,
+	SHADOW,
+	spacing,
+	Z_INDEX,
+} from "@/tokens";
 
 const ModalRoot = styled.div`
   display: grid;
@@ -24,7 +24,7 @@ const ModalRoot = styled.div`
   position: fixed;
   z-index: ${Z_INDEX.modal};
 
-  ${mediaUp('sm')} {
+  ${mediaUp("sm")} {
     padding: ${spacing(6)};
   }
 `;
@@ -58,7 +58,7 @@ const ModalHeader = styled.div`
   flex-shrink: 0;
   padding: ${spacing(5.5)} ${spacing(6)} ${spacing(4)};
 
-  ${mediaUp('sm')} {
+  ${mediaUp("sm")} {
     padding: ${spacing(7)} ${spacing(7.5)} ${spacing(4)};
   }
 `;
@@ -102,7 +102,7 @@ const CloseButton = styled.button`
 const ModalClient = styled.span`
   color: ${semanticColor.inkMuted};
   display: block;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(2.75)};
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -122,7 +122,7 @@ const ModalBody = styled.div`
   overscroll-behavior: contain;
   padding: ${spacing(5)} ${spacing(6)};
 
-  ${mediaUp('sm')} {
+  ${mediaUp("sm")} {
     padding: ${spacing(5.5)} ${spacing(7.5)};
   }
 `;
@@ -170,7 +170,7 @@ const ModalDesc = styled.div`
   }
 
   & ul li::before {
-    background: ${color('blue')};
+    background: ${color("blue")};
     border-radius: 50%;
     content: '';
     height: 5px;
@@ -181,7 +181,7 @@ const ModalDesc = styled.div`
   }
 
   & a {
-    color: ${color('blue')};
+    color: ${color("blue")};
     text-decoration: underline;
     text-underline-offset: 2px;
   }
@@ -195,15 +195,15 @@ const ModalFoot = styled.div`
   gap: ${spacing(4)};
   padding: ${spacing(4.5)} ${spacing(6)};
 
-  ${mediaUp('sm')} {
+  ${mediaUp("sm")} {
     padding: ${spacing(4.5)} ${spacing(7.5)};
   }
 `;
 
 const ModalLink = styled(ExternalLink)`
-  color: ${color('blue')};
+  color: ${color("blue")};
   display: inline-flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   gap: ${spacing(1.75)};
   letter-spacing: 0.04em;
@@ -222,7 +222,7 @@ const NavButton = styled.button`
   border-radius: ${radius(1.5)};
   color: ${semanticColor.ink};
   cursor: pointer;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.25)};
   font-weight: 600;
   padding: ${spacing(2.25)} ${spacing(4)};
@@ -236,25 +236,25 @@ const NavButton = styled.button`
 const NavButtonPrimary = styled(NavButton)`
   background: ${semanticColor.ink};
   border-color: ${semanticColor.ink};
-  color: ${color('white')};
+  color: ${color("white")};
 `;
 
 export const caseStudyModalStyles = {
-  CloseButton,
-  ModalBody,
-  ModalClient,
-  ModalDesc,
-  ModalFoot,
-  ModalHeader,
-  ModalHeaderCopy,
-  ModalHeaderIntro,
-  ModalLink,
-  ModalNav,
-  ModalPanel,
-  ModalRoot,
-  ModalScrim,
-  ModalTitle,
-  ModalVisualSlot,
-  NavButton,
-  NavButtonPrimary,
+	CloseButton,
+	ModalBody,
+	ModalClient,
+	ModalDesc,
+	ModalFoot,
+	ModalHeader,
+	ModalHeaderCopy,
+	ModalHeaderIntro,
+	ModalLink,
+	ModalNav,
+	ModalPanel,
+	ModalRoot,
+	ModalScrim,
+	ModalTitle,
+	ModalVisualSlot,
+	NavButton,
+	NavButtonPrimary,
 };

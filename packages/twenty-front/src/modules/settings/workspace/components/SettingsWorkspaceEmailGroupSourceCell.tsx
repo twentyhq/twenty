@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type MessageChannel } from "@/accounts/types/MessageChannel";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -13,17 +13,17 @@ const StyledNameCell = styled.div`
 `;
 
 type SettingsWorkspaceEmailGroupSourceCellProps = {
-  item: MessageChannel;
+	item: MessageChannel;
 };
 
 export const SettingsWorkspaceEmailGroupSourceCell = ({
-  item,
+	item,
 }: SettingsWorkspaceEmailGroupSourceCellProps) => {
-  const sourceHandle = item.connectedAccount?.handle;
+	const sourceHandle = item.connectedAccount?.handle;
 
-  return (
-    <StyledNameCell>
-      <OverflowingTextWithTooltip text={sourceHandle ?? '—'} />
-    </StyledNameCell>
-  );
+	return (
+		<StyledNameCell>
+			<OverflowingTextWithTooltip text={sourceHandle ?? "—"} />
+		</StyledNameCell>
+	);
 };

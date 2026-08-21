@@ -1,13 +1,13 @@
-import { RuleTester } from 'oxlint/plugins-dev';
+import { RuleTester } from "oxlint/plugins-dev";
 
-import { rule, RULE_NAME } from './no-direct-atom-family-in-selector';
+import { rule, RULE_NAME } from "./no-direct-atom-family-in-selector";
 
 const ruleTester = new RuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    {
-      code: `
+	valid: [
+		{
+			code: `
         const mySelector = createAtomComponentSelector({
           key: 'mySelector',
           get: ({ instanceId }) => ({ get }) => {
@@ -17,9 +17,9 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-    },
-    {
-      code: `
+		},
+		{
+			code: `
         const mySelector = createAtomComponentFamilySelector({
           key: 'mySelector',
           get: ({ instanceId, familyKey }) => ({ get }) => {
@@ -29,16 +29,16 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-    },
-    {
-      code: `
+		},
+		{
+			code: `
         const atom = someState.atomFamily({ instanceId: 'test' });
       `,
-    },
-  ],
-  invalid: [
-    {
-      code: `
+		},
+	],
+	invalid: [
+		{
+			code: `
         const mySelector = createAtomComponentSelector({
           key: 'mySelector',
           get: ({ instanceId }) => ({ get }) => {
@@ -48,10 +48,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [{ messageId: 'noDirectAtomFamilyInSelector' }],
-    },
-    {
-      code: `
+			errors: [{ messageId: "noDirectAtomFamilyInSelector" }],
+		},
+		{
+			code: `
         const mySelector = createAtomComponentFamilySelector({
           key: 'mySelector',
           get: ({ instanceId, familyKey }) => ({ get }) => {
@@ -61,10 +61,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [{ messageId: 'noDirectAtomFamilyInSelector' }],
-    },
-    {
-      code: `
+			errors: [{ messageId: "noDirectAtomFamilyInSelector" }],
+		},
+		{
+			code: `
         const mySelector = createAtomComponentFamilySelector({
           key: 'mySelector',
           get: ({ instanceId, familyKey }) => ({ get }) => {
@@ -75,10 +75,10 @@ ruleTester.run(RULE_NAME, rule, {
           componentInstanceContext: MyContext,
         });
       `,
-      errors: [
-        { messageId: 'noDirectAtomFamilyInSelector' },
-        { messageId: 'noDirectAtomFamilyInSelector' },
-      ],
-    },
-  ],
+			errors: [
+				{ messageId: "noDirectAtomFamilyInSelector" },
+				{ messageId: "noDirectAtomFamilyInSelector" },
+			],
+		},
+	],
 });

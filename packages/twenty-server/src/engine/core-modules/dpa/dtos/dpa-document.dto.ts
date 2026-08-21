@@ -1,31 +1,31 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { DpaDocumentBlockDTO } from 'src/engine/core-modules/dpa/dtos/dpa-document-block.dto';
-import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
+import { DpaDocumentBlockDTO } from "src/engine/core-modules/dpa/dtos/dpa-document-block.dto";
+import { DpaRegion } from "src/engine/core-modules/dpa/enums/dpa-region.enum";
 
-@ObjectType('DpaDocument')
+@ObjectType("DpaDocument")
 export class DpaDocumentDTO {
-  @Field()
-  title: string;
+	@Field()
+	title: string;
 
-  @Field()
-  lastUpdatedLabel: string;
+	@Field()
+	lastUpdatedLabel: string;
 
-  @Field()
-  templateVersion: string;
+	@Field()
+	templateVersion: string;
 
-  @Field(() => DpaRegion)
-  region: DpaRegion;
+	@Field(() => DpaRegion)
+	region: DpaRegion;
 
-  @Field()
-  processorEntity: string;
+	@Field()
+	processorEntity: string;
 
-  @Field()
-  sccSectionActive: boolean;
+	@Field()
+	sccSectionActive: boolean;
 
-  @Field({ nullable: true })
-  notice?: string;
+	@Field({ nullable: true })
+	notice?: string;
 
-  @Field(() => [DpaDocumentBlockDTO])
-  blocks: DpaDocumentBlockDTO[];
+	@Field(() => [DpaDocumentBlockDTO])
+	blocks: DpaDocumentBlockDTO[];
 }

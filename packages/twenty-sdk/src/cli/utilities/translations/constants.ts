@@ -1,1 +1,1 @@
-export const LOCALES_DIR = 'locales';
+export const LOCALES_DIR = "locales";

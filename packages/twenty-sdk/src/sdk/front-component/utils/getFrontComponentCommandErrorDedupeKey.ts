@@ -1,3 +1,3 @@
 export const getFrontComponentCommandErrorDedupeKey = (
-  frontComponentId: string,
+	frontComponentId: string,
 ): string => `${frontComponentId}-command-error`;

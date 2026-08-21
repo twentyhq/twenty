@@ -1,15 +1,15 @@
-import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
+import { usePreviewRecord } from "@/settings/data-model/fields/preview/hooks/usePreviewRecord";
 
 type UseRelationFieldPreviewParams = {
-  relationObjectNameSingular: string;
-  skip?: boolean;
+	relationObjectNameSingular: string;
+	skip?: boolean;
 };
 
 export const useRelationFieldPreviewValue = ({
-  relationObjectNameSingular,
-  skip,
+	relationObjectNameSingular,
+	skip,
 }: UseRelationFieldPreviewParams) =>
-  usePreviewRecord({
-    objectNameSingular: relationObjectNameSingular,
-    skip,
-  });
+	usePreviewRecord({
+		objectNameSingular: relationObjectNameSingular,
+		skip,
+	});

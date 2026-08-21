@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const FIND_ONE_FRONT_COMPONENT = gql`
   query FindOneFrontComponent($id: UUID!) {

@@ -1,2 +1,2 @@
 export const getStuckRunningRunsMonitorCacheKey = (workspaceId: string) =>
-  `workflow-stuck-running-runs-monitor:${workspaceId}`;
+	`workflow-stuck-running-runs-monitor:${workspaceId}`;

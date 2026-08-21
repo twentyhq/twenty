@@ -1,4 +1,4 @@
 export type SdkClientUrls = {
-  core: string;
-  metadata: string;
+	core: string;
+	metadata: string;
 };

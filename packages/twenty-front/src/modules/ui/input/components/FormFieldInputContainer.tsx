@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { Field } from 'twenty-ui/input';
+import { styled } from "@linaria/react";
+import { Field } from "twenty-ui/input";
 
 const StyledFormFieldInputContainer = styled(Field.Root)`
   display: flex;

@@ -1,12 +1,12 @@
-import { createRequiredContext } from '~/utils/createRequiredContext';
+import { createRequiredContext } from "~/utils/createRequiredContext";
 
 export type RecordFieldsScopeContextValue = {
-  scopeInstanceId: string;
+	scopeInstanceId: string;
 };
 
 export const [
-  RecordFieldsScopeContextProvider,
-  useRecordFieldsScopeContextOrThrow,
+	RecordFieldsScopeContextProvider,
+	useRecordFieldsScopeContextOrThrow,
 ] = createRequiredContext<RecordFieldsScopeContextValue>(
-  'RecordFieldsScopeContext',
+	"RecordFieldsScopeContext",
 );

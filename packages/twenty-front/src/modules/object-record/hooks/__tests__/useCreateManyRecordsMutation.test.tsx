@@ -1,9 +1,9 @@
-import { renderHook } from '@testing-library/react';
-import { print } from 'graphql';
+import { renderHook } from "@testing-library/react";
+import { print } from "graphql";
 
-import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
-import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from "@/object-record/hooks/__mocks__/personFragments";
+import { useCreateManyRecordsMutation } from "@/object-record/hooks/useCreateManyRecordsMutation";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const expectedQueryTemplate = `
   mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
@@ -11,35 +11,35 @@ const expectedQueryTemplate = `
       ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
     }
   }
-`.replace(/\s/g, '');
+`.replace(/\s/g, "");
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useCreateManyRecordsMutation', () => {
-  it('should return a valid createManyRecordsMutation', () => {
-    const objectNameSingular = 'person';
+describe("useCreateManyRecordsMutation", () => {
+	it("should return a valid createManyRecordsMutation", () => {
+		const objectNameSingular = "person";
 
-    const { result } = renderHook(
-      () =>
-        useCreateManyRecordsMutation({
-          objectNameSingular,
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+		const { result } = renderHook(
+			() =>
+				useCreateManyRecordsMutation({
+					objectNameSingular,
+				}),
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    const { createManyRecordsMutation } = result.current;
+		const { createManyRecordsMutation } = result.current;
 
-    expect(createManyRecordsMutation).toBeDefined();
+		expect(createManyRecordsMutation).toBeDefined();
 
-    const printedReceivedQuery = print(createManyRecordsMutation).replace(
-      /\s/g,
-      '',
-    );
+		const printedReceivedQuery = print(createManyRecordsMutation).replace(
+			/\s/g,
+			"",
+		);
 
-    expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
-  });
+		expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+	});
 });

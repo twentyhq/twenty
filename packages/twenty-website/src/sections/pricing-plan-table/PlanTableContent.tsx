@@ -1,34 +1,34 @@
-'use client';
+"use client";
 
-import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { useMemo, useState } from 'react';
+import { type MessageDescriptor } from "@lingui/core";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { useMemo, useState } from "react";
 
-import { INFORMATIVE_MARKS } from '@/icons';
-import { getMessageDescriptorSource } from '@/platform/i18n/get-message-descriptor-source';
-import { usePricingState } from '@/pricing-state';
+import { INFORMATIVE_MARKS } from "@/icons";
+import { getMessageDescriptorSource } from "@/platform/i18n/get-message-descriptor-source";
+import { usePricingState } from "@/pricing-state";
 import {
-  color,
-  EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  semanticColor,
-  spacing,
-} from '@/tokens';
-import { Button } from '@/ui';
+	color,
+	EASING,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	semanticColor,
+	spacing,
+} from "@/tokens";
+import { Button } from "@/ui";
 
-import { PLAN_TABLE_DATA } from './plan-table-data';
+import { PLAN_TABLE_DATA } from "./plan-table-data";
 import {
-  type PlanTableBodyRowDataType,
-  type PlanTableCellType,
-  type PlanTableFeatureRowDataType,
-  type PlanTableTierColumnType,
-  type PlanTableTierId,
-} from './plan-table-types';
-import { resolveVisibleRows } from './plan-table-visible-rows';
+	type PlanTableBodyRowDataType,
+	type PlanTableCellType,
+	type PlanTableFeatureRowDataType,
+	type PlanTableTierColumnType,
+	type PlanTableTierId,
+} from "./plan-table-types";
+import { resolveVisibleRows } from "./plan-table-visible-rows";
 
 const CheckMark = INFORMATIVE_MARKS.check;
 
@@ -48,7 +48,7 @@ const GridRow = styled.div`
 
 const HeadCell = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(5.5)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: ${spacing(7)};
@@ -62,7 +62,7 @@ const HeadCell = styled.div`
 const FeatureLabel = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   line-height: ${spacing(8)};
   min-height: ${spacing(16)};
@@ -74,7 +74,7 @@ const TierCell = styled.div`
   border-left: 1px solid ${semanticColor.line};
   display: flex;
   flex-direction: column;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   justify-content: center;
   line-height: ${spacing(5.5)};
@@ -95,14 +95,14 @@ const YesRow = styled.div`
 
 const CategoryBand = styled.div`
   align-items: center;
-  background-color: ${color('white-10')};
+  background-color: ${color("white-10")};
   display: flex;
   min-height: ${spacing(16)};
   padding: ${spacing(2)} ${spacing(4)};
 `;
 
 const CategoryTitle = styled.span`
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(5.5)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: ${spacing(7)};
@@ -138,154 +138,154 @@ const CtaRow = styled.div`
 // Enterprise inherits the Organization cell unless a row overrides it: the
 // tier is a superset, so unmarked rows read as "same as Organization".
 function resolveCell(
-  row: PlanTableFeatureRowDataType,
-  columnId: PlanTableTierId,
+	row: PlanTableFeatureRowDataType,
+	columnId: PlanTableTierId,
 ): PlanTableCellType {
-  return (
-    row.tiers[columnId] ??
-    (columnId === 'enterprise' ? row.tiers.organization : undefined) ?? {
-      kind: 'dash',
-    }
-  );
+	return (
+		row.tiers[columnId] ??
+		(columnId === "enterprise" ? row.tiers.organization : undefined) ?? {
+			kind: "dash",
+		}
+	);
 }
 
 function CellValue({ cell }: { cell: PlanTableCellType }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  if (cell.kind === 'dash') {
-    return <TierText>{i18n._(msg`No`)}</TierText>;
-  }
+	if (cell.kind === "dash") {
+		return <TierText>{i18n._(msg`No`)}</TierText>;
+	}
 
-  if (cell.kind === 'text') {
-    return <TierText>{i18n._(cell.text)}</TierText>;
-  }
+	if (cell.kind === "text") {
+		return <TierText>{i18n._(cell.text)}</TierText>;
+	}
 
-  return (
-    <YesRow>
-      <CheckMark color={color('blue')} sizePx={16} />
-      <TierText>{i18n._(cell.label ?? msg`Yes`)}</TierText>
-    </YesRow>
-  );
+	return (
+		<YesRow>
+			<CheckMark color={color("blue")} sizePx={16} />
+			<TierText>{i18n._(cell.label ?? msg`Yes`)}</TierText>
+		</YesRow>
+	);
 }
 
 function FeatureRow({
-  row,
-  tierColumns,
+	row,
+	tierColumns,
 }: {
-  row: PlanTableFeatureRowDataType;
-  tierColumns: PlanTableTierColumnType[];
+	row: PlanTableFeatureRowDataType;
+	tierColumns: PlanTableTierColumnType[];
 }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <GridRow>
-      <FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
-      {tierColumns.map((column) => (
-        <TierCell key={column.id}>
-          <CellValue cell={resolveCell(row, column.id)} />
-        </TierCell>
-      ))}
-    </GridRow>
-  );
+	return (
+		<GridRow>
+			<FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
+			{tierColumns.map((column) => (
+				<TierCell key={column.id}>
+					<CellValue cell={resolveCell(row, column.id)} />
+				</TierCell>
+			))}
+		</GridRow>
+	);
 }
 
 function CategoryRow({ title }: { title: MessageDescriptor }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <GridRow>
-      <CategoryBand>
-        <CategoryTitle>{i18n._(title)}</CategoryTitle>
-      </CategoryBand>
-      <CategoryBand aria-hidden="true" />
-      <CategoryBand aria-hidden="true" />
-      <CategoryBand aria-hidden="true" />
-    </GridRow>
-  );
+	return (
+		<GridRow>
+			<CategoryBand>
+				<CategoryTitle>{i18n._(title)}</CategoryTitle>
+			</CategoryBand>
+			<CategoryBand aria-hidden="true" />
+			<CategoryBand aria-hidden="true" />
+			<CategoryBand aria-hidden="true" />
+		</GridRow>
+	);
 }
 
 function PlanRow({
-  row,
-  tierColumns,
+	row,
+	tierColumns,
 }: {
-  row: PlanTableBodyRowDataType;
-  tierColumns: PlanTableTierColumnType[];
+	row: PlanTableBodyRowDataType;
+	tierColumns: PlanTableTierColumnType[];
 }) {
-  if (row.type === 'category') {
-    return <CategoryRow title={row.title} />;
-  }
+	if (row.type === "category") {
+		return <CategoryRow title={row.title} />;
+	}
 
-  return <FeatureRow row={row} tierColumns={tierColumns} />;
+	return <FeatureRow row={row} tierColumns={tierColumns} />;
 }
 
 const rowKey = (row: PlanTableBodyRowDataType): string =>
-  getMessageDescriptorSource(
-    row.type === 'category' ? row.title : row.featureLabel,
-  );
+	getMessageDescriptorSource(
+		row.type === "category" ? row.title : row.featureLabel,
+	);
 
 export function PlanTableContent() {
-  const { i18n } = useLingui();
-  const { hosting } = usePricingState();
-  const [expanded, setExpanded] = useState(false);
+	const { i18n } = useLingui();
+	const { hosting } = usePricingState();
+	const [expanded, setExpanded] = useState(false);
 
-  const visibleRows = useMemo(
-    () => resolveVisibleRows(PLAN_TABLE_DATA.rows, hosting),
-    [hosting],
-  );
+	const visibleRows = useMemo(
+		() => resolveVisibleRows(PLAN_TABLE_DATA.rows, hosting),
+		[hosting],
+	);
 
-  const initialRows = visibleRows.slice(
-    0,
-    PLAN_TABLE_DATA.initialVisibleRowCount,
-  );
-  const extraRows = visibleRows.slice(PLAN_TABLE_DATA.initialVisibleRowCount);
-  const hasMoreRows = extraRows.length > 0;
+	const initialRows = visibleRows.slice(
+		0,
+		PLAN_TABLE_DATA.initialVisibleRowCount,
+	);
+	const extraRows = visibleRows.slice(PLAN_TABLE_DATA.initialVisibleRowCount);
+	const hasMoreRows = extraRows.length > 0;
 
-  const toggleLabel = expanded
-    ? PLAN_TABLE_DATA.seeMoreFeaturesCta.collapseLabel
-    : PLAN_TABLE_DATA.seeMoreFeaturesCta.expandLabel;
+	const toggleLabel = expanded
+		? PLAN_TABLE_DATA.seeMoreFeaturesCta.collapseLabel
+		: PLAN_TABLE_DATA.seeMoreFeaturesCta.expandLabel;
 
-  return (
-    <TableScope>
-      <GridRow>
-        <HeadCell>{i18n._(PLAN_TABLE_DATA.featureColumnLabel)}</HeadCell>
-        {PLAN_TABLE_DATA.tierColumns.map((column) => (
-          <HeadCell data-tier key={column.id}>
-            {i18n._(column.label[hosting])}
-          </HeadCell>
-        ))}
-      </GridRow>
+	return (
+		<TableScope>
+			<GridRow>
+				<HeadCell>{i18n._(PLAN_TABLE_DATA.featureColumnLabel)}</HeadCell>
+				{PLAN_TABLE_DATA.tierColumns.map((column) => (
+					<HeadCell data-tier key={column.id}>
+						{i18n._(column.label[hosting])}
+					</HeadCell>
+				))}
+			</GridRow>
 
-      {initialRows.map((row) => (
-        <PlanRow
-          key={rowKey(row)}
-          row={row}
-          tierColumns={PLAN_TABLE_DATA.tierColumns}
-        />
-      ))}
+			{initialRows.map((row) => (
+				<PlanRow
+					key={rowKey(row)}
+					row={row}
+					tierColumns={PLAN_TABLE_DATA.tierColumns}
+				/>
+			))}
 
-      {hasMoreRows ? (
-        <CollapsibleWrapper data-expanded={expanded ? '' : undefined}>
-          <CollapsibleInner>
-            {extraRows.map((row) => (
-              <PlanRow
-                key={rowKey(row)}
-                row={row}
-                tierColumns={PLAN_TABLE_DATA.tierColumns}
-              />
-            ))}
-          </CollapsibleInner>
-        </CollapsibleWrapper>
-      ) : null}
+			{hasMoreRows ? (
+				<CollapsibleWrapper data-expanded={expanded ? "" : undefined}>
+					<CollapsibleInner>
+						{extraRows.map((row) => (
+							<PlanRow
+								key={rowKey(row)}
+								row={row}
+								tierColumns={PLAN_TABLE_DATA.tierColumns}
+							/>
+						))}
+					</CollapsibleInner>
+				</CollapsibleWrapper>
+			) : null}
 
-      {hasMoreRows ? (
-        <CtaRow>
-          <Button
-            label={i18n._(toggleLabel)}
-            onClick={() => setExpanded((previous) => !previous)}
-            variant="outlined"
-          />
-        </CtaRow>
-      ) : null}
-    </TableScope>
-  );
+			{hasMoreRows ? (
+				<CtaRow>
+					<Button
+						label={i18n._(toggleLabel)}
+						onClick={() => setExpanded((previous) => !previous)}
+						variant="outlined"
+					/>
+				</CtaRow>
+			) : null}
+		</TableScope>
+	);
 }

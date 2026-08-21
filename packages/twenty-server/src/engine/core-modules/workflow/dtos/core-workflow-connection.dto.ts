@@ -1,33 +1,33 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
-import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { CoreWorkflowDTO } from "src/engine/core-modules/workflow/dtos/core-workflow.dto";
 
-@ObjectType('CoreWorkflowEdge')
+@ObjectType("CoreWorkflowEdge")
 export class CoreWorkflowEdgeDTO {
-  @Field(() => CoreWorkflowDTO)
-  node: CoreWorkflowDTO;
+	@Field(() => CoreWorkflowDTO)
+	node: CoreWorkflowDTO;
 
-  @Field(() => String)
-  cursor: string;
+	@Field(() => String)
+	cursor: string;
 }
 
-@ObjectType('CoreWorkflowPageInfo')
+@ObjectType("CoreWorkflowPageInfo")
 export class CoreWorkflowPageInfoDTO {
-  @Field(() => String, { nullable: true })
-  endCursor: string | null;
+	@Field(() => String, { nullable: true })
+	endCursor: string | null;
 
-  @Field(() => Boolean)
-  hasNextPage: boolean;
+	@Field(() => Boolean)
+	hasNextPage: boolean;
 }
 
-@ObjectType('CoreWorkflowConnection')
+@ObjectType("CoreWorkflowConnection")
 export class CoreWorkflowConnectionDTO {
-  @Field(() => [CoreWorkflowEdgeDTO])
-  edges: CoreWorkflowEdgeDTO[];
+	@Field(() => [CoreWorkflowEdgeDTO])
+	edges: CoreWorkflowEdgeDTO[];
 
-  @Field(() => CoreWorkflowPageInfoDTO)
-  pageInfo: CoreWorkflowPageInfoDTO;
+	@Field(() => CoreWorkflowPageInfoDTO)
+	pageInfo: CoreWorkflowPageInfoDTO;
 
-  @Field(() => Int)
-  totalCount: number;
+	@Field(() => Int)
+	totalCount: number;
 }

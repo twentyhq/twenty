@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import React, { useContext } from 'react';
-import { IconCheck } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import React, { useContext } from "react";
+import { IconCheck } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledBenefitContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -21,17 +21,17 @@ const StyledCheckContainer = styled.div`
   width: 16px;
 `;
 type SubscriptionBenefitProps = {
-  children: React.ReactNode;
+	children: React.ReactNode;
 };
 export const SubscriptionBenefit = ({ children }: SubscriptionBenefitProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledBenefitContainer>
-      <StyledCheckContainer>
-        <IconCheck color={theme.grayScale.gray11} size={14} />
-      </StyledCheckContainer>
-      {children}
-    </StyledBenefitContainer>
-  );
+	return (
+		<StyledBenefitContainer>
+			<StyledCheckContainer>
+				<IconCheck color={theme.grayScale.gray11} size={14} />
+			</StyledCheckContainer>
+			{children}
+		</StyledBenefitContainer>
+	);
 };

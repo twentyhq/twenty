@@ -1,28 +1,28 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import GraphQLJSON from 'graphql-type-json';
+import GraphQLJSON from "graphql-type-json";
 import {
-  type WorkspaceCompanyEnrichment,
-  type WorkspacePersonEnrichment,
-} from 'twenty-shared/workspace';
+	type WorkspaceCompanyEnrichment,
+	type WorkspacePersonEnrichment,
+} from "twenty-shared/workspace";
 
-import { WorkspaceCompanyEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-company-enrichment-outcome.enum';
-import { WorkspacePersonEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-person-enrichment-outcome.enum';
+import { WorkspaceCompanyEnrichmentOutcome } from "src/engine/core-modules/company-enrichment/enums/workspace-company-enrichment-outcome.enum";
+import { WorkspacePersonEnrichmentOutcome } from "src/engine/core-modules/company-enrichment/enums/workspace-person-enrichment-outcome.enum";
 
-@ObjectType('WorkspaceCompanyEnrichmentResult')
+@ObjectType("WorkspaceCompanyEnrichmentResult")
 export class WorkspaceCompanyEnrichmentResultDTO {
-  @Field(() => WorkspaceCompanyEnrichmentOutcome)
-  outcome: WorkspaceCompanyEnrichmentOutcome;
+	@Field(() => WorkspaceCompanyEnrichmentOutcome)
+	outcome: WorkspaceCompanyEnrichmentOutcome;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  enrichment: WorkspaceCompanyEnrichment | null;
+	@Field(() => GraphQLJSON, { nullable: true })
+	enrichment: WorkspaceCompanyEnrichment | null;
 
-  @Field(() => WorkspacePersonEnrichmentOutcome)
-  personOutcome: WorkspacePersonEnrichmentOutcome;
+	@Field(() => WorkspacePersonEnrichmentOutcome)
+	personOutcome: WorkspacePersonEnrichmentOutcome;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  personEnrichment: WorkspacePersonEnrichment | null;
+	@Field(() => GraphQLJSON, { nullable: true })
+	personEnrichment: WorkspacePersonEnrichment | null;
 
-  @Field(() => Boolean)
-  isBookCallOnboardingStepPending: boolean;
+	@Field(() => Boolean)
+	isBookCallOnboardingStepPending: boolean;
 }

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const FIELD_PERMISSION_FRAGMENT = gql`
   fragment FieldPermissionFragment on FieldPermission {

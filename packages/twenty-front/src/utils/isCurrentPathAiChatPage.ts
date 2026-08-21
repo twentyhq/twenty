@@ -1,4 +1,4 @@
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiChatPath } from "~/utils/isAiChatPath";
 
 export const isCurrentPathAiChatPage = () =>
-  isAiChatPath(window.location.pathname);
+	isAiChatPath(window.location.pathname);

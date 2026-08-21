@@ -1,32 +1,32 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { isHiddenSystemField } from "@/object-metadata/utils/isHiddenSystemField";
 
 type IsFieldMetadataAvailableForViewFieldArgs = {
-  objectNameSingular: string;
-  fieldMetadata: Pick<FieldMetadataItem, 'name' | 'isSystem' | 'isActive'>;
+	objectNameSingular: string;
+	fieldMetadata: Pick<FieldMetadataItem, "name" | "isSystem" | "isActive">;
 };
 
 export const isActiveFieldMetadataItem = ({
-  objectNameSingular,
-  fieldMetadata,
+	objectNameSingular,
+	fieldMetadata,
 }: IsFieldMetadataAvailableForViewFieldArgs) => {
-  if (fieldMetadata.isActive === false) {
-    return false;
-  }
+	if (fieldMetadata.isActive === false) {
+		return false;
+	}
 
-  if (
-    (objectNameSingular === CoreObjectNameSingular.Note &&
-      fieldMetadata.name === 'noteTargets') ||
-    (objectNameSingular === CoreObjectNameSingular.Task &&
-      fieldMetadata.name === 'taskTargets')
-  ) {
-    return true;
-  }
+	if (
+		(objectNameSingular === CoreObjectNameSingular.Note &&
+			fieldMetadata.name === "noteTargets") ||
+		(objectNameSingular === CoreObjectNameSingular.Task &&
+			fieldMetadata.name === "taskTargets")
+	) {
+		return true;
+	}
 
-  if (isHiddenSystemField(fieldMetadata)) {
-    return false;
-  }
+	if (isHiddenSystemField(fieldMetadata)) {
+		return false;
+	}
 
-  return true;
+	return true;
 };

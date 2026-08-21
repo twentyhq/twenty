@@ -1,1 +1,1 @@
-export { WhyTwentyEditorials } from './WhyTwentyEditorials';
+export { WhyTwentyEditorials } from "./WhyTwentyEditorials";

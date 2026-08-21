@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconArrowBackUp,
-  IconChevronDown,
-  IconChevronUp,
-} from '@tabler/icons-react';
-import { useState } from 'react';
+	IconArrowBackUp,
+	IconChevronDown,
+	IconChevronUp,
+} from "@tabler/icons-react";
+import { useState } from "react";
 
-import { EASING } from '@/tokens';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { EASING } from "@/tokens";
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { changesSummaryCardState } from './changes-summary-card-state';
-import { ChangesSummaryFileRow } from './ChangesSummaryFileRow';
-import { CHANGESET_TOTALS } from './changeset-totals';
-import { CONVERSATION_CORE } from './conversation-core';
-import { DIFF_SPANS } from './diff-spans';
-import { ROCKET_CHANGESET } from './rocket-changeset';
+import { changesSummaryCardState } from "./changes-summary-card-state";
+import { ChangesSummaryFileRow } from "./ChangesSummaryFileRow";
+import { CHANGESET_TOTALS } from "./changeset-totals";
+import { CONVERSATION_CORE } from "./conversation-core";
+import { DIFF_SPANS } from "./diff-spans";
+import { ROCKET_CHANGESET } from "./rocket-changeset";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -122,52 +122,52 @@ const SeeMoreChevron = styled.span`
 `;
 
 export function ChangesSummaryCard({ onUndo }: { onUndo?: () => void }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const hiddenCount = changesSummaryCardState.getHiddenChangesCount({
-    changes: ROCKET_CHANGESET,
-  });
-  const visibleChanges = changesSummaryCardState.getVisibleChanges({
-    changes: ROCKET_CHANGESET,
-    isExpanded,
-  });
+	const [isExpanded, setIsExpanded] = useState(false);
+	const hiddenCount = changesSummaryCardState.getHiddenChangesCount({
+		changes: ROCKET_CHANGESET,
+	});
+	const visibleChanges = changesSummaryCardState.getVisibleChanges({
+		changes: ROCKET_CHANGESET,
+		isExpanded,
+	});
 
-  return (
-    <CardRoot>
-      <Header>
-        <HeaderTitle>
-          <span>{ROCKET_CHANGESET.length} files changed</span>
-          <DIFF_SPANS.Added>+{CHANGESET_TOTALS.added}</DIFF_SPANS.Added>
-          <DIFF_SPANS.Removed>-{CHANGESET_TOTALS.removed}</DIFF_SPANS.Removed>
-        </HeaderTitle>
-        <UndoButton onClick={onUndo} type="button">
-          Undo
-          <IconArrowBackUp size={12} stroke={2} />
-        </UndoButton>
-      </Header>
-      <FileList>
-        {visibleChanges.map((change, index) => (
-          <ChangesSummaryFileRow
-            animationDelay={changesSummaryCardState.getRowDelay(index)}
-            change={change}
-            key={change.path}
-          />
-        ))}
-      </FileList>
-      {hiddenCount > 0 && (
-        <SeeMoreButton
-          onClick={() => setIsExpanded((current) => !current)}
-          type="button"
-        >
-          <SeeMoreChevron aria-hidden>
-            {isExpanded ? (
-              <IconChevronUp size={12} stroke={2} />
-            ) : (
-              <IconChevronDown size={12} stroke={2} />
-            )}
-          </SeeMoreChevron>
-          {isExpanded ? 'See less' : `See ${hiddenCount} more`}
-        </SeeMoreButton>
-      )}
-    </CardRoot>
-  );
+	return (
+		<CardRoot>
+			<Header>
+				<HeaderTitle>
+					<span>{ROCKET_CHANGESET.length} files changed</span>
+					<DIFF_SPANS.Added>+{CHANGESET_TOTALS.added}</DIFF_SPANS.Added>
+					<DIFF_SPANS.Removed>-{CHANGESET_TOTALS.removed}</DIFF_SPANS.Removed>
+				</HeaderTitle>
+				<UndoButton onClick={onUndo} type="button">
+					Undo
+					<IconArrowBackUp size={12} stroke={2} />
+				</UndoButton>
+			</Header>
+			<FileList>
+				{visibleChanges.map((change, index) => (
+					<ChangesSummaryFileRow
+						animationDelay={changesSummaryCardState.getRowDelay(index)}
+						change={change}
+						key={change.path}
+					/>
+				))}
+			</FileList>
+			{hiddenCount > 0 && (
+				<SeeMoreButton
+					onClick={() => setIsExpanded((current) => !current)}
+					type="button"
+				>
+					<SeeMoreChevron aria-hidden>
+						{isExpanded ? (
+							<IconChevronUp size={12} stroke={2} />
+						) : (
+							<IconChevronDown size={12} stroke={2} />
+						)}
+					</SeeMoreChevron>
+					{isExpanded ? "See less" : `See ${hiddenCount} more`}
+				</SeeMoreButton>
+			)}
+		</CardRoot>
+	);
 }

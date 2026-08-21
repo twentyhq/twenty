@@ -1,10 +1,10 @@
-import { type CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
+import { type CoreApiClient, type CoreSchema } from "twenty-client-sdk/core";
 
 export function createPartnerLink(
-  client: CoreApiClient,
-  data: CoreSchema.PartnerLinkCreateInput,
+	client: CoreApiClient,
+	data: CoreSchema.PartnerLinkCreateInput,
 ) {
-  return client.mutation({
-    createPartnerLink: { __args: { data }, id: true },
-  });
+	return client.mutation({
+		createPartnerLink: { __args: { data }, id: true },
+	});
 }

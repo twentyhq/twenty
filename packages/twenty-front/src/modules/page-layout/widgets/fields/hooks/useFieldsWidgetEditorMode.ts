@@ -1,24 +1,24 @@
-import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
-import { type FieldsWidgetEditorMode } from '@/page-layout/widgets/fields/types/FieldsWidgetEditorMode';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { fieldsWidgetEditorModeDraftComponentState } from "@/page-layout/states/fieldsWidgetEditorModeDraftComponentState";
+import { type FieldsWidgetEditorMode } from "@/page-layout/widgets/fields/types/FieldsWidgetEditorMode";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
 
 type UseFieldsWidgetEditorModeParams = {
-  pageLayoutId: string;
-  widgetId: string;
+	pageLayoutId: string;
+	widgetId: string;
 };
 
 export const useFieldsWidgetEditorMode = ({
-  pageLayoutId,
-  widgetId,
+	pageLayoutId,
+	widgetId,
 }: UseFieldsWidgetEditorModeParams): {
-  editorMode: FieldsWidgetEditorMode;
+	editorMode: FieldsWidgetEditorMode;
 } => {
-  const fieldsWidgetEditorModeDraft = useAtomComponentStateValue(
-    fieldsWidgetEditorModeDraftComponentState,
-    pageLayoutId,
-  );
+	const fieldsWidgetEditorModeDraft = useAtomComponentStateValue(
+		fieldsWidgetEditorModeDraftComponentState,
+		pageLayoutId,
+	);
 
-  const editorMode = fieldsWidgetEditorModeDraft[widgetId];
+	const editorMode = fieldsWidgetEditorModeDraft[widgetId];
 
-  return { editorMode };
+	return { editorMode };
 };

@@ -1,19 +1,19 @@
-import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
-import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { DATE_TIME_SETTINGS_PREVIEW_DATE } from '@/localization/constants/DateTimeSettingsPreviewDate';
-import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/layout';
-import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { H2Title } from 'twenty-ui/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { CalendarMonthCard } from "@/activities/calendar/components/CalendarMonthCard";
+import { CalendarContext } from "@/activities/calendar/contexts/CalendarContext";
+import { currentWorkspaceMemberState } from "@/auth/states/currentWorkspaceMemberState";
+import { DATE_TIME_SETTINGS_PREVIEW_DATE } from "@/localization/constants/DateTimeSettingsPreviewDate";
+import { SettingsAccountsCalendarDisplaySettings } from "@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { Section } from "twenty-ui/layout";
+import { addMinutes, endOfDay, min, startOfDay } from "date-fns";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { H2Title } from "twenty-ui/typography";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 import {
-  CalendarChannelVisibility,
-  type TimelineCalendarEvent,
-} from '~/generated/graphql';
+	CalendarChannelVisibility,
+	type TimelineCalendarEvent,
+} from "~/generated/graphql";
 
 const StyledGeneralContainer = styled.div`
   display: flex;
@@ -23,72 +23,72 @@ const StyledGeneralContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarChannelsGeneral = () => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+	const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const exampleStartDate = DATE_TIME_SETTINGS_PREVIEW_DATE;
-  const exampleEndDate = min([
-    addMinutes(exampleStartDate, 30),
-    endOfDay(exampleStartDate),
-  ]);
-  const exampleDayTime = startOfDay(exampleStartDate).getTime();
-  const exampleCalendarEvent: TimelineCalendarEvent = {
-    id: '',
-    participants: [
-      {
-        firstName: currentWorkspaceMember?.name.firstName || '',
-        lastName: currentWorkspaceMember?.name.lastName || '',
-        displayName: currentWorkspaceMember
-          ? [
-              currentWorkspaceMember.name.firstName,
-              currentWorkspaceMember.name.lastName,
-            ].join(' ')
-          : '',
-        avatarUrl: currentWorkspaceMember?.avatarUrl || '',
-        handle: '',
-        personId: '',
-        workspaceMemberId: currentWorkspaceMember?.id || '',
-      },
-    ],
-    callRecordings: [],
-    endsAt: exampleEndDate.toISOString(),
-    isFullDay: false,
-    startsAt: exampleStartDate.toISOString(),
-    conferenceSolution: '',
-    conferenceLink: {
-      primaryLinkLabel: '',
-      primaryLinkUrl: '',
-    },
-    description: '',
-    isCanceled: false,
-    location: '',
-    title: t`Onboarding call`,
-    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
-  };
+	const exampleStartDate = DATE_TIME_SETTINGS_PREVIEW_DATE;
+	const exampleEndDate = min([
+		addMinutes(exampleStartDate, 30),
+		endOfDay(exampleStartDate),
+	]);
+	const exampleDayTime = startOfDay(exampleStartDate).getTime();
+	const exampleCalendarEvent: TimelineCalendarEvent = {
+		id: "",
+		participants: [
+			{
+				firstName: currentWorkspaceMember?.name.firstName || "",
+				lastName: currentWorkspaceMember?.name.lastName || "",
+				displayName: currentWorkspaceMember
+					? [
+							currentWorkspaceMember.name.firstName,
+							currentWorkspaceMember.name.lastName,
+						].join(" ")
+					: "",
+				avatarUrl: currentWorkspaceMember?.avatarUrl || "",
+				handle: "",
+				personId: "",
+				workspaceMemberId: currentWorkspaceMember?.id || "",
+			},
+		],
+		callRecordings: [],
+		endsAt: exampleEndDate.toISOString(),
+		isFullDay: false,
+		startsAt: exampleStartDate.toISOString(),
+		conferenceSolution: "",
+		conferenceLink: {
+			primaryLinkLabel: "",
+			primaryLinkUrl: "",
+		},
+		description: "",
+		isCanceled: false,
+		location: "",
+		title: t`Onboarding call`,
+		visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+	};
 
-  return (
-    <StyledGeneralContainer>
-      <Section>
-        <H2Title
-          title={t`Display`}
-          description={t`Configure how we should display your events in your calendar`}
-        />
-        <SettingsAccountsCalendarDisplaySettings />
-      </Section>
-      <Section>
-        <H2Title
-          title={t`Color code`}
-          description={t`Events you participated in are displayed in red.`}
-        />
-        <CalendarContext.Provider
-          value={{
-            calendarEventsByDayTime: {
-              [exampleDayTime]: [exampleCalendarEvent],
-            },
-          }}
-        >
-          <CalendarMonthCard dayTimes={[exampleDayTime]} />
-        </CalendarContext.Provider>
-      </Section>
-    </StyledGeneralContainer>
-  );
+	return (
+		<StyledGeneralContainer>
+			<Section>
+				<H2Title
+					title={t`Display`}
+					description={t`Configure how we should display your events in your calendar`}
+				/>
+				<SettingsAccountsCalendarDisplaySettings />
+			</Section>
+			<Section>
+				<H2Title
+					title={t`Color code`}
+					description={t`Events you participated in are displayed in red.`}
+				/>
+				<CalendarContext.Provider
+					value={{
+						calendarEventsByDayTime: {
+							[exampleDayTime]: [exampleCalendarEvent],
+						},
+					}}
+				>
+					<CalendarMonthCard dayTimes={[exampleDayTime]} />
+				</CalendarContext.Provider>
+			</Section>
+		</StyledGeneralContainer>
+	);
 };

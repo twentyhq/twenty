@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 import {
-  IconChartBar,
-  IconChecklist,
-  IconHierarchy3,
-  IconLayoutKanban,
-} from '@tabler/icons-react';
+	IconChartBar,
+	IconChecklist,
+	IconHierarchy3,
+	IconLayoutKanban,
+} from "@tabler/icons-react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  radius,
-  spacing,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	radius,
+	spacing,
+} from "@/tokens";
 
-import { type AiHeroTab, type AiHeroTabIcon } from './ai-hero-tabs';
+import { type AiHeroTab, type AiHeroTabIcon } from "./ai-hero-tabs";
 
 const TAB_ICONS: Record<AiHeroTabIcon, typeof IconChartBar> = {
-  chart: IconChartBar,
-  checklist: IconChecklist,
-  kanban: IconLayoutKanban,
-  workflow: IconHierarchy3,
+	chart: IconChartBar,
+	checklist: IconChecklist,
+	kanban: IconLayoutKanban,
+	workflow: IconHierarchy3,
 };
 
 const Label = styled.span`
@@ -44,7 +44,7 @@ const StyledButton = styled.button`
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.regular};
   gap: ${spacing(2)};
@@ -61,20 +61,20 @@ const StyledButton = styled.button`
     color 0.2s ease;
 
   &[data-active='true'] {
-    background-color: ${color('white')};
+    background-color: ${color("white")};
     border: 1px solid transparent;
-    color: ${color('black')};
+    color: ${color("black")};
   }
 
   &[data-active='false'] {
-    background-color: ${color('black')};
+    background-color: ${color("black")};
     background-image: linear-gradient(
       90deg,
-      ${color('white-10')} 0%,
-      ${color('white-10')} 100%
+      ${color("white-10")} 0%,
+      ${color("white-10")} 100%
     );
-    border: 1px solid ${color('white-10')};
-    color: ${color('white')};
+    border: 1px solid ${color("white-10")};
+    color: ${color("white")};
   }
 
   /* Deck cards are physical: the white wash rides the active state too,
@@ -87,13 +87,13 @@ const StyledButton = styled.button`
   &[data-presentation='deck'][data-active='true'] {
     background-image: linear-gradient(
       90deg,
-      ${color('white-10')} 0%,
-      ${color('white-10')} 100%
+      ${color("white-10")} 0%,
+      ${color("white-10")} 100%
     );
   }
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
+    outline: 1px solid ${color("blue")};
     outline-offset: 1px;
   }
 `;
@@ -113,52 +113,52 @@ const TabIconBox = styled.span`
   }
 
   &[data-active='true'] {
-    background-color: ${color('black-10')};
+    background-color: ${color("black-10")};
   }
 
   &[data-active='false'] {
-    background-color: ${color('blue')};
+    background-color: ${color("blue")};
   }
 `;
 
 export function TabButton({
-  controls,
-  id,
-  isActive,
-  onSelect,
-  presentation = 'row',
-  tab,
+	controls,
+	id,
+	isActive,
+	onSelect,
+	presentation = "row",
+	tab,
 }: {
-  controls: string;
-  id: string;
-  isActive: boolean;
-  onSelect: () => void;
-  // 'deck': the stacked-card face (fills its card, keeps the white wash).
-  presentation?: 'row' | 'deck';
-  tab: AiHeroTab;
+	controls: string;
+	id: string;
+	isActive: boolean;
+	onSelect: () => void;
+	// 'deck': the stacked-card face (fills its card, keeps the white wash).
+	presentation?: "row" | "deck";
+	tab: AiHeroTab;
 }) {
-  const { i18n } = useLingui();
-  const Icon = TAB_ICONS[tab.icon];
+	const { i18n } = useLingui();
+	const Icon = TAB_ICONS[tab.icon];
 
-  return (
-    <StyledButton
-      aria-controls={controls}
-      aria-selected={isActive}
-      data-active={String(isActive)}
-      data-presentation={presentation}
-      id={id}
-      onClick={onSelect}
-      role="tab"
-      type="button"
-    >
-      <Label>{i18n._(tab.body)}</Label>
-      <TabIconBox data-active={String(isActive)}>
-        <Icon
-          color={isActive ? color('blue') : color('white')}
-          size={16}
-          stroke={2}
-        />
-      </TabIconBox>
-    </StyledButton>
-  );
+	return (
+		<StyledButton
+			aria-controls={controls}
+			aria-selected={isActive}
+			data-active={String(isActive)}
+			data-presentation={presentation}
+			id={id}
+			onClick={onSelect}
+			role="tab"
+			type="button"
+		>
+			<Label>{i18n._(tab.body)}</Label>
+			<TabIconBox data-active={String(isActive)}>
+				<Icon
+					color={isActive ? color("blue") : color("white")}
+					size={16}
+					stroke={2}
+				/>
+			</TabIconBox>
+		</StyledButton>
+	);
 }

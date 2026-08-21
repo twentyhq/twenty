@@ -1,18 +1,18 @@
-import { clsx } from 'clsx';
-import { type ComponentPropsWithoutRef } from 'react';
+import { clsx } from "clsx";
+import { type ComponentPropsWithoutRef } from "react";
 
-import styles from './CardHeader.module.scss';
+import styles from "./CardHeader.module.scss";
 
-type CardHeaderProps = ComponentPropsWithoutRef<'div'>;
+type CardHeaderProps = ComponentPropsWithoutRef<"div">;
 
 export const CardHeader = ({
-  children,
-  className,
-  ...rest
+	children,
+	className,
+	...rest
 }: CardHeaderProps) => {
-  return (
-    <div className={clsx(styles.cardHeader, className)} {...rest}>
-      {children}
-    </div>
-  );
+	return (
+		<div className={clsx(styles.cardHeader, className)} {...rest}>
+			{children}
+		</div>
+	);
 };

@@ -1,19 +1,19 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type DestroyOnePageLayoutFactoryInput = {
-  id: string;
+	id: string;
 };
 
 export const destroyOnePageLayoutQueryFactory = ({
-  input,
+	input,
 }: PerformMetadataQueryParams<DestroyOnePageLayoutFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation DestroyPageLayout($id: String!) {
       destroyPageLayout(id: $id)
     }
   `,
-  variables: {
-    id: input.id,
-  },
+	variables: {
+		id: input.id,
+	},
 });

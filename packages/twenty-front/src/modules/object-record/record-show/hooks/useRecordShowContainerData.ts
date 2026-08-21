@@ -1,19 +1,19 @@
-import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { recordLoadingFamilyState } from "@/object-record/record-store/states/recordLoadingFamilyState";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
 
 type UseRecordShowContainerDataProps = {
-  objectRecordId: string;
+	objectRecordId: string;
 };
 
 export const useRecordShowContainerData = ({
-  objectRecordId,
+	objectRecordId,
 }: UseRecordShowContainerDataProps) => {
-  const recordLoading = useAtomFamilyStateValue(
-    recordLoadingFamilyState,
-    objectRecordId,
-  );
+	const recordLoading = useAtomFamilyStateValue(
+		recordLoadingFamilyState,
+		objectRecordId,
+	);
 
-  return {
-    recordLoading,
-  };
+	return {
+		recordLoading,
+	};
 };

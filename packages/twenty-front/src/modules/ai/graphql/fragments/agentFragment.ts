@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const AGENT_FRAGMENT = gql`
   fragment AgentFields on Agent {

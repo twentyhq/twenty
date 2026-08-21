@@ -1,21 +1,21 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export type ImapSyncCursor = {
-  highestUid: number;
-  uidValidity: number;
-  modSeq?: string;
+	highestUid: number;
+	uidValidity: number;
+	modSeq?: string;
 };
 
 export const parseSyncCursor = (
-  cursor: string | null,
+	cursor: string | null,
 ): ImapSyncCursor | null => {
-  if (!isDefined(cursor)) {
-    return null;
-  }
+	if (!isDefined(cursor)) {
+		return null;
+	}
 
-  try {
-    return JSON.parse(cursor) as ImapSyncCursor;
-  } catch {
-    return null;
-  }
+	try {
+		return JSON.parse(cursor) as ImapSyncCursor;
+	} catch {
+		return null;
+	}
 };

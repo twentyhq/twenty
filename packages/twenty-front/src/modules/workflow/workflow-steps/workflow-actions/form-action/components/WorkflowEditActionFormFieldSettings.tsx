@@ -1,20 +1,20 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { InputLabel, LightIconButton } from 'twenty-ui/input';
-import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
-import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
-import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
-import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
-import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { IconSettingsAutomation, IconX } from 'twenty-ui/icon';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { FormFieldInputContainer } from "@/ui/input/components/FormFieldInputContainer";
+import { FormSelectFieldInput } from "@/object-record/record-field/ui/form-types/components/FormSelectFieldInput";
+import { InputLabel, LightIconButton } from "twenty-ui/input";
+import { WorkflowFormFieldSettingsByType } from "@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType";
+import { FORM_SELECT_FIELD_TYPE_OPTIONS } from "@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions";
+import { type WorkflowFormActionField } from "@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField";
+import { type WorkflowFormFieldType } from "@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType";
+import { getDefaultFormFieldSettings } from "@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { IconSettingsAutomation, IconX } from "twenty-ui/icon";
+import { themeCssVariables, ThemeContext } from "twenty-ui/theme-constants";
+import { useContext } from "react";
 type WorkflowEditActionFormFieldSettingsProps = {
-  field: WorkflowFormActionField;
-  onChange: (field: WorkflowFormActionField) => void;
-  onClose: () => void;
+	field: WorkflowFormActionField;
+	onChange: (field: WorkflowFormActionField) => void;
+	onClose: () => void;
 };
 
 const StyledFormFieldSettingsContainer = styled.div`
@@ -57,60 +57,60 @@ const StyledCloseButtonContainer = styled.div`
 `;
 
 export const WorkflowEditActionFormFieldSettings = ({
-  field,
-  onChange,
-  onClose,
+	field,
+	onChange,
+	onClose,
 }: WorkflowEditActionFormFieldSettingsProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledFormFieldSettingsContainer>
-      <StyledSettingsHeader>
-        <StyledTitleContainer>
-          <IconSettingsAutomation
-            size={theme.icon.size.md}
-            color={theme.font.color.primary}
-          />
-          {t`Input settings`}
-        </StyledTitleContainer>
-        <StyledCloseButtonContainer>
-          <LightIconButton
-            testId="close-button"
-            Icon={IconX}
-            size="small"
-            accent="secondary"
-            onClick={onClose}
-          />
-        </StyledCloseButtonContainer>
-      </StyledSettingsHeader>
-      <StyledSettingsContent>
-        <FormFieldInputContainer>
-          <InputLabel>{t`Type`}</InputLabel>
-          <FormSelectFieldInput
-            options={FORM_SELECT_FIELD_TYPE_OPTIONS}
-            onChange={(newType: string | null) => {
-              if (newType === null) {
-                return;
-              }
+	return (
+		<StyledFormFieldSettingsContainer>
+			<StyledSettingsHeader>
+				<StyledTitleContainer>
+					<IconSettingsAutomation
+						size={theme.icon.size.md}
+						color={theme.font.color.primary}
+					/>
+					{t`Input settings`}
+				</StyledTitleContainer>
+				<StyledCloseButtonContainer>
+					<LightIconButton
+						testId="close-button"
+						Icon={IconX}
+						size="small"
+						accent="secondary"
+						onClick={onClose}
+					/>
+				</StyledCloseButtonContainer>
+			</StyledSettingsHeader>
+			<StyledSettingsContent>
+				<FormFieldInputContainer>
+					<InputLabel>{t`Type`}</InputLabel>
+					<FormSelectFieldInput
+						options={FORM_SELECT_FIELD_TYPE_OPTIONS}
+						onChange={(newType: string | null) => {
+							if (newType === null) {
+								return;
+							}
 
-              const type = newType as WorkflowFormFieldType;
-              const { name, label, settings } =
-                getDefaultFormFieldSettings(type);
+							const type = newType as WorkflowFormFieldType;
+							const { name, label, settings } =
+								getDefaultFormFieldSettings(type);
 
-              onChange({
-                ...field,
-                type,
-                name,
-                label,
-                settings,
-                placeholder: '',
-              });
-            }}
-            defaultValue={field.type}
-          />
-        </FormFieldInputContainer>
-        <WorkflowFormFieldSettingsByType field={field} onChange={onChange} />
-      </StyledSettingsContent>
-    </StyledFormFieldSettingsContainer>
-  );
+							onChange({
+								...field,
+								type,
+								name,
+								label,
+								settings,
+								placeholder: "",
+							});
+						}}
+						defaultValue={field.type}
+					/>
+				</FormFieldInputContainer>
+				<WorkflowFormFieldSettingsByType field={field} onChange={onChange} />
+			</StyledSettingsContent>
+		</StyledFormFieldSettingsContainer>
+	);
 };

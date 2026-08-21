@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly undecoratedLink: 'undecoratedLink';
+	readonly undecoratedLink: "undecoratedLink";
 };
 export default classNames;

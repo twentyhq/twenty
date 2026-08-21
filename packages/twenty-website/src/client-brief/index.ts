@@ -1,1 +1,1 @@
-export { ClientBriefWizard } from './wizard/ClientBriefWizard';
+export { ClientBriefWizard } from "./wizard/ClientBriefWizard";

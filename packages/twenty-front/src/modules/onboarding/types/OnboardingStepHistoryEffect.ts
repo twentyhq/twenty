@@ -1,4 +1,4 @@
 export type OnboardingStepHistoryEffect =
-  | 'recordAsReversible'
-  | 'clearAfterIrreversibleStep'
-  | 'leaveUnchanged';
+	| "recordAsReversible"
+	| "clearAfterIrreversibleStep"
+	| "leaveUnchanged";

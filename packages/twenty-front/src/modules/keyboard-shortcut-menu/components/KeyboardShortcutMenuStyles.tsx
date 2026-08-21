@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 export const StyledDialog = styled.div<{ isMobile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -15,8 +15,8 @@ export const StyledDialog = styled.div<{ isMobile: boolean }>`
   position: fixed;
   top: 30%;
   transform: ${({ isMobile }) =>
-    isMobile ? 'translateX(-49.5%)' : 'translateX(-50%)'};
-  width: ${({ isMobile }) => (isMobile ? 'calc(100% - 40px)' : '100%')};
+		isMobile ? "translateX(-49.5%)" : "translateX(-50%)"};
+  width: ${({ isMobile }) => (isMobile ? "calc(100% - 40px)" : "100%")};
   z-index: 1000;
 `;
 

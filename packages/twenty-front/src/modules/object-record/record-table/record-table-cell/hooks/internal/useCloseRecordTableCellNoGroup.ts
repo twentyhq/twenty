@@ -1,45 +1,45 @@
-import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
-import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from "@/object-record/record-table/constants/FocusClickOutsideListenerId";
+import { useDragSelect } from "@/ui/utilities/drag-select/hooks/useDragSelect";
+import { useClickOutsideListener } from "@/ui/utilities/pointer-event/hooks/useClickOutsideListener";
 
-import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
-import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from "@/object-record/record-table/constants/RecordTableClickOutsideListenerId";
+import { useRecordTableContextOrThrow } from "@/object-record/record-table/contexts/RecordTableContext";
+import { useCloseCurrentTableCellInEditMode } from "@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode";
+import { clickOutsideListenerIsActivatedComponentState } from "@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState";
+import { useStore } from "jotai";
+import { useCallback } from "react";
 
 export const useCloseRecordTableCellNoGroup = () => {
-  const { recordTableId } = useRecordTableContextOrThrow();
-  const store = useStore();
+	const { recordTableId } = useRecordTableContextOrThrow();
+	const store = useStore();
 
-  const { setDragSelectionStartEnabled } = useDragSelect();
+	const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const { toggleClickOutside } = useClickOutsideListener(
-    FOCUS_CLICK_OUTSIDE_LISTENER_ID,
-  );
+	const { toggleClickOutside } = useClickOutsideListener(
+		FOCUS_CLICK_OUTSIDE_LISTENER_ID,
+	);
 
-  const closeCurrentTableCellInEditMode =
-    useCloseCurrentTableCellInEditMode(recordTableId);
+	const closeCurrentTableCellInEditMode =
+		useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const closeTableCellNoGroup = useCallback(() => {
-    toggleClickOutside(true);
-    setDragSelectionStartEnabled(true);
-    closeCurrentTableCellInEditMode();
-    store.set(
-      clickOutsideListenerIsActivatedComponentState.atomFamily({
-        instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
-      }),
-      true,
-    );
-  }, [
-    closeCurrentTableCellInEditMode,
-    setDragSelectionStartEnabled,
-    toggleClickOutside,
-    store,
-  ]);
+	const closeTableCellNoGroup = useCallback(() => {
+		toggleClickOutside(true);
+		setDragSelectionStartEnabled(true);
+		closeCurrentTableCellInEditMode();
+		store.set(
+			clickOutsideListenerIsActivatedComponentState.atomFamily({
+				instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+			}),
+			true,
+		);
+	}, [
+		closeCurrentTableCellInEditMode,
+		setDragSelectionStartEnabled,
+		toggleClickOutside,
+		store,
+	]);
 
-  return {
-    closeTableCellNoGroup,
-  };
+	return {
+		closeTableCellNoGroup,
+	};
 };

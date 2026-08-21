@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { IconChevronLeft } from "twenty-ui/icon";
+import { LightIconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsWizardStepBarProps = {
-  label: ReactNode;
-  onBack?: () => void;
-  trailing?: ReactNode;
+	label: ReactNode;
+	onBack?: () => void;
+	trailing?: ReactNode;
 };
 
 const StyledStepBar = styled.div`
@@ -42,22 +42,22 @@ const StyledRight = styled.div`
 `;
 
 export const SettingsWizardStepBar = ({
-  label,
-  onBack,
-  trailing,
+	label,
+	onBack,
+	trailing,
 }: SettingsWizardStepBarProps) => (
-  <StyledStepBar>
-    <StyledLeft>
-      {onBack && (
-        <LightIconButton
-          Icon={IconChevronLeft}
-          size="small"
-          accent="tertiary"
-          onClick={onBack}
-        />
-      )}
-    </StyledLeft>
-    <StyledLabel>{label}</StyledLabel>
-    <StyledRight>{trailing}</StyledRight>
-  </StyledStepBar>
+	<StyledStepBar>
+		<StyledLeft>
+			{onBack && (
+				<LightIconButton
+					Icon={IconChevronLeft}
+					size="small"
+					accent="tertiary"
+					onClick={onBack}
+				/>
+			)}
+		</StyledLeft>
+		<StyledLabel>{label}</StyledLabel>
+		<StyledRight>{trailing}</StyledRight>
+	</StyledStepBar>
 );

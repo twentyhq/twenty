@@ -1,167 +1,167 @@
-import { clsx } from 'clsx';
-import { type ComponentPropsWithoutRef, forwardRef } from 'react';
+import { clsx } from "clsx";
+import { type ComponentPropsWithoutRef, forwardRef } from "react";
 
-import { IconCheck } from '@ui/icon';
-import { type MenuItemAccent } from '@ui/navigation/MenuItem/types/MenuItemAccent';
+import { IconCheck } from "@ui/icon";
+import { type MenuItemAccent } from "@ui/navigation/MenuItem/types/MenuItemAccent";
 
-import styles from './StyledMenuItemBase.module.scss';
+import styles from "./StyledMenuItemBase.module.scss";
 
 export type MenuItemBaseProps = {
-  accent?: MenuItemAccent;
-  isKeySelected?: boolean;
-  isHoverBackgroundDisabled?: boolean;
-  hovered?: boolean;
-  disabled?: boolean;
-  focused?: boolean;
+	accent?: MenuItemAccent;
+	isKeySelected?: boolean;
+	isHoverBackgroundDisabled?: boolean;
+	hovered?: boolean;
+	disabled?: boolean;
+	focused?: boolean;
 };
 
 // The deprecated Linaria styled components forwarded refs and arbitrary
 // native props, so the ports preserve that contract.
 type StyledMenuItemBaseElementProps = MenuItemBaseProps &
-  ComponentPropsWithoutRef<'div'>;
+	ComponentPropsWithoutRef<"div">;
 
 export const StyledMenuItemBase = forwardRef<
-  HTMLDivElement,
-  StyledMenuItemBaseElementProps
+	HTMLDivElement,
+	StyledMenuItemBaseElementProps
 >(
-  (
-    {
-      accent,
-      isKeySelected,
-      isHoverBackgroundDisabled,
-      hovered: _hovered,
-      disabled,
-      focused,
-      className,
-      children,
-      ...rest
-    },
-    ref,
-  ) => (
-    <div
-      ref={ref}
-      className={clsx(styles.menuItemBase, className)}
-      data-accent={accent}
-      data-key-selected={isKeySelected || undefined}
-      data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
-      data-disabled={disabled || undefined}
-      data-focused={focused || undefined}
-      {...rest}
-    >
-      {children}
-    </div>
-  ),
+	(
+		{
+			accent,
+			isKeySelected,
+			isHoverBackgroundDisabled,
+			hovered: _hovered,
+			disabled,
+			focused,
+			className,
+			children,
+			...rest
+		},
+		ref,
+	) => (
+		<div
+			ref={ref}
+			className={clsx(styles.menuItemBase, className)}
+			data-accent={accent}
+			data-key-selected={isKeySelected || undefined}
+			data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
+			data-disabled={disabled || undefined}
+			data-focused={focused || undefined}
+			{...rest}
+		>
+			{children}
+		</div>
+	),
 );
 
-StyledMenuItemBase.displayName = 'StyledMenuItemBase';
+StyledMenuItemBase.displayName = "StyledMenuItemBase";
 
-type StyledStaticDivProps = ComponentPropsWithoutRef<'div'>;
+type StyledStaticDivProps = ComponentPropsWithoutRef<"div">;
 
 const createStyledDiv = (classNameFromModule: string, displayName: string) => {
-  const StyledDiv = forwardRef<HTMLDivElement, StyledStaticDivProps>(
-    ({ className, children, ...rest }, ref) => (
-      <div ref={ref} className={clsx(classNameFromModule, className)} {...rest}>
-        {children}
-      </div>
-    ),
-  );
+	const StyledDiv = forwardRef<HTMLDivElement, StyledStaticDivProps>(
+		({ className, children, ...rest }, ref) => (
+			<div ref={ref} className={clsx(classNameFromModule, className)} {...rest}>
+				{children}
+			</div>
+		),
+	);
 
-  StyledDiv.displayName = displayName;
+	StyledDiv.displayName = displayName;
 
-  return StyledDiv;
+	return StyledDiv;
 };
 
 export const StyledMenuItemLabel = createStyledDiv(
-  styles.menuItemLabel,
-  'StyledMenuItemLabel',
+	styles.menuItemLabel,
+	"StyledMenuItemLabel",
 );
 
 export const StyledMenuItemLabelLight = createStyledDiv(
-  styles.menuItemLabelLight,
-  'StyledMenuItemLabelLight',
+	styles.menuItemLabelLight,
+	"StyledMenuItemLabelLight",
 );
 
 export const StyledNoIconFiller = createStyledDiv(
-  styles.noIconFiller,
-  'StyledNoIconFiller',
+	styles.noIconFiller,
+	"StyledNoIconFiller",
 );
 
 export const StyledMenuItemLeftContent = createStyledDiv(
-  styles.menuItemLeftContent,
-  'StyledMenuItemLeftContent',
+	styles.menuItemLeftContent,
+	"StyledMenuItemLeftContent",
 );
 
 export const StyledMenuItemRightContent = createStyledDiv(
-  styles.menuItemRightContent,
-  'StyledMenuItemRightContent',
+	styles.menuItemRightContent,
+	"StyledMenuItemRightContent",
 );
 
 export const StyledDraggableItem = createStyledDiv(
-  styles.draggableItem,
-  'StyledDraggableItem',
+	styles.draggableItem,
+	"StyledDraggableItem",
 );
 
 type HoverableMenuItemBaseProps = {
-  isIconDisplayedOnHoverOnly?: boolean;
-  cursor?: 'drag' | 'default';
+	isIconDisplayedOnHoverOnly?: boolean;
+	cursor?: "drag" | "default";
 } & MenuItemBaseProps;
 
 type StyledHoverableMenuItemBaseElementProps = HoverableMenuItemBaseProps &
-  ComponentPropsWithoutRef<'div'>;
+	ComponentPropsWithoutRef<"div">;
 
 export const StyledHoverableMenuItemBase = forwardRef<
-  HTMLDivElement,
-  StyledHoverableMenuItemBaseElementProps
+	HTMLDivElement,
+	StyledHoverableMenuItemBaseElementProps
 >(
-  (
-    {
-      accent,
-      isKeySelected,
-      isHoverBackgroundDisabled,
-      hovered: _hovered,
-      disabled,
-      focused,
-      isIconDisplayedOnHoverOnly,
-      cursor,
-      className,
-      children,
-      ...rest
-    },
-    ref,
-  ) => (
-    <div
-      ref={ref}
-      className={clsx(styles.hoverableMenuItemBase, className)}
-      data-accent={accent}
-      data-key-selected={isKeySelected || undefined}
-      data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
-      data-disabled={disabled || undefined}
-      data-focused={focused || undefined}
-      data-icon-displayed-on-hover-only={
-        isIconDisplayedOnHoverOnly || undefined
-      }
-      data-cursor={cursor}
-      {...rest}
-    >
-      {children}
-    </div>
-  ),
+	(
+		{
+			accent,
+			isKeySelected,
+			isHoverBackgroundDisabled,
+			hovered: _hovered,
+			disabled,
+			focused,
+			isIconDisplayedOnHoverOnly,
+			cursor,
+			className,
+			children,
+			...rest
+		},
+		ref,
+	) => (
+		<div
+			ref={ref}
+			className={clsx(styles.hoverableMenuItemBase, className)}
+			data-accent={accent}
+			data-key-selected={isKeySelected || undefined}
+			data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
+			data-disabled={disabled || undefined}
+			data-focused={focused || undefined}
+			data-icon-displayed-on-hover-only={
+				isIconDisplayedOnHoverOnly || undefined
+			}
+			data-cursor={cursor}
+			{...rest}
+		>
+			{children}
+		</div>
+	),
 );
 
-StyledHoverableMenuItemBase.displayName = 'StyledHoverableMenuItemBase';
+StyledHoverableMenuItemBase.displayName = "StyledHoverableMenuItemBase";
 
 export const StyledMenuItemIconCheck = ({ size }: { size?: number }) => (
-  <div className={styles.menuItemIconCheckContainer}>
-    <IconCheck size={size} />
-  </div>
+	<div className={styles.menuItemIconCheckContainer}>
+		<IconCheck size={size} />
+	</div>
 );
 
 export const StyledMenuItemContextualText = createStyledDiv(
-  styles.menuItemContextualText,
-  'StyledMenuItemContextualText',
+	styles.menuItemContextualText,
+	"StyledMenuItemContextualText",
 );
 
 export const StyledRightMenuItemContextualText = createStyledDiv(
-  styles.rightMenuItemContextualText,
-  'StyledRightMenuItemContextualText',
+	styles.rightMenuItemContextualText,
+	"StyledRightMenuItemContextualText",
 );

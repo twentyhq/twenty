@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const query = gql`
   query FindManyPeople(
@@ -142,5 +142,5 @@ export const query = gql`
 export const variables = { limit: 60, filter: undefined, orderBy: undefined };
 
 export const responseData = {
-  id: '',
+	id: "",
 };

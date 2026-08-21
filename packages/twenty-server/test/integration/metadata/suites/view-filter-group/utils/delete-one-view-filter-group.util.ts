@@ -1,35 +1,35 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { deleteViewFilterGroupQueryFactory } from 'test/integration/metadata/suites/view-filter-group/utils/delete-view-filter-group-query-factory.util';
-import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
-import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
+import { deleteViewFilterGroupQueryFactory } from "test/integration/metadata/suites/view-filter-group/utils/delete-view-filter-group-query-factory.util";
+import { type CommonResponseBody } from "test/integration/metadata/types/common-response-body.type";
+import { warnIfErrorButNotExpectedToFail } from "test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util";
+import { warnIfNoErrorButExpectedToFail } from "test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util";
 
 export const deleteOneViewFilterGroup = async ({
-  id,
-  expectToFail,
+	id,
+	expectToFail,
 }: {
-  id: string;
-  expectToFail: boolean;
+	id: string;
+	expectToFail: boolean;
 }): CommonResponseBody<{
-  deleteViewFilterGroup: boolean;
+	deleteViewFilterGroup: boolean;
 }> => {
-  const graphqlOperation = deleteViewFilterGroupQueryFactory({ id });
+	const graphqlOperation = deleteViewFilterGroupQueryFactory({ id });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+	const response = await makeMetadataAPIRequest(graphqlOperation);
 
-  if (expectToFail === true) {
-    warnIfNoErrorButExpectedToFail({
-      response,
-      errorMessage: 'View Filter Group deletion should have failed but did not',
-    });
-  }
+	if (expectToFail === true) {
+		warnIfNoErrorButExpectedToFail({
+			response,
+			errorMessage: "View Filter Group deletion should have failed but did not",
+		});
+	}
 
-  if (expectToFail === false) {
-    warnIfErrorButNotExpectedToFail({
-      response,
-      errorMessage: 'View Filter Group deletion has failed but should not',
-    });
-  }
+	if (expectToFail === false) {
+		warnIfErrorButNotExpectedToFail({
+			response,
+			errorMessage: "View Filter Group deletion has failed but should not",
+		});
+	}
 
-  return { data: response.body.data, errors: response.body.errors };
+	return { data: response.body.data, errors: response.body.errors };
 };

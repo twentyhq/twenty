@@ -1,42 +1,42 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconClock,
-  IconCode,
-  IconFilter,
-  IconMail,
-  IconPlug,
-  IconPlus,
-  IconRepeat,
-  IconSearch,
-  IconSitemap,
-} from '@tabler/icons-react';
+	IconClock,
+	IconCode,
+	IconFilter,
+	IconMail,
+	IconPlug,
+	IconPlus,
+	IconRepeat,
+	IconSearch,
+	IconSitemap,
+} from "@tabler/icons-react";
 
-import { EASING, REDUCED_MOTION } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { EASING, REDUCED_MOTION } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { WORKFLOW_THEME } from './workflow-theme';
-import { PREVIEW_SKELETON } from '../../primitives/PreviewSkeleton';
-import { type WorkflowNodeDef } from '../../types';
+import { WORKFLOW_THEME } from "./workflow-theme";
+import { PREVIEW_SKELETON } from "../../primitives/PreviewSkeleton";
+import { type WorkflowNodeDef } from "../../types";
 
 const colors = WORKFLOW_THEME.colors;
 
 const NODE_ICON_MAP: Record<string, typeof IconPlug> = {
-  clock: IconClock,
-  code: IconCode,
-  filter: IconFilter,
-  mail: IconMail,
-  plug: IconPlug,
-  plus: IconPlus,
-  repeat: IconRepeat,
-  search: IconSearch,
-  sitemap: IconSitemap,
+	clock: IconClock,
+	code: IconCode,
+	filter: IconFilter,
+	mail: IconMail,
+	plug: IconPlug,
+	plus: IconPlus,
+	repeat: IconRepeat,
+	search: IconSearch,
+	sitemap: IconSitemap,
 };
 
 const NODE_ICON_COLORS: Record<string, string> = {
-  trigger: colors.nodeTriggerIcon,
-  action: colors.nodeActionIcon,
-  fallback: colors.nodeIconFallback,
+	trigger: colors.nodeTriggerIcon,
+	action: colors.nodeActionIcon,
+	fallback: colors.nodeIconFallback,
 };
 
 const Node = styled.div<{ $index: number }>`
@@ -139,45 +139,45 @@ const SkeletonIcon = styled(PREVIEW_SKELETON.Block)`
 `;
 
 export function WorkflowNode({
-  generating = false,
-  index = 0,
-  node,
+	generating = false,
+	index = 0,
+	node,
 }: {
-  generating?: boolean;
-  index?: number;
-  node: WorkflowNodeDef;
+	generating?: boolean;
+	index?: number;
+	node: WorkflowNodeDef;
 }) {
-  const Icon = NODE_ICON_MAP[node.iconName] ?? IconCode;
-  const iconColor = NODE_ICON_COLORS[node.iconColor ?? 'action'];
-  return (
-    <Node
-      $index={index}
-      style={{ left: node.x, top: node.y, width: node.width }}
-    >
-      {generating ? (
-        <>
-          <SkeletonIcon />
-          <NodeContent>
-            <PREVIEW_SKELETON.Bar $height={8} $width="38%" />
-            <PREVIEW_SKELETON.Bar $height={9} $width="72%" />
-          </NodeContent>
-        </>
-      ) : (
-        <>
-          <NodeIconContainer>
-            <Icon
-              aria-hidden
-              color={iconColor}
-              size={20}
-              stroke={THEME_LIGHT.icon.stroke.sm}
-            />
-          </NodeIconContainer>
-          <NodeContent>
-            <NodeLabel>{node.label}</NodeLabel>
-            <NodeTitle>{node.title}</NodeTitle>
-          </NodeContent>
-        </>
-      )}
-    </Node>
-  );
+	const Icon = NODE_ICON_MAP[node.iconName] ?? IconCode;
+	const iconColor = NODE_ICON_COLORS[node.iconColor ?? "action"];
+	return (
+		<Node
+			$index={index}
+			style={{ left: node.x, top: node.y, width: node.width }}
+		>
+			{generating ? (
+				<>
+					<SkeletonIcon />
+					<NodeContent>
+						<PREVIEW_SKELETON.Bar $height={8} $width="38%" />
+						<PREVIEW_SKELETON.Bar $height={9} $width="72%" />
+					</NodeContent>
+				</>
+			) : (
+				<>
+					<NodeIconContainer>
+						<Icon
+							aria-hidden
+							color={iconColor}
+							size={20}
+							stroke={THEME_LIGHT.icon.stroke.sm}
+						/>
+					</NodeIconContainer>
+					<NodeContent>
+						<NodeLabel>{node.label}</NodeLabel>
+						<NodeTitle>{node.title}</NodeTitle>
+					</NodeContent>
+				</>
+			)}
+		</Node>
+	);
 }

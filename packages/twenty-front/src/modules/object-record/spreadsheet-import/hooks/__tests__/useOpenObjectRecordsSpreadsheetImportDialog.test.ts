@@ -1,46 +1,46 @@
-import { renderHook } from '@testing-library/react';
-import { act } from 'react';
-import gql from 'graphql-tag';
+import { renderHook } from "@testing-library/react";
+import { act } from "react";
+import gql from "graphql-tag";
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { spreadsheetImportDialogState } from "@/spreadsheet-import/states/spreadsheetImportDialogState";
+import { useOpenObjectRecordsSpreadsheetImportDialog } from "@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog";
+import { jotaiStore } from "@/ui/utilities/state/jotai/jotaiStore";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
-const COMPANY_ID = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
+const COMPANY_ID = "cb2e9f4b-20c3-4759-9315-4ffeecfaf71a";
 
-jest.mock('uuid', () => ({
-  ...jest.requireActual('uuid'),
-  v4: jest.fn(() => 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a'),
+jest.mock("uuid", () => ({
+	...jest.requireActual("uuid"),
+	v4: jest.fn(() => "cb2e9f4b-20c3-4759-9315-4ffeecfaf71a"),
 }));
 
 const mockBatchCreateManyRecords = jest.fn().mockResolvedValue([]);
 
-jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
-  useBatchCreateManyRecords: () => ({
-    batchCreateManyRecords: mockBatchCreateManyRecords,
-  }),
+jest.mock("@/object-record/hooks/useBatchCreateManyRecords", () => ({
+	useBatchCreateManyRecords: () => ({
+		batchCreateManyRecords: mockBatchCreateManyRecords,
+	}),
 }));
 
 const mockResult = jest.fn(() => ({
-  data: {
-    createCompanies: [
-      {
-        id: COMPANY_ID,
-        name: 'Example Company',
-        employees: 0,
-        idealCustomerProfile: true,
-        __typename: 'Company',
-      },
-    ],
-  },
+	data: {
+		createCompanies: [
+			{
+				id: COMPANY_ID,
+				name: "Example Company",
+				employees: 0,
+				idealCustomerProfile: true,
+				__typename: "Company",
+			},
+		],
+	},
 }));
 
 const companyMocks = [
-  {
-    request: {
-      query: gql`
+	{
+		request: {
+			query: gql`
         mutation CreateCompanies(
           $data: [CompanyCreateInput!]!
           $upsert: Boolean
@@ -54,121 +54,121 @@ const companyMocks = [
           }
         }
       `,
-    },
-    variableMatcher: () => true,
-    result: mockResult,
-  },
+		},
+		variableMatcher: () => true,
+		result: mockResult,
+	},
 ];
 
 const fakeCsv = () => {
-  const csvContent = 'name\nExample Company';
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  return new File([blob], 'fakeData.csv', { type: 'text/csv' });
+	const csvContent = "name\nExample Company";
+	const blob = new Blob([csvContent], { type: "text/csv" });
+	return new File([blob], "fakeData.csv", { type: "text/csv" });
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: companyMocks,
+	apolloMocks: companyMocks,
 });
 
-describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+describe("useOpenObjectRecordsSpreadsheetImportDialog", () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
 
-  it('should open dialog and configure onSubmit function correctly', async () => {
-    const { result } = renderHook(
-      () => {
-        const { openObjectRecordsSpreadsheetImportDialog } =
-          useOpenObjectRecordsSpreadsheetImportDialog(
-            CoreObjectNameSingular.Company,
-          );
-        return {
-          openObjectRecordsSpreadsheetImportDialog,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+	it("should open dialog and configure onSubmit function correctly", async () => {
+		const { result } = renderHook(
+			() => {
+				const { openObjectRecordsSpreadsheetImportDialog } =
+					useOpenObjectRecordsSpreadsheetImportDialog(
+						CoreObjectNameSingular.Company,
+					);
+				return {
+					openObjectRecordsSpreadsheetImportDialog,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    const spreadsheetImportDialog = jotaiStore.get(
-      spreadsheetImportDialogState.atom,
-    );
+		const spreadsheetImportDialog = jotaiStore.get(
+			spreadsheetImportDialogState.atom,
+		);
 
-    expect(spreadsheetImportDialog.isOpen).toBe(false);
-    expect(spreadsheetImportDialog.options).toBeNull();
+		expect(spreadsheetImportDialog.isOpen).toBe(false);
+		expect(spreadsheetImportDialog.options).toBeNull();
 
-    await act(async () => {
-      result.current.openObjectRecordsSpreadsheetImportDialog();
-    });
+		await act(async () => {
+			result.current.openObjectRecordsSpreadsheetImportDialog();
+		});
 
-    const dialogAfterOpen = jotaiStore.get(spreadsheetImportDialogState.atom);
+		const dialogAfterOpen = jotaiStore.get(spreadsheetImportDialogState.atom);
 
-    expect(dialogAfterOpen.isOpen).toBe(true);
-    expect(dialogAfterOpen.options).toHaveProperty('onSubmit');
-    expect(dialogAfterOpen.options?.onSubmit).toBeInstanceOf(Function);
-    expect(dialogAfterOpen.options).toHaveProperty('spreadsheetImportFields');
-    expect(
-      Array.isArray(dialogAfterOpen.options?.spreadsheetImportFields),
-    ).toBe(true);
-  });
+		expect(dialogAfterOpen.isOpen).toBe(true);
+		expect(dialogAfterOpen.options).toHaveProperty("onSubmit");
+		expect(dialogAfterOpen.options?.onSubmit).toBeInstanceOf(Function);
+		expect(dialogAfterOpen.options).toHaveProperty("spreadsheetImportFields");
+		expect(
+			Array.isArray(dialogAfterOpen.options?.spreadsheetImportFields),
+		).toBe(true);
+	});
 
-  it('should call batchCreateManyRecords when onSubmit is executed', async () => {
-    const { result } = renderHook(
-      () => {
-        const { openObjectRecordsSpreadsheetImportDialog } =
-          useOpenObjectRecordsSpreadsheetImportDialog(
-            CoreObjectNameSingular.Company,
-          );
-        return {
-          openObjectRecordsSpreadsheetImportDialog,
-        };
-      },
-      { wrapper: Wrapper },
-    );
+	it("should call batchCreateManyRecords when onSubmit is executed", async () => {
+		const { result } = renderHook(
+			() => {
+				const { openObjectRecordsSpreadsheetImportDialog } =
+					useOpenObjectRecordsSpreadsheetImportDialog(
+						CoreObjectNameSingular.Company,
+					);
+				return {
+					openObjectRecordsSpreadsheetImportDialog,
+				};
+			},
+			{ wrapper: Wrapper },
+		);
 
-    await act(async () => {
-      result.current.openObjectRecordsSpreadsheetImportDialog();
-    });
+		await act(async () => {
+			result.current.openObjectRecordsSpreadsheetImportDialog();
+		});
 
-    const spreadsheetImportDialog = jotaiStore.get(
-      spreadsheetImportDialogState.atom,
-    );
+		const spreadsheetImportDialog = jotaiStore.get(
+			spreadsheetImportDialogState.atom,
+		);
 
-    const submitData = {
-      validStructuredRows: [
-        {
-          id: COMPANY_ID,
-          name: 'Example Company',
-          idealCustomerProfile: true,
-          employees: '0',
-        },
-      ],
-      invalidStructuredRows: [],
-      allStructuredRows: [
-        {
-          id: COMPANY_ID,
-          name: 'Example Company',
-          __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
-          idealCustomerProfile: true,
-          employees: '0',
-        },
-      ],
-    };
+		const submitData = {
+			validStructuredRows: [
+				{
+					id: COMPANY_ID,
+					name: "Example Company",
+					idealCustomerProfile: true,
+					employees: "0",
+				},
+			],
+			invalidStructuredRows: [],
+			allStructuredRows: [
+				{
+					id: COMPANY_ID,
+					name: "Example Company",
+					__index: "cbc3985f-dde9-46d1-bae2-c124141700ac",
+					idealCustomerProfile: true,
+					employees: "0",
+				},
+			],
+		};
 
-    await act(async () => {
-      await spreadsheetImportDialog.options?.onSubmit(submitData, fakeCsv());
-    });
+		await act(async () => {
+			await spreadsheetImportDialog.options?.onSubmit(submitData, fakeCsv());
+		});
 
-    expect(mockBatchCreateManyRecords).toHaveBeenCalledTimes(1);
+		expect(mockBatchCreateManyRecords).toHaveBeenCalledTimes(1);
 
-    const callArgs = mockBatchCreateManyRecords.mock.calls[0][0];
-    expect(callArgs).toHaveProperty('recordsToCreate');
-    expect(callArgs).toHaveProperty('upsert', true);
-    expect(Array.isArray(callArgs.recordsToCreate)).toBe(true);
-    expect(callArgs.recordsToCreate).toHaveLength(1);
+		const callArgs = mockBatchCreateManyRecords.mock.calls[0][0];
+		expect(callArgs).toHaveProperty("recordsToCreate");
+		expect(callArgs).toHaveProperty("upsert", true);
+		expect(Array.isArray(callArgs.recordsToCreate)).toBe(true);
+		expect(callArgs.recordsToCreate).toHaveLength(1);
 
-    const recordToCreate = callArgs.recordsToCreate[0];
-    expect(recordToCreate).toHaveProperty('name', 'Example Company');
-    expect(recordToCreate).toHaveProperty('idealCustomerProfile', true);
-    expect(recordToCreate).toHaveProperty('employees', 0);
-  });
+		const recordToCreate = callArgs.recordsToCreate[0];
+		expect(recordToCreate).toHaveProperty("name", "Example Company");
+		expect(recordToCreate).toHaveProperty("idealCustomerProfile", true);
+		expect(recordToCreate).toHaveProperty("employees", 0);
+	});
 });

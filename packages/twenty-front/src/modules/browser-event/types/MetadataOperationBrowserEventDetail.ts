@@ -1,5 +1,5 @@
-import { type MetadataOperation } from '@/browser-event/types/MetadataOperation';
-import { type BroadcastEntityName } from '@/browser-event/types/BroadcastEntityName';
+import { type MetadataOperation } from "@/browser-event/types/MetadataOperation";
+import { type BroadcastEntityName } from "@/browser-event/types/BroadcastEntityName";
 
 // TODO: The browser event layer currently uses "Metadata" naming throughout
 // (MetadataOperation, MetadataOperationBrowserEventDetail, etc.) because it
@@ -11,9 +11,9 @@ import { type BroadcastEntityName } from '@/browser-event/types/BroadcastEntityN
 // rename of this layer (e.g. Metadata* → Entity* or Broadcast*) would make
 // the naming consistent with the actual scope.
 export type MetadataOperationBrowserEventDetail<
-  T extends Record<string, unknown>,
+	T extends Record<string, unknown>,
 > = {
-  metadataName: BroadcastEntityName;
-  operation: MetadataOperation<T>;
-  updatedCollectionHash?: string;
+	metadataName: BroadcastEntityName;
+	operation: MetadataOperation<T>;
+	updatedCollectionHash?: string;
 };

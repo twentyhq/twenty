@@ -1,4 +1,4 @@
-import { type WebsiteRouteFamily } from './website-route';
+import { type WebsiteRouteFamily } from "./website-route";
 
 // Dynamic families register here as their content migrates (articles,
 // releases, customer stories). The sitemap awaits every enumerator.

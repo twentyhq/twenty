@@ -1,68 +1,68 @@
-import { VariableTagChip } from '@/advanced-text-editor/extensions/variable-tag/VariableTagChip';
-import { Node } from '@tiptap/core';
-import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
-import { extractRawVariableNamePart } from 'twenty-shared/workflow';
+import { VariableTagChip } from "@/advanced-text-editor/extensions/variable-tag/VariableTagChip";
+import { Node } from "@tiptap/core";
+import { mergeAttributes, ReactNodeViewRenderer } from "@tiptap/react";
+import { extractRawVariableNamePart } from "twenty-shared/workflow";
 
-declare module '@tiptap/core' {
-  interface Commands<ReturnType> {
-    variableTag: {
-      insertVariableTag: (variableName: string) => ReturnType;
-    };
-  }
+declare module "@tiptap/core" {
+	interface Commands<ReturnType> {
+		variableTag: {
+			insertVariableTag: (variableName: string) => ReturnType;
+		};
+	}
 }
 
 export const VariableTag = Node.create({
-  name: 'variableTag',
-  group: 'inline',
-  inline: true,
-  atom: true,
+	name: "variableTag",
+	group: "inline",
+	inline: true,
+	atom: true,
 
-  addNodeView() {
-    return ReactNodeViewRenderer(VariableTagChip);
-  },
+	addNodeView() {
+		return ReactNodeViewRenderer(VariableTagChip);
+	},
 
-  addAttributes: () => ({
-    variable: {
-      default: null,
-      parseHTML: (element) => element.getAttribute('data-variable'),
-      renderHTML: (attributes) => {
-        return {
-          'data-variable': attributes.variable,
-        };
-      },
-    },
-  }),
+	addAttributes: () => ({
+		variable: {
+			default: null,
+			parseHTML: (element) => element.getAttribute("data-variable"),
+			renderHTML: (attributes) => {
+				return {
+					"data-variable": attributes.variable,
+				};
+			},
+		},
+	}),
 
-  renderHTML: ({ node, HTMLAttributes }) => {
-    const variable = node.attrs.variable as string;
+	renderHTML: ({ node, HTMLAttributes }) => {
+		const variable = node.attrs.variable as string;
 
-    return [
-      'span',
-      mergeAttributes(HTMLAttributes, {
-        'data-type': 'variableTag',
-        class: 'variable-tag',
-      }),
-      extractRawVariableNamePart({
-        rawVariableName: variable,
-        part: 'selectedField',
-      }),
-    ];
-  },
+		return [
+			"span",
+			mergeAttributes(HTMLAttributes, {
+				"data-type": "variableTag",
+				class: "variable-tag",
+			}),
+			extractRawVariableNamePart({
+				rawVariableName: variable,
+				part: "selectedField",
+			}),
+		];
+	},
 
-  renderText: ({ node }) => {
-    return node.attrs.variable;
-  },
+	renderText: ({ node }) => {
+		return node.attrs.variable;
+	},
 
-  addCommands: () => ({
-    insertVariableTag:
-      (variableName: string) =>
-      ({ commands }) => {
-        commands.insertContent({
-          type: 'variableTag',
-          attrs: { variable: variableName },
-        });
+	addCommands: () => ({
+		insertVariableTag:
+			(variableName: string) =>
+			({ commands }) => {
+				commands.insertContent({
+					type: "variableTag",
+					attrs: { variable: variableName },
+				});
 
-        return true;
-      },
-  }),
+				return true;
+			},
+	}),
 });

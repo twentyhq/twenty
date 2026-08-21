@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { type IconComponent } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledCheckContainer = styled.div<{ color: string }>`
   align-items: center;
@@ -17,18 +17,18 @@ const StyledCheckContainer = styled.div<{ color: string }>`
 `;
 
 type OnboardingModalCircularIconProps = {
-  Icon: IconComponent;
+	Icon: IconComponent;
 };
 
 export const OnboardingModalCircularIcon = ({
-  Icon,
+	Icon,
 }: OnboardingModalCircularIconProps) => {
-  const { theme } = useContext(ThemeContext);
-  const color = theme.background.invertedPrimary;
+	const { theme } = useContext(ThemeContext);
+	const color = theme.background.invertedPrimary;
 
-  return (
-    <StyledCheckContainer color={color}>
-      <Icon size={24} color={color} stroke={3} />
-    </StyledCheckContainer>
-  );
+	return (
+		<StyledCheckContainer color={color}>
+			<Icon size={24} color={color} stroke={3} />
+		</StyledCheckContainer>
+	);
 };

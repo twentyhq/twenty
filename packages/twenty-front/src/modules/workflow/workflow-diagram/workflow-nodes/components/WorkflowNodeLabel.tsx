@@ -1,13 +1,13 @@
-import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { styled } from '@linaria/react';
-import { Label } from 'twenty-ui/typography';
+import type { WorkflowRunStepStatus } from "@/workflow/types/Workflow";
+import { getWorkflowDiagramColors } from "@/workflow/workflow-diagram/utils/getWorkflowDiagramColors";
+import { styled } from "@linaria/react";
+import { Label } from "twenty-ui/typography";
 
 type WorkflowNodeLabelProps = {
-  runStatus?: WorkflowRunStepStatus;
-  selected: boolean;
-  children?: React.ReactNode;
-  className?: string;
+	runStatus?: WorkflowRunStepStatus;
+	selected: boolean;
+	children?: React.ReactNode;
+	className?: string;
 };
 
 const StyledNodeLabelWrapper = styled.div<{ labelColor: string }>`
@@ -20,17 +20,17 @@ const StyledNodeLabelWrapper = styled.div<{ labelColor: string }>`
 `;
 
 export const WorkflowNodeLabel = ({
-  runStatus,
-  selected,
-  children,
-  className,
+	runStatus,
+	selected,
+	children,
+	className,
 }: WorkflowNodeLabelProps) => {
-  const colors = getWorkflowDiagramColors({ runStatus });
-  const labelColor = selected ? colors.selected.color : colors.unselected.color;
+	const colors = getWorkflowDiagramColors({ runStatus });
+	const labelColor = selected ? colors.selected.color : colors.unselected.color;
 
-  return (
-    <StyledNodeLabelWrapper labelColor={labelColor} className={className}>
-      <Label>{children}</Label>
-    </StyledNodeLabelWrapper>
-  );
+	return (
+		<StyledNodeLabelWrapper labelColor={labelColor} className={className}>
+			<Label>{children}</Label>
+		</StyledNodeLabelWrapper>
+	);
 };

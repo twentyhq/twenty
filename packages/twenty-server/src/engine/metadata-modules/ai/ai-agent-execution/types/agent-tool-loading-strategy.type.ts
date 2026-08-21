@@ -1,1 +1,1 @@
-export type AgentToolLoadingStrategy = 'preload' | 'lazy';
+export type AgentToolLoadingStrategy = "preload" | "lazy";

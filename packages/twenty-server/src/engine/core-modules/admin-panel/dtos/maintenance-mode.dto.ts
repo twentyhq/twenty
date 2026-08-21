@@ -1,13 +1,13 @@
-import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('MaintenanceMode')
+@ObjectType("MaintenanceMode")
 export class MaintenanceModeDTO {
-  @Field(() => GraphQLISODateTime)
-  startAt: Date;
+	@Field(() => GraphQLISODateTime)
+	startAt: Date;
 
-  @Field(() => GraphQLISODateTime)
-  endAt: Date;
+	@Field(() => GraphQLISODateTime)
+	endAt: Date;
 
-  @Field(() => String, { nullable: true })
-  link?: string;
+	@Field(() => String, { nullable: true })
+	link?: string;
 }

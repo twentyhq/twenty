@@ -1,1 +1,1 @@
-export const VISIBILITY_DESKTOP = 'desktop';
+export const VISIBILITY_DESKTOP = "desktop";

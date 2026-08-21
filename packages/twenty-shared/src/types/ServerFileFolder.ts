@@ -1,3 +1,3 @@
 export enum ServerFileFolder {
-  ApplicationRegistration = 'application-registration',
+	ApplicationRegistration = "application-registration",
 }

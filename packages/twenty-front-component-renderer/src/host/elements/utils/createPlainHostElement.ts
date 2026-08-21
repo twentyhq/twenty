@@ -1,30 +1,30 @@
-import React from 'react';
+import React from "react";
 
-import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
+import { type ElementRefCallback } from "@/host/elements/types/ElementRefCallback";
 
 type CreatePlainHostElementParams = {
-  htmlTag: string;
-  isVoid: boolean;
-  reactBindableProps: Record<string, unknown>;
-  hostEnforcedProps: Record<string, unknown>;
-  composedElementRef: ElementRefCallback;
-  children: React.ReactNode;
+	htmlTag: string;
+	isVoid: boolean;
+	reactBindableProps: Record<string, unknown>;
+	hostEnforcedProps: Record<string, unknown>;
+	composedElementRef: ElementRefCallback;
+	children: React.ReactNode;
 };
 
 export const createPlainHostElement = ({
-  htmlTag,
-  isVoid,
-  reactBindableProps,
-  hostEnforcedProps,
-  composedElementRef,
-  children,
+	htmlTag,
+	isVoid,
+	reactBindableProps,
+	hostEnforcedProps,
+	composedElementRef,
+	children,
 }: CreatePlainHostElementParams) =>
-  React.createElement(
-    htmlTag,
-    {
-      ...reactBindableProps,
-      ...hostEnforcedProps,
-      ref: composedElementRef,
-    },
-    isVoid ? undefined : children,
-  );
+	React.createElement(
+		htmlTag,
+		{
+			...reactBindableProps,
+			...hostEnforcedProps,
+			ref: composedElementRef,
+		},
+		isVoid ? undefined : children,
+	);

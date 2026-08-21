@@ -1,7 +1,7 @@
 export type VerificationRecord = {
-  type: 'TXT' | 'CNAME' | 'MX';
-  key: string;
-  value: string;
-  priority?: number;
-  status?: string;
+	type: "TXT" | "CNAME" | "MX";
+	key: string;
+	value: string;
+	priority?: number;
+	status?: string;
 };

@@ -1,35 +1,35 @@
-import { Temporal } from 'temporal-polyfill';
+import { Temporal } from "temporal-polyfill";
 
 type GetShiftedRecordCalendarEndDateTimeArgs = {
-  endDateTime?: unknown;
-  originalStartInstant: Temporal.Instant;
-  shiftedStartInstant: Temporal.Instant;
+	endDateTime?: unknown;
+	originalStartInstant: Temporal.Instant;
+	shiftedStartInstant: Temporal.Instant;
 };
 
 export const getShiftedRecordCalendarEndDateTime = ({
-  endDateTime,
-  originalStartInstant,
-  shiftedStartInstant,
+	endDateTime,
+	originalStartInstant,
+	shiftedStartInstant,
 }: GetShiftedRecordCalendarEndDateTimeArgs): string | undefined => {
-  if (typeof endDateTime !== 'string') {
-    return undefined;
-  }
+	if (typeof endDateTime !== "string") {
+		return undefined;
+	}
 
-  try {
-    const originalEndInstant = Temporal.Instant.from(endDateTime);
+	try {
+		const originalEndInstant = Temporal.Instant.from(endDateTime);
 
-    if (
-      Temporal.Instant.compare(originalEndInstant, originalStartInstant) < 0
-    ) {
-      return undefined;
-    }
+		if (
+			Temporal.Instant.compare(originalEndInstant, originalStartInstant) < 0
+		) {
+			return undefined;
+		}
 
-    return Temporal.Instant.fromEpochNanoseconds(
-      shiftedStartInstant.epochNanoseconds +
-        (originalEndInstant.epochNanoseconds -
-          originalStartInstant.epochNanoseconds),
-    ).toString();
-  } catch {
-    return undefined;
-  }
+		return Temporal.Instant.fromEpochNanoseconds(
+			shiftedStartInstant.epochNanoseconds +
+				(originalEndInstant.epochNanoseconds -
+					originalStartInstant.epochNanoseconds),
+		).toString();
+	} catch {
+		return undefined;
+	}
 };

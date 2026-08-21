@@ -1,7 +1,7 @@
-import * as a11yAddonAnnotations from '@storybook/addon-a11y/preview';
-import { setProjectAnnotations } from '@storybook/react-vite';
-import { MotionGlobalConfig } from 'framer-motion';
-import * as projectAnnotations from './preview';
+import * as a11yAddonAnnotations from "@storybook/addon-a11y/preview";
+import { setProjectAnnotations } from "@storybook/react-vite";
+import { MotionGlobalConfig } from "framer-motion";
+import * as projectAnnotations from "./preview";
 
 // Freeze framer-motion so Argos screenshots are deterministic. Playwright's
 // `animations: "disabled"` only halts CSS animations/transitions, not

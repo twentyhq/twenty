@@ -1,19 +1,19 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 import {
-  IconHome,
-  IconMessageCircle2,
-  IconMessageCirclePlus,
-} from '@tabler/icons-react';
+	IconHome,
+	IconMessageCircle2,
+	IconMessageCirclePlus,
+} from "@tabler/icons-react";
 
-import { mediaUp } from '@/tokens';
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { mediaUp } from "@/tokens";
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
 const Root = styled.div`
   display: flex;
   justify-content: center;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     justify-content: space-between;
   }
@@ -22,7 +22,7 @@ const Root = styled.div`
 const SegmentedRail = styled.div`
   display: none;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: flex;
     align-items: center;
     /* The old hand-mixed #fcfcfccc: the secondary surface at 80%. */
@@ -42,7 +42,7 @@ const SegmentedRail = styled.div`
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
   background: ${({ $selected }) =>
-    $selected ? THEME_LIGHT.background.transparent.light : 'transparent'};
+		$selected ? THEME_LIGHT.background.transparent.light : "transparent"};
   border-radius: ${THEME_LIGHT.border.radius.pill};
   display: flex;
   height: 20px;
@@ -61,7 +61,7 @@ const NewChat = styled.div`
   justify-content: center;
   width: 32px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     column-gap: 4px;
     height: 26px;
     padding: 3px;
@@ -72,7 +72,7 @@ const NewChat = styled.div`
 const NewChatLabel = styled.span`
   display: none;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: block;
     font-family: var(--font-product), sans-serif;
     font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
@@ -84,35 +84,35 @@ const NewChatLabel = styled.span`
 // The home/chat rail + "New chat" pill — chrome only, as on the old
 // site: the AI conversation lives in the floating Terminal.
 export function SidebarControls() {
-  return (
-    <Root>
-      <SegmentedRail aria-hidden>
-        <Segment $selected>
-          <IconHome
-            aria-hidden
-            color={THEME_LIGHT.font.color.primary}
-            size={16}
-            strokeWidth={THEME_LIGHT.icon.stroke.md}
-          />
-        </Segment>
-        <Segment>
-          <IconMessageCircle2
-            aria-hidden
-            color={THEME_LIGHT.font.color.tertiary}
-            size={16}
-            strokeWidth={THEME_LIGHT.icon.stroke.md}
-          />
-        </Segment>
-      </SegmentedRail>
-      <NewChat aria-hidden>
-        <IconMessageCirclePlus
-          aria-hidden
-          color={THEME_LIGHT.font.color.secondary}
-          size={16}
-          strokeWidth={THEME_LIGHT.icon.stroke.md}
-        />
-        <NewChatLabel>New chat</NewChatLabel>
-      </NewChat>
-    </Root>
-  );
+	return (
+		<Root>
+			<SegmentedRail aria-hidden>
+				<Segment $selected>
+					<IconHome
+						aria-hidden
+						color={THEME_LIGHT.font.color.primary}
+						size={16}
+						strokeWidth={THEME_LIGHT.icon.stroke.md}
+					/>
+				</Segment>
+				<Segment>
+					<IconMessageCircle2
+						aria-hidden
+						color={THEME_LIGHT.font.color.tertiary}
+						size={16}
+						strokeWidth={THEME_LIGHT.icon.stroke.md}
+					/>
+				</Segment>
+			</SegmentedRail>
+			<NewChat aria-hidden>
+				<IconMessageCirclePlus
+					aria-hidden
+					color={THEME_LIGHT.font.color.secondary}
+					size={16}
+					strokeWidth={THEME_LIGHT.icon.stroke.md}
+				/>
+				<NewChatLabel>New chat</NewChatLabel>
+			</NewChat>
+		</Root>
+	);
 }

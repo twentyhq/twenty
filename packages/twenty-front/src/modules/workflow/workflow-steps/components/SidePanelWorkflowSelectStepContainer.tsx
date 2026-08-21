@@ -1,5 +1,5 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { styled } from "@linaria/react";
 
 const StyledStepListContainer = styled.div`
   display: flex;

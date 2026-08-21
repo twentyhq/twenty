@@ -1,7 +1,7 @@
-import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
+import { type ChatReferenceIdentity } from "@/ai/types/ChatReferenceIdentity";
 
 export type ChatReferenceMatch = ChatReferenceIdentity & {
-  fullMatch: string;
-  index: number;
-  displayName: string;
+	fullMatch: string;
+	index: number;
+	displayName: string;
 };

@@ -1,12 +1,12 @@
-import IconGoogleCalendarRaw from '@assets/icons/google-calendar.svg?react';
-import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import IconGoogleCalendarRaw from "@assets/icons/google-calendar.svg?react";
+import { type IconComponentProps } from "@ui/icon/types/IconComponent";
+import { useTheme } from "@ui/theme-constants";
 
-type IconGoogleCalendarProps = Pick<IconComponentProps, 'size'>;
+type IconGoogleCalendarProps = Pick<IconComponentProps, "size">;
 
 export const IconGoogleCalendar = (props: IconGoogleCalendarProps) => {
-  const theme = useTheme();
-  const size = props.size ?? theme.icon.size.lg;
+	const theme = useTheme();
+	const size = props.size ?? theme.icon.size.lg;
 
-  return <IconGoogleCalendarRaw height={size} width={size} />;
+	return <IconGoogleCalendarRaw height={size} width={size} />;
 };

@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { IconChevronRight } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconChevronRight } from "@tabler/icons-react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { ChangesSummaryDiffCounts } from './ChangesSummaryDiffCounts';
-import { type FileChange } from './rocket-changeset';
+import { ChangesSummaryDiffCounts } from "./ChangesSummaryDiffCounts";
+import { type FileChange } from "./rocket-changeset";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -58,19 +58,19 @@ const Chevron = styled.span`
 `;
 
 export function ChangesSummaryFileRow({
-  animationDelay,
-  change,
+	animationDelay,
+	change,
 }: {
-  animationDelay: string;
-  change: FileChange;
+	animationDelay: string;
+	change: FileChange;
 }) {
-  return (
-    <FileRow $delay={animationDelay}>
-      <FilePath>{change.path}</FilePath>
-      <ChangesSummaryDiffCounts added={change.added} removed={change.removed} />
-      <Chevron>
-        <IconChevronRight size={14} stroke={1.8} />
-      </Chevron>
-    </FileRow>
-  );
+	return (
+		<FileRow $delay={animationDelay}>
+			<FilePath>{change.path}</FilePath>
+			<ChangesSummaryDiffCounts added={change.added} removed={change.removed} />
+			<Chevron>
+				<IconChevronRight size={14} stroke={1.8} />
+			</Chevron>
+		</FileRow>
+	);
 }

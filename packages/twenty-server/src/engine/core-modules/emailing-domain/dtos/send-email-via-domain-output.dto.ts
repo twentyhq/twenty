@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('SendEmailViaDomainOutput')
+@ObjectType("SendEmailViaDomainOutput")
 export class SendEmailViaDomainOutputDTO {
-  @Field(() => String)
-  messageId: string;
+	@Field(() => String)
+	messageId: string;
 }

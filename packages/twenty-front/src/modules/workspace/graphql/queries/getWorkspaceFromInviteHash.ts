@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_WORKSPACE_FROM_INVITE_HASH = gql`
   query GetWorkspaceFromInviteHash($inviteHash: String!) {

@@ -1,12 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('WorkspaceUpgradeRef')
+@ObjectType("WorkspaceUpgradeRef")
 export class WorkspaceUpgradeRefDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => String, { nullable: true })
-  name: string | null;
+	@Field(() => String, { nullable: true })
+	name: string | null;
 }

@@ -1,22 +1,22 @@
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { t } from "@lingui/core/macro";
+import { styled } from "@linaria/react";
+import { useState } from "react";
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
-import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isNonEmptyString } from "@sniptt/guards";
+import { isDefined } from "twenty-shared/utils";
+import { Tag } from "twenty-ui/data-display";
+import { IconChevronDown, IconChevronUp, IconTool } from "twenty-ui/icon";
+import { JsonTree } from "twenty-ui/json-visualizer";
+import { AnimatedExpandableContainer } from "twenty-ui/layout";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
-import { getAdminToolDisplayName } from '@/settings/admin-panel/utils/getAdminToolDisplayName';
-import { parseAdminToolJson } from '@/settings/admin-panel/utils/parseAdminToolJson';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { type AdminChatThreadMessagePart } from "@/settings/admin-panel/types/AdminChatThreadMessagePart";
+import { getAdminToolDisplayName } from "@/settings/admin-panel/utils/getAdminToolDisplayName";
+import { parseAdminToolJson } from "@/settings/admin-panel/utils/parseAdminToolJson";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 
 type SettingsAdminChatToolCallPartProps = {
-  part: AdminChatThreadMessagePart;
+	part: AdminChatThreadMessagePart;
 };
 
 const StyledContainer = styled.div`
@@ -68,11 +68,11 @@ const StyledTab = styled.button<{ isActive: boolean }>`
   border: none;
   border-bottom: 1px solid
     ${({ isActive }) =>
-      isActive ? themeCssVariables.font.color.primary : 'transparent'};
+			isActive ? themeCssVariables.font.color.primary : "transparent"};
   color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
+		isActive
+			? themeCssVariables.font.color.primary
+			: themeCssVariables.font.color.tertiary};
   cursor: pointer;
   font-size: ${themeCssVariables.font.size.sm};
   padding: ${themeCssVariables.spacing[1]} 0;
@@ -98,81 +98,81 @@ const StyledEmptyTabLabel = styled.div`
 `;
 
 export const SettingsAdminChatToolCallPart = ({
-  part,
+	part,
 }: SettingsAdminChatToolCallPartProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'output' | 'input'>(
-    isDefined(part.toolOutput) ? 'output' : 'input',
-  );
-  const { copyToClipboard } = useCopyToClipboard();
+	const [isExpanded, setIsExpanded] = useState(false);
+	const [activeTab, setActiveTab] = useState<"output" | "input">(
+		isDefined(part.toolOutput) ? "output" : "input",
+	);
+	const { copyToClipboard } = useCopyToClipboard();
 
-  const toolName = getAdminToolDisplayName(part);
+	const toolName = getAdminToolDisplayName(part);
 
-  const hasToolError =
-    part.state === 'output-error' || isNonEmptyString(part.errorMessage);
+	const hasToolError =
+		part.state === "output-error" || isNonEmptyString(part.errorMessage);
 
-  const activeJsonValue = parseAdminToolJson(
-    activeTab === 'output' ? part.toolOutput : part.toolInput,
-  );
+	const activeJsonValue = parseAdminToolJson(
+		activeTab === "output" ? part.toolOutput : part.toolInput,
+	);
 
-  return (
-    <StyledContainer>
-      <StyledToggleRow
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
-        <StyledToolLabel>
-          <IconTool size={14} />
-          {toolName}
-          {hasToolError && <Tag color="red" text={t`Failed`} />}
-        </StyledToolLabel>
-        <StyledRightContent>
-          {isExpanded ? (
-            <IconChevronUp size={14} />
-          ) : (
-            <IconChevronDown size={14} />
-          )}
-        </StyledRightContent>
-      </StyledToggleRow>
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-        <StyledTabContainer>
-          <StyledTab
-            isActive={activeTab === 'output'}
-            onClick={() => setActiveTab('output')}
-          >
-            {t`Output`}
-          </StyledTab>
-          <StyledTab
-            isActive={activeTab === 'input'}
-            onClick={() => setActiveTab('input')}
-          >
-            {t`Input`}
-          </StyledTab>
-        </StyledTabContainer>
-        {isDefined(activeJsonValue) ? (
-          <StyledJsonTreeContainer>
-            <JsonTree
-              value={activeJsonValue}
-              shouldExpandNodeInitially={() => false}
-              emptyArrayLabel={t`Empty Array`}
-              emptyObjectLabel={t`Empty Object`}
-              emptyStringLabel={t`[empty string]`}
-              arrowButtonCollapsedLabel={t`Expand`}
-              arrowButtonExpandedLabel={t`Collapse`}
-              onNodeValueClick={copyToClipboard}
-            />
-          </StyledJsonTreeContainer>
-        ) : (
-          <StyledEmptyTabLabel>
-            {activeTab === 'output' ? t`No output` : t`No input`}
-          </StyledEmptyTabLabel>
-        )}
-        {isNonEmptyString(part.errorMessage) && (
-          <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
-        )}
-      </AnimatedExpandableContainer>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledToggleRow
+				aria-expanded={isExpanded}
+				onClick={() =>
+					setIsExpanded((previousIsExpanded) => !previousIsExpanded)
+				}
+			>
+				<StyledToolLabel>
+					<IconTool size={14} />
+					{toolName}
+					{hasToolError && <Tag color="red" text={t`Failed`} />}
+				</StyledToolLabel>
+				<StyledRightContent>
+					{isExpanded ? (
+						<IconChevronUp size={14} />
+					) : (
+						<IconChevronDown size={14} />
+					)}
+				</StyledRightContent>
+			</StyledToggleRow>
+			<AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+				<StyledTabContainer>
+					<StyledTab
+						isActive={activeTab === "output"}
+						onClick={() => setActiveTab("output")}
+					>
+						{t`Output`}
+					</StyledTab>
+					<StyledTab
+						isActive={activeTab === "input"}
+						onClick={() => setActiveTab("input")}
+					>
+						{t`Input`}
+					</StyledTab>
+				</StyledTabContainer>
+				{isDefined(activeJsonValue) ? (
+					<StyledJsonTreeContainer>
+						<JsonTree
+							value={activeJsonValue}
+							shouldExpandNodeInitially={() => false}
+							emptyArrayLabel={t`Empty Array`}
+							emptyObjectLabel={t`Empty Object`}
+							emptyStringLabel={t`[empty string]`}
+							arrowButtonCollapsedLabel={t`Expand`}
+							arrowButtonExpandedLabel={t`Collapse`}
+							onNodeValueClick={copyToClipboard}
+						/>
+					</StyledJsonTreeContainer>
+				) : (
+					<StyledEmptyTabLabel>
+						{activeTab === "output" ? t`No output` : t`No input`}
+					</StyledEmptyTabLabel>
+				)}
+				{isNonEmptyString(part.errorMessage) && (
+					<StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
+				)}
+			</AnimatedExpandableContainer>
+		</StyledContainer>
+	);
 };

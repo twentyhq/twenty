@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import type { LineSeries, Point } from '@nivo/line';
-import { type ReactElement } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import type { LineSeries, Point } from "@nivo/line";
+import { type ReactElement } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledTooltipContainer = styled.div`
   backdrop-filter: ${themeCssVariables.blur.medium};
@@ -46,25 +46,25 @@ const StyledTooltipValue = styled.span`
 `;
 
 type SettingsAdminWorkerMetricsTooltipProps = {
-  slice: {
-    points: readonly Point<LineSeries>[];
-  };
+	slice: {
+		points: readonly Point<LineSeries>[];
+	};
 };
 
 export const SettingsAdminWorkerMetricsTooltip = ({
-  slice,
+	slice,
 }: SettingsAdminWorkerMetricsTooltipProps): ReactElement => {
-  return (
-    <StyledTooltipContainer>
-      {slice.points.map((point) => (
-        <StyledTooltipItem key={point.id} color={point.seriesColor}>
-          <StyledTooltipColorCircle color={point.seriesColor} />
-          <StyledTooltipDataRow>
-            <span>{point.seriesId}</span>
-            <StyledTooltipValue>{point.data.yFormatted}</StyledTooltipValue>
-          </StyledTooltipDataRow>
-        </StyledTooltipItem>
-      ))}
-    </StyledTooltipContainer>
-  );
+	return (
+		<StyledTooltipContainer>
+			{slice.points.map((point) => (
+				<StyledTooltipItem key={point.id} color={point.seriesColor}>
+					<StyledTooltipColorCircle color={point.seriesColor} />
+					<StyledTooltipDataRow>
+						<span>{point.seriesId}</span>
+						<StyledTooltipValue>{point.data.yFormatted}</StyledTooltipValue>
+					</StyledTooltipDataRow>
+				</StyledTooltipItem>
+			))}
+		</StyledTooltipContainer>
+	);
 };

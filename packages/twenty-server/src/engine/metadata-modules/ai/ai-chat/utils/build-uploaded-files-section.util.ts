@@ -1,13 +1,13 @@
 export const buildUploadedFilesSection = (
-  storedFiles: Array<{ filename: string; fileId: string }>,
+	storedFiles: Array<{ filename: string; fileId: string }>,
 ): string => {
-  const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
+	const fileList = storedFiles.map((f) => `- ${f.filename}`).join("\n");
 
-  const filesJson = JSON.stringify(
-    storedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
-  );
+	const filesJson = JSON.stringify(
+		storedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
+	);
 
-  return `
+	return `
 ## Uploaded Files
 
 The user has uploaded the following files:

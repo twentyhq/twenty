@@ -1,4 +1,4 @@
 export type NestedRelationsReadPathOptions = {
-  isOrmV2ReadPathEnabled: boolean;
-  useReplica: boolean;
+	isOrmV2ReadPathEnabled: boolean;
+	useReplica: boolean;
 };

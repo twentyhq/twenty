@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly container: 'container';
+	readonly container: "container";
 };
 export default classNames;

@@ -1,17 +1,17 @@
 type ResolveChildNodeAtIndexInput = {
-  parent: Node;
-  index: number;
+	parent: Node;
+	index: number;
 };
 
 export const resolveChildNodeAtIndex = ({
-  parent,
-  index,
+	parent,
+	index,
 }: ResolveChildNodeAtIndexInput): Node | null => {
-  const { childNodes } = parent;
+	const { childNodes } = parent;
 
-  if (index < 0 || index >= childNodes.length) {
-    return null;
-  }
+	if (index < 0 || index >= childNodes.length) {
+		return null;
+	}
 
-  return childNodes.item(index) ?? null;
+	return childNodes.item(index) ?? null;
 };

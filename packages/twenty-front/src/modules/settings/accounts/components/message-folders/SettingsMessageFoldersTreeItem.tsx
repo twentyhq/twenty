@@ -1,25 +1,25 @@
-import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFolderIcon';
-import { SettingsMessageFoldersBreadcrumb } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersBreadcrumb';
-import { type MessageFolderTreeNode } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
-import { countNestedFolders } from '@/settings/accounts/components/message-folders/utils/countNestedFolders';
-import { formatFolderName } from '@/settings/accounts/components/message-folders/utils/formatFolderName';
-import { isFolderTreePartiallySelected } from '@/settings/accounts/components/message-folders/utils/isFolderTreePartiallySelected';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
-import { Status } from 'twenty-ui/data-display';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { Checkbox, CheckboxSize } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type MessageFolder } from "@/accounts/types/MessageFolder";
+import { SettingsAccountsMessageFolderIcon } from "@/settings/accounts/components/message-folders/SettingsAccountsMessageFolderIcon";
+import { SettingsMessageFoldersBreadcrumb } from "@/settings/accounts/components/message-folders/SettingsMessageFoldersBreadcrumb";
+import { type MessageFolderTreeNode } from "@/settings/accounts/components/message-folders/utils/computeMessageFolderTree";
+import { countNestedFolders } from "@/settings/accounts/components/message-folders/utils/countNestedFolders";
+import { formatFolderName } from "@/settings/accounts/components/message-folders/utils/formatFolderName";
+import { isFolderTreePartiallySelected } from "@/settings/accounts/components/message-folders/utils/isFolderTreePartiallySelected";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useState } from "react";
+import { MessageFolderPendingSyncAction } from "twenty-shared/types";
+import { Status } from "twenty-ui/data-display";
+import { IconChevronDown, IconChevronUp } from "twenty-ui/icon";
+import { Checkbox, CheckboxSize } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsMessageFoldersTreeItemProps = {
-  depth?: number;
-  folderTreeNode: MessageFolderTreeNode;
-  isLast?: boolean;
-  onToggleFolder: (folder: MessageFolder) => void;
-  parentsIsLastList?: boolean[];
+	depth?: number;
+	folderTreeNode: MessageFolderTreeNode;
+	isLast?: boolean;
+	onToggleFolder: (folder: MessageFolder) => void;
+	parentsIsLastList?: boolean[];
 };
 
 const BREADCRUMB_WIDTH = 24;
@@ -36,7 +36,7 @@ const StyledNestedList = styled.ul`
 
 const StyledCollapsibleWrapper = styled.div<{ isExpanded: boolean }>`
   display: grid;
-  grid-template-rows: ${({ isExpanded }) => (isExpanded ? '1fr' : '0fr')};
+  grid-template-rows: ${({ isExpanded }) => (isExpanded ? "1fr" : "0fr")};
   transition: grid-template-rows
     calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out;
 `;
@@ -125,114 +125,114 @@ const StyledCheckboxWrapper = styled.div`
 `;
 
 export const SettingsMessageFoldersTreeItem = ({
-  depth = 0,
-  folderTreeNode,
-  isLast = false,
-  onToggleFolder,
-  parentsIsLastList = [],
+	depth = 0,
+	folderTreeNode,
+	isLast = false,
+	onToggleFolder,
+	parentsIsLastList = [],
 }: SettingsMessageFoldersTreeItemProps) => {
-  const { t } = useLingui();
-  const [isExpanded, setIsExpanded] = useState(true);
+	const { t } = useLingui();
+	const [isExpanded, setIsExpanded] = useState(true);
 
-  const { children, folder, hasChildren } = folderTreeNode;
-  const childCount = hasChildren ? countNestedFolders(folderTreeNode) : 0;
-  const isIndeterminate =
-    hasChildren &&
-    !folder.isSynced &&
-    isFolderTreePartiallySelected(folderTreeNode);
+	const { children, folder, hasChildren } = folderTreeNode;
+	const childCount = hasChildren ? countNestedFolders(folderTreeNode) : 0;
+	const isIndeterminate =
+		hasChildren &&
+		!folder.isSynced &&
+		isFolderTreePartiallySelected(folderTreeNode);
 
-  const handleExpandToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
+	const handleExpandToggle = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setIsExpanded(!isExpanded);
+	};
 
-  const handleRowClick = () => {
-    if (hasChildren) {
-      setIsExpanded(!isExpanded);
-    }
-  };
+	const handleRowClick = () => {
+		if (hasChildren) {
+			setIsExpanded(!isExpanded);
+		}
+	};
 
-  const handleCheckboxClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
+	const handleCheckboxClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+	};
 
-  const childParentsIsLastList =
-    depth > 0 ? [...parentsIsLastList, isLast] : parentsIsLastList;
+	const childParentsIsLastList =
+		depth > 0 ? [...parentsIsLastList, isLast] : parentsIsLastList;
 
-  return (
-    <StyledTreeItem>
-      <StyledTreeItemContent depth={depth} onClick={handleRowClick}>
-        {depth > 0 && (
-          <SettingsMessageFoldersBreadcrumb
-            depth={depth}
-            isLast={isLast}
-            parentsIsLastList={parentsIsLastList}
-          />
-        )}
+	return (
+		<StyledTreeItem>
+			<StyledTreeItemContent depth={depth} onClick={handleRowClick}>
+				{depth > 0 && (
+					<SettingsMessageFoldersBreadcrumb
+						depth={depth}
+						isLast={isLast}
+						parentsIsLastList={parentsIsLastList}
+					/>
+				)}
 
-        <StyledFolderContent>
-          <StyledFolderInfo>
-            <SettingsAccountsMessageFolderIcon
-              folder={folder}
-              isChildFolder={depth > 0}
-            />
-            <StyledFolderName>{formatFolderName(folder.name)}</StyledFolderName>
-          </StyledFolderInfo>
+				<StyledFolderContent>
+					<StyledFolderInfo>
+						<SettingsAccountsMessageFolderIcon
+							folder={folder}
+							isChildFolder={depth > 0}
+						/>
+						<StyledFolderName>{formatFolderName(folder.name)}</StyledFolderName>
+					</StyledFolderInfo>
 
-          <StyledRightSection>
-            {folder.pendingSyncAction ===
-              MessageFolderPendingSyncAction.FOLDER_IMPORT && (
-              <Status color="turquoise" text={t`Importing`} isLoaderVisible />
-            )}
+					<StyledRightSection>
+						{folder.pendingSyncAction ===
+							MessageFolderPendingSyncAction.FOLDER_IMPORT && (
+							<Status color="turquoise" text={t`Importing`} isLoaderVisible />
+						)}
 
-            {hasChildren && (
-              <>
-                <StyledChildCount>{childCount}</StyledChildCount>
-                <StyledExpandButton
-                  aria-label={
-                    isExpanded ? t`Collapse folder` : t`Expand folder`
-                  }
-                  onClick={handleExpandToggle}
-                >
-                  {isExpanded ? (
-                    <IconChevronUp size={16} />
-                  ) : (
-                    <IconChevronDown size={16} />
-                  )}
-                </StyledExpandButton>
-              </>
-            )}
+						{hasChildren && (
+							<>
+								<StyledChildCount>{childCount}</StyledChildCount>
+								<StyledExpandButton
+									aria-label={
+										isExpanded ? t`Collapse folder` : t`Expand folder`
+									}
+									onClick={handleExpandToggle}
+								>
+									{isExpanded ? (
+										<IconChevronUp size={16} />
+									) : (
+										<IconChevronDown size={16} />
+									)}
+								</StyledExpandButton>
+							</>
+						)}
 
-            <StyledCheckboxWrapper onClick={handleCheckboxClick}>
-              <Checkbox
-                checked={folder.isSynced}
-                indeterminate={isIndeterminate}
-                onChange={() => onToggleFolder(folder)}
-                size={CheckboxSize.Small}
-              />
-            </StyledCheckboxWrapper>
-          </StyledRightSection>
-        </StyledFolderContent>
-      </StyledTreeItemContent>
+						<StyledCheckboxWrapper onClick={handleCheckboxClick}>
+							<Checkbox
+								checked={folder.isSynced}
+								indeterminate={isIndeterminate}
+								onChange={() => onToggleFolder(folder)}
+								size={CheckboxSize.Small}
+							/>
+						</StyledCheckboxWrapper>
+					</StyledRightSection>
+				</StyledFolderContent>
+			</StyledTreeItemContent>
 
-      {hasChildren && (
-        <StyledCollapsibleWrapper isExpanded={isExpanded}>
-          <StyledCollapsibleContent>
-            <StyledNestedList>
-              {children.map((child, index) => (
-                <SettingsMessageFoldersTreeItem
-                  key={child.folder.id}
-                  depth={depth + 1}
-                  folderTreeNode={child}
-                  isLast={index === children.length - 1}
-                  onToggleFolder={onToggleFolder}
-                  parentsIsLastList={childParentsIsLastList}
-                />
-              ))}
-            </StyledNestedList>
-          </StyledCollapsibleContent>
-        </StyledCollapsibleWrapper>
-      )}
-    </StyledTreeItem>
-  );
+			{hasChildren && (
+				<StyledCollapsibleWrapper isExpanded={isExpanded}>
+					<StyledCollapsibleContent>
+						<StyledNestedList>
+							{children.map((child, index) => (
+								<SettingsMessageFoldersTreeItem
+									key={child.folder.id}
+									depth={depth + 1}
+									folderTreeNode={child}
+									isLast={index === children.length - 1}
+									onToggleFolder={onToggleFolder}
+									parentsIsLastList={childParentsIsLastList}
+								/>
+							))}
+						</StyledNestedList>
+					</StyledCollapsibleContent>
+				</StyledCollapsibleWrapper>
+			)}
+		</StyledTreeItem>
+	);
 };

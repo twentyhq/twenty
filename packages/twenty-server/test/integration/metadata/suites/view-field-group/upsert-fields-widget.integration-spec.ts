@@ -1,24 +1,24 @@
 import {
-  VIEW_FIELD_GQL_FIELDS,
-  VIEW_FIELD_GROUP_GQL_FIELDS,
-  VIEW_GQL_FIELDS,
-} from 'test/integration/constants/view-gql-fields.constants';
-import { findViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/find-view-field-groups.util';
-import { upsertFieldsWidget } from 'test/integration/metadata/suites/view-field-group/utils/upsert-fields-widget.util';
-import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
-import { v4 as uuidv4 } from 'uuid';
+	VIEW_FIELD_GQL_FIELDS,
+	VIEW_FIELD_GROUP_GQL_FIELDS,
+	VIEW_GQL_FIELDS,
+} from "test/integration/constants/view-gql-fields.constants";
+import { findViewFieldGroups } from "test/integration/metadata/suites/view-field-group/utils/find-view-field-groups.util";
+import { upsertFieldsWidget } from "test/integration/metadata/suites/view-field-group/utils/upsert-fields-widget.util";
+import { findViewFields } from "test/integration/metadata/suites/view-field/utils/find-view-fields.util";
+import { v4 as uuidv4 } from "uuid";
 
 type FieldsWidgetTestSetup = {
-  widgetId: string;
-  viewId: string;
-  labelIdentifierFieldMetadataId: string | null;
-  viewFields: Array<{
-    id: string;
-    fieldMetadataId: string;
-    position: number;
-    isVisible: boolean;
-    viewFieldGroupId: string | null;
-  }>;
+	widgetId: string;
+	viewId: string;
+	labelIdentifierFieldMetadataId: string | null;
+	viewFields: Array<{
+		id: string;
+		fieldMetadataId: string;
+		position: number;
+		isVisible: boolean;
+		viewFieldGroupId: string | null;
+	}>;
 };
 
 const VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS = `
@@ -32,492 +32,492 @@ const VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS = `
 `;
 
 const fetchFieldsWidgetTestSetup = async (): Promise<FieldsWidgetTestSetup> => {
-  // TODO refactor should not use global source for that
-  const widgets = await global.testDataSource.query(
-    `SELECT id, configuration->>'viewId' AS "viewId"
+	// TODO refactor should not use global source for that
+	const widgets = await global.testDataSource.query(
+		`SELECT id, configuration->>'viewId' AS "viewId"
      FROM core."pageLayoutWidget"
      WHERE type = 'FIELDS'
        AND "deletedAt" IS NULL
      LIMIT 1`,
-  );
+	);
 
-  expect(widgets.length).toBeGreaterThan(0);
+	expect(widgets.length).toBeGreaterThan(0);
 
-  const { id: widgetId, viewId } = widgets[0];
+	const { id: widgetId, viewId } = widgets[0];
 
-  expect(widgetId).toBeDefined();
-  expect(viewId).toBeDefined();
+	expect(widgetId).toBeDefined();
+	expect(viewId).toBeDefined();
 
-  // TODO refactor should not use global source for that
-  const views = await global.testDataSource.query(
-    `SELECT v."objectMetadataId", om."labelIdentifierFieldMetadataId"
+	// TODO refactor should not use global source for that
+	const views = await global.testDataSource.query(
+		`SELECT v."objectMetadataId", om."labelIdentifierFieldMetadataId"
      FROM core."view" v
      JOIN core."objectMetadata" om ON om.id = v."objectMetadataId"
      WHERE v.id = $1`,
-    [viewId],
-  );
+		[viewId],
+	);
 
-  const labelIdentifierFieldMetadataId =
-    views[0]?.labelIdentifierFieldMetadataId ?? null;
+	const labelIdentifierFieldMetadataId =
+		views[0]?.labelIdentifierFieldMetadataId ?? null;
 
-  const { data } = await findViewFields({
-    viewId,
-    gqlFields: 'id fieldMetadataId position isVisible viewFieldGroupId',
-    expectToFail: false,
-  });
+	const { data } = await findViewFields({
+		viewId,
+		gqlFields: "id fieldMetadataId position isVisible viewFieldGroupId",
+		expectToFail: false,
+	});
 
-  const viewFields = data.getViewFields;
+	const viewFields = data.getViewFields;
 
-  return { widgetId, viewId, labelIdentifierFieldMetadataId, viewFields };
+	return { widgetId, viewId, labelIdentifierFieldMetadataId, viewFields };
 };
 
-describe('upsertFieldsWidget', () => {
-  let testSetup: FieldsWidgetTestSetup;
+describe("upsertFieldsWidget", () => {
+	let testSetup: FieldsWidgetTestSetup;
 
-  beforeAll(async () => {
-    testSetup = await fetchFieldsWidgetTestSetup();
-  });
+	beforeAll(async () => {
+		testSetup = await fetchFieldsWidgetTestSetup();
+	});
 
-  describe('with groups input', () => {
-    it('should upsert fields widget with a new group and return a view', async () => {
-      const newGroupId = uuidv4();
-      const targetFields = testSetup.viewFields.slice(0, 2);
+	describe("with groups input", () => {
+		it("should upsert fields widget with a new group and return a view", async () => {
+			const newGroupId = uuidv4();
+			const targetFields = testSetup.viewFields.slice(0, 2);
 
-      const { data, errors } = await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: newGroupId,
-              name: 'Test Group',
-              position: 0,
-              isVisible: true,
-              fields: targetFields.map((f, index) => ({
-                viewFieldId: f.id,
-                isVisible: true,
-                position: index,
-              })),
-            },
-          ],
-        },
-        gqlFields: VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS,
-      });
+			const { data, errors } = await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: newGroupId,
+							name: "Test Group",
+							position: 0,
+							isVisible: true,
+							fields: targetFields.map((f, index) => ({
+								viewFieldId: f.id,
+								isVisible: true,
+								position: index,
+							})),
+						},
+					],
+				},
+				gqlFields: VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS,
+			});
 
-      expect(errors).toBeUndefined();
-      expect(data.upsertFieldsWidget).toBeDefined();
-      expect(data.upsertFieldsWidget.id).toBeDefined();
-      expect(data.upsertFieldsWidget.name).toBeDefined();
+			expect(errors).toBeUndefined();
+			expect(data.upsertFieldsWidget).toBeDefined();
+			expect(data.upsertFieldsWidget.id).toBeDefined();
+			expect(data.upsertFieldsWidget.name).toBeDefined();
 
-      const { data: groupsData } = await findViewFieldGroups({
-        viewId: testSetup.viewId,
-        gqlFields: 'id name',
-        expectToFail: false,
-      });
+			const { data: groupsData } = await findViewFieldGroups({
+				viewId: testSetup.viewId,
+				gqlFields: "id name",
+				expectToFail: false,
+			});
 
-      const createdGroup = groupsData.getViewFieldGroups.find(
-        (g: { id: string }) => g.id === newGroupId,
-      );
+			const createdGroup = groupsData.getViewFieldGroups.find(
+				(g: { id: string }) => g.id === newGroupId,
+			);
 
-      expect(createdGroup).toBeDefined();
-      expect(createdGroup!.name).toBe('Test Group');
-    });
+			expect(createdGroup).toBeDefined();
+			expect(createdGroup!.name).toBe("Test Group");
+		});
 
-    it('should hard-delete groups not included in the input', async () => {
-      const groupToDeleteId = uuidv4();
-      const groupToKeepId = uuidv4();
+		it("should hard-delete groups not included in the input", async () => {
+			const groupToDeleteId = uuidv4();
+			const groupToKeepId = uuidv4();
 
-      const twoFields = testSetup.viewFields.slice(0, 2);
+			const twoFields = testSetup.viewFields.slice(0, 2);
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: groupToDeleteId,
-              name: 'Group To Delete',
-              position: 0,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: twoFields[0].id,
-                  isVisible: true,
-                  position: 0,
-                },
-              ],
-            },
-            {
-              id: groupToKeepId,
-              name: 'Group To Keep',
-              position: 1,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: twoFields[1].id,
-                  isVisible: true,
-                  position: 0,
-                },
-              ],
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: groupToDeleteId,
+							name: "Group To Delete",
+							position: 0,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: twoFields[0].id,
+									isVisible: true,
+									position: 0,
+								},
+							],
+						},
+						{
+							id: groupToKeepId,
+							name: "Group To Keep",
+							position: 1,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: twoFields[1].id,
+									isVisible: true,
+									position: 0,
+								},
+							],
+						},
+					],
+				},
+			});
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: groupToKeepId,
-              name: 'Group To Keep',
-              position: 0,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: twoFields[1].id,
-                  isVisible: true,
-                  position: 0,
-                },
-              ],
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: groupToKeepId,
+							name: "Group To Keep",
+							position: 0,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: twoFields[1].id,
+									isVisible: true,
+									position: 0,
+								},
+							],
+						},
+					],
+				},
+			});
 
-      // Verify the omitted group was hard-deleted (row should be completely gone)
-      const deletedGroup = await global.testDataSource.query(
-        `SELECT id FROM core."viewFieldGroup"
+			// Verify the omitted group was hard-deleted (row should be completely gone)
+			const deletedGroup = await global.testDataSource.query(
+				`SELECT id FROM core."viewFieldGroup"
          WHERE id = $1`,
-        [groupToDeleteId],
-      );
+				[groupToDeleteId],
+			);
 
-      expect(deletedGroup.length).toBe(0);
+			expect(deletedGroup.length).toBe(0);
 
-      const { data: keptGroupData } = await findViewFieldGroups({
-        viewId: testSetup.viewId,
-        gqlFields: 'id',
-        expectToFail: false,
-      });
+			const { data: keptGroupData } = await findViewFieldGroups({
+				viewId: testSetup.viewId,
+				gqlFields: "id",
+				expectToFail: false,
+			});
 
-      const keptGroup = keptGroupData.getViewFieldGroups.find(
-        (g: { id: string }) => g.id === groupToKeepId,
-      );
+			const keptGroup = keptGroupData.getViewFieldGroups.find(
+				(g: { id: string }) => g.id === groupToKeepId,
+			);
 
-      expect(keptGroup).toBeDefined();
-    });
+			expect(keptGroup).toBeDefined();
+		});
 
-    it('should update view field positions and visibility within groups', async () => {
-      const groupId = uuidv4();
-      const targetField = testSetup.viewFields.find(
-        (field) =>
-          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
-      )!;
+		it("should update view field positions and visibility within groups", async () => {
+			const groupId = uuidv4();
+			const targetField = testSetup.viewFields.find(
+				(field) =>
+					field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+			)!;
 
-      expect(targetField).toBeDefined();
+			expect(targetField).toBeDefined();
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: groupId,
-              name: 'Position Test Group',
-              position: 0,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: targetField.id,
-                  isVisible: false,
-                  position: 42,
-                },
-              ],
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: groupId,
+							name: "Position Test Group",
+							position: 0,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: targetField.id,
+									isVisible: false,
+									position: 42,
+								},
+							],
+						},
+					],
+				},
+			});
 
-      const { data: fieldsData } = await findViewFields({
-        viewId: testSetup.viewId,
-        gqlFields: 'id isVisible position viewFieldGroupId',
-        expectToFail: false,
-      });
+			const { data: fieldsData } = await findViewFields({
+				viewId: testSetup.viewId,
+				gqlFields: "id isVisible position viewFieldGroupId",
+				expectToFail: false,
+			});
 
-      const updatedField = fieldsData.getViewFields.find(
-        (f: { id: string }) => f.id === targetField.id,
-      );
+			const updatedField = fieldsData.getViewFields.find(
+				(f: { id: string }) => f.id === targetField.id,
+			);
 
-      expect(updatedField).toBeDefined();
-      expect(updatedField!.isVisible).toBe(false);
-      expect(updatedField!.position).toBe(42);
-      expect(updatedField!.viewFieldGroupId).toBe(groupId);
-    });
-  });
+			expect(updatedField).toBeDefined();
+			expect(updatedField!.isVisible).toBe(false);
+			expect(updatedField!.position).toBe(42);
+			expect(updatedField!.viewFieldGroupId).toBe(groupId);
+		});
+	});
 
-  describe('with fields input (ungrouped)', () => {
-    it('should upsert fields widget with flat fields and return a view', async () => {
-      const targetFields = testSetup.viewFields.slice(0, 3);
+	describe("with fields input (ungrouped)", () => {
+		it("should upsert fields widget with flat fields and return a view", async () => {
+			const targetFields = testSetup.viewFields.slice(0, 3);
 
-      const { data, errors } = await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          fields: targetFields.map((f, index) => ({
-            viewFieldId: f.id,
-            isVisible: true,
-            position: index,
-          })),
-        },
-        gqlFields: VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS,
-      });
+			const { data, errors } = await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					fields: targetFields.map((f, index) => ({
+						viewFieldId: f.id,
+						isVisible: true,
+						position: index,
+					})),
+				},
+				gqlFields: VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS,
+			});
 
-      expect(errors).toBeUndefined();
-      expect(data.upsertFieldsWidget).toBeDefined();
-      expect(data.upsertFieldsWidget.id).toBeDefined();
-    });
+			expect(errors).toBeUndefined();
+			expect(data.upsertFieldsWidget).toBeDefined();
+			expect(data.upsertFieldsWidget.id).toBeDefined();
+		});
 
-    it('should hard-delete all existing groups when using flat fields', async () => {
-      const groupId = uuidv4();
-      const targetField = testSetup.viewFields[0];
+		it("should hard-delete all existing groups when using flat fields", async () => {
+			const groupId = uuidv4();
+			const targetField = testSetup.viewFields[0];
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: groupId,
-              name: 'Group To Be Deleted',
-              position: 0,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: targetField.id,
-                  isVisible: true,
-                  position: 0,
-                },
-              ],
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: groupId,
+							name: "Group To Be Deleted",
+							position: 0,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: targetField.id,
+									isVisible: true,
+									position: 0,
+								},
+							],
+						},
+					],
+				},
+			});
 
-      const { data: groupBeforeData } = await findViewFieldGroups({
-        viewId: testSetup.viewId,
-        gqlFields: 'id',
-        expectToFail: false,
-      });
+			const { data: groupBeforeData } = await findViewFieldGroups({
+				viewId: testSetup.viewId,
+				gqlFields: "id",
+				expectToFail: false,
+			});
 
-      const groupBefore = groupBeforeData.getViewFieldGroups.find(
-        (g: { id: string }) => g.id === groupId,
-      );
+			const groupBefore = groupBeforeData.getViewFieldGroups.find(
+				(g: { id: string }) => g.id === groupId,
+			);
 
-      expect(groupBefore).toBeDefined();
+			expect(groupBefore).toBeDefined();
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          fields: [
-            {
-              viewFieldId: targetField.id,
-              isVisible: true,
-              position: 0,
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					fields: [
+						{
+							viewFieldId: targetField.id,
+							isVisible: true,
+							position: 0,
+						},
+					],
+				},
+			});
 
-      // Verify custom group is hard-deleted (not just deactivated)
-      const { data: allGroupsData } = await findViewFieldGroups({
-        viewId: testSetup.viewId,
-        gqlFields: 'id isActive',
-        expectToFail: false,
-      });
+			// Verify custom group is hard-deleted (not just deactivated)
+			const { data: allGroupsData } = await findViewFieldGroups({
+				viewId: testSetup.viewId,
+				gqlFields: "id isActive",
+				expectToFail: false,
+			});
 
-      const specificGroup = allGroupsData.getViewFieldGroups.find(
-        (g: { id: string }) => g.id === groupId,
-      );
+			const specificGroup = allGroupsData.getViewFieldGroups.find(
+				(g: { id: string }) => g.id === groupId,
+			);
 
-      expect(specificGroup).toBeUndefined();
+			expect(specificGroup).toBeUndefined();
 
-      const { data: updatedFieldData } = await findViewFields({
-        viewId: testSetup.viewId,
-        gqlFields: 'id viewFieldGroupId',
-        expectToFail: false,
-      });
+			const { data: updatedFieldData } = await findViewFields({
+				viewId: testSetup.viewId,
+				gqlFields: "id viewFieldGroupId",
+				expectToFail: false,
+			});
 
-      const updatedField = updatedFieldData.getViewFields.find(
-        (f: { id: string }) => f.id === targetField.id,
-      );
+			const updatedField = updatedFieldData.getViewFields.find(
+				(f: { id: string }) => f.id === targetField.id,
+			);
 
-      expect(updatedField).toBeDefined();
-      expect(updatedField!.viewFieldGroupId).toBeNull();
-    });
+			expect(updatedField).toBeDefined();
+			expect(updatedField!.viewFieldGroupId).toBeNull();
+		});
 
-    it('should update field positions and visibility without groups', async () => {
-      const targetField = testSetup.viewFields.find(
-        (field) =>
-          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
-      )!;
+		it("should update field positions and visibility without groups", async () => {
+			const targetField = testSetup.viewFields.find(
+				(field) =>
+					field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+			)!;
 
-      expect(targetField).toBeDefined();
+			expect(targetField).toBeDefined();
 
-      const groupId = uuidv4();
+			const groupId = uuidv4();
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: groupId,
-              name: 'Temporary Group',
-              position: 0,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: targetField.id,
-                  isVisible: true,
-                  position: 0,
-                },
-              ],
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: groupId,
+							name: "Temporary Group",
+							position: 0,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: targetField.id,
+									isVisible: true,
+									position: 0,
+								},
+							],
+						},
+					],
+				},
+			});
 
-      await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          fields: [
-            {
-              viewFieldId: targetField.id,
-              isVisible: false,
-              position: 99,
-            },
-          ],
-        },
-      });
+			await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					fields: [
+						{
+							viewFieldId: targetField.id,
+							isVisible: false,
+							position: 99,
+						},
+					],
+				},
+			});
 
-      const { data: updatedFieldData } = await findViewFields({
-        viewId: testSetup.viewId,
-        gqlFields: 'id isVisible position viewFieldGroupId',
-        expectToFail: false,
-      });
+			const { data: updatedFieldData } = await findViewFields({
+				viewId: testSetup.viewId,
+				gqlFields: "id isVisible position viewFieldGroupId",
+				expectToFail: false,
+			});
 
-      const updatedField = updatedFieldData.getViewFields.find(
-        (f: { id: string }) => f.id === targetField.id,
-      );
+			const updatedField = updatedFieldData.getViewFields.find(
+				(f: { id: string }) => f.id === targetField.id,
+			);
 
-      expect(updatedField).toBeDefined();
-      expect(updatedField!.isVisible).toBe(false);
-      expect(updatedField!.position).toBe(99);
-      expect(updatedField!.viewFieldGroupId).toBeNull();
-    });
-  });
+			expect(updatedField).toBeDefined();
+			expect(updatedField!.isVisible).toBe(false);
+			expect(updatedField!.position).toBe(99);
+			expect(updatedField!.viewFieldGroupId).toBeNull();
+		});
+	});
 
-  describe('validation', () => {
-    it('should fail when both groups and fields are provided', async () => {
-      const targetField = testSetup.viewFields[0];
+	describe("validation", () => {
+		it("should fail when both groups and fields are provided", async () => {
+			const targetField = testSetup.viewFields[0];
 
-      const { errors } = await upsertFieldsWidget({
-        expectToFail: true,
-        input: {
-          widgetId: testSetup.widgetId,
-          groups: [
-            {
-              id: uuidv4(),
-              name: 'Test',
-              position: 0,
-              isVisible: true,
-              fields: [
-                {
-                  viewFieldId: targetField.id,
-                  isVisible: true,
-                  position: 0,
-                },
-              ],
-            },
-          ],
-          fields: [
-            {
-              viewFieldId: targetField.id,
-              isVisible: true,
-              position: 0,
-            },
-          ],
-        },
-      });
+			const { errors } = await upsertFieldsWidget({
+				expectToFail: true,
+				input: {
+					widgetId: testSetup.widgetId,
+					groups: [
+						{
+							id: uuidv4(),
+							name: "Test",
+							position: 0,
+							isVisible: true,
+							fields: [
+								{
+									viewFieldId: targetField.id,
+									isVisible: true,
+									position: 0,
+								},
+							],
+						},
+					],
+					fields: [
+						{
+							viewFieldId: targetField.id,
+							isVisible: true,
+							position: 0,
+						},
+					],
+				},
+			});
 
-      expect(errors).toBeDefined();
-      expect(errors.length).toBeGreaterThan(0);
-    });
+			expect(errors).toBeDefined();
+			expect(errors.length).toBeGreaterThan(0);
+		});
 
-    it('should fail when neither groups nor fields are provided', async () => {
-      const { errors } = await upsertFieldsWidget({
-        expectToFail: true,
-        input: {
-          widgetId: testSetup.widgetId,
-        },
-      });
+		it("should fail when neither groups nor fields are provided", async () => {
+			const { errors } = await upsertFieldsWidget({
+				expectToFail: true,
+				input: {
+					widgetId: testSetup.widgetId,
+				},
+			});
 
-      expect(errors).toBeDefined();
-      expect(errors.length).toBeGreaterThan(0);
-    });
+			expect(errors).toBeDefined();
+			expect(errors.length).toBeGreaterThan(0);
+		});
 
-    it('should fail when widget id does not exist', async () => {
-      const { errors } = await upsertFieldsWidget({
-        expectToFail: true,
-        input: {
-          widgetId: uuidv4(),
-          fields: [
-            {
-              viewFieldId: testSetup.viewFields[0].id,
-              isVisible: true,
-              position: 0,
-            },
-          ],
-        },
-      });
+		it("should fail when widget id does not exist", async () => {
+			const { errors } = await upsertFieldsWidget({
+				expectToFail: true,
+				input: {
+					widgetId: uuidv4(),
+					fields: [
+						{
+							viewFieldId: testSetup.viewFields[0].id,
+							isVisible: true,
+							position: 0,
+						},
+					],
+				},
+			});
 
-      expect(errors).toBeDefined();
-      expect(errors.length).toBeGreaterThan(0);
-    });
-  });
+			expect(errors).toBeDefined();
+			expect(errors.length).toBeGreaterThan(0);
+		});
+	});
 
-  describe('return type', () => {
-    it('should return a view with the expected fields', async () => {
-      const targetField = testSetup.viewFields[0];
+	describe("return type", () => {
+		it("should return a view with the expected fields", async () => {
+			const targetField = testSetup.viewFields[0];
 
-      const { data } = await upsertFieldsWidget({
-        expectToFail: false,
-        input: {
-          widgetId: testSetup.widgetId,
-          fields: [
-            {
-              viewFieldId: targetField.id,
-              isVisible: true,
-              position: 0,
-            },
-          ],
-        },
-        gqlFields: VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS,
-      });
+			const { data } = await upsertFieldsWidget({
+				expectToFail: false,
+				input: {
+					widgetId: testSetup.widgetId,
+					fields: [
+						{
+							viewFieldId: targetField.id,
+							isVisible: true,
+							position: 0,
+						},
+					],
+				},
+				gqlFields: VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS,
+			});
 
-      const view = data.upsertFieldsWidget;
+			const view = data.upsertFieldsWidget;
 
-      expect(view.id).toBeDefined();
-      expect(view.name).toBeDefined();
-      expect(view.objectMetadataId).toBeDefined();
-      expect(view.workspaceId).toBeDefined();
-      expect(view.createdAt).toBeDefined();
-      expect(view.updatedAt).toBeDefined();
-      expect(Array.isArray(view.viewFields)).toBe(true);
-      expect(Array.isArray(view.viewFieldGroups)).toBe(true);
-    });
-  });
+			expect(view.id).toBeDefined();
+			expect(view.name).toBeDefined();
+			expect(view.objectMetadataId).toBeDefined();
+			expect(view.workspaceId).toBeDefined();
+			expect(view.createdAt).toBeDefined();
+			expect(view.updatedAt).toBeDefined();
+			expect(Array.isArray(view.viewFields)).toBe(true);
+			expect(Array.isArray(view.viewFieldGroups)).toBe(true);
+		});
+	});
 });

@@ -1,5 +1,5 @@
 export enum FirstDayOfTheWeek {
-  MONDAY = 'MONDAY',
-  SUNDAY = 'SUNDAY',
-  SATURDAY = 'SATURDAY',
+	MONDAY = "MONDAY",
+	SUNDAY = "SUNDAY",
+	SATURDAY = "SATURDAY",
 }

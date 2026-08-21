@@ -1,9 +1,9 @@
 export type FeatureBulletIcon =
-  | 'book'
-  | 'check'
-  | 'code'
-  | 'edit'
-  | 'eye'
-  | 'search'
-  | 'tag'
-  | 'users';
+	| "book"
+	| "check"
+	| "code"
+	| "edit"
+	| "eye"
+	| "search"
+	| "tag"
+	| "users";

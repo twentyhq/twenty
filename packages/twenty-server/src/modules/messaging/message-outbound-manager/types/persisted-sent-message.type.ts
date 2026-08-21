@@ -1,4 +1,4 @@
 export type PersistedSentMessage = {
-  messageId: string;
-  messageThreadId: string;
+	messageId: string;
+	messageThreadId: string;
 };

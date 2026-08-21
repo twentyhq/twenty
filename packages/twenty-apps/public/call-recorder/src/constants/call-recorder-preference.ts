@@ -1,4 +1,4 @@
 export enum CallRecorderPreference {
-  ON = 'ON',
-  OFF = 'OFF',
+	ON = "ON",
+	OFF = "OFF",
 }

@@ -1,1 +1,1 @@
-export type AiProviderAuthType = 'key' | 'credentials' | 'role';
+export type AiProviderAuthType = "key" | "credentials" | "role";

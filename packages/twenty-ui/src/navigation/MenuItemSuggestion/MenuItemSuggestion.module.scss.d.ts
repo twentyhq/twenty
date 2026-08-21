@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly suggestionMenuItem: 'suggestionMenuItem';
+	readonly suggestionMenuItem: "suggestionMenuItem";
 };
 export default classNames;

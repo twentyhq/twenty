@@ -1,7 +1,7 @@
-import { type ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
+import { type ProfilingReport } from "~/testing/profiling/types/ProfilingReportByRun";
 
 export const parseProfilingReportString = (
-  profilingReportStringifiedJson: string,
+	profilingReportStringifiedJson: string,
 ) => {
-  return JSON.parse(profilingReportStringifiedJson) as ProfilingReport;
+	return JSON.parse(profilingReportStringifiedJson) as ProfilingReport;
 };

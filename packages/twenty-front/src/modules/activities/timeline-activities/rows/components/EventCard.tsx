@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventCardProps = {
-  children: React.ReactNode;
-  isOpen: boolean;
+	children: React.ReactNode;
+	isOpen: boolean;
 };
 
 const StyledCardContainer = styled.div`
@@ -38,11 +38,11 @@ const StyledCardInnerContainer = styled.div`
 `;
 
 export const EventCard = ({ children, isOpen }: EventCardProps) => {
-  return (
-    isOpen && (
-      <StyledCardContainer>
-        <StyledCardInnerContainer>{children}</StyledCardInnerContainer>
-      </StyledCardContainer>
-    )
-  );
+	return (
+		isOpen && (
+			<StyledCardContainer>
+				<StyledCardInnerContainer>{children}</StyledCardInnerContainer>
+			</StyledCardContainer>
+		)
+	);
 };

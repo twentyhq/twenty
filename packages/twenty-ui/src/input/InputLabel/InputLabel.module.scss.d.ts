@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly label: 'label';
+	readonly label: "label";
 };
 export default classNames;

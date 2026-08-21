@@ -1,3 +1,3 @@
 export type CommonPropertiesJwtPayload = {
-  sub: string;
+	sub: string;
 };

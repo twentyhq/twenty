@@ -1,30 +1,30 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
-import { default as request } from 'supertest';
-import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
+import { default as request } from "supertest";
+import { PERSON_GQL_FIELDS } from "test/integration/constants/person-gql-fields.constants";
+import { createCustomRoleWithObjectPermissions } from "test/integration/graphql/utils/create-custom-role-with-object-permissions.util";
+import { createOneOperationFactory } from "test/integration/graphql/utils/create-one-operation-factory.util";
+import { deleteRole } from "test/integration/graphql/utils/delete-one-role.util";
+import { findManyOperationFactory } from "test/integration/graphql/utils/find-many-operation-factory.util";
+import { findOneOperationFactory } from "test/integration/graphql/utils/find-one-operation-factory.util";
+import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from "test/integration/graphql/utils/make-graphql-api-request-with-member-role.util";
+import { makeGraphqlAPIRequest } from "test/integration/graphql/utils/make-graphql-api-request.util";
+import { updateWorkspaceMemberRole } from "test/integration/graphql/utils/update-workspace-member-role.util";
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { ErrorCode } from "src/engine/core-modules/graphql/utils/graphql-errors.util";
+import { PermissionsExceptionMessage } from "src/engine/metadata-modules/permissions/permissions.exception";
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from "src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant";
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-describe('permissionsOnRelations', () => {
-  let originalMemberRoleId: string;
-  let customRoleId: string;
-  const personId = randomUUID();
+describe("permissionsOnRelations", () => {
+	let originalMemberRoleId: string;
+	let customRoleId: string;
+	const personId = randomUUID();
 
-  beforeAll(async () => {
-    const getRolesQuery = {
-      query: `
+	beforeAll(async () => {
+		const getRolesQuery = {
+			query: `
         query GetRoles {
           getRoles {
             id
@@ -32,50 +32,50 @@ describe('permissionsOnRelations', () => {
           }
         }
       `,
-    };
+		};
 
-    const rolesResponse = await client
-      .post('/metadata')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(getRolesQuery);
+		const rolesResponse = await client
+			.post("/metadata")
+			.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+			.send(getRolesQuery);
 
-    originalMemberRoleId = rolesResponse.body.data.getRoles.find(
-      (role: any) => role.label === 'Member',
-    ).id;
+		originalMemberRoleId = rolesResponse.body.data.getRoles.find(
+			(role: any) => role.label === "Member",
+		).id;
 
-    const companyId = randomUUID();
-    const graphqlOperationForCompanyCreation = createOneOperationFactory({
-      objectMetadataSingularName: 'company',
-      gqlFields: `
+		const companyId = randomUUID();
+		const graphqlOperationForCompanyCreation = createOneOperationFactory({
+			objectMetadataSingularName: "company",
+			gqlFields: `
           name
         `,
-      data: {
-        id: companyId,
-        name: 'Twenty',
-      },
-    });
+			data: {
+				id: companyId,
+				name: "Twenty",
+			},
+		});
 
-    await makeGraphqlAPIRequest(graphqlOperationForCompanyCreation);
+		await makeGraphqlAPIRequest(graphqlOperationForCompanyCreation);
 
-    const graphqlOperationForPersonCreation = createOneOperationFactory({
-      objectMetadataSingularName: 'person',
-      gqlFields: PERSON_GQL_FIELDS,
-      data: {
-        id: personId,
-        name: {
-          firstName: 'Marie',
-        },
-        jobTitle: 'Paris',
-        companyId,
-      },
-    });
+		const graphqlOperationForPersonCreation = createOneOperationFactory({
+			objectMetadataSingularName: "person",
+			gqlFields: PERSON_GQL_FIELDS,
+			data: {
+				id: personId,
+				name: {
+					firstName: "Marie",
+				},
+				jobTitle: "Paris",
+				companyId,
+			},
+		});
 
-    await makeGraphqlAPIRequest(graphqlOperationForPersonCreation);
-  });
+		await makeGraphqlAPIRequest(graphqlOperationForPersonCreation);
+	});
 
-  afterAll(async () => {
-    const restoreMemberRoleQuery = {
-      query: `
+	afterAll(async () => {
+		const restoreMemberRoleQuery = {
+			query: `
           mutation UpdateWorkspaceMemberRole {
             updateWorkspaceMemberRole(
               workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JONY}"
@@ -85,37 +85,37 @@ describe('permissionsOnRelations', () => {
             }
           }
         `,
-    };
+		};
 
-    await client
-      .post('/metadata')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(restoreMemberRoleQuery);
-  });
+		await client
+			.post("/metadata")
+			.set("Authorization", `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+			.send(restoreMemberRoleQuery);
+	});
 
-  afterEach(async () => {
-    await deleteRole(client, customRoleId);
-  });
+	afterEach(async () => {
+		await deleteRole(client, customRoleId);
+	});
 
-  it('should throw permission error when querying person with company relation without company read permission', async () => {
-    const { roleId } = await createCustomRoleWithObjectPermissions({
-      label: 'PersonOnlyRole',
-      canReadPerson: true,
-      canReadCompany: false,
-    });
+	it("should throw permission error when querying person with company relation without company read permission", async () => {
+		const { roleId } = await createCustomRoleWithObjectPermissions({
+			label: "PersonOnlyRole",
+			canReadPerson: true,
+			canReadCompany: false,
+		});
 
-    customRoleId = roleId;
+		customRoleId = roleId;
 
-    await updateWorkspaceMemberRole({
-      client,
-      roleId: customRoleId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    });
+		await updateWorkspaceMemberRole({
+			client,
+			roleId: customRoleId,
+			workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+		});
 
-    const graphqlOperation = findManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: `
+		const graphqlOperation = findManyOperationFactory({
+			objectMetadataSingularName: "person",
+			objectMetadataPluralName: "people",
+			gqlFields: `
           id
           jobTitle
           company {
@@ -123,35 +123,35 @@ describe('permissionsOnRelations', () => {
             name
           }
         `,
-    });
+		});
 
-    const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+		const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
-    expect(response.body.errors[0].message).toBe(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-    );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  });
+		expect(response.body.errors[0].message).toBe(
+			PermissionsExceptionMessage.PERMISSION_DENIED,
+		);
+		expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+	});
 
-  it('should successfully query person with company relation when having both permissions', async () => {
-    const { roleId } = await createCustomRoleWithObjectPermissions({
-      label: 'PersonAndCompanyRole',
-      canReadPerson: true,
-      canReadCompany: true,
-    });
+	it("should successfully query person with company relation when having both permissions", async () => {
+		const { roleId } = await createCustomRoleWithObjectPermissions({
+			label: "PersonAndCompanyRole",
+			canReadPerson: true,
+			canReadCompany: true,
+		});
 
-    customRoleId = roleId;
+		customRoleId = roleId;
 
-    await updateWorkspaceMemberRole({
-      client,
-      roleId: customRoleId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    });
+		await updateWorkspaceMemberRole({
+			client,
+			roleId: customRoleId,
+			workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+		});
 
-    const graphqlOperation = findManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: `
+		const graphqlOperation = findManyOperationFactory({
+			objectMetadataSingularName: "person",
+			objectMetadataPluralName: "people",
+			gqlFields: `
           id
           jobTitle
           company {
@@ -159,37 +159,37 @@ describe('permissionsOnRelations', () => {
             name
           }
         `,
-    });
+		});
 
-    const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+		const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.people).toBeDefined();
-    const person = response.body.data.people.edges[0].node;
+		expect(response.body.data).toBeDefined();
+		expect(response.body.data.people).toBeDefined();
+		const person = response.body.data.people.edges[0].node;
 
-    expect(person.company).toBeDefined();
-    expect(response.body.error).toBeUndefined();
-  });
+		expect(person.company).toBeDefined();
+		expect(response.body.error).toBeUndefined();
+	});
 
-  it('nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission', async () => {
-    const { roleId } = await createCustomRoleWithObjectPermissions({
-      label: 'PersonCompanyOnlyRole',
-      canReadPerson: true,
-      canReadCompany: true,
-      canReadOpportunities: false,
-    });
+	it("nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission", async () => {
+		const { roleId } = await createCustomRoleWithObjectPermissions({
+			label: "PersonCompanyOnlyRole",
+			canReadPerson: true,
+			canReadCompany: true,
+			canReadOpportunities: false,
+		});
 
-    customRoleId = roleId;
+		customRoleId = roleId;
 
-    await updateWorkspaceMemberRole({
-      client,
-      roleId: customRoleId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    });
+		await updateWorkspaceMemberRole({
+			client,
+			roleId: customRoleId,
+			workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+		});
 
-    const graphqlOperation = findOneOperationFactory({
-      objectMetadataSingularName: 'person',
-      gqlFields: `
+		const graphqlOperation = findOneOperationFactory({
+			objectMetadataSingularName: "person",
+			gqlFields: `
           id
           jobTitle
           company {
@@ -204,19 +204,19 @@ describe('permissionsOnRelations', () => {
             }
           }
         `,
-      filter: {
-        id: {
-          eq: personId,
-        },
-      },
-    });
+			filter: {
+				id: {
+					eq: personId,
+				},
+			},
+		});
 
-    const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+		const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toBe(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-    );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  });
+		expect(response.body.errors).toBeDefined();
+		expect(response.body.errors[0].message).toBe(
+			PermissionsExceptionMessage.PERMISSION_DENIED,
+		);
+		expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+	});
 });

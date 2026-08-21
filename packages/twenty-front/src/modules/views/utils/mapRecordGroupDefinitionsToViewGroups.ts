@@ -1,9 +1,9 @@
-import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { type ViewGroup } from '@/views/types/ViewGroup';
-import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
+import { type RecordGroupDefinition } from "@/object-record/record-group/types/RecordGroupDefinition";
+import { type ViewGroup } from "@/views/types/ViewGroup";
+import { recordGroupDefinitionToViewGroup } from "@/views/utils/recordGroupDefinitionToViewGroup";
 
 export const mapRecordGroupDefinitionsToViewGroups = (
-  groupDefinitions: RecordGroupDefinition[],
+	groupDefinitions: RecordGroupDefinition[],
 ): ViewGroup[] => {
-  return groupDefinitions.map(recordGroupDefinitionToViewGroup);
+	return groupDefinitions.map(recordGroupDefinitionToViewGroup);
 };

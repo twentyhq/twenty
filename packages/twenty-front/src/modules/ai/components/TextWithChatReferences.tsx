@@ -1,22 +1,22 @@
-import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
-import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
+import { ChatReferenceChip } from "@/ai/components/ChatReferenceChip";
+import { getChatReferenceSegments } from "@/ai/utils/getChatReferenceSegments";
 
 type TextWithChatReferencesProps = {
-  text: string;
+	text: string;
 };
 
 export const TextWithChatReferences = ({
-  text,
+	text,
 }: TextWithChatReferencesProps) => {
-  return (
-    <>
-      {getChatReferenceSegments(text).map((segment) =>
-        typeof segment === 'string' ? (
-          segment
-        ) : (
-          <ChatReferenceChip key={segment.index} reference={segment} />
-        ),
-      )}
-    </>
-  );
+	return (
+		<>
+			{getChatReferenceSegments(text).map((segment) =>
+				typeof segment === "string" ? (
+					segment
+				) : (
+					<ChatReferenceChip key={segment.index} reference={segment} />
+				),
+			)}
+		</>
+	);
 };

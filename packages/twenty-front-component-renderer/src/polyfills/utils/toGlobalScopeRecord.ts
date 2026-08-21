@@ -2,5 +2,5 @@
 // global scope is an ordinary mutable object the polyfills install onto.
 // The one assertion lives here so call sites stay cast-free.
 export const toGlobalScopeRecord = (
-  globalScope: object,
+	globalScope: object,
 ): Record<string, unknown> => globalScope as Record<string, unknown>;

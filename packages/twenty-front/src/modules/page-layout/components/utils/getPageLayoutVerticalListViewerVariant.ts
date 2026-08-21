@@ -1,19 +1,19 @@
-import { type PageLayoutVerticalListViewerVariant } from '@/page-layout/types/PageLayoutVerticalListViewerVariant';
+import { type PageLayoutVerticalListViewerVariant } from "@/page-layout/types/PageLayoutVerticalListViewerVariant";
 
 type GetPageLayoutVerticalListViewerVariantParams = {
-  isInPinnedTab: boolean;
-  isMobile: boolean;
-  isInSidePanel: boolean;
+	isInPinnedTab: boolean;
+	isMobile: boolean;
+	isInSidePanel: boolean;
 };
 
 export const getPageLayoutVerticalListViewerVariant = ({
-  isInPinnedTab,
-  isMobile,
-  isInSidePanel,
+	isInPinnedTab,
+	isMobile,
+	isInSidePanel,
 }: GetPageLayoutVerticalListViewerVariantParams): PageLayoutVerticalListViewerVariant => {
-  if (isInPinnedTab || isMobile || isInSidePanel) {
-    return 'side-column';
-  }
+	if (isInPinnedTab || isMobile || isInSidePanel) {
+		return "side-column";
+	}
 
-  return 'default';
+	return "default";
 };

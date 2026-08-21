@@ -1,15 +1,15 @@
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
-import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FieldContext } from "@/object-record/record-field/ui/contexts/FieldContext";
+import { recordStoreFamilyState } from "@/object-record/record-store/states/recordStoreFamilyState";
+import { useRecordTitleCell } from "@/object-record/record-title-cell/hooks/useRecordTitleCell";
+import { type RecordTitleCellContainerType } from "@/object-record/record-title-cell/types/RecordTitleCellContainerType";
+import { getRecordFieldInputInstanceId } from "@/object-record/utils/getRecordFieldInputId";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { isNonEmptyString } from "@sniptt/guards";
+import { useContext } from "react";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -34,38 +34,38 @@ const StyledEmptyText = styled.div`
 `;
 
 export const RecordTitleCellSingleTextDisplayMode = ({
-  containerType,
+	containerType,
 }: {
-  containerType: RecordTitleCellContainerType;
+	containerType: RecordTitleCellContainerType;
 }) => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+	const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+	const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const fieldValue = recordStore?.[fieldDefinition.metadata.fieldName];
-  const isEmpty = !isNonEmptyString(fieldValue) || fieldValue.trim() === '';
+	const fieldValue = recordStore?.[fieldDefinition.metadata.fieldName];
+	const isEmpty = !isNonEmptyString(fieldValue) || fieldValue.trim() === "";
 
-  const { openRecordTitleCell } = useRecordTitleCell();
+	const { openRecordTitleCell } = useRecordTitleCell();
 
-  return (
-    <StyledDiv
-      onClick={() => {
-        openRecordTitleCell({
-          recordId,
-          fieldMetadataItemId: fieldDefinition.fieldMetadataId,
-          instanceId: getRecordFieldInputInstanceId({
-            recordId,
-            fieldName: fieldDefinition.metadata.fieldName,
-            prefix: containerType,
-          }),
-        });
-      }}
-    >
-      {isEmpty ? (
-        <StyledEmptyText>{t`Untitled`}</StyledEmptyText>
-      ) : (
-        <OverflowingTextWithTooltip text={fieldValue} />
-      )}
-    </StyledDiv>
-  );
+	return (
+		<StyledDiv
+			onClick={() => {
+				openRecordTitleCell({
+					recordId,
+					fieldMetadataItemId: fieldDefinition.fieldMetadataId,
+					instanceId: getRecordFieldInputInstanceId({
+						recordId,
+						fieldName: fieldDefinition.metadata.fieldName,
+						prefix: containerType,
+					}),
+				});
+			}}
+		>
+			{isEmpty ? (
+				<StyledEmptyText>{t`Untitled`}</StyledEmptyText>
+			) : (
+				<OverflowingTextWithTooltip text={fieldValue} />
+			)}
+		</StyledDiv>
+	);
 };

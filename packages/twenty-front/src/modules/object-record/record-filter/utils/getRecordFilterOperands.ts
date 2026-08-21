@@ -1,18 +1,18 @@
 import {
-  type FilterableAndTSVectorFieldType,
-  type ViewFilterOperand as RecordFilterOperand,
-} from 'twenty-shared/types';
-import { getFilterOperandsForFilterableFieldType } from 'twenty-shared/utils';
+	type FilterableAndTSVectorFieldType,
+	type ViewFilterOperand as RecordFilterOperand,
+} from "twenty-shared/types";
+import { getFilterOperandsForFilterableFieldType } from "twenty-shared/utils";
 
 export const getRecordFilterOperands = ({
-  filterType,
-  subFieldName,
+	filterType,
+	subFieldName,
 }: {
-  filterType: FilterableAndTSVectorFieldType;
-  subFieldName?: string | null | undefined;
+	filterType: FilterableAndTSVectorFieldType;
+	subFieldName?: string | null | undefined;
 }): readonly RecordFilterOperand[] => {
-  return getFilterOperandsForFilterableFieldType({
-    filterType,
-    subFieldName,
-  });
+	return getFilterOperandsForFilterableFieldType({
+		filterType,
+		subFieldName,
+	});
 };

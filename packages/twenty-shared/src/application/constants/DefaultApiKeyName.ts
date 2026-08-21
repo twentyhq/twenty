@@ -1,1 +1,1 @@
-export const DEFAULT_API_KEY_NAME = 'TWENTY_API_KEY';
+export const DEFAULT_API_KEY_NAME = "TWENTY_API_KEY";

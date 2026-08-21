@@ -1,13 +1,13 @@
-import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRunStepStatus } from "@/workflow/types/Workflow";
 
 export const getIsOutputTabDisabled = ({
-  stepExecutionStatus,
+	stepExecutionStatus,
 }: {
-  stepExecutionStatus: WorkflowRunStepStatus;
+	stepExecutionStatus: WorkflowRunStepStatus;
 }) => {
-  return (
-    stepExecutionStatus === 'RUNNING' ||
-    stepExecutionStatus === 'NOT_STARTED' ||
-    stepExecutionStatus === 'SKIPPED'
-  );
+	return (
+		stepExecutionStatus === "RUNNING" ||
+		stepExecutionStatus === "NOT_STARTED" ||
+		stepExecutionStatus === "SKIPPED"
+	);
 };

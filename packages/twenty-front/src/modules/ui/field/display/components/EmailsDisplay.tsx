@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/navigation';
+import { type FieldEmailsValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { ExpandableList } from "@/ui/layout/expandable-list/components/ExpandableList";
+import { styled } from "@linaria/react";
+import { isDefined } from "twenty-shared/utils";
+import { RoundedLink } from "twenty-ui/navigation";
 
 type EmailsDisplayProps = {
-  value?: FieldEmailsValue;
-  isFocused?: boolean;
-  onEmailClick?: (email: string, event: React.MouseEvent<HTMLElement>) => void;
+	value?: FieldEmailsValue;
+	isFocused?: boolean;
+	onEmailClick?: (email: string, event: React.MouseEvent<HTMLElement>) => void;
 };
 
 const StyledContainer = styled.div`
@@ -26,40 +26,40 @@ const StyledContainer = styled.div`
 `;
 
 export const EmailsDisplay = ({
-  value,
-  isFocused,
-  onEmailClick,
+	value,
+	isFocused,
+	onEmailClick,
 }: EmailsDisplayProps) => {
-  const emails = useMemo(
-    () =>
-      [
-        value?.primaryEmail ? value.primaryEmail : null,
-        ...(value?.additionalEmails ?? []),
-      ].filter(isDefined),
-    [value?.primaryEmail, value?.additionalEmails],
-  );
+	const emails = useMemo(
+		() =>
+			[
+				value?.primaryEmail ? value.primaryEmail : null,
+				...(value?.additionalEmails ?? []),
+			].filter(isDefined),
+		[value?.primaryEmail, value?.additionalEmails],
+	);
 
-  return isFocused ? (
-    <ExpandableList isChipCountDisplayed>
-      {emails.map((email, index) => (
-        <RoundedLink
-          key={index}
-          label={email}
-          href={`mailto:${email}`}
-          onClick={(event) => onEmailClick?.(email, event)}
-        />
-      ))}
-    </ExpandableList>
-  ) : (
-    <StyledContainer>
-      {emails.map((email, index) => (
-        <RoundedLink
-          key={index}
-          label={email}
-          href={`mailto:${email}`}
-          onClick={(event) => onEmailClick?.(email, event)}
-        />
-      ))}
-    </StyledContainer>
-  );
+	return isFocused ? (
+		<ExpandableList isChipCountDisplayed>
+			{emails.map((email, index) => (
+				<RoundedLink
+					key={index}
+					label={email}
+					href={`mailto:${email}`}
+					onClick={(event) => onEmailClick?.(email, event)}
+				/>
+			))}
+		</ExpandableList>
+	) : (
+		<StyledContainer>
+			{emails.map((email, index) => (
+				<RoundedLink
+					key={index}
+					label={email}
+					href={`mailto:${email}`}
+					onClick={(event) => onEmailClick?.(email, event)}
+				/>
+			))}
+		</StyledContainer>
+	);
 };

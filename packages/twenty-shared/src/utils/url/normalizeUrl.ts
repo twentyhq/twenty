@@ -1,12 +1,12 @@
-import { ensureAbsoluteUrl } from '@/utils/url/ensureAbsoluteUrl';
-import { normalizeUrlOrigin } from '@/utils/url/normalizeUrlOrigin';
+import { ensureAbsoluteUrl } from "@/utils/url/ensureAbsoluteUrl";
+import { normalizeUrlOrigin } from "@/utils/url/normalizeUrlOrigin";
 
 export const normalizeUrl = (url: string): string => {
-  const trimmed = url.trim();
+	const trimmed = url.trim();
 
-  if (trimmed === '') {
-    return trimmed;
-  }
+	if (trimmed === "") {
+		return trimmed;
+	}
 
-  return normalizeUrlOrigin(ensureAbsoluteUrl(trimmed));
+	return normalizeUrlOrigin(ensureAbsoluteUrl(trimmed));
 };

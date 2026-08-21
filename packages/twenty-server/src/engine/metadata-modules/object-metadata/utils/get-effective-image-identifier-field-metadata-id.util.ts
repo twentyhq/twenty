@@ -1,20 +1,20 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
+import { type ObjectMetadataOverrides } from "src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type";
 
 type ImageIdentifierResolvableObjectMetadata = {
-  overrides?: ObjectMetadataOverrides | null;
-  imageIdentifierFieldMetadataId?: string | null;
+	overrides?: ObjectMetadataOverrides | null;
+	imageIdentifierFieldMetadataId?: string | null;
 };
 
 export const getEffectiveImageIdentifierFieldMetadataId = (
-  objectMetadata: ImageIdentifierResolvableObjectMetadata,
+	objectMetadata: ImageIdentifierResolvableObjectMetadata,
 ): string | null => {
-  const { overrides } = objectMetadata;
+	const { overrides } = objectMetadata;
 
-  if (isDefined(overrides) && 'imageIdentifierFieldMetadataId' in overrides) {
-    return overrides.imageIdentifierFieldMetadataId ?? null;
-  }
+	if (isDefined(overrides) && "imageIdentifierFieldMetadataId" in overrides) {
+		return overrides.imageIdentifierFieldMetadataId ?? null;
+	}
 
-  return objectMetadata.imageIdentifierFieldMetadataId ?? null;
+	return objectMetadata.imageIdentifierFieldMetadataId ?? null;
 };

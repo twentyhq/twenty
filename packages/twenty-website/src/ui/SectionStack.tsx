@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { mediaUp, spacing } from '@/tokens';
+import { mediaUp, spacing } from "@/tokens";
 
 // The gap between a section's intro and its content block: one value pair
 // across the site (Problem, ThreeCards, FAQ, and onward).
@@ -12,7 +12,7 @@ export const SectionStack = styled.div`
     margin-top: ${spacing(10)};
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     & > * + * {
       margin-top: ${spacing(20)};
     }

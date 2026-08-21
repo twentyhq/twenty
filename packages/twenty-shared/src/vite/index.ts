@@ -7,4 +7,4 @@
  *                              |___/
  */
 
-export { createWywProfilingPlugin } from './createWywProfilingPlugin';
+export { createWywProfilingPlugin } from "./createWywProfilingPlugin";

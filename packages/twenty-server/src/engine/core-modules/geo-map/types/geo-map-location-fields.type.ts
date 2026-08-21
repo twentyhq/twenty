@@ -1,4 +1,4 @@
 export type GeoMapLocationFields = {
-  lat?: number;
-  lng?: number;
+	lat?: number;
+	lng?: number;
 };

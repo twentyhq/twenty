@@ -1,1 +1,1 @@
-export type WorkflowContext = 'workflow' | 'workflow-version' | 'workflow-run';
+export type WorkflowContext = "workflow" | "workflow-version" | "workflow-run";

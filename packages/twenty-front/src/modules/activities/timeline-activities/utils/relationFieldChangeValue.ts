@@ -1,16 +1,16 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export type RelationFieldChangeValue = {
-  id: string | null;
+	id: string | null;
 };
 
 export const isRelationFieldChangeValue = (
-  value: unknown,
+	value: unknown,
 ): value is RelationFieldChangeValue => {
-  return (
-    isDefined(value) &&
-    typeof value === 'object' &&
-    value !== null &&
-    'id' in value
-  );
+	return (
+		isDefined(value) &&
+		typeof value === "object" &&
+		value !== null &&
+		"id" in value
+	);
 };

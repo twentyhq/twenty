@@ -1,55 +1,55 @@
-import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
-import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react/macro';
-import { isUndefined } from '@sniptt/guards';
+import { sanitizeMessageToRenderInSnackbar } from "@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar";
+import { styled } from "@linaria/react";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
+import { isUndefined } from "@sniptt/guards";
 import {
-  type ComponentPropsWithoutRef,
-  type ReactNode,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
-import { isDefined } from 'twenty-shared/utils';
+	type ComponentPropsWithoutRef,
+	type ReactNode,
+	useContext,
+	useMemo,
+	useState,
+} from "react";
+import { isDefined } from "twenty-shared/utils";
 import {
-  IconAlertTriangle,
-  IconInfoCircle,
-  IconSquareRoundedCheck,
-  IconX,
-} from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { ProgressBar } from 'twenty-ui/feedback';
-import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+	IconAlertTriangle,
+	IconInfoCircle,
+	IconSquareRoundedCheck,
+	IconX,
+} from "twenty-ui/icon";
+import { HorizontalSeparator } from "twenty-ui/layout";
+import { ProgressBar } from "twenty-ui/feedback";
+import { LightButton, LightIconButton } from "twenty-ui/input";
+import { UndecoratedLink } from "twenty-ui/navigation";
 import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+	MOBILE_VIEWPORT,
+	ThemeContext,
+	themeCssVariables,
+} from "twenty-ui/theme-constants";
 
 export enum SnackBarVariant {
-  Default = 'default',
-  Error = 'error',
-  Success = 'success',
-  Info = 'info',
-  Warning = 'warning',
+	Default = "default",
+	Error = "error",
+	Success = "success",
+	Info = "info",
+	Warning = "warning",
 }
 
-export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
-  className?: string;
-  progress?: number;
-  duration?: number;
-  icon?: ReactNode;
-  message: string;
-  buttonLabel?: string;
-  buttonOnClick?: () => void;
-  buttonTo?: string;
-  detailedMessage?: string;
-  onCancel?: () => void;
-  onClose?: () => void;
-  role?: 'alert' | 'status';
-  variant?: SnackBarVariant;
-  dedupeKey?: string;
+export type SnackBarProps = Pick<ComponentPropsWithoutRef<"div">, "id"> & {
+	className?: string;
+	progress?: number;
+	duration?: number;
+	icon?: ReactNode;
+	message: string;
+	buttonLabel?: string;
+	buttonOnClick?: () => void;
+	buttonTo?: string;
+	detailedMessage?: string;
+	onCancel?: () => void;
+	onClose?: () => void;
+	role?: "alert" | "status";
+	variant?: SnackBarVariant;
+	dedupeKey?: string;
 };
 
 const StyledContainer = styled.div`
@@ -129,131 +129,131 @@ const StyledBottomAction = styled.div`
 `;
 
 const defaultAriaLabelByVariant: Record<
-  SnackBarVariant,
-  ReturnType<typeof msg>
+	SnackBarVariant,
+	ReturnType<typeof msg>
 > = {
-  [SnackBarVariant.Default]: msg`Alert`,
-  [SnackBarVariant.Error]: msg`Error`,
-  [SnackBarVariant.Info]: msg`Info`,
-  [SnackBarVariant.Success]: msg`Success`,
-  [SnackBarVariant.Warning]: msg`Warning`,
+	[SnackBarVariant.Default]: msg`Alert`,
+	[SnackBarVariant.Error]: msg`Error`,
+	[SnackBarVariant.Info]: msg`Info`,
+	[SnackBarVariant.Success]: msg`Success`,
+	[SnackBarVariant.Warning]: msg`Warning`,
 };
 
 export const SnackBar = ({
-  className,
-  progress: overrideProgressValue,
-  duration = 6000,
-  icon: iconComponent,
-  id,
-  message,
-  detailedMessage,
-  buttonLabel,
-  buttonOnClick,
-  buttonTo,
-  onCancel,
-  onClose,
-  role = 'status',
-  variant = SnackBarVariant.Default,
+	className,
+	progress: overrideProgressValue,
+	duration = 6000,
+	icon: iconComponent,
+	id,
+	message,
+	detailedMessage,
+	buttonLabel,
+	buttonOnClick,
+	buttonTo,
+	onCancel,
+	onClose,
+	role = "status",
+	variant = SnackBarVariant.Default,
 }: SnackBarProps) => {
-  const { i18n, t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-  const [isPaused, setIsPaused] = useState(false);
-  const isAutoDismiss = isUndefined(overrideProgressValue);
+	const { i18n, t } = useLingui();
+	const { theme } = useContext(ThemeContext);
+	const [isPaused, setIsPaused] = useState(false);
+	const isAutoDismiss = isUndefined(overrideProgressValue);
 
-  const icon = useMemo(() => {
-    if (isDefined(iconComponent)) {
-      return iconComponent;
-    }
+	const icon = useMemo(() => {
+		if (isDefined(iconComponent)) {
+			return iconComponent;
+		}
 
-    const ariaLabel = i18n._(defaultAriaLabelByVariant[variant]);
-    const color = theme.snackBar[variant].color;
-    const size = theme.icon.size.md;
+		const ariaLabel = i18n._(defaultAriaLabelByVariant[variant]);
+		const color = theme.snackBar[variant].color;
+		const size = theme.icon.size.md;
 
-    switch (variant) {
-      case SnackBarVariant.Error:
-        return (
-          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
-        );
-      case SnackBarVariant.Info:
-        return <IconInfoCircle {...{ 'aria-label': ariaLabel, color, size }} />;
-      case SnackBarVariant.Success:
-        return (
-          <IconSquareRoundedCheck
-            {...{ 'aria-label': ariaLabel, color, size }}
-          />
-        );
-      case SnackBarVariant.Warning:
-        return (
-          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
-        );
-      default:
-        return (
-          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
-        );
-    }
-  }, [iconComponent, variant, i18n, theme.icon.size.md, theme.snackBar]);
+		switch (variant) {
+			case SnackBarVariant.Error:
+				return (
+					<IconAlertTriangle {...{ "aria-label": ariaLabel, color, size }} />
+				);
+			case SnackBarVariant.Info:
+				return <IconInfoCircle {...{ "aria-label": ariaLabel, color, size }} />;
+			case SnackBarVariant.Success:
+				return (
+					<IconSquareRoundedCheck
+						{...{ "aria-label": ariaLabel, color, size }}
+					/>
+				);
+			case SnackBarVariant.Warning:
+				return (
+					<IconAlertTriangle {...{ "aria-label": ariaLabel, color, size }} />
+				);
+			default:
+				return (
+					<IconAlertTriangle {...{ "aria-label": ariaLabel, color, size }} />
+				);
+		}
+	}, [iconComponent, variant, i18n, theme.icon.size.md, theme.snackBar]);
 
-  const handleMouseEnter = () => {
-    setIsPaused(true);
-  };
+	const handleMouseEnter = () => {
+		setIsPaused(true);
+	};
 
-  const handleMouseLeave = () => {
-    setIsPaused(false);
-  };
+	const handleMouseLeave = () => {
+		setIsPaused(false);
+	};
 
-  const sanitizedMessage = sanitizeMessageToRenderInSnackbar(message);
-  const sanitizedDetailedMessage =
-    sanitizeMessageToRenderInSnackbar(detailedMessage);
+	const sanitizedMessage = sanitizeMessageToRenderInSnackbar(message);
+	const sanitizedDetailedMessage =
+		sanitizeMessageToRenderInSnackbar(detailedMessage);
 
-  return (
-    <StyledContainer
-      aria-live={role === 'alert' ? 'assertive' : 'polite'}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      title={sanitizedMessage ?? i18n._(defaultAriaLabelByVariant[variant])}
-      className={className}
-      id={id}
-      role={role}
-      data-globally-prevent-click-outside
-    >
-      <StyledProgressBarContainer>
-        <ProgressBar
-          barColor={theme.snackBar[variant].backgroundColor}
-          value={overrideProgressValue ?? 100}
-          countdownDurationInMs={isAutoDismiss ? duration : undefined}
-          isCountdownPaused={isPaused}
-          onCountdownComplete={onClose}
-        />
-      </StyledProgressBarContainer>
-      <StyledHeader>
-        <StyledIcon>{icon}</StyledIcon>
-        <StyledMessage>{sanitizedMessage ?? ''}</StyledMessage>
-        <StyledActions>
-          {!!onCancel && <LightButton title={t`Cancel`} onClick={onCancel} />}
+	return (
+		<StyledContainer
+			aria-live={role === "alert" ? "assertive" : "polite"}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+			title={sanitizedMessage ?? i18n._(defaultAriaLabelByVariant[variant])}
+			className={className}
+			id={id}
+			role={role}
+			data-globally-prevent-click-outside
+		>
+			<StyledProgressBarContainer>
+				<ProgressBar
+					barColor={theme.snackBar[variant].backgroundColor}
+					value={overrideProgressValue ?? 100}
+					countdownDurationInMs={isAutoDismiss ? duration : undefined}
+					isCountdownPaused={isPaused}
+					onCountdownComplete={onClose}
+				/>
+			</StyledProgressBarContainer>
+			<StyledHeader>
+				<StyledIcon>{icon}</StyledIcon>
+				<StyledMessage>{sanitizedMessage ?? ""}</StyledMessage>
+				<StyledActions>
+					{!!onCancel && <LightButton title={t`Cancel`} onClick={onCancel} />}
 
-          {!!onClose && (
-            <LightIconButton title={t`Close`} Icon={IconX} onClick={onClose} />
-          )}
-        </StyledActions>
-      </StyledHeader>
-      {isDefined(sanitizedDetailedMessage) && (
-        <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
-      )}
-      {isDefined(buttonLabel) &&
-        (isDefined(buttonOnClick) || isDefined(buttonTo)) && (
-          <StyledBottomActionContainer>
-            <HorizontalSeparator noMargin />
-            <StyledBottomAction>
-              {isDefined(buttonTo) ? (
-                <UndecoratedLink to={buttonTo}>
-                  <LightButton title={buttonLabel} />
-                </UndecoratedLink>
-              ) : (
-                <LightButton title={buttonLabel} onClick={buttonOnClick} />
-              )}
-            </StyledBottomAction>
-          </StyledBottomActionContainer>
-        )}
-    </StyledContainer>
-  );
+					{!!onClose && (
+						<LightIconButton title={t`Close`} Icon={IconX} onClick={onClose} />
+					)}
+				</StyledActions>
+			</StyledHeader>
+			{isDefined(sanitizedDetailedMessage) && (
+				<StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
+			)}
+			{isDefined(buttonLabel) &&
+				(isDefined(buttonOnClick) || isDefined(buttonTo)) && (
+					<StyledBottomActionContainer>
+						<HorizontalSeparator noMargin />
+						<StyledBottomAction>
+							{isDefined(buttonTo) ? (
+								<UndecoratedLink to={buttonTo}>
+									<LightButton title={buttonLabel} />
+								</UndecoratedLink>
+							) : (
+								<LightButton title={buttonLabel} onClick={buttonOnClick} />
+							)}
+						</StyledBottomAction>
+					</StyledBottomActionContainer>
+				)}
+		</StyledContainer>
+	);
 };

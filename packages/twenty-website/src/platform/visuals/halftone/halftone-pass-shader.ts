@@ -2,7 +2,7 @@
 // visuals use): tiled dash bands with hover light/flow/power-shift and drag
 // flow displacement. Ported verbatim.
 export const HALFTONE_PASS_SHADER = {
-  fragment: /* glsl */ `
+	fragment: /* glsl */ `
   precision highp float;
 
   uniform sampler2D tScene;

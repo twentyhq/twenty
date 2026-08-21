@@ -1,22 +1,22 @@
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from "@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState";
+import { objectMetadataItemsSelector } from "@/object-metadata/states/objectMetadataItemsSelector";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
 
 export const useContextStoreObjectMetadataItem = (
-  contextStoreInstanceId?: string,
+	contextStoreInstanceId?: string,
 ) => {
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    contextStoreInstanceId,
-  );
+	const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
+		contextStoreCurrentObjectMetadataItemIdComponentState,
+		contextStoreInstanceId,
+	);
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+	const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItemToFind) =>
-      objectMetadataItemToFind.id === contextStoreCurrentObjectMetadataItemId,
-  );
+	const objectMetadataItem = objectMetadataItems.find(
+		(objectMetadataItemToFind) =>
+			objectMetadataItemToFind.id === contextStoreCurrentObjectMetadataItemId,
+	);
 
-  return { objectMetadataItem };
+	return { objectMetadataItem };
 };

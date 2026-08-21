@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const OBJECT_METADATA_FRAGMENT = gql`
   fragment ObjectMetadataFields on Object {

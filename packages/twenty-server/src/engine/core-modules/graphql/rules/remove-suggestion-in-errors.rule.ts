@@ -1,14 +1,14 @@
-import { type ASTVisitor, type ValidationContext } from 'graphql';
+import { type ASTVisitor, type ValidationContext } from "graphql";
 
 export const removeSuggestionInErrorsRule = (
-  context: ValidationContext,
+	context: ValidationContext,
 ): ASTVisitor => {
-  const originalReportError = context.reportError.bind(context);
+	const originalReportError = context.reportError.bind(context);
 
-  context.reportError = (error) => {
-    error.message = error.message.replace(/ Did you mean[^?]*\?/g, '');
-    originalReportError(error);
-  };
+	context.reportError = (error) => {
+		error.message = error.message.replace(/ Did you mean[^?]*\?/g, "");
+		originalReportError(error);
+	};
 
-  return {};
+	return {};
 };

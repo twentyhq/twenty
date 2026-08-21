@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const deleteViewSortOperationFactory = ({
-  viewSortId,
+	viewSortId,
 }: {
-  viewSortId: string;
+	viewSortId: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation DeleteViewSort($input: DeleteViewSortInput!) {
       deleteViewSort(input: $input)
     }
   `,
-  variables: {
-    input: { id: viewSortId },
-  },
+	variables: {
+		input: { id: viewSortId },
+	},
 });

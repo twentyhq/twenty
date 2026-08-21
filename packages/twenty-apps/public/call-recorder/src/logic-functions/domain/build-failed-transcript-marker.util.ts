@@ -1,13 +1,13 @@
-import { type TranscriptMarker } from 'src/logic-functions/types/transcript-marker.type';
+import { type TranscriptMarker } from "src/logic-functions/types/transcript-marker.type";
 
 export const buildFailedTranscriptMarker = ({
-  recallTranscriptId,
-  subCode,
+	recallTranscriptId,
+	subCode,
 }: {
-  recallTranscriptId: string | null;
-  subCode: string | null;
+	recallTranscriptId: string | null;
+	subCode: string | null;
 }): TranscriptMarker => ({
-  recallTranscriptId,
-  status: 'FAILED',
-  subCode,
+	recallTranscriptId,
+	status: "FAILED",
+	subCode,
 });

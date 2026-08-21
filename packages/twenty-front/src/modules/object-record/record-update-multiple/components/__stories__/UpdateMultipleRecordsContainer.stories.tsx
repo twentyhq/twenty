@@ -1,26 +1,26 @@
-import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { MockLink } from '@apollo/client/testing';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from "@/command-menu-item/constants/EmptyCommandMenuContextApi";
+import { CommandMenuContext } from "@/command-menu-item/contexts/CommandMenuContext";
+import { CommandMenuItemContainerType } from "@/command-menu-item/types/CommandMenuItemContainerType";
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from "@/context-store/constants/MainContextStoreInstanceId";
+import { contextStoreNumberOfSelectedRecordsComponentState } from "@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState";
+import { ApolloCoreClientContext } from "@/object-metadata/contexts/ApolloCoreClientContext";
+import { UpdateMultipleRecordsContainer } from "@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer";
+import { useSetAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useSetAtomComponentState";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { MockLink } from "@apollo/client/testing";
 import {
-  type Decorator,
-  type Meta,
-  type StoryObj,
-} from '@storybook/react-vite';
-import gql from 'graphql-tag';
-import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
-import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+	type Decorator,
+	type Meta,
+	type StoryObj,
+} from "@storybook/react-vite";
+import gql from "graphql-tag";
+import { useEffect } from "react";
+import { expect, userEvent, within } from "storybook/test";
+import { ContextStoreDecorator } from "~/testing/decorators/ContextStoreDecorator";
+import { ObjectMetadataItemsDecorator } from "~/testing/decorators/ObjectMetadataItemsDecorator";
+import { RootDecorator } from "~/testing/decorators/RootDecorator";
+import { SnackBarDecorator } from "~/testing/decorators/SnackBarDecorator";
+import { MemoryRouterDecorator } from "~/testing/decorators/MemoryRouterDecorator";
 
 const UPDATE_MANY_COMPANIES_MUTATION = gql`
   mutation UpdateManyCompanies(
@@ -34,77 +34,77 @@ const UPDATE_MANY_COMPANIES_MUTATION = gql`
 `;
 
 const mocks = [
-  {
-    request: {
-      query: UPDATE_MANY_COMPANIES_MUTATION,
-      variables: {
-        filter: { id: { in: ['1'] } }, // Assuming filter setup
-        data: { name: 'New Name' },
-      },
-    },
-    result: {
-      data: {
-        updateManyCompanies: [{ id: '1', __typename: 'Company' }],
-      },
-    },
-  },
+	{
+		request: {
+			query: UPDATE_MANY_COMPANIES_MUTATION,
+			variables: {
+				filter: { id: { in: ["1"] } }, // Assuming filter setup
+				data: { name: "New Name" },
+			},
+		},
+		result: {
+			data: {
+				updateManyCompanies: [{ id: "1", __typename: "Company" }],
+			},
+		},
+	},
 ];
 
 const mockLink = new MockLink(mocks);
 const mockApolloCoreClient = new ApolloClient({
-  link: mockLink,
-  cache: new InMemoryCache(),
+	link: mockLink,
+	cache: new InMemoryCache(),
 });
 
 const SelectedRecordsSeedDecorator: Decorator = (Story) => {
-  const setNumberOfSelectedRecords = useSetAtomComponentState(
-    contextStoreNumberOfSelectedRecordsComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
+	const setNumberOfSelectedRecords = useSetAtomComponentState(
+		contextStoreNumberOfSelectedRecordsComponentState,
+		MAIN_CONTEXT_STORE_INSTANCE_ID,
+	);
 
-  useEffect(() => {
-    setNumberOfSelectedRecords(3);
-  }, [setNumberOfSelectedRecords]);
+	useEffect(() => {
+		setNumberOfSelectedRecords(3);
+	}, [setNumberOfSelectedRecords]);
 
-  return <Story />;
+	return <Story />;
 };
 
 const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
-  title:
-    'Modules/ObjectRecord/RecordUpdateMultiple/Components/UpdateMultipleRecordsContainer',
-  component: UpdateMultipleRecordsContainer,
-  decorators: [
-    MemoryRouterDecorator,
-    (Story) => (
-      <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
-        <CommandMenuContext.Provider
-          value={{
-            commandMenuItems: [],
-            containerType: CommandMenuItemContainerType.IndexPageDropdown,
-            displayType: 'dropdownItem',
-            commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
-            isInPreviewMode: false,
-          }}
-        >
-          <Story />
-        </CommandMenuContext.Provider>
-      </ApolloCoreClientContext.Provider>
-    ),
-    SelectedRecordsSeedDecorator,
-    ContextStoreDecorator,
-    ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-    RootDecorator,
-  ],
-  args: {
-    objectNameSingular: 'company',
-    contextStoreInstanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-  },
-  parameters: {
-    contextStore: {
-      componentInstanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    },
-  },
+	title:
+		"Modules/ObjectRecord/RecordUpdateMultiple/Components/UpdateMultipleRecordsContainer",
+	component: UpdateMultipleRecordsContainer,
+	decorators: [
+		MemoryRouterDecorator,
+		(Story) => (
+			<ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
+				<CommandMenuContext.Provider
+					value={{
+						commandMenuItems: [],
+						containerType: CommandMenuItemContainerType.IndexPageDropdown,
+						displayType: "dropdownItem",
+						commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+						isInPreviewMode: false,
+					}}
+				>
+					<Story />
+				</CommandMenuContext.Provider>
+			</ApolloCoreClientContext.Provider>
+		),
+		SelectedRecordsSeedDecorator,
+		ContextStoreDecorator,
+		ObjectMetadataItemsDecorator,
+		SnackBarDecorator,
+		RootDecorator,
+	],
+	args: {
+		objectNameSingular: "company",
+		contextStoreInstanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+	},
+	parameters: {
+		contextStore: {
+			componentInstanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+		},
+	},
 };
 
 export default meta;
@@ -112,22 +112,22 @@ export default meta;
 type Story = StoryObj<typeof UpdateMultipleRecordsContainer>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    const nameLabel = await canvas.findByText('Name', {}, { timeout: 10000 });
-    const nameInput = within(nameLabel.parentElement!).getByRole('textbox');
+		const nameLabel = await canvas.findByText("Name", {}, { timeout: 10000 });
+		const nameInput = within(nameLabel.parentElement!).getByRole("textbox");
 
-    await userEvent.type(nameInput, 'New Name');
+		await userEvent.type(nameInput, "New Name");
 
-    const applyButton = await canvas.findByRole('button', { name: /Apply/i });
-    expect(applyButton).toBeEnabled();
+		const applyButton = await canvas.findByRole("button", { name: /Apply/i });
+		expect(applyButton).toBeEnabled();
 
-    await userEvent.click(applyButton);
+		await userEvent.click(applyButton);
 
-    const cancelButton = await canvas.findByRole('button', { name: /Cancel/i });
-    expect(cancelButton).toBeEnabled();
+		const cancelButton = await canvas.findByRole("button", { name: /Cancel/i });
+		expect(cancelButton).toBeEnabled();
 
-    await userEvent.click(cancelButton);
-  },
+		await userEvent.click(cancelButton);
+	},
 };

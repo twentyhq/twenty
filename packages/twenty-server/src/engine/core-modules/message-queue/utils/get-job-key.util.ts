@@ -1,9 +1,9 @@
 export const getJobKey = ({
-  jobName,
-  jobId,
+	jobName,
+	jobId,
 }: {
-  jobName: string;
-  jobId?: string;
+	jobName: string;
+	jobId?: string;
 }) => {
-  return `${jobName}${jobId ? `.${jobId}` : ''}`;
+	return `${jobName}${jobId ? `.${jobId}` : ""}`;
 };

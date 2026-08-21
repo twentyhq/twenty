@@ -1,15 +1,15 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class GenerateTextInput {
-  @IsString()
-  @IsOptional()
-  systemPrompt?: string;
+	@IsString()
+	@IsOptional()
+	systemPrompt?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  userPrompt: string;
+	@IsString()
+	@IsNotEmpty()
+	userPrompt: string;
 
-  @IsString()
-  @IsOptional()
-  modelId?: string;
+	@IsString()
+	@IsOptional()
+	modelId?: string;
 }

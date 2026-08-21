@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { spacing } from '@/tokens';
+import { spacing } from "@/tokens";
 
 // A heading and its supporting body, paired at one gap everywhere — the
 // hero and section intros compose this instead of choosing their own.

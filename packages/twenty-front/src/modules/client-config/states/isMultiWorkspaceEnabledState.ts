@@ -1,5 +1,5 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 export const isMultiWorkspaceEnabledState = createAtomState<boolean>({
-  key: 'isMultiWorkspaceEnabled',
-  defaultValue: false,
+	key: "isMultiWorkspaceEnabled",
+	defaultValue: false,
 });

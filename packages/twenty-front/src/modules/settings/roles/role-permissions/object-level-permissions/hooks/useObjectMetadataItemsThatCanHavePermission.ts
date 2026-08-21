@@ -1,14 +1,14 @@
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from "@/object-metadata/hooks/useFilteredObjectMetadataItems";
 
 export const useObjectMetadataItemsThatCanHavePermission = () => {
-  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
-    useFilteredObjectMetadataItems();
+	const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
+		useFilteredObjectMetadataItems();
 
-  const objectMetadataItemsThatCanHavePermission = objectMetadataItems.filter(
-    (objectMetadataItem) => objectMetadataItem.isUIEditable,
-  );
+	const objectMetadataItemsThatCanHavePermission = objectMetadataItems.filter(
+		(objectMetadataItem) => objectMetadataItem.isUIEditable,
+	);
 
-  return {
-    objectMetadataItemsThatCanHavePermission,
-  };
+	return {
+		objectMetadataItemsThatCanHavePermission,
+	};
 };

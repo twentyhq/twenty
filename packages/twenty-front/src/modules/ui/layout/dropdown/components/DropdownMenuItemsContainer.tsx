@@ -1,9 +1,9 @@
-import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from "@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledExternalContainer = styled.div<{
-  maxHeight?: number;
+	maxHeight?: number;
 }>`
   --dropdown-menu-items-padding: ${themeCssVariables.spacing[1]};
   --dropdown-menu-items-row-gap: 2px;
@@ -16,7 +16,7 @@ const StyledExternalContainer = styled.div<{
 
   height: fit-content;
 
-  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : "none")};
 
   padding: var(--dropdown-menu-items-padding);
   width: 100%;
@@ -26,7 +26,7 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   box-sizing: border-box;
 
   display: flex;
-  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : "none")};
   overflow-y: auto;
 
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
@@ -73,30 +73,30 @@ const StyledInternalContainer = styled.div`
 `;
 
 export const DropdownMenuItemsContainer = ({
-  children,
-  hasMaxHeight,
-  scrollable = true,
-  className,
+	children,
+	hasMaxHeight,
+	scrollable = true,
+	className,
 }: {
-  children: React.ReactNode;
-  hasMaxHeight?: boolean;
-  scrollable?: boolean;
-  className?: string;
+	children: React.ReactNode;
+	hasMaxHeight?: boolean;
+	scrollable?: boolean;
+	className?: string;
 }) => {
-  return scrollable === true ? (
-    <StyledScrollableContainer
-      className={className}
-      maxHeight={
-        hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
-      }
-    >
-      <StyledExternalContainer role="listbox">
-        <StyledInternalContainer>{children}</StyledInternalContainer>
-      </StyledExternalContainer>
-    </StyledScrollableContainer>
-  ) : (
-    <StyledExternalContainer role="listbox" className={className}>
-      <StyledInternalContainer>{children}</StyledInternalContainer>
-    </StyledExternalContainer>
-  );
+	return scrollable === true ? (
+		<StyledScrollableContainer
+			className={className}
+			maxHeight={
+				hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
+			}
+		>
+			<StyledExternalContainer role="listbox">
+				<StyledInternalContainer>{children}</StyledInternalContainer>
+			</StyledExternalContainer>
+		</StyledScrollableContainer>
+	) : (
+		<StyledExternalContainer role="listbox" className={className}>
+			<StyledInternalContainer>{children}</StyledInternalContainer>
+		</StyledExternalContainer>
+	);
 };

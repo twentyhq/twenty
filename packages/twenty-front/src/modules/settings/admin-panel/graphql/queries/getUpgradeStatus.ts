@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_UPGRADE_STATUS = gql`
   query GetUpgradeStatus($workspaceIds: [UUID!]!) {

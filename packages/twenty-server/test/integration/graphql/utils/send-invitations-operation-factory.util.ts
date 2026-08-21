@@ -1,18 +1,18 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const sendInvitationsOperationFactory = ({
-  emails,
-  roleId,
+	emails,
+	roleId,
 }: {
-  emails: string[];
-  roleId?: string;
+	emails: string[];
+	roleId?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation SendInvitations($emails: [String!]!, $roleId: UUID) {
       sendInvitations(emails: $emails, roleId: $roleId) {
         success
       }
     }
   `,
-  variables: { emails, roleId },
+	variables: { emails, roleId },
 });

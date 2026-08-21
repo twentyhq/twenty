@@ -1,59 +1,59 @@
-import { useMutation, useQuery } from '@apollo/client/react';
-import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from "@apollo/client/react";
+import { useEffect, useState } from "react";
 
-import { DISMISS_MAINTENANCE_MODE_BANNER } from '@/information-banner/graphql/mutations/dismissMaintenanceModeBanner';
-import { IS_MAINTENANCE_MODE_BANNER_DISMISSED } from '@/information-banner/graphql/queries/isMaintenanceModeBannerDismissed';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { DISMISS_MAINTENANCE_MODE_BANNER } from "@/information-banner/graphql/mutations/dismissMaintenanceModeBanner";
+import { IS_MAINTENANCE_MODE_BANNER_DISMISSED } from "@/information-banner/graphql/queries/isMaintenanceModeBannerDismissed";
+import { useApolloCoreClient } from "@/object-metadata/hooks/useApolloCoreClient";
 
 export const useMaintenanceModeBannerDismissal = ({
-  enabled,
-  maintenanceStartAt,
+	enabled,
+	maintenanceStartAt,
 }: {
-  enabled: boolean;
-  maintenanceStartAt?: string;
+	enabled: boolean;
+	maintenanceStartAt?: string;
 }) => {
-  const apolloCoreClient = useApolloCoreClient();
-  const [isDismissed, setIsDismissed] = useState(false);
+	const apolloCoreClient = useApolloCoreClient();
+	const [isDismissed, setIsDismissed] = useState(false);
 
-  const { data, loading, refetch } = useQuery<{
-    isMaintenanceModeBannerDismissed: boolean;
-  }>(IS_MAINTENANCE_MODE_BANNER_DISMISSED, {
-    client: apolloCoreClient,
-    skip: !enabled,
-    fetchPolicy: 'network-only',
-  });
+	const { data, loading, refetch } = useQuery<{
+		isMaintenanceModeBannerDismissed: boolean;
+	}>(IS_MAINTENANCE_MODE_BANNER_DISMISSED, {
+		client: apolloCoreClient,
+		skip: !enabled,
+		fetchPolicy: "network-only",
+	});
 
-  const [mutate] = useMutation<{
-    dismissMaintenanceModeBanner: boolean;
-  }>(DISMISS_MAINTENANCE_MODE_BANNER, {
-    client: apolloCoreClient,
-  });
+	const [mutate] = useMutation<{
+		dismissMaintenanceModeBanner: boolean;
+	}>(DISMISS_MAINTENANCE_MODE_BANNER, {
+		client: apolloCoreClient,
+	});
 
-  useEffect(() => {
-    if (!enabled) {
-      setIsDismissed(false);
+	useEffect(() => {
+		if (!enabled) {
+			setIsDismissed(false);
 
-      return;
-    }
-  }, [enabled]);
+			return;
+		}
+	}, [enabled]);
 
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
+	useEffect(() => {
+		if (!enabled) {
+			return;
+		}
 
-    setIsDismissed(false);
-    void refetch();
-  }, [enabled, maintenanceStartAt, refetch]);
+		setIsDismissed(false);
+		void refetch();
+	}, [enabled, maintenanceStartAt, refetch]);
 
-  const dismissBanner = async () => {
-    await mutate();
-    setIsDismissed(true);
-  };
+	const dismissBanner = async () => {
+		await mutate();
+		setIsDismissed(true);
+	};
 
-  return {
-    dismissBanner,
-    isDismissed: isDismissed || data?.isMaintenanceModeBannerDismissed === true,
-    isLoading: enabled ? loading : false,
-  };
+	return {
+		dismissBanner,
+		isDismissed: isDismissed || data?.isMaintenanceModeBannerDismissed === true,
+		isLoading: enabled ? loading : false,
+	};
 };

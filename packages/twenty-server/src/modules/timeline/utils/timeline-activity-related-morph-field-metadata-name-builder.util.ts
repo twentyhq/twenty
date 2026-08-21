@@ -1,7 +1,7 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize } from "twenty-shared/utils";
 
 export const buildTimelineActivityRelatedMorphFieldMetadataName = (
-  name: string,
+	name: string,
 ) => {
-  return `target${capitalize(name)}`;
+	return `target${capitalize(name)}`;
 };

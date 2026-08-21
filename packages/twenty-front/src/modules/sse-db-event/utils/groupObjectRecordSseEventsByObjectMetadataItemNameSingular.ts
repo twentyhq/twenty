@@ -1,26 +1,26 @@
-import { type ObjectRecordEvent } from '~/generated-metadata/graphql';
+import { type ObjectRecordEvent } from "~/generated-metadata/graphql";
 
 export const groupObjectRecordSseEventsByObjectMetadataItemNameSingular = ({
-  objectRecordEvents,
+	objectRecordEvents,
 }: {
-  objectRecordEvents: ObjectRecordEvent[];
+	objectRecordEvents: ObjectRecordEvent[];
 }) => {
-  const objectRecordEventsByObjectMetadataItemNameSingular = new Map<
-    string,
-    ObjectRecordEvent[]
-  >();
+	const objectRecordEventsByObjectMetadataItemNameSingular = new Map<
+		string,
+		ObjectRecordEvent[]
+	>();
 
-  for (const objectRecordEvent of objectRecordEvents) {
-    const existingObjectRecordEvents =
-      objectRecordEventsByObjectMetadataItemNameSingular.get(
-        objectRecordEvent.objectNameSingular,
-      ) ?? [];
+	for (const objectRecordEvent of objectRecordEvents) {
+		const existingObjectRecordEvents =
+			objectRecordEventsByObjectMetadataItemNameSingular.get(
+				objectRecordEvent.objectNameSingular,
+			) ?? [];
 
-    objectRecordEventsByObjectMetadataItemNameSingular.set(
-      objectRecordEvent.objectNameSingular,
-      [...existingObjectRecordEvents, objectRecordEvent],
-    );
-  }
+		objectRecordEventsByObjectMetadataItemNameSingular.set(
+			objectRecordEvent.objectNameSingular,
+			[...existingObjectRecordEvents, objectRecordEvent],
+		);
+	}
 
-  return objectRecordEventsByObjectMetadataItemNameSingular;
+	return objectRecordEventsByObjectMetadataItemNameSingular;
 };

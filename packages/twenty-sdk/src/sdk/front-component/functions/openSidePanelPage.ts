@@ -1,17 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 import {
-  frontComponentHostCommunicationApi,
-  type OpenSidePanelPageFunction,
-} from '../globals/frontComponentHostCommunicationApi';
+	frontComponentHostCommunicationApi,
+	type OpenSidePanelPageFunction,
+} from "../globals/frontComponentHostCommunicationApi";
 
 export const openSidePanelPage: OpenSidePanelPageFunction = (params) => {
-  const openSidePanelPageFunction =
-    frontComponentHostCommunicationApi.openSidePanelPage;
+	const openSidePanelPageFunction =
+		frontComponentHostCommunicationApi.openSidePanelPage;
 
-  if (!isDefined(openSidePanelPageFunction)) {
-    throw new Error('openSidePanelPageFunction is not set');
-  }
+	if (!isDefined(openSidePanelPageFunction)) {
+		throw new Error("openSidePanelPageFunction is not set");
+	}
 
-  return openSidePanelPageFunction(params);
+	return openSidePanelPageFunction(params);
 };

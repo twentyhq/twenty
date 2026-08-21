@@ -1,3 +1,3 @@
 export const getIsDevelopmentEnvironment = () => {
-  return process.env.IS_DEV_ENV === 'true';
+	return process.env.IS_DEV_ENV === "true";
 };

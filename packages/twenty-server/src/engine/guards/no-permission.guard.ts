@@ -1,8 +1,8 @@
 import {
-  type CanActivate,
-  type ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+	type CanActivate,
+	type ExecutionContext,
+	Injectable,
+} from "@nestjs/common";
 
 // Guard that explicitly marks an endpoint as NOT requiring permission checks
 // This guard always returns true and serves as explicit documentation that
@@ -19,7 +19,7 @@ import {
 // If you're unsure, use CustomPermissionGuard and implement checks in the method
 @Injectable()
 export class NoPermissionGuard implements CanActivate {
-  canActivate(_context: ExecutionContext): boolean {
-    return true;
-  }
+	canActivate(_context: ExecutionContext): boolean {
+		return true;
+	}
 }

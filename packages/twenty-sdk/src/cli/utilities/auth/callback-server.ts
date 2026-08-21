@@ -1,30 +1,30 @@
-import http from 'node:http';
+import http from "node:http";
 
-import { OAUTH_MODAL_HEADER_IMAGE_BASE64 } from '@/cli/constants/oauth-modal-header-image-base64';
+import { OAUTH_MODAL_HEADER_IMAGE_BASE64 } from "@/cli/constants/oauth-modal-header-image-base64";
 
 type CallbackResult =
-  | { success: true; code: string }
-  | { success: false; error: string };
+	| { success: true; code: string }
+	| { success: false; error: string };
 
 type CallbackServer = {
-  port: number;
-  callbackUrl: string;
-  waitForCallback: () => Promise<CallbackResult>;
-  close: () => void;
+	port: number;
+	callbackUrl: string;
+	waitForCallback: () => Promise<CallbackResult>;
+	close: () => void;
 };
 
 const pageHtml = ({
-  title,
-  message,
-  isSuccess,
-  isDarkMode,
+	title,
+	message,
+	isSuccess,
+	isDarkMode,
 }: {
-  title: string;
-  message: string;
-  isSuccess: boolean;
-  isDarkMode: boolean;
+	title: string;
+	message: string;
+	isSuccess: boolean;
+	isDarkMode: boolean;
 }) => `<!DOCTYPE html>
-<html lang="en"${isDarkMode ? ' class="dark"' : ''}>
+<html lang="en"${isDarkMode ? ' class="dark"' : ""}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -134,12 +134,12 @@ const pageHtml = ({
   <div class="card">
     <div class="header">
       <div class="logo-tile">
-        <div class="status-icon ${isSuccess ? 'status-icon-success' : 'status-icon-error'}">
+        <div class="status-icon ${isSuccess ? "status-icon-success" : "status-icon-error"}">
           ${
-            isSuccess
-              ? '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
-              : '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-          }
+						isSuccess
+							? '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+							: '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+					}
         </div>
       </div>
     </div>
@@ -152,114 +152,114 @@ const pageHtml = ({
 </html>`;
 
 const successHtml = (isDarkMode: boolean) =>
-  pageHtml({
-    title: 'Authentication successful',
-    message: 'You can close this window and return to the terminal.',
-    isSuccess: true,
-    isDarkMode,
-  });
+	pageHtml({
+		title: "Authentication successful",
+		message: "You can close this window and return to the terminal.",
+		isSuccess: true,
+		isDarkMode,
+	});
 
 const escapeHtml = (text: string): string =>
-  text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+	text
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
 
 const errorHtml = (error: string, isDarkMode: boolean) =>
-  pageHtml({
-    title: 'Authentication failed',
-    message: `${escapeHtml(error)}<br>Please return to the terminal and try again.`,
-    isSuccess: false,
-    isDarkMode,
-  });
+	pageHtml({
+		title: "Authentication failed",
+		message: `${escapeHtml(error)}<br>Please return to the terminal and try again.`,
+		isSuccess: false,
+		isDarkMode,
+	});
 
 export const startCallbackServer = (options?: {
-  timeoutMs?: number;
+	timeoutMs?: number;
 }): Promise<CallbackServer> => {
-  const timeoutMs = options?.timeoutMs ?? 120_000;
+	const timeoutMs = options?.timeoutMs ?? 120_000;
 
-  return new Promise((resolve, reject) => {
-    let callbackResolve: (result: CallbackResult) => void;
-    let timeoutHandle: ReturnType<typeof setTimeout>;
+	return new Promise((resolve, reject) => {
+		let callbackResolve: (result: CallbackResult) => void;
+		let timeoutHandle: ReturnType<typeof setTimeout>;
 
-    const callbackPromise = new Promise<CallbackResult>((res) => {
-      callbackResolve = res;
-    });
+		const callbackPromise = new Promise<CallbackResult>((res) => {
+			callbackResolve = res;
+		});
 
-    const server = http.createServer((req, res) => {
-      const url = new URL(req.url ?? '/', `http://127.0.0.1`);
+		const server = http.createServer((req, res) => {
+			const url = new URL(req.url ?? "/", `http://127.0.0.1`);
 
-      if (url.pathname !== '/callback') {
-        res.writeHead(404, { Connection: 'close' });
-        res.end('Not found');
+			if (url.pathname !== "/callback") {
+				res.writeHead(404, { Connection: "close" });
+				res.end("Not found");
 
-        return;
-      }
+				return;
+			}
 
-      const code = url.searchParams.get('code');
-      const error = url.searchParams.get('error');
-      const isDarkMode = url.searchParams.get('theme') === 'dark';
+			const code = url.searchParams.get("code");
+			const error = url.searchParams.get("error");
+			const isDarkMode = url.searchParams.get("theme") === "dark";
 
-      const result: CallbackResult = code
-        ? { success: true, code }
-        : {
-            success: false,
-            error:
-              error ??
-              url.searchParams.get('error_description') ??
-              'Unknown error',
-          };
+			const result: CallbackResult = code
+				? { success: true, code }
+				: {
+						success: false,
+						error:
+							error ??
+							url.searchParams.get("error_description") ??
+							"Unknown error",
+					};
 
-      const body = result.success
-        ? successHtml(isDarkMode)
-        : errorHtml(result.error, isDarkMode);
+			const body = result.success
+				? successHtml(isDarkMode)
+				: errorHtml(result.error, isDarkMode);
 
-      res.writeHead(200, {
-        'Content-Type': 'text/html',
-        'Content-Length': Buffer.byteLength(body),
-        Connection: 'close',
-      });
+			res.writeHead(200, {
+				"Content-Type": "text/html",
+				"Content-Length": Buffer.byteLength(body),
+				Connection: "close",
+			});
 
-      res.on('close', () => callbackResolve(result));
-      res.end(body);
-    });
+			res.on("close", () => callbackResolve(result));
+			res.end(body);
+		});
 
-    server.listen(0, '127.0.0.1', () => {
-      const address = server.address();
+		server.listen(0, "127.0.0.1", () => {
+			const address = server.address();
 
-      if (!address || typeof address === 'string') {
-        reject(new Error('Failed to start callback server'));
+			if (!address || typeof address === "string") {
+				reject(new Error("Failed to start callback server"));
 
-        return;
-      }
+				return;
+			}
 
-      const port = address.port;
+			const port = address.port;
 
-      resolve({
-        port,
-        callbackUrl: `http://127.0.0.1:${port}/callback`,
-        waitForCallback: () => {
-          timeoutHandle = setTimeout(() => {
-            callbackResolve({
-              success: false,
-              error: `Timed out waiting for authorization (${timeoutMs / 1000}s)`,
-            });
-          }, timeoutMs);
+			resolve({
+				port,
+				callbackUrl: `http://127.0.0.1:${port}/callback`,
+				waitForCallback: () => {
+					timeoutHandle = setTimeout(() => {
+						callbackResolve({
+							success: false,
+							error: `Timed out waiting for authorization (${timeoutMs / 1000}s)`,
+						});
+					}, timeoutMs);
 
-          return callbackPromise.finally(() => {
-            clearTimeout(timeoutHandle);
-          });
-        },
-        close: () => {
-          clearTimeout(timeoutHandle);
-          server.close();
-          server.closeIdleConnections();
-        },
-      });
-    });
+					return callbackPromise.finally(() => {
+						clearTimeout(timeoutHandle);
+					});
+				},
+				close: () => {
+					clearTimeout(timeoutHandle);
+					server.close();
+					server.closeIdleConnections();
+				},
+			});
+		});
 
-    server.on('error', reject);
-  });
+		server.on("error", reject);
+	});
 };

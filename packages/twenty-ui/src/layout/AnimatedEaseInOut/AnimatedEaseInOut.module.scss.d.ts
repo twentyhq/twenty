@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly panel: 'panel';
+	readonly panel: "panel";
 };
 export default classNames;

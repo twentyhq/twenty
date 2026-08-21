@@ -1,5 +1,5 @@
 export type AskQuestionAnswer = {
-  questionIndex: number;
-  selectedOptionIndices: number[];
-  freeText?: string;
+	questionIndex: number;
+	selectedOptionIndices: number[];
+	freeText?: string;
 };

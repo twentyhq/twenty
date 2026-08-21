@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
-import { PAGE_LAYOUT_TAB_FRAGMENT } from '@/dashboards/graphql/fragments/pageLayoutTabFragment';
+import { PAGE_LAYOUT_TAB_FRAGMENT } from "@/dashboards/graphql/fragments/pageLayoutTabFragment";
 
 export const RESET_PAGE_LAYOUT_TAB_TO_DEFAULT = gql`
   ${PAGE_LAYOUT_TAB_FRAGMENT}

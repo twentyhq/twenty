@@ -1,1 +1,1 @@
-export type TimelineActivityLinkedObject = 'note' | 'task';
+export type TimelineActivityLinkedObject = "note" | "task";

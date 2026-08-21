@@ -1,7 +1,7 @@
 export const buildFrontComponentStorageNamespace = ({
-  applicationId,
-  userId,
+	applicationId,
+	userId,
 }: {
-  applicationId: string;
-  userId: string;
+	applicationId: string;
+	userId: string;
 }): string => `frontComponentStorage:${applicationId}:${userId}:`;

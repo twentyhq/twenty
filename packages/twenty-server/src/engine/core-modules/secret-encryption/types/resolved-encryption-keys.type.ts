@@ -1,4 +1,4 @@
 export type ResolvedEncryptionKeys = {
-  primary: string;
-  fallback: string | null;
+	primary: string;
+	fallback: string | null;
 };

@@ -1,1 +1,1 @@
-export { RelationOnDeleteAction as OnDeleteAction } from 'twenty-shared/types';
+export { RelationOnDeleteAction as OnDeleteAction } from "twenty-shared/types";

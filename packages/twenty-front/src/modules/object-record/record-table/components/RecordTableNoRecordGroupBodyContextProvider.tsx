@@ -1,80 +1,80 @@
-import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
-import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
-import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
+import { RecordTableBodyContextProvider } from "@/object-record/record-table/contexts/RecordTableBodyContext";
+import { useRecordTableContextOrThrow } from "@/object-record/record-table/contexts/RecordTableContext";
+import { useRecordTableMoveFocusedCell } from "@/object-record/record-table/hooks/useRecordTableMoveFocusedCell";
+import { useCloseRecordTableCellNoGroup } from "@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup";
+import { useMoveHoverToCurrentCell } from "@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell";
 import {
-  type OpenTableCellArgs,
-  useOpenRecordTableCell,
-} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
-import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
-import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type ReactNode } from 'react';
+	type OpenTableCellArgs,
+	useOpenRecordTableCell,
+} from "@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell";
+import { useTriggerCommandMenuDropdown } from "@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown";
+import { hasUserSelectedAllRowsComponentState } from "@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState";
+import { type MoveFocusDirection } from "@/object-record/record-table/types/MoveFocusDirection";
+import { type TableCellPosition } from "@/object-record/record-table/types/TableCellPosition";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { type ReactNode } from "react";
 
 type RecordTableNoRecordGroupBodyContextProviderProps = {
-  children?: ReactNode;
+	children?: ReactNode;
 };
 
 export const RecordTableNoRecordGroupBodyContextProvider = ({
-  children,
+	children,
 }: RecordTableNoRecordGroupBodyContextProviderProps) => {
-  const { recordTableId } = useRecordTableContextOrThrow();
+	const { recordTableId } = useRecordTableContextOrThrow();
 
-  const { openTableCell } = useOpenRecordTableCell(recordTableId);
+	const { openTableCell } = useOpenRecordTableCell(recordTableId);
 
-  const handleOpenTableCell = (args: OpenTableCellArgs) => {
-    openTableCell(args);
-  };
+	const handleOpenTableCell = (args: OpenTableCellArgs) => {
+		openTableCell(args);
+	};
 
-  const { moveFocus } = useRecordTableMoveFocusedCell(recordTableId);
+	const { moveFocus } = useRecordTableMoveFocusedCell(recordTableId);
 
-  const handleMoveFocus = (direction: MoveFocusDirection) => {
-    moveFocus(direction);
-  };
+	const handleMoveFocus = (direction: MoveFocusDirection) => {
+		moveFocus(direction);
+	};
 
-  const { closeTableCellNoGroup } = useCloseRecordTableCellNoGroup();
+	const { closeTableCellNoGroup } = useCloseRecordTableCellNoGroup();
 
-  const handleCloseTableCell = () => {
-    closeTableCellNoGroup();
-  };
+	const handleCloseTableCell = () => {
+		closeTableCellNoGroup();
+	};
 
-  const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
+	const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const handleMoveHoverToCurrentCell = (cellPosition: TableCellPosition) => {
-    moveHoverToCurrentCell(cellPosition);
-  };
+	const handleMoveHoverToCurrentCell = (cellPosition: TableCellPosition) => {
+		moveHoverToCurrentCell(cellPosition);
+	};
 
-  const { triggerCommandMenuDropdown } = useTriggerCommandMenuDropdown({
-    recordTableId,
-  });
+	const { triggerCommandMenuDropdown } = useTriggerCommandMenuDropdown({
+		recordTableId,
+	});
 
-  const handleCommandMenuDropdown = (
-    event: React.MouseEvent,
-    recordId: string,
-  ) => {
-    triggerCommandMenuDropdown(event, recordId);
-  };
+	const handleCommandMenuDropdown = (
+		event: React.MouseEvent,
+		recordId: string,
+	) => {
+		triggerCommandMenuDropdown(event, recordId);
+	};
 
-  const hasUserSelectedAllRows = useAtomComponentStateValue(
-    hasUserSelectedAllRowsComponentState,
-    recordTableId,
-  );
+	const hasUserSelectedAllRows = useAtomComponentStateValue(
+		hasUserSelectedAllRowsComponentState,
+		recordTableId,
+	);
 
-  return (
-    <RecordTableBodyContextProvider
-      value={{
-        onOpenTableCell: handleOpenTableCell,
-        onMoveFocus: handleMoveFocus,
-        onCloseTableCell: handleCloseTableCell,
-        onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
-        onCommandMenuDropdownOpened: handleCommandMenuDropdown,
-        hasUserSelectedAllRows,
-      }}
-    >
-      {children}
-    </RecordTableBodyContextProvider>
-  );
+	return (
+		<RecordTableBodyContextProvider
+			value={{
+				onOpenTableCell: handleOpenTableCell,
+				onMoveFocus: handleMoveFocus,
+				onCloseTableCell: handleCloseTableCell,
+				onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
+				onCommandMenuDropdownOpened: handleCommandMenuDropdown,
+				hasUserSelectedAllRows,
+			}}
+		>
+			{children}
+		</RecordTableBodyContextProvider>
+	);
 };

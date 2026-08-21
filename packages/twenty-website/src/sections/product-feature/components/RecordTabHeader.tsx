@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { RECORD_TABS } from '../data/record-tabs';
-import { type RecordTabLabel } from '../types/record-tab-label';
+import { RECORD_TABS } from "../data/record-tabs";
+import { type RecordTabLabel } from "../types/record-tab-label";
 
 const Bar = styled.div`
   align-items: stretch;
@@ -60,16 +60,16 @@ const TabContent = styled.span`
 `;
 
 export function RecordTabHeader({ active }: { active: RecordTabLabel }) {
-  return (
-    <Bar>
-      {RECORD_TABS.map(({ icon: Icon, label }) => (
-        <TabButton data-active={label === active ? '' : undefined} key={label}>
-          <TabContent>
-            <Icon size={16} stroke={2} />
-            {label}
-          </TabContent>
-        </TabButton>
-      ))}
-    </Bar>
-  );
+	return (
+		<Bar>
+			{RECORD_TABS.map(({ icon: Icon, label }) => (
+				<TabButton data-active={label === active ? "" : undefined} key={label}>
+					<TabContent>
+						<Icon size={16} stroke={2} />
+						{label}
+					</TabContent>
+				</TabButton>
+			))}
+		</Bar>
+	);
 }

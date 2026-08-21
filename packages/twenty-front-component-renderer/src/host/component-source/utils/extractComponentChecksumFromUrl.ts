@@ -1,11 +1,11 @@
 const SHA256_FINGERPRINTED_URL_PATTERN = /\/([0-9a-f]{64})\.js$/;
 
 export const extractComponentChecksumFromUrl = ({
-  url,
+	url,
 }: {
-  url: string;
+	url: string;
 }): string | undefined => {
-  const match = url.match(SHA256_FINGERPRINTED_URL_PATTERN);
+	const match = url.match(SHA256_FINGERPRINTED_URL_PATTERN);
 
-  return match?.[1];
+	return match?.[1];
 };

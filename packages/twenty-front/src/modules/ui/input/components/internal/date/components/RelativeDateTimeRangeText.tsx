@@ -1,10 +1,10 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { type Temporal } from 'temporal-polyfill';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { IconArrowDown } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { currentWorkspaceMemberState } from "@/auth/states/currentWorkspaceMemberState";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { styled } from "@linaria/react";
+import { type Temporal } from "temporal-polyfill";
+import { SOURCE_LOCALE } from "twenty-shared/translations";
+import { IconArrowDown } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -25,32 +25,32 @@ const StyledBound = styled.span`
 `;
 
 type RelativeDateTimeRangeTextProps = {
-  start: Temporal.ZonedDateTime;
-  end: Temporal.ZonedDateTime;
+	start: Temporal.ZonedDateTime;
+	end: Temporal.ZonedDateTime;
 };
 
 export const RelativeDateTimeRangeText = ({
-  start,
-  end,
+	start,
+	end,
 }: RelativeDateTimeRangeTextProps) => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+	const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+	const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const formatter = new Intl.DateTimeFormat(userLocale, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-    timeZone: start.timeZoneId,
-  });
+	const formatter = new Intl.DateTimeFormat(userLocale, {
+		dateStyle: "medium",
+		timeStyle: "short",
+		timeZone: start.timeZoneId,
+	});
 
-  return (
-    <StyledContainer>
-      <StyledBound>
-        {formatter.format(new Date(start.epochMilliseconds))}
-      </StyledBound>
-      <IconArrowDown size={14} color={themeCssVariables.font.color.tertiary} />
-      <StyledBound>
-        {formatter.format(new Date(end.epochMilliseconds))}
-      </StyledBound>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledBound>
+				{formatter.format(new Date(start.epochMilliseconds))}
+			</StyledBound>
+			<IconArrowDown size={14} color={themeCssVariables.font.color.tertiary} />
+			<StyledBound>
+				{formatter.format(new Date(end.epochMilliseconds))}
+			</StyledBound>
+		</StyledContainer>
+	);
 };

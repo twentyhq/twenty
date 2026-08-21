@@ -1,5 +1,5 @@
 export type FieldsConfigurationGroupDragData = {
-  type: 'group';
-  groupId: string;
-  index: number;
+	type: "group";
+	groupId: string;
+	index: number;
 };

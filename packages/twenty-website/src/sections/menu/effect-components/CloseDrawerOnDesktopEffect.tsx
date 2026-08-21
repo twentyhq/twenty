@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { BREAKPOINT_PX } from '@/tokens';
+import { BREAKPOINT_PX } from "@/tokens";
 
 export type CloseDrawerOnDesktopEffectProps = {
-  onClose: () => void;
+	onClose: () => void;
 };
 
 export function CloseDrawerOnDesktopEffect({
-  onClose,
+	onClose,
 }: CloseDrawerOnDesktopEffectProps) {
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(min-width: ${BREAKPOINT_PX.md}px)`);
+	useEffect(() => {
+		const mediaQuery = window.matchMedia(`(min-width: ${BREAKPOINT_PX.md}px)`);
 
-    const handleChange = () => {
-      if (mediaQuery.matches) onClose();
-    };
+		const handleChange = () => {
+			if (mediaQuery.matches) onClose();
+		};
 
-    mediaQuery.addEventListener('change', handleChange);
+		mediaQuery.addEventListener("change", handleChange);
 
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [onClose]);
+		return () => mediaQuery.removeEventListener("change", handleChange);
+	}, [onClose]);
 
-  return null;
+	return null;
 }

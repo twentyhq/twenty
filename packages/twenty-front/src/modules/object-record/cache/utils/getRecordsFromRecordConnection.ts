@@ -1,13 +1,13 @@
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getRecordFromRecordNode } from "@/object-record/cache/utils/getRecordFromRecordNode";
+import { type RecordGqlConnectionEdgesRequired } from "@/object-record/graphql/types/RecordGqlConnectionEdgesRequired";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
 
 export const getRecordsFromRecordConnection = <T extends ObjectRecord>({
-  recordConnection,
+	recordConnection,
 }: {
-  recordConnection: RecordGqlConnectionEdgesRequired;
+	recordConnection: RecordGqlConnectionEdgesRequired;
 }): T[] => {
-  return recordConnection?.edges?.map((edge) =>
-    getRecordFromRecordNode<T>({ recordNode: edge.node }),
-  );
+	return recordConnection?.edges?.map((edge) =>
+		getRecordFromRecordNode<T>({ recordNode: edge.node }),
+	);
 };

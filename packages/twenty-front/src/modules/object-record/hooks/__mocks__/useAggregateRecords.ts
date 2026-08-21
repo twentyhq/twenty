@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const AGGREGATE_QUERY = gql`
   query AggregateOpportunities($filter: OpportunityFilterInput) {
@@ -11,9 +11,9 @@ export const AGGREGATE_QUERY = gql`
 `;
 
 export const mockResponse = {
-  opportunities: {
-    totalCount: 42,
-    sumAmount: 1000000,
-    avgAmount: 23800,
-  },
+	opportunities: {
+		totalCount: 42,
+		sumAmount: 1000000,
+		avgAmount: 23800,
+	},
 };

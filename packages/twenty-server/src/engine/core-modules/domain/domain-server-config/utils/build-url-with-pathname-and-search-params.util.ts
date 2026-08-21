@@ -1,31 +1,31 @@
-import { appendSearchParamsToUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/append-search-params-to-url.util';
+import { appendSearchParamsToUrl } from "src/engine/core-modules/domain/domain-server-config/utils/append-search-params-to-url.util";
 
 type BuildUrlWithPathnameAndSearchParamsProps = {
-  baseUrl: URL;
-  pathname?: string;
-  searchParams?: Record<string, string | number | boolean>;
-  hash?: string;
+	baseUrl: URL;
+	pathname?: string;
+	searchParams?: Record<string, string | number | boolean>;
+	hash?: string;
 };
 
 export const buildUrlWithPathnameAndSearchParams = ({
-  baseUrl,
-  pathname,
-  searchParams,
-  hash,
+	baseUrl,
+	pathname,
+	searchParams,
+	hash,
 }: BuildUrlWithPathnameAndSearchParamsProps) => {
-  const url = baseUrl;
+	const url = baseUrl;
 
-  if (pathname) {
-    url.pathname = pathname;
-  }
+	if (pathname) {
+		url.pathname = pathname;
+	}
 
-  if (searchParams) {
-    appendSearchParamsToUrl(url, searchParams);
-  }
+	if (searchParams) {
+		appendSearchParamsToUrl(url, searchParams);
+	}
 
-  if (hash) {
-    url.hash = hash;
-  }
+	if (hash) {
+		url.hash = hash;
+	}
 
-  return url;
+	return url;
 };

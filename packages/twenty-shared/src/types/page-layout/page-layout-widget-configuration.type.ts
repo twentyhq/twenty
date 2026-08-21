@@ -1,220 +1,220 @@
-import { type AggregateOperations } from '../AggregateOperations';
-import { type ObjectRecordGroupByDateGranularity } from '../ObjectRecordGroupByDateGranularity';
-import { type SerializedRelation } from '../SerializedRelation.type';
+import { type AggregateOperations } from "../AggregateOperations";
+import { type ObjectRecordGroupByDateGranularity } from "../ObjectRecordGroupByDateGranularity";
+import { type SerializedRelation } from "../SerializedRelation.type";
 
-import { type ChartFilter } from './chart-filter.type';
-import { type RatioAggregateConfig } from './ratio-aggregate-config.type';
+import { type ChartFilter } from "./chart-filter.type";
+import { type RatioAggregateConfig } from "./ratio-aggregate-config.type";
 
 type BaseChartConfiguration = {
-  aggregateFieldMetadataId: SerializedRelation;
-  aggregateOperation: AggregateOperations;
-  displayDataLabel?: boolean;
-  description?: string;
-  color?: string;
-  filter?: ChartFilter;
-  timezone?: string;
-  firstDayOfTheWeek?: number;
+	aggregateFieldMetadataId: SerializedRelation;
+	aggregateOperation: AggregateOperations;
+	displayDataLabel?: boolean;
+	description?: string;
+	color?: string;
+	filter?: ChartFilter;
+	timezone?: string;
+	firstDayOfTheWeek?: number;
 };
 
 export type AggregateChartConfiguration = BaseChartConfiguration & {
-  configurationType: 'AGGREGATE_CHART';
-  label?: string;
-  numberFormat?: string;
-  prefix?: string;
-  suffix?: string;
-  ratioAggregateConfig?: RatioAggregateConfig;
+	configurationType: "AGGREGATE_CHART";
+	label?: string;
+	numberFormat?: string;
+	prefix?: string;
+	suffix?: string;
+	ratioAggregateConfig?: RatioAggregateConfig;
 };
 
 export type PieChartConfiguration = BaseChartConfiguration & {
-  configurationType: 'PIE_CHART';
-  groupByFieldMetadataId: SerializedRelation;
-  groupBySubFieldName?: string;
-  dateGranularity?: ObjectRecordGroupByDateGranularity;
-  orderBy?: string;
-  manualSortOrder?: string[];
-  showCenterMetric?: boolean;
-  displayLegend?: boolean;
-  hideEmptyCategory?: boolean;
-  numberFormat?: string;
-  splitMultiValueFields?: boolean;
+	configurationType: "PIE_CHART";
+	groupByFieldMetadataId: SerializedRelation;
+	groupBySubFieldName?: string;
+	dateGranularity?: ObjectRecordGroupByDateGranularity;
+	orderBy?: string;
+	manualSortOrder?: string[];
+	showCenterMetric?: boolean;
+	displayLegend?: boolean;
+	hideEmptyCategory?: boolean;
+	numberFormat?: string;
+	splitMultiValueFields?: boolean;
 };
 
 export type BarChartConfiguration = BaseChartConfiguration & {
-  configurationType: 'BAR_CHART';
-  primaryAxisGroupByFieldMetadataId: SerializedRelation;
-  primaryAxisGroupBySubFieldName?: string;
-  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
-  primaryAxisOrderBy?: string;
-  primaryAxisManualSortOrder?: string[];
-  secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
-  secondaryAxisGroupBySubFieldName?: string;
-  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
-  secondaryAxisOrderBy?: string;
-  secondaryAxisManualSortOrder?: string[];
-  omitNullValues?: boolean;
-  splitMultiValueFields?: boolean;
-  axisNameDisplay?: string;
-  displayLegend?: boolean;
-  numberFormat?: string;
-  rangeMin?: number;
-  rangeMax?: number;
-  groupMode?: string;
-  layout?: string;
-  isCumulative?: boolean;
+	configurationType: "BAR_CHART";
+	primaryAxisGroupByFieldMetadataId: SerializedRelation;
+	primaryAxisGroupBySubFieldName?: string;
+	primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+	primaryAxisOrderBy?: string;
+	primaryAxisManualSortOrder?: string[];
+	secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
+	secondaryAxisGroupBySubFieldName?: string;
+	secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
+	secondaryAxisOrderBy?: string;
+	secondaryAxisManualSortOrder?: string[];
+	omitNullValues?: boolean;
+	splitMultiValueFields?: boolean;
+	axisNameDisplay?: string;
+	displayLegend?: boolean;
+	numberFormat?: string;
+	rangeMin?: number;
+	rangeMax?: number;
+	groupMode?: string;
+	layout?: string;
+	isCumulative?: boolean;
 };
 
 export type LineChartConfiguration = BaseChartConfiguration & {
-  configurationType: 'LINE_CHART';
-  primaryAxisGroupByFieldMetadataId: SerializedRelation;
-  primaryAxisGroupBySubFieldName?: string;
-  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
-  primaryAxisOrderBy?: string;
-  primaryAxisManualSortOrder?: string[];
-  secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
-  secondaryAxisGroupBySubFieldName?: string;
-  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
-  secondaryAxisOrderBy?: string;
-  secondaryAxisManualSortOrder?: string[];
-  omitNullValues?: boolean;
-  splitMultiValueFields?: boolean;
-  axisNameDisplay?: string;
-  displayLegend?: boolean;
-  numberFormat?: string;
-  rangeMin?: number;
-  rangeMax?: number;
-  isStacked?: boolean;
-  isCumulative?: boolean;
+	configurationType: "LINE_CHART";
+	primaryAxisGroupByFieldMetadataId: SerializedRelation;
+	primaryAxisGroupBySubFieldName?: string;
+	primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+	primaryAxisOrderBy?: string;
+	primaryAxisManualSortOrder?: string[];
+	secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
+	secondaryAxisGroupBySubFieldName?: string;
+	secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
+	secondaryAxisOrderBy?: string;
+	secondaryAxisManualSortOrder?: string[];
+	omitNullValues?: boolean;
+	splitMultiValueFields?: boolean;
+	axisNameDisplay?: string;
+	displayLegend?: boolean;
+	numberFormat?: string;
+	rangeMin?: number;
+	rangeMax?: number;
+	isStacked?: boolean;
+	isCumulative?: boolean;
 };
 
 export type ViewConfiguration = {
-  configurationType: 'VIEW';
+	configurationType: "VIEW";
 };
 
 export type RecordTableConfiguration = {
-  configurationType: 'RECORD_TABLE';
-  viewId?: SerializedRelation | null;
-  recordLimit?: number;
+	configurationType: "RECORD_TABLE";
+	viewId?: SerializedRelation | null;
+	recordLimit?: number;
 };
 
 export type FieldConfiguration = {
-  configurationType: 'FIELD';
-  fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW' | 'TABLE';
-  viewId?: string;
-  // One-to-many relation field on the relation target object, to list records
-  // two relation hops away (e.g. Company -> People -> Owned opportunities)
-  nestedRelationFieldMetadataId?: string | null;
+	configurationType: "FIELD";
+	fieldMetadataId: string;
+	fieldDisplayMode: "CARD" | "EDITOR" | "FIELD" | "VIEW" | "TABLE";
+	viewId?: string;
+	// One-to-many relation field on the relation target object, to list records
+	// two relation hops away (e.g. Company -> People -> Owned opportunities)
+	nestedRelationFieldMetadataId?: string | null;
 };
 
 export type FieldsConfiguration = {
-  configurationType: 'FIELDS';
-  viewId?: SerializedRelation | null;
-  newFieldDefaultVisibility?: boolean | null;
-  shouldAllowUserToSeeHiddenFields?: boolean;
+	configurationType: "FIELDS";
+	viewId?: SerializedRelation | null;
+	newFieldDefaultVisibility?: boolean | null;
+	shouldAllowUserToSeeHiddenFields?: boolean;
 };
 
 export type FieldRichTextConfiguration = {
-  configurationType: 'FIELD_RICH_TEXT';
+	configurationType: "FIELD_RICH_TEXT";
 };
 
 export type StandaloneRichTextConfiguration = {
-  configurationType: 'STANDALONE_RICH_TEXT';
-  body: {
-    blocknote?: string | null;
-    markdown: string | null;
-  };
+	configurationType: "STANDALONE_RICH_TEXT";
+	body: {
+		blocknote?: string | null;
+		markdown: string | null;
+	};
 };
 
 export type IframeConfiguration = {
-  configurationType: 'IFRAME';
-  url?: string;
+	configurationType: "IFRAME";
+	url?: string;
 };
 
 export type FrontComponentConfiguration = {
-  configurationType: 'FRONT_COMPONENT';
-  frontComponentId: SerializedRelation;
+	configurationType: "FRONT_COMPONENT";
+	frontComponentId: SerializedRelation;
 };
 
 export type TimelineConfiguration = {
-  configurationType: 'TIMELINE';
+	configurationType: "TIMELINE";
 };
 
 export type TasksConfiguration = {
-  configurationType: 'TASKS';
+	configurationType: "TASKS";
 };
 
 export type NotesConfiguration = {
-  configurationType: 'NOTES';
+	configurationType: "NOTES";
 };
 
 export type FilesConfiguration = {
-  configurationType: 'FILES';
+	configurationType: "FILES";
 };
 
 export type EmailsConfiguration = {
-  configurationType: 'EMAILS';
+	configurationType: "EMAILS";
 };
 
 export type EmailThreadConfiguration = {
-  configurationType: 'EMAIL_THREAD';
+	configurationType: "EMAIL_THREAD";
 };
 
 export type MessageCampaignBodyConfiguration = {
-  configurationType: 'MESSAGE_CAMPAIGN_BODY';
+	configurationType: "MESSAGE_CAMPAIGN_BODY";
 };
 
 export type MessageCampaignDetailsConfiguration = {
-  configurationType: 'MESSAGE_CAMPAIGN_DETAILS';
+	configurationType: "MESSAGE_CAMPAIGN_DETAILS";
 };
 
 export type CallRecordingSummaryConfiguration = {
-  configurationType: 'CALL_RECORDING_SUMMARY';
+	configurationType: "CALL_RECORDING_SUMMARY";
 };
 
 export type CallRecordingTranscriptConfiguration = {
-  configurationType: 'CALL_RECORDING_TRANSCRIPT';
+	configurationType: "CALL_RECORDING_TRANSCRIPT";
 };
 
 export type CalendarConfiguration = {
-  configurationType: 'CALENDAR';
+	configurationType: "CALENDAR";
 };
 
 export type WorkflowConfiguration = {
-  configurationType: 'WORKFLOW';
+	configurationType: "WORKFLOW";
 };
 
 export type WorkflowVersionConfiguration = {
-  configurationType: 'WORKFLOW_VERSION';
+	configurationType: "WORKFLOW_VERSION";
 };
 
 export type WorkflowRunConfiguration = {
-  configurationType: 'WORKFLOW_RUN';
+	configurationType: "WORKFLOW_RUN";
 };
 
 export type PageLayoutWidgetConfiguration =
-  | AggregateChartConfiguration
-  | PieChartConfiguration
-  | BarChartConfiguration
-  | LineChartConfiguration
-  | ViewConfiguration
-  | RecordTableConfiguration
-  | FieldConfiguration
-  | FieldsConfiguration
-  | FieldRichTextConfiguration
-  | StandaloneRichTextConfiguration
-  | IframeConfiguration
-  | FrontComponentConfiguration
-  | TimelineConfiguration
-  | TasksConfiguration
-  | NotesConfiguration
-  | FilesConfiguration
-  | EmailsConfiguration
-  | CalendarConfiguration
-  | WorkflowConfiguration
-  | WorkflowVersionConfiguration
-  | WorkflowRunConfiguration
-  | EmailThreadConfiguration
-  | MessageCampaignBodyConfiguration
-  | MessageCampaignDetailsConfiguration
-  | CallRecordingSummaryConfiguration
-  | CallRecordingTranscriptConfiguration;
+	| AggregateChartConfiguration
+	| PieChartConfiguration
+	| BarChartConfiguration
+	| LineChartConfiguration
+	| ViewConfiguration
+	| RecordTableConfiguration
+	| FieldConfiguration
+	| FieldsConfiguration
+	| FieldRichTextConfiguration
+	| StandaloneRichTextConfiguration
+	| IframeConfiguration
+	| FrontComponentConfiguration
+	| TimelineConfiguration
+	| TasksConfiguration
+	| NotesConfiguration
+	| FilesConfiguration
+	| EmailsConfiguration
+	| CalendarConfiguration
+	| WorkflowConfiguration
+	| WorkflowVersionConfiguration
+	| WorkflowRunConfiguration
+	| EmailThreadConfiguration
+	| MessageCampaignBodyConfiguration
+	| MessageCampaignDetailsConfiguration
+	| CallRecordingSummaryConfiguration
+	| CallRecordingTranscriptConfiguration;

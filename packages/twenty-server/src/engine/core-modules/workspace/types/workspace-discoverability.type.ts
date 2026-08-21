@@ -5,7 +5,7 @@
 // - MEMBERS_AND_INVITEES: hidden from email-domain discovery, still shown to members and invited users
 // - HIDDEN: never listed in the picker; members and invited users sign in from the workspace URL directly
 export enum WorkspaceDiscoverability {
-  PUBLIC = 'PUBLIC',
-  MEMBERS_AND_INVITEES = 'MEMBERS_AND_INVITEES',
-  HIDDEN = 'HIDDEN',
+	PUBLIC = "PUBLIC",
+	MEMBERS_AND_INVITEES = "MEMBERS_AND_INVITEES",
+	HIDDEN = "HIDDEN",
 }

@@ -1,4 +1,4 @@
 export type SlackAssistantStatusStep = {
-  afterSeconds: number;
-  text: string;
+	afterSeconds: number;
+	text: string;
 };

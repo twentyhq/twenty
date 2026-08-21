@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const GET_CONNECTED_IMAP_SMTP_CALDAV_ACCOUNT = gql`
   query GetConnectedImapSmtpCaldavAccount($id: UUID!) {

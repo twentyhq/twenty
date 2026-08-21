@@ -1,4 +1,4 @@
-import { isDefined } from '../utils/validation/isDefined';
+import { isDefined } from "../utils/validation/isDefined";
 
 const PLACEHOLDER_REGEX = /\{(\w+)\}/g;
 
@@ -6,16 +6,16 @@ const PLACEHOLDER_REGEX = /\{(\w+)\}/g;
 // translated by whoever owns the catalog and filled later by whoever owns the
 // values.
 export const interpolateMessagePlaceholders = (
-  message: string,
-  values?: Record<string, string | number | undefined>,
+	message: string,
+	values?: Record<string, string | number | undefined>,
 ): string => {
-  if (!isDefined(values)) {
-    return message;
-  }
+	if (!isDefined(values)) {
+		return message;
+	}
 
-  return message.replace(PLACEHOLDER_REGEX, (placeholder, name: string) => {
-    const value = values[name];
+	return message.replace(PLACEHOLDER_REGEX, (placeholder, name: string) => {
+		const value = values[name];
 
-    return isDefined(value) ? String(value) : placeholder;
-  });
+		return isDefined(value) ? String(value) : placeholder;
+	});
 };

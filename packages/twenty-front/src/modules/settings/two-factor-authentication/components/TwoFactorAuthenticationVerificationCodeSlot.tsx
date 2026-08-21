@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { type SlotProps } from 'input-otp';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type SlotProps } from "input-otp";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
   align-items: center;
@@ -13,9 +13,9 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   justify-content: center;
   outline: 0;
   outline-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.border.color.strong
-      : themeCssVariables.border.color.medium};
+		isActive
+			? themeCssVariables.border.color.strong
+			: themeCssVariables.border.color.medium};
   outline-color: ${themeCssVariables.border.color.medium};
 
   .group:hover &,
@@ -23,8 +23,8 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
     border-color: ${themeCssVariables.border.color.medium};
   }
 
-  outline-style: ${({ isActive }) => (isActive ? 'solid' : 'none')};
-  outline-width: ${({ isActive }) => (isActive ? '1px' : '0')};
+  outline-style: ${({ isActive }) => (isActive ? "solid" : "none")};
+  outline-width: ${({ isActive }) => (isActive ? "1px" : "0")};
 
   position: relative;
   transition: all 0.3s;
@@ -68,23 +68,23 @@ const StyledCaret = styled.div`
 type TwoFactorAuthenticationVerificationCodeSlotProps = SlotProps;
 
 export const TwoFactorAuthenticationVerificationCodeSlot = ({
-  char,
-  hasFakeCaret,
-  isActive,
-  placeholderChar,
+	char,
+	hasFakeCaret,
+	isActive,
+	placeholderChar,
 }: TwoFactorAuthenticationVerificationCodeSlotProps) => {
-  return (
-    <StyledSlot isActive={isActive}>
-      {char ? (
-        <StyledInputChar>{char}</StyledInputChar>
-      ) : (
-        <StyledPlaceholderChar>{placeholderChar ?? 'X'}</StyledPlaceholderChar>
-      )}
-      {hasFakeCaret && (
-        <StyledCaretContainer>
-          <StyledCaret />
-        </StyledCaretContainer>
-      )}
-    </StyledSlot>
-  );
+	return (
+		<StyledSlot isActive={isActive}>
+			{char ? (
+				<StyledInputChar>{char}</StyledInputChar>
+			) : (
+				<StyledPlaceholderChar>{placeholderChar ?? "X"}</StyledPlaceholderChar>
+			)}
+			{hasFakeCaret && (
+				<StyledCaretContainer>
+					<StyledCaret />
+				</StyledCaretContainer>
+			)}
+		</StyledSlot>
+	);
 };

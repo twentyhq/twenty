@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('InviteSuggestion')
+@ObjectType("InviteSuggestion")
 export class InviteSuggestionDTO {
-  @Field(() => String)
-  email: string;
+	@Field(() => String)
+	email: string;
 
-  @Field(() => String, { nullable: true })
-  displayName?: string;
+	@Field(() => String, { nullable: true })
+	displayName?: string;
 }

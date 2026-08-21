@@ -1,8 +1,8 @@
 export enum GqlInputTypeDefinitionKind {
-  Create = 'Create',
-  Update = 'Update',
-  Filter = 'Filter',
-  OrderBy = 'OrderBy',
-  GroupBy = 'GroupBy',
-  OrderByWithGroupBy = 'OrderByWithGroupBy',
+	Create = "Create",
+	Update = "Update",
+	Filter = "Filter",
+	OrderBy = "OrderBy",
+	GroupBy = "GroupBy",
+	OrderByWithGroupBy = "OrderByWithGroupBy",
 }

@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly animatedPath: 'animatedPath';
+	readonly animatedPath: "animatedPath";
 };
 export default classNames;

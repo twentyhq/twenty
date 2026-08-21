@@ -1,1 +1,1 @@
-export const NUMBER_FILTER_TYPES = ['NUMBER', 'PHONES'];
+export const NUMBER_FILTER_TYPES = ["NUMBER", "PHONES"];

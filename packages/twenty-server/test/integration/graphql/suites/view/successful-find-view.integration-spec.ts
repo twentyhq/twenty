@@ -1,22 +1,22 @@
 import {
-  VIEW_FIELD_GQL_FIELDS,
-  VIEW_FILTER_GQL_FIELDS,
-  VIEW_FILTER_GROUP_GQL_FIELDS,
-  VIEW_GQL_FIELDS,
-  VIEW_GROUP_GQL_FIELDS,
-  VIEW_SORT_GQL_FIELDS,
-} from 'test/integration/constants/view-gql-fields.constants';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+	VIEW_FIELD_GQL_FIELDS,
+	VIEW_FILTER_GQL_FIELDS,
+	VIEW_FILTER_GROUP_GQL_FIELDS,
+	VIEW_GQL_FIELDS,
+	VIEW_GROUP_GQL_FIELDS,
+	VIEW_SORT_GQL_FIELDS,
+} from "test/integration/constants/view-gql-fields.constants";
+import { findManyObjectMetadata } from "test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util";
+import { findViews } from "test/integration/metadata/suites/view/utils/find-views.util";
+import { extractRecordIdsAndDatesAsExpectAny } from "test/utils/extract-record-ids-and-dates-as-expect-any";
+import { jestExpectToBeDefined } from "test/utils/jest-expect-to-be-defined.util.test";
 
-import { ViewKey } from 'twenty-shared/types';
+import { ViewKey } from "twenty-shared/types";
 
-describe('successful find view with all sub-relations (e2e)', () => {
-  let companyObjectMetadataId: string;
+describe("successful find view with all sub-relations (e2e)", () => {
+	let companyObjectMetadataId: string;
 
-  const COMPREHENSIVE_VIEW_GQL_FIELDS = `
+	const COMPREHENSIVE_VIEW_GQL_FIELDS = `
     ${VIEW_GQL_FIELDS}
     viewFields {
       ${VIEW_FIELD_GQL_FIELDS}
@@ -35,53 +35,53 @@ describe('successful find view with all sub-relations (e2e)', () => {
     }
   `;
 
-  beforeAll(async () => {
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: {
-          first: 1000,
-        },
-      },
-      gqlFields: `
+	beforeAll(async () => {
+		const { objects } = await findManyObjectMetadata({
+			expectToFail: false,
+			input: {
+				filter: {},
+				paging: {
+					first: 1000,
+				},
+			},
+			gqlFields: `
         id
         nameSingular
       `,
-    });
+		});
 
-    const companyObject = objects.find((obj) => obj.nameSingular === 'company');
+		const companyObject = objects.find((obj) => obj.nameSingular === "company");
 
-    jestExpectToBeDefined(companyObject);
-    companyObjectMetadataId = companyObject.id;
-  });
+		jestExpectToBeDefined(companyObject);
+		companyObjectMetadataId = companyObject.id;
+	});
 
-  describe('Company View Structure Validation', () => {
-    it('should successfully fetch complete view structure with all sub-relations in single GraphQL query', async () => {
-      const { data: viewsData } = await findViews({
-        objectMetadataId: companyObjectMetadataId,
-        gqlFields: COMPREHENSIVE_VIEW_GQL_FIELDS,
-        expectToFail: false,
-      });
-      const testView = viewsData.getViews.find(
-        (view) => view.key === ViewKey.INDEX,
-      );
+	describe("Company View Structure Validation", () => {
+		it("should successfully fetch complete view structure with all sub-relations in single GraphQL query", async () => {
+			const { data: viewsData } = await findViews({
+				objectMetadataId: companyObjectMetadataId,
+				gqlFields: COMPREHENSIVE_VIEW_GQL_FIELDS,
+				expectToFail: false,
+			});
+			const testView = viewsData.getViews.find(
+				(view) => view.key === ViewKey.INDEX,
+			);
 
-      jestExpectToBeDefined(testView);
+			jestExpectToBeDefined(testView);
 
-      const stableTestView = {
-        ...testView,
-        viewFields: [...testView.viewFields].sort(
-          (a, b) => a.position - b.position,
-        ),
-      };
+			const stableTestView = {
+				...testView,
+				viewFields: [...testView.viewFields].sort(
+					(a, b) => a.position - b.position,
+				),
+			};
 
-      // universalIdentifier stays normalized: the sample-app fields seeded on
-      // the company view get per-seed identifiers, so the engine-derived view
-      // field identifiers displaying them differ across seeds too.
-      expect(stableTestView).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...stableTestView }),
-      );
-    });
-  });
+			// universalIdentifier stays normalized: the sample-app fields seeded on
+			// the company view get per-seed identifiers, so the engine-derived view
+			// field identifiers displaying them differ across seeds too.
+			expect(stableTestView).toMatchSnapshot(
+				extractRecordIdsAndDatesAsExpectAny({ ...stableTestView }),
+			);
+		});
+	});
 });

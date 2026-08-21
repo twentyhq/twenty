@@ -1,15 +1,15 @@
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
-import { RecordTableHeaderDnd } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDnd';
-import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
-import { RecordTableHeaderFirstCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstCell';
-import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
-import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
-import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RECORD_TABLE_ROW_HEIGHT } from "@/object-record/record-table/constants/RecordTableRowHeight";
+import { TABLE_Z_INDEX } from "@/object-record/record-table/constants/TableZIndex";
+import { RecordTableHeaderCheckboxColumn } from "@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn";
+import { RecordTableHeaderDnd } from "@/object-record/record-table/record-table-header/components/RecordTableHeaderDnd";
+import { RecordTableHeaderDragDropColumn } from "@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn";
+import { RecordTableHeaderFirstCell } from "@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstCell";
+import { useResizeTableHeader } from "@/object-record/record-table/record-table-header/hooks/useResizeTableHeader";
+import { useIsRecordTableCheckboxColumnHidden } from "@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden";
+import { isRecordTableDragColumnHiddenComponentState } from "@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 // The header takes the first slot of the virtualized row grid, whose pitch is
 // RECORD_TABLE_ROW_HEIGHT + 1 (row plus its bottom border).
@@ -25,23 +25,23 @@ const StyledHeaderContainer = styled.div`
 `;
 
 export const RecordTableHeader = () => {
-  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
-    isRecordTableDragColumnHiddenComponentState,
-  );
+	const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+		isRecordTableDragColumnHiddenComponentState,
+	);
 
-  const isRecordTableCheckboxColumnHidden =
-    useIsRecordTableCheckboxColumnHidden();
+	const isRecordTableCheckboxColumnHidden =
+		useIsRecordTableCheckboxColumnHidden();
 
-  useResizeTableHeader();
+	useResizeTableHeader();
 
-  return (
-    <StyledHeaderContainer>
-      {!isRecordTableDragColumnHidden && <RecordTableHeaderDragDropColumn />}
-      {!isRecordTableCheckboxColumnHidden && (
-        <RecordTableHeaderCheckboxColumn />
-      )}
-      <RecordTableHeaderFirstCell />
-      <RecordTableHeaderDnd />
-    </StyledHeaderContainer>
-  );
+	return (
+		<StyledHeaderContainer>
+			{!isRecordTableDragColumnHidden && <RecordTableHeaderDragDropColumn />}
+			{!isRecordTableCheckboxColumnHidden && (
+				<RecordTableHeaderCheckboxColumn />
+			)}
+			<RecordTableHeaderFirstCell />
+			<RecordTableHeaderDnd />
+		</StyledHeaderContainer>
+	);
 };

@@ -1,22 +1,22 @@
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { styled } from "@linaria/react";
+import { isDefined } from "twenty-shared/utils";
 import {
-  type IconComponent,
-  IconAlertTriangle,
-  IconInfoCircle,
-} from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	type IconComponent,
+	IconAlertTriangle,
+	IconInfoCircle,
+} from "twenty-ui/icon";
+import { AppTooltip } from "twenty-ui/surfaces";
+import { Button } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-type AiChatBannerVariant = 'default' | 'warning';
+type AiChatBannerVariant = "default" | "warning";
 
 const StyledBanner = styled.div<{ variant: AiChatBannerVariant }>`
   align-items: center;
   background-color: ${({ variant }) =>
-    variant === 'warning'
-      ? themeCssVariables.background.transparent.orange
-      : themeCssVariables.accent.secondary};
+		variant === "warning"
+			? themeCssVariables.background.transparent.orange
+			: themeCssVariables.accent.secondary};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
@@ -28,9 +28,9 @@ const StyledBanner = styled.div<{ variant: AiChatBannerVariant }>`
 const StyledIconContainer = styled.div<{ variant: AiChatBannerVariant }>`
   align-items: center;
   color: ${({ variant }) =>
-    variant === 'warning'
-      ? themeCssVariables.color.orange
-      : themeCssVariables.color.blue};
+		variant === "warning"
+			? themeCssVariables.color.orange
+			: themeCssVariables.color.blue};
   display: flex;
   flex-shrink: 0;
   height: 16px;
@@ -40,9 +40,9 @@ const StyledIconContainer = styled.div<{ variant: AiChatBannerVariant }>`
 
 const StyledMessage = styled.p<{ variant: AiChatBannerVariant }>`
   color: ${({ variant }) =>
-    variant === 'warning'
-      ? themeCssVariables.color.orange
-      : themeCssVariables.color.blue};
+		variant === "warning"
+			? themeCssVariables.color.orange
+			: themeCssVariables.color.blue};
   flex-grow: 1;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.sm};
@@ -55,58 +55,58 @@ const StyledMessage = styled.p<{ variant: AiChatBannerVariant }>`
 `;
 
 export type AiChatBannerProps = {
-  message: string;
-  variant?: AiChatBannerVariant;
-  tooltipMessage?: string;
-  buttonTitle?: string;
-  buttonIcon?: IconComponent;
-  buttonOnClick?: () => void;
-  isButtonDisabled?: boolean;
-  isButtonLoading?: boolean;
+	message: string;
+	variant?: AiChatBannerVariant;
+	tooltipMessage?: string;
+	buttonTitle?: string;
+	buttonIcon?: IconComponent;
+	buttonOnClick?: () => void;
+	isButtonDisabled?: boolean;
+	isButtonLoading?: boolean;
 };
 
 export const AiChatBanner = ({
-  message,
-  variant = 'default',
-  tooltipMessage,
-  buttonTitle,
-  buttonIcon,
-  buttonOnClick,
-  isButtonDisabled = false,
-  isButtonLoading = false,
+	message,
+	variant = "default",
+	tooltipMessage,
+	buttonTitle,
+	buttonIcon,
+	buttonOnClick,
+	isButtonDisabled = false,
+	isButtonLoading = false,
 }: AiChatBannerProps) => {
-  const tooltipId = 'ai-chat-banner-tooltip';
+	const tooltipId = "ai-chat-banner-tooltip";
 
-  return (
-    <StyledBanner
-      variant={variant}
-      data-tooltip-id={tooltipMessage ? tooltipId : undefined}
-    >
-      <StyledIconContainer variant={variant}>
-        {variant === 'default' ? (
-          <IconInfoCircle size={16} />
-        ) : (
-          <IconAlertTriangle size={16} />
-        )}
-      </StyledIconContainer>
-      <StyledMessage variant={variant}>{message}</StyledMessage>
-      {isDefined(buttonTitle) && isDefined(buttonOnClick) && (
-        <Button
-          variant="secondary"
-          size="small"
-          Icon={buttonIcon}
-          onClick={buttonOnClick}
-          disabled={isButtonDisabled || isButtonLoading}
-          title={buttonTitle}
-        />
-      )}
-      {isDefined(tooltipMessage) && (
-        <AppTooltip
-          anchorSelect={`[data-tooltip-id='${tooltipId}']`}
-          content={tooltipMessage}
-          place="bottom"
-        />
-      )}
-    </StyledBanner>
-  );
+	return (
+		<StyledBanner
+			variant={variant}
+			data-tooltip-id={tooltipMessage ? tooltipId : undefined}
+		>
+			<StyledIconContainer variant={variant}>
+				{variant === "default" ? (
+					<IconInfoCircle size={16} />
+				) : (
+					<IconAlertTriangle size={16} />
+				)}
+			</StyledIconContainer>
+			<StyledMessage variant={variant}>{message}</StyledMessage>
+			{isDefined(buttonTitle) && isDefined(buttonOnClick) && (
+				<Button
+					variant="secondary"
+					size="small"
+					Icon={buttonIcon}
+					onClick={buttonOnClick}
+					disabled={isButtonDisabled || isButtonLoading}
+					title={buttonTitle}
+				/>
+			)}
+			{isDefined(tooltipMessage) && (
+				<AppTooltip
+					anchorSelect={`[data-tooltip-id='${tooltipId}']`}
+					content={tooltipMessage}
+					place="bottom"
+				/>
+			)}
+		</StyledBanner>
+	);
 };

@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const deleteViewFilterGroupOperationFactory = ({
-  viewFilterGroupId,
+	viewFilterGroupId,
 }: {
-  viewFilterGroupId: string;
+	viewFilterGroupId: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation DeleteViewFilterGroup($id: String!) {
       deleteViewFilterGroup(id: $id)
     }
   `,
-  variables: {
-    id: viewFilterGroupId,
-  },
+	variables: {
+		id: viewFilterGroupId,
+	},
 });

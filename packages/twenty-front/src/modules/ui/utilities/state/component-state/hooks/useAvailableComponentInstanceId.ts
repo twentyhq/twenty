@@ -1,19 +1,19 @@
-import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useComponentInstanceStateContext } from "@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext";
+import { type ComponentInstanceStateContext } from "@/ui/utilities/state/component-state/types/ComponentInstanceStateContext";
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const useAvailableComponentInstanceId = <
-  T extends { instanceId: string },
+	T extends { instanceId: string },
 >(
-  Context: ComponentInstanceStateContext<T>,
+	Context: ComponentInstanceStateContext<T>,
 ): string | null => {
-  const instanceStateContext = useComponentInstanceStateContext(Context);
+	const instanceStateContext = useComponentInstanceStateContext(Context);
 
-  const instanceIdFromContext = instanceStateContext?.instanceId;
+	const instanceIdFromContext = instanceStateContext?.instanceId;
 
-  if (isNonEmptyString(instanceIdFromContext)) {
-    return instanceIdFromContext;
-  } else {
-    return null;
-  }
+	if (isNonEmptyString(instanceIdFromContext)) {
+		return instanceIdFromContext;
+	} else {
+		return null;
+	}
 };

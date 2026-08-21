@@ -1,5 +1,5 @@
 export const getFieldsConfigurationGroupRenameDropdownId = (
-  groupId: string,
+	groupId: string,
 ) => {
-  return `fields-configuration-group-rename-${groupId}`;
+	return `fields-configuration-group-rename-${groupId}`;
 };

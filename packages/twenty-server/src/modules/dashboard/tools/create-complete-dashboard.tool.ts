@@ -1,62 +1,62 @@
-import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
+import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 
-import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type CreatePageLayoutWidgetInput } from "src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input";
+import { type WidgetType } from "src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum";
+import { PageLayoutType } from "src/engine/metadata-modules/page-layout/enums/page-layout-type.enum";
+import { buildSystemAuthContext } from "src/engine/twenty-orm/utils/build-system-auth-context.util";
 import {
-  gridPositionSchema,
-  widgetConfigurationSchema,
-  widgetTypeSchema,
-} from 'src/modules/dashboard/tools/schemas/widget.schema';
+	gridPositionSchema,
+	widgetConfigurationSchema,
+	widgetTypeSchema,
+} from "src/modules/dashboard/tools/schemas/widget.schema";
 import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
-import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
-import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
+	type DashboardToolContext,
+	type DashboardToolDependencies,
+} from "src/modules/dashboard/tools/types/dashboard-tool-dependencies.type";
+import { type WidgetConfigurationInput } from "src/modules/dashboard/tools/types/widget-configuration-input.type";
+import { computeDashboardIdentifierMaps } from "src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util";
+import { resolveWidgetFieldNamesToIds } from "src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util";
 
 const widgetSchema = z.object({
-  title: z.string().describe('Widget title displayed in the header'),
-  type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
-  objectMetadataId: z
-    .uuid()
-    .optional()
-    .describe(
-      'For GRAPH and RECORD_TABLE widgets: UUID of the object to aggregate or display. Provide this or objectName.',
-    ),
-  objectName: z
-    .string()
-    .optional()
-    .describe(
-      'For GRAPH and RECORD_TABLE widgets: object name, singular or plural (e.g. "opportunity"). Resolved to a UUID — alternative to objectMetadataId.',
-    ),
-  configuration: widgetConfigurationSchema,
+	title: z.string().describe("Widget title displayed in the header"),
+	type: widgetTypeSchema.describe("Widget type"),
+	gridPosition: gridPositionSchema.describe("Position in 12-column grid"),
+	objectMetadataId: z
+		.uuid()
+		.optional()
+		.describe(
+			"For GRAPH and RECORD_TABLE widgets: UUID of the object to aggregate or display. Provide this or objectName.",
+		),
+	objectName: z
+		.string()
+		.optional()
+		.describe(
+			'For GRAPH and RECORD_TABLE widgets: object name, singular or plural (e.g. "opportunity"). Resolved to a UUID — alternative to objectMetadataId.',
+		),
+	configuration: widgetConfigurationSchema,
 });
 
 const createCompleteDashboardSchema = z.object({
-  title: z.string().describe('Dashboard title'),
-  tabTitle: z
-    .string()
-    .optional()
-    .default('Main')
-    .describe('Title of the first tab'),
-  widgets: z
-    .array(widgetSchema)
-    .optional()
-    .default([])
-    .describe('Widgets to add'),
+	title: z.string().describe("Dashboard title"),
+	tabTitle: z
+		.string()
+		.optional()
+		.default("Main")
+		.describe("Title of the first tab"),
+	widgets: z
+		.array(widgetSchema)
+		.optional()
+		.default([])
+		.describe("Widgets to add"),
 });
 
 export const createCreateCompleteDashboardTool = (
-  deps: DashboardToolDependencies,
-  context: DashboardToolContext,
+	deps: DashboardToolDependencies,
+	context: DashboardToolContext,
 ) => ({
-  name: 'create_complete_dashboard' as const,
-  description: `Create a dashboard with layout, tab, and widgets.
+	name: "create_complete_dashboard" as const,
+	description: `Create a dashboard with layout, tab, and widgets.
 
 OBJECT & FIELD REFERENCES: You can reference the object and fields by NAME instead of UUID. Use objectName (e.g. "opportunity") on the widget and the *FieldName variants in configuration (aggregateFieldName, primaryAxisGroupByFieldName, secondaryAxisGroupByFieldName, groupByFieldName). They are resolved to UUIDs server-side, so you usually do NOT need get_object_metadata / get_field_metadata first. UUID variants (objectMetadataId, *FieldMetadataId) still work and take precedence when both are given.
 
@@ -107,157 +107,157 @@ CHART FILTERS (AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART):
    - Example: { type: "RECORD_TABLE", objectMetadataId: "<object-uuid>", configuration: { configurationType: "RECORD_TABLE", viewId: "<dedicated-view-uuid>" } }
 
 AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`,
-  inputSchema: createCompleteDashboardSchema,
-  execute: async (parameters: {
-    title: string;
-    tabTitle?: string;
-    widgets?: Array<{
-      title: string;
-      type: WidgetType;
-      gridPosition: {
-        row: number;
-        column: number;
-        rowSpan: number;
-        columnSpan: number;
-      };
-      objectMetadataId?: string;
-      objectName?: string;
-      configuration?: WidgetConfigurationInput;
-    }>;
-  }) => {
-    try {
-      const tabTitle = parameters.tabTitle ?? 'Main';
-      const widgets = parameters.widgets ?? [];
-      const identifierMaps =
-        widgets.length > 0
-          ? await computeDashboardIdentifierMaps(deps, context)
-          : null;
-      const pageLayout = await deps.pageLayoutService.create({
-        createPageLayoutInput: {
-          name: parameters.title,
-          type: PageLayoutType.DASHBOARD,
-        },
-        workspaceId: context.workspaceId,
-      });
+	inputSchema: createCompleteDashboardSchema,
+	execute: async (parameters: {
+		title: string;
+		tabTitle?: string;
+		widgets?: Array<{
+			title: string;
+			type: WidgetType;
+			gridPosition: {
+				row: number;
+				column: number;
+				rowSpan: number;
+				columnSpan: number;
+			};
+			objectMetadataId?: string;
+			objectName?: string;
+			configuration?: WidgetConfigurationInput;
+		}>;
+	}) => {
+		try {
+			const tabTitle = parameters.tabTitle ?? "Main";
+			const widgets = parameters.widgets ?? [];
+			const identifierMaps =
+				widgets.length > 0
+					? await computeDashboardIdentifierMaps(deps, context)
+					: null;
+			const pageLayout = await deps.pageLayoutService.create({
+				createPageLayoutInput: {
+					name: parameters.title,
+					type: PageLayoutType.DASHBOARD,
+				},
+				workspaceId: context.workspaceId,
+			});
 
-      const pageLayoutTab = await deps.pageLayoutTabService.create({
-        createPageLayoutTabInput: {
-          title: tabTitle,
-          pageLayoutId: pageLayout.id,
-          position: 0,
-        },
-        workspaceId: context.workspaceId,
-      });
+			const pageLayoutTab = await deps.pageLayoutTabService.create({
+				createPageLayoutTabInput: {
+					title: tabTitle,
+					pageLayoutId: pageLayout.id,
+					position: 0,
+				},
+				workspaceId: context.workspaceId,
+			});
 
-      const createdWidgets = [];
-      const widgetErrors = [];
+			const createdWidgets = [];
+			const widgetErrors = [];
 
-      for (const widget of widgets) {
-        try {
-          const widgetWithMetadataIds = identifierMaps
-            ? resolveWidgetFieldNamesToIds(widget, identifierMaps)
-            : widget;
+			for (const widget of widgets) {
+				try {
+					const widgetWithMetadataIds = identifierMaps
+						? resolveWidgetFieldNamesToIds(widget, identifierMaps)
+						: widget;
 
-          const createdWidget = await deps.pageLayoutWidgetService.create({
-            input: {
-              ...widgetWithMetadataIds,
-              pageLayoutTabId: pageLayoutTab.id,
-            } as CreatePageLayoutWidgetInput,
-            workspaceId: context.workspaceId,
-          });
+					const createdWidget = await deps.pageLayoutWidgetService.create({
+						input: {
+							...widgetWithMetadataIds,
+							pageLayoutTabId: pageLayoutTab.id,
+						} as CreatePageLayoutWidgetInput,
+						workspaceId: context.workspaceId,
+					});
 
-          createdWidgets.push({
-            id: createdWidget.id,
-            title: createdWidget.title,
-            type: createdWidget.type,
-          });
-        } catch (widgetError) {
-          widgetErrors.push({
-            title: widget.title,
-            error: widgetError.message,
-          });
-        }
-      }
+					createdWidgets.push({
+						id: createdWidget.id,
+						title: createdWidget.title,
+						type: createdWidget.type,
+					});
+				} catch (widgetError) {
+					widgetErrors.push({
+						title: widget.title,
+						error: widgetError.message,
+					});
+				}
+			}
 
-      const dashboardId = await createDashboardRecord(
-        deps,
-        context,
-        parameters.title,
-        pageLayout.id,
-      );
+			const dashboardId = await createDashboardRecord(
+				deps,
+				context,
+				parameters.title,
+				pageLayout.id,
+			);
 
-      const result = {
-        dashboardId,
-        pageLayoutId: pageLayout.id,
-        pageLayoutTabId: pageLayoutTab.id,
-        title: parameters.title,
-        widgets: createdWidgets,
-      };
+			const result = {
+				dashboardId,
+				pageLayoutId: pageLayout.id,
+				pageLayoutTabId: pageLayoutTab.id,
+				title: parameters.title,
+				widgets: createdWidgets,
+			};
 
-      if (widgetErrors.length > 0) {
-        return {
-          success: true,
-          message: `Dashboard created with ${createdWidgets.length} widgets. ${widgetErrors.length} widget(s) failed.`,
-          result,
-          widgetErrors,
-          recordReferences: [
-            {
-              objectNameSingular: 'dashboard',
-              recordId: dashboardId,
-              displayName: parameters.title,
-            },
-          ],
-        };
-      }
+			if (widgetErrors.length > 0) {
+				return {
+					success: true,
+					message: `Dashboard created with ${createdWidgets.length} widgets. ${widgetErrors.length} widget(s) failed.`,
+					result,
+					widgetErrors,
+					recordReferences: [
+						{
+							objectNameSingular: "dashboard",
+							recordId: dashboardId,
+							displayName: parameters.title,
+						},
+					],
+				};
+			}
 
-      return {
-        success: true,
-        message: `Dashboard "${parameters.title}" created with ${createdWidgets.length} widgets`,
-        result,
-        recordReferences: [
-          {
-            objectNameSingular: 'dashboard',
-            recordId: dashboardId,
-            displayName: parameters.title,
-          },
-        ],
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Failed to create dashboard: ${error.message}`,
-        error: error.message,
-      };
-    }
-  },
+			return {
+				success: true,
+				message: `Dashboard "${parameters.title}" created with ${createdWidgets.length} widgets`,
+				result,
+				recordReferences: [
+					{
+						objectNameSingular: "dashboard",
+						recordId: dashboardId,
+						displayName: parameters.title,
+					},
+				],
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: `Failed to create dashboard: ${error.message}`,
+				error: error.message,
+			};
+		}
+	},
 });
 
 const createDashboardRecord = async (
-  deps: DashboardToolDependencies,
-  context: DashboardToolContext,
-  title: string,
-  pageLayoutId: string,
+	deps: DashboardToolDependencies,
+	context: DashboardToolContext,
+	title: string,
+	pageLayoutId: string,
 ): Promise<string> => {
-  const authContext = buildSystemAuthContext(context.workspaceId);
+	const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
-        'dashboard',
-        { shouldBypassPermissionChecks: true },
-      );
+	return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+		const dashboardRepository =
+			await deps.globalWorkspaceOrmManager.getRepository(
+				context.workspaceId,
+				"dashboard",
+				{ shouldBypassPermissionChecks: true },
+			);
 
-    const position = await deps.recordPositionService.buildRecordPosition({
-      value: 'first',
-      objectMetadata: { isCustom: false, nameSingular: 'dashboard' },
-      workspaceId: context.workspaceId,
-    });
+		const position = await deps.recordPositionService.buildRecordPosition({
+			value: "first",
+			objectMetadata: { isCustom: false, nameSingular: "dashboard" },
+			workspaceId: context.workspaceId,
+		});
 
-    const dashboard = { id: uuidv4(), title, pageLayoutId, position };
+		const dashboard = { id: uuidv4(), title, pageLayoutId, position };
 
-    await dashboardRepository.insert(dashboard);
+		await dashboardRepository.insert(dashboard);
 
-    return dashboard.id;
-  }, authContext);
+		return dashboard.id;
+	}, authContext);
 };

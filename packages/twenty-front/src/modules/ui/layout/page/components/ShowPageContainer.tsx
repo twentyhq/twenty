@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { type CSSProperties, type ReactNode } from 'react';
+import { styled } from "@linaria/react";
+import { type CSSProperties, type ReactNode } from "react";
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from "@/ui/utilities/responsive/hooks/useIsMobile";
+import { ScrollWrapper } from "@/ui/utilities/scroll/components/ScrollWrapper";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledOuterContainer = styled.div`
   display: flex;
@@ -25,32 +25,32 @@ const StyledScrollWrapperContainer = styled.div`
 `;
 
 export type ShowPageContainerProps = {
-  children: ReactNode;
+	children: ReactNode;
 };
 
 export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
-  const isMobile = useIsMobile();
+	const isMobile = useIsMobile();
 
-  const mobileStyle = isMobile
-    ? ({
-        '--show-page-gap': themeCssVariables.spacing[3],
-        '--show-page-direction': 'column',
-      } as CSSProperties)
-    : undefined;
+	const mobileStyle = isMobile
+		? ({
+				"--show-page-gap": themeCssVariables.spacing[3],
+				"--show-page-direction": "column",
+			} as CSSProperties)
+		: undefined;
 
-  return isMobile ? (
-    <StyledOuterContainer style={mobileStyle}>
-      <StyledScrollWrapperContainer>
-        <ScrollWrapper componentInstanceId="scroll-wrapper-show-page-container">
-          <StyledInnerContainer style={mobileStyle}>
-            {children}
-          </StyledInnerContainer>
-        </ScrollWrapper>
-      </StyledScrollWrapperContainer>
-    </StyledOuterContainer>
-  ) : (
-    <StyledOuterContainer>
-      <StyledInnerContainer>{children}</StyledInnerContainer>
-    </StyledOuterContainer>
-  );
+	return isMobile ? (
+		<StyledOuterContainer style={mobileStyle}>
+			<StyledScrollWrapperContainer>
+				<ScrollWrapper componentInstanceId="scroll-wrapper-show-page-container">
+					<StyledInnerContainer style={mobileStyle}>
+						{children}
+					</StyledInnerContainer>
+				</ScrollWrapper>
+			</StyledScrollWrapperContainer>
+		</StyledOuterContainer>
+	) : (
+		<StyledOuterContainer>
+			<StyledInnerContainer>{children}</StyledInnerContainer>
+		</StyledOuterContainer>
+	);
 };

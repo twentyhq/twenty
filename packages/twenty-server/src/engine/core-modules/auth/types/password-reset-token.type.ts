@@ -1,5 +1,5 @@
 export type PasswordResetToken = {
-  passwordResetToken: string;
-  passwordResetTokenExpiresAt: Date;
-  workspaceId: string;
+	passwordResetToken: string;
+	passwordResetTokenExpiresAt: Date;
+	workspaceId: string;
 };

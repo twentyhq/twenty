@@ -1,1 +1,1 @@
-export type MenuItemAccent = 'default' | 'danger' | 'placeholder';
+export type MenuItemAccent = "default" | "danger" | "placeholder";

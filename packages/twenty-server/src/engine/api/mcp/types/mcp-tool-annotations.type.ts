@@ -1,5 +1,5 @@
 export type McpToolAnnotations = {
-  readOnlyHint: boolean;
-  openWorldHint: boolean;
-  destructiveHint: boolean;
+	readOnlyHint: boolean;
+	openWorldHint: boolean;
+	destructiveHint: boolean;
 };

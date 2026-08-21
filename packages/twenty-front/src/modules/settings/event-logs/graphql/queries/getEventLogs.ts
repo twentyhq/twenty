@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_EVENT_LOGS = gql`
   query EventLogs($input: EventLogQueryInput!) {

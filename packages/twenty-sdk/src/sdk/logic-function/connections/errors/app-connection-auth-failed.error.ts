@@ -8,14 +8,14 @@
 // is in this state, so a stored connection id can be safely retried until
 // it works again.
 export class AppConnectionAuthFailedError extends Error {
-  readonly connectionId: string;
+	readonly connectionId: string;
 
-  constructor(connectionId: string) {
-    super(
-      `App connection ${connectionId} requires the user to reconnect ` +
-        `(authFailedAt is set). Surface a "Reconnect" prompt in your UI.`,
-    );
-    this.name = 'AppConnectionAuthFailedError';
-    this.connectionId = connectionId;
-  }
+	constructor(connectionId: string) {
+		super(
+			`App connection ${connectionId} requires the user to reconnect ` +
+				`(authFailedAt is set). Surface a "Reconnect" prompt in your UI.`,
+		);
+		this.name = "AppConnectionAuthFailedError";
+		this.connectionId = connectionId;
+	}
 }

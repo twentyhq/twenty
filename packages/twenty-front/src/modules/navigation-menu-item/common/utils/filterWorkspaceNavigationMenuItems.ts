@@ -1,8 +1,8 @@
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from "~/generated-metadata/graphql";
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
 export const filterWorkspaceNavigationMenuItems = (
-  items: NavigationMenuItem[],
+	items: NavigationMenuItem[],
 ): NavigationMenuItem[] =>
-  items.filter((item) => !isDefined(item.userWorkspaceId));
+	items.filter((item) => !isDefined(item.userWorkspaceId));

@@ -1,49 +1,48 @@
-import { type Equal, type Expect } from 'twenty-shared/testing';
+import { type Equal, type Expect } from "twenty-shared/testing";
 
-import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { type UniversalFlatEntityUpdate } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type";
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
-  Expect<
-    Equal<
-      keyof UniversalFlatEntityUpdate<'fieldMetadata'>,
-      | 'name'
-      | 'label'
-      | 'icon'
-      | 'description'
-      | 'isActive'
-      | 'defaultValue'
-      | 'overrides'
-      | 'options'
-      | 'isUnique'
-      | 'isLabelSyncedWithName'
-      | 'isUIEditable'
-      | 'writability'
-      | 'isNullable'
-      | 'universalSettings'
-    >
-  >,
-
-  Expect<
-    Equal<
-      keyof UniversalFlatEntityUpdate<'objectMetadata'>,
-      | 'icon'
-      | 'color'
-      | 'openRecordIn'
-      | 'description'
-      | 'isActive'
-      | 'overrides'
-      | 'isLabelSyncedWithName'
-      | 'nameSingular'
-      | 'namePlural'
-      | 'labelSingular'
-      | 'labelPlural'
-      | 'labelIdentifierFieldMetadataUniversalIdentifier'
-      | 'imageIdentifierFieldMetadataUniversalIdentifier'
-      | 'isSearchable'
-      | 'isUIEditable'
-      | 'isUICreatable'
-      | 'writability'
-    >
-  >,
+	Expect<
+		Equal<
+			keyof UniversalFlatEntityUpdate<"fieldMetadata">,
+			| "name"
+			| "label"
+			| "icon"
+			| "description"
+			| "isActive"
+			| "defaultValue"
+			| "overrides"
+			| "options"
+			| "isUnique"
+			| "isLabelSyncedWithName"
+			| "isUIEditable"
+			| "writability"
+			| "isNullable"
+			| "universalSettings"
+		>
+	>,
+	Expect<
+		Equal<
+			keyof UniversalFlatEntityUpdate<"objectMetadata">,
+			| "icon"
+			| "color"
+			| "openRecordIn"
+			| "description"
+			| "isActive"
+			| "overrides"
+			| "isLabelSyncedWithName"
+			| "nameSingular"
+			| "namePlural"
+			| "labelSingular"
+			| "labelPlural"
+			| "labelIdentifierFieldMetadataUniversalIdentifier"
+			| "imageIdentifierFieldMetadataUniversalIdentifier"
+			| "isSearchable"
+			| "isUIEditable"
+			| "isUICreatable"
+			| "writability"
+		>
+	>,
 ];

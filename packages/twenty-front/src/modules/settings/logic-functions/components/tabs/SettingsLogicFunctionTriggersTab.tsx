@@ -1,15 +1,15 @@
-import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
-import { SettingsLogicFunctionCronTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection';
-import { SettingsLogicFunctionDatabaseEventTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection';
-import { SettingsLogicFunctionHttpTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection';
-import { SettingsLogicFunctionToolTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection';
-import { SettingsLogicFunctionWorkflowActionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/feedback';
-import { IconInfoCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type LogicFunctionFormValues } from "@/logic-functions/hooks/useLogicFunctionUpdateFormState";
+import { SettingsLogicFunctionCronTriggerSection } from "@/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection";
+import { SettingsLogicFunctionDatabaseEventTriggerSection } from "@/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection";
+import { SettingsLogicFunctionHttpTriggerSection } from "@/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection";
+import { SettingsLogicFunctionToolTriggerSection } from "@/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection";
+import { SettingsLogicFunctionWorkflowActionTriggerSection } from "@/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { isDefined } from "twenty-shared/utils";
+import { Callout } from "twenty-ui/feedback";
+import { IconInfoCircle } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledEmptyState = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -26,76 +26,76 @@ const StyledCalloutWrapper = styled.div`
 `;
 
 export const SettingsLogicFunctionTriggersTab = ({
-  formValues,
-  onChange,
-  readonly = false,
-  applicationName,
+	formValues,
+	onChange,
+	readonly = false,
+	applicationName,
 }: {
-  formValues: LogicFunctionFormValues;
-  onChange: <TKey extends keyof LogicFunctionFormValues>(
-    key: TKey,
-  ) => (value: LogicFunctionFormValues[TKey]) => void;
-  readonly?: boolean;
-  applicationName?: string;
+	formValues: LogicFunctionFormValues;
+	onChange: <TKey extends keyof LogicFunctionFormValues>(
+		key: TKey,
+	) => (value: LogicFunctionFormValues[TKey]) => void;
+	readonly?: boolean;
+	applicationName?: string;
 }) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const hasAnyTrigger =
-    isDefined(formValues.httpRouteTriggerSettings) ||
-    isDefined(formValues.cronTriggerSettings) ||
-    isDefined(formValues.databaseEventTriggerSettings) ||
-    isDefined(formValues.toolTriggerSettings) ||
-    isDefined(formValues.workflowActionTriggerSettings);
+	const hasAnyTrigger =
+		isDefined(formValues.httpRouteTriggerSettings) ||
+		isDefined(formValues.cronTriggerSettings) ||
+		isDefined(formValues.databaseEventTriggerSettings) ||
+		isDefined(formValues.toolTriggerSettings) ||
+		isDefined(formValues.workflowActionTriggerSettings);
 
-  if (readonly && !hasAnyTrigger) {
-    return isDefined(applicationName) ? (
-      <StyledCalloutWrapper>
-        <Callout
-          variant="info"
-          Icon={IconInfoCircle}
-          title={t`Bundled with ${applicationName}`}
-          description={t`This function has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
-        />
-      </StyledCalloutWrapper>
-    ) : (
-      <StyledEmptyState>
-        {t`No trigger is configured for this function.`}
-      </StyledEmptyState>
-    );
-  }
+	if (readonly && !hasAnyTrigger) {
+		return isDefined(applicationName) ? (
+			<StyledCalloutWrapper>
+				<Callout
+					variant="info"
+					Icon={IconInfoCircle}
+					title={t`Bundled with ${applicationName}`}
+					description={t`This function has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
+				/>
+			</StyledCalloutWrapper>
+		) : (
+			<StyledEmptyState>
+				{t`No trigger is configured for this function.`}
+			</StyledEmptyState>
+		);
+	}
 
-  return (
-    <>
-      <SettingsLogicFunctionHttpTriggerSection
-        value={formValues.httpRouteTriggerSettings}
-        onChange={onChange('httpRouteTriggerSettings')}
-        readonly={readonly}
-      />
-      <SettingsLogicFunctionCronTriggerSection
-        value={formValues.cronTriggerSettings}
-        onChange={onChange('cronTriggerSettings')}
-        readonly={readonly}
-      />
-      <SettingsLogicFunctionDatabaseEventTriggerSection
-        value={formValues.databaseEventTriggerSettings}
-        onChange={onChange('databaseEventTriggerSettings')}
-        readonly={readonly}
-      />
-      <SettingsLogicFunctionToolTriggerSection
-        value={formValues.toolTriggerSettings}
-        onChange={onChange('toolTriggerSettings')}
-        readonly={readonly}
-      />
-      <SettingsLogicFunctionWorkflowActionTriggerSection
-        value={formValues.workflowActionTriggerSettings}
-        onChange={onChange('workflowActionTriggerSettings')}
-        readonly={readonly}
-      />
-      {!readonly && !hasAnyTrigger && (
-        <StyledEmptyState>
-          {t`No trigger is enabled. Toggle one of the options above to choose how this function gets invoked.`}
-        </StyledEmptyState>
-      )}
-    </>
-  );
+	return (
+		<>
+			<SettingsLogicFunctionHttpTriggerSection
+				value={formValues.httpRouteTriggerSettings}
+				onChange={onChange("httpRouteTriggerSettings")}
+				readonly={readonly}
+			/>
+			<SettingsLogicFunctionCronTriggerSection
+				value={formValues.cronTriggerSettings}
+				onChange={onChange("cronTriggerSettings")}
+				readonly={readonly}
+			/>
+			<SettingsLogicFunctionDatabaseEventTriggerSection
+				value={formValues.databaseEventTriggerSettings}
+				onChange={onChange("databaseEventTriggerSettings")}
+				readonly={readonly}
+			/>
+			<SettingsLogicFunctionToolTriggerSection
+				value={formValues.toolTriggerSettings}
+				onChange={onChange("toolTriggerSettings")}
+				readonly={readonly}
+			/>
+			<SettingsLogicFunctionWorkflowActionTriggerSection
+				value={formValues.workflowActionTriggerSettings}
+				onChange={onChange("workflowActionTriggerSettings")}
+				readonly={readonly}
+			/>
+			{!readonly && !hasAnyTrigger && (
+				<StyledEmptyState>
+					{t`No trigger is enabled. Toggle one of the options above to choose how this function gets invoked.`}
+				</StyledEmptyState>
+			)}
+		</>
+	);
 };

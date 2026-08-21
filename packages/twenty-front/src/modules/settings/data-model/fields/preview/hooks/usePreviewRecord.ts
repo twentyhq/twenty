@@ -1,65 +1,65 @@
-import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { useLabelIdentifierFieldMetadataItem } from "@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem";
+import { CoreObjectNameSingular } from "twenty-shared/types";
+import { useFindManyRecords } from "@/object-record/hooks/useFindManyRecords";
+import { isFieldValueEmpty } from "@/object-record/record-field/ui/utils/isFieldValueEmpty";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
+import { getFieldPreviewValue } from "@/settings/data-model/fields/preview/utils/getFieldPreviewValue";
+import { isDefined, pascalCase } from "twenty-shared/utils";
 
 type UsePreviewRecordParams = {
-  objectNameSingular: string;
-  skip?: boolean;
+	objectNameSingular: string;
+	skip?: boolean;
 };
 
 export const usePreviewRecord = ({
-  objectNameSingular,
-  skip: skipFromProps,
+	objectNameSingular,
+	skip: skipFromProps,
 }: UsePreviewRecordParams): ObjectRecord | null => {
-  const { labelIdentifierFieldMetadataItem } =
-    useLabelIdentifierFieldMetadataItem({
-      objectNameSingular,
-    });
+	const { labelIdentifierFieldMetadataItem } =
+		useLabelIdentifierFieldMetadataItem({
+			objectNameSingular,
+		});
 
-  const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
+	const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
 
-  let recordGqlFields: Record<string, boolean> | undefined = undefined;
-  if (objectNameSingular === CoreObjectNameSingular.NoteTarget)
-    recordGqlFields = { id: true, note: true };
-  if (objectNameSingular === CoreObjectNameSingular.TaskTarget)
-    recordGqlFields = { id: true, task: true };
+	let recordGqlFields: Record<string, boolean> | undefined = undefined;
+	if (objectNameSingular === CoreObjectNameSingular.NoteTarget)
+		recordGqlFields = { id: true, note: true };
+	if (objectNameSingular === CoreObjectNameSingular.TaskTarget)
+		recordGqlFields = { id: true, task: true };
 
-  const { records } = useFindManyRecords({
-    objectNameSingular,
-    recordGqlFields,
-    limit: 1,
-    skip,
-  });
+	const { records } = useFindManyRecords({
+		objectNameSingular,
+		recordGqlFields,
+		limit: 1,
+		skip,
+	});
 
-  if (skip) return null;
+	if (skip) return null;
 
-  const [firstRecord] = records;
+	const [firstRecord] = records;
 
-  if (
-    isDefined(firstRecord) &&
-    !isFieldValueEmpty({
-      fieldDefinition: { type: labelIdentifierFieldMetadataItem.type },
-      fieldValue: firstRecord?.[labelIdentifierFieldMetadataItem.name],
-    })
-  ) {
-    return firstRecord;
-  }
+	if (
+		isDefined(firstRecord) &&
+		!isFieldValueEmpty({
+			fieldDefinition: { type: labelIdentifierFieldMetadataItem.type },
+			fieldValue: firstRecord?.[labelIdentifierFieldMetadataItem.name],
+		})
+	) {
+		return firstRecord;
+	}
 
-  const fieldPreviewValue = getFieldPreviewValue({
-    fieldType: labelIdentifierFieldMetadataItem.type,
-    fieldSettings: labelIdentifierFieldMetadataItem.settings,
-    defaultValue: labelIdentifierFieldMetadataItem.defaultValue,
-  });
+	const fieldPreviewValue = getFieldPreviewValue({
+		fieldType: labelIdentifierFieldMetadataItem.type,
+		fieldSettings: labelIdentifierFieldMetadataItem.settings,
+		defaultValue: labelIdentifierFieldMetadataItem.defaultValue,
+	});
 
-  const placeholderRecord = {
-    __typename: pascalCase(objectNameSingular),
-    id: '',
-    [labelIdentifierFieldMetadataItem.name]: fieldPreviewValue,
-  };
+	const placeholderRecord = {
+		__typename: pascalCase(objectNameSingular),
+		id: "",
+		[labelIdentifierFieldMetadataItem.name]: fieldPreviewValue,
+	};
 
-  return placeholderRecord;
+	return placeholderRecord;
 };

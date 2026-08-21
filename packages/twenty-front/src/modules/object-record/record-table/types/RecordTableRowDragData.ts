@@ -1,6 +1,6 @@
-import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { type DragDropItemData } from "@/ui/utilities/drag-and-drop/types/DragDropItemData";
 
 export type RecordTableRowDragData = DragDropItemData & {
-  recordId: string;
-  focusIndex: number;
+	recordId: string;
+	focusIndex: number;
 };

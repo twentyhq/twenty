@@ -1,9 +1,9 @@
-import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { DRAG_SOURCE_OPACITY } from "@/ui/utilities/drag-and-drop/constants/DragSourceOpacity";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledBoardCard = styled.div<{
-  isDragging?: boolean;
+	isDragging?: boolean;
 }>`
   --record-card-background-color: ${themeCssVariables.background.secondary};
 

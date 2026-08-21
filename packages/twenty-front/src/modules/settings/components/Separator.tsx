@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledHr = styled.hr`
   border: none;
@@ -10,5 +10,5 @@ const StyledHr = styled.hr`
 `;
 
 export const Separator = () => {
-  return <StyledHr />;
+	return <StyledHr />;
 };

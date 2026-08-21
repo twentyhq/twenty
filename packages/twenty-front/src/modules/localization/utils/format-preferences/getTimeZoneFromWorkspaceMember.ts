@@ -1,11 +1,11 @@
-import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type CurrentWorkspaceMember } from "@/auth/states/currentWorkspaceMemberState";
+import { detectTimeZone } from "@/localization/utils/detection/detectTimeZone";
+import { type WorkspaceMember } from "@/workspace-member/types/WorkspaceMember";
 
 export const getTimeZoneFromWorkspaceMember = (
-  workspaceMember: WorkspaceMember | CurrentWorkspaceMember,
+	workspaceMember: WorkspaceMember | CurrentWorkspaceMember,
 ): string => {
-  return workspaceMember.timeZone === 'system' || !workspaceMember.timeZone
-    ? detectTimeZone()
-    : workspaceMember.timeZone;
+	return workspaceMember.timeZone === "system" || !workspaceMember.timeZone
+		? detectTimeZone()
+		: workspaceMember.timeZone;
 };

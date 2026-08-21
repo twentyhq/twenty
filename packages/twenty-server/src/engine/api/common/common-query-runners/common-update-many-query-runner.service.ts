@@ -1,153 +1,153 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import { isDefined } from 'class-validator';
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { ObjectRecord } from 'twenty-shared/types';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
+import { isDefined } from "class-validator";
+import { QUERY_MAX_RECORDS_FROM_RELATION } from "twenty-shared/constants";
+import { ObjectRecord } from "twenty-shared/types";
+import { FindOptionsRelations, ObjectLiteral } from "typeorm";
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonBaseQueryRunnerService } from "src/engine/api/common/common-query-runners/common-base-query-runner.service";
 import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+	CommonQueryRunnerException,
+	CommonQueryRunnerExceptionCode,
+} from "src/engine/api/common/common-query-runners/errors/common-query-runner.exception";
+import { STANDARD_ERROR_MESSAGE } from "src/engine/api/common/common-query-runners/errors/standard-error-message.constant";
+import { CommonBaseQueryRunnerContext } from "src/engine/api/common/types/common-base-query-runner-context.type";
+import { CommonExtendedQueryRunnerContext } from "src/engine/api/common/types/common-extended-query-runner-context.type";
 import {
-  CommonExtendedInput,
-  CommonInput,
-  CommonQueryNames,
-  UpdateManyQueryArgs,
-} from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+	CommonExtendedInput,
+	CommonInput,
+	CommonQueryNames,
+	UpdateManyQueryArgs,
+} from "src/engine/api/common/types/common-query-args.type";
+import { buildColumnsToReturn } from "src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return";
+import { assertIsValidUuid } from "src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util";
+import { WorkspaceAuthContext } from "src/engine/core-modules/auth/types/workspace-auth-context.type";
+import { FlatEntityMaps } from "src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type";
+import { FlatFieldMetadata } from "src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type";
+import { FlatObjectMetadata } from "src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type";
+import { assertMutationNotOnRemoteObject } from "src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util";
 
 @Injectable()
 export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerService<
-  UpdateManyQueryArgs,
-  ObjectRecord[]
+	UpdateManyQueryArgs,
+	ObjectRecord[]
 > {
-  protected readonly operationName = CommonQueryNames.UPDATE_MANY;
+	protected readonly operationName = CommonQueryNames.UPDATE_MANY;
 
-  async run(
-    args: CommonExtendedInput<UpdateManyQueryArgs>,
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
-    const {
-      authContext,
-      rolePermissionConfig,
-      workspaceDataSource,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    } = queryRunnerContext;
+	async run(
+		args: CommonExtendedInput<UpdateManyQueryArgs>,
+		queryRunnerContext: CommonExtendedQueryRunnerContext,
+	): Promise<ObjectRecord[]> {
+		const {
+			authContext,
+			rolePermissionConfig,
+			workspaceDataSource,
+			flatObjectMetadataMaps,
+			flatFieldMetadataMaps,
+			flatObjectMetadata,
+		} = queryRunnerContext;
 
-    const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+		const columnsToReturn = buildColumnsToReturn({
+			select: args.selectedFieldsResult.select,
+			relations: args.selectedFieldsResult.relations,
+			flatObjectMetadata,
+			flatObjectMetadataMaps,
+			flatFieldMetadataMaps,
+		});
 
-    const updatedRecords = await this.runFilteredMutation({
-      queryRunnerContext,
-      filter: args.filter,
-      columnsToReturn,
-      kind: 'update',
-      data: args.data,
-    });
+		const updatedRecords = await this.runFilteredMutation({
+			queryRunnerContext,
+			filter: args.filter,
+			columnsToReturn,
+			kind: "update",
+			data: args.data,
+		});
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: updatedRecords,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        workspaceDataSource,
-        rolePermissionConfig,
-        selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
-      });
-    }
+		if (isDefined(args.selectedFieldsResult.relations)) {
+			await this.processNestedRelationsHelper.processNestedRelations({
+				flatObjectMetadataMaps,
+				flatFieldMetadataMaps,
+				parentObjectMetadataItem: flatObjectMetadata,
+				parentObjectRecords: updatedRecords,
+				relations: args.selectedFieldsResult.relations as Record<
+					string,
+					FindOptionsRelations<ObjectLiteral>
+				>,
+				limit: QUERY_MAX_RECORDS_FROM_RELATION,
+				authContext,
+				workspaceDataSource,
+				rolePermissionConfig,
+				selectedFields: args.selectedFieldsResult.select,
+				...this.getNestedRelationsReadPathOptions(queryRunnerContext),
+			});
+		}
 
-    return updatedRecords;
-  }
+		return updatedRecords;
+	}
 
-  async computeArgs(
-    args: CommonInput<UpdateManyQueryArgs>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<CommonInput<UpdateManyQueryArgs>> {
-    const {
-      authContext,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = queryRunnerContext;
+	async computeArgs(
+		args: CommonInput<UpdateManyQueryArgs>,
+		queryRunnerContext: CommonBaseQueryRunnerContext,
+	): Promise<CommonInput<UpdateManyQueryArgs>> {
+		const {
+			authContext,
+			flatObjectMetadata,
+			flatFieldMetadataMaps,
+			flatObjectMetadataMaps,
+		} = queryRunnerContext;
 
-    return {
-      ...args,
-      filter: this.filterArgProcessor.process({
-        filter: args.filter,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      }),
-      data: (
-        await this.dataArgProcessor.process({
-          partialRecordInputs: [args.data],
-          authContext,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-          shouldBackfillPositionIfUndefined: false,
-        })
-      )[0],
-    };
-  }
+		return {
+			...args,
+			filter: this.filterArgProcessor.process({
+				filter: args.filter,
+				flatObjectMetadata,
+				flatObjectMetadataMaps,
+				flatFieldMetadataMaps,
+			}),
+			data: (
+				await this.dataArgProcessor.process({
+					partialRecordInputs: [args.data],
+					authContext,
+					flatObjectMetadata,
+					flatFieldMetadataMaps,
+					flatObjectMetadataMaps,
+					shouldBackfillPositionIfUndefined: false,
+				})
+			)[0],
+		};
+	}
 
-  async validate(
-    args: CommonInput<UpdateManyQueryArgs>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<void> {
-    const { flatObjectMetadata } = queryRunnerContext;
+	async validate(
+		args: CommonInput<UpdateManyQueryArgs>,
+		queryRunnerContext: CommonBaseQueryRunnerContext,
+	): Promise<void> {
+		const { flatObjectMetadata } = queryRunnerContext;
 
-    assertMutationNotOnRemoteObject(flatObjectMetadata);
-    if (!args.filter) {
-      throw new CommonQueryRunnerException(
-        'Filter is required',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
+		assertMutationNotOnRemoteObject(flatObjectMetadata);
+		if (!args.filter) {
+			throw new CommonQueryRunnerException(
+				"Filter is required",
+				CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+				{ userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+			);
+		}
 
-    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
-  }
+		args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+	}
 
-  async processQueryResult(
-    queryResult: ObjectRecord[],
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord[]> {
-    return await this.commonResultGettersService.processRecordArray(
-      queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
-  }
+	async processQueryResult(
+		queryResult: ObjectRecord[],
+		flatObjectMetadata: FlatObjectMetadata,
+		flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+		flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+		authContext: WorkspaceAuthContext,
+	): Promise<ObjectRecord[]> {
+		return await this.commonResultGettersService.processRecordArray(
+			queryResult,
+			flatObjectMetadata,
+			flatObjectMetadataMaps,
+			flatFieldMetadataMaps,
+			authContext.workspace.id,
+		);
+	}
 }

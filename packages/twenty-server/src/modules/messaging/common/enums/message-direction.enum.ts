@@ -1,4 +1,4 @@
 export enum MessageDirection {
-  INCOMING = 'INCOMING',
-  OUTGOING = 'OUTGOING',
+	INCOMING = "INCOMING",
+	OUTGOING = "OUTGOING",
 }

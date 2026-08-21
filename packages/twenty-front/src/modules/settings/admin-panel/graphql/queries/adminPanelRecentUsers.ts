@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ADMIN_PANEL_RECENT_USERS = gql`
   query AdminPanelRecentUsers($searchTerm: String) {

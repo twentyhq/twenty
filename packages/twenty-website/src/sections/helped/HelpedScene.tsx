@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import { useCallback, useRef } from 'react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import { useCallback, useRef } from "react";
 
-import { useScheduledOnScroll } from '@/platform/motion';
-import { color, fontSize, mediaUp, spacing } from '@/tokens';
-import { Eyebrow, GuideCrosshair, Heading } from '@/ui';
+import { useScheduledOnScroll } from "@/platform/motion";
+import { color, fontSize, mediaUp, spacing } from "@/tokens";
+import { Eyebrow, GuideCrosshair, Heading } from "@/ui";
 
-import { HelpedCard } from './HelpedCard';
+import { HelpedCard } from "./HelpedCard";
 import {
-  applyHelpedSceneLayout,
-  type HelpedSceneLayoutState,
-} from './helped-scene-layout';
-import { HELPED_CARDS } from './helped.data';
+	applyHelpedSceneLayout,
+	type HelpedSceneLayoutState,
+} from "./helped-scene-layout";
+import { HELPED_CARDS } from "./helped.data";
 
 // Display treatment ported from the original: below md this headline runs
 // larger than the xl ramp's floor and tracks the viewport. The old site
@@ -27,7 +27,7 @@ const headlineMeasureClassName = css`
   /* The old headline escapes its block's 16px gutter: its effective
      measure is the full 688 — without this the last two words wrap to a
      fourth line. */
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     margin-inline: ${spacing(-4)};
   }
 
@@ -40,7 +40,7 @@ const headlineMeasureClassName = css`
     text-wrap: wrap; /* balance opt-out: the display headline must fill 3 greedy lines like old */
   }
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     max-width: 688px;
 
     h2[data-size] {
@@ -63,8 +63,8 @@ const ScrollStage = styled.div`
 const StageGuide = styled.div`
   display: none;
 
-  ${mediaUp('md')} {
-    background-color: ${color('black-10')};
+  ${mediaUp("md")} {
+    background-color: ${color("black-10")};
     bottom: -19px;
     display: block;
     left: 50%;
@@ -127,57 +127,57 @@ const CardPositioner = styled.div`
 `;
 
 export function HelpedScene() {
-  const { i18n } = useLingui();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const layoutStateRef = useRef<HelpedSceneLayoutState>({
-    measurements: null,
-  });
+	const { i18n } = useLingui();
+	const sectionRef = useRef<HTMLDivElement>(null);
+	const innerRef = useRef<HTMLDivElement>(null);
+	const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+	const layoutStateRef = useRef<HelpedSceneLayoutState>({
+		measurements: null,
+	});
 
-  const runLayout = useCallback(() => {
-    applyHelpedSceneLayout(
-      { cardRefs, innerRef, sectionRef },
-      HELPED_CARDS.length,
-      layoutStateRef.current,
-    );
-  }, []);
+	const runLayout = useCallback(() => {
+		applyHelpedSceneLayout(
+			{ cardRefs, innerRef, sectionRef },
+			HELPED_CARDS.length,
+			layoutStateRef.current,
+		);
+	}, []);
 
-  useScheduledOnScroll(runLayout);
+	useScheduledOnScroll(runLayout);
 
-  return (
-    <ScrollStage
-      aria-label={i18n._(msg`Customer stories`)}
-      id="homepage-cases"
-      ref={sectionRef}
-      role="region"
-    >
-      <StageGuide aria-hidden />
-      <StickyInner ref={innerRef}>
-        <GuideCrosshair crossX="50%" crossY="176px" verticalLines={false} />
-        <HeadlineBlock>
-          <EyebrowExitTarget data-helped-exit-target>
-            <Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>
-          </EyebrowExitTarget>
-          <div className={headlineMeasureClassName}>
-            <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`Dev teams power company-wide *change with Twenty*`)}
-            </Heading>
-          </div>
-        </HeadlineBlock>
-        <CardsLayer>
-          {HELPED_CARDS.map((card, index) => (
-            <CardPositioner
-              key={card.wordmark}
-              ref={(element) => {
-                cardRefs.current[index] = element;
-              }}
-            >
-              <HelpedCard card={card} />
-            </CardPositioner>
-          ))}
-        </CardsLayer>
-      </StickyInner>
-    </ScrollStage>
-  );
+	return (
+		<ScrollStage
+			aria-label={i18n._(msg`Customer stories`)}
+			id="homepage-cases"
+			ref={sectionRef}
+			role="region"
+		>
+			<StageGuide aria-hidden />
+			<StickyInner ref={innerRef}>
+				<GuideCrosshair crossX="50%" crossY="176px" verticalLines={false} />
+				<HeadlineBlock>
+					<EyebrowExitTarget data-helped-exit-target>
+						<Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>
+					</EyebrowExitTarget>
+					<div className={headlineMeasureClassName}>
+						<Heading as="h2" size="lg" weight="light">
+							{i18n._(msg`Dev teams power company-wide *change with Twenty*`)}
+						</Heading>
+					</div>
+				</HeadlineBlock>
+				<CardsLayer>
+					{HELPED_CARDS.map((card, index) => (
+						<CardPositioner
+							key={card.wordmark}
+							ref={(element) => {
+								cardRefs.current[index] = element;
+							}}
+						>
+							<HelpedCard card={card} />
+						</CardPositioner>
+					))}
+				</CardsLayer>
+			</StickyInner>
+		</ScrollStage>
+	);
 }

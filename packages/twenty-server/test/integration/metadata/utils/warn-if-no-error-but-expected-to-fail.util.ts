@@ -1,17 +1,17 @@
-import { isDefined } from 'class-validator';
-import { type Response } from 'supertest';
+import { isDefined } from "class-validator";
+import { type Response } from "supertest";
 
 type WarnIfNoErrorButExpectedToFailInput = {
-  response: Response;
-  errorMessage: string;
+	response: Response;
+	errorMessage: string;
 };
 
 export const warnIfNoErrorButExpectedToFail = ({
-  response,
-  errorMessage,
+	response,
+	errorMessage,
 }: WarnIfNoErrorButExpectedToFailInput) => {
-  if (!isDefined(response.body.errors) || response.body.errors.length === 0) {
-    expect(false).toEqual(errorMessage);
-  }
-  expect(response.body.errors.length).toBeGreaterThan(0);
+	if (!isDefined(response.body.errors) || response.body.errors.length === 0) {
+		expect(false).toEqual(errorMessage);
+	}
+	expect(response.body.errors.length).toBeGreaterThan(0);
 };

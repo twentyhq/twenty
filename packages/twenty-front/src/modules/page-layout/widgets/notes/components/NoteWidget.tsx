@@ -1,8 +1,8 @@
-import { NotesCard } from '@/activities/notes/components/NotesCard';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
-import { styled } from '@linaria/react';
+import { NotesCard } from "@/activities/notes/components/NotesCard";
+import { type PageLayoutWidget } from "@/page-layout/types/PageLayoutWidget";
+import { useLayoutRenderingContext } from "@/ui/layout/contexts/LayoutRenderingContext";
+import { SidePanelProvider } from "@/ui/layout/side-panel/contexts/SidePanelContext";
+import { styled } from "@linaria/react";
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -12,17 +12,17 @@ const StyledContainer = styled.div`
 `;
 
 type NoteWidgetProps = {
-  widget: PageLayoutWidget;
+	widget: PageLayoutWidget;
 };
 
 export const NoteWidget = ({ widget: _widget }: NoteWidgetProps) => {
-  const { isInSidePanel } = useLayoutRenderingContext();
+	const { isInSidePanel } = useLayoutRenderingContext();
 
-  return (
-    <SidePanelProvider value={{ isInSidePanel }}>
-      <StyledContainer>
-        <NotesCard />
-      </StyledContainer>
-    </SidePanelProvider>
-  );
+	return (
+		<SidePanelProvider value={{ isInSidePanel }}>
+			<StyledContainer>
+				<NotesCard />
+			</StyledContainer>
+		</SidePanelProvider>
+	);
 };

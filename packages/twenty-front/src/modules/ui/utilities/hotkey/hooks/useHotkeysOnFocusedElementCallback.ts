@@ -1,75 +1,75 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
-import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { useStore } from 'jotai';
+import { DEBUG_FOCUS_STACK } from "@/ui/utilities/focus/constants/DebugFocusStack";
+import { currentFocusIdSelector } from "@/ui/utilities/focus/states/currentFocusIdSelector";
+import { useStore } from "jotai";
 import {
-  type Hotkey,
-  type OptionsOrDependencyArray,
-} from 'react-hotkeys-hook/dist/types';
-import { logDebug } from '~/utils/logDebug';
+	type Hotkey,
+	type OptionsOrDependencyArray,
+} from "react-hotkeys-hook/dist/types";
+import { logDebug } from "~/utils/logDebug";
 
 export const useHotkeysOnFocusedElementCallback = (
-  dependencies?: OptionsOrDependencyArray,
+	dependencies?: OptionsOrDependencyArray,
 ) => {
-  const store = useStore();
+	const store = useStore();
 
-  const dependencyArray = Array.isArray(dependencies) ? dependencies : [];
+	const dependencyArray = Array.isArray(dependencies) ? dependencies : [];
 
-  return useCallback(
-    ({
-      callback,
-      hotkeysEvent,
-      keyboardEvent,
-      focusId,
-      preventDefault,
-    }: {
-      keyboardEvent: KeyboardEvent;
-      hotkeysEvent: Hotkey;
-      callback: (keyboardEvent: KeyboardEvent, hotkeysEvent: Hotkey) => void;
-      focusId: string;
-      preventDefault?: boolean;
-    }) => {
-      const currentFocusId = store.get(currentFocusIdSelector.atom);
+	return useCallback(
+		({
+			callback,
+			hotkeysEvent,
+			keyboardEvent,
+			focusId,
+			preventDefault,
+		}: {
+			keyboardEvent: KeyboardEvent;
+			hotkeysEvent: Hotkey;
+			callback: (keyboardEvent: KeyboardEvent, hotkeysEvent: Hotkey) => void;
+			focusId: string;
+			preventDefault?: boolean;
+		}) => {
+			const currentFocusId = store.get(currentFocusIdSelector.atom);
 
-      if (currentFocusId !== focusId) {
-        if (DEBUG_FOCUS_STACK) {
-          logDebug(
-            `DEBUG: %cI can't call hotkey (${
-              hotkeysEvent.keys
-            }) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
-            'color: gray; ',
-          );
-        }
+			if (currentFocusId !== focusId) {
+				if (DEBUG_FOCUS_STACK) {
+					logDebug(
+						`DEBUG: %cI can't call hotkey (${
+							hotkeysEvent.keys
+						}) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
+						"color: gray; ",
+					);
+				}
 
-        return;
-      }
+				return;
+			}
 
-      if (DEBUG_FOCUS_STACK) {
-        logDebug(
-          `DEBUG: %cI can call hotkey (${
-            hotkeysEvent.keys
-          }) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
-          'color: green;',
-        );
-      }
+			if (DEBUG_FOCUS_STACK) {
+				logDebug(
+					`DEBUG: %cI can call hotkey (${
+						hotkeysEvent.keys
+					}) because I'm in [${focusId}] and the current focus identifier is [${currentFocusId}]`,
+					"color: green;",
+				);
+			}
 
-      if (preventDefault === true) {
-        if (DEBUG_FOCUS_STACK) {
-          logDebug(
-            `DEBUG: %cI prevent default for hotkey (${hotkeysEvent.keys})`,
-            'color: gray;',
-          );
-        }
+			if (preventDefault === true) {
+				if (DEBUG_FOCUS_STACK) {
+					logDebug(
+						`DEBUG: %cI prevent default for hotkey (${hotkeysEvent.keys})`,
+						"color: gray;",
+					);
+				}
 
-        keyboardEvent.stopPropagation();
-        keyboardEvent.preventDefault();
-        keyboardEvent.stopImmediatePropagation();
-      }
+				keyboardEvent.stopPropagation();
+				keyboardEvent.preventDefault();
+				keyboardEvent.stopImmediatePropagation();
+			}
 
-      return callback(keyboardEvent, hotkeysEvent);
-    },
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [...dependencyArray, store],
-  );
+			return callback(keyboardEvent, hotkeysEvent);
+		},
+		// oxlint-disable-next-line react-hooks/exhaustive-deps
+		[...dependencyArray, store],
+	);
 };

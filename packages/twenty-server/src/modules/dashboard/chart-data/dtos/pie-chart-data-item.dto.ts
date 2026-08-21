@@ -1,10 +1,10 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('PieChartDataItem')
+@ObjectType("PieChartDataItem")
 export class PieChartDataItemDTO {
-  @Field(() => String)
-  key: string;
+	@Field(() => String)
+	key: string;
 
-  @Field(() => Float)
-  value: number;
+	@Field(() => Float)
+	value: number;
 }

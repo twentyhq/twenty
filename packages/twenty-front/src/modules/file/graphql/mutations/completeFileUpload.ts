@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const COMPLETE_FILE_UPLOAD = gql`
   mutation CompleteFileUpload($fileId: String!) {

@@ -1,22 +1,22 @@
-import { TerminalOutput } from '@/ai/components/TerminalOutput';
-import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
-import { useLingui } from '@lingui/react/macro';
+import { TerminalOutput } from "@/ai/components/TerminalOutput";
+import { styled } from "@linaria/react";
+import { useContext, useState } from "react";
+import { useLingui } from "@lingui/react/macro";
 import {
-  IconChevronDown,
-  IconChevronUp,
-  IconCode,
-  IconCopy,
-  IconDownload,
-  IconFile,
-  IconPlayerPlay,
-  IconSquareRoundedCheck,
-  IconSquareRoundedX,
-} from 'twenty-ui/icon';
-import { CodeEditor, LightIconButton } from 'twenty-ui/input';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+	IconChevronDown,
+	IconChevronUp,
+	IconCode,
+	IconCopy,
+	IconDownload,
+	IconFile,
+	IconPlayerPlay,
+	IconSquareRoundedCheck,
+	IconSquareRoundedX,
+} from "twenty-ui/icon";
+import { CodeEditor, LightIconButton } from "twenty-ui/input";
+import { AnimatedExpandableContainer } from "twenty-ui/layout";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledHeader = styled.div<{ status: 'success' | 'error' | 'running' }>`
+const StyledHeader = styled.div<{ status: "success" | "error" | "running" }>`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -50,28 +50,28 @@ const StyledHeaderRight = styled.div`
 `;
 
 const StyledStatusBadge = styled.div<{
-  status: 'success' | 'error' | 'running';
+	status: "success" | "error" | "running";
 }>`
   align-items: center;
   background: ${({ status }) =>
-    status === 'success'
-      ? themeCssVariables.background.transparent.success
-      : status === 'error'
-        ? themeCssVariables.background.transparent.danger
-        : themeCssVariables.background.transparent.medium};
+		status === "success"
+			? themeCssVariables.background.transparent.success
+			: status === "error"
+				? themeCssVariables.background.transparent.danger
+				: themeCssVariables.background.transparent.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${({ status }) =>
-    status === 'success'
-      ? themeCssVariables.color.turquoise
-      : status === 'error'
-        ? themeCssVariables.color.red
-        : themeCssVariables.font.color.secondary};
+		status === "success"
+			? themeCssVariables.color.turquoise
+			: status === "error"
+				? themeCssVariables.color.red
+				: themeCssVariables.font.color.secondary};
   corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing["0.5"]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.span`
@@ -149,7 +149,7 @@ const StyledFileInfo = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  padding: ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing["1.5"]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFileName = styled.span`
@@ -171,206 +171,206 @@ const StyledDownloadLink = styled.a`
 `;
 
 type CodeExecutionDisplayProps = {
-  code: string;
-  stdout: string;
-  stderr: string;
-  exitCode?: number;
-  files?: Array<{
-    fileId: string;
-    filename: string;
-    url: string;
-    mimeType?: string;
-  }>;
-  isRunning?: boolean;
+	code: string;
+	stdout: string;
+	stderr: string;
+	exitCode?: number;
+	files?: Array<{
+		fileId: string;
+		filename: string;
+		url: string;
+		mimeType?: string;
+	}>;
+	isRunning?: boolean;
 };
 
 const isPreviewableMimeType = (mimeType?: string): boolean => {
-  if (!mimeType) {
-    return false;
-  }
+	if (!mimeType) {
+		return false;
+	}
 
-  return ['image/png', 'image/jpeg', 'image/gif', 'image/webp'].includes(
-    mimeType,
-  );
+	return ["image/png", "image/jpeg", "image/gif", "image/webp"].includes(
+		mimeType,
+	);
 };
 
 export const CodeExecutionDisplay = ({
-  code,
-  stdout,
-  stderr,
-  exitCode,
-  files = [],
-  isRunning = false,
+	code,
+	stdout,
+	stderr,
+	exitCode,
+	files = [],
+	isRunning = false,
 }: CodeExecutionDisplayProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { t } = useLingui();
-  const { copyToClipboard } = useCopyToClipboard();
-  const [isCodeExpanded, setIsCodeExpanded] = useState(false);
-  const [isOutputExpanded, setIsOutputExpanded] = useState(true);
-  const [isFilesExpanded, setIsFilesExpanded] = useState(true);
+	const { theme } = useContext(ThemeContext);
+	const { t } = useLingui();
+	const { copyToClipboard } = useCopyToClipboard();
+	const [isCodeExpanded, setIsCodeExpanded] = useState(false);
+	const [isOutputExpanded, setIsOutputExpanded] = useState(true);
+	const [isFilesExpanded, setIsFilesExpanded] = useState(true);
 
-  const status: 'success' | 'error' | 'running' = isRunning
-    ? 'running'
-    : exitCode === 0
-      ? 'success'
-      : 'error';
+	const status: "success" | "error" | "running" = isRunning
+		? "running"
+		: exitCode === 0
+			? "success"
+			: "error";
 
-  const StatusIcon =
-    status === 'success'
-      ? IconSquareRoundedCheck
-      : status === 'error'
-        ? IconSquareRoundedX
-        : IconPlayerPlay;
+	const StatusIcon =
+		status === "success"
+			? IconSquareRoundedCheck
+			: status === "error"
+				? IconSquareRoundedX
+				: IconPlayerPlay;
 
-  const statusText = isRunning
-    ? t`Running...`
-    : exitCode === 0
-      ? t`Completed`
-      : t`Failed`;
+	const statusText = isRunning
+		? t`Running...`
+		: exitCode === 0
+			? t`Completed`
+			: t`Failed`;
 
-  const hasOutput = stdout || stderr;
-  const hasFiles = files.length > 0;
+	const hasOutput = stdout || stderr;
+	const hasFiles = files.length > 0;
 
-  return (
-    <StyledContainer>
-      <StyledHeader status={status}>
-        <StyledHeaderLeft>
-          <IconCode size={theme.icon.size.md} />
-          <StyledTitle>{t`Python Code Execution`}</StyledTitle>
-        </StyledHeaderLeft>
-        <StyledHeaderRight>
-          <StyledStatusBadge status={status}>
-            <StatusIcon size={theme.icon.size.sm} />
-            {statusText}
-          </StyledStatusBadge>
-        </StyledHeaderRight>
-      </StyledHeader>
+	return (
+		<StyledContainer>
+			<StyledHeader status={status}>
+				<StyledHeaderLeft>
+					<IconCode size={theme.icon.size.md} />
+					<StyledTitle>{t`Python Code Execution`}</StyledTitle>
+				</StyledHeaderLeft>
+				<StyledHeaderRight>
+					<StyledStatusBadge status={status}>
+						<StatusIcon size={theme.icon.size.sm} />
+						{statusText}
+					</StyledStatusBadge>
+				</StyledHeaderRight>
+			</StyledHeader>
 
-      <StyledSection>
-        <StyledSectionHeader onClick={() => setIsCodeExpanded(!isCodeExpanded)}>
-          <StyledSectionHeaderLeft>
-            <IconCode size={theme.icon.size.sm} />
-            {t`Code`}
-          </StyledSectionHeaderLeft>
-          <StyledHeaderRight>
-            <LightIconButton
-              Icon={IconCopy}
-              onClick={(e) => {
-                e.stopPropagation();
-                copyToClipboard(code);
-              }}
-              title={t`Copy code`}
-              size="small"
-              accent="tertiary"
-            />
-            {isCodeExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
-            ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
-            )}
-          </StyledHeaderRight>
-        </StyledSectionHeader>
-        <AnimatedExpandableContainer
-          isExpanded={isCodeExpanded}
-          mode="fit-content"
-        >
-          <StyledCodeEditorContainer>
-            <CodeEditor
-              value={code}
-              language="python"
-              height="300px"
-              options={{
-                readOnly: true,
-                domReadOnly: true,
-                minimap: { enabled: false },
-              }}
-            />
-          </StyledCodeEditorContainer>
-        </AnimatedExpandableContainer>
-      </StyledSection>
+			<StyledSection>
+				<StyledSectionHeader onClick={() => setIsCodeExpanded(!isCodeExpanded)}>
+					<StyledSectionHeaderLeft>
+						<IconCode size={theme.icon.size.sm} />
+						{t`Code`}
+					</StyledSectionHeaderLeft>
+					<StyledHeaderRight>
+						<LightIconButton
+							Icon={IconCopy}
+							onClick={(e) => {
+								e.stopPropagation();
+								copyToClipboard(code);
+							}}
+							title={t`Copy code`}
+							size="small"
+							accent="tertiary"
+						/>
+						{isCodeExpanded ? (
+							<IconChevronUp size={theme.icon.size.sm} />
+						) : (
+							<IconChevronDown size={theme.icon.size.sm} />
+						)}
+					</StyledHeaderRight>
+				</StyledSectionHeader>
+				<AnimatedExpandableContainer
+					isExpanded={isCodeExpanded}
+					mode="fit-content"
+				>
+					<StyledCodeEditorContainer>
+						<CodeEditor
+							value={code}
+							language="python"
+							height="300px"
+							options={{
+								readOnly: true,
+								domReadOnly: true,
+								minimap: { enabled: false },
+							}}
+						/>
+					</StyledCodeEditorContainer>
+				</AnimatedExpandableContainer>
+			</StyledSection>
 
-      {(hasOutput || isRunning) && (
-        <StyledSection>
-          <StyledSectionHeader
-            onClick={() => setIsOutputExpanded(!isOutputExpanded)}
-          >
-            <StyledSectionHeaderLeft>{t`Output`}</StyledSectionHeaderLeft>
-            {isOutputExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
-            ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
-            )}
-          </StyledSectionHeader>
-          <AnimatedExpandableContainer
-            isExpanded={isOutputExpanded}
-            mode="fit-content"
-          >
-            <TerminalOutput
-              stdout={stdout}
-              stderr={stderr}
-              isRunning={isRunning}
-            />
-          </AnimatedExpandableContainer>
-        </StyledSection>
-      )}
+			{(hasOutput || isRunning) && (
+				<StyledSection>
+					<StyledSectionHeader
+						onClick={() => setIsOutputExpanded(!isOutputExpanded)}
+					>
+						<StyledSectionHeaderLeft>{t`Output`}</StyledSectionHeaderLeft>
+						{isOutputExpanded ? (
+							<IconChevronUp size={theme.icon.size.sm} />
+						) : (
+							<IconChevronDown size={theme.icon.size.sm} />
+						)}
+					</StyledSectionHeader>
+					<AnimatedExpandableContainer
+						isExpanded={isOutputExpanded}
+						mode="fit-content"
+					>
+						<TerminalOutput
+							stdout={stdout}
+							stderr={stderr}
+							isRunning={isRunning}
+						/>
+					</AnimatedExpandableContainer>
+				</StyledSection>
+			)}
 
-      {hasFiles && (
-        <StyledSection>
-          <StyledSectionHeader
-            onClick={() => setIsFilesExpanded(!isFilesExpanded)}
-          >
-            <StyledSectionHeaderLeft>
-              <IconFile size={theme.icon.size.sm} />
-              {t`Generated Files`} ({files.length})
-            </StyledSectionHeaderLeft>
-            {isFilesExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
-            ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
-            )}
-          </StyledSectionHeader>
-          <AnimatedExpandableContainer
-            isExpanded={isFilesExpanded}
-            mode="fit-content"
-          >
-            <StyledFilesGrid>
-              {files.map((file) => {
-                const filename = file.filename;
+			{hasFiles && (
+				<StyledSection>
+					<StyledSectionHeader
+						onClick={() => setIsFilesExpanded(!isFilesExpanded)}
+					>
+						<StyledSectionHeaderLeft>
+							<IconFile size={theme.icon.size.sm} />
+							{t`Generated Files`} ({files.length})
+						</StyledSectionHeaderLeft>
+						{isFilesExpanded ? (
+							<IconChevronUp size={theme.icon.size.sm} />
+						) : (
+							<IconChevronDown size={theme.icon.size.sm} />
+						)}
+					</StyledSectionHeader>
+					<AnimatedExpandableContainer
+						isExpanded={isFilesExpanded}
+						mode="fit-content"
+					>
+						<StyledFilesGrid>
+							{files.map((file) => {
+								const filename = file.filename;
 
-                return (
-                  <StyledFileCard key={file.fileId}>
-                    <StyledFilePreview>
-                      {isPreviewableMimeType(file.mimeType) ? (
-                        <StyledPreviewImage
-                          src={file.url}
-                          alt={filename}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <IconFile size={48} color={theme.font.color.tertiary} />
-                      )}
-                    </StyledFilePreview>
-                    <StyledFileInfo>
-                      <StyledFileName title={filename}>
-                        {filename}
-                      </StyledFileName>
-                      <StyledDownloadLink
-                        href={file.url}
-                        download={filename}
-                        title={t`Download ${filename}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <IconDownload size={theme.icon.size.sm} />
-                      </StyledDownloadLink>
-                    </StyledFileInfo>
-                  </StyledFileCard>
-                );
-              })}
-            </StyledFilesGrid>
-          </AnimatedExpandableContainer>
-        </StyledSection>
-      )}
-    </StyledContainer>
-  );
+								return (
+									<StyledFileCard key={file.fileId}>
+										<StyledFilePreview>
+											{isPreviewableMimeType(file.mimeType) ? (
+												<StyledPreviewImage
+													src={file.url}
+													alt={filename}
+													loading="lazy"
+												/>
+											) : (
+												<IconFile size={48} color={theme.font.color.tertiary} />
+											)}
+										</StyledFilePreview>
+										<StyledFileInfo>
+											<StyledFileName title={filename}>
+												{filename}
+											</StyledFileName>
+											<StyledDownloadLink
+												href={file.url}
+												download={filename}
+												title={t`Download ${filename}`}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												<IconDownload size={theme.icon.size.sm} />
+											</StyledDownloadLink>
+										</StyledFileInfo>
+									</StyledFileCard>
+								);
+							})}
+						</StyledFilesGrid>
+					</AnimatedExpandableContainer>
+				</StyledSection>
+			)}
+		</StyledContainer>
+	);
 };

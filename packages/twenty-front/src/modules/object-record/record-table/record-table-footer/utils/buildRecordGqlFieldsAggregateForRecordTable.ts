@@ -1,14 +1,14 @@
-import { type RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type RecordGqlFieldsAggregate } from "@/object-record/graphql/types/RecordGqlFieldsAggregate";
+import { AggregateOperations } from "@/object-record/record-table/constants/AggregateOperations";
 
 export const buildRecordGqlFieldsAggregateForRecordTable = ({
-  aggregateOperation,
-  fieldName,
+	aggregateOperation,
+	fieldName,
 }: {
-  fieldName: string;
-  aggregateOperation?: AggregateOperations | null;
+	fieldName: string;
+	aggregateOperation?: AggregateOperations | null;
 }): RecordGqlFieldsAggregate => {
-  return {
-    [fieldName]: [aggregateOperation ?? AggregateOperations.COUNT],
-  };
+	return {
+		[fieldName]: [aggregateOperation ?? AggregateOperations.COUNT],
+	};
 };

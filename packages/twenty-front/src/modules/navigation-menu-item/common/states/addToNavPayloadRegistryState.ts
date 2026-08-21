@@ -1,10 +1,10 @@
-import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
+import type { AddToNavigationDragPayload } from "@/navigation-menu-item/common/types/add-to-navigation-drag-payload";
 
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const addToNavPayloadRegistryState = createAtomState<
-  Map<string, AddToNavigationDragPayload>
+	Map<string, AddToNavigationDragPayload>
 >({
-  key: 'navigation-menu-item/addToNavPayloadRegistryState',
-  defaultValue: new Map(),
+	key: "navigation-menu-item/addToNavPayloadRegistryState",
+	defaultValue: new Map(),
 });

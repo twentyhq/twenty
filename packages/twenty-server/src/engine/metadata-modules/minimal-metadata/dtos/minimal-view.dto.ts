@@ -1,19 +1,19 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { ViewKey, ViewType } from 'twenty-shared/types';
+import { Field, ObjectType } from "@nestjs/graphql";
+import { ViewKey, ViewType } from "twenty-shared/types";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('MinimalView')
+@ObjectType("MinimalView")
 export class MinimalViewDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => ViewType)
-  type: ViewType;
+	@Field(() => ViewType)
+	type: ViewType;
 
-  @Field(() => ViewKey, { nullable: true })
-  key: ViewKey | null;
+	@Field(() => ViewKey, { nullable: true })
+	key: ViewKey | null;
 
-  @Field(() => UUIDScalarType)
-  objectMetadataId: string;
+	@Field(() => UUIDScalarType)
+	objectMetadataId: string;
 }

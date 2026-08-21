@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useContext } from "react";
+import { useDropzone } from "react-dropzone";
 
-import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { IconUpload } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useSpreadsheetImportInternal } from "@/spreadsheet-import/hooks/useSpreadsheetImportInternal";
+import { IconUpload } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -41,61 +41,61 @@ const StyledUploadIconContainer = styled.div`
 `;
 
 type DropZoneProps = {
-  setIsDraggingFile: (drag: boolean) => void;
-  onUploadFiles: (files: File[]) => void;
+	setIsDraggingFile: (drag: boolean) => void;
+	onUploadFiles: (files: File[]) => void;
 };
 
 export const DropZone = ({
-  setIsDraggingFile,
-  onUploadFiles,
+	setIsDraggingFile,
+	onUploadFiles,
 }: DropZoneProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { t } = useLingui();
-  const { maxFileSize } = useSpreadsheetImportInternal();
+	const { theme } = useContext(ThemeContext);
+	const { t } = useLingui();
+	const { maxFileSize } = useSpreadsheetImportInternal();
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    noClick: true,
-    noKeyboard: true,
-    multiple: true,
-    maxSize: maxFileSize,
-    onDragEnter: () => {
-      setIsDraggingFile(true);
-    },
-    onDragLeave: () => {
-      setIsDraggingFile(false);
-    },
-    onDrop: () => {
-      setIsDraggingFile(false);
-    },
-    onDropAccepted: async (files) => {
-      onUploadFiles(files);
-      setIsDraggingFile(false);
-    },
-  });
+	const { getRootProps, getInputProps, isDragActive } = useDropzone({
+		noClick: true,
+		noKeyboard: true,
+		multiple: true,
+		maxSize: maxFileSize,
+		onDragEnter: () => {
+			setIsDraggingFile(true);
+		},
+		onDragLeave: () => {
+			setIsDraggingFile(false);
+		},
+		onDrop: () => {
+			setIsDraggingFile(false);
+		},
+		onDropAccepted: async (files) => {
+			onUploadFiles(files);
+			setIsDraggingFile(false);
+		},
+	});
 
-  return (
-    <StyledContainer
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...getRootProps()}
-    >
-      {isDragActive && (
-        <>
-          <input
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...getInputProps()}
-          />
-          <StyledUploadIconContainer>
-            <IconUpload
-              stroke={theme.icon.stroke.sm}
-              size={theme.icon.size.lg}
-            />
-          </StyledUploadIconContainer>
-          <StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
-          <StyledUploadDragSubTitle>
-            {t`Drag and Drop Here`}
-          </StyledUploadDragSubTitle>
-        </>
-      )}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer
+			// oxlint-disable-next-line react/jsx-props-no-spreading
+			{...getRootProps()}
+		>
+			{isDragActive && (
+				<>
+					<input
+						// oxlint-disable-next-line react/jsx-props-no-spreading
+						{...getInputProps()}
+					/>
+					<StyledUploadIconContainer>
+						<IconUpload
+							stroke={theme.icon.stroke.sm}
+							size={theme.icon.size.lg}
+						/>
+					</StyledUploadIconContainer>
+					<StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
+					<StyledUploadDragSubTitle>
+						{t`Drag and Drop Here`}
+					</StyledUploadDragSubTitle>
+				</>
+			)}
+		</StyledContainer>
+	);
 };

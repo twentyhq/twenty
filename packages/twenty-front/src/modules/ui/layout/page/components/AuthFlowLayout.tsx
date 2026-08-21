@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Outlet } from "react-router-dom";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledBackground = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -11,7 +11,7 @@ const StyledBackground = styled.div`
 `;
 
 export const AuthFlowLayout = () => (
-  <StyledBackground>
-    <Outlet />
-  </StyledBackground>
+	<StyledBackground>
+		<Outlet />
+	</StyledBackground>
 );

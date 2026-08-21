@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { type BlockNoteColor } from "@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor";
+import { themeCssVariables, ThemeContext } from "twenty-ui/theme-constants";
+import { useContext } from "react";
 const StyledColorIcon = styled.div<{
-  textColorValue: string;
-  backgroundColorValue: string;
+	textColorValue: string;
+	backgroundColorValue: string;
 }>`
   background-color: ${({ backgroundColorValue }) => backgroundColorValue};
   border-radius: ${themeCssVariables.border.radius.xs};
@@ -20,60 +20,60 @@ const StyledColorIcon = styled.div<{
 `;
 
 type DashboardColorIconProps = {
-  textColor?: BlockNoteColor;
-  backgroundColor?: BlockNoteColor;
+	textColor?: BlockNoteColor;
+	backgroundColor?: BlockNoteColor;
 };
 
 export const DashboardColorIcon = ({
-  textColor,
-  backgroundColor,
+	textColor,
+	backgroundColor,
 }: DashboardColorIconProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const getThemeColorForTextColor = (color: BlockNoteColor): string => {
-    if (color === 'default') {
-      return 'inherit';
-    }
-    return (
-      (theme.color as unknown as Record<string, string>)[color] ?? 'inherit'
-    );
-  };
+	const getThemeColorForTextColor = (color: BlockNoteColor): string => {
+		if (color === "default") {
+			return "inherit";
+		}
+		return (
+			(theme.color as unknown as Record<string, string>)[color] ?? "inherit"
+		);
+	};
 
-  const getThemeColorForBackgroundColor = (color: BlockNoteColor): string => {
-    if (color === 'default') {
-      return 'transparent';
-    }
+	const getThemeColorForBackgroundColor = (color: BlockNoteColor): string => {
+		if (color === "default") {
+			return "transparent";
+		}
 
-    const backgroundColorMap: Record<
-      Exclude<BlockNoteColor, 'default'>,
-      string
-    > = {
-      gray: theme.color.gray3,
-      brown: theme.color.brown3,
-      red: theme.color.red3,
-      orange: theme.color.orange3,
-      yellow: theme.color.yellow3,
-      green: theme.color.green3,
-      blue: theme.color.blue3,
-      purple: theme.color.purple3,
-      pink: theme.color.pink3,
-    };
+		const backgroundColorMap: Record<
+			Exclude<BlockNoteColor, "default">,
+			string
+		> = {
+			gray: theme.color.gray3,
+			brown: theme.color.brown3,
+			red: theme.color.red3,
+			orange: theme.color.orange3,
+			yellow: theme.color.yellow3,
+			green: theme.color.green3,
+			blue: theme.color.blue3,
+			purple: theme.color.purple3,
+			pink: theme.color.pink3,
+		};
 
-    return backgroundColorMap[color];
-  };
+		return backgroundColorMap[color];
+	};
 
-  return (
-    <StyledColorIcon
-      textColorValue={
-        textColor ? getThemeColorForTextColor(textColor) : 'inherit'
-      }
-      backgroundColorValue={
-        backgroundColor
-          ? getThemeColorForBackgroundColor(backgroundColor)
-          : 'transparent'
-      }
-    >
-      A
-    </StyledColorIcon>
-  );
+	return (
+		<StyledColorIcon
+			textColorValue={
+				textColor ? getThemeColorForTextColor(textColor) : "inherit"
+			}
+			backgroundColorValue={
+				backgroundColor
+					? getThemeColorForBackgroundColor(backgroundColor)
+					: "transparent"
+			}
+		>
+			A
+		</StyledColorIcon>
+	);
 };

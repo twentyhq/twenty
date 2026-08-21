@@ -1,20 +1,20 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const isGracefullyHandledEventStreamError = ({
-  subCode,
-  code,
+	subCode,
+	code,
 }: {
-  subCode?: unknown;
-  code?: unknown;
+	subCode?: unknown;
+	code?: unknown;
 }) => {
-  if (!isNonEmptyString(subCode) && !isNonEmptyString(code)) {
-    return false;
-  }
+	if (!isNonEmptyString(subCode) && !isNonEmptyString(code)) {
+		return false;
+	}
 
-  return (
-    subCode === 'EVENT_STREAM_ALREADY_EXISTS' ||
-    subCode === 'NOT_AUTHORIZED' ||
-    code === 'UNAUTHENTICATED' ||
-    code === 'FORBIDDEN'
-  );
+	return (
+		subCode === "EVENT_STREAM_ALREADY_EXISTS" ||
+		subCode === "NOT_AUTHORIZED" ||
+		code === "UNAUTHENTICATED" ||
+		code === "FORBIDDEN"
+	);
 };

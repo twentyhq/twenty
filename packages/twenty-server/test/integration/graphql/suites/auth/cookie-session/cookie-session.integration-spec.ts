@@ -1,18 +1,18 @@
-import request from 'supertest';
+import request from "supertest";
 
-import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { USER_SESSION_COOKIE_NAME } from "src/engine/core-modules/user-session/constants/user-session-cookie-name.constant";
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 
 const buildAppleOrigin = (): string => {
-  const origin = new URL(SERVER_URL);
+	const origin = new URL(SERVER_URL);
 
-  origin.hostname =
-    process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-      ? `apple.${origin.hostname}`
-      : origin.hostname;
+	origin.hostname =
+		process.env.IS_MULTIWORKSPACE_ENABLED === "true"
+			? `apple.${origin.hostname}`
+			: origin.hostname;
 
-  return origin.origin;
+	return origin.origin;
 };
 
 // The app listens on localhost while the seeded workspace resolves from the
@@ -20,14 +20,14 @@ const buildAppleOrigin = (): string => {
 // request and refuses to issue the cookie, which is the behaviour under test
 // everywhere except here.
 const asWorkspaceRequest = (
-  agent: request.Test,
-  originOverride?: string,
+	agent: request.Test,
+	originOverride?: string,
 ): request.Test => {
-  const host = new URL(origin).host;
+	const host = new URL(origin).host;
 
-  return originOverride === undefined
-    ? agent.set('Host', host).set('Origin', origin)
-    : agent.set('Host', host).set('Origin', originOverride);
+	return originOverride === undefined
+		? agent.set("Host", host).set("Origin", origin)
+		: agent.set("Host", host).set("Origin", originOverride);
 };
 
 const CURRENT_USER_QUERY = `
@@ -60,29 +60,29 @@ const FIND_COMPANIES_QUERY = `
   }
 `;
 
-const AUTH_ERROR_CODES = ['UNAUTHENTICATED', 'FORBIDDEN'];
+const AUTH_ERROR_CODES = ["UNAUTHENTICATED", "FORBIDDEN"];
 
 const extractSessionCookie = (
-  setCookieHeader: string | string[] | undefined,
+	setCookieHeader: string | string[] | undefined,
 ): string | undefined => {
-  const setCookies =
-    typeof setCookieHeader === 'string'
-      ? [setCookieHeader]
-      : (setCookieHeader ?? []);
+	const setCookies =
+		typeof setCookieHeader === "string"
+			? [setCookieHeader]
+			: (setCookieHeader ?? []);
 
-  return setCookies
-    .find((cookie) => cookie.startsWith(`${USER_SESSION_COOKIE_NAME}=`))
-    ?.split(';')[0];
+	return setCookies
+		.find((cookie) => cookie.startsWith(`${USER_SESSION_COOKIE_NAME}=`))
+		?.split(";")[0];
 };
 
 const origin = buildAppleOrigin();
 
 const signInAndGetSessionCookie = async (): Promise<string> => {
-  const loginResponse = await asWorkspaceRequest(
-    request(SERVER_URL).post('/metadata'),
-  )
-    .send({
-      query: `
+	const loginResponse = await asWorkspaceRequest(
+		request(SERVER_URL).post("/metadata"),
+	)
+		.send({
+			query: `
         mutation GetLoginTokenFromCredentials(
           $email: String!
           $password: String!
@@ -99,22 +99,22 @@ const signInAndGetSessionCookie = async (): Promise<string> => {
           }
         }
       `,
-      variables: {
-        email: 'tim@apple.dev',
-        password: 'tim@apple.dev',
-        origin,
-      },
-    })
-    .expect(200);
+			variables: {
+				email: "tim@apple.dev",
+				password: "tim@apple.dev",
+				origin,
+			},
+		})
+		.expect(200);
 
-  const loginToken =
-    loginResponse.body.data.getLoginTokenFromCredentials.loginToken.token;
+	const loginToken =
+		loginResponse.body.data.getLoginTokenFromCredentials.loginToken.token;
 
-  const exchangeResponse = await asWorkspaceRequest(
-    request(SERVER_URL).post('/metadata'),
-  )
-    .send({
-      query: `
+	const exchangeResponse = await asWorkspaceRequest(
+		request(SERVER_URL).post("/metadata"),
+	)
+		.send({
+			query: `
         mutation GetAuthTokensFromLoginToken(
           $loginToken: String!
           $origin: String!
@@ -128,126 +128,126 @@ const signInAndGetSessionCookie = async (): Promise<string> => {
           }
         }
       `,
-      variables: { loginToken, origin },
-    })
-    .expect(200);
+			variables: { loginToken, origin },
+		})
+		.expect(200);
 
-  const sessionCookie = extractSessionCookie(
-    exchangeResponse.headers['set-cookie'],
-  );
+	const sessionCookie = extractSessionCookie(
+		exchangeResponse.headers["set-cookie"],
+	);
 
-  expect(sessionCookie).toBeDefined();
+	expect(sessionCookie).toBeDefined();
 
-  return sessionCookie as string;
+	return sessionCookie as string;
 };
 
-describe('Cookie sessions (integration)', () => {
-  let sessionCookie: string;
+describe("Cookie sessions (integration)", () => {
+	let sessionCookie: string;
 
-  beforeAll(async () => {
-    sessionCookie = await signInAndGetSessionCookie();
-  });
+	beforeAll(async () => {
+		sessionCookie = await signInAndGetSessionCookie();
+	});
 
-  it('should set a session cookie when exchanging a login token', () => {
-    expect(sessionCookie).toContain(`${USER_SESSION_COOKIE_NAME}=sess_`);
-  });
+	it("should set a session cookie when exchanging a login token", () => {
+		expect(sessionCookie).toContain(`${USER_SESSION_COOKIE_NAME}=sess_`);
+	});
 
-  it('should authenticate a request carrying only the session cookie', async () => {
-    const response = await asWorkspaceRequest(
-      request(SERVER_URL).post('/metadata'),
-    )
-      .set('Cookie', sessionCookie)
-      .send({ query: CURRENT_USER_QUERY })
-      .expect(200);
+	it("should authenticate a request carrying only the session cookie", async () => {
+		const response = await asWorkspaceRequest(
+			request(SERVER_URL).post("/metadata"),
+		)
+			.set("Cookie", sessionCookie)
+			.send({ query: CURRENT_USER_QUERY })
+			.expect(200);
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.currentUser.email).toBe('tim@apple.dev');
-  });
+		expect(response.body.errors).toBeUndefined();
+		expect(response.body.data.currentUser.email).toBe("tim@apple.dev");
+	});
 
-  it('should reject a cookie-authenticated request from a foreign origin', async () => {
-    const response = await asWorkspaceRequest(
-      request(SERVER_URL).post('/metadata'),
-      'https://evil.example.org',
-    )
-      .set('Cookie', sessionCookie)
-      .send({ query: CURRENT_USER_QUERY });
+	it("should reject a cookie-authenticated request from a foreign origin", async () => {
+		const response = await asWorkspaceRequest(
+			request(SERVER_URL).post("/metadata"),
+			"https://evil.example.org",
+		)
+			.set("Cookie", sessionCookie)
+			.send({ query: CURRENT_USER_QUERY });
 
-    expect(response.status).toBe(403);
-    expect(response.body.error).toBe('CSRF_ORIGIN_MISMATCH');
-  });
+		expect(response.status).toBe(403);
+		expect(response.body.error).toBe("CSRF_ORIGIN_MISMATCH");
+	});
 
-  it('should reject a cookie-authenticated request sending no origin', async () => {
-    const response = await request(SERVER_URL)
-      .post('/metadata')
-      .set('Host', new URL(origin).host)
-      .set('Cookie', sessionCookie)
-      .send({ query: CURRENT_USER_QUERY });
+	it("should reject a cookie-authenticated request sending no origin", async () => {
+		const response = await request(SERVER_URL)
+			.post("/metadata")
+			.set("Host", new URL(origin).host)
+			.set("Cookie", sessionCookie)
+			.send({ query: CURRENT_USER_QUERY });
 
-    expect(response.status).toBe(403);
-    expect(response.body.error).toBe('CSRF_ORIGIN_MISMATCH');
-  });
+		expect(response.status).toBe(403);
+		expect(response.body.error).toBe("CSRF_ORIGIN_MISMATCH");
+	});
 
-  // Mints its own session rather than consuming the shared one, so revoking it
-  // cannot break the tests above whatever order they run in.
-  it('should stop authenticating the cookie once signed out', async () => {
-    const disposableSessionCookie = await signInAndGetSessionCookie();
+	// Mints its own session rather than consuming the shared one, so revoking it
+	// cannot break the tests above whatever order they run in.
+	it("should stop authenticating the cookie once signed out", async () => {
+		const disposableSessionCookie = await signInAndGetSessionCookie();
 
-    const signOutResponse = await asWorkspaceRequest(
-      request(SERVER_URL).post('/metadata'),
-    )
-      .set('Cookie', disposableSessionCookie)
-      .send({ query: SIGN_OUT_MUTATION })
-      .expect(200);
+		const signOutResponse = await asWorkspaceRequest(
+			request(SERVER_URL).post("/metadata"),
+		)
+			.set("Cookie", disposableSessionCookie)
+			.send({ query: SIGN_OUT_MUTATION })
+			.expect(200);
 
-    expect(signOutResponse.body.errors).toBeUndefined();
+		expect(signOutResponse.body.errors).toBeUndefined();
 
-    const afterSignOut = await asWorkspaceRequest(
-      request(SERVER_URL).post('/metadata'),
-    )
-      .set('Cookie', disposableSessionCookie)
-      .send({ query: CURRENT_USER_QUERY });
+		const afterSignOut = await asWorkspaceRequest(
+			request(SERVER_URL).post("/metadata"),
+		)
+			.set("Cookie", disposableSessionCookie)
+			.send({ query: CURRENT_USER_QUERY });
 
-    expect(afterSignOut.body.data?.currentUser).toBeFalsy();
-    expect(afterSignOut.body.errors).toBeDefined();
-    expect(
-      afterSignOut.body.errors.map(
-        (graphQLError: { extensions?: { code?: string } }) =>
-          graphQLError.extensions?.code,
-      ),
-    ).toEqual(
-      expect.arrayContaining([expect.stringMatching(/UNAUTHENTICATED/)]),
-    );
-  });
+		expect(afterSignOut.body.data?.currentUser).toBeFalsy();
+		expect(afterSignOut.body.errors).toBeDefined();
+		expect(
+			afterSignOut.body.errors.map(
+				(graphQLError: { extensions?: { code?: string } }) =>
+					graphQLError.extensions?.code,
+			),
+		).toEqual(
+			expect.arrayContaining([expect.stringMatching(/UNAUTHENTICATED/)]),
+		);
+	});
 
-  it('should answer a revoked cookie with an auth error rather than a schema error', async () => {
-    const disposableSessionCookie = await signInAndGetSessionCookie();
+	it("should answer a revoked cookie with an auth error rather than a schema error", async () => {
+		const disposableSessionCookie = await signInAndGetSessionCookie();
 
-    await asWorkspaceRequest(request(SERVER_URL).post('/metadata'))
-      .set('Cookie', disposableSessionCookie)
-      .send({ query: SIGN_OUT_MUTATION })
-      .expect(200);
+		await asWorkspaceRequest(request(SERVER_URL).post("/metadata"))
+			.set("Cookie", disposableSessionCookie)
+			.send({ query: SIGN_OUT_MUTATION })
+			.expect(200);
 
-    const response = await asWorkspaceRequest(
-      request(SERVER_URL).post('/graphql'),
-    )
-      .set('Cookie', disposableSessionCookie)
-      .send({ query: FIND_COMPANIES_QUERY });
+		const response = await asWorkspaceRequest(
+			request(SERVER_URL).post("/graphql"),
+		)
+			.set("Cookie", disposableSessionCookie)
+			.send({ query: FIND_COMPANIES_QUERY });
 
-    expect(response.body.errors).toBeDefined();
+		expect(response.body.errors).toBeDefined();
 
-    const messages = response.body.errors.map(
-      (graphQLError: { message: string }) => graphQLError.message,
-    );
-    const codes = response.body.errors.map(
-      (graphQLError: { extensions?: { code?: string } }) =>
-        graphQLError.extensions?.code,
-    );
+		const messages = response.body.errors.map(
+			(graphQLError: { message: string }) => graphQLError.message,
+		);
+		const codes = response.body.errors.map(
+			(graphQLError: { extensions?: { code?: string } }) =>
+				graphQLError.extensions?.code,
+		);
 
-    // The client only signs out on an auth code. A missing workspace schema
-    // surfaces as "Cannot query field", which it cannot act on.
-    expect(messages.join(' ')).not.toContain('Cannot query field');
-    expect(codes.some((code: string) => AUTH_ERROR_CODES.includes(code))).toBe(
-      true,
-    );
-  });
+		// The client only signs out on an auth code. A missing workspace schema
+		// surfaces as "Cannot query field", which it cannot act on.
+		expect(messages.join(" ")).not.toContain("Cannot query field");
+		expect(codes.some((code: string) => AUTH_ERROR_CODES.includes(code))).toBe(
+			true,
+		);
+	});
 });

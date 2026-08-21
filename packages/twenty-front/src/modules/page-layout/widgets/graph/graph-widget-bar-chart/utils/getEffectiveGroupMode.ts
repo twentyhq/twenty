@@ -1,16 +1,16 @@
-import { type BarChartConfiguration } from '~/generated-metadata/graphql';
+import { type BarChartConfiguration } from "~/generated-metadata/graphql";
 
 export const getEffectiveGroupMode = (
-  groupMode: BarChartConfiguration['groupMode'],
-  hasGroupByOnSecondaryAxis: boolean,
-): 'grouped' | 'stacked' | undefined => {
-  if (!hasGroupByOnSecondaryAxis) {
-    return undefined;
-  }
+	groupMode: BarChartConfiguration["groupMode"],
+	hasGroupByOnSecondaryAxis: boolean,
+): "grouped" | "stacked" | undefined => {
+	if (!hasGroupByOnSecondaryAxis) {
+		return undefined;
+	}
 
-  if (groupMode === 'GROUPED') {
-    return 'grouped';
-  }
+	if (groupMode === "GROUPED") {
+		return "grouped";
+	}
 
-  return 'stacked';
+	return "stacked";
 };

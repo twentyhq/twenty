@@ -1,4 +1,4 @@
 export enum AiModelRole {
-  FAST = 'fast',
-  SMART = 'smart',
+	FAST = "fast",
+	SMART = "smart",
 }

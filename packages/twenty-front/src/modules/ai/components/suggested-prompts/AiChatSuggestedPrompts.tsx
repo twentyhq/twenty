@@ -1,16 +1,16 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react/macro';
-import { type Editor } from '@tiptap/react';
-import { LightButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
+import { type Editor } from "@tiptap/react";
+import { LightButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 import {
-  DEFAULT_SUGGESTED_PROMPTS,
-  type SuggestedPrompt,
-} from '@/ai/components/suggested-prompts/default-suggested-prompts';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+	DEFAULT_SUGGESTED_PROMPTS,
+	type SuggestedPrompt,
+} from "@/ai/components/suggested-prompts/default-suggested-prompts";
+import { agentChatInputState } from "@/ai/states/agentChatInputState";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -34,43 +34,43 @@ const StyledSuggestedPromptButtonContainer = styled.div`
 `;
 
 const pickRandom = <T,>(items: T[]): T =>
-  items[Math.floor(Math.random() * items.length)];
+	items[Math.floor(Math.random() * items.length)];
 
 type AiChatSuggestedPromptsProps = {
-  editor: Editor | null;
+	editor: Editor | null;
 };
 
 export const AiChatSuggestedPrompts = ({
-  editor,
+	editor,
 }: AiChatSuggestedPromptsProps) => {
-  const { t: resolveMessage } = useLingui();
-  const setAgentChatInput = useSetAtomState(agentChatInputState);
+	const { t: resolveMessage } = useLingui();
+	const setAgentChatInput = useSetAtomState(agentChatInputState);
 
-  const handleClick = (prompt: SuggestedPrompt) => {
-    const picked = pickRandom(prompt.prefillPrompts);
-    const text = resolveMessage(picked);
+	const handleClick = (prompt: SuggestedPrompt) => {
+		const picked = pickRandom(prompt.prefillPrompts);
+		const text = resolveMessage(picked);
 
-    setAgentChatInput(text);
-    editor?.commands.setContent({
-      type: 'doc',
-      content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
-    });
-    editor?.commands.focus('end');
-  };
+		setAgentChatInput(text);
+		editor?.commands.setContent({
+			type: "doc",
+			content: [{ type: "paragraph", content: [{ type: "text", text }] }],
+		});
+		editor?.commands.focus("end");
+	};
 
-  return (
-    <StyledContainer>
-      <StyledTitle>{t`What can I help you with?`}</StyledTitle>
-      {DEFAULT_SUGGESTED_PROMPTS.map((prompt) => (
-        <StyledSuggestedPromptButtonContainer key={prompt.id}>
-          <LightButton
-            Icon={prompt.Icon}
-            title={resolveMessage(prompt.label)}
-            accent="secondary"
-            onClick={() => handleClick(prompt)}
-          />
-        </StyledSuggestedPromptButtonContainer>
-      ))}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledTitle>{t`What can I help you with?`}</StyledTitle>
+			{DEFAULT_SUGGESTED_PROMPTS.map((prompt) => (
+				<StyledSuggestedPromptButtonContainer key={prompt.id}>
+					<LightButton
+						Icon={prompt.Icon}
+						title={resolveMessage(prompt.label)}
+						accent="secondary"
+						onClick={() => handleClick(prompt)}
+					/>
+				</StyledSuggestedPromptButtonContainer>
+			))}
+		</StyledContainer>
+	);
 };

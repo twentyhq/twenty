@@ -1,4 +1,4 @@
 export enum AppBasePath {
-  Settings = '/settings',
-  Root = '/',
+	Settings = "/settings",
+	Root = "/",
 }

@@ -1,4 +1,4 @@
 export type FirefliesListCallsByParticipantInput = {
-  participantEmail: string;
-  limit?: number;
+	participantEmail: string;
+	limit?: number;
 };

@@ -1,98 +1,98 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { type FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/field-metadata-option.type';
-import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
+import { type FieldMetadataOption } from "src/modules/dashboard/chart-data/types/field-metadata-option.type";
+import { type GroupByRawResult } from "src/modules/dashboard/chart-data/types/group-by-raw-result.type";
 
 type FillSelectGapsParams = {
-  data: GroupByRawResult[];
-  selectOptions: FieldMetadataOption[] | null | undefined;
+	data: GroupByRawResult[];
+	selectOptions: FieldMetadataOption[] | null | undefined;
 };
 
 export const fillSelectGaps = ({
-  data,
-  selectOptions,
+	data,
+	selectOptions,
 }: FillSelectGapsParams): GroupByRawResult[] => {
-  if (
-    !isDefined(selectOptions) ||
-    selectOptions.length === 0 ||
-    data.length === 0
-  ) {
-    return data;
-  }
+	if (
+		!isDefined(selectOptions) ||
+		selectOptions.length === 0 ||
+		data.length === 0
+	) {
+		return data;
+	}
 
-  const existingGroupsMap = new Map<string, GroupByRawResult>();
+	const existingGroupsMap = new Map<string, GroupByRawResult>();
 
-  for (const item of data) {
-    const dimensionValue = item.groupByDimensionValues?.[0];
+	for (const item of data) {
+		const dimensionValue = item.groupByDimensionValues?.[0];
 
-    if (isDefined(dimensionValue)) {
-      existingGroupsMap.set(String(dimensionValue), item);
-    }
-  }
+		if (isDefined(dimensionValue)) {
+			existingGroupsMap.set(String(dimensionValue), item);
+		}
+	}
 
-  const filledData: GroupByRawResult[] = selectOptions.map((option) => {
-    const existingGroup = existingGroupsMap.get(option.value);
+	const filledData: GroupByRawResult[] = selectOptions.map((option) => {
+		const existingGroup = existingGroupsMap.get(option.value);
 
-    if (isDefined(existingGroup)) {
-      return existingGroup;
-    }
+		if (isDefined(existingGroup)) {
+			return existingGroup;
+		}
 
-    return {
-      groupByDimensionValues: [option.value],
-      aggregateValue: 0,
-    };
-  });
+		return {
+			groupByDimensionValues: [option.value],
+			aggregateValue: 0,
+		};
+	});
 
-  return filledData;
+	return filledData;
 };
 
 type FillSelectGapsTwoDimensionalParams = {
-  data: GroupByRawResult[];
-  selectOptions: FieldMetadataOption[] | null | undefined;
+	data: GroupByRawResult[];
+	selectOptions: FieldMetadataOption[] | null | undefined;
 };
 
 export const fillSelectGapsTwoDimensional = ({
-  data,
-  selectOptions,
+	data,
+	selectOptions,
 }: FillSelectGapsTwoDimensionalParams): GroupByRawResult[] => {
-  if (
-    !isDefined(selectOptions) ||
-    selectOptions.length === 0 ||
-    data.length === 0
-  ) {
-    return data;
-  }
+	if (
+		!isDefined(selectOptions) ||
+		selectOptions.length === 0 ||
+		data.length === 0
+	) {
+		return data;
+	}
 
-  const existingGroupsMap = new Map<string, GroupByRawResult>();
-  const uniqueSecondDimensionValues = new Set<unknown>();
+	const existingGroupsMap = new Map<string, GroupByRawResult>();
+	const uniqueSecondDimensionValues = new Set<unknown>();
 
-  for (const item of data) {
-    const primaryValue = item.groupByDimensionValues?.[0];
-    const secondaryValue = item.groupByDimensionValues?.[1] ?? null;
+	for (const item of data) {
+		const primaryValue = item.groupByDimensionValues?.[0];
+		const secondaryValue = item.groupByDimensionValues?.[1] ?? null;
 
-    if (isDefined(primaryValue)) {
-      const key = `${String(primaryValue)}_${String(secondaryValue)}`;
+		if (isDefined(primaryValue)) {
+			const key = `${String(primaryValue)}_${String(secondaryValue)}`;
 
-      existingGroupsMap.set(key, item);
-      uniqueSecondDimensionValues.add(secondaryValue);
-    }
-  }
+			existingGroupsMap.set(key, item);
+			uniqueSecondDimensionValues.add(secondaryValue);
+		}
+	}
 
-  const filledData: GroupByRawResult[] = selectOptions.flatMap((option) =>
-    Array.from(uniqueSecondDimensionValues).map((secondaryValue) => {
-      const key = `${option.value}_${String(secondaryValue)}`;
-      const existingGroup = existingGroupsMap.get(key);
+	const filledData: GroupByRawResult[] = selectOptions.flatMap((option) =>
+		Array.from(uniqueSecondDimensionValues).map((secondaryValue) => {
+			const key = `${option.value}_${String(secondaryValue)}`;
+			const existingGroup = existingGroupsMap.get(key);
 
-      if (isDefined(existingGroup)) {
-        return existingGroup;
-      }
+			if (isDefined(existingGroup)) {
+				return existingGroup;
+			}
 
-      return {
-        groupByDimensionValues: [option.value, secondaryValue],
-        aggregateValue: 0,
-      };
-    }),
-  );
+			return {
+				groupByDimensionValues: [option.value, secondaryValue],
+				aggregateValue: 0,
+			};
+		}),
+	);
 
-  return filledData;
+	return filledData;
 };

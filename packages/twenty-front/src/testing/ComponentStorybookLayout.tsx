@@ -1,6 +1,6 @@
-import { type JSX } from 'react';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type JSX } from "react";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledLayout = styled.div<{ width?: number }>`
   border: 1px solid ${themeCssVariables.border.color.light};
@@ -11,19 +11,19 @@ const StyledLayout = styled.div<{ width?: number }>`
 
   height: fit-content;
   max-width: calc(100% - 40px);
-  min-width: ${({ width }) => (width ? 'unset' : '300px')};
+  min-width: ${({ width }) => (width ? "unset" : "300px")};
   padding: 20px;
-  width: ${({ width }) => (width ? width + 'px' : 'fit-content')};
+  width: ${({ width }) => (width ? width + "px" : "fit-content")};
 `;
 
 type ComponentStorybookLayoutProps = {
-  width?: number;
-  children: JSX.Element;
+	width?: number;
+	children: JSX.Element;
 };
 
 export const ComponentStorybookLayout = ({
-  width,
-  children,
+	width,
+	children,
 }: ComponentStorybookLayoutProps) => (
-  <StyledLayout width={width}>{children}</StyledLayout>
+	<StyledLayout width={width}>{children}</StyledLayout>
 );

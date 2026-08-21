@@ -1,14 +1,14 @@
-import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useOpenEmailBlockSettingsInSidePanel } from '@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel';
+import { HeadlessEngineCommandWrapperEffect } from "@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect";
+import { useOpenEmailBlockSettingsInSidePanel } from "@/side-panel/hooks/useOpenEmailBlockSettingsInSidePanel";
 
 export const OpenEmailBlockSettingsSingleRecordCommand = () => {
-  const { openEmailBlockSettingsInSidePanel } =
-    useOpenEmailBlockSettingsInSidePanel();
+	const { openEmailBlockSettingsInSidePanel } =
+		useOpenEmailBlockSettingsInSidePanel();
 
-  return (
-    <HeadlessEngineCommandWrapperEffect
-      execute={openEmailBlockSettingsInSidePanel}
-      ready
-    />
-  );
+	return (
+		<HeadlessEngineCommandWrapperEffect
+			execute={openEmailBlockSettingsInSidePanel}
+			ready
+		/>
+	);
 };

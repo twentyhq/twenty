@@ -1,4 +1,4 @@
 export type MorphItem = {
-  recordId: string;
-  objectMetadataId: string;
+	recordId: string;
+	objectMetadataId: string;
 };

@@ -1,21 +1,21 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
 
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { recordIndexAllRecordIdsComponentSelector } from "@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
-import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
-import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { cx } from '@linaria/core';
-import { Checkbox } from 'twenty-ui/input';
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from "@/object-record/record-table/constants/RecordTableColumnCheckboxWidth";
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from "@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName";
+import { RECORD_TABLE_ROW_HEIGHT } from "@/object-record/record-table/constants/RecordTableRowHeight";
+import { useRecordTableContextOrThrow } from "@/object-record/record-table/contexts/RecordTableContext";
+import { useResetTableRowSelection } from "@/object-record/record-table/hooks/internal/useResetTableRowSelection";
+import { useSelectAllRows } from "@/object-record/record-table/hooks/internal/useSelectAllRows";
+import { isRecordTableInitialLoadingComponentState } from "@/object-record/record-table/states/isRecordTableInitialLoadingComponentState";
+import { allRowsSelectedStatusComponentSelector } from "@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { cx } from "@linaria/core";
+import { Checkbox } from "twenty-ui/input";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -39,60 +39,60 @@ const StyledColumnHeaderCell = styled.div`
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const allRowsSelectedStatus = useAtomComponentSelectorValue(
-    allRowsSelectedStatusComponentSelector,
-  );
+	const allRowsSelectedStatus = useAtomComponentSelectorValue(
+		allRowsSelectedStatusComponentSelector,
+	);
 
-  const { selectAllRows } = useSelectAllRows();
+	const { selectAllRows } = useSelectAllRows();
 
-  const { resetTableRowSelection } = useResetTableRowSelection();
+	const { resetTableRowSelection } = useResetTableRowSelection();
 
-  const checked =
-    allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
-  const indeterminate = allRowsSelectedStatus === 'some';
+	const checked =
+		allRowsSelectedStatus === "all" || allRowsSelectedStatus === "some";
+	const indeterminate = allRowsSelectedStatus === "some";
 
-  const { recordTableId } = useRecordTableContextOrThrow();
+	const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableInitialLoading = useAtomComponentStateValue(
-    isRecordTableInitialLoadingComponentState,
-    recordTableId,
-  );
+	const isRecordTableInitialLoading = useAtomComponentStateValue(
+		isRecordTableInitialLoadingComponentState,
+		recordTableId,
+	);
 
-  const allRecordIds = useAtomComponentSelectorValue(
-    recordIndexAllRecordIdsComponentSelector,
-    recordTableId,
-  );
+	const allRecordIds = useAtomComponentSelectorValue(
+		recordIndexAllRecordIdsComponentSelector,
+		recordTableId,
+	);
 
-  const recordTableIsEmpty =
-    !isRecordTableInitialLoading && allRecordIds.length === 0;
+	const recordTableIsEmpty =
+		!isRecordTableInitialLoading && allRecordIds.length === 0;
 
-  const onChange = () => {
-    if (checked) {
-      resetTableRowSelection();
-    } else {
-      selectAllRows();
-    }
-  };
+	const onChange = () => {
+		if (checked) {
+			resetTableRowSelection();
+		} else {
+			selectAllRows();
+		}
+	};
 
-  return (
-    <StyledColumnHeaderCell
-      className={cx(
-        'header-cell',
-        RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME,
-      )}
-    >
-      <StyledContainer data-select-disable>
-        <Checkbox
-          hoverable
-          checked={checked}
-          onChange={onChange}
-          indeterminate={indeterminate}
-          disabled={recordTableIsEmpty}
-          aria-label={t`Select all rows`}
-        />
-      </StyledContainer>
-    </StyledColumnHeaderCell>
-  );
+	return (
+		<StyledColumnHeaderCell
+			className={cx(
+				"header-cell",
+				RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME,
+			)}
+		>
+			<StyledContainer data-select-disable>
+				<Checkbox
+					hoverable
+					checked={checked}
+					onChange={onChange}
+					indeterminate={indeterminate}
+					disabled={recordTableIsEmpty}
+					aria-label={t`Select all rows`}
+				/>
+			</StyledContainer>
+		</StyledColumnHeaderCell>
+	);
 };

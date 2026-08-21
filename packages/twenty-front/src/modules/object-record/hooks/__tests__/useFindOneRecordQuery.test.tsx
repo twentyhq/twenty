@@ -1,9 +1,9 @@
-import { renderHook } from '@testing-library/react';
-import { print } from 'graphql';
+import { renderHook } from "@testing-library/react";
+import { print } from "graphql";
 
-import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
-import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from "@/object-record/hooks/__mocks__/personFragments";
+import { useFindOneRecordQuery } from "@/object-record/hooks/useFindOneRecordQuery";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const expectedQueryTemplate = `
 query FindOnePerson($objectRecordId: UUID!) {
@@ -11,32 +11,32 @@ query FindOnePerson($objectRecordId: UUID!) {
       ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
   }
 }
-`.replace(/\s/g, '');
+`.replace(/\s/g, "");
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useFindOneRecordQuery', () => {
-  it('should return a valid findOneRecordQuery', () => {
-    const objectNameSingular = 'person';
+describe("useFindOneRecordQuery", () => {
+	it("should return a valid findOneRecordQuery", () => {
+		const objectNameSingular = "person";
 
-    const { result } = renderHook(
-      () =>
-        useFindOneRecordQuery({
-          objectNameSingular,
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+		const { result } = renderHook(
+			() =>
+				useFindOneRecordQuery({
+					objectNameSingular,
+				}),
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    const { findOneRecordQuery } = result.current;
+		const { findOneRecordQuery } = result.current;
 
-    expect(findOneRecordQuery).toBeDefined();
+		expect(findOneRecordQuery).toBeDefined();
 
-    const printedReceivedQuery = print(findOneRecordQuery).replace(/\s/g, '');
+		const printedReceivedQuery = print(findOneRecordQuery).replace(/\s/g, "");
 
-    expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
-  });
+		expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+	});
 });

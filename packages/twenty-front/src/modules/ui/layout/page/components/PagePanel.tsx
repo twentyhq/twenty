@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import React from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import React from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledPanel = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -14,10 +14,10 @@ const StyledPanel = styled.div`
 `;
 
 type PagePanelProps = {
-  children: React.ReactNode;
-  hasInformationBar?: boolean;
+	children: React.ReactNode;
+	hasInformationBar?: boolean;
 };
 
 export const PagePanel = ({ children }: PagePanelProps) => (
-  <StyledPanel>{children}</StyledPanel>
+	<StyledPanel>{children}</StyledPanel>
 );

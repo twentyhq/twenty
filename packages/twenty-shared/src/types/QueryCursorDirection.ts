@@ -1,1 +1,1 @@
-export type QueryCursorDirection = 'before' | 'after';
+export type QueryCursorDirection = "before" | "after";

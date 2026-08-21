@@ -1,2 +1,2 @@
-export { ThreeCards } from './ThreeCards';
-export { ProductThreeCards } from './ProductThreeCards';
+export { ThreeCards } from "./ThreeCards";
+export { ProductThreeCards } from "./ProductThreeCards";

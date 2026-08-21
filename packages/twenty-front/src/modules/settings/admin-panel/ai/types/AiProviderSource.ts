@@ -1,1 +1,1 @@
-export type AiProviderSource = 'catalog' | 'custom';
+export type AiProviderSource = "catalog" | "custom";

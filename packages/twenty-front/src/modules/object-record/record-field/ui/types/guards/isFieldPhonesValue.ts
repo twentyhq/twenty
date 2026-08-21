@@ -1,7 +1,7 @@
-import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
+import { type FieldPhonesValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { phonesFieldValueSchema } from "@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema";
 
 export const isFieldPhonesValue = (
-  fieldValue: unknown,
+	fieldValue: unknown,
 ): fieldValue is FieldPhonesValue =>
-  phonesFieldValueSchema.safeParse(fieldValue).success;
+	phonesFieldValueSchema.safeParse(fieldValue).success;

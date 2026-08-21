@@ -1,24 +1,24 @@
 /* @license Enterprise */
 
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { BillingProductDTO } from 'src/engine/core-modules/billing/dtos/billing-product.dto';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { BillingProductDTO } from "src/engine/core-modules/billing/dtos/billing-product.dto";
 
-@ObjectType('BillingSubscriptionItem')
+@ObjectType("BillingSubscriptionItem")
 export class BillingSubscriptionItemDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => Boolean)
-  hasReachedCurrentPeriodCap: boolean;
+	@Field(() => Boolean)
+	hasReachedCurrentPeriodCap: boolean;
 
-  @Field(() => Number, { nullable: true })
-  quantity: number | null;
+	@Field(() => Number, { nullable: true })
+	quantity: number | null;
 
-  @Field(() => String)
-  stripePriceId: string;
+	@Field(() => String)
+	stripePriceId: string;
 
-  @Field(() => BillingProductDTO)
-  billingProduct: BillingProductDTO;
+	@Field(() => BillingProductDTO)
+	billingProduct: BillingProductDTO;
 }

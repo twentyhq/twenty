@@ -1,24 +1,24 @@
-import { t } from '@lingui/core/macro';
-import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
-import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { t } from "@lingui/core/macro";
+import { useMultipleRecordPickerPerformSearch } from "@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch";
+import { MultipleRecordPickerComponentInstanceContext } from "@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext";
 
-import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState';
-import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
+import { multipleRecordPickerIsFetchingMoreComponentState } from "@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState";
+import { multipleRecordPickerIsLoadingComponentState } from "@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState";
 
-import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
-import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
-import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { useCallback } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { useStore } from 'jotai';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { multipleRecordPickerPaginationState } from "@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState";
+import { multipleRecordPickerSearchFilterComponentState } from "@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState";
+import { multipleRecordPickerShouldShowInitialLoadingComponentState } from "@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState";
+import { multipleRecordPickerShouldShowSkeletonComponentState } from "@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState";
+import { multipleRecordPickerPaginationSelector } from "@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector";
+import { useAvailableComponentInstanceIdOrThrow } from "@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow";
+import { useAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useAtomComponentState";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { styled } from "@linaria/react";
+import { useCallback } from "react";
+import { useInView } from "react-intersection-observer";
+import { useStore } from "jotai";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledText = styled.div`
   align-items: center;
@@ -35,96 +35,96 @@ const StyledIntersectionObserver = styled.div`
 `;
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
-  const store = useStore();
-  const [
-    multipleRecordPickerIsFetchingMore,
-    setMultipleRecordPickerIsFetchingMore,
-  ] = useAtomComponentState(multipleRecordPickerIsFetchingMoreComponentState);
+	const store = useStore();
+	const [
+		multipleRecordPickerIsFetchingMore,
+		setMultipleRecordPickerIsFetchingMore,
+	] = useAtomComponentState(multipleRecordPickerIsFetchingMoreComponentState);
 
-  const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
-    MultipleRecordPickerComponentInstanceContext,
-  );
+	const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
+		MultipleRecordPickerComponentInstanceContext,
+	);
 
-  const paginationState = useAtomComponentSelectorValue(
-    multipleRecordPickerPaginationSelector,
-    componentInstanceId,
-  );
+	const paginationState = useAtomComponentSelectorValue(
+		multipleRecordPickerPaginationSelector,
+		componentInstanceId,
+	);
 
-  const multipleRecordPickerIsLoading = useAtomComponentStateValue(
-    multipleRecordPickerIsLoadingComponentState,
-    componentInstanceId,
-  );
+	const multipleRecordPickerIsLoading = useAtomComponentStateValue(
+		multipleRecordPickerIsLoadingComponentState,
+		componentInstanceId,
+	);
 
-  const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
-    multipleRecordPickerSearchFilterComponentState,
-    componentInstanceId,
-  );
+	const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
+		multipleRecordPickerSearchFilterComponentState,
+		componentInstanceId,
+	);
 
-  const multipleRecordPickerShouldShowInitialLoading =
-    useAtomComponentStateValue(
-      multipleRecordPickerShouldShowInitialLoadingComponentState,
-    );
+	const multipleRecordPickerShouldShowInitialLoading =
+		useAtomComponentStateValue(
+			multipleRecordPickerShouldShowInitialLoadingComponentState,
+		);
 
-  const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
-    multipleRecordPickerShouldShowSkeletonComponentState,
-  );
+	const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
+		multipleRecordPickerShouldShowSkeletonComponentState,
+	);
 
-  const { performSearch } = useMultipleRecordPickerPerformSearch();
+	const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const fetchMore = useCallback(async () => {
-    const currentPaginationState = store.get(
-      multipleRecordPickerPaginationState.atomFamily({
-        instanceId: componentInstanceId,
-      }),
-    );
+	const fetchMore = useCallback(async () => {
+		const currentPaginationState = store.get(
+			multipleRecordPickerPaginationState.atomFamily({
+				instanceId: componentInstanceId,
+			}),
+		);
 
-    if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
-      return;
-    }
+		if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
+			return;
+		}
 
-    await performSearch({
-      multipleRecordPickerInstanceId: componentInstanceId,
-      forceSearchFilter: multipleRecordPickerSearchFilter,
-      loadMore: true,
-    });
-  }, [
-    componentInstanceId,
-    performSearch,
-    multipleRecordPickerSearchFilter,
-    multipleRecordPickerIsLoading,
-    store,
-  ]);
+		await performSearch({
+			multipleRecordPickerInstanceId: componentInstanceId,
+			forceSearchFilter: multipleRecordPickerSearchFilter,
+			loadMore: true,
+		});
+	}, [
+		componentInstanceId,
+		performSearch,
+		multipleRecordPickerSearchFilter,
+		multipleRecordPickerIsLoading,
+		store,
+	]);
 
-  const { ref } = useInView({
-    onChange: useCallback(
-      async (inView: boolean) => {
-        if (inView) {
-          setMultipleRecordPickerIsFetchingMore(true);
+	const { ref } = useInView({
+		onChange: useCallback(
+			async (inView: boolean) => {
+				if (inView) {
+					setMultipleRecordPickerIsFetchingMore(true);
 
-          await fetchMore();
+					await fetchMore();
 
-          setMultipleRecordPickerIsFetchingMore(false);
-        }
-      },
-      [fetchMore, setMultipleRecordPickerIsFetchingMore],
-    ),
-  });
+					setMultipleRecordPickerIsFetchingMore(false);
+				}
+			},
+			[fetchMore, setMultipleRecordPickerIsFetchingMore],
+		),
+	});
 
-  if (
-    !paginationState.hasNextPage ||
-    multipleRecordPickerShouldShowInitialLoading ||
-    multipleRecordPickerShouldShowSkeleton ||
-    (multipleRecordPickerIsLoading && !multipleRecordPickerIsFetchingMore)
-  ) {
-    return null;
-  }
+	if (
+		!paginationState.hasNextPage ||
+		multipleRecordPickerShouldShowInitialLoading ||
+		multipleRecordPickerShouldShowSkeleton ||
+		(multipleRecordPickerIsLoading && !multipleRecordPickerIsFetchingMore)
+	) {
+		return null;
+	}
 
-  return (
-    <>
-      <StyledIntersectionObserver ref={ref} />
-      {multipleRecordPickerIsFetchingMore && (
-        <StyledText>{t`Loading more...`}</StyledText>
-      )}
-    </>
-  );
+	return (
+		<>
+			<StyledIntersectionObserver ref={ref} />
+			{multipleRecordPickerIsFetchingMore && (
+				<StyledText>{t`Loading more...`}</StyledText>
+			)}
+		</>
+	);
 };

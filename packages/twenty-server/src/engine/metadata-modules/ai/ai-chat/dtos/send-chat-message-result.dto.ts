@@ -1,13 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('SendChatMessageResult')
+@ObjectType("SendChatMessageResult")
 export class SendChatMessageResultDTO {
-  @Field(() => String)
-  messageId: string;
+	@Field(() => String)
+	messageId: string;
 
-  @Field(() => Boolean)
-  queued: boolean;
+	@Field(() => Boolean)
+	queued: boolean;
 
-  @Field(() => String, { nullable: true })
-  streamId?: string;
+	@Field(() => String, { nullable: true })
+	streamId?: string;
 }

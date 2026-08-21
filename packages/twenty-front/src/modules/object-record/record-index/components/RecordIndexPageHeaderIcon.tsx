@@ -1,15 +1,15 @@
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { ObjectMetadataIcon } from "@/object-metadata/components/ObjectMetadataIcon";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { isDefined } from "twenty-shared/utils";
 
 export const RecordIndexPageHeaderIcon = ({
-  objectMetadataItem,
+	objectMetadataItem,
 }: {
-  objectMetadataItem?: EnrichedObjectMetadataItem;
+	objectMetadataItem?: EnrichedObjectMetadataItem;
 }) => {
-  if (!isDefined(objectMetadataItem)) {
-    return null;
-  }
+	if (!isDefined(objectMetadataItem)) {
+		return null;
+	}
 
-  return <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
+	return <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 };

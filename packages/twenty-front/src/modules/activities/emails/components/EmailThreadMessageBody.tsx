@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
-import Linkify from 'linkify-react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
+import { styled } from "@linaria/react";
+import { motion } from "framer-motion";
+import Linkify from "linkify-react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { AnimatedEaseInOut } from "twenty-ui/layout";
 
 const StyledThreadMessageBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};
@@ -26,26 +26,26 @@ const StyledThreadMessageBody = styled(motion.div)`
 `;
 
 type EmailThreadMessageBodyProps = {
-  body: string;
-  isDisplayed: boolean;
+	body: string;
+	isDisplayed: boolean;
 };
 
 export const EmailThreadMessageBody = ({
-  body,
-  isDisplayed,
+	body,
+	isDisplayed,
 }: EmailThreadMessageBodyProps) => {
-  return (
-    <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      <StyledThreadMessageBody>
-        <Linkify
-          options={{
-            target: '_blank',
-            rel: 'noopener noreferrer',
-          }}
-        >
-          {body}
-        </Linkify>
-      </StyledThreadMessageBody>
-    </AnimatedEaseInOut>
-  );
+	return (
+		<AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
+			<StyledThreadMessageBody>
+				<Linkify
+					options={{
+						target: "_blank",
+						rel: "noopener noreferrer",
+					}}
+				>
+					{body}
+				</Linkify>
+			</StyledThreadMessageBody>
+		</AnimatedEaseInOut>
+	);
 };

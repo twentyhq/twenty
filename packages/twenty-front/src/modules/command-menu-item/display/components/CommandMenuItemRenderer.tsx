@@ -1,24 +1,24 @@
-import { AppMenuItem } from '@/applications/components/AppMenuItem';
-import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
-import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
-import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
-import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
-import { MenuItem } from 'twenty-ui/navigation';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import { AppMenuItem } from "@/applications/components/AppMenuItem";
+import { useIsThirdPartyApplication } from "@/applications/hooks/useIsThirdPartyApplication";
+import { CommandMenuContext } from "@/command-menu-item/contexts/CommandMenuContext";
+import { CommandListItemLoader } from "@/command-menu-item/display/components/CommandListItemLoader";
+import { interpolateCommandMenuItemFields } from "@/command-menu-item/display/utils/interpolateCommandMenuItemFields";
+import { useCommandMenuItemClick } from "@/command-menu-item/hooks/useCommandMenuItemClick";
+import { CommandMenuButton } from "@/command-menu/components/CommandMenuButton";
+import { CommandMenuItem } from "@/command-menu/components/CommandMenuItem";
+import { SelectableListItem } from "@/ui/layout/selectable-list/components/SelectableListItem";
+import { SelectableListComponentInstanceContext } from "@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext";
+import { isSelectedItemIdComponentFamilyState } from "@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState";
+import { useAvailableComponentInstanceIdOrThrow } from "@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow";
+import { useAtomComponentFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue";
+import { COMMAND_MENU_DEFAULT_ICON } from "@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon";
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { assertUnreachable, isDefined } from "twenty-shared/utils";
+import { useIcons } from "twenty-ui/icon";
+import { Loader } from "twenty-ui/feedback";
+import { MenuItem } from "twenty-ui/navigation";
+import { type CommandMenuItemFieldsFragment } from "~/generated-metadata/graphql";
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -29,177 +29,177 @@ const StyledPreviewWrapper = styled.div`
 `;
 
 type CommandMenuItemRendererProps = {
-  item: CommandMenuItemFieldsFragment;
-  isPrimaryAction?: boolean;
-  shouldHideLabel?: boolean;
+	item: CommandMenuItemFieldsFragment;
+	isPrimaryAction?: boolean;
+	shouldHideLabel?: boolean;
 };
 
 type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
 
 const CommandMenuItemButtonRenderer = ({
-  item,
-  isPrimaryAction = false,
-  shouldHideLabel = false,
+	item,
+	isPrimaryAction = false,
+	shouldHideLabel = false,
 }: CommandMenuItemButtonRendererProps) => {
-  const { commandMenuContextApi, isInPreviewMode } =
-    useContext(CommandMenuContext);
-  const { getIcon } = useIcons();
+	const { commandMenuContextApi, isInPreviewMode } =
+		useContext(CommandMenuContext);
+	const { getIcon } = useIcons();
 
-  const { iconKey, label, shortLabel } = interpolateCommandMenuItemFields(
-    item,
-    commandMenuContextApi,
-  );
+	const { iconKey, label, shortLabel } = interpolateCommandMenuItemFields(
+		item,
+		commandMenuContextApi,
+	);
 
-  const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
+	const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
 
-  const { handleClick, disabled } = useCommandMenuItemClick({
-    item,
-    Icon,
-    label,
-  });
+	const { handleClick, disabled } = useCommandMenuItemClick({
+		item,
+		Icon,
+		label,
+	});
 
-  const command = { key: item.id, label, shortLabel, Icon };
+	const command = { key: item.id, label, shortLabel, Icon };
 
-  if (isInPreviewMode) {
-    return (
-      <StyledPreviewWrapper>
-        <CommandMenuButton
-          command={command}
-          isPrimaryAction={isPrimaryAction}
-          shouldHideLabel={shouldHideLabel}
-        />
-      </StyledPreviewWrapper>
-    );
-  }
+	if (isInPreviewMode) {
+		return (
+			<StyledPreviewWrapper>
+				<CommandMenuButton
+					command={command}
+					isPrimaryAction={isPrimaryAction}
+					shouldHideLabel={shouldHideLabel}
+				/>
+			</StyledPreviewWrapper>
+		);
+	}
 
-  return (
-    <CommandMenuButton
-      command={command}
-      onClick={disabled ? undefined : handleClick}
-      disabled={disabled}
-      isPrimaryAction={isPrimaryAction}
-      shouldHideLabel={shouldHideLabel}
-    />
-  );
+	return (
+		<CommandMenuButton
+			command={command}
+			onClick={disabled ? undefined : handleClick}
+			disabled={disabled}
+			isPrimaryAction={isPrimaryAction}
+			shouldHideLabel={shouldHideLabel}
+		/>
+	);
 };
 
 const CommandMenuItemSelectableRenderer = ({
-  item,
-  displayType,
+	item,
+	displayType,
 }: CommandMenuItemRendererProps & {
-  displayType: 'listItem' | 'dropdownItem';
+	displayType: "listItem" | "dropdownItem";
 }) => {
-  const { commandMenuContextApi } = useContext(CommandMenuContext);
-  const { getIcon } = useIcons();
+	const { commandMenuContextApi } = useContext(CommandMenuContext);
+	const { getIcon } = useIcons();
 
-  const { iconKey, label } = interpolateCommandMenuItemFields(
-    item,
-    commandMenuContextApi,
-  );
+	const { iconKey, label } = interpolateCommandMenuItemFields(
+		item,
+		commandMenuContextApi,
+	);
 
-  const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
+	const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
 
-  const { handleClick, disabled, progress, showDisabledLoader } =
-    useCommandMenuItemClick({ item, Icon, label });
+	const { handleClick, disabled, progress, showDisabledLoader } =
+		useCommandMenuItemClick({ item, Icon, label });
 
-  const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
-    SelectableListComponentInstanceContext,
-  );
+	const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
+		SelectableListComponentInstanceContext,
+	);
 
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    item.id,
-    selectableListInstanceId,
-  );
+	const isSelectedItemId = useAtomComponentFamilyStateValue(
+		isSelectedItemIdComponentFamilyState,
+		item.id,
+		selectableListInstanceId,
+	);
 
-  const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
+	const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
 
-  const onItemClick = () => {
-    if (disabled) {
-      return;
-    }
-    handleClick();
-  };
+	const onItemClick = () => {
+		if (disabled) {
+			return;
+		}
+		handleClick();
+	};
 
-  const loaderComponent =
-    disabled && showDisabledLoader ? (
-      isDefined(progress) ? (
-        <CommandListItemLoader progress={progress} />
-      ) : (
-        <Loader />
-      )
-    ) : undefined;
+	const loaderComponent =
+		disabled && showDisabledLoader ? (
+			isDefined(progress) ? (
+				<CommandListItemLoader progress={progress} />
+			) : (
+				<Loader />
+			)
+		) : undefined;
 
-  if (isThirdPartyApp) {
-    return (
-      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-        <AppMenuItem
-          applicationId={item.applicationId}
-          text={label}
-          onClick={disabled ? undefined : handleClick}
-          focused={!disabled && isSelectedItemId}
-          disabled={disabled}
-          RightComponent={loaderComponent}
-        />
-      </SelectableListItem>
-    );
-  }
+	if (isThirdPartyApp) {
+		return (
+			<SelectableListItem itemId={item.id} onEnter={onItemClick}>
+				<AppMenuItem
+					applicationId={item.applicationId}
+					text={label}
+					onClick={disabled ? undefined : handleClick}
+					focused={!disabled && isSelectedItemId}
+					disabled={disabled}
+					RightComponent={loaderComponent}
+				/>
+			</SelectableListItem>
+		);
+	}
 
-  if (displayType === 'listItem') {
-    return (
-      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-        <CommandMenuItem
-          id={item.id}
-          Icon={Icon}
-          label={label}
-          onClick={disabled ? undefined : handleClick}
-          hotKeys={item.hotKeys}
-          disabled={disabled}
-          RightComponent={loaderComponent}
-        />
-      </SelectableListItem>
-    );
-  }
+	if (displayType === "listItem") {
+		return (
+			<SelectableListItem itemId={item.id} onEnter={onItemClick}>
+				<CommandMenuItem
+					id={item.id}
+					Icon={Icon}
+					label={label}
+					onClick={disabled ? undefined : handleClick}
+					hotKeys={item.hotKeys}
+					disabled={disabled}
+					RightComponent={loaderComponent}
+				/>
+			</SelectableListItem>
+		);
+	}
 
-  return (
-    <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-      <MenuItem
-        focused={isSelectedItemId}
-        LeftIcon={Icon}
-        onClick={onItemClick}
-        text={label}
-        disabled={disabled}
-      />
-    </SelectableListItem>
-  );
+	return (
+		<SelectableListItem itemId={item.id} onEnter={onItemClick}>
+			<MenuItem
+				focused={isSelectedItemId}
+				LeftIcon={Icon}
+				onClick={onItemClick}
+				text={label}
+				disabled={disabled}
+			/>
+		</SelectableListItem>
+	);
 };
 
 // oxlint-disable-next-line twenty/effect-components
 export const CommandMenuItemRenderer = ({
-  item,
-  isPrimaryAction,
-  shouldHideLabel,
+	item,
+	isPrimaryAction,
+	shouldHideLabel,
 }: CommandMenuItemRendererProps) => {
-  const { displayType } = useContext(CommandMenuContext);
+	const { displayType } = useContext(CommandMenuContext);
 
-  if (displayType === 'button') {
-    return (
-      <CommandMenuItemButtonRenderer
-        item={item}
-        isPrimaryAction={isPrimaryAction}
-        shouldHideLabel={shouldHideLabel}
-      />
-    );
-  }
+	if (displayType === "button") {
+		return (
+			<CommandMenuItemButtonRenderer
+				item={item}
+				isPrimaryAction={isPrimaryAction}
+				shouldHideLabel={shouldHideLabel}
+			/>
+		);
+	}
 
-  if (displayType === 'listItem' || displayType === 'dropdownItem') {
-    return (
-      <CommandMenuItemSelectableRenderer
-        item={item}
-        displayType={displayType}
-      />
-    );
-  }
+	if (displayType === "listItem" || displayType === "dropdownItem") {
+		return (
+			<CommandMenuItemSelectableRenderer
+				item={item}
+				displayType={displayType}
+			/>
+		);
+	}
 
-  return assertUnreachable(displayType, 'Unsupported display type');
+	return assertUnreachable(displayType, "Unsupported display type");
 };

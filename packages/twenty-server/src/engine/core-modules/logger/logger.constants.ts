@@ -1,1 +1,1 @@
-export const LOGGER_DRIVER = Symbol('LOGGER_DRIVER');
+export const LOGGER_DRIVER = Symbol("LOGGER_DRIVER");

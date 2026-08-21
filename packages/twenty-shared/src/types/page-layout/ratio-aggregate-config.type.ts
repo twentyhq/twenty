@@ -1,6 +1,6 @@
-import { type SerializedRelation } from '../SerializedRelation.type';
+import { type SerializedRelation } from "../SerializedRelation.type";
 
 export type RatioAggregateConfig = {
-  fieldMetadataId: SerializedRelation;
-  optionValue: string;
+	fieldMetadataId: SerializedRelation;
+	optionValue: string;
 };

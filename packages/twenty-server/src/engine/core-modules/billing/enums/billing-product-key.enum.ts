@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-import { registerEnumType } from '@nestjs/graphql';
+import { registerEnumType } from "@nestjs/graphql";
 
 export enum BillingProductKey {
-  BASE_PRODUCT = 'BASE_PRODUCT',
-  RESOURCE_CREDIT = 'RESOURCE_CREDIT',
+	BASE_PRODUCT = "BASE_PRODUCT",
+	RESOURCE_CREDIT = "RESOURCE_CREDIT",
 }
 
 registerEnumType(BillingProductKey, {
-  name: 'BillingProductKey',
-  description: 'The different billing products available',
+	name: "BillingProductKey",
+	description: "The different billing products available",
 });

@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type RecordCalendarMonthHeaderDayProps = {
-  label: string;
+	label: string;
 };
 
 const StyledLabel = styled.div`
@@ -16,7 +16,7 @@ const StyledLabel = styled.div`
 `;
 
 export const RecordCalendarMonthHeaderDay = ({
-  label,
+	label,
 }: RecordCalendarMonthHeaderDayProps) => {
-  return <StyledLabel>{label}</StyledLabel>;
+	return <StyledLabel>{label}</StyledLabel>;
 };

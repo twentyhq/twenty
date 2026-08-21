@@ -1,9 +1,9 @@
-import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+import { createAtomFamilyState } from "@/ui/utilities/state/jotai/utils/createAtomFamilyState";
 
 export const hasNextPageFamilyState = createAtomFamilyState<
-  boolean,
-  string | undefined
+	boolean,
+	string | undefined
 >({
-  key: 'hasNextPageFamilyState',
-  defaultValue: false,
+	key: "hasNextPageFamilyState",
+	defaultValue: false,
 });

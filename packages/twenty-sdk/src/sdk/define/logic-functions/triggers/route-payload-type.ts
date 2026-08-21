@@ -1,1 +1,1 @@
-export type { LogicFunctionEvent as RoutePayload } from 'twenty-shared/types';
+export type { LogicFunctionEvent as RoutePayload } from "twenty-shared/types";

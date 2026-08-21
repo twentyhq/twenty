@@ -1,14 +1,14 @@
-import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { computeDeterministicUuid } from "@/application/deterministic-identifier/compute-deterministic-uuid.util";
 
 export const getPermissionFlagUniversalIdentifier = ({
-  applicationUniversalIdentifier,
-  key,
+	applicationUniversalIdentifier,
+	key,
 }: {
-  applicationUniversalIdentifier: string;
-  key: string;
+	applicationUniversalIdentifier: string;
+	key: string;
 }): string =>
-  computeDeterministicUuid({
-    entityNamespace: 'permissionFlag',
-    value: key,
-    applicationUniversalIdentifier,
-  });
+	computeDeterministicUuid({
+		entityNamespace: "permissionFlag",
+		value: key,
+		applicationUniversalIdentifier,
+	});

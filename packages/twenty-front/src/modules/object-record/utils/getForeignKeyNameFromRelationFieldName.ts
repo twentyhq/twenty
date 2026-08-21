@@ -1,2 +1,2 @@
 export const getForeignKeyNameFromRelationFieldName = (nameSingular: string) =>
-  `${nameSingular}Id`;
+	`${nameSingular}Id`;

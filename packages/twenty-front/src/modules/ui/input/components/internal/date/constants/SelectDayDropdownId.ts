@@ -1,1 +1,1 @@
-export const SELECT_DAY_DROPDOWN_ID = 'select-day-dropdown-Id';
+export const SELECT_DAY_DROPDOWN_ID = "select-day-dropdown-Id";

@@ -1,17 +1,17 @@
-import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { computeDeterministicUuid } from "@/application/deterministic-identifier/compute-deterministic-uuid.util";
 
 export const getSystemPageLayoutWidgetUniversalIdentifier = ({
-  objectMetadataApplicationUniversalIdentifier,
-  pageLayoutTabUniversalIdentifier,
-  title,
+	objectMetadataApplicationUniversalIdentifier,
+	pageLayoutTabUniversalIdentifier,
+	title,
 }: {
-  objectMetadataApplicationUniversalIdentifier: string;
-  pageLayoutTabUniversalIdentifier: string;
-  title: string;
+	objectMetadataApplicationUniversalIdentifier: string;
+	pageLayoutTabUniversalIdentifier: string;
+	title: string;
 }): string =>
-  computeDeterministicUuid({
-    entityNamespace: 'pageLayoutWidget',
-    value: `${pageLayoutTabUniversalIdentifier}:${title}`,
-    applicationUniversalIdentifier:
-      objectMetadataApplicationUniversalIdentifier,
-  });
+	computeDeterministicUuid({
+		entityNamespace: "pageLayoutWidget",
+		value: `${pageLayoutTabUniversalIdentifier}:${title}`,
+		applicationUniversalIdentifier:
+			objectMetadataApplicationUniversalIdentifier,
+	});

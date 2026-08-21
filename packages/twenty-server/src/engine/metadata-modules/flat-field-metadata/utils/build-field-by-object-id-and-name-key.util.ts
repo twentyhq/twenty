@@ -1,4 +1,4 @@
 export const buildFieldByObjectIdAndNameKey = (
-  objectMetadataId: string,
-  fieldName: string,
+	objectMetadataId: string,
+	fieldName: string,
 ): string => `${objectMetadataId}:${fieldName}`;

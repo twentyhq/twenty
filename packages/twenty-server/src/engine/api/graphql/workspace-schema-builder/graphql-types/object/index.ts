@@ -1,1 +1,1 @@
-export * from './page-into.object-type';
+export * from "./page-into.object-type";

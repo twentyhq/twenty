@@ -1,80 +1,80 @@
-import { isDefined } from 'twenty-shared/utils';
-import { type Application } from '~/generated-metadata/graphql';
-import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
-import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
-import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
-import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
-import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
-import { SettingsApplicationGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationGeneralSection';
-import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
-import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
+import { isDefined } from "twenty-shared/utils";
+import { type Application } from "~/generated-metadata/graphql";
+import { useUpdateOneApplicationVariable } from "~/pages/settings/applications/hooks/useUpdateOneApplicationVariable";
+import { SettingsApplicationConnectionsSection } from "~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection";
+import { SettingsApplicationCustomSettingsSection } from "~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection";
+import { SettingsApplicationDetailEnvironmentVariablesTable } from "~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable";
+import { SettingsApplicationFunctionDomainSection } from "~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection";
+import { SettingsApplicationGeneralSection } from "~/pages/settings/applications/tabs/SettingsApplicationGeneralSection";
+import { applicationHasHttpTriggeredFunctions } from "~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions";
+import { getDisplayedApplicationVariables } from "~/pages/settings/applications/utils/getDisplayedApplicationVariables";
+import { isUpgradableApplicationSourceType } from "~/pages/settings/applications/utils/isUpgradableApplicationSourceType";
 
 export const SettingsApplicationDetailSettingsTab = ({
-  application,
+	application,
 }: {
-  application?: Pick<
-    Application,
-    | 'applicationVariables'
-    | 'id'
-    | 'universalIdentifier'
-    | 'canBeUninstalled'
-    | 'autoUpgrade'
-    | 'applicationRegistration'
-    | 'logicFunctions'
-    | 'settingsCustomTabFrontComponentId'
-  >;
+	application?: Pick<
+		Application,
+		| "applicationVariables"
+		| "id"
+		| "universalIdentifier"
+		| "canBeUninstalled"
+		| "autoUpgrade"
+		| "applicationRegistration"
+		| "logicFunctions"
+		| "settingsCustomTabFrontComponentId"
+	>;
 }) => {
-  const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
+	const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
-  const envVariables = getDisplayedApplicationVariables(
-    application?.applicationVariables ?? [],
-  );
+	const envVariables = getDisplayedApplicationVariables(
+		application?.applicationVariables ?? [],
+	);
 
-  const hasHttpTriggeredFunctions =
-    applicationHasHttpTriggeredFunctions(application);
+	const hasHttpTriggeredFunctions =
+		applicationHasHttpTriggeredFunctions(application);
 
-  const isUpgradable = isUpgradableApplicationSourceType(
-    application?.applicationRegistration?.sourceType,
-  );
+	const isUpgradable = isUpgradableApplicationSourceType(
+		application?.applicationRegistration?.sourceType,
+	);
 
-  const settingsFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
+	const settingsFrontComponentId =
+		application?.settingsCustomTabFrontComponentId;
 
-  return (
-    <>
-      {isUpgradable && application?.id && (
-        <SettingsApplicationGeneralSection
-          applicationId={application.id}
-          autoUpgrade={application.autoUpgrade}
-        />
-      )}
-      {hasHttpTriggeredFunctions && application?.id && (
-        <SettingsApplicationFunctionDomainSection
-          applicationId={application.id}
-        />
-      )}
-      {application?.id && (
-        <SettingsApplicationConnectionsSection applicationId={application.id} />
-      )}
-      {isDefined(settingsFrontComponentId) ? (
-        <SettingsApplicationCustomSettingsSection
-          frontComponentId={settingsFrontComponentId}
-        />
-      ) : (
-        <SettingsApplicationDetailEnvironmentVariablesTable
-          envVariables={envVariables}
-          onUpdate={({ key, value }) =>
-            application?.id
-              ? updateOneApplicationVariable({
-                  key,
-                  value,
-                  applicationId: application.id,
-                })
-              : null
-          }
-        />
-      )}
-    </>
-  );
+	return (
+		<>
+			{isUpgradable && application?.id && (
+				<SettingsApplicationGeneralSection
+					applicationId={application.id}
+					autoUpgrade={application.autoUpgrade}
+				/>
+			)}
+			{hasHttpTriggeredFunctions && application?.id && (
+				<SettingsApplicationFunctionDomainSection
+					applicationId={application.id}
+				/>
+			)}
+			{application?.id && (
+				<SettingsApplicationConnectionsSection applicationId={application.id} />
+			)}
+			{isDefined(settingsFrontComponentId) ? (
+				<SettingsApplicationCustomSettingsSection
+					frontComponentId={settingsFrontComponentId}
+				/>
+			) : (
+				<SettingsApplicationDetailEnvironmentVariablesTable
+					envVariables={envVariables}
+					onUpdate={({ key, value }) =>
+						application?.id
+							? updateOneApplicationVariable({
+									key,
+									value,
+									applicationId: application.id,
+								})
+							: null
+					}
+				/>
+			)}
+		</>
+	);
 };

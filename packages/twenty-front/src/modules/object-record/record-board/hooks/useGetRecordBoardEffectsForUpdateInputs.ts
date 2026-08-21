@@ -1,101 +1,101 @@
-import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
-import { type RecordBoardUpdateEffect } from '@/object-record/record-board/types/RecordBoardUpdateEffect';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, mapById } from 'twenty-shared/utils';
+import { useActiveFieldMetadataItems } from "@/object-metadata/hooks/useActiveFieldMetadataItems";
+import { type RecordBoardUpdateEffect } from "@/object-record/record-board/types/RecordBoardUpdateEffect";
+import { currentRecordFiltersComponentState } from "@/object-record/record-filter/states/currentRecordFiltersComponentState";
+import { useRecordIndexContextOrThrow } from "@/object-record/record-index/contexts/RecordIndexContext";
+import { recordIndexGroupFieldMetadataItemComponentState } from "@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState";
+import { currentRecordSortsComponentState } from "@/object-record/record-sort/states/currentRecordSortsComponentState";
+import { type ObjectRecordOperationUpdateInput } from "@/object-record/types/ObjectRecordOperationUpdateInput";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { FieldMetadataType } from "twenty-shared/types";
+import { isDefined, mapById } from "twenty-shared/utils";
 
 export const useGetRecordBoardEffectsForUpdateInputs = () => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+	const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
-    objectMetadataItem,
-  });
+	const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
+		objectMetadataItem,
+	});
 
-  const currentRecordSorts = useAtomComponentStateValue(
-    currentRecordSortsComponentState,
-  );
+	const currentRecordSorts = useAtomComponentStateValue(
+		currentRecordSortsComponentState,
+	);
 
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-  );
+	const currentRecordFilters = useAtomComponentStateValue(
+		currentRecordFiltersComponentState,
+	);
 
-  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
-    recordIndexGroupFieldMetadataItemComponentState,
-  );
+	const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
+		recordIndexGroupFieldMetadataItemComponentState,
+	);
 
-  const getRecordBoardEffectsForUpdateInputs = (
-    updateInputs: ObjectRecordOperationUpdateInput[],
-  ): RecordBoardUpdateEffect => {
-    const updatedFieldNames = new Set<string>();
-    let thereIsAnUpdateOnAFilteredField = false;
-    let thereIsAnUpdateOnASortedField = false;
-    let thereIsAnUpdateOnAGroupField = false;
+	const getRecordBoardEffectsForUpdateInputs = (
+		updateInputs: ObjectRecordOperationUpdateInput[],
+	): RecordBoardUpdateEffect => {
+		const updatedFieldNames = new Set<string>();
+		let thereIsAnUpdateOnAFilteredField = false;
+		let thereIsAnUpdateOnASortedField = false;
+		let thereIsAnUpdateOnAGroupField = false;
 
-    for (const updateInput of updateInputs) {
-      const fieldNamesForUpdateInput = updateInput.updatedFields.flatMap(
-        (updatedField) => Object.keys(updatedField ?? {}),
-      );
+		for (const updateInput of updateInputs) {
+			const fieldNamesForUpdateInput = updateInput.updatedFields.flatMap(
+				(updatedField) => Object.keys(updatedField ?? {}),
+			);
 
-      for (const fieldName of fieldNamesForUpdateInput) {
-        updatedFieldNames.add(fieldName);
-      }
+			for (const fieldName of fieldNamesForUpdateInput) {
+				updatedFieldNames.add(fieldName);
+			}
 
-      const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
-        (fieldMetadataItemToFilter) =>
-          fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
-          (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
-            fieldNamesForUpdateInput.includes(
-              `${fieldMetadataItemToFilter.name}Id`,
-            )),
-      );
+			const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
+				(fieldMetadataItemToFilter) =>
+					fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
+					(fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
+						fieldNamesForUpdateInput.includes(
+							`${fieldMetadataItemToFilter.name}Id`,
+						)),
+			);
 
-      const updatedFieldMetadataItemIds =
-        updatedFieldMetadataItems.map(mapById);
+			const updatedFieldMetadataItemIds =
+				updatedFieldMetadataItems.map(mapById);
 
-      const updateOnAFilteredField = currentRecordFilters.some((recordFilter) =>
-        updatedFieldMetadataItemIds.includes(recordFilter.fieldMetadataId),
-      );
+			const updateOnAFilteredField = currentRecordFilters.some((recordFilter) =>
+				updatedFieldMetadataItemIds.includes(recordFilter.fieldMetadataId),
+			);
 
-      const updateOnASortedField = currentRecordSorts.some((recordSort) =>
-        updatedFieldMetadataItemIds.includes(recordSort.fieldMetadataId),
-      );
+			const updateOnASortedField = currentRecordSorts.some((recordSort) =>
+				updatedFieldMetadataItemIds.includes(recordSort.fieldMetadataId),
+			);
 
-      if (isDefined(recordIndexGroupFieldMetadataItem)) {
-        if (
-          updatedFieldMetadataItemIds.includes(
-            recordIndexGroupFieldMetadataItem.id,
-          )
-        ) {
-          thereIsAnUpdateOnAGroupField = true;
-        }
-      }
+			if (isDefined(recordIndexGroupFieldMetadataItem)) {
+				if (
+					updatedFieldMetadataItemIds.includes(
+						recordIndexGroupFieldMetadataItem.id,
+					)
+				) {
+					thereIsAnUpdateOnAGroupField = true;
+				}
+			}
 
-      if (updateOnAFilteredField) {
-        thereIsAnUpdateOnAFilteredField = true;
-      }
+			if (updateOnAFilteredField) {
+				thereIsAnUpdateOnAFilteredField = true;
+			}
 
-      if (updateOnASortedField) {
-        thereIsAnUpdateOnASortedField = true;
-      }
-    }
+			if (updateOnASortedField) {
+				thereIsAnUpdateOnASortedField = true;
+			}
+		}
 
-    if (thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField) {
-      return 'trigger-initial-query';
-    }
+		if (thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField) {
+			return "trigger-initial-query";
+		}
 
-    if (updatedFieldNames.has('position') || thereIsAnUpdateOnAGroupField) {
-      return 'reposition-records';
-    }
+		if (updatedFieldNames.has("position") || thereIsAnUpdateOnAGroupField) {
+			return "reposition-records";
+		}
 
-    return 'none';
-  };
+		return "none";
+	};
 
-  return {
-    getRecordBoardEffectsForUpdateInputs,
-  };
+	return {
+		getRecordBoardEffectsForUpdateInputs,
+	};
 };

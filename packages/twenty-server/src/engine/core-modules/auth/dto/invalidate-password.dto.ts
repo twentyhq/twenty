@@ -1,9 +1,9 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field } from "@nestjs/graphql";
 
-@ObjectType('InvalidatePassword')
+@ObjectType("InvalidatePassword")
 export class InvalidatePasswordDTO {
-  @Field(() => Boolean, {
-    description: 'Boolean that confirms query was dispatched',
-  })
-  success: boolean;
+	@Field(() => Boolean, {
+		description: "Boolean that confirms query was dispatched",
+	})
+	success: boolean;
 }

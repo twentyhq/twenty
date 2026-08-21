@@ -1,7 +1,7 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
+import { type CreateFrontComponentInput } from "src/engine/metadata-modules/front-component/dtos/create-front-component.input";
 
 export type CreateFrontComponentFactoryInput = CreateFrontComponentInput;
 
@@ -14,17 +14,17 @@ const DEFAULT_FRONT_COMPONENT_GQL_FIELDS = `
 `;
 
 export const createFrontComponentQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_FRONT_COMPONENT_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_FRONT_COMPONENT_GQL_FIELDS,
 }: PerformMetadataQueryParams<CreateFrontComponentFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation CreateFrontComponent($input: CreateFrontComponentInput!) {
       createFrontComponent(input: $input) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    input,
-  },
+	variables: {
+		input,
+	},
 });

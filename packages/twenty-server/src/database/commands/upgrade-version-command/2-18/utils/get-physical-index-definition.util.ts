@@ -1,4 +1,4 @@
-import { type QueryRunner } from 'typeorm';
+import { type QueryRunner } from "typeorm";
 
 // Physical catalog introspection is an upgrade-only concern: in normal
 // operation metadata is the source of truth and migrations never need to ask
@@ -12,21 +12,21 @@ import { type QueryRunner } from 'typeorm';
 // catalog on large multi-tenant clusters. This lookup hits the unique
 // (relname, relnamespace) index on pg_class.
 export const getPhysicalIndexDefinition = async ({
-  queryRunner,
-  schemaName,
-  indexName,
+	queryRunner,
+	schemaName,
+	indexName,
 }: {
-  queryRunner: QueryRunner;
-  schemaName: string;
-  indexName: string;
+	queryRunner: QueryRunner;
+	schemaName: string;
+	indexName: string;
 }): Promise<string | null> => {
-  const result: { indexdef: string }[] = await queryRunner.query(
-    `SELECT pg_get_indexdef(c.oid) AS "indexdef"
+	const result: { indexdef: string }[] = await queryRunner.query(
+		`SELECT pg_get_indexdef(c.oid) AS "indexdef"
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE c.relname = $2 AND n.nspname = $1 AND c.relkind IN ('i', 'I')`,
-    [schemaName, indexName],
-  );
+		[schemaName, indexName],
+	);
 
-  return result[0]?.indexdef ?? null;
+	return result[0]?.indexdef ?? null;
 };

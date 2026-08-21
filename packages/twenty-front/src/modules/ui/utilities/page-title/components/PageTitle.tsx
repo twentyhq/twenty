@@ -1,13 +1,13 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
+import { Helmet } from "@dr.pogodin/react-helmet";
 
 type PageTitleProps = {
-  title: string;
+	title: string;
 };
 
 export const PageTitle = (props: PageTitleProps) => {
-  return (
-    <Helmet>
-      <title>{props.title}</title>
-    </Helmet>
-  );
+	return (
+		<Helmet>
+			<title>{props.title}</title>
+		</Helmet>
+	);
 };

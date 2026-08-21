@@ -1,4 +1,4 @@
-import { type FindManyApplicationsForToolTableQuery } from '~/generated-metadata/graphql';
+import { type FindManyApplicationsForToolTableQuery } from "~/generated-metadata/graphql";
 
 export type SettingsAgentToolApplication =
-  FindManyApplicationsForToolTableQuery['findManyApplications'][number];
+	FindManyApplicationsForToolTableQuery["findManyApplications"][number];

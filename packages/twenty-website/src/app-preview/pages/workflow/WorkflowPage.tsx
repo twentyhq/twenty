@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { THEME_LIGHT } from 'twenty-ui/theme';
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { THEME_LIGHT } from "twenty-ui/theme";
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
-import { WORKFLOW_GRAPH } from './workflow-data';
-import { WorkflowBranchLabel } from './WorkflowBranchLabel';
-import { WorkflowEdges } from './WorkflowEdges';
-import { WorkflowNode } from './WorkflowNode';
-import { WORKFLOW_THEME } from './workflow-theme';
-import { type WorkflowPageDefinition } from '../../types';
+import { WORKFLOW_GRAPH } from "./workflow-data";
+import { WorkflowBranchLabel } from "./WorkflowBranchLabel";
+import { WorkflowEdges } from "./WorkflowEdges";
+import { WorkflowNode } from "./WorkflowNode";
+import { WORKFLOW_THEME } from "./workflow-theme";
+import { type WorkflowPageDefinition } from "../../types";
 
 const colors = WORKFLOW_THEME.colors;
 
@@ -89,59 +89,59 @@ const ActiveBadgeLabel = styled.span`
 // The named workflows render the authored default graph; a page may
 // carry its own nodes/edges (the type allows it, as on the old site).
 export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
-  const nodes = page.nodes ?? WORKFLOW_GRAPH.nodes;
-  const edges = page.edges ?? (page.nodes ? [] : WORKFLOW_GRAPH.edges);
-  const branchLabels =
-    page.branchLabels ?? (page.nodes ? [] : WORKFLOW_GRAPH.branchLabels);
+	const nodes = page.nodes ?? WORKFLOW_GRAPH.nodes;
+	const edges = page.edges ?? (page.nodes ? [] : WORKFLOW_GRAPH.edges);
+	const branchLabels =
+		page.branchLabels ?? (page.nodes ? [] : WORKFLOW_GRAPH.branchLabels);
 
-  return (
-    <PageShell>
-      <CanvasViewportShell>
-        <ActiveBadge>
-          <ActiveBadgeLabel>Active</ActiveBadgeLabel>
-        </ActiveBadge>
-        <CanvasViewport
-          aria-label={`Interactive preview of the ${page.header.title.toLowerCase()} workflow`}
-        >
-          <Canvas
-            $height={WORKFLOW_THEME.canvasHeightPx}
-            $width={WORKFLOW_THEME.canvasWidthPx}
-          >
-            <CanvasContent
-              $height={WORKFLOW_THEME.canvasHeightPx}
-              $width={WORKFLOW_THEME.canvasWidthPx}
-              data-workflow-canvas
-            >
-              {page.generating ? null : (
-                <WorkflowEdges
-                  canvasHeight={WORKFLOW_THEME.canvasHeightPx}
-                  canvasWidth={WORKFLOW_THEME.canvasWidthPx}
-                  edges={edges}
-                  nodes={nodes}
-                />
-              )}
-              {nodes.map((node, index) => (
-                <WorkflowNode
-                  generating={page.generating}
-                  index={index}
-                  key={node.id}
-                  node={node}
-                />
-              ))}
-              {page.generating
-                ? null
-                : branchLabels.map((label) => (
-                    <WorkflowBranchLabel
-                      key={`${label.text}-${label.x}`}
-                      text={label.text}
-                      x={label.x}
-                      y={label.y}
-                    />
-                  ))}
-            </CanvasContent>
-          </Canvas>
-        </CanvasViewport>
-      </CanvasViewportShell>
-    </PageShell>
-  );
+	return (
+		<PageShell>
+			<CanvasViewportShell>
+				<ActiveBadge>
+					<ActiveBadgeLabel>Active</ActiveBadgeLabel>
+				</ActiveBadge>
+				<CanvasViewport
+					aria-label={`Interactive preview of the ${page.header.title.toLowerCase()} workflow`}
+				>
+					<Canvas
+						$height={WORKFLOW_THEME.canvasHeightPx}
+						$width={WORKFLOW_THEME.canvasWidthPx}
+					>
+						<CanvasContent
+							$height={WORKFLOW_THEME.canvasHeightPx}
+							$width={WORKFLOW_THEME.canvasWidthPx}
+							data-workflow-canvas
+						>
+							{page.generating ? null : (
+								<WorkflowEdges
+									canvasHeight={WORKFLOW_THEME.canvasHeightPx}
+									canvasWidth={WORKFLOW_THEME.canvasWidthPx}
+									edges={edges}
+									nodes={nodes}
+								/>
+							)}
+							{nodes.map((node, index) => (
+								<WorkflowNode
+									generating={page.generating}
+									index={index}
+									key={node.id}
+									node={node}
+								/>
+							))}
+							{page.generating
+								? null
+								: branchLabels.map((label) => (
+										<WorkflowBranchLabel
+											key={`${label.text}-${label.x}`}
+											text={label.text}
+											x={label.x}
+											y={label.y}
+										/>
+									))}
+						</CanvasContent>
+					</Canvas>
+				</CanvasViewport>
+			</CanvasViewportShell>
+		</PageShell>
+	);
 }

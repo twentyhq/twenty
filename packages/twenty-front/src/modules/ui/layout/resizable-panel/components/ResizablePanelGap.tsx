@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { useResizablePanel } from '@/ui/layout/resizable-panel/hooks/useResizablePanel';
-import { type ResizablePanelConstraints } from '@/ui/layout/resizable-panel/types/ResizablePanelConstraints';
-import { type ResizablePanelSide } from '@/ui/layout/resizable-panel/types/ResizablePanelSide';
+import { useResizablePanel } from "@/ui/layout/resizable-panel/hooks/useResizablePanel";
+import { type ResizablePanelConstraints } from "@/ui/layout/resizable-panel/types/ResizablePanelConstraints";
+import { type ResizablePanelSide } from "@/ui/layout/resizable-panel/types/ResizablePanelSide";
 
 // Horizontal padding offset by an equal negative margin keeps the resize
 // handle grabbable even when the visual gap is 0, without shifting neighbors.
@@ -20,43 +20,43 @@ const StyledGap = styled.div<{ gapWidth: number }>`
 `;
 
 type ResizablePanelGapProps = {
-  side: ResizablePanelSide;
-  constraints: ResizablePanelConstraints;
-  currentWidth: number;
-  onWidthChange: (width: number) => void;
-  onCollapse: () => void;
-  gapWidth: number;
-  cssVariableName?: string;
-  onResizeStart?: () => void;
+	side: ResizablePanelSide;
+	constraints: ResizablePanelConstraints;
+	currentWidth: number;
+	onWidthChange: (width: number) => void;
+	onCollapse: () => void;
+	gapWidth: number;
+	cssVariableName?: string;
+	onResizeStart?: () => void;
 };
 
 export const ResizablePanelGap = ({
-  side,
-  constraints,
-  currentWidth,
-  onWidthChange,
-  onCollapse,
-  gapWidth,
-  cssVariableName,
-  onResizeStart,
+	side,
+	constraints,
+	currentWidth,
+	onWidthChange,
+	onCollapse,
+	gapWidth,
+	cssVariableName,
+	onResizeStart,
 }: ResizablePanelGapProps) => {
-  const { handleMouseDown, handleMouseEnter, handleMouseLeave } =
-    useResizablePanel({
-      side,
-      constraints,
-      currentWidth,
-      onWidthChange,
-      onCollapse,
-      cssVariableName,
-      onResizeStart,
-    });
+	const { handleMouseDown, handleMouseEnter, handleMouseLeave } =
+		useResizablePanel({
+			side,
+			constraints,
+			currentWidth,
+			onWidthChange,
+			onCollapse,
+			cssVariableName,
+			onResizeStart,
+		});
 
-  return (
-    <StyledGap
-      gapWidth={gapWidth}
-      onMouseDown={handleMouseDown}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    />
-  );
+	return (
+		<StyledGap
+			gapWidth={gapWidth}
+			onMouseDown={handleMouseDown}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
+		/>
+	);
 };

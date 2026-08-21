@@ -1,8 +1,8 @@
-import { createRequiredContext } from '~/utils/createRequiredContext';
+import { createRequiredContext } from "~/utils/createRequiredContext";
 
 type SidePanelContextType = {
-  isInSidePanel: boolean;
+	isInSidePanel: boolean;
 };
 
 export const [SidePanelProvider, useIsInSidePanelOrThrow] =
-  createRequiredContext<SidePanelContextType>('SidePanel');
+	createRequiredContext<SidePanelContextType>("SidePanel");

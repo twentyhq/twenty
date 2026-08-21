@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconArrowBackUp, IconArrowUp } from '@tabler/icons-react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconArrowBackUp, IconArrowUp } from "@tabler/icons-react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { TerminalSendButtonFingerHint } from './TerminalSendButtonFingerHint';
-import { useTerminalSendButtonHint } from './use-terminal-send-button-hint';
+import { TerminalSendButtonFingerHint } from "./TerminalSendButtonFingerHint";
+import { useTerminalSendButtonHint } from "./use-terminal-send-button-hint";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -20,11 +20,11 @@ const SendButtonWrapper = styled.span`
 const SendButtonRoot = styled.button<{ $isReset: boolean }>`
   align-items: center;
   background: ${({ $isReset }) =>
-    $isReset ? terminal.accent.reset : terminal.accent.brand};
+		$isReset ? terminal.accent.reset : terminal.accent.brand};
   border: none;
   border-radius: 999px;
   box-shadow: ${({ $isReset }) =>
-    $isReset ? 'none' : terminal.accent.sendShadow};
+		$isReset ? "none" : terminal.accent.sendShadow};
   color: ${terminal.accent.onAccent};
   cursor: pointer;
   display: flex;
@@ -39,7 +39,7 @@ const SendButtonRoot = styled.button<{ $isReset: boolean }>`
 
   &:hover:not(:disabled) {
     background: ${({ $isReset }) =>
-      $isReset ? terminal.accent.resetHover : terminal.accent.brandHover};
+			$isReset ? terminal.accent.resetHover : terminal.accent.brandHover};
   }
 
   &:active:not(:disabled) {
@@ -53,49 +53,49 @@ const SendButtonRoot = styled.button<{ $isReset: boolean }>`
 `;
 
 export function TerminalSendButton({
-  onClick,
-  disabled,
-  mode = 'send',
+	onClick,
+	disabled,
+	mode = "send",
 }: {
-  onClick?: () => void;
-  disabled?: boolean;
-  mode?: 'send' | 'reset';
+	onClick?: () => void;
+	disabled?: boolean;
+	mode?: "send" | "reset";
 }) {
-  const { i18n } = useLingui();
-  const isReset = mode === 'reset';
-  const { buttonRef, dismissHint, hintPosition, hintReady, showHint } =
-    useTerminalSendButtonHint({
-      disabled,
-      isReset,
-    });
+	const { i18n } = useLingui();
+	const isReset = mode === "reset";
+	const { buttonRef, dismissHint, hintPosition, hintReady, showHint } =
+		useTerminalSendButtonHint({
+			disabled,
+			isReset,
+		});
 
-  return (
-    <SendButtonWrapper>
-      <SendButtonRoot
-        $isReset={isReset}
-        aria-label={
-          isReset ? i18n._(msg`Reset conversation`) : i18n._(msg`Send message`)
-        }
-        disabled={disabled}
-        onClick={() => {
-          dismissHint();
-          onClick?.();
-        }}
-        onMouseEnter={dismissHint}
-        ref={buttonRef}
-        type="button"
-      >
-        {isReset ? (
-          <IconArrowBackUp size={16} stroke={2.2} />
-        ) : (
-          <IconArrowUp size={16} stroke={2.2} />
-        )}
-      </SendButtonRoot>
-      <TerminalSendButtonFingerHint
-        position={hintPosition}
-        ready={hintReady}
-        visible={showHint}
-      />
-    </SendButtonWrapper>
-  );
+	return (
+		<SendButtonWrapper>
+			<SendButtonRoot
+				$isReset={isReset}
+				aria-label={
+					isReset ? i18n._(msg`Reset conversation`) : i18n._(msg`Send message`)
+				}
+				disabled={disabled}
+				onClick={() => {
+					dismissHint();
+					onClick?.();
+				}}
+				onMouseEnter={dismissHint}
+				ref={buttonRef}
+				type="button"
+			>
+				{isReset ? (
+					<IconArrowBackUp size={16} stroke={2.2} />
+				) : (
+					<IconArrowUp size={16} stroke={2.2} />
+				)}
+			</SendButtonRoot>
+			<TerminalSendButtonFingerHint
+				position={hintPosition}
+				ready={hintReady}
+				visible={showHint}
+			/>
+		</SendButtonWrapper>
+	);
 }

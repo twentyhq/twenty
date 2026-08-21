@@ -1,5 +1,5 @@
 export const computeRecordShowComponentInstanceId = (
-  objectRecordId: string,
+	objectRecordId: string,
 ) => {
-  return `record-show-${objectRecordId}`;
+	return `record-show-${objectRecordId}`;
 };

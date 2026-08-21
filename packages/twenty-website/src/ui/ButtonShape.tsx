@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { DURATION, EASING } from '@/tokens';
+import { DURATION, EASING } from "@/tokens";
 
 // Purely geometric 9-slice for the brand's beveled button: rounded left cap,
 // stretching middle, curved-bevel right cap. All color comes from the
@@ -48,54 +48,54 @@ const Middle = styled.span`
 `;
 
 const leftFillPath = (height: number): string =>
-  `M4 0 A4 4 0 0 0 0 4 V${height - 4} A4 4 0 0 0 4 ${height} Z`;
+	`M4 0 A4 4 0 0 0 0 4 V${height - 4} A4 4 0 0 0 4 ${height} Z`;
 
 const leftStrokePath = (height: number): string =>
-  `M4 0.5 A3.5 3.5 0 0 0 0.5 4 V${height - 4} A3.5 3.5 0 0 0 4 ${height - 0.5}`;
+	`M4 0.5 A3.5 3.5 0 0 0 0.5 4 V${height - 4} A3.5 3.5 0 0 0 4 ${height - 0.5}`;
 
 const rightFillPath = (height: number): string => {
-  const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
-  return `M0 0 h11 a4 4 0 0 1 4 4 v${straight} a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 ${height} H0 Z`;
+	const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
+	return `M0 0 h11 a4 4 0 0 1 4 4 v${straight} a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 ${height} H0 Z`;
 };
 
 const rightStrokePath = (height: number): string => {
-  const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
-  return `M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v${straight} a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0`;
+	const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
+	return `M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v${straight} a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0`;
 };
 
 export type ButtonShapeProps = {
-  heightPx: number;
-  outlined?: boolean;
+	heightPx: number;
+	outlined?: boolean;
 };
 
 export function ButtonShape({ heightPx, outlined = false }: ButtonShapeProps) {
-  return (
-    <ShapeRow aria-hidden>
-      <svg
-        height={heightPx}
-        viewBox={`0 0 4 ${heightPx}`}
-        width="4"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {outlined ? (
-          <path d={leftStrokePath(heightPx)} data-stroke />
-        ) : (
-          <path d={leftFillPath(heightPx)} data-fill />
-        )}
-      </svg>
-      <Middle />
-      <svg
-        height={heightPx}
-        viewBox={`0 0 ${RIGHT_CAP_WIDTH} ${heightPx}`}
-        width={RIGHT_CAP_WIDTH}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {outlined ? (
-          <path d={rightStrokePath(heightPx)} data-stroke />
-        ) : (
-          <path d={rightFillPath(heightPx)} data-fill />
-        )}
-      </svg>
-    </ShapeRow>
-  );
+	return (
+		<ShapeRow aria-hidden>
+			<svg
+				height={heightPx}
+				viewBox={`0 0 4 ${heightPx}`}
+				width="4"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				{outlined ? (
+					<path d={leftStrokePath(heightPx)} data-stroke />
+				) : (
+					<path d={leftFillPath(heightPx)} data-fill />
+				)}
+			</svg>
+			<Middle />
+			<svg
+				height={heightPx}
+				viewBox={`0 0 ${RIGHT_CAP_WIDTH} ${heightPx}`}
+				width={RIGHT_CAP_WIDTH}
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				{outlined ? (
+					<path d={rightStrokePath(heightPx)} data-stroke />
+				) : (
+					<path d={rightFillPath(heightPx)} data-fill />
+				)}
+			</svg>
+		</ShapeRow>
+	);
 }

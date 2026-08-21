@@ -1,16 +1,16 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
-import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleHandoffTargetElementId';
-import { WELCOME_TITLE_MESSAGE } from '@/onboarding/constants/WelcomeTitleMessage';
-import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
-import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { WelcomePersonChip } from "@/onboarding/components/WelcomeOverlay/WelcomePersonChip";
+import { WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID } from "@/onboarding/constants/WelcomeTitleHandoffTargetElementId";
+import { WELCOME_TITLE_MESSAGE } from "@/onboarding/constants/WelcomeTitleMessage";
+import { isWelcomeAnimationLeavingState } from "@/onboarding/states/isWelcomeAnimationLeavingState";
+import { isWelcomeAnimationVisibleState } from "@/onboarding/states/isWelcomeAnimationVisibleState";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
 
 const StyledPreamble = styled.div<{
-  isHiddenBehindOverlay: boolean;
+	isHiddenBehindOverlay: boolean;
 }>`
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.regular};
@@ -68,34 +68,34 @@ const StyledContinuation = styled.span`
 `;
 
 export const WorkspaceSetupChatPreamble = () => {
-  const { t } = useLingui();
-  const isWelcomeAnimationVisible = useAtomStateValue(
-    isWelcomeAnimationVisibleState,
-  );
-  const isWelcomeAnimationLeaving = useAtomStateValue(
-    isWelcomeAnimationLeavingState,
-  );
+	const { t } = useLingui();
+	const isWelcomeAnimationVisible = useAtomStateValue(
+		isWelcomeAnimationVisibleState,
+	);
+	const isWelcomeAnimationLeaving = useAtomStateValue(
+		isWelcomeAnimationLeavingState,
+	);
 
-  const revealClassName = isWelcomeAnimationLeaving
-    ? 'is-revealing-after-flight'
-    : undefined;
+	const revealClassName = isWelcomeAnimationLeaving
+		? "is-revealing-after-flight"
+		: undefined;
 
-  return (
-    <StyledPreamble
-      isHiddenBehindOverlay={
-        isWelcomeAnimationVisible && !isWelcomeAnimationLeaving
-      }
-    >
-      <StyledSingleLineHandoffRun
-        id={WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID}
-        className={revealClassName}
-      >
-        {t(WELCOME_TITLE_MESSAGE)}
-        <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
-      </StyledSingleLineHandoffRun>{' '}
-      <StyledContinuation className={revealClassName}>
-        {t`It natively comes with 7 standard objects.`}
-      </StyledContinuation>
-    </StyledPreamble>
-  );
+	return (
+		<StyledPreamble
+			isHiddenBehindOverlay={
+				isWelcomeAnimationVisible && !isWelcomeAnimationLeaving
+			}
+		>
+			<StyledSingleLineHandoffRun
+				id={WELCOME_TITLE_HANDOFF_TARGET_ELEMENT_ID}
+				className={revealClassName}
+			>
+				{t(WELCOME_TITLE_MESSAGE)}
+				<WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
+			</StyledSingleLineHandoffRun>{" "}
+			<StyledContinuation className={revealClassName}>
+				{t`It natively comes with 7 standard objects.`}
+			</StyledContinuation>
+		</StyledPreamble>
+	);
 };

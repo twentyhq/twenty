@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const TRACK_ANALYTICS = gql`
   mutation TrackAnalytics(

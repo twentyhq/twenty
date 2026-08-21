@@ -1,1 +1,1 @@
-export const DEFAULT_RECALL_REGION = 'eu-central-1';
+export const DEFAULT_RECALL_REGION = "eu-central-1";

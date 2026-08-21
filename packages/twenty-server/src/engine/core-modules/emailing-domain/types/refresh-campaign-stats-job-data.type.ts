@@ -1,4 +1,4 @@
 export type RefreshCampaignStatsJobData = {
-  workspaceId: string;
-  campaignId: string;
+	workspaceId: string;
+	campaignId: string;
 };

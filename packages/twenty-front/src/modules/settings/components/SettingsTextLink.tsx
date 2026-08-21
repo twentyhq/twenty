@@ -1,28 +1,28 @@
-import { css, cx } from '@linaria/core';
-import { type MouseEventHandler, type ReactNode } from 'react';
-import { Link, type LinkProps } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { css, cx } from "@linaria/core";
+import { type MouseEventHandler, type ReactNode } from "react";
+import { Link, type LinkProps } from "react-router-dom";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-type SettingsTextLinkVariant = 'primary' | 'secondary';
+type SettingsTextLinkVariant = "primary" | "secondary";
 
 type SettingsTextLinkCommonProps = {
-  children: ReactNode;
-  className?: string;
-  title?: string;
-  variant?: SettingsTextLinkVariant;
+	children: ReactNode;
+	className?: string;
+	title?: string;
+	variant?: SettingsTextLinkVariant;
 };
 
 type SettingsTextLinkProps =
-  | (SettingsTextLinkCommonProps & {
-      disabled?: boolean;
-      onClick?: MouseEventHandler<HTMLButtonElement>;
-      to?: undefined;
-    })
-  | (SettingsTextLinkCommonProps & {
-      disabled?: never;
-      onClick?: MouseEventHandler<HTMLAnchorElement>;
-      to: LinkProps['to'];
-    });
+	| (SettingsTextLinkCommonProps & {
+			disabled?: boolean;
+			onClick?: MouseEventHandler<HTMLButtonElement>;
+			to?: undefined;
+	  })
+	| (SettingsTextLinkCommonProps & {
+			disabled?: never;
+			onClick?: MouseEventHandler<HTMLAnchorElement>;
+			to: LinkProps["to"];
+	  });
 
 const settingsTextLinkBaseClassName = css`
   background: none;
@@ -64,42 +64,42 @@ const settingsTextLinkSecondaryClassName = css`
 `;
 
 export const SettingsTextLink = ({
-  children,
-  className,
-  title,
-  variant = 'primary',
-  ...props
+	children,
+	className,
+	title,
+	variant = "primary",
+	...props
 }: SettingsTextLinkProps) => {
-  const textLinkClassName = cx(
-    settingsTextLinkBaseClassName,
-    variant === 'primary'
-      ? settingsTextLinkPrimaryClassName
-      : settingsTextLinkSecondaryClassName,
-    className,
-  );
+	const textLinkClassName = cx(
+		settingsTextLinkBaseClassName,
+		variant === "primary"
+			? settingsTextLinkPrimaryClassName
+			: settingsTextLinkSecondaryClassName,
+		className,
+	);
 
-  if (props.to !== undefined) {
-    return (
-      <Link
-        className={textLinkClassName}
-        onClick={props.onClick}
-        title={title}
-        to={props.to}
-      >
-        {children}
-      </Link>
-    );
-  }
+	if (props.to !== undefined) {
+		return (
+			<Link
+				className={textLinkClassName}
+				onClick={props.onClick}
+				title={title}
+				to={props.to}
+			>
+				{children}
+			</Link>
+		);
+	}
 
-  return (
-    <button
-      className={textLinkClassName}
-      disabled={props.disabled ?? false}
-      onClick={props.onClick}
-      title={title}
-      type="button"
-    >
-      {children}
-    </button>
-  );
+	return (
+		<button
+			className={textLinkClassName}
+			disabled={props.disabled ?? false}
+			onClick={props.onClick}
+			title={title}
+			type="button"
+		>
+			{children}
+		</button>
+	);
 };

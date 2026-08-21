@@ -1,8 +1,8 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type DeleteNavigationMenuItemFactoryInput = {
-  id: string;
+	id: string;
 };
 
 const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
@@ -12,17 +12,17 @@ const DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS = `
 `;
 
 export const deleteNavigationMenuItemQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_NAVIGATION_MENU_ITEM_GQL_FIELDS,
 }: PerformMetadataQueryParams<DeleteNavigationMenuItemFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation DeleteNavigationMenuItem($id: UUID!) {
       deleteNavigationMenuItem(id: $id) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: input.id,
-  },
+	variables: {
+		id: input.id,
+	},
 });

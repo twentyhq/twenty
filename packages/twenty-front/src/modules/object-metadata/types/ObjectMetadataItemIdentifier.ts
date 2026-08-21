@@ -1,3 +1,3 @@
 export type ObjectMetadataItemIdentifier = {
-  objectNameSingular: string;
+	objectNameSingular: string;
 };

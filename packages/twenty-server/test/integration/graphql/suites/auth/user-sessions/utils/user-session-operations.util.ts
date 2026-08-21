@@ -1,8 +1,8 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 export const currentUserIdentityQueryFactory = () => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       query CurrentUser {
         currentUser {
           id
@@ -10,13 +10,13 @@ export const currentUserIdentityQueryFactory = () => {
         }
       }
     `,
-    variables: {},
-  };
+		variables: {},
+	};
 };
 
 export const currentUserWorkspaceContextQueryFactory = () => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       query CurrentUserWorkspaceContext {
         currentUser {
           id
@@ -30,13 +30,13 @@ export const currentUserWorkspaceContextQueryFactory = () => {
         }
       }
     `,
-    variables: {},
-  };
+		variables: {},
+	};
 };
 
 export const currentUserSessionsQueryFactory = () => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       query CurrentUserSessions {
         currentUserSessions {
           id
@@ -49,47 +49,47 @@ export const currentUserSessionsQueryFactory = () => {
         }
       }
     `,
-    variables: {},
-  };
+		variables: {},
+	};
 };
 
 export const revokeUserSessionQueryFactory = ({
-  userSessionId,
+	userSessionId,
 }: {
-  userSessionId: string;
+	userSessionId: string;
 }) => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation RevokeUserSession($userSessionId: UUID!) {
         revokeUserSession(userSessionId: $userSessionId)
       }
     `,
-    variables: { userSessionId },
-  };
+		variables: { userSessionId },
+	};
 };
 
 export const revokeAllOtherUserSessionsQueryFactory = () => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation RevokeAllOtherUserSessions {
         revokeAllOtherUserSessions
       }
     `,
-    variables: {},
-  };
+		variables: {},
+	};
 };
 
 export const signOutQueryFactory = ({
-  refreshToken,
+	refreshToken,
 }: {
-  refreshToken?: string;
+	refreshToken?: string;
 } = {}) => {
-  return {
-    query: gql`
+	return {
+		query: gql`
       mutation SignOut($refreshToken: String) {
         signOut(refreshToken: $refreshToken)
       }
     `,
-    variables: { refreshToken },
-  };
+		variables: { refreshToken },
+	};
 };

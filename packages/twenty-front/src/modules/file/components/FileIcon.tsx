@@ -1,23 +1,23 @@
-import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
-import { useFileIconColors } from '@/file/hooks/useFileIconColors';
-import { IconMapping } from '@/file/utils/fileIconMappings';
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useState } from 'react';
-import { FILE_CATEGORIES, type FileCategory } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type AttachmentFileCategory } from "@/activities/files/types/AttachmentFileCategory";
+import { useFileIconColors } from "@/file/hooks/useFileIconColors";
+import { IconMapping } from "@/file/utils/fileIconMappings";
+import { styled } from "@linaria/react";
+import { isNonEmptyString } from "@sniptt/guards";
+import { useContext, useState } from "react";
+import { FILE_CATEGORIES, type FileCategory } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
+import { AvatarOrIcon } from "twenty-ui/data-display";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
-type FileIconSize = 'small' | 'medium';
+type FileIconSize = "small" | "medium";
 
 const THUMBNAIL_SIZE_PX_BY_FILE_ICON_SIZE: Record<FileIconSize, number> = {
-  small: 14,
-  medium: 24,
+	small: 14,
+	medium: 24,
 };
 
 const StyledIconContainer = styled.div<{
-  background: string;
+	background: string;
 }>`
   align-items: center;
   background: ${({ background }) => background};
@@ -38,54 +38,54 @@ const StyledThumbnail = styled.img<{ sizePx: number }>`
 `;
 
 type FileIconProps = {
-  fileCategory: AttachmentFileCategory | FileCategory;
-  size?: FileIconSize;
-  thumbnailUrl?: string;
+	fileCategory: AttachmentFileCategory | FileCategory;
+	size?: FileIconSize;
+	thumbnailUrl?: string;
 };
 
 export const FileIcon = ({
-  fileCategory,
-  size = 'medium',
-  thumbnailUrl,
+	fileCategory,
+	size = "medium",
+	thumbnailUrl,
 }: FileIconProps) => {
-  const { theme } = useContext(ThemeContext);
-  const iconColors = useFileIconColors();
-  const Icon = IconMapping[fileCategory];
-  const [failedThumbnailUrl, setFailedThumbnailUrl] = useState<string>();
+	const { theme } = useContext(ThemeContext);
+	const iconColors = useFileIconColors();
+	const Icon = IconMapping[fileCategory];
+	const [failedThumbnailUrl, setFailedThumbnailUrl] = useState<string>();
 
-  const shouldRenderThumbnail =
-    fileCategory === FILE_CATEGORIES.IMAGE &&
-    isNonEmptyString(thumbnailUrl) &&
-    failedThumbnailUrl !== thumbnailUrl;
+	const shouldRenderThumbnail =
+		fileCategory === FILE_CATEGORIES.IMAGE &&
+		isNonEmptyString(thumbnailUrl) &&
+		failedThumbnailUrl !== thumbnailUrl;
 
-  if (shouldRenderThumbnail) {
-    return (
-      <StyledThumbnail
-        alt=""
-        aria-hidden
-        sizePx={THUMBNAIL_SIZE_PX_BY_FILE_ICON_SIZE[size]}
-        src={thumbnailUrl}
-        onError={() => setFailedThumbnailUrl(thumbnailUrl)}
-      />
-    );
-  }
+	if (shouldRenderThumbnail) {
+		return (
+			<StyledThumbnail
+				alt=""
+				aria-hidden
+				sizePx={THUMBNAIL_SIZE_PX_BY_FILE_ICON_SIZE[size]}
+				src={thumbnailUrl}
+				onError={() => setFailedThumbnailUrl(thumbnailUrl)}
+			/>
+		);
+	}
 
-  if (size === 'small') {
-    return (
-      <AvatarOrIcon
-        Icon={Icon}
-        IconBackgroundColor={iconColors[fileCategory] ?? theme.color.gray}
-      />
-    );
-  }
+	if (size === "small") {
+		return (
+			<AvatarOrIcon
+				Icon={Icon}
+				IconBackgroundColor={iconColors[fileCategory] ?? theme.color.gray}
+			/>
+		);
+	}
 
-  return (
-    <StyledIconContainer
-      background={iconColors[fileCategory] ?? theme.color.gray}
-    >
-      {isDefined(Icon) && (
-        <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-      )}
-    </StyledIconContainer>
-  );
+	return (
+		<StyledIconContainer
+			background={iconColors[fileCategory] ?? theme.color.gray}
+		>
+			{isDefined(Icon) && (
+				<Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+			)}
+		</StyledIconContainer>
+	);
 };

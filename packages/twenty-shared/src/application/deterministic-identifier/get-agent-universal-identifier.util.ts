@@ -1,14 +1,14 @@
-import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { computeDeterministicUuid } from "@/application/deterministic-identifier/compute-deterministic-uuid.util";
 
 export const getAgentUniversalIdentifier = ({
-  applicationUniversalIdentifier,
-  name,
+	applicationUniversalIdentifier,
+	name,
 }: {
-  applicationUniversalIdentifier: string;
-  name: string;
+	applicationUniversalIdentifier: string;
+	name: string;
 }): string =>
-  computeDeterministicUuid({
-    entityNamespace: 'agent',
-    value: name,
-    applicationUniversalIdentifier,
-  });
+	computeDeterministicUuid({
+		entityNamespace: "agent",
+		value: name,
+		applicationUniversalIdentifier,
+	});

@@ -1,4 +1,4 @@
 export type SlackEventsEnqueueResult = {
-  ok: boolean;
-  skipped?: string;
+	ok: boolean;
+	skipped?: string;
 };

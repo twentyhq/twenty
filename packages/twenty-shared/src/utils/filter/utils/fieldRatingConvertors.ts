@@ -1,19 +1,19 @@
-import { RATING_VALUES } from '@/constants';
-import { type FieldRatingValue } from '@/types';
+import { RATING_VALUES } from "@/constants";
+import { type FieldRatingValue } from "@/types";
 
 export const convertGreaterThanOrEqualRatingToArrayOfRatingValues = (
-  greaterThanValue: number,
+	greaterThanValue: number,
 ) =>
-  RATING_VALUES.filter(
-    (ratingValue) => +ratingValue.split('_')[1] >= greaterThanValue,
-  );
+	RATING_VALUES.filter(
+		(ratingValue) => +ratingValue.split("_")[1] >= greaterThanValue,
+	);
 
 export const convertLessThanOrEqualRatingToArrayOfRatingValues = (
-  lessThanValue: number,
+	lessThanValue: number,
 ) =>
-  RATING_VALUES.filter(
-    (ratingValue) => +ratingValue.split('_')[1] <= lessThanValue,
-  );
+	RATING_VALUES.filter(
+		(ratingValue) => +ratingValue.split("_")[1] <= lessThanValue,
+	);
 
 export const convertRatingToRatingValue = (rating: number) =>
-  `RATING_${rating}` as FieldRatingValue;
+	`RATING_${rating}` as FieldRatingValue;

@@ -1,147 +1,147 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
-import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
+import { ALLOWED_HTML_ELEMENTS } from "@/constants/AllowedHtmlElements";
+import { isAriaOrDataAttribute } from "@/remote/elements/utils/isAriaOrDataAttribute";
 
 const PROPERTY_MAPPED_ATTRIBUTES = [
-  { attributeName: 'class', elementPropertyName: 'className' },
-  { attributeName: 'for', elementPropertyName: 'htmlFor' },
-  { attributeName: 'tabindex', elementPropertyName: 'tabIndex' },
-  { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
+	{ attributeName: "class", elementPropertyName: "className" },
+	{ attributeName: "for", elementPropertyName: "htmlFor" },
+	{ attributeName: "tabindex", elementPropertyName: "tabIndex" },
+	{ attributeName: "srcdoc", elementPropertyName: "srcDoc" },
 ];
 
 const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
-  PROPERTY_MAPPED_ATTRIBUTES.flatMap(
-    ({ attributeName, elementPropertyName }): [string, string][] => [
-      [attributeName, elementPropertyName],
-      [elementPropertyName, elementPropertyName],
-    ],
-  ),
+	PROPERTY_MAPPED_ATTRIBUTES.flatMap(
+		({ attributeName, elementPropertyName }): [string, string][] => [
+			[attributeName, elementPropertyName],
+			[elementPropertyName, elementPropertyName],
+		],
+	),
 );
 
 type RemoteElementWithAttributeUpdater = Element &
-  Record<string, unknown> & {
-    updateRemoteAttribute: (attributeName: string, value?: string) => void;
-  };
+	Record<string, unknown> & {
+		updateRemoteAttribute: (attributeName: string, value?: string) => void;
+	};
 
 type RemoteElementConstructor = CustomElementConstructor & {
-  observedAttributes?: string[];
-  prototype: RemoteElementWithAttributeUpdater;
+	observedAttributes?: string[];
+	prototype: RemoteElementWithAttributeUpdater;
 };
 
 export const patchRemoteElementAttributes = (): void => {
-  for (const allowedHtmlElement of ALLOWED_HTML_ELEMENTS) {
-    const elementConstructor = customElements.get(allowedHtmlElement.tag) as
-      | RemoteElementConstructor
-      | undefined;
+	for (const allowedHtmlElement of ALLOWED_HTML_ELEMENTS) {
+		const elementConstructor = customElements.get(allowedHtmlElement.tag) as
+			| RemoteElementConstructor
+			| undefined;
 
-    if (!isDefined(elementConstructor)) {
-      continue;
-    }
+		if (!isDefined(elementConstructor)) {
+			continue;
+		}
 
-    const attributeNamesAlreadySyncedByRemoteDom = new Set<string>(
-      elementConstructor.observedAttributes ?? [],
-    );
+		const attributeNamesAlreadySyncedByRemoteDom = new Set<string>(
+			elementConstructor.observedAttributes ?? [],
+		);
 
-    const shouldForwardAttributeAcrossBoundary = (
-      attributeName: string,
-    ): boolean =>
-      isAriaOrDataAttribute(attributeName) &&
-      !attributeNamesAlreadySyncedByRemoteDom.has(attributeName);
+		const shouldForwardAttributeAcrossBoundary = (
+			attributeName: string,
+		): boolean =>
+			isAriaOrDataAttribute(attributeName) &&
+			!attributeNamesAlreadySyncedByRemoteDom.has(attributeName);
 
-    const originalGetAttribute = elementConstructor.prototype.getAttribute;
+		const originalGetAttribute = elementConstructor.prototype.getAttribute;
 
-    elementConstructor.prototype.getAttribute = function (
-      this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
-    ) {
-      const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
+		elementConstructor.prototype.getAttribute = function (
+			this: RemoteElementWithAttributeUpdater,
+			attributeName: string,
+		) {
+			const mappedElementPropertyName =
+				ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
-      if (isDefined(mappedElementPropertyName)) {
-        const elementPropertyValue = this[mappedElementPropertyName];
+			if (isDefined(mappedElementPropertyName)) {
+				const elementPropertyValue = this[mappedElementPropertyName];
 
-        return isDefined(elementPropertyValue)
-          ? String(elementPropertyValue)
-          : null;
-      }
+				return isDefined(elementPropertyValue)
+					? String(elementPropertyValue)
+					: null;
+			}
 
-      return originalGetAttribute.call(this, attributeName);
-    };
+			return originalGetAttribute.call(this, attributeName);
+		};
 
-    const originalHasAttribute = elementConstructor.prototype.hasAttribute;
+		const originalHasAttribute = elementConstructor.prototype.hasAttribute;
 
-    elementConstructor.prototype.hasAttribute = function (
-      this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
-    ) {
-      const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
+		elementConstructor.prototype.hasAttribute = function (
+			this: RemoteElementWithAttributeUpdater,
+			attributeName: string,
+		) {
+			const mappedElementPropertyName =
+				ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
-      if (isDefined(mappedElementPropertyName)) {
-        return isDefined(this[mappedElementPropertyName]);
-      }
+			if (isDefined(mappedElementPropertyName)) {
+				return isDefined(this[mappedElementPropertyName]);
+			}
 
-      return originalHasAttribute.call(this, attributeName);
-    };
+			return originalHasAttribute.call(this, attributeName);
+		};
 
-    const originalGetAttributeNames =
-      elementConstructor.prototype.getAttributeNames;
+		const originalGetAttributeNames =
+			elementConstructor.prototype.getAttributeNames;
 
-    elementConstructor.prototype.getAttributeNames = function (
-      this: RemoteElementWithAttributeUpdater,
-    ) {
-      const mappedAttributeNames = PROPERTY_MAPPED_ATTRIBUTES.filter(
-        ({ elementPropertyName }) => isDefined(this[elementPropertyName]),
-      ).map(({ attributeName }) => attributeName);
+		elementConstructor.prototype.getAttributeNames = function (
+			this: RemoteElementWithAttributeUpdater,
+		) {
+			const mappedAttributeNames = PROPERTY_MAPPED_ATTRIBUTES.filter(
+				({ elementPropertyName }) => isDefined(this[elementPropertyName]),
+			).map(({ attributeName }) => attributeName);
 
-      return [...originalGetAttributeNames.call(this), ...mappedAttributeNames];
-    };
+			return [...originalGetAttributeNames.call(this), ...mappedAttributeNames];
+		};
 
-    const originalSetAttribute = elementConstructor.prototype.setAttribute;
+		const originalSetAttribute = elementConstructor.prototype.setAttribute;
 
-    elementConstructor.prototype.setAttribute = function (
-      this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
-      attributeValue: string,
-    ) {
-      const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
+		elementConstructor.prototype.setAttribute = function (
+			this: RemoteElementWithAttributeUpdater,
+			attributeName: string,
+			attributeValue: string,
+		) {
+			const mappedElementPropertyName =
+				ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
-      if (isDefined(mappedElementPropertyName)) {
-        this[mappedElementPropertyName] = attributeValue;
+			if (isDefined(mappedElementPropertyName)) {
+				this[mappedElementPropertyName] = attributeValue;
 
-        return;
-      }
+				return;
+			}
 
-      originalSetAttribute.call(this, attributeName, attributeValue);
+			originalSetAttribute.call(this, attributeName, attributeValue);
 
-      if (shouldForwardAttributeAcrossBoundary(attributeName)) {
-        this.updateRemoteAttribute(attributeName, attributeValue);
-      }
-    };
+			if (shouldForwardAttributeAcrossBoundary(attributeName)) {
+				this.updateRemoteAttribute(attributeName, attributeValue);
+			}
+		};
 
-    const originalRemoveAttribute =
-      elementConstructor.prototype.removeAttribute;
+		const originalRemoveAttribute =
+			elementConstructor.prototype.removeAttribute;
 
-    elementConstructor.prototype.removeAttribute = function (
-      this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
-    ) {
-      const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
+		elementConstructor.prototype.removeAttribute = function (
+			this: RemoteElementWithAttributeUpdater,
+			attributeName: string,
+		) {
+			const mappedElementPropertyName =
+				ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
-      if (isDefined(mappedElementPropertyName)) {
-        this[mappedElementPropertyName] = undefined;
+			if (isDefined(mappedElementPropertyName)) {
+				this[mappedElementPropertyName] = undefined;
 
-        return;
-      }
+				return;
+			}
 
-      originalRemoveAttribute.call(this, attributeName);
+			originalRemoveAttribute.call(this, attributeName);
 
-      if (shouldForwardAttributeAcrossBoundary(attributeName)) {
-        this.updateRemoteAttribute(attributeName);
-      }
-    };
-  }
+			if (shouldForwardAttributeAcrossBoundary(attributeName)) {
+				this.updateRemoteAttribute(attributeName);
+			}
+		};
+	}
 };

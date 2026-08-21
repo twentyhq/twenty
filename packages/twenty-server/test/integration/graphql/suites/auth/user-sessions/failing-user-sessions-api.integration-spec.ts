@@ -1,66 +1,68 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
+import { getCoreRepository } from "test/integration/utils/get-core-repository.util";
 
 import {
-  extractSessionCookie,
-  postMetadataOperationWithHeaders,
-  signInWithCookieCapture,
-} from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
+	extractSessionCookie,
+	postMetadataOperationWithHeaders,
+	signInWithCookieCapture,
+} from "test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util";
 import {
-  currentUserSessionsQueryFactory,
-  revokeUserSessionQueryFactory,
-} from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
+	currentUserSessionsQueryFactory,
+	revokeUserSessionQueryFactory,
+} from "test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util";
 
-import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
-import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
+import { UserSessionEntity } from "src/engine/core-modules/user-session/user-session.entity";
+import { hashUserSessionToken } from "src/engine/core-modules/user-session/utils/hash-user-session-token.util";
 
-import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { ALLOWED_ORIGIN } from "test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants";
 
-describe('failing user sessions API (integration)', () => {
-  let timSessionId: string;
+describe("failing user sessions API (integration)", () => {
+	let timSessionId: string;
 
-  beforeAll(async () => {
-    const signInResponse = await signInWithCookieCapture({
-      originHeader: ALLOWED_ORIGIN,
-    });
-    const sessionCookie = extractSessionCookie(signInResponse);
+	beforeAll(async () => {
+		const signInResponse = await signInWithCookieCapture({
+			originHeader: ALLOWED_ORIGIN,
+		});
+		const sessionCookie = extractSessionCookie(signInResponse);
 
-    if (!sessionCookie) {
-      throw new Error('Expected a session cookie from sign-in');
-    }
+		if (!sessionCookie) {
+			throw new Error("Expected a session cookie from sign-in");
+		}
 
-    const sessionRow = await getCoreRepository<UserSessionEntity>(
-      UserSessionEntity,
-    ).findOneBy({ tokenHash: hashUserSessionToken(sessionCookie.sessionToken) });
+		const sessionRow = await getCoreRepository<UserSessionEntity>(
+			UserSessionEntity,
+		).findOneBy({
+			tokenHash: hashUserSessionToken(sessionCookie.sessionToken),
+		});
 
-    if (!sessionRow) {
-      throw new Error('Expected a persisted session row');
-    }
+		if (!sessionRow) {
+			throw new Error("Expected a persisted session row");
+		}
 
-    timSessionId = sessionRow.id;
-  });
+		timSessionId = sessionRow.id;
+	});
 
-  it('should reject an unauthenticated sessions listing', async () => {
-    const response = await postMetadataOperationWithHeaders(
-      currentUserSessionsQueryFactory(),
-      { originHeader: ALLOWED_ORIGIN },
-    );
+	it("should reject an unauthenticated sessions listing", async () => {
+		const response = await postMetadataOperationWithHeaders(
+			currentUserSessionsQueryFactory(),
+			{ originHeader: ALLOWED_ORIGIN },
+		);
 
-    expect(response.body.errors).toBeDefined();
-  });
+		expect(response.body.errors).toBeDefined();
+	});
 
-  it("should refuse to revoke another user's session", async () => {
-    // Default token authenticates Jane, a different seeded user than Tim.
-    const response = await makeMetadataAPIRequest(
-      revokeUserSessionQueryFactory({ userSessionId: timSessionId }),
-    ).expect(200);
+	it("should refuse to revoke another user's session", async () => {
+		// Default token authenticates Jane, a different seeded user than Tim.
+		const response = await makeMetadataAPIRequest(
+			revokeUserSessionQueryFactory({ userSessionId: timSessionId }),
+		).expect(200);
 
-    expect(response.body.errors).toBeDefined();
+		expect(response.body.errors).toBeDefined();
 
-    const sessionRow = await getCoreRepository<UserSessionEntity>(
-      UserSessionEntity,
-    ).findOneBy({ id: timSessionId });
+		const sessionRow = await getCoreRepository<UserSessionEntity>(
+			UserSessionEntity,
+		).findOneBy({ id: timSessionId });
 
-    expect(sessionRow?.revokedAt).toBeNull();
-  });
+		expect(sessionRow?.revokedAt).toBeNull();
+	});
 });

@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('QueueMetricsDataPoint')
+@ObjectType("QueueMetricsDataPoint")
 export class QueueMetricsDataPointDTO {
-  @Field(() => Number)
-  x: number;
+	@Field(() => Number)
+	x: number;
 
-  @Field(() => Number)
-  y: number;
+	@Field(() => Number)
+	y: number;
 }

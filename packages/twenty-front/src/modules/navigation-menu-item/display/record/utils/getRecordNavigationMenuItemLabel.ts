@@ -1,7 +1,7 @@
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from "~/generated-metadata/graphql";
 
 export const getRecordNavigationMenuItemLabel = (
-  item: Pick<NavigationMenuItem, 'targetRecordIdentifier'>,
+	item: Pick<NavigationMenuItem, "targetRecordIdentifier">,
 ): string => {
-  return item.targetRecordIdentifier?.labelIdentifier ?? '';
+	return item.targetRecordIdentifier?.labelIdentifier ?? "";
 };

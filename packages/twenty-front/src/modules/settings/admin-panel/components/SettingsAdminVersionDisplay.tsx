@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type SettingsAdminVersionDisplayProps = {
-  version: string | undefined | null;
-  loading: boolean;
-  noVersionMessage: string;
+	version: string | undefined | null;
+	loading: boolean;
+	noVersionMessage: string;
 };
 
 const StyledActionLink = styled.a`
@@ -30,25 +30,25 @@ const StyledSpan = styled.span`
 `;
 
 export const SettingsAdminVersionDisplay = ({
-  version,
-  loading,
-  noVersionMessage,
+	version,
+	loading,
+	noVersionMessage,
 }: SettingsAdminVersionDisplayProps) => {
-  if (loading) {
-    return <StyledSpan>{t`Loading...`}</StyledSpan>;
-  }
+	if (loading) {
+		return <StyledSpan>{t`Loading...`}</StyledSpan>;
+	}
 
-  if (!version) {
-    return <StyledSpan>{noVersionMessage}</StyledSpan>;
-  }
+	if (!version) {
+		return <StyledSpan>{noVersionMessage}</StyledSpan>;
+	}
 
-  return (
-    <StyledActionLink
-      href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${version}`}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {version}
-    </StyledActionLink>
-  );
+	return (
+		<StyledActionLink
+			href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${version}`}
+			target="_blank"
+			rel="noreferrer"
+		>
+			{version}
+		</StyledActionLink>
+	);
 };

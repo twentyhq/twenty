@@ -1,12 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationEntity } from "src/engine/core-modules/application/application-registration/application-registration.entity";
 
-@ObjectType('CreateApplicationRegistration')
+@ObjectType("CreateApplicationRegistration")
 export class CreateApplicationRegistrationDTO {
-  @Field(() => ApplicationRegistrationEntity)
-  applicationRegistration: ApplicationRegistrationEntity;
+	@Field(() => ApplicationRegistrationEntity)
+	applicationRegistration: ApplicationRegistrationEntity;
 
-  @Field()
-  clientSecret: string;
+	@Field()
+	clientSecret: string;
 }

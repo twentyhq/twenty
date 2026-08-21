@@ -1,8 +1,8 @@
-import { useUuidField } from '@/object-record/record-field/ui/meta-types/hooks/useUuidField';
-import { TextDisplay } from 'twenty-ui/data-display';
+import { useUuidField } from "@/object-record/record-field/ui/meta-types/hooks/useUuidField";
+import { TextDisplay } from "twenty-ui/data-display";
 
 export const UuidFieldDisplay = () => {
-  const { fieldValue } = useUuidField();
+	const { fieldValue } = useUuidField();
 
-  return <TextDisplay text={fieldValue} />;
+	return <TextDisplay text={fieldValue} />;
 };

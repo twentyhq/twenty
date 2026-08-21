@@ -1,19 +1,19 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
 export type DeleteOneRoleFactoryInput = {
-  idToDelete: string;
+	idToDelete: string;
 };
 
 export const deleteOneRoleQueryFactory = ({
-  input,
+	input,
 }: PerformMetadataQueryParams<DeleteOneRoleFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation DeleteOneRole($idToDelete: UUID!) {
       deleteOneRole(roleId: $idToDelete)
     }
   `,
-  variables: {
-    idToDelete: input.idToDelete,
-  },
+	variables: {
+		idToDelete: input.idToDelete,
+	},
 });

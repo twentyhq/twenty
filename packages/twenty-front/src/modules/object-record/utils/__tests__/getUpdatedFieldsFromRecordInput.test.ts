@@ -1,33 +1,33 @@
-import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
+import { getUpdatedFieldsFromRecordInput } from "@/object-record/utils/getUpdatedFieldsFromRecordInput";
 
-describe('getUpdatedFieldsFromRecordInput', () => {
-  it('should return field entries excluding id', () => {
-    const input = { id: '123', name: 'Alice', age: 30 };
+describe("getUpdatedFieldsFromRecordInput", () => {
+	it("should return field entries excluding id", () => {
+		const input = { id: "123", name: "Alice", age: 30 };
 
-    const result = getUpdatedFieldsFromRecordInput(input);
+		const result = getUpdatedFieldsFromRecordInput(input);
 
-    expect(result).toEqual([{ name: 'Alice' }, { age: 30 }]);
-  });
+		expect(result).toEqual([{ name: "Alice" }, { age: 30 }]);
+	});
 
-  it('should return empty array when only id is present', () => {
-    const input = { id: '123' };
+	it("should return empty array when only id is present", () => {
+		const input = { id: "123" };
 
-    const result = getUpdatedFieldsFromRecordInput(input);
+		const result = getUpdatedFieldsFromRecordInput(input);
 
-    expect(result).toEqual([]);
-  });
+		expect(result).toEqual([]);
+	});
 
-  it('should handle inputs without id', () => {
-    const input = { name: 'Bob', email: 'bob@test.com' };
+	it("should handle inputs without id", () => {
+		const input = { name: "Bob", email: "bob@test.com" };
 
-    const result = getUpdatedFieldsFromRecordInput(input);
+		const result = getUpdatedFieldsFromRecordInput(input);
 
-    expect(result).toEqual([{ name: 'Bob' }, { email: 'bob@test.com' }]);
-  });
+		expect(result).toEqual([{ name: "Bob" }, { email: "bob@test.com" }]);
+	});
 
-  it('should handle empty input', () => {
-    const result = getUpdatedFieldsFromRecordInput({});
+	it("should handle empty input", () => {
+		const result = getUpdatedFieldsFromRecordInput({});
 
-    expect(result).toEqual([]);
-  });
+		expect(result).toEqual([]);
+	});
 });

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_ADMIN_WORKSPACE_CHAT_THREADS = gql`
   query GetAdminWorkspaceChatThreads($workspaceId: UUID!) {

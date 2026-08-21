@@ -1,25 +1,25 @@
-import { isString } from '@sniptt/guards';
+import { isString } from "@sniptt/guards";
 
-import { type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowIteratorAction } from "src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type";
 
 export const getIteratorInitialLoopStepIds = (
-  step: WorkflowIteratorAction,
+	step: WorkflowIteratorAction,
 ): string[] => {
-  const initialLoopStepIds = step.settings.input.initialLoopStepIds;
+	const initialLoopStepIds = step.settings.input.initialLoopStepIds;
 
-  if (isString(initialLoopStepIds)) {
-    try {
-      const parsed: unknown = JSON.parse(initialLoopStepIds);
+	if (isString(initialLoopStepIds)) {
+		try {
+			const parsed: unknown = JSON.parse(initialLoopStepIds);
 
-      if (Array.isArray(parsed) && parsed.every(isString)) {
-        return parsed;
-      }
-    } catch {
-      return [];
-    }
+			if (Array.isArray(parsed) && parsed.every(isString)) {
+				return parsed;
+			}
+		} catch {
+			return [];
+		}
 
-    return [];
-  }
+		return [];
+	}
 
-  return initialLoopStepIds ?? [];
+	return initialLoopStepIds ?? [];
 };

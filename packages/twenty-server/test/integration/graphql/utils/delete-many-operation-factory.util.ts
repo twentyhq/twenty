@@ -1,20 +1,20 @@
-import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared/utils';
+import gql from "graphql-tag";
+import { capitalize } from "twenty-shared/utils";
 
 type DeleteManyOperationFactoryParams = {
-  objectMetadataSingularName: string;
-  objectMetadataPluralName: string;
-  gqlFields: string;
-  filter?: object;
+	objectMetadataSingularName: string;
+	objectMetadataPluralName: string;
+	gqlFields: string;
+	filter?: object;
 };
 
 export const deleteManyOperationFactory = ({
-  objectMetadataSingularName,
-  objectMetadataPluralName,
-  gqlFields,
-  filter = {},
+	objectMetadataSingularName,
+	objectMetadataPluralName,
+	gqlFields,
+	filter = {},
 }: DeleteManyOperationFactoryParams) => ({
-  query: gql`
+	query: gql`
     mutation Delete${capitalize(objectMetadataPluralName)}(
       $filter: ${capitalize(objectMetadataSingularName)}FilterInput!
     ) {
@@ -23,7 +23,7 @@ export const deleteManyOperationFactory = ({
       }
   }
   `,
-  variables: {
-    filter,
-  },
+	variables: {
+		filter,
+	},
 });

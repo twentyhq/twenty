@@ -1,21 +1,21 @@
-import { styled } from '@linaria/react';
-import { useCallback, useState } from 'react';
+import { styled } from "@linaria/react";
+import { useCallback, useState } from "react";
 
-import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { EmailLoader } from '@/activities/emails/components/EmailLoader';
-import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
-import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
-import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomResolverFetchMoreLoader } from "@/activities/components/CustomResolverFetchMoreLoader";
+import { EmailLoader } from "@/activities/emails/components/EmailLoader";
+import { EmailThreadMessage } from "@/activities/emails/components/EmailThreadMessage";
+import { useEmailThread } from "@/activities/emails/hooks/useEmailThread";
+import { useReplyContext } from "@/activities/emails/hooks/useReplyContext";
+import { type EmailDraftPrefill } from "@/activities/emails/types/EmailDraftPrefill";
+import { type EmailThreadMessageWithSender } from "@/activities/emails/types/EmailThreadMessageWithSender";
+import { getEmailDraftPrefillFromMessage } from "@/activities/emails/utils/getEmailDraftPrefillFromMessage";
+import { type PageLayoutWidget } from "@/page-layout/types/PageLayoutWidget";
+import { EmailThreadComposer } from "@/page-layout/widgets/email-thread/components/EmailThreadComposer";
+import { EmailThreadIntermediaryMessages } from "@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages";
+import { useLayoutRenderingContext } from "@/ui/layout/contexts/LayoutRenderingContext";
+import { useTargetRecord } from "@/ui/layout/contexts/useTargetRecord";
+import { t } from "@lingui/core/macro";
+import { isDefined } from "twenty-shared/utils";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -31,121 +31,121 @@ const StyledContainer = styled.div`
 `;
 
 type EmailThreadWidgetProps = {
-  widget: PageLayoutWidget;
+	widget: PageLayoutWidget;
 };
 
 export const EmailThreadWidget = ({
-  widget: _widget,
+	widget: _widget,
 }: EmailThreadWidgetProps) => {
-  const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+	const targetRecord = useTargetRecord();
+	const { isInSidePanel } = useLayoutRenderingContext();
 
-  const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
-    targetRecord.id,
-  );
+	const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
+		targetRecord.id,
+	);
 
-  const replyContext = useReplyContext(targetRecord.id);
+	const replyContext = useReplyContext(targetRecord.id);
 
-  const [composerIntent, setComposerIntent] = useState<
-    'opened' | 'closed' | null
-  >(null);
-  const [clickedDraftPrefill, setClickedDraftPrefill] =
-    useState<EmailDraftPrefill | null>(null);
-  const [previousTargetRecordId, setPreviousTargetRecordId] = useState(
-    targetRecord.id,
-  );
+	const [composerIntent, setComposerIntent] = useState<
+		"opened" | "closed" | null
+	>(null);
+	const [clickedDraftPrefill, setClickedDraftPrefill] =
+		useState<EmailDraftPrefill | null>(null);
+	const [previousTargetRecordId, setPreviousTargetRecordId] = useState(
+		targetRecord.id,
+	);
 
-  if (previousTargetRecordId !== targetRecord.id) {
-    setPreviousTargetRecordId(targetRecord.id);
-    setComposerIntent(null);
-    setClickedDraftPrefill(null);
-  }
+	if (previousTargetRecordId !== targetRecord.id) {
+		setPreviousTargetRecordId(targetRecord.id);
+		setComposerIntent(null);
+		setClickedDraftPrefill(null);
+	}
 
-  const handleComposerOpenChange = useCallback((open: boolean) => {
-    setComposerIntent(open ? 'opened' : 'closed');
+	const handleComposerOpenChange = useCallback((open: boolean) => {
+		setComposerIntent(open ? "opened" : "closed");
 
-    if (!open) {
-      setClickedDraftPrefill(null);
-    }
-  }, []);
+		if (!open) {
+			setClickedDraftPrefill(null);
+		}
+	}, []);
 
-  const handleDraftClick = useCallback(
-    (message: EmailThreadMessageWithSender) => {
-      setClickedDraftPrefill(getEmailDraftPrefillFromMessage(message));
-      setComposerIntent('opened');
-    },
-    [],
-  );
+	const handleDraftClick = useCallback(
+		(message: EmailThreadMessageWithSender) => {
+			setClickedDraftPrefill(getEmailDraftPrefillFromMessage(message));
+			setComposerIntent("opened");
+		},
+		[],
+	);
 
-  const canReply = isDefined(replyContext) && !replyContext.loading;
+	const canReply = isDefined(replyContext) && !replyContext.loading;
 
-  const messagesCount = messages.length;
-  const is5OrMoreMessages = messagesCount >= 5;
-  const firstMessages = messages.slice(
-    0,
-    is5OrMoreMessages ? 2 : messagesCount - 1,
-  );
-  const intermediaryMessages = is5OrMoreMessages
-    ? messages.slice(2, messagesCount - 1)
-    : [];
-  const lastMessage = messages[messagesCount - 1];
+	const messagesCount = messages.length;
+	const is5OrMoreMessages = messagesCount >= 5;
+	const firstMessages = messages.slice(
+		0,
+		is5OrMoreMessages ? 2 : messagesCount - 1,
+	);
+	const intermediaryMessages = is5OrMoreMessages
+		? messages.slice(2, messagesCount - 1)
+		: [];
+	const lastMessage = messages[messagesCount - 1];
 
-  const trailingDraft = lastMessage?.isDraft ? lastMessage : undefined;
-  const draftPrefill =
-    clickedDraftPrefill ??
-    (isDefined(trailingDraft)
-      ? getEmailDraftPrefillFromMessage(trailingDraft)
-      : null);
-  const isComposerOpen =
-    composerIntent === 'opened' ||
-    (composerIntent === null && isDefined(trailingDraft));
+	const trailingDraft = lastMessage?.isDraft ? lastMessage : undefined;
+	const draftPrefill =
+		clickedDraftPrefill ??
+		(isDefined(trailingDraft)
+			? getEmailDraftPrefillFromMessage(trailingDraft)
+			: null);
+	const isComposerOpen =
+		composerIntent === "opened" ||
+		(composerIntent === null && isDefined(trailingDraft));
 
-  if (threadLoading || !thread || !messages.length) {
-    return (
-      <StyledWrapper>
-        <StyledContainer>
-          <EmailLoader loadingText={t`Loading thread`} />
-        </StyledContainer>
-      </StyledWrapper>
-    );
-  }
+	if (threadLoading || !thread || !messages.length) {
+		return (
+			<StyledWrapper>
+				<StyledContainer>
+					<EmailLoader loadingText={t`Loading thread`} />
+				</StyledContainer>
+			</StyledWrapper>
+		);
+	}
 
-  return (
-    <StyledWrapper>
-      <StyledContainer>
-        {firstMessages.map((message) => (
-          <EmailThreadMessage
-            key={message.id}
-            message={message}
-            onDraftClick={handleDraftClick}
-          />
-        ))}
-        <EmailThreadIntermediaryMessages
-          messages={intermediaryMessages}
-          onDraftClick={handleDraftClick}
-        />
-        <EmailThreadMessage
-          key={lastMessage.id}
-          message={lastMessage}
-          isExpanded
-          hideBottomBorder={!isComposerOpen}
-          onDraftClick={handleDraftClick}
-        />
-        <CustomResolverFetchMoreLoader
-          loading={threadLoading}
-          onLastRowVisible={fetchMoreMessages}
-        />
-      </StyledContainer>
-      {canReply && (
-        <EmailThreadComposer
-          key={draftPrefill?.messageId ?? 'reply'}
-          replyContext={replyContext}
-          isInSidePanel={isInSidePanel}
-          isComposerOpen={isComposerOpen}
-          setIsComposerOpen={handleComposerOpenChange}
-          draftPrefill={draftPrefill}
-        />
-      )}
-    </StyledWrapper>
-  );
+	return (
+		<StyledWrapper>
+			<StyledContainer>
+				{firstMessages.map((message) => (
+					<EmailThreadMessage
+						key={message.id}
+						message={message}
+						onDraftClick={handleDraftClick}
+					/>
+				))}
+				<EmailThreadIntermediaryMessages
+					messages={intermediaryMessages}
+					onDraftClick={handleDraftClick}
+				/>
+				<EmailThreadMessage
+					key={lastMessage.id}
+					message={lastMessage}
+					isExpanded
+					hideBottomBorder={!isComposerOpen}
+					onDraftClick={handleDraftClick}
+				/>
+				<CustomResolverFetchMoreLoader
+					loading={threadLoading}
+					onLastRowVisible={fetchMoreMessages}
+				/>
+			</StyledContainer>
+			{canReply && (
+				<EmailThreadComposer
+					key={draftPrefill?.messageId ?? "reply"}
+					replyContext={replyContext}
+					isInSidePanel={isInSidePanel}
+					isComposerOpen={isComposerOpen}
+					setIsComposerOpen={handleComposerOpenChange}
+					draftPrefill={draftPrefill}
+				/>
+			)}
+		</StyledWrapper>
+	);
 };

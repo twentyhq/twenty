@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('AuthorizeApp')
+@ObjectType("AuthorizeApp")
 export class AuthorizeAppDTO {
-  @Field(() => String)
-  redirectUrl: string;
+	@Field(() => String)
+	redirectUrl: string;
 }

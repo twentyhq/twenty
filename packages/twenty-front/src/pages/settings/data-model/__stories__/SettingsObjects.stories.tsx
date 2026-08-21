@@ -1,22 +1,22 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { within } from 'storybook/test';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { within } from "storybook/test";
 
 import {
-  PageDecorator,
-  type PageDecoratorArgs,
-} from '~/testing/decorators/PageDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+	PageDecorator,
+	type PageDecoratorArgs,
+} from "~/testing/decorators/PageDecorator";
+import { graphqlMocks } from "~/testing/graphqlMocks";
 
-import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
+import { SettingsObjects } from "~/pages/settings/data-model/SettingsObjects";
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/DataModel/SettingsObjects',
-  component: SettingsObjects,
-  decorators: [PageDecorator],
-  args: { routePath: '/settings/objects' },
-  parameters: {
-    msw: graphqlMocks,
-  },
+	title: "Pages/Settings/DataModel/SettingsObjects",
+	component: SettingsObjects,
+	decorators: [PageDecorator],
+	args: { routePath: "/settings/objects" },
+	parameters: {
+		msw: graphqlMocks,
+	},
 };
 
 export default meta;
@@ -24,9 +24,9 @@ export default meta;
 export type Story = StoryObj<typeof SettingsObjects>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
 
-    await canvas.findByRole('heading', { name: 'Objects' }, { timeout: 5000 });
-  },
+		await canvas.findByRole("heading", { name: "Objects" }, { timeout: 5000 });
+	},
 };

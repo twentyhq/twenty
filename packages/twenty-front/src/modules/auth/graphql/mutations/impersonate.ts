@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 // TODO: Fragments should be used instead of duplicating the user fields !
 export const IMPERSONATE = gql`

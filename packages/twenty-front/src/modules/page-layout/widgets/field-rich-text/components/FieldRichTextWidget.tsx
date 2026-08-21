@@ -1,6 +1,6 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { FieldRichTextCard } from '@/ui/layout/show-page/components/FieldRichTextCard';
-import { styled } from '@linaria/react';
+import { type PageLayoutWidget } from "@/page-layout/types/PageLayoutWidget";
+import { FieldRichTextCard } from "@/ui/layout/show-page/components/FieldRichTextCard";
+import { styled } from "@linaria/react";
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -10,15 +10,15 @@ const StyledContainer = styled.div`
 `;
 
 type FieldRichTextWidgetProps = {
-  widget: PageLayoutWidget;
+	widget: PageLayoutWidget;
 };
 
 export const FieldRichTextWidget = ({
-  widget: _widget,
+	widget: _widget,
 }: FieldRichTextWidgetProps) => {
-  return (
-    <StyledContainer>
-      <FieldRichTextCard />
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<FieldRichTextCard />
+		</StyledContainer>
+	);
 };

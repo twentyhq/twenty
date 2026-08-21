@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
 const PillButton = styled.button<{ $active?: boolean }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? terminal.toggle.activeSegmentBackground : 'transparent'};
+		$active ? terminal.toggle.activeSegmentBackground : "transparent"};
   border: 1px solid
     ${({ $active }) =>
-      $active ? terminal.toggle.activeSegmentBorder : 'transparent'};
+			$active ? terminal.toggle.activeSegmentBorder : "transparent"};
   border-radius: 6px;
   box-shadow: ${({ $active }) =>
-    $active ? terminal.toggle.activeSegmentShadow : 'none'};
+		$active ? terminal.toggle.activeSegmentShadow : "none"};
   box-sizing: border-box;
   cursor: pointer;
   display: inline-flex;
@@ -37,11 +37,11 @@ const PillButton = styled.button<{ $active?: boolean }>`
 
   &:hover {
     background: ${({ $active }) =>
-      $active
-        ? terminal.toggle.activeSegmentBackground
-        : terminal.toggle.inactiveSegmentHoverBackground};
+			$active
+				? terminal.toggle.activeSegmentBackground
+				: terminal.toggle.inactiveSegmentHoverBackground};
     border-color: ${({ $active }) =>
-      $active ? terminal.toggle.activeSegmentBorder : 'transparent'};
+			$active ? terminal.toggle.activeSegmentBorder : "transparent"};
   }
 `;
 
@@ -54,30 +54,30 @@ const Removed = styled.span`
 `;
 
 export function DiffPill({
-  added,
-  removed,
-  isActive,
-  onClick,
+	added,
+	removed,
+	isActive,
+	onClick,
 }: {
-  added: number;
-  removed: number;
-  isActive?: boolean;
-  onClick?: () => void;
+	added: number;
+	removed: number;
+	isActive?: boolean;
+	onClick?: () => void;
 }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <PillButton
-      $active={isActive}
-      aria-label={
-        isActive ? i18n._(msg`Hide changes`) : i18n._(msg`Show changes`)
-      }
-      aria-pressed={isActive}
-      onClick={onClick}
-      type="button"
-    >
-      <Added>+{added}</Added>
-      <Removed>-{removed}</Removed>
-    </PillButton>
-  );
+	return (
+		<PillButton
+			$active={isActive}
+			aria-label={
+				isActive ? i18n._(msg`Hide changes`) : i18n._(msg`Show changes`)
+			}
+			aria-pressed={isActive}
+			onClick={onClick}
+			type="button"
+		>
+			<Added>+{added}</Added>
+			<Removed>-{removed}</Removed>
+		</PillButton>
+	);
 }

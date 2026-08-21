@@ -1,3 +1,3 @@
 export const scrollAiChatToBottom = (scrollWrapperElement: HTMLElement) => {
-  scrollWrapperElement.scrollTop = scrollWrapperElement.scrollHeight;
+	scrollWrapperElement.scrollTop = scrollWrapperElement.scrollHeight;
 };

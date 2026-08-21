@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { type ExplorerNode, type FileIconKind } from './editor-types';
+import { type ExplorerNode, type FileIconKind } from "./editor-types";
 
 const editor = APP_PREVIEW_TONES.editor;
 
@@ -53,7 +53,7 @@ const FileTree = styled.div`
 const FileRowStatic = styled.div<{ $active?: boolean; $depth: number }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? editor.surface.activeRow : 'transparent'};
+		$active ? editor.surface.activeRow : "transparent"};
   display: flex;
   flex: 0 0 24px;
   gap: 6px;
@@ -67,7 +67,7 @@ const FileRowStatic = styled.div<{ $active?: boolean; $depth: number }>`
 const FileRowButton = styled.button<{ $active?: boolean; $depth: number }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? editor.surface.activeRow : 'transparent'};
+		$active ? editor.surface.activeRow : "transparent"};
   border: none;
   color: inherit;
   cursor: pointer;
@@ -86,7 +86,7 @@ const FileRowButton = styled.button<{ $active?: boolean; $depth: number }>`
 
   &:hover {
     background: ${({ $active }) =>
-      $active ? editor.surface.activeRow : editor.surface.rowHover};
+			$active ? editor.surface.activeRow : editor.surface.rowHover};
   }
 `;
 
@@ -104,20 +104,20 @@ const FolderName = styled.span`
 
 const FileName = styled.span<{ $active?: boolean }>`
   color: ${({ $active }) =>
-    $active ? editor.text.primary : editor.text.muted};
+		$active ? editor.text.primary : editor.text.muted};
   font-family: ${APP_PREVIEW_STAGE.terminalFont.ui};
   font-size: 12px;
   font-weight: ${({ $active }) => ($active ? 500 : 400)};
 `;
 
 const FILE_ICON_COLOR: Record<FileIconKind, string> = {
-  ts: editor.fileIcon.ts,
-  md: editor.fileIcon.md,
-  js: editor.fileIcon.js,
-  git: editor.fileIcon.git,
-  yaml: editor.fileIcon.yaml,
-  cf: editor.fileIcon.cf,
-  lock: editor.fileIcon.lock,
+	ts: editor.fileIcon.ts,
+	md: editor.fileIcon.md,
+	js: editor.fileIcon.js,
+	git: editor.fileIcon.git,
+	yaml: editor.fileIcon.yaml,
+	cf: editor.fileIcon.cf,
+	lock: editor.fileIcon.lock,
 };
 
 const FileIcon = styled.span<{ $color: string }>`
@@ -129,73 +129,73 @@ const FileIcon = styled.span<{ $color: string }>`
 `;
 
 function ExplorerNodeRow({
-  activeFileId,
-  node,
-  onSelectFile,
+	activeFileId,
+	node,
+	onSelectFile,
 }: {
-  activeFileId: string;
-  node: ExplorerNode;
-  onSelectFile: (fileId: string) => void;
+	activeFileId: string;
+	node: ExplorerNode;
+	onSelectFile: (fileId: string) => void;
 }) {
-  if (node.kind === 'folder') {
-    return (
-      <FileRowStatic $depth={node.depth}>
-        <Caret aria-hidden>{node.expanded ? '▾' : '▸'}</Caret>
-        <FolderName>{node.name}</FolderName>
-      </FileRowStatic>
-    );
-  }
+	if (node.kind === "folder") {
+		return (
+			<FileRowStatic $depth={node.depth}>
+				<Caret aria-hidden>{node.expanded ? "▾" : "▸"}</Caret>
+				<FolderName>{node.name}</FolderName>
+			</FileRowStatic>
+		);
+	}
 
-  const isActive = node.fileId !== undefined && node.fileId === activeFileId;
+	const isActive = node.fileId !== undefined && node.fileId === activeFileId;
 
-  if (node.fileId === undefined) {
-    return (
-      <FileRowStatic $active={isActive} $depth={node.depth}>
-        <FileIcon $color={FILE_ICON_COLOR[node.icon]}>
-          {node.iconLabel}
-        </FileIcon>
-        <FileName $active={isActive}>{node.name}</FileName>
-      </FileRowStatic>
-    );
-  }
+	if (node.fileId === undefined) {
+		return (
+			<FileRowStatic $active={isActive} $depth={node.depth}>
+				<FileIcon $color={FILE_ICON_COLOR[node.icon]}>
+					{node.iconLabel}
+				</FileIcon>
+				<FileName $active={isActive}>{node.name}</FileName>
+			</FileRowStatic>
+		);
+	}
 
-  const fileId = node.fileId;
+	const fileId = node.fileId;
 
-  return (
-    <FileRowButton
-      $active={isActive}
-      $depth={node.depth}
-      onClick={() => onSelectFile(fileId)}
-      type="button"
-    >
-      <FileIcon $color={FILE_ICON_COLOR[node.icon]}>{node.iconLabel}</FileIcon>
-      <FileName $active={isActive}>{node.name}</FileName>
-    </FileRowButton>
-  );
+	return (
+		<FileRowButton
+			$active={isActive}
+			$depth={node.depth}
+			onClick={() => onSelectFile(fileId)}
+			type="button"
+		>
+			<FileIcon $color={FILE_ICON_COLOR[node.icon]}>{node.iconLabel}</FileIcon>
+			<FileName $active={isActive}>{node.name}</FileName>
+		</FileRowButton>
+	);
 }
 
 export function TerminalEditorExplorer({
-  activeFileId,
-  nodes,
-  onSelectFile,
+	activeFileId,
+	nodes,
+	onSelectFile,
 }: {
-  activeFileId: string;
-  nodes: ReadonlyArray<ExplorerNode>;
-  onSelectFile: (fileId: string) => void;
+	activeFileId: string;
+	nodes: ReadonlyArray<ExplorerNode>;
+	onSelectFile: (fileId: string) => void;
 }) {
-  return (
-    <Sidebar>
-      <ExplorerHeader>Explorer</ExplorerHeader>
-      <FileTree>
-        {nodes.map((node) => (
-          <ExplorerNodeRow
-            activeFileId={activeFileId}
-            key={node.id}
-            node={node}
-            onSelectFile={onSelectFile}
-          />
-        ))}
-      </FileTree>
-    </Sidebar>
-  );
+	return (
+		<Sidebar>
+			<ExplorerHeader>Explorer</ExplorerHeader>
+			<FileTree>
+				{nodes.map((node) => (
+					<ExplorerNodeRow
+						activeFileId={activeFileId}
+						key={node.id}
+						node={node}
+						onSelectFile={onSelectFile}
+					/>
+				))}
+			</FileTree>
+		</Sidebar>
+	);
 }

@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
-import { OBJECT_METADATA_FRAGMENT } from '@/object-metadata/graphql/fragment';
+import { gql } from "@apollo/client";
+import { OBJECT_METADATA_FRAGMENT } from "@/object-metadata/graphql/fragment";
 
 export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
   ${OBJECT_METADATA_FRAGMENT}

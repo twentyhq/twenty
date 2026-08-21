@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useMediaQuery } from './use-media-query';
+import { useMediaQuery } from "./use-media-query";
 
 export function usePrefersReducedMotion(): boolean {
-  return useMediaQuery('(prefers-reduced-motion: reduce)');
+	return useMediaQuery("(prefers-reduced-motion: reduce)");
 }

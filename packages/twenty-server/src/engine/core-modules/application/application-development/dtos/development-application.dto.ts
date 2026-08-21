@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('DevelopmentApplication')
+@ObjectType("DevelopmentApplication")
 export class DevelopmentApplicationDTO {
-  @Field(() => String)
-  id: string;
+	@Field(() => String)
+	id: string;
 
-  @Field(() => String)
-  universalIdentifier: string;
+	@Field(() => String)
+	universalIdentifier: string;
 }

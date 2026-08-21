@@ -1,4 +1,4 @@
 export const getStepOutputSchemaFamilyStateKey = (
-  workflowVersionId: string,
-  stepId: string,
+	workflowVersionId: string,
+	stepId: string,
 ) => `${workflowVersionId}-${stepId}`;

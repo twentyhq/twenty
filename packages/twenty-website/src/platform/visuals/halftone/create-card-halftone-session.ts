@@ -1,9 +1,9 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import { observeElementSize } from '@/platform/motion';
+import { observeElementSize } from "@/platform/motion";
 
-import { createVisualFrameLoop } from '../engine/create-visual-frame-loop';
-import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { createVisualFrameLoop } from "../engine/create-visual-frame-loop";
+import { createVisualRenderer } from "../three-runtime/create-visual-renderer";
 
 // The feature cards' per-card dash backdrop, ported verbatim from the
 // old scene hook. This is deliberately a SECOND, simpler pipeline beside
@@ -11,19 +11,19 @@ import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
 // responses (this one has the velocity motion bias and the authored
 // active-hover anchor; no wave, no responsive frame).
 export type CardHalftoneConfig = {
-  activeHoverX: number;
-  activeHoverY: number;
-  dashColor: string;
-  flipImageY: boolean;
-  halftonePower: number;
-  halftoneScalePx: number;
-  halftoneWidth: number;
-  hoverDashColor: string;
-  hoverHalftoneRadius: number;
-  hoverLightIntensity: number;
-  hoverLightRadius: number;
-  imageContrast: number;
-  previewDistance: number;
+	activeHoverX: number;
+	activeHoverY: number;
+	dashColor: string;
+	flipImageY: boolean;
+	halftonePower: number;
+	halftoneScalePx: number;
+	halftoneWidth: number;
+	hoverDashColor: string;
+	hoverHalftoneRadius: number;
+	hoverLightIntensity: number;
+	hoverLightRadius: number;
+	imageContrast: number;
+	previewDistance: number;
 };
 
 const PASS_THROUGH_VERTEX_SHADER = /* glsl */ `
@@ -163,336 +163,336 @@ const POINTER_POSITION_STOP_EPSILON = 0.001;
 const POINTER_VELOCITY_STOP_EPSILON = 0.0001;
 
 type InteractionState = {
-  hoverStrength: number;
-  mouseX: number;
-  mouseY: number;
-  pointerInside: boolean;
-  pointerVelocityX: number;
-  pointerVelocityY: number;
-  smoothedMouseX: number;
-  smoothedMouseY: number;
+	hoverStrength: number;
+	mouseX: number;
+	mouseY: number;
+	pointerInside: boolean;
+	pointerVelocityX: number;
+	pointerVelocityY: number;
+	smoothedMouseX: number;
+	smoothedMouseY: number;
 };
 
 function createInteractionState(): InteractionState {
-  return {
-    hoverStrength: 0,
-    mouseX: 0.5,
-    mouseY: 0.5,
-    pointerInside: false,
-    pointerVelocityX: 0,
-    pointerVelocityY: 0,
-    smoothedMouseX: 0.5,
-    smoothedMouseY: 0.5,
-  };
+	return {
+		hoverStrength: 0,
+		mouseX: 0.5,
+		mouseY: 0.5,
+		pointerInside: false,
+		pointerVelocityX: 0,
+		pointerVelocityY: 0,
+		smoothedMouseX: 0.5,
+		smoothedMouseY: 0.5,
+	};
 }
 
 function getImagePreviewZoom(previewDistance: number) {
-  return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
+	return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
 }
 
 function getDevicePixelRatio() {
-  if (typeof window === 'undefined') {
-    return 1;
-  }
-  return Math.min(window.devicePixelRatio || 1, MAX_DEVICE_PIXEL_RATIO);
+	if (typeof window === "undefined") {
+		return 1;
+	}
+	return Math.min(window.devicePixelRatio || 1, MAX_DEVICE_PIXEL_RATIO);
 }
 
 type CreateCardHalftoneSessionOptions = {
-  config: CardHalftoneConfig;
-  container: HTMLElement;
-  image: HTMLImageElement;
-  // The card's hover state forces the hover light at the authored anchor
-  // while the pointer is off the canvas.
-  isExternallyActive: () => boolean;
-  pointerTarget?: HTMLElement | null;
-  onFirstFrame?: () => void;
+	config: CardHalftoneConfig;
+	container: HTMLElement;
+	image: HTMLImageElement;
+	// The card's hover state forces the hover light at the authored anchor
+	// while the pointer is off the canvas.
+	isExternallyActive: () => boolean;
+	pointerTarget?: HTMLElement | null;
+	onFirstFrame?: () => void;
 };
 
 export function createCardHalftoneSession({
-  config,
-  container,
-  image,
-  isExternallyActive,
-  pointerTarget,
-  onFirstFrame,
+	config,
+	container,
+	image,
+	isExternallyActive,
+	pointerTarget,
+	onFirstFrame,
 }: CreateCardHalftoneSessionOptions): {
-  dispose: () => void;
-  wake: () => void;
+	dispose: () => void;
+	wake: () => void;
 } | null {
-  const renderer = createVisualRenderer({
-    alpha: true,
-    antialias: false,
-    premultipliedAlpha: false,
-  });
+	const renderer = createVisualRenderer({
+		alpha: true,
+		antialias: false,
+		premultipliedAlpha: false,
+	});
 
-  if (renderer === null) {
-    return null;
-  }
+	if (renderer === null) {
+		return null;
+	}
 
-  renderer.setClearColor(0x000000, 0);
-  const pixelRatio = getDevicePixelRatio();
-  renderer.setPixelRatio(pixelRatio);
+	renderer.setClearColor(0x000000, 0);
+	const pixelRatio = getDevicePixelRatio();
+	renderer.setPixelRatio(pixelRatio);
 
-  const canvas = renderer.domElement;
-  canvas.style.cursor = 'default';
-  canvas.style.display = 'block';
-  canvas.style.height = '100%';
-  canvas.style.touchAction = 'none';
-  canvas.style.width = '100%';
-  container.appendChild(canvas);
+	const canvas = renderer.domElement;
+	canvas.style.cursor = "default";
+	canvas.style.display = "block";
+	canvas.style.height = "100%";
+	canvas.style.touchAction = "none";
+	canvas.style.width = "100%";
+	container.appendChild(canvas);
 
-  const trackingElement = pointerTarget ?? canvas;
+	const trackingElement = pointerTarget ?? canvas;
 
-  const imageTexture = new THREE.Texture(image);
-  imageTexture.colorSpace = THREE.SRGBColorSpace;
-  imageTexture.minFilter = THREE.LinearFilter;
-  imageTexture.magFilter = THREE.LinearFilter;
-  imageTexture.generateMipmaps = false;
-  imageTexture.needsUpdate = true;
+	const imageTexture = new THREE.Texture(image);
+	imageTexture.colorSpace = THREE.SRGBColorSpace;
+	imageTexture.minFilter = THREE.LinearFilter;
+	imageTexture.magFilter = THREE.LinearFilter;
+	imageTexture.generateMipmaps = false;
+	imageTexture.needsUpdate = true;
 
-  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+	const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
+	const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-  const halftoneMaterial = new THREE.ShaderMaterial({
-    fragmentShader: CARD_HALFTONE_FRAGMENT_SHADER,
-    transparent: true,
-    uniforms: {
-      dashColor: { value: new THREE.Color(config.dashColor) },
-      halftoneCellPx: {
-        value: Math.max(config.halftoneScalePx * pixelRatio, 1),
-      },
-      halftonePower: { value: config.halftonePower },
-      halftoneWidth: { value: config.halftoneWidth },
-      hoverDashColor: { value: new THREE.Color(config.hoverDashColor) },
-      hoverLightRadius: { value: config.hoverLightRadius },
-      hoverLightStrength: { value: 0 },
-      imageContrast: { value: config.imageContrast },
-      imageFlipY: { value: config.flipImageY ? 1 : 0 },
-      imageSize: { value: new THREE.Vector2(image.width, image.height) },
-      imageZoom: { value: getImagePreviewZoom(config.previewDistance) },
-      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-      interactionVelocity: { value: new THREE.Vector2(0, 0) },
-      logicalResolution: { value: new THREE.Vector2(1, 1) },
-      tImage: { value: imageTexture },
-    },
-    vertexShader: PASS_THROUGH_VERTEX_SHADER,
-  });
+	const halftoneMaterial = new THREE.ShaderMaterial({
+		fragmentShader: CARD_HALFTONE_FRAGMENT_SHADER,
+		transparent: true,
+		uniforms: {
+			dashColor: { value: new THREE.Color(config.dashColor) },
+			halftoneCellPx: {
+				value: Math.max(config.halftoneScalePx * pixelRatio, 1),
+			},
+			halftonePower: { value: config.halftonePower },
+			halftoneWidth: { value: config.halftoneWidth },
+			hoverDashColor: { value: new THREE.Color(config.hoverDashColor) },
+			hoverLightRadius: { value: config.hoverLightRadius },
+			hoverLightStrength: { value: 0 },
+			imageContrast: { value: config.imageContrast },
+			imageFlipY: { value: config.flipImageY ? 1 : 0 },
+			imageSize: { value: new THREE.Vector2(image.width, image.height) },
+			imageZoom: { value: getImagePreviewZoom(config.previewDistance) },
+			interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
+			interactionVelocity: { value: new THREE.Vector2(0, 0) },
+			logicalResolution: { value: new THREE.Vector2(1, 1) },
+			tImage: { value: imageTexture },
+		},
+		vertexShader: PASS_THROUGH_VERTEX_SHADER,
+	});
 
-  const fullScreenMesh = new THREE.Mesh(fullScreenGeometry, halftoneMaterial);
-  const scene = new THREE.Scene();
-  scene.add(fullScreenMesh);
+	const fullScreenMesh = new THREE.Mesh(fullScreenGeometry, halftoneMaterial);
+	const scene = new THREE.Scene();
+	scene.add(fullScreenMesh);
 
-  const interaction = createInteractionState();
-  let hasRenderedFirstFrame = false;
+	const interaction = createInteractionState();
+	let hasRenderedFirstFrame = false;
 
-  const renderFrame = (deltaSeconds: number) => {
-    const externalActive = isExternallyActive();
-    const isHoverActive = externalActive || interaction.pointerInside;
-    const targetHoverStrength = isHoverActive ? 1 : 0;
-    const hoverEasing =
-      1 -
-      Math.exp(
-        -deltaSeconds * (isHoverActive ? HOVER_FADE_IN : HOVER_FADE_OUT),
-      );
+	const renderFrame = (deltaSeconds: number) => {
+		const externalActive = isExternallyActive();
+		const isHoverActive = externalActive || interaction.pointerInside;
+		const targetHoverStrength = isHoverActive ? 1 : 0;
+		const hoverEasing =
+			1 -
+			Math.exp(
+				-deltaSeconds * (isHoverActive ? HOVER_FADE_IN : HOVER_FADE_OUT),
+			);
 
-    interaction.hoverStrength +=
-      (targetHoverStrength - interaction.hoverStrength) * hoverEasing;
+		interaction.hoverStrength +=
+			(targetHoverStrength - interaction.hoverStrength) * hoverEasing;
 
-    if (
-      Math.abs(targetHoverStrength - interaction.hoverStrength) <=
-      HOVER_STRENGTH_STOP_EPSILON
-    ) {
-      interaction.hoverStrength = targetHoverStrength;
-    }
+		if (
+			Math.abs(targetHoverStrength - interaction.hoverStrength) <=
+			HOVER_STRENGTH_STOP_EPSILON
+		) {
+			interaction.hoverStrength = targetHoverStrength;
+		}
 
-    const targetMouseX =
-      externalActive && !interaction.pointerInside
-        ? config.activeHoverX
-        : interaction.mouseX;
-    const targetMouseY =
-      externalActive && !interaction.pointerInside
-        ? config.activeHoverY
-        : interaction.mouseY;
+		const targetMouseX =
+			externalActive && !interaction.pointerInside
+				? config.activeHoverX
+				: interaction.mouseX;
+		const targetMouseY =
+			externalActive && !interaction.pointerInside
+				? config.activeHoverY
+				: interaction.mouseY;
 
-    interaction.smoothedMouseX +=
-      (targetMouseX - interaction.smoothedMouseX) * POINTER_FOLLOW;
-    interaction.smoothedMouseY +=
-      (targetMouseY - interaction.smoothedMouseY) * POINTER_FOLLOW;
+		interaction.smoothedMouseX +=
+			(targetMouseX - interaction.smoothedMouseX) * POINTER_FOLLOW;
+		interaction.smoothedMouseY +=
+			(targetMouseY - interaction.smoothedMouseY) * POINTER_FOLLOW;
 
-    if (
-      Math.abs(targetMouseX - interaction.smoothedMouseX) <=
-      POINTER_POSITION_STOP_EPSILON
-    ) {
-      interaction.smoothedMouseX = targetMouseX;
-    }
+		if (
+			Math.abs(targetMouseX - interaction.smoothedMouseX) <=
+			POINTER_POSITION_STOP_EPSILON
+		) {
+			interaction.smoothedMouseX = targetMouseX;
+		}
 
-    if (
-      Math.abs(targetMouseY - interaction.smoothedMouseY) <=
-      POINTER_POSITION_STOP_EPSILON
-    ) {
-      interaction.smoothedMouseY = targetMouseY;
-    }
+		if (
+			Math.abs(targetMouseY - interaction.smoothedMouseY) <=
+			POINTER_POSITION_STOP_EPSILON
+		) {
+			interaction.smoothedMouseY = targetMouseY;
+		}
 
-    interaction.pointerVelocityX *= POINTER_VELOCITY_DAMPING;
-    interaction.pointerVelocityY *= POINTER_VELOCITY_DAMPING;
+		interaction.pointerVelocityX *= POINTER_VELOCITY_DAMPING;
+		interaction.pointerVelocityY *= POINTER_VELOCITY_DAMPING;
 
-    if (
-      Math.abs(interaction.pointerVelocityX) <= POINTER_VELOCITY_STOP_EPSILON
-    ) {
-      interaction.pointerVelocityX = 0;
-    }
+		if (
+			Math.abs(interaction.pointerVelocityX) <= POINTER_VELOCITY_STOP_EPSILON
+		) {
+			interaction.pointerVelocityX = 0;
+		}
 
-    if (
-      Math.abs(interaction.pointerVelocityY) <= POINTER_VELOCITY_STOP_EPSILON
-    ) {
-      interaction.pointerVelocityY = 0;
-    }
+		if (
+			Math.abs(interaction.pointerVelocityY) <= POINTER_VELOCITY_STOP_EPSILON
+		) {
+			interaction.pointerVelocityY = 0;
+		}
 
-    const logicalRes = halftoneMaterial.uniforms.logicalResolution.value;
-    halftoneMaterial.uniforms.interactionUv.value.set(
-      interaction.smoothedMouseX,
-      1 - interaction.smoothedMouseY,
-    );
-    halftoneMaterial.uniforms.interactionVelocity.value.set(
-      interaction.pointerVelocityX * logicalRes.x,
-      -interaction.pointerVelocityY * logicalRes.y,
-    );
-    halftoneMaterial.uniforms.hoverLightStrength.value =
-      config.hoverLightIntensity * interaction.hoverStrength;
-    halftoneMaterial.uniforms.hoverLightRadius.value =
-      config.hoverHalftoneRadius + config.hoverLightRadius * 0.5;
-    halftoneMaterial.uniforms.imageZoom.value = getImagePreviewZoom(
-      config.previewDistance,
-    );
+		const logicalRes = halftoneMaterial.uniforms.logicalResolution.value;
+		halftoneMaterial.uniforms.interactionUv.value.set(
+			interaction.smoothedMouseX,
+			1 - interaction.smoothedMouseY,
+		);
+		halftoneMaterial.uniforms.interactionVelocity.value.set(
+			interaction.pointerVelocityX * logicalRes.x,
+			-interaction.pointerVelocityY * logicalRes.y,
+		);
+		halftoneMaterial.uniforms.hoverLightStrength.value =
+			config.hoverLightIntensity * interaction.hoverStrength;
+		halftoneMaterial.uniforms.hoverLightRadius.value =
+			config.hoverHalftoneRadius + config.hoverLightRadius * 0.5;
+		halftoneMaterial.uniforms.imageZoom.value = getImagePreviewZoom(
+			config.previewDistance,
+		);
 
-    renderer.render(scene, orthographicCamera);
+		renderer.render(scene, orthographicCamera);
 
-    if (!hasRenderedFirstFrame) {
-      hasRenderedFirstFrame = true;
-      onFirstFrame?.();
-    }
+		if (!hasRenderedFirstFrame) {
+			hasRenderedFirstFrame = true;
+			onFirstFrame?.();
+		}
 
-    return (
-      isHoverActive ||
-      interaction.hoverStrength !== targetHoverStrength ||
-      interaction.smoothedMouseX !== targetMouseX ||
-      interaction.smoothedMouseY !== targetMouseY ||
-      interaction.pointerVelocityX !== 0 ||
-      interaction.pointerVelocityY !== 0
-    );
-  };
+		return (
+			isHoverActive ||
+			interaction.hoverStrength !== targetHoverStrength ||
+			interaction.smoothedMouseX !== targetMouseX ||
+			interaction.smoothedMouseY !== targetMouseY ||
+			interaction.pointerVelocityX !== 0 ||
+			interaction.pointerVelocityY !== 0
+		);
+	};
 
-  const renderLoop = createVisualFrameLoop({
-    renderFrame: (frame) => renderFrame(frame.deltaSeconds),
-    target: container,
-    targetVisibilityOptions: { rootMargin: '100px' },
-  });
+	const renderLoop = createVisualFrameLoop({
+		renderFrame: (frame) => renderFrame(frame.deltaSeconds),
+		target: container,
+		targetVisibilityOptions: { rootMargin: "100px" },
+	});
 
-  const ensureAnimationLoop = () => {
-    renderLoop.start();
-  };
+	const ensureAnimationLoop = () => {
+		renderLoop.start();
+	};
 
-  const syncSize = () => {
-    const cssWidth = Math.max(container.clientWidth, 1);
-    const cssHeight = Math.max(container.clientHeight, 1);
+	const syncSize = () => {
+		const cssWidth = Math.max(container.clientWidth, 1);
+		const cssHeight = Math.max(container.clientHeight, 1);
 
-    renderer.setSize(cssWidth, cssHeight, false);
-    halftoneMaterial.uniforms.logicalResolution.value.set(
-      cssWidth * pixelRatio,
-      cssHeight * pixelRatio,
-    );
-    halftoneMaterial.uniforms.halftoneCellPx.value = Math.max(
-      config.halftoneScalePx * pixelRatio,
-      1,
-    );
+		renderer.setSize(cssWidth, cssHeight, false);
+		halftoneMaterial.uniforms.logicalResolution.value.set(
+			cssWidth * pixelRatio,
+			cssHeight * pixelRatio,
+		);
+		halftoneMaterial.uniforms.halftoneCellPx.value = Math.max(
+			config.halftoneScalePx * pixelRatio,
+			1,
+		);
 
-    if (!renderLoop.isRunning()) {
-      renderFrame(0);
-    }
-  };
+		if (!renderLoop.isRunning()) {
+			renderFrame(0);
+		}
+	};
 
-  const stopObservingSize = observeElementSize(container, syncSize);
-  syncSize();
+	const stopObservingSize = observeElementSize(container, syncSize);
+	syncSize();
 
-  const updatePointerPosition = (
-    event: PointerEvent,
-    options?: { resetVelocity?: boolean },
-  ) => {
-    const rect = trackingElement.getBoundingClientRect();
-    const width = Math.max(rect.width, 1);
-    const height = Math.max(rect.height, 1);
-    const nextMouseX = THREE.MathUtils.clamp(
-      (event.clientX - rect.left) / width,
-      0,
-      1,
-    );
-    const nextMouseY = THREE.MathUtils.clamp(
-      (event.clientY - rect.top) / height,
-      0,
-      1,
-    );
-    const deltaX = nextMouseX - interaction.mouseX;
-    const deltaY = nextMouseY - interaction.mouseY;
+	const updatePointerPosition = (
+		event: PointerEvent,
+		options?: { resetVelocity?: boolean },
+	) => {
+		const rect = trackingElement.getBoundingClientRect();
+		const width = Math.max(rect.width, 1);
+		const height = Math.max(rect.height, 1);
+		const nextMouseX = THREE.MathUtils.clamp(
+			(event.clientX - rect.left) / width,
+			0,
+			1,
+		);
+		const nextMouseY = THREE.MathUtils.clamp(
+			(event.clientY - rect.top) / height,
+			0,
+			1,
+		);
+		const deltaX = nextMouseX - interaction.mouseX;
+		const deltaY = nextMouseY - interaction.mouseY;
 
-    interaction.mouseX = nextMouseX;
-    interaction.mouseY = nextMouseY;
-    interaction.pointerInside =
-      event.clientX >= rect.left &&
-      event.clientX <= rect.right &&
-      event.clientY >= rect.top &&
-      event.clientY <= rect.bottom;
+		interaction.mouseX = nextMouseX;
+		interaction.mouseY = nextMouseY;
+		interaction.pointerInside =
+			event.clientX >= rect.left &&
+			event.clientX <= rect.right &&
+			event.clientY >= rect.top &&
+			event.clientY <= rect.bottom;
 
-    if (options?.resetVelocity) {
-      interaction.pointerVelocityX = 0;
-      interaction.pointerVelocityY = 0;
-      interaction.smoothedMouseX = nextMouseX;
-      interaction.smoothedMouseY = nextMouseY;
-      return;
-    }
+		if (options?.resetVelocity) {
+			interaction.pointerVelocityX = 0;
+			interaction.pointerVelocityY = 0;
+			interaction.smoothedMouseX = nextMouseX;
+			interaction.smoothedMouseY = nextMouseY;
+			return;
+		}
 
-    interaction.pointerVelocityX = deltaX;
-    interaction.pointerVelocityY = deltaY;
-  };
+		interaction.pointerVelocityX = deltaX;
+		interaction.pointerVelocityY = deltaY;
+	};
 
-  const handlePointerMove = (event: PointerEvent) => {
-    const shouldReset = !interaction.pointerInside;
-    updatePointerPosition(
-      event,
-      shouldReset ? { resetVelocity: true } : undefined,
-    );
-    ensureAnimationLoop();
-  };
+	const handlePointerMove = (event: PointerEvent) => {
+		const shouldReset = !interaction.pointerInside;
+		updatePointerPosition(
+			event,
+			shouldReset ? { resetVelocity: true } : undefined,
+		);
+		ensureAnimationLoop();
+	};
 
-  const handlePointerLeave = () => {
-    interaction.pointerInside = false;
-    interaction.pointerVelocityX = 0;
-    interaction.pointerVelocityY = 0;
-    ensureAnimationLoop();
-  };
+	const handlePointerLeave = () => {
+		interaction.pointerInside = false;
+		interaction.pointerVelocityX = 0;
+		interaction.pointerVelocityY = 0;
+		ensureAnimationLoop();
+	};
 
-  trackingElement.addEventListener('pointermove', handlePointerMove);
-  trackingElement.addEventListener('pointerleave', handlePointerLeave);
+	trackingElement.addEventListener("pointermove", handlePointerMove);
+	trackingElement.addEventListener("pointerleave", handlePointerLeave);
 
-  if (isExternallyActive()) {
-    ensureAnimationLoop();
-  }
+	if (isExternallyActive()) {
+		ensureAnimationLoop();
+	}
 
-  return {
-    dispose: () => {
-      renderLoop.dispose();
-      stopObservingSize();
-      trackingElement.removeEventListener('pointermove', handlePointerMove);
-      trackingElement.removeEventListener('pointerleave', handlePointerLeave);
+	return {
+		dispose: () => {
+			renderLoop.dispose();
+			stopObservingSize();
+			trackingElement.removeEventListener("pointermove", handlePointerMove);
+			trackingElement.removeEventListener("pointerleave", handlePointerLeave);
 
-      halftoneMaterial.dispose();
-      imageTexture.dispose();
-      fullScreenGeometry.dispose();
-      renderer.dispose();
+			halftoneMaterial.dispose();
+			imageTexture.dispose();
+			fullScreenGeometry.dispose();
+			renderer.dispose();
 
-      if (canvas.parentNode === container) {
-        container.removeChild(canvas);
-      }
-    },
-    wake: ensureAnimationLoop,
-  };
+			if (canvas.parentNode === container) {
+				container.removeChild(canvas);
+			}
+		},
+		wake: ensureAnimationLoop,
+	};
 }

@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { useSelectedRecordIds } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { isUndefined } from "@sniptt/guards";
+import { useSelectedRecordIds } from "twenty-sdk/front-component";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { CalendarEventRecordingContent } from 'src/front-components/components/CalendarEventRecordingContent';
+import { CalendarEventRecordingContent } from "src/front-components/components/CalendarEventRecordingContent";
 
 const StyledCenteredState = styled.div`
   align-items: center;
@@ -18,22 +18,22 @@ const StyledCenteredState = styled.div`
 `;
 
 export const CalendarEventRecording = () => {
-  const selectedRecordIds = useSelectedRecordIds();
-  const calendarEventId =
-    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
+	const selectedRecordIds = useSelectedRecordIds();
+	const calendarEventId =
+		selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
 
-  if (isUndefined(calendarEventId)) {
-    return (
-      <StyledCenteredState>
-        Open a calendar event to see its recording.
-      </StyledCenteredState>
-    );
-  }
+	if (isUndefined(calendarEventId)) {
+		return (
+			<StyledCenteredState>
+				Open a calendar event to see its recording.
+			</StyledCenteredState>
+		);
+	}
 
-  return (
-    <CalendarEventRecordingContent
-      key={calendarEventId}
-      calendarEventId={calendarEventId}
-    />
-  );
+	return (
+		<CalendarEventRecordingContent
+			key={calendarEventId}
+			calendarEventId={calendarEventId}
+		/>
+	);
 };

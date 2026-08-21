@@ -1,26 +1,26 @@
-import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { createValidationResult } from "@/sdk/define/common/utils/create-validation-result";
+import type { DefineEntity } from "@/sdk/define/common/types/define-entity.type";
+import { type PostInstallLogicFunctionConfig } from "@/sdk/define/logic-functions/post-install-logic-function-config";
 
 export const definePostInstallLogicFunction: DefineEntity<
-  PostInstallLogicFunctionConfig
+	PostInstallLogicFunctionConfig
 > = (config) => {
-  const errors = [];
+	const errors = [];
 
-  if (!config.universalIdentifier) {
-    errors.push('Post install logic function must have a universalIdentifier');
-  }
+	if (!config.universalIdentifier) {
+		errors.push("Post install logic function must have a universalIdentifier");
+	}
 
-  if (!config.handler) {
-    errors.push('Post install logic function must have a handler');
-  }
+	if (!config.handler) {
+		errors.push("Post install logic function must have a handler");
+	}
 
-  if (typeof config.handler !== 'function') {
-    errors.push('Post install logic function handler must be a function');
-  }
+	if (typeof config.handler !== "function") {
+		errors.push("Post install logic function handler must be a function");
+	}
 
-  return createValidationResult({
-    config,
-    errors,
-  });
+	return createValidationResult({
+		config,
+		errors,
+	});
 };

@@ -1,15 +1,15 @@
-import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
-import { useCallback } from 'react';
+import { usePerformViewAPIPersist } from "@/views/hooks/internal/usePerformViewAPIPersist";
+import { useCallback } from "react";
 
 export const useDeleteViewForFieldsWidget = () => {
-  const { performViewAPIDestroy } = usePerformViewAPIPersist();
+	const { performViewAPIDestroy } = usePerformViewAPIPersist();
 
-  const deleteViewForFieldsWidget = useCallback(
-    async (viewId: string) => {
-      await performViewAPIDestroy({ id: viewId });
-    },
-    [performViewAPIDestroy],
-  );
+	const deleteViewForFieldsWidget = useCallback(
+		async (viewId: string) => {
+			await performViewAPIDestroy({ id: viewId });
+		},
+		[performViewAPIDestroy],
+	);
 
-  return { deleteViewForFieldsWidget };
+	return { deleteViewForFieldsWidget };
 };

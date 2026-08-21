@@ -1,1 +1,1 @@
-export const MEMBER_ROLE_LABEL = 'Member';
+export const MEMBER_ROLE_LABEL = "Member";

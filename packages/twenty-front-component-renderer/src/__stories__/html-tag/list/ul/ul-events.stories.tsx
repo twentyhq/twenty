@@ -1,29 +1,29 @@
-import { type Meta } from '@storybook/react-vite';
+import { type Meta } from "@storybook/react-vite";
 
-import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { FrontComponentRenderer } from "@/host/components/FrontComponentRenderer";
 import {
-  FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  resetFrontComponentStoryMocks,
-} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+	FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+	resetFrontComponentStoryMocks,
+} from "@/__stories__/shared/test-utils/createFrontComponentStoryMeta";
 import {
-  createHtmlTagClickStory,
-  createHtmlTagFocusStory,
-} from '@/__stories__/shared/test-utils/createHtmlElementStory';
+	createHtmlTagClickStory,
+	createHtmlTagFocusStory,
+} from "@/__stories__/shared/test-utils/createHtmlElementStory";
 
 const meta: Meta<typeof FrontComponentRenderer> = {
-  title: 'FrontComponent/HtmlTag/List/Ul/Events',
-  component: FrontComponentRenderer,
-  parameters: { layout: 'centered' },
-  args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  beforeEach: resetFrontComponentStoryMocks,
+	title: "FrontComponent/HtmlTag/List/Ul/Events",
+	component: FrontComponentRenderer,
+	parameters: { layout: "centered" },
+	args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+	beforeEach: resetFrontComponentStoryMocks,
 };
 
 export default meta;
 
 export const Click = createHtmlTagClickStory({
-  frontComponentBundleName: 'ul-click',
+	frontComponentBundleName: "ul-click",
 });
 
 export const FocusBlur = createHtmlTagFocusStory({
-  frontComponentBundleName: 'ul-focus-blur',
+	frontComponentBundleName: "ul-focus-blur",
 });

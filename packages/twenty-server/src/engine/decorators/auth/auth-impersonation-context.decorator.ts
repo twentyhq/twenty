@@ -1,11 +1,11 @@
-import { type ExecutionContext, createParamDecorator } from '@nestjs/common';
+import { type ExecutionContext, createParamDecorator } from "@nestjs/common";
 
-import { getRequest } from 'src/utils/extract-request';
+import { getRequest } from "src/utils/extract-request";
 
 export const AuthImpersonationContext = createParamDecorator(
-  (_: unknown, ctx: ExecutionContext) => {
-    const request = getRequest(ctx);
+	(_: unknown, ctx: ExecutionContext) => {
+		const request = getRequest(ctx);
 
-    return request.impersonationContext;
-  },
+		return request.impersonationContext;
+	},
 );

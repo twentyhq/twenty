@@ -4,15 +4,15 @@
 // (washes, tone tables, dark surfaces) stay authored in their scene;
 // only values used by two or more scene files live here.
 export const FICTION_PALETTE = {
-  accent: '#3e63dd',
-  white: '#ffffff',
-  cardBackground: '#fcfcfc',
-  borderLight: '#f1f1f1',
-  borderMedium: '#ebebeb',
-  borderStrong: '#d6d6d6',
-  inkMuted: '#666666',
-  inkSoft: '#777777',
-  inkFaint: '#999999',
-  inkDisabled: '#b3b3b3',
-  yellowWash: '#fef2a4',
+	accent: "#3e63dd",
+	white: "#ffffff",
+	cardBackground: "#fcfcfc",
+	borderLight: "#f1f1f1",
+	borderMedium: "#ebebeb",
+	borderStrong: "#d6d6d6",
+	inkMuted: "#666666",
+	inkSoft: "#777777",
+	inkFaint: "#999999",
+	inkDisabled: "#b3b3b3",
+	yellowWash: "#fef2a4",
 };

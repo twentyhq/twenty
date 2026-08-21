@@ -1,20 +1,20 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
-import { EllipsisDisplay } from 'twenty-ui/data-display';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { EllipsisDisplay } from "twenty-ui/data-display";
+import { ComponentDecorator } from "twenty-ui/testing";
+import { getProfilingStory } from "~/testing/profiling/utils/getProfilingStory";
 
 const meta: Meta = {
-  title: 'UI/Input/EllipsisDisplay/EllipsisDisplay',
-  component: EllipsisDisplay,
-  decorators: [ComponentDecorator],
-  args: {
-    maxWidth: 100,
-    children: 'This is a long text that should be truncated',
-  },
-  parameters: {
-    chromatic: { disableSnapshot: true },
-  },
+	title: "UI/Input/EllipsisDisplay/EllipsisDisplay",
+	component: EllipsisDisplay,
+	decorators: [ComponentDecorator],
+	args: {
+		maxWidth: 100,
+		children: "This is a long text that should be truncated",
+	},
+	parameters: {
+		chromatic: { disableSnapshot: true },
+	},
 };
 
 export default meta;
@@ -24,8 +24,8 @@ type Story = StoryObj<typeof EllipsisDisplay>;
 export const Default: Story = {};
 
 export const Performance = getProfilingStory({
-  componentName: 'EllipsisDisplay',
-  averageThresholdInMs: 0.2,
-  numberOfRuns: 20,
-  numberOfTestsPerRun: 10,
+	componentName: "EllipsisDisplay",
+	averageThresholdInMs: 0.2,
+	numberOfRuns: 20,
+	numberOfTestsPerRun: 10,
 });

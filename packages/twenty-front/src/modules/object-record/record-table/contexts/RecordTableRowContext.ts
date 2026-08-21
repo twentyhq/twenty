@@ -1,13 +1,13 @@
-import { createRequiredContext } from '~/utils/createRequiredContext';
+import { createRequiredContext } from "~/utils/createRequiredContext";
 
 export type RecordTableRowContextValue = {
-  pathToShowPage: string;
-  objectNameSingular: string;
-  recordId: string;
-  rowIndex: number;
-  isSelected: boolean;
-  isRecordReadOnly?: boolean;
+	pathToShowPage: string;
+	objectNameSingular: string;
+	recordId: string;
+	rowIndex: number;
+	isSelected: boolean;
+	isRecordReadOnly?: boolean;
 };
 
 export const [RecordTableRowContextProvider, useRecordTableRowContextOrThrow] =
-  createRequiredContext<RecordTableRowContextValue>('RecordTableRowContext');
+	createRequiredContext<RecordTableRowContextValue>("RecordTableRowContext");

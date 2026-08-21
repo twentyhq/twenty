@@ -1,1 +1,1 @@
-export * from 'src/engine/core-modules/captcha/interfaces/captcha.interface';
+export * from "src/engine/core-modules/captcha/interfaces/captcha.interface";

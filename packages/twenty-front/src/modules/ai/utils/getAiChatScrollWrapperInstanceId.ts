@@ -1,4 +1,4 @@
-import { type AiChatSurface } from '@/ai/types/AiChatSurface';
+import { type AiChatSurface } from "@/ai/types/AiChatSurface";
 
 export const getAiChatScrollWrapperInstanceId = (surface: AiChatSurface) =>
-  `ai-chat-scroll-wrapper-${surface}`;
+	`ai-chat-scroll-wrapper-${surface}`;

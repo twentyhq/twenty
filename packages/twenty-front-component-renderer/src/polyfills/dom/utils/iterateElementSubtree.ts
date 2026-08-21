@@ -1,32 +1,32 @@
-import { isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isObject } from "@sniptt/guards";
+import { isDefined } from "twenty-shared/utils";
 
-import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
+import { type ElementLike } from "@/polyfills/dom/types/ElementLike";
 
 export function* iterateElementSubtree(
-  rootElement: ElementLike,
+	rootElement: ElementLike,
 ): Generator<ElementLike> {
-  const pendingNodes: ElementLike[] = [rootElement];
+	const pendingNodes: ElementLike[] = [rootElement];
 
-  while (pendingNodes.length > 0) {
-    const currentNode = pendingNodes.pop();
+	while (pendingNodes.length > 0) {
+		const currentNode = pendingNodes.pop();
 
-    if (!isDefined(currentNode)) {
-      return;
-    }
+		if (!isDefined(currentNode)) {
+			return;
+		}
 
-    yield currentNode;
+		yield currentNode;
 
-    const childNodes = currentNode.childNodes;
+		const childNodes = currentNode.childNodes;
 
-    if (isDefined(childNodes)) {
-      for (let index = childNodes.length - 1; index >= 0; index -= 1) {
-        const childNode = childNodes[index];
+		if (isDefined(childNodes)) {
+			for (let index = childNodes.length - 1; index >= 0; index -= 1) {
+				const childNode = childNodes[index];
 
-        if (isObject(childNode)) {
-          pendingNodes.push(childNode);
-        }
-      }
-    }
-  }
+				if (isObject(childNode)) {
+					pendingNodes.push(childNode);
+				}
+			}
+		}
+	}
 }

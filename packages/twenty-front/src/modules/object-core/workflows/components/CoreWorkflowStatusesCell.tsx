@@ -1,14 +1,14 @@
-import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
-import { useCoreWorkflowStatusOptions } from '@/object-core/workflows/hooks/useCoreWorkflowStatusOptions';
+import { MultiSelectDisplay } from "@/ui/field/display/components/MultiSelectDisplay";
+import { useCoreWorkflowStatusOptions } from "@/object-core/workflows/hooks/useCoreWorkflowStatusOptions";
 
 type CoreWorkflowStatusesCellProps = {
-  statuses: string[];
+	statuses: string[];
 };
 
 export const CoreWorkflowStatusesCell = ({
-  statuses,
+	statuses,
 }: CoreWorkflowStatusesCellProps) => {
-  const statusOptions = useCoreWorkflowStatusOptions();
+	const statusOptions = useCoreWorkflowStatusOptions();
 
-  return <MultiSelectDisplay values={statuses} options={statusOptions} />;
+	return <MultiSelectDisplay values={statuses} options={statusOptions} />;
 };

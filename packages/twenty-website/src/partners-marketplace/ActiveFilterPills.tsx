@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconX } from '@tabler/icons-react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconX } from "@tabler/icons-react";
 
 import {
-  color,
-  fontFamily,
-  fontSize,
-  radius,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	color,
+	fontFamily,
+	fontSize,
+	radius,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 
 export type ActivePill = {
-  key: string;
-  text: string;
-  onRemove: () => void;
+	key: string;
+	text: string;
+	onRemove: () => void;
 };
 
 const PillsRow = styled.div`
@@ -28,12 +28,12 @@ const PillsRow = styled.div`
 
 const Pill = styled.span`
   align-items: center;
-  background: ${color('black-5')};
+  background: ${color("black-5")};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(4)};
-  color: ${color('black-80')};
+  color: ${color("black-80")};
   display: inline-flex;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(3)};
   gap: ${spacing(1)};
   line-height: ${fontSize(4)};
@@ -57,30 +57,30 @@ const RemoveButton = styled.button`
 
   &:focus-visible {
     border-radius: ${radius(0.5)};
-    outline: 2px solid ${color('black-40')};
+    outline: 2px solid ${color("black-40")};
     outline-offset: 2px;
   }
 `;
 
 export function ActiveFilterPills({ pills }: { pills: readonly ActivePill[] }) {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  if (pills.length === 0) return null;
+	if (pills.length === 0) return null;
 
-  return (
-    <PillsRow aria-label={i18n._(msg`Active filters`)}>
-      {pills.map((pill) => (
-        <Pill key={pill.key}>
-          {pill.text}
-          <RemoveButton
-            aria-label={i18n._(msg`Remove ${pill.text} filter`)}
-            onClick={pill.onRemove}
-            type="button"
-          >
-            <IconX size={12} strokeWidth={2} aria-hidden="true" />
-          </RemoveButton>
-        </Pill>
-      ))}
-    </PillsRow>
-  );
+	return (
+		<PillsRow aria-label={i18n._(msg`Active filters`)}>
+			{pills.map((pill) => (
+				<Pill key={pill.key}>
+					{pill.text}
+					<RemoveButton
+						aria-label={i18n._(msg`Remove ${pill.text} filter`)}
+						onClick={pill.onRemove}
+						type="button"
+					>
+						<IconX size={12} strokeWidth={2} aria-hidden="true" />
+					</RemoveButton>
+				</Pill>
+			))}
+		</PillsRow>
+	);
 }

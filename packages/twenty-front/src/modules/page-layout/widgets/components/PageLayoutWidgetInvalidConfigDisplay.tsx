@@ -1,9 +1,9 @@
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { type FallbackProps } from 'react-error-boundary';
-import { Status } from 'twenty-ui/data-display';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { useCurrentWidget } from "@/page-layout/widgets/hooks/useCurrentWidget";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { type FallbackProps } from "react-error-boundary";
+import { Status } from "twenty-ui/data-display";
+import { AppTooltip } from "twenty-ui/surfaces";
 
 type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
 
@@ -14,25 +14,25 @@ const StyledInvalidConfigContainer = styled.div`
 `;
 
 export const PageLayoutWidgetInvalidConfigDisplay = ({
-  error,
+	error,
 }: PageLayoutWidgetInvalidConfigDisplayProps) => {
-  const widget = useCurrentWidget();
-  const tooltipId = `widget-invalid-config-tooltip-${widget.id}`;
+	const widget = useCurrentWidget();
+	const tooltipId = `widget-invalid-config-tooltip-${widget.id}`;
 
-  const text = t`Invalid Configuration`;
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  const tooltipContent = t`Invalid configuration: ${errorMessage}`;
+	const text = t`Invalid Configuration`;
+	const errorMessage = error instanceof Error ? error.message : String(error);
+	const tooltipContent = t`Invalid configuration: ${errorMessage}`;
 
-  return (
-    <StyledInvalidConfigContainer>
-      <div id={tooltipId}>
-        <Status color="red" text={text} />
-      </div>
-      <AppTooltip
-        anchorSelect={`#${tooltipId}`}
-        content={tooltipContent}
-        place="top"
-      />
-    </StyledInvalidConfigContainer>
-  );
+	return (
+		<StyledInvalidConfigContainer>
+			<div id={tooltipId}>
+				<Status color="red" text={text} />
+			</div>
+			<AppTooltip
+				anchorSelect={`#${tooltipId}`}
+				content={tooltipContent}
+				place="top"
+			/>
+		</StyledInvalidConfigContainer>
+	);
 };

@@ -1,2 +1,2 @@
 export const buildUnsubscribeTextFooter = (webUrl: string): string =>
-  `\n\n--\nUnsubscribe: ${webUrl}`;
+	`\n\n--\nUnsubscribe: ${webUrl}`;

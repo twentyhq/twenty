@@ -1,11 +1,11 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from "@sniptt/guards";
 
 export const toText = (value: unknown): string | undefined => {
-  if (!isString(value)) {
-    return undefined;
-  }
+	if (!isString(value)) {
+		return undefined;
+	}
 
-  const trimmed = value.trim();
+	const trimmed = value.trim();
 
-  return isNonEmptyString(trimmed) ? trimmed : undefined;
+	return isNonEmptyString(trimmed) ? trimmed : undefined;
 };

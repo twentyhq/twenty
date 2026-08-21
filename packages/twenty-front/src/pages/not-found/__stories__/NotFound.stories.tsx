@@ -1,23 +1,23 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { within } from 'storybook/test';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { within } from "storybook/test";
 
 import {
-  PageDecorator,
-  type PageDecoratorArgs,
-} from '~/testing/decorators/PageDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+	PageDecorator,
+	type PageDecoratorArgs,
+} from "~/testing/decorators/PageDecorator";
+import { graphqlMocks } from "~/testing/graphqlMocks";
 
-import { NotFound } from '~/pages/not-found/NotFound';
+import { NotFound } from "~/pages/not-found/NotFound";
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/NotFound/Default',
-  component: NotFound,
-  decorators: [PageDecorator],
-  args: {
-    routePath: '/toto-not-found',
-  },
-  parameters: {
-    msw: graphqlMocks,
-  },
+	title: "Pages/NotFound/Default",
+	component: NotFound,
+	decorators: [PageDecorator],
+	args: {
+		routePath: "/toto-not-found",
+	},
+	parameters: {
+		msw: graphqlMocks,
+	},
 };
 
 export default meta;
@@ -25,8 +25,8 @@ export default meta;
 export type Story = StoryObj<typeof NotFound>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await canvas.findByText('Off the beaten path');
-  },
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		await canvas.findByText("Off the beaten path");
+	},
 };

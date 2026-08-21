@@ -1,19 +1,19 @@
-import { type ViewFilterOperand } from '@/types';
-import { isDefined } from '@/utils';
+import { type ViewFilterOperand } from "@/types";
+import { isDefined } from "@/utils";
 
-import { isRecordFilterOperandExpectingValue } from './isRecordFilterOperandExpectingValue';
+import { isRecordFilterOperandExpectingValue } from "./isRecordFilterOperandExpectingValue";
 
 export const isRecordFilterValueValid = (recordFilter: {
-  operand: ViewFilterOperand;
-  value: string;
+	operand: ViewFilterOperand;
+	value: string;
 }): boolean => {
-  if (!isRecordFilterOperandExpectingValue(recordFilter.operand)) {
-    return true;
-  }
+	if (!isRecordFilterOperandExpectingValue(recordFilter.operand)) {
+		return true;
+	}
 
-  return (
-    isDefined(recordFilter.value) &&
-    recordFilter.value !== '' &&
-    recordFilter.value !== '[]'
-  );
+	return (
+		isDefined(recordFilter.value) &&
+		recordFilter.value !== "" &&
+		recordFilter.value !== "[]"
+	);
 };

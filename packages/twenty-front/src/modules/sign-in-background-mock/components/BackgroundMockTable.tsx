@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
 
-import { BackgroundMockTableRow } from '@/sign-in-background-mock/components/BackgroundMockTableRow';
-import { BACKGROUND_MOCK_COLUMNS } from '@/sign-in-background-mock/constants/BackgroundMockColumns';
-import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
-import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
-import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Checkbox } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { BackgroundMockTableRow } from "@/sign-in-background-mock/components/BackgroundMockTableRow";
+import { BACKGROUND_MOCK_COLUMNS } from "@/sign-in-background-mock/constants/BackgroundMockColumns";
+import { BACKGROUND_MOCK_COMPANIES } from "@/sign-in-background-mock/constants/BackgroundMockCompanies";
+import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from "@/sign-in-background-mock/constants/BackgroundMockTableDimensions";
+import { IconChevronDown, IconPlus, useIcons } from "twenty-ui/icon";
+import { OverflowingTextWithTooltip } from "twenty-ui/surfaces";
+import { Checkbox } from "twenty-ui/input";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledTableWrapper = styled.div`
   display: flex;
@@ -148,81 +148,81 @@ const StyledLastEmptyCell = styled.div`
 `;
 
 export const BackgroundMockTable = () => {
-  const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
+	const { theme } = useContext(ThemeContext);
+	const { getIcon } = useIcons();
 
-  return (
-    <StyledTableWrapper>
-      <StyledTable>
-        <StyledHeaderRow>
-          <StyledDragHandleColumn />
-          <StyledCheckboxHeaderColumn>
-            <Checkbox hoverable checked={false} />
-          </StyledCheckboxHeaderColumn>
-          {BACKGROUND_MOCK_COLUMNS.map((column) => {
-            const Icon = getIcon(column.iconName);
-            return (
-              <StyledHeaderCell key={column.label} width={column.width}>
-                {Icon !== undefined && (
-                  <Icon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                )}
-                <StyledHeaderLabel>{column.label}</StyledHeaderLabel>
-              </StyledHeaderCell>
-            );
-          })}
-          <StyledAddColumnHeaderCell>
-            <StyledAddColumnIconWrapper>
-              <IconPlus
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-              />
-            </StyledAddColumnIconWrapper>
-          </StyledAddColumnHeaderCell>
-        </StyledHeaderRow>
-        <StyledTableBody>
-          {BACKGROUND_MOCK_COMPANIES.map((company) => (
-            <BackgroundMockTableRow key={company.id} company={company} />
-          ))}
-        </StyledTableBody>
-        <StyledFooterRow>
-          <StyledDragHandleColumn />
-          <StyledFooterCheckboxColumn />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[0].width}>
-            <StyledFooterLabel>
-              <OverflowingTextWithTooltip text="Calculate" />
-            </StyledFooterLabel>
-            <IconChevronDown
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
-            />
-          </StyledFooterCell>
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[1].width}>
-            <StyledFooterLabel>
-              <OverflowingTextWithTooltip text="Count all" />
-            </StyledFooterLabel>
-            <StyledFooterValue>599</StyledFooterValue>
-          </StyledFooterCell>
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[2].width} />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[3].width} />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[4].width} />
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[5].width}>
-            <StyledFooterLabel>
-              <OverflowingTextWithTooltip text="Max of Employees" />
-            </StyledFooterLabel>
-            <StyledFooterValue>284,571</StyledFooterValue>
-          </StyledFooterCell>
-          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[6].width}>
-            <StyledFooterLabel>
-              <OverflowingTextWithTooltip text="Not empty of Address" />
-            </StyledFooterLabel>
-            <StyledFooterValue>599</StyledFooterValue>
-          </StyledFooterCell>
-          <StyledLastEmptyCell />
-        </StyledFooterRow>
-      </StyledTable>
-    </StyledTableWrapper>
-  );
+	return (
+		<StyledTableWrapper>
+			<StyledTable>
+				<StyledHeaderRow>
+					<StyledDragHandleColumn />
+					<StyledCheckboxHeaderColumn>
+						<Checkbox hoverable checked={false} />
+					</StyledCheckboxHeaderColumn>
+					{BACKGROUND_MOCK_COLUMNS.map((column) => {
+						const Icon = getIcon(column.iconName);
+						return (
+							<StyledHeaderCell key={column.label} width={column.width}>
+								{Icon !== undefined && (
+									<Icon
+										size={theme.icon.size.md}
+										stroke={theme.icon.stroke.sm}
+									/>
+								)}
+								<StyledHeaderLabel>{column.label}</StyledHeaderLabel>
+							</StyledHeaderCell>
+						);
+					})}
+					<StyledAddColumnHeaderCell>
+						<StyledAddColumnIconWrapper>
+							<IconPlus
+								size={theme.icon.size.sm}
+								stroke={theme.icon.stroke.sm}
+							/>
+						</StyledAddColumnIconWrapper>
+					</StyledAddColumnHeaderCell>
+				</StyledHeaderRow>
+				<StyledTableBody>
+					{BACKGROUND_MOCK_COMPANIES.map((company) => (
+						<BackgroundMockTableRow key={company.id} company={company} />
+					))}
+				</StyledTableBody>
+				<StyledFooterRow>
+					<StyledDragHandleColumn />
+					<StyledFooterCheckboxColumn />
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[0].width}>
+						<StyledFooterLabel>
+							<OverflowingTextWithTooltip text="Calculate" />
+						</StyledFooterLabel>
+						<IconChevronDown
+							size={theme.icon.size.sm}
+							stroke={theme.icon.stroke.sm}
+						/>
+					</StyledFooterCell>
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[1].width}>
+						<StyledFooterLabel>
+							<OverflowingTextWithTooltip text="Count all" />
+						</StyledFooterLabel>
+						<StyledFooterValue>599</StyledFooterValue>
+					</StyledFooterCell>
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[2].width} />
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[3].width} />
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[4].width} />
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[5].width}>
+						<StyledFooterLabel>
+							<OverflowingTextWithTooltip text="Max of Employees" />
+						</StyledFooterLabel>
+						<StyledFooterValue>284,571</StyledFooterValue>
+					</StyledFooterCell>
+					<StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[6].width}>
+						<StyledFooterLabel>
+							<OverflowingTextWithTooltip text="Not empty of Address" />
+						</StyledFooterLabel>
+						<StyledFooterValue>599</StyledFooterValue>
+					</StyledFooterCell>
+					<StyledLastEmptyCell />
+				</StyledFooterRow>
+			</StyledTable>
+		</StyledTableWrapper>
+	);
 };

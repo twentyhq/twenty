@@ -1,1 +1,1 @@
-export { ViewKey } from 'twenty-shared/types';
+export { ViewKey } from "twenty-shared/types";

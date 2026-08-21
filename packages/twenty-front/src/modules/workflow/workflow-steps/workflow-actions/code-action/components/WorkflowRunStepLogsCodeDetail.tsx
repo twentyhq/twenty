@@ -1,32 +1,32 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { isDefined } from "twenty-shared/utils";
+import { type WorkflowRunStepLog } from "twenty-shared/workflow";
 import {
-  IconAlertTriangle,
-  IconCheck,
-  IconClock,
-  IconTerminal,
-} from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+	IconAlertTriangle,
+	IconCheck,
+	IconClock,
+	IconTerminal,
+} from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
-import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
+import { MONOSPACE_FONT_FAMILY } from "@/ui/theme/constants/MonospaceFontFamily";
+import { formatDuration } from "@/workflow/workflow-steps/workflow-actions/utils/formatDuration";
 import {
-  StyledErrorCard,
-  StyledErrorMessageText,
-  StyledHeaderLeft,
-  StyledMetric,
-  StyledMetricLabel,
-  StyledMetricsRow,
-  StyledMetricValue,
-  StyledSection,
-  StyledSectionTitle,
-  StyledStatusBadge,
-  StyledSummaryCard,
-  StyledSummaryHeader,
-  StyledTitle,
-} from '@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles';
+	StyledErrorCard,
+	StyledErrorMessageText,
+	StyledHeaderLeft,
+	StyledMetric,
+	StyledMetricLabel,
+	StyledMetricsRow,
+	StyledMetricValue,
+	StyledSection,
+	StyledSectionTitle,
+	StyledStatusBadge,
+	StyledSummaryCard,
+	StyledSummaryHeader,
+	StyledTitle,
+} from "@/workflow/workflow-steps/workflow-actions/components/workflowRunStepLogsStyles";
 
 const StyledErrorHeader = styled.div`
   align-items: center;
@@ -50,62 +50,62 @@ const StyledStackTrace = styled.pre`
   word-break: break-word;
 `;
 
-type CodeDetails = Extract<WorkflowRunStepLog['details'], { type: 'CODE' }>;
+type CodeDetails = Extract<WorkflowRunStepLog["details"], { type: "CODE" }>;
 
 export const WorkflowRunStepLogsCodeDetail = ({
-  details,
+	details,
 }: {
-  details: CodeDetails;
+	details: CodeDetails;
 }) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  const isSuccess = details.status === 'SUCCESS';
-  const StatusIcon = isSuccess ? IconCheck : IconAlertTriangle;
+	const isSuccess = details.status === "SUCCESS";
+	const StatusIcon = isSuccess ? IconCheck : IconAlertTriangle;
 
-  return (
-    <>
-      <StyledSummaryCard>
-        <StyledSummaryHeader>
-          <StyledHeaderLeft>
-            <IconTerminal size={16} />
-            <StyledTitle>{t`Function run`}</StyledTitle>
-          </StyledHeaderLeft>
-          <StyledStatusBadge isSuccess={isSuccess}>
-            <StatusIcon size={12} />
-            {isSuccess ? t`Success` : t`Error`}
-          </StyledStatusBadge>
-        </StyledSummaryHeader>
-        <StyledMetricsRow>
-          <StyledMetric>
-            <StyledMetricLabel>
-              <IconClock size={12} />
-              {t`Duration`}
-            </StyledMetricLabel>
-            <StyledMetricValue>
-              {formatDuration(details.durationMs)}
-            </StyledMetricValue>
-          </StyledMetric>
-        </StyledMetricsRow>
-      </StyledSummaryCard>
+	return (
+		<>
+			<StyledSummaryCard>
+				<StyledSummaryHeader>
+					<StyledHeaderLeft>
+						<IconTerminal size={16} />
+						<StyledTitle>{t`Function run`}</StyledTitle>
+					</StyledHeaderLeft>
+					<StyledStatusBadge isSuccess={isSuccess}>
+						<StatusIcon size={12} />
+						{isSuccess ? t`Success` : t`Error`}
+					</StyledStatusBadge>
+				</StyledSummaryHeader>
+				<StyledMetricsRow>
+					<StyledMetric>
+						<StyledMetricLabel>
+							<IconClock size={12} />
+							{t`Duration`}
+						</StyledMetricLabel>
+						<StyledMetricValue>
+							{formatDuration(details.durationMs)}
+						</StyledMetricValue>
+					</StyledMetric>
+				</StyledMetricsRow>
+			</StyledSummaryCard>
 
-      {isDefined(details.error) && details.error !== null && (
-        <StyledSection>
-          <StyledSectionTitle>{t`Error`}</StyledSectionTitle>
-          <StyledErrorCard>
-            <StyledErrorHeader>
-              <IconAlertTriangle size={14} />
-              {details.error.type}
-            </StyledErrorHeader>
-            <StyledErrorMessageText>
-              {details.error.message}
-            </StyledErrorMessageText>
-            {isDefined(details.error.stackTrace) &&
-              details.error.stackTrace.length > 0 && (
-                <StyledStackTrace>{details.error.stackTrace}</StyledStackTrace>
-              )}
-          </StyledErrorCard>
-        </StyledSection>
-      )}
-    </>
-  );
+			{isDefined(details.error) && details.error !== null && (
+				<StyledSection>
+					<StyledSectionTitle>{t`Error`}</StyledSectionTitle>
+					<StyledErrorCard>
+						<StyledErrorHeader>
+							<IconAlertTriangle size={14} />
+							{details.error.type}
+						</StyledErrorHeader>
+						<StyledErrorMessageText>
+							{details.error.message}
+						</StyledErrorMessageText>
+						{isDefined(details.error.stackTrace) &&
+							details.error.stackTrace.length > 0 && (
+								<StyledStackTrace>{details.error.stackTrace}</StyledStackTrace>
+							)}
+					</StyledErrorCard>
+				</StyledSection>
+			)}
+		</>
+	);
 };

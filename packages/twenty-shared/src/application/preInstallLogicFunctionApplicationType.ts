@@ -1,7 +1,7 @@
-import type { SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import type { SyncableEntityOptions } from "@/application/syncableEntityOptionsType";
 
 export type PreInstallLogicFunctionApplicationManifest =
-  SyncableEntityOptions & {
-    universalIdentifier: string;
-    shouldRunOnVersionUpgrade?: boolean;
-  };
+	SyncableEntityOptions & {
+		universalIdentifier: string;
+		shouldRunOnVersionUpgrade?: boolean;
+	};

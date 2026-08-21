@@ -1,16 +1,16 @@
-import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+import { createAtomFamilyState } from "@/ui/utilities/state/jotai/utils/createAtomFamilyState";
 
 type FilesFieldUploadStateKey = {
-  recordId: string;
-  fieldName: string;
+	recordId: string;
+	fieldName: string;
 };
 
-type FilesFieldUploadState = 'UPLOAD_WINDOW_OPEN' | 'UPLOADING_FILE' | null;
+type FilesFieldUploadState = "UPLOAD_WINDOW_OPEN" | "UPLOADING_FILE" | null;
 
 export const filesFieldUploadState = createAtomFamilyState<
-  FilesFieldUploadState,
-  FilesFieldUploadStateKey
+	FilesFieldUploadState,
+	FilesFieldUploadStateKey
 >({
-  key: 'filesFieldUploadState',
-  defaultValue: null,
+	key: "filesFieldUploadState",
+	defaultValue: null,
 });

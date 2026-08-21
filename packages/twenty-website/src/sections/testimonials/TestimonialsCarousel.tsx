@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
+import { msg } from "@lingui/core/macro";
 
-import { ArrowLeft, ArrowRight } from '@/icons';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { ArrowLeft, ArrowRight } from "@/icons";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { useState } from "react";
 
 import {
-  EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  mediaUp,
-  semanticColor,
-  spacing,
-  typeRampDeclarations,
-} from '@/tokens';
-import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
-import { Body, Eyebrow, IconButton, MarkedDivider } from '@/ui';
+	EASING,
+	FONT_WEIGHT,
+	fontFamily,
+	mediaUp,
+	semanticColor,
+	spacing,
+	typeRampDeclarations,
+} from "@/tokens";
+import { HalftoneModel } from "@/platform/visuals/rigs/HalftoneModel";
+import { Body, Eyebrow, IconButton, MarkedDivider } from "@/ui";
 
-import { HOURGLASS_VISUAL } from './hourglass-config';
+import { HOURGLASS_VISUAL } from "./hourglass-config";
 
-import { type TestimonialRecord } from './testimonials.data';
+import { type TestimonialRecord } from "./testimonials.data";
 
 const CarouselGrid = styled.div`
   display: grid;
@@ -30,7 +30,7 @@ const CarouselGrid = styled.div`
   row-gap: ${spacing(6)};
   z-index: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: stretch;
     column-gap: ${spacing(15)};
     grid-template-columns: auto auto minmax(0, 1fr);
@@ -44,7 +44,7 @@ const LeftColumn = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
     row-gap: ${spacing(12)};
@@ -54,7 +54,7 @@ const LeftColumn = styled.div`
 const CounterSlot = styled.div`
   order: 1;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     order: 2;
   }
 `;
@@ -69,7 +69,7 @@ const VisualSlot = styled.div`
   order: 2;
   width: 198px;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     height: 476px;
     order: 1;
     width: 336px;
@@ -77,12 +77,12 @@ const VisualSlot = styled.div`
 `;
 
 const CounterText = styled.p`
-  ${typeRampDeclarations('headingMd')}
-  font-family: ${fontFamily('sans')};
+  ${typeRampDeclarations("headingMd")}
+  font-family: ${fontFamily("sans")};
   font-weight: ${FONT_WEIGHT.light};
   white-space: nowrap;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     text-align: center;
   }
 `;
@@ -94,7 +94,7 @@ const RightColumn = styled.div`
   min-width: 0;
   row-gap: ${spacing(6)};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     padding-block: ${spacing(8)};
     row-gap: ${spacing(14)};
   }
@@ -125,8 +125,8 @@ const QuoteSlide = styled.div`
 // Testimonials are quotes, not section titles — rendered as a paragraph that
 // borrows the headingMd display ramp rather than carrying a heading tag.
 const QuoteText = styled.p`
-  ${typeRampDeclarations('headingMd')}
-  font-family: ${fontFamily('sans')};
+  ${typeRampDeclarations("headingMd")}
+  font-family: ${fontFamily("sans")};
   font-weight: ${FONT_WEIGHT.light};
   text-wrap: balance;
 `;
@@ -138,7 +138,7 @@ const FooterRow = styled.div`
   grid-template-columns: 1fr;
   row-gap: ${spacing(4)};
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     grid-template-columns: auto 1fr;
   }
@@ -151,7 +151,7 @@ const NavGroup = styled.div`
   justify-content: start;
   order: 2;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     order: 1;
   }
 `;
@@ -164,7 +164,7 @@ const AuthorBlock = styled.div`
   row-gap: ${spacing(1)};
   text-align: left;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     justify-self: end;
     order: 2;
   }
@@ -177,88 +177,88 @@ const SeparatorSlot = styled.div`
 
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     height: 100%;
     width: auto;
   }
 `;
 
 export function TestimonialsCarousel({
-  testimonials,
+	testimonials,
 }: {
-  testimonials: readonly TestimonialRecord[];
+	testimonials: readonly TestimonialRecord[];
 }) {
-  const { i18n } = useLingui();
-  const [index, setIndex] = useState(0);
-  const total = testimonials.length;
-  const hasPrevious = index > 0;
-  const hasNext = index < total - 1;
-  const current = testimonials[index];
+	const { i18n } = useLingui();
+	const [index, setIndex] = useState(0);
+	const total = testimonials.length;
+	const hasPrevious = index > 0;
+	const hasNext = index < total - 1;
+	const current = testimonials[index];
 
-  return (
-    <CarouselGrid
-      aria-label={i18n._(msg`Testimonials`)}
-      aria-roledescription={i18n._(msg`carousel`)}
-      role="region"
-    >
-      <LeftColumn>
-        <CounterSlot>
-          <CounterText aria-live="polite">
-            {index + 1}/{total}
-          </CounterText>
-        </CounterSlot>
-        <VisualSlot data-illustration="hourglass">
-          <HalftoneModel
-            initialPose={HOURGLASS_VISUAL.initialPose}
-            modelUrl={HOURGLASS_VISUAL.modelUrl}
-            settings={HOURGLASS_VISUAL.settings}
-          />
-        </VisualSlot>
-      </LeftColumn>
-      <SeparatorSlot>
-        <MarkedDivider />
-      </SeparatorSlot>
-      <RightColumn>
-        <Eyebrow>{i18n._(msg`They are the real sales`)}</Eyebrow>
-        <QuoteStack>
-          {testimonials.map((testimonial, testimonialIndex) => (
-            <QuoteSlide
-              data-active={testimonialIndex === index ? '' : undefined}
-              key={testimonial.author.name.id}
-            >
-              <QuoteText>{i18n._(testimonial.quote)}</QuoteText>
-            </QuoteSlide>
-          ))}
-        </QuoteStack>
-        <FooterRow>
-          <NavGroup>
-            <IconButton
-              ariaLabel={i18n._(msg`Previous testimonial`)}
-              disabled={!hasPrevious}
-              onClick={() => hasPrevious && setIndex(index - 1)}
-              sizePx={48}
-            >
-              <ArrowLeft sizePx={14} />
-            </IconButton>
-            <IconButton
-              ariaLabel={i18n._(msg`Next testimonial`)}
-              disabled={!hasNext}
-              onClick={() => hasNext && setIndex(index + 1)}
-              sizePx={48}
-            >
-              <ArrowRight sizePx={14} />
-            </IconButton>
-          </NavGroup>
-          <AuthorBlock>
-            <Body size="sm" weight="medium">
-              {i18n._(current.author.name)}
-            </Body>
-            <Body muted size="xs">
-              {i18n._(current.author.designation)}
-            </Body>
-          </AuthorBlock>
-        </FooterRow>
-      </RightColumn>
-    </CarouselGrid>
-  );
+	return (
+		<CarouselGrid
+			aria-label={i18n._(msg`Testimonials`)}
+			aria-roledescription={i18n._(msg`carousel`)}
+			role="region"
+		>
+			<LeftColumn>
+				<CounterSlot>
+					<CounterText aria-live="polite">
+						{index + 1}/{total}
+					</CounterText>
+				</CounterSlot>
+				<VisualSlot data-illustration="hourglass">
+					<HalftoneModel
+						initialPose={HOURGLASS_VISUAL.initialPose}
+						modelUrl={HOURGLASS_VISUAL.modelUrl}
+						settings={HOURGLASS_VISUAL.settings}
+					/>
+				</VisualSlot>
+			</LeftColumn>
+			<SeparatorSlot>
+				<MarkedDivider />
+			</SeparatorSlot>
+			<RightColumn>
+				<Eyebrow>{i18n._(msg`They are the real sales`)}</Eyebrow>
+				<QuoteStack>
+					{testimonials.map((testimonial, testimonialIndex) => (
+						<QuoteSlide
+							data-active={testimonialIndex === index ? "" : undefined}
+							key={testimonial.author.name.id}
+						>
+							<QuoteText>{i18n._(testimonial.quote)}</QuoteText>
+						</QuoteSlide>
+					))}
+				</QuoteStack>
+				<FooterRow>
+					<NavGroup>
+						<IconButton
+							ariaLabel={i18n._(msg`Previous testimonial`)}
+							disabled={!hasPrevious}
+							onClick={() => hasPrevious && setIndex(index - 1)}
+							sizePx={48}
+						>
+							<ArrowLeft sizePx={14} />
+						</IconButton>
+						<IconButton
+							ariaLabel={i18n._(msg`Next testimonial`)}
+							disabled={!hasNext}
+							onClick={() => hasNext && setIndex(index + 1)}
+							sizePx={48}
+						>
+							<ArrowRight sizePx={14} />
+						</IconButton>
+					</NavGroup>
+					<AuthorBlock>
+						<Body size="sm" weight="medium">
+							{i18n._(current.author.name)}
+						</Body>
+						<Body muted size="xs">
+							{i18n._(current.author.designation)}
+						</Body>
+					</AuthorBlock>
+				</FooterRow>
+			</RightColumn>
+		</CarouselGrid>
+	);
 }

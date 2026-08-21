@@ -1,11 +1,11 @@
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import NextImage from 'next/image';
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import NextImage from "next/image";
 
-import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
-import { radius } from '@/tokens';
+import { HalftoneModel } from "@/platform/visuals/rigs/HalftoneModel";
+import { radius } from "@/tokens";
 
-import { WHY_TWENTY_HERO } from './why-twenty-visual-config';
+import { WHY_TWENTY_HERO } from "./why-twenty-visual-config";
 
 // The /why-twenty hero: a textured backdrop with the halftone "20" floating
 // over it in a fixed 462px stage. Decorative — the hero heading carries the
@@ -36,26 +36,26 @@ const backgroundImageClassName = css`
 `;
 
 export function WhyTwentyVisual() {
-  return (
-    <VisualFrame aria-hidden>
-      <BackgroundLayer>
-        <NextImage
-          alt=""
-          className={backgroundImageClassName}
-          fill
-          priority
-          sizes="100vw"
-          src="/images/why-twenty/hero/background.webp"
-        />
-      </BackgroundLayer>
-      <ForegroundLayer>
-        <HalftoneModel
-          initialPose={WHY_TWENTY_HERO.initialPose}
-          modelUrl={WHY_TWENTY_HERO.modelUrl}
-          priority
-          settings={WHY_TWENTY_HERO.settings}
-        />
-      </ForegroundLayer>
-    </VisualFrame>
-  );
+	return (
+		<VisualFrame aria-hidden>
+			<BackgroundLayer>
+				<NextImage
+					alt=""
+					className={backgroundImageClassName}
+					fill
+					priority
+					sizes="100vw"
+					src="/images/why-twenty/hero/background.webp"
+				/>
+			</BackgroundLayer>
+			<ForegroundLayer>
+				<HalftoneModel
+					initialPose={WHY_TWENTY_HERO.initialPose}
+					modelUrl={WHY_TWENTY_HERO.modelUrl}
+					priority
+					settings={WHY_TWENTY_HERO.settings}
+				/>
+			</ForegroundLayer>
+		</VisualFrame>
+	);
 }

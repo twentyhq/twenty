@@ -1,127 +1,127 @@
-import type DataLoader from 'dataloader';
+import type DataLoader from "dataloader";
 
-import { type FieldMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
-import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
+import { type FieldMetadataConnectionLoaderPayload } from "src/engine/dataloaders/factories/field-metadata-connection-loader.factory";
+import { type IndexMetadataConnectionLoaderPayload } from "src/engine/dataloaders/factories/index-metadata-connection-loader.factory";
 import {
-  type ApplicationTranslationCatalogLoaderPayload,
-  type FieldMetadataLoaderPayload,
-  type IndexFieldMetadataLoaderPayload,
-  type IndexMetadataLoaderPayload,
-  type SearchFieldMetadataLoaderPayload,
-  type IsConfiguredLoaderPayload,
-  type MorphRelationLoaderPayload,
-  type StandardApplicationIdLoaderPayload,
-  type ObjectMetadataLoaderPayload,
-  type RelationLoaderPayload,
-  type ViewFieldGroupsByViewIdLoaderPayload,
-  type ViewFieldsByViewFieldGroupIdLoaderPayload,
-  type ViewFieldsByViewIdLoaderPayload,
-  type ViewFilterGroupsByViewIdLoaderPayload,
-  type ViewFiltersByViewIdLoaderPayload,
-  type ViewGroupsByViewIdLoaderPayload,
-  type ViewSortsByViewIdLoaderPayload,
-} from 'src/engine/dataloaders/dataloader.service';
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
-import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
-import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
-import { type ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
-import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import { type ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
-import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
+	type ApplicationTranslationCatalogLoaderPayload,
+	type FieldMetadataLoaderPayload,
+	type IndexFieldMetadataLoaderPayload,
+	type IndexMetadataLoaderPayload,
+	type SearchFieldMetadataLoaderPayload,
+	type IsConfiguredLoaderPayload,
+	type MorphRelationLoaderPayload,
+	type StandardApplicationIdLoaderPayload,
+	type ObjectMetadataLoaderPayload,
+	type RelationLoaderPayload,
+	type ViewFieldGroupsByViewIdLoaderPayload,
+	type ViewFieldsByViewFieldGroupIdLoaderPayload,
+	type ViewFieldsByViewIdLoaderPayload,
+	type ViewFilterGroupsByViewIdLoaderPayload,
+	type ViewFiltersByViewIdLoaderPayload,
+	type ViewGroupsByViewIdLoaderPayload,
+	type ViewSortsByViewIdLoaderPayload,
+} from "src/engine/dataloaders/dataloader.service";
+import { type FieldMetadataDTO } from "src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto";
+import { type RelationDTO } from "src/engine/metadata-modules/field-metadata/dtos/relation.dto";
+import { type IndexFieldMetadataDTO } from "src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto";
+import { type IndexMetadataDTO } from "src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto";
+import { type ObjectMetadataDTO } from "src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto";
+import { type SearchFieldMetadataDTO } from "src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto";
+import { type CursorConnection } from "src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory";
+import { type ViewFieldGroupDTO } from "src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto";
+import { type ViewFieldDTO } from "src/engine/metadata-modules/view-field/dtos/view-field.dto";
+import { type ViewFilterGroupDTO } from "src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto";
+import { type ViewFilterDTO } from "src/engine/metadata-modules/view-filter/dtos/view-filter.dto";
+import { type ViewGroupDTO } from "src/engine/metadata-modules/view-group/dtos/view-group.dto";
+import { type ViewSortDTO } from "src/engine/metadata-modules/view-sort/dtos/view-sort.dto";
 
 export interface IDataloaders {
-  relationLoader: DataLoader<RelationLoaderPayload, RelationDTO | null>;
+	relationLoader: DataLoader<RelationLoaderPayload, RelationDTO | null>;
 
-  morphRelationLoader: DataLoader<
-    MorphRelationLoaderPayload,
-    RelationDTO[] | null
-  >;
+	morphRelationLoader: DataLoader<
+		MorphRelationLoaderPayload,
+		RelationDTO[] | null
+	>;
 
-  fieldMetadataLoader: DataLoader<
-    FieldMetadataLoaderPayload,
-    FieldMetadataDTO[]
-  >;
+	fieldMetadataLoader: DataLoader<
+		FieldMetadataLoaderPayload,
+		FieldMetadataDTO[]
+	>;
 
-  fieldMetadataConnectionLoader: DataLoader<
-    FieldMetadataConnectionLoaderPayload,
-    CursorConnection<FieldMetadataDTO>
-  >;
+	fieldMetadataConnectionLoader: DataLoader<
+		FieldMetadataConnectionLoaderPayload,
+		CursorConnection<FieldMetadataDTO>
+	>;
 
-  indexMetadataLoader: DataLoader<
-    IndexMetadataLoaderPayload,
-    IndexMetadataDTO[]
-  >;
+	indexMetadataLoader: DataLoader<
+		IndexMetadataLoaderPayload,
+		IndexMetadataDTO[]
+	>;
 
-  indexMetadataConnectionLoader: DataLoader<
-    IndexMetadataConnectionLoaderPayload,
-    CursorConnection<IndexMetadataDTO>
-  >;
+	indexMetadataConnectionLoader: DataLoader<
+		IndexMetadataConnectionLoaderPayload,
+		CursorConnection<IndexMetadataDTO>
+	>;
 
-  indexFieldMetadataLoader: DataLoader<
-    IndexFieldMetadataLoaderPayload,
-    IndexFieldMetadataDTO[]
-  >;
+	indexFieldMetadataLoader: DataLoader<
+		IndexFieldMetadataLoaderPayload,
+		IndexFieldMetadataDTO[]
+	>;
 
-  searchFieldMetadataLoader: DataLoader<
-    SearchFieldMetadataLoaderPayload,
-    SearchFieldMetadataDTO[]
-  >;
+	searchFieldMetadataLoader: DataLoader<
+		SearchFieldMetadataLoaderPayload,
+		SearchFieldMetadataDTO[]
+	>;
 
-  objectMetadataLoader: DataLoader<
-    ObjectMetadataLoaderPayload,
-    ObjectMetadataDTO | null
-  >;
+	objectMetadataLoader: DataLoader<
+		ObjectMetadataLoaderPayload,
+		ObjectMetadataDTO | null
+	>;
 
-  viewFieldGroupsByViewIdLoader: DataLoader<
-    ViewFieldGroupsByViewIdLoaderPayload,
-    ViewFieldGroupDTO[]
-  >;
+	viewFieldGroupsByViewIdLoader: DataLoader<
+		ViewFieldGroupsByViewIdLoaderPayload,
+		ViewFieldGroupDTO[]
+	>;
 
-  viewFieldsByViewFieldGroupIdLoader: DataLoader<
-    ViewFieldsByViewFieldGroupIdLoaderPayload,
-    ViewFieldDTO[]
-  >;
+	viewFieldsByViewFieldGroupIdLoader: DataLoader<
+		ViewFieldsByViewFieldGroupIdLoaderPayload,
+		ViewFieldDTO[]
+	>;
 
-  viewFieldsByViewIdLoader: DataLoader<
-    ViewFieldsByViewIdLoaderPayload,
-    ViewFieldDTO[]
-  >;
+	viewFieldsByViewIdLoader: DataLoader<
+		ViewFieldsByViewIdLoaderPayload,
+		ViewFieldDTO[]
+	>;
 
-  viewFiltersByViewIdLoader: DataLoader<
-    ViewFiltersByViewIdLoaderPayload,
-    ViewFilterDTO[]
-  >;
+	viewFiltersByViewIdLoader: DataLoader<
+		ViewFiltersByViewIdLoaderPayload,
+		ViewFilterDTO[]
+	>;
 
-  viewSortsByViewIdLoader: DataLoader<
-    ViewSortsByViewIdLoaderPayload,
-    ViewSortDTO[]
-  >;
+	viewSortsByViewIdLoader: DataLoader<
+		ViewSortsByViewIdLoaderPayload,
+		ViewSortDTO[]
+	>;
 
-  viewGroupsByViewIdLoader: DataLoader<
-    ViewGroupsByViewIdLoaderPayload,
-    ViewGroupDTO[]
-  >;
+	viewGroupsByViewIdLoader: DataLoader<
+		ViewGroupsByViewIdLoaderPayload,
+		ViewGroupDTO[]
+	>;
 
-  viewFilterGroupsByViewIdLoader: DataLoader<
-    ViewFilterGroupsByViewIdLoaderPayload,
-    ViewFilterGroupDTO[]
-  >;
+	viewFilterGroupsByViewIdLoader: DataLoader<
+		ViewFilterGroupsByViewIdLoaderPayload,
+		ViewFilterGroupDTO[]
+	>;
 
-  isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
+	isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
 
-  standardApplicationIdLoader: DataLoader<
-    StandardApplicationIdLoaderPayload,
-    string
-  >;
+	standardApplicationIdLoader: DataLoader<
+		StandardApplicationIdLoaderPayload,
+		string
+	>;
 
-  applicationTranslationCatalogLoader: DataLoader<
-    ApplicationTranslationCatalogLoaderPayload,
-    Record<string, string> | undefined
-  >;
+	applicationTranslationCatalogLoader: DataLoader<
+		ApplicationTranslationCatalogLoaderPayload,
+		Record<string, string> | undefined
+	>;
 }

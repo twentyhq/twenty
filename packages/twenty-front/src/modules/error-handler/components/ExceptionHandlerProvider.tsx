@@ -1,12 +1,12 @@
-import { SentryInitEffect } from '@/error-handler/components/SentryInitEffect';
+import { SentryInitEffect } from "@/error-handler/components/SentryInitEffect";
 
 export const ExceptionHandlerProvider: React.FC<React.PropsWithChildren> = ({
-  children,
+	children,
 }) => {
-  return (
-    <>
-      <SentryInitEffect />
-      {children}
-    </>
-  );
+	return (
+		<>
+			<SentryInitEffect />
+			{children}
+		</>
+	);
 };

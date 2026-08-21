@@ -1,1 +1,1 @@
-export const UNSUBSCRIBE_HOSTNAME_PREFIX = 'unsubscribe';
+export const UNSUBSCRIBE_HOSTNAME_PREFIX = "unsubscribe";

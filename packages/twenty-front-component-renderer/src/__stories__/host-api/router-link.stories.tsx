@@ -1,22 +1,22 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, waitFor } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+import { expect, waitFor } from "storybook/test";
+import { isDefined } from "twenty-shared/utils";
 
 import {
-  errorHandler,
-  FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  resetFrontComponentStoryMocks,
-} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { HOST_API_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
-import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
-import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+	errorHandler,
+	FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+	resetFrontComponentStoryMocks,
+} from "@/__stories__/shared/test-utils/createFrontComponentStoryMeta";
+import { HOST_API_TIMEOUT } from "@/__stories__/shared/test-utils/timeouts";
+import { runFrontComponentStory } from "@/__stories__/shared/test-utils/runFrontComponentStory";
+import { FrontComponentRenderer } from "@/host/components/FrontComponentRenderer";
 
 const meta: Meta<typeof FrontComponentRenderer> = {
-  title: 'FrontComponent/HostApi/RouterLink',
-  component: FrontComponentRenderer,
-  parameters: { layout: 'centered' },
-  args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
-  beforeEach: resetFrontComponentStoryMocks,
+	title: "FrontComponent/HostApi/RouterLink",
+	component: FrontComponentRenderer,
+	parameters: { layout: "centered" },
+	args: FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+	beforeEach: resetFrontComponentStoryMocks,
 };
 
 export default meta;
@@ -33,21 +33,21 @@ type Story = StoryObj<typeof FrontComponentRenderer>;
 // which otherwise navigate the host page away before the async worker
 // round-trip can preventDefault.
 export const RouterLink: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-router-link',
-  play: async ({ args }) => {
-    const api = args.frontComponentHostCommunicationApi;
+	frontComponentBundleName: "host-api-router-link",
+	play: async ({ args }) => {
+		const api = args.frontComponentHostCommunicationApi;
 
-    if (!isDefined(api)) {
-      throw new Error('frontComponentHostCommunicationApi is required');
-    }
+		if (!isDefined(api)) {
+			throw new Error("frontComponentHostCommunicationApi is required");
+		}
 
-    await waitFor(
-      () => {
-        expect(errorHandler).toHaveBeenCalled();
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
+		await waitFor(
+			() => {
+				expect(errorHandler).toHaveBeenCalled();
+			},
+			{ timeout: HOST_API_TIMEOUT },
+		);
 
-    expect(api.navigate).not.toHaveBeenCalled();
-  },
+		expect(api.navigate).not.toHaveBeenCalled();
+	},
 });

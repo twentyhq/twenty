@@ -1,3 +1,3 @@
 export type RecordPickerSearchQuery = {
-  computeFilterFields: (relationPickerType: string) => string[];
+	computeFilterFields: (relationPickerType: string) => string[];
 };

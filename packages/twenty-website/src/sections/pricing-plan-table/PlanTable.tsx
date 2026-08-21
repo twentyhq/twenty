@@ -1,11 +1,11 @@
-import { SectionShell } from '@/ui';
+import { SectionShell } from "@/ui";
 
-import { PlanTableContent } from './PlanTableContent';
+import { PlanTableContent } from "./PlanTableContent";
 
 export function PlanTable() {
-  return (
-    <SectionShell scheme="dark">
-      <PlanTableContent />
-    </SectionShell>
-  );
+	return (
+		<SectionShell scheme="dark">
+			<PlanTableContent />
+		</SectionShell>
+	);
 }

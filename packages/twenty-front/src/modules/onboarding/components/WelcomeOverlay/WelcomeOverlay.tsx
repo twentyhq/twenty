@@ -1,22 +1,22 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type CSSProperties } from 'react';
-import { createPortal } from 'react-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type CSSProperties } from "react";
+import { createPortal } from "react-dom";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { WelcomeAnimationAutoLeaveEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationAutoLeaveEffect';
-import { WelcomeAnimationForcedTeardownEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationForcedTeardownEffect';
-import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
-import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
-import { WELCOME_TITLE_MESSAGE } from '@/onboarding/constants/WelcomeTitleMessage';
-import { WELCOME_TITLE_SOURCE_ELEMENT_ID } from '@/onboarding/constants/WelcomeTitleSourceElementId';
-import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAnimationLeavingState';
-import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
-import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { WelcomeAnimationAutoLeaveEffect } from "@/onboarding/components/WelcomeOverlay/WelcomeAnimationAutoLeaveEffect";
+import { WelcomeAnimationForcedTeardownEffect } from "@/onboarding/components/WelcomeOverlay/WelcomeAnimationForcedTeardownEffect";
+import { WelcomeHalftoneCanvas } from "@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas";
+import { WelcomePersonChip } from "@/onboarding/components/WelcomeOverlay/WelcomePersonChip";
+import { WELCOME_TITLE_MESSAGE } from "@/onboarding/constants/WelcomeTitleMessage";
+import { WELCOME_TITLE_SOURCE_ELEMENT_ID } from "@/onboarding/constants/WelcomeTitleSourceElementId";
+import { isWelcomeAnimationLeavingState } from "@/onboarding/states/isWelcomeAnimationLeavingState";
+import { isWelcomeAnimationVisibleState } from "@/onboarding/states/isWelcomeAnimationVisibleState";
+import { welcomeTitleFlightState } from "@/onboarding/states/welcomeTitleFlightState";
+import { RootStackingContextZIndices } from "@/ui/layout/constants/RootStackingContextZIndices";
+import { useIsMobile } from "@/ui/utilities/responsive/hooks/useIsMobile";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
 
 const StyledOverlay = styled.div`
   align-items: center;
@@ -239,82 +239,82 @@ const StyledWord = styled.span`
 `;
 
 export const WelcomeOverlay = () => {
-  const { t } = useLingui();
-  const isWelcomeAnimationVisible = useAtomStateValue(
-    isWelcomeAnimationVisibleState,
-  );
-  const isWelcomeAnimationLeaving = useAtomStateValue(
-    isWelcomeAnimationLeavingState,
-  );
-  const welcomeTitleFlight = useAtomStateValue(welcomeTitleFlightState);
-  const isMobile = useIsMobile();
+	const { t } = useLingui();
+	const isWelcomeAnimationVisible = useAtomStateValue(
+		isWelcomeAnimationVisibleState,
+	);
+	const isWelcomeAnimationLeaving = useAtomStateValue(
+		isWelcomeAnimationLeavingState,
+	);
+	const welcomeTitleFlight = useAtomStateValue(welcomeTitleFlightState);
+	const isMobile = useIsMobile();
 
-  if (!isWelcomeAnimationVisible) {
-    return null;
-  }
+	if (!isWelcomeAnimationVisible) {
+		return null;
+	}
 
-  const activeWelcomeTitleFlight = isMobile ? null : welcomeTitleFlight;
+	const activeWelcomeTitleFlight = isMobile ? null : welcomeTitleFlight;
 
-  const welcomeTitle = t(WELCOME_TITLE_MESSAGE);
-  const welcomeTitleWords = welcomeTitle.split(' ');
+	const welcomeTitle = t(WELCOME_TITLE_MESSAGE);
+	const welcomeTitleWords = welcomeTitle.split(" ");
 
-  const leavingClassName = isWelcomeAnimationLeaving ? 'is-leaving' : undefined;
-  const titleClassName = isWelcomeAnimationLeaving
-    ? isDefined(activeWelcomeTitleFlight)
-      ? 'is-flying'
-      : 'is-leaving'
-    : undefined;
+	const leavingClassName = isWelcomeAnimationLeaving ? "is-leaving" : undefined;
+	const titleClassName = isWelcomeAnimationLeaving
+		? isDefined(activeWelcomeTitleFlight)
+			? "is-flying"
+			: "is-leaving"
+		: undefined;
 
-  const titleStyle = isDefined(activeWelcomeTitleFlight)
-    ? ({
-        '--welcome-flight-x': `${activeWelcomeTitleFlight.translateXInPx}px`,
-        '--welcome-flight-y': `${activeWelcomeTitleFlight.translateYInPx}px`,
-        '--welcome-flight-scale': activeWelcomeTitleFlight.scale,
-        '--welcome-flight-origin-x': `${activeWelcomeTitleFlight.transformOriginXInPx}px`,
-      } as CSSProperties)
-    : undefined;
+	const titleStyle = isDefined(activeWelcomeTitleFlight)
+		? ({
+				"--welcome-flight-x": `${activeWelcomeTitleFlight.translateXInPx}px`,
+				"--welcome-flight-y": `${activeWelcomeTitleFlight.translateYInPx}px`,
+				"--welcome-flight-scale": activeWelcomeTitleFlight.scale,
+				"--welcome-flight-origin-x": `${activeWelcomeTitleFlight.transformOriginXInPx}px`,
+			} as CSSProperties)
+		: undefined;
 
-  return createPortal(
-    <StyledOverlay>
-      {isWelcomeAnimationLeaving ? (
-        <WelcomeAnimationForcedTeardownEffect />
-      ) : (
-        <WelcomeAnimationAutoLeaveEffect />
-      )}
-      <StyledBackdrop className={leavingClassName} />
-      <StyledCanvasLayer>
-        <WelcomeHalftoneCanvas isLeaving={isWelcomeAnimationLeaving} />
-      </StyledCanvasLayer>
-      <StyledTitle
-        id={WELCOME_TITLE_SOURCE_ELEMENT_ID}
-        className={titleClassName}
-        style={titleStyle}
-      >
-        <StyledTitleBoldRun>
-          {welcomeTitleWords.map((word, index) => (
-            <StyledWord
-              key={`${word}-${index}`}
-              style={{ '--word-index': index } as CSSProperties}
-            >
-              {word}
-            </StyledWord>
-          ))}
-          <StyledWord
-            style={
-              { '--word-index': welcomeTitleWords.length } as CSSProperties
-            }
-          >
-            <WelcomePersonChip />
-          </StyledWord>
-        </StyledTitleBoldRun>
-        <StyledTitleRegularRun aria-hidden>
-          {welcomeTitle}
-          <StyledTargetScaleChip>
-            <WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
-          </StyledTargetScaleChip>
-        </StyledTitleRegularRun>
-      </StyledTitle>
-    </StyledOverlay>,
-    document.body,
-  );
+	return createPortal(
+		<StyledOverlay>
+			{isWelcomeAnimationLeaving ? (
+				<WelcomeAnimationForcedTeardownEffect />
+			) : (
+				<WelcomeAnimationAutoLeaveEffect />
+			)}
+			<StyledBackdrop className={leavingClassName} />
+			<StyledCanvasLayer>
+				<WelcomeHalftoneCanvas isLeaving={isWelcomeAnimationLeaving} />
+			</StyledCanvasLayer>
+			<StyledTitle
+				id={WELCOME_TITLE_SOURCE_ELEMENT_ID}
+				className={titleClassName}
+				style={titleStyle}
+			>
+				<StyledTitleBoldRun>
+					{welcomeTitleWords.map((word, index) => (
+						<StyledWord
+							key={`${word}-${index}`}
+							style={{ "--word-index": index } as CSSProperties}
+						>
+							{word}
+						</StyledWord>
+					))}
+					<StyledWord
+						style={
+							{ "--word-index": welcomeTitleWords.length } as CSSProperties
+						}
+					>
+						<WelcomePersonChip />
+					</StyledWord>
+				</StyledTitleBoldRun>
+				<StyledTitleRegularRun aria-hidden>
+					{welcomeTitle}
+					<StyledTargetScaleChip>
+						<WelcomePersonChip avatarSize="xs" sizeVariant="compact" />
+					</StyledTargetScaleChip>
+				</StyledTitleRegularRun>
+			</StyledTitle>
+		</StyledOverlay>,
+		document.body,
+	);
 };

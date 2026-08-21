@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 // oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
 export const FieldInputContainer = styled.div`

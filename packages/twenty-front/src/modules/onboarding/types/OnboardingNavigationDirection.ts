@@ -1,1 +1,1 @@
-export type OnboardingNavigationDirection = 'forward' | 'backward';
+export type OnboardingNavigationDirection = "forward" | "backward";

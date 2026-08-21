@@ -1,22 +1,22 @@
-import { RecordChip } from '@/object-record/components/RecordChip';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
-import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
-import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RecordChip } from "@/object-record/components/RecordChip";
+import { StopPropagationContainer } from "@/object-record/record-board/record-board-card/components/StopPropagationContainer";
+import { visibleRecordFieldsComponentSelector } from "@/object-record/record-field/states/visibleRecordFieldsComponentSelector";
+import { isFieldValueEmpty } from "@/object-record/record-field/ui/utils/isFieldValueEmpty";
+import { useRecordIndexContextOrThrow } from "@/object-record/record-index/contexts/RecordIndexContext";
+import { useOpenRecordFromIndexView } from "@/object-record/record-index/hooks/useOpenRecordFromIndexView";
+import { RecordListRowField } from "@/object-record/record-list/components/RecordListRowField";
+import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from "@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth";
+import { useRecordListContextOrThrow } from "@/object-record/record-list/contexts/RecordListContext";
+import { recordListDisplayedFieldCountComponentState } from "@/object-record/record-list/states/recordListDisplayedFieldCountComponentState";
+import { recordStoreFamilyState } from "@/object-record/record-store/states/recordStoreFamilyState";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { isDefined } from "twenty-shared/utils";
+import { ChipVariant } from "twenty-ui/data-display";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledRowContainer = styled.div`
   cursor: pointer;
@@ -75,111 +75,111 @@ const StyledHiddenFieldCountChip = styled.div`
 `;
 
 type RecordListRowProps = {
-  recordId: string;
+	recordId: string;
 };
 
 export const RecordListRow = ({ recordId }: RecordListRowProps) => {
-  const { objectNameSingular } = useRecordListContextOrThrow();
-  const {
-    labelIdentifierFieldMetadataItem,
-    fieldDefinitionByFieldMetadataItemId,
-  } = useRecordIndexContextOrThrow();
+	const { objectNameSingular } = useRecordListContextOrThrow();
+	const {
+		labelIdentifierFieldMetadataItem,
+		fieldDefinitionByFieldMetadataItemId,
+	} = useRecordIndexContextOrThrow();
 
-  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+	const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const visibleRecordFields = useAtomComponentSelectorValue(
-    visibleRecordFieldsComponentSelector,
-  );
+	const visibleRecordFields = useAtomComponentSelectorValue(
+		visibleRecordFieldsComponentSelector,
+	);
 
-  const recordListDisplayedFieldCount = useAtomComponentStateValue(
-    recordListDisplayedFieldCountComponentState,
-  );
+	const recordListDisplayedFieldCount = useAtomComponentStateValue(
+		recordListDisplayedFieldCountComponentState,
+	);
 
-  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+	const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  if (!isDefined(recordStore)) {
-    return null;
-  }
+	if (!isDefined(recordStore)) {
+		return null;
+	}
 
-  const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
-    (recordField) =>
-      recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
-  );
+	const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
+		(recordField) =>
+			recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
+	);
 
-  const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.flatMap(
-    (recordField) => {
-      const fieldDefinition =
-        fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+	const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.flatMap(
+		(recordField) => {
+			const fieldDefinition =
+				fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-      if (
-        !isDefined(fieldDefinition) ||
-        isFieldValueEmpty({
-          fieldDefinition,
-          fieldValue: recordStore[fieldDefinition.metadata.fieldName],
-        })
-      ) {
-        return [];
-      }
+			if (
+				!isDefined(fieldDefinition) ||
+				isFieldValueEmpty({
+					fieldDefinition,
+					fieldValue: recordStore[fieldDefinition.metadata.fieldName],
+				})
+			) {
+				return [];
+			}
 
-      return [{ recordField, fieldDefinition }];
-    },
-  );
+			return [{ recordField, fieldDefinition }];
+		},
+	);
 
-  const displayedRecordFields = nonEmptyRecordFields.slice(
-    0,
-    recordListDisplayedFieldCount,
-  );
+	const displayedRecordFields = nonEmptyRecordFields.slice(
+		0,
+		recordListDisplayedFieldCount,
+	);
 
-  const hiddenFieldCount =
-    nonEmptyRecordFields.length - displayedRecordFields.length;
+	const hiddenFieldCount =
+		nonEmptyRecordFields.length - displayedRecordFields.length;
 
-  const openRecord = () => openRecordFromIndexView({ recordId });
+	const openRecord = () => openRecordFromIndexView({ recordId });
 
-  return (
-    <StyledRowContainer
-      role="button"
-      tabIndex={0}
-      aria-label={t`Open record`}
-      onClick={openRecord}
-      onKeyDown={(event) => {
-        if (event.target !== event.currentTarget) {
-          return;
-        }
+	return (
+		<StyledRowContainer
+			role="button"
+			tabIndex={0}
+			aria-label={t`Open record`}
+			onClick={openRecord}
+			onKeyDown={(event) => {
+				if (event.target !== event.currentTarget) {
+					return;
+				}
 
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          openRecord();
-        }
-      }}
-    >
-      <StyledRow>
-        <StyledRecordChipContainer>
-          <StopPropagationContainer>
-            <RecordChip
-              objectNameSingular={objectNameSingular}
-              record={recordStore}
-              variant={ChipVariant.Transparent}
-              onClick={openRecord}
-              triggerEvent={'CLICK'}
-            />
-          </StopPropagationContainer>
-        </StyledRecordChipContainer>
-        <StyledFieldsContainer>
-          {displayedRecordFields.map(({ recordField, fieldDefinition }) => (
-            <RecordListRowField
-              key={recordField.fieldMetadataItemId}
-              recordId={recordId}
-              recordField={recordField}
-              fieldDefinition={fieldDefinition}
-            />
-          ))}
-          {hiddenFieldCount > 0 && (
-            <StyledHiddenFieldCountChip>
-              {hiddenFieldCount}
-            </StyledHiddenFieldCountChip>
-          )}
-        </StyledFieldsContainer>
-      </StyledRow>
-    </StyledRowContainer>
-  );
+				if (event.key === "Enter" || event.key === " ") {
+					event.preventDefault();
+					openRecord();
+				}
+			}}
+		>
+			<StyledRow>
+				<StyledRecordChipContainer>
+					<StopPropagationContainer>
+						<RecordChip
+							objectNameSingular={objectNameSingular}
+							record={recordStore}
+							variant={ChipVariant.Transparent}
+							onClick={openRecord}
+							triggerEvent={"CLICK"}
+						/>
+					</StopPropagationContainer>
+				</StyledRecordChipContainer>
+				<StyledFieldsContainer>
+					{displayedRecordFields.map(({ recordField, fieldDefinition }) => (
+						<RecordListRowField
+							key={recordField.fieldMetadataItemId}
+							recordId={recordId}
+							recordField={recordField}
+							fieldDefinition={fieldDefinition}
+						/>
+					))}
+					{hiddenFieldCount > 0 && (
+						<StyledHiddenFieldCountChip>
+							{hiddenFieldCount}
+						</StyledHiddenFieldCountChip>
+					)}
+				</StyledFieldsContainer>
+			</StyledRow>
+		</StyledRowContainer>
+	);
 };

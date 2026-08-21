@@ -1,60 +1,60 @@
-import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { type FieldLinksDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
-import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { Field } from 'twenty-ui/input';
+import { t } from "@lingui/core/macro";
+import { FormFieldInputContainer } from "@/ui/input/components/FormFieldInputContainer";
+import { FormNestedFieldInputContainer } from "@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer";
+import { FormTextFieldInput } from "@/object-record/record-field/ui/form-types/components/FormTextFieldInput";
+import { type VariablePickerComponent } from "@/object-record/record-field/ui/form-types/types/VariablePickerComponent";
+import { type FieldLinksDraftValue } from "@/object-record/record-field/ui/types/FieldInputDraftValue";
+import { type FieldLinksValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { Field } from "twenty-ui/input";
 
 type FormLinksFieldInputProps = {
-  label?: string;
-  defaultValue?: FieldLinksValue;
-  onChange: (value: FieldLinksValue) => void;
-  VariablePicker?: VariablePickerComponent;
-  readonly?: boolean;
-  placeholder?: string;
+	label?: string;
+	defaultValue?: FieldLinksValue;
+	onChange: (value: FieldLinksValue) => void;
+	VariablePicker?: VariablePickerComponent;
+	readonly?: boolean;
+	placeholder?: string;
 };
 
 export const FormLinksFieldInput = ({
-  label,
-  defaultValue,
-  onChange,
-  readonly,
-  VariablePicker,
-  placeholder,
+	label,
+	defaultValue,
+	onChange,
+	readonly,
+	VariablePicker,
+	placeholder,
 }: FormLinksFieldInputProps) => {
-  const handleChange =
-    (field: keyof FieldLinksDraftValue) => (updatedLinksPart: string) => {
-      const updatedLinks = {
-        primaryLinkLabel: defaultValue?.primaryLinkLabel ?? '',
-        primaryLinkUrl: defaultValue?.primaryLinkUrl ?? '',
-        [field]: updatedLinksPart,
-      };
-      onChange(updatedLinks);
-    };
+	const handleChange =
+		(field: keyof FieldLinksDraftValue) => (updatedLinksPart: string) => {
+			const updatedLinks = {
+				primaryLinkLabel: defaultValue?.primaryLinkLabel ?? "",
+				primaryLinkUrl: defaultValue?.primaryLinkUrl ?? "",
+				[field]: updatedLinksPart,
+			};
+			onChange(updatedLinks);
+		};
 
-  return (
-    <FormFieldInputContainer>
-      {label ? <Field.Label>{label}</Field.Label> : null}
-      <FormNestedFieldInputContainer>
-        <FormTextFieldInput
-          label={t`Primary Link Label`}
-          defaultValue={defaultValue?.primaryLinkLabel}
-          onChange={handleChange('primaryLinkLabel')}
-          placeholder={placeholder ?? t`Primary Link Label`}
-          readonly={readonly}
-          VariablePicker={VariablePicker}
-        />
-        <FormTextFieldInput
-          label={t`Primary Link URL`}
-          defaultValue={defaultValue?.primaryLinkUrl}
-          onChange={handleChange('primaryLinkUrl')}
-          placeholder={placeholder ?? t`Primary Link URL`}
-          readonly={readonly}
-          VariablePicker={VariablePicker}
-        />
-      </FormNestedFieldInputContainer>
-    </FormFieldInputContainer>
-  );
+	return (
+		<FormFieldInputContainer>
+			{label ? <Field.Label>{label}</Field.Label> : null}
+			<FormNestedFieldInputContainer>
+				<FormTextFieldInput
+					label={t`Primary Link Label`}
+					defaultValue={defaultValue?.primaryLinkLabel}
+					onChange={handleChange("primaryLinkLabel")}
+					placeholder={placeholder ?? t`Primary Link Label`}
+					readonly={readonly}
+					VariablePicker={VariablePicker}
+				/>
+				<FormTextFieldInput
+					label={t`Primary Link URL`}
+					defaultValue={defaultValue?.primaryLinkUrl}
+					onChange={handleChange("primaryLinkUrl")}
+					placeholder={placeholder ?? t`Primary Link URL`}
+					readonly={readonly}
+					VariablePicker={VariablePicker}
+				/>
+			</FormNestedFieldInputContainer>
+		</FormFieldInputContainer>
+	);
 };

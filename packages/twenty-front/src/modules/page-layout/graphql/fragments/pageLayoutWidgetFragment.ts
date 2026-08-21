@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
   fragment PageLayoutWidgetFragment on PageLayoutWidget {

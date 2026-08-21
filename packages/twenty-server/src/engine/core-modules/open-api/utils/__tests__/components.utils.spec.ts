@@ -1,67 +1,67 @@
-import { faker } from '@faker-js/faker';
-import { type EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
+import { faker } from "@faker-js/faker";
+import { type EachTestingContext } from "twenty-shared/testing";
+import { FieldMetadataType, NumberDataType } from "twenty-shared/types";
 
-import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { objectMetadataItemMock } from "src/engine/api/__mocks__/object-metadata-item.mock";
+import { computeSchemaComponents } from "src/engine/core-modules/open-api/utils/components.utils";
+import { type FieldMetadataEntity } from "src/engine/metadata-modules/field-metadata/field-metadata.entity";
+import { type FlatObjectMetadata } from "src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type";
 
-describe('computeSchemaComponents', () => {
-  faker.seed(1);
-  it('should compute schema components', () => {
-    const flatObjectMetadata: FlatObjectMetadata = {
-      ...objectMetadataItemMock,
-      universalIdentifier: 'objectName',
-      fieldIds: objectMetadataItemMock.fields.map((f) => f.id),
-    } as any;
+describe("computeSchemaComponents", () => {
+	faker.seed(1);
+	it("should compute schema components", () => {
+		const flatObjectMetadata: FlatObjectMetadata = {
+			...objectMetadataItemMock,
+			universalIdentifier: "objectName",
+			fieldIds: objectMetadataItemMock.fields.map((f) => f.id),
+		} as any;
 
-    const flatFieldMetadataMaps = {
-      byUniversalIdentifier: Object.fromEntries(
-        objectMetadataItemMock.fields.map((f) => [
-          f.universalIdentifier || f.id,
-          f as any,
-        ]),
-      ),
-      universalIdentifierById: Object.fromEntries(
-        objectMetadataItemMock.fields.map((f) => [
-          f.id,
-          f.universalIdentifier || f.id,
-        ]),
-      ),
-      universalIdentifiersByApplicationId: {},
-    };
+		const flatFieldMetadataMaps = {
+			byUniversalIdentifier: Object.fromEntries(
+				objectMetadataItemMock.fields.map((f) => [
+					f.universalIdentifier || f.id,
+					f as any,
+				]),
+			),
+			universalIdentifierById: Object.fromEntries(
+				objectMetadataItemMock.fields.map((f) => [
+					f.id,
+					f.universalIdentifier || f.id,
+				]),
+			),
+			universalIdentifiersByApplicationId: {},
+		};
 
-    const relationTargetObjectMetadata: FlatObjectMetadata = {
-      id: 'relationTargetObjectId',
-      nameSingular: 'relationTargetObject',
-      namePlural: 'relationTargetObjects',
-      universalIdentifier: 'relationTargetObject',
-      fieldIds: [],
-    } as any;
+		const relationTargetObjectMetadata: FlatObjectMetadata = {
+			id: "relationTargetObjectId",
+			nameSingular: "relationTargetObject",
+			namePlural: "relationTargetObjects",
+			universalIdentifier: "relationTargetObject",
+			fieldIds: [],
+		} as any;
 
-    const flatObjectMetadataMaps = {
-      byUniversalIdentifier: {
-        [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
-        [relationTargetObjectMetadata.universalIdentifier as string]:
-          relationTargetObjectMetadata,
-      },
-      universalIdentifierById: {
-        [flatObjectMetadata.id]:
-          flatObjectMetadata.universalIdentifier as string,
-        [relationTargetObjectMetadata.id]:
-          relationTargetObjectMetadata.universalIdentifier as string,
-      },
-      universalIdentifiersByApplicationId: {},
-    };
+		const flatObjectMetadataMaps = {
+			byUniversalIdentifier: {
+				[flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
+				[relationTargetObjectMetadata.universalIdentifier as string]:
+					relationTargetObjectMetadata,
+			},
+			universalIdentifierById: {
+				[flatObjectMetadata.id]:
+					flatObjectMetadata.universalIdentifier as string,
+				[relationTargetObjectMetadata.id]:
+					relationTargetObjectMetadata.universalIdentifier as string,
+			},
+			universalIdentifiersByApplicationId: {},
+		};
 
-    expect(
-      computeSchemaComponents(
-        [flatObjectMetadata],
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      ),
-    ).toMatchInlineSnapshot(`
+		expect(
+			computeSchemaComponents(
+				[flatObjectMetadata],
+				flatObjectMetadataMaps,
+				flatFieldMetadataMaps,
+			),
+		).toMatchInlineSnapshot(`
 {
   "ObjectName": {
     "description": "Object description",
@@ -843,89 +843,89 @@ describe('computeSchemaComponents', () => {
   },
 }
 `);
-  });
+	});
 
-  const testsCases: EachTestingContext<
-    Pick<
-      FieldMetadataEntity<FieldMetadataType.NUMBER>,
-      'id' | 'name' | 'type' | 'isNullable' | 'defaultValue' | 'settings'
-    > & { universalIdentifier: string }
-  >[] = [
-    {
-      title: 'Integer dataType with decimals',
-      context: {
-        id: 'number1',
-        name: 'number1',
-        type: FieldMetadataType.NUMBER,
-        isNullable: false,
-        defaultValue: null,
-        settings: { type: 'number', decimals: 1, dataType: NumberDataType.INT },
-        universalIdentifier: 'number1',
-      },
-    },
-    {
-      title: 'Float without decimals',
-      context: {
-        id: 'number2',
-        name: 'number2',
-        type: FieldMetadataType.NUMBER,
-        isNullable: false,
-        defaultValue: null,
-        settings: { type: 'number', dataType: NumberDataType.FLOAT },
-        universalIdentifier: 'number2',
-      },
-    },
-    {
-      title: 'Integer with a 0 decimals',
-      context: {
-        id: 'number3',
-        name: 'number3',
-        type: FieldMetadataType.NUMBER,
-        isNullable: false,
-        defaultValue: null,
-        settings: { type: 'number', decimals: 0, dataType: NumberDataType.INT },
-        universalIdentifier: 'number3',
-      },
-    },
-  ];
+	const testsCases: EachTestingContext<
+		Pick<
+			FieldMetadataEntity<FieldMetadataType.NUMBER>,
+			"id" | "name" | "type" | "isNullable" | "defaultValue" | "settings"
+		> & { universalIdentifier: string }
+	>[] = [
+		{
+			title: "Integer dataType with decimals",
+			context: {
+				id: "number1",
+				name: "number1",
+				type: FieldMetadataType.NUMBER,
+				isNullable: false,
+				defaultValue: null,
+				settings: { type: "number", decimals: 1, dataType: NumberDataType.INT },
+				universalIdentifier: "number1",
+			},
+		},
+		{
+			title: "Float without decimals",
+			context: {
+				id: "number2",
+				name: "number2",
+				type: FieldMetadataType.NUMBER,
+				isNullable: false,
+				defaultValue: null,
+				settings: { type: "number", dataType: NumberDataType.FLOAT },
+				universalIdentifier: "number2",
+			},
+		},
+		{
+			title: "Integer with a 0 decimals",
+			context: {
+				id: "number3",
+				name: "number3",
+				type: FieldMetadataType.NUMBER,
+				isNullable: false,
+				defaultValue: null,
+				settings: { type: "number", decimals: 0, dataType: NumberDataType.INT },
+				universalIdentifier: "number3",
+			},
+		},
+	];
 
-  it.each(testsCases)('$title', ({ context: field }) => {
-    const flatObjectMetadata: FlatObjectMetadata = {
-      targetTableName: 'testingObject',
-      id: 'mockObjectId',
-      nameSingular: 'objectName',
-      namePlural: 'objectsName',
-      universalIdentifier: 'objectName',
-      fieldIds: [field.id],
-    } as any;
+	it.each(testsCases)("$title", ({ context: field }) => {
+		const flatObjectMetadata: FlatObjectMetadata = {
+			targetTableName: "testingObject",
+			id: "mockObjectId",
+			nameSingular: "objectName",
+			namePlural: "objectsName",
+			universalIdentifier: "objectName",
+			fieldIds: [field.id],
+		} as any;
 
-    const flatFieldMetadataMaps = {
-      byUniversalIdentifier: {
-        [field.universalIdentifier || field.id]: field as any,
-      },
-      universalIdentifierById: {
-        [field.id]: field.universalIdentifier || field.id,
-      },
-      universalIdentifiersByApplicationId: {},
-    };
+		const flatFieldMetadataMaps = {
+			byUniversalIdentifier: {
+				[field.universalIdentifier || field.id]: field as any,
+			},
+			universalIdentifierById: {
+				[field.id]: field.universalIdentifier || field.id,
+			},
+			universalIdentifiersByApplicationId: {},
+		};
 
-    const flatObjectMetadataMaps = {
-      byUniversalIdentifier: {
-        [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
-      },
-      universalIdentifierById: {
-        [flatObjectMetadata.id]:
-          flatObjectMetadata.universalIdentifier as string,
-      },
-      universalIdentifiersByApplicationId: {},
-    };
+		const flatObjectMetadataMaps = {
+			byUniversalIdentifier: {
+				[flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
+			},
+			universalIdentifierById: {
+				[flatObjectMetadata.id]:
+					flatObjectMetadata.universalIdentifier as string,
+			},
+			universalIdentifiersByApplicationId: {},
+		};
 
-    expect(
-      computeSchemaComponents(
-        [flatObjectMetadata],
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      ),
-    ).toMatchSnapshot();
-  });
+		expect(
+			computeSchemaComponents(
+				[flatObjectMetadata],
+				flatObjectMetadataMaps,
+				flatFieldMetadataMaps,
+			),
+		).toMatchSnapshot();
+	});
 });

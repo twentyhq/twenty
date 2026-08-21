@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 const ThinkingRoot = styled.div`
   align-items: center;
@@ -37,13 +37,13 @@ const ThinkingDot = styled.span<{ $delay: string }>`
 `;
 
 export function ThinkingIndicator() {
-  const { i18n } = useLingui();
+	const { i18n } = useLingui();
 
-  return (
-    <ThinkingRoot aria-label={i18n._(msg`Thinking`)}>
-      <ThinkingDot $delay="0s" />
-      <ThinkingDot $delay="0.15s" />
-      <ThinkingDot $delay="0.3s" />
-    </ThinkingRoot>
-  );
+	return (
+		<ThinkingRoot aria-label={i18n._(msg`Thinking`)}>
+			<ThinkingDot $delay="0s" />
+			<ThinkingDot $delay="0.15s" />
+			<ThinkingDot $delay="0.3s" />
+		</ThinkingRoot>
+	);
 }

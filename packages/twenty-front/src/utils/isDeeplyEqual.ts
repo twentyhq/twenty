@@ -1,4 +1,4 @@
-import deepEqual from 'deep-equal';
+import deepEqual from "deep-equal";
 
 export const isDeeplyEqual = <T>(a: T, b: T, options?: { strict: boolean }) =>
-  deepEqual(a, b, options);
+	deepEqual(a, b, options);

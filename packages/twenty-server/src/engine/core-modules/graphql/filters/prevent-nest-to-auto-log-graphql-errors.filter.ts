@@ -1,10 +1,10 @@
 import {
-  type ArgumentsHost,
-  Catch,
-  type ExceptionFilter,
-} from '@nestjs/common';
+	type ArgumentsHost,
+	Catch,
+	type ExceptionFilter,
+} from "@nestjs/common";
 
-import { GraphQLError } from 'graphql';
+import { GraphQLError } from "graphql";
 
 /**
  * In NestJS, if an exception is not handled, it will shown in the logs
@@ -12,8 +12,10 @@ import { GraphQLError } from 'graphql';
  * and leave it to the GraphQL layer to handle the error.
  */
 @Catch(GraphQLError)
-export class PreventNestToAutoLogGraphqlErrorsFilter implements ExceptionFilter {
-  catch(exception: GraphQLError, _host: ArgumentsHost) {
-    return exception;
-  }
+export class PreventNestToAutoLogGraphqlErrorsFilter
+	implements ExceptionFilter
+{
+	catch(exception: GraphQLError, _host: ArgumentsHost) {
+		return exception;
+	}
 }

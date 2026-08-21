@@ -1,3 +1,3 @@
 export const convertViewFilterValueToString = (value: any) => {
-  return typeof value === 'string' ? value : JSON.stringify(value ?? '');
+	return typeof value === "string" ? value : JSON.stringify(value ?? "");
 };

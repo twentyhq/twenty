@@ -1,10 +1,10 @@
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import { type CommandMenuItemFieldsFragment } from "~/generated-metadata/graphql";
 
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const commandMenuItemsDraftState = createAtomState<
-  CommandMenuItemFieldsFragment[] | null
+	CommandMenuItemFieldsFragment[] | null
 >({
-  key: 'commandMenuItemsDraftState',
-  defaultValue: null,
+	key: "commandMenuItemsDraftState",
+	defaultValue: null,
 });

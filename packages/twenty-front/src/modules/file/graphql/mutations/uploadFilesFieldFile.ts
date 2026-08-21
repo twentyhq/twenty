@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const UPLOAD_FILES_FIELD_FILE = gql`
   mutation UploadFilesFieldFile($file: Upload!, $fieldMetadataId: String!) {

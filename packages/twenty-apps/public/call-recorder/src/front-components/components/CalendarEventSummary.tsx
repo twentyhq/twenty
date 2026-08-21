@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { useSelectedRecordIds } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { isUndefined } from "@sniptt/guards";
+import { useSelectedRecordIds } from "twenty-sdk/front-component";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { CalendarEventSummaryContent } from 'src/front-components/components/CalendarEventSummaryContent';
+import { CalendarEventSummaryContent } from "src/front-components/components/CalendarEventSummaryContent";
 
 const StyledCenteredState = styled.div`
   align-items: center;
@@ -18,22 +18,22 @@ const StyledCenteredState = styled.div`
 `;
 
 export const CalendarEventSummary = () => {
-  const selectedRecordIds = useSelectedRecordIds();
-  const calendarEventId =
-    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
+	const selectedRecordIds = useSelectedRecordIds();
+	const calendarEventId =
+		selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
 
-  if (isUndefined(calendarEventId)) {
-    return (
-      <StyledCenteredState>
-        Open a calendar event to see its summary.
-      </StyledCenteredState>
-    );
-  }
+	if (isUndefined(calendarEventId)) {
+		return (
+			<StyledCenteredState>
+				Open a calendar event to see its summary.
+			</StyledCenteredState>
+		);
+	}
 
-  return (
-    <CalendarEventSummaryContent
-      key={calendarEventId}
-      calendarEventId={calendarEventId}
-    />
-  );
+	return (
+		<CalendarEventSummaryContent
+			key={calendarEventId}
+			calendarEventId={calendarEventId}
+		/>
+	);
 };

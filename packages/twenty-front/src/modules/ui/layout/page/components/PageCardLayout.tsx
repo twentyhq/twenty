@@ -1,13 +1,13 @@
-import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { InformationBannerWrapper } from "@/information-banner/components/InformationBannerWrapper";
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { MOBILE_VIEWPORT, themeCssVariables } from "twenty-ui/theme-constants";
 
 type PageCardLayoutProps = {
-  header: ReactNode;
-  secondaryBar?: ReactNode;
-  children: ReactNode;
-  showInformationBanner?: boolean;
+	header: ReactNode;
+	secondaryBar?: ReactNode;
+	children: ReactNode;
+	showInformationBanner?: boolean;
 };
 
 const StyledRoot = styled.div`
@@ -106,27 +106,27 @@ const StyledPrintHidden = styled.div`
 `;
 
 export const PageCardLayout = ({
-  header,
-  secondaryBar,
-  children,
-  showInformationBanner = true,
+	header,
+	secondaryBar,
+	children,
+	showInformationBanner = true,
 }: PageCardLayoutProps) => {
-  return (
-    <StyledRoot>
-      <StyledMainCardWrapper>
-        <StyledCard>
-          <StyledPrintHidden>{header}</StyledPrintHidden>
-          <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
-          <StyledBodyContent>
-            {showInformationBanner && (
-              <StyledPrintHidden>
-                <InformationBannerWrapper />
-              </StyledPrintHidden>
-            )}
-            {children}
-          </StyledBodyContent>
-        </StyledCard>
-      </StyledMainCardWrapper>
-    </StyledRoot>
-  );
+	return (
+		<StyledRoot>
+			<StyledMainCardWrapper>
+				<StyledCard>
+					<StyledPrintHidden>{header}</StyledPrintHidden>
+					<StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
+					<StyledBodyContent>
+						{showInformationBanner && (
+							<StyledPrintHidden>
+								<InformationBannerWrapper />
+							</StyledPrintHidden>
+						)}
+						{children}
+					</StyledBodyContent>
+				</StyledCard>
+			</StyledMainCardWrapper>
+		</StyledRoot>
+	);
 };

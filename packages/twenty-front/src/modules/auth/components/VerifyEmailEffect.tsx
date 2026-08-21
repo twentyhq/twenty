@@ -1,127 +1,127 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
-import { useAuth } from '@/auth/hooks/useAuth';
-import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
-import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { verifyEmailRedirectPathState } from "@/app/states/verifyEmailRedirectPathState";
+import { useAuth } from "@/auth/hooks/useAuth";
+import { useVerifyLogin } from "@/auth/hooks/useVerifyLogin";
+import { clientConfigApiStatusState } from "@/client-config/states/clientConfigApiStatusState";
+import { useIsCurrentLocationOnAWorkspace } from "@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace";
+import { useRedirectToWorkspaceDomain } from "@/domain-manager/hooks/useRedirectToWorkspaceDomain";
+import { useSnackBar } from "@/ui/feedback/snack-bar-manager/hooks/useSnackBar";
+import { useAtomStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomStateValue";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
+import { useLingui } from "@lingui/react/macro";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { AppPath } from "twenty-shared/types";
+import { isDefined } from "twenty-shared/utils";
+import { useNavigateApp } from "~/hooks/useNavigateApp";
+import { getWorkspaceUrl } from "~/utils/getWorkspaceUrl";
+import { isGraphqlErrorOfType } from "~/utils/is-graphql-error-of-type.util";
 
 type VerifyEmailEffectProps = {
-  onError: () => void;
+	onError: () => void;
 };
 
 export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
-  const {
-    verifyEmailAndGetLoginToken,
-    verifyEmailAndGetWorkspaceAgnosticToken,
-  } = useAuth();
+	const {
+		verifyEmailAndGetLoginToken,
+		verifyEmailAndGetWorkspaceAgnosticToken,
+	} = useAuth();
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+	const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const [searchParams] = useSearchParams();
+	const [searchParams] = useSearchParams();
 
-  const setVerifyEmailRedirectPath = useSetAtomState(
-    verifyEmailRedirectPathState,
-  );
+	const setVerifyEmailRedirectPath = useSetAtomState(
+		verifyEmailRedirectPathState,
+	);
 
-  const email = searchParams.get('email');
-  const emailVerificationToken = searchParams.get('emailVerificationToken');
-  const verifyEmailRedirectPath = searchParams.get('nextPath');
+	const email = searchParams.get("email");
+	const emailVerificationToken = searchParams.get("emailVerificationToken");
+	const verifyEmailRedirectPath = searchParams.get("nextPath");
 
-  const navigate = useNavigateApp();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { verifyLoginToken } = useVerifyLogin();
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
+	const navigate = useNavigateApp();
+	const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+	const { verifyLoginToken } = useVerifyLogin();
+	const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+	const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
-  const { t } = useLingui();
-  useEffect(() => {
-    const verifyEmailToken = async () => {
-      if (!email || !emailVerificationToken) {
-        enqueueErrorSnackBar({
-          message: t`Invalid email verification link.`,
-          options: {
-            dedupeKey: 'email-verification-link-dedupe-key',
-          },
-        });
-        return navigate(AppPath.SignInUp);
-      }
+	const { t } = useLingui();
+	useEffect(() => {
+		const verifyEmailToken = async () => {
+			if (!email || !emailVerificationToken) {
+				enqueueErrorSnackBar({
+					message: t`Invalid email verification link.`,
+					options: {
+						dedupeKey: "email-verification-link-dedupe-key",
+					},
+				});
+				return navigate(AppPath.SignInUp);
+			}
 
-      const successSnackbarParams = {
-        message: t`Email verified.`,
-        options: {
-          dedupeKey: 'email-verification-dedupe-key',
-        },
-      };
+			const successSnackbarParams = {
+				message: t`Email verified.`,
+				options: {
+					dedupeKey: "email-verification-dedupe-key",
+				},
+			};
 
-      try {
-        if (!isOnAWorkspace) {
-          await verifyEmailAndGetWorkspaceAgnosticToken(
-            emailVerificationToken,
-            email,
-          );
+			try {
+				if (!isOnAWorkspace) {
+					await verifyEmailAndGetWorkspaceAgnosticToken(
+						emailVerificationToken,
+						email,
+					);
 
-          enqueueSuccessSnackBar(successSnackbarParams);
+					enqueueSuccessSnackBar(successSnackbarParams);
 
-          return navigate(AppPath.SignInUp);
-        }
+					return navigate(AppPath.SignInUp);
+				}
 
-        const { loginToken, workspaceUrls } = await verifyEmailAndGetLoginToken(
-          emailVerificationToken,
-          email,
-        );
+				const { loginToken, workspaceUrls } = await verifyEmailAndGetLoginToken(
+					emailVerificationToken,
+					email,
+				);
 
-        enqueueSuccessSnackBar(successSnackbarParams);
+				enqueueSuccessSnackBar(successSnackbarParams);
 
-        const workspaceUrl = getWorkspaceUrl(workspaceUrls);
-        if (workspaceUrl.slice(0, -1) !== window.location.origin) {
-          return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
-            loginToken: loginToken.token,
-          });
-        }
+				const workspaceUrl = getWorkspaceUrl(workspaceUrls);
+				if (workspaceUrl.slice(0, -1) !== window.location.origin) {
+					return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
+						loginToken: loginToken.token,
+					});
+				}
 
-        if (isDefined(verifyEmailRedirectPath)) {
-          setVerifyEmailRedirectPath(verifyEmailRedirectPath);
-        }
+				if (isDefined(verifyEmailRedirectPath)) {
+					setVerifyEmailRedirectPath(verifyEmailRedirectPath);
+				}
 
-        await verifyLoginToken(loginToken.token);
-      } catch (error) {
-        enqueueErrorSnackBar({
-          ...(CombinedGraphQLErrors.is(error)
-            ? { apolloError: error }
-            : { message: t`Email verification failed` }),
-          options: {
-            dedupeKey: 'email-verification-error-dedupe-key',
-          },
-        });
-        if (isGraphqlErrorOfType(error, 'EMAIL_ALREADY_VERIFIED')) {
-          navigate(AppPath.SignInUp);
-        }
+				await verifyLoginToken(loginToken.token);
+			} catch (error) {
+				enqueueErrorSnackBar({
+					...(CombinedGraphQLErrors.is(error)
+						? { apolloError: error }
+						: { message: t`Email verification failed` }),
+					options: {
+						dedupeKey: "email-verification-error-dedupe-key",
+					},
+				});
+				if (isGraphqlErrorOfType(error, "EMAIL_ALREADY_VERIFIED")) {
+					navigate(AppPath.SignInUp);
+				}
 
-        onError();
-      }
-    };
+				onError();
+			}
+		};
 
-    if (!clientConfigApiStatus.isLoadedOnce) {
-      return;
-    }
+		if (!clientConfigApiStatus.isLoadedOnce) {
+			return;
+		}
 
-    verifyEmailToken();
+		verifyEmailToken();
 
-    // Verify email only needs to run once at mount
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientConfigApiStatus.isLoadedOnce]);
+		// Verify email only needs to run once at mount
+		// oxlint-disable-next-line react-hooks/exhaustive-deps
+	}, [clientConfigApiStatus.isLoadedOnce]);
 
-  return <></>;
+	return <></>;
 };

@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly clickable: 'clickable';
+	readonly clickable: "clickable";
 };
 export default classNames;

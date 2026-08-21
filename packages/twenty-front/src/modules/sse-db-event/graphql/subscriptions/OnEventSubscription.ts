@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ON_EVENT_SUBSCRIPTION = gql`
   subscription OnEventSubscription($eventStreamId: String!) {

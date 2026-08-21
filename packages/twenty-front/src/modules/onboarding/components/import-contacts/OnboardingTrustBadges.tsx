@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-const BADGE_ASSET_PATH = '/images/onboarding/trust-badges';
+const BADGE_ASSET_PATH = "/images/onboarding/trust-badges";
 
 const TRUSTED_BY_LOGOS = [
-  { name: 'PwC', src: `${BADGE_ASSET_PATH}/pwc.png` },
-  {
-    name: 'République Française',
-    src: `${BADGE_ASSET_PATH}/french-republic.png`,
-  },
+	{ name: "PwC", src: `${BADGE_ASSET_PATH}/pwc.png` },
+	{
+		name: "République Française",
+		src: `${BADGE_ASSET_PATH}/french-republic.png`,
+	},
 ];
 
 const StyledRow = styled.div`
@@ -37,7 +37,7 @@ const StyledBadge = styled.div<{ hasClusterLeading: boolean }>`
   overflow: hidden;
   padding: 0 10px 0
     ${({ hasClusterLeading }) =>
-      hasClusterLeading ? '10px' : themeCssVariables.spacing[1]};
+			hasClusterLeading ? "10px" : themeCssVariables.spacing[1]};
 `;
 
 const StyledSeal = styled.img`
@@ -63,42 +63,42 @@ const StyledBadgeLabel = styled.span`
 `;
 
 type TrustBadgeProps = {
-  hasClusterLeading?: boolean;
-  label: string;
-  leading: ReactNode;
+	hasClusterLeading?: boolean;
+	label: string;
+	leading: ReactNode;
 };
 
 const TrustBadge = ({
-  hasClusterLeading = false,
-  label,
-  leading,
+	hasClusterLeading = false,
+	label,
+	leading,
 }: TrustBadgeProps) => (
-  <StyledBadge hasClusterLeading={hasClusterLeading}>
-    {leading}
-    <StyledBadgeLabel>{label}</StyledBadgeLabel>
-  </StyledBadge>
+	<StyledBadge hasClusterLeading={hasClusterLeading}>
+		{leading}
+		<StyledBadgeLabel>{label}</StyledBadgeLabel>
+	</StyledBadge>
 );
 
 export const OnboardingTrustBadges = () => (
-  <StyledRow>
-    <TrustBadge
-      label="SOC2"
-      leading={<StyledSeal src={`${BADGE_ASSET_PATH}/soc2.png`} alt="" />}
-    />
-    <TrustBadge
-      label="+10k"
-      hasClusterLeading
-      leading={
-        <StyledLogoCluster>
-          {TRUSTED_BY_LOGOS.map((logo) => (
-            <StyledClusterLogo key={logo.name} src={logo.src} alt={logo.name} />
-          ))}
-        </StyledLogoCluster>
-      }
-    />
-    <TrustBadge
-      label="GDPR"
-      leading={<StyledSeal src={`${BADGE_ASSET_PATH}/gdpr.png`} alt="" />}
-    />
-  </StyledRow>
+	<StyledRow>
+		<TrustBadge
+			label="SOC2"
+			leading={<StyledSeal src={`${BADGE_ASSET_PATH}/soc2.png`} alt="" />}
+		/>
+		<TrustBadge
+			label="+10k"
+			hasClusterLeading
+			leading={
+				<StyledLogoCluster>
+					{TRUSTED_BY_LOGOS.map((logo) => (
+						<StyledClusterLogo key={logo.name} src={logo.src} alt={logo.name} />
+					))}
+				</StyledLogoCluster>
+			}
+		/>
+		<TrustBadge
+			label="GDPR"
+			leading={<StyledSeal src={`${BADGE_ASSET_PATH}/gdpr.png`} alt="" />}
+		/>
+	</StyledRow>
 );

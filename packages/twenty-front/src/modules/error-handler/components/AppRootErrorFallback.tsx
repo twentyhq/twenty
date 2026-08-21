@@ -1,9 +1,9 @@
-import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import { IconReload } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type AppErrorDisplayProps } from "@/error-handler/types/AppErrorDisplayProps";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useContext } from "react";
+import { IconReload } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
@@ -100,39 +100,39 @@ const StyledIconContainer = styled.span`
 `;
 
 export const AppRootErrorFallback = ({
-  resetErrorBoundary,
-  title = t`Sorry, something went wrong`,
+	resetErrorBoundary,
+	title = t`Sorry, something went wrong`,
 }: AppRootErrorFallbackProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledContainer>
-      <StyledPanel>
-        <StyledEmptyContainer>
-          <StyledImageContainer>
-            <StyledBackgroundImage
-              src="/images/placeholders/background/error_index_bg.png"
-              alt={t`Background`}
-            />
-            <StyledInnerImage
-              src="/images/placeholders/moving-image/error_index.png"
-              alt={t`Error illustration`}
-            />
-          </StyledImageContainer>
-          <StyledEmptyTextContainer>
-            <StyledEmptyTitle>{title}</StyledEmptyTitle>
-            <StyledEmptySubTitle>
-              {t`Please refresh the page.`}
-            </StyledEmptySubTitle>
-          </StyledEmptyTextContainer>
-          <StyledButton onClick={resetErrorBoundary}>
-            <StyledIconContainer>
-              <IconReload size={theme.icon.size.md} />
-            </StyledIconContainer>
-            {t`Reload`}
-          </StyledButton>
-        </StyledEmptyContainer>
-      </StyledPanel>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledPanel>
+				<StyledEmptyContainer>
+					<StyledImageContainer>
+						<StyledBackgroundImage
+							src="/images/placeholders/background/error_index_bg.png"
+							alt={t`Background`}
+						/>
+						<StyledInnerImage
+							src="/images/placeholders/moving-image/error_index.png"
+							alt={t`Error illustration`}
+						/>
+					</StyledImageContainer>
+					<StyledEmptyTextContainer>
+						<StyledEmptyTitle>{title}</StyledEmptyTitle>
+						<StyledEmptySubTitle>
+							{t`Please refresh the page.`}
+						</StyledEmptySubTitle>
+					</StyledEmptyTextContainer>
+					<StyledButton onClick={resetErrorBoundary}>
+						<StyledIconContainer>
+							<IconReload size={theme.icon.size.md} />
+						</StyledIconContainer>
+						{t`Reload`}
+					</StyledButton>
+				</StyledEmptyContainer>
+			</StyledPanel>
+		</StyledContainer>
+	);
 };

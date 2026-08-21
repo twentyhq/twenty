@@ -1,21 +1,21 @@
-import gql from 'graphql-tag';
-import { VIEW_FILTER_GROUP_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
+import gql from "graphql-tag";
+import { VIEW_FILTER_GROUP_GQL_FIELDS } from "test/integration/constants/view-gql-fields.constants";
 
 export const findViewFilterGroupOperationFactory = ({
-  gqlFields = VIEW_FILTER_GROUP_GQL_FIELDS,
-  viewFilterGroupId,
+	gqlFields = VIEW_FILTER_GROUP_GQL_FIELDS,
+	viewFilterGroupId,
 }: {
-  gqlFields?: string;
-  viewFilterGroupId: string;
+	gqlFields?: string;
+	viewFilterGroupId: string;
 }) => ({
-  query: gql`
+	query: gql`
     query GetViewFilterGroup($id: String!) {
       getViewFilterGroup(id: $id) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    id: viewFilterGroupId,
-  },
+	variables: {
+		id: viewFilterGroupId,
+	},
 });

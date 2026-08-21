@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ARCHIVE_CHAT_THREAD = gql`
   mutation ArchiveChatThread($id: UUID!) {

@@ -1,5 +1,5 @@
 export type EmailRecipients = {
-  to: string;
-  cc?: string;
-  bcc?: string;
+	to: string;
+	cc?: string;
+	bcc?: string;
 };

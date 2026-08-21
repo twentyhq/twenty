@@ -1,3 +1,3 @@
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from "twenty-ui/theme";
 
-export type GraphColor = ThemeColor | 'auto';
+export type GraphColor = ThemeColor | "auto";

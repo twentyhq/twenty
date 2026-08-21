@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { type ComponentType } from 'react';
+import { styled } from "@linaria/react";
+import { type ComponentType } from "react";
 
-import { EASING, mediaUp } from '@/tokens';
+import { EASING, mediaUp } from "@/tokens";
 
-import { DataModelVisual } from '../DataModelVisual';
-import { LayoutVisual } from '../LayoutVisual';
-import { WorkflowVisual } from '../WorkflowVisual';
-import { PRODUCT_STEPPER_STEPS } from '../data/product-stepper-data';
-import { type ProductStepperVisualKey } from '../types/product-stepper-visual-key';
-import { ProductStepperVisualFrame } from './ProductStepperVisualFrame';
+import { DataModelVisual } from "../DataModelVisual";
+import { LayoutVisual } from "../LayoutVisual";
+import { WorkflowVisual } from "../WorkflowVisual";
+import { PRODUCT_STEPPER_STEPS } from "../data/product-stepper-data";
+import { type ProductStepperVisualKey } from "../types/product-stepper-visual-key";
+import { ProductStepperVisualFrame } from "./ProductStepperVisualFrame";
 
 const VISUALS: Record<
-  ProductStepperVisualKey,
-  ComponentType<{ active: boolean }>
+	ProductStepperVisualKey,
+	ComponentType<{ active: boolean }>
 > = {
-  dataModel: DataModelVisual,
-  layout: LayoutVisual,
-  workflow: WorkflowVisual,
+	dataModel: DataModelVisual,
+	layout: LayoutVisual,
+	workflow: WorkflowVisual,
 };
 
 const VisualColumn = styled.div`
@@ -26,7 +26,7 @@ const VisualColumn = styled.div`
   order: -1;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: center;
     align-self: start;
     display: flex;
@@ -42,7 +42,7 @@ const VisualMeasure = styled.div`
   min-width: 0;
   width: 100%;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     max-width: 672px;
   }
 `;
@@ -71,28 +71,28 @@ const SlideInner = styled.div`
 `;
 
 export function ProductStepperVisual({
-  activeStepIndex,
+	activeStepIndex,
 }: {
-  activeStepIndex: number;
+	activeStepIndex: number;
 }) {
-  return (
-    <VisualColumn>
-      <VisualMeasure>
-        <ProductStepperVisualFrame>
-          {PRODUCT_STEPPER_STEPS.map((step, stepNumber) => {
-            const isActive = stepNumber === activeStepIndex;
-            const Visual = VISUALS[step.visual];
+	return (
+		<VisualColumn>
+			<VisualMeasure>
+				<ProductStepperVisualFrame>
+					{PRODUCT_STEPPER_STEPS.map((step, stepNumber) => {
+						const isActive = stepNumber === activeStepIndex;
+						const Visual = VISUALS[step.visual];
 
-            return (
-              <Slide data-active={isActive ? '' : undefined} key={step.visual}>
-                <SlideInner>
-                  <Visual active={isActive} />
-                </SlideInner>
-              </Slide>
-            );
-          })}
-        </ProductStepperVisualFrame>
-      </VisualMeasure>
-    </VisualColumn>
-  );
+						return (
+							<Slide data-active={isActive ? "" : undefined} key={step.visual}>
+								<SlideInner>
+									<Visual active={isActive} />
+								</SlideInner>
+							</Slide>
+						);
+					})}
+				</ProductStepperVisualFrame>
+			</VisualMeasure>
+		</VisualColumn>
+	);
 }

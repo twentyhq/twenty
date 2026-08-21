@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly leftContentWithCheckboxContainer: 'leftContentWithCheckboxContainer';
+	readonly leftContentWithCheckboxContainer: "leftContentWithCheckboxContainer";
 };
 export default classNames;

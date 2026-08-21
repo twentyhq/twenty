@@ -1,112 +1,112 @@
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useMutation } from '@apollo/client/react';
-import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
+import { settingsDraftRoleFamilyState } from "@/settings/roles/states/settingsDraftRoleFamilyState";
+import { settingsPersistedRoleFamilyState } from "@/settings/roles/states/settingsPersistedRoleFamilyState";
+import { type PartialWorkspaceMember } from "@/settings/roles/types/RoleWithPartialMembers";
+import { useAtomFamilyStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue";
+import { useSetAtomFamilyState } from "@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState";
+import { useMutation } from "@apollo/client/react";
+import { UpdateWorkspaceMemberRoleDocument } from "~/generated-metadata/graphql";
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
-  workspaceMemberId: string;
+	workspaceMemberId: string;
 };
 
 type UpdateWorkspaceMemberRoleDraftStateParams = {
-  workspaceMember: PartialWorkspaceMember;
+	workspaceMember: PartialWorkspaceMember;
 };
 
 type AddWorkspaceMembersToRoleParams = {
-  roleId: string;
-  workspaceMemberIds: string[];
+	roleId: string;
+	workspaceMemberIds: string[];
 };
 
 export const useUpdateWorkspaceMemberRole = (roleId: string) => {
-  const setSettingsPersistedRole = useSetAtomFamilyState(
-    settingsPersistedRoleFamilyState,
-    roleId,
-  );
-  const settingsDraftRole = useAtomFamilyStateValue(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
+	const setSettingsPersistedRole = useSetAtomFamilyState(
+		settingsPersistedRoleFamilyState,
+		roleId,
+	);
+	const settingsDraftRole = useAtomFamilyStateValue(
+		settingsDraftRoleFamilyState,
+		roleId,
+	);
+	const setSettingsDraftRole = useSetAtomFamilyState(
+		settingsDraftRoleFamilyState,
+		roleId,
+	);
 
-  const [updateWorkspaceMemberRoleMutation] = useMutation(
-    UpdateWorkspaceMemberRoleDocument,
-  );
+	const [updateWorkspaceMemberRoleMutation] = useMutation(
+		UpdateWorkspaceMemberRoleDocument,
+	);
 
-  const updateWorkspaceMemberRoleDraftState = ({
-    workspaceMember,
-  }: UpdateWorkspaceMemberRoleDraftStateParams) => {
-    setSettingsDraftRole({
-      ...settingsDraftRole,
-      workspaceMembers: [
-        ...settingsDraftRole.workspaceMembers,
-        {
-          id: workspaceMember.id,
-          name: workspaceMember.name,
-          userEmail: workspaceMember.userEmail,
-          avatarUrl: workspaceMember.avatarUrl,
-        },
-      ],
-    });
-  };
+	const updateWorkspaceMemberRoleDraftState = ({
+		workspaceMember,
+	}: UpdateWorkspaceMemberRoleDraftStateParams) => {
+		setSettingsDraftRole({
+			...settingsDraftRole,
+			workspaceMembers: [
+				...settingsDraftRole.workspaceMembers,
+				{
+					id: workspaceMember.id,
+					name: workspaceMember.name,
+					userEmail: workspaceMember.userEmail,
+					avatarUrl: workspaceMember.avatarUrl,
+				},
+			],
+		});
+	};
 
-  const addWorkspaceMemberToRoleAndUpdateState = async ({
-    workspaceMemberId,
-  }: AddWorkspaceMemberToRoleAndUpdateStateParams) => {
-    const { data } = await updateWorkspaceMemberRoleMutation({
-      variables: {
-        workspaceMemberId,
-        roleId,
-      },
-    });
+	const addWorkspaceMemberToRoleAndUpdateState = async ({
+		workspaceMemberId,
+	}: AddWorkspaceMemberToRoleAndUpdateStateParams) => {
+		const { data } = await updateWorkspaceMemberRoleMutation({
+			variables: {
+				workspaceMemberId,
+				roleId,
+			},
+		});
 
-    if (data?.updateWorkspaceMemberRole !== undefined) {
-      const updatedWorkspaceMember = data.updateWorkspaceMemberRole;
-      const updatedWorkspaceMembers = [
-        ...settingsDraftRole.workspaceMembers,
-        {
-          id: updatedWorkspaceMember.id,
-          name: updatedWorkspaceMember.name,
-          colorScheme: updatedWorkspaceMember.colorScheme,
-          userEmail: updatedWorkspaceMember.userEmail,
-        },
-      ];
+		if (data?.updateWorkspaceMemberRole !== undefined) {
+			const updatedWorkspaceMember = data.updateWorkspaceMemberRole;
+			const updatedWorkspaceMembers = [
+				...settingsDraftRole.workspaceMembers,
+				{
+					id: updatedWorkspaceMember.id,
+					name: updatedWorkspaceMember.name,
+					colorScheme: updatedWorkspaceMember.colorScheme,
+					userEmail: updatedWorkspaceMember.userEmail,
+				},
+			];
 
-      const updatedRole = {
-        ...settingsDraftRole,
-        workspaceMembers: updatedWorkspaceMembers,
-      };
+			const updatedRole = {
+				...settingsDraftRole,
+				workspaceMembers: updatedWorkspaceMembers,
+			};
 
-      setSettingsPersistedRole(updatedRole);
-      setSettingsDraftRole(updatedRole);
-    }
+			setSettingsPersistedRole(updatedRole);
+			setSettingsDraftRole(updatedRole);
+		}
 
-    return data?.updateWorkspaceMemberRole;
-  };
+		return data?.updateWorkspaceMemberRole;
+	};
 
-  const addWorkspaceMembersToRole = async ({
-    roleId,
-    workspaceMemberIds,
-  }: AddWorkspaceMembersToRoleParams) => {
-    await Promise.all(
-      workspaceMemberIds.map((workspaceMemberId) =>
-        updateWorkspaceMemberRoleMutation({
-          variables: {
-            roleId,
-            workspaceMemberId,
-          },
-        }),
-      ),
-    );
-  };
+	const addWorkspaceMembersToRole = async ({
+		roleId,
+		workspaceMemberIds,
+	}: AddWorkspaceMembersToRoleParams) => {
+		await Promise.all(
+			workspaceMemberIds.map((workspaceMemberId) =>
+				updateWorkspaceMemberRoleMutation({
+					variables: {
+						roleId,
+						workspaceMemberId,
+					},
+				}),
+			),
+		);
+	};
 
-  return {
-    addWorkspaceMemberToRoleAndUpdateState,
-    updateWorkspaceMemberRoleDraftState,
-    addWorkspaceMembersToRole,
-  };
+	return {
+		addWorkspaceMemberToRoleAndUpdateState,
+		updateWorkspaceMemberRoleDraftState,
+		addWorkspaceMembersToRole,
+	};
 };

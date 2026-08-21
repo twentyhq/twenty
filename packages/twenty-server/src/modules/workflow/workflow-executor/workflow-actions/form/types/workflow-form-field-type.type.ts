@@ -1,7 +1,7 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from "twenty-shared/types";
 
 export type WorkflowFormFieldType =
-  | FieldMetadataType.TEXT
-  | FieldMetadataType.NUMBER
-  | FieldMetadataType.DATE
-  | 'RECORD';
+	| FieldMetadataType.TEXT
+	| FieldMetadataType.NUMBER
+	| FieldMetadataType.DATE
+	| "RECORD";

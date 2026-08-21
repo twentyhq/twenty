@@ -1,13 +1,13 @@
-import { Pill } from '@ui/data-display';
+import { Pill } from "@ui/data-display";
 
-import styles from './ButtonSoon.module.scss';
+import styles from "./ButtonSoon.module.scss";
 
 type ButtonSoonProps = {
-  label?: string;
+	label?: string;
 };
 
-export const ButtonSoon = ({ label = 'Soon' }: ButtonSoonProps) => (
-  <span className={styles.soonPillContainer}>
-    <Pill label={label} />
-  </span>
+export const ButtonSoon = ({ label = "Soon" }: ButtonSoonProps) => (
+	<span className={styles.soonPillContainer}>
+		<Pill label={label} />
+	</span>
 );

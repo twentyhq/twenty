@@ -1,5 +1,5 @@
 export type FakeSlackAssistantStatus = {
-  channelId: string;
-  threadTimestamp: string;
-  status: string;
+	channelId: string;
+	threadTimestamp: string;
+	status: string;
 };

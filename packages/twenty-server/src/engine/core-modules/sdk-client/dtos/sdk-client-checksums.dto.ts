@@ -1,16 +1,16 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-@ObjectType('SdkClientChecksums')
+@ObjectType("SdkClientChecksums")
 export class SdkClientChecksumsDTO {
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  core: string | null;
+	@IsString()
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	core: string | null;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  metadata: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	metadata: string;
 }

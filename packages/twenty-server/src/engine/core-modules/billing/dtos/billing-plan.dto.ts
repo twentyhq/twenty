@@ -1,24 +1,24 @@
 /* @license Enterprise */
 
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
 import {
-  BillingLicensedProduct,
-  BillingMeteredProduct,
-} from 'src/engine/core-modules/billing/dtos/billing-product.dto';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+	BillingLicensedProduct,
+	BillingMeteredProduct,
+} from "src/engine/core-modules/billing/dtos/billing-product.dto";
+import { BillingPlanKey } from "src/engine/core-modules/billing/enums/billing-plan-key.enum";
 
-@ObjectType('BillingPlan')
+@ObjectType("BillingPlan")
 export class BillingPlanDTO {
-  @Field(() => BillingPlanKey)
-  planKey: BillingPlanKey;
+	@Field(() => BillingPlanKey)
+	planKey: BillingPlanKey;
 
-  @Field(() => [BillingLicensedProduct])
-  baseProducts: BillingLicensedProduct[];
+	@Field(() => [BillingLicensedProduct])
+	baseProducts: BillingLicensedProduct[];
 
-  @Field(() => [BillingLicensedProduct])
-  resourceCreditProducts: BillingLicensedProduct[];
+	@Field(() => [BillingLicensedProduct])
+	resourceCreditProducts: BillingLicensedProduct[];
 
-  @Field(() => [BillingMeteredProduct])
-  meteredProducts: BillingMeteredProduct[];
+	@Field(() => [BillingMeteredProduct])
+	meteredProducts: BillingMeteredProduct[];
 }

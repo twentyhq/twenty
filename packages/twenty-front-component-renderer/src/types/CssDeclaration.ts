@@ -1,4 +1,4 @@
 export type CssDeclaration = {
-  cssPropertyName: string;
-  cssValue: string;
+	cssPropertyName: string;
+	cssValue: string;
 };

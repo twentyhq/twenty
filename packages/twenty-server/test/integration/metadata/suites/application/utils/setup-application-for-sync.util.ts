@@ -1,26 +1,26 @@
-import gql from 'graphql-tag';
-import { isDefined } from 'twenty-shared/utils';
+import gql from "graphql-tag";
+import { isDefined } from "twenty-shared/utils";
 
-import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { uploadApplicationFile } from "test/integration/metadata/suites/application/utils/upload-application-file.util";
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
 export const setupApplicationForSync = async ({
-  applicationUniversalIdentifier,
-  name,
-  sourcePath,
-  token,
+	applicationUniversalIdentifier,
+	name,
+	sourcePath,
+	token,
 }: {
-  applicationUniversalIdentifier: string;
-  name: string;
-  description: string;
-  sourcePath: string;
-  token?: string;
+	applicationUniversalIdentifier: string;
+	name: string;
+	description: string;
+	sourcePath: string;
+	token?: string;
 }) => {
-  jest.useRealTimers();
+	jest.useRealTimers();
 
-  const registrationResponse = await makeMetadataAPIRequest(
-    {
-      query: gql`
+	const registrationResponse = await makeMetadataAPIRequest(
+		{
+			query: gql`
         mutation CreateApplicationRegistration(
           $input: CreateApplicationRegistrationInput!
         ) {
@@ -31,24 +31,24 @@ export const setupApplicationForSync = async ({
           }
         }
       `,
-      variables: {
-        input: { name, universalIdentifier: applicationUniversalIdentifier },
-      },
-    },
-    token,
-  );
+			variables: {
+				input: { name, universalIdentifier: applicationUniversalIdentifier },
+			},
+		},
+		token,
+	);
 
-  if (isDefined(registrationResponse.body.errors)) {
-    throw new Error(
-      `Failed to create application registration: ${JSON.stringify(
-        registrationResponse.body.errors,
-      )}`,
-    );
-  }
+	if (isDefined(registrationResponse.body.errors)) {
+		throw new Error(
+			`Failed to create application registration: ${JSON.stringify(
+				registrationResponse.body.errors,
+			)}`,
+		);
+	}
 
-  const developmentApplicationResponse = await makeMetadataAPIRequest(
-    {
-      query: gql`
+	const developmentApplicationResponse = await makeMetadataAPIRequest(
+		{
+			query: gql`
         mutation CreateDevelopmentApplication(
           $universalIdentifier: String!
           $name: String!
@@ -61,33 +61,33 @@ export const setupApplicationForSync = async ({
           }
         }
       `,
-      variables: { universalIdentifier: applicationUniversalIdentifier, name },
-    },
-    token,
-  );
+			variables: { universalIdentifier: applicationUniversalIdentifier, name },
+		},
+		token,
+	);
 
-  if (isDefined(developmentApplicationResponse.body.errors)) {
-    throw new Error(
-      `Failed to create development application: ${JSON.stringify(
-        developmentApplicationResponse.body.errors,
-      )}`,
-    );
-  }
+	if (isDefined(developmentApplicationResponse.body.errors)) {
+		throw new Error(
+			`Failed to create development application: ${JSON.stringify(
+				developmentApplicationResponse.body.errors,
+			)}`,
+		);
+	}
 
-  const packageJson = JSON.stringify({
-    name: sourcePath,
-    version: '1.0.0',
-  });
+	const packageJson = JSON.stringify({
+		name: sourcePath,
+		version: "1.0.0",
+	});
 
-  await uploadApplicationFile({
-    applicationUniversalIdentifier,
-    fileFolder: 'Dependencies',
-    filePath: 'package.json',
-    fileBuffer: Buffer.from(packageJson),
-    filename: 'package.json',
-    expectToFail: false,
-    token,
-  });
+	await uploadApplicationFile({
+		applicationUniversalIdentifier,
+		fileFolder: "Dependencies",
+		filePath: "package.json",
+		fileBuffer: Buffer.from(packageJson),
+		filename: "package.json",
+		expectToFail: false,
+		token,
+	});
 
-  jest.useFakeTimers();
+	jest.useFakeTimers();
 };

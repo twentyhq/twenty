@@ -1,22 +1,22 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('LogicFunctionLogs')
+@ObjectType("LogicFunctionLogs")
 export class LogicFunctionLogsDTO {
-  @Field({ description: 'Execution Logs' })
-  logs: string;
+	@Field({ description: "Execution Logs" })
+	logs: string;
 
-  @HideField()
-  applicationUniversalIdentifier?: string;
+	@HideField()
+	applicationUniversalIdentifier?: string;
 
-  @HideField()
-  applicationId?: string;
+	@HideField()
+	applicationId?: string;
 
-  @HideField()
-  name?: string;
+	@HideField()
+	name?: string;
 
-  @HideField()
-  id?: string;
+	@HideField()
+	id?: string;
 
-  @HideField()
-  universalIdentifier?: string;
+	@HideField()
+	universalIdentifier?: string;
 }

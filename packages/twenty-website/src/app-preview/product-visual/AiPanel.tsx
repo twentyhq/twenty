@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 import {
-  IconArrowUp,
-  IconChevronDown,
-  IconEdit,
-  IconPaperclip,
-  IconX,
-} from '@tabler/icons-react';
-import { Fragment, useEffect, useRef, type ReactNode } from 'react';
+	IconArrowUp,
+	IconChevronDown,
+	IconEdit,
+	IconPaperclip,
+	IconX,
+} from "@tabler/icons-react";
+import { Fragment, useEffect, useRef, type ReactNode } from "react";
 
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
-import { ClaudeMark } from '@/icons';
-import { streamedMarkdown } from './streamed-markdown';
-import { type ProductVisualSceneDefinition } from './product-visual-scenes';
+import { ClaudeMark } from "@/icons";
+import { streamedMarkdown } from "./streamed-markdown";
+import { type ProductVisualSceneDefinition } from "./product-visual-scenes";
 
 const MAX_VISIBLE_RESPONSE_CHIPS = 3;
 
@@ -24,15 +24,15 @@ const inks = APP_PREVIEW_TONES.productVisual;
 const PanelShell = styled.aside<{ $panelOnly: boolean }>`
   background: ${THEME_LIGHT.background.primary};
   border: ${({ $panelOnly }) =>
-    $panelOnly ? 'none' : `1px solid ${THEME_LIGHT.border.color.medium}`};
-  border-radius: ${({ $panelOnly }) => ($panelOnly ? '0' : '8px')};
+		$panelOnly ? "none" : `1px solid ${THEME_LIGHT.border.color.medium}`};
+  border-radius: ${({ $panelOnly }) => ($panelOnly ? "0" : "8px")};
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  width: ${({ $panelOnly }) => ($panelOnly ? '100%' : '280px')};
+  width: ${({ $panelOnly }) => ($panelOnly ? "100%" : "280px")};
 `;
 
 const PanelHeader = styled.div`
@@ -248,132 +248,132 @@ const SendButton = styled.span`
 // by the playback layer), the streamed answer with entity chips, and the
 // composer chrome. Mock copy is product-screenshot fiction (English).
 export function AiPanel({
-  activeStepIndex = -1,
-  completedStepCount = 0,
-  panelOnly = false,
-  scene,
-  stepsSlot = null,
-  streamComplete = false,
-  streamedTextVisibleLength = 0,
+	activeStepIndex = -1,
+	completedStepCount = 0,
+	panelOnly = false,
+	scene,
+	stepsSlot = null,
+	streamComplete = false,
+	streamedTextVisibleLength = 0,
 }: {
-  activeStepIndex?: number;
-  completedStepCount?: number;
-  panelOnly?: boolean;
-  scene: ProductVisualSceneDefinition;
-  stepsSlot?: ReactNode;
-  streamComplete?: boolean;
-  streamedTextVisibleLength?: number;
+	activeStepIndex?: number;
+	completedStepCount?: number;
+	panelOnly?: boolean;
+	scene: ProductVisualSceneDefinition;
+	stepsSlot?: ReactNode;
+	streamComplete?: boolean;
+	streamedTextVisibleLength?: number;
 }) {
-  const messagesRef = useRef<HTMLDivElement>(null);
-  const hasSteps = (scene.steps?.length ?? 0) > 0;
-  const responseChips = scene.responseChips;
-  const visibleResponseChips = responseChips.slice(
-    0,
-    MAX_VISIBLE_RESPONSE_CHIPS,
-  );
-  const hiddenResponseChipCount = Math.max(
-    responseChips.length - MAX_VISIBLE_RESPONSE_CHIPS,
-    0,
-  );
-  // A streamed answer's runs have positional identity; bind the numbers
-  // ahead of render so keys are explicit data.
-  const revealedParagraphs = streamedMarkdown
-    .sliceVisibleParagraphs(scene.responseText, streamedTextVisibleLength)
-    .map((segments, paragraphNumber) => ({
-      number: paragraphNumber,
-      segments: segments.map((segment, segmentNumber) => ({
-        bold: segment.bold,
-        number: segmentNumber,
-        text: segment.text,
-      })),
-    }));
+	const messagesRef = useRef<HTMLDivElement>(null);
+	const hasSteps = (scene.steps?.length ?? 0) > 0;
+	const responseChips = scene.responseChips;
+	const visibleResponseChips = responseChips.slice(
+		0,
+		MAX_VISIBLE_RESPONSE_CHIPS,
+	);
+	const hiddenResponseChipCount = Math.max(
+		responseChips.length - MAX_VISIBLE_RESPONSE_CHIPS,
+		0,
+	);
+	// A streamed answer's runs have positional identity; bind the numbers
+	// ahead of render so keys are explicit data.
+	const revealedParagraphs = streamedMarkdown
+		.sliceVisibleParagraphs(scene.responseText, streamedTextVisibleLength)
+		.map((segments, paragraphNumber) => ({
+			number: paragraphNumber,
+			segments: segments.map((segment, segmentNumber) => ({
+				bold: segment.bold,
+				number: segmentNumber,
+				text: segment.text,
+			})),
+		}));
 
-  // Keep the latest agent step / streamed text in view, like a real chat.
-  useEffect(() => {
-    const messages = messagesRef.current;
+	// Keep the latest agent step / streamed text in view, like a real chat.
+	useEffect(() => {
+		const messages = messagesRef.current;
 
-    if (messages) {
-      messages.scrollTop = messages.scrollHeight;
-    }
-  }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
+		if (messages) {
+			messages.scrollTop = messages.scrollHeight;
+		}
+	}, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
-  return (
-    <PanelShell $panelOnly={panelOnly}>
-      <PanelHeader>
-        <HeaderButton>
-          <IconX size={13} stroke={2} />
-        </HeaderButton>
-        <PanelTitle>Ask AI</PanelTitle>
-        <HeaderButton>
-          <IconEdit size={13} stroke={2} />
-        </HeaderButton>
-      </PanelHeader>
-      <Messages ref={messagesRef}>
-        <UserMessage>{scene.label}</UserMessage>
-        {stepsSlot}
-        {streamedTextVisibleLength > 0 ? (
-          <>
-            <AnswerText>
-              {revealedParagraphs.map((paragraph) => (
-                <AnswerParagraph key={paragraph.number}>
-                  {paragraph.segments.map((segment) =>
-                    segment.bold ? (
-                      <AnswerStrong key={segment.number}>
-                        {segment.text}
-                      </AnswerStrong>
-                    ) : (
-                      <Fragment key={segment.number}>{segment.text}</Fragment>
-                    ),
-                  )}
-                </AnswerParagraph>
-              ))}
-            </AnswerText>
-            {streamComplete && responseChips.length > 0 ? (
-              <EntityChips>
-                {visibleResponseChips.map((chip) => (
-                  <EntityChip key={chip.name}>
-                    <EntityChipIcon
-                      alt={chip.name}
-                      fetchPriority="low"
-                      src={chip.logoUrl}
-                    />
-                    <EntityChipName>{chip.name}</EntityChipName>
-                  </EntityChip>
-                ))}
-                {hiddenResponseChipCount > 0 ? (
-                  <EntityOverflowChip>
-                    +{hiddenResponseChipCount} more
-                  </EntityOverflowChip>
-                ) : null}
-              </EntityChips>
-            ) : null}
-          </>
-        ) : hasSteps ? null : (
-          <ThinkingText>Thinking...</ThinkingText>
-        )}
-      </Messages>
-      <InputArea>
-        <InputBox>
-          <InputPlaceholder>Ask, search or make anything...</InputPlaceholder>
-          <InputButtonRow>
-            <InputLeftButtons>
-              <IconPaperclip size={13} stroke={2} />
-            </InputLeftButtons>
-            <InputRightButtons>
-              <ModelChip>
-                <ClaudeMark sizePx={12} />
-                Claude Opus 4.6
-                <ModelChipChevron>
-                  <IconChevronDown size={13} stroke={2} />
-                </ModelChipChevron>
-              </ModelChip>
-              <SendButton>
-                <IconArrowUp size={13} stroke={2} />
-              </SendButton>
-            </InputRightButtons>
-          </InputButtonRow>
-        </InputBox>
-      </InputArea>
-    </PanelShell>
-  );
+	return (
+		<PanelShell $panelOnly={panelOnly}>
+			<PanelHeader>
+				<HeaderButton>
+					<IconX size={13} stroke={2} />
+				</HeaderButton>
+				<PanelTitle>Ask AI</PanelTitle>
+				<HeaderButton>
+					<IconEdit size={13} stroke={2} />
+				</HeaderButton>
+			</PanelHeader>
+			<Messages ref={messagesRef}>
+				<UserMessage>{scene.label}</UserMessage>
+				{stepsSlot}
+				{streamedTextVisibleLength > 0 ? (
+					<>
+						<AnswerText>
+							{revealedParagraphs.map((paragraph) => (
+								<AnswerParagraph key={paragraph.number}>
+									{paragraph.segments.map((segment) =>
+										segment.bold ? (
+											<AnswerStrong key={segment.number}>
+												{segment.text}
+											</AnswerStrong>
+										) : (
+											<Fragment key={segment.number}>{segment.text}</Fragment>
+										),
+									)}
+								</AnswerParagraph>
+							))}
+						</AnswerText>
+						{streamComplete && responseChips.length > 0 ? (
+							<EntityChips>
+								{visibleResponseChips.map((chip) => (
+									<EntityChip key={chip.name}>
+										<EntityChipIcon
+											alt={chip.name}
+											fetchPriority="low"
+											src={chip.logoUrl}
+										/>
+										<EntityChipName>{chip.name}</EntityChipName>
+									</EntityChip>
+								))}
+								{hiddenResponseChipCount > 0 ? (
+									<EntityOverflowChip>
+										+{hiddenResponseChipCount} more
+									</EntityOverflowChip>
+								) : null}
+							</EntityChips>
+						) : null}
+					</>
+				) : hasSteps ? null : (
+					<ThinkingText>Thinking...</ThinkingText>
+				)}
+			</Messages>
+			<InputArea>
+				<InputBox>
+					<InputPlaceholder>Ask, search or make anything...</InputPlaceholder>
+					<InputButtonRow>
+						<InputLeftButtons>
+							<IconPaperclip size={13} stroke={2} />
+						</InputLeftButtons>
+						<InputRightButtons>
+							<ModelChip>
+								<ClaudeMark sizePx={12} />
+								Claude Opus 4.6
+								<ModelChipChevron>
+									<IconChevronDown size={13} stroke={2} />
+								</ModelChipChevron>
+							</ModelChip>
+							<SendButton>
+								<IconArrowUp size={13} stroke={2} />
+							</SendButton>
+						</InputRightButtons>
+					</InputButtonRow>
+				</InputBox>
+			</InputArea>
+		</PanelShell>
+	);
 }

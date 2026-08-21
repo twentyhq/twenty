@@ -1,26 +1,26 @@
-import { type FrontComponentThread } from '@/types/FrontComponentThread';
-import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
-import { useEffect } from 'react';
+import { type FrontComponentThread } from "@/types/FrontComponentThread";
+import { type FrontComponentExecutionContext } from "twenty-sdk/front-component";
+import { useEffect } from "react";
 
 type FrontComponentUpdateContextEffectProps = {
-  thread: FrontComponentThread;
-  executionContext: FrontComponentExecutionContext;
-  onExecutionContextInitialized: () => void;
+	thread: FrontComponentThread;
+	executionContext: FrontComponentExecutionContext;
+	onExecutionContextInitialized: () => void;
 };
 
 export const FrontComponentUpdateContextEffect = ({
-  thread,
-  executionContext,
-  onExecutionContextInitialized,
+	thread,
+	executionContext,
+	onExecutionContextInitialized,
 }: FrontComponentUpdateContextEffectProps) => {
-  useEffect(() => {
-    const updateContext = async () => {
-      await thread.imports.updateContext(executionContext).catch(() => {});
-      onExecutionContextInitialized();
-    };
+	useEffect(() => {
+		const updateContext = async () => {
+			await thread.imports.updateContext(executionContext).catch(() => {});
+			onExecutionContextInitialized();
+		};
 
-    updateContext();
-  }, [executionContext, onExecutionContextInitialized, thread]);
+		updateContext();
+	}, [executionContext, onExecutionContextInitialized, thread]);
 
-  return null;
+	return null;
 };

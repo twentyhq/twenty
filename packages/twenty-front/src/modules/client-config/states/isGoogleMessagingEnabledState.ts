@@ -1,5 +1,5 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 export const isGoogleMessagingEnabledState = createAtomState<boolean>({
-  key: 'isGoogleMessagingEnabled',
-  defaultValue: false,
+	key: "isGoogleMessagingEnabled",
+	defaultValue: false,
 });

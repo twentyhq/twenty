@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly ellipsis: 'ellipsis';
+	readonly ellipsis: "ellipsis";
 };
 export default classNames;

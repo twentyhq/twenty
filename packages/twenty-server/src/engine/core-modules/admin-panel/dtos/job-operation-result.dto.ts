@@ -1,13 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('JobOperationResult')
+@ObjectType("JobOperationResult")
 export class JobOperationResultDTO {
-  @Field(() => String)
-  jobId: string;
+	@Field(() => String)
+	jobId: string;
 
-  @Field(() => Boolean)
-  success: boolean;
+	@Field(() => Boolean)
+	success: boolean;
 
-  @Field(() => String, { nullable: true })
-  error?: string;
+	@Field(() => String, { nullable: true })
+	error?: string;
 }

@@ -1,13 +1,13 @@
-import { useRecordTableCellFocusHotkeys } from '@/object-record/record-table/record-table-cell/hooks/useRecordTableCellFocusHotkeys';
+import { useRecordTableCellFocusHotkeys } from "@/object-record/record-table/record-table-cell/hooks/useRecordTableCellFocusHotkeys";
 
 export const RecordTableCellArrowKeysEffect = ({
-  cellFocusId,
+	cellFocusId,
 }: {
-  cellFocusId: string;
+	cellFocusId: string;
 }) => {
-  useRecordTableCellFocusHotkeys({
-    focusId: cellFocusId,
-  });
+	useRecordTableCellFocusHotkeys({
+		focusId: cellFocusId,
+	});
 
-  return null;
+	return null;
 };

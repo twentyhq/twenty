@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { type ReactNode } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { AiChatThreadListItem } from "@/ai/components/AiChatThreadListItem";
+import { NavigationDrawerSectionTitle } from "@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle";
+import { type AgentChatThread } from "~/generated-metadata/graphql";
 
 const StyledThreadsList = styled.div`
   display: flex;
@@ -17,34 +17,34 @@ const StyledDateGroup = styled.div`
 `;
 
 type AiChatThreadGroupProps = {
-  alwaysShowRightIcon?: boolean;
-  rightIcon?: ReactNode;
-  threads: AgentChatThread[];
-  title: string;
+	alwaysShowRightIcon?: boolean;
+	rightIcon?: ReactNode;
+	threads: AgentChatThread[];
+	title: string;
 };
 
 export const AiChatThreadGroup = ({
-  alwaysShowRightIcon = false,
-  rightIcon,
-  threads,
-  title,
+	alwaysShowRightIcon = false,
+	rightIcon,
+	threads,
+	title,
 }: AiChatThreadGroupProps) => {
-  if (threads.length === 0) {
-    return null;
-  }
+	if (threads.length === 0) {
+		return null;
+	}
 
-  return (
-    <StyledDateGroup>
-      <NavigationDrawerSectionTitle
-        label={title}
-        alwaysShowRightIcon={alwaysShowRightIcon}
-        rightIcon={rightIcon}
-      />
-      <StyledThreadsList>
-        {threads.map((thread) => (
-          <AiChatThreadListItem key={thread.id} thread={thread} />
-        ))}
-      </StyledThreadsList>
-    </StyledDateGroup>
-  );
+	return (
+		<StyledDateGroup>
+			<NavigationDrawerSectionTitle
+				label={title}
+				alwaysShowRightIcon={alwaysShowRightIcon}
+				rightIcon={rightIcon}
+			/>
+			<StyledThreadsList>
+				{threads.map((thread) => (
+					<AiChatThreadListItem key={thread.id} thread={thread} />
+				))}
+			</StyledThreadsList>
+		</StyledDateGroup>
+	);
 };

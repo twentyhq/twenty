@@ -1,4 +1,4 @@
 export type TabListDimensions = {
-  width: number;
-  height: number;
+	width: number;
+	height: number;
 };

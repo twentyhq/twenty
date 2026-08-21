@@ -2,7 +2,7 @@
 // Other system fields (createdAt, updatedAt, deletedAt, createdBy, updatedBy)
 // are isSystem: true but remain user-visible.
 export const HIDDEN_SYSTEM_FIELD_NAMES = new Set([
-  'id',
-  'searchVector',
-  'position',
+	"id",
+	"searchVector",
+	"position",
 ]);

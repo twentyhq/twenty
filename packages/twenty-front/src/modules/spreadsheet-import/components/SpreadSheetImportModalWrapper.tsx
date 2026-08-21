@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { useSpreadsheetImportInternal } from "@/spreadsheet-import/hooks/useSpreadsheetImportInternal";
 
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
-import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
+import { ModalStatefulWrapper } from "@/ui/layout/modal/components/ModalStatefulWrapper";
+import { MOBILE_VIEWPORT } from "twenty-ui/theme-constants";
+import { SpreadSheetImportModalCloseButton } from "./SpreadSheetImportModalCloseButton";
 
 const StyledInnerContainer = styled.div`
   display: flex;
@@ -28,33 +28,33 @@ const StyledRtlLtr = styled.div`
 `;
 
 type SpreadSheetImportModalWrapperProps = {
-  children: React.ReactNode;
-  modalInstanceId: string;
-  onClose: () => void;
+	children: React.ReactNode;
+	modalInstanceId: string;
+	onClose: () => void;
 };
 
 export const SpreadSheetImportModalWrapper = ({
-  modalInstanceId,
-  children,
-  onClose,
+	modalInstanceId,
+	children,
+	onClose,
 }: SpreadSheetImportModalWrapperProps) => {
-  const { rtl } = useSpreadsheetImportInternal();
+	const { rtl } = useSpreadsheetImportInternal();
 
-  return (
-    <ModalStatefulWrapper
-      size="extraLarge"
-      padding="none"
-      modalInstanceId={modalInstanceId}
-      isClosable={true}
-      onClose={onClose}
-      shouldCloseModalOnClickOutsideOrEscape={false}
-    >
-      <StyledInnerContainer>
-        <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
-          <SpreadSheetImportModalCloseButton onClose={onClose} />
-          {children}
-        </StyledRtlLtr>
-      </StyledInnerContainer>
-    </ModalStatefulWrapper>
-  );
+	return (
+		<ModalStatefulWrapper
+			size="extraLarge"
+			padding="none"
+			modalInstanceId={modalInstanceId}
+			isClosable={true}
+			onClose={onClose}
+			shouldCloseModalOnClickOutsideOrEscape={false}
+		>
+			<StyledInnerContainer>
+				<StyledRtlLtr dir={rtl ? "rtl" : "ltr"}>
+					<SpreadSheetImportModalCloseButton onClose={onClose} />
+					{children}
+				</StyledRtlLtr>
+			</StyledInnerContainer>
+		</ModalStatefulWrapper>
+	);
 };

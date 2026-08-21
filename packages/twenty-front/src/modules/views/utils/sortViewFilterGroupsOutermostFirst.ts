@@ -1,15 +1,15 @@
-import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { type ViewFilterGroup } from "@/views/types/ViewFilterGroup";
 
 export const sortViewFilterGroupsOutermostFirst = (
-  viewFilterGroups: ViewFilterGroup[],
-  parentViewFilterGroupId?: string,
+	viewFilterGroups: ViewFilterGroup[],
+	parentViewFilterGroupId?: string,
 ): ViewFilterGroup[] => {
-  const childGroups = viewFilterGroups.filter(
-    (group) => group.parentViewFilterGroupId === parentViewFilterGroupId,
-  );
+	const childGroups = viewFilterGroups.filter(
+		(group) => group.parentViewFilterGroupId === parentViewFilterGroupId,
+	);
 
-  return childGroups.flatMap((group) => [
-    group,
-    ...sortViewFilterGroupsOutermostFirst(viewFilterGroups, group.id),
-  ]);
+	return childGroups.flatMap((group) => [
+		group,
+		...sortViewFilterGroupsOutermostFirst(viewFilterGroups, group.id),
+	]);
 };

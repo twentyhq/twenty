@@ -1,25 +1,25 @@
-import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type JSX, lazy, Suspense, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { isDefined } from 'twenty-shared/utils';
-import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { downloadFile } from "@/activities/files/utils/downloadFile";
+import { filePreviewState } from "@/ui/field/display/states/filePreviewState";
+import { ModalStatefulWrapper } from "@/ui/layout/modal/components/ModalStatefulWrapper";
+import { useModal } from "@/ui/layout/modal/hooks/useModal";
+import { useAtomState } from "@/ui/utilities/state/jotai/hooks/useAtomState";
+import { ScrollWrapper } from "@/ui/utilities/scroll/components/ScrollWrapper";
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { type JSX, lazy, Suspense, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { isDefined } from "twenty-shared/utils";
+import { IconDownload, IconX } from "twenty-ui/icon";
+import { IconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const DocumentViewer = lazy(() =>
-  import('@/activities/files/components/DocumentViewer').then((module) => ({
-    default: module.DocumentViewer,
-  })),
+	import("@/activities/files/components/DocumentViewer").then((module) => ({
+		default: module.DocumentViewer,
+	})),
 );
 
-const GLOBAL_FILE_PREVIEW_MODAL_ID = 'global-file-preview-modal';
+const GLOBAL_FILE_PREVIEW_MODAL_ID = "global-file-preview-modal";
 
 const StyledModalHeader = styled.div`
   align-items: center;
@@ -73,77 +73,77 @@ const StyledLoadingText = styled.div`
 `;
 
 export const GlobalFilePreviewModal = (): JSX.Element | null => {
-  const { t } = useLingui();
-  const [filePreview, setFilePreview] = useAtomState(filePreviewState);
-  const { openModal, closeModal } = useModal();
+	const { t } = useLingui();
+	const [filePreview, setFilePreview] = useAtomState(filePreviewState);
+	const { openModal, closeModal } = useModal();
 
-  useEffect(() => {
-    if (isDefined(filePreview)) {
-      openModal(GLOBAL_FILE_PREVIEW_MODAL_ID);
-    }
-  }, [filePreview, openModal]);
+	useEffect(() => {
+		if (isDefined(filePreview)) {
+			openModal(GLOBAL_FILE_PREVIEW_MODAL_ID);
+		}
+	}, [filePreview, openModal]);
 
-  const handleClose = () => {
-    closeModal(GLOBAL_FILE_PREVIEW_MODAL_ID);
-    setFilePreview(null);
-  };
+	const handleClose = () => {
+		closeModal(GLOBAL_FILE_PREVIEW_MODAL_ID);
+		setFilePreview(null);
+	};
 
-  const handleDownload = () => {
-    if (!filePreview || !filePreview.url) return;
-    downloadFile(filePreview.url, filePreview.label ?? 'file');
-  };
+	const handleDownload = () => {
+		if (!filePreview || !filePreview.url) return;
+		downloadFile(filePreview.url, filePreview.label ?? "file");
+	};
 
-  if (!isDefined(filePreview)) {
-    return null;
-  }
+	if (!isDefined(filePreview)) {
+		return null;
+	}
 
-  return (
-    <>
-      {createPortal(
-        <ModalStatefulWrapper
-          modalInstanceId={GLOBAL_FILE_PREVIEW_MODAL_ID}
-          size="large"
-          isClosable
-          onClose={handleClose}
-          renderInDocumentBody
-        >
-          <StyledModalHeader>
-            <StyledHeader>
-              <StyledModalTitle>{filePreview.label}</StyledModalTitle>
-              <StyledButtonContainer>
-                <IconButton
-                  Icon={IconDownload}
-                  onClick={handleDownload}
-                  size="small"
-                />
-                <IconButton Icon={IconX} onClick={handleClose} size="small" />
-              </StyledButtonContainer>
-            </StyledHeader>
-          </StyledModalHeader>
-          <ScrollWrapper
-            componentInstanceId={`preview-modal-${filePreview.fileId ?? 'file'}`}
-          >
-            <StyledModalContent>
-              <Suspense
-                fallback={
-                  <StyledLoadingContainer>
-                    <StyledLoadingText>
-                      {t`Loading document viewer...`}
-                    </StyledLoadingText>
-                  </StyledLoadingContainer>
-                }
-              >
-                <DocumentViewer
-                  documentName={filePreview.label ?? t`Untitled`}
-                  documentUrl={filePreview.url ?? ''}
-                  documentExtension={filePreview.extension ?? ''}
-                />
-              </Suspense>
-            </StyledModalContent>
-          </ScrollWrapper>
-        </ModalStatefulWrapper>,
-        document.body,
-      )}
-    </>
-  );
+	return (
+		<>
+			{createPortal(
+				<ModalStatefulWrapper
+					modalInstanceId={GLOBAL_FILE_PREVIEW_MODAL_ID}
+					size="large"
+					isClosable
+					onClose={handleClose}
+					renderInDocumentBody
+				>
+					<StyledModalHeader>
+						<StyledHeader>
+							<StyledModalTitle>{filePreview.label}</StyledModalTitle>
+							<StyledButtonContainer>
+								<IconButton
+									Icon={IconDownload}
+									onClick={handleDownload}
+									size="small"
+								/>
+								<IconButton Icon={IconX} onClick={handleClose} size="small" />
+							</StyledButtonContainer>
+						</StyledHeader>
+					</StyledModalHeader>
+					<ScrollWrapper
+						componentInstanceId={`preview-modal-${filePreview.fileId ?? "file"}`}
+					>
+						<StyledModalContent>
+							<Suspense
+								fallback={
+									<StyledLoadingContainer>
+										<StyledLoadingText>
+											{t`Loading document viewer...`}
+										</StyledLoadingText>
+									</StyledLoadingContainer>
+								}
+							>
+								<DocumentViewer
+									documentName={filePreview.label ?? t`Untitled`}
+									documentUrl={filePreview.url ?? ""}
+									documentExtension={filePreview.extension ?? ""}
+								/>
+							</Suspense>
+						</StyledModalContent>
+					</ScrollWrapper>
+				</ModalStatefulWrapper>,
+				document.body,
+			)}
+		</>
+	);
 };

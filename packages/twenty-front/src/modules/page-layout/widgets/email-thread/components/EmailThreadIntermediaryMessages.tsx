@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { styled } from "@linaria/react";
+import { useState } from "react";
 
-import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { t } from '@lingui/core/macro';
-import { IconArrowsVertical } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { EmailThreadMessage } from "@/activities/emails/components/EmailThreadMessage";
+import { type EmailThreadMessageWithSender } from "@/activities/emails/types/EmailThreadMessageWithSender";
+import { t } from "@lingui/core/macro";
+import { IconArrowsVertical } from "twenty-ui/icon";
+import { Button } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledButtonContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -14,35 +14,35 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const EmailThreadIntermediaryMessages = ({
-  messages,
-  onDraftClick,
+	messages,
+	onDraftClick,
 }: {
-  messages: EmailThreadMessageWithSender[];
-  onDraftClick: (message: EmailThreadMessageWithSender) => void;
+	messages: EmailThreadMessageWithSender[];
+	onDraftClick: (message: EmailThreadMessageWithSender) => void;
 }) => {
-  const [areMessagesOpen, setAreMessagesOpen] = useState(false);
-  const messagesLength = messages.length;
+	const [areMessagesOpen, setAreMessagesOpen] = useState(false);
+	const messagesLength = messages.length;
 
-  if (messagesLength === 0) {
-    return null;
-  }
+	if (messagesLength === 0) {
+		return null;
+	}
 
-  return areMessagesOpen ? (
-    messages.map((message) => (
-      <EmailThreadMessage
-        key={message.id}
-        message={message}
-        onDraftClick={onDraftClick}
-      />
-    ))
-  ) : (
-    <StyledButtonContainer>
-      <Button
-        Icon={IconArrowsVertical}
-        title={t`${messagesLength} emails`}
-        size="small"
-        onClick={() => setAreMessagesOpen(true)}
-      />
-    </StyledButtonContainer>
-  );
+	return areMessagesOpen ? (
+		messages.map((message) => (
+			<EmailThreadMessage
+				key={message.id}
+				message={message}
+				onDraftClick={onDraftClick}
+			/>
+		))
+	) : (
+		<StyledButtonContainer>
+			<Button
+				Icon={IconArrowsVertical}
+				title={t`${messagesLength} emails`}
+				size="small"
+				onClick={() => setAreMessagesOpen(true)}
+			/>
+		</StyledButtonContainer>
+	);
 };

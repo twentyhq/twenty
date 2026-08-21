@@ -1,12 +1,12 @@
 /* @license Enterprise */
 
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('UsageTimeSeries')
+@ObjectType("UsageTimeSeries")
 export class UsageTimeSeriesDTO {
-  @Field(() => String)
-  date: string;
+	@Field(() => String)
+	date: string;
 
-  @Field(() => Float)
-  creditsUsed: number;
+	@Field(() => Float)
+	creditsUsed: number;
 }

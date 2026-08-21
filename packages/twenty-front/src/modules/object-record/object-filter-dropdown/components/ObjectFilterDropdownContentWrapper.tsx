@@ -1,37 +1,37 @@
-import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
-import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { DATE_FILTER_TYPES } from "@/object-record/object-filter-dropdown/constants/DateFilterTypes";
+import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from "@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth";
+import { fieldMetadataItemUsedInDropdownComponentSelector } from "@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector";
+import { DropdownContent } from "@/ui/layout/dropdown/components/DropdownContent";
+import { GenericDropdownContentWidth } from "@/ui/layout/dropdown/constants/GenericDropdownContentWidth";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { getFilterTypeFromFieldType, isDefined } from "twenty-shared/utils";
 
 export const ObjectFilterDropdownContentWrapper = ({
-  children,
+	children,
 }: React.PropsWithChildren) => {
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
+	const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
+		fieldMetadataItemUsedInDropdownComponentSelector,
+	);
 
-  if (!isDefined(fieldMetadataItemUsedInDropdown)) {
-    return null;
-  }
+	if (!isDefined(fieldMetadataItemUsedInDropdown)) {
+		return null;
+	}
 
-  const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItemUsedInDropdown.type,
-  );
+	const filterType = getFilterTypeFromFieldType(
+		fieldMetadataItemUsedInDropdown.type,
+	);
 
-  const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
+	const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
 
-  return (
-    <DropdownContent
-      widthInPixels={
-        isDateFilter
-          ? DATE_PICKER_DROPDOWN_CONTENT_WIDTH
-          : GenericDropdownContentWidth.ExtraLarge
-      }
-    >
-      {children}
-    </DropdownContent>
-  );
+	return (
+		<DropdownContent
+			widthInPixels={
+				isDateFilter
+					? DATE_PICKER_DROPDOWN_CONTENT_WIDTH
+					: GenericDropdownContentWidth.ExtraLarge
+			}
+		>
+			{children}
+		</DropdownContent>
+	);
 };

@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { ActivityList } from '@/activities/components/ActivityList';
-import { type Task } from '@/activities/types/Task';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { TaskRow } from './TaskRow';
+import { ActivityList } from "@/activities/components/ActivityList";
+import { type Task } from "@/activities/types/Task";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { TaskRow } from "./TaskRow";
 
 type TaskListProps = {
-  title: string;
-  tasks: Task[];
+	title: string;
+	tasks: Task[];
 };
 
 const StyledContainer = styled.div`
@@ -41,22 +41,22 @@ const StyledCount = styled.span`
 `;
 
 export const TaskList = ({ title, tasks }: TaskListProps) => (
-  <>
-    {tasks.length > 0 && (
-      <StyledContainer>
-        <StyledTitleBar>
-          {title && (
-            <StyledTitle>
-              {title} <StyledCount>{tasks.length}</StyledCount>
-            </StyledTitle>
-          )}
-        </StyledTitleBar>
-        <ActivityList>
-          {tasks.map((task) => (
-            <TaskRow key={task.id} task={task} />
-          ))}
-        </ActivityList>
-      </StyledContainer>
-    )}
-  </>
+	<>
+		{tasks.length > 0 && (
+			<StyledContainer>
+				<StyledTitleBar>
+					{title && (
+						<StyledTitle>
+							{title} <StyledCount>{tasks.length}</StyledCount>
+						</StyledTitle>
+					)}
+				</StyledTitleBar>
+				<ActivityList>
+					{tasks.map((task) => (
+						<TaskRow key={task.id} task={task} />
+					))}
+				</ActivityList>
+			</StyledContainer>
+		)}
+	</>
 );

@@ -1,25 +1,25 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { type IconComponentProps } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { type IconComponentProps } from "twenty-ui/icon";
+import { ThemeContext } from "twenty-ui/theme-constants";
 
 type ModelsDevProviderLogoProps = {
-  logoUrl: string;
-} & Pick<IconComponentProps, 'className' | 'size' | 'style'>;
+	logoUrl: string;
+} & Pick<IconComponentProps, "className" | "size" | "style">;
 
 const resolvePixelSize = (
-  size: IconComponentProps['size'] | undefined,
+	size: IconComponentProps["size"] | undefined,
 ): number => {
-  if (typeof size === 'number') {
-    return size;
-  }
-  if (typeof size === 'string') {
-    const parsed = parseInt(size, 10);
+	if (typeof size === "number") {
+		return size;
+	}
+	if (typeof size === "string") {
+		const parsed = parseInt(size, 10);
 
-    return Number.isNaN(parsed) ? 16 : parsed;
-  }
+		return Number.isNaN(parsed) ? 16 : parsed;
+	}
 
-  return 16;
+	return 16;
 };
 
 const StyledLogo = styled.img`
@@ -27,26 +27,26 @@ const StyledLogo = styled.img`
 `;
 
 export const ModelsDevProviderLogo = ({
-  logoUrl,
-  size,
-  className,
-  style,
+	logoUrl,
+	size,
+	className,
+	style,
 }: ModelsDevProviderLogoProps) => {
-  const { theme } = useContext(ThemeContext);
-  const pixelSize = resolvePixelSize(size);
-  const isLightTheme = theme.name === 'light';
+	const { theme } = useContext(ThemeContext);
+	const pixelSize = resolvePixelSize(size);
+	const isLightTheme = theme.name === "light";
 
-  return (
-    <StyledLogo
-      alt=""
-      className={className}
-      height={pixelSize}
-      src={logoUrl}
-      style={{
-        ...style,
-        filter: isLightTheme ? 'none' : 'invert(1)',
-      }}
-      width={pixelSize}
-    />
-  );
+	return (
+		<StyledLogo
+			alt=""
+			className={className}
+			height={pixelSize}
+			src={logoUrl}
+			style={{
+				...style,
+				filter: isLightTheme ? "none" : "invert(1)",
+			}}
+			width={pixelSize}
+		/>
+	);
 };

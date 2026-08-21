@@ -1,8 +1,8 @@
-import { SidePanelFooterWidthContext } from '@/ui/layout/side-panel/contexts/SidePanelFooterWidthContext';
-import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { styled } from '@linaria/react';
-import { Fragment, useCallback, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { SidePanelFooterWidthContext } from "@/ui/layout/side-panel/contexts/SidePanelFooterWidthContext";
+import { NodeDimension } from "@/ui/utilities/dimensions/components/NodeDimension";
+import { styled } from "@linaria/react";
+import { Fragment, useCallback, useState } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -22,28 +22,28 @@ const StyledActionsRow = styled(NodeDimension)`
 `;
 
 type SidePanelFooterProps = {
-  actions: React.ReactNode[];
+	actions: React.ReactNode[];
 };
 
 export const SidePanelFooter = ({ actions }: SidePanelFooterProps) => {
-  const [actionsRowWidth, setActionsRowWidth] = useState(0);
+	const [actionsRowWidth, setActionsRowWidth] = useState(0);
 
-  const handleActionsRowDimensionChange = useCallback(
-    (dimensions: { width: number; height: number }) => {
-      setActionsRowWidth(dimensions.width);
-    },
-    [],
-  );
+	const handleActionsRowDimensionChange = useCallback(
+		(dimensions: { width: number; height: number }) => {
+			setActionsRowWidth(dimensions.width);
+		},
+		[],
+	);
 
-  return (
-    <StyledContainer>
-      <SidePanelFooterWidthContext.Provider value={actionsRowWidth}>
-        <StyledActionsRow onDimensionChange={handleActionsRowDimensionChange}>
-          {actions.map((action, index) => (
-            <Fragment key={index}>{action}</Fragment>
-          ))}
-        </StyledActionsRow>
-      </SidePanelFooterWidthContext.Provider>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<SidePanelFooterWidthContext.Provider value={actionsRowWidth}>
+				<StyledActionsRow onDimensionChange={handleActionsRowDimensionChange}>
+					{actions.map((action, index) => (
+						<Fragment key={index}>{action}</Fragment>
+					))}
+				</StyledActionsRow>
+			</SidePanelFooterWidthContext.Provider>
+		</StyledContainer>
+	);
 };

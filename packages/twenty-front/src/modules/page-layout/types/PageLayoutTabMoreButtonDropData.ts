@@ -1,3 +1,3 @@
 export type PageLayoutTabMoreButtonDropData = {
-  type: 'tab-more-button';
+	type: "tab-more-button";
 };

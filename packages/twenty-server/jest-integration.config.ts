@@ -1,97 +1,99 @@
-import dotenv from 'dotenv';
-import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+import dotenv from "dotenv";
+import { type JestConfigWithTsJest, pathsToModuleNameMapper } from "ts-jest";
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { NodeEnvironment } from "src/engine/core-modules/twenty-config/interfaces/node-environment.interface";
 
-import testTokens from './test/integration/constants/test-tokens.json';
+import testTokens from "./test/integration/constants/test-tokens.json";
 
-if (process.env.NODE_ENV === 'test') {
-  dotenv.config({ path: '.env.test', override: true });
+if (process.env.NODE_ENV === "test") {
+	dotenv.config({ path: ".env.test", override: true });
 } else {
-  dotenv.config({ path: '.env', override: true });
+	dotenv.config({ path: ".env", override: true });
 }
 
-const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
+const isBillingEnabled = process.env.IS_BILLING_ENABLED === "true";
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
 
-const tsConfig = require('./tsconfig.json');
+const tsConfig = require("./tsconfig.json");
 
 const jestConfig: JestConfigWithTsJest = {
-  // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
-  // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
-  prettierPath: null,
-  silent: false,
-  errorOnDeprecated: true,
-  maxConcurrency: 1,
-  moduleFileExtensions: ['js', 'mjs', 'json', 'ts'],
-  rootDir: '.',
-  testEnvironment: 'node',
-  testPathIgnorePatterns: [
-    ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
-    ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
-    // Requires an app booted as a secure deployment; run through
-    // jest-integration-secure.config.ts (nx test:integration:secure).
-    '<rootDir>/test/integration/secure-deployment',
-  ],
-  testRegex: '\\.integration-spec\\.ts$',
-  modulePathIgnorePatterns: ['<rootDir>/dist'],
-  globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
-  globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
-  testTimeout: 20000,
-  maxWorkers: 1,
-  // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
-  // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
-  // css engine, @mswjs/interceptors and friends); let swc transform them
-  // (and .mjs below) so jest can require them.
-  transformIgnorePatterns: [
-    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)',
-  ],
-  transform: {
-    '^.+\\.(t|j|mj)s$': [
-      '@swc/jest',
-      {
-        jsc: {
-          parser: {
-            syntax: 'typescript',
-            tsx: false,
-            decorators: true,
-          },
-          transform: {
-            decoratorMetadata: true,
-          },
-          baseUrl: '.',
-          paths: {
-            'src/*': ['./src/*'],
-            'test/*': ['./test/*'],
-          },
-          experimental: {
-            plugins: [
-              [
-                '@lingui/swc-plugin',
-                {
-                  stripNonEssentialFields: false,
-                },
-              ],
-            ],
-          },
-        },
-      },
-    ],
-  },
-  moduleNameMapper: {
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
-      prefix: '<rootDir>/',
-    }),
-    '^test/(.*)$': '<rootDir>/test/$1',
-  },
-  globals: {
-    APP_PORT: 4000,
-    NODE_ENV: NodeEnvironment.TEST,
-    // Test tokens are loaded from a shared JSON file to ensure consistency
-    // with CI workflows and other tools that need these tokens
-    ...testTokens,
-  },
+	// For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
+	// Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
+	prettierPath: null,
+	silent: false,
+	errorOnDeprecated: true,
+	maxConcurrency: 1,
+	moduleFileExtensions: ["js", "mjs", "json", "ts"],
+	rootDir: ".",
+	testEnvironment: "node",
+	testPathIgnorePatterns: [
+		...(isBillingEnabled ? [] : ["<rootDir>/test/integration/billing"]),
+		...(isClickhouseEnabled ? [] : ["<rootDir>/test/integration/audit"]),
+		// Requires an app booted as a secure deployment; run through
+		// jest-integration-secure.config.ts (nx test:integration:secure).
+		"<rootDir>/test/integration/secure-deployment",
+	],
+	testRegex: "\\.integration-spec\\.ts$",
+	modulePathIgnorePatterns: ["<rootDir>/dist"],
+	globalSetup: "<rootDir>/test/integration/utils/setup-test.ts",
+	globalTeardown: "<rootDir>/test/integration/utils/teardown-test.ts",
+	setupFilesAfterEnv: [
+		"<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts",
+	],
+	testTimeout: 20000,
+	maxWorkers: 1,
+	// jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
+	// tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
+	// css engine, @mswjs/interceptors and friends); let swc transform them
+	// (and .mjs below) so jest can require them.
+	transformIgnorePatterns: [
+		"/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)",
+	],
+	transform: {
+		"^.+\\.(t|j|mj)s$": [
+			"@swc/jest",
+			{
+				jsc: {
+					parser: {
+						syntax: "typescript",
+						tsx: false,
+						decorators: true,
+					},
+					transform: {
+						decoratorMetadata: true,
+					},
+					baseUrl: ".",
+					paths: {
+						"src/*": ["./src/*"],
+						"test/*": ["./test/*"],
+					},
+					experimental: {
+						plugins: [
+							[
+								"@lingui/swc-plugin",
+								{
+									stripNonEssentialFields: false,
+								},
+							],
+						],
+					},
+				},
+			},
+		],
+	},
+	moduleNameMapper: {
+		...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
+			prefix: "<rootDir>/",
+		}),
+		"^test/(.*)$": "<rootDir>/test/$1",
+	},
+	globals: {
+		APP_PORT: 4000,
+		NODE_ENV: NodeEnvironment.TEST,
+		// Test tokens are loaded from a shared JSON file to ensure consistency
+		// with CI workflows and other tools that need these tokens
+		...testTokens,
+	},
 };
 
 export default jestConfig;

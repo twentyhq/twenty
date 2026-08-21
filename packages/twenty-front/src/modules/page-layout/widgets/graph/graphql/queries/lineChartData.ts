@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const LINE_CHART_DATA = gql`
   query LineChartData($input: LineChartDataInput!) {

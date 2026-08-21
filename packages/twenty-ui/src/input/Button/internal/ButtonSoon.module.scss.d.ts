@@ -1,4 +1,4 @@
 declare const classNames: {
-  readonly soonPillContainer: 'soonPillContainer';
+	readonly soonPillContainer: "soonPillContainer";
 };
 export default classNames;

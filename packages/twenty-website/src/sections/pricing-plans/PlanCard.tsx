@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useLingui } from '@lingui/react';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
-import NextImage from 'next/image';
+import { useLingui } from "@lingui/react";
+import { css } from "@linaria/core";
+import { styled } from "@linaria/react";
+import NextImage from "next/image";
 
-import { TalkToUsButton } from '@/contact-cal';
-import { useAnimatedNumber } from '@/platform/motion';
-import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
-import { Body, Button, Heading } from '@/ui';
+import { TalkToUsButton } from "@/contact-cal";
+import { useAnimatedNumber } from "@/platform/motion";
+import { color, mediaUp, radius, semanticColor, spacing } from "@/tokens";
+import { Body, Button, Heading } from "@/ui";
 
 import {
-  PLANS_DATA,
-  type PlansBillingPeriod,
-  type PlansTierId,
-} from './plans-data';
-import { PlanFeatureList } from './PlanFeatureList';
-import { type PlansHostingMode } from '@/pricing-state';
-import { useFeatureTransition } from './use-feature-transition';
+	PLANS_DATA,
+	type PlansBillingPeriod,
+	type PlansTierId,
+} from "./plans-data";
+import { PlanFeatureList } from "./PlanFeatureList";
+import { type PlansHostingMode } from "@/pricing-state";
+import { useFeatureTransition } from "./use-feature-transition";
 
 const CardShell = styled.div`
-  background-color: ${color('white')};
+  background-color: ${color("white")};
   border: 1px solid transparent;
   border-radius: ${radius(2)};
   display: flex;
@@ -73,7 +73,7 @@ const PriceLine = styled.div`
   flex-wrap: wrap;
   min-width: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     flex-wrap: nowrap;
     overflow: hidden;
     white-space: nowrap;
@@ -81,11 +81,11 @@ const PriceLine = styled.div`
 `;
 
 const priceSuffixClassName = css`
-  color: ${color('black-60')};
+  color: ${color("black-60")};
   display: block;
   min-width: 0;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -124,86 +124,86 @@ const CtaRow = styled.div`
   }
 `;
 
-const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
+const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat("en-US");
 
 export function PlanCard({
-  billing,
-  highlighted = false,
-  hosting,
-  maxBullets,
-  tierId,
+	billing,
+	highlighted = false,
+	hosting,
+	maxBullets,
+	tierId,
 }: {
-  billing: PlansBillingPeriod;
-  highlighted?: boolean;
-  hosting: PlansHostingMode;
-  maxBullets: number;
-  tierId: PlansTierId;
+	billing: PlansBillingPeriod;
+	highlighted?: boolean;
+	hosting: PlansHostingMode;
+	maxBullets: number;
+	tierId: PlansTierId;
 }) {
-  const { i18n } = useLingui();
-  const tier = PLANS_DATA[tierId];
-  const cell = tier.cells[hosting][billing];
-  const cta = tier.cta[hosting];
-  const iconWidth = tier.icon.widthPx ?? 80;
-  const animatedPriceValue = useAnimatedNumber(cell.price.value);
-  const { comparisonBulletTexts, phase, visibleBullets } = useFeatureTransition(
-    cell.featureBullets,
-  );
+	const { i18n } = useLingui();
+	const tier = PLANS_DATA[tierId];
+	const cell = tier.cells[hosting][billing];
+	const cta = tier.cta[hosting];
+	const iconWidth = tier.icon.widthPx ?? 80;
+	const animatedPriceValue = useAnimatedNumber(cell.price.value);
+	const { comparisonBulletTexts, phase, visibleBullets } = useFeatureTransition(
+		cell.featureBullets,
+	);
 
-  return (
-    <CardShell>
-      <CardHeader>
-        <CardHeaderInfo>
-          <Heading
-            as="h3"
-            className={titleClassName}
-            family="sans"
-            size="xs"
-            weight="light"
-          >
-            {i18n._(tier.heading[hosting])}
-          </Heading>
-          <PriceLine>
-            <Heading as="h4" family="sans" size="sm" weight="regular">
-              {`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}${cell.price.valueSuffix ?? ''}`}
-            </Heading>
-            <Body as="span" className={priceSuffixClassName} size="sm">
-              {i18n._(cell.price.suffix)}
-            </Body>
-          </PriceLine>
-        </CardHeaderInfo>
-        <CardIcon $widthPx={iconWidth}>
-          <NextImage
-            alt={tier.icon.alt}
-            fill
-            sizes={`${iconWidth}px`}
-            src={tier.icon.src}
-          />
-        </CardIcon>
-      </CardHeader>
+	return (
+		<CardShell>
+			<CardHeader>
+				<CardHeaderInfo>
+					<Heading
+						as="h3"
+						className={titleClassName}
+						family="sans"
+						size="xs"
+						weight="light"
+					>
+						{i18n._(tier.heading[hosting])}
+					</Heading>
+					<PriceLine>
+						<Heading as="h4" family="sans" size="sm" weight="regular">
+							{`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}${cell.price.valueSuffix ?? ""}`}
+						</Heading>
+						<Body as="span" className={priceSuffixClassName} size="sm">
+							{i18n._(cell.price.suffix)}
+						</Body>
+					</PriceLine>
+				</CardHeaderInfo>
+				<CardIcon $widthPx={iconWidth}>
+					<NextImage
+						alt={tier.icon.alt}
+						fill
+						sizes={`${iconWidth}px`}
+						src={tier.icon.src}
+					/>
+				</CardIcon>
+			</CardHeader>
 
-      <CardRule />
+			<CardRule />
 
-      <PlanFeatureList
-        comparisonBulletTexts={comparisonBulletTexts}
-        maxBullets={maxBullets}
-        phase={phase}
-        visibleBullets={visibleBullets}
-      />
+			<PlanFeatureList
+				comparisonBulletTexts={comparisonBulletTexts}
+				maxBullets={maxBullets}
+				phase={phase}
+				visibleBullets={visibleBullets}
+			/>
 
-      <CtaRow>
-        {cta.href !== undefined ? (
-          <Button
-            href={cta.href}
-            label={i18n._(cta.label)}
-            variant={highlighted ? 'filled' : 'outlined'}
-          />
-        ) : (
-          <TalkToUsButton
-            label={cta.label}
-            variant={highlighted ? 'filled' : 'outlined'}
-          />
-        )}
-      </CtaRow>
-    </CardShell>
-  );
+			<CtaRow>
+				{cta.href !== undefined ? (
+					<Button
+						href={cta.href}
+						label={i18n._(cta.label)}
+						variant={highlighted ? "filled" : "outlined"}
+					/>
+				) : (
+					<TalkToUsButton
+						label={cta.label}
+						variant={highlighted ? "filled" : "outlined"}
+					/>
+				)}
+			</CtaRow>
+		</CardShell>
+	);
 }

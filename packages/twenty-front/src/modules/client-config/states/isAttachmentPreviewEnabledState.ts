@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const isAttachmentPreviewEnabledState = createAtomState<boolean>({
-  key: 'isAttachmentPreviewEnabledState',
-  defaultValue: false,
+	key: "isAttachmentPreviewEnabledState",
+	defaultValue: false,
 });

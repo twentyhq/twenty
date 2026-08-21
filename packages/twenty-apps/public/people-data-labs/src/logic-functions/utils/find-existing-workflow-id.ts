@@ -1,18 +1,18 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from "twenty-client-sdk/core";
 
 export const findExistingWorkflowId = async ({
-  client,
-  name,
+	client,
+	name,
 }: {
-  client: CoreApiClient;
-  name: string;
+	client: CoreApiClient;
+	name: string;
 }): Promise<string | undefined> => {
-  const result = (await client.query({
-    workflows: {
-      __args: { filter: { name: { eq: name } } },
-      edges: { node: { id: true } },
-    },
-  })) as { workflows?: { edges?: { node?: { id?: string } }[] } };
+	const result = (await client.query({
+		workflows: {
+			__args: { filter: { name: { eq: name } } },
+			edges: { node: { id: true } },
+		},
+	})) as { workflows?: { edges?: { node?: { id?: string } }[] } };
 
-  return result.workflows?.edges?.[0]?.node?.id;
+	return result.workflows?.edges?.[0]?.node?.id;
 };

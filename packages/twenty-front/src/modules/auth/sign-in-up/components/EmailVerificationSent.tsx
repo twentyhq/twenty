@@ -1,19 +1,19 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
-import { useHandleResendEmailVerificationToken } from '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken';
+import { SubTitle } from "@/auth/components/SubTitle";
+import { Title } from "@/auth/components/Title";
+import { useHandleResendEmailVerificationToken } from "@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken";
 import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
-import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
-import { t } from '@lingui/core/macro';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/layout';
+	SignInUpStep,
+	signInUpStepState,
+} from "@/auth/states/signInUpStepState";
+import { OnboardingModalCircularIcon } from "@/onboarding/components/OnboardingModalCircularIcon";
+import { t } from "@lingui/core/macro";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
+import { IconGmail, IconMail, IconMailX, IconMicrosoft } from "twenty-ui/icon";
+import { MainButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { AnimatedEaseIn } from "twenty-ui/layout";
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -80,107 +80,107 @@ const StyledDot = styled.div`
 `;
 
 export const EmailVerificationSent = ({
-  email,
-  isError = false,
+	email,
+	isError = false,
 }: {
-  email: string | null;
-  isError?: boolean;
+	email: string | null;
+	isError?: boolean;
 }) => {
-  const setSignInUpStep = useSetAtomState(signInUpStepState);
+	const setSignInUpStep = useSetAtomState(signInUpStepState);
 
-  const { handleResendEmailVerificationToken, loading: isLoading } =
-    useHandleResendEmailVerificationToken();
+	const { handleResendEmailVerificationToken, loading: isLoading } =
+		useHandleResendEmailVerificationToken();
 
-  const handleOpenGmail = () => {
-    const gmailUrl = email
-      ? `https://mail.google.com/mail/u/${email}/`
-      : 'https://mail.google.com/';
-    window.open(gmailUrl, '_blank');
-  };
+	const handleOpenGmail = () => {
+		const gmailUrl = email
+			? `https://mail.google.com/mail/u/${email}/`
+			: "https://mail.google.com/";
+		window.open(gmailUrl, "_blank");
+	};
 
-  const handleOpenOutlook = () => {
-    const outlookUrl = email
-      ? `https://outlook.live.com/mail/${email}/`
-      : 'https://outlook.live.com/';
-    window.open(outlookUrl, '_blank');
-  };
+	const handleOpenOutlook = () => {
+		const outlookUrl = email
+			? `https://outlook.live.com/mail/${email}/`
+			: "https://outlook.live.com/";
+		window.open(outlookUrl, "_blank");
+	};
 
-  const handleChangeEmail = () => {
-    setSignInUpStep(SignInUpStep.Email);
-  };
+	const handleChangeEmail = () => {
+		setSignInUpStep(SignInUpStep.Email);
+	};
 
-  const title = isError ? t`Email Verification Failed` : t`Check your Emails`;
-  const subtitle = isError
-    ? t`We encountered an issue verifying`
-    : t`A verification email has been sent to`;
+	const title = isError ? t`Email Verification Failed` : t`Check your Emails`;
+	const subtitle = isError
+		? t`We encountered an issue verifying`
+		: t`A verification email has been sent to`;
 
-  const Icon = isError ? IconMailX : IconMail;
+	const Icon = isError ? IconMailX : IconMail;
 
-  const mainButtons = isError ? (
-    <>
-      <MainButton
-        title={t`Try with another email`}
-        onClick={handleChangeEmail}
-        variant="secondary"
-        fullWidth
-      />
-      <MainButton
-        title={isLoading ? t`Sending...` : t`Resend email`}
-        onClick={handleResendEmailVerificationToken(email)}
-        disabled={isLoading}
-        fullWidth
-      />
-    </>
-  ) : (
-    <>
-      <MainButton
-        title={t`Open Gmail`}
-        onClick={handleOpenGmail}
-        Icon={IconGmail}
-        variant="secondary"
-        fullWidth
-      />
-      <MainButton
-        title={t`Open Outlook`}
-        onClick={handleOpenOutlook}
-        Icon={IconMicrosoft}
-        variant="secondary"
-        fullWidth
-      />
-    </>
-  );
+	const mainButtons = isError ? (
+		<>
+			<MainButton
+				title={t`Try with another email`}
+				onClick={handleChangeEmail}
+				variant="secondary"
+				fullWidth
+			/>
+			<MainButton
+				title={isLoading ? t`Sending...` : t`Resend email`}
+				onClick={handleResendEmailVerificationToken(email)}
+				disabled={isLoading}
+				fullWidth
+			/>
+		</>
+	) : (
+		<>
+			<MainButton
+				title={t`Open Gmail`}
+				onClick={handleOpenGmail}
+				Icon={IconGmail}
+				variant="secondary"
+				fullWidth
+			/>
+			<MainButton
+				title={t`Open Outlook`}
+				onClick={handleOpenOutlook}
+				Icon={IconMicrosoft}
+				variant="secondary"
+				fullWidth
+			/>
+		</>
+	);
 
-  return (
-    <StyledContainer>
-      <AnimatedEaseIn>
-        <OnboardingModalCircularIcon Icon={Icon} />
-      </AnimatedEaseIn>
+	return (
+		<StyledContainer>
+			<AnimatedEaseIn>
+				<OnboardingModalCircularIcon Icon={Icon} />
+			</AnimatedEaseIn>
 
-      <StyledTextContainer>
-        <Title animate noMarginTop>
-          {title}
-        </Title>
-        <SubTitle>
-          {subtitle} <StyledEmail>{email}</StyledEmail>
-        </SubTitle>
-      </StyledTextContainer>
+			<StyledTextContainer>
+				<Title animate noMarginTop>
+					{title}
+				</Title>
+				<SubTitle>
+					{subtitle} <StyledEmail>{email}</StyledEmail>
+				</SubTitle>
+			</StyledTextContainer>
 
-      <StyledButtonsContainer>{mainButtons}</StyledButtonsContainer>
+			<StyledButtonsContainer>{mainButtons}</StyledButtonsContainer>
 
-      {!isError && (
-        <StyledBottomLinks>
-          <StyledLinkButton
-            onClick={handleResendEmailVerificationToken(email)}
-            disabled={isLoading}
-          >
-            {isLoading ? t`Sending...` : t`Resend email`}
-          </StyledLinkButton>
-          <StyledDot />
-          <StyledLinkButton onClick={handleChangeEmail}>
-            {t`Change email`}
-          </StyledLinkButton>
-        </StyledBottomLinks>
-      )}
-    </StyledContainer>
-  );
+			{!isError && (
+				<StyledBottomLinks>
+					<StyledLinkButton
+						onClick={handleResendEmailVerificationToken(email)}
+						disabled={isLoading}
+					>
+						{isLoading ? t`Sending...` : t`Resend email`}
+					</StyledLinkButton>
+					<StyledDot />
+					<StyledLinkButton onClick={handleChangeEmail}>
+						{t`Change email`}
+					</StyledLinkButton>
+				</StyledBottomLinks>
+			)}
+		</StyledContainer>
+	);
 };

@@ -1,14 +1,14 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { PlusMark } from '@/icons';
+import { PlusMark } from "@/icons";
 import {
-  color,
-  GUTTER,
-  MAX_CONTENT_WIDTH_PX,
-  mediaUp,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	color,
+	GUTTER,
+	MAX_CONTENT_WIDTH_PX,
+	mediaUp,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 
 // The bracket that joins a section to the bordered band directly above it: two
 // side rails + a base line + the bottom two plus-markers, open at the top so the
@@ -24,7 +24,7 @@ const Board = styled.div`
   pointer-events: none;
   position: absolute;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     display: block;
   }
 `;
@@ -67,7 +67,7 @@ const RightLine = styled(Line)`
 // it), so the marker is nudged half a pixel less than a bordered host's to land
 // its cross on the rails' centreline crossing.
 const Corner = styled.span`
-  color: ${color('blue')};
+  color: ${color("blue")};
   line-height: 0;
   position: absolute;
 `;
@@ -83,19 +83,19 @@ const CornerBottomRight = styled(Corner)`
 `;
 
 export function ConnectingFrame() {
-  return (
-    <Board aria-hidden>
-      <Frame>
-        <BottomLine />
-        <LeftLine />
-        <RightLine />
-        <CornerBottomLeft>
-          <PlusMark sizePx={14} />
-        </CornerBottomLeft>
-        <CornerBottomRight>
-          <PlusMark sizePx={14} />
-        </CornerBottomRight>
-      </Frame>
-    </Board>
-  );
+	return (
+		<Board aria-hidden>
+			<Frame>
+				<BottomLine />
+				<LeftLine />
+				<RightLine />
+				<CornerBottomLeft>
+					<PlusMark sizePx={14} />
+				</CornerBottomLeft>
+				<CornerBottomRight>
+					<PlusMark sizePx={14} />
+				</CornerBottomRight>
+			</Frame>
+		</Board>
+	);
 }

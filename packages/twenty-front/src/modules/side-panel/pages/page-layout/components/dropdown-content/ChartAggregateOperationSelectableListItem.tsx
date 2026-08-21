@@ -1,92 +1,92 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
-import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
-import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
-import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/types/AggregateChartOperation';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { usePageLayoutIdFromContextStore } from "@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore";
+import { useUpdateCurrentWidgetConfig } from "@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig";
+import { useWidgetInEditMode } from "@/side-panel/pages/page-layout/hooks/useWidgetInEditMode";
+import { isWidgetConfigurationOfType } from "@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType";
+import { type ExtendedAggregateOperations } from "@/object-record/record-table/types/ExtendedAggregateOperations";
+import { convertExtendedAggregateOperationToAggregateOperation } from "@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation";
+import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from "@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio";
+import { type AggregateChartOperation } from "@/page-layout/widgets/graph/graph-widget-aggregate-chart/types/AggregateChartOperation";
+import { DropdownComponentInstanceContext } from "@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext";
+import { useCloseDropdown } from "@/ui/layout/dropdown/hooks/useCloseDropdown";
+import { SelectableListItem } from "@/ui/layout/selectable-list/components/SelectableListItem";
+import { selectedItemIdComponentState } from "@/ui/layout/selectable-list/states/selectedItemIdComponentState";
+import { useAvailableComponentInstanceIdOrThrow } from "@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
+import { isDefined } from "twenty-shared/utils";
+import { MenuItemSelect } from "twenty-ui/navigation";
 
 const isExtendedAggregateOperation = (
-  operation: AggregateChartOperation,
+	operation: AggregateChartOperation,
 ): operation is ExtendedAggregateOperations => {
-  return operation !== DASHBOARD_AGGREGATE_OPERATION_RATIO;
+	return operation !== DASHBOARD_AGGREGATE_OPERATION_RATIO;
 };
 
 export const ChartAggregateOperationSelectableListItem = ({
-  operation,
-  label,
-  currentFieldMetadataId,
+	operation,
+	label,
+	currentFieldMetadataId,
 }: {
-  operation: AggregateChartOperation;
-  label: string;
-  currentFieldMetadataId: string;
+	operation: AggregateChartOperation;
+	label: string;
+	currentFieldMetadataId: string;
 }) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
-  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
-  const { closeDropdown } = useCloseDropdown();
+	const { pageLayoutId } = usePageLayoutIdFromContextStore();
+	const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+	const { updateCurrentWidgetConfig } =
+		useUpdateCurrentWidgetConfig(pageLayoutId);
+	const { closeDropdown } = useCloseDropdown();
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
+	const dropdownId = useAvailableComponentInstanceIdOrThrow(
+		DropdownComponentInstanceContext,
+	);
 
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
+	const selectedItemId = useAtomComponentStateValue(
+		selectedItemIdComponentState,
+		dropdownId,
+	);
 
-  const configuration = widgetInEditMode?.configuration;
+	const configuration = widgetInEditMode?.configuration;
 
-  const currentAggregateOperation =
-    configuration &&
-    'aggregateOperation' in configuration &&
-    configuration.aggregateOperation;
+	const currentAggregateOperation =
+		configuration &&
+		"aggregateOperation" in configuration &&
+		configuration.aggregateOperation;
 
-  const isCurrentlyRatio =
-    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') &&
-    isDefined(configuration.ratioAggregateConfig);
+	const isCurrentlyRatio =
+		isWidgetConfigurationOfType(configuration, "AggregateChartConfiguration") &&
+		isDefined(configuration.ratioAggregateConfig);
 
-  if (!isExtendedAggregateOperation(operation)) {
-    return null;
-  }
+	if (!isExtendedAggregateOperation(operation)) {
+		return null;
+	}
 
-  const aggregateOperation =
-    convertExtendedAggregateOperationToAggregateOperation(operation);
+	const aggregateOperation =
+		convertExtendedAggregateOperationToAggregateOperation(operation);
 
-  const isSelected =
-    currentAggregateOperation === aggregateOperation && !isCurrentlyRatio;
+	const isSelected =
+		currentAggregateOperation === aggregateOperation && !isCurrentlyRatio;
 
-  const isFocused = selectedItemId === operation;
+	const isFocused = selectedItemId === operation;
 
-  const handleClick = () => {
-    updateCurrentWidgetConfig({
-      configToUpdate: {
-        aggregateFieldMetadataId: currentFieldMetadataId,
-        aggregateOperation,
-        ratioAggregateConfig: null,
-      },
-    });
-    closeDropdown();
-  };
+	const handleClick = () => {
+		updateCurrentWidgetConfig({
+			configToUpdate: {
+				aggregateFieldMetadataId: currentFieldMetadataId,
+				aggregateOperation,
+				ratioAggregateConfig: null,
+			},
+		});
+		closeDropdown();
+	};
 
-  return (
-    <SelectableListItem itemId={operation} onEnter={handleClick}>
-      <MenuItemSelect
-        text={label}
-        selected={isSelected}
-        focused={isFocused}
-        onClick={handleClick}
-      />
-    </SelectableListItem>
-  );
+	return (
+		<SelectableListItem itemId={operation} onEnter={handleClick}>
+			<MenuItemSelect
+				text={label}
+				selected={isSelected}
+				focused={isFocused}
+				onClick={handleClick}
+			/>
+		</SelectableListItem>
+	);
 };

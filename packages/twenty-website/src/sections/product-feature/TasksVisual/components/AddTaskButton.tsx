@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { IconPlus } from '@tabler/icons-react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { IconPlus } from "@tabler/icons-react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
+import { previewFontSize } from "@/app-preview/preview-font-size";
 
 const Button = styled.div`
   align-items: center;
@@ -26,11 +26,11 @@ const Button = styled.div`
 `;
 
 export function AddTaskButton() {
-  const { i18n } = useLingui();
-  return (
-    <Button>
-      <IconPlus size={14} stroke={2} />
-      {i18n._(msg`Add task`)}
-    </Button>
-  );
+	const { i18n } = useLingui();
+	return (
+		<Button>
+			<IconPlus size={14} stroke={2} />
+			{i18n._(msg`Add task`)}
+		</Button>
+	);
 }

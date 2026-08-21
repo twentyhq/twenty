@@ -1,1 +1,1 @@
-export const AI_CHAT_INPUT_ID = 'ai-chat-input';
+export const AI_CHAT_INPUT_ID = "ai-chat-input";

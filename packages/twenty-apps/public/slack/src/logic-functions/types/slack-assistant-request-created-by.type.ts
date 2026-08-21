@@ -1,4 +1,4 @@
 export type SlackAssistantRequestCreatedBy = {
-  source?: string | null;
-  workspaceMemberId?: string | null;
+	source?: string | null;
+	workspaceMemberId?: string | null;
 };

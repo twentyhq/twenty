@@ -1,7 +1,7 @@
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from "typeorm";
 
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { RegisteredInstanceCommand } from "src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator";
+import { SlowInstanceCommand } from "src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface";
 
 // Replaces the legacy `secure` boolean with the `connectionSecurity` enum,
 // preserving the previously deployed on-wire behavior exactly. SMTP used
@@ -10,13 +10,13 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // opportunistic STARTTLS otherwise (-> STARTTLS); CalDAV is TLS over its https
 // host (-> SSL_TLS). STARTTLS stays opportunistic so no account is forced onto
 // a stricter handshake than it already used.
-@RegisteredInstanceCommand('2.15.0', 1781461753981, { type: 'slow' })
+@RegisteredInstanceCommand("2.15.0", 1781461753981, { type: "slow" })
 export class BackfillConnectionSecuritySlowInstanceCommand
-  implements SlowInstanceCommand
+	implements SlowInstanceCommand
 {
-  async runDataMigration(dataSource: DataSource): Promise<void> {
-    await dataSource.query(
-      `UPDATE "core"."connectedAccount"
+	async runDataMigration(dataSource: DataSource): Promise<void> {
+		await dataSource.query(
+			`UPDATE "core"."connectedAccount"
        SET "connectionParameters" = jsonb_set(
          "connectionParameters" #- '{SMTP,secure}',
          '{SMTP,connectionSecurity}',
@@ -27,10 +27,10 @@ export class BackfillConnectionSecuritySlowInstanceCommand
        )
        WHERE "connectionParameters" ? 'SMTP'
          AND NOT "connectionParameters"->'SMTP' ? 'connectionSecurity'`,
-    );
+		);
 
-    await dataSource.query(
-      `UPDATE "core"."connectedAccount"
+		await dataSource.query(
+			`UPDATE "core"."connectedAccount"
        SET "connectionParameters" = jsonb_set(
          "connectionParameters" #- '{IMAP,secure}',
          '{IMAP,connectionSecurity}',
@@ -41,10 +41,10 @@ export class BackfillConnectionSecuritySlowInstanceCommand
        )
        WHERE "connectionParameters" ? 'IMAP'
          AND NOT "connectionParameters"->'IMAP' ? 'connectionSecurity'`,
-    );
+		);
 
-    await dataSource.query(
-      `UPDATE "core"."connectedAccount"
+		await dataSource.query(
+			`UPDATE "core"."connectedAccount"
        SET "connectionParameters" = jsonb_set(
          "connectionParameters" #- '{CALDAV,secure}',
          '{CALDAV,connectionSecurity}',
@@ -52,14 +52,14 @@ export class BackfillConnectionSecuritySlowInstanceCommand
        )
        WHERE "connectionParameters" ? 'CALDAV'
          AND NOT "connectionParameters"->'CALDAV' ? 'connectionSecurity'`,
-    );
-  }
+		);
+	}
 
-  public async up(_queryRunner: QueryRunner): Promise<void> {
-    return;
-  }
+	public async up(_queryRunner: QueryRunner): Promise<void> {
+		return;
+	}
 
-  public async down(_queryRunner: QueryRunner): Promise<void> {
-    return;
-  }
+	public async down(_queryRunner: QueryRunner): Promise<void> {
+		return;
+	}
 }

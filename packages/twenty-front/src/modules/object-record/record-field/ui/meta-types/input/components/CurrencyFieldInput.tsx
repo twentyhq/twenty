@@ -1,141 +1,141 @@
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { t } from "@lingui/core/macro";
+import { isNonEmptyString } from "@sniptt/guards";
 
-import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
-import { CurrencyCode } from 'twenty-shared/constants';
+import { type FieldCurrencyValue } from "@/object-record/record-field/ui/types/FieldMetadata";
+import { CurrencyInput } from "@/ui/field/input/components/CurrencyInput";
+import { CurrencyCode } from "twenty-shared/constants";
 
-import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
+import { useCurrencyField } from "@/object-record/record-field/ui/meta-types/hooks/useCurrencyField";
 
-import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldInputEventContext } from "@/object-record/record-field/ui/contexts/FieldInputEventContext";
+import { RecordFieldComponentInstanceContext } from "@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext";
 
-import { hasCurrencyValueChanged } from '@/object-record/record-field/ui/meta-types/input/utils/hasCurrencyValueChanged';
-import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useContext } from 'react';
-import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { hasCurrencyValueChanged } from "@/object-record/record-field/ui/meta-types/input/utils/hasCurrencyValueChanged";
+import { isFieldCurrencyValue } from "@/object-record/record-field/ui/types/guards/isFieldCurrencyValue";
+import { useAvailableComponentInstanceIdOrThrow } from "@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow";
+import { useContext } from "react";
+import { convertCurrencyAmountToCurrencyMicros } from "~/utils/convertCurrencyToCurrencyMicros";
+import { isUndefinedOrNull } from "~/utils/isUndefinedOrNull";
 
 export const CurrencyFieldInput = () => {
-  const { fieldValue, draftValue, setDraftValue, defaultValue, decimals } =
-    useCurrencyField();
+	const { fieldValue, draftValue, setDraftValue, defaultValue, decimals } =
+		useCurrencyField();
 
-  const { onClickOutside, onEnter, onEscape, onShiftTab, onTab } = useContext(
-    FieldInputEventContext,
-  );
+	const { onClickOutside, onEnter, onEscape, onShiftTab, onTab } = useContext(
+		FieldInputEventContext,
+	);
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
+	const instanceId = useAvailableComponentInstanceIdOrThrow(
+		RecordFieldComponentInstanceContext,
+	);
 
-  const defaultCurrencyCodeWithoutSQLQuotes = (
-    defaultValue as FieldCurrencyValue
-  )?.currencyCode?.replace(/'/g, '') as CurrencyCode;
+	const defaultCurrencyCodeWithoutSQLQuotes = (
+		defaultValue as FieldCurrencyValue
+	)?.currencyCode?.replace(/'/g, "") as CurrencyCode;
 
-  const defaultCurrencyCodeIsNotEmpty = isNonEmptyString(
-    defaultCurrencyCodeWithoutSQLQuotes,
-  );
+	const defaultCurrencyCodeIsNotEmpty = isNonEmptyString(
+		defaultCurrencyCodeWithoutSQLQuotes,
+	);
 
-  const draftCurrencyCode = draftValue?.currencyCode;
+	const draftCurrencyCode = draftValue?.currencyCode;
 
-  const draftCurrencyCodeIsEmptyIsNotEmpty =
-    isNonEmptyString(draftCurrencyCode);
+	const draftCurrencyCodeIsEmptyIsNotEmpty =
+		isNonEmptyString(draftCurrencyCode);
 
-  const currencyCode = draftCurrencyCodeIsEmptyIsNotEmpty
-    ? draftCurrencyCode
-    : defaultCurrencyCodeIsNotEmpty
-      ? defaultCurrencyCodeWithoutSQLQuotes
-      : CurrencyCode.USD;
+	const currencyCode = draftCurrencyCodeIsEmptyIsNotEmpty
+		? draftCurrencyCode
+		: defaultCurrencyCodeIsNotEmpty
+			? defaultCurrencyCodeWithoutSQLQuotes
+			: CurrencyCode.USD;
 
-  const getNewCurrencyValue = ({
-    amountText,
-    currencyCode,
-  }: {
-    amountText: string;
-    currencyCode: string;
-  }) => {
-    const normalizedAmountText = amountText.replace(',', '.');
-    const amount = parseFloat(normalizedAmountText);
+	const getNewCurrencyValue = ({
+		amountText,
+		currencyCode,
+	}: {
+		amountText: string;
+		currencyCode: string;
+	}) => {
+		const normalizedAmountText = amountText.replace(",", ".");
+		const amount = parseFloat(normalizedAmountText);
 
-    const newCurrencyValue = {
-      amountMicros: isNaN(amount)
-        ? null
-        : convertCurrencyAmountToCurrencyMicros(amount),
-      currencyCode,
-    };
+		const newCurrencyValue = {
+			amountMicros: isNaN(amount)
+				? null
+				: convertCurrencyAmountToCurrencyMicros(amount),
+			currencyCode,
+		};
 
-    if (!isFieldCurrencyValue(newCurrencyValue)) {
-      return;
-    }
+		if (!isFieldCurrencyValue(newCurrencyValue)) {
+			return;
+		}
 
-    return newCurrencyValue;
-  };
+		return newCurrencyValue;
+	};
 
-  const getExitArgs = (amountText: string) => {
-    const newValue = getNewCurrencyValue({ amountText, currencyCode });
+	const getExitArgs = (amountText: string) => {
+		const newValue = getNewCurrencyValue({ amountText, currencyCode });
 
-    return {
-      newValue,
-      skipPersist: !hasCurrencyValueChanged({
-        newValue,
-        currentValue: fieldValue,
-      }),
-    };
-  };
+		return {
+			newValue,
+			skipPersist: !hasCurrencyValueChanged({
+				newValue,
+				currentValue: fieldValue,
+			}),
+		};
+	};
 
-  const handleEnter = (newValue: string) => {
-    onEnter?.(getExitArgs(newValue));
-  };
+	const handleEnter = (newValue: string) => {
+		onEnter?.(getExitArgs(newValue));
+	};
 
-  const handleEscape = (newValue: string) => {
-    onEscape?.(getExitArgs(newValue));
-  };
+	const handleEscape = (newValue: string) => {
+		onEscape?.(getExitArgs(newValue));
+	};
 
-  const handleClickOutside = (
-    event: MouseEvent | TouchEvent,
-    newValue: string,
-  ) => {
-    onClickOutside?.({ ...getExitArgs(newValue), event });
-  };
+	const handleClickOutside = (
+		event: MouseEvent | TouchEvent,
+		newValue: string,
+	) => {
+		onClickOutside?.({ ...getExitArgs(newValue), event });
+	};
 
-  const handleTab = (newValue: string) => {
-    onTab?.(getExitArgs(newValue));
-  };
+	const handleTab = (newValue: string) => {
+		onTab?.(getExitArgs(newValue));
+	};
 
-  const handleShiftTab = (newValue: string) => {
-    onShiftTab?.(getExitArgs(newValue));
-  };
+	const handleShiftTab = (newValue: string) => {
+		onShiftTab?.(getExitArgs(newValue));
+	};
 
-  const handleChange = (newValue: string) => {
-    setDraftValue({
-      amount: newValue,
-      currencyCode,
-    });
-  };
+	const handleChange = (newValue: string) => {
+		setDraftValue({
+			amount: newValue,
+			currencyCode,
+		});
+	};
 
-  const handleSelect = (newValue: string) => {
-    setDraftValue({
-      amount: isUndefinedOrNull(draftValue?.amount) ? '' : draftValue?.amount,
-      currencyCode: newValue as CurrencyCode,
-    });
-  };
+	const handleSelect = (newValue: string) => {
+		setDraftValue({
+			amount: isUndefinedOrNull(draftValue?.amount) ? "" : draftValue?.amount,
+			currencyCode: newValue as CurrencyCode,
+		});
+	};
 
-  return (
-    <CurrencyInput
-      instanceId={instanceId}
-      value={draftValue?.amount?.toString() ?? ''}
-      currencyCode={currencyCode}
-      decimals={decimals}
-      autoFocus
-      placeholder={t`Currency`}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      onChange={handleChange}
-      onSelect={handleSelect}
-    />
-  );
+	return (
+		<CurrencyInput
+			instanceId={instanceId}
+			value={draftValue?.amount?.toString() ?? ""}
+			currencyCode={currencyCode}
+			decimals={decimals}
+			autoFocus
+			placeholder={t`Currency`}
+			onClickOutside={handleClickOutside}
+			onEnter={handleEnter}
+			onEscape={handleEscape}
+			onShiftTab={handleShiftTab}
+			onTab={handleTab}
+			onChange={handleChange}
+			onSelect={handleSelect}
+		/>
+	);
 };

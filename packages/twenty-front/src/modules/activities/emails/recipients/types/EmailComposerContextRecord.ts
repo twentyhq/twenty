@@ -1,4 +1,4 @@
 export type EmailComposerContextRecord = {
-  objectNameSingular: string;
-  recordId: string;
+	objectNameSingular: string;
+	recordId: string;
 };

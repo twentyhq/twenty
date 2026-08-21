@@ -1,3 +1,3 @@
-import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { type PageLayout } from "@/page-layout/types/PageLayout";
 
-export type FlatPageLayout = Omit<PageLayout, 'tabs'>;
+export type FlatPageLayout = Omit<PageLayout, "tabs">;

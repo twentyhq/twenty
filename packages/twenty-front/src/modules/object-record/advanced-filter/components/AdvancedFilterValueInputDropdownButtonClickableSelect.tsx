@@ -1,18 +1,18 @@
-import { AdvancedFilterRelationValueInputClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterRelationValueInputClickableSelect';
-import { getAdvancedFilterInputPlaceholderText } from '@/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { AdvancedFilterRelationValueInputClickableSelect } from "@/object-record/advanced-filter/components/AdvancedFilterRelationValueInputClickableSelect";
+import { getAdvancedFilterInputPlaceholderText } from "@/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText";
+import { currentRecordFiltersComponentState } from "@/object-record/record-filter/states/currentRecordFiltersComponentState";
+import { SelectControl } from "@/ui/input/components/SelectControl";
+import { useAtomComponentStateValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue";
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { useGetRecordFilterDisplayValue } from '@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useFieldMetadataItemById } from "@/object-metadata/hooks/useFieldMetadataItemById";
+import { useGetRecordFilterDisplayValue } from "@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue";
+import { t } from "@lingui/core/macro";
+import { isDefined } from "twenty-shared/utils";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div`
@@ -32,68 +32,68 @@ const StyledControlContainer = styled.div`
 `;
 
 type AdvancedFilterValueInputDropdownButtonClickableSelectProps = {
-  recordFilterId: string;
+	recordFilterId: string;
 };
 
 export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
-  recordFilterId,
+	recordFilterId,
 }: AdvancedFilterValueInputDropdownButtonClickableSelectProps) => {
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-  );
+	const currentRecordFilters = useAtomComponentStateValue(
+		currentRecordFiltersComponentState,
+	);
 
-  const { getRecordFilterDisplayValue } = useGetRecordFilterDisplayValue();
+	const { getRecordFilterDisplayValue } = useGetRecordFilterDisplayValue();
 
-  const recordFilter = currentRecordFilters.find(
-    (recordFilter) => recordFilter.id === recordFilterId,
-  );
+	const recordFilter = currentRecordFilters.find(
+		(recordFilter) => recordFilter.id === recordFilterId,
+	);
 
-  const isDisabled =
-    !isDefined(recordFilter?.fieldMetadataId) ||
-    !isDefined(recordFilter.operand);
+	const isDisabled =
+		!isDefined(recordFilter?.fieldMetadataId) ||
+		!isDefined(recordFilter.operand);
 
-  const shouldUsePlaceholder = !isNonEmptyString(recordFilter?.value);
+	const shouldUsePlaceholder = !isNonEmptyString(recordFilter?.value);
 
-  const { fieldMetadataItem } = useFieldMetadataItemById(
-    recordFilter?.fieldMetadataId ?? '',
-  );
+	const { fieldMetadataItem } = useFieldMetadataItemById(
+		recordFilter?.fieldMetadataId ?? "",
+	);
 
-  const placeholderText = isDefined(fieldMetadataItem)
-    ? getAdvancedFilterInputPlaceholderText(fieldMetadataItem)
-    : t`Enter filter`;
+	const placeholderText = isDefined(fieldMetadataItem)
+		? getAdvancedFilterInputPlaceholderText(fieldMetadataItem)
+		: t`Enter filter`;
 
-  const recordFilterDisplayValue = getRecordFilterDisplayValue(recordFilter);
+	const recordFilterDisplayValue = getRecordFilterDisplayValue(recordFilter);
 
-  const advancedFilterInputText = shouldUsePlaceholder
-    ? placeholderText
-    : (recordFilterDisplayValue ?? '');
+	const advancedFilterInputText = shouldUsePlaceholder
+		? placeholderText
+		: (recordFilterDisplayValue ?? "");
 
-  const isDateTimeType =
-    recordFilter?.type === 'DATE' || recordFilter?.type === 'DATE_TIME';
+	const isDateTimeType =
+		recordFilter?.type === "DATE" || recordFilter?.type === "DATE_TIME";
 
-  if (
-    recordFilter?.type === 'RELATION' &&
-    !shouldUsePlaceholder &&
-    isDefined(recordFilter.fieldMetadataId)
-  ) {
-    return (
-      <AdvancedFilterRelationValueInputClickableSelect
-        recordFilter={recordFilter}
-      />
-    );
-  }
+	if (
+		recordFilter?.type === "RELATION" &&
+		!shouldUsePlaceholder &&
+		isDefined(recordFilter.fieldMetadataId)
+	) {
+		return (
+			<AdvancedFilterRelationValueInputClickableSelect
+				recordFilter={recordFilter}
+			/>
+		);
+	}
 
-  return isDateTimeType ? (
-    <StyledControlContainer>{advancedFilterInputText}</StyledControlContainer>
-  ) : (
-    <SelectControl
-      selectedOption={{
-        label: advancedFilterInputText,
-        value: null,
-        disabled: isDisabled,
-      }}
-      textAccent={shouldUsePlaceholder ? 'placeholder' : 'default'}
-      isDisabled={isDateTimeType}
-    />
-  );
+	return isDateTimeType ? (
+		<StyledControlContainer>{advancedFilterInputText}</StyledControlContainer>
+	) : (
+		<SelectControl
+			selectedOption={{
+				label: advancedFilterInputText,
+				value: null,
+				disabled: isDisabled,
+			}}
+			textAccent={shouldUsePlaceholder ? "placeholder" : "default"}
+			isDisabled={isDateTimeType}
+		/>
+	);
 };

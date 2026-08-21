@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
-import { Card, CardContent } from 'twenty-ui/surfaces';
-import { Toggle } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { Card, CardContent } from "twenty-ui/surfaces";
+import { Toggle } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type Parameter = {
-  value: boolean;
-  title: string;
-  description: string;
-  onToggle: (value: boolean) => void;
+	value: boolean;
+	title: string;
+	description: string;
+	onToggle: (value: boolean) => void;
 };
 
 type SettingsAccountsToggleSettingCardProps = {
-  parameters: Parameter[];
+	parameters: Parameter[];
 };
 
 const StyledCardContentContainer = styled.div`
@@ -45,24 +45,24 @@ const StyledToggleContainer = styled.span`
 `;
 
 export const SettingsAccountsToggleSettingCard = ({
-  parameters,
+	parameters,
 }: SettingsAccountsToggleSettingCardProps) => (
-  <Card rounded>
-    {parameters.map((parameter, index) => (
-      <StyledCardContentContainer key={index}>
-        <CardContent
-          divider={index < parameters.length - 1}
-          onClick={() => parameter.onToggle(!parameter.value)}
-        >
-          <div>
-            <StyledTitle>{parameter.title}</StyledTitle>
-            <StyledDescription>{parameter.description}</StyledDescription>
-          </div>
-          <StyledToggleContainer>
-            <Toggle value={parameter.value} onChange={parameter.onToggle} />
-          </StyledToggleContainer>
-        </CardContent>
-      </StyledCardContentContainer>
-    ))}
-  </Card>
+	<Card rounded>
+		{parameters.map((parameter, index) => (
+			<StyledCardContentContainer key={index}>
+				<CardContent
+					divider={index < parameters.length - 1}
+					onClick={() => parameter.onToggle(!parameter.value)}
+				>
+					<div>
+						<StyledTitle>{parameter.title}</StyledTitle>
+						<StyledDescription>{parameter.description}</StyledDescription>
+					</div>
+					<StyledToggleContainer>
+						<Toggle value={parameter.value} onChange={parameter.onToggle} />
+					</StyledToggleContainer>
+				</CardContent>
+			</StyledCardContentContainer>
+		))}
+	</Card>
 );

@@ -1,4 +1,4 @@
 export type CalendarAttendee = {
-  email: string;
-  displayName?: string;
+	email: string;
+	displayName?: string;
 };

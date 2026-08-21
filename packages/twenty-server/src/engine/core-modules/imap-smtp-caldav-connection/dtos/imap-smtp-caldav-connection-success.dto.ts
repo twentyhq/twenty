@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('ImapSmtpCaldavConnectionSuccess')
+@ObjectType("ImapSmtpCaldavConnectionSuccess")
 export class ImapSmtpCaldavConnectionSuccessDTO {
-  @Field(() => Boolean)
-  success: boolean;
+	@Field(() => Boolean)
+	success: boolean;
 
-  @Field(() => String)
-  connectedAccountId: string;
+	@Field(() => String)
+	connectedAccountId: string;
 }

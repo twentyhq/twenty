@@ -1,25 +1,25 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Meta, type StoryObj } from "@storybook/react-vite";
 
-import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
+import { SettingsDevelopersApiKeyDetail } from "~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail";
 import {
-  PageDecorator,
-  type PageDecoratorArgs,
-} from '~/testing/decorators/PageDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+	PageDecorator,
+	type PageDecoratorArgs,
+} from "~/testing/decorators/PageDecorator";
+import { graphqlMocks } from "~/testing/graphqlMocks";
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/ApiKeys/SettingsDevelopersApiKeyDetail',
-  component: SettingsDevelopersApiKeyDetail,
-  decorators: [PageDecorator],
-  args: {
-    routePath: '/settings/apis/:apiKeyId',
-    routeParams: {
-      ':apiKeyId': 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
-    },
-  },
-  parameters: {
-    msw: graphqlMocks,
-  },
+	title: "Pages/Settings/ApiKeys/SettingsDevelopersApiKeyDetail",
+	component: SettingsDevelopersApiKeyDetail,
+	decorators: [PageDecorator],
+	args: {
+		routePath: "/settings/apis/:apiKeyId",
+		routeParams: {
+			":apiKeyId": "f7c6d736-8fcd-4e9c-ab99-28f6a9031570",
+		},
+	},
+	parameters: {
+		msw: graphqlMocks,
+	},
 };
 export default meta;
 

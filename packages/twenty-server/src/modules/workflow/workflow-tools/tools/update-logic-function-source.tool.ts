@@ -1,30 +1,30 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 import {
-  type WorkflowToolContext,
-  type WorkflowToolDependencies,
-} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+	type WorkflowToolContext,
+	type WorkflowToolDependencies,
+} from "src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type";
 
 const updateLogicFunctionSourceSchema = z.object({
-  logicFunctionId: z
-    .string()
-    .uuid()
-    .describe(
-      'The ID of the logic function to update (from the code step settings.input.logicFunctionId)',
-    ),
-  code: z
-    .string()
-    .describe(
-      'The TypeScript source code for the logic function. Must export a main function.',
-    ),
+	logicFunctionId: z
+		.string()
+		.uuid()
+		.describe(
+			"The ID of the logic function to update (from the code step settings.input.logicFunctionId)",
+		),
+	code: z
+		.string()
+		.describe(
+			"The TypeScript source code for the logic function. Must export a main function.",
+		),
 });
 
 export const createUpdateLogicFunctionSourceTool = (
-  deps: Pick<WorkflowToolDependencies, 'logicFunctionFromSourceService'>,
-  context: WorkflowToolContext,
+	deps: Pick<WorkflowToolDependencies, "logicFunctionFromSourceService">,
+	context: WorkflowToolContext,
 ) => ({
-  name: 'update_logic_function_source' as const,
-  description: `Update the TypeScript source code of a logic function used in a workflow code step.
+	name: "update_logic_function_source" as const,
+	description: `Update the TypeScript source code of a logic function used in a workflow code step.
 
 Use this tool to modify the actual code that runs when a CODE step executes.
 
@@ -44,33 +44,33 @@ export const main = async (params: { url: string }) => {
 \`\`\`
 
 To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.`,
-  inputSchema: updateLogicFunctionSourceSchema,
-  execute: async (parameters: { logicFunctionId: string; code: string }) => {
-    try {
-      const { logicFunctionId, code } = parameters;
-      const { workspaceId } = context;
+	inputSchema: updateLogicFunctionSourceSchema,
+	execute: async (parameters: { logicFunctionId: string; code: string }) => {
+		try {
+			const { logicFunctionId, code } = parameters;
+			const { workspaceId } = context;
 
-      await deps.logicFunctionFromSourceService.updateOneFromSource({
-        updateLogicFunctionFromSourceInput: {
-          id: logicFunctionId,
-          update: {
-            sourceHandlerCode: code,
-          },
-        },
-        workspaceId,
-      });
+			await deps.logicFunctionFromSourceService.updateOneFromSource({
+				updateLogicFunctionFromSourceInput: {
+					id: logicFunctionId,
+					update: {
+						sourceHandlerCode: code,
+					},
+				},
+				workspaceId,
+			});
 
-      return {
-        success: true,
-        message: `Successfully updated source code for logic function ${logicFunctionId}`,
-        logicFunctionId,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        message: `Failed to update logic function source: ${error.message}`,
-      };
-    }
-  },
+			return {
+				success: true,
+				message: `Successfully updated source code for logic function ${logicFunctionId}`,
+				logicFunctionId,
+			};
+		} catch (error) {
+			return {
+				success: false,
+				error: error.message,
+				message: `Failed to update logic function source: ${error.message}`,
+			};
+		}
+	},
 });

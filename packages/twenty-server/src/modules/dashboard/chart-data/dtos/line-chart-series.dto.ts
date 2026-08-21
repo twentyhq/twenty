@@ -1,15 +1,15 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { LineChartDataPointDTO } from 'src/modules/dashboard/chart-data/dtos/line-chart-data-point.dto';
+import { LineChartDataPointDTO } from "src/modules/dashboard/chart-data/dtos/line-chart-data-point.dto";
 
-@ObjectType('LineChartSeries')
+@ObjectType("LineChartSeries")
 export class LineChartSeriesDTO {
-  @Field(() => String)
-  key: string;
+	@Field(() => String)
+	key: string;
 
-  @Field(() => String)
-  label: string;
+	@Field(() => String)
+	label: string;
 
-  @Field(() => [LineChartDataPointDTO])
-  data: LineChartDataPointDTO[];
+	@Field(() => [LineChartDataPointDTO])
+	data: LineChartDataPointDTO[];
 }

@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const isSidePanelAnimatingState = createAtomState<boolean>({
-  key: 'side-panel/isSidePanelAnimatingState',
-  defaultValue: false,
+	key: "side-panel/isSidePanelAnimatingState",
+	defaultValue: false,
 });

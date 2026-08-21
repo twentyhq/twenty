@@ -1,16 +1,16 @@
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { styled } from "@linaria/react";
+import { isDefined } from "twenty-shared/utils";
 
-import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
-import { Pill } from 'twenty-ui/data-display';
-import { IconExternalLink } from 'twenty-ui/icon';
+import { type McpSetupCard } from "@/settings/mcp-and-apis/types/McpSetup";
+import { Pill } from "twenty-ui/data-display";
+import { IconExternalLink } from "twenty-ui/icon";
 import {
-  AppTooltip,
-  Card,
-  CardContent,
-  TooltipDelay,
-} from 'twenty-ui/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+	AppTooltip,
+	Card,
+	CardContent,
+	TooltipDelay,
+} from "twenty-ui/surfaces";
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 const StyledCardContent = styled(CardContent)`
   align-items: center;
@@ -97,73 +97,73 @@ const StyledInstallAction = styled.a`
 `;
 
 type SettingsMcpSetupCardActionProps = {
-  card: McpSetupCard;
+	card: McpSetupCard;
 };
 
 const SettingsMcpSetupCardAction = ({
-  card,
+	card,
 }: SettingsMcpSetupCardActionProps) => {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  if (card.isDisabled === true) {
-    return (
-      <>
-        <StyledInstallAction
-          as="span"
-          aria-disabled="true"
-          data-tooltip-id={card.tooltipId}
-        >
-          <IconExternalLink size={theme.icon.size.sm} />
-          {card.ctaLabel}
-        </StyledInstallAction>
-        {isDefined(card.disabledTooltip) && isDefined(card.tooltipId) && (
-          <AppTooltip
-            anchorSelect={`[data-tooltip-id='${card.tooltipId}']`}
-            content={card.disabledTooltip}
-            delay={TooltipDelay.shortDelay}
-            noArrow
-            place="bottom"
-            positionStrategy="fixed"
-          />
-        )}
-      </>
-    );
-  }
+	if (card.isDisabled === true) {
+		return (
+			<>
+				<StyledInstallAction
+					as="span"
+					aria-disabled="true"
+					data-tooltip-id={card.tooltipId}
+				>
+					<IconExternalLink size={theme.icon.size.sm} />
+					{card.ctaLabel}
+				</StyledInstallAction>
+				{isDefined(card.disabledTooltip) && isDefined(card.tooltipId) && (
+					<AppTooltip
+						anchorSelect={`[data-tooltip-id='${card.tooltipId}']`}
+						content={card.disabledTooltip}
+						delay={TooltipDelay.shortDelay}
+						noArrow
+						place="bottom"
+						positionStrategy="fixed"
+					/>
+				)}
+			</>
+		);
+	}
 
-  if (!isDefined(card.href)) {
-    return null;
-  }
+	if (!isDefined(card.href)) {
+		return null;
+	}
 
-  return (
-    <StyledInstallAction
-      href={card.href}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <IconExternalLink size={theme.icon.size.sm} />
-      {card.ctaLabel}
-    </StyledInstallAction>
-  );
+	return (
+		<StyledInstallAction
+			href={card.href}
+			rel="noopener noreferrer"
+			target="_blank"
+		>
+			<IconExternalLink size={theme.icon.size.sm} />
+			{card.ctaLabel}
+		</StyledInstallAction>
+	);
 };
 
 type SettingsMcpSetupCardProps = {
-  card: McpSetupCard;
+	card: McpSetupCard;
 };
 
 export const SettingsMcpSetupCard = ({ card }: SettingsMcpSetupCardProps) => (
-  <Card rounded>
-    <StyledCardContent>
-      <StyledLogo aria-hidden>{card.logo}</StyledLogo>
-      <StyledBody>
-        <StyledHeader>
-          <StyledTitle>{card.title}</StyledTitle>
-          <Pill label={card.badge} />
-          <StyledActionSlot>
-            <SettingsMcpSetupCardAction card={card} />
-          </StyledActionSlot>
-        </StyledHeader>
-        <StyledDescription>{card.description}</StyledDescription>
-      </StyledBody>
-    </StyledCardContent>
-  </Card>
+	<Card rounded>
+		<StyledCardContent>
+			<StyledLogo aria-hidden>{card.logo}</StyledLogo>
+			<StyledBody>
+				<StyledHeader>
+					<StyledTitle>{card.title}</StyledTitle>
+					<Pill label={card.badge} />
+					<StyledActionSlot>
+						<SettingsMcpSetupCardAction card={card} />
+					</StyledActionSlot>
+				</StyledHeader>
+				<StyledDescription>{card.description}</StyledDescription>
+			</StyledBody>
+		</StyledCardContent>
+	</Card>
 );

@@ -1,3 +1,3 @@
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import { type CommandMenuItemFieldsFragment } from "~/generated-metadata/graphql";
 
 export type FlatCommandMenuItem = CommandMenuItemFieldsFragment;

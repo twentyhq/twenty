@@ -1,3 +1,3 @@
 export type PinnedCommandMenuItemsLayoutKey =
-  | 'page-header'
-  | 'side-panel-footer';
+	| "page-header"
+	| "side-panel-footer";

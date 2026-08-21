@@ -1,11 +1,11 @@
-import { type ViewFilterOperand } from '@/types';
+import { type ViewFilterOperand } from "@/types";
 
-import { isRecordFilterValueValid } from './isRecordFilterValueValid';
+import { isRecordFilterValueValid } from "./isRecordFilterValueValid";
 
 export const filterOutInvalidRecordFilters = <
-  T extends { operand: ViewFilterOperand; value: string },
+	T extends { operand: ViewFilterOperand; value: string },
 >(
-  recordFilters: T[],
+	recordFilters: T[],
 ): T[] => {
-  return recordFilters.filter(isRecordFilterValueValid);
+	return recordFilters.filter(isRecordFilterValueValid);
 };

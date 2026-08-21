@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 import {
-  color,
-  fontFamily,
-  fontSize,
-  radius,
-  semanticColor,
-  spacing,
-} from '@/tokens';
+	color,
+	fontFamily,
+	fontSize,
+	radius,
+	semanticColor,
+	spacing,
+} from "@/tokens";
 
 const Wrapper = styled.div`
   align-items: center;
@@ -22,17 +22,17 @@ const Wrapper = styled.div`
   width: 100%;
 
   &:focus-within {
-    border-color: ${color('blue')};
+    border-color: ${color("blue")};
   }
 
   &[data-invalid] {
-    border-color: ${color('error')};
+    border-color: ${color("error")};
   }
 `;
 
 const Prefix = styled.span`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   margin-right: ${spacing(2)};
 `;
@@ -42,7 +42,7 @@ const Control = styled.input`
   border: none;
   color: ${semanticColor.ink};
   flex: 1 1 auto;
-  font-family: ${fontFamily('sans')};
+  font-family: ${fontFamily("sans")};
   font-size: ${fontSize(4)};
   height: 100%;
   min-width: 0;
@@ -60,37 +60,37 @@ const Control = styled.input`
 // It strips anything but digits and a decimal point on input, keeping the value
 // clean for a consumer's parseFloat.
 export function NumberField({
-  ariaLabel,
-  invalid = false,
-  name,
-  onValueChange,
-  placeholder,
-  prefix,
-  value,
+	ariaLabel,
+	invalid = false,
+	name,
+	onValueChange,
+	placeholder,
+	prefix,
+	value,
 }: {
-  ariaLabel: string;
-  invalid?: boolean;
-  name: string;
-  onValueChange: (value: string) => void;
-  placeholder?: string;
-  prefix?: string;
-  value: string;
+	ariaLabel: string;
+	invalid?: boolean;
+	name: string;
+	onValueChange: (value: string) => void;
+	placeholder?: string;
+	prefix?: string;
+	value: string;
 }) {
-  return (
-    <Wrapper data-invalid={invalid ? '' : undefined}>
-      {prefix !== undefined ? <Prefix aria-hidden>{prefix}</Prefix> : null}
-      <Control
-        aria-label={ariaLabel}
-        autoComplete="off"
-        inputMode="decimal"
-        name={name}
-        onChange={(event) =>
-          onValueChange(event.target.value.replace(/[^\d.]/g, ''))
-        }
-        placeholder={placeholder}
-        type="text"
-        value={value}
-      />
-    </Wrapper>
-  );
+	return (
+		<Wrapper data-invalid={invalid ? "" : undefined}>
+			{prefix !== undefined ? <Prefix aria-hidden>{prefix}</Prefix> : null}
+			<Control
+				aria-label={ariaLabel}
+				autoComplete="off"
+				inputMode="decimal"
+				name={name}
+				onChange={(event) =>
+					onValueChange(event.target.value.replace(/[^\d.]/g, ""))
+				}
+				placeholder={placeholder}
+				type="text"
+				value={value}
+			/>
+		</Wrapper>
+	);
 }

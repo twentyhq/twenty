@@ -1,220 +1,220 @@
 export type UUIDFilterValue = string;
 
-export type IsFilter = 'NULL' | 'NOT_NULL';
+export type IsFilter = "NULL" | "NOT_NULL";
 
 export type UUIDFilter = {
-  eq?: UUIDFilterValue;
-  gt?: UUIDFilterValue;
-  gte?: UUIDFilterValue;
-  in?: UUIDFilterValue[];
-  lt?: UUIDFilterValue;
-  lte?: UUIDFilterValue;
-  neq?: UUIDFilterValue;
-  is?: IsFilter;
+	eq?: UUIDFilterValue;
+	gt?: UUIDFilterValue;
+	gte?: UUIDFilterValue;
+	in?: UUIDFilterValue[];
+	lt?: UUIDFilterValue;
+	lte?: UUIDFilterValue;
+	neq?: UUIDFilterValue;
+	is?: IsFilter;
 };
 
 export type RelationFilter = {
-  is?: IsFilter;
-  in?: UUIDFilterValue[];
+	is?: IsFilter;
+	in?: UUIDFilterValue[];
 };
 
 export type BooleanFilter = {
-  eq?: boolean;
-  is?: IsFilter;
+	eq?: boolean;
+	is?: IsFilter;
 };
 
 export type StringFilter = {
-  eq?: string;
-  gt?: string;
-  gte?: string;
-  in?: string[];
-  lt?: string;
-  lte?: string;
-  neq?: string;
-  startsWith?: string;
-  like?: string;
-  ilike?: string;
-  regex?: string;
-  iregex?: string;
-  is?: IsFilter;
+	eq?: string;
+	gt?: string;
+	gte?: string;
+	in?: string[];
+	lt?: string;
+	lte?: string;
+	neq?: string;
+	startsWith?: string;
+	like?: string;
+	ilike?: string;
+	regex?: string;
+	iregex?: string;
+	is?: IsFilter;
 };
 
 export type RatingFilter = {
-  eq?: string;
-  in?: string[];
-  is?: IsFilter;
-  gt?: string;
-  gte?: string;
-  lt?: string;
-  lte?: string;
+	eq?: string;
+	in?: string[];
+	is?: IsFilter;
+	gt?: string;
+	gte?: string;
+	lt?: string;
+	lte?: string;
 };
 
 export type FloatFilter = {
-  eq?: number;
-  gt?: number;
-  gte?: number;
-  in?: number[];
-  lt?: number;
-  lte?: number;
-  neq?: number;
-  is?: IsFilter;
+	eq?: number;
+	gt?: number;
+	gte?: number;
+	in?: number[];
+	lt?: number;
+	lte?: number;
+	neq?: number;
+	is?: IsFilter;
 };
 
 export type DateFilter = {
-  eq?: string;
-  gt?: string;
-  gte?: string;
-  in?: string[];
-  lt?: string;
-  lte?: string;
-  neq?: string;
-  is?: IsFilter;
+	eq?: string;
+	gt?: string;
+	gte?: string;
+	in?: string[];
+	lt?: string;
+	lte?: string;
+	neq?: string;
+	is?: IsFilter;
 };
 
 export type DateTimeFilter = {
-  eq?: string;
-  gt?: string;
-  gte?: string;
-  in?: string[];
-  lt?: string;
-  lte?: string;
-  neq?: string;
-  is?: IsFilter;
+	eq?: string;
+	gt?: string;
+	gte?: string;
+	in?: string[];
+	lt?: string;
+	lte?: string;
+	neq?: string;
+	is?: IsFilter;
 };
 
 export type CurrencyFilter = {
-  amountMicros?: FloatFilter;
-  currencyCode?: SelectFilter;
+	amountMicros?: FloatFilter;
+	currencyCode?: SelectFilter;
 };
 
 export type URLFilter = {
-  url?: StringFilter;
-  label?: StringFilter;
+	url?: StringFilter;
+	label?: StringFilter;
 };
 
 export type FullNameFilter = {
-  firstName?: StringFilter;
-  lastName?: StringFilter;
+	firstName?: StringFilter;
+	lastName?: StringFilter;
 };
 
 export type AddressFilter = {
-  addressStreet1?: StringFilter;
-  addressStreet2?: StringFilter;
-  addressCity?: StringFilter;
-  addressState?: StringFilter;
-  addressCountry?: StringFilter;
-  addressPostcode?: StringFilter;
+	addressStreet1?: StringFilter;
+	addressStreet2?: StringFilter;
+	addressCity?: StringFilter;
+	addressState?: StringFilter;
+	addressCountry?: StringFilter;
+	addressPostcode?: StringFilter;
 };
 
 export type LinksFilter = {
-  primaryLinkUrl?: StringFilter;
-  primaryLinkLabel?: StringFilter;
-  secondaryLinks?: RawJsonFilter;
+	primaryLinkUrl?: StringFilter;
+	primaryLinkLabel?: StringFilter;
+	secondaryLinks?: RawJsonFilter;
 };
 
 export type ActorFilter = {
-  name?: StringFilter;
-  source?: SelectFilter;
-  workspaceMemberId?: UUIDFilter;
+	name?: StringFilter;
+	source?: SelectFilter;
+	workspaceMemberId?: UUIDFilter;
 };
 
 export type EmailsFilter = {
-  primaryEmail?: StringFilter;
-  additionalEmails?: RawJsonFilter;
+	primaryEmail?: StringFilter;
+	additionalEmails?: RawJsonFilter;
 };
 
 export type PhonesFilter = {
-  primaryPhoneNumber?: StringFilter;
-  primaryPhoneCallingCode?: StringFilter;
-  additionalPhones?: RawJsonFilter;
+	primaryPhoneNumber?: StringFilter;
+	primaryPhoneCallingCode?: StringFilter;
+	additionalPhones?: RawJsonFilter;
 };
 
 export type SelectFilter = {
-  is?: IsFilter;
-  in?: string[];
-  eq?: string;
-  neq?: string;
-  gt?: string;
-  gte?: string;
-  lt?: string;
-  lte?: string;
+	is?: IsFilter;
+	in?: string[];
+	eq?: string;
+	neq?: string;
+	gt?: string;
+	gte?: string;
+	lt?: string;
+	lte?: string;
 };
 
 export type MultiSelectFilter = {
-  is?: IsFilter;
-  isEmptyArray?: boolean;
-  containsAny?: string[];
+	is?: IsFilter;
+	isEmptyArray?: boolean;
+	containsAny?: string[];
 };
 
 export type ArrayFilter = {
-  is?: IsFilter;
-  isEmptyArray?: boolean;
-  containsIlike?: string;
+	is?: IsFilter;
+	isEmptyArray?: boolean;
+	containsIlike?: string;
 };
 
 export type RawJsonFilter = {
-  like?: string;
-  is?: IsFilter;
+	like?: string;
+	is?: IsFilter;
 };
 
 export type FilesFilter = {
-  like?: string;
-  is?: IsFilter;
+	like?: string;
+	is?: IsFilter;
 };
 
 export type RichTextLeafFilter = {
-  ilike?: string;
+	ilike?: string;
 };
 
 export type RichTextFilter = {
-  blocknote?: RichTextLeafFilter;
-  markdown?: RichTextLeafFilter;
+	blocknote?: RichTextLeafFilter;
+	markdown?: RichTextLeafFilter;
 };
 
 export type TSVectorFilter = {
-  search: string;
+	search: string;
 };
 
 export type LeafFilter =
-  | UUIDFilter
-  | StringFilter
-  | FloatFilter
-  | DateFilter
-  | DateTimeFilter
-  | CurrencyFilter
-  | URLFilter
-  | FullNameFilter
-  | BooleanFilter
-  | AddressFilter
-  | LinksFilter
-  | ActorFilter
-  | EmailsFilter
-  | PhonesFilter
-  | ArrayFilter
-  | RawJsonFilter
-  | FilesFilter
-  | RichTextFilter
-  | TSVectorFilter
-  | undefined;
+	| UUIDFilter
+	| StringFilter
+	| FloatFilter
+	| DateFilter
+	| DateTimeFilter
+	| CurrencyFilter
+	| URLFilter
+	| FullNameFilter
+	| BooleanFilter
+	| AddressFilter
+	| LinksFilter
+	| ActorFilter
+	| EmailsFilter
+	| PhonesFilter
+	| ArrayFilter
+	| RawJsonFilter
+	| FilesFilter
+	| RichTextFilter
+	| TSVectorFilter
+	| undefined;
 
 export type AndObjectRecordFilter = {
-  and?: RecordGqlOperationFilter[];
+	and?: RecordGqlOperationFilter[];
 };
 
 export type OrObjectRecordFilter = {
-  or?: RecordGqlOperationFilter[] | RecordGqlOperationFilter;
+	or?: RecordGqlOperationFilter[] | RecordGqlOperationFilter;
 };
 
 export type NotObjectRecordFilter = {
-  not?: RecordGqlOperationFilter;
+	not?: RecordGqlOperationFilter;
 };
 
 export type LeafObjectRecordFilter = {
-  [fieldName: string]: LeafFilter;
+	[fieldName: string]: LeafFilter;
 };
 
 export type RecordGqlOperationFilter =
-  | LeafObjectRecordFilter
-  | AndObjectRecordFilter
-  | OrObjectRecordFilter
-  | NotObjectRecordFilter;
+	| LeafObjectRecordFilter
+	| AndObjectRecordFilter
+	| OrObjectRecordFilter
+	| NotObjectRecordFilter;

@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const activeCustomizationPageLayoutIdsState = createAtomState<string[]>({
-  key: 'activeCustomizationPageLayoutIdsState',
-  defaultValue: [],
+	key: "activeCustomizationPageLayoutIdsState",
+	defaultValue: [],
 });

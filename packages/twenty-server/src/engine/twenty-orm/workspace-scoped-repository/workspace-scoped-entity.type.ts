@@ -1,5 +1,5 @@
-import { type ObjectLiteral } from 'typeorm';
+import { type ObjectLiteral } from "typeorm";
 
 export type WorkspaceScopedEntity = ObjectLiteral & {
-  workspaceId: string | null;
+	workspaceId: string | null;
 };

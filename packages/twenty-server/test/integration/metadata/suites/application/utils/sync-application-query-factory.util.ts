@@ -1,14 +1,14 @@
-import gql from 'graphql-tag';
-import { type Manifest } from 'twenty-shared/application';
+import gql from "graphql-tag";
+import { type Manifest } from "twenty-shared/application";
 
 export const syncApplicationQueryFactory = ({
-  manifest,
-  dryRun,
+	manifest,
+	dryRun,
 }: {
-  manifest: Manifest;
-  dryRun?: boolean;
+	manifest: Manifest;
+	dryRun?: boolean;
 }) => ({
-  query: gql`
+	query: gql`
     mutation SyncApplication($manifest: JSON!, $dryRun: Boolean) {
       syncApplication(manifest: $manifest, dryRun: $dryRun) {
         applicationUniversalIdentifier
@@ -16,8 +16,8 @@ export const syncApplicationQueryFactory = ({
       }
     }
   `,
-  variables: {
-    manifest,
-    dryRun,
-  },
+	variables: {
+		manifest,
+		dryRun,
+	},
 });

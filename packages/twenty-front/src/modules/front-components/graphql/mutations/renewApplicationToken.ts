@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const RENEW_APPLICATION_TOKEN = gql`
   mutation RenewApplicationToken($applicationRefreshToken: String!) {

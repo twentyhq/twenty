@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { SKELETON_LOADER_HEIGHT_SIZES } from "@/activities/components/SkeletonLoader";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledSkeletonContainer = styled.div`
   display: flex;
@@ -32,53 +32,53 @@ const StyledNameContainer = styled.div`
 `;
 
 export const SettingsAgentDetailSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <StyledSkeletonContainer>
-        <StyledFormSection>
-          <StyledIconNameRow>
-            <StyledIconContainer>
-              <Skeleton
-                width={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-              />
-            </StyledIconContainer>
-            <StyledNameContainer>
-              <Skeleton
-                height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                width="100%"
-              />
-            </StyledNameContainer>
-          </StyledIconNameRow>
+	const { theme } = useContext(ThemeContext);
+	return (
+		<SkeletonTheme
+			baseColor={theme.background.tertiary}
+			highlightColor={theme.background.transparent.lighter}
+			borderRadius={4}
+		>
+			<StyledSkeletonContainer>
+				<StyledFormSection>
+					<StyledIconNameRow>
+						<StyledIconContainer>
+							<Skeleton
+								width={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+								height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+							/>
+						</StyledIconContainer>
+						<StyledNameContainer>
+							<Skeleton
+								height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+								width="100%"
+							/>
+						</StyledNameContainer>
+					</StyledIconNameRow>
 
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-            width="100%"
-          />
+					<Skeleton
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+						width="100%"
+					/>
 
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-            width="100%"
-          />
+					<Skeleton
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+						width="100%"
+					/>
 
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-            width="100%"
-          />
+					<Skeleton
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+						width="100%"
+					/>
 
-          <Skeleton
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-            width="100%"
-          />
+					<Skeleton
+						height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+						width="100%"
+					/>
 
-          <Skeleton height={120} width="100%" />
-        </StyledFormSection>
-      </StyledSkeletonContainer>
-    </SkeletonTheme>
-  );
+					<Skeleton height={120} width="100%" />
+				</StyledFormSection>
+			</StyledSkeletonContainer>
+		</SkeletonTheme>
+	);
 };

@@ -1,28 +1,28 @@
-import { type ReactNode } from 'react';
+import { type ReactNode } from "react";
 
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { styled } from '@linaria/react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { NavigationDrawerSection } from "@/ui/navigation/navigation-drawer/components/NavigationDrawerSection";
+import { styled } from "@linaria/react";
+import { useIsMobile } from "twenty-ui/utilities";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledFixedContainer = styled.div<{ isMobile?: boolean }>`
   flex-shrink: 0;
   padding-left: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[5] : '0'};
+		isMobile ? themeCssVariables.spacing[5] : "0"};
   padding-right: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[5] : '0'};
+		isMobile ? themeCssVariables.spacing[5] : "0"};
 `;
 
 export const NavigationDrawerFixedContent = ({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }) => {
-  const isMobile = useIsMobile();
+	const isMobile = useIsMobile();
 
-  return (
-    <StyledFixedContainer isMobile={isMobile}>
-      <NavigationDrawerSection>{children}</NavigationDrawerSection>
-    </StyledFixedContainer>
-  );
+	return (
+		<StyledFixedContainer isMobile={isMobile}>
+			<NavigationDrawerSection>{children}</NavigationDrawerSection>
+		</StyledFixedContainer>
+	);
 };

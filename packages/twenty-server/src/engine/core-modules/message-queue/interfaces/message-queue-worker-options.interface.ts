@@ -1,6 +1,6 @@
 export interface MessageQueueWorkerOptions {
-  concurrency?: number;
-  lockDuration?: number;
-  maxStalledCount?: number;
-  boundedShutdownDrain?: boolean;
+	concurrency?: number;
+	lockDuration?: number;
+	maxStalledCount?: number;
+	boundedShutdownDrain?: boolean;
 }

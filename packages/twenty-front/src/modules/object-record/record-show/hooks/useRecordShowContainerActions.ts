@@ -1,31 +1,31 @@
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useUpdateOneRecord } from "@/object-record/hooks/useUpdateOneRecord";
 import {
-  type RecordUpdateHook,
-  type RecordUpdateHookParams,
-} from '@/object-record/record-field/ui/contexts/FieldContext';
+	type RecordUpdateHook,
+	type RecordUpdateHookParams,
+} from "@/object-record/record-field/ui/contexts/FieldContext";
 
 interface UseRecordShowContainerActionsProps {
-  objectNameSingular: string;
+	objectNameSingular: string;
 }
 
 export const useRecordShowContainerActions = ({
-  objectNameSingular,
+	objectNameSingular,
 }: UseRecordShowContainerActionsProps) => {
-  const { updateOneRecord } = useUpdateOneRecord();
+	const { updateOneRecord } = useUpdateOneRecord();
 
-  const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
-    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord({
-        objectNameSingular,
-        idToUpdate: variables.where.id as string,
-        updateOneRecordInput: variables.updateOneRecordInput,
-      });
-    };
+	const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
+		const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+			updateOneRecord({
+				objectNameSingular,
+				idToUpdate: variables.where.id as string,
+				updateOneRecordInput: variables.updateOneRecordInput,
+			});
+		};
 
-    return [updateEntity, { loading: false }];
-  };
+		return [updateEntity, { loading: false }];
+	};
 
-  return {
-    useUpdateOneObjectRecordMutation,
-  };
+	return {
+		useUpdateOneObjectRecordMutation,
+	};
 };

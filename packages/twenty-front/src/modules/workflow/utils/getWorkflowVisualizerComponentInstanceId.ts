@@ -1,7 +1,7 @@
 export const getWorkflowVisualizerComponentInstanceId = ({
-  recordId,
+	recordId,
 }: {
-  recordId: string;
+	recordId: string;
 }) => {
-  return recordId;
+	return recordId;
 };

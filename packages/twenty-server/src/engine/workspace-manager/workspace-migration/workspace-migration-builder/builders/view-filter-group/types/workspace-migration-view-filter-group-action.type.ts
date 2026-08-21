@@ -1,24 +1,24 @@
-import { type BaseFlatCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-create-workspace-migration-action.type';
-import { type BaseFlatDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-delete-workspace-migration-action.type';
-import { type BaseFlatUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-update-workspace-migration-action.type';
-import { type BaseUniversalCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-create-workspace-migration-action.type';
-import { type BaseUniversalDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-delete-workspace-migration-action.type';
-import { type BaseUniversalUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-update-workspace-migration-action.type';
+import { type BaseFlatCreateWorkspaceMigrationAction } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-create-workspace-migration-action.type";
+import { type BaseFlatDeleteWorkspaceMigrationAction } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-delete-workspace-migration-action.type";
+import { type BaseFlatUpdateWorkspaceMigrationAction } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-update-workspace-migration-action.type";
+import { type BaseUniversalCreateWorkspaceMigrationAction } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-create-workspace-migration-action.type";
+import { type BaseUniversalDeleteWorkspaceMigrationAction } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-delete-workspace-migration-action.type";
+import { type BaseUniversalUpdateWorkspaceMigrationAction } from "src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-update-workspace-migration-action.type";
 
 export type UniversalCreateViewFilterGroupAction =
-  BaseUniversalCreateWorkspaceMigrationAction<'viewFilterGroup'>;
+	BaseUniversalCreateWorkspaceMigrationAction<"viewFilterGroup">;
 
 export type FlatCreateViewFilterGroupAction =
-  BaseFlatCreateWorkspaceMigrationAction<'viewFilterGroup'>;
+	BaseFlatCreateWorkspaceMigrationAction<"viewFilterGroup">;
 
 export type FlatUpdateViewFilterGroupAction =
-  BaseFlatUpdateWorkspaceMigrationAction<'viewFilterGroup'>;
+	BaseFlatUpdateWorkspaceMigrationAction<"viewFilterGroup">;
 
 export type UniversalUpdateViewFilterGroupAction =
-  BaseUniversalUpdateWorkspaceMigrationAction<'viewFilterGroup'>;
+	BaseUniversalUpdateWorkspaceMigrationAction<"viewFilterGroup">;
 
 export type UniversalDeleteViewFilterGroupAction =
-  BaseUniversalDeleteWorkspaceMigrationAction<'viewFilterGroup'>;
+	BaseUniversalDeleteWorkspaceMigrationAction<"viewFilterGroup">;
 
 export type FlatDeleteViewFilterGroupAction =
-  BaseFlatDeleteWorkspaceMigrationAction<'viewFilterGroup'>;
+	BaseFlatDeleteWorkspaceMigrationAction<"viewFilterGroup">;

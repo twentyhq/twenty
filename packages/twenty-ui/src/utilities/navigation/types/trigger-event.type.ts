@@ -1,1 +1,1 @@
-export type TriggerEventType = 'MOUSE_DOWN' | 'CLICK';
+export type TriggerEventType = "MOUSE_DOWN" | "CLICK";

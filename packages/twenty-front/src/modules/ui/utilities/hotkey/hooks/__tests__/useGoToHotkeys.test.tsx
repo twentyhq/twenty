@@ -1,42 +1,42 @@
-import { act, fireEvent, renderHook } from '@testing-library/react';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { act, fireEvent, renderHook } from "@testing-library/react";
+import { MemoryRouter, useLocation } from "react-router-dom";
 
-import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
+import { useGoToHotkeys } from "@/ui/utilities/hotkey/hooks/useGoToHotkeys";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <MemoryRouter
-    initialEntries={['/one', '/two', { pathname: '/three' }]}
-    initialIndex={1}
-  >
-    {children}
-  </MemoryRouter>
+	<MemoryRouter
+		initialEntries={["/one", "/two", { pathname: "/three" }]}
+		initialIndex={1}
+	>
+		{children}
+	</MemoryRouter>
 );
 const renderHookConfig = {
-  wrapper: Wrapper,
+	wrapper: Wrapper,
 };
 
-describe('useGoToHotkeys', () => {
-  it('should navigate on hotkey trigger', () => {
-    const { result } = renderHook(() => {
-      useGoToHotkeys({ key: 'a', location: '/three' });
+describe("useGoToHotkeys", () => {
+	it("should navigate on hotkey trigger", () => {
+		const { result } = renderHook(() => {
+			useGoToHotkeys({ key: "a", location: "/three" });
 
-      const location = useLocation();
+			const location = useLocation();
 
-      return {
-        pathname: location.pathname,
-      };
-    }, renderHookConfig);
+			return {
+				pathname: location.pathname,
+			};
+		}, renderHookConfig);
 
-    expect(result.current.pathname).toBe('/two');
+		expect(result.current.pathname).toBe("/two");
 
-    act(() => {
-      fireEvent.keyDown(document, { key: 'g', code: 'KeyG' });
-    });
+		act(() => {
+			fireEvent.keyDown(document, { key: "g", code: "KeyG" });
+		});
 
-    act(() => {
-      fireEvent.keyDown(document, { key: 'a', code: 'KeyA' });
-    });
+		act(() => {
+			fireEvent.keyDown(document, { key: "a", code: "KeyA" });
+		});
 
-    expect(result.current.pathname).toBe('/three');
-  });
+		expect(result.current.pathname).toBe("/three");
+	});
 });

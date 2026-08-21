@@ -1,21 +1,21 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from "class-validator";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('RecordIdentifier')
+@ObjectType("RecordIdentifier")
 export class RecordIdentifierDTO {
-  @IsUUID()
-  @Field(() => UUIDScalarType)
-  id: string;
+	@IsUUID()
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @IsString()
-  @Field(() => String)
-  labelIdentifier: string;
+	@IsString()
+	@Field(() => String)
+	labelIdentifier: string;
 
-  @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  imageIdentifier?: string | null;
+	@IsOptional()
+	@IsString()
+	@Field(() => String, { nullable: true })
+	imageIdentifier?: string | null;
 }

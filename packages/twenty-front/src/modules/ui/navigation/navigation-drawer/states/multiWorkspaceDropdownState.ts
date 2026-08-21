@@ -1,8 +1,8 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const multiWorkspaceDropdownState = createAtomState<
-  'default' | 'workspaces-list' | 'themes'
+	"default" | "workspaces-list" | "themes"
 >({
-  key: 'multiWorkspaceDropdownState',
-  defaultValue: 'default',
+	key: "multiWorkspaceDropdownState",
+	defaultValue: "default",
 });

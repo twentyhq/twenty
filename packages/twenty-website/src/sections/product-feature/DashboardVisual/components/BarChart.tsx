@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useLingui } from '@lingui/react';
-import { styled } from '@linaria/react';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { useLingui } from "@lingui/react";
+import { styled } from "@linaria/react";
+import { THEME_LIGHT } from "twenty-ui/theme";
 
-import { previewFontSize } from '@/app-preview/preview-font-size';
-import { EASING } from '@/tokens';
+import { previewFontSize } from "@/app-preview/preview-font-size";
+import { EASING } from "@/tokens";
 
-import { type DashboardMonth } from '../types/dashboard-month';
+import { type DashboardMonth } from "../types/dashboard-month";
 
 const X_LABEL_ROW_HEIGHT = 18;
 const TARGET_TICK_COUNT = 4;
@@ -122,86 +122,86 @@ const XLabel = styled.span`
 `;
 
 function getNiceScale(maxValue: number): { maxTick: number; ticks: number[] } {
-  if (!(maxValue > 0)) {
-    return { maxTick: 1, ticks: [0, 1] };
-  }
-  const rawStep = maxValue / TARGET_TICK_COUNT;
-  const magnitude = 10 ** Math.floor(Math.log10(rawStep));
-  const normalized = rawStep / magnitude;
-  const niceNormalized =
-    normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
-  const step = niceNormalized * magnitude;
-  const tickCount = Math.ceil(maxValue / step);
-  return {
-    maxTick: step * tickCount,
-    ticks: Array.from({ length: tickCount + 1 }, (_, index) => index * step),
-  };
+	if (!(maxValue > 0)) {
+		return { maxTick: 1, ticks: [0, 1] };
+	}
+	const rawStep = maxValue / TARGET_TICK_COUNT;
+	const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+	const normalized = rawStep / magnitude;
+	const niceNormalized =
+		normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+	const step = niceNormalized * magnitude;
+	const tickCount = Math.ceil(maxValue / step);
+	return {
+		maxTick: step * tickCount,
+		ticks: Array.from({ length: tickCount + 1 }, (_, index) => index * step),
+	};
 }
 
 export function BarChart({
-  active,
-  months,
+	active,
+	months,
 }: {
-  active: boolean;
-  months: DashboardMonth[];
+	active: boolean;
+	months: DashboardMonth[];
 }) {
-  const { i18n } = useLingui();
-  const maxValue = Math.max(...months.map((month) => month.value));
-  const { maxTick, ticks } = getNiceScale(maxValue);
+	const { i18n } = useLingui();
+	const maxValue = Math.max(...months.map((month) => month.value));
+	const { maxTick, ticks } = getNiceScale(maxValue);
 
-  return (
-    <Root>
-      <Plot>
-        <YAxis>
-          {ticks.toReversed().map((tick) => (
-            <YLabel key={tick}>{tick}</YLabel>
-          ))}
-        </YAxis>
-        <Bars>
-          <PlotArea>
-            {ticks.map((tick) => (
-              <GridLine
-                key={tick}
-                style={{ bottom: `${(tick / maxTick) * 100}%` }}
-              />
-            ))}
-            <BarsRow>
-              {months.map((month, columnNumber) => {
-                const heightPercent = (month.value / maxTick) * 100;
-                return (
-                  <BarColumn key={month.id}>
-                    <ValueLabel
-                      style={{
-                        bottom: `${heightPercent}%`,
-                        opacity: active ? 1 : 0,
-                        transitionDelay: active
-                          ? `${300 + columnNumber * 50}ms`
-                          : '0ms',
-                      }}
-                    >
-                      {month.value}
-                    </ValueLabel>
-                    <Bar
-                      style={{
-                        height: `${heightPercent}%`,
-                        transform: active ? 'scaleY(1)' : 'scaleY(0)',
-                        transitionDelay: active
-                          ? `${columnNumber * 50}ms`
-                          : '0ms',
-                      }}
-                    />
-                  </BarColumn>
-                );
-              })}
-            </BarsRow>
-          </PlotArea>
-          <XLabels>
-            {months.map((month) => (
-              <XLabel key={month.id}>{i18n._(month.label)}</XLabel>
-            ))}
-          </XLabels>
-        </Bars>
-      </Plot>
-    </Root>
-  );
+	return (
+		<Root>
+			<Plot>
+				<YAxis>
+					{ticks.toReversed().map((tick) => (
+						<YLabel key={tick}>{tick}</YLabel>
+					))}
+				</YAxis>
+				<Bars>
+					<PlotArea>
+						{ticks.map((tick) => (
+							<GridLine
+								key={tick}
+								style={{ bottom: `${(tick / maxTick) * 100}%` }}
+							/>
+						))}
+						<BarsRow>
+							{months.map((month, columnNumber) => {
+								const heightPercent = (month.value / maxTick) * 100;
+								return (
+									<BarColumn key={month.id}>
+										<ValueLabel
+											style={{
+												bottom: `${heightPercent}%`,
+												opacity: active ? 1 : 0,
+												transitionDelay: active
+													? `${300 + columnNumber * 50}ms`
+													: "0ms",
+											}}
+										>
+											{month.value}
+										</ValueLabel>
+										<Bar
+											style={{
+												height: `${heightPercent}%`,
+												transform: active ? "scaleY(1)" : "scaleY(0)",
+												transitionDelay: active
+													? `${columnNumber * 50}ms`
+													: "0ms",
+											}}
+										/>
+									</BarColumn>
+								);
+							})}
+						</BarsRow>
+					</PlotArea>
+					<XLabels>
+						{months.map((month) => (
+							<XLabel key={month.id}>{i18n._(month.label)}</XLabel>
+						))}
+					</XLabels>
+				</Bars>
+			</Plot>
+		</Root>
+	);
 }

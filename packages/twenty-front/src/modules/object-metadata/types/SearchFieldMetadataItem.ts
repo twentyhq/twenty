@@ -1,8 +1,8 @@
-import { type SearchField as GeneratedSearchField } from '~/generated-metadata/graphql';
+import { type SearchField as GeneratedSearchField } from "~/generated-metadata/graphql";
 
 export type SearchFieldMetadataItem = Omit<
-  GeneratedSearchField,
-  '__typename'
+	GeneratedSearchField,
+	"__typename"
 > & {
-  __typename?: string;
+	__typename?: string;
 };

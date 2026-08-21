@@ -1,5 +1,5 @@
 export type ConfigVariableSourceFilter =
-  | 'all'
-  | 'database'
-  | 'environment'
-  | 'default';
+	| "all"
+	| "database"
+	| "environment"
+	| "default";

@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
+import { styled } from "@linaria/react";
+import { type CSSProperties } from "react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  radius,
-  spacing,
-  DURATION,
-  REDUCED_MOTION,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	fontSize,
+	mediaUp,
+	radius,
+	spacing,
+	DURATION,
+	REDUCED_MOTION,
+} from "@/tokens";
 
 const RailContainer = styled.div`
   display: none;
 
-  ${mediaUp('md')} {
+  ${mediaUp("md")} {
     align-items: flex-start;
     align-self: stretch;
     display: flex;
@@ -64,7 +64,7 @@ const StepRow = styled.div`
 `;
 
 const PillTrack = styled.div`
-  background-color: var(--rail-inactive, ${color('black-20')});
+  background-color: var(--rail-inactive, ${color("black-20")});
   border-radius: 50%;
   display: flex;
   height: ${spacing(1)};
@@ -85,7 +85,7 @@ const PillTrack = styled.div`
 `;
 
 const PillFill = styled.div`
-  background-color: ${color('blue')};
+  background-color: ${color("blue")};
   border-radius: ${radius(8)};
   height: var(--rail-fill, 0%);
   transition: height ${DURATION.xxs} linear;
@@ -93,8 +93,8 @@ const PillFill = styled.div`
 `;
 
 const StepLabel = styled.div`
-  color: ${color('blue')};
-  font-family: ${fontFamily('mono')};
+  color: ${color("blue")};
+  font-family: ${fontFamily("mono")};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   left: calc(100% + ${spacing(4)});
@@ -112,53 +112,53 @@ const StepLabel = styled.div`
 `;
 
 export type StepperProgressRailProps = {
-  activeStepIndex: number;
-  inactiveColor?: string;
-  localProgress: number;
-  stepCount: number;
+	activeStepIndex: number;
+	inactiveColor?: string;
+	localProgress: number;
+	stepCount: number;
 };
 
 export function StepperProgressRail({
-  activeStepIndex,
-  inactiveColor,
-  localProgress,
-  stepCount,
+	activeStepIndex,
+	inactiveColor,
+	localProgress,
+	stepCount,
 }: StepperProgressRailProps) {
-  return (
-    <RailContainer
-      style={
-        inactiveColor
-          ? ({ '--rail-inactive': inactiveColor } as CSSProperties)
-          : undefined
-      }
-    >
-      <StickyViewportCenter>
-        <Rail>
-          {Array.from({ length: stepCount }, (_, index) => {
-            const isActive = index === activeStepIndex;
-            const fillPercentage = isActive
-              ? Math.min(100, Math.max(0, localProgress * 100))
-              : 0;
-            return (
-              <StepRow
-                data-active={isActive ? '' : undefined}
-                key={`step-${index}`}
-              >
-                <PillTrack data-active={isActive ? '' : undefined}>
-                  <PillFill
-                    style={
-                      { '--rail-fill': `${fillPercentage}%` } as CSSProperties
-                    }
-                  />
-                </PillTrack>
-                <StepLabel data-visible={isActive ? '' : undefined}>
-                  {String(index + 1).padStart(2, '0')}
-                </StepLabel>
-              </StepRow>
-            );
-          })}
-        </Rail>
-      </StickyViewportCenter>
-    </RailContainer>
-  );
+	return (
+		<RailContainer
+			style={
+				inactiveColor
+					? ({ "--rail-inactive": inactiveColor } as CSSProperties)
+					: undefined
+			}
+		>
+			<StickyViewportCenter>
+				<Rail>
+					{Array.from({ length: stepCount }, (_, index) => {
+						const isActive = index === activeStepIndex;
+						const fillPercentage = isActive
+							? Math.min(100, Math.max(0, localProgress * 100))
+							: 0;
+						return (
+							<StepRow
+								data-active={isActive ? "" : undefined}
+								key={`step-${index}`}
+							>
+								<PillTrack data-active={isActive ? "" : undefined}>
+									<PillFill
+										style={
+											{ "--rail-fill": `${fillPercentage}%` } as CSSProperties
+										}
+									/>
+								</PillTrack>
+								<StepLabel data-visible={isActive ? "" : undefined}>
+									{String(index + 1).padStart(2, "0")}
+								</StepLabel>
+							</StepRow>
+						);
+					})}
+				</Rail>
+			</StickyViewportCenter>
+		</RailContainer>
+	);
 }

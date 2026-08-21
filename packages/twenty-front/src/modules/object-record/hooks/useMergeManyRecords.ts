@@ -1,135 +1,135 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
-import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyRecordsMutation';
-import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
-import { getOperationName } from '~/utils/getOperationName';
+import { dispatchObjectRecordOperationBrowserEvent } from "@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent";
+import { useApolloCoreClient } from "@/object-metadata/hooks/useApolloCoreClient";
+import { useObjectMetadataItem } from "@/object-metadata/hooks/useObjectMetadataItem";
+import { useGenerateDepthRecordGqlFieldsFromObject } from "@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject";
+import { useFindDuplicateRecordsQuery } from "@/object-record/hooks/useFindDuplicatesRecordsQuery";
+import { useFindOneRecordQuery } from "@/object-record/hooks/useFindOneRecordQuery";
+import { useMergeManyRecordsMutation } from "@/object-record/hooks/useMergeManyRecordsMutation";
+import { useRefetchAggregateQueries } from "@/object-record/hooks/useRefetchAggregateQueries";
+import { type ObjectRecord } from "@/object-record/types/ObjectRecord";
+import { getMergeManyRecordsMutationResponseField } from "@/object-record/utils/getMergeManyRecordsMutationResponseField";
+import { type RecordGqlOperationGqlRecordFields } from "twenty-shared/types";
+import { getOperationName } from "~/utils/getOperationName";
 
 export type MergeManySettings = {
-  conflictPriorityIndex: number;
+	conflictPriorityIndex: number;
 };
 
 export type UseMergeManyRecordsProps = {
-  objectNameSingular: string;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+	objectNameSingular: string;
+	recordGqlFields?: RecordGqlOperationGqlRecordFields;
 };
 
 export const useMergeManyRecords = <
-  MergedObjectRecord extends ObjectRecord = ObjectRecord,
+	MergedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
-  objectNameSingular,
-  recordGqlFields,
+	objectNameSingular,
+	recordGqlFields,
 }: UseMergeManyRecordsProps) => {
-  const apolloCoreClient = useApolloCoreClient();
-  const [loading, setLoading] = useState(false);
+	const apolloCoreClient = useApolloCoreClient();
+	const [loading, setLoading] = useState(false);
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+	const { objectMetadataItem } = useObjectMetadataItem({
+		objectNameSingular,
+	});
 
-  const { recordGqlFields: depthOneRecordGqlFields } =
-    useGenerateDepthRecordGqlFieldsFromObject({
-      objectNameSingular,
-      depth: 1,
-    });
+	const { recordGqlFields: depthOneRecordGqlFields } =
+		useGenerateDepthRecordGqlFieldsFromObject({
+			objectNameSingular,
+			depth: 1,
+		});
 
-  const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
+	const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
-  const { mergeManyRecordsMutation } = useMergeManyRecordsMutation({
-    objectNameSingular,
-    recordGqlFields: computedRecordGqlFields,
-  });
+	const { mergeManyRecordsMutation } = useMergeManyRecordsMutation({
+		objectNameSingular,
+		recordGqlFields: computedRecordGqlFields,
+	});
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries();
+	const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
-  const { findOneRecordQuery } = useFindOneRecordQuery({
-    objectNameSingular,
-    recordGqlFields: computedRecordGqlFields,
-  });
+	const { findOneRecordQuery } = useFindOneRecordQuery({
+		objectNameSingular,
+		recordGqlFields: computedRecordGqlFields,
+	});
 
-  const { findDuplicateRecordsQuery } = useFindDuplicateRecordsQuery({
-    objectNameSingular,
-  });
+	const { findDuplicateRecordsQuery } = useFindDuplicateRecordsQuery({
+		objectNameSingular,
+	});
 
-  type MergeManyRecordsProps = {
-    recordIds: string[];
-    mergeSettings: MergeManySettings;
-    preview?: boolean;
-  };
+	type MergeManyRecordsProps = {
+		recordIds: string[];
+		mergeSettings: MergeManySettings;
+		preview?: boolean;
+	};
 
-  const mergeManyRecords = useCallback(
-    async ({
-      recordIds,
-      mergeSettings,
-      preview = false,
-    }: MergeManyRecordsProps): Promise<MergedObjectRecord | null> => {
-      setLoading(true);
+	const mergeManyRecords = useCallback(
+		async ({
+			recordIds,
+			mergeSettings,
+			preview = false,
+		}: MergeManyRecordsProps): Promise<MergedObjectRecord | null> => {
+			setLoading(true);
 
-      const mutationResponseField = getMergeManyRecordsMutationResponseField(
-        objectMetadataItem.namePlural,
-      );
+			const mutationResponseField = getMergeManyRecordsMutationResponseField(
+				objectMetadataItem.namePlural,
+			);
 
-      try {
-        const mergedObject = await apolloCoreClient.mutate({
-          mutation: mergeManyRecordsMutation,
-          variables: {
-            ids: recordIds,
-            conflictPriorityIndex: mergeSettings.conflictPriorityIndex,
-            dryRun: preview,
-          },
-          // Prevent cache updates during dry run to avoid overwriting original record data
-          ...(preview && {
-            fetchPolicy: 'no-cache',
-          }),
-          refetchQueries: [
-            getOperationName(findOneRecordQuery) ?? '',
-            getOperationName(findDuplicateRecordsQuery) ?? '',
-          ].filter(Boolean),
-        });
+			try {
+				const mergedObject = await apolloCoreClient.mutate({
+					mutation: mergeManyRecordsMutation,
+					variables: {
+						ids: recordIds,
+						conflictPriorityIndex: mergeSettings.conflictPriorityIndex,
+						dryRun: preview,
+					},
+					// Prevent cache updates during dry run to avoid overwriting original record data
+					...(preview && {
+						fetchPolicy: "no-cache",
+					}),
+					refetchQueries: [
+						getOperationName(findOneRecordQuery) ?? "",
+						getOperationName(findDuplicateRecordsQuery) ?? "",
+					].filter(Boolean),
+				});
 
-        setLoading(false);
+				setLoading(false);
 
-        if (!preview) {
-          await refetchAggregateQueries({
-            objectMetadataNamePlural: objectMetadataItem.namePlural,
-          });
-          dispatchObjectRecordOperationBrowserEvent({
-            objectMetadataItem,
-            operation: {
-              type: 'merge-records',
-            },
-          });
-        }
+				if (!preview) {
+					await refetchAggregateQueries({
+						objectMetadataNamePlural: objectMetadataItem.namePlural,
+					});
+					dispatchObjectRecordOperationBrowserEvent({
+						objectMetadataItem,
+						operation: {
+							type: "merge-records",
+						},
+					});
+				}
 
-        return (
-          (mergedObject.data as Record<string, any>)?.[mutationResponseField] ??
-          null
-        );
-      } catch (error) {
-        setLoading(false);
-        throw error;
-      }
-    },
-    [
-      objectMetadataItem,
-      apolloCoreClient,
-      mergeManyRecordsMutation,
-      findOneRecordQuery,
-      findDuplicateRecordsQuery,
-      refetchAggregateQueries,
-    ],
-  );
+				return (
+					(mergedObject.data as Record<string, any>)?.[mutationResponseField] ??
+					null
+				);
+			} catch (error) {
+				setLoading(false);
+				throw error;
+			}
+		},
+		[
+			objectMetadataItem,
+			apolloCoreClient,
+			mergeManyRecordsMutation,
+			findOneRecordQuery,
+			findDuplicateRecordsQuery,
+			refetchAggregateQueries,
+		],
+	);
 
-  return {
-    mergeManyRecords,
-    loading,
-  };
+	return {
+		mergeManyRecords,
+		loading,
+	};
 };

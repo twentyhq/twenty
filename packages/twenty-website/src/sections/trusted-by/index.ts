@@ -1,1 +1,1 @@
-export { TrustedBy } from './TrustedBy';
+export { TrustedBy } from "./TrustedBy";

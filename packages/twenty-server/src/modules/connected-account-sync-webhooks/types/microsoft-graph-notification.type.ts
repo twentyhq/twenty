@@ -1,12 +1,12 @@
-import { type ChangeNotification } from '@microsoft/microsoft-graph-types';
+import { type ChangeNotification } from "@microsoft/microsoft-graph-types";
 
 export type MicrosoftGraphNotification = Omit<
-  ChangeNotification,
-  'subscriptionId'
+	ChangeNotification,
+	"subscriptionId"
 > & {
-  subscriptionId: string;
+	subscriptionId: string;
 };
 
 export type MicrosoftGraphNotificationPayload = {
-  value?: MicrosoftGraphNotification[];
+	value?: MicrosoftGraphNotification[];
 };

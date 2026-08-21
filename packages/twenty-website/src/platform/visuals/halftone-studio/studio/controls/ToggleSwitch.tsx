@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { styled } from '@linaria/react';
-import type { ChangeEventHandler } from 'react';
+import { styled } from "@linaria/react";
+import type { ChangeEventHandler } from "react";
 
 const Toggle = styled.label`
   display: block;
@@ -49,25 +49,25 @@ const ToggleTrack = styled.span`
 `;
 
 type ToggleSwitchProps = {
-  ariaLabelledBy?: string;
-  checked: boolean;
-  onChange: ChangeEventHandler<HTMLInputElement>;
+	ariaLabelledBy?: string;
+	checked: boolean;
+	onChange: ChangeEventHandler<HTMLInputElement>;
 };
 
 export function ToggleSwitch({
-  ariaLabelledBy,
-  checked,
-  onChange,
+	ariaLabelledBy,
+	checked,
+	onChange,
 }: ToggleSwitchProps) {
-  return (
-    <Toggle>
-      <ToggleInput
-        aria-labelledby={ariaLabelledBy}
-        checked={checked}
-        onChange={onChange}
-        type="checkbox"
-      />
-      <ToggleTrack />
-    </Toggle>
-  );
+	return (
+		<Toggle>
+			<ToggleInput
+				aria-labelledby={ariaLabelledBy}
+				checked={checked}
+				onChange={onChange}
+				type="checkbox"
+			/>
+			<ToggleTrack />
+		</Toggle>
+	);
 }

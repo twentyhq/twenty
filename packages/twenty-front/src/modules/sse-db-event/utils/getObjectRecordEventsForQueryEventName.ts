@@ -1,3 +1,3 @@
 export const getObjectRecordEventsForQueryEventName = (queryId: string) => {
-  return `object-record-events-${queryId}`;
+	return `object-record-events-${queryId}`;
 };

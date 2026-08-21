@@ -1,13 +1,13 @@
-import { isDefined } from 'twenty-shared/utils';
-import { styled } from '@linaria/react';
+import { isDefined } from "twenty-shared/utils";
+import { styled } from "@linaria/react";
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useIcons } from 'twenty-ui/icon';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
+import { useIcons } from "twenty-ui/icon";
+import { useContext } from "react";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type ObjectFieldRowWithoutRelationProps = {
-  field: FieldMetadataItem;
+	field: FieldMetadataItem;
 };
 
 const StyledRow = styled.div`
@@ -24,17 +24,17 @@ const StyledFieldName = styled.div`
 `;
 
 export const ObjectFieldRowWithoutRelation = ({
-  field,
+	field,
 }: ObjectFieldRowWithoutRelationProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
+	const { theme } = useContext(ThemeContext);
+	const { getIcon } = useIcons();
 
-  const Icon = getIcon(field?.icon);
+	const Icon = getIcon(field?.icon);
 
-  return (
-    <StyledRow>
-      {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
-      <StyledFieldName>{field.label}</StyledFieldName>
-    </StyledRow>
-  );
+	return (
+		<StyledRow>
+			{isDefined(Icon) && <Icon size={theme.icon.size.md} />}
+			<StyledFieldName>{field.label}</StyledFieldName>
+		</StyledRow>
+	);
 };

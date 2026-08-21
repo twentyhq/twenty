@@ -1,8 +1,8 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export type UpdateWorkspaceMemberRoleInput = {
-  workspaceMemberId: string;
-  roleId: string;
+	workspaceMemberId: string;
+	roleId: string;
 };
 
 const DEFAULT_WORKSPACE_MEMBER_GQL_FIELDS = `
@@ -20,13 +20,13 @@ const DEFAULT_WORKSPACE_MEMBER_GQL_FIELDS = `
 `;
 
 export const updateWorkspaceMemberRoleQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_WORKSPACE_MEMBER_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_WORKSPACE_MEMBER_GQL_FIELDS,
 }: {
-  input: UpdateWorkspaceMemberRoleInput;
-  gqlFields?: string;
+	input: UpdateWorkspaceMemberRoleInput;
+	gqlFields?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation UpdateWorkspaceMemberRole($workspaceMemberId: UUID!, $roleId: UUID!) {
       updateWorkspaceMemberRole(
         workspaceMemberId: $workspaceMemberId
@@ -36,8 +36,8 @@ export const updateWorkspaceMemberRoleQueryFactory = ({
       }
     }
   `,
-  variables: {
-    workspaceMemberId: input.workspaceMemberId,
-    roleId: input.roleId,
-  },
+	variables: {
+		workspaceMemberId: input.workspaceMemberId,
+		roleId: input.roleId,
+	},
 });

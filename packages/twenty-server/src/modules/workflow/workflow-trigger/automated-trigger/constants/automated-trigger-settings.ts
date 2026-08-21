@@ -1,32 +1,32 @@
-import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from "twenty-shared/types";
 
 export type DatabaseEventTriggerFilterSettings = {
-  stepFilters: StepFilter[];
-  stepFilterGroups: StepFilterGroup[];
+	stepFilters: StepFilter[];
+	stepFilterGroups: StepFilterGroup[];
 };
 
 export type BaseDatabaseEventTriggerSettings = {
-  eventName: string;
-  filter?: DatabaseEventTriggerFilterSettings;
+	eventName: string;
+	filter?: DatabaseEventTriggerFilterSettings;
 };
 
 export type DatabaseEventTriggerSettings =
-  | BaseDatabaseEventTriggerSettings
-  | UpdateEventTriggerSettings
-  | UpsertEventTriggerSettings;
+	| BaseDatabaseEventTriggerSettings
+	| UpdateEventTriggerSettings
+	| UpsertEventTriggerSettings;
 
 export type UpdateEventTriggerSettings = BaseDatabaseEventTriggerSettings & {
-  fields: string[];
+	fields: string[];
 };
 
 export type UpsertEventTriggerSettings = BaseDatabaseEventTriggerSettings & {
-  fields: string[];
+	fields: string[];
 };
 
 export type CronTriggerSettings = {
-  pattern: string;
+	pattern: string;
 };
 
 export type AutomatedTriggerSettings =
-  | DatabaseEventTriggerSettings
-  | CronTriggerSettings;
+	| DatabaseEventTriggerSettings
+	| CronTriggerSettings;

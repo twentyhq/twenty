@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { EventRow } from '@/activities/timeline-activities/components/EventRow';
-import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { EventRow } from "@/activities/timeline-activities/components/EventRow";
+import { type EventGroup } from "@/activities/timeline-activities/utils/groupEventsByMonth";
+import { type EnrichedObjectMetadataItem } from "@/object-metadata/types/EnrichedObjectMetadataItem";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type EventsGroupProps = {
-  group: EventGroup;
-  month: string;
-  year?: number;
-  mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
+	group: EventGroup;
+	month: string;
+	year?: number;
+	mainObjectMetadataItem: EnrichedObjectMetadataItem | null;
 };
 
 const StyledActivityGroup = styled.div`
@@ -58,28 +58,28 @@ const StyledMonthSeperatorLine = styled.div`
 `;
 
 export const EventsGroup = ({
-  group,
-  month,
-  year,
-  mainObjectMetadataItem,
+	group,
+	month,
+	year,
+	mainObjectMetadataItem,
 }: EventsGroupProps) => {
-  return (
-    <StyledActivityGroup>
-      <StyledMonthSeperator>
-        {month} {year}
-        <StyledMonthSeperatorLine />
-      </StyledMonthSeperator>
-      <StyledActivityGroupContainer>
-        <StyledActivityGroupBar />
-        {group.items.map((event, index) => (
-          <EventRow
-            mainObjectMetadataItem={mainObjectMetadataItem}
-            key={index}
-            event={event}
-            isLastEvent={index === group.items.length - 1}
-          />
-        ))}
-      </StyledActivityGroupContainer>
-    </StyledActivityGroup>
-  );
+	return (
+		<StyledActivityGroup>
+			<StyledMonthSeperator>
+				{month} {year}
+				<StyledMonthSeperatorLine />
+			</StyledMonthSeperator>
+			<StyledActivityGroupContainer>
+				<StyledActivityGroupBar />
+				{group.items.map((event, index) => (
+					<EventRow
+						mainObjectMetadataItem={mainObjectMetadataItem}
+						key={index}
+						event={event}
+						isLastEvent={index === group.items.length - 1}
+					/>
+				))}
+			</StyledActivityGroupContainer>
+		</StyledActivityGroup>
+	);
 };

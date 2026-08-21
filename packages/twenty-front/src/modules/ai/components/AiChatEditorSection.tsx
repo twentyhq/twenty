@@ -1,33 +1,33 @@
-import { styled } from '@linaria/react';
-import { EditorContent } from '@tiptap/react';
-import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { EditorContent } from "@tiptap/react";
+import { useLingui } from "@lingui/react/macro";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from "twenty-shared/utils";
 
-import { AiChatBanner } from '@/ai/components/AiChatBanner';
-import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
-import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
-import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
-import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
-import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
-import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
-import { Select } from '@/ui/input/components/Select';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type SelectOption } from 'twenty-ui/input';
+import { AiChatBanner } from "@/ai/components/AiChatBanner";
+import { AiChatEmptyState } from "@/ai/components/AiChatEmptyState";
+import { AiChatQuestionCard } from "@/ai/components/AiChatQuestionCard";
+import { AIChatNoMoreBillingCreditsBanner } from "@/ai/components/AIChatNoMoreBillingCreditsBanner";
+import { AiChatStandaloneError } from "@/ai/components/AiChatStandaloneError";
+import { AgentChatContextPreview } from "@/ai/components/internal/AgentChatContextPreview";
+import { AgentChatFileUploadButton } from "@/ai/components/internal/AgentChatFileUploadButton";
+import { AiChatContextUsageButton } from "@/ai/components/internal/AiChatContextUsageButton";
+import { AiChatEditorFocusEffect } from "@/ai/components/internal/AiChatEditorFocusEffect";
+import { AiChatSkeletonLoader } from "@/ai/components/internal/AiChatSkeletonLoader";
+import { SendMessageButton } from "@/ai/components/internal/SendMessageButton";
+import { useAgentChatModelId } from "@/ai/hooks/useAgentChatModelId";
+import { useAiChatEditor } from "@/ai/hooks/useAiChatEditor";
+import { useAiModelOptions } from "@/ai/hooks/useAiModelOptions";
+import { useHasReachedAiChatCreditsCap } from "@/ai/hooks/useHasReachedAiChatCreditsCap";
+import { useWorkspaceAiModelAvailability } from "@/ai/hooks/useWorkspaceAiModelAvailability";
+import { agentChatUserSelectedModelState } from "@/ai/states/agentChatUserSelectedModelState";
+import { agentChatPendingQuestionComponentSelector } from "@/ai/states/selectors/agentChatPendingQuestionComponentSelector";
+import { Select } from "@/ui/input/components/Select";
+import { useIsMobile } from "@/ui/utilities/responsive/hooks/useIsMobile";
+import { useAtomComponentSelectorValue } from "@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue";
+import { useSetAtomState } from "@/ui/utilities/state/jotai/hooks/useSetAtomState";
+import { type SelectOption } from "twenty-ui/input";
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
@@ -38,7 +38,7 @@ const StyledInputArea = styled.div<{ isMobile: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   margin-top: auto;
   padding-block: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[3]};
+		isMobile ? "0" : themeCssVariables.spacing[3]};
   padding-inline: ${themeCssVariables.spacing[3]};
 `;
 
@@ -50,7 +50,7 @@ const StyledInputBox = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${({ isMobile }) => (isMobile ? 'auto' : '140px')};
+  min-height: ${({ isMobile }) => (isMobile ? "auto" : "140px")};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -75,8 +75,8 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
-    max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile }) => (isMobile ? 'auto' : '48px')};
+    max-height: ${({ isMobile }) => (isMobile ? "160px" : "320px")};
+    min-height: ${({ isMobile }) => (isMobile ? "auto" : "48px")};
     outline: none;
     overflow-y: auto;
     padding: 0;
@@ -106,7 +106,7 @@ const StyledButtonsContainer = styled.div`
 const StyledLeftButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
 `;
 
 const StyledRightButtonsContainer = styled.div`
@@ -116,84 +116,84 @@ const StyledRightButtonsContainer = styled.div`
 `;
 
 export const AiChatEditorSection = () => {
-  const { t } = useLingui();
-  const isMobile = useIsMobile();
-  const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
-  const { enabledModels } = useWorkspaceAiModelAvailability();
-  const hasNoEnabledModels = enabledModels.length === 0;
-  const { options, pinnedOption } = useAiModelOptions({
-    variant: 'pinned-default',
-  });
+	const { t } = useLingui();
+	const isMobile = useIsMobile();
+	const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
+	const { enabledModels } = useWorkspaceAiModelAvailability();
+	const hasNoEnabledModels = enabledModels.length === 0;
+	const { options, pinnedOption } = useAiModelOptions({
+		variant: "pinned-default",
+	});
 
-  const smartModelOptions: SelectOption<string | null>[] = options;
-  const defaultPinnedOption: SelectOption<string | null> | undefined =
-    pinnedOption
-      ? {
-          ...pinnedOption,
-          value: null,
-        }
-      : undefined;
-  const setAgentChatUserSelectedModel = useSetAtomState(
-    agentChatUserSelectedModelState,
-  );
-  const { selectedModelId } = useAgentChatModelId();
+	const smartModelOptions: SelectOption<string | null>[] = options;
+	const defaultPinnedOption: SelectOption<string | null> | undefined =
+		pinnedOption
+			? {
+					...pinnedOption,
+					value: null,
+				}
+			: undefined;
+	const setAgentChatUserSelectedModel = useSetAtomState(
+		agentChatUserSelectedModelState,
+	);
+	const { selectedModelId } = useAgentChatModelId();
 
-  const { editor, handleSendAndClear } = useAiChatEditor();
+	const { editor, handleSendAndClear } = useAiChatEditor();
 
-  const pendingQuestion = useAtomComponentSelectorValue(
-    agentChatPendingQuestionComponentSelector,
-  );
+	const pendingQuestion = useAtomComponentSelectorValue(
+		agentChatPendingQuestionComponentSelector,
+	);
 
-  return (
-    <>
-      <AiChatEditorFocusEffect editor={editor} />
-      <AiChatEmptyState editor={editor} />
-      <AiChatStandaloneError />
-      <AiChatSkeletonLoader />
+	return (
+		<>
+			<AiChatEditorFocusEffect editor={editor} />
+			<AiChatEmptyState editor={editor} />
+			<AiChatStandaloneError />
+			<AiChatSkeletonLoader />
 
-      <StyledInputArea isMobile={isMobile}>
-        <AgentChatContextPreview />
-        {hasNoEnabledModels && (
-          <AiChatBanner
-            message={t`No AI models are enabled in this workspace.`}
-            variant="warning"
-          />
-        )}
-        {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
-        {isDefined(pendingQuestion) ? (
-          <AiChatQuestionCard pendingQuestion={pendingQuestion} />
-        ) : (
-          <StyledInputBox isMobile={isMobile}>
-            <StyledEditorWrapper isMobile={isMobile}>
-              <EditorContent editor={editor} />
-            </StyledEditorWrapper>
-            <StyledButtonsContainer>
-              <StyledLeftButtonsContainer>
-                <AgentChatFileUploadButton />
-                <AiChatContextUsageButton />
-              </StyledLeftButtonsContainer>
-              <StyledRightButtonsContainer>
-                <Select
-                  dropdownId="ai-chat-smart-model-select"
-                  value={selectedModelId}
-                  onChange={setAgentChatUserSelectedModel}
-                  options={smartModelOptions}
-                  pinnedOption={defaultPinnedOption}
-                  disabled={hasNoEnabledModels}
-                  selectSizeVariant="small"
-                  showContextualTextInControl={false}
-                  withSearchInput
-                  dropdownOffset={{ x: 0, y: 8 }}
-                />
-                <SendMessageButton
-                  onSend={handleSendAndClear}
-                  isDisabled={hasNoEnabledModels}
-                />
-              </StyledRightButtonsContainer>
-            </StyledButtonsContainer>
-          </StyledInputBox>
-        )}
-      </StyledInputArea>
-    </>
-  );
+			<StyledInputArea isMobile={isMobile}>
+				<AgentChatContextPreview />
+				{hasNoEnabledModels && (
+					<AiChatBanner
+						message={t`No AI models are enabled in this workspace.`}
+						variant="warning"
+					/>
+				)}
+				{hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
+				{isDefined(pendingQuestion) ? (
+					<AiChatQuestionCard pendingQuestion={pendingQuestion} />
+				) : (
+					<StyledInputBox isMobile={isMobile}>
+						<StyledEditorWrapper isMobile={isMobile}>
+							<EditorContent editor={editor} />
+						</StyledEditorWrapper>
+						<StyledButtonsContainer>
+							<StyledLeftButtonsContainer>
+								<AgentChatFileUploadButton />
+								<AiChatContextUsageButton />
+							</StyledLeftButtonsContainer>
+							<StyledRightButtonsContainer>
+								<Select
+									dropdownId="ai-chat-smart-model-select"
+									value={selectedModelId}
+									onChange={setAgentChatUserSelectedModel}
+									options={smartModelOptions}
+									pinnedOption={defaultPinnedOption}
+									disabled={hasNoEnabledModels}
+									selectSizeVariant="small"
+									showContextualTextInControl={false}
+									withSearchInput
+									dropdownOffset={{ x: 0, y: 8 }}
+								/>
+								<SendMessageButton
+									onSend={handleSendAndClear}
+									isDisabled={hasNoEnabledModels}
+								/>
+							</StyledRightButtonsContainer>
+						</StyledButtonsContainer>
+					</StyledInputBox>
+				)}
+			</StyledInputArea>
+		</>
+	);
 };

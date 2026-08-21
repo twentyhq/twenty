@@ -1,1 +1,1 @@
-export type DragOperationType = 'single' | 'multi';
+export type DragOperationType = "single" | "multi";

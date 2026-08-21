@@ -1,19 +1,19 @@
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type ViewFilter } from '@/views/types/ViewFilter';
+import { type RecordFilter } from "@/object-record/record-filter/types/RecordFilter";
+import { type ViewFilter } from "@/views/types/ViewFilter";
 
 export const mapRecordFilterToViewFilter = (
-  recordFilter: RecordFilter,
+	recordFilter: RecordFilter,
 ): ViewFilter => {
-  return {
-    displayValue: recordFilter.displayValue,
-    fieldMetadataId: recordFilter.fieldMetadataId,
-    id: recordFilter.id,
-    operand: recordFilter.operand,
-    value: recordFilter.value,
-    positionInViewFilterGroup: recordFilter.positionInRecordFilterGroup,
-    viewFilterGroupId: recordFilter.recordFilterGroupId,
-    subFieldName: recordFilter.subFieldName,
-    relationTargetFieldMetadataId:
-      recordFilter.relationTargetFieldMetadataId ?? null,
-  };
+	return {
+		displayValue: recordFilter.displayValue,
+		fieldMetadataId: recordFilter.fieldMetadataId,
+		id: recordFilter.id,
+		operand: recordFilter.operand,
+		value: recordFilter.value,
+		positionInViewFilterGroup: recordFilter.positionInRecordFilterGroup,
+		viewFilterGroupId: recordFilter.recordFilterGroupId,
+		subFieldName: recordFilter.subFieldName,
+		relationTargetFieldMetadataId:
+			recordFilter.relationTargetFieldMetadataId ?? null,
+	};
 };

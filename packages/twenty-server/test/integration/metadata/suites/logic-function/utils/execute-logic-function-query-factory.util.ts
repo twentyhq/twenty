@@ -1,12 +1,12 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import { type ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
+import { type ExecuteOneLogicFunctionInput } from "src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input";
 
 export type ExecuteLogicFunctionFactoryInput = Omit<
-  ExecuteOneLogicFunctionInput,
-  'payload'
+	ExecuteOneLogicFunctionInput,
+	"payload"
 > & {
-  payload: Record<string, unknown>;
+	payload: Record<string, unknown>;
 };
 
 const DEFAULT_EXECUTION_RESULT_GQL_FIELDS = `
@@ -18,20 +18,20 @@ const DEFAULT_EXECUTION_RESULT_GQL_FIELDS = `
 `;
 
 export const executeLogicFunctionQueryFactory = ({
-  input,
-  gqlFields = DEFAULT_EXECUTION_RESULT_GQL_FIELDS,
+	input,
+	gqlFields = DEFAULT_EXECUTION_RESULT_GQL_FIELDS,
 }: {
-  input: ExecuteLogicFunctionFactoryInput;
-  gqlFields?: string;
+	input: ExecuteLogicFunctionFactoryInput;
+	gqlFields?: string;
 }) => ({
-  query: gql`
+	query: gql`
     mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
       executeOneLogicFunction(input: $input) {
         ${gqlFields}
       }
     }
   `,
-  variables: {
-    input,
-  },
+	variables: {
+		input,
+	},
 });

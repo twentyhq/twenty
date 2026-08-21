@@ -1,21 +1,21 @@
-import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useEffect } from 'react';
+import { hasWidgetTooManyGroupsComponentState } from "@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState";
+import { useSetAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useSetAtomComponentState";
+import { useEffect } from "react";
 
 type GraphWidgetChartHasTooManyGroupsEffectProps = {
-  hasTooManyGroups: boolean;
+	hasTooManyGroups: boolean;
 };
 
 export const GraphWidgetChartHasTooManyGroupsEffect = ({
-  hasTooManyGroups,
+	hasTooManyGroups,
 }: GraphWidgetChartHasTooManyGroupsEffectProps) => {
-  const setHasWidgetTooManyGroups = useSetAtomComponentState(
-    hasWidgetTooManyGroupsComponentState,
-  );
+	const setHasWidgetTooManyGroups = useSetAtomComponentState(
+		hasWidgetTooManyGroupsComponentState,
+	);
 
-  useEffect(() => {
-    setHasWidgetTooManyGroups(hasTooManyGroups);
-  }, [hasTooManyGroups, setHasWidgetTooManyGroups]);
+	useEffect(() => {
+		setHasWidgetTooManyGroups(hasTooManyGroups);
+	}, [hasTooManyGroups, setHasWidgetTooManyGroups]);
 
-  return null;
+	return null;
 };

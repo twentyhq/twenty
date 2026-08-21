@@ -1,115 +1,115 @@
 import {
-  Field,
-  HideField,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+	Field,
+	HideField,
+	ObjectType,
+	registerEnumType,
+} from "@nestjs/graphql";
 
 import {
-  IsDateString,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
-import graphqlTypeJson from 'graphql-type-json';
+	IsDateString,
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsObject,
+	IsOptional,
+	IsString,
+	IsUUID,
+} from "class-validator";
+import graphqlTypeJson from "graphql-type-json";
 import {
-  CronTriggerSettings,
-  DatabaseEventTriggerSettings,
-  HttpRouteTriggerSettings,
-  ToolTriggerSettings,
-  WorkflowActionTriggerSettings,
-} from 'twenty-shared/application';
+	CronTriggerSettings,
+	DatabaseEventTriggerSettings,
+	HttpRouteTriggerSettings,
+	ToolTriggerSettings,
+	WorkflowActionTriggerSettings,
+} from "twenty-shared/application";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { LogicFunctionExecutionMode } from "src/engine/metadata-modules/logic-function/logic-function.entity";
 
 registerEnumType(LogicFunctionExecutionMode, {
-  name: 'LogicFunctionExecutionMode',
+	name: "LogicFunctionExecutionMode",
 });
 
-@ObjectType('LogicFunction')
+@ObjectType("LogicFunction")
 export class LogicFunctionDTO {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  id: string;
+	@IsUUID()
+	@IsNotEmpty()
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @IsString()
-  @Field()
-  name: string;
+	@IsString()
+	@Field()
+	name: string;
 
-  @IsString()
-  @Field({ nullable: true })
-  description?: string;
+	@IsString()
+	@Field({ nullable: true })
+	description?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  runtime: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	runtime: string;
 
-  @IsNumber()
-  @Field()
-  timeoutSeconds: number;
+	@IsNumber()
+	@Field()
+	timeoutSeconds: number;
 
-  @IsEnum(LogicFunctionExecutionMode)
-  @Field(() => LogicFunctionExecutionMode)
-  executionMode: LogicFunctionExecutionMode;
+	@IsEnum(LogicFunctionExecutionMode)
+	@Field(() => LogicFunctionExecutionMode)
+	executionMode: LogicFunctionExecutionMode;
 
-  @IsString()
-  @Field()
-  sourceHandlerPath: string;
+	@IsString()
+	@Field()
+	sourceHandlerPath: string;
 
-  @IsString()
-  @Field()
-  handlerName: string;
+	@IsString()
+	@Field()
+	handlerName: string;
 
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  cronTriggerSettings?: CronTriggerSettings;
+	@IsObject()
+	@IsOptional()
+	@Field(() => graphqlTypeJson, { nullable: true })
+	cronTriggerSettings?: CronTriggerSettings;
 
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
+	@IsObject()
+	@IsOptional()
+	@Field(() => graphqlTypeJson, { nullable: true })
+	databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
 
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  httpRouteTriggerSettings?: HttpRouteTriggerSettings;
+	@IsObject()
+	@IsOptional()
+	@Field(() => graphqlTypeJson, { nullable: true })
+	httpRouteTriggerSettings?: HttpRouteTriggerSettings;
 
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  toolTriggerSettings?: ToolTriggerSettings;
+	@IsObject()
+	@IsOptional()
+	@Field(() => graphqlTypeJson, { nullable: true })
+	toolTriggerSettings?: ToolTriggerSettings;
 
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
-  workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
+	@IsObject()
+	@IsOptional()
+	@Field(() => graphqlTypeJson, { nullable: true })
+	workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId?: string;
+	@IsUUID()
+	@IsOptional()
+	@Field(() => UUIDScalarType, { nullable: true })
+	applicationId?: string;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  universalIdentifier?: string;
+	@IsUUID()
+	@IsOptional()
+	@Field(() => UUIDScalarType, { nullable: true })
+	universalIdentifier?: string;
 
-  @HideField()
-  workspaceId: string;
+	@HideField()
+	workspaceId: string;
 
-  @IsDateString()
-  @Field()
-  createdAt: Date;
+	@IsDateString()
+	@Field()
+	createdAt: Date;
 
-  @IsDateString()
-  @Field()
-  updatedAt: Date;
+	@IsDateString()
+	@Field()
+	updatedAt: Date;
 }

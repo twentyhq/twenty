@@ -1,48 +1,48 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from "@nestjs/graphql";
 
 import {
-  IsDateString,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+	IsDateString,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+	IsUUID,
+} from "class-validator";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
 
-@ObjectType('IndexField')
+@ObjectType("IndexField")
 export class IndexFieldMetadataDTO {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  id: string;
+	@IsUUID()
+	@IsNotEmpty()
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  indexMetadataId: string;
+	indexMetadataId: string;
 
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  fieldMetadataId: string;
+	@IsUUID()
+	@IsNotEmpty()
+	@Field(() => UUIDScalarType)
+	fieldMetadataId: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @Field()
-  order: number;
+	@IsNumber()
+	@IsNotEmpty()
+	@Field()
+	order: number;
 
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  subFieldName?: string;
+	@IsOptional()
+	@IsString()
+	@Field({ nullable: true })
+	subFieldName?: string;
 
-  @IsDateString()
-  @Field()
-  createdAt: Date;
+	@IsDateString()
+	@Field()
+	createdAt: Date;
 
-  @IsDateString()
-  @Field()
-  updatedAt: Date;
+	@IsDateString()
+	@Field()
+	updatedAt: Date;
 
-  @HideField()
-  workspaceId: string;
+	@HideField()
+	workspaceId: string;
 }

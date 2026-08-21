@@ -1,3 +1,3 @@
 export type ActionToolLabel = {
-  label: string;
+	label: string;
 };

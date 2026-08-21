@@ -1,121 +1,121 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 import {
-  getEnterpriseConfigError,
-  getStripeClient,
-  isBillableSeatReporter,
-  verifyEnterpriseKey,
-} from '@/platform/enterprise';
+	getEnterpriseConfigError,
+	getStripeClient,
+	isBillableSeatReporter,
+	verifyEnterpriseKey,
+} from "@/platform/enterprise";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-const NON_UPDATABLE_STATUSES = new Set(['canceled', 'incomplete_expired']);
+const NON_UPDATABLE_STATUSES = new Set(["canceled", "incomplete_expired"]);
 
 type InstanceMetadata = {
-  serverId?: string;
+	serverId?: string;
 };
 
 export async function POST(request: Request) {
-  const configError = getEnterpriseConfigError({
-    route: 'enterprise-seats',
-    feature: 'Enterprise seat management',
-    requiredEnvVars: ['STRIPE_SECRET_KEY', 'ENTERPRISE_JWT_PUBLIC_KEY'],
-  });
+	const configError = getEnterpriseConfigError({
+		route: "enterprise-seats",
+		feature: "Enterprise seat management",
+		requiredEnvVars: ["STRIPE_SECRET_KEY", "ENTERPRISE_JWT_PUBLIC_KEY"],
+	});
 
-  if (configError) {
-    return configError;
-  }
+	if (configError) {
+		return configError;
+	}
 
-  try {
-    const body = (await request.json()) as {
-      enterpriseKey?: unknown;
-      seatCount?: unknown;
-      instanceMetadata?: InstanceMetadata;
-    };
-    const { enterpriseKey, seatCount, instanceMetadata } = body;
+	try {
+		const body = (await request.json()) as {
+			enterpriseKey?: unknown;
+			seatCount?: unknown;
+			instanceMetadata?: InstanceMetadata;
+		};
+		const { enterpriseKey, seatCount, instanceMetadata } = body;
 
-    if (!enterpriseKey || typeof enterpriseKey !== 'string') {
-      return NextResponse.json(
-        { error: 'Missing enterpriseKey' },
-        { status: 400 },
-      );
-    }
+		if (!enterpriseKey || typeof enterpriseKey !== "string") {
+			return NextResponse.json(
+				{ error: "Missing enterpriseKey" },
+				{ status: 400 },
+			);
+		}
 
-    if (typeof seatCount !== 'number' || seatCount < 1) {
-      return NextResponse.json({ error: 'Invalid seatCount' }, { status: 400 });
-    }
+		if (typeof seatCount !== "number" || seatCount < 1) {
+			return NextResponse.json({ error: "Invalid seatCount" }, { status: 400 });
+		}
 
-    const payload = verifyEnterpriseKey(enterpriseKey);
+		const payload = verifyEnterpriseKey(enterpriseKey);
 
-    if (!payload) {
-      return NextResponse.json(
-        { error: 'Invalid enterprise key' },
-        { status: 403 },
-      );
-    }
+		if (!payload) {
+			return NextResponse.json(
+				{ error: "Invalid enterprise key" },
+				{ status: 403 },
+			);
+		}
 
-    const stripe = getStripeClient();
-    const subscription = await stripe.subscriptions.retrieve(payload.sub);
+		const stripe = getStripeClient();
+		const subscription = await stripe.subscriptions.retrieve(payload.sub);
 
-    const serverId = instanceMetadata?.serverId;
+		const serverId = instanceMetadata?.serverId;
 
-    if (
-      !isBillableSeatReporter({
-        stripeMetadata: subscription.metadata,
-        serverId,
-      })
-    ) {
-      return NextResponse.json({
-        success: false,
-        reason: 'This instance is not the billing instance for this key',
-        seatCount: subscription.items.data[0]?.quantity ?? 0,
-        subscriptionId: payload.sub,
-      });
-    }
+		if (
+			!isBillableSeatReporter({
+				stripeMetadata: subscription.metadata,
+				serverId,
+			})
+		) {
+			return NextResponse.json({
+				success: false,
+				reason: "This instance is not the billing instance for this key",
+				seatCount: subscription.items.data[0]?.quantity ?? 0,
+				subscriptionId: payload.sub,
+			});
+		}
 
-    if (
-      NON_UPDATABLE_STATUSES.has(subscription.status) ||
-      subscription.cancel_at_period_end
-    ) {
-      return NextResponse.json({
-        success: false,
-        reason: 'Subscription is canceled or scheduled for cancellation',
-        seatCount: subscription.items.data[0]?.quantity ?? 0,
-        subscriptionId: payload.sub,
-      });
-    }
+		if (
+			NON_UPDATABLE_STATUSES.has(subscription.status) ||
+			subscription.cancel_at_period_end
+		) {
+			return NextResponse.json({
+				success: false,
+				reason: "Subscription is canceled or scheduled for cancellation",
+				seatCount: subscription.items.data[0]?.quantity ?? 0,
+				subscriptionId: payload.sub,
+			});
+		}
 
-    if (!subscription.items.data[0]) {
-      return NextResponse.json(
-        { error: 'No subscription item found' },
-        { status: 400 },
-      );
-    }
+		if (!subscription.items.data[0]) {
+			return NextResponse.json(
+				{ error: "No subscription item found" },
+				{ status: 400 },
+			);
+		}
 
-    const subscriptionItemId = subscription.items.data[0].id;
+		const subscriptionItemId = subscription.items.data[0].id;
 
-    await stripe.subscriptions.update(payload.sub, {
-      items: [
-        {
-          id: subscriptionItemId,
-          quantity: seatCount,
-        },
-      ],
-      proration_behavior: 'create_prorations',
-    });
+		await stripe.subscriptions.update(payload.sub, {
+			items: [
+				{
+					id: subscriptionItemId,
+					quantity: seatCount,
+				},
+			],
+			proration_behavior: "create_prorations",
+		});
 
-    return NextResponse.json({
-      success: true,
-      seatCount,
-      subscriptionId: payload.sub,
-    });
-  } catch (error: unknown) {
-    console.error(error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
+		return NextResponse.json({
+			success: true,
+			seatCount,
+			subscriptionId: payload.sub,
+		});
+	} catch (error: unknown) {
+		console.error(error);
+		const message = error instanceof Error ? error.message : "Unknown error";
 
-    return NextResponse.json(
-      { error: `Seat update error: ${message}` },
-      { status: 500 },
-    );
-  }
+		return NextResponse.json(
+			{ error: `Seat update error: ${message}` },
+			{ status: 500 },
+		);
+	}
 }

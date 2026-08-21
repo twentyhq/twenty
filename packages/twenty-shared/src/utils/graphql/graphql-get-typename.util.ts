@@ -1,13 +1,13 @@
-import { pascalCase } from '../strings/pascalCase';
+import { pascalCase } from "../strings/pascalCase";
 
 export const getNodeTypename = (name: string): string => pascalCase(name);
 
 export const getConnectionTypename = (objectNameSingular: string): string =>
-  `${pascalCase(objectNameSingular)}Connection`;
+	`${pascalCase(objectNameSingular)}Connection`;
 
 export const getEdgeTypename = (objectNameSingular: string): string =>
-  `${pascalCase(objectNameSingular)}Edge`;
+	`${pascalCase(objectNameSingular)}Edge`;
 
 export const getGroupByConnectionTypename = (
-  objectNameSingular: string,
+	objectNameSingular: string,
 ): string => `${pascalCase(objectNameSingular)}GroupByConnection`;

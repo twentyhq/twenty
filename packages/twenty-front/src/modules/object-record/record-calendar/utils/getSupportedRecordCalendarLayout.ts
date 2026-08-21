@@ -1,19 +1,19 @@
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { ViewCalendarLayout } from "~/generated-metadata/graphql";
 
 type GetSupportedRecordCalendarLayoutArgs = {
-  calendarLayout: ViewCalendarLayout | null | undefined;
-  isCalendarWeekViewEnabled: boolean;
+	calendarLayout: ViewCalendarLayout | null | undefined;
+	isCalendarWeekViewEnabled: boolean;
 };
 
 export const getSupportedRecordCalendarLayout = ({
-  calendarLayout,
-  isCalendarWeekViewEnabled,
+	calendarLayout,
+	isCalendarWeekViewEnabled,
 }: GetSupportedRecordCalendarLayoutArgs) => {
-  const isTimeGridLayout =
-    calendarLayout === ViewCalendarLayout.DAY ||
-    calendarLayout === ViewCalendarLayout.WEEK;
+	const isTimeGridLayout =
+		calendarLayout === ViewCalendarLayout.DAY ||
+		calendarLayout === ViewCalendarLayout.WEEK;
 
-  return isCalendarWeekViewEnabled && isTimeGridLayout
-    ? calendarLayout
-    : ViewCalendarLayout.MONTH;
+	return isCalendarWeekViewEnabled && isTimeGridLayout
+		? calendarLayout
+		: ViewCalendarLayout.MONTH;
 };

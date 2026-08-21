@@ -1,103 +1,103 @@
-import { gql } from '@apollo/client';
-import { act, renderHook } from '@testing-library/react';
-import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
-import { MemoryRouter, useLocation } from 'react-router-dom';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
+import { gql } from "@apollo/client";
+import { act, renderHook } from "@testing-library/react";
+import fetchMock, { enableFetchMocks } from "jest-fetch-mock";
+import { MemoryRouter, useLocation } from "react-router-dom";
+import { SnackBarComponentInstanceContext } from "@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext";
+import { useApolloFactory } from "@/apollo/hooks/useApolloFactory";
 
 enableFetchMocks();
 
-jest.mock('@/apollo/utils/getTokenPair', () => ({
-  getTokenPair: jest.fn().mockReturnValue({
-    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
-    refreshToken: { token: 'testRefreshToken', expiresAt: '' },
-  }),
+jest.mock("@/apollo/utils/getTokenPair", () => ({
+	getTokenPair: jest.fn().mockReturnValue({
+		accessOrWorkspaceAgnosticToken: { token: "testAccessToken", expiresAt: "" },
+		refreshToken: { token: "testRefreshToken", expiresAt: "" },
+	}),
 }));
 
 const mockNavigate = jest.fn();
 
-jest.mock('react-router-dom', () => {
-  const initialRouter = jest.requireActual('react-router-dom');
+jest.mock("react-router-dom", () => {
+	const initialRouter = jest.requireActual("react-router-dom");
 
-  return {
-    ...initialRouter,
-    useNavigate: () => mockNavigate,
-  };
+	return {
+		...initialRouter,
+		useNavigate: () => mockNavigate,
+	};
 });
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <MemoryRouter
-    initialEntries={['/welcome', '/verify', '/opportunities']}
-    initialIndex={2}
-  >
-    <SnackBarComponentInstanceContext.Provider
-      value={{ instanceId: 'test-instance-id' }}
-    >
-      {children}
-    </SnackBarComponentInstanceContext.Provider>
-  </MemoryRouter>
+	<MemoryRouter
+		initialEntries={["/welcome", "/verify", "/opportunities"]}
+		initialIndex={2}
+	>
+		<SnackBarComponentInstanceContext.Provider
+			value={{ instanceId: "test-instance-id" }}
+		>
+			{children}
+		</SnackBarComponentInstanceContext.Provider>
+	</MemoryRouter>
 );
 
-describe('useApolloFactory', () => {
-  it('should work as expected', () => {
-    const { result } = renderHook(() => useApolloFactory(), {
-      wrapper: Wrapper,
-    });
+describe("useApolloFactory", () => {
+	it("should work as expected", () => {
+		const { result } = renderHook(() => useApolloFactory(), {
+			wrapper: Wrapper,
+		});
 
-    const res = result.current;
+		const res = result.current;
 
-    expect(res).toBeDefined();
-    expect(res).toHaveProperty('link');
-    expect(res).toHaveProperty('cache');
-    expect(res).toHaveProperty('query');
-  });
+		expect(res).toBeDefined();
+		expect(res).toHaveProperty("link");
+		expect(res).toHaveProperty("cache");
+		expect(res).toHaveProperty("query");
+	});
 
-  it('should navigate to /welcome on unauthenticated error', async () => {
-    const errors = [
-      {
-        extensions: {
-          code: 'UNAUTHENTICATED',
-        },
-      },
-    ];
-    fetchMock.mockResponse(() =>
-      Promise.resolve({
-        body: JSON.stringify({
-          data: {},
-          errors,
-        }),
-      }),
-    );
+	it("should navigate to /welcome on unauthenticated error", async () => {
+		const errors = [
+			{
+				extensions: {
+					code: "UNAUTHENTICATED",
+				},
+			},
+		];
+		fetchMock.mockResponse(() =>
+			Promise.resolve({
+				body: JSON.stringify({
+					data: {},
+					errors,
+				}),
+			}),
+		);
 
-    const { result } = renderHook(
-      () => {
-        const location = useLocation();
-        return { factory: useApolloFactory(), location };
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+		const { result } = renderHook(
+			() => {
+				const location = useLocation();
+				return { factory: useApolloFactory(), location };
+			},
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    expect(result.current.location.pathname).toBe('/opportunities');
+		expect(result.current.location.pathname).toBe("/opportunities");
 
-    try {
-      await act(async () => {
-        await result.current.factory.mutate({
-          mutation: gql`
+		try {
+			await act(async () => {
+				await result.current.factory.mutate({
+					mutation: gql`
             mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
               track(type: $type, sessionId: $sessionId, data: $data) {
                 success
               }
             }
           `,
-        });
-      });
-    } catch (error) {
-      expect(error).toBeDefined();
+				});
+			});
+		} catch (error) {
+			expect(error).toBeDefined();
 
-      expect(mockNavigate).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith('/welcome');
-    }
-  });
+			expect(mockNavigate).toHaveBeenCalled();
+			expect(mockNavigate).toHaveBeenCalledWith("/welcome");
+		}
+	});
 });

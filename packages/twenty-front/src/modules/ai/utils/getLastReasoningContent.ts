@@ -1,13 +1,13 @@
-import { type ReasoningUIPart } from 'ai';
+import { type ReasoningUIPart } from "ai";
 
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from "@/ai/utils/thinkingStepPart";
 
 export const getLastReasoningContent = (
-  parts: ThinkingStepPart[],
+	parts: ThinkingStepPart[],
 ): string | null => {
-  const reasoningParts = parts.filter(
-    (part): part is ReasoningUIPart => part.type === 'reasoning',
-  );
+	const reasoningParts = parts.filter(
+		(part): part is ReasoningUIPart => part.type === "reasoning",
+	);
 
-  return reasoningParts.at(-1)?.text ?? null;
+	return reasoningParts.at(-1)?.text ?? null;
 };

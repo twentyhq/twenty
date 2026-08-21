@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { CodeEditor } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { CodeEditor } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -22,24 +22,24 @@ const StyledHint = styled.span`
 `;
 
 export const SettingsLogicFunctionTriggerPayloadFormat = ({
-  payload,
-  hint,
+	payload,
+	hint,
 }: {
-  payload: object;
-  hint?: string;
+	payload: object;
+	hint?: string;
 }) => {
-  const { t } = useLingui();
+	const { t } = useLingui();
 
-  return (
-    <StyledContainer>
-      <StyledLabel>{t`Sample input`}</StyledLabel>
-      <CodeEditor
-        value={JSON.stringify(payload, null, 2)}
-        language="json"
-        height={140}
-        options={{ readOnly: true }}
-      />
-      {hint !== undefined && <StyledHint>{hint}</StyledHint>}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledLabel>{t`Sample input`}</StyledLabel>
+			<CodeEditor
+				value={JSON.stringify(payload, null, 2)}
+				language="json"
+				height={140}
+				options={{ readOnly: true }}
+			/>
+			{hint !== undefined && <StyledHint>{hint}</StyledHint>}
+		</StyledContainer>
+	);
 };

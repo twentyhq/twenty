@@ -1,10 +1,10 @@
 export const seedCompareObjectMetadataForNavigationPosition = (
-  a: { isSystem: boolean },
-  b: { isSystem: boolean },
+	a: { isSystem: boolean },
+	b: { isSystem: boolean },
 ): number => {
-  if (a.isSystem !== b.isSystem) {
-    return a.isSystem ? 1 : -1;
-  }
+	if (a.isSystem !== b.isSystem) {
+		return a.isSystem ? 1 : -1;
+	}
 
-  return 0;
+	return 0;
 };

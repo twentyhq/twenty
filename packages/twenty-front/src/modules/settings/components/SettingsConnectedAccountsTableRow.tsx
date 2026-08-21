@@ -1,11 +1,11 @@
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
-import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ConnectedAccount } from "@/accounts/types/ConnectedAccount";
+import { SettingsAccountsConnectedAccountsRowRightContainer } from "@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer";
+import { SettingsConnectedAccountIcon } from "@/settings/accounts/components/SettingsConnectedAccountIcon";
+import { TableCell } from "@/ui/layout/table/components/TableCell";
+import { TableRow } from "@/ui/layout/table/components/TableRow";
+import { styled } from "@linaria/react";
+import { useContext } from "react";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -24,33 +24,33 @@ const StyledTableRowContainer = styled.div`
 `;
 
 type SettingsConnectedAccountsTableRowProps = {
-  account: ConnectedAccount;
+	account: ConnectedAccount;
 };
 
 export const SettingsConnectedAccountsTableRow = ({
-  account,
+	account,
 }: SettingsConnectedAccountsTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
-  const IconComponent = SettingsConnectedAccountIcon({ account });
+	const { theme } = useContext(ThemeContext);
+	const IconComponent = SettingsConnectedAccountIcon({ account });
 
-  return (
-    <StyledTableRowContainer>
-      <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
-        <TableCell>
-          <StyledNameCell>
-            <IconComponent
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-            {account.handle}
-          </StyledNameCell>
-        </TableCell>
-        <TableCell align="right">
-          <SettingsAccountsConnectedAccountsRowRightContainer
-            account={account}
-          />
-        </TableCell>
-      </TableRow>
-    </StyledTableRowContainer>
-  );
+	return (
+		<StyledTableRowContainer>
+			<TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
+				<TableCell>
+					<StyledNameCell>
+						<IconComponent
+							size={theme.icon.size.md}
+							stroke={theme.icon.stroke.sm}
+						/>
+						{account.handle}
+					</StyledNameCell>
+				</TableCell>
+				<TableCell align="right">
+					<SettingsAccountsConnectedAccountsRowRightContainer
+						account={account}
+					/>
+				</TableCell>
+			</TableRow>
+		</StyledTableRowContainer>
+	);
 };

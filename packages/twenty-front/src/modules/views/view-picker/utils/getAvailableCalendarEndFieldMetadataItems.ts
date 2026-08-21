@@ -1,27 +1,27 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from "@/object-metadata/types/FieldMetadataItem";
 
-type CalendarFieldMetadataItem = Pick<FieldMetadataItem, 'id' | 'type'>;
+type CalendarFieldMetadataItem = Pick<FieldMetadataItem, "id" | "type">;
 
 export const getAvailableCalendarEndFieldMetadataItems = <
-  T extends CalendarFieldMetadataItem,
+	T extends CalendarFieldMetadataItem,
 >({
-  availableFieldsForCalendar,
-  calendarFieldMetadataId,
+	availableFieldsForCalendar,
+	calendarFieldMetadataId,
 }: {
-  availableFieldsForCalendar: T[];
-  calendarFieldMetadataId: string | null | undefined;
+	availableFieldsForCalendar: T[];
+	calendarFieldMetadataId: string | null | undefined;
 }): T[] => {
-  const calendarFieldMetadataItem = availableFieldsForCalendar.find(
-    (fieldMetadataItem) => fieldMetadataItem.id === calendarFieldMetadataId,
-  );
+	const calendarFieldMetadataItem = availableFieldsForCalendar.find(
+		(fieldMetadataItem) => fieldMetadataItem.id === calendarFieldMetadataId,
+	);
 
-  if (calendarFieldMetadataItem === undefined) {
-    return [];
-  }
+	if (calendarFieldMetadataItem === undefined) {
+		return [];
+	}
 
-  return availableFieldsForCalendar.filter(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.id !== calendarFieldMetadataItem.id &&
-      fieldMetadataItem.type === calendarFieldMetadataItem.type,
-  );
+	return availableFieldsForCalendar.filter(
+		(fieldMetadataItem) =>
+			fieldMetadataItem.id !== calendarFieldMetadataItem.id &&
+			fieldMetadataItem.type === calendarFieldMetadataItem.type,
+	);
 };

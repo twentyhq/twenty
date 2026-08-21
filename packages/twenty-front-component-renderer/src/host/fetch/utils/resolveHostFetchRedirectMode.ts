@@ -1,11 +1,11 @@
 export const resolveHostFetchRedirectMode = (
-  requestMethod: string,
-  requestUrl: string,
-  fileStorageRedirectableUrls: Set<string>,
+	requestMethod: string,
+	requestUrl: string,
+	fileStorageRedirectableUrls: Set<string>,
 ): RequestRedirect => {
-  const isReadOnlyMethod = requestMethod === 'GET' || requestMethod === 'HEAD';
+	const isReadOnlyMethod = requestMethod === "GET" || requestMethod === "HEAD";
 
-  return isReadOnlyMethod && fileStorageRedirectableUrls.has(requestUrl)
-    ? 'follow'
-    : 'error';
+	return isReadOnlyMethod && fileStorageRedirectableUrls.has(requestUrl)
+		? "follow"
+		: "error";
 };

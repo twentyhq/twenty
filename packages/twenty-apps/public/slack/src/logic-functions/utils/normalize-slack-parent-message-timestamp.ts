@@ -1,15 +1,15 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
 export const normalizeSlackParentMessageTimestamp = (
-  parentMessageTimestamp: string | undefined,
+	parentMessageTimestamp: string | undefined,
 ): string | undefined => {
-  if (!isNonEmptyString(parentMessageTimestamp)) {
-    return undefined;
-  }
+	if (!isNonEmptyString(parentMessageTimestamp)) {
+		return undefined;
+	}
 
-  const trimmedParentMessageTimestamp = parentMessageTimestamp.trim();
+	const trimmedParentMessageTimestamp = parentMessageTimestamp.trim();
 
-  return isNonEmptyString(trimmedParentMessageTimestamp)
-    ? trimmedParentMessageTimestamp
-    : undefined;
+	return isNonEmptyString(trimmedParentMessageTimestamp)
+		? trimmedParentMessageTimestamp
+		: undefined;
 };

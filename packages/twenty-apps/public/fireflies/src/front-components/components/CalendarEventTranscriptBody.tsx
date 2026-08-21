@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { useMemo } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { isUndefined } from "@sniptt/guards";
+import { useMemo } from "react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { TranscriptEntryList } from 'src/front-components/components/TranscriptEntryList';
-import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
-import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
+import { TranscriptEntryList } from "src/front-components/components/TranscriptEntryList";
+import { TranscriptErrorBox } from "src/front-components/components/TranscriptErrorBox";
+import { parseTranscriptEntries } from "src/front-components/utils/parse-transcript-entries.util";
 
 const StyledCenteredState = styled.div`
   align-items: center;
@@ -21,54 +21,54 @@ const StyledCenteredState = styled.div`
 `;
 
 type CalendarEventTranscriptBodyProps = {
-  transcript: unknown;
-  isCalendarEventTranscriptQueryLoading: boolean;
-  errorMessage: string | undefined;
+	transcript: unknown;
+	isCalendarEventTranscriptQueryLoading: boolean;
+	errorMessage: string | undefined;
 };
 
 export const CalendarEventTranscriptBody = ({
-  transcript,
-  isCalendarEventTranscriptQueryLoading,
-  errorMessage,
+	transcript,
+	isCalendarEventTranscriptQueryLoading,
+	errorMessage,
 }: CalendarEventTranscriptBodyProps) => {
-  const entries = useMemo(
-    () => parseTranscriptEntries(transcript),
-    [transcript],
-  );
+	const entries = useMemo(
+		() => parseTranscriptEntries(transcript),
+		[transcript],
+	);
 
-  if (!isUndefined(errorMessage)) {
-    return (
-      <TranscriptErrorBox
-        title="Failed to load the transcript"
-        description={errorMessage}
-      />
-    );
-  }
+	if (!isUndefined(errorMessage)) {
+		return (
+			<TranscriptErrorBox
+				title="Failed to load the transcript"
+				description={errorMessage}
+			/>
+		);
+	}
 
-  if (isCalendarEventTranscriptQueryLoading) {
-    return <StyledCenteredState>Loading transcript…</StyledCenteredState>;
-  }
+	if (isCalendarEventTranscriptQueryLoading) {
+		return <StyledCenteredState>Loading transcript…</StyledCenteredState>;
+	}
 
-  if (isUndefined(transcript)) {
-    return (
-      <StyledCenteredState>
-        No transcript for this calendar event yet.
-      </StyledCenteredState>
-    );
-  }
+	if (isUndefined(transcript)) {
+		return (
+			<StyledCenteredState>
+				No transcript for this calendar event yet.
+			</StyledCenteredState>
+		);
+	}
 
-  if (isUndefined(entries)) {
-    return (
-      <TranscriptErrorBox
-        title="Unrecognized transcript format"
-        description="The stored transcript does not match the expected diarized format."
-      />
-    );
-  }
+	if (isUndefined(entries)) {
+		return (
+			<TranscriptErrorBox
+				title="Unrecognized transcript format"
+				description="The stored transcript does not match the expected diarized format."
+			/>
+		);
+	}
 
-  if (entries.length === 0) {
-    return <StyledCenteredState>The transcript is empty.</StyledCenteredState>;
-  }
+	if (entries.length === 0) {
+		return <StyledCenteredState>The transcript is empty.</StyledCenteredState>;
+	}
 
-  return <TranscriptEntryList entries={entries} />;
+	return <TranscriptEntryList entries={entries} />;
 };

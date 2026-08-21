@@ -1,1 +1,1 @@
-export type SpreadsheetImportErrorLevel = 'info' | 'warning' | 'error';
+export type SpreadsheetImportErrorLevel = "info" | "warning" | "error";

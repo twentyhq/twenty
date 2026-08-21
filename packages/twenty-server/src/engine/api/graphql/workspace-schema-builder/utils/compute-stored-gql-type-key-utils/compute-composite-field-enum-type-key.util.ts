@@ -1,10 +1,10 @@
-import { pascalCase } from 'twenty-shared/utils';
+import { pascalCase } from "twenty-shared/utils";
 
 export const computeCompositeFieldEnumTypeKey = (
-  fieldMetadataType: string,
-  compositePropertyName: string,
+	fieldMetadataType: string,
+	compositePropertyName: string,
 ): string => {
-  return `${pascalCase(fieldMetadataType)}${pascalCase(
-    compositePropertyName,
-  )}Enum`;
+	return `${pascalCase(fieldMetadataType)}${pascalCase(
+		compositePropertyName,
+	)}Enum`;
 };

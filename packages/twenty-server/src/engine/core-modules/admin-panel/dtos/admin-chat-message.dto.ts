@@ -1,26 +1,26 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { AdminChatMessagePartDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-message-part.dto';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { AdminChatMessagePartDTO } from "src/engine/core-modules/admin-panel/dtos/admin-chat-message-part.dto";
+import { AgentMessageRole } from "src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity";
 
 // Ensure the enum is registered with GraphQL
-import 'src/engine/core-modules/admin-panel/enums/agent-message-role.enum';
+import "src/engine/core-modules/admin-panel/enums/agent-message-role.enum";
 
-@ObjectType('AdminChatMessage')
+@ObjectType("AdminChatMessage")
 export class AdminChatMessageDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => AgentMessageRole)
-  role: AgentMessageRole;
+	@Field(() => AgentMessageRole)
+	role: AgentMessageRole;
 
-  @Field(() => Boolean)
-  isHidden: boolean;
+	@Field(() => Boolean)
+	isHidden: boolean;
 
-  @Field(() => [AdminChatMessagePartDTO])
-  parts: AdminChatMessagePartDTO[];
+	@Field(() => [AdminChatMessagePartDTO])
+	parts: AdminChatMessagePartDTO[];
 
-  @Field(() => Date)
-  createdAt: Date;
+	@Field(() => Date)
+	createdAt: Date;
 }

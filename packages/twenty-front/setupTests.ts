@@ -1,13 +1,13 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 import {
-  ReadableStream as NodeReadableStream,
-  TransformStream as NodeTransformStream,
-  WritableStream as NodeWritableStream,
-} from 'node:stream/web';
+	ReadableStream as NodeReadableStream,
+	TransformStream as NodeTransformStream,
+	WritableStream as NodeWritableStream,
+} from "node:stream/web";
 
-import { i18n } from '@lingui/core';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { messages as enMessages } from '~/locales/generated/en';
+import { i18n } from "@lingui/core";
+import { SOURCE_LOCALE } from "twenty-shared/translations";
+import { messages as enMessages } from "~/locales/generated/en";
 
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
@@ -15,50 +15,50 @@ i18n.activate(SOURCE_LOCALE);
 const globalWithWebStreams = globalThis as Record<string, unknown>;
 
 if (globalWithWebStreams.TransformStream === undefined) {
-  globalWithWebStreams.TransformStream = NodeTransformStream;
+	globalWithWebStreams.TransformStream = NodeTransformStream;
 }
 
 if (globalWithWebStreams.ReadableStream === undefined) {
-  globalWithWebStreams.ReadableStream = NodeReadableStream;
+	globalWithWebStreams.ReadableStream = NodeReadableStream;
 }
 
 if (globalWithWebStreams.WritableStream === undefined) {
-  globalWithWebStreams.WritableStream = NodeWritableStream;
+	globalWithWebStreams.WritableStream = NodeWritableStream;
 }
 
-if (typeof window !== 'undefined') {
-  Object.defineProperty(window, 'scrollTo', {
-    value: () => {},
-    writable: true,
-  });
+if (typeof window !== "undefined") {
+	Object.defineProperty(window, "scrollTo", {
+		value: () => {},
+		writable: true,
+	});
 }
 
 // jsdom does not implement ResizeObserver; @dnd-kit/dom expects it at import
 // time.
 class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+	observe() {}
+	unobserve() {}
+	disconnect() {}
 }
 
 if (globalThis.ResizeObserver === undefined) {
-  globalThis.ResizeObserver =
-    ResizeObserverMock as unknown as typeof ResizeObserver;
+	globalThis.ResizeObserver =
+		ResizeObserverMock as unknown as typeof ResizeObserver;
 }
 
 declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toThrowError(error?: string | RegExp | Error): R;
-      toMatchSnapshot(propertyMatchers?: any): R;
-    }
-  }
+	namespace jest {
+		interface Matchers<R> {
+			toThrowError(error?: string | RegExp | Error): R;
+			toMatchSnapshot(propertyMatchers?: any): R;
+		}
+	}
 
-  namespace Vi {
-    interface Assertion {
-      toMatchSnapshot(propertyMatchers?: any): void;
-    }
-  }
+	namespace Vi {
+		interface Assertion {
+			toMatchSnapshot(propertyMatchers?: any): void;
+		}
+	}
 }
 
 /**
@@ -69,5 +69,5 @@ declare global {
  * Map, Set, etc.
  */
 global.structuredClone = (val) => {
-  return JSON.parse(JSON.stringify(val));
+	return JSON.parse(JSON.stringify(val));
 };

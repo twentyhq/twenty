@@ -1,1 +1,1 @@
-export const SOURCE_LOCALE = 'en';
+export const SOURCE_LOCALE = "en";

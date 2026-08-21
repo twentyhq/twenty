@@ -1,6 +1,6 @@
-import { FieldMetadataType } from '@/types';
+import { FieldMetadataType } from "@/types";
 
 export const IMAGE_IDENTIFIER_FIELD_METADATA_TYPES = [
-  FieldMetadataType.FILES,
-  FieldMetadataType.LINKS,
+	FieldMetadataType.FILES,
+	FieldMetadataType.LINKS,
 ];

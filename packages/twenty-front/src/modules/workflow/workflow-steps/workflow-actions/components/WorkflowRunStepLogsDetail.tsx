@@ -1,22 +1,22 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { workflowRunStepLogSchema } from 'twenty-shared/workflow';
-import { IconInfoCircle } from 'twenty-ui/icon';
-import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type JsonValue } from 'type-fest';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { isDefined } from "twenty-shared/utils";
+import { workflowRunStepLogSchema } from "twenty-shared/workflow";
+import { IconInfoCircle } from "twenty-ui/icon";
+import { isTwoFirstDepths, JsonTree } from "twenty-ui/json-visualizer";
+import { themeCssVariables } from "twenty-ui/theme-constants";
+import { type JsonValue } from "type-fest";
 
-import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
-import { useWorkflowRunStepLog } from '@/workflow/hooks/useWorkflowRunStepLog';
-import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail';
-import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail';
-import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail';
-import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries';
-import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail';
-import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useFlowOrThrow } from "@/workflow/hooks/useFlowOrThrow";
+import { useWorkflowRunIdOrThrow } from "@/workflow/hooks/useWorkflowRunIdOrThrow";
+import { useWorkflowRunStepLog } from "@/workflow/hooks/useWorkflowRunStepLog";
+import { WorkflowRunStepLogsAiAgentDetail } from "@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail";
+import { WorkflowRunStepLogsCodeDetail } from "@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail";
+import { WorkflowRunStepLogsEmailDetail } from "@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail";
+import { WorkflowRunStepLogsEntries } from "@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries";
+import { WorkflowRunStepLogsHttpRequestDetail } from "@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail";
+import { getIsDescendantOfIterator } from "@/workflow/workflow-steps/utils/getIsDescendantOfIterator";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 
 const StyledRoot = styled.div`
   display: flex;
@@ -47,92 +47,92 @@ const StyledTruncatedNotice = styled.div`
 `;
 
 export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
-  const { t } = useLingui();
-  const { copyToClipboard } = useCopyToClipboard();
+	const { t } = useLingui();
+	const { copyToClipboard } = useCopyToClipboard();
 
-  const workflowRunId = useWorkflowRunIdOrThrow();
-  const flow = useFlowOrThrow();
+	const workflowRunId = useWorkflowRunIdOrThrow();
+	const flow = useFlowOrThrow();
 
-  const rawStepLog = useWorkflowRunStepLog({ workflowRunId, stepId });
+	const rawStepLog = useWorkflowRunStepLog({ workflowRunId, stepId });
 
-  if (!isDefined(rawStepLog)) {
-    return (
-      <StyledRoot>
-        <StyledEmptyState>
-          <IconInfoCircle size={20} />
-          <div>{t`No logs were recorded for this step.`}</div>
-        </StyledEmptyState>
-      </StyledRoot>
-    );
-  }
+	if (!isDefined(rawStepLog)) {
+		return (
+			<StyledRoot>
+				<StyledEmptyState>
+					<IconInfoCircle size={20} />
+					<div>{t`No logs were recorded for this step.`}</div>
+				</StyledEmptyState>
+			</StyledRoot>
+		);
+	}
 
-  const parseResult = workflowRunStepLogSchema.safeParse(rawStepLog);
+	const parseResult = workflowRunStepLogSchema.safeParse(rawStepLog);
 
-  if (!parseResult.success) {
-    return (
-      <StyledRoot>
-        <JsonTree
-          value={rawStepLog as JsonValue}
-          shouldExpandNodeInitially={isTwoFirstDepths}
-          emptyArrayLabel={t`Empty Array`}
-          emptyObjectLabel={t`Empty Object`}
-          emptyStringLabel={t`[empty string]`}
-          arrowButtonCollapsedLabel={t`Expand`}
-          arrowButtonExpandedLabel={t`Collapse`}
-          onNodeValueClick={copyToClipboard}
-        />
-      </StyledRoot>
-    );
-  }
+	if (!parseResult.success) {
+		return (
+			<StyledRoot>
+				<JsonTree
+					value={rawStepLog as JsonValue}
+					shouldExpandNodeInitially={isTwoFirstDepths}
+					emptyArrayLabel={t`Empty Array`}
+					emptyObjectLabel={t`Empty Object`}
+					emptyStringLabel={t`[empty string]`}
+					arrowButtonCollapsedLabel={t`Expand`}
+					arrowButtonExpandedLabel={t`Collapse`}
+					onNodeValueClick={copyToClipboard}
+				/>
+			</StyledRoot>
+		);
+	}
 
-  const stepLog = parseResult.data;
+	const stepLog = parseResult.data;
 
-  const isInsideIteratorLoop = isDefined(flow.steps)
-    ? getIsDescendantOfIterator({ stepId, steps: flow.steps })
-    : false;
+	const isInsideIteratorLoop = isDefined(flow.steps)
+		? getIsDescendantOfIterator({ stepId, steps: flow.steps })
+		: false;
 
-  const renderDetails = () => {
-    switch (stepLog.details.type) {
-      case 'AI_AGENT':
-        return <WorkflowRunStepLogsAiAgentDetail details={stepLog.details} />;
-      case 'CODE':
-        return <WorkflowRunStepLogsCodeDetail details={stepLog.details} />;
-      case 'HTTP_REQUEST':
-        return (
-          <WorkflowRunStepLogsHttpRequestDetail details={stepLog.details} />
-        );
-      case 'EMAIL':
-        return <WorkflowRunStepLogsEmailDetail details={stepLog.details} />;
-      default:
-        return (
-          <JsonTree
-            value={stepLog.details as JsonValue}
-            shouldExpandNodeInitially={isTwoFirstDepths}
-            emptyArrayLabel={t`Empty Array`}
-            emptyObjectLabel={t`Empty Object`}
-            emptyStringLabel={t`[empty string]`}
-            arrowButtonCollapsedLabel={t`Expand`}
-            arrowButtonExpandedLabel={t`Collapse`}
-            onNodeValueClick={copyToClipboard}
-          />
-        );
-    }
-  };
+	const renderDetails = () => {
+		switch (stepLog.details.type) {
+			case "AI_AGENT":
+				return <WorkflowRunStepLogsAiAgentDetail details={stepLog.details} />;
+			case "CODE":
+				return <WorkflowRunStepLogsCodeDetail details={stepLog.details} />;
+			case "HTTP_REQUEST":
+				return (
+					<WorkflowRunStepLogsHttpRequestDetail details={stepLog.details} />
+				);
+			case "EMAIL":
+				return <WorkflowRunStepLogsEmailDetail details={stepLog.details} />;
+			default:
+				return (
+					<JsonTree
+						value={stepLog.details as JsonValue}
+						shouldExpandNodeInitially={isTwoFirstDepths}
+						emptyArrayLabel={t`Empty Array`}
+						emptyObjectLabel={t`Empty Object`}
+						emptyStringLabel={t`[empty string]`}
+						arrowButtonCollapsedLabel={t`Expand`}
+						arrowButtonExpandedLabel={t`Collapse`}
+						onNodeValueClick={copyToClipboard}
+					/>
+				);
+		}
+	};
 
-  return (
-    <StyledRoot>
-      {renderDetails()}
+	return (
+		<StyledRoot>
+			{renderDetails()}
 
-      <WorkflowRunStepLogsEntries
-        entries={stepLog.entries}
-        onlyLatestIteration={isInsideIteratorLoop}
-      />
+			<WorkflowRunStepLogsEntries
+				entries={stepLog.entries}
+				onlyLatestIteration={isInsideIteratorLoop}
+			/>
 
-      {isDefined(stepLog.truncated) && (
-        <StyledTruncatedNotice>
-          {t`Some log data was dropped to fit the size limit (${stepLog.truncated.droppedEntries} entries, ${stepLog.truncated.droppedBytes} bytes).`}
-        </StyledTruncatedNotice>
-      )}
-    </StyledRoot>
-  );
+			{isDefined(stepLog.truncated) && (
+				<StyledTruncatedNotice>
+					{t`Some log data was dropped to fit the size limit (${stepLog.truncated.droppedEntries} entries, ${stepLog.truncated.droppedBytes} bytes).`}
+				</StyledTruncatedNotice>
+			)}
+		</StyledRoot>
+	);
 };

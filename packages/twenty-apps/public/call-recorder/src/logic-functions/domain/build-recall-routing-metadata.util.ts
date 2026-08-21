@@ -1,12 +1,12 @@
-import { type RecallRoutingMetadata } from 'src/logic-functions/types/recall-routing-metadata.type';
+import { type RecallRoutingMetadata } from "src/logic-functions/types/recall-routing-metadata.type";
 
 export const buildRecallRoutingMetadata = ({
-  callRecordingId,
-  workspaceId,
+	callRecordingId,
+	workspaceId,
 }: {
-  callRecordingId: string;
-  workspaceId: string;
+	callRecordingId: string;
+	workspaceId: string;
 }): RecallRoutingMetadata => ({
-  twentyWorkspaceId: workspaceId,
-  twentyCallRecordingId: callRecordingId,
+	twentyWorkspaceId: workspaceId,
+	twentyCallRecordingId: callRecordingId,
 });

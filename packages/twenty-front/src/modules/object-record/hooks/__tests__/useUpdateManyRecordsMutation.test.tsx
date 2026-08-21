@@ -1,8 +1,8 @@
-import { renderHook } from '@testing-library/react';
-import { print } from 'graphql';
+import { renderHook } from "@testing-library/react";
+import { print } from "graphql";
 
-import { useUpdateManyRecordsMutation } from '@/object-record/hooks/useUpdateManyRecordsMutation';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { useUpdateManyRecordsMutation } from "@/object-record/hooks/useUpdateManyRecordsMutation";
+import { getJestMetadataAndApolloMocksWrapper } from "~/testing/jest/getJestMetadataAndApolloMocksWrapper";
 
 const expectedQueryTemplate = `
   mutation UpdateManyPeople($filter: PersonFilterInput!, $data: PersonUpdateInput!) {
@@ -10,35 +10,35 @@ const expectedQueryTemplate = `
       id
     }
   }
-`.replace(/\s/g, '');
+`.replace(/\s/g, "");
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
+	apolloMocks: [],
 });
 
-describe('useUpdateManyRecordsMutation', () => {
-  it('should return a valid updateManyRecordsMutation', () => {
-    const objectNameSingular = 'person';
+describe("useUpdateManyRecordsMutation", () => {
+	it("should return a valid updateManyRecordsMutation", () => {
+		const objectNameSingular = "person";
 
-    const { result } = renderHook(
-      () =>
-        useUpdateManyRecordsMutation({
-          objectNameSingular,
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+		const { result } = renderHook(
+			() =>
+				useUpdateManyRecordsMutation({
+					objectNameSingular,
+				}),
+			{
+				wrapper: Wrapper,
+			},
+		);
 
-    const { updateManyRecordsMutation } = result.current;
+		const { updateManyRecordsMutation } = result.current;
 
-    expect(updateManyRecordsMutation).toBeDefined();
+		expect(updateManyRecordsMutation).toBeDefined();
 
-    const printedReceivedQuery = print(updateManyRecordsMutation).replace(
-      /\s/g,
-      '',
-    );
+		const printedReceivedQuery = print(updateManyRecordsMutation).replace(
+			/\s/g,
+			"",
+		);
 
-    expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
-  });
+		expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+	});
 });

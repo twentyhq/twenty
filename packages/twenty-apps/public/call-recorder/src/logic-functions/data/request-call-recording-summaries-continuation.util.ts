@@ -1,12 +1,12 @@
-import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
-import { postToOwnRoute } from 'src/logic-functions/data/post-to-own-route.util';
+import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from "src/constants/generate-call-recording-summaries-route-path";
+import { postToOwnRoute } from "src/logic-functions/data/post-to-own-route.util";
 
 export const requestCallRecordingSummariesContinuation = async ({
-  callRecordingIds,
+	callRecordingIds,
 }: {
-  callRecordingIds: string[];
+	callRecordingIds: string[];
 }): Promise<boolean> =>
-  postToOwnRoute({
-    path: GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
-    body: { callRecordingIds },
-  });
+	postToOwnRoute({
+		path: GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+		body: { callRecordingIds },
+	});

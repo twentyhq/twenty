@@ -1,22 +1,22 @@
-import gql from 'graphql-tag';
-import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import gql from "graphql-tag";
+import { type PerformMetadataQueryParams } from "test/integration/metadata/types/perform-metadata-query.type";
 
-import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { type UpdateLogicFunctionFromSourceInput } from "src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input";
 
 export type UpdateLogicFunctionFromSourceFactoryInput =
-  UpdateLogicFunctionFromSourceInput;
+	UpdateLogicFunctionFromSourceInput;
 
 export const updateLogicFunctionFromSourceQueryFactory = ({
-  input,
+	input,
 }: PerformMetadataQueryParams<UpdateLogicFunctionFromSourceFactoryInput>) => ({
-  query: gql`
+	query: gql`
     mutation UpdateOneLogicFunction(
       $input: UpdateLogicFunctionFromSourceInput!
     ) {
       updateOneLogicFunction(input: $input)
     }
   `,
-  variables: {
-    input,
-  },
+	variables: {
+		input,
+	},
 });

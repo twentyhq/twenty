@@ -1,16 +1,16 @@
-import { styled } from '@linaria/react';
-import { IconArrowsVertical } from '@tabler/icons-react';
+import { styled } from "@linaria/react";
+import { IconArrowsVertical } from "@tabler/icons-react";
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { APP_PREVIEW_STAGE } from "@/tokens/app-preview/app-preview-stage";
+import { APP_PREVIEW_TONES } from "@/tokens/app-preview/app-preview-tones";
 
 import {
-  DIFF_FILES,
-  type DiffChunk,
-  type DiffFile,
-  type DiffToken,
-  type DiffTokenKind,
-} from './diff-data';
+	DIFF_FILES,
+	type DiffChunk,
+	type DiffFile,
+	type DiffToken,
+	type DiffTokenKind,
+} from "./diff-data";
 
 const diff = APP_PREVIEW_TONES.terminal.diff;
 
@@ -83,26 +83,26 @@ const DiffStack = styled.div`
   width: 100%;
 `;
 
-const LineRow = styled.div<{ $change?: 'added' | 'removed' }>`
+const LineRow = styled.div<{ $change?: "added" | "removed" }>`
   align-items: center;
   background: ${({ $change }) => {
-    if ($change === 'added') {
-      return diff.rowAdded;
-    }
-    if ($change === 'removed') {
-      return diff.rowRemoved;
-    }
-    return 'transparent';
-  }};
+		if ($change === "added") {
+			return diff.rowAdded;
+		}
+		if ($change === "removed") {
+			return diff.rowRemoved;
+		}
+		return "transparent";
+	}};
   border-radius: 2px;
   display: flex;
   overflow: hidden;
   position: relative;
 `;
 
-const ChangeBar = styled.span<{ $change: 'added' | 'removed' }>`
+const ChangeBar = styled.span<{ $change: "added" | "removed" }>`
   background: ${({ $change }) =>
-    $change === 'added' ? diff.barAdded : diff.barRemoved};
+		$change === "added" ? diff.barAdded : diff.barRemoved};
   flex: 0 0 3px;
   width: 3px;
   align-self: stretch;
@@ -115,7 +115,7 @@ const LineContent = styled.div<{ $indented?: boolean }>`
   gap: 12px;
   min-width: 0;
   overflow: hidden;
-  padding: 6px 12px 6px ${({ $indented }) => ($indented ? '9px' : '12px')};
+  padding: 6px 12px 6px ${({ $indented }) => ($indented ? "9px" : "12px")};
   white-space: nowrap;
 `;
 
@@ -159,57 +159,57 @@ const UnmodChip = styled.div`
 `;
 
 const TOKEN_COLOR: Record<DiffTokenKind, string> = {
-  text: diff.lineText,
-  keyword: diff.syntaxKeyword,
-  type: diff.syntaxType,
-  string: diff.syntaxString,
-  identifier: diff.syntaxIdentifier,
+	text: diff.lineText,
+	keyword: diff.syntaxKeyword,
+	type: diff.syntaxType,
+	string: diff.syntaxString,
+	identifier: diff.syntaxIdentifier,
 };
 
 const renderToken = (token: DiffToken, index: number) => {
-  if (token.kind === 'text') {
-    return <span key={index}>{token.value}</span>;
-  }
-  return (
-    <span key={index} style={{ color: TOKEN_COLOR[token.kind] }}>
-      {token.value}
-    </span>
-  );
+	if (token.kind === "text") {
+		return <span key={index}>{token.value}</span>;
+	}
+	return (
+		<span key={index} style={{ color: TOKEN_COLOR[token.kind] }}>
+			{token.value}
+		</span>
+	);
 };
 
 const renderChunk = (chunk: DiffChunk, index: number) => {
-  if (chunk.kind === 'unmodified') {
-    return (
-      <UnmodRow key={`unmod-${index}`}>
-        <UnmodChip>
-          <IconArrowsVertical size={12} stroke={1.8} />
-          {chunk.count} unmodified lines
-        </UnmodChip>
-      </UnmodRow>
-    );
-  }
-  return (
-    <LineRow key={`line-${index}`} $change={chunk.change}>
-      {chunk.change ? <ChangeBar $change={chunk.change} /> : null}
-      <LineContent $indented={Boolean(chunk.change)}>
-        <LineNumber>{chunk.lineNumber}</LineNumber>
-        <LineText>{chunk.tokens.map(renderToken)}</LineText>
-      </LineContent>
-    </LineRow>
-  );
+	if (chunk.kind === "unmodified") {
+		return (
+			<UnmodRow key={`unmod-${index}`}>
+				<UnmodChip>
+					<IconArrowsVertical size={12} stroke={1.8} />
+					{chunk.count} unmodified lines
+				</UnmodChip>
+			</UnmodRow>
+		);
+	}
+	return (
+		<LineRow key={`line-${index}`} $change={chunk.change}>
+			{chunk.change ? <ChangeBar $change={chunk.change} /> : null}
+			<LineContent $indented={Boolean(chunk.change)}>
+				<LineNumber>{chunk.lineNumber}</LineNumber>
+				<LineText>{chunk.tokens.map(renderToken)}</LineText>
+			</LineContent>
+		</LineRow>
+	);
 };
 
 const renderFile = (file: DiffFile) => (
-  <div key={file.id}>
-    <FileHeader>
-      <FilePath>{file.path}</FilePath>
-      <DiffAdded>+{file.added}</DiffAdded>
-      <DiffRemoved>-{file.removed}</DiffRemoved>
-    </FileHeader>
-    <DiffStack>{file.chunks.map(renderChunk)}</DiffStack>
-  </div>
+	<div key={file.id}>
+		<FileHeader>
+			<FilePath>{file.path}</FilePath>
+			<DiffAdded>+{file.added}</DiffAdded>
+			<DiffRemoved>-{file.removed}</DiffRemoved>
+		</FileHeader>
+		<DiffStack>{file.chunks.map(renderChunk)}</DiffStack>
+	</div>
 );
 
 export function TerminalDiff() {
-  return <Root>{DIFF_FILES.map(renderFile)}</Root>;
+	return <Root>{DIFF_FILES.map(renderFile)}</Root>;
 }

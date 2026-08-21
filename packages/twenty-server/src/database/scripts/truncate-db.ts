@@ -1,43 +1,43 @@
-import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { rawDataSource } from "src/database/typeorm/raw/raw.datasource";
 
-import { performQuery } from './setup-db-utils';
+import { performQuery } from "./setup-db-utils";
 
 async function dropSchemasSequentially() {
-  try {
-    await rawDataSource.initialize();
+	try {
+		await rawDataSource.initialize();
 
-    const schemas =
-      (await performQuery<{ schema_name: string }[]>(
-        `
+		const schemas =
+			(await performQuery<{ schema_name: string }[]>(
+				`
       SELECT n.nspname AS "schema_name"
       FROM pg_catalog.pg_namespace n
       WHERE n.nspname !~ '^pg_'
         AND n.nspname <> 'information_schema'
         AND n.nspname NOT IN ('metric_helpers', 'user_management', 'public')
     `,
-        'Fetching schemas...',
-      )) ?? [];
+				"Fetching schemas...",
+			)) ?? [];
 
-    const batchSize = 10;
+		const batchSize = 10;
 
-    for (let i = 0; i < schemas.length; i += batchSize) {
-      const batch = schemas.slice(i, i + batchSize);
+		for (let i = 0; i < schemas.length; i += batchSize) {
+			const batch = schemas.slice(i, i + batchSize);
 
-      await Promise.all(
-        batch.map((schema) =>
-          performQuery(
-            `DROP SCHEMA IF EXISTS "${schema.schema_name}" CASCADE;`,
-            `Dropping schema ${schema.schema_name}...`,
-          ),
-        ),
-      );
-    }
-    // oxlint-disable-next-line no-console
-    console.log('All schemas dropped successfully.');
-  } catch (err) {
-    // oxlint-disable-next-line no-console
-    console.error('Error during schema dropping:', err);
-  }
+			await Promise.all(
+				batch.map((schema) =>
+					performQuery(
+						`DROP SCHEMA IF EXISTS "${schema.schema_name}" CASCADE;`,
+						`Dropping schema ${schema.schema_name}...`,
+					),
+				),
+			);
+		}
+		// oxlint-disable-next-line no-console
+		console.log("All schemas dropped successfully.");
+	} catch (err) {
+		// oxlint-disable-next-line no-console
+		console.error("Error during schema dropping:", err);
+	}
 }
 
 void dropSchemasSequentially();

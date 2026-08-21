@@ -1,21 +1,21 @@
-import gql from 'graphql-tag';
-import { isDefined } from 'twenty-shared/utils';
+import gql from "graphql-tag";
+import { isDefined } from "twenty-shared/utils";
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
 export type ApplicationVariableSummary = {
-  key: string;
-  value: string;
-  isSecret: boolean;
+	key: string;
+	value: string;
+	isSecret: boolean;
 };
 
 export const findOneApplicationIdByUniversalIdentifier = async ({
-  universalIdentifier,
+	universalIdentifier,
 }: {
-  universalIdentifier: string;
+	universalIdentifier: string;
 }): Promise<string> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query FindOneApplicationIdByUniversalIdentifier(
         $universalIdentifier: UUID!
       ) {
@@ -24,29 +24,29 @@ export const findOneApplicationIdByUniversalIdentifier = async ({
         }
       }
     `,
-    variables: { universalIdentifier },
-  });
+		variables: { universalIdentifier },
+	});
 
-  const id: string | undefined = response.body?.data?.findOneApplication?.id;
+	const id: string | undefined = response.body?.data?.findOneApplication?.id;
 
-  if (!isDefined(id)) {
-    throw new Error(
-      `findOneApplication did not return an id for universalIdentifier=${universalIdentifier}: ${JSON.stringify(
-        response.body,
-      )}`,
-    );
-  }
+	if (!isDefined(id)) {
+		throw new Error(
+			`findOneApplication did not return an id for universalIdentifier=${universalIdentifier}: ${JSON.stringify(
+				response.body,
+			)}`,
+		);
+	}
 
-  return id;
+	return id;
 };
 
 export const findOneApplicationVariables = async ({
-  id,
+	id,
 }: {
-  id: string;
+	id: string;
 }): Promise<ApplicationVariableSummary[]> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
+	const response = await makeMetadataAPIRequest({
+		query: gql`
       query FindOneApplicationVariables($id: UUID!) {
         findOneApplication(id: $id) {
           applicationVariables {
@@ -57,10 +57,10 @@ export const findOneApplicationVariables = async ({
         }
       }
     `,
-    variables: { id },
-  });
+		variables: { id },
+	});
 
-  expect(response.body.errors).toBeUndefined();
+	expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.findOneApplication.applicationVariables;
+	return response.body.data.findOneApplication.applicationVariables;
 };

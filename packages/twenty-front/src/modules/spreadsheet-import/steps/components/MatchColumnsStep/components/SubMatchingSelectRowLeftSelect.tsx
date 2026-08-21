@@ -1,8 +1,8 @@
-import { SubMatchingSelectControlContainer } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectControlContainer';
+import { SubMatchingSelectControlContainer } from "@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectControlContainer";
 
-import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type SpreadsheetMatchedOptions } from "@/spreadsheet-import/types/SpreadsheetMatchedOptions";
+import { styled } from "@linaria/react";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -17,17 +17,17 @@ const StyledControlLabel = styled.div`
 `;
 
 export type SubMatchingSelectRowLeftSelectProps = {
-  option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
+	option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
 };
 
 export const SubMatchingSelectRowLeftSelect = ({
-  option,
+	option,
 }: SubMatchingSelectRowLeftSelectProps) => {
-  return (
-    <SubMatchingSelectControlContainer cursor="default">
-      <StyledControlLabel>
-        <StyledLabel>{option.entry}</StyledLabel>
-      </StyledControlLabel>
-    </SubMatchingSelectControlContainer>
-  );
+	return (
+		<SubMatchingSelectControlContainer cursor="default">
+			<StyledControlLabel>
+				<StyledLabel>{option.entry}</StyledLabel>
+			</StyledControlLabel>
+		</SubMatchingSelectControlContainer>
+	);
 };

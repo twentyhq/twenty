@@ -1,10 +1,10 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('ObjectRecordCount')
+@ObjectType("ObjectRecordCount")
 export class ObjectRecordCountDTO {
-  @Field(() => String)
-  objectNamePlural: string;
+	@Field(() => String)
+	objectNamePlural: string;
 
-  @Field(() => Int)
-  totalCount: number;
+	@Field(() => Int)
+	totalCount: number;
 }

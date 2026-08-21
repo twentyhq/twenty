@@ -1,7 +1,7 @@
-import { type AskQuestionItem } from 'twenty-shared/ai';
+import { type AskQuestionItem } from "twenty-shared/ai";
 
 export type AgentChatPendingQuestion = {
-  messageId: string;
-  toolCallId: string;
-  questions: AskQuestionItem[];
+	messageId: string;
+	toolCallId: string;
+	questions: AskQuestionItem[];
 };

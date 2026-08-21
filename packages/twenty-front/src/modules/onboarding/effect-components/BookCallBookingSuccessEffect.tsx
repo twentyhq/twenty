@@ -1,51 +1,51 @@
-import { getCalApi } from '@calcom/embed-react';
-import { useEffect } from 'react';
+import { getCalApi } from "@calcom/embed-react";
+import { useEffect } from "react";
 
 type BookCallBookingSuccessEffectProps = {
-  onBookingSuccessful: () => void;
+	onBookingSuccessful: () => void;
 };
 
 export const BookCallBookingSuccessEffect = ({
-  onBookingSuccessful,
+	onBookingSuccessful,
 }: BookCallBookingSuccessEffectProps) => {
-  useEffect(() => {
-    let isSubscribed = true;
-    let hasHandledBookingSuccess = false;
-    let calApi: Awaited<ReturnType<typeof getCalApi>> | undefined;
+	useEffect(() => {
+		let isSubscribed = true;
+		let hasHandledBookingSuccess = false;
+		let calApi: Awaited<ReturnType<typeof getCalApi>> | undefined;
 
-    const handleBookingSuccessful = () => {
-      if (hasHandledBookingSuccess) {
-        return;
-      }
+		const handleBookingSuccessful = () => {
+			if (hasHandledBookingSuccess) {
+				return;
+			}
 
-      hasHandledBookingSuccess = true;
-      onBookingSuccessful();
-    };
+			hasHandledBookingSuccess = true;
+			onBookingSuccessful();
+		};
 
-    const subscribeToBookingSuccess = async () => {
-      const api = await getCalApi();
+		const subscribeToBookingSuccess = async () => {
+			const api = await getCalApi();
 
-      if (!isSubscribed) {
-        return;
-      }
+			if (!isSubscribed) {
+				return;
+			}
 
-      calApi = api;
-      api('on', {
-        action: 'bookingSuccessfulV2',
-        callback: handleBookingSuccessful,
-      });
-    };
+			calApi = api;
+			api("on", {
+				action: "bookingSuccessfulV2",
+				callback: handleBookingSuccessful,
+			});
+		};
 
-    void subscribeToBookingSuccess();
+		void subscribeToBookingSuccess();
 
-    return () => {
-      isSubscribed = false;
-      calApi?.('off', {
-        action: 'bookingSuccessfulV2',
-        callback: handleBookingSuccessful,
-      });
-    };
-  }, [onBookingSuccessful]);
+		return () => {
+			isSubscribed = false;
+			calApi?.("off", {
+				action: "bookingSuccessfulV2",
+				callback: handleBookingSuccessful,
+			});
+		};
+	}, [onBookingSuccessful]);
 
-  return null;
+	return null;
 };

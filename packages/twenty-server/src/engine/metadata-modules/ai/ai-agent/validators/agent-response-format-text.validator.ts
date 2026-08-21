@@ -1,6 +1,6 @@
-import { IsEnum } from 'class-validator';
+import { IsEnum } from "class-validator";
 
 export class AgentResponseFormatText {
-  @IsEnum(['text'])
-  type: 'text';
+	@IsEnum(["text"])
+	type: "text";
 }

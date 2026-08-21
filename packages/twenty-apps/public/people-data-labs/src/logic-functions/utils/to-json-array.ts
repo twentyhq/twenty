@@ -1,4 +1,4 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray } from "@sniptt/guards";
 
 export const toJsonArray = (value: unknown): unknown[] | undefined =>
-  isNonEmptyArray(value) ? value : undefined;
+	isNonEmptyArray(value) ? value : undefined;

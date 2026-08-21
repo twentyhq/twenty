@@ -1,41 +1,41 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+	Column,
+	CreateDateColumn,
+	Entity,
+	Index,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from "typeorm";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { WorkspaceRelatedEntity } from "src/engine/workspace-manager/types/workspace-related-entity";
 
-@Index('IDX_API_KEY_WORKSPACE_ID', ['workspaceId'])
-@Entity({ name: 'apiKey', schema: 'core' })
-@ObjectType('ApiKey')
+@Index("IDX_API_KEY_WORKSPACE_ID", ["workspaceId"])
+@Entity({ name: "apiKey", schema: "core" })
+@ObjectType("ApiKey")
 export class ApiKeyEntity extends WorkspaceRelatedEntity {
-  @Field(() => UUIDScalarType)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+	@Field(() => UUIDScalarType)
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
-  @Field()
-  @Column()
-  name: string;
+	@Field()
+	@Column()
+	name: string;
 
-  @Field(() => Date)
-  @Column({ type: 'timestamptz' })
-  expiresAt: Date;
+	@Field(() => Date)
+	@Column({ type: "timestamptz" })
+	expiresAt: Date;
 
-  @Field(() => Date, { nullable: true })
-  @Column({ type: 'timestamptz', nullable: true })
-  revokedAt?: Date | null;
+	@Field(() => Date, { nullable: true })
+	@Column({ type: "timestamptz", nullable: true })
+	revokedAt?: Date | null;
 
-  @Field(() => Date)
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+	@Field(() => Date)
+	@CreateDateColumn({ type: "timestamptz" })
+	createdAt: Date;
 
-  @Field(() => Date)
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+	@Field(() => Date)
+	@UpdateDateColumn({ type: "timestamptz" })
+	updatedAt: Date;
 }

@@ -1,1 +1,1 @@
-export * from 'src/engine/core-modules/logger/interfaces/logger.interface';
+export * from "src/engine/core-modules/logger/interfaces/logger.interface";

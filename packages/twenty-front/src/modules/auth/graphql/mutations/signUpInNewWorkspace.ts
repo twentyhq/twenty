@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const SIGN_UP_IN_NEW_WORKSPACE = gql`
   mutation SignUpInNewWorkspace($input: SignUpInNewWorkspaceInput) {

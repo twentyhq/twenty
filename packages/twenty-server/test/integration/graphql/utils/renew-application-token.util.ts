@@ -1,14 +1,14 @@
-import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import gql from "graphql-tag";
+import { makeMetadataAPIRequest } from "test/integration/metadata/suites/utils/make-metadata-api-request.util";
 
 export const renewApplicationToken = async ({
-  applicationRefreshToken,
-  accessToken,
+	applicationRefreshToken,
+	accessToken,
 }: {
-  applicationRefreshToken: string;
-  accessToken: string;
+	applicationRefreshToken: string;
+	accessToken: string;
 }) => {
-  const mutation = gql`
+	const mutation = gql`
     mutation RenewApplicationToken($applicationRefreshToken: String!) {
       renewApplicationToken(applicationRefreshToken: $applicationRefreshToken) {
         applicationAccessToken {
@@ -21,8 +21,8 @@ export const renewApplicationToken = async ({
     }
   `;
 
-  return await makeMetadataAPIRequest(
-    { query: mutation, variables: { applicationRefreshToken } },
-    accessToken,
-  );
+	return await makeMetadataAPIRequest(
+		{ query: mutation, variables: { applicationRefreshToken } },
+		accessToken,
+	);
 };

@@ -1,73 +1,73 @@
 import {
-  Field,
-  Float,
-  HideField,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+	Field,
+	Float,
+	HideField,
+	ObjectType,
+	registerEnumType,
+} from "@nestjs/graphql";
+import { PageLayoutTabLayoutMode } from "twenty-shared/types";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type PageLayoutTabOverrides } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { type PageLayoutTabOverrides } from "src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity";
+import { PageLayoutWidgetDTO } from "src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto";
 
 registerEnumType(PageLayoutTabLayoutMode, {
-  name: 'PageLayoutTabLayoutMode',
+	name: "PageLayoutTabLayoutMode",
 });
 
-@ObjectType('PageLayoutTab')
+@ObjectType("PageLayoutTab")
 export class PageLayoutTabDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  universalIdentifier: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	universalIdentifier: string;
 
-  @Field({ nullable: false })
-  isSystemSideEffect: boolean;
+	@Field({ nullable: false })
+	isSystemSideEffect: boolean;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  applicationId: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	applicationId: string;
 
-  @Field({ nullable: false })
-  title: string;
+	@Field({ nullable: false })
+	title: string;
 
-  @Field(() => Float, { nullable: false, defaultValue: 0 })
-  position: number;
+	@Field(() => Float, { nullable: false, defaultValue: 0 })
+	position: number;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  pageLayoutId: string;
+	@Field(() => UUIDScalarType, { nullable: false })
+	pageLayoutId: string;
 
-  @Field(() => [PageLayoutWidgetDTO], { nullable: true })
-  widgets?: PageLayoutWidgetDTO[] | null;
+	@Field(() => [PageLayoutWidgetDTO], { nullable: true })
+	widgets?: PageLayoutWidgetDTO[] | null;
 
-  @Field(() => String, { nullable: true })
-  icon?: string | null;
+	@Field(() => String, { nullable: true })
+	icon?: string | null;
 
-  @Field(() => PageLayoutTabLayoutMode, {
-    nullable: true, // Not nullable in the database, but we need to make it nullable here until the frontend consumes the new type
-    defaultValue: PageLayoutTabLayoutMode.GRID,
-  })
-  layoutMode: PageLayoutTabLayoutMode;
+	@Field(() => PageLayoutTabLayoutMode, {
+		nullable: true, // Not nullable in the database, but we need to make it nullable here until the frontend consumes the new type
+		defaultValue: PageLayoutTabLayoutMode.GRID,
+	})
+	layoutMode: PageLayoutTabLayoutMode;
 
-  @Field()
-  createdAt: Date;
+	@Field()
+	createdAt: Date;
 
-  @Field()
-  updatedAt: Date;
+	@Field()
+	updatedAt: Date;
 
-  @Field(() => Boolean, { nullable: false })
-  isActive: boolean;
+	@Field(() => Boolean, { nullable: false })
+	isActive: boolean;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+	@Field(() => Date, { nullable: true })
+	deletedAt?: Date | null;
 
-  @Field(() => Boolean, {
-    nullable: true,
-    deprecationReason: 'isOverridden is deprecated',
-  })
-  isOverridden?: boolean;
+	@Field(() => Boolean, {
+		nullable: true,
+		deprecationReason: "isOverridden is deprecated",
+	})
+	isOverridden?: boolean;
 
-  @HideField()
-  overrides?: PageLayoutTabOverrides | null;
+	@HideField()
+	overrides?: PageLayoutTabOverrides | null;
 }

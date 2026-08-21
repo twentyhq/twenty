@@ -1,222 +1,234 @@
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  type Relation,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+	Column,
+	CreateDateColumn,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+	type Relation,
+	Unique,
+	UpdateDateColumn,
+} from "typeorm";
 
-import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataWritability, ObjectOpenRecordIn } from "twenty-shared/types";
 
-import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
-import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
-import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant';
-import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
-import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
-import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
-import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from "src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant";
+import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from "src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant";
+import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from "src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant";
+import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from "src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant";
+import { type WorkspaceEntityDuplicateCriteria } from "src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type";
+import { WasIntroducedInUpgrade } from "src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator";
+import { WasRemovedInUpgrade } from "src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator";
+import { FieldMetadataEntity } from "src/engine/metadata-modules/field-metadata/field-metadata.entity";
+import { IndexMetadataEntity } from "src/engine/metadata-modules/index-metadata/index-metadata.entity";
+import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from "src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant";
+import { type ObjectMetadataOverrides } from "src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type";
+import { FieldPermissionEntity } from "src/engine/metadata-modules/object-permission/field-permission/field-permission.entity";
+import { ObjectPermissionEntity } from "src/engine/metadata-modules/object-permission/object-permission.entity";
+import { SearchFieldMetadataEntity } from "src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity";
+import { ViewEntity } from "src/engine/metadata-modules/view/entities/view.entity";
+import { SyncableEntity } from "src/engine/workspace-manager/types/syncable-entity.interface";
+import { type JsonbProperty } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type";
 
-@Entity('objectMetadata')
-@Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
-  'nameSingular',
-  'workspaceId',
+@Entity("objectMetadata")
+@Unique("IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE", [
+	"nameSingular",
+	"workspaceId",
 ])
-@Unique('IDX_OBJECT_METADATA_NAME_PLURAL_WORKSPACE_ID_UNIQUE', [
-  'namePlural',
-  'workspaceId',
+@Unique("IDX_OBJECT_METADATA_NAME_PLURAL_WORKSPACE_ID_UNIQUE", [
+	"namePlural",
+	"workspaceId",
 ])
 export class ObjectMetadataEntity
-  extends SyncableEntity
-  implements Required<ObjectMetadataEntity>
+	extends SyncableEntity
+	implements Required<ObjectMetadataEntity>
 {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
-  // @deprecated - FK dropped, column kept for data preservation only
-  @Column({ nullable: true, type: 'uuid' })
-  dataSourceId: string;
+	// @deprecated - FK dropped, column kept for data preservation only
+	@Column({ nullable: true, type: "uuid" })
+	dataSourceId: string;
 
-  @Column({ nullable: false })
-  nameSingular: string;
+	@Column({ nullable: false })
+	nameSingular: string;
 
-  @Column({ nullable: false })
-  namePlural: string;
+	@Column({ nullable: false })
+	namePlural: string;
 
-  @Column({ nullable: false })
-  labelSingular: string;
+	@Column({ nullable: false })
+	labelSingular: string;
 
-  @Column({ nullable: false })
-  labelPlural: string;
+	@Column({ nullable: false })
+	labelPlural: string;
 
-  @Column({ nullable: true, type: 'text' })
-  description: string | null;
+	@Column({ nullable: true, type: "text" })
+	description: string | null;
 
-  @Column({ nullable: true, type: 'varchar' })
-  icon: string | null;
+	@Column({ nullable: true, type: "varchar" })
+	icon: string | null;
 
-  @Column({ nullable: true, type: 'text' })
-  color: string | null;
+	@Column({ nullable: true, type: "text" })
+	color: string | null;
 
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'enum',
-    enum: Object.values(ObjectOpenRecordIn),
-    default: ObjectOpenRecordIn.USER_CHOICE,
-  })
-  openRecordIn: ObjectOpenRecordIn;
+	@WasIntroducedInUpgrade({
+		upgradeCommandName: ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME,
+	})
+	@Column({
+		type: "enum",
+		enum: Object.values(ObjectOpenRecordIn),
+		default: ObjectOpenRecordIn.USER_CHOICE,
+	})
+	openRecordIn: ObjectOpenRecordIn;
 
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ type: 'jsonb', nullable: true })
-  overrides: JsonbProperty<ObjectMetadataOverrides> | null;
+	@WasIntroducedInUpgrade({
+		upgradeCommandName: ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
+	})
+	@Column({ type: "jsonb", nullable: true })
+	overrides: JsonbProperty<ObjectMetadataOverrides> | null;
 
-  /**
-   * @deprecated Please use `overrides` instead.
-   */
-  @WasRemovedInUpgrade({
-    upgradeCommandName:
-      DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: WasRemovedInUpgrade<JsonbProperty<ObjectMetadataOverrides> | null>;
+	/**
+	 * @deprecated Please use `overrides` instead.
+	 */
+	@WasRemovedInUpgrade({
+		upgradeCommandName:
+			DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
+	})
+	@Column({ type: "jsonb", nullable: true })
+	standardOverrides: WasRemovedInUpgrade<JsonbProperty<ObjectMetadataOverrides> | null>;
 
-  /**
-   * @deprecated
-   */
-  @Column({ nullable: false })
-  targetTableName: string;
+	/**
+	 * @deprecated
+	 */
+	@Column({ nullable: false })
+	targetTableName: string;
 
-  @WasRemovedInUpgrade({
-    upgradeCommandName:
-      '2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
-  })
-  @Column({ type: 'boolean', default: false })
-  isCustom: WasRemovedInUpgrade<boolean>;
+	@WasRemovedInUpgrade({
+		upgradeCommandName:
+			"2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012",
+	})
+	@Column({ type: "boolean", default: false })
+	isCustom: WasRemovedInUpgrade<boolean>;
 
-  @Column({ default: false })
-  isRemote: boolean;
+	@Column({ default: false })
+	isRemote: boolean;
 
-  @Column({ default: false })
-  isActive: boolean;
+	@Column({ default: false })
+	isActive: boolean;
 
-  @Column({ default: false })
-  isSystem: boolean;
+	@Column({ default: false })
+	isSystem: boolean;
 
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ default: true })
-  isUIEditable: boolean;
+	@WasIntroducedInUpgrade({
+		upgradeCommandName:
+			RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+	})
+	@Column({ default: true })
+	isUIEditable: boolean;
 
-  // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
-  // it in 2.13 would break the previous release's pods mid rolling-deploy, since
-  // they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
-  // omit it; the decorator + physical drop are deferred (core-team-issues#2542).
-  @Column({ type: 'boolean', default: false })
-  isUIReadOnly: WasRemovedInUpgrade<boolean>;
+	// Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
+	// it in 2.13 would break the previous release's pods mid rolling-deploy, since
+	// they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
+	// omit it; the decorator + physical drop are deferred (core-team-issues#2542).
+	@Column({ type: "boolean", default: false })
+	isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ default: true })
-  isUICreatable: boolean;
+	@WasIntroducedInUpgrade({
+		upgradeCommandName:
+			RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+	})
+	@Column({ default: true })
+	isUICreatable: boolean;
 
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME,
-  })
-  @Column({
-    type: 'enum',
-    enum: Object.values(MetadataWritability),
-    default: MetadataWritability.OPEN,
-  })
-  writability: MetadataWritability;
+	@WasIntroducedInUpgrade({
+		upgradeCommandName: ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME,
+	})
+	@Column({
+		type: "enum",
+		enum: Object.values(MetadataWritability),
+		default: MetadataWritability.OPEN,
+	})
+	writability: MetadataWritability;
 
-  @Column({ default: true })
-  isAuditLogged: boolean;
+	@Column({ default: true })
+	isAuditLogged: boolean;
 
-  @Column({ default: false })
-  isSearchable: boolean;
+	@Column({ default: false })
+	isSearchable: boolean;
 
-  @Column({ type: 'jsonb', nullable: true })
-  duplicateCriteria: JsonbProperty<WorkspaceEntityDuplicateCriteria[]> | null;
+	@Column({ type: "jsonb", nullable: true })
+	duplicateCriteria: JsonbProperty<WorkspaceEntityDuplicateCriteria[]> | null;
 
-  @Column({ nullable: true, type: 'varchar' })
-  shortcut: string | null;
+	@Column({ nullable: true, type: "varchar" })
+	shortcut: string | null;
 
-  // TODO: This should not be nullable - legacy field introduced when label identifier was nullable
-  // TODO: This should be a joinColumn and we should have a FK on this too https://github.com/twentyhq/core-team-issues/issues/2172
-  @Column({ nullable: true, type: 'uuid' })
-  labelIdentifierFieldMetadataId: string | null;
+	// TODO: This should not be nullable - legacy field introduced when label identifier was nullable
+	// TODO: This should be a joinColumn and we should have a FK on this too https://github.com/twentyhq/core-team-issues/issues/2172
+	@Column({ nullable: true, type: "uuid" })
+	labelIdentifierFieldMetadataId: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
-  imageIdentifierFieldMetadataId: string | null;
+	@Column({ nullable: true, type: "uuid" })
+	imageIdentifierFieldMetadataId: string | null;
 
-  @Column({ default: false })
-  isLabelSyncedWithName: boolean;
+	@Column({ default: false })
+	isLabelSyncedWithName: boolean;
 
-  @OneToMany(() => FieldMetadataEntity, (field) => field.object, {
-    cascade: true,
-  })
-  fields: Relation<FieldMetadataEntity[]>;
+	@OneToMany(
+		() => FieldMetadataEntity,
+		(field) => field.object,
+		{
+			cascade: true,
+		},
+	)
+	fields: Relation<FieldMetadataEntity[]>;
 
-  @OneToMany(() => IndexMetadataEntity, (index) => index.objectMetadata, {
-    cascade: true,
-  })
-  indexMetadatas: Relation<IndexMetadataEntity[]>;
+	@OneToMany(
+		() => IndexMetadataEntity,
+		(index) => index.objectMetadata,
+		{
+			cascade: true,
+		},
+	)
+	indexMetadatas: Relation<IndexMetadataEntity[]>;
 
-  @OneToMany(
-    () => SearchFieldMetadataEntity,
-    (searchFieldMetadata) => searchFieldMetadata.objectMetadata,
-    {
-      cascade: true,
-    },
-  )
-  searchFieldMetadatas: Relation<SearchFieldMetadataEntity[]>;
+	@OneToMany(
+		() => SearchFieldMetadataEntity,
+		(searchFieldMetadata) => searchFieldMetadata.objectMetadata,
+		{
+			cascade: true,
+		},
+	)
+	searchFieldMetadatas: Relation<SearchFieldMetadataEntity[]>;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+	@CreateDateColumn({ type: "timestamptz" })
+	createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+	@UpdateDateColumn({ type: "timestamptz" })
+	updatedAt: Date;
 
-  @OneToMany(
-    () => ObjectPermissionEntity,
-    (objectPermission) => objectPermission.objectMetadata,
-    {
-      cascade: true,
-    },
-  )
-  objectPermissions: Relation<ObjectPermissionEntity[]>;
+	@OneToMany(
+		() => ObjectPermissionEntity,
+		(objectPermission) => objectPermission.objectMetadata,
+		{
+			cascade: true,
+		},
+	)
+	objectPermissions: Relation<ObjectPermissionEntity[]>;
 
-  @OneToMany(
-    () => FieldPermissionEntity,
-    (fieldPermission) => fieldPermission.objectMetadata,
-    {
-      cascade: true,
-    },
-  )
-  fieldPermissions: Relation<FieldPermissionEntity[]>;
+	@OneToMany(
+		() => FieldPermissionEntity,
+		(fieldPermission) => fieldPermission.objectMetadata,
+		{
+			cascade: true,
+		},
+	)
+	fieldPermissions: Relation<FieldPermissionEntity[]>;
 
-  @OneToMany(() => ViewEntity, (view) => view.objectMetadata, {
-    cascade: true,
-  })
-  views: Relation<ViewEntity[]>;
+	@OneToMany(
+		() => ViewEntity,
+		(view) => view.objectMetadata,
+		{
+			cascade: true,
+		},
+	)
+	views: Relation<ViewEntity[]>;
 }

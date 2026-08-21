@@ -1,24 +1,24 @@
-import { camelToKebab } from 'twenty-shared/utils';
+import { camelToKebab } from "twenty-shared/utils";
 
-import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
+import { isCssCustomPropertyName } from "@/utils/css/isCssCustomPropertyName";
 
 const CSS_PROPERTY_NAME_BY_CSSOM_ALIAS = new Map<string, string>([
-  ['cssFloat', 'float'],
+	["cssFloat", "float"],
 ]);
 
 export const resolveCssPropertyNameFromJsPropertyName = (
-  jsPropertyName: string,
+	jsPropertyName: string,
 ): string => {
-  if (isCssCustomPropertyName(jsPropertyName)) {
-    return jsPropertyName;
-  }
+	if (isCssCustomPropertyName(jsPropertyName)) {
+		return jsPropertyName;
+	}
 
-  const aliasedCssPropertyName =
-    CSS_PROPERTY_NAME_BY_CSSOM_ALIAS.get(jsPropertyName);
+	const aliasedCssPropertyName =
+		CSS_PROPERTY_NAME_BY_CSSOM_ALIAS.get(jsPropertyName);
 
-  if (aliasedCssPropertyName !== undefined) {
-    return aliasedCssPropertyName;
-  }
+	if (aliasedCssPropertyName !== undefined) {
+		return aliasedCssPropertyName;
+	}
 
-  return camelToKebab(jsPropertyName);
+	return camelToKebab(jsPropertyName);
 };

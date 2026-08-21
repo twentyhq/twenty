@@ -1,6 +1,6 @@
-import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { createAtomState } from "@/ui/utilities/state/jotai/utils/createAtomState";
 
 export const appVersionState = createAtomState<string | undefined>({
-  key: 'appVersion',
-  defaultValue: undefined,
+	key: "appVersion",
+	defaultValue: undefined,
 });

@@ -1,11 +1,11 @@
-import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
-import { computeRecordListDisplayedFieldCount } from '@/object-record/record-list/utils/computeRecordListDisplayedFieldCount';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useLayoutEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { recordListDisplayedFieldCountComponentState } from "@/object-record/record-list/states/recordListDisplayedFieldCountComponentState";
+import { computeRecordListDisplayedFieldCount } from "@/object-record/record-list/utils/computeRecordListDisplayedFieldCount";
+import { useSetAtomComponentState } from "@/ui/utilities/state/jotai/hooks/useSetAtomComponentState";
+import { useLayoutEffect } from "react";
+import { isDefined } from "twenty-shared/utils";
 
 type RecordListResponsiveFieldCountEffectProps = {
-  containerElement: HTMLElement | null;
+	containerElement: HTMLElement | null;
 };
 
 // Takes the element rather than a ref object. React attaches a host element's
@@ -14,31 +14,31 @@ type RecordListResponsiveFieldCountEffectProps = {
 // is filled — the list would keep its default field count. A callback ref
 // stored in state re-renders instead, and the effect measures the real element.
 export const RecordListResponsiveFieldCountEffect = ({
-  containerElement,
+	containerElement,
 }: RecordListResponsiveFieldCountEffectProps) => {
-  const setRecordListDisplayedFieldCount = useSetAtomComponentState(
-    recordListDisplayedFieldCountComponentState,
-  );
+	const setRecordListDisplayedFieldCount = useSetAtomComponentState(
+		recordListDisplayedFieldCountComponentState,
+	);
 
-  useLayoutEffect(() => {
-    if (!isDefined(containerElement)) {
-      return;
-    }
+	useLayoutEffect(() => {
+		if (!isDefined(containerElement)) {
+			return;
+		}
 
-    const updateDisplayedFieldCount = () => {
-      setRecordListDisplayedFieldCount(
-        computeRecordListDisplayedFieldCount(containerElement.clientWidth),
-      );
-    };
+		const updateDisplayedFieldCount = () => {
+			setRecordListDisplayedFieldCount(
+				computeRecordListDisplayedFieldCount(containerElement.clientWidth),
+			);
+		};
 
-    updateDisplayedFieldCount();
+		updateDisplayedFieldCount();
 
-    const resizeObserver = new ResizeObserver(updateDisplayedFieldCount);
+		const resizeObserver = new ResizeObserver(updateDisplayedFieldCount);
 
-    resizeObserver.observe(containerElement);
+		resizeObserver.observe(containerElement);
 
-    return () => resizeObserver.disconnect();
-  }, [containerElement, setRecordListDisplayedFieldCount]);
+		return () => resizeObserver.disconnect();
+	}, [containerElement, setRecordListDisplayedFieldCount]);
 
-  return null;
+	return null;
 };

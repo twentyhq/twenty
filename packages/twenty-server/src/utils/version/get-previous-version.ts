@@ -1,26 +1,26 @@
-import { SemVer } from 'semver';
+import { SemVer } from "semver";
 
 type GetPreviousVersionFromArrayArgs = {
-  versions: string[];
-  currentVersion: string;
+	versions: string[];
+	currentVersion: string;
 };
 export const getPreviousVersion = ({
-  versions,
-  currentVersion,
+	versions,
+	currentVersion,
 }: GetPreviousVersionFromArrayArgs): SemVer | undefined => {
-  try {
-    const semverVersions = versions
-      .map((version) => new SemVer(version))
-      .sort((a, b) => b.compare(a));
+	try {
+		const semverVersions = versions
+			.map((version) => new SemVer(version))
+			.sort((a, b) => b.compare(a));
 
-    const currentSemver = new SemVer(currentVersion);
+		const currentSemver = new SemVer(currentVersion);
 
-    const previousVersion = semverVersions.find(
-      (version) => version.compare(currentSemver) < 0,
-    );
+		const previousVersion = semverVersions.find(
+			(version) => version.compare(currentSemver) < 0,
+		);
 
-    return previousVersion;
-  } catch {
-    return undefined;
-  }
+		return previousVersion;
+	} catch {
+		return undefined;
+	}
 };

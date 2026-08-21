@@ -1,76 +1,76 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from "@nestjs/graphql";
 
 import {
-  IsBoolean,
-  IsDateString,
-  IsNotEmpty,
-  IsString,
-  IsUUID,
-} from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
+	IsBoolean,
+	IsDateString,
+	IsNotEmpty,
+	IsString,
+	IsUUID,
+} from "class-validator";
+import GraphQLJSON from "graphql-type-json";
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
-import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { UUIDScalarType } from "src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars";
+import { ModelConfiguration } from "src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration";
+import { type ModelId } from "src/engine/metadata-modules/ai/ai-models/types/model-id.type";
 
-@ObjectType('Agent')
+@ObjectType("Agent")
 export class AgentDTO {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  id: string;
+	@IsUUID()
+	@IsNotEmpty()
+	@Field(() => UUIDScalarType)
+	id: string;
 
-  @IsString()
-  @Field()
-  name: string;
+	@IsString()
+	@Field()
+	name: string;
 
-  @IsString()
-  @Field()
-  label: string;
+	@IsString()
+	@Field()
+	label: string;
 
-  @IsString()
-  @Field({ nullable: true })
-  icon?: string;
+	@IsString()
+	@Field({ nullable: true })
+	icon?: string;
 
-  @IsString()
-  @Field({ nullable: true })
-  description?: string;
+	@IsString()
+	@Field({ nullable: true })
+	description?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  prompt: string;
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	prompt: string;
 
-  @Field(() => String)
-  modelId: ModelId;
+	@Field(() => String)
+	modelId: ModelId;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  responseFormat?: object;
+	@Field(() => GraphQLJSON, { nullable: true })
+	responseFormat?: object;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  roleId?: string;
+	@Field(() => UUIDScalarType, { nullable: true })
+	roleId?: string;
 
-  @IsBoolean()
-  @Field()
-  isCustom: boolean;
+	@IsBoolean()
+	@Field()
+	isCustom: boolean;
 
-  @HideField()
-  workspaceId: string;
+	@HideField()
+	workspaceId: string;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId?: string;
+	@Field(() => UUIDScalarType, { nullable: true })
+	applicationId?: string;
 
-  @IsDateString()
-  @Field()
-  createdAt: Date;
+	@IsDateString()
+	@Field()
+	createdAt: Date;
 
-  @IsDateString()
-  @Field()
-  updatedAt: Date;
+	@IsDateString()
+	@Field()
+	updatedAt: Date;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  modelConfiguration?: ModelConfiguration;
+	@Field(() => GraphQLJSON, { nullable: true })
+	modelConfiguration?: ModelConfiguration;
 
-  @Field(() => [String])
-  evaluationInputs: string[];
+	@Field(() => [String])
+	evaluationInputs: string[];
 }

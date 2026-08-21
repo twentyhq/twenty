@@ -1,74 +1,72 @@
 import {
-  type Equal,
-  type Expect,
-  type HasAllProperties,
-} from 'twenty-shared/testing';
+	type Equal,
+	type Expect,
+	type HasAllProperties,
+} from "twenty-shared/testing";
 
-import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
+import { type FlatEntityUpdate } from "src/engine/metadata-modules/flat-entity/types/flat-entity-update.type";
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
-  Expect<
-    Equal<
-      keyof FlatEntityUpdate<'fieldMetadata'>,
-      | 'name'
-      | 'label'
-      | 'icon'
-      | 'description'
-      | 'isActive'
-      | 'defaultValue'
-      | 'overrides'
-      | 'options'
-      | 'settings'
-      | 'isUnique'
-      | 'isLabelSyncedWithName'
-      | 'isUIEditable'
-      | 'writability'
-      | 'isNullable'
-      | 'universalSettings'
-    >
-  >,
-  Expect<
-    HasAllProperties<
-      FlatEntityUpdate<'fieldMetadata'>,
-      {
-        universalSettings?: never;
-      }
-    >
-  >,
-
-  Expect<
-    Equal<
-      keyof FlatEntityUpdate<'objectMetadata'>,
-      | 'icon'
-      | 'color'
-      | 'openRecordIn'
-      | 'description'
-      | 'isActive'
-      | 'overrides'
-      | 'isLabelSyncedWithName'
-      | 'nameSingular'
-      | 'namePlural'
-      | 'labelSingular'
-      | 'labelPlural'
-      | 'labelIdentifierFieldMetadataId'
-      | 'labelIdentifierFieldMetadataUniversalIdentifier'
-      | 'imageIdentifierFieldMetadataId'
-      | 'imageIdentifierFieldMetadataUniversalIdentifier'
-      | 'isSearchable'
-      | 'isUIEditable'
-      | 'isUICreatable'
-      | 'writability'
-    >
-  >,
-
-  Expect<
-    HasAllProperties<
-      FlatEntityUpdate<'objectMetadata'>,
-      {
-        labelIdentifierFieldMetadataUniversalIdentifier?: never;
-        imageIdentifierFieldMetadataUniversalIdentifier?: never;
-      }
-    >
-  >,
+	Expect<
+		Equal<
+			keyof FlatEntityUpdate<"fieldMetadata">,
+			| "name"
+			| "label"
+			| "icon"
+			| "description"
+			| "isActive"
+			| "defaultValue"
+			| "overrides"
+			| "options"
+			| "settings"
+			| "isUnique"
+			| "isLabelSyncedWithName"
+			| "isUIEditable"
+			| "writability"
+			| "isNullable"
+			| "universalSettings"
+		>
+	>,
+	Expect<
+		HasAllProperties<
+			FlatEntityUpdate<"fieldMetadata">,
+			{
+				universalSettings?: never;
+			}
+		>
+	>,
+	Expect<
+		Equal<
+			keyof FlatEntityUpdate<"objectMetadata">,
+			| "icon"
+			| "color"
+			| "openRecordIn"
+			| "description"
+			| "isActive"
+			| "overrides"
+			| "isLabelSyncedWithName"
+			| "nameSingular"
+			| "namePlural"
+			| "labelSingular"
+			| "labelPlural"
+			| "labelIdentifierFieldMetadataId"
+			| "labelIdentifierFieldMetadataUniversalIdentifier"
+			| "imageIdentifierFieldMetadataId"
+			| "imageIdentifierFieldMetadataUniversalIdentifier"
+			| "isSearchable"
+			| "isUIEditable"
+			| "isUICreatable"
+			| "writability"
+		>
+	>,
+	Expect<
+		HasAllProperties<
+			FlatEntityUpdate<"objectMetadata">,
+			{
+				labelIdentifierFieldMetadataUniversalIdentifier?: never;
+				imageIdentifierFieldMetadataUniversalIdentifier?: never;
+			}
+		>
+	>,
 ];

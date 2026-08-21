@@ -1,16 +1,16 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from "@sniptt/guards";
 
-import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { LogicFunctionExecutionMode } from "src/engine/metadata-modules/logic-function/logic-function.entity";
+import { type FlatLogicFunction } from "src/engine/metadata-modules/logic-function/types/flat-logic-function.type";
 
 export type LogicFunctionPrebuiltStateFields = Pick<
-  FlatLogicFunction,
-  'executionMode' | 'isBuildUpToDate' | 'checksum'
+	FlatLogicFunction,
+	"executionMode" | "isBuildUpToDate" | "checksum"
 >;
 
 export const isLogicFunctionReadyForPrebuiltInstall = (
-  flatLogicFunction: LogicFunctionPrebuiltStateFields,
+	flatLogicFunction: LogicFunctionPrebuiltStateFields,
 ): boolean =>
-  flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
-  flatLogicFunction.isBuildUpToDate === true &&
-  isNonEmptyString(flatLogicFunction.checksum);
+	flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
+	flatLogicFunction.isBuildUpToDate === true &&
+	isNonEmptyString(flatLogicFunction.checksum);

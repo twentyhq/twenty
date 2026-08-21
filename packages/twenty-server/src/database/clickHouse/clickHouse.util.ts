@@ -4,16 +4,16 @@
  * JavaScript toISOString() returns: YYYY-MM-DDTHH:mm:ss.SSSZ
  */
 export const formatDateTimeForClickHouse = (date: Date | string): string => {
-  const iso = typeof date === 'string' ? date : date.toISOString();
+	const iso = typeof date === "string" ? date : date.toISOString();
 
-  // Extract date (YYYY-MM-DD) and time with milliseconds (HH:mm:ss.SSS)
-  return `${iso.slice(0, 10)} ${iso.slice(11, 23)}`;
+	// Extract date (YYYY-MM-DD) and time with milliseconds (HH:mm:ss.SSS)
+	return `${iso.slice(0, 10)} ${iso.slice(11, 23)}`;
 };
 
 export const formatDateForClickHouse = (date: Date): string =>
-  date.toISOString().slice(0, 10);
+	date.toISOString().slice(0, 10);
 
 // ClickHouse returns DateTime64 values as naive strings (YYYY-MM-DD HH:mm:ss.SSS) in UTC.
 // Parse them as UTC explicitly, otherwise `new Date` assumes the server's local timezone.
 export const parseClickHouseDateTime = (value: string): Date =>
-  new Date(`${value.replace(' ', 'T')}Z`);
+	new Date(`${value.replace(" ", "T")}Z`);

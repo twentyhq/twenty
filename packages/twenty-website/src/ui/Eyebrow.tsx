@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
 import {
-  color,
-  FONT_WEIGHT,
-  fontFamily,
-  semanticColor,
-  spacing,
-  typeRampDeclarations,
-} from '@/tokens';
+	color,
+	FONT_WEIGHT,
+	fontFamily,
+	semanticColor,
+	spacing,
+	typeRampDeclarations,
+} from "@/tokens";
 
 const EyebrowRow = styled.p`
   align-items: center;
@@ -17,8 +17,8 @@ const EyebrowRow = styled.p`
      itself stays flush against the marker via text-align. */
   display: inline-flex;
   text-align: start;
-  font-family: ${fontFamily('sans')};
-  ${typeRampDeclarations('eyebrow')}
+  font-family: ${fontFamily("sans")};
+  ${typeRampDeclarations("eyebrow")}
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: -0.04em;
   gap: ${spacing(2)};
@@ -26,7 +26,7 @@ const EyebrowRow = styled.p`
 
 // The marker is a plain rounded rectangle — CSS, not an SVG asset.
 const Marker = styled.span`
-  background-color: ${color('blue')};
+  background-color: ${color("blue")};
   border-radius: 1px;
   flex-shrink: 0;
   height: 7px;
@@ -34,14 +34,14 @@ const Marker = styled.span`
 `;
 
 export type EyebrowProps = {
-  children: string;
+	children: string;
 };
 
 export function Eyebrow({ children }: EyebrowProps) {
-  return (
-    <EyebrowRow>
-      <Marker aria-hidden />
-      {children}
-    </EyebrowRow>
-  );
+	return (
+		<EyebrowRow>
+			<Marker aria-hidden />
+			{children}
+		</EyebrowRow>
+	);
 }

@@ -1,5 +1,5 @@
 export type CrowdinTranslation = {
-  stringId: number;
-  translationId: number;
-  text: string;
+	stringId: number;
+	translationId: number;
+	text: string;
 };

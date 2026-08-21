@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useInView } from 'react-intersection-observer';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { useInView } from "react-intersection-observer";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 type CustomResolverFetchMoreLoaderProps = {
-  loading: boolean;
-  onLastRowVisible: (...args: any[]) => any;
+	loading: boolean;
+	onLastRowVisible: (...args: any[]) => any;
 };
 
 const StyledContainer = styled.div`
@@ -23,20 +23,20 @@ const StyledText = styled.div`
 `;
 
 export const CustomResolverFetchMoreLoader = ({
-  loading,
-  onLastRowVisible,
+	loading,
+	onLastRowVisible,
 }: CustomResolverFetchMoreLoaderProps) => {
-  const { ref: tbodyRef } = useInView({
-    onChange: (inView) => {
-      if (inView) {
-        onLastRowVisible();
-      }
-    },
-  });
+	const { ref: tbodyRef } = useInView({
+		onChange: (inView) => {
+			if (inView) {
+				onLastRowVisible();
+			}
+		},
+	});
 
-  return (
-    <StyledContainer ref={tbodyRef}>
-      {loading && <StyledText>{t`Loading more...`}</StyledText>}
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer ref={tbodyRef}>
+			{loading && <StyledText>{t`Loading more...`}</StyledText>}
+		</StyledContainer>
+	);
 };

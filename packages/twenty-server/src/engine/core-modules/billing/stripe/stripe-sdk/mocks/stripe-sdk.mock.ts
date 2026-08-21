@@ -1,31 +1,31 @@
 /* @license Enterprise */
 
-import type Stripe from 'stripe';
+import type Stripe from "stripe";
 
 export class StripeSDKMock {
-  constructor(private readonly _apiKey: string) {}
+	constructor(private readonly _apiKey: string) {}
 
-  customers = {
-    update: (_id: string, _params?: Stripe.CustomerUpdateParams) => {
-      return;
-    },
-  };
+	customers = {
+		update: (_id: string, _params?: Stripe.CustomerUpdateParams) => {
+			return;
+		},
+	};
 
-  webhooks = {
-    constructEvent: (
-      payload: Buffer,
-      signature: string,
-      _webhookSecret: string,
-    ) => {
-      if (signature === 'correct-signature') {
-        const body = JSON.parse(payload.toString());
+	webhooks = {
+		constructEvent: (
+			payload: Buffer,
+			signature: string,
+			_webhookSecret: string,
+		) => {
+			if (signature === "correct-signature") {
+				const body = JSON.parse(payload.toString());
 
-        return {
-          type: body.type,
-          data: body.data,
-        };
-      }
-      throw new Error('Invalid signature');
-    },
-  };
+				return {
+					type: body.type,
+					data: body.data,
+				};
+			}
+			throw new Error("Invalid signature");
+		},
+	};
 }

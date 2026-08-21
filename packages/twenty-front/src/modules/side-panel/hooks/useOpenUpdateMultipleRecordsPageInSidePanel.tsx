@@ -1,29 +1,29 @@
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { SidePanelPages } from 'twenty-shared/types';
+import { useNavigateSidePanel } from "@/side-panel/hooks/useNavigateSidePanel";
+import { SidePanelPages } from "twenty-shared/types";
 
-import { msg, t } from '@lingui/core/macro';
-import { useCallback } from 'react';
-import { IconBoxMultiple } from 'twenty-ui/icon';
+import { msg, t } from "@lingui/core/macro";
+import { useCallback } from "react";
+import { IconBoxMultiple } from "twenty-ui/icon";
 
 type UseOpenUpdateMultipleRecordsPageInSidePanelProps = {
-  contextStoreInstanceId: string;
+	contextStoreInstanceId: string;
 };
 
 export const useOpenUpdateMultipleRecordsPageInSidePanel = ({
-  contextStoreInstanceId,
+	contextStoreInstanceId,
 }: UseOpenUpdateMultipleRecordsPageInSidePanelProps) => {
-  const { navigateSidePanel } = useNavigateSidePanel();
+	const { navigateSidePanel } = useNavigateSidePanel();
 
-  const openUpdateMultipleRecordsPageInSidePanel = useCallback(async () => {
-    navigateSidePanel({
-      page: SidePanelPages.UpdateRecords,
-      pageTitle: t(msg`Update records`),
-      pageIcon: IconBoxMultiple,
-      pageId: contextStoreInstanceId,
-    });
-  }, [navigateSidePanel, contextStoreInstanceId]);
+	const openUpdateMultipleRecordsPageInSidePanel = useCallback(async () => {
+		navigateSidePanel({
+			page: SidePanelPages.UpdateRecords,
+			pageTitle: t(msg`Update records`),
+			pageIcon: IconBoxMultiple,
+			pageId: contextStoreInstanceId,
+		});
+	}, [navigateSidePanel, contextStoreInstanceId]);
 
-  return {
-    openUpdateMultipleRecordsPageInSidePanel,
-  };
+	return {
+		openUpdateMultipleRecordsPageInSidePanel,
+	};
 };

@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { Avatar } from 'twenty-ui/data-display';
-import { IconRefresh } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useContext, useState } from "react";
+import { isNonEmptyString } from "@sniptt/guards";
+import { Avatar } from "twenty-ui/data-display";
+import { IconRefresh } from "twenty-ui/icon";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type AppConnectionHeaderProps = {
-  appLogoUrl?: string | null;
-  appName: string;
+	appLogoUrl?: string | null;
+	appName: string;
 };
 
 const StyledContainer = styled.div`
@@ -54,39 +54,39 @@ const StyledLinkIconContainer = styled.div`
 `;
 
 export const AppConnectionHeader = ({
-  appLogoUrl,
-  appName,
+	appLogoUrl,
+	appName,
 }: AppConnectionHeaderProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  const [hasAppLogoError, setHasAppLogoError] = useState(false);
+	const [hasAppLogoError, setHasAppLogoError] = useState(false);
 
-  const showAppLogoImage = isNonEmptyString(appLogoUrl) && !hasAppLogoError;
+	const showAppLogoImage = isNonEmptyString(appLogoUrl) && !hasAppLogoError;
 
-  return (
-    <StyledContainer>
-      <StyledAppLogoTile>
-        <StyledAppLogo src={'/images/integrations/twenty-logo.svg'} alt="" />
-      </StyledAppLogoTile>
-      <StyledLinkIconContainer aria-hidden>
-        <IconRefresh size={theme.icon.size.md} stroke={theme.icon.stroke.lg} />
-      </StyledLinkIconContainer>
-      <StyledAppLogoTile>
-        {showAppLogoImage ? (
-          <StyledAppLogo
-            src={appLogoUrl}
-            alt=""
-            onError={() => setHasAppLogoError(true)}
-          />
-        ) : (
-          <Avatar
-            size="xl"
-            placeholder={appName}
-            placeholderColorSeed={appName}
-            type="squared"
-          />
-        )}
-      </StyledAppLogoTile>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledAppLogoTile>
+				<StyledAppLogo src={"/images/integrations/twenty-logo.svg"} alt="" />
+			</StyledAppLogoTile>
+			<StyledLinkIconContainer aria-hidden>
+				<IconRefresh size={theme.icon.size.md} stroke={theme.icon.stroke.lg} />
+			</StyledLinkIconContainer>
+			<StyledAppLogoTile>
+				{showAppLogoImage ? (
+					<StyledAppLogo
+						src={appLogoUrl}
+						alt=""
+						onError={() => setHasAppLogoError(true)}
+					/>
+				) : (
+					<Avatar
+						size="xl"
+						placeholder={appName}
+						placeholderColorSeed={appName}
+						type="squared"
+					/>
+				)}
+			</StyledAppLogoTile>
+		</StyledContainer>
+	);
 };

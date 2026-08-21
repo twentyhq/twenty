@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('ChannelSyncSuccess')
+@ObjectType("ChannelSyncSuccess")
 export class ChannelSyncSuccessDTO {
-  @Field(() => Boolean)
-  success: boolean;
+	@Field(() => Boolean)
+	success: boolean;
 }

@@ -1,13 +1,13 @@
-import { ApiPath } from 'twenty-shared/types';
+import { ApiPath } from "twenty-shared/types";
 
 interface ApolloPlaygroundOptions {
-  path?: ApiPath;
+	path?: ApiPath;
 }
 
 export const renderApolloPlayground = ({
-  path = ApiPath.GraphQL,
+	path = ApiPath.GraphQL,
 }: ApolloPlaygroundOptions = {}) => {
-  return `
+	return `
     <!DOCTYPE html>
     <html lang="en">
       <body style="margin: 0; overflow-x: hidden; overflow-y: hidden">

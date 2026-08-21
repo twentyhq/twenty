@@ -1,1 +1,1 @@
-export type FieldsWidgetDisplayMode = 'grouped' | 'inline';
+export type FieldsWidgetDisplayMode = "grouped" | "inline";

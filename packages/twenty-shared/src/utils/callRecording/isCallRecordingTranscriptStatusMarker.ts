@@ -1,15 +1,15 @@
-import { isArray, isObject } from '@sniptt/guards';
+import { isArray, isObject } from "@sniptt/guards";
 
-import { type CallRecordingTranscriptStatusMarker } from '@/types/CallRecordingTranscript';
+import { type CallRecordingTranscriptStatusMarker } from "@/types/CallRecordingTranscript";
 
 export const isCallRecordingTranscriptStatusMarker = (
-  transcript: unknown,
+	transcript: unknown,
 ): transcript is CallRecordingTranscriptStatusMarker => {
-  if (!isObject(transcript) || isArray(transcript)) {
-    return false;
-  }
+	if (!isObject(transcript) || isArray(transcript)) {
+		return false;
+	}
 
-  const status = (transcript as Record<string, unknown>).status;
+	const status = (transcript as Record<string, unknown>).status;
 
-  return status === 'PENDING' || status === 'FAILED';
+	return status === "PENDING" || status === "FAILED";
 };

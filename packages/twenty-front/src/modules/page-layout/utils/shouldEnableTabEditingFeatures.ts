@@ -1,11 +1,11 @@
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from "~/generated-metadata/graphql";
 
 export const shouldEnableTabEditingFeatures = (
-  pageLayoutType: PageLayoutType,
+	pageLayoutType: PageLayoutType,
 ): boolean => {
-  return (
-    pageLayoutType === PageLayoutType.DASHBOARD ||
-    pageLayoutType === PageLayoutType.STANDALONE_PAGE ||
-    pageLayoutType === PageLayoutType.RECORD_PAGE
-  );
+	return (
+		pageLayoutType === PageLayoutType.DASHBOARD ||
+		pageLayoutType === PageLayoutType.STANDALONE_PAGE ||
+		pageLayoutType === PageLayoutType.RECORD_PAGE
+	);
 };

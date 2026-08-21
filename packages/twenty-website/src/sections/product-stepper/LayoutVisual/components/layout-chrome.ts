@@ -1,11 +1,11 @@
-import { styled } from '@linaria/react';
+import { styled } from "@linaria/react";
 
-import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
+import { PRODUCT_STEPPER_SCENE } from "@/tokens/feature-scenes/product-stepper-scene";
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 const layout = PRODUCT_STEPPER_SCENE.layout;
 
-const PANEL_RADIUS = '3px';
+const PANEL_RADIUS = "3px";
 
 const PANEL_SHADOW = layout.panelShadow;
 
@@ -423,46 +423,46 @@ const AddText = styled.span`
 `;
 
 export const LAYOUT_CHROME = {
-  ActionButton,
-  ActionsBar,
-  AddIconBox,
-  AddSectionRow,
-  AddText,
-  DoneButton,
-  EditField,
-  EditGroup,
-  FieldDot,
-  FieldIconBox,
-  FieldLabels,
-  FieldName,
-  FieldRow,
-  FieldType,
-  NavBreadcrumb,
-  NavChevron,
-  NavIconBox,
-  NavItem,
-  NavPanel,
-  NavSectionLabel,
-  NavSubItem,
-  PanelActionButton,
-  PanelBackButton,
-  PanelFields,
-  PanelHeader,
-  PanelIconBox,
-  PanelSubBar,
-  PanelSubLabel,
-  PanelTitleBold,
-  PanelTitleGroup,
-  RightPanel,
-  SectionName,
-  SectionRow,
-  WidgetAvatar,
-  WidgetChip,
-  WidgetIcon,
-  WidgetInner,
-  WidgetLabel,
-  WidgetPanel,
-  WidgetRow,
-  WidgetSectionLabel,
-  WidgetValue,
+	ActionButton,
+	ActionsBar,
+	AddIconBox,
+	AddSectionRow,
+	AddText,
+	DoneButton,
+	EditField,
+	EditGroup,
+	FieldDot,
+	FieldIconBox,
+	FieldLabels,
+	FieldName,
+	FieldRow,
+	FieldType,
+	NavBreadcrumb,
+	NavChevron,
+	NavIconBox,
+	NavItem,
+	NavPanel,
+	NavSectionLabel,
+	NavSubItem,
+	PanelActionButton,
+	PanelBackButton,
+	PanelFields,
+	PanelHeader,
+	PanelIconBox,
+	PanelSubBar,
+	PanelSubLabel,
+	PanelTitleBold,
+	PanelTitleGroup,
+	RightPanel,
+	SectionName,
+	SectionRow,
+	WidgetAvatar,
+	WidgetChip,
+	WidgetIcon,
+	WidgetInner,
+	WidgetLabel,
+	WidgetPanel,
+	WidgetRow,
+	WidgetSectionLabel,
+	WidgetValue,
 };

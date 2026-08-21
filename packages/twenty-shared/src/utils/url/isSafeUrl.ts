@@ -1,15 +1,15 @@
-const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
+const SAFE_URL_PROTOCOLS = ["http:", "https:", "mailto:", "tel:"];
 
 export const isSafeUrl = (url: string): boolean => {
-  if (url.startsWith('/') && !url.startsWith('//')) {
-    return true;
-  }
+	if (url.startsWith("/") && !url.startsWith("//")) {
+		return true;
+	}
 
-  try {
-    const parsed = new URL(url);
+	try {
+		const parsed = new URL(url);
 
-    return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
-  } catch {
-    return false;
-  }
+		return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
+	} catch {
+		return false;
+	}
 };

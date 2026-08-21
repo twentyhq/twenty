@@ -1,1 +1,1 @@
-export * from './WorkspaceActivationStatus';
+export * from "./WorkspaceActivationStatus";

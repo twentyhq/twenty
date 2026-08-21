@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { IconFrame, IconSquare } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from "@linaria/react";
+import { useLingui } from "@lingui/react/macro";
+import { useState } from "react";
+import { IconFrame, IconSquare } from "twenty-ui/icon";
+import { LightIconButton } from "twenty-ui/input";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { StyledEmailFieldLabel } from "@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel";
+import { TextInput } from "@/ui/input/components/TextInput";
 
 const StyledRow = styled.div`
   align-items: center;
@@ -38,114 +38,114 @@ const StyledUnitChip = styled.div`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-const SIDE_KEYS = ['top', 'right', 'bottom', 'left'] as const;
+const SIDE_KEYS = ["top", "right", "bottom", "left"] as const;
 
 const SIDE_PLACEHOLDERS: Record<(typeof SIDE_KEYS)[number], string> = {
-  top: 'T',
-  right: 'R',
-  bottom: 'B',
-  left: 'L',
+	top: "T",
+	right: "R",
+	bottom: "B",
+	left: "L",
 };
 
 const toDisplayAmount = (token: string): string =>
-  token.endsWith('px') && !Number.isNaN(Number(token.slice(0, -2)))
-    ? token.slice(0, -2)
-    : token;
+	token.endsWith("px") && !Number.isNaN(Number(token.slice(0, -2)))
+		? token.slice(0, -2)
+		: token;
 
 const toCssToken = (input: string): string => {
-  const trimmed = input.trim();
+	const trimmed = input.trim();
 
-  if (trimmed === '') {
-    return '0px';
-  }
+	if (trimmed === "") {
+		return "0px";
+	}
 
-  return Number.isNaN(Number(trimmed)) ? trimmed : `${trimmed}px`;
+	return Number.isNaN(Number(trimmed)) ? trimmed : `${trimmed}px`;
 };
 
 const areAllSidesEqual = ({ top, right, bottom, left }: CssBoxSides) =>
-  top === right && right === bottom && bottom === left;
+	top === right && right === bottom && bottom === left;
 
 export type CssBoxSides = {
-  top: string;
-  right: string;
-  bottom: string;
-  left: string;
+	top: string;
+	right: string;
+	bottom: string;
+	left: string;
 };
 
 type EmailBoxSidesInputProps = {
-  label: string;
-  sides: CssBoxSides;
-  onChange: (sides: CssBoxSides) => void;
-  placeholder?: string;
+	label: string;
+	sides: CssBoxSides;
+	onChange: (sides: CssBoxSides) => void;
+	placeholder?: string;
 };
 
 export const EmailBoxSidesInput = ({
-  label,
-  sides,
-  onChange,
-  placeholder,
+	label,
+	sides,
+	onChange,
+	placeholder,
 }: EmailBoxSidesInputProps) => {
-  const { t } = useLingui();
-  const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
+	const { t } = useLingui();
+	const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
 
-  const commitAllSides = (input: string) => {
-    const token = input.trim() === '' ? '' : toCssToken(input);
+	const commitAllSides = (input: string) => {
+		const token = input.trim() === "" ? "" : toCssToken(input);
 
-    onChange({ top: token, right: token, bottom: token, left: token });
-  };
+		onChange({ top: token, right: token, bottom: token, left: token });
+	};
 
-  const commitSide = (side: (typeof SIDE_KEYS)[number], input: string) => {
-    onChange({
-      ...sides,
-      [side]: input.trim() === '' ? '' : toCssToken(input),
-    });
-  };
+	const commitSide = (side: (typeof SIDE_KEYS)[number], input: string) => {
+		onChange({
+			...sides,
+			[side]: input.trim() === "" ? "" : toCssToken(input),
+		});
+	};
 
-  return (
-    <div>
-      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
-      <StyledRow>
-        {isPerSide ? (
-          <StyledSidesGrid>
-            {SIDE_KEYS.map((side) => (
-              <TextInput
-                key={side}
-                value={toDisplayAmount(sides[side])}
-                onChange={(input) => commitSide(side, input)}
-                placeholder={SIDE_PLACEHOLDERS[side]}
-                fullWidth
-              />
-            ))}
-          </StyledSidesGrid>
-        ) : (
-          <TextInput
-            value={toDisplayAmount(sides.top)}
-            onChange={commitAllSides}
-            placeholder={placeholder ?? '0'}
-            fullWidth
-          />
-        )}
-        <StyledUnitChip>px</StyledUnitChip>
-        <LightIconButton
-          Icon={IconSquare}
-          size="small"
-          accent={isPerSide ? 'tertiary' : 'secondary'}
-          title={t`Same value on every side`}
-          aria-pressed={!isPerSide}
-          onClick={() => {
-            setIsPerSide(false);
-            commitAllSides(toDisplayAmount(sides.top));
-          }}
-        />
-        <LightIconButton
-          Icon={IconFrame}
-          size="small"
-          accent={isPerSide ? 'secondary' : 'tertiary'}
-          title={t`Edit each side`}
-          aria-pressed={isPerSide}
-          onClick={() => setIsPerSide(true)}
-        />
-      </StyledRow>
-    </div>
-  );
+	return (
+		<div>
+			<StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
+			<StyledRow>
+				{isPerSide ? (
+					<StyledSidesGrid>
+						{SIDE_KEYS.map((side) => (
+							<TextInput
+								key={side}
+								value={toDisplayAmount(sides[side])}
+								onChange={(input) => commitSide(side, input)}
+								placeholder={SIDE_PLACEHOLDERS[side]}
+								fullWidth
+							/>
+						))}
+					</StyledSidesGrid>
+				) : (
+					<TextInput
+						value={toDisplayAmount(sides.top)}
+						onChange={commitAllSides}
+						placeholder={placeholder ?? "0"}
+						fullWidth
+					/>
+				)}
+				<StyledUnitChip>px</StyledUnitChip>
+				<LightIconButton
+					Icon={IconSquare}
+					size="small"
+					accent={isPerSide ? "tertiary" : "secondary"}
+					title={t`Same value on every side`}
+					aria-pressed={!isPerSide}
+					onClick={() => {
+						setIsPerSide(false);
+						commitAllSides(toDisplayAmount(sides.top));
+					}}
+				/>
+				<LightIconButton
+					Icon={IconFrame}
+					size="small"
+					accent={isPerSide ? "secondary" : "tertiary"}
+					title={t`Edit each side`}
+					aria-pressed={isPerSide}
+					onClick={() => setIsPerSide(true)}
+				/>
+			</StyledRow>
+		</div>
+	);
 };

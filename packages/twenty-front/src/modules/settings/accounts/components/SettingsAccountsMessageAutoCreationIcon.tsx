@@ -1,12 +1,12 @@
-import { styled } from '@linaria/react';
-import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
+import { styled } from "@linaria/react";
+import { IconArrowDown, IconArrowUp } from "twenty-ui/icon";
 
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from "twenty-ui/theme-constants";
 
 type SettingsAccountsMessageAutoCreationIconProps = {
-  className?: string;
-  isSentActive?: boolean;
-  isReceivedActive?: boolean;
+	className?: string;
+	isSentActive?: boolean;
+	isReceivedActive?: boolean;
 };
 
 const StyledIconContainer = styled.div`
@@ -17,19 +17,19 @@ const StyledIconContainer = styled.div`
   color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing["0.5"]};
   height: 40px;
   justify-content: center;
-  padding: ${themeCssVariables.spacing['0.5']};
+  padding: ${themeCssVariables.spacing["0.5"]};
   width: 32px;
 `;
 
 const StyledDirectionSkeleton = styled.div<{ isActive?: boolean }>`
   align-items: center;
   background-color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.accent.accent7
-      : themeCssVariables.border.color.medium};
+		isActive
+			? themeCssVariables.accent.accent7
+			: themeCssVariables.border.color.medium};
   border-radius: 1px;
   color: ${themeCssVariables.font.color.inverted};
   display: flex;
@@ -39,23 +39,23 @@ const StyledDirectionSkeleton = styled.div<{ isActive?: boolean }>`
 `;
 
 export const SettingsAccountsMessageAutoCreationIcon = ({
-  className,
-  isSentActive,
-  isReceivedActive,
+	className,
+	isSentActive,
+	isReceivedActive,
 }: SettingsAccountsMessageAutoCreationIconProps) => {
-  const theme = useTheme();
+	const theme = useTheme();
 
-  return (
-    <StyledIconContainer className={className}>
-      <StyledDirectionSkeleton isActive={isSentActive}>
-        <IconArrowUp size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
-      </StyledDirectionSkeleton>
-      <StyledDirectionSkeleton isActive={isReceivedActive}>
-        <IconArrowDown
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.md}
-        />
-      </StyledDirectionSkeleton>
-    </StyledIconContainer>
-  );
+	return (
+		<StyledIconContainer className={className}>
+			<StyledDirectionSkeleton isActive={isSentActive}>
+				<IconArrowUp size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
+			</StyledDirectionSkeleton>
+			<StyledDirectionSkeleton isActive={isReceivedActive}>
+				<IconArrowDown
+					size={theme.icon.size.sm}
+					stroke={theme.icon.stroke.md}
+				/>
+			</StyledDirectionSkeleton>
+		</StyledIconContainer>
+	);
 };

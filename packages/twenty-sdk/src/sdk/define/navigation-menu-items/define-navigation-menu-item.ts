@@ -1,19 +1,19 @@
-import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
-import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type NavigationMenuItemManifest } from 'twenty-shared/application';
+import { type DefineEntity } from "@/sdk/define/common/types/define-entity.type";
+import { createValidationResult } from "@/sdk/define/common/utils/create-validation-result";
+import { type NavigationMenuItemManifest } from "twenty-shared/application";
 
 export const defineNavigationMenuItem: DefineEntity<
-  NavigationMenuItemManifest
+	NavigationMenuItemManifest
 > = (config) => {
-  const errors: string[] = [];
+	const errors: string[] = [];
 
-  if (!config.universalIdentifier) {
-    errors.push('NavigationMenuItem must have a universalIdentifier');
-  }
+	if (!config.universalIdentifier) {
+		errors.push("NavigationMenuItem must have a universalIdentifier");
+	}
 
-  if (typeof config.position !== 'number') {
-    errors.push('NavigationMenuItem must have a position');
-  }
+	if (typeof config.position !== "number") {
+		errors.push("NavigationMenuItem must have a position");
+	}
 
-  return createValidationResult({ config, errors });
+	return createValidationResult({ config, errors });
 };

@@ -1,14 +1,14 @@
-import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
+import { SidePanelPageComponentInstanceContext } from "@/side-panel/states/contexts/SidePanelPageComponentInstanceContext";
+import { createAtomComponentState } from "@/ui/utilities/state/jotai/utils/createAtomComponentState";
 
 type FrontComponentRecordContext = {
-  recordId: string;
-  objectNameSingular: string;
+	recordId: string;
+	objectNameSingular: string;
 };
 
 export const viewableFrontComponentRecordContextComponentState =
-  createAtomComponentState<FrontComponentRecordContext | null>({
-    key: 'side-panel/viewable-front-component-record-context',
-    defaultValue: null,
-    componentInstanceContext: SidePanelPageComponentInstanceContext,
-  });
+	createAtomComponentState<FrontComponentRecordContext | null>({
+		key: "side-panel/viewable-front-component-record-context",
+		defaultValue: null,
+		componentInstanceContext: SidePanelPageComponentInstanceContext,
+	});

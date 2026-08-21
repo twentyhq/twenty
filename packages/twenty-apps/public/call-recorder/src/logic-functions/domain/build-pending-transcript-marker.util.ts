@@ -1,13 +1,13 @@
-import { type TranscriptMarker } from 'src/logic-functions/types/transcript-marker.type';
+import { type TranscriptMarker } from "src/logic-functions/types/transcript-marker.type";
 
 export const buildPendingTranscriptMarker = ({
-  recallTranscriptId,
-  requestedAt,
+	recallTranscriptId,
+	requestedAt,
 }: {
-  recallTranscriptId: string;
-  requestedAt: string;
+	recallTranscriptId: string;
+	requestedAt: string;
 }): TranscriptMarker => ({
-  recallTranscriptId,
-  status: 'PENDING',
-  requestedAt,
+	recallTranscriptId,
+	status: "PENDING",
+	requestedAt,
 });

@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { copyToClipboard } from 'twenty-sdk/front-component';
-import { IconCopy, type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import styled from "@emotion/styled";
+import { copyToClipboard } from "twenty-sdk/front-component";
+import { IconCopy, type IconComponent } from "twenty-ui/icon";
+import { themeCssVariables } from "twenty-ui/theme-constants";
 
 const COPY_ICON_SIZE = 16;
 
@@ -30,38 +30,38 @@ const StyledButton = styled.button`
 `;
 
 type CopyToClipboardButtonProps = {
-  textToCopy: string | undefined;
-  ariaLabel: string;
-  Icon?: IconComponent;
+	textToCopy: string | undefined;
+	ariaLabel: string;
+	Icon?: IconComponent;
 };
 
 export const CopyToClipboardButton = ({
-  textToCopy,
-  ariaLabel,
-  Icon = IconCopy,
+	textToCopy,
+	ariaLabel,
+	Icon = IconCopy,
 }: CopyToClipboardButtonProps) => {
-  const isDisabled = textToCopy === undefined || textToCopy.length === 0;
+	const isDisabled = textToCopy === undefined || textToCopy.length === 0;
 
-  const handleClick = () => {
-    if (isDisabled) {
-      return;
-    }
+	const handleClick = () => {
+		if (isDisabled) {
+			return;
+		}
 
-    // The host performs the clipboard write and owns the success/error
-    // snackbar; the front-component sandbox has no direct navigator.clipboard
-    // access, and the host does not report back whether the copy succeeded.
-    void copyToClipboard(textToCopy);
-  };
+		// The host performs the clipboard write and owns the success/error
+		// snackbar; the front-component sandbox has no direct navigator.clipboard
+		// access, and the host does not report back whether the copy succeeded.
+		void copyToClipboard(textToCopy);
+	};
 
-  return (
-    <StyledButton
-      type="button"
-      aria-label={ariaLabel}
-      title={ariaLabel}
-      disabled={isDisabled}
-      onClick={handleClick}
-    >
-      <Icon size={COPY_ICON_SIZE} />
-    </StyledButton>
-  );
+	return (
+		<StyledButton
+			type="button"
+			aria-label={ariaLabel}
+			title={ariaLabel}
+			disabled={isDisabled}
+			onClick={handleClick}
+		>
+			<Icon size={COPY_ICON_SIZE} />
+		</StyledButton>
+	);
 };

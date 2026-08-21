@@ -1,4 +1,4 @@
 export const ALLOWED_FULL_NAME_SORT_SUBFIELDS = [
-  'firstName',
-  'lastName',
+	"firstName",
+	"lastName",
 ] as const;

@@ -1,14 +1,14 @@
-import { type IconComponent } from 'twenty-ui/icon';
-import React, { useContext } from 'react';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type IconComponent } from "twenty-ui/icon";
+import React, { useContext } from "react";
+import { styled } from "@linaria/react";
+import { t } from "@lingui/core/macro";
+import { ThemeContext, themeCssVariables } from "twenty-ui/theme-constants";
 
 type SubscriptionInfoRowContainerProps = {
-  Icon: IconComponent;
-  label: string;
-  currentValue: React.ReactNode;
-  nextValue?: React.ReactNode;
+	Icon: IconComponent;
+	label: string;
+	currentValue: React.ReactNode;
+	nextValue?: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
@@ -38,32 +38,32 @@ const StyledHeaderText = styled.div`
 `;
 
 export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
-  if (!show) return null;
-  return (
-    <StyledContainer>
-      <div />
-      <StyledHeaderText>{t`Current`}</StyledHeaderText>
-      <StyledHeaderText>{t`Next`}</StyledHeaderText>
-    </StyledContainer>
-  );
+	if (!show) return null;
+	return (
+		<StyledContainer>
+			<div />
+			<StyledHeaderText>{t`Current`}</StyledHeaderText>
+			<StyledHeaderText>{t`Next`}</StyledHeaderText>
+		</StyledContainer>
+	);
 };
 
 export const SubscriptionInfoRowContainer = ({
-  Icon,
-  label,
-  currentValue,
-  nextValue,
+	Icon,
+	label,
+	currentValue,
+	nextValue,
 }: SubscriptionInfoRowContainerProps) => {
-  const { theme } = useContext(ThemeContext);
+	const { theme } = useContext(ThemeContext);
 
-  return (
-    <StyledContainer>
-      <StyledIconLabelContainer>
-        <Icon size={theme.icon.size.md} />
-        <StyledLabelContainer>{label}</StyledLabelContainer>
-      </StyledIconLabelContainer>
-      {currentValue}
-      <div>{nextValue ?? ''}</div>
-    </StyledContainer>
-  );
+	return (
+		<StyledContainer>
+			<StyledIconLabelContainer>
+				<Icon size={theme.icon.size.md} />
+				<StyledLabelContainer>{label}</StyledLabelContainer>
+			</StyledIconLabelContainer>
+			{currentValue}
+			<div>{nextValue ?? ""}</div>
+		</StyledContainer>
+	);
 };

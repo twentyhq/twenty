@@ -1,5 +1,5 @@
 export type ParsedLogLine = {
-  timestamp: Date;
-  level: string;
-  message: string;
+	timestamp: Date;
+	level: string;
+	message: string;
 };

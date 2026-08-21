@@ -1,5 +1,5 @@
-import { type Temporal } from 'temporal-polyfill';
+import { type Temporal } from "temporal-polyfill";
 
 export const isPlainDateInWeekend = (plainDate: Temporal.PlainDate) => {
-  return plainDate.dayOfWeek > 5;
+	return plainDate.dayOfWeek > 5;
 };
