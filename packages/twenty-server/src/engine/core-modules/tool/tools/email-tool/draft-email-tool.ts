@@ -11,7 +11,6 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
-import { toSendMessageInput } from 'src/modules/messaging/message-outbound-manager/utils/to-send-message-input.util';
 
 @Injectable()
 export class DraftEmailTool implements Tool {
@@ -106,7 +105,19 @@ export class DraftEmailTool implements Tool {
 
   private async createDraft(data: ComposedEmail): Promise<void> {
     await this.messageOutboundService.createDraft(
-      toSendMessageInput(data),
+      {
+        fromHandle: data.fromHandle,
+        to: data.recipients.to,
+        cc: data.recipients.cc.length > 0 ? data.recipients.cc : undefined,
+        bcc: data.recipients.bcc.length > 0 ? data.recipients.bcc : undefined,
+        subject: data.sanitizedSubject,
+        body: data.plainTextBody,
+        html: data.sanitizedHtmlBody,
+        attachments: data.attachments,
+        inReplyTo: data.inReplyTo,
+        threadExternalId: data.threadExternalId,
+        references: data.references,
+      },
       data.connectedAccount,
     );
   }

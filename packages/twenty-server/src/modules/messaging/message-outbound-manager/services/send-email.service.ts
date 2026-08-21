@@ -5,8 +5,8 @@ import { MessagingDraftSendService } from 'src/modules/messaging/message-outboun
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 import { SentMessagePersistenceService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-persistence.service';
 import { type PersistedSentMessage } from 'src/modules/messaging/message-outbound-manager/types/persisted-sent-message.type';
+import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
-import { toSendMessageInput } from 'src/modules/messaging/message-outbound-manager/utils/to-send-message-input.util';
 
 @Injectable()
 export class SendEmailService {
@@ -20,7 +20,7 @@ export class SendEmailService {
 
   async sendComposedEmail(data: ComposedEmail): Promise<SendMessageResult> {
     return this.messageOutboundService.sendMessage(
-      toSendMessageInput(data),
+      this.toSendMessageInput(data),
       data.connectedAccount,
     );
   }
@@ -32,7 +32,7 @@ export class SendEmailService {
   ): Promise<SendMessageResult> {
     return this.messagingDraftSendService.sendDraftMessage({
       draftMessageId,
-      sendMessageInput: toSendMessageInput(data),
+      sendMessageInput: this.toSendMessageInput(data),
       connectedAccount: data.connectedAccount,
       workspaceId,
     });
@@ -58,6 +58,22 @@ export class SendEmailService {
       messageExternalId,
       workspaceId,
     });
+  }
+
+  private toSendMessageInput(data: ComposedEmail): SendMessageInput {
+    return {
+      fromHandle: data.fromHandle,
+      to: data.recipients.to,
+      cc: data.recipients.cc.length > 0 ? data.recipients.cc : undefined,
+      bcc: data.recipients.bcc.length > 0 ? data.recipients.bcc : undefined,
+      subject: data.sanitizedSubject,
+      body: data.plainTextBody,
+      html: data.sanitizedHtmlBody,
+      attachments: data.attachments,
+      inReplyTo: data.inReplyTo,
+      threadExternalId: data.threadExternalId,
+      references: data.references,
+    };
   }
 
   async persistSentMessage(
