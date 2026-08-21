@@ -23,7 +23,7 @@ type TimelineActivityRulesForEventBatch = {
 };
 
 @Injectable()
-export class TimelineActivityRuleResolverService {
+export class TimelineActivityRuleBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}

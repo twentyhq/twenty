@@ -5,12 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
-
-export type ResolvedTimelineActivityTarget = {
-  targetObjectNameSingular: string;
-  targetRecordId: string;
-};
 
 const readTargetFromJunctionRow = (
   junctionRow: Record<string, unknown>,
@@ -33,7 +29,7 @@ const readTargetFromJunctionRow = (
 };
 
 @Injectable()
-export class TimelineActivityTargetResolverService {
+export class TimelineActivityTargetQueryService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
