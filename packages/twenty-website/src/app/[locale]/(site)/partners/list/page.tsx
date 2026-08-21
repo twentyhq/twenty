@@ -1,5 +1,12 @@
 import { Suspense } from 'react';
 
+import { msg } from '@lingui/core/macro';
+
+import {
+  ClientBriefModalRoot,
+  ClientBriefTextLink,
+  SubmitBriefButton,
+} from '@/client-brief';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -46,12 +53,26 @@ export default async function PartnersMarketplacePage({
         )}
       />
       <Menu communityStats={communityStats} scheme="light" />
-      <main>
-        <MarketplaceHeader />
-        <Suspense fallback={<MarketplaceListSkeleton />}>
-          <MarketplaceClient partners={partners} />
-        </Suspense>
-      </main>
+      <ClientBriefModalRoot>
+        <main>
+          <MarketplaceHeader
+            briefLink={
+              <ClientBriefTextLink>tell us what you need</ClientBriefTextLink>
+            }
+          />
+          <Suspense fallback={<MarketplaceListSkeleton />}>
+            <MarketplaceClient
+              briefAction={
+                <SubmitBriefButton label={msg`Get matched`} variant="filled" />
+              }
+              briefPromptAction={
+                <SubmitBriefButton label={msg`Submit a brief`} />
+              }
+              partners={partners}
+            />
+          </Suspense>
+        </main>
+      </ClientBriefModalRoot>
     </>
   );
 }

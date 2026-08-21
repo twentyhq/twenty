@@ -1,7 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 
 import { spacing } from '@/tokens';
 import { SectionShell } from '@/ui';
@@ -19,8 +19,12 @@ const Results = styled.div`
 `;
 
 export function MarketplaceClient({
+  briefAction,
+  briefPromptAction,
   partners,
 }: {
+  briefAction: ReactNode;
+  briefPromptAction: ReactNode;
   partners: readonly MarketplacePartner[];
 }) {
   const {
@@ -51,13 +55,18 @@ export function MarketplaceClient({
           visibleCount={filteredPartners.length}
         />
         <Results>
-          <MarketplaceGrid partners={filteredPartners} />
+          <MarketplaceGrid
+            briefAction={briefAction}
+            partners={filteredPartners}
+          />
           {filteredPartners.length === 0 && partners.length > 0 && (
             <MarketplaceEmptyState onClearFilters={clearAll} />
           )}
         </Results>
       </SectionShell>
-      {partners.length > 0 && <MarketplaceBriefPrompt />}
+      {partners.length > 0 && (
+        <MarketplaceBriefPrompt briefAction={briefPromptAction} />
+      )}
     </>
   );
 }

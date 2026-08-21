@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { IconArrowUpRight } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import {
   DURATION,
@@ -115,15 +116,15 @@ const RailLinkIcon = styled(IconArrowUpRight)`
 `;
 
 export function PartnerProfileCtas({
+  briefAction,
   calendarLink,
   links,
   linkUrls,
-  slug,
 }: {
+  briefAction: ReactNode;
   calendarLink: string;
   links: PartnerLinks;
   linkUrls?: readonly string[];
-  slug: string;
 }) {
   const { i18n } = useLingui();
   const calendarHref = isSafeHttpUrl(calendarLink) ? calendarLink : null;
@@ -178,13 +179,7 @@ export function PartnerProfileCtas({
             ))}
           </RailLinks>
         )}
-        <PrimaryAction>
-          <Button
-            href={`/partners/brief?partner=${encodeURIComponent(slug)}`}
-            label={i18n._(msg`Submit a brief`)}
-            variant="outlined"
-          />
-        </PrimaryAction>
+        <PrimaryAction>{briefAction}</PrimaryAction>
       </CtaCard>
     </Wrapper>
   );
