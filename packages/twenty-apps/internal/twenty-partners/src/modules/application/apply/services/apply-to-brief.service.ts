@@ -8,6 +8,7 @@ import {
 import { createApplication } from 'src/modules/application/apply/graphql/mutations/create-application';
 import { findOpportunityForApply } from 'src/modules/application/apply/graphql/queries/find-opportunity-for-apply';
 import { findPartnerName } from 'src/modules/application/apply/graphql/queries/find-partner-name';
+import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { buildApplicationName } from 'src/modules/application/utils/build-application-name';
 import {
@@ -48,7 +49,17 @@ export const applyToBrief = async (
     if (trimmedPitch.length < MIN_PITCH_LENGTH) return errorResponse('PITCH_TOO_SHORT');
 
     const duplicates = await findDuplicateApplication(client, opportunityId, resolved.partnerId);
-    if (duplicates.applications?.edges?.[0]?.node?.id) return errorResponse('ALREADY_APPLIED');
+    const existing = duplicates.applications?.edges?.[0]?.node;
+    if (existing?.id) {
+      if (isNonEmptyString(existing.pitch)) return errorResponse('ALREADY_APPLIED');
+
+      // Fill the pitch of an INVITED row in place and leave its state alone — the state
+      // records that Twenty pushed this brief at the partner. No extra guard is needed for
+      // late-stage rows: stamping introSentAt unlists the brief, so INTRODUCED / WON /
+      // DECLINED rows fail the isListed check above with BRIEF_NOT_OPEN.
+      await updateApplication(client, existing.id, { pitch: trimmedPitch });
+      return { ok: true, applicationId: existing.id };
+    }
 
     const partner = (await findPartnerName(client, resolved.partnerId)).partner;
 

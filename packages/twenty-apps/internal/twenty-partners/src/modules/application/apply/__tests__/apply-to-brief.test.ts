@@ -120,13 +120,44 @@ describe('applyToBrief', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it('refuses a duplicate application without creating anything', async () => {
-    respondWith({ applications: { edges: [{ node: { id: 'existing-application' } }] } });
+  it('refuses an existing application that already carries a pitch', async () => {
+    respondWith({
+      applications: {
+        edges: [{ node: { id: 'existing-application', pitch: 'a real pitch' } }],
+      },
+    });
 
     const result = await applyToBrief(event(validBody));
 
     expect(result).toEqual({ ok: false, reason: 'ALREADY_APPLIED' });
     expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['null', null],
+    ['whitespace only', '   \n  '],
+  ])('fills the pitch of an existing row whose pitch is %s', async (_label, pitch) => {
+    respondWith({
+      applications: { edges: [{ node: { id: 'invited-application', pitch } }] },
+    });
+    const submittedPitch = `  ${pitchOf(MIN_PITCH_LENGTH)}  `;
+
+    const result = await applyToBrief(
+      event({ opportunityId: OPPORTUNITY_ID, pitch: submittedPitch }),
+    );
+
+    expect(result).toEqual({ ok: true, applicationId: 'invited-application' });
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateApplication: {
+        __args: { id: 'invited-application', data: { pitch: submittedPitch.trim() } },
+        id: true,
+      },
+    });
+
+    const data = mutationMock.mock.calls[0][0].updateApplication.__args.data;
+    expect(Object.keys(data)).toEqual(['pitch']);
+    expect(data).not.toHaveProperty('state');
   });
 
   it('creates the application once with the five derived fields', async () => {
