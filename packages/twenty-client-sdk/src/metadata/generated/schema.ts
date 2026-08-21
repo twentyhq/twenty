@@ -1541,6 +1541,7 @@ export interface Sentry {
     environment?: Scalars['String']
     release?: Scalars['String']
     dsn?: Scalars['String']
+    tracesSampleRate?: Scalars['Float']
     __typename: 'Sentry'
 }
 
@@ -4846,6 +4847,7 @@ export interface SentryGenqlSelection{
     environment?: boolean | number
     release?: boolean | number
     dsn?: boolean | number
+    tracesSampleRate?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
