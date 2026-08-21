@@ -11,6 +11,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     folderId
     name
     link
+    systemPage
     icon
     color
     pageLayoutId

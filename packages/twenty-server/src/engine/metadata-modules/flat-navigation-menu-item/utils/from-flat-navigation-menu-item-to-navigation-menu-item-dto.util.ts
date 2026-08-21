@@ -14,6 +14,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   folderId: flatNavigationMenuItem.folderId ?? undefined,
   name: flatNavigationMenuItem.name ?? undefined,
   link: flatNavigationMenuItem.link ?? undefined,
+  systemPage: flatNavigationMenuItem.systemPage ?? undefined,
   icon: flatNavigationMenuItem.icon ?? undefined,
   color: flatNavigationMenuItem.color ?? undefined,
   pageLayoutId: flatNavigationMenuItem.pageLayoutId ?? undefined,
