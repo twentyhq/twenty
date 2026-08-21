@@ -82,11 +82,27 @@ export const SettingsObjectTimelineRuleEdit = () => {
     setHasInitialized(true);
   }, [hasInitialized, timelineActivityRule]);
 
+  // A rule can be deleted or reset from another tab, which leaves the id in
+  // this url pointing at nothing.
   useEffect(() => {
-    if (!loading && !isDefined(objectMetadataItem)) {
+    if (loading) {
+      return;
+    }
+
+    if (
+      !isDefined(objectMetadataItem) ||
+      !isDefined(timelineActivityRule) ||
+      !isDefined(sourceObjectMetadataItem)
+    ) {
       navigateApp(AppPath.NotFound);
     }
-  }, [loading, objectMetadataItem, navigateApp]);
+  }, [
+    loading,
+    objectMetadataItem,
+    timelineActivityRule,
+    sourceObjectMetadataItem,
+    navigateApp,
+  ]);
 
   const triggerableFields = useMemo(
     () =>
