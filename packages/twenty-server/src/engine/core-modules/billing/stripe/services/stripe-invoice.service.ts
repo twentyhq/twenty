@@ -2,6 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import type Stripe from 'stripe';
 
 import {
@@ -61,13 +63,13 @@ export class StripeInvoiceService {
     const invoice = await this.stripe.invoices.create({
       customer: stripeCustomerId,
       subscription: stripeSubscriptionId,
-      pending_invoice_items_behavior: 'exclude',
     });
 
     let finalizedInvoice: Stripe.Invoice;
+    let invoiceItemId: string | undefined;
 
     try {
-      await this.stripe.invoiceItems.create({
+      const invoiceItem = await this.stripe.invoiceItems.create({
         customer: stripeCustomerId,
         subscription: stripeSubscriptionId,
         invoice: invoice.id,
@@ -76,6 +78,8 @@ export class StripeInvoiceService {
         description,
       });
 
+      invoiceItemId = invoiceItem.id;
+
       finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
         invoice.id,
         {
@@ -83,7 +87,10 @@ export class StripeInvoiceService {
         },
       );
     } catch (error) {
-      await this.deleteDraftUpgradeInvoice(invoice.id);
+      await this.deleteDraftUpgradeInvoice({
+        invoiceId: invoice.id,
+        invoiceItemId,
+      });
 
       throw error;
     }
@@ -145,12 +152,30 @@ export class StripeInvoiceService {
     );
   }
 
-  private async deleteDraftUpgradeInvoice(invoiceId: string): Promise<void> {
+  private async deleteDraftUpgradeInvoice({
+    invoiceId,
+    invoiceItemId,
+  }: {
+    invoiceId: string;
+    invoiceItemId?: string;
+  }): Promise<void> {
     try {
       await this.stripe.invoices.del(invoiceId);
     } catch (deleteError) {
       this.logger.error(
         `Failed to delete draft upgrade invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
+      );
+    }
+
+    if (!isDefined(invoiceItemId)) {
+      return;
+    }
+
+    try {
+      await this.stripe.invoiceItems.del(invoiceItemId);
+    } catch (deleteError) {
+      this.logger.error(
+        `Failed to delete upgrade invoice item ${invoiceItemId}: ${this.getErrorMessage(deleteError)}`,
       );
     }
   }

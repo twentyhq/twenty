@@ -9,10 +9,6 @@ import {
 } from '@lingui/core';
 import { compileMessage } from '@lingui/message-utils/compileMessage';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
-
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
 import { messages as arMessages } from 'src/engine/core-modules/i18n/locales/generated/ar-SA';
@@ -125,38 +121,6 @@ export class I18nService implements OnModuleInit {
     const i18n = this.getI18nInstance(locale);
 
     return i18n._(messageId, values, options);
-  }
-
-  async buildEffectiveEntityI18nContext({
-    applicationId,
-    loaders,
-    locale,
-    workspaceId,
-  }: {
-    applicationId: string | undefined;
-    loaders: IDataloaders;
-    locale: keyof typeof APP_LOCALES | undefined;
-    workspaceId: string;
-  }): Promise<EffectiveEntityI18nContext> {
-    const safeLocale = locale ?? SOURCE_LOCALE;
-
-    const standardApplicationId =
-      await loaders.standardApplicationIdLoader.load({ workspaceId });
-
-    const applicationCatalog = isDefined(applicationId)
-      ? await loaders.applicationTranslationCatalogLoader.load({
-          applicationId,
-          workspaceId,
-          locale: safeLocale,
-        })
-      : undefined;
-
-    return {
-      locale,
-      i18nInstance: this.getI18nInstance(safeLocale),
-      isStandardApp: applicationId === standardApplicationId,
-      applicationCatalog,
-    };
   }
 
   async onModuleInit() {

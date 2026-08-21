@@ -51,7 +51,7 @@ msgstr "その期間を過ぎると、ワークスペースとそのすべての
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm new email"
-msgstr ""
+msgstr "新しいメールアドレスの確認"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -61,7 +61,7 @@ msgstr "メールアドレスを確認"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your new email address"
-msgstr ""
+msgstr "新しいメールアドレスを確認してください"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx

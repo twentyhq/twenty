@@ -24,7 +24,7 @@ describe('generateILikeFiltersForCompositeFields', () => {
       },
     ]);
   });
-  it('should format composite filters for complex filter string', () => {
+  it('should require every token to match a subfield for complex filter string', () => {
     expect(
       generateILikeFiltersForCompositeFields('john doe', 'name', [
         'firstName',
@@ -32,32 +32,90 @@ describe('generateILikeFiltersForCompositeFields', () => {
       ]),
     ).toEqual([
       {
-        name: {
-          firstName: {
-            ilike: '%john%',
+        and: [
+          {
+            or: [
+              { name: { firstName: { ilike: '%john%' } } },
+              { name: { lastName: { ilike: '%john%' } } },
+            ],
           },
-        },
+          {
+            or: [
+              { name: { firstName: { ilike: '%doe%' } } },
+              { name: { lastName: { ilike: '%doe%' } } },
+            ],
+          },
+        ],
       },
+    ]);
+  });
+
+  it('should be insensitive to token order', () => {
+    expect(
+      generateILikeFiltersForCompositeFields('doe john', 'name', [
+        'firstName',
+        'lastName',
+      ]),
+    ).toEqual([
       {
-        name: {
-          lastName: {
-            ilike: '%john%',
+        and: [
+          {
+            or: [
+              { name: { firstName: { ilike: '%doe%' } } },
+              { name: { lastName: { ilike: '%doe%' } } },
+            ],
           },
-        },
+          {
+            or: [
+              { name: { firstName: { ilike: '%john%' } } },
+              { name: { lastName: { ilike: '%john%' } } },
+            ],
+          },
+        ],
       },
+    ]);
+  });
+
+  it('should normalize surrounding and repeated whitespace', () => {
+    expect(
+      generateILikeFiltersForCompositeFields('  john   doe  ', 'name', [
+        'firstName',
+        'lastName',
+      ]),
+    ).toEqual(
+      generateILikeFiltersForCompositeFields('john doe', 'name', [
+        'firstName',
+        'lastName',
+      ]),
+    );
+  });
+
+  it('should not tokenize a single token padded with whitespace', () => {
+    expect(
+      generateILikeFiltersForCompositeFields('  john  ', 'name', [
+        'firstName',
+        'lastName',
+      ]),
+    ).toEqual([
+      { name: { firstName: { ilike: '%john%' } } },
+      { name: { lastName: { ilike: '%john%' } } },
+    ]);
+  });
+
+  it('should keep returning per-subfield emptiness checks when emptyCheck is set', () => {
+    expect(
+      generateILikeFiltersForCompositeFields(
+        'john doe',
+        'name',
+        ['firstName'],
+        true,
+      ),
+    ).toEqual([
       {
-        name: {
-          firstName: {
-            ilike: '%doe%',
-          },
-        },
-      },
-      {
-        name: {
-          lastName: {
-            ilike: '%doe%',
-          },
-        },
+        or: [
+          { name: { firstName: { is: 'NULL' } } },
+          { name: { firstName: { ilike: '' } } },
+        ],
       },
     ]);
   });

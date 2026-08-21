@@ -66,6 +66,9 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+تظهر السلاسل السياقية في كتالوجات اللغة المحلية كمجموعة مفهرسة حسب سياقها:
+`"\<context>": { "\<message>": "\<translation>" }`. تكون تسميات الـ Manifest سياقية بطبيعتها — إذ تحمل كل تسمية دورها في البيانات الوصفية (`objectMetadata.labelSingular`، `fieldMetadata.label`، `view.name`، …)، لذلك يمكن أن تُترجَم الكلمة نفسها بشكل مختلف عندما تكون اسم كائن وعندما تكون اسم عرض.
+
 ## الاستخراج والترجمة
 
 شغِّل أمر الاستخراج من دليل تطبيقك:
@@ -83,9 +86,17 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+السلاسل غير المرتبطة بسياق هي مدخلات مسطَّحة؛ أما السلاسل المرتبطة بسياق — بما في ذلك كل تسمية في ملف manifest — فهي متداخلة تحت مفتاح السياق الخاص بها.
 
 العناصر النائبة مثل `{name}` تُستبدَل وقت التشغيل — احتفظ بها في
 الترجمة. أي سلسلة تُترَك فارغة تعود إلى نص المصدر.
@@ -98,13 +109,11 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 اللغة (locale) من سياق التنفيذ الخاص به (لغة المضيف الحالية) ويحل كل سلسلة مقابل كتالوجه، مع الرجوع إلى المصدر عندما تكون الترجمة مفقودة. تغيير اللغة في المضيف يعيد تصيير سلاسل `Trans` و
 `useTranslate().t` مباشرة.
 
-نظرًا إلى أنّ الكتالوجات تُجمَّع في وقت البناء، فإن تحديث ترجمة ما يعني
-إعادة تشغيل `twenty dev:build` (وإعادة النشر)، تمامًا مثل أي تغيير آخر.
-
-<Note>
-يتم تجميع الترجمات بواسطة `twenty dev:build` (و`twenty apply`). تشغيل المراقبة المستمرة `twenty dev`
-يعرض سلاسل المصدر، لذا اختبر المخرجات المترجمة ببناء (build) لمرة واحدة.
-</Note>
+تُصرَّف تسميات Manifest عند كل مزامنة — `twenty dev:build` و`twenty apply`
+وكذلك المراقبة المستمرة `twenty dev` — لذا يكفي تعديل ملف لغة
+والمزامنة لرؤية النص الجديد. تُضمَّن كتالوجات مكوّنات Front في
+كل حزمة مكوّنات وقت البناء، لذا فإن تغيير أحدها لا يزال يعني
+إعادة تشغيل `twenty dev:build` (وإعادة النشر).
 
 قد تمتد عناصر النص التابعة لـ `Trans` على عدة أسطر — يتم ضغط المسافات
 بنفس الطريقة التي يقوم JSX بضغطها، لذلك كلاهما يتم استخلاصه إلى المفتاح `Welcome back`:

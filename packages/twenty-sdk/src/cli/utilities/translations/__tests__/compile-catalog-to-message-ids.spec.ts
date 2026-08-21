@@ -3,15 +3,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { generateMessageId } from 'twenty-shared/i18n';
 
 import { compileCatalogToMessageIds } from '@/cli/utilities/translations/compile-catalog-to-message-ids';
-import { CONTEXT_SEPARATOR } from '@/sdk/front-component/translations/message/context-separator.constant';
-import { getTranslationCatalogKey } from '@/sdk/front-component/translations/message';
 
 describe('compileCatalogToMessageIds', () => {
-  it('keys translations by message id, honoring the context', () => {
+  it('keys translations by message id, honoring context groups', () => {
     const compiled = compileCatalogToMessageIds({
       catalog: {
         Export: 'Exporter',
-        [getTranslationCatalogKey('Export', 'view.name')]: 'Export de vue',
+        'view.name': { Export: 'Export de vue' },
       },
     });
 
@@ -27,6 +25,7 @@ describe('compileCatalogToMessageIds', () => {
         Export: '',
         Import: 42,
         Delete: 'Supprimer',
+        'view.name': { Untranslated: '' },
       },
     });
 
@@ -36,19 +35,19 @@ describe('compileCatalogToMessageIds', () => {
   it('reports a collision and keeps the later entry', () => {
     const onCollision = vi.fn();
 
-    // A context-less key and an empty-context key hash identically, so two
-    // distinct catalog keys can claim one message id.
+    // An empty-string context group hashes like no context at all, so two
+    // distinct authored entries can claim one message id.
     const compiled = compileCatalogToMessageIds({
       catalog: {
         Export: 'first',
-        [`${CONTEXT_SEPARATOR}Export`]: 'second',
+        '': { Export: 'second' },
       },
       onCollision,
     });
 
     expect(onCollision).toHaveBeenCalledWith({
       messageId: generateMessageId('Export'),
-      keptKey: `${CONTEXT_SEPARATOR}Export`,
+      keptKey: ' Export',
       droppedKey: 'Export',
     });
     expect(compiled).toEqual({ [generateMessageId('Export')]: 'second' });
