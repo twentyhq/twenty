@@ -15,8 +15,8 @@ export function PartnerSignoff() {
       heading={i18n._(msg`Ready to grow *with Twenty?*`)}
       scheme="light"
     >
-      <BecomePartnerButton label={msg`Become a partner`} variant="outlined" />
       <Button href="/partners/list" label={i18n._(msg`Find a partner`)} />
+      <BecomePartnerButton label={msg`Become a partner`} variant="outlined" />
     </Signoff>
   );
 }
