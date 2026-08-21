@@ -1,14 +1,25 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+
+// The fields filtering actually reads. Callers keep their own wider row type.
+export type FilterableTimelineActivity = Pick<
+  TimelineActivity,
+  | 'name'
+  | 'action'
+  | 'sourceObjectMetadataId'
+  | 'linkedObjectMetadataId'
+  | 'linkedRecordId'
+  | 'properties'
+>;
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getTimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
-const keepActivityWithReadableDiff = (
-  timelineActivity: TimelineActivity,
+const keepActivityWithReadableDiff = <T extends FilterableTimelineActivity>(
+  timelineActivity: T,
   readableFields: FieldMetadataItem[],
-): TimelineActivity | undefined => {
+): T | undefined => {
   const validDiffEntries = Object.entries(
     timelineActivity.properties?.diff ?? {},
   ).filter(([diffKey]) =>
@@ -31,7 +42,7 @@ const keepActivityWithReadableDiff = (
 // Activities created before the linkedObjectMetadataId column was populated
 // encode the linked object in their name, e.g. "linked-note.updated".
 const findLegacyObjectMetadataItemFromName = (
-  timelineActivity: TimelineActivity,
+  timelineActivity: FilterableTimelineActivity,
   objectMetadataItems: EnrichedObjectMetadataItem[],
 ): EnrichedObjectMetadataItem | undefined => {
   if (!timelineActivity.name.startsWith('linked-')) {
@@ -51,7 +62,7 @@ const findLegacyObjectMetadataItemFromName = (
 // A row about a related record names its object in three places, oldest last:
 // the stored source column, the linked column, and the legacy name.
 const findLinkedObjectMetadataItem = (
-  timelineActivity: TimelineActivity,
+  timelineActivity: FilterableTimelineActivity,
   objectMetadataItems: EnrichedObjectMetadataItem[],
 ): EnrichedObjectMetadataItem | undefined => {
   if (!isDefined(timelineActivity.linkedRecordId)) {
@@ -74,11 +85,13 @@ const findLinkedObjectMetadataItem = (
   );
 };
 
-export const filterOutInvalidTimelineActivities = (
-  timelineActivities: TimelineActivity[],
+export const filterOutInvalidTimelineActivities = <
+  T extends FilterableTimelineActivity,
+>(
+  timelineActivities: T[],
   mainObjectSingularName: string,
   objectMetadataItems: EnrichedObjectMetadataItem[],
-): TimelineActivity[] => {
+): T[] => {
   const mainObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === mainObjectSingularName,
@@ -97,9 +110,7 @@ export const filterOutInvalidTimelineActivities = (
 
       // Resolved once here so the renderer never has to parse a legacy name to
       // work out which object a row came from.
-      const timelineActivity: TimelineActivity = isDefined(
-        linkedObjectMetadataItem,
-      )
+      const timelineActivity: T = isDefined(linkedObjectMetadataItem)
         ? {
             ...rawTimelineActivity,
             sourceObjectMetadataId: linkedObjectMetadataItem.id,
