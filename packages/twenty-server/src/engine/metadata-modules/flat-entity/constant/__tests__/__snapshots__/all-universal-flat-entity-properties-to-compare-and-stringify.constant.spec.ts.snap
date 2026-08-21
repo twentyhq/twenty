@@ -340,10 +340,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "actions",
       "triggerFieldMetadataIds",
       "isActive",
+      "overrides",
     ],
     "propertiesToStringify": [
       "actions",
       "triggerFieldMetadataIds",
+      "overrides",
     ],
   },
   "view": {
