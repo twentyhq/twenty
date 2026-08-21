@@ -5437,6 +5437,7 @@ export type Sentry = {
   dsn?: Maybe<Scalars['String']['output']>;
   environment?: Maybe<Scalars['String']['output']>;
   release?: Maybe<Scalars['String']['output']>;
+  tracesSampleRate?: Maybe<Scalars['Float']['output']>;
 };
 
 export type SetAppKeyValueInput = {
