@@ -31,27 +31,46 @@ afterAll(() => {
   else process.env.TWENTY_APP_ACCESS_TOKEN = originalToken;
 });
 
+// An Error value makes that lookup reject, mirroring what the real SDK does on a bad id.
 type QueryResponses = {
   workspaceMembers?: unknown;
-  partners?: unknown;
-  opportunity?: unknown;
+  partnerByMember?: unknown;
+  opportunities?: unknown;
   applications?: unknown;
-  partner?: unknown;
+  partnerName?: unknown;
+};
+
+type QuerySelection = {
+  workspaceMembers?: unknown;
+  partners?: { __args: { filter: Record<string, unknown> } };
+  opportunities?: unknown;
+  applications?: unknown;
 };
 
 const defaultResponses = (): QueryResponses => ({
   workspaceMembers: { edges: [{ node: { id: WORKSPACE_MEMBER_ID } }] },
-  partners: { edges: [{ node: { id: PARTNER_ID } }] },
-  opportunity: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: true },
+  partnerByMember: { edges: [{ node: { id: PARTNER_ID } }] },
+  opportunities: {
+    edges: [{ node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: true } }],
+  },
   applications: { edges: [] },
-  partner: { id: PARTNER_ID, name: 'Acme Partners' },
+  partnerName: { edges: [{ node: { id: PARTNER_ID, name: 'Acme Partners' } }] },
 });
 
 const respondWith = (overrides: QueryResponses = {}) => {
   const responses = { ...defaultResponses(), ...overrides };
-  queryMock.mockImplementation((selection: Record<string, unknown>) => {
-    const key = Object.keys(selection)[0] as keyof QueryResponses;
-    return Promise.resolve({ [key]: responses[key] });
+  queryMock.mockImplementation((selection: QuerySelection) => {
+    const key = Object.keys(selection)[0];
+    // Both the resolver and the partner-name lookup query `partners`; the filter tells them apart.
+    const responseKey =
+      key === 'partners'
+        ? selection.partners?.__args.filter.partnerUserId
+          ? 'partnerByMember'
+          : 'partnerName'
+        : (key as keyof QueryResponses);
+    const response = responses[responseKey];
+    if (response instanceof Error) return Promise.reject(response);
+    return Promise.resolve({ [key as string]: response });
   });
 };
 
@@ -78,7 +97,7 @@ describe('applyToBrief', () => {
   });
 
   it('refuses a caller with no partner without creating anything', async () => {
-    respondWith({ partners: { edges: [] } });
+    respondWith({ partnerByMember: { edges: [] } });
 
     const result = await applyToBrief(event(validBody));
 
@@ -87,7 +106,11 @@ describe('applyToBrief', () => {
   });
 
   it('refuses a brief that is not listed without creating anything', async () => {
-    respondWith({ opportunity: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: false } });
+    respondWith({
+      opportunities: {
+        edges: [{ node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: false } }],
+      },
+    });
 
     const result = await applyToBrief(event(validBody));
 
@@ -96,7 +119,16 @@ describe('applyToBrief', () => {
   });
 
   it('refuses a brief that does not exist without creating anything', async () => {
-    respondWith({ opportunity: null });
+    respondWith({ opportunities: { edges: [] } });
+
+    const result = await applyToBrief(event(validBody));
+
+    expect(result).toEqual({ ok: false, reason: 'BRIEF_NOT_OPEN' });
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses when the brief lookup throws Record not found', async () => {
+    respondWith({ opportunities: new Error('Record not found') });
 
     const result = await applyToBrief(event(validBody));
 

@@ -1,3 +1,4 @@
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
@@ -28,6 +29,17 @@ const applyToBriefSchema = z.object({
   pitch: z.string(),
 });
 
+// A partner who pastes a stale brief id must see BRIEF_NOT_OPEN, never the opaque failure
+// message, so a read that fails for any reason counts as "no brief".
+const loadBrief = async (client: CoreApiClient, opportunityId: string) => {
+  try {
+    const result = await findOpportunityForApply(client, opportunityId);
+    return result.opportunities?.edges?.[0]?.node ?? null;
+  } catch {
+    return null;
+  }
+};
+
 export const applyToBrief = async (
   event: RoutePayload<unknown>,
 ): Promise<ApplyToBriefResult> => {
@@ -42,7 +54,7 @@ export const applyToBrief = async (
   try {
     const client = buildAppClient();
 
-    const brief = (await findOpportunityForApply(client, opportunityId)).opportunity;
+    const brief = await loadBrief(client, opportunityId);
     if (!brief || brief.isListed !== true) return errorResponse('BRIEF_NOT_OPEN');
 
     const trimmedPitch = pitch.trim();
@@ -61,7 +73,7 @@ export const applyToBrief = async (
       return { ok: true, applicationId: existing.id };
     }
 
-    const partner = (await findPartnerName(client, resolved.partnerId)).partner;
+    const partner = (await findPartnerName(client, resolved.partnerId)).partners?.edges?.[0]?.node;
 
     // on-application-set-name fires on application.updated only, so an insert that already
     // carries partnerId never triggers it — the label must be written here.
