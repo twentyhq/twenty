@@ -21,12 +21,14 @@ const buildQuery = (pageLayoutType: 'DASHBOARD' | 'RECORD_PAGE') => `query findP
       title
       position
       layoutMode
+      isSystemSideEffect
       widgets {
         id
         pageLayoutTabId
         title
         type
         objectMetadataId
+        isSystemSideEffect
         gridPosition {
           row
           column

@@ -173,6 +173,7 @@ describe('buildPageLayoutTabsInput', () => {
       title: 'Overview',
       position: 0,
       layoutMode: 'GRID',
+      isSystemSideEffect: false,
       widgets: [
         {
           id: 'source-widget-1',
@@ -182,6 +183,7 @@ describe('buildPageLayoutTabsInput', () => {
           objectMetadataId: 'source-object-1',
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
           configuration: { configurationType: 'AGGREGATE_CHART', aggregateFieldMetadataId: 'source-field-1' },
+          isSystemSideEffect: false,
         },
         {
           id: 'source-widget-2',
@@ -191,6 +193,7 @@ describe('buildPageLayoutTabsInput', () => {
           objectMetadataId: null,
           gridPosition: { row: 0, column: 2, rowSpan: 1, columnSpan: 1 },
           configuration: { configurationType: 'VIEW' },
+          isSystemSideEffect: false,
         },
       ],
     },

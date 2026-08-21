@@ -9,6 +9,8 @@ import { createMockGraphqlClient } from 'src/__tests__/utils/mock-graphql-client
 import { migrateSkills } from "src/logic-functions/migration/migrate-skills.util";
 import { migrateViews } from "src/logic-functions/migration/migrate-views.util";
 import { migrateRecordsForObject } from "src/logic-functions/migration/migrate-records-for-object.util";
+import { migrateRecordPageLayouts } from "src/logic-functions/migration/migrate-page-record-layouts.util";
+import { PageLayout, PageLayoutWidget } from "src/logic-functions/types/dashboard.type";
 
 describe('migrateSkills', () => {
   const buildSkill = (overrides: Partial<Skill> = {}): Skill => ({
@@ -310,5 +312,227 @@ describe('migrateRecordsForObject', () => {
     await migrateRecordsForObject(sourceClient, targetClient, taskObject, new Map());
 
     expect(targetCalls).toHaveLength(0);
+  });
+});
+
+describe('migrateRecordPageLayouts', () => {
+  const buildWidget = (overrides: Partial<PageLayoutWidget> = {}): PageLayoutWidget => ({
+    id: 'fields-widget',
+    pageLayoutTabId: 'source-home-tab',
+    title: 'Fields',
+    type: 'FIELDS',
+    objectMetadataId: null,
+    gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+    configuration: { configurationType: 'FIELDS' },
+    isSystemSideEffect: true,
+    ...overrides,
+  });
+
+  const buildSystemLayout = (overrides: Partial<PageLayout> = {}): PageLayout => ({
+    id: 'source-system-layout',
+    name: 'Default Person Layout',
+    type: 'RECORD_PAGE',
+    objectMetadataId: 'source-object-1',
+    isSystemSideEffect: true,
+    tabs: [
+      {
+        id: 'source-home-tab',
+        title: 'Home',
+        position: 0,
+        layoutMode: 'GRID',
+        isSystemSideEffect: true,
+        widgets: [buildWidget()],
+      },
+    ],
+    ...overrides,
+  });
+
+  const targetHomeTab = {
+    id: 'target-home-tab',
+    title: 'Home',
+    position: 0,
+    layoutMode: 'GRID',
+    isSystemSideEffect: true,
+    widgets: [buildWidget({ id: 'target-fields-widget', pageLayoutTabId: 'target-home-tab' })],
+  };
+
+  it("adds a custom widget onto the target's existing system tab, never touching the tree-replace endpoint", async () => {
+    const sourceLayout = buildSystemLayout({
+      tabs: [
+        {
+          id: 'source-home-tab',
+          title: 'Home',
+          position: 0,
+          layoutMode: 'GRID',
+          isSystemSideEffect: true,
+          widgets: [
+            buildWidget(),
+            buildWidget({
+              id: 'custom-widget-1',
+              title: 'Notes iframe',
+              type: 'IFRAME',
+              configuration: { configurationType: 'IFRAME', url: 'https://example.com' },
+              isSystemSideEffect: false,
+            }),
+          ],
+        },
+      ],
+    });
+    const targetLayout = buildSystemLayout({
+      id: 'target-system-layout',
+      objectMetadataId: 'target-object-1',
+      tabs: [targetHomeTab],
+    });
+
+    const { client: sourceClient } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [sourceLayout] },
+    });
+    const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [targetLayout] },
+      createPageLayoutWidget: { createPageLayoutWidget: { id: 'target-custom-widget-1' } },
+    });
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+
+    expect(targetCalls.filter((call) => call.operationName === 'updatePageLayoutWithTabsAndWidgets')).toHaveLength(0);
+    expect(targetCalls.filter((call) => call.operationName === 'createPageLayout')).toHaveLength(0);
+    expect(targetCalls.filter((call) => call.operationName === 'createPageLayoutTab')).toHaveLength(0);
+    const widgetCalls = targetCalls.filter((call) => call.operationName === 'createPageLayoutWidget');
+    expect(widgetCalls).toHaveLength(1);
+    expect(widgetCalls[0].variables.input).toMatchObject({ pageLayoutTabId: 'target-home-tab', title: 'Notes iframe', type: 'IFRAME' });
+  });
+
+  it('creates a brand new tab (and its widget) when a user added a whole extra tab to the default page', async () => {
+    const sourceLayout = buildSystemLayout({
+      tabs: [
+        {
+          id: 'source-home-tab',
+          title: 'Home',
+          position: 0,
+          layoutMode: 'GRID',
+          isSystemSideEffect: true,
+          widgets: [buildWidget()],
+        },
+        {
+          id: 'source-custom-tab',
+          title: 'Extra',
+          position: 1,
+          layoutMode: 'GRID',
+          isSystemSideEffect: false,
+          widgets: [
+            buildWidget({
+              id: 'extra-widget',
+              title: 'Extra widget',
+              type: 'IFRAME',
+              configuration: { configurationType: 'IFRAME', url: 'https://example.com' },
+              isSystemSideEffect: false,
+            }),
+          ],
+        },
+      ],
+    });
+    const targetLayout = buildSystemLayout({
+      id: 'target-system-layout',
+      objectMetadataId: 'target-object-1',
+      tabs: [targetHomeTab],
+    });
+
+    const { client: sourceClient } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [sourceLayout] },
+    });
+    const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [targetLayout] },
+      createPageLayoutTab: { createPageLayoutTab: { id: 'target-extra-tab' } },
+      createPageLayoutWidget: { createPageLayoutWidget: { id: 'target-extra-widget' } },
+    });
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+
+    expect(targetCalls.filter((call) => call.operationName === 'updatePageLayoutWithTabsAndWidgets')).toHaveLength(0);
+    const tabCalls = targetCalls.filter((call) => call.operationName === 'createPageLayoutTab');
+    expect(tabCalls).toHaveLength(1);
+    expect(tabCalls[0].variables.input).toMatchObject({ title: 'Extra', pageLayoutId: 'target-system-layout' });
+
+    const widgetCalls = targetCalls.filter((call) => call.operationName === 'createPageLayoutWidget');
+    expect(widgetCalls).toHaveLength(1);
+    expect(widgetCalls[0].variables.input).toMatchObject({ pageLayoutTabId: 'target-extra-tab', title: 'Extra widget' });
+  });
+
+  it('does not duplicate a custom widget already present on the target system tab', async () => {
+    const customWidget = buildWidget({
+      id: 'custom-widget-1',
+      title: 'Notes iframe',
+      type: 'IFRAME',
+      configuration: { configurationType: 'IFRAME', url: 'https://example.com' },
+      isSystemSideEffect: false,
+    });
+    const sourceLayout = buildSystemLayout({
+      tabs: [
+        {
+          id: 'source-home-tab',
+          title: 'Home',
+          position: 0,
+          layoutMode: 'GRID',
+          isSystemSideEffect: true,
+          widgets: [buildWidget(), customWidget],
+        },
+      ],
+    });
+    const targetLayout = buildSystemLayout({
+      id: 'target-system-layout',
+      objectMetadataId: 'target-object-1',
+      tabs: [
+        {
+          ...targetHomeTab,
+          widgets: [
+            ...targetHomeTab.widgets,
+            { ...customWidget, id: 'target-custom-widget-1', pageLayoutTabId: 'target-home-tab' },
+          ],
+        },
+      ],
+    });
+
+    const { client: sourceClient } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [sourceLayout] },
+    });
+    const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [targetLayout] },
+    });
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+
+    expect(targetCalls.filter((call) => call.operationName === 'createPageLayoutWidget')).toHaveLength(0);
+  });
+
+  it('still creates a wholly separate custom layout from scratch', async () => {
+    const customLayout: PageLayout = {
+      id: 'source-custom-layout',
+      name: 'Sales Overview',
+      type: 'RECORD_PAGE',
+      objectMetadataId: 'source-object-1',
+      isSystemSideEffect: false,
+      tabs: [
+        { id: 'source-tab-1', title: 'Overview', position: 0, layoutMode: 'GRID', isSystemSideEffect: false, widgets: [] },
+      ],
+    };
+
+    const { client: sourceClient } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [customLayout] },
+    });
+    const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
+      findPageLayouts: { getPageLayouts: [] },
+      createPageLayout: { createPageLayout: { id: 'target-custom-layout' } },
+      updatePageLayoutWithTabsAndWidgets: { updatePageLayoutWithTabsAndWidgets: { id: 'target-custom-layout' } },
+    });
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+
+    const createLayoutCalls = targetCalls.filter((call) => call.operationName === 'createPageLayout');
+    expect(createLayoutCalls).toHaveLength(1);
+    expect(createLayoutCalls[0].variables.input).toMatchObject({ name: 'Sales Overview', objectMetadataId: 'target-object-1' });
   });
 });
