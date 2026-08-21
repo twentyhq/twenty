@@ -165,9 +165,6 @@ export const FormAdvancedTextFieldInput = ({
       onImageUpload,
       onImageUploadError,
     },
-    // No deps: the editor persists across fullscreen toggles.
-    // EditorContent supports moving one Editor instance between mount
-    // points, so recreating it here would only lose in-progress content.
   );
 
   useEffect(() => {
