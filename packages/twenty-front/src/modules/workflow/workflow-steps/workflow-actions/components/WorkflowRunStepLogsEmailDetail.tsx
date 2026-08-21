@@ -152,6 +152,12 @@ export const WorkflowRunStepLogsEmailDetail = ({
       <StyledSection>
         <StyledSectionTitle>{t`Recipients`}</StyledSectionTitle>
         <StyledRecipientsCard>
+          {isDefined(details.fromHandle) && details.fromHandle.length > 0 && (
+            <>
+              <StyledRecipientLabel>{t`From`}</StyledRecipientLabel>
+              <StyledRecipientValue>{details.fromHandle}</StyledRecipientValue>
+            </>
+          )}
           <StyledRecipientLabel>{t`To`}</StyledRecipientLabel>
           <StyledRecipientValue>
             {isNonEmptyArray(details.recipients.to)

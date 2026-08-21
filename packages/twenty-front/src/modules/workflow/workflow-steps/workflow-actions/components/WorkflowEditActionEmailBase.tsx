@@ -62,14 +62,15 @@ export const WorkflowEditActionEmailBase = ({
 
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const { formData, handleFieldChange, saveAction } = useEmailForm({
-    action,
-    onActionUpdate:
-      actionOptions.readonly === true
-        ? undefined
-        : actionOptions.onActionUpdate,
-    readonly: actionOptions.readonly === true,
-  });
+  const { formData, handleFieldChange, handleFieldsChange, saveAction } =
+    useEmailForm({
+      action,
+      onActionUpdate:
+        actionOptions.readonly === true
+          ? undefined
+          : actionOptions.onActionUpdate,
+      readonly: actionOptions.readonly === true,
+    });
 
   const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
     cc: boolean;
@@ -106,7 +107,10 @@ export const WorkflowEditActionEmailBase = ({
   };
 
   const handleConnectedAccountChange = (connectedAccountId: string | null) => {
-    handleFieldChange('connectedAccountId', connectedAccountId);
+    handleFieldsChange({
+      connectedAccountId: connectedAccountId ?? '',
+      fromHandle: '',
+    });
   };
 
   const apolloCoreClient = useApolloCoreClient();
@@ -127,7 +131,7 @@ export const WorkflowEditActionEmailBase = ({
   const { data: otherAccountData, loading: otherAccountLoading } = useQuery<{
     workflowStepConnectedAccountHandle: Pick<
       ConnectedAccount,
-      'id' | 'handle' | 'provider'
+      'id' | 'handle' | 'provider' | 'handleAliases'
     > | null;
   }>(WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE, {
     client: apolloCoreClient,
@@ -186,6 +190,15 @@ export const WorkflowEditActionEmailBase = ({
     });
   }
 
+  const configuredAccount = ownAccount ?? otherAccount;
+
+  const senderOptions: SelectOption<string>[] = isDefined(configuredAccount)
+    ? [
+        configuredAccount.handle,
+        ...(configuredAccount.handleAliases ?? []),
+      ].map((handle) => ({ label: handle, value: handle }))
+    : [];
+
   useEffect(() => {
     return () => {
       saveAction.flush();
@@ -214,6 +227,24 @@ export const WorkflowEditActionEmailBase = ({
               text: t`Add account`,
             }}
           />
+          {senderOptions.length > 1 && (
+            <FormSelectFieldInput
+              key={`sender-${formData.connectedAccountId ?? 'none'}`}
+              label={t`From`}
+              hint={t`Send from the account address or one of its verified aliases`}
+              defaultValue={
+                formData.fromHandle === ''
+                  ? configuredAccount?.handle
+                  : formData.fromHandle
+              }
+              options={senderOptions}
+              onChange={(fromHandle) => {
+                handleFieldChange('fromHandle', fromHandle ?? '');
+              }}
+              VariablePicker={WorkflowVariablePicker}
+              readonly={actionOptions.readonly}
+            />
+          )}
           {isDefined(missingScopes) && (
             <>
               <Callout
