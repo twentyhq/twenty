@@ -29,8 +29,10 @@ export class TimelineActivityRuleDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   relationFieldMetadataId: string | null;
 
+  // Explicit type: the resolution union is erased at runtime, so reflection
+  // cannot infer a GraphQL type from it.
   @IsString()
-  @Field()
+  @Field(() => String)
   resolution: TimelineActivityRuleResolution;
 
   @IsArray()
