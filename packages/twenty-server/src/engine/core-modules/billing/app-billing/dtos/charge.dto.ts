@@ -1,6 +1,14 @@
 /* @license Enterprise */
 
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
@@ -26,4 +34,10 @@ export class ChargeDto {
   @IsOptional()
   @IsString()
   resourceContext?: string;
+
+  // Webhook and cron runs have no triggering person on the token, so the owner
+  // can only come from workspace data, which names people by workspace member.
+  @IsOptional()
+  @IsUUID()
+  workspaceMemberId?: string;
 }

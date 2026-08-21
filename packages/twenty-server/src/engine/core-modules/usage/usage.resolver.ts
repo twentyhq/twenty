@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
@@ -23,6 +24,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @MetadataResolver()
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
@@ -32,6 +34,7 @@ export class UsageResolver {
     private readonly usageAnalyticsService: UsageAnalyticsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => UsageAnalyticsDTO)
@@ -58,20 +61,35 @@ export class UsageResolver {
       operationTypes: input?.operationTypes ?? undefined,
     };
 
-    const [usageByUser, usageByOperationType, usageByModel, timeSeries] =
-      await Promise.all([
-        this.usageAnalyticsService.getUsageByUser(periodParams),
-        this.usageAnalyticsService.getUsageByOperationType({
-          ...periodParams,
-          userWorkspaceId: input?.userWorkspaceId ?? undefined,
-        }),
-        this.usageAnalyticsService.getUsageByModel(periodParams),
-        this.usageAnalyticsService.getUsageTimeSeries(periodParams),
-      ]);
-
-    const resolvedUsageByUser = await this.resolveBreakdownKeys(
+    const [
       usageByUser,
-      (ids) => this.resolveUserNames(ids, workspace.id),
+      usageByOperationType,
+      usageByApplication,
+      usageByModel,
+      timeSeries,
+    ] = await Promise.all([
+      this.usageAnalyticsService.getUsageByUser(periodParams),
+      this.usageAnalyticsService.getUsageByOperationType({
+        ...periodParams,
+        userWorkspaceId: input?.userWorkspaceId ?? undefined,
+      }),
+      this.usageAnalyticsService.getUsageByApplication({
+        ...periodParams,
+        userWorkspaceId: input?.userWorkspaceId ?? undefined,
+      }),
+      this.usageAnalyticsService.getUsageByModel(periodParams),
+      this.usageAnalyticsService.getUsageTimeSeries(periodParams),
+    ]);
+
+    const [resolvedUsageByUser, resolvedUsageByApplication] = await Promise.all(
+      [
+        this.resolveBreakdownKeys(usageByUser, (ids) =>
+          this.resolveUserNames(ids, workspace.id),
+        ),
+        this.resolveBreakdownKeys(usageByApplication, (ids) =>
+          this.resolveApplicationNames(ids, workspace.id),
+        ),
+      ],
     );
 
     const result: UsageAnalyticsDTO = {
@@ -80,6 +98,10 @@ export class UsageResolver {
         creditsUsed: toDisplayCredits(item.creditsUsed),
       })),
       usageByOperationType: usageByOperationType.map((item) => ({
+        ...item,
+        creditsUsed: toDisplayCredits(item.creditsUsed),
+      })),
+      usageByApplication: resolvedUsageByApplication.map((item) => ({
         ...item,
         creditsUsed: toDisplayCredits(item.creditsUsed),
       })),
@@ -136,6 +158,35 @@ export class UsageResolver {
       ...item,
       label: nameMap.get(item.key),
     }));
+  }
+
+  private async resolveApplicationNames(
+    applicationIds: string[],
+    workspaceId: string,
+  ): Promise<Map<string, string>> {
+    const nameById = new Map<string, string>();
+
+    if (applicationIds.length === 0) {
+      return nameById;
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    for (const applicationId of applicationIds) {
+      const application = findActiveFlatApplicationById(
+        flatApplicationMaps,
+        applicationId,
+      );
+
+      if (isDefined(application)) {
+        nameById.set(applicationId, application.name);
+      }
+    }
+
+    return nameById;
   }
 
   private async resolveUserNames(

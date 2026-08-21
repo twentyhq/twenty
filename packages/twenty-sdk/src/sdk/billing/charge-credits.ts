@@ -9,6 +9,8 @@ export type ChargeCreditsParams = {
   operationType: string;
   quantity?: number;
   resourceContext?: string;
+  // Ignored when the run has a triggering user: the token already names them.
+  workspaceMemberId?: string;
 };
 
 // Records credit usage against the running application via the Twenty
@@ -22,6 +24,7 @@ export const chargeCredits = async ({
   operationType,
   quantity = 1,
   resourceContext,
+  workspaceMemberId,
 }: ChargeCreditsParams): Promise<void> => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const token = getApplicationAccessToken();
@@ -44,6 +47,7 @@ export const chargeCredits = async ({
           quantity,
           operationType,
           resourceContext,
+          workspaceMemberId,
         }),
         signal: AbortSignal.timeout(BILLING_CHARGE_TIMEOUT_MS),
       },

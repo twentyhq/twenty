@@ -2222,6 +2222,7 @@ export interface UsageUserDaily {
 export interface UsageAnalytics {
     usageByUser: UsageBreakdownItem[]
     usageByOperationType: UsageBreakdownItem[]
+    usageByApplication: UsageBreakdownItem[]
     usageByModel: UsageBreakdownItem[]
     timeSeries: UsageTimeSeries[]
     periodStart: Scalars['DateTime']
@@ -5582,6 +5583,7 @@ export interface UsageUserDailyGenqlSelection{
 export interface UsageAnalyticsGenqlSelection{
     usageByUser?: UsageBreakdownItemGenqlSelection
     usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByApplication?: UsageBreakdownItemGenqlSelection
     usageByModel?: UsageBreakdownItemGenqlSelection
     timeSeries?: UsageTimeSeriesGenqlSelection
     periodStart?: boolean | number

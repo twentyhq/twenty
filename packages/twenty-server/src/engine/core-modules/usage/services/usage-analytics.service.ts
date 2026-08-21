@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
@@ -112,6 +113,32 @@ export class UsageAnalyticsService {
         extraWhere: 'AND userWorkspaceId = {userWorkspaceId:String}',
         extraParams: { userWorkspaceId: params.userWorkspaceId },
       }),
+    });
+  }
+
+  // Apps pick their operation type from a closed platform enum, so unrelated
+  // apps merge under whichever one they picked. Grouping on the application
+  // instead answers "which app spent my credits" without disturbing the
+  // operation-type breakdown, which still accounts for every credit.
+  async getUsageByApplication(
+    params: PeriodParams & { userWorkspaceId?: string },
+  ): Promise<UsageBreakdownItem[]> {
+    return this.queryBreakdown({
+      ...params,
+      groupByField: 'resourceId',
+      extraWhere: [
+        'AND resourceType = {appResourceType:String}',
+        "AND resourceId != ''",
+        ...(params.userWorkspaceId
+          ? ['AND userWorkspaceId = {userWorkspaceId:String}']
+          : []),
+      ].join(' '),
+      extraParams: {
+        appResourceType: UsageResourceType.APP,
+        ...(params.userWorkspaceId
+          ? { userWorkspaceId: params.userWorkspaceId }
+          : {}),
+      },
     });
   }
 

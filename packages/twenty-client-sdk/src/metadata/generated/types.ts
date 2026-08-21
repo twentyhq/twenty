@@ -5032,6 +5032,9 @@ export default {
             "usageByOperationType": [
                 199
             ],
+            "usageByApplication": [
+                199
+            ],
             "usageByModel": [
                 199
             ],

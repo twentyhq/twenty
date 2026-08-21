@@ -2550,6 +2550,7 @@ type UsageUserDaily {
 type UsageAnalytics {
   usageByUser: [UsageBreakdownItem!]!
   usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
   usageByModel: [UsageBreakdownItem!]!
   timeSeries: [UsageTimeSeries!]!
   periodStart: DateTime!

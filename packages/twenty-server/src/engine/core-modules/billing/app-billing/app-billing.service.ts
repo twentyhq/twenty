@@ -1,10 +1,15 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
 
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -36,6 +41,8 @@ export class AppBillingService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async emitChargeEvent(params: {
@@ -52,19 +59,15 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${charge.operationType})`,
     );
 
-    let periodStart: Date | undefined;
-
-    if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
-
-      periodStart =
-        currentBillingSubscription === NO_BILLING_SUBSCRIPTION
-          ? undefined
-          : currentBillingSubscription.currentPeriodStart;
-    }
+    const [attributedUserWorkspaceId, periodStart] = await Promise.all([
+      isDefined(userWorkspaceId)
+        ? userWorkspaceId
+        : this.resolveUserWorkspaceIdForWorkspaceMember({
+            workspaceId,
+            workspaceMemberId: charge.workspaceMemberId,
+          }),
+      this.resolveBillingPeriodStart(workspaceId),
+    ]);
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
@@ -77,11 +80,60 @@ export class AppBillingService {
           unit,
           resourceId: applicationId,
           resourceContext: charge.resourceContext ?? null,
-          userWorkspaceId: userWorkspaceId ?? null,
+          userWorkspaceId: attributedUserWorkspaceId,
           periodStart,
         },
       ],
       workspaceId,
     );
+  }
+
+  private async resolveBillingPeriodStart(
+    workspaceId: string,
+  ): Promise<Date | undefined> {
+    if (!this.billingService.isBillingEnabled()) {
+      return undefined;
+    }
+
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    return currentBillingSubscription === NO_BILLING_SUBSCRIPTION
+      ? undefined
+      : currentBillingSubscription.currentPeriodStart;
+  }
+
+  // Workspace-scoped on both hops, so an app cannot attribute its spend to
+  // someone outside the workspace its token was issued for.
+  private async resolveUserWorkspaceIdForWorkspaceMember({
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    workspaceMemberId?: string;
+  }): Promise<string | null> {
+    if (!isDefined(workspaceMemberId)) {
+      return null;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
+
+    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
+      return null;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+      select: { id: true },
+    });
+
+    return userWorkspace?.id ?? null;
   }
 }
