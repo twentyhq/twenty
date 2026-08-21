@@ -28,11 +28,8 @@ const isWritePermittedByWritability = ({
   }
 
   if (writability === MetadataWritability.APPLICATION) {
-    // The gate asks whether the owning application's own code is writing, so it
-    // reads the application off any context that carries one. Binding a user to
-    // an application token narrows what that code may touch; it does not make
-    // the code somebody else's. Only APPLICATION_ACCESS tokens ever carry an
-    // application, so no user session can satisfy this.
+    // Only APPLICATION_ACCESS tokens ever carry an application, so reading it
+    // off a user-bound context cannot let an ordinary session through.
     return (
       isDefined(authContext) &&
       isDefined(owningApplicationId) &&
