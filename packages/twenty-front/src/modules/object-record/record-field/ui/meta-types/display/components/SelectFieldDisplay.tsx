@@ -1,5 +1,5 @@
 import { useSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useSelectFieldDisplay';
-import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
+import { SelectDisplay } from 'twenty-ui/data-display';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SelectFieldDisplay = () => {

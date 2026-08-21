@@ -37,6 +37,17 @@ export type ToManyDedupOrder = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
+export type ExistsFilterClause = {
+  token: string;
+  alias: string;
+  parentAlias: string;
+  relationFieldName: string;
+  targetTableShape: WorkspaceTableShape;
+  correlationCondition: string;
+  conditionSql: string;
+  additionalOnConditions: string[];
+};
+
 export type ColumnSelection = {
   alias: string;
   columnName: string;
@@ -62,6 +73,7 @@ export type SelectStatementState = {
   columnSelections: ColumnSelection[];
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
+  existsFilterClauses: ExistsFilterClause[];
   groupByExpressions: string[];
   orderByClauses: OrderByClause[];
   distinctOnExpressions: string[];
@@ -286,16 +298,76 @@ export const renderUserWhereExpression = (
     )
     .join(' ');
 
+const renderExistsFilter = (
+  existsFilterClause: ExistsFilterClause,
+  includeDeleted: boolean,
+): string => {
+  const conditions = [
+    existsFilterClause.correlationCondition,
+    ...existsFilterClause.additionalOnConditions,
+  ];
+
+  if (existsFilterClause.conditionSql.length > 0) {
+    conditions.push(existsFilterClause.conditionSql);
+  }
+
+  if (
+    !includeDeleted &&
+    existsFilterClause.targetTableShape.hasDeletedAtColumn
+  ) {
+    conditions.push(
+      `${quoteColumn(existsFilterClause.alias, 'deletedAt')} IS NULL`,
+    );
+  }
+
+  const tableExpression = `${escapeIdentifier(
+    existsFilterClause.targetTableShape.schemaName,
+  )}.${escapeIdentifier(existsFilterClause.targetTableShape.tableName)}`;
+
+  return `EXISTS (SELECT 1 FROM ${tableExpression} AS ${escapeIdentifier(
+    existsFilterClause.alias,
+  )} WHERE ${conditions.join(' AND ')})`;
+};
+
+export const substituteExistsFilterTokens = ({
+  expression,
+  existsFilterClauses,
+  includeDeleted,
+}: {
+  expression: string;
+  existsFilterClauses: ExistsFilterClause[];
+  includeDeleted: boolean;
+}): string =>
+  existsFilterClauses.reduce(
+    (substituted, existsFilterClause) =>
+      substituted
+        .split(existsFilterClause.token)
+        .join(renderExistsFilter(existsFilterClause, includeDeleted)),
+    expression,
+  );
+
 export const buildWhereExpression = (
   state: SelectStatementState,
   {
     includeSoftDeletePredicate = true,
-  }: { includeSoftDeletePredicate?: boolean } = {},
+    substituteExistsFilters = true,
+  }: {
+    includeSoftDeletePredicate?: boolean;
+    substituteExistsFilters?: boolean;
+  } = {},
 ): string => {
-  const userExpression = quoteQualifiedAliasReferences(
+  const renderedWhereClauses = quoteQualifiedAliasReferences(
     renderUserWhereExpression(state.whereClauses),
     collectStatementAliases(state),
   );
+
+  const userExpression = substituteExistsFilters
+    ? substituteExistsFilterTokens({
+        expression: renderedWhereClauses,
+        existsFilterClauses: state.existsFilterClauses,
+        includeDeleted: state.includeDeleted,
+      })
+    : renderedWhereClauses;
 
   const shouldAddSoftDeletePredicate =
     includeSoftDeletePredicate &&

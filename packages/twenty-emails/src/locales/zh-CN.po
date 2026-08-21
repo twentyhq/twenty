@@ -206,7 +206,7 @@ msgstr "旧金山/巴黎"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
-msgstr "服务器管理员访问权限已变更"
+msgstr "服务器管理员访问权限已更改"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -241,7 +241,7 @@ msgstr "设置您的密码 🗝"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
-msgstr "开始新工作区"
+msgstr "创建新工作区"
 
 #. js-lingui-explicit-id
 #: src/emails/test.email.tsx

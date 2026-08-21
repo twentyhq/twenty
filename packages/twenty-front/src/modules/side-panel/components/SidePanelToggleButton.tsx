@@ -79,7 +79,7 @@ export const SidePanelToggleButton = () => {
         <IconButton
           Icon={IconDotsVertical}
           dataTestId="page-header-side-panel-button"
-          size={isMobile ? 'medium' : 'small'}
+          size="small"
           variant="primary"
           accent="default"
           ariaLabel={ariaLabel}

@@ -135,6 +135,37 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
+  // oxlint-disable-next-line typescript/no-explicit-any
+  override async getRawAndEntities<RawRow = any>(): Promise<{
+    entities: T[];
+    raw: RawRow[];
+  }> {
+    try {
+      this.validatePermissions();
+
+      const { entities, raw } = await super.getRawAndEntities<RawRow>();
+
+      const mainAliasTarget = this.getMainAliasTarget();
+
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        mainAliasTarget,
+        this.internalContext,
+      );
+
+      return {
+        raw,
+        entities: formatResult<T[]>(
+          entities,
+          objectMetadata,
+          this.internalContext.flatObjectMetadataMaps,
+          this.internalContext.flatFieldMetadataMaps,
+        ),
+      };
+    } catch (error) {
+      throw await computeTwentyORMException(error);
+    }
+  }
+
   override async getMany(options?: { noFormatting?: boolean }): Promise<T[]> {
     try {
       this.validatePermissions();
@@ -381,6 +412,7 @@ export class WorkspaceSelectQueryBuilder<
       flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
       objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      authContext: this.authContext,
     });
   }
 

@@ -1,7 +1,4 @@
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -16,37 +13,28 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/FieldWidgetEditAction';
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
+import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
-import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-export const WidgetActionFieldEdit = () => {
-  const widget = useCurrentWidget();
+type WidgetActionFieldEditProps = {
+  widget: PageLayoutWidget;
+};
+
+export const WidgetActionFieldEdit = ({
+  widget,
+}: WidgetActionFieldEditProps) => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const fieldMetadataId = isFieldWidget(widget)
-    ? widget.configuration.fieldMetadataId
-    : undefined;
-
-  const resolvedFieldMetadataId = useResolveFieldMetadataIdFromNameOrId(
-    fieldMetadataId ?? '',
-  );
-
-  const { fieldMetadataItem } = useFieldMetadataItemById(
-    resolvedFieldMetadataId ?? '',
-  );
+  const { objectMetadataItem, fieldMetadataItem, fieldDefinition } =
+    useFieldWidgetFieldDefinition(widget);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const getIsMetadataItemFromStandardApplication =
@@ -62,14 +50,7 @@ export const WidgetActionFieldEdit = () => {
   });
 
   assertIsDefinedOrThrow(fieldMetadataItem);
-
-  const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-    field: fieldMetadataItem,
-    position: 0,
-    objectMetadataItem,
-    showLabel: true,
-    labelWidth: 90,
-  });
+  assertIsDefinedOrThrow(fieldDefinition);
 
   const isRelationField =
     isFieldRelation(fieldDefinition) || isFieldMorphRelation(fieldDefinition);

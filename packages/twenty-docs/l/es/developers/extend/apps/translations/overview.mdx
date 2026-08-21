@@ -70,6 +70,11 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Las cadenas contextuales aparecen en los catálogos de configuración regional como un grupo indexado por su
+contexto: `"\<context>": { "\<message>": "\<translation>" }`. Las etiquetas del manifiesto son
+contextuales por construcción: cada una lleva el metadato del rol que desempeña (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), por lo que
+la misma palabra puede traducirse de manera diferente como nombre de objeto y como nombre de vista.
+
 ## Extrayendo y traduciendo
 
 Ejecutar el comando de extracción desde el directorio de la aplicación:
@@ -86,9 +91,17 @@ La extracción recopila tanto las etiquetas de tu manifest como las cadenas de `
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Las cadenas sin contexto son entradas planas; las cadenas contextuales —incluida cada etiqueta de manifiesto— están anidadas bajo su clave de contexto.
 
 Los marcadores de posición como `{name}` se sustituyen en tiempo de ejecución — manténgalos en la traducción
 . Cualquier cadena que quede vacía regresa al texto original.
@@ -101,14 +114,11 @@ desde su contexto de ejecución (el idioma actual del host) y resuelve
 cada cadena contra su catálogo, volviendo a la fuente cuando falta una traducción
 . Cambiar el idioma en el host vuelve a renderizar en tiempo real las cadenas de `Trans` y `useTranslate().t`.
 
-Debido a que los catálogos se compilan en tiempo de construcción, actualizar una traducción significa
-volver a ejecutar `twenty dev:build` (y redesplegar), lo mismo que cualquier otro cambio.
-
-<Note>
-Las traducciones son compiladas por `twenty dev:build` (y `veinte aplicaciones`). El reloj
-continuo `veinte dev` muestra las cadenas de origen, así que prueba la salida localizada
-con una compilación única.
-</Note>
+Las etiquetas de manifiesto se compilan en cada sincronización — `twenty dev:build`, `twenty apply`
+y también en el modo de observación continuo `twenty dev` —, por lo que basta con editar un archivo de configuración regional y
+sincronizar para ver el nuevo texto. Los catálogos de componentes del front-end se incorporan en
+cada paquete de componentes durante la compilación, por lo que cambiar uno de ellos sigue implicando
+volver a ejecutar `twenty dev:build` (y volver a implementar).
 
 Los nodos de texto hijos de `Trans` pueden abarcar varias líneas; los espacios en blanco se colapsan de la misma manera en que JSX los colapsa, por lo que ambos se extraen a la clave `Welcome back`:
 

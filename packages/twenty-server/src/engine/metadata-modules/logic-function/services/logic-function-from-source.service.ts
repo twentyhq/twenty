@@ -348,10 +348,14 @@ export class LogicFunctionFromSourceService {
     id,
     payload,
     workspaceId,
+    userId,
+    userWorkspaceId,
   }: {
     id: string;
     payload: object;
     workspaceId: string;
+    userId?: string;
+    userWorkspaceId?: string;
   }): Promise<LogicFunctionExecutionResultDTO> {
     const { flatLogicFunction } =
       await this.helperService.findLogicFunctionAndApplicationOrThrow({
@@ -367,6 +371,8 @@ export class LogicFunctionFromSourceService {
       logicFunctionId: id,
       workspaceId,
       payload,
+      userId,
+      userWorkspaceId,
       executionMode: LogicFunctionExecutionMode.LIVE,
     });
 

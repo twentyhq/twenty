@@ -43,7 +43,7 @@ export class AgentTurnGraderService {
 
     const { score, comment } = await this.evaluateWithAI(turn);
 
-    return this.evaluationRepository.save(workspaceId, {
+    return this.evaluationRepository.insertAndReturnOne(workspaceId, {
       turnId,
       score,
       comment,

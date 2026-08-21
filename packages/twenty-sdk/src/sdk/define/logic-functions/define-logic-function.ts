@@ -1,3 +1,5 @@
+import { HTTPMethod } from 'twenty-shared/types';
+
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
@@ -26,6 +28,17 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     if (!config.httpRouteTriggerSettings.httpMethod) {
       errors.push('Route trigger must have an httpMethod');
     }
+  }
+
+  if (
+    config.serverRouteTriggerSettings?.httpMethods?.some(
+      (httpMethod) =>
+        httpMethod !== HTTPMethod.GET && httpMethod !== HTTPMethod.POST,
+    )
+  ) {
+    errors.push(
+      'Server route trigger only supports the GET and POST http methods',
+    );
   }
 
   if (config.cronTriggerSettings) {

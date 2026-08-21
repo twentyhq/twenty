@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Max,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -361,15 +362,6 @@ export class ConfigVariables {
   @IsNonNegativeDuration()
   @IsOptional()
   REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Enable cookie-based user sessions for the web app (dual-stack with token pairs during the migration)',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  AUTH_COOKIE_SESSIONS_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
@@ -1207,6 +1199,39 @@ export class ConfigVariables {
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of front-end traces sent to Sentry, between 0 and 1. Front-end traces propagate their sampling decision to the server, so this also drives the rate for browser-originated server traces.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @Max(1)
+  @IsOptional()
+  SENTRY_FRONT_TRACES_SAMPLE_RATE = 0.1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of server traces sent to Sentry, between 0 and 1. Browser-originated traces inherit the front-end decision instead, and AI traces are always sampled at 1. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SENTRY_TRACES_SAMPLE_RATE = 0.1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of sampled server traces that are also profiled, between 0 and 1. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SENTRY_PROFILES_SAMPLE_RATE = 0.01;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -2096,7 +2121,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Driver used for the emailing domain feature — AWS_SES for production (requires AWS credentials), LOG fakes registration/verification/sends locally',
+      'Driver used for the emailing domain feature — AWS_SES (requires AWS credentials), RESEND (requires a Resend API key), LOG fakes registration/verification/sends locally',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailingDomainDriver),
   })
@@ -2183,6 +2208,34 @@ export class ConfigVariables {
   })
   @IsOptional()
   TATAMI_SNS_TOPIC_ARN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    isSensitive: true,
+    description: 'Resend API key used when EMAILING_DOMAIN_DRIVER is RESEND',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    isSensitive: true,
+    description:
+      'Signing secret of the Resend webhook endpoint that targets /webhooks/messaging/resend (whsec_...)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_WEBHOOK_SIGNING_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    description:
+      'Region Resend provisions new emailing domains in (us-east-1, eu-west-1, sa-east-1 or ap-northeast-1). Leave empty for the Resend default.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_DOMAIN_REGION: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
