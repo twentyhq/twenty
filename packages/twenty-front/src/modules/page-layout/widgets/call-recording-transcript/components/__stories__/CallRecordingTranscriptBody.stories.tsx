@@ -7,7 +7,15 @@ import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recordin
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState, type ComponentProps } from 'react';
-import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  spyOn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
@@ -101,31 +109,95 @@ const failedCallRecording: CalendarEventCallRecordingCandidate = {
   transcript: null,
 };
 
+const makeMockTranscriptEntry = ({
+  speakerName,
+  text,
+  startSeconds,
+  endSeconds,
+}: {
+  speakerName: string;
+  text: string;
+  startSeconds: number;
+  endSeconds: number;
+}) => {
+  const wordTexts = text.split(' ');
+  const wordDurationSeconds = (endSeconds - startSeconds) / wordTexts.length;
+
+  return {
+    participant: { name: speakerName },
+    words: wordTexts.map((wordText, wordIndex) => ({
+      text: wordText,
+      start_timestamp: {
+        relative: startSeconds + wordIndex * wordDurationSeconds,
+      },
+      end_timestamp: {
+        relative: startSeconds + (wordIndex + 1) * wordDurationSeconds,
+      },
+    })),
+  };
+};
+
 const rawTranscript = [
-  {
-    participant: { name: 'Ada Lovelace' },
-    words: [
-      {
-        text: 'Thanks for joining, let us walk through the quarterly numbers.',
-        start_timestamp: { relative: 12 },
-        end_timestamp: { relative: 21 },
-      },
-    ],
-  },
-  {
-    participant: { name: 'Grace Hopper' },
-    words: [
-      {
-        text: 'Happy to. Pipeline grew twenty percent since the last call.',
-        start_timestamp: { relative: 24 },
-        end_timestamp: { relative: 40 },
-      },
-    ],
-  },
-  {
-    participant: {},
-    words: [{ text: 'Inaudible segment.' }],
-  },
+  makeMockTranscriptEntry({
+    speakerName: 'Ada Lovelace',
+    text: "Welcome everyone, let's start with a quick project update.",
+    startSeconds: 1,
+    endSeconds: 5,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Grace Hopper',
+    text: 'The first milestone is complete and ready for review.',
+    startSeconds: 6,
+    endSeconds: 10,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Alan Turing',
+    text: 'I tested the playback controls across several browsers.',
+    startSeconds: 11,
+    endSeconds: 15,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Ada Lovelace',
+    text: 'Great, did seeking keep the transcript synchronized?',
+    startSeconds: 16,
+    endSeconds: 20,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Alan Turing',
+    text: 'Yes, the active entry followed every position change.',
+    startSeconds: 21,
+    endSeconds: 25,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Grace Hopper',
+    text: 'Word highlighting stayed smooth during normal playback.',
+    startSeconds: 26,
+    endSeconds: 30,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Ada Lovelace',
+    text: 'How does the player behave after a loading error?',
+    startSeconds: 31,
+    endSeconds: 35,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Grace Hopper',
+    text: 'Retrying refreshes the recording and restores the player.',
+    startSeconds: 36,
+    endSeconds: 40,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Alan Turing',
+    text: 'The header actions are available for every recording.',
+    startSeconds: 41,
+    endSeconds: 45,
+  }),
+  makeMockTranscriptEntry({
+    speakerName: 'Ada Lovelace',
+    text: "Perfect, let's gather final feedback and wrap up.",
+    startSeconds: 46,
+    endSeconds: 51,
+  }),
 ];
 
 const readableCallRecording: CalendarEventCallRecordingCandidate = {
@@ -227,11 +299,18 @@ export const Ready: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Ada Lovelace');
-    await canvas.findByText(
-      'Happy to. Pipeline grew twenty percent since the last call.',
-    );
-    await canvas.findByText('Inaudible segment.');
+    expect(await canvas.findAllByText('Ada Lovelace')).toHaveLength(4);
+    expect(await canvas.findAllByText('Alan Turing')).toHaveLength(3);
+
+    const transcriptRegion = canvas.getByRole('region', {
+      name: 'Transcript',
+    });
+
+    fireEvent.wheel(transcriptRegion);
+
+    expect(
+      canvas.queryByRole('button', { name: 'Jump to current' }),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -244,9 +323,19 @@ export const WithVideo: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const widget = await canvas.findByTestId(TRANSCRIPT_WIDGET_ID);
+    const videoElement = canvasElement.querySelector('video');
 
-    expect(await canvas.findByText('Transcript')).toBeVisible();
-    expect(canvasElement.querySelector('video')).not.toBeNull();
+    if (!isDefined(videoElement)) {
+      throw new Error('Video player was not rendered');
+    }
+
+    expect(within(widget).getByText('Transcript')).toBeVisible();
+    expect(videoElement.currentTime).toBeLessThan(1);
+    expect(
+      canvasElement.querySelector('[aria-current="true"]'),
+    ).not.toBeInTheDocument();
+
     const copyTranscriptButton = await canvas.findByRole('button', {
       name: 'Copy transcript',
     });
@@ -261,7 +350,9 @@ export const WithVideo: Story = {
     await userEvent.click(copyTranscriptButton);
 
     expect(writeText).toHaveBeenLastCalledWith(
-      'Ada Lovelace (0:12)\nThanks for joining, let us walk through the quarterly numbers.\n\nGrace Hopper (0:24)\nHappy to. Pipeline grew twenty percent since the last call.\n\nUnknown speaker\nInaudible segment.',
+      expect.stringContaining(
+        "Ada Lovelace (0:01)\nWelcome everyone, let's start with a quick project update.",
+      ),
     );
 
     await userEvent.click(copyVideoLinkButton);
@@ -279,6 +370,22 @@ export const WithVideo: Story = {
     expect(seeAllLink).toHaveAttribute(
       'href',
       expect.stringContaining('calendar-event-id'),
+    );
+
+    setVideoCurrentTime(videoElement, 1.5);
+
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[aria-current="true"]'),
+      ).toHaveTextContent("Welcome everyone, let's start"),
+    );
+
+    setVideoCurrentTime(videoElement, 5.5);
+
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector('[aria-current="true"]'),
+      ).not.toBeInTheDocument(),
     );
   },
 };
@@ -307,6 +414,105 @@ export const PlaybackError: Story = {
       ),
     );
   },
+};
+
+export const WithVideoInteractions: Story = {
+  tags: ['!dev', '!autodocs'],
+  args: {
+    callRecording: recordedCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findAllByText('Ada Lovelace')).toHaveLength(4);
+
+    const transcriptRegion = await canvas.findByRole('region', {
+      name: 'Transcript',
+    });
+    const videoElement = canvasElement.querySelector('video');
+
+    if (!isDefined(videoElement)) {
+      throw new Error('Video player was not rendered');
+    }
+
+    setVideoCurrentTime(videoElement, 48);
+
+    await waitFor(() => {
+      const activeEntry = canvasElement.querySelector('[aria-current="true"]');
+
+      expect(activeEntry).toHaveTextContent(
+        "Perfect, let's gather final feedback and wrap up.",
+      );
+      expect(transcriptRegion.scrollTop).toBeGreaterThan(0);
+    });
+
+    fireEvent.wheel(transcriptRegion, { deltaY: -100 });
+
+    const jumpToCurrentButton = await canvas.findByRole('button', {
+      name: 'Jump to current',
+    });
+
+    setVideoCurrentTime(videoElement, 22);
+
+    await waitFor(() => {
+      expect(
+        canvasElement.querySelector('[aria-current="true"]'),
+      ).toHaveTextContent(
+        'Yes, the active entry followed every position change.',
+      );
+      expect(jumpToCurrentButton).toBeVisible();
+    });
+
+    await userEvent.click(jumpToCurrentButton);
+
+    await waitFor(() => {
+      const activeEntryRectangle = canvasElement
+        .querySelector('[aria-current="true"]')
+        ?.getBoundingClientRect();
+      const transcriptRegionRectangle =
+        transcriptRegion.getBoundingClientRect();
+
+      expect(
+        canvas.queryByRole('button', { name: 'Jump to current' }),
+      ).not.toBeInTheDocument();
+      expect(activeEntryRectangle?.top).toBeGreaterThanOrEqual(
+        transcriptRegionRectangle.top,
+      );
+      expect(activeEntryRectangle?.bottom).toBeLessThanOrEqual(
+        transcriptRegionRectangle.bottom,
+      );
+    });
+
+    const transcriptEntryButton = canvas.getByRole('button', {
+      name: 'Seek recording to 0:06',
+    });
+
+    await userEvent.click(transcriptEntryButton);
+
+    await waitFor(() => {
+      expect(canvasElement.querySelector('video')).toBe(videoElement);
+      expect(videoElement.currentSrc).toContain(
+        'media.w3.org/2010/05/sintel/trailer.mp4',
+      );
+      expect(videoElement.currentTime).toBeCloseTo(6.01);
+      expect(
+        canvasElement.querySelector('[aria-current="true"]'),
+      ).toHaveTextContent(
+        'The first milestone is complete and ready for review.',
+      );
+    });
+  },
+};
+
+const setVideoCurrentTime = (
+  videoElement: HTMLVideoElement,
+  currentTimeSeconds: number,
+) => {
+  videoElement.currentTime = currentTimeSeconds;
+  fireEvent.timeUpdate(videoElement);
 };
 
 export const Loading: Story = {

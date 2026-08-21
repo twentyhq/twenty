@@ -4,21 +4,27 @@ import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
 import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
 import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
+import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
 import { CallRecordingVideoPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer';
+import { buildCallRecordingTranscriptTimePoints } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptTimePoints';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import {
   isDefined,
   isNonEmptyArray,
   parseCallRecordingTranscriptEntries,
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+// Media timebase rounding can land an exact-start seek a hair before the
+// entry; nudging inside it keeps the clicked entry the active one.
+const SEEK_INTO_ENTRY_EPSILON_SECONDS = 0.01;
 
 const StyledRecordingLayout = styled.div`
   display: grid;
@@ -52,6 +58,46 @@ export const CallRecordingTranscriptBody = ({
   refetchCallRecording,
 }: CallRecordingTranscriptBodyProps) => {
   const widget = useCurrentWidget();
+  const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
+    null,
+  );
+  const [entryPlaybackPosition, setEntryPlaybackPosition] = useState({
+    activeIndex: -1,
+    lastStartedIndex: -1,
+  });
+
+  const transcriptEntries = useMemo(
+    () =>
+      isDefined(callRecording)
+        ? parseCallRecordingTranscriptEntries(callRecording.transcript)
+        : undefined,
+    [callRecording],
+  );
+
+  const entryTimePoints = useMemo(
+    () =>
+      isDefined(transcriptEntries)
+        ? buildCallRecordingTranscriptTimePoints(transcriptEntries)
+        : [],
+    [transcriptEntries],
+  );
+
+  const videoFileUrl = isDefined(callRecording)
+    ? getCallRecordingVideoFileUrl(callRecording)
+    : undefined;
+  const hasLivePlayback = isDefined(videoElement);
+
+  const seekVideoToTranscriptEntry = useCallback(
+    (entryStartSeconds: number) => {
+      if (!isDefined(videoElement)) {
+        return;
+      }
+
+      videoElement.currentTime =
+        entryStartSeconds + SEEK_INTO_ENTRY_EPSILON_SECONDS;
+    },
+    [videoElement],
+  );
 
   if (isDefined(restriction)) {
     return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
@@ -75,15 +121,23 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  const transcriptEntries = parseCallRecordingTranscriptEntries(
-    callRecording.transcript,
-  );
-
   let transcriptContent: ReactNode;
 
-  if (isNonEmptyArray(transcriptEntries)) {
+  const hasTranscriptEntries = isNonEmptyArray(transcriptEntries);
+
+  if (hasTranscriptEntries) {
     transcriptContent = (
-      <CallRecordingTranscriptEntryList entries={transcriptEntries} />
+      <CallRecordingTranscriptEntryList
+        entries={transcriptEntries}
+        activeEntryIndex={
+          hasLivePlayback ? entryPlaybackPosition.activeIndex : undefined
+        }
+        lastStartedEntryIndex={
+          hasLivePlayback ? entryPlaybackPosition.lastStartedIndex : undefined
+        }
+        videoElement={videoElement}
+        onEntrySelect={hasLivePlayback ? seekVideoToTranscriptEntry : undefined}
+      />
     );
   } else if (isCallRecordingTranscriptPending(callRecording)) {
     transcriptContent = (
@@ -111,24 +165,32 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecording);
-
   if (!isDefined(videoFileUrl)) {
     return transcriptContent;
   }
 
   return (
     <StyledRecordingLayout>
+      <CallRecordingTranscriptPlaybackEffect
+        videoElement={videoElement}
+        timePoints={entryTimePoints}
+        onPlaybackPositionChange={setEntryPlaybackPosition}
+      />
       <StyledPlayerSection>
         <CallRecordingVideoPlayer
           key={videoFileUrl}
+          ref={setVideoElement}
           src={videoFileUrl}
           onRetry={refetchCallRecording}
         />
       </StyledPlayerSection>
-      <StyledTranscriptScrollContainer>
-        {transcriptContent}
-      </StyledTranscriptScrollContainer>
+      {hasTranscriptEntries ? (
+        transcriptContent
+      ) : (
+        <StyledTranscriptScrollContainer>
+          {transcriptContent}
+        </StyledTranscriptScrollContainer>
+      )}
     </StyledRecordingLayout>
   );
 };
