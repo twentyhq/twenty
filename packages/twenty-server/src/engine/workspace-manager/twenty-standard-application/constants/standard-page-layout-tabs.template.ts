@@ -118,7 +118,7 @@ export const TAB_PROPS = {
   files: {
     title: 'Files',
     position: 50,
-    icon: 'IconPaperclip',
+    icon: 'IconFiles',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   emails: {

@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconAppWindow,
+  IconAddressBook,
   IconCommand,
   IconLayoutDashboard,
-  IconLayoutSidebarLeftExpand,
+  IconLayoutSidebar,
   IconPencil,
   IconTable,
 } from 'twenty-ui/icon';
@@ -39,13 +39,13 @@ export const SettingsLayout = () => {
     {
       id: 'sidebar',
       title: t`Sidebar`,
-      Icon: IconLayoutSidebarLeftExpand,
+      Icon: IconLayoutSidebar,
       vimeoId: '1185511790',
     },
     {
       id: 'record-page',
       title: t`Record page`,
-      Icon: IconAppWindow,
+      Icon: IconAddressBook,
       vimeoId: '1185511790',
     },
     {

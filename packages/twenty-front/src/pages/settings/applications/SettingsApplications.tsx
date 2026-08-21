@@ -7,7 +7,7 @@ import { useSettingsActiveTabId } from '@/settings/components/layout/useSettings
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/icon';
+import { IconApps, IconCode, IconPlug, IconShoppingBag } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
@@ -29,7 +29,7 @@ export const SettingsApplications = () => {
   );
 
   const tabs = [
-    { id: 'marketplace', title: t`Marketplace`, Icon: IconDownload },
+    { id: 'marketplace', title: t`Marketplace`, Icon: IconShoppingBag },
     { id: 'installed', title: t`Installed`, Icon: IconApps },
     ...(hasDeveloperAccess
       ? [{ id: DEVELOPER_TAB_ID, title: t`Developer`, Icon: IconCode }]
@@ -86,7 +86,7 @@ export const SettingsApplications = () => {
               {
                 id: 'browse',
                 title: t`Browse`,
-                Icon: IconDownload,
+                Icon: IconShoppingBag,
                 vimeoId: '1185416793',
               },
               {

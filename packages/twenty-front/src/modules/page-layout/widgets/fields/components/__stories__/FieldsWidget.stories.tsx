@@ -197,7 +197,7 @@ const createView = (
   name: 'Company Fields',
   objectMetadataId: companyObjectMetadataItem.id,
   type: ViewType.FIELDS_WIDGET,
-  icon: 'IconList',
+  icon: 'IconListDetails',
   key: null,
   shouldHideEmptyGroups: false,
   position: 0,

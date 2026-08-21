@@ -9,9 +9,9 @@ import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconAppWindow,
   IconFrame,
-  IconList,
+  IconListDetails,
+  IconPerspective,
   IconPlus,
   IconTable,
   type IconComponent,
@@ -79,10 +79,10 @@ export const usePageLayoutHeaderInfo = ({
 
       const resolvedTabIcon = isDefined(tab.icon)
         ? getIcon(tab.icon)
-        : IconAppWindow;
+        : IconPerspective;
 
       return {
-        headerIcon: resolvedTabIcon ?? IconAppWindow,
+        headerIcon: resolvedTabIcon ?? IconPerspective,
         headerIconColor: iconColor,
         headerType: isSoloTab ? t`Full tab widget` : t`Tab`,
         title,
@@ -187,7 +187,7 @@ export const usePageLayoutHeaderInfo = ({
           : '';
 
       return {
-        headerIcon: IconList,
+        headerIcon: IconListDetails,
         headerIconColor: iconColor,
         headerType: t`Fields Widget`,
         title,
@@ -219,7 +219,7 @@ export const usePageLayoutHeaderInfo = ({
           : '';
 
       return {
-        headerIcon: IconList,
+        headerIcon: IconListDetails,
         headerIconColor: iconColor,
         headerType: t`Field Widget`,
         title,

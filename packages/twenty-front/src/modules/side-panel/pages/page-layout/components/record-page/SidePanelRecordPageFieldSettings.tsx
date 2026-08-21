@@ -32,11 +32,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconLayoutSidebarRight,
-  IconList,
-  IconListDetails,
-} from 'twenty-ui/icon';
+import { IconLayoutSidebarRight, IconListDetails } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
   FieldDisplayMode,
@@ -250,7 +246,7 @@ export const SidePanelRecordPageFieldSettings = () => {
                 <CommandMenuItem
                   id="fields"
                   label={t`Fields`}
-                  Icon={IconList}
+                  Icon={IconListDetails}
                   hasSubMenu
                   onClick={handleNavigateToFields}
                   description={t`${visibleFieldsCount} visible fields`}

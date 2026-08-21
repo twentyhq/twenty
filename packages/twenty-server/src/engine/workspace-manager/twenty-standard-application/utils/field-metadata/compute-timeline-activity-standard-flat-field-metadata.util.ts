@@ -377,7 +377,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
           context: 'fieldMetadata.description',
         }),
       ),
-      icon: 'IconCircleUser',
+      icon: 'IconUsers',
       isNullable: true,
       isUIEditable: false,
       targetObjectName: 'workspaceMember',
