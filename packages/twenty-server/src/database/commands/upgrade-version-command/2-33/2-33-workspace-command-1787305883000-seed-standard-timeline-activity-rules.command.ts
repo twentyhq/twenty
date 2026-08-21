@@ -123,6 +123,7 @@ export class SeedStandardTimelineActivityRulesCommand extends ProvisionedWorkspa
         actions: [...actions],
         triggerFieldMetadataIds,
         isActive: true,
+        overrides: null,
         workspaceId,
         createdAt: now,
         updatedAt: now,

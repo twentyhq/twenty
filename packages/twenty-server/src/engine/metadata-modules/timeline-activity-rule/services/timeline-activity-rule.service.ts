@@ -14,6 +14,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatTimelineActivityRule } from 'src/engine/metadata-modules/flat-timeline-activity-rule/types/flat-timeline-activity-rule.type';
 import { SELF_TIMELINE_ACTIVITY_RULE_ACTIONS } from 'src/engine/metadata-modules/timeline-activity-rule/constants/self-timeline-activity-rule-actions.constant';
 import { findSelfOverrideFlatTimelineActivityRule } from 'src/engine/metadata-modules/timeline-activity-rule/utils/find-self-override-flat-timeline-activity-rule.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { type ResetTimelineActivityRuleInput } from 'src/engine/metadata-modules/timeline-activity-rule/dtos/reset-timeline-activity-rule.input';
 import { type TimelineActivityRuleDTO } from 'src/engine/metadata-modules/timeline-activity-rule/dtos/timeline-activity-rule.dto';
 import { type UpsertTimelineActivityRuleInput } from 'src/engine/metadata-modules/timeline-activity-rule/dtos/upsert-timeline-activity-rule.input';
@@ -21,10 +24,6 @@ import {
   TimelineActivityRuleException,
   TimelineActivityRuleExceptionCode,
 } from 'src/engine/metadata-modules/timeline-activity-rule/timeline-activity-rule.exception';
-import {
-  STANDARD_TIMELINE_ACTIVITY_RULES,
-  type StandardTimelineActivityRuleDefinition,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-timeline-activity-rules.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
@@ -53,6 +52,8 @@ export class TimelineActivityRuleService {
     workspaceId: string,
   ): Promise<TimelineActivityRuleDTO[]> {
     const flatMaps = await this.getFlatMaps(workspaceId);
+    const workspaceCustomApplicationUniversalIdentifier =
+      await this.getWorkspaceCustomApplicationUniversalIdentifier(workspaceId);
 
     const persistedFlatRules = Object.values(
       flatMaps.flatTimelineActivityRuleMaps.byUniversalIdentifier,
@@ -73,7 +74,10 @@ export class TimelineActivityRuleService {
     const relationRules = persistedFlatRules
       .filter((flatRule) => isDefined(flatRule.relationFieldMetadataId))
       .map((flatRule) =>
-        this.buildEffectiveRelationRule({ flatRule, flatMaps }),
+        this.buildEffectiveRelationRule({
+          flatRule,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
       );
 
     return [...selfRules, ...relationRules];
@@ -102,15 +106,36 @@ export class TimelineActivityRuleService {
     const now = new Date().toISOString();
 
     if (isDefined(existingFlatRule)) {
+      // Editing an application owned rule must not rewrite the definition the
+      // application ships: the change is stored as an override instead.
+      const { overrides, updatedEditableProperties } =
+        sanitizeOverridableEntityInput({
+          metadataName: 'timelineActivityRule',
+          existingFlatEntity: existingFlatRule,
+          updatedEditableProperties: {
+            ...(isDefined(input.actions) && {
+              actions: input.actions as TimelineActivityAction[],
+            }),
+            ...(input.triggerFieldMetadataIds !== undefined && {
+              triggerFieldMetadataIds: input.triggerFieldMetadataIds,
+            }),
+            ...(isDefined(input.isActive) && { isActive: input.isActive }),
+          },
+          shouldOverride: isCallerOverridingEntity({
+            callerApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+            entityApplicationUniversalIdentifier:
+              existingFlatRule.applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+            isSystemSideEffect: false,
+          }),
+        });
+
       const flatRuleToUpdate: FlatTimelineActivityRule = {
         ...existingFlatRule,
-        ...(isDefined(input.actions) && {
-          actions: input.actions as TimelineActivityAction[],
-        }),
-        ...(input.triggerFieldMetadataIds !== undefined && {
-          triggerFieldMetadataIds: input.triggerFieldMetadataIds,
-        }),
-        ...(isDefined(input.isActive) && { isActive: input.isActive }),
+        ...updatedEditableProperties,
+        overrides,
         updatedAt: now,
       };
 
@@ -177,6 +202,7 @@ export class TimelineActivityRuleService {
         ],
         triggerFieldMetadataIds: input.triggerFieldMetadataIds ?? null,
         isActive: input.isActive ?? true,
+        overrides: null,
         workspaceId,
         createdAt: now,
         updatedAt: now,
@@ -224,7 +250,6 @@ export class TimelineActivityRuleService {
     if (isDefined(existingFlatRule)) {
       await this.resetExistingFlatRule({
         existingFlatRule,
-        flatMaps,
         workspaceId,
       });
     }
@@ -238,11 +263,9 @@ export class TimelineActivityRuleService {
 
   private async resetExistingFlatRule({
     existingFlatRule,
-    flatMaps,
     workspaceId,
   }: {
     existingFlatRule: FlatTimelineActivityRule;
-    flatMaps: RuleFlatMaps;
     workspaceId: string;
   }): Promise<void> {
     const { workspaceCustomFlatApplication } =
@@ -250,20 +273,11 @@ export class TimelineActivityRuleService {
         { workspaceId },
       );
 
-    const standardRuleDefinition =
-      this.findStandardRuleDefinition(existingFlatRule);
+    const isApplicationOwned =
+      existingFlatRule.applicationUniversalIdentifier !==
+      workspaceCustomFlatApplication.universalIdentifier;
 
-    if (isDefined(standardRuleDefinition)) {
-      const standardTriggerFieldMetadataIds =
-        standardRuleDefinition.triggerFieldUniversalIdentifiers
-          .map(
-            (triggerFieldUniversalIdentifier) =>
-              flatMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-                triggerFieldUniversalIdentifier
-              ]?.id,
-          )
-          .filter(isDefined);
-
+    if (isApplicationOwned) {
       await this.runMigration({
         workspaceId,
         applicationUniversalIdentifier:
@@ -271,9 +285,7 @@ export class TimelineActivityRuleService {
         flatEntityToUpdate: [
           {
             ...existingFlatRule,
-            actions: [...standardRuleDefinition.actions],
-            triggerFieldMetadataIds: standardTriggerFieldMetadataIds,
-            isActive: true,
+            overrides: null,
             updatedAt: new Date().toISOString(),
           },
         ],
@@ -286,6 +298,17 @@ export class TimelineActivityRuleService {
         flatEntityToDelete: [existingFlatRule],
       });
     }
+  }
+
+  private async getWorkspaceCustomApplicationUniversalIdentifier(
+    workspaceId: string,
+  ): Promise<string> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return workspaceCustomFlatApplication.universalIdentifier;
   }
 
   private async getFlatMaps(workspaceId: string): Promise<RuleFlatMaps> {
@@ -366,7 +389,13 @@ export class TimelineActivityRuleService {
       });
 
       return isDefined(flatRule)
-        ? this.buildEffectiveRelationRule({ flatRule, flatMaps })
+        ? this.buildEffectiveRelationRule({
+            flatRule,
+            workspaceCustomApplicationUniversalIdentifier:
+              await this.getWorkspaceCustomApplicationUniversalIdentifier(
+                workspaceId,
+              ),
+          })
         : null;
     }
 
@@ -389,18 +418,6 @@ export class TimelineActivityRuleService {
     );
   }
 
-  private findStandardRuleDefinition(
-    flatRule: FlatTimelineActivityRule,
-  ): StandardTimelineActivityRuleDefinition | undefined {
-    return STANDARD_TIMELINE_ACTIVITY_RULES.find(
-      (definition) =>
-        definition.objectUniversalIdentifier ===
-          flatRule.objectMetadataUniversalIdentifier &&
-        definition.relationFieldUniversalIdentifier ===
-          flatRule.relationFieldMetadataUniversalIdentifier,
-    );
-  }
-
   private buildEffectiveSelfRule({
     flatObjectMetadata,
     persistedFlatRules,
@@ -415,10 +432,14 @@ export class TimelineActivityRuleService {
       return undefined;
     }
 
-    const selfOverrideFlatRule = findSelfOverrideFlatTimelineActivityRule({
+    const persistedSelfFlatRule = findSelfOverrideFlatTimelineActivityRule({
       persistedFlatRules,
       objectMetadataId: flatObjectMetadata.id,
     });
+
+    const selfOverrideFlatRule = isDefined(persistedSelfFlatRule)
+      ? resolveEffectiveEntity(persistedSelfFlatRule)
+      : undefined;
 
     return {
       id: selfOverrideFlatRule?.id ?? null,
@@ -440,50 +461,26 @@ export class TimelineActivityRuleService {
 
   private buildEffectiveRelationRule({
     flatRule,
-    flatMaps,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     flatRule: FlatTimelineActivityRule;
-    flatMaps: RuleFlatMaps;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): TimelineActivityRuleDTO {
-    const standardRuleDefinition = this.findStandardRuleDefinition(flatRule);
-
-    const isOverridden = isDefined(standardRuleDefinition)
-      ? !flatRule.isActive ||
-        !this.haveSameMembers(
-          flatRule.actions,
-          standardRuleDefinition.actions,
-        ) ||
-        !this.haveSameMembers(
-          flatRule.triggerFieldMetadataIds ?? [],
-          standardRuleDefinition.triggerFieldUniversalIdentifiers
-            .map(
-              (triggerFieldUniversalIdentifier) =>
-                flatMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-                  triggerFieldUniversalIdentifier
-                ]?.id,
-            )
-            .filter(isDefined),
-        )
-      : false;
+    const effectiveFlatRule = resolveEffectiveEntity(flatRule);
 
     return {
-      id: flatRule.id,
-      objectMetadataId: flatRule.objectMetadataId,
-      relationFieldMetadataId: flatRule.relationFieldMetadataId,
-      resolution: flatRule.resolution,
-      actions: flatRule.actions,
-      triggerFieldMetadataIds: flatRule.triggerFieldMetadataIds,
-      isActive: flatRule.isActive,
-      isStandard: isDefined(standardRuleDefinition),
-      isOverridden,
+      id: effectiveFlatRule.id,
+      objectMetadataId: effectiveFlatRule.objectMetadataId,
+      relationFieldMetadataId: effectiveFlatRule.relationFieldMetadataId,
+      resolution: effectiveFlatRule.resolution,
+      actions: effectiveFlatRule.actions,
+      triggerFieldMetadataIds: effectiveFlatRule.triggerFieldMetadataIds,
+      isActive: effectiveFlatRule.isActive,
+      isStandard:
+        flatRule.applicationUniversalIdentifier !==
+        workspaceCustomApplicationUniversalIdentifier,
+      isOverridden: isDefined(flatRule.overrides),
     };
-  }
-
-  private haveSameMembers(left: string[], right: string[]): boolean {
-    return (
-      left.length === right.length &&
-      [...left].sort().join(',') === [...right].sort().join(',')
-    );
   }
 
   private async runMigration({
