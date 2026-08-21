@@ -11,6 +11,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -373,13 +374,18 @@ export class FileStorageService {
     });
   }
 
-  readFile(params: ResourceIdentifier): Promise<Readable> {
+  readFile(
+    params: ResourceIdentifier & { byteRange?: ByteRange },
+  ): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     const { onStorageFilePath } =
       this.validateAndBuildFileStoragePathOrThrow(params);
 
-    return driver.readFile({ filePath: onStorageFilePath });
+    return driver.readFile({
+      filePath: onStorageFilePath,
+      byteRange: params.byteRange,
+    });
   }
 
   downloadFile(
