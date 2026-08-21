@@ -194,12 +194,12 @@ export const WorkflowEditActionEmailBase = ({
   const configuredAccount = ownAccount ?? otherAccount;
 
   const configuredAccountSenderValue = isDefined(configuredAccount)
-    ? formatConnectedAccountSenderValue(
-        configuredAccount.id,
-        isNonEmptyString(formData.fromHandle)
+    ? formatConnectedAccountSenderValue({
+        connectedAccountId: configuredAccount.id,
+        handle: isNonEmptyString(formData.fromHandle)
           ? formData.fromHandle
           : configuredAccount.handle,
-      )
+      })
     : undefined;
 
   const selectedSenderValue = isSenderVariable

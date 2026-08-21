@@ -155,10 +155,10 @@ export const EmailComposerFields = ({
   );
 
   const selectedSenderValue = isDefined(selectedAccount)
-    ? formatConnectedAccountSenderValue(
-        selectedAccount.id,
-        composerState.fromHandle ?? selectedAccount.handle,
-      )
+    ? formatConnectedAccountSenderValue({
+        connectedAccountId: selectedAccount.id,
+        handle: composerState.fromHandle ?? selectedAccount.handle,
+      })
     : undefined;
 
   const allRecipientKeys = [

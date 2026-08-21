@@ -8,6 +8,10 @@ export const parseConnectedAccountSenderValue = (
     CONNECTED_ACCOUNT_SENDER_VALUE_SEPARATOR,
   );
 
+  if (separatorIndex === -1) {
+    return { connectedAccountId: value };
+  }
+
   return {
     connectedAccountId: value.slice(0, separatorIndex),
     fromHandle: value.slice(separatorIndex + 1),

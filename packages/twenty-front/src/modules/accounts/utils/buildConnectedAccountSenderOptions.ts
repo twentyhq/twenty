@@ -9,6 +9,9 @@ export const buildConnectedAccountSenderOptions = (
   accounts.flatMap((account) =>
     getSendableEmailHandles(account).map((handle) => ({
       label: handle,
-      value: formatConnectedAccountSenderValue(account.id, handle),
+      value: formatConnectedAccountSenderValue({
+        connectedAccountId: account.id,
+        handle,
+      }),
     })),
   );
