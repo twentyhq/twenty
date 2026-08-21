@@ -666,7 +666,7 @@ async function main() {
   }
 
   console.log(
-    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage + amount read-only) — field permissions verified`,
+    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (Partner role cannot write Opportunity at all; locks kept as intent) — field permissions verified`,
   );
 
   // ── 6. Verify Application field permissions (set via manifest, not here — see header) ─

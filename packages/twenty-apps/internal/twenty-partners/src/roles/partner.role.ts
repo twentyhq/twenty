@@ -54,19 +54,22 @@ import { REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportu
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
 
-// External partner self-service role: a partner sees only its own records, can edit its
-// own Partner profile; Company/Person are read-only. Application is read-only too — the
-// pitch is set once by the apply route (application role) at creation and is never
-// editable by the partner afterwards. Opportunity stage/amount are admin-only (read-only
-// for partners). Application rows are scoped to own partnerUser (RLS). Row-level
-// predicates can't ship in the manifest, so run `yarn rls:configure` after install.
+// External partner self-service role: a partner sees only its own records and can edit its
+// own Partner profile. Company, Person, Opportunity and Application are read-only — the
+// pitch is set once by the apply route (application role) at creation and is never editable
+// by the partner afterwards. Application rows are scoped to own partnerUser (RLS).
+// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
 //
-// `updatedBy` and `position` must stay editable even though they're not partner-facing: the
-// server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
-// `position` with `stage` on a kanban drag, so locking either makes ALL opportunity updates
-// fail with PERMISSION_DENIED. The server overwrites both regardless, so there's nothing to
-// protect. `createdBy` stays locked (not injected on update); `searchVector` is a generated
-// column, so its lock is an inert no-op.
+// The Opportunity and Application field locks below are moot now that neither object is
+// writable at all. They stay because configure-partner-rls.ts asserts on them and exits
+// non-zero on drift, and because they still describe intent if object access ever reopens.
+//
+// `updatedBy` and `position` are left unlocked on purpose: the server injects `updatedBy`
+// into every update (ActorFromAuthContextService) and co-writes `position` with `stage` on a
+// kanban drag, so locking either would make every opportunity update fail with
+// PERMISSION_DENIED if object-level write returned. The server overwrites both regardless,
+// so there's nothing to protect. `createdBy` stays locked (not injected on update);
+// `searchVector` is a generated column, so its lock is an inert no-op.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
@@ -454,8 +457,10 @@ export default defineRole({
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      // Also what hides the "New Opportunity" button: the standard command menu item is
+      // gated on objectPermissions.canUpdateObjectRecords.
       canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
