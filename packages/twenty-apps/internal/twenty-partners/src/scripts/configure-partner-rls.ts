@@ -3,9 +3,9 @@
 //
 // 1. Upserts row-level-permission predicates on the Partner role:
 //    - "partnerUser IS the current member" on partner/person/company/partnerLink/partnerService/
-//      partnerContent/application. The Apply workflow must map Partner User to the clicking
-//      member at insert (see src/workflows/README.md) — RLS validates the insert against the
-//      row as submitted, so a row created without partnerUser is rejected.
+//      partnerContent/application. RLS validates an insert against the row as submitted, so a
+//      row created without partnerUser is rejected — which is why the apply route sets
+//      partnerUser when it creates the Application.
 //    - "(partnerUser IS me) OR (isListed = true)" on opportunity (marketplace briefs)
 //    - "id IS the current member" on workspaceMember (self-scope; internal roster hidden)
 //
