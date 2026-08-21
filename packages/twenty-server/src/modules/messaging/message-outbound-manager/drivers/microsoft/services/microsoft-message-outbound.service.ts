@@ -7,7 +7,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
-import { resolveOutboundFromHandle } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-from-handle.util';
+import { resolveOutboundFromHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-from-handle-or-throw.util';
 import { type Client as MicrosoftGraphClient } from '@microsoft/microsoft-graph-client';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -154,7 +154,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Record<string, unknown> {
-    const fromHandle = resolveOutboundFromHandle({
+    const fromHandle = resolveOutboundFromHandleOrThrow({
       connectedAccount,
       requestedFromHandle: sendMessageInput.fromHandle,
     });

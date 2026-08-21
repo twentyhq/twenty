@@ -1,9 +1,14 @@
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  MessageChannelException,
+  MessageChannelExceptionCode,
+} from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 
-export const resolveOutboundFromHandle = ({
+export const resolveOutboundFromHandleOrThrow = ({
   connectedAccount,
   requestedFromHandle,
 }: {
@@ -29,8 +34,12 @@ export const resolveOutboundFromHandle = ({
   );
 
   if (!isDefined(matchedFromHandle)) {
-    throw new Error(
+    throw new MessageChannelException(
       `Sender ${requestedFromHandle} is not the connected account handle nor one of its verified aliases`,
+      MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      {
+        userFriendlyMessage: msg`You cannot send from this address.`,
+      },
     );
   }
 
