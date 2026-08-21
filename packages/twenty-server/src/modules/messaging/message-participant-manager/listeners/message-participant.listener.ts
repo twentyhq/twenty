@@ -63,6 +63,7 @@ export class MessageParticipantListener {
             name: 'message.linked',
             action: 'linked' as const,
             sourceObjectMetadataId: messageObjectMetadata.id,
+            ruleRelationFieldMetadataId: null,
             properties: {},
             objectSingularName: 'person',
             recordId: participant.personId,

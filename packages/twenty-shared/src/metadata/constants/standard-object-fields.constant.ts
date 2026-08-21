@@ -159,6 +159,9 @@ export const STANDARD_OBJECT_FIELDS = {
     sourceObjectMetadataId: {
       universalIdentifier: '20202020-7c4d-4a19-9b83-51ef2d60ac38',
     },
+    ruleRelationFieldMetadataId: {
+      universalIdentifier: '20202020-9f6e-4c07-a2d4-38b5e1c9f470',
+    },
   },
   attachment: {
     ...buildStandardObjectSystemFields(

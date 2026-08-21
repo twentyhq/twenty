@@ -54,9 +54,9 @@ your-app/
 
 ## Korumalı alan
 
-* **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
+* **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, çalıştırmayı tetikleyen kişi veya uygulamanın kendisi olarak hareket eden tür güvenlikli API istemcisi aracılığıyla erişirler. [Bir çağrının hangi erişimi kullandığına](/l/tr/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses) bakın.
 * **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
-* **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
+* **İzinler**, API düzeyinde uygulanır. Her ikisi de `defineApplicationRole()` ile tanımlanan rolden türetilen iki çalışma zamanı belirteci eklenir; varsayılan belirteç, çalıştırmanın arkasında biri olduğunda tetikleyen kişinin yapabilecekleriyle daha da sınırlandırılır.
 
 ## Uygulama yaşam döngüsü
 

@@ -96,7 +96,7 @@ The same applies to front components reading values via `getApplicationVariable(
 
 The role declared with [`defineApplicationRole()`](/developers/extend/apps/config/roles) controls what the app's logic functions and front components can access:
 
-- The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
+- The runtime tokens injected into your logic functions are derived from this role. A call acting as a person is further narrowed to what that person can do, so it can never exceed either one. See [Whose access a call uses](/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 - The typed API client is restricted to the permissions granted to that role.
 - Follow least-privilege: declare only the permissions your functions need.
 

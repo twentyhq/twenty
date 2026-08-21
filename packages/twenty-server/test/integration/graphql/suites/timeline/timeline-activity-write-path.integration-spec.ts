@@ -16,6 +16,7 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
   linkedObjectMetadataId
   action
   sourceObjectMetadataId
+  ruleRelationFieldMetadataId
   targetCompanyId
   targetPersonId
   targetNoteId
@@ -31,6 +32,7 @@ type TimelineActivityRow = {
   linkedObjectMetadataId: string | null;
   action: string | null;
   sourceObjectMetadataId: string | null;
+  ruleRelationFieldMetadataId: string | null;
   targetCompanyId: string | null;
   targetPersonId: string | null;
   targetNoteId: string | null;
@@ -339,6 +341,9 @@ describe('timeline activity write path (integration)', () => {
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
       expect(timelineActivities[0].linkedRecordCachedName).toBe('Linked note');
       expect(timelineActivities[0].linkedObjectMetadataId).not.toBeNull();
+      // Names the rule that produced the row, so a bad rule's output can be
+      // found again without parsing the legacy name.
+      expect(timelineActivities[0].ruleRelationFieldMetadataId).not.toBeNull();
       // `name` keeps the legacy raw event action, the column carries the meaning
       expect(timelineActivities[0].action).toBe('linked');
       expect(timelineActivities[0].sourceObjectMetadataId).toBe(
@@ -353,6 +358,8 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
+      // A rule on the record itself walks no relation.
+      expect(timelineActivities[0].ruleRelationFieldMetadataId).toBeNull();
     });
 
     it('should write a linked entry on the company when the note title changes', async () => {

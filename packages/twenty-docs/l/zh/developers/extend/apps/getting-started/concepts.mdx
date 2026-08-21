@@ -54,9 +54,9 @@ your-app/
 
 ## 沙盒化
 
-* **逻辑函数** 在服务器上的独立 Node.js 进程中运行。 它们只能通过类型化的 API 客户端访问数据，且范围受应用角色权限限制。
+* **逻辑函数** 在服务器上的独立 Node.js 进程中运行。 它们仅通过类型化 API 客户端访问数据，该客户端会以触发运行的人员或应用本身的身份执行操作。 请参阅[调用使用谁的访问权限](/l/zh/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)。
 * **前端组件** 在使用 Remote DOM 的 Web Worker 中运行——与主页面沙盒隔离，但渲染原生 DOM 元素（非 iframe）。 它们通过消息传递的宿主 API 与 Twenty 通信。
-* **权限** 在 API 层面强制执行。 运行时令牌（`TWENTY_APP_ACCESS_TOKEN`）源自 `defineApplication()` 中定义的角色。
+* **权限** 在 API 层面强制执行。 系统会注入两个运行时令牌，二者均派生自通过 `defineApplicationRole()` 声明的角色；只要运行由人员触发，默认令牌的权限范围就会进一步缩小为该触发人员可执行的操作。
 
 ## 应用生命周期
 

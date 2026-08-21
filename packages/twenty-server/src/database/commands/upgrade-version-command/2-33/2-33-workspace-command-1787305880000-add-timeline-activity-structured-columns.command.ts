@@ -18,13 +18,14 @@ const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
 const NEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   TIMELINE_ACTIVITY.fields.action.universalIdentifier,
   TIMELINE_ACTIVITY.fields.sourceObjectMetadataId.universalIdentifier,
+  TIMELINE_ACTIVITY.fields.ruleRelationFieldMetadataId.universalIdentifier,
 ];
 
 @RegisteredWorkspaceCommand('2.33.0', 1787305880000)
 @Command({
   name: 'upgrade:2-33:add-timeline-activity-structured-columns',
   description:
-    'Add the timelineActivity.action and timelineActivity.sourceObjectMetadataId system fields on existing workspaces that predate them',
+    'Add the timelineActivity.action, timelineActivity.sourceObjectMetadataId and timelineActivity.ruleRelationFieldMetadataId system fields on existing workspaces that predate them',
 })
 export class AddTimelineActivityStructuredColumnsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

@@ -2395,7 +2395,6 @@ msgstr "Apòstrof i punt"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
@@ -3258,11 +3257,6 @@ msgstr "Bronze"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
 msgstr "Marró"
-
-#. js-lingui-id: O2UpM1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Browse"
-msgstr "Explora"
 
 #. js-lingui-id: 041SWy
 #: src/pages/settings/admin-panel/SettingsAdminChats.tsx
@@ -4225,11 +4219,6 @@ msgstr "Ordre copiada al porta-retalls"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "Icona del Comandament"
-
-#. js-lingui-id: V1zWD4
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Command menu"
-msgstr "Menú de comandes"
 
 #. js-lingui-id: PUMdxH
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
@@ -5780,17 +5769,11 @@ msgstr "Fosc"
 msgid "Dashboard duplicated successfully"
 msgstr "Quadre de comandament duplicat correctament"
 
-#. js-lingui-id: w6iIMm
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Dashboards"
-msgstr "Taulers de comandament"
-
 #. js-lingui-id: HKH+W+
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Data"
 msgstr "Dades"
@@ -6528,11 +6511,6 @@ msgstr "Detalls"
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
 msgid "Detected application version running on this instance"
 msgstr "Versió de l'aplicació detectada que s'executa en aquesta instància"
-
-#. js-lingui-id: QYXe1O
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Develop"
-msgstr "Desenvolupa"
 
 #. js-lingui-id: 7aDnUb
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -8766,13 +8744,10 @@ msgstr "camps"
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Fields"
 msgstr "Camps"
@@ -9451,7 +9426,6 @@ msgstr "Atorga permís per realitzar totes les accions disponibles sense restric
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "GraphQL"
 msgstr "GraphQL"
 
@@ -10317,7 +10291,6 @@ msgstr "Introdueix les teves dades de facturació per obtenir una prova gratuït
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Install"
 msgstr "Instal·la"
@@ -10554,7 +10527,6 @@ msgstr "Invitacions"
 #. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/utils/title-utils.ts
 msgid "Invite"
@@ -12166,7 +12138,6 @@ msgstr "L'ID del model és necessari"
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Models"
 
@@ -12437,7 +12408,6 @@ msgstr "N/A"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -13272,11 +13242,6 @@ msgstr "No hi ha models disponibles. Si us plau, configureu models d'IA a la con
 msgid "No notes"
 msgstr "Sense notes"
 
-#. js-lingui-id: 14uqQk
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "No object found"
-msgstr "No s'ha trobat cap objecte"
-
 #. js-lingui-id: YFHO2u
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
@@ -13899,7 +13864,6 @@ msgstr "objectes"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -13910,14 +13874,8 @@ msgstr "objectes"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Objects"
 msgstr "Objectes"
-
-#. js-lingui-id: tmyEbd
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "Objects and fields managed by this app"
-msgstr "Objectes i camps gestionats per aquesta aplicació"
 
 #. js-lingui-id: /8Yh6y
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -15522,7 +15480,6 @@ msgstr "Etiqueta de registre"
 
 #. js-lingui-id: XueM/X
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
 msgstr "Pàgina de registre"
 
@@ -15659,7 +15616,6 @@ msgstr "Tipus de relació"
 #. js-lingui-id: g87L9j
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Relations"
 msgstr "Relacions"
 
@@ -16036,7 +15992,6 @@ msgstr ""
 
 #. js-lingui-id: WHiaOl
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 msgid "REST"
 msgstr "DESCANS"
@@ -16232,7 +16187,6 @@ msgstr "rols"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Rols"
@@ -16587,7 +16541,6 @@ msgstr "Cerca un objecte"
 #. js-lingui-id: BoNHR0
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 msgid "Search an object..."
 msgstr "Cerca un objecte..."
 
@@ -17539,11 +17492,6 @@ msgstr "Panell lateral"
 msgid "Side Panel"
 msgstr "Panell lateral"
 
-#. js-lingui-id: uWi2Q+
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Sidebar"
-msgstr "Barra lateral"
-
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Sidebar items"
@@ -17676,7 +17624,6 @@ msgstr "habilitats"
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Skills"
@@ -18509,7 +18456,6 @@ msgid "Task Title"
 msgstr "Títol de la tasca"
 
 #. js-lingui-id: KM6m8p
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr "Equip"
@@ -19441,7 +19387,6 @@ msgstr "Generació d'eines"
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr "Eines"
@@ -20974,7 +20919,6 @@ msgstr "Visualitza l'ús"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "Vistes"
@@ -21063,6 +21007,16 @@ msgstr "Infants en espera"
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Esperant la sortida..."
+
+#. js-lingui-id: THYlSm
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Walkthrough"
+msgstr "Guia pas a pas"
 
 #. js-lingui-id: r6y+jM
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx

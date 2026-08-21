@@ -33,6 +33,8 @@ export class DevModeOrchestrator {
   private debounceMs: number;
   private syncTimer: NodeJS.Timeout | null = null;
   private serverCheckInterval: NodeJS.Timeout | null = null;
+  private syncRequestedWhileRunning = false;
+  private isClosed = false;
 
   private apiService: ApiService;
   private clientService: ClientService;
@@ -94,6 +96,8 @@ export class DevModeOrchestrator {
   }
 
   async start(): Promise<void> {
+    this.isClosed = false;
+
     const outputDir = path.join(this.state.appPath, OUTPUT_DIR);
 
     await ensureDir(outputDir);
@@ -121,8 +125,16 @@ export class DevModeOrchestrator {
   }
 
   async close(): Promise<void> {
+    this.isClosed = true;
+
+    if (this.syncTimer) {
+      clearTimeout(this.syncTimer);
+      this.syncTimer = null;
+    }
+
     if (this.serverCheckInterval) {
       clearInterval(this.serverCheckInterval);
+      this.serverCheckInterval = null;
     }
 
     await this.startWatchersStep.close();
@@ -152,6 +164,10 @@ export class DevModeOrchestrator {
   }
 
   private scheduleSync(): void {
+    if (this.isClosed) {
+      return;
+    }
+
     if (this.syncTimer) {
       clearTimeout(this.syncTimer);
     }
@@ -164,6 +180,7 @@ export class DevModeOrchestrator {
 
   private async performSync(): Promise<void> {
     if (this.state.pipeline.isSyncing) {
+      this.syncRequestedWhileRunning = true;
       return;
     }
 
@@ -180,6 +197,11 @@ export class DevModeOrchestrator {
       this.state.updateAllEntitiesStatus('error');
     } finally {
       this.state.updatePipeline({ isSyncing: false });
+
+      if (this.syncRequestedWhileRunning && !this.isClosed) {
+        this.syncRequestedWhileRunning = false;
+        this.scheduleSync();
+      }
     }
   }
 
