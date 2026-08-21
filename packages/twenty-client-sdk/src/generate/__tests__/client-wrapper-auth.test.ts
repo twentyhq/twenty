@@ -201,12 +201,15 @@ describe('Generated client wrapper auth behavior', () => {
     ).toEqual(['Bearer application-token']);
   });
 
-  it('should refuse to act as a person nobody triggered the run as', () => {
+  it('should act as the application when nobody triggered the run', async () => {
+    // The runtime points TWENTY_APP_ACCESS_TOKEN at the application in a cron
+    // schedule or install hook, so the default client keeps working there.
+    process.env.TWENTY_APP_ACCESS_TOKEN = 'application-token';
     process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
 
-    expect(
-      () => new TwentyClass({ url: 'https://example.com/graphql' }),
-    ).toThrow(/Nobody triggered this run/);
+    expect(await runQueryCapturingAuthorization({})).toEqual([
+      'Bearer application-token',
+    ]);
   });
 
   it('should still serve a run nobody triggered when asked for the application', async () => {
@@ -217,7 +220,7 @@ describe('Generated client wrapper auth behavior', () => {
     ).toEqual(['Bearer application-token']);
   });
 
-  it('should not refuse outside a logic function run', () => {
+  it('should build outside a logic function run', () => {
     expect(
       () => new TwentyClass({ url: 'https://example.com/graphql' }),
     ).not.toThrow();

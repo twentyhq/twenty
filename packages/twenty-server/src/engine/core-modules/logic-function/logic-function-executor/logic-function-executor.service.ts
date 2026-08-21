@@ -424,9 +424,11 @@ export class LogicFunctionExecutorService {
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      ...(isDefined(delegatedAccessToken)
-        ? { [DEFAULT_APP_ACCESS_TOKEN_NAME]: delegatedAccessToken.token }
-        : {}),
+      // Falls back to the application when nobody triggered the run, so a cron
+      // schedule or an install hook keeps working without asking for anything.
+      [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
+        delegatedAccessToken ?? applicationAccessToken
+      ).token,
       [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',

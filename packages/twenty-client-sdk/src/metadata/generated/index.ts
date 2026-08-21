@@ -75,9 +75,9 @@ const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
   'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-// 'user' acts as the person who triggered the run, limited to their role
-// intersected with the application's. 'application' acts as the application
-// alone, for work the triggering person could not do themselves.
+// The default acts as the person who triggered the run, limited to their role
+// intersected with the application's, and as the application alone when nobody
+// triggered it. 'application' asks for the application's access either way.
 type TwentyClientRunAs = 'user' | 'application';
 
 type MetadataApiClientOptions = ClientOptions & {
@@ -221,27 +221,15 @@ export class MetadataApiClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    const applicationToken =
-      processEnvironment[APP_APPLICATION_ACCESS_TOKEN_ENV_KEY];
-    const delegatedToken = processEnvironment[APP_ACCESS_TOKEN_ENV_KEY];
-
-    // The application token is only ever set by the logic function runtime, so
-    // its absence means we are somewhere else entirely and must not refuse.
-    if (
-      runAs !== 'application' &&
-      applicationToken !== undefined &&
-      delegatedToken === undefined
-    ) {
-      throw new Error(
-        "Nobody triggered this run, so there is no one to act as. Check context.workspaceMemberId first, or build the client with runAs: 'application'.",
-      );
-    }
-
     // Priority: explicit header > the token for the requested access > api key
     // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
-      (runAs === 'application' ? applicationToken : delegatedToken) ??
+      processEnvironment[
+        runAs === 'application'
+          ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
+          : APP_ACCESS_TOKEN_ENV_KEY
+      ] ??
       processEnvironment[API_KEY_ENV_KEY] ??
       null;
 

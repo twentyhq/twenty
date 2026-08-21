@@ -484,7 +484,9 @@ const handler = async (
 
 A client acts as the person who triggered the run: their role intersected with your application's, so the call can never do more than either of you. That is the default, and it means a person can never use your app to exceed their own permissions.
 
-Some calls legitimately need the application's own access instead — reading your app's configuration records, or doing work the triggering person could not do themselves. Build a second client for those:
+When nobody triggered the run there is no person to act as, so the same client falls back to your application's own access: cron schedules, install hooks and unauthenticated webhooks need no special handling.
+
+Some calls legitimately need the application's own access even when a person *is* behind the run — reading your app's configuration records, or doing work that person could not do themselves. Build a second client for those:
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -504,10 +506,12 @@ const handler = async (event: DatabaseEventPayload) => {
 Build both once, at module scope, and every call site then says which access it uses by which client it calls.
 
 <Note>
-**A run nobody triggered has no one to act as.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client throws rather than quietly falling back to your application's access. Use `runAs: 'application'` in those functions, or check `context.workspaceMemberId` first when a function can be reached both ways.
+**A run nobody triggered acts as your application.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client falls back to your application's own access and keeps working. `runAs: 'application'` is only needed when you want that access in a run a person *did* trigger.
+
+Check `context.workspaceMemberId` when a function behaves differently depending on whether someone is behind it, for instance to attribute a record.
 </Note>
 
-This applies to record access. The SDK helpers that reach your application's own resources always use its access and are unaffected by `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` and credit charging all work the same in a run nobody triggered.
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` and credit charging.
 
 #### Exposing a function as an AI tool or workflow action
 
@@ -853,7 +857,7 @@ Key points:
   When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
   - `TWENTY_API_URL` — Base URL of the Twenty API
-  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to a person's role intersected with your application's: whoever triggered the run in a logic function, whoever is looking at the page in a front component. In a logic function it is **absent when nobody triggered the run**, which is why the default client refuses in cron schedules, install hooks and unauthenticated webhooks.
+  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key for the default access: a person's role intersected with your application's when someone is behind the run, your application's own role when nobody is. The person is whoever triggered the run in a logic function, whoever is looking at the page in a front component.
   - `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Short-lived key scoped to your application's own role alone. Logic functions only, always injected there, and what `runAs: 'application'` uses.
 
   You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
