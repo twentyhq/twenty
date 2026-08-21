@@ -259,6 +259,27 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
     ]);
   }, 60000);
 
+  it('replies from a verified alias by patching the reply draft', async () => {
+    const subject = `Microsoft alias reply ${randomUUID()}`;
+
+    const result = await sendEmail({
+      connectedAccountId: channel.connectedAccountId,
+      fromHandle: ALIAS,
+      to: RECIPIENTS.to,
+      subject,
+      body: '<p>Microsoft alias reply body</p>',
+      inReplyTo: '<microsoft-parent@example.com>',
+    });
+
+    expect(result).toMatchObject({ success: true });
+    expect(microsoft.patchedMessages).toEqual([
+      expect.objectContaining({
+        subject,
+        from: { emailAddress: { address: ALIAS } },
+      }),
+    ]);
+  }, 60000);
+
   it('refuses to send from an address the account has not verified', async () => {
     const result = await sendEmail({
       connectedAccountId: channel.connectedAccountId,
