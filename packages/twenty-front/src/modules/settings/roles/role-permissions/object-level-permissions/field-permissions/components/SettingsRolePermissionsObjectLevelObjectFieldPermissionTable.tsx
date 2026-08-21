@@ -61,9 +61,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
 
   const restrictableFieldMetadataItems = [
     ...searchedFields.filter(filterUserFacingFieldMetadataItems),
-  ].sort(
-    sortByProperty('label', sortedFieldByTable?.direction ?? 'asc'),
-  );
+  ].sort(sortByProperty('label', sortedFieldByTable?.direction ?? 'asc'));
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
