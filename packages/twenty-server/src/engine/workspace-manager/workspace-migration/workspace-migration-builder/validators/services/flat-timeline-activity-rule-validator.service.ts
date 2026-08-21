@@ -7,6 +7,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
 import { TimelineActivityRuleExceptionCode } from 'src/engine/metadata-modules/timeline-activity-rule/timeline-activity-rule.exception';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import {
@@ -23,8 +24,10 @@ type UniversalFlatTimelineActivityRuleToValidate = NonNullable<
 
 @Injectable()
 export class FlatTimelineActivityRuleValidatorService {
+  // Validation judges what the rule will actually do, so it reads through the
+  // overrides blob rather than the definition underneath it.
   private getSemanticValidationErrors({
-    flatTimelineActivityRule,
+    flatTimelineActivityRule: rawFlatTimelineActivityRule,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
   }: {
@@ -36,6 +39,10 @@ export class FlatTimelineActivityRuleValidatorService {
       typeof ALL_METADATA_NAME.timelineActivityRule
     >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatObjectMetadataMaps'];
   }): FlatEntityValidationError<TimelineActivityRuleExceptionCode>[] {
+    const flatTimelineActivityRule = resolveEffectiveEntity(
+      rawFlatTimelineActivityRule,
+    );
+
     const errors: FlatEntityValidationError<TimelineActivityRuleExceptionCode>[] =
       [];
 

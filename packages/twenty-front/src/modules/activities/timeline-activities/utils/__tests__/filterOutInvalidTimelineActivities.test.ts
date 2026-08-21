@@ -117,12 +117,16 @@ describe('filterOutInvalidTimelineActivities', () => {
         id: '1',
         name: 'linked-task.updated',
         linkedObjectMetadataId: TASK_OBJECT_METADATA_ID,
+        sourceObjectMetadataId: TASK_OBJECT_METADATA_ID,
+        linkedRecordId: 'task-record-id',
         properties: {},
       },
       {
         id: '2',
         name: 'linked-note.updated',
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        sourceObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        linkedRecordId: 'note-record-id',
         properties: {},
       },
     ] as TimelineActivity[];
@@ -136,6 +140,8 @@ describe('filterOutInvalidTimelineActivities', () => {
         id: '1',
         name: 'linked-note.updated',
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        sourceObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        linkedRecordId: 'note-record-id',
         properties: {
           diff: {
             title: { before: 'a', after: 'b' },
@@ -150,6 +156,8 @@ describe('filterOutInvalidTimelineActivities', () => {
         id: '1',
         name: 'linked-note.updated',
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        sourceObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        linkedRecordId: 'note-record-id',
         properties: { diff: { title: { before: 'a', after: 'b' } } },
       },
     ]);
@@ -161,6 +169,8 @@ describe('filterOutInvalidTimelineActivities', () => {
         id: '1',
         name: 'linked-note.updated',
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        sourceObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        linkedRecordId: 'note-record-id',
         properties: { diff: { field1: { before: 'c', after: 'd' } } },
       },
     ] as TimelineActivity[];
@@ -173,6 +183,7 @@ describe('filterOutInvalidTimelineActivities', () => {
       {
         id: '1',
         name: 'linked-note.updated',
+        linkedRecordId: 'note-record-id',
         properties: {
           diff: {
             title: { before: 'a', after: 'b' },
@@ -186,8 +197,64 @@ describe('filterOutInvalidTimelineActivities', () => {
       {
         id: '1',
         name: 'linked-note.updated',
+        linkedRecordId: 'note-record-id',
+        linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        sourceObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: { diff: { title: { before: 'a', after: 'b' } } },
       },
     ]);
+  });
+});
+
+describe('source object normalization', () => {
+  it('resolves a legacy linked row from its name and stamps the source object', () => {
+    const [event] = filter([
+      {
+        id: 'legacy',
+        name: 'linked-note.created',
+        action: 'linked',
+        sourceObjectMetadataId: null,
+        linkedObjectMetadataId: null,
+        linkedRecordId: 'note-record-id',
+        properties: {},
+      },
+    ] as unknown as TimelineActivity[]);
+
+    expect(event.sourceObjectMetadataId).toBe(NOTE_OBJECT_METADATA_ID);
+    expect(event.linkedObjectMetadataId).toBe(NOTE_OBJECT_METADATA_ID);
+  });
+
+  it('prefers the stored source object over the legacy name', () => {
+    const [event] = filter([
+      {
+        id: 'renamed',
+        name: 'linked-oldName.created',
+        action: 'linked',
+        sourceObjectMetadataId: TASK_OBJECT_METADATA_ID,
+        linkedObjectMetadataId: null,
+        linkedRecordId: 'task-record-id',
+        properties: {},
+      },
+    ] as unknown as TimelineActivity[]);
+
+    expect(event.sourceObjectMetadataId).toBe(TASK_OBJECT_METADATA_ID);
+    expect(event.linkedObjectMetadataId).toBe(TASK_OBJECT_METADATA_ID);
+  });
+
+  it('leaves a row about the record itself without a linked object', () => {
+    const [event] = filter([
+      {
+        id: 'self',
+        name: 'company.created',
+        action: 'created',
+        sourceObjectMetadataId: 'company-object-metadata-id',
+        linkedObjectMetadataId: null,
+        linkedRecordId: null,
+        properties: {},
+      },
+    ] as unknown as TimelineActivity[]);
+
+    expect(event.linkedObjectMetadataId).toBeNull();
+    expect(event.sourceObjectMetadataId).toBe('company-object-metadata-id');
   });
 });
