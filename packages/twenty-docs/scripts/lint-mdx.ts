@@ -125,8 +125,6 @@ const getFencedCodeRanges = (text: string): Range[] => {
 const isInsideRange = (position: number, ranges: Range[]) =>
   ranges.some((range) => position >= range.start && position < range.end);
 
-// An odd number of backticks before the position means it sits inside an
-// unclosed inline span, which markdown renders as code.
 const isInsideInlineCode = (
   position: number,
   text: string,
