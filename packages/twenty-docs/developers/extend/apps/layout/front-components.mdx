@@ -448,7 +448,7 @@ The following system variables are always available via `process.env`:
 | Variable | Description |
 |----------|-------------|
 | `TWENTY_API_URL` | Base URL of the Twenty core API |
-| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to the signed-in person's role intersected with your app's, so a component can never do more than the person looking at it |
 
 ### `TWENTY_FUNCTIONS_URL`
 
