@@ -282,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 L'identificatore è il `universalIdentifier` del resolver dal tuo manifest. Registra quell'URL presso il provider.
 
+**Risposta a una verifica GET.** Alcuni provider verificano un endpoint prima di inviarvi dati, inviando un `GET` contenente una verifica allo stesso URL a cui in seguito invieranno eventi tramite `POST` — WhatsApp Cloud API di Meta è uno di questi. Una route del server risponde solo a `POST`, a meno che non venga specificato diversamente, quindi dichiara entrambi i metodi:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+La verifica arriva in `event.queryStringParameters` e la restituzione di un `Response` la rimanda al provider nella stessa richiesta. Un corpo stringa viene inviato come `text/plain`, che è ciò che questi provider si aspettano:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` sostituisce l'impostazione predefinita anziché aggiungersi a essa, quindi `['GET']` da solo fa sì che la route rifiuti `POST`. Sono supportati solo `GET` e `POST`. Lascialo non impostato a meno che il provider non richieda il secondo verbo: una route che dichiara `GET` avrà il proprio resolver eseguito da qualsiasi chiamante non autenticato, inclusi i crawler e gli strumenti di anteprima dei link che inviano `GET` senza richiesta. A tutto ciò per cui la piattaforma non dispone di un metodo viene restituito `405` senza che il resolver venga mai eseguito.
+
 <Note>
 **L'applicazione deve essere rivendicata e installata nel workspace del proprietario.** Poiché il resolver viene eseguito nel **workspace del proprietario** (il workspace che possiede la registrazione dell'applicazione), un server route trigger funziona solo quando l'applicazione è stata *rivendicata*, cioè ha un workspace del proprietario, **e** quell'applicazione è **installata nel workspace del proprietario**. Finché entrambe non sono vere, il resolver non ha dove essere eseguito, quindi la route non può essere gestita. Un'applicazione che espone una funzione logica `serverRouteTriggerSettings` quindi non può essere elencata nel marketplace finché non è stata rivendicata e installata nel workspace del proprietario.
 </Note>

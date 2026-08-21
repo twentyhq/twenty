@@ -1,3 +1,5 @@
+import { buildObjectMetadataLabelPlaceholderValues } from 'twenty-shared/i18n';
+
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 
 const mockI18n = {
@@ -22,17 +24,42 @@ describe('resolveViewName', () => {
     expect(
       resolveViewName({
         view: { name: 'All {objectLabelPlural}' },
-        objectLabelPlural: 'Entreprises',
+        objectLabelPlaceholderValues: buildObjectMetadataLabelPlaceholderValues(
+          { labelPlural: 'Entreprises' },
+        ),
         i18nContext: buildContext(),
       }),
     ).toBe('All Entreprises');
+  });
+
+  it('capitalizes the object label it substitutes', () => {
+    expect(
+      resolveViewName({
+        view: { name: 'All {objectLabelPlural}' },
+        objectLabelPlaceholderValues: buildObjectMetadataLabelPlaceholderValues(
+          { labelPlural: 'widgets' },
+        ),
+        i18nContext: buildContext(),
+      }),
+    ).toBe('All Widgets');
+  });
+
+  it('substitutes the singular object label too', () => {
+    expect(
+      resolveViewName({
+        view: { name: '{objectLabelSingular} Record Page' },
+        objectLabelPlaceholderValues: buildObjectMetadataLabelPlaceholderValues(
+          { labelSingular: 'widget' },
+        ),
+        i18nContext: buildContext(),
+      }),
+    ).toBe('Widget Record Page');
   });
 
   it('leaves the placeholder alone when no object label is available', () => {
     expect(
       resolveViewName({
         view: { name: 'All {objectLabelPlural}' },
-        objectLabelPlural: undefined,
         i18nContext: buildContext(),
       }),
     ).toBe('All {objectLabelPlural}');
@@ -44,7 +71,6 @@ describe('resolveViewName', () => {
     expect(
       resolveViewName({
         view: { name: 'My pipeline' },
-        objectLabelPlural: undefined,
         i18nContext: buildContext({ isStandardApp: false }),
       }),
     ).toBe('My pipeline');
@@ -54,19 +80,19 @@ describe('resolveViewName', () => {
     expect(
       resolveViewName({
         view: { name: 'Renamed', overrides: { name: 'Renamed' } },
-        objectLabelPlural: undefined,
         i18nContext: buildContext(),
       }),
     ).toBe('Renamed');
   });
 
   it('resolves an installed application view name from that application catalog', () => {
-    const catalog = { 'O+uYD2': 'Toutes les fusees' };
+    // generateMessageId('All rockets', 'view.name') — catalogs are keyed with
+    // the metadataName.property context since S5.
+    const catalog = { '1FxLDo': 'Toutes les fusees' };
 
     expect(
       resolveViewName({
         view: { name: 'All rockets' },
-        objectLabelPlural: undefined,
         i18nContext: buildContext({
           isStandardApp: false,
           applicationCatalog: catalog,

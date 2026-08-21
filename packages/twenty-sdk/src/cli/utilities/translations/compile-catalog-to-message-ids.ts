@@ -1,10 +1,11 @@
 import { generateMessageId } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-import { parseTranslationCatalogKey } from '@/sdk/front-component/translations/message';
+import { flattenLocaleCatalog } from '@/cli/utilities/translations/locale-catalog-format';
 
-// Authoring files are keyed readable (context + message) for translators;
-// runtime lookups are by message id, so every consumer compiles through here.
+// Authoring files are keyed readable (context groups + plain messages) for
+// translators; runtime lookups are by message id, so every consumer compiles
+// through here.
 export const compileCatalogToMessageIds = ({
   catalog,
   onCollision,
@@ -20,12 +21,14 @@ export const compileCatalogToMessageIds = ({
   const compiled: Record<string, string> = {};
   const keyByMessageId = new Map<string, string>();
 
-  for (const [key, translation] of Object.entries(catalog)) {
-    if (typeof translation !== 'string' || translation.length === 0) {
+  for (const { message, context, translation } of flattenLocaleCatalog(
+    catalog,
+  )) {
+    if (translation.length === 0) {
       continue;
     }
 
-    const { message, context } = parseTranslationCatalogKey(key);
+    const key = isDefined(context) ? `${context} ${message}` : message;
     const messageId = generateMessageId(message, context);
     const collidingKey = keyByMessageId.get(messageId);
 

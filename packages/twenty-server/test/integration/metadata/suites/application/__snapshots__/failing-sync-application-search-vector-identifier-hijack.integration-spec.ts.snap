@@ -10,8 +10,14 @@ exports[`Sync application should reject hijacking the searchVector system field 
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable, writability",
               "userFriendlyMessage": "System fields cannot be updated",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type TS_VECTOR must have SYSTEM writability",
+              "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
+              "value": "OPEN",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -122,7 +128,7 @@ exports[`Sync application should reject hijacking the searchVector system field 
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, label, name, isUIEditable",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, label, name, isUIEditable, writability",
               "userFriendlyMessage": "System fields cannot be updated",
             },
             {
@@ -130,6 +136,12 @@ exports[`Sync application should reject hijacking the searchVector system field 
               "message": "Field type TS_VECTOR must be named "searchVector", got "stolenSearchVector"",
               "userFriendlyMessage": "Field type TS_VECTOR must be named "searchVector"",
               "value": "stolenSearchVector",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type TS_VECTOR must have SYSTEM writability",
+              "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
+              "value": "OPEN",
             },
           ],
           "flatEntityMinimalInformation": {

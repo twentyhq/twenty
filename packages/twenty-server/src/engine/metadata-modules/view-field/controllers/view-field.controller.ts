@@ -35,10 +35,9 @@ import {
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
-import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
-import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/viewFields`)
 @UseGuards(WorkspaceAuthGuard)
@@ -92,7 +91,7 @@ export class ViewFieldController {
   }
 
   @Patch(':id')
-  @UseGuards(UpdateViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFieldInput['update'],
@@ -105,7 +104,7 @@ export class ViewFieldController {
   }
 
   @Post()
-  @UseGuards(CreateViewFieldPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async create(
     @Body() input: CreateViewFieldInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -117,7 +116,7 @@ export class ViewFieldController {
   }
 
   @Delete(':id')
-  @UseGuards(DeleteViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

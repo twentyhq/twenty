@@ -1,9 +1,11 @@
-import { generateMessageId } from 'twenty-shared/i18n';
+import {
+  generateMessageId,
+  interpolateMessagePlaceholders,
+} from 'twenty-shared/i18n';
 import { type AppLocale } from 'twenty-shared/translations';
 
 import { getFrontComponentTranslations } from './front-component-translations';
 import {
-  interpolateMessage,
   normalizeMessageDescriptor,
   type MessageDescriptor,
   type TranslationValues,
@@ -19,5 +21,5 @@ export const resolveTranslation = (
   const catalog = getFrontComponentTranslations()[locale];
   const translation = catalog?.[generateMessageId(message, context)];
 
-  return interpolateMessage(translation ?? message, values);
+  return interpolateMessagePlaceholders(translation ?? message, values);
 };
