@@ -27,6 +27,17 @@ describe('installClassList', () => {
     expect(typeof document.documentElement.classList.add).toBe('function');
   });
 
+  it('should refuse a read on the prototype itself', () => {
+    const polyfillWindow = new Window();
+    installClassList(polyfillWindow.Element.prototype);
+
+    expect(
+      () =>
+        (polyfillWindow.Element.prototype as unknown as { classList: unknown })
+          .classList,
+    ).toThrow(TypeError);
+  });
+
   it('should return the same facade on every access', () => {
     const document = createSandboxDocument();
 

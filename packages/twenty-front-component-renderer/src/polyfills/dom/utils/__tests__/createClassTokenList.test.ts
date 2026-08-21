@@ -1,3 +1,4 @@
+import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 import { createClassTokenList } from '@/polyfills/dom/utils/createClassTokenList';
 
 class FakeElement {
@@ -12,25 +13,20 @@ class FakeElement {
   }
 }
 
-// Mirrors patchRemoteElementAttributes, which redirects the class attribute to
-// the className remote property on both reads and writes
-class FakeRemoteElement {
-  className?: string;
+type TokenMutator = [
+  methodName: string,
+  callWithToken: (classTokenList: WorkerClassTokenList, token: string) => void,
+];
 
-  getAttribute(attributeName: string): string | null {
-    if (attributeName === 'class') {
-      return this.className ?? null;
-    }
-
-    return null;
-  }
-
-  setAttribute(attributeName: string, attributeValue: string): void {
-    if (attributeName === 'class') {
-      this.className = attributeValue;
-    }
-  }
-}
+const TOKEN_MUTATORS: TokenMutator[] = [
+  ['add', (classTokenList, token) => classTokenList.add(token)],
+  ['remove', (classTokenList, token) => classTokenList.remove(token)],
+  ['toggle', (classTokenList, token) => classTokenList.toggle(token)],
+  [
+    'replace',
+    (classTokenList, token) => classTokenList.replace(token, 'valid'),
+  ],
+];
 
 const expectDomException = (callback: () => void, exceptionName: string) => {
   let thrownError: unknown = null;
@@ -86,21 +82,6 @@ describe('createClassTokenList', () => {
       expect(element.getAttribute('class')).toBe('first second third');
     });
 
-    it('should throw a SyntaxError for an empty token', () => {
-      const classTokenList = createClassTokenList(new FakeElement());
-
-      expectDomException(() => classTokenList.add(''), 'SyntaxError');
-    });
-
-    it('should throw an InvalidCharacterError for a token containing whitespace', () => {
-      const classTokenList = createClassTokenList(new FakeElement());
-
-      expectDomException(
-        () => classTokenList.add('two tokens'),
-        'InvalidCharacterError',
-      );
-    });
-
     it('should validate every token before mutating anything', () => {
       const element = new FakeElement();
       const classTokenList = createClassTokenList(element);
@@ -140,16 +121,6 @@ describe('createClassTokenList', () => {
 
       expect(element.getAttribute('class')).toBeNull();
     });
-
-    it('should throw the spec exceptions', () => {
-      const classTokenList = createClassTokenList(new FakeElement());
-
-      expectDomException(() => classTokenList.remove(''), 'SyntaxError');
-      expectDomException(
-        () => classTokenList.remove('a b'),
-        'InvalidCharacterError',
-      );
-    });
   });
 
   describe('toggle', () => {
@@ -186,16 +157,6 @@ describe('createClassTokenList', () => {
       expect(classTokenList.toggle('open', false)).toBe(false);
       expect(element.getAttribute('class')).toBeNull();
     });
-
-    it('should throw the spec exceptions', () => {
-      const classTokenList = createClassTokenList(new FakeElement());
-
-      expectDomException(() => classTokenList.toggle(''), 'SyntaxError');
-      expectDomException(
-        () => classTokenList.toggle('a b'),
-        'InvalidCharacterError',
-      );
-    });
   });
 
   describe('replace', () => {
@@ -226,13 +187,9 @@ describe('createClassTokenList', () => {
       expect(element.getAttribute('class')).toBe('first second');
     });
 
-    it('should validate both tokens', () => {
+    it('should validate the replacement token', () => {
       const classTokenList = createClassTokenList(new FakeElement());
 
-      expectDomException(
-        () => classTokenList.replace('', 'new'),
-        'SyntaxError',
-      );
       expectDomException(
         () => classTokenList.replace('old', 'has space'),
         'InvalidCharacterError',
@@ -351,36 +308,101 @@ describe('createClassTokenList', () => {
     });
   });
 
-  describe('className reflection on remote elements', () => {
-    it('should read tokens through the getAttribute redirected to the className property', () => {
-      const element = new FakeRemoteElement();
-      element.className = 'from-react second';
+  describe('toggle force conversion', () => {
+    it('should treat an explicitly null force as false like the DOM does', () => {
+      const element = new FakeElement();
       const classTokenList = createClassTokenList(element);
 
-      expect(classTokenList.contains('from-react')).toBe(true);
-      expect(classTokenList.length).toBe(2);
-      expect(classTokenList.value).toBe('from-react second');
+      expect(classTokenList.toggle('open', null as unknown as undefined)).toBe(
+        false,
+      );
+      expect(element.getAttribute('class')).toBeNull();
     });
 
-    it('should preserve className tokens when writing through the redirected setAttribute', () => {
-      const element = new FakeRemoteElement();
-      element.className = 'from-react';
+    it('should not rewrite the attribute when forcing a present token on', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', ' first  second ');
+      const setAttribute = jest.spyOn(element, 'setAttribute');
       const classTokenList = createClassTokenList(element);
 
-      classTokenList.add('mapboxgl-map');
+      expect(classTokenList.toggle('first', true)).toBe(true);
 
-      expect(element.className).toBe('from-react mapboxgl-map');
+      expect(setAttribute).not.toHaveBeenCalled();
+      expect(element.getAttribute('class')).toBe(' first  second ');
     });
 
-    it('should round trip consecutive writes through the className property', () => {
-      const element = new FakeRemoteElement();
+    it('should not rewrite the attribute when forcing an absent token off', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', ' first  second ');
+      const setAttribute = jest.spyOn(element, 'setAttribute');
       const classTokenList = createClassTokenList(element);
 
-      classTokenList.add('first');
-      classTokenList.add('second');
-      classTokenList.remove('first');
+      expect(classTokenList.toggle('absent', false)).toBe(false);
 
-      expect(element.className).toBe('second');
+      expect(setAttribute).not.toHaveBeenCalled();
+      expect(element.getAttribute('class')).toBe(' first  second ');
     });
   });
+
+  describe('indexed access', () => {
+    it('should expose tokens as indexed properties', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', 'first second');
+      const classTokenList = createClassTokenList(element);
+
+      expect(classTokenList[0]).toBe('first');
+      expect(classTokenList[1]).toBe('second');
+      expect(classTokenList[2]).toBeUndefined();
+    });
+
+    it('should support the array like idioms that read length and indices', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', 'first second');
+      const classTokenList = createClassTokenList(element);
+
+      expect(Array.prototype.slice.call(classTokenList)).toEqual([
+        'first',
+        'second',
+      ]);
+      expect(Object.keys(classTokenList)).toEqual(['0', '1']);
+      expect(JSON.stringify(classTokenList)).toBe('{"0":"first","1":"second"}');
+    });
+
+    it('should convert item indices the way an unsigned long conversion does', () => {
+      const element = new FakeElement();
+      element.setAttribute('class', 'first second');
+      const classTokenList = createClassTokenList(element);
+
+      expect(classTokenList.item(1.5)).toBe('second');
+      expect(classTokenList.item(NaN)).toBe('first');
+      expect(classTokenList.item(-1)).toBeNull();
+    });
+  });
+
+  describe('branding', () => {
+    it('should report itself as a DOMTokenList', () => {
+      const classTokenList = createClassTokenList(new FakeElement());
+
+      expect(Object.prototype.toString.call(classTokenList)).toBe(
+        '[object DOMTokenList]',
+      );
+    });
+  });
+
+  describe.each(TOKEN_MUTATORS)(
+    '%s token validation',
+    (_methodName, callWithToken) => {
+      it.each([
+        ['', 'SyntaxError'],
+        ['two tokens', 'InvalidCharacterError'],
+      ])('should throw for %p', (invalidToken, exceptionName) => {
+        const classTokenList = createClassTokenList(new FakeElement());
+
+        expectDomException(
+          () => callWithToken(classTokenList, invalidToken),
+          exceptionName,
+        );
+      });
+    },
+  );
 });

@@ -24,6 +24,17 @@ describe('installClassName', () => {
     expect(element.className).toBe('from-attribute');
   });
 
+  it('should refuse a read on the prototype itself', () => {
+    const polyfillWindow = new Window();
+    installClassName(polyfillWindow.Element.prototype);
+
+    expect(
+      () =>
+        (polyfillWindow.Element.prototype as unknown as { className: unknown })
+          .className,
+    ).toThrow(TypeError);
+  });
+
   it('should return an empty string for an element without a class attribute', () => {
     const document = createSandboxDocument();
 

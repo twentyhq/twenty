@@ -100,6 +100,8 @@ No relative `./` or `../` imports inside `src/__stories__/`.
 - `expectFrontComponentValue({ canvas, expected })` — waits for the
   `data-testid="front-component-value"` element rendered by the fixture to
   display the expected string.
+- `expectJsonDataAttribute({ canvas, testId, attributeName, expectedValue })` —
+  waits for a `data-*` attribute holding JSON to parse to the expected value.
 - `expectAttributesReflected({ canvas, attributes })` /
   `expectPropertiesReflected({ canvas, properties })` — used by
   property-reflection stories to assert host DOM mirror values.

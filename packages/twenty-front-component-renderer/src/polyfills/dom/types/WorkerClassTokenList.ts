@@ -1,4 +1,5 @@
 export type WorkerClassTokenList = {
+  readonly [index: number]: string;
   readonly length: number;
   value: string;
   add: (...tokens: string[]) => void;
@@ -14,11 +15,12 @@ export type WorkerClassTokenList = {
       tokenIndex: number,
       tokenList: WorkerClassTokenList,
     ) => void,
-    thisArg?: unknown,
+    thisArgument?: unknown,
   ) => void;
   entries: () => IterableIterator<[number, string]>;
   keys: () => IterableIterator<number>;
   values: () => IterableIterator<string>;
   toString: () => string;
+  readonly [Symbol.toStringTag]: string;
   [Symbol.iterator]: () => IterableIterator<string>;
 };

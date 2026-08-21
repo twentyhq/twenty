@@ -1,5 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
+import { ASCII_WHITESPACE_REGEX } from '@/polyfills/dom/constants/AsciiWhitespaceRegex';
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
@@ -8,13 +7,9 @@ const hasEveryClassNameToken = (
   element: ElementLike,
   classNameTokens: string[],
 ): boolean => {
-  const classNameValue = element.getAttribute?.('class');
-
-  if (!isNonEmptyString(classNameValue)) {
-    return false;
-  }
-
-  const elementTokens = parseClassTokenList(classNameValue);
+  const elementTokens = (element.getAttribute?.('class') ?? '').split(
+    ASCII_WHITESPACE_REGEX,
+  );
 
   return classNameTokens.every((classNameToken) =>
     elementTokens.includes(classNameToken),
