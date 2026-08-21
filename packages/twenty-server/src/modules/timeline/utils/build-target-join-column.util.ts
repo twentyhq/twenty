@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { getJoinColumnNameForRelationFlatFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-flat-field-metadata.util';
+import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -32,7 +32,7 @@ export const buildTargetJoinColumn = ({
 
   return {
     joinColumnName:
-      getJoinColumnNameForRelationFlatFieldMetadata(flatFieldMetadata),
+      getJoinColumnNameForRelationField(flatFieldMetadata),
     targetObjectNameSingular: targetFlatObjectMetadata.nameSingular,
   };
 };

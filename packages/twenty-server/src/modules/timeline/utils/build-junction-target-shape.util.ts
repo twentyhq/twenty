@@ -1,7 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getJoinColumnNameForRelationFlatFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-flat-field-metadata.util';
+import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -74,7 +74,7 @@ export const buildJunctionTargetShape = ({
   }
 
   const junctionSourceJoinColumnName =
-    getJoinColumnNameForRelationFlatFieldMetadata(
+    getJoinColumnNameForRelationField(
       junctionSourceFlatFieldMetadata,
     );
 
