@@ -19,7 +19,6 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityRuleResolverService } from 'src/modules/timeline/services/timeline-activity-rule-resolver.service';
 import {
-  resolveLinkedRecordCachedName,
   type ResolvedTimelineActivityTarget,
   TimelineActivityTargetResolverService,
 } from 'src/modules/timeline/services/timeline-activity-target-resolver.service';
@@ -29,6 +28,7 @@ import {
   type TimelineActivityRule,
   type TimelineActivityRuleAction,
 } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // An event on the junction object is a change to the link, not to the linked
