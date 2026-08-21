@@ -18,6 +18,7 @@ import { type EmailRecipientDragData } from '@/activities/emails/recipients/type
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
+import { type EmailComposerSender } from '@/activities/emails/types/EmailComposerSender';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
@@ -118,6 +119,20 @@ const StyledRecipientLimitWarning = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[3]};
 `;
 
+const SENDER_VALUE_SEPARATOR = ' ';
+
+const formatSenderValue = (connectedAccountId: string, handle: string) =>
+  `${connectedAccountId}${SENDER_VALUE_SEPARATOR}${handle}`;
+
+const parseSenderValue = (value: string): EmailComposerSender => {
+  const separatorIndex = value.indexOf(SENDER_VALUE_SEPARATOR);
+
+  return {
+    connectedAccountId: value.slice(0, separatorIndex),
+    fromHandle: value.slice(separatorIndex + 1),
+  };
+};
+
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
   contextRecord?: EmailComposerContextRecord | null;
@@ -151,17 +166,22 @@ export const EmailComposerFields = ({
   const senderOptions = connectedAccounts.flatMap((account) =>
     getAccountHandles(account).map((handle) => ({
       label: handle,
-      value: handle,
+      value: formatSenderValue(account.id, handle),
     })),
   );
 
   const hasMultipleSenders = senderOptions.length > 1;
 
-  const selectedSenderValue =
-    composerState.fromHandle ??
-    connectedAccounts.find(
-      (account) => account.id === composerState.connectedAccountId,
-    )?.handle;
+  const selectedAccount = connectedAccounts.find(
+    (account) => account.id === composerState.connectedAccountId,
+  );
+
+  const selectedSenderValue = isDefined(selectedAccount)
+    ? formatSenderValue(
+        selectedAccount.id,
+        composerState.fromHandle ?? selectedAccount.handle,
+      )
+    : undefined;
 
   const allRecipientKeys = [
     ...composerState.to,
@@ -221,18 +241,9 @@ export const EmailComposerFields = ({
                   fullWidth
                   value={selectedSenderValue}
                   options={senderOptions}
-                  onChange={(handle) => {
-                    const account = connectedAccounts.find((connectedAccount) =>
-                      getAccountHandles(connectedAccount).includes(handle),
-                    );
-
-                    if (isDefined(account)) {
-                      composerState.setSender({
-                        connectedAccountId: account.id,
-                        fromHandle: handle,
-                      });
-                    }
-                  }}
+                  onChange={(value) =>
+                    composerState.setSender(parseSenderValue(value))
+                  }
                 />
               </EmailComposerFieldRow>
             )}
