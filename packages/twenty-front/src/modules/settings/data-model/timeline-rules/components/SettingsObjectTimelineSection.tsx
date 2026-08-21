@@ -57,7 +57,7 @@ export const SettingsObjectTimelineSection = ({
   const selfTimelineActivityRule = timelineActivityRules.find(
     (rule) =>
       rule.objectMetadataId === objectMetadataItem.id &&
-      rule.relationFieldMetadataId === null,
+      !isDefined(rule.relationFieldMetadataId),
   );
 
   const timelineRuleRows = useMemo(

@@ -1,11 +1,11 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useFindManyTimelineActivityRules } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
+import { isTriggerableField } from '@/settings/data-model/timeline-rules/utils/isTriggerableField';
 import { useResetTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useResetTimelineActivityRule';
 import { useUpsertTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useUpsertTimelineActivityRule';
 import { SettingsDataModelFieldSelectRows } from '@/settings/data-model/components/SettingsDataModelFieldSelectRows';
@@ -13,7 +13,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { AppPath, FieldMetadataType, SettingsPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconLink,
@@ -28,14 +28,6 @@ import { Card } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const isTriggerableField = (field: FieldMetadataItem): boolean =>
-  field.isActive === true &&
-  field.isSystem !== true &&
-  field.type !== FieldMetadataType.RELATION &&
-  field.type !== FieldMetadataType.MORPH_RELATION &&
-  field.type !== FieldMetadataType.TS_VECTOR &&
-  field.type !== FieldMetadataType.POSITION;
 
 export const SettingsObjectTimelineRuleEdit = () => {
   const { t } = useLingui();
