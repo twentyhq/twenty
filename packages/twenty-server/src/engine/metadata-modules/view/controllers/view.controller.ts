@@ -12,12 +12,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
 import { hasObjectMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -64,7 +63,6 @@ export class ViewController {
     private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly i18nService: I18nService,
   ) {}
 
   @Get()
@@ -212,16 +210,14 @@ export class ViewController {
         },
       );
 
-    const safeLocale = locale ?? SOURCE_LOCALE;
-
-    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
-
-    const { standardApplicationId, catalogByApplicationId } =
-      await this.applicationTranslationCatalogService.getCatalogs({
-        applicationIds: views.map((view) => view.applicationId),
-        locale: safeLocale,
-        workspaceId,
-      });
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: views.map((view) => view.applicationId),
+          locale,
+          workspaceId,
+        },
+      );
 
     return views.map((view) => {
       const objectMetadata = hasObjectMetadataLabelPlaceholder(view.name)
@@ -236,8 +232,7 @@ export class ViewController {
             viewName: view.name,
             objectMetadata,
             i18nContext: {
-              locale,
-              i18nInstance,
+              ...getI18nContext(objectMetadata.applicationId ?? undefined),
               isStandardApp: belongsToTwentyStandardApp(objectMetadata),
             },
           })
@@ -248,12 +243,7 @@ export class ViewController {
         name: resolveViewName({
           view,
           objectLabelPlaceholderValues,
-          i18nContext: {
-            locale,
-            i18nInstance,
-            isStandardApp: view.applicationId === standardApplicationId,
-            applicationCatalog: catalogByApplicationId.get(view.applicationId),
-          },
+          i18nContext: getI18nContext(view.applicationId),
         }),
       };
     });

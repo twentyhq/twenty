@@ -154,9 +154,9 @@ describe('compileApplicationTranslations', () => {
     });
   });
 
-  it('returns undefined when there is no locales directory', async () => {
+  it('returns no locales when there is no locales directory', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
-    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+    expect(await compileApplicationTranslations(appPath)).toEqual({});
   });
 });

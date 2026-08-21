@@ -3876,6 +3876,11 @@ msgstr "A TS_VECTOR típusú mezőnek rendszermezőnek kell lennie."
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "A TS_VECTOR típusú mező neve \"searchVector\" kell, hogy legyen."
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "A TS_VECTOR típusú mezőnek SYSTEM írhatósággal kell rendelkeznie."
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -10202,6 +10207,11 @@ msgstr "Ezt a fájlt már feltöltötték."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "Ennek a fájlfeltöltésnek a véglegesítése már megtörtént."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Ez a HTTP-metódus nem engedélyezett ezen a kiszolgálóútvonalon."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts

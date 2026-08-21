@@ -3876,6 +3876,11 @@ msgstr "Тип поља TS_VECTOR мора бити системско поље"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Тип поља TS_VECTOR мора се звати \"searchVector\""
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "Тип поља TS_VECTOR мора имати SYSTEM могућност уписивања"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -10202,6 +10207,11 @@ msgstr "Ова датотека је већ отпремљена."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "Ово отпремање датотеке је већ финализовано."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Овај HTTP метод није дозвољен на овој путањи сервера."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts

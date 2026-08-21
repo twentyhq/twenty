@@ -3876,6 +3876,11 @@ msgstr "フィールドタイプ TS_VECTOR はシステムフィールドであ�
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "フィールドタイプ TS_VECTOR の名前は \"searchVector\" である必要があります。"
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "フィールドタイプ TS_VECTOR には SYSTEM の書き込み可能性が必要です。"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -10202,6 +10207,11 @@ msgstr "このファイルはすでにアップロードされています。"
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "このファイルのアップロードはすでに完了済みです。"
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "このHTTPメソッドは、このサーバールートでは許可されていません。"
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts

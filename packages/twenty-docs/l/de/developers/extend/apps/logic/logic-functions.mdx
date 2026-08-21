@@ -282,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Der Bezeichner ist der `universalIdentifier` des Resolvers aus deinem Manifest. Registriere diese URL beim Provider.
 
+**Beantworten eines Verifizierungs-`GET`.** Einige Anbieter verifizieren einen Endpunkt, bevor sie an ihn liefern, indem sie einen `GET` mit einer Challenge an dieselbe URL senden, an die sie später Ereignisse per `POST` senden werden — die WhatsApp Cloud API von Meta ist einer davon. Eine Serverroute beantwortet nur `POST`, sofern du nichts anderes angibst; deklariere daher beide Methoden:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Die Challenge trifft in `event.queryStringParameters` ein, und durch das Zurückgeben einer `Response` wird sie dem Anbieter bei derselben Anfrage zurückgesendet. Ein String-Body wird als `text/plain` gesendet, was diese Anbieter erwarten:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` ersetzt den Standard, anstatt ihn zu ergänzen, sodass `['GET']` allein dazu führt, dass die Route `POST` ablehnt. Es werden nur `GET` und `POST` unterstützt. Lassen Sie es nicht festgelegt, sofern der Anbieter nicht das zweite Verb benötigt: Bei einer Route, die `GET` deklariert, wird ihr Resolver von jedem nicht authentifizierten Aufrufer ausgeführt, einschließlich der Crawler und Link-Unfurler, die unaufgefordert `GET` senden. Für alles, wofür die Plattform keine Methode hat, wird `405` zurückgegeben, ohne dass der Resolver jemals ausgeführt wird.
+
 <Note>
 **Die Anwendung muss beansprucht und im Arbeitsbereich ihres Besitzers installiert werden.** Da der Resolver im **Owner-Arbeitsbereich** ausgeführt wird (dem Arbeitsbereich, der die Anwendungsregistrierung besitzt), funktioniert ein Server-Route-Trigger nur, wenn die Anwendung *beansprucht* wurde – d. h. sie einen Owner-Arbeitsbereich hat – **und** diese Anwendung **im Owner-Arbeitsbereich installiert ist**. Solange beides nicht zutrifft, hat der Resolver keinen Ausführungsort, sodass die Route nicht ausgeführt werden kann. Eine Anwendung, die eine `serverRouteTriggerSettings`-Logikfunktion bereitstellt, kann daher nicht im Marketplace aufgeführt werden, bevor sie beansprucht und im Owner-Arbeitsbereich installiert wurde.
 </Note>

@@ -3876,6 +3876,11 @@ msgstr "El tipus de camp TS_VECTOR ha de ser un camp del sistema"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "El tipus de camp TS_VECTOR s'ha d'anomenar \"searchVector\""
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "El tipus de camp TS_VECTOR ha de tenir capacitat d'escriptura SYSTEM"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -10202,6 +10207,11 @@ msgstr "Aquest fitxer ja s'ha carregat."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "La càrrega d'aquest fitxer ja s'ha finalitzat."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Aquest mètode HTTP no està permès en aquesta ruta del servidor."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts

@@ -3876,6 +3876,11 @@ msgstr "TS_VECTOR turi maydoni tizim maydoni bo‘lishi kerak"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "TS_VECTOR turi maydoni \"searchVector\" deb nomlangan bo‘lishi kerak"
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "TS_VECTOR turidagi maydon SYSTEM yozish huquqiga ega bo‘lishi kerak"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -10202,6 +10207,11 @@ msgstr "Ushbu fayl allaqachon yuklab qo‘yilgan."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "Ushbu faylni yuklab qo‘yish allaqachon yakunlangan."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Bu HTTP usuli ushbu server marshrutida ruxsat etilmagan."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts

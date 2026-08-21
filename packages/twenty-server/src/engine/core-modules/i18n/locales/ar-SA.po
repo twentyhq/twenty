@@ -3876,6 +3876,11 @@ msgstr "يجب أن يكون نوع الحقل TS_VECTOR حقلًا تابعًا
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "يجب تسمية نوع الحقل TS_VECTOR باسم \"searchVector\""
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "يجب أن يتمتع نوع الحقل TS_VECTOR بقابلية الكتابة بواسطة SYSTEM."
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -10202,6 +10207,11 @@ msgstr "تم تحميل هذا الملف بالفعل."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "تم إنهاء تحميل هذا الملف بالفعل."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "طريقة HTTP هذه غير مسموح بها على مسار الخادم هذا."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
