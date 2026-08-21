@@ -367,9 +367,14 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'action',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Action`),
+      label: i18nLabel(
+        msg({ message: `Action`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`What happened, independently of the event name format`,
+        msg({
+          message: `What happened, independently of the event name format`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconBolt',
       isSystem: true,
@@ -387,8 +392,18 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'sourceObjectMetadataId',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Source Object Metadata Id`),
-      description: i18nLabel(msg`Object whose event produced this entry`),
+      label: i18nLabel(
+        msg({
+          message: `Source Object Metadata Id`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Object whose event produced this entry`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconAbc',
       isSystem: true,
       isNullable: true,
