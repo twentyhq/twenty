@@ -8,7 +8,6 @@ import { groupEventsByMonth } from '@/activities/timeline-activities/utils/group
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventListProps = {
@@ -23,7 +22,6 @@ const StyledTimelineContainer = styled.div`
   align-self: stretch;
 
   display: flex;
-  flex: 1 0 0;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: flex-start;
@@ -45,27 +43,22 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
   const groupedEvents = groupEventsByMonth(filteredEvents);
 
   return (
-    <ScrollWrapper
-      componentInstanceId={`scroll-wrapper-event-list-${targetableObject.id}`}
-    >
-      <StyledTimelineContainer>
-        {groupedEvents.map((group, index) => (
-          <EventsGroup
-            mainObjectMetadataItem={mainObjectMetadataItem}
-            key={group.year.toString() + group.month}
-            group={group}
-            month={new Date(group.items[0].createdAt).toLocaleString(
-              'default',
-              { month: 'long' },
-            )}
-            year={
-              index === 0 || group.year !== groupedEvents[index - 1].year
-                ? group.year
-                : undefined
-            }
-          />
-        ))}
-      </StyledTimelineContainer>
-    </ScrollWrapper>
+    <StyledTimelineContainer>
+      {groupedEvents.map((group, index) => (
+        <EventsGroup
+          mainObjectMetadataItem={mainObjectMetadataItem}
+          key={group.year.toString() + group.month}
+          group={group}
+          month={new Date(group.items[0].createdAt).toLocaleString('default', {
+            month: 'long',
+          })}
+          year={
+            index === 0 || group.year !== groupedEvents[index - 1].year
+              ? group.year
+              : undefined
+          }
+        />
+      ))}
+    </StyledTimelineContainer>
   );
 };
