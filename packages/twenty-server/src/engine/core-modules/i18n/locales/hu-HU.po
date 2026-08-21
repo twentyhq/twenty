@@ -816,7 +816,7 @@ msgstr "Aposztróf és pont"
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
-msgstr ""
+msgstr "Az alkalmazás megtisztítása még folyamatban van. Kérjük, próbálja újra."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -867,7 +867,7 @@ msgstr "Alkalmazásregisztrációs változó nem található."
 #. js-lingui-id: P+wtF/
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application uninstall logic function failed."
-msgstr ""
+msgstr "Az alkalmazás eltávolítási logikai függvényének végrehajtása meghiúsult."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -1285,7 +1285,7 @@ msgstr "A(z) \"{widgetTitle}\" widget esetén a tartalomnak objektumnak kell len
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
-msgstr ""
+msgstr "Bumm"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6717,7 +6717,7 @@ msgstr "Nincs jogosultsága hozzáférni ehhez az OAuth-szolgáltatóhoz."
 #. js-lingui-id: KPx1UV
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Not found"
-msgstr ""
+msgstr "Nem található"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
