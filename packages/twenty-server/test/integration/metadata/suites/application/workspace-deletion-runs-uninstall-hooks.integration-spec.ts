@@ -21,15 +21,18 @@ import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-module
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 const buildManifestWithUninstallHook = ({
-  appId,
+  applicationUniversalIdentifier,
   roleId,
   logicFunctionId,
 }: {
-  appId: string;
+  applicationUniversalIdentifier: string;
   roleId: string;
   logicFunctionId: string;
 }): Manifest => {
-  const baseManifest = buildBaseManifest({ appId, roleId });
+  const baseManifest = buildBaseManifest({
+    appId: applicationUniversalIdentifier,
+    roleId,
+  });
 
   return {
     ...baseManifest,
@@ -57,14 +60,14 @@ const buildManifestWithUninstallHook = ({
 };
 
 describe('Workspace deletion runs application uninstall hooks', () => {
-  let appId: string;
+  let applicationUniversalIdentifier: string;
   let roleId: string;
   let logicFunctionId: string;
   let userAccessToken: string;
   let executeSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    appId = uuidv4();
+    applicationUniversalIdentifier = uuidv4();
     roleId = uuidv4();
     logicFunctionId = uuidv4();
 
@@ -88,7 +91,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
 
     await globalThis.testDataSource.query(
       `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-      [appId],
+      [applicationUniversalIdentifier],
     );
 
     await deleteUser({ accessToken: userAccessToken });
@@ -138,7 +141,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
     });
 
     await setupApplicationForSync({
-      applicationUniversalIdentifier: appId,
+      applicationUniversalIdentifier,
       name: 'Workspace Deletion Hook Test App',
       description: 'App for testing uninstall hooks on workspace deletion',
       sourcePath: 'test-workspace-deletion-hook',
@@ -149,7 +152,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
 
     await syncApplication({
       manifest: buildManifestWithUninstallHook({
-        appId,
+        applicationUniversalIdentifier,
         roleId,
         logicFunctionId,
       }),
@@ -183,7 +186,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
         logicFunctionId: expect.any(String),
         payload: {
           version: '1.0.0',
-          idempotencyKey: `workspace-deletion:${workspaceId}:${workspaceDeletedAtIso}:${appId}`,
+          idempotencyKey: `workspace-deletion:${workspaceId}:${workspaceDeletedAtIso}:${applicationUniversalIdentifier}`,
         },
       }),
     );
@@ -191,7 +194,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
     const [applicationAfterHook] = await globalThis.testDataSource.query(
       `SELECT "uninstallHookCompletedForRequestedAt" FROM core."application"
        WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-      [appId, workspaceId],
+      [applicationUniversalIdentifier, workspaceId],
     );
 
     expect(

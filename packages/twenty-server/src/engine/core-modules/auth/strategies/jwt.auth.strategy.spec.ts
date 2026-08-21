@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { msg } from '@lingui/core/macro';
+import { type Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -23,7 +24,7 @@ describe('JwtAuthStrategy', () => {
   let twentyConfigService: any;
   let workspaceCacheService: any;
   let coreEntityCacheService: any;
-  let workspaceRepository: any;
+  let workspaceRepository: { findOne: jest.Mock };
 
   const jwt = {
     sub: 'sub-default',
@@ -138,7 +139,7 @@ describe('JwtAuthStrategy', () => {
         permissionsService,
         twentyConfigService,
       ),
-      workspaceRepository,
+      workspaceRepository as unknown as Repository<WorkspaceEntity>,
     );
 
   describe('API_KEY validation', () => {
