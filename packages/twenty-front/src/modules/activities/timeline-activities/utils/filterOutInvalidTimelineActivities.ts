@@ -1,4 +1,4 @@
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
@@ -6,10 +6,12 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
-const keepActivityWithReadableDiff = (
-  timelineActivity: TimelineActivity,
+const keepActivityWithReadableDiff = <
+  TTimelineActivity extends FilterableTimelineActivity,
+>(
+  timelineActivity: TTimelineActivity,
   readableFields: FieldMetadataItem[],
-): TimelineActivity | undefined => {
+): TTimelineActivity | undefined => {
   const validDiffEntries = Object.entries(
     timelineActivity.properties?.diff ?? {},
   ).filter(([diffKey]) =>
@@ -29,12 +31,14 @@ const keepActivityWithReadableDiff = (
   };
 };
 
-export const filterOutInvalidTimelineActivities = (
-  timelineActivities: TimelineActivity[],
+export const filterOutInvalidTimelineActivities = <
+  TTimelineActivity extends FilterableTimelineActivity,
+>(
+  timelineActivities: TTimelineActivity[],
   mainObjectSingularName: string,
   objectMetadataItems: EnrichedObjectMetadataItem[],
   timelineActivityTypeById: Map<string, TimelineActivityType>,
-): TimelineActivity[] => {
+): TTimelineActivity[] => {
   const mainObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === mainObjectSingularName,

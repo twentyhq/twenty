@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { isTimelineActivityAction } from 'twenty-shared/timeline';
 import { FindManyTimelineActivityTypesDocument } from '~/generated-metadata/graphql';
 
 export const useTimelineActivityTypes = () => {
@@ -15,9 +15,9 @@ export const useTimelineActivityTypes = () => {
           timelineActivityType.id,
           {
             ...timelineActivityType,
-            action:
-              (timelineActivityType.action as TimelineActivityAction | null) ??
-              null,
+            action: isTimelineActivityAction(timelineActivityType.action)
+              ? timelineActivityType.action
+              : null,
             icon: timelineActivityType.icon ?? null,
           },
         ]),

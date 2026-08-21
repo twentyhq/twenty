@@ -1,4 +1,4 @@
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 // An application-declared type has no action and renders generically, which is
 // also what a row whose type has not loaded yet gets.
 export const getTimelineActivityAction = (
-  timelineActivity: TimelineActivity,
+  timelineActivity: FilterableTimelineActivity,
   timelineActivityTypeById: Map<string, TimelineActivityType>,
 ): TimelineActivityAction | null => {
   if (!isDefined(timelineActivity.timelineActivityTypeId)) {

@@ -26,7 +26,7 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: false, type: 'varchar' })
   name: string;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'varchar' })
   label: string;
 
   // Selects the built-in timeline row renderer. Null for an application-declared
@@ -34,7 +34,7 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'varchar' })
   action: TimelineActivityAction | null;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })

@@ -1,4 +1,4 @@
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -54,7 +54,7 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
   ],
 ]);
 
-const filter = (events: TimelineActivity[]) =>
+const filter = (events: FilterableTimelineActivity[]) =>
   filterOutInvalidTimelineActivities(
     events,
     'company',
@@ -85,7 +85,7 @@ describe('filterOutInvalidTimelineActivities', () => {
           },
         },
       },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual([
       {
@@ -117,7 +117,7 @@ describe('filterOutInvalidTimelineActivities', () => {
           diff: { field4: { before: 'value11', after: 'value12' } },
         },
       },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual([]);
   });
@@ -125,7 +125,7 @@ describe('filterOutInvalidTimelineActivities', () => {
   it('drops update events that have no diff', () => {
     const events = [
       { id: '1', timelineActivityTypeId: UPDATED_TYPE_ID, properties: {} },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual([]);
   });
@@ -134,7 +134,7 @@ describe('filterOutInvalidTimelineActivities', () => {
     const events = [
       { id: '1', timelineActivityTypeId: LINKED_TYPE_ID, properties: {} },
       { id: '2', timelineActivityTypeId: LINKED_TYPE_ID, properties: {} },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual(events);
   });
@@ -153,7 +153,7 @@ describe('filterOutInvalidTimelineActivities', () => {
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: {},
       },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual(events);
   });
@@ -171,7 +171,7 @@ describe('filterOutInvalidTimelineActivities', () => {
           },
         },
       },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual([
       {
@@ -191,7 +191,7 @@ describe('filterOutInvalidTimelineActivities', () => {
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: { diff: { field1: { before: 'c', after: 'd' } } },
       },
-    ] as unknown as TimelineActivity[];
+    ];
 
     expect(filter(events)).toEqual([]);
   });
