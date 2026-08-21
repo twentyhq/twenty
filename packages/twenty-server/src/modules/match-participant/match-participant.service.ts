@@ -17,6 +17,12 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
 
+type GetParticipantRepositoryArgs = {
+  workspaceId: string;
+  objectMetadataName: ObjectMetadataName;
+  transactionScope?: WorkspaceTransactionScope;
+};
+
 type MatchParticipantsForWorkspaceMembersArgs = {
   participantMatching: {
     workspaceMemberIds: string[];
@@ -63,11 +69,11 @@ export class MatchParticipantService<
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  private async getParticipantRepository(
-    workspaceId: string,
-    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
-    transactionScope?: WorkspaceTransactionScope,
-  ) {
+  private async getParticipantRepository({
+    workspaceId,
+    objectMetadataName,
+    transactionScope,
+  }: GetParticipantRepositoryArgs) {
     if (objectMetadataName === 'messageParticipant') {
       if (isDefined(transactionScope)) {
         return transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
@@ -111,11 +117,11 @@ export class MatchParticipantService<
         { shouldBypassPermissionChecks: true },
       );
 
-    const participantRepository = await this.getParticipantRepository(
+    const participantRepository = await this.getParticipantRepository({
       workspaceId,
       objectMetadataName,
       transactionScope,
-    );
+    });
 
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -225,10 +231,10 @@ export class MatchParticipantService<
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const participantRepository = await this.getParticipantRepository(
+      const participantRepository = await this.getParticipantRepository({
         workspaceId,
         objectMetadataName,
-      );
+      });
 
       const participants = await participantRepository.find({
         where: {
@@ -260,10 +266,10 @@ export class MatchParticipantService<
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const participantRepository = await this.getParticipantRepository(
+      const participantRepository = await this.getParticipantRepository({
         workspaceId,
         objectMetadataName,
-      );
+      });
 
       let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
       let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
