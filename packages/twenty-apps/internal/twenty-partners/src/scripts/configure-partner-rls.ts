@@ -522,7 +522,6 @@ async function main() {
   {
     // Predicate-group ids are unique across the whole metadata schema, not per workspace,
     // so a hardcoded id collides on a server that hosts more than one workspace.
-    // getRoles does not return existing groups, so derive a stable id instead of reading one.
     const opportunityGroupId = deriveUuid(
       `${workspaceId}:opportunity-rls-or-group`,
     );
