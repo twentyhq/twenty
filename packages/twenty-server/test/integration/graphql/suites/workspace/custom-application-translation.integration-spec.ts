@@ -145,9 +145,12 @@ describe('custom application translation resolve path', () => {
     expect(applicationRegistrationId).toEqual(expect.any(String));
 
     const messages = {
-      [generateMessageId(SOURCE_LABEL_SINGULAR)]: TRANSLATED_LABEL_SINGULAR,
-      [generateMessageId(SOURCE_LABEL_PLURAL)]: TRANSLATED_LABEL_PLURAL,
-      [generateMessageId(SOURCE_DESCRIPTION)]: TRANSLATED_DESCRIPTION,
+      [generateMessageId(SOURCE_LABEL_SINGULAR, 'objectMetadata.labelSingular')]:
+        TRANSLATED_LABEL_SINGULAR,
+      [generateMessageId(SOURCE_LABEL_PLURAL, 'objectMetadata.labelPlural')]:
+        TRANSLATED_LABEL_PLURAL,
+      [generateMessageId(SOURCE_DESCRIPTION, 'objectMetadata.description')]:
+        TRANSLATED_DESCRIPTION,
     };
 
     await testDataSource.query(

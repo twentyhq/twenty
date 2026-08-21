@@ -75,6 +75,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Șirurile contextuale apar în cataloagele de localizare ca un grup indexat după
+contextul lor: `"\<context>": { "\<message>": "\<translation>" }`. Etichetele din manifest sunt
+contextuale prin construcție — fiecare poartă rolul de metadată pe care îl joacă
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), astfel încât
+același cuvânt poate fi tradus diferit ca nume de obiect și ca nume de vizualizare.
+
 ## Extragerea și traducerea
 
 Rulează comanda de extragere din directorul aplicației:
@@ -93,9 +99,17 @@ din sursa front-component în `locales/\<locale>.json`, indexate după
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Șirurile fără context sunt intrări simple; șirurile contextuale — inclusiv fiecare etichetă din manifest — sunt îmbricate sub cheia lor de context.
 
 Localnicii ca `{name}` sunt substituiți la timp - țineți-le în traducerea
 . Orice şir rămas gol se întoarce la textul sursă.
@@ -110,14 +124,11 @@ fiecare șir din catalog, revenind la sursă atunci când lipsește o traducere
 . Schimbarea limbii în gazdă reafișează în timp real șirurile `Trans` și
 `useTranslate().t`.
 
-Deoarece cataloagele sunt compilate la ora de construcție, actualizarea unei traduceri înseamnă
-repornirea `douăzeci dev:build` (și redistribuirea), la fel ca orice altă schimbare.
-
-<Note>
-Traducerile sunt compilate de `douăzeci dev:build` (și `douăzeci apply`).
-ceasul continuu `douăzeci de dev` arată șirurile sursă, așa că testează rezultatul localizat
-cu o singură construcție.
-</Note>
+Etichetele manifestului sunt compilate la fiecare sincronizare — `twenty dev:build`, `twenty apply`
+și monitorizarea continuă `twenty dev` — astfel că editarea unui fișier de localizare și
+sincronizarea sunt suficiente pentru a vedea textul nou. Cataloagele componentelor Front sunt integrate în
+fiecare pachet de componente la momentul compilării, astfel că modificarea unuia dintre ele înseamnă totuși
+rularea din nou a `twenty dev:build` (și redistribuirea).
 
 Elementele text copil ale `Trans` pot acoperi mai multe linii — spațiile albe sunt comprimate în
 același mod în care JSX le comprimă, astfel încât ambele variante sunt extrase cu cheia `Welcome back`:
