@@ -1,6 +1,6 @@
 import { defineRule } from '@oxlint/plugins';
 
-import { typedTokenHelpers } from '../utils/typedTokenHelpers';
+import { typedTokenHelpers } from './typedTokenHelpers';
 
 type GuardedEndpointRuleOptions = {
   triggerDecorators: string[];

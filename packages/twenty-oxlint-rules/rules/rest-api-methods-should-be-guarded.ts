@@ -1,4 +1,4 @@
-import { createGuardedEndpointRule } from './createGuardedEndpointRule';
+import { createGuardedEndpointRule } from '../utils/createGuardedEndpointRule';
 
 export const RULE_NAME = 'rest-api-methods-should-be-guarded';
 
