@@ -1,12 +1,8 @@
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
+
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export type TimelineActivityRuleAction =
-  | 'created'
-  | 'updated'
-  | 'deleted'
-  | 'restored'
-  | 'linked'
-  | 'unlinked';
+export type TimelineActivityRuleAction = TimelineActivityAction;
 
 export type TimelineActivityRuleTargetJoinColumn = {
   joinColumnName: string;
