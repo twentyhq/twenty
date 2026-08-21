@@ -1,4 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
 
@@ -71,6 +72,33 @@ export const resolvePartnerFromRequest = async (event: {
   }
 
   const resolved = await resolvePartnerByUserId(buildAppClient(), claims.userId);
+  return resolved ?? { error: 'NO_PARTNER' };
+};
+
+// Two identity paths on purpose. resolvePartnerFromRequest serves routes that act AS the
+// partner, where intersecting the caller's role with the app role is the correct behaviour.
+// This one serves a route that acts ON BEHALF OF the partner under app authority, so it
+// verifies the forwarded header itself and leaves the function's own token app-only.
+export const resolvePartnerFromForwardedToken = async (event: {
+  headers?: Record<string, string | undefined>;
+}): Promise<ResolvedPartner> => {
+  const authorization = event.headers?.authorization;
+  if (!authorization?.startsWith('Bearer ')) return { error: 'UNAUTHENTICATED' };
+
+  let userId: string | undefined;
+  try {
+    // Verification is the round trip itself: the server checks the signature, so the id it
+    // returns is trustworthy in a way a decoded claim never is.
+    const current = await new MetadataApiClient({
+      headers: { Authorization: authorization },
+    }).query({ currentUser: { id: true } });
+    userId = current.currentUser?.id;
+  } catch {
+    return { error: 'UNAUTHENTICATED' };
+  }
+  if (!userId) return { error: 'UNAUTHENTICATED' };
+
+  const resolved = await resolvePartnerByUserId(buildAppClient(), userId);
   return resolved ?? { error: 'NO_PARTNER' };
 };
 

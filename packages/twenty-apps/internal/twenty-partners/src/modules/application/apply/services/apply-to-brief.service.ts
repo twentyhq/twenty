@@ -16,7 +16,7 @@ import {
   buildAppClient,
   errorResponse,
   failureResponse,
-  resolvePartnerFromRequest,
+  resolvePartnerFromForwardedToken,
 } from 'src/modules/shared/http/resolve-partner-from-request.service';
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
 
@@ -43,7 +43,7 @@ const loadBrief = async (client: CoreApiClient, opportunityId: string) => {
 export const applyToBrief = async (
   event: RoutePayload<unknown>,
 ): Promise<ApplyToBriefResult> => {
-  const resolved = await resolvePartnerFromRequest(event);
+  const resolved = await resolvePartnerFromForwardedToken(event);
   if ('error' in resolved) return errorResponse(resolved.error);
 
   const parsed = applyToBriefSchema.safeParse(event.body);

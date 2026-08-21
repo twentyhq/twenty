@@ -1,8 +1,9 @@
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { queryMock, mutationMock } = vi.hoisted(() => ({
+const { queryMock, mutationMock, metadataQueryMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   mutationMock: vi.fn(),
+  metadataQueryMock: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -11,25 +12,20 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: vi.fn(function () {
+    return { query: metadataQueryMock };
+  }),
+}));
+
 import { MIN_PITCH_LENGTH } from '../constants/apply-to-brief.constants';
 import { applyToBrief } from '../services/apply-to-brief.service';
 
 const USER_ID = 'user-1';
-const USER_WORKSPACE_ID = 'user-workspace-1';
 const WORKSPACE_MEMBER_ID = 'member-1';
 const PARTNER_ID = 'partner-1';
 const OPPORTUNITY_ID = 'opportunity-1';
-
-const originalToken = process.env.TWENTY_APP_ACCESS_TOKEN;
-const payload = Buffer.from(
-  JSON.stringify({ userId: USER_ID, userWorkspaceId: USER_WORKSPACE_ID }),
-).toString('base64url');
-process.env.TWENTY_APP_ACCESS_TOKEN = `header.${payload}.sig`;
-
-afterAll(() => {
-  if (originalToken === undefined) delete process.env.TWENTY_APP_ACCESS_TOKEN;
-  else process.env.TWENTY_APP_ACCESS_TOKEN = originalToken;
-});
+const AUTHORIZATION = 'Bearer caller-token';
 
 // An Error value makes that lookup reject, mirroring what the real SDK does on a bad id.
 type QueryResponses = {
@@ -76,8 +72,8 @@ const respondWith = (overrides: QueryResponses = {}) => {
 
 const pitchOf = (length: number) => 'a'.repeat(length);
 
-const event = (body: unknown, userWorkspaceId: string | null = USER_WORKSPACE_ID) =>
-  ({ body, userWorkspaceId }) as never;
+const event = (body: unknown, authorization: string | null = AUTHORIZATION) =>
+  ({ body, headers: { authorization: authorization ?? undefined } }) as never;
 
 const validBody = { opportunityId: OPPORTUNITY_ID, pitch: pitchOf(MIN_PITCH_LENGTH) };
 
@@ -85,6 +81,8 @@ describe('applyToBrief', () => {
   beforeEach(() => {
     queryMock.mockReset();
     mutationMock.mockReset();
+    metadataQueryMock.mockReset();
+    metadataQueryMock.mockResolvedValue({ currentUser: { id: USER_ID } });
     mutationMock.mockResolvedValue({ createApplication: { id: 'application-1' } });
     respondWith();
   });

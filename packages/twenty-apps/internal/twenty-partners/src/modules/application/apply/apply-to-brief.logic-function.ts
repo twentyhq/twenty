@@ -20,6 +20,11 @@ export default defineLogicFunction({
   httpRouteTriggerSettings: {
     path: '/apply-to-brief',
     httpMethod: 'POST',
-    isAuthRequired: true,
+    // isAuthRequired would make the server mint a token carrying the caller's user claims,
+    // and the executor intersects the caller's role with the app role — the Partner role
+    // denies Application writes, so the create would be refused. The function verifies the
+    // forwarded header itself instead, and keeps an app-only token for the write.
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['authorization'],
   },
 });

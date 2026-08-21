@@ -1,8 +1,28 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const { coreQueryMock, metadataQueryMock } = vi.hoisted(() => ({
+  coreQueryMock: vi.fn(),
+  metadataQueryMock: vi.fn(),
+}));
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: vi.fn(function () {
+    return { query: coreQueryMock, mutation: vi.fn() };
+  }),
+}));
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: vi.fn(function () {
+    return { query: metadataQueryMock };
+  }),
+}));
+
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import {
   decodeJwtClaims,
   errorResponse,
+  resolvePartnerFromForwardedToken,
   resolvePartnerFromRequest,
 } from './resolve-partner-from-request.service';
 
@@ -70,5 +90,72 @@ describe('resolvePartnerFromRequest guards (no network)', () => {
 describe('errorResponse', () => {
   it('wraps a reason in a failure envelope', () => {
     expect(errorResponse('NO_PARTNER')).toEqual({ ok: false, reason: 'NO_PARTNER' });
+  });
+});
+
+describe('resolvePartnerFromForwardedToken', () => {
+  const USER_ID = 'user-1';
+  const WORKSPACE_MEMBER_ID = 'member-1';
+  const PARTNER_ID = 'partner-1';
+  const AUTHORIZATION = 'Bearer forwarded-token';
+
+  beforeEach(() => {
+    coreQueryMock.mockReset();
+    metadataQueryMock.mockReset();
+    metadataQueryMock.mockResolvedValue({ currentUser: { id: USER_ID } });
+    coreQueryMock.mockImplementation((selection: Record<string, unknown>) => {
+      const key = Object.keys(selection)[0];
+      if (key === 'workspaceMembers') {
+        return Promise.resolve({
+          workspaceMembers: { edges: [{ node: { id: WORKSPACE_MEMBER_ID } }] },
+        });
+      }
+      return Promise.resolve({ partners: { edges: [{ node: { id: PARTNER_ID } }] } });
+    });
+  });
+
+  it('returns UNAUTHENTICATED when there is no authorization header', async () => {
+    expect(await resolvePartnerFromForwardedToken({})).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(await resolvePartnerFromForwardedToken({ headers: {} })).toEqual({
+      error: 'UNAUTHENTICATED',
+    });
+    expect(metadataQueryMock).not.toHaveBeenCalled();
+  });
+
+  it('returns UNAUTHENTICATED when the header has no Bearer prefix', async () => {
+    expect(
+      await resolvePartnerFromForwardedToken({ headers: { authorization: 'forwarded-token' } }),
+    ).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(metadataQueryMock).not.toHaveBeenCalled();
+  });
+
+  it('returns UNAUTHENTICATED when the server rejects the forwarded token', async () => {
+    metadataQueryMock.mockRejectedValue(new Error('Unauthorized'));
+
+    expect(
+      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+    ).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(coreQueryMock).not.toHaveBeenCalled();
+  });
+
+  it('returns UNAUTHENTICATED when currentUser carries no id', async () => {
+    metadataQueryMock.mockResolvedValue({ currentUser: null });
+
+    expect(
+      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+    ).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(coreQueryMock).not.toHaveBeenCalled();
+  });
+
+  it('resolves the partner by verifying the token against currentUser', async () => {
+    const result = await resolvePartnerFromForwardedToken({
+      headers: { authorization: AUTHORIZATION },
+    });
+
+    expect(result).toEqual({ partnerId: PARTNER_ID, workspaceMemberId: WORKSPACE_MEMBER_ID });
+    expect(metadataQueryMock).toHaveBeenCalledWith({ currentUser: { id: true } });
+    expect(MetadataApiClient).toHaveBeenCalledWith({
+      headers: { Authorization: AUTHORIZATION },
+    });
   });
 });
