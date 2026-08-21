@@ -8,27 +8,7 @@
     "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
     "generateTokens": {
       "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/design-tokens/**/*",
-        "{projectRoot}/scripts/generateThemeTokens.ts",
-        "{workspaceRoot}/.oxfmtrc.jsonc",
-        "{workspaceRoot}/yarn.lock"
-      ],
-      "outputs": [
-        "{projectRoot}/src/theme-constants/theme-light.css",
-        "{projectRoot}/src/theme-constants/theme-dark.css",
-        "{projectRoot}/src/theme-constants/themeCssVariables.ts",
-        "{projectRoot}/src/theme-constants/themeTypes.ts",
-        "{projectRoot}/src/theme/internal/themeSpacing.ts",
-        "{projectRoot}/src/theme/constants/ThemeLight.ts",
-        "{projectRoot}/src/theme/constants/ThemeDark.ts",
-        "{projectRoot}/src/theme/constants/ThemeCommon.ts",
-        "{projectRoot}/src/theme/constants/MainColorNames.ts",
-        "{projectRoot}/src/theme/constants/Animation.ts",
-        "{projectRoot}/src/theme/constants/GrayScaleLight.ts",
-        "{projectRoot}/src/theme/constants/GrayScaleDark.ts"
-      ],
+      "cache": false,
       "options": {
         "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts"
       }
@@ -36,10 +16,8 @@
     "generate:check": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": ["generateTokens"],
       "options": {
-        "cwd": "{projectRoot}",
-        "command": "git diff --exit-code -- src/theme-constants/theme-light.css src/theme-constants/theme-dark.css src/theme-constants/themeCssVariables.ts src/theme-constants/themeTypes.ts src/theme/internal/themeSpacing.ts src/theme/constants/ThemeLight.ts src/theme/constants/ThemeDark.ts src/theme/constants/ThemeCommon.ts src/theme/constants/MainColorNames.ts src/theme/constants/Animation.ts src/theme/constants/GrayScaleLight.ts src/theme/constants/GrayScaleDark.ts || (echo '::error::Generated theme artifacts are stale. Run: npx nx generateTokens twenty-ui' && false)"
+        "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts --check"
       }
     },
     "generateBarrels": {

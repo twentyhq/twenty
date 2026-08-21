@@ -89,19 +89,38 @@ const sourceOutputs = [
   },
 ];
 
+const isCheckMode = process.argv.includes('--check');
+const outputPaths = sourceOutputs.map(({ path }) => path);
+
 for (const { path, content } of sourceOutputs) {
   writeFileSync(path, content, 'utf-8');
 }
 
 // oxfmt reformats CSS as well as TypeScript, so the committed artifacts are its
 // output rather than the builders'.
-const formatResult = spawnSync(
-  'npx',
-  ['oxfmt', ...sourceOutputs.map(({ path }) => path)],
-  { cwd: packageRoot, stdio: 'inherit' },
-);
+const formatResult = spawnSync('npx', ['oxfmt', ...outputPaths], {
+  cwd: packageRoot,
+  stdio: 'inherit',
+});
 if (formatResult.status !== 0) {
   throw new Error('oxfmt failed on the generated theme files');
+}
+
+if (isCheckMode) {
+  const diffResult = spawnSync(
+    'git',
+    ['diff', '--exit-code', '--', ...outputPaths],
+    {
+      cwd: packageRoot,
+      stdio: 'inherit',
+    },
+  );
+  if (diffResult.status !== 0) {
+    process.stderr.write(
+      '::error::Generated theme artifacts are stale. Run: npx nx generateTokens twenty-ui\n',
+    );
+    process.exit(1);
+  }
 }
 
 console.log(`Generated theme artifacts from ${leaves.length} design tokens.`);
