@@ -9,6 +9,7 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { Field } from 'twenty-ui/input';
 
@@ -33,6 +34,11 @@ export const FormLinksFieldInput = ({
 }: FormLinksFieldInputProps) => {
   const allowsSecondaryLinks = maxNumberOfValues !== 1;
   const secondaryLinks = defaultValue?.secondaryLinks;
+
+  // the primary link takes one of the field's allowed values
+  const maxSecondaryLinkCount = isDefined(maxNumberOfValues)
+    ? maxNumberOfValues - 1
+    : undefined;
 
   const handleChange =
     (field: keyof FieldLinksDraftValue) => (updatedLinksPart: string) => {
@@ -88,6 +94,7 @@ export const FormLinksFieldInput = ({
             onChange={handleSecondaryLinksChange}
             readonly={readonly}
             VariablePicker={VariablePicker}
+            maxItemCount={maxSecondaryLinkCount}
           />
         )}
       </FormNestedFieldInputContainer>

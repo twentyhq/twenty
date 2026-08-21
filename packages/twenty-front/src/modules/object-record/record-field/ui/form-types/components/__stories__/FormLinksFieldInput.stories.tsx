@@ -142,6 +142,29 @@ export const BindsSecondaryLinksToAVariable: Story = {
   },
 };
 
+export const StopsAddingSecondaryLinksAtTheFieldLimit: Story = {
+  args: {
+    label: 'Intro Video',
+    onChange: fn(),
+    // two allowed values: the primary link plus one secondary
+    maxNumberOfValues: 2,
+    defaultValue: {
+      primaryLinkLabel: 'Google',
+      primaryLinkUrl: 'https://www.google.com',
+      secondaryLinks: [{ label: null, url: 'https://docs.twenty.com' }],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('https://docs.twenty.com'));
+
+    await waitFor(() => {
+      expect(canvas.queryByText('Add item')).not.toBeInTheDocument();
+    });
+  },
+};
+
 export const HidesSecondaryLinksWhenSingleValueField: Story = {
   args: {
     label: 'Domain Name',
