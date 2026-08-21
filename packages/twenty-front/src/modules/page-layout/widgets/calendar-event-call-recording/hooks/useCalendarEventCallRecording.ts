@@ -18,11 +18,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 const CALL_RECORDING_QUERY_LIMIT = 50;
 
-const CALL_RECORDING_RECORD_FIELDS = {
+const CALL_RECORDING_SUMMARY_RECORD_FIELDS = {
+  id: true,
+  status: true,
+  summary: true,
+  createdAt: true,
+} as const satisfies RecordGqlOperationGqlRecordFields;
+
+const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS = {
   id: true,
   status: true,
   transcript: true,
-  summary: true,
   createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
@@ -49,9 +55,11 @@ export const useCalendarEventCallRecording = ({
   queryScope: CalendarEventCallRecordingQueryScope;
 }): {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
+  callRecordingsCount: number;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
+  refetch: () => Promise<unknown>;
 } => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
@@ -109,6 +117,37 @@ export const useCalendarEventCallRecording = ({
 
   const shouldSkipQuery = !isDefined(calendarEventId) || isDefined(restriction);
 
+  const restrictedCallRecordingFieldNames = useMemo(
+    () =>
+      new Set(
+        callRecordingObjectMetadataItem.fields
+          .filter(
+            (fieldMetadataItem) =>
+              callRecordingObjectPermissions.restrictedFields[
+                fieldMetadataItem.id
+              ]?.canRead === false,
+          )
+          .map((fieldMetadataItem) => fieldMetadataItem.name),
+      ),
+    [
+      callRecordingObjectMetadataItem.fields,
+      callRecordingObjectPermissions.restrictedFields,
+    ],
+  );
+
+  const callRecordingRecordFields = useMemo(() => {
+    if (queryScope === 'call-recording-summary') {
+      return CALL_RECORDING_SUMMARY_RECORD_FIELDS;
+    }
+
+    return {
+      ...CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS,
+      ...(!restrictedCallRecordingFieldNames.has('video')
+        ? { video: true }
+        : {}),
+    } satisfies RecordGqlOperationGqlRecordFields;
+  }, [queryScope, restrictedCallRecordingFieldNames]);
+
   const callRecordingFilter = useMemo(
     () =>
       isDefined(calendarEventId)
@@ -119,6 +158,7 @@ export const useCalendarEventCallRecording = ({
 
   const {
     records: callRecordings,
+    totalCount: callRecordingsTotalCount,
     loading,
     error,
     refetch,
@@ -126,7 +166,7 @@ export const useCalendarEventCallRecording = ({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
     filter: callRecordingFilter,
     orderBy: CALL_RECORDING_ORDER_BY,
-    recordGqlFields: CALL_RECORDING_RECORD_FIELDS,
+    recordGqlFields: callRecordingRecordFields,
     limit: CALL_RECORDING_QUERY_LIMIT,
     skip: shouldSkipQuery,
   });
@@ -167,5 +207,12 @@ export const useCalendarEventCallRecording = ({
 
   const callRecording = selectCalendarEventCallRecording(callRecordings);
 
-  return { callRecording, loading, error, restriction };
+  return {
+    callRecording,
+    callRecordingsCount: callRecordingsTotalCount ?? callRecordings.length,
+    loading,
+    error,
+    restriction,
+    refetch,
+  };
 };

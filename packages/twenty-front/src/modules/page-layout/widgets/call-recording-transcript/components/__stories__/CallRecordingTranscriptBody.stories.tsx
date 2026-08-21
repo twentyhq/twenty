@@ -4,8 +4,11 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/calendar-event-call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
+import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, waitFor, within } from 'storybook/test';
+import { useState, type ComponentProps } from 'react';
+import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutType,
@@ -13,6 +16,8 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { CallRecordingStatus } from '~/generated/graphql';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const TRANSCRIPT_WIDGET_ID = 'transcript-widget';
 const CALL_RECORDING_TAB_ID = 'call-recording-tab';
@@ -80,6 +85,7 @@ const completedCallRecording: CalendarEventCallRecordingCandidate = {
   status: CallRecordingStatus.COMPLETED,
   transcript: [],
   summary: null,
+  video: null,
   createdAt: '2026-01-01T00:00:00Z',
 };
 
@@ -127,6 +133,65 @@ const readableCallRecording: CalendarEventCallRecordingCandidate = {
   transcript: rawTranscript,
 };
 
+const recordedCallRecording: CalendarEventCallRecordingCandidate = {
+  ...readableCallRecording,
+  video: [
+    {
+      fileId: 'video-file-id',
+      label: 'recording.mp4',
+      extension: 'mp4',
+      url: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+    },
+  ],
+};
+
+const unplayableRecordedCallRecording: CalendarEventCallRecordingCandidate = {
+  ...recordedCallRecording,
+  video: [
+    {
+      fileId: 'unplayable-video-file-id',
+      label: 'unplayable-recording.mp4',
+      extension: 'mp4',
+      url: 'data:video/mp4,not-a-video',
+    },
+  ],
+};
+
+type CallRecordingTranscriptBodyStoryProps = ComponentProps<
+  typeof CallRecordingTranscriptBody
+>;
+
+const CallRecordingTranscriptBodyStory = (
+  args: CallRecordingTranscriptBodyStoryProps,
+) => (
+  <>
+    <CallRecordingTranscriptHeaderDataEffect
+      callRecording={args.callRecording}
+      callRecordingsCount={isDefined(args.callRecording) ? 1 : 0}
+    />
+    <CallRecordingTranscriptBody {...args} />
+  </>
+);
+
+const PlaybackErrorRecoveryStory = (
+  args: CallRecordingTranscriptBodyStoryProps,
+) => {
+  const [callRecording, setCallRecording] = useState(args.callRecording);
+
+  const refetchCallRecording = async () => {
+    await args.refetchCallRecording();
+    setCallRecording(recordedCallRecording);
+  };
+
+  return (
+    <CallRecordingTranscriptBodyStory
+      {...args}
+      callRecording={callRecording}
+      refetchCallRecording={refetchCallRecording}
+    />
+  );
+};
+
 const meta: Meta<typeof CallRecordingTranscriptBody> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingTranscriptBody',
   component: CallRecordingTranscriptBody,
@@ -136,10 +201,16 @@ const meta: Meta<typeof CallRecordingTranscriptBody> = {
       tabId: CALL_RECORDING_TAB_ID,
       widgetId: TRANSCRIPT_WIDGET_ID,
     }),
+    MemoryRouterDecorator,
+    SnackBarDecorator,
     ComponentDecorator,
   ],
   parameters: {
     layout: 'centered',
+  },
+  render: (args) => <CallRecordingTranscriptBodyStory {...args} />,
+  args: {
+    refetchCallRecording: async () => {},
   },
 };
 
@@ -161,6 +232,80 @@ export const Ready: Story = {
       'Happy to. Pipeline grew twenty percent since the last call.',
     );
     await canvas.findByText('Inaudible segment.');
+  },
+};
+
+export const WithVideo: Story = {
+  args: {
+    callRecording: recordedCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Transcript')).toBeVisible();
+    expect(canvasElement.querySelector('video')).not.toBeNull();
+    const copyTranscriptButton = await canvas.findByRole('button', {
+      name: 'Copy transcript',
+    });
+    const copyVideoLinkButton = canvas.getByRole('button', {
+      name: 'Copy video download link',
+    });
+    const writeText = spyOn(
+      navigator.clipboard,
+      'writeText',
+    ).mockResolvedValue();
+
+    await userEvent.click(copyTranscriptButton);
+
+    expect(writeText).toHaveBeenLastCalledWith(
+      'Ada Lovelace (0:12)\nThanks for joining, let us walk through the quarterly numbers.\n\nGrace Hopper (0:24)\nHappy to. Pipeline grew twenty percent since the last call.\n\nUnknown speaker\nInaudible segment.',
+    );
+
+    await userEvent.click(copyVideoLinkButton);
+
+    expect(writeText).toHaveBeenLastCalledWith(
+      'https://media.w3.org/2010/05/sintel/trailer.mp4',
+    );
+
+    writeText.mockRestore();
+
+    const seeAllLink = canvas.getByRole('link', {
+      name: 'See all call recordings linked to this calendar event',
+    });
+
+    expect(seeAllLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('calendar-event-id'),
+    );
+  },
+};
+
+export const PlaybackError: Story = {
+  args: {
+    callRecording: unplayableRecordedCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+    refetchCallRecording: fn(async () => {}),
+  },
+  render: (args) => <PlaybackErrorRecoveryStory {...args} />,
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Playback failed');
+    await userEvent.click(canvas.getByRole('button', { name: /^Retry/ }));
+
+    expect(args.refetchCallRecording).toHaveBeenCalledTimes(1);
+
+    await waitFor(() =>
+      expect(canvasElement.querySelector('video')).toHaveAttribute(
+        'src',
+        'https://media.w3.org/2010/05/sintel/trailer.mp4#t=0.001',
+      ),
+    );
   },
 };
 
