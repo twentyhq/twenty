@@ -85,7 +85,12 @@ describe('translateStandardLabel', () => {
     });
 
     expect(result).toBe('Entreprise');
-    expect(mockI18n._).toHaveBeenCalledWith('company-id');
+    expect(mockI18n._).toHaveBeenCalledWith('company-id', {
+      objectLabel: '{objectLabel}',
+      objectLabelSingular: '{objectLabelSingular}',
+      objectLabelPlural: '{objectLabelPlural}',
+      objectIcon: '{objectIcon}',
+    });
   });
 
   it('should return the source value when the standard bundle has no translation', () => {

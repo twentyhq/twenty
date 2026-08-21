@@ -11,7 +11,7 @@ import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/obje
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { InputHint, InputLabel, type SelectOption } from 'twenty-ui/input';
+import { Field, type SelectOption } from 'twenty-ui/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -207,7 +207,7 @@ export const FormMultiSelectFieldInput = ({
 
   return (
     <FormFieldInputContainer data-testid={testId}>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -293,7 +293,7 @@ export const FormMultiSelectFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      {hint ? <InputHint>{hint}</InputHint> : null}
+      {hint ? <Field.Description>{hint}</Field.Description> : null}
     </FormFieldInputContainer>
   );
 };

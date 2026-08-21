@@ -337,7 +337,7 @@ msgstr "Ваш безкоштовний пробний період для <0>{w
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
-msgstr "Ваш план незабаром буде поновлено"
+msgstr "Ваш тарифний план незабаром буде поновлено."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
@@ -347,7 +347,7 @@ msgstr "Ваш пробний період незабаром закінчить
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Ваш робочий простір <0>{workspaceDisplayName}</0> щойно було остаточно видалено — його було призупинено {daysSinceInactive} днів тому і не встигли повторно активувати вчасно."
+msgstr "Ваш робочий простір <0>{workspaceDisplayName}</0> щойно було остаточно видалено — його було призупинено {daysSinceInactive} днів тому, і його не було повторно активовано вчасно."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

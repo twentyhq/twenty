@@ -13,6 +13,7 @@ export const TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
   fieldMetadata: ['label', 'description'],
   view: ['name'],
   viewFieldGroup: ['name'],
+  pageLayout: ['name'],
   pageLayoutTab: ['title'],
   pageLayoutWidget: ['title'],
   commandMenuItem: ['label', 'shortLabel'],

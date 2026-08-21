@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 每个连接包含：
 
-| 字段                | 描述                                                   |
-| ----------------- | ---------------------------------------------------- |
-| `id`              | 唯一的行 id；传给 `getConnection(id)` 以重新获取单个连接             |
-| `visibility`      | `'user'`（仅对单个工作区成员私有）或 `'workspace'`（与所有成员共享）        |
-| `scopes`          | 上游提供方授予的 OAuth 权限（不同于 `visibility`——两者不相关）           |
-| `userWorkspaceId` | 所有者的 userWorkspace id——在 HTTP 路由触发器中用于选择"请求用户的连接"很有用 |
-| `accessToken`     | 最新的 OAuth 访问令牌（若已过期会自动刷新）                            |
-| `name` / `handle` | 连接的显示名称（在 OAuth 回调时自动生成，用户可重命名）                      |
-| `authFailedAt`    | 当最近一次刷新失败时会设置；用户必须重新连接                               |
+| 字段                | 描述                                                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| `id`              | 唯一的行 id；传给 `getConnection(id)` 以重新获取单个连接                                                     |
+| `visibility`      | `'user'`（仅对单个工作区成员私有）或 `'workspace'`（与所有成员共享）                                                |
+| `scopes`          | 上游提供方授予的 OAuth 权限（不同于 `visibility`——两者不相关）                                                   |
+| `userWorkspaceId` | 所有者的 userWorkspace id——在 HTTP 路由触发器中用于选择"请求用户的连接"很有用                                         |
+| `accessToken`     | 最新的 OAuth 访问令牌（若已过期会自动刷新）                                                                    |
+| `name`            | 连接的显示名称（在 OAuth 回调时自动生成，用户可重命名）                                                              |
+| `handle`          | 已连接的上游帐户电子邮件，每次重新连接时刷新； 从 OIDC `id_token` 返回的 token\` 解决方案在代币交换中返回，回退到连接20个用户的电子邮件，当提供商不返回一个 |
+| `authFailedAt`    | 当最近一次刷新失败时会设置；用户必须重新连接                                                                       |
 
 关键点：
 

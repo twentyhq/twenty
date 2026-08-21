@@ -96,7 +96,7 @@ msgstr "Гитхаб"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
-msgstr "Сперва хорошие новости: ваше рабочее пространство <0>{workspaceDisplayName}</0> только приостановлено — ни один из ваших данных не исчез."
+msgstr "Сначала хорошие новости: ваше рабочее пространство <0>{workspaceDisplayName}</0> только приостановлено — ваши данные никуда не делись."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -211,22 +211,22 @@ msgstr "Доступ администратора сервера изменен"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
+msgstr "Полный доступ администратора"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
+msgstr "Вход от имени пользователя"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
+msgstr "Изменение доступа администратора сервера"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
+msgstr "Предупреждение"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -327,17 +327,17 @@ msgstr "Срок действия вашей бесплатной пробной
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Срок действия вашей бесплатной пробной версии <0>{workspaceDisplayName}</0> истекает {formattedDate}. Если вы не отмените ее до этого момента, привязанная карта будет автоматически списана по вашему годовому тарифному плану."
+msgstr "Срок действия вашей бесплатной пробной версии <0>{workspaceDisplayName}</0> истекает {formattedDate}. Если вы не отмените ее до этого момента, с привязанной карты будет автоматически списана оплата по вашему годовому тарифному плану."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Срок действия вашей бесплатной пробной версии <0>{workspaceDisplayName}</0> истекает {formattedDate}. Если вы не отмените ее до этого момента, привязанная карта будет автоматически списана по вашему месячному тарифному плану."
+msgstr "Срок действия вашей бесплатной пробной версии <0>{workspaceDisplayName}</0> истекает {formattedDate}. Если вы не отмените ее до этого момента, с привязанной карты будет автоматически списана оплата по вашему месячному тарифному плану."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
-msgstr "Срок действия вашего плана скоро продлится"
+msgstr "Скоро продление вашего плана"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
