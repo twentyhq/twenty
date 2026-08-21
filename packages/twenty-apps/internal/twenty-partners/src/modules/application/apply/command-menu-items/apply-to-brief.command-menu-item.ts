@@ -8,7 +8,8 @@ import {
 export default defineCommandMenuItem({
   universalIdentifier: APPLY_TO_BRIEF_COMMAND_MENU_ITEM_ID,
   label: 'Apply to this brief',
-  shortLabel: 'Apply',
+  shortLabel: 'Apply to this opportunity',
+  icon: 'IconSend',
   isPinned: true,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
