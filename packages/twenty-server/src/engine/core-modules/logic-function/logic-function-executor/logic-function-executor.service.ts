@@ -120,8 +120,6 @@ export class LogicFunctionExecutorService {
     logicFunctionId: string;
     workspaceId: string;
     payload: object;
-    // The person who triggered the run. Whether they are bound to the token is
-    // the function's own declaration to make, never the caller's.
     userId?: string;
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
@@ -386,9 +384,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
   }) {
     // Two tokens so a handler can choose per call which access it acts with,
-    // rather than the whole run being locked to one of them. The delegated one
-    // is absent when nobody triggered the run, which is what lets the client
-    // refuse rather than quietly fall back to the application's own access.
+    // rather than the whole run being locked to one of them.
     const hasTriggeringPerson = isDefined(userId) && isDefined(userWorkspaceId);
 
     const [applicationAccessToken, delegatedAccessToken] = await Promise.all([
