@@ -40,7 +40,10 @@ const buildSelfOverrideRow = (overrides: Record<string, unknown>) => ({
 });
 
 describe('TimelineActivityRuleResolverService', () => {
-  const setup = async (ruleRows: Record<string, unknown>[]) => {
+  const setup = async (
+    ruleRows: Record<string, unknown>[],
+    fieldRows: { universalIdentifier: string; id: string; name: string }[] = [],
+  ) => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         TimelineActivityRuleResolverService,
@@ -54,7 +57,7 @@ describe('TimelineActivityRuleResolverService', () => {
                   id: COMPANY_OBJECT_ID,
                 },
               ]),
-              flatFieldMetadataMaps: buildMaps(),
+              flatFieldMetadataMaps: buildMaps(fieldRows),
               flatTimelineActivityRuleMaps: buildMaps(
                 ruleRows as {
                   universalIdentifier: string;
@@ -111,6 +114,65 @@ describe('TimelineActivityRuleResolverService', () => {
 
     expect(sourceRules).toHaveLength(1);
     expect(sourceRules[0].actions).toEqual(['created', 'deleted']);
+  });
+
+  it('should resolve the trigger field names of an override row', async () => {
+    const service = await setup(
+      [buildSelfOverrideRow({ triggerFieldMetadataIds: ['name-field-id'] })],
+      [
+        {
+          universalIdentifier: 'name-field-universal-identifier',
+          id: 'name-field-id',
+          name: 'name',
+        },
+      ],
+    );
+
+    const { sourceRules } = await service.getRulesForEventBatch({
+      workspaceId: WORKSPACE_ID,
+      flatObjectMetadata: companyFlatObjectMetadata,
+    });
+
+    expect(sourceRules).toHaveLength(1);
+    expect(sourceRules[0].triggerFieldNames).toEqual(['name']);
+  });
+
+  it('should keep the surviving trigger fields when one has been deleted', async () => {
+    const service = await setup(
+      [
+        buildSelfOverrideRow({
+          triggerFieldMetadataIds: ['name-field-id', 'deleted-field-id'],
+        }),
+      ],
+      [
+        {
+          universalIdentifier: 'name-field-universal-identifier',
+          id: 'name-field-id',
+          name: 'name',
+        },
+      ],
+    );
+
+    const { sourceRules } = await service.getRulesForEventBatch({
+      workspaceId: WORKSPACE_ID,
+      flatObjectMetadata: companyFlatObjectMetadata,
+    });
+
+    expect(sourceRules[0].triggerFieldNames).toEqual(['name']);
+  });
+
+  it('should emit on any field when every trigger field has been deleted', async () => {
+    const service = await setup([
+      buildSelfOverrideRow({ triggerFieldMetadataIds: ['deleted-field-id'] }),
+    ]);
+
+    const { sourceRules } = await service.getRulesForEventBatch({
+      workspaceId: WORKSPACE_ID,
+      flatObjectMetadata: companyFlatObjectMetadata,
+    });
+
+    expect(sourceRules).toHaveLength(1);
+    expect(sourceRules[0].triggerFieldNames).toBeNull();
   });
 
   it('should not derive a self rule for a system object', async () => {

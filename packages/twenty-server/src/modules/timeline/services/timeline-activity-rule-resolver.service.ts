@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -231,9 +231,18 @@ export class TimelineActivityRuleResolverService {
       return null;
     }
 
-    return findManyFlatEntityByIdInFlatEntityMaps({
+    const triggerFieldNames = findManyFlatEntityByIdInFlatEntityMaps({
       flatEntityIds: triggerFieldMetadataIds,
       flatEntityMaps: flatFieldMetadataMaps,
     }).map((flatFieldMetadata) => flatFieldMetadata.name);
+
+    // An empty list gates every update out, so a rule whose trigger fields have
+    // all been deleted would go silently dead. Fall back to emitting on any
+    // field instead.
+    if (!isNonEmptyArray(triggerFieldNames)) {
+      return null;
+    }
+
+    return triggerFieldNames;
   }
 }
