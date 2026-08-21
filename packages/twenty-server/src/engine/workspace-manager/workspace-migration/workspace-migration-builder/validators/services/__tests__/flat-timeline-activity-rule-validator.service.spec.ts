@@ -78,9 +78,8 @@ describe('FlatTimelineActivityRuleValidatorService', () => {
 
   describe('self rule creation', () => {
     it('should accept a self rule on an audit logged non system object', () => {
-      const result = service.validateFlatTimelineActivityRuleCreation(
-        buildCreationArgs(),
-      );
+      const result =
+        service.validateFlatTimelineActivityRuleCreation(buildCreationArgs());
 
       expect(result.errors).toHaveLength(0);
     });
