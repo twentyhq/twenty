@@ -211,6 +211,7 @@ export class TimelineActivityRepository {
         name: payload.name,
         action: payload.action,
         sourceObjectMetadataId: payload.sourceObjectMetadataId,
+        ruleRelationFieldMetadataId: payload.ruleRelationFieldMetadataId,
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,
         [timelineActivityPropertyName]: payload.recordId,

@@ -74,6 +74,7 @@ export class MessagingMessageParticipantService {
           objectMetadataName: 'messageParticipant',
           matchWith: 'workspaceMemberAndPerson',
           workspaceId,
+          transactionScope,
         });
       },
       authContext,

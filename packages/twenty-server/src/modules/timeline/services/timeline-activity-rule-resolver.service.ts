@@ -216,6 +216,7 @@ export class TimelineActivityRuleResolverService {
 
     return {
       sourceFlatObjectMetadata,
+      relationFieldMetadataId: flatRule.relationFieldMetadataId,
       actions: flatRule.actions,
       triggerFieldNames: this.resolveTriggerFieldNames({
         triggerFieldMetadataIds: flatRule.triggerFieldMetadataIds,

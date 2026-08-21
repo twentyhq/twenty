@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 Pro volání aplikačních HTTP tras nebo čtení a zápis záznamů Twenty z front komponenty použijte `RestApiClient` z `twenty-client-sdk/rest`. Odesílá cesty `/s/...` na základní URL funkcí vašeho workspace a všechny ostatní cesty, včetně `/rest/...`, na `TWENTY_API_URL`.
 
+Vždy jedná jako osoba, která si stránku prohlíží. `runAs: 'application'` je pouze volba funkce logiky: komponenta nikdy neobdrží vlastní token vaší aplikace, takže požadavek na něj zde vyvolá chybu. Práci, která vyžaduje vlastní přístup aplikace, vložte do funkce logiky a místo toho volejte ji.
+
 | Metoda                            | Popis                                                                |
 | --------------------------------- | -------------------------------------------------------------------- |
 | `get(path, options?)`             | Odešle požadavek `GET`                                               |
@@ -445,10 +447,10 @@ Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým k
 
 Následující systémové proměnné jsou vždy dostupné přes `process.env`:
 
-| Proměnná                  | Popis                                                          |
-| ------------------------- | -------------------------------------------------------------- |
-| `TWENTY_API_URL`          | Základní URL Twenty core API                                   |
-| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace |
+| Proměnná                  | Popis                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                                                                                                    |
+| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s rozsahem oprávnění omezeným na roli přihlášené osoby v průniku s rolí vaší aplikace, takže komponenta nikdy nemůže dělat víc než osoba, která si ji prohlíží |
 
 ### `TWENTY_FUNCTIONS_URL`
 
