@@ -1,5 +1,8 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
+import {
+  type FilterableTimelineActivity,
+  filterOutInvalidTimelineActivities,
+} from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 const mainObjectMetadataItem = {
@@ -27,7 +30,7 @@ const taskObjectMetadataItem = {
   readableFields: [{ name: 'title' }, { name: 'body' }],
 } as EnrichedObjectMetadataItem;
 
-const filter = (events: TimelineActivity[]) =>
+const filter = <T extends FilterableTimelineActivity>(events: T[]) =>
   filterOutInvalidTimelineActivities(events, 'company', [
     mainObjectMetadataItem,
     noteObjectMetadataItem,
@@ -218,7 +221,7 @@ describe('source object normalization', () => {
         linkedRecordId: 'note-record-id',
         properties: {},
       },
-    ] as unknown as TimelineActivity[]);
+    ]);
 
     expect(event.sourceObjectMetadataId).toBe(NOTE_OBJECT_METADATA_ID);
     expect(event.linkedObjectMetadataId).toBe(NOTE_OBJECT_METADATA_ID);
@@ -235,7 +238,7 @@ describe('source object normalization', () => {
         linkedRecordId: 'task-record-id',
         properties: {},
       },
-    ] as unknown as TimelineActivity[]);
+    ]);
 
     expect(event.sourceObjectMetadataId).toBe(TASK_OBJECT_METADATA_ID);
     expect(event.linkedObjectMetadataId).toBe(TASK_OBJECT_METADATA_ID);
@@ -252,7 +255,7 @@ describe('source object normalization', () => {
         linkedRecordId: null,
         properties: {},
       },
-    ] as unknown as TimelineActivity[]);
+    ]);
 
     expect(event.linkedObjectMetadataId).toBeNull();
     expect(event.sourceObjectMetadataId).toBe('company-object-metadata-id');
