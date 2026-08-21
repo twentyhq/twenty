@@ -9,14 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconEye,
-  IconHierarchy2,
-  IconLink,
-  IconList,
-  IconPlus,
-  IconSparkle2,
-} from 'twenty-ui/icon';
+import { IconEye, IconPlus, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
@@ -38,24 +31,6 @@ export const SettingsObjects = () => {
       Icon: IconSparkle2,
       vimeoId: '1217964359',
       hasSound: true,
-    },
-    {
-      id: 'objects',
-      title: t`Objects`,
-      Icon: IconHierarchy2,
-      vimeoId: '926288174',
-    },
-    {
-      id: 'fields',
-      title: t`Fields`,
-      Icon: IconList,
-      vimeoId: '927628219',
-    },
-    {
-      id: 'relations',
-      title: t`Relations`,
-      Icon: IconLink,
-      vimeoId: '1185511827',
     },
   ];
 

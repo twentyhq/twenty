@@ -126,24 +126,6 @@ export const SettingsAI = () => {
                 vimeoId: '1217964358',
                 hasSound: true,
               },
-              {
-                id: 'skills',
-                title: t`Skills`,
-                Icon: IconSparkles,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'tools',
-                title: t`Tools`,
-                Icon: IconTool,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'models',
-                title: t`Models`,
-                Icon: IconCpu,
-                vimeoId: '1185511734',
-              },
             ]}
             playButtonAriaLabel={t`Watch AI demo`}
           />

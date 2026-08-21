@@ -16,13 +16,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconBrandGraphql,
-  IconPlug,
-  IconPlus,
-  IconSparkle2,
-  IconWebhook,
-} from 'twenty-ui/icon';
+import { IconPlug, IconPlus, IconSparkle2, IconWebhook } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -110,39 +104,15 @@ export const SettingsApiWebhooks = () => {
             lightSrc={isMcpTab ? McpCoverLight : PlaygroundCoverLight}
             darkSrc={isMcpTab ? McpCoverDark : PlaygroundCoverDark}
             instanceIdPrefix={SETTINGS_API_HERO_INSTANCE_ID_PREFIX}
-            tabs={
-              isMcpTab
-                ? [
-                    {
-                      id: 'mcp_api_webhook_walkthrough',
-                      title: t`Walkthrough`,
-                      Icon: IconSparkle2,
-                      vimeoId: '1217967646',
-                      hasSound: true,
-                    },
-                  ]
-                : [
-                    {
-                      id: 'api_webhook_walkthrough',
-                      title: t`Walkthrough`,
-                      Icon: IconSparkle2,
-                      vimeoId: '1217967646',
-                      hasSound: true,
-                    },
-                    {
-                      id: 'rest',
-                      title: t`REST`,
-                      Icon: IconPlug,
-                      vimeoId: '928786722',
-                    },
-                    {
-                      id: 'graphql',
-                      title: t`GraphQL`,
-                      Icon: IconBrandGraphql,
-                      vimeoId: '928786722',
-                    },
-                  ]
-            }
+            tabs={[
+              {
+                id: 'api_webhook_walkthrough',
+                title: t`Walkthrough`,
+                Icon: IconSparkle2,
+                vimeoId: '1217967646',
+                hasSound: true,
+              },
+            ]}
             playButtonAriaLabel={t`Watch API demo`}
           />
         </Section>

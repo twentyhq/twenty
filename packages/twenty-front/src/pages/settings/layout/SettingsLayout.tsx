@@ -8,15 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconAppWindow,
-  IconCommand,
-  IconLayoutDashboard,
-  IconLayoutSidebarLeftExpand,
-  IconPencil,
-  IconSparkle2,
-  IconTable,
-} from 'twenty-ui/icon';
+import { IconLayoutDashboard, IconPencil, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
@@ -43,36 +35,6 @@ export const SettingsLayout = () => {
       Icon: IconSparkle2,
       vimeoId: '1217964357',
       hasSound: true,
-    },
-    {
-      id: 'sidebar',
-      title: t`Sidebar`,
-      Icon: IconLayoutSidebarLeftExpand,
-      vimeoId: '1185511790',
-    },
-    {
-      id: 'record-page',
-      title: t`Record page`,
-      Icon: IconAppWindow,
-      vimeoId: '1185511790',
-    },
-    {
-      id: 'command-menu',
-      title: t`Command menu`,
-      Icon: IconCommand,
-      vimeoId: '1185416775',
-    },
-    {
-      id: 'views',
-      title: t`Views`,
-      Icon: IconTable,
-      vimeoId: '1145648745',
-    },
-    {
-      id: 'dashboards',
-      title: t`Dashboards`,
-      Icon: IconLayoutDashboard,
-      vimeoId: '1185511768',
     },
   ];
 

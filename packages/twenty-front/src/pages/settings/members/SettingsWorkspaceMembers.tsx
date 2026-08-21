@@ -1,7 +1,12 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconLock, IconSparkle2, IconUserPlus, IconUsers } from 'twenty-ui/icon';
+import {
+  IconLock,
+  IconSparkle2,
+  IconUserPlus,
+  IconUsers,
+} from 'twenty-ui/icon';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -86,28 +91,6 @@ export const SettingsWorkspaceMembers = () => {
                 vimeoId: '1217964364',
                 hasSound: true,
               },
-              {
-                id: 'team',
-                title: t`Team`,
-                Icon: IconUsers,
-                vimeoId: '1185227242',
-              },
-              {
-                id: 'invite',
-                title: t`Invite`,
-                Icon: IconUserPlus,
-                vimeoId: '1185227242',
-              },
-              ...(hasRolesPermission
-                ? [
-                    {
-                      id: 'roles',
-                      title: t`Roles`,
-                      Icon: IconLock,
-                      vimeoId: '1185227242',
-                    },
-                  ]
-                : []),
             ]}
             playButtonAriaLabel={t`Watch members demo`}
           />

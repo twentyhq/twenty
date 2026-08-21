@@ -7,13 +7,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconApps,
-  IconCode,
-  IconDownload,
-  IconPlug,
-  IconSparkle2,
-} from 'twenty-ui/icon';
+import { IconApps, IconCode, IconDownload, IconSparkle2 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
@@ -95,24 +89,6 @@ export const SettingsApplications = () => {
                 Icon: IconSparkle2,
                 vimeoId: '1217964666',
                 hasSound: true,
-              },
-              {
-                id: 'browse',
-                title: t`Browse`,
-                Icon: IconDownload,
-                vimeoId: '1185416793',
-              },
-              {
-                id: 'install',
-                title: t`Install`,
-                Icon: IconApps,
-                vimeoId: '1185416793',
-              },
-              {
-                id: 'develop',
-                title: t`Develop`,
-                Icon: IconPlug,
-                vimeoId: '1185416793',
               },
             ]}
             playButtonAriaLabel={t`Watch apps demo`}
