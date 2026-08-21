@@ -12,7 +12,10 @@ import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 jest.mock('@/auth/hooks/useAuth', () => ({ useAuth: jest.fn() }));
@@ -74,7 +77,10 @@ const renderUseSignInUp = (workspacePublicData: PublicWorkspaceData | null) => {
 };
 
 describe('useSignInUp > submitCredentials > sign-up routing', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    resetJotaiStore();
+    jest.clearAllMocks();
+  });
 
   it('signs up in the workspace when the location resolves one, so its approved access domains are checked', async () => {
     const { result } = renderUseSignInUp({
@@ -90,6 +96,7 @@ describe('useSignInUp > submitCredentials > sign-up routing', () => {
         captchaToken: 'captcha-token',
       }),
     );
+    expect(signUpWithCredentialsInWorkspaceMock).toHaveBeenCalledTimes(1);
     expect(signUpWithCredentialsMock).not.toHaveBeenCalled();
   });
 
@@ -103,6 +110,7 @@ describe('useSignInUp > submitCredentials > sign-up routing', () => {
       'Passw0rd!',
       'captcha-token',
     );
+    expect(signUpWithCredentialsMock).toHaveBeenCalledTimes(1);
     expect(signUpWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
   });
 });
