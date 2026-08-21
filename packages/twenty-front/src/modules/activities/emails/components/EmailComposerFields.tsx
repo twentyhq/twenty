@@ -18,8 +18,10 @@ import { type EmailRecipientDragData } from '@/activities/emails/recipients/type
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
-import { type EmailComposerSender } from '@/activities/emails/types/EmailComposerSender';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
+import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
+import { formatConnectedAccountSenderValue } from '@/accounts/utils/formatConnectedAccountSenderValue';
+import { parseConnectedAccountSenderValue } from '@/accounts/utils/parseConnectedAccountSenderValue';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { Select } from '@/ui/input/components/Select';
@@ -119,20 +121,6 @@ const StyledRecipientLimitWarning = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[3]};
 `;
 
-const SENDER_VALUE_SEPARATOR = ' ';
-
-const formatSenderValue = (connectedAccountId: string, handle: string) =>
-  `${connectedAccountId}${SENDER_VALUE_SEPARATOR}${handle}`;
-
-const parseSenderValue = (value: string): EmailComposerSender => {
-  const separatorIndex = value.indexOf(SENDER_VALUE_SEPARATOR);
-
-  return {
-    connectedAccountId: value.slice(0, separatorIndex),
-    fromHandle: value.slice(separatorIndex + 1),
-  };
-};
-
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
   contextRecord?: EmailComposerContextRecord | null;
@@ -158,17 +146,7 @@ export const EmailComposerFields = ({
 
   const connectedAccounts = accountsData?.myConnectedAccounts ?? [];
 
-  const getAccountHandles = (account: (typeof connectedAccounts)[number]) => [
-    account.handle,
-    ...(account.handleAliases ?? []),
-  ];
-
-  const senderOptions = connectedAccounts.flatMap((account) =>
-    getAccountHandles(account).map((handle) => ({
-      label: handle,
-      value: formatSenderValue(account.id, handle),
-    })),
-  );
+  const senderOptions = buildConnectedAccountSenderOptions(connectedAccounts);
 
   const hasMultipleSenders = senderOptions.length > 1;
 
@@ -177,7 +155,7 @@ export const EmailComposerFields = ({
   );
 
   const selectedSenderValue = isDefined(selectedAccount)
-    ? formatSenderValue(
+    ? formatConnectedAccountSenderValue(
         selectedAccount.id,
         composerState.fromHandle ?? selectedAccount.handle,
       )
@@ -242,7 +220,9 @@ export const EmailComposerFields = ({
                   value={selectedSenderValue}
                   options={senderOptions}
                   onChange={(value) =>
-                    composerState.setSender(parseSenderValue(value))
+                    composerState.setSender(
+                      parseConnectedAccountSenderValue(value),
+                    )
                   }
                 />
               </EmailComposerFieldRow>

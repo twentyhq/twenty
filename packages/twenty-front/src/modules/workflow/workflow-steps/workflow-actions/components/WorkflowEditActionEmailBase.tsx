@@ -1,5 +1,8 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
+import { formatConnectedAccountSenderValue } from '@/accounts/utils/formatConnectedAccountSenderValue';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
+import { parseConnectedAccountSenderValue } from '@/accounts/utils/parseConnectedAccountSenderValue';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
@@ -32,7 +35,8 @@ import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -106,11 +110,20 @@ export const WorkflowEditActionEmailBase = ({
     });
   };
 
-  const handleConnectedAccountChange = (connectedAccountId: string | null) => {
-    handleFieldsChange({
-      connectedAccountId: connectedAccountId ?? '',
-      fromHandle: '',
-    });
+  const handleSenderChange = (senderValue: string | null) => {
+    if (!isNonEmptyString(senderValue)) {
+      handleFieldsChange({ connectedAccountId: '', fromHandle: '' });
+
+      return;
+    }
+
+    if (isStandaloneVariableString(senderValue)) {
+      handleFieldsChange({ connectedAccountId: senderValue, fromHandle: '' });
+
+      return;
+    }
+
+    handleFieldsChange(parseConnectedAccountSenderValue(senderValue));
   };
 
   const apolloCoreClient = useApolloCoreClient();
@@ -167,37 +180,31 @@ export const WorkflowEditActionEmailBase = ({
         }
       : null;
 
-  const connectedAccountOptions: SelectOption<string>[] = [];
+  const sendableAccounts = myAccounts.filter(
+    (account) =>
+      account.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
+      isDefined(account.connectionParameters?.SMTP),
+  );
 
-  myAccounts.forEach((account) => {
-    if (
-      account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
-      !isDefined(account.connectionParameters?.SMTP)
-    ) {
-      return;
-    }
-
-    connectedAccountOptions.push({
-      label: account.handle,
-      value: account.id,
-    });
-  });
-
-  if (isDefined(otherAccount)) {
-    connectedAccountOptions.push({
-      label: otherAccount.handle,
-      value: otherAccount.id,
-    });
-  }
+  const senderOptions = buildConnectedAccountSenderOptions([
+    ...sendableAccounts,
+    ...(isDefined(otherAccount) ? [otherAccount] : []),
+  ]);
 
   const configuredAccount = ownAccount ?? otherAccount;
 
-  const senderOptions: SelectOption<string>[] = isDefined(configuredAccount)
-    ? [
-        configuredAccount.handle,
-        ...(configuredAccount.handleAliases ?? []),
-      ].map((handle) => ({ label: handle, value: handle }))
-    : [];
+  const configuredAccountSenderValue = isDefined(configuredAccount)
+    ? formatConnectedAccountSenderValue(
+        configuredAccount.id,
+        isNonEmptyString(formData.fromHandle)
+          ? formData.fromHandle
+          : configuredAccount.handle,
+      )
+    : undefined;
+
+  const selectedSenderValue = isSenderVariable
+    ? configuredAccountId
+    : configuredAccountSenderValue;
 
   useEffect(() => {
     return () => {
@@ -210,12 +217,12 @@ export const WorkflowEditActionEmailBase = ({
       <>
         <WorkflowStepBody>
           <FormSelectFieldInput
-            key={`connected-account-${formData.connectedAccountId ?? 'none'}`}
-            label={t`Account`}
-            hint={t`Pick a connected account or set a workspace member as variable`}
-            defaultValue={formData.connectedAccountId}
-            options={connectedAccountOptions}
-            onChange={handleConnectedAccountChange}
+            key={`sender-${selectedSenderValue ?? 'none'}`}
+            label={t`From`}
+            hint={t`Pick an address to send from or set a workspace member as variable`}
+            defaultValue={selectedSenderValue}
+            options={senderOptions}
+            onChange={handleSenderChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={actionOptions.readonly}
             callToActionButton={{
@@ -227,24 +234,6 @@ export const WorkflowEditActionEmailBase = ({
               text: t`Add account`,
             }}
           />
-          {senderOptions.length > 1 && (
-            <FormSelectFieldInput
-              key={`sender-${formData.connectedAccountId ?? 'none'}`}
-              label={t`From`}
-              hint={t`Send from the account address or one of its verified aliases`}
-              defaultValue={
-                formData.fromHandle === ''
-                  ? configuredAccount?.handle
-                  : formData.fromHandle
-              }
-              options={senderOptions}
-              onChange={(fromHandle) => {
-                handleFieldChange('fromHandle', fromHandle ?? '');
-              }}
-              VariablePicker={WorkflowVariablePicker}
-              readonly={actionOptions.readonly}
-            />
-          )}
           {isDefined(missingScopes) && (
             <>
               <Callout

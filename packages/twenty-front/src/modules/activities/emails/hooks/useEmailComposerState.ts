@@ -7,7 +7,7 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
-import { type EmailComposerSender } from '@/activities/emails/types/EmailComposerSender';
+import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 
 type UseEmailComposerStateArgs = {
@@ -38,7 +38,7 @@ export const useEmailComposerState = ({
   const initialSubject = draftPrefill?.subject ?? defaultSubject;
   const initialBody = draftPrefill?.body ?? '';
 
-  const [sender, setSender] = useState<EmailComposerSender>({
+  const [sender, setSender] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,
   });
 

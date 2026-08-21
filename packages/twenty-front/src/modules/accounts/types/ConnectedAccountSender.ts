@@ -1,4 +1,4 @@
-export type EmailComposerSender = {
+export type ConnectedAccountSender = {
   connectedAccountId: string;
   fromHandle?: string;
 };
