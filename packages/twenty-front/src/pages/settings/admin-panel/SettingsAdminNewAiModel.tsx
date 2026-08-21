@@ -66,6 +66,16 @@ type ModelSuggestion = {
   supportsReasoning: boolean;
 };
 
+const isInvalidLimit = (rawValue: string) => {
+  if (rawValue.trim() === '') {
+    return false;
+  }
+
+  const parsedValue = Number(rawValue);
+
+  return !Number.isInteger(parsedValue) || parsedValue <= 0;
+};
+
 type FormValues = {
   name: string;
   label: string;
@@ -184,9 +194,16 @@ export const SettingsAdminNewAiModel = () => {
       );
       form.setValue(
         'contextWindowTokens',
-        String(suggestion.contextWindowTokens),
+        suggestion.contextWindowTokens > 0
+          ? String(suggestion.contextWindowTokens)
+          : '',
       );
-      form.setValue('maxOutputTokens', String(suggestion.maxOutputTokens));
+      form.setValue(
+        'maxOutputTokens',
+        suggestion.maxOutputTokens > 0
+          ? String(suggestion.maxOutputTokens)
+          : '',
+      );
       form.setValue('modalities', suggestion.modalities ?? []);
       form.setValue('supportsReasoning', suggestion.supportsReasoning);
     }
@@ -217,6 +234,27 @@ export const SettingsAdminNewAiModel = () => {
       return;
     }
 
+    const contextWindowTokens = Number(values.contextWindowTokens);
+    const maxOutputTokens = Number(values.maxOutputTokens);
+
+    if (isInvalidLimit(values.contextWindowTokens)) {
+      form.setError('contextWindowTokens', {
+        type: 'manual',
+        message: t`Context window must be a positive integer`,
+      });
+
+      return;
+    }
+
+    if (isInvalidLimit(values.maxOutputTokens)) {
+      form.setError('maxOutputTokens', {
+        type: 'manual',
+        message: t`Max output must be a positive integer`,
+      });
+
+      return;
+    }
+
     const cachedInput = parseFloat(
       values.cachedInputCostPerMillionTokens || '',
     );
@@ -239,8 +277,8 @@ export const SettingsAdminNewAiModel = () => {
       ...(isFinite(cacheCreation) && {
         cacheCreationCostPerMillionTokens: cacheCreation,
       }),
-      contextWindowTokens: parseInt(values.contextWindowTokens || '0', 10),
-      maxOutputTokens: parseInt(values.maxOutputTokens || '0', 10),
+      ...(contextWindowTokens > 0 && { contextWindowTokens }),
+      ...(maxOutputTokens > 0 && { maxOutputTokens }),
       ...(values.modalities.length > 0 && {
         modalities: values.modalities,
       }),
@@ -452,26 +490,34 @@ export const SettingsAdminNewAiModel = () => {
               <Controller
                 name="contextWindowTokens"
                 control={form.control}
-                render={({ field: { onChange, value } }) => (
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
                   <TextInput
                     label={t`Context window`}
                     value={value}
                     onChange={onChange}
                     placeholder={t`e.g. 128000`}
                     fullWidth
+                    error={error?.message}
                   />
                 )}
               />
               <Controller
                 name="maxOutputTokens"
                 control={form.control}
-                render={({ field: { onChange, value } }) => (
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
                   <TextInput
                     label={t`Max output`}
                     value={value}
                     onChange={onChange}
                     placeholder={t`e.g. 16384`}
                     fullWidth
+                    error={error?.message}
                   />
                 )}
               />

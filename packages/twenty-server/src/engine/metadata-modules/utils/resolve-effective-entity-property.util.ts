@@ -18,7 +18,7 @@ const readOverrideProperty = (overrides: unknown, property: string): unknown =>
     ? (overrides as Record<string, unknown>)[property]
     : undefined;
 
-const readOverrideTranslation = ({
+export const readOverrideTranslation = ({
   overrides,
   locale,
   property,
@@ -59,16 +59,9 @@ const resolveEffectiveProperty = ({
   const safeLocale = locale ?? SOURCE_LOCALE;
   const safeBaseValue = baseValue ?? '';
 
-  // Custom (non-standard) entities without a catalog have no standard label to
-  // resolve or translate, and never carry overrides.
-  if (!isStandardApp && !isDefined(applicationCatalog)) {
-    return safeBaseValue;
-  }
-
-  if (!isTranslatable && isDefined(overrideValue)) {
-    return overrideValue as string;
-  }
-
+  // Workspace-authored translations apply to every entity, custom ones
+  // included: a custom object created in French can still carry an English
+  // translation even though it has no catalog to fall back to.
   if (isTranslatable) {
     const translation = readOverrideTranslation({
       overrides,
@@ -81,12 +74,23 @@ const resolveEffectiveProperty = ({
     }
   }
 
+  // Custom (non-standard) entities without a catalog have no standard label
+  // to resolve or translate, and property renames live in base columns.
+  if (!isStandardApp && !isDefined(applicationCatalog)) {
+    return safeBaseValue;
+  }
+
+  if (!isTranslatable && isDefined(overrideValue)) {
+    return overrideValue as string;
+  }
+
   if (isNonEmptyString(overrideValue)) {
     return overrideValue;
   }
 
   return translateStandardLabel({
     sourceValue: safeBaseValue,
+    context: `${metadataName}.${property}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,

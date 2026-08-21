@@ -46,6 +46,9 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
@@ -77,12 +80,14 @@ export class ObjectMetadataController {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.objectMetadataRepository,
@@ -98,13 +103,13 @@ export class ObjectMetadataController {
       this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
-    const data = items.map((object) =>
-      this.toObjectWithFieldsDto(
-        object,
-        fields.get(object.id) ?? [],
-        uniqueFieldMetadataIds,
-      ),
-    );
+    const data = await this.toObjectWithFieldsDtos({
+      objects: items,
+      fieldsByObjectId: fields,
+      uniqueFieldMetadataIds,
+      locale,
+      workspaceId,
+    });
 
     const result: {
       data: ObjectMetadataWithFieldsDTO[];
@@ -121,6 +126,7 @@ export class ObjectMetadataController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     const object = await this.objectMetadataRepository.findOne({
       where: { id, workspaceId },
@@ -140,11 +146,13 @@ export class ObjectMetadataController {
       this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
-    const result = this.toObjectWithFieldsDto(
-      object,
-      fields,
+    const [result] = await this.toObjectWithFieldsDtos({
+      objects: [object],
+      fieldsByObjectId: new Map([[object.id, fields]]),
       uniqueFieldMetadataIds,
-    );
+      locale,
+      workspaceId,
+    });
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -288,19 +296,61 @@ export class ObjectMetadataController {
     return grouped;
   }
 
-  private toObjectWithFieldsDto(
-    object: ObjectMetadataEntity,
-    fields: FieldMetadataEntity[],
-    uniqueFieldMetadataIds: ReadonlySet<string>,
-  ): ObjectMetadataWithFieldsDTO {
-    return {
+  // REST returns the same labels the app renders: resolved for the caller's
+  // locale, through the one resolver the GraphQL read path uses. Objects and
+  // every field across them resolve in one call each, so a page costs a fixed
+  // number of catalog reads rather than one per row.
+  private async toObjectWithFieldsDtos({
+    objects,
+    fieldsByObjectId,
+    uniqueFieldMetadataIds,
+    locale,
+    workspaceId,
+  }: {
+    objects: ObjectMetadataEntity[];
+    fieldsByObjectId: Map<string, FieldMetadataEntity[]>;
+    uniqueFieldMetadataIds: ReadonlySet<string>;
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<ObjectMetadataWithFieldsDTO[]> {
+    const [resolvedObjects, resolvedFields] = await Promise.all([
+      this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'objectMetadata',
+          entities: objects,
+          locale,
+          workspaceId,
+        },
+      ),
+      this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'fieldMetadata',
+          entities: objects.flatMap(
+            (object) => fieldsByObjectId.get(object.id) ?? [],
+          ),
+          locale,
+          workspaceId,
+        },
+      ),
+    ]);
+    const resolvedFieldsByObjectId = new Map<string, FieldMetadataEntity[]>();
+
+    for (const field of resolvedFields) {
+      const fieldsForObject =
+        resolvedFieldsByObjectId.get(field.objectMetadataId) ?? [];
+
+      fieldsForObject.push(field);
+      resolvedFieldsByObjectId.set(field.objectMetadataId, fieldsForObject);
+    }
+
+    return resolvedObjects.map((object) => ({
       ...fromObjectMetadataEntityToObjectMetadataDto(object),
-      fields: fields.map((field) =>
+      fields: (resolvedFieldsByObjectId.get(object.id) ?? []).map((field) =>
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
           uniqueFieldMetadataIds,
         ),
       ),
-    };
+    }));
   }
 }
