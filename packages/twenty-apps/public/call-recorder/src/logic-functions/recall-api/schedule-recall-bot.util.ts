@@ -102,6 +102,7 @@ export const computeRecallBotCreationIdempotencyKey = ({
       JSON.stringify({
         workspaceId: metadata.twentyWorkspaceId,
         callRecordingId: metadata.twentyCallRecordingId,
+        botScheduleAttemptId: metadata.twentyBotScheduleAttemptId,
         meetingUrl,
         joinAt,
       }),

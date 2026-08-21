@@ -7,6 +7,7 @@ import processRecallWebhookLogicFunction, {
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
 const requestArtifactImportMock = vi.hoisted(() => vi.fn());
+const BOT_SCHEDULE_ATTEMPT_ID = '2f7bb627-d7db-4c9f-8203-cb450cf5a45a';
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
@@ -30,6 +31,7 @@ const buildRecordingDoneWebhookBody = () => ({
       metadata: {
         twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
         twentyCallRecordingId: 'call-recording-1',
+        twentyBotScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
       },
     },
     recording: { id: 'recall-recording-1' },
@@ -48,6 +50,7 @@ describe('process-recall-webhook', () => {
             node: {
               id: 'call-recording-1',
               status: 'PROCESSING',
+              botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
               externalRecordingId: 'recall-recording-1',
               transcript: [
                 {
@@ -66,7 +69,7 @@ describe('process-recall-webhook', () => {
     });
     mutationMock.mockReset();
     mutationMock.mockResolvedValue({
-      updateCallRecording: { id: 'call-recording-1' },
+      updateCallRecordings: [{ id: 'call-recording-1' }],
     });
     requestArtifactImportMock.mockReset();
     requestArtifactImportMock.mockResolvedValue(true);
@@ -103,9 +106,15 @@ describe('process-recall-webhook', () => {
     );
     expect(mutationMock).toHaveBeenCalledTimes(1);
     expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: 'call-recording-1',
+          filter: {
+            id: { eq: 'call-recording-1' },
+            deletedAt: { is: 'NULL' },
+            status: { eq: 'PROCESSING' },
+            externalBotId: { is: 'NULL' },
+            botScheduleAttemptId: { eq: BOT_SCHEDULE_ATTEMPT_ID },
+          },
           data: {
             externalBotId: 'recall-bot-1',
             externalRecordingId: 'recall-recording-1',

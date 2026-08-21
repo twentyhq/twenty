@@ -4,6 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import {
   fetchAllNodes,
   type ConnectionPage,
@@ -21,6 +22,7 @@ type CallRecordingNode = {
   endedAt?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptId?: string | null;
   botScheduleAttemptedAt?: string | null;
   botScheduleIdempotencyKey?: string | null;
   externalRecordingId?: string | null;
@@ -56,6 +58,7 @@ export const findCallRecordingsByFilter = async (
               endedAt: true,
               calendarEventId: true,
               externalBotId: true,
+              botScheduleAttemptId: true,
               botScheduleAttemptedAt: true,
               botScheduleIdempotencyKey: true,
               externalRecordingId: true,
@@ -84,12 +87,7 @@ export const findCallRecordingsByFilter = async (
     endedAt: callRecording.endedAt ?? undefined,
     calendarEventId: callRecording.calendarEventId ?? undefined,
     externalBotId: normalizeOptionalString(callRecording.externalBotId),
-    botScheduleAttemptedAt: normalizeOptionalString(
-      callRecording.botScheduleAttemptedAt,
-    ),
-    botScheduleIdempotencyKey: normalizeOptionalString(
-      callRecording.botScheduleIdempotencyKey,
-    ),
+    botScheduleAttempt: getCallRecordingBotScheduleAttempt(callRecording),
     externalRecordingId: normalizeOptionalString(
       callRecording.externalRecordingId,
     ),

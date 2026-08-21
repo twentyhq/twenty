@@ -19,12 +19,14 @@ export const hasUnchangedBotScheduleIdempotencyKey = ({
   calendarEvent: CalendarEventRecord;
   workspaceId: string;
 }): boolean => {
-  const storedIdempotencyKey = callRecording.botScheduleIdempotencyKey;
+  const storedIdempotencyKey = callRecording.botScheduleAttempt?.idempotencyKey;
+  const botScheduleAttemptId = callRecording.botScheduleAttempt?.id;
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (
     isUndefined(storedIdempotencyKey) ||
+    isUndefined(botScheduleAttemptId) ||
     isUndefined(meetingUrl) ||
     isUndefined(meetingStartsAt)
   ) {
@@ -39,6 +41,7 @@ export const hasUnchangedBotScheduleIdempotencyKey = ({
       metadata: buildRecallRoutingMetadata({
         callRecordingId: callRecording.id,
         workspaceId,
+        botScheduleAttemptId,
       }),
     })
   );

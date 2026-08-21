@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -6,18 +8,22 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
+import { isCompleteCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { recordCallRecordingBotScheduleAttemptIfActive } from 'src/logic-functions/data/record-call-recording-bot-schedule-attempt-if-active.util';
+import { recordCallRecordingExternalBotIdForScheduleAttempt } from 'src/logic-functions/data/record-call-recording-external-bot-id-for-schedule-attempt.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 
-// The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
+// The sole place a Recall bot is created. A conditional attempt claim elects
+// one writer; retries reuse that attempt's identity and idempotency key.
 export const scheduleRecallBotForCallRecording = async (
-  client: CoreApiClient,
+  coreApiClient: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<boolean> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
@@ -30,7 +36,7 @@ export const scheduleRecallBotForCallRecording = async (
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
 
   const freshCallRecording = (
-    await findCallRecordingsByIds(client, [callRecording.id])
+    await findCallRecordingsByIds(coreApiClient, [callRecording.id])
   )[0];
 
   if (
@@ -54,9 +60,20 @@ export const scheduleRecallBotForCallRecording = async (
   }
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
+  const existingAttempt = freshCallRecording.botScheduleAttempt;
+
+  if (
+    !isUndefined(existingAttempt) &&
+    !isCompleteCallRecordingBotScheduleAttempt(existingAttempt)
+  ) {
+    return false;
+  }
+
+  const botScheduleAttemptId = existingAttempt?.id ?? randomUUID();
   const metadata = buildRecallRoutingMetadata({
     callRecordingId: callRecording.id,
     workspaceId,
+    botScheduleAttemptId,
   });
   const idempotencyKey = computeRecallBotCreationIdempotencyKey({
     meetingUrl,
@@ -64,25 +81,31 @@ export const scheduleRecallBotForCallRecording = async (
     metadata,
   });
 
-  // Persisted before the POST so a crash leaves proof that a bot creation may
-  // have reached Recall; while the stored key still matches the scheduling
-  // inputs, recovery can re-send the creation idempotently instead of asking
-  // Recall whether a bot already exists. Re-sends of the same key keep the
-  // first attempt's timestamp so repeated unknown outcomes age out of the
-  // resend window instead of staying trusted forever.
-  const recordedAttemptTimestamp =
-    freshCallRecording.botScheduleIdempotencyKey === idempotencyKey
-      ? freshCallRecording.botScheduleAttemptedAt
-      : undefined;
+  if (
+    !isUndefined(existingAttempt) &&
+    existingAttempt.idempotencyKey !== idempotencyKey
+  ) {
+    return false;
+  }
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: {
-      botScheduleAttemptedAt:
-        recordedAttemptTimestamp ?? new Date().toISOString(),
-      botScheduleIdempotencyKey: idempotencyKey,
-    },
-  });
+  // Persist the attempt identity before the POST. Re-sends preserve the first
+  // timestamp, while a replacement lifecycle claims a new UUID.
+  const nextAttempt = {
+    id: botScheduleAttemptId,
+    attemptedAt: existingAttempt?.attemptedAt ?? new Date().toISOString(),
+    idempotencyKey,
+  };
+
+  const didRecordScheduleAttempt =
+    await recordCallRecordingBotScheduleAttemptIfActive(coreApiClient, {
+      callRecordingId: callRecording.id,
+      expectedAttempt: existingAttempt,
+      nextAttempt,
+    });
+
+  if (!didRecordScheduleAttempt) {
+    return false;
+  }
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
@@ -101,10 +124,31 @@ export const scheduleRecallBotForCallRecording = async (
     return false;
   }
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: { externalBotId: scheduleResult.externalBotId },
-  });
+  const didRecordExternalBotId =
+    await recordCallRecordingExternalBotIdForScheduleAttempt(coreApiClient, {
+      callRecordingId: callRecording.id,
+      botScheduleAttemptId,
+      externalBotId: scheduleResult.externalBotId,
+    });
+
+  if (!didRecordExternalBotId) {
+    const callRecordingAfterWritebackConflict = (
+      await findCallRecordingsByIds(coreApiClient, [callRecording.id])
+    )[0];
+
+    if (
+      callRecordingAfterWritebackConflict?.botScheduleAttempt?.id ===
+        botScheduleAttemptId &&
+      callRecordingAfterWritebackConflict.externalBotId ===
+        scheduleResult.externalBotId
+    ) {
+      return true;
+    }
+
+    await cancelOrEjectRecallBot(scheduleResult.externalBotId);
+
+    return false;
+  }
 
   return true;
 };
