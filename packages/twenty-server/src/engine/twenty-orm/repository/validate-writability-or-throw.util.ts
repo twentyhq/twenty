@@ -1,7 +1,6 @@
 import { MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getAuthContextApplicationId } from 'src/engine/core-modules/auth/utils/get-auth-context-application-id.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -33,7 +32,8 @@ const isWritePermittedByWritability = ({
     return (
       isDefined(authContext) &&
       isDefined(owningApplicationId) &&
-      getAuthContextApplicationId(authContext) === owningApplicationId
+      (authContext.type === 'application' || authContext.type === 'user') &&
+      authContext.application?.id === owningApplicationId
     );
   }
 
