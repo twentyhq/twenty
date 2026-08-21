@@ -507,6 +507,8 @@ Build both once, at module scope, and every call site then says which access it 
 **A run nobody triggered has no one to act as.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client throws rather than quietly falling back to your application's access. Use `runAs: 'application'` in those functions, or check `context.workspaceMemberId` first when a function can be reached both ways.
 </Note>
 
+This applies to record access. The SDK helpers that reach your application's own resources always use its access and are unaffected by `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` and credit charging all work the same in a run nobody triggered.
+
 #### Exposing a function as an AI tool or workflow action
 
 Logic functions can be exposed on two surfaces, each with its own trigger:
