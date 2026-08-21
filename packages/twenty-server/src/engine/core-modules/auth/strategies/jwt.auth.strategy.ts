@@ -341,16 +341,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    if (
-      isDefined(workspace.deletedAt) &&
-      !isDefined(payload.workspaceDeletionRequestTimestamp)
-    ) {
-      throw new AuthException(
-        'Workspace deletion is in progress',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
     const applicationId = payload.sub ?? payload.applicationId;
 
     const { flatApplicationMaps } =
@@ -456,7 +446,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       )
     ) {
       throw new AuthException(
-        'Workspace deletion is in progress',
+        'Workspace deletion request not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }

@@ -532,43 +532,28 @@ export class WorkspaceService {
   }
 
   async reactivateWorkspace(id: string): Promise<boolean> {
-    const advisoryLockResult =
-      await this.postgresAdvisoryLockService.tryWithLock(
-        getWorkspaceApplicationUninstallLockName(id),
-        async () => {
-          const { affected } = await this.workspaceRepository.update(
-            {
-              id,
-              activationStatus: In([
-                WorkspaceActivationStatus.SUSPENDED,
-                WorkspaceActivationStatus.CREATED,
-              ]),
-              deletedAt: IsNull(),
-            },
-            {
-              activationStatus: WorkspaceActivationStatus.ACTIVE,
-              suspendedAt: null,
-            },
-          );
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: In([
+          WorkspaceActivationStatus.SUSPENDED,
+          WorkspaceActivationStatus.CREATED,
+        ]),
+        deletedAt: IsNull(),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        suspendedAt: null,
+      },
+    );
 
-          const hasBeenReactivated = isDefined(affected) && affected > 0;
+    const hasBeenReactivated = isDefined(affected) && affected > 0;
 
-          if (hasBeenReactivated) {
-            await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-          }
-
-          return hasBeenReactivated;
-        },
-      );
-
-    if (!advisoryLockResult.acquired) {
-      throw new WorkspaceException(
-        `Cannot reactivate workspace ${id} while application uninstall is running`,
-        WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS,
-      );
+    if (hasBeenReactivated) {
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
-    return advisoryLockResult.value;
+    return hasBeenReactivated;
   }
 
   async deleteWorkspace(id: string, softDelete = false) {

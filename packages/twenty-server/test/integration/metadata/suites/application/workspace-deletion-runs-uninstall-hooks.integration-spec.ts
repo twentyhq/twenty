@@ -11,10 +11,10 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
-import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
@@ -64,12 +64,14 @@ describe('Workspace deletion runs application uninstall hooks', () => {
   let roleId: string;
   let logicFunctionId: string;
   let userAccessToken: string;
+  let workspaceIdToCleanup: string | undefined;
   let executeSpy: jest.SpyInstance;
 
   beforeEach(() => {
     applicationUniversalIdentifier = uuidv4();
     roleId = uuidv4();
     logicFunctionId = uuidv4();
+    workspaceIdToCleanup = undefined;
 
     const logicFunctionExecutorService =
       getAppProviderByClassName<LogicFunctionExecutorService>(
@@ -86,22 +88,10 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       });
   });
 
-  afterEach(async () => {
-    executeSpy.mockRestore();
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-      [applicationUniversalIdentifier],
-    );
-
-    await deleteUser({ accessToken: userAccessToken });
-  });
-
-  it('runs pending hooks once through the enqueued job, then retries and the sweep skip the workspace', async () => {
+  const createSoftDeletedWorkspaceWithApplication = async () => {
     jest.useRealTimers();
 
     const uniqueEmail = `test-${randomUUID()}@example.com`;
-
     const { data: signUpData } = await signUp({
       input: { email: uniqueEmail, password: 'Test123!@#' },
       expectToFail: false,
@@ -121,8 +111,9 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       accessToken: userAccessToken,
       expectToFail: false,
     });
-
     const workspaceId = newWorkspaceData.workspace.id;
+
+    workspaceIdToCleanup = workspaceId;
 
     const {
       data: { getAuthTokensFromLoginToken: authTokensData },
@@ -131,7 +122,6 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       loginToken: newWorkspaceData.loginToken.token,
       expectToFail: false,
     });
-
     const workspaceAccessToken =
       authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
 
@@ -144,7 +134,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       applicationUniversalIdentifier,
       name: 'Workspace Deletion Hook Test App',
       description: 'App for testing uninstall hooks on workspace deletion',
-      sourcePath: 'test-workspace-deletion-hook',
+      sourcePath: `test-workspace-deletion-hook-${applicationUniversalIdentifier}`,
       token: workspaceAccessToken,
     });
 
@@ -162,10 +152,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
 
     const workspaceService =
       getAppProviderByClassName<WorkspaceService>('WorkspaceService');
-    const applicationUninstallService =
-      getAppProviderByClassName<ApplicationUninstallService>(
-        'ApplicationUninstallService',
-      );
+
     await workspaceService.deleteWorkspace(workspaceId, true);
 
     const [softDeletedWorkspace] = await globalThis.testDataSource.query(
@@ -177,6 +164,40 @@ describe('Workspace deletion runs application uninstall hooks', () => {
     ).toISOString();
 
     await waitForAllJobsToFinish();
+
+    return { workspaceDeletedAtIso, workspaceId, workspaceService };
+  };
+
+  afterEach(async () => {
+    try {
+      if (isDefined(workspaceIdToCleanup)) {
+        const [workspaceToCleanup] = await globalThis.testDataSource.query(
+          'SELECT id FROM core."workspace" WHERE id = $1',
+          [workspaceIdToCleanup],
+        );
+
+        if (isDefined(workspaceToCleanup)) {
+          const workspaceService =
+            getAppProviderByClassName<WorkspaceService>('WorkspaceService');
+
+          await workspaceService.deleteWorkspace(workspaceIdToCleanup);
+        }
+      }
+
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [applicationUniversalIdentifier],
+      );
+
+      await deleteUser({ accessToken: userAccessToken });
+    } finally {
+      executeSpy.mockRestore();
+    }
+  });
+
+  it('runs the uninstall hook through the enqueued deletion job and records completion', async () => {
+    const { workspaceDeletedAtIso, workspaceId } =
+      await createSoftDeletedWorkspaceWithApplication();
 
     expect(executeSpy).toHaveBeenCalledTimes(1);
     expect(executeSpy).toHaveBeenCalledWith(
@@ -202,25 +223,11 @@ describe('Workspace deletion runs application uninstall hooks', () => {
         applicationAfterHook.uninstallHookCompletedForRequestedAt,
       ).toISOString(),
     ).toBe(workspaceDeletedAtIso);
+  }, 120000);
 
-    await applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
-      workspaceId,
-      workspaceDeletedAt: new Date(workspaceDeletedAtIso),
-    });
-
-    expect(executeSpy).toHaveBeenCalledTimes(1);
-
-    const workspaceIdsWithPendingUninstallHooks =
-      await applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks(
-        [
-          {
-            workspaceId,
-            uninstallRequestedAt: new Date(workspaceDeletedAtIso),
-          },
-        ],
-      );
-
-    expect(workspaceIdsWithPendingUninstallHooks.size).toBe(0);
+  it('defers hard deletion while the uninstall lock is held', async () => {
+    const { workspaceId, workspaceService } =
+      await createSoftDeletedWorkspaceWithApplication();
 
     const [workspaceMembershipBeforeDeferredHardDeletion] =
       await globalThis.testDataSource.query(

@@ -474,6 +474,7 @@ describe('JwtAuthStrategy', () => {
         } as JwtPayload),
       ).rejects.toMatchObject({
         code: AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        message: 'Workspace deletion request not found',
       });
       expect(workspaceRepository.findOne).toHaveBeenCalledWith({
         where: { id: workspaceId },
