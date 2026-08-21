@@ -491,6 +491,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Accounts"
 msgstr "Tilit"
 
+#. js-lingui-id: HKV7A1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Action"
+msgstr ""
+
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
@@ -7036,6 +7042,12 @@ msgstr "Poistettavaa objektia ei löytynyt"
 msgid "Object to update not found"
 msgstr "Päivitettävää objektia ei löytynyt"
 
+#. js-lingui-id: 6PYZ6E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose event produced this entry"
+msgstr ""
+
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -8999,6 +9011,12 @@ msgstr "Lähdekäsittelijän polku on virheellinen"
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
+msgstr ""
+
+#. js-lingui-id: nUw2n0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Source Object Metadata Id"
 msgstr ""
 
 #. js-lingui-id: Qc2uwm
@@ -11494,6 +11512,12 @@ msgstr "Keskiviikko"
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Tervetuloa Twentyyn: Vahvista sähköpostisi"
+
+#. js-lingui-id: xxP3ZZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What happened, independently of the event name format"
+msgstr ""
 
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
