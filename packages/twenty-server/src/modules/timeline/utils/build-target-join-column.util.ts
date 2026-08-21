@@ -7,8 +7,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type TimelineActivityRuleTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-rule.type';
 
-// The join column a relation field writes and the object it points at, the
-// unit both target shapes are made of.
 export const buildTargetJoinColumn = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,

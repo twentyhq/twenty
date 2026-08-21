@@ -37,7 +37,7 @@ const findJunctionTargetFieldMetadataItem = ({
     : undefined;
 };
 
-export const junctionRelationReachesObject = ({
+const junctionRelationReachesObject = ({
   relationFieldMetadataItem,
   objectMetadataItem,
   objectMetadataItems,
@@ -81,8 +81,7 @@ export const junctionRelationReachesObject = ({
   ).includes(objectMetadataItem.id);
 };
 
-// A many-to-one relation reaches the object its join column points at.
-export const manyToOneRelationReachesObject = ({
+const manyToOneRelationReachesObject = ({
   relationFieldMetadataItem,
   objectMetadataItem,
 }: {
