@@ -20,6 +20,7 @@ describe('deriveDefaultTimelineActivityRule', () => {
       deriveDefaultTimelineActivityRule(COMPANY_FLAT_OBJECT_METADATA),
     ).toEqual({
       sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_METADATA,
+      relationFieldMetadataId: null,
       actions: ['created', 'updated', 'deleted', 'restored'],
       triggerFieldNames: null,
       targetShape: { kind: 'SELF' },

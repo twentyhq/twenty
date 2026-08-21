@@ -42,7 +42,13 @@ describe('LocalChildProcessRunnerService', () => {
           runnerPath,
           env: {},
           payload: {},
-          context: { retryCount: 2, maxRetries: 3 },
+          context: {
+            retryCount: 2,
+            maxRetries: 3,
+            workspaceId: 'workspace-1',
+            userWorkspaceId: null,
+            workspaceMemberId: null,
+          },
           timeoutMs: 5_000,
         });
 

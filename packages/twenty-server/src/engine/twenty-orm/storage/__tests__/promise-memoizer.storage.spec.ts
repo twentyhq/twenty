@@ -137,6 +137,52 @@ describe('PromiseMemoizer', () => {
       expect(result2).toBe('test-value');
       expect(mockFactory).toHaveBeenCalledTimes(1);
     });
+
+    it('should not cache a stale promise after its key is cleared', async () => {
+      let markFirstFactoryStarted: (() => void) | undefined;
+      const firstFactoryStarted = new Promise<void>((resolve) => {
+        markFirstFactoryStarted = resolve;
+      });
+      let resolveFirstFactory: (value: string) => void;
+      let resolveSecondFactory: (value: string) => void;
+      const firstFactoryPromise = new Promise<string>((resolve) => {
+        resolveFirstFactory = resolve;
+      });
+      const secondFactoryPromise = new Promise<string>((resolve) => {
+        resolveSecondFactory = resolve;
+      });
+
+      mockFactory
+        .mockImplementationOnce(() => {
+          markFirstFactoryStarted?.();
+
+          return firstFactoryPromise;
+        })
+        .mockImplementationOnce(() => secondFactoryPromise);
+
+      const firstResultPromise = memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      await firstFactoryStarted;
+      await memoizer.clearKey('test-key-1');
+
+      const secondResultPromise = memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      resolveFirstFactory!('stale-value');
+      resolveSecondFactory!('fresh-value');
+
+      await expect(firstResultPromise).resolves.toBe('stale-value');
+      await expect(secondResultPromise).resolves.toBe('fresh-value');
+      await expect(
+        memoizer.memoizePromiseAndExecute('test-key-1', mockFactory),
+      ).resolves.toBe('fresh-value');
+      expect(mockFactory).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('clearKey', () => {

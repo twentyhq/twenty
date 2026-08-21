@@ -23,6 +23,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   linkedObjectMetadataId: string | null;
   action: string | null;
   sourceObjectMetadataId: string | null;
+  ruleRelationFieldMetadataId: string | null;
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   workspaceMemberId: string | null;
   targetPerson: EntityRelation<PersonWorkspaceEntity> | null;

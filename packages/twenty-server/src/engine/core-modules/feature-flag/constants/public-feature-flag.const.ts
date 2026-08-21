@@ -40,15 +40,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       icon: 'IconList',
     },
   },
-  {
-    key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
-    metadata: {
-      label: 'Settings Discovery Hero',
-      description:
-        'Show the per-page hero illustration + video walkthrough modal on settings pages',
-      icon: 'IconSparkles',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {
