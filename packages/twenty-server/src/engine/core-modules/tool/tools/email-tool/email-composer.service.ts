@@ -338,7 +338,7 @@ export class EmailComposerService {
     context: ToolExecutionContext,
   ): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId } = context;
-    const { subject, body, files, inReplyTo } = parameters;
+    const { subject, body, files, inReplyTo, fromHandle } = parameters;
     let { connectedAccountId } = parameters;
 
     let recipients: { to: string[]; cc: string[]; bcc: string[] };
@@ -440,6 +440,7 @@ export class EmailComposerService {
         sanitizedHtmlBody,
         attachments,
         connectedAccount,
+        fromHandle,
         messageChannelId: messageChannel?.id,
         shouldPersistMessage: isDefined(messageChannel),
         inReplyTo,

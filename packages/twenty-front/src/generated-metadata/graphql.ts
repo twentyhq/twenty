@@ -5376,6 +5376,7 @@ export type SendEmailInput = {
   connectedAccountId: Scalars['String']['input'];
   draftMessageId?: InputMaybe<Scalars['String']['input']>;
   files?: InputMaybe<Array<SendEmailAttachmentInput>>;
+  fromHandle?: InputMaybe<Scalars['String']['input']>;
   inReplyTo?: InputMaybe<Scalars['String']['input']>;
   subject: Scalars['String']['input'];
   to: Scalars['String']['input'];

@@ -5,7 +5,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
@@ -135,16 +134,34 @@ export const EmailComposerFields = ({
   const { theme } = useContext(ThemeContext);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
-    myConnectedAccounts: { id: string; handle: string }[];
+    myConnectedAccounts: {
+      id: string;
+      handle: string;
+      handleAliases: string[] | null;
+    }[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
 
-  const accountOptions: SelectOption<string>[] =
-    accountsData?.myConnectedAccounts?.map((account) => ({
-      label: account.handle,
-      value: account.id,
-    })) ?? [];
+  const connectedAccounts = accountsData?.myConnectedAccounts ?? [];
 
-  const hasMultipleAccounts = accountOptions.length > 1;
+  const getAccountHandles = (account: (typeof connectedAccounts)[number]) => [
+    account.handle,
+    ...(account.handleAliases ?? []),
+  ];
+
+  const senderOptions = connectedAccounts.flatMap((account) =>
+    getAccountHandles(account).map((handle) => ({
+      label: handle,
+      value: handle,
+    })),
+  );
+
+  const hasMultipleSenders = senderOptions.length > 1;
+
+  const selectedSenderValue =
+    composerState.fromHandle ??
+    connectedAccounts.find(
+      (account) => account.id === composerState.connectedAccountId,
+    )?.handle;
 
   const allRecipientKeys = [
     ...composerState.to,
@@ -197,16 +214,25 @@ export const EmailComposerFields = ({
           onDragEnd={handlers.onDragEnd}
         >
           <StyledHeaderRows>
-            {hasMultipleAccounts && (
+            {hasMultipleSenders && (
               <EmailComposerFieldRow label={t`From`}>
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
-                  value={composerState.connectedAccountId}
-                  options={accountOptions}
-                  onChange={(value) =>
-                    composerState.setConnectedAccountId(value)
-                  }
+                  value={selectedSenderValue}
+                  options={senderOptions}
+                  onChange={(handle) => {
+                    const account = connectedAccounts.find((connectedAccount) =>
+                      getAccountHandles(connectedAccount).includes(handle),
+                    );
+
+                    if (isDefined(account)) {
+                      composerState.setSender({
+                        connectedAccountId: account.id,
+                        fromHandle: handle,
+                      });
+                    }
+                  }}
                 />
               </EmailComposerFieldRow>
             )}

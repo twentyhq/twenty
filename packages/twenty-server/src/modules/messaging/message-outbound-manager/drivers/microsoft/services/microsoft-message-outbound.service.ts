@@ -7,6 +7,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+import { resolveOutboundFromHandle } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-from-handle.util';
 import { type Client as MicrosoftGraphClient } from '@microsoft/microsoft-graph-client';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,7 +31,11 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       id: messageId,
       internetMessageId,
       conversationId,
-    } = await this.createDraftMessage(microsoftClient, sendMessageInput);
+    } = await this.createDraftMessage(
+      microsoftClient,
+      sendMessageInput,
+      connectedAccount,
+    );
 
     await microsoftClient.api(`/me/messages/${messageId}/send`).post({});
 
@@ -49,7 +54,11 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       connectedAccount.id,
     );
 
-    await this.createDraftMessage(microsoftClient, sendMessageInput);
+    await this.createDraftMessage(
+      microsoftClient,
+      sendMessageInput,
+      connectedAccount,
+    );
   }
 
   async sendDraft(
@@ -81,6 +90,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
   private async createDraftMessage(
     microsoftClient: MicrosoftGraphClient,
     sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<{
     id: string;
     internetMessageId?: string;
@@ -93,7 +103,10 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
         )
       : undefined;
 
-    const message = this.composeMicrosoftMessage(sendMessageInput);
+    const message = this.composeMicrosoftMessage(
+      sendMessageInput,
+      connectedAccount,
+    );
 
     if (isDefined(parentMessageGraphId)) {
       const reply = await microsoftClient
@@ -139,9 +152,18 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
 
   private composeMicrosoftMessage(
     sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
   ): Record<string, unknown> {
+    const fromHandle = resolveOutboundFromHandle({
+      connectedAccount,
+      requestedFromHandle: sendMessageInput.fromHandle,
+    });
+
     return {
       subject: sendMessageInput.subject,
+      ...(isDefined(fromHandle)
+        ? { from: { emailAddress: { address: fromHandle } } }
+        : {}),
       body: {
         contentType: 'HTML',
         content: sendMessageInput.html,
