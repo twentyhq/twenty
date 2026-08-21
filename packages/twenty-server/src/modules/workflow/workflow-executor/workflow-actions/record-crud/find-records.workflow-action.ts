@@ -8,6 +8,7 @@ import {
   isNonEmptyArray,
   isRecordFilterValueValid,
   resolveInput,
+  type RecordFilter,
 } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -26,6 +27,7 @@ import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-execu
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
 import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
+import { turnEmptyFilterValuesIntoEmptinessOperands } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/turn-empty-filter-values-into-emptiness-operands.util';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -69,8 +71,16 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    if (workflowActionInput.filter?.recordFilters) {
-      for (const filter of workflowActionInput.filter.recordFilters) {
+    const resolvedRecordFilters = workflowActionInput.filter?.recordFilters;
+
+    const recordFilters = isDefined(resolvedRecordFilters)
+      ? turnEmptyFilterValuesIntoEmptinessOperands<RecordFilter>(
+          resolvedRecordFilters,
+        )
+      : undefined;
+
+    if (isDefined(recordFilters)) {
+      for (const filter of recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
           throw new WorkflowStepExecutorException(
             `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
@@ -79,8 +89,6 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         }
       }
     }
-
-    const recordFilters = workflowActionInput.filter?.recordFilters;
 
     let gqlOperationFilter: RecordGqlOperationFilter;
 
