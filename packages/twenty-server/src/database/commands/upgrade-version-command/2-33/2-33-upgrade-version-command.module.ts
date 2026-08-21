@@ -5,6 +5,8 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { BackfillActivityTargetsJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123540000-backfill-activity-targets-junction-target.command';
 import { AddTimelineActivityStructuredColumnsCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123550000-add-timeline-activity-structured-columns.command';
 import { BackfillTimelineActivityStructuredColumnsCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123560000-backfill-timeline-activity-structured-columns.command';
+import { MigrateCommandMenuItemLabelsToPlaceholdersCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787127900000-migrate-command-menu-item-labels-to-placeholders.command';
+import { MarkSearchVectorFieldsSystemCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787138325228-mark-search-vector-fields-system.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -17,13 +19,15 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
-    WorkspaceMigrationModule,
     WorkspaceMigrationRunnerModule,
+    WorkspaceMigrationModule,
   ],
   providers: [
     BackfillActivityTargetsJunctionTargetCommand,
     AddTimelineActivityStructuredColumnsCommand,
     BackfillTimelineActivityStructuredColumnsCommand,
+    MigrateCommandMenuItemLabelsToPlaceholdersCommand,
+    MarkSearchVectorFieldsSystemCommand,
   ],
 })
 export class V2_33_UpgradeVersionCommandModule {}

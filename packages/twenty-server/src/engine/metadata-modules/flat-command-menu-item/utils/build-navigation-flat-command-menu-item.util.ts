@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -6,16 +8,23 @@ import { v5 } from 'uuid';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
 
-export const NAVIGATION_INTERPOLATED_LABEL =
-  'Go to ${navigateToObjectMetadataItem.labelPlural}';
+// The stored label is the source message; the target object's label stays a
+// placeholder filled at read time for the reader's locale.
+export const NAVIGATION_INTERPOLATED_LABEL = i18nLabel(
+  msg({
+    message: `Go to {objectLabelPlural}`,
+    context: 'commandMenuItem.label',
+  }),
+);
 export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
-  '${navigateToObjectMetadataItem.labelPlural}';
+  getMetadataLabelPlaceholder('objectLabelPlural');
 export const NAVIGATION_INTERPOLATED_ICON =
-  '${navigateToObjectMetadataItem.icon}';
+  getMetadataLabelPlaceholder('objectIcon');
 
 const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
   Record<string, FeatureFlagKey>
