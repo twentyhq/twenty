@@ -1,4 +1,9 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { shouldUseCaseInsensitiveOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import { buildCursorKeysetCondition } from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
+import { computeOrderByLeafColumnType } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 
 // SQL NULL can sit in any nullable column whatever its type: write-side
@@ -8,6 +13,22 @@ import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.u
 // and are treated as nullable; a needless IS NULL branch matches nothing.
 const checkIfLeafCanHoldNullValue = (leaf: OrderByLeaf): boolean =>
   leaf.kind === 'scalar' ? leaf.fieldMetadata.isNullable !== false : true;
+
+// Read from the leaf's own column type, the way the SQL order parser decides
+// whether to wrap the column in LOWER(), so the keyset predicate and the scan
+// order cannot disagree about the ordering relation. MULTI_SELECT is left out
+// even though it is ordered case-insensitively: its cursor value is an array,
+// which no scalar LOWER() comparison can carry, so aligning it needs the array
+// rendering of the ordering (issue #24359 covers TEXT and SELECT).
+const checkIfLeafIsOrderedCaseInsensitively = (leaf: OrderByLeaf): boolean => {
+  const columnType = computeOrderByLeafColumnType(leaf);
+
+  return (
+    isDefined(columnType) &&
+    columnType !== FieldMetadataType.MULTI_SELECT &&
+    shouldUseCaseInsensitiveOrder(columnType)
+  );
+};
 
 type BuildCursorLeafWhereConditionParams = {
   leaf: OrderByLeaf;
@@ -37,6 +58,7 @@ export function buildCursorLeafWhereCondition({
     isForwardPagination,
     isEqualityCondition,
     canFieldHoldNullValue: checkIfLeafCanHoldNullValue(leaf),
+    isCaseInsensitiveOrder: checkIfLeafIsOrderedCaseInsensitively(leaf),
     buildLeafCondition: (leafFilter) =>
       leaf.path.reduceRight<Record<string, unknown>>(
         (nested, key) => ({ [key]: nested }),
