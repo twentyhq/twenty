@@ -73,10 +73,9 @@ export const buildJunctionTargetShape = ({
     return undefined;
   }
 
-  const junctionSourceJoinColumnName =
-    getJoinColumnNameForRelationField(
-      junctionSourceFlatFieldMetadata,
-    );
+  const junctionSourceJoinColumnName = getJoinColumnNameForRelationField(
+    junctionSourceFlatFieldMetadata,
+  );
 
   const junctionTargetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: junctionTargetFieldId,

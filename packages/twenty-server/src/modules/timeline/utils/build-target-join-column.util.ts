@@ -31,8 +31,7 @@ export const buildTargetJoinColumn = ({
   }
 
   return {
-    joinColumnName:
-      getJoinColumnNameForRelationField(flatFieldMetadata),
+    joinColumnName: getJoinColumnNameForRelationField(flatFieldMetadata),
     targetObjectNameSingular: targetFlatObjectMetadata.nameSingular,
   };
 };
