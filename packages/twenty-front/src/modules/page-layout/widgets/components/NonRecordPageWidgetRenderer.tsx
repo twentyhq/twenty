@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
+import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useWidgetRendererState } from '@/page-layout/widgets/hooks/useWidgetRendererState';
 
 type NonRecordPageWidgetRendererProps = {
@@ -33,6 +34,8 @@ export const NonRecordPageWidgetRenderer = ({
       onRemove={state.handleRemove}
       onMouseEnter={isSoloVariant ? undefined : state.handleMouseEnter}
       onMouseLeave={isSoloVariant ? undefined : state.handleMouseLeave}
-    />
+    >
+      <WidgetContentRenderer widget={widget} />
+    </WidgetCardShell>
   );
 };

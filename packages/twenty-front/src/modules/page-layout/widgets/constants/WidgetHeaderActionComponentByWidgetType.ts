@@ -1,4 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetActionCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
 import { WidgetActionEmailCompose } from '@/page-layout/widgets/emails/components/WidgetActionEmailCompose';
 import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/WidgetActionFileAttach';
@@ -19,4 +20,5 @@ export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
   [WidgetType.TASKS]: WidgetActionTaskCreate,
   [WidgetType.NOTES]: WidgetActionNoteCreate,
   [WidgetType.FILES]: WidgetActionFileAttach,
+  [WidgetType.CALL_RECORDING_TRANSCRIPT]: WidgetActionCallRecordingTranscript,
 };

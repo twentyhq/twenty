@@ -1,7 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
-import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
@@ -9,7 +8,7 @@ import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetC
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { styled } from '@linaria/react';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent, type ReactNode, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -40,6 +39,7 @@ type WidgetCardShellProps = {
   onRemove: (e?: MouseEvent) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  children: ReactNode;
 };
 
 export const WidgetCardShell = ({
@@ -61,15 +61,13 @@ export const WidgetCardShell = ({
   onRemove,
   onMouseEnter,
   onMouseLeave,
+  children,
 }: WidgetCardShellProps) => {
   const { theme } = useContext(ThemeContext);
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;
 
-  // A widget stacked in the main tab area gets a bounded slot with its own
-  // scroll, so no single widget swallows the tab. Solo widgets own the tab,
-  // and pinned/side-column stacks keep their flowing column behavior.
   const hasBoundedHeight = variant === 'record-page' && isInVerticalListTab;
 
   return (
@@ -129,7 +127,7 @@ export const WidgetCardShell = ({
                 widget.objectMetadataId,
               ]}
             >
-              <WidgetContentRenderer widget={widget} />
+              {children}
             </ErrorBoundary>
           ) : (
             <StyledNoAccessContainer>

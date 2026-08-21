@@ -7,10 +7,12 @@ import {
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
+import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Decorator } from '@storybook/react-vite';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -29,10 +31,36 @@ export const getCallRecordingWidgetStoryDecorator =
     widgetId: string;
   }): Decorator =>
   (Story) => {
-    setTestObjectMetadataItemsInMetadataStore(
-      jotaiStore,
-      getTestEnrichedObjectMetadataItemsMock(),
+    const widget = pageLayout.tabs
+      .flatMap((tab) => tab.widgets)
+      .find((pageLayoutWidget) => pageLayoutWidget.id === widgetId);
+
+    if (!isDefined(widget)) {
+      throw new Error(`Widget ${widgetId} was not found in the page layout`);
+    }
+
+    const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+    const calendarEventObjectMetadataItem = objectMetadataItems.find(
+      ({ nameSingular }) =>
+        nameSingular === CoreObjectNameSingular.CalendarEvent,
     );
+
+    if (!isDefined(calendarEventObjectMetadataItem)) {
+      throw new Error('Calendar event metadata was not found');
+    }
+
+    setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+      ...objectMetadataItems,
+      {
+        ...calendarEventObjectMetadataItem,
+        id: 'call-recording-object-metadata-id',
+        nameSingular: CoreObjectNameSingular.CallRecording,
+        namePlural: 'callRecordings',
+        labelSingular: 'Call Recording',
+        labelPlural: 'Call Recordings',
+        fields: [],
+      },
+    ]);
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -48,13 +76,16 @@ export const getCallRecordingWidgetStoryDecorator =
     );
 
     return (
-      <div style={{ width: '500px', height: '360px', display: 'flex' }}>
+      <div style={{ display: 'flex', width: 500 }}>
         <PageLayoutTestWrapper store={jotaiStore}>
           <LayoutRenderingProvider
             value={{
               isInSidePanel: false,
               layoutType: PageLayoutType.RECORD_PAGE,
-              targetRecordIdentifier: undefined,
+              targetRecordIdentifier: {
+                id: 'calendar-event-id',
+                targetObjectNameSingular: CoreObjectNameSingular.CalendarEvent,
+              },
             }}
           >
             <PageLayoutContentProvider
@@ -64,11 +95,25 @@ export const getCallRecordingWidgetStoryDecorator =
                 presentation: 'stack',
               }}
             >
-              <WidgetComponentInstanceContext.Provider
-                value={{ instanceId: widgetId }}
+              <WidgetCardShell
+                widget={widget}
+                variant="record-page"
+                isEditable={false}
+                isEditing={false}
+                isDragging={false}
+                isResizing={false}
+                isLastWidget={true}
+                showHeader={true}
+                hasAccess={true}
+                restriction={{ type: null }}
+                isInVerticalListTab={true}
+                isMobile={false}
+                isReorderEnabled={true}
+                isDeletingWidgetEnabled={true}
+                onRemove={() => {}}
               >
                 <Story />
-              </WidgetComponentInstanceContext.Provider>
+              </WidgetCardShell>
             </PageLayoutContentProvider>
           </LayoutRenderingProvider>
         </PageLayoutTestWrapper>
