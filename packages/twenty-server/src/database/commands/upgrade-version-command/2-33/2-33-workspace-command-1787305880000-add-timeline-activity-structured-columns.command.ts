@@ -20,7 +20,7 @@ const NEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   TIMELINE_ACTIVITY.fields.sourceObjectMetadataId.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.33.0', 1787123550000)
+@RegisteredWorkspaceCommand('2.33.0', 1787305880000)
 @Command({
   name: 'upgrade:2-33:add-timeline-activity-structured-columns',
   description:

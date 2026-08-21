@@ -14,7 +14,7 @@ const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
 const LINKED_NAME_PREFIX = 'linked-';
 
 
-@RegisteredWorkspaceCommand('2.33.0', 1787123560000)
+@RegisteredWorkspaceCommand('2.33.0', 1787305881000)
 @Command({
   name: 'upgrade:2-33:backfill-timeline-activity-structured-columns',
   description:
