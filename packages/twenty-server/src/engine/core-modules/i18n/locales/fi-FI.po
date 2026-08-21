@@ -816,7 +816,7 @@ msgstr "Heittomerkki ja piste"
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
-msgstr ""
+msgstr "Sovelluksen puhdistus on edelleen käynnissä. Yritä uudelleen."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -867,7 +867,7 @@ msgstr "Sovelluksen rekisteröinnin muuttujaa ei löytynyt."
 #. js-lingui-id: P+wtF/
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application uninstall logic function failed."
-msgstr ""
+msgstr "Sovelluksen asennuksen poistologiikkafunktio epäonnistui."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -1285,7 +1285,7 @@ msgstr "Widgetin \"{widgetTitle}\" sisällön on oltava objekti"
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
-msgstr ""
+msgstr "Pum"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6717,7 +6717,7 @@ msgstr "Ei oikeutta käyttää tätä OAuth-tarjoajaa."
 #. js-lingui-id: KPx1UV
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Not found"
-msgstr ""
+msgstr "Ei löytynyt"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts

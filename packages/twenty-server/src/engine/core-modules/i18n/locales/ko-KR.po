@@ -816,7 +816,7 @@ msgstr "아포스트로피와 마침표"
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
-msgstr ""
+msgstr "애플리케이션 정리가 아직 진행 중입니다. 다시 시도해 주세요."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -867,7 +867,7 @@ msgstr "애플리케이션 등록 변수를 찾을 수 없음."
 #. js-lingui-id: P+wtF/
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application uninstall logic function failed."
-msgstr ""
+msgstr "애플리케이션 제거 로직 함수가 실패했습니다."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -1285,7 +1285,7 @@ msgstr "위젯 \"{widgetTitle}\"의 본문은 객체여야 합니다"
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
-msgstr ""
+msgstr "쾅"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6717,7 +6717,7 @@ msgstr "이 OAuth 공급자에 액세스할 권한이 없습니다."
 #. js-lingui-id: KPx1UV
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Not found"
-msgstr ""
+msgstr "찾을 수 없음"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
