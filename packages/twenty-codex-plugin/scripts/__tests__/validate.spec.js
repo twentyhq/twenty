@@ -157,6 +157,31 @@ test('assertCliGuidanceSplit catches deprecated guidance outside the CLI referen
   );
 });
 
+test('assertCliGuidanceSplit catches stale one-shot sync terminology', () => {
+  const standalonePagesPath = path.join(
+    PLUGIN_ROOT,
+    'references',
+    'develop-app',
+    'standalone-pages.md',
+  );
+
+  withFileMutation(
+    standalonePagesPath,
+    (contents) => `${contents}\nUse one-shot sync for verification.\n`,
+    () => {
+      const failures = collectFailures(crossDocContracts.assertCliGuidanceSplit);
+
+      assert.ok(
+        failures.some(
+          (failure) =>
+            failure.includes('references/develop-app/standalone-pages.md') &&
+            failure.includes('one-shot sync'),
+        ),
+      );
+    },
+  );
+});
+
 test('assertTestingGuidance passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertTestingGuidance), []);
 });

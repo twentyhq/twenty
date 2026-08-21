@@ -305,10 +305,17 @@ const assertCliGuidanceSplit = (fail) => {
   ];
 
   for (const documentPath of agentFacingDocumentPaths) {
-    if (readText(documentPath).includes('yarn twenty dev --once')) {
-      fail(
-        `${path.relative(PLUGIN_ROOT, documentPath)} contains deprecated yarn twenty dev --once guidance`,
-      );
+    const contents = readText(documentPath);
+
+    for (const deprecatedFragment of [
+      'yarn twenty dev --once',
+      'one-shot sync',
+    ]) {
+      if (contents.toLowerCase().includes(deprecatedFragment)) {
+        fail(
+          `${path.relative(PLUGIN_ROOT, documentPath)} contains deprecated ${deprecatedFragment} guidance`,
+        );
+      }
     }
   }
 };

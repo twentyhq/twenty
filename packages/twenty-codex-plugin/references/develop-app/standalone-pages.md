@@ -400,7 +400,7 @@ If this renders but the full page does not, the issue is inside the full compone
 
 ## Deployment And Verification
 
-Use local dev sync while iterating and one-shot sync for bounded verification. Use `../manage-app/cli-and-sync.md` for exact command behavior, remote setup, verbose troubleshooting, deploys, and logs.
+Use bounded apply for deployment and verification. Use `../manage-app/cli-and-sync.md` for exact command behavior, remote setup, verbose troubleshooting, deploys, and logs.
 
 ```bash
 yarn twenty apply
