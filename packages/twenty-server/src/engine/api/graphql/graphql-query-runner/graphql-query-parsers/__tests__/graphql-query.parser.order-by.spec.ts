@@ -75,6 +75,13 @@ describe('GraphqlQueryParser order by rendering', () => {
     objectMetadataId: 'company-object-id',
   });
 
+  const companyContactNameField = createMockField({
+    id: 'company-contactname-id',
+    type: FieldMetadataType.FULL_NAME,
+    name: 'contactName',
+    objectMetadataId: 'company-object-id',
+  });
+
   const rootFields = [
     nameField,
     stageField,
@@ -83,7 +90,7 @@ describe('GraphqlQueryParser order by rendering', () => {
     contactNameField,
     companyField,
   ];
-  const fields = [...rootFields, companyNameField];
+  const fields = [...rootFields, companyNameField, companyContactNameField];
 
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
     byUniversalIdentifier: Object.fromEntries(
@@ -107,7 +114,7 @@ describe('GraphqlQueryParser order by rendering', () => {
     universalIdentifier: 'company-object-id',
     workspaceId,
     nameSingular: 'company',
-    fieldIds: ['company-name-id'],
+    fieldIds: ['company-name-id', 'company-contactname-id'],
   } as unknown as FlatObjectMetadata;
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
@@ -188,6 +195,21 @@ describe('GraphqlQueryParser order by rendering', () => {
         nulls: 'NULLS LAST',
       },
       'LOWER("company"."name")': { order: 'ASC', nulls: 'NULLS LAST' },
+    });
+  });
+
+  it('should wrap a composite text sub-column of a relation target', () => {
+    expect(
+      applyOrderBy([
+        {
+          company: { contactName: { lastName: OrderByDirection.AscNullsLast } },
+        },
+      ]),
+    ).toEqual({
+      'LOWER("company"."contactNameLastName")': {
+        order: 'ASC',
+        nulls: 'NULLS LAST',
+      },
     });
   });
 
