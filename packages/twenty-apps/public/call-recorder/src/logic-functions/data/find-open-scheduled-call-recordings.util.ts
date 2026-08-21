@@ -7,8 +7,13 @@ import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-r
 
 export const findOpenScheduledCallRecordings = async (
   client: CoreApiClient,
+  shouldStartPageRequest: () => boolean = () => true,
 ): Promise<CallRecordingRecord[]> =>
-  findCallRecordingsByFilter(client, {
-    recordingRequestStatus: { eq: CallRecordingRequestStatus.REQUESTED },
-    status: { eq: CallRecordingStatus.SCHEDULED },
-  });
+  findCallRecordingsByFilter(
+    client,
+    {
+      recordingRequestStatus: { eq: CallRecordingRequestStatus.REQUESTED },
+      status: { eq: CallRecordingStatus.SCHEDULED },
+    },
+    shouldStartPageRequest,
+  );

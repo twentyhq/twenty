@@ -2614,6 +2614,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "properties": {
         "universalIdentifier": "20202020-f142-4b04-b91b-6a2b4af3bf11",
       },
+      "ruleRelationFieldMetadataId": {
+        "universalIdentifier": "20202020-9f6e-4c07-a2d4-38b5e1c9f470",
+      },
       "searchVector": {
         "universalIdentifier": "23a0482b-f41b-5e13-9b3e-356c5aaa90a3",
       },

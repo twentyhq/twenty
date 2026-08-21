@@ -36,6 +36,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
   uninstallLogicFunctionId: null,
+  uninstallHookCompletedForRequestedAt: null,
   canBeUninstalled: false,
   autoUpgrade: false,
   applicationRegistrationId: null,

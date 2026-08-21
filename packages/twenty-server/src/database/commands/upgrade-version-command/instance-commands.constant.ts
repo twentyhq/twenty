@@ -148,6 +148,7 @@ import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/databas
 import { AddWritabilityToMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786713600000-add-writability-to-metadata';
 import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786959731000-add-uninstall-logic-function-id-to-application';
 import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786959731001-backfill-uninstall-logic-function-id-on-application';
+import { AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787151824000-add-uninstall-hook-completed-for-requested-at-to-application';
 import { CreateTimelineActivityRuleCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787305882000-create-timeline-activity-rule-core-table';
 
 export const INSTANCE_COMMANDS = [
@@ -299,5 +300,6 @@ export const INSTANCE_COMMANDS = [
   AddWritabilityToMetadataFastInstanceCommand,
   AddUninstallLogicFunctionIdToApplicationFastInstanceCommand,
   BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand,
+  AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand,
   CreateTimelineActivityRuleCoreTableFastInstanceCommand,
 ];

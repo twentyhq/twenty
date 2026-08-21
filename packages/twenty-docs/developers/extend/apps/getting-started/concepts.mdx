@@ -54,9 +54,9 @@ your-app/
 
 ## Sandboxing
 
-- **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, scoped to the app's role permissions.
+- **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, which acts either as the person who triggered the run or as the app itself. See [Whose access a call uses](/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 - **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes). They communicate with Twenty via a message-passing host API.
-- **Permissions** are enforced at the API level. The runtime token (`TWENTY_APP_ACCESS_TOKEN`) is derived from the role defined in `defineApplication()`.
+- **Permissions** are enforced at the API level. Two runtime tokens are injected, both derived from the role declared with `defineApplicationRole()`; the default one is narrowed further to what the triggering person can do whenever someone is behind the run.
 
 ## App lifecycle
 

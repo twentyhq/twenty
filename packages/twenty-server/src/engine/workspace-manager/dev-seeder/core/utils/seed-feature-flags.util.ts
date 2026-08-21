@@ -10,7 +10,6 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED]: true,
   [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: true,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
-  [FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED]: false,
   [FeatureFlagKey.IS_TIMELINE_RULES_ENABLED]: true,
 };
 

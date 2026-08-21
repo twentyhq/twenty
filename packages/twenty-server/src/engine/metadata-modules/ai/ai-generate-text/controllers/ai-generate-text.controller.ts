@@ -22,6 +22,7 @@ import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/ai`)
@@ -69,16 +70,18 @@ export class AiGenerateTextController {
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
 
     try {
-      result = await generateText({
-        model: registeredModel.model,
-        system: body.systemPrompt,
-        prompt: body.userPrompt,
-        experimental_telemetry: buildAiTelemetry({
-          functionId: 'ai-generate-text',
-          workspaceId: workspace.id,
-          userWorkspaceId,
+      result = await withDedicatedAiTrace(() =>
+        generateText({
+          model: registeredModel.model,
+          system: body.systemPrompt,
+          prompt: body.userPrompt,
+          experimental_telemetry: buildAiTelemetry({
+            functionId: 'ai-generate-text',
+            workspaceId: workspace.id,
+            userWorkspaceId,
+          }),
         }),
-      });
+      );
 
       return {
         text: result.text,

@@ -123,6 +123,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   uninstallLogicFunctionId: string | null;
 
+  @Column({ nullable: true, type: 'timestamptz' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.33.0_AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand_1787151824000',
+  })
+  uninstallHookCompletedForRequestedAt: Date | null;
+
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 
