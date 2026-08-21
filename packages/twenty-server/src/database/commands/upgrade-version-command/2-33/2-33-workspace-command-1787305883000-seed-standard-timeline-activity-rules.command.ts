@@ -14,7 +14,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_TIMELINE_ACTIVITY_RULES } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-timeline-activity-rules.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.33.0', 1787125100000)
+@RegisteredWorkspaceCommand('2.33.0', 1787305883000)
 @Command({
   name: 'upgrade:2-33:seed-standard-timeline-activity-rules',
   description:
