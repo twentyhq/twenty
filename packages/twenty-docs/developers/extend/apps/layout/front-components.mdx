@@ -794,14 +794,14 @@ Elements can measure themselves: the host mirrors geometry into the sandbox, so 
 Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
 
 <Note>
-`requestAnimationFrame` works, with or without the `window.` prefix.
+`requestAnimationFrame` and `cancelAnimationFrame` work, with or without the `window.` prefix. Only Chrome runs a real animation frame inside a worker; Firefox and Safari fall back to a 16 ms timer, so callbacks are not aligned to the display refresh and have no ordering relationship with the host's geometry push. Use it to defer a re-read past a write, not to drive a smooth animation, and prefer CSS transitions, which run on the host.
 </Note>
 
 ### Global scope
 
 The worker's own natives are also aliased onto `window`, so they work with or without the `window.` prefix: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` and `TextEncoder`/`TextDecoder`.
 
-`requestIdleCallback` is backed by a timer rather than real idle detection: the callback runs almost immediately and its deadline advertises a small fixed budget, so treat it as "soon", not as "when the thread is free". A `timeout` option is honoured.
+`requestIdleCallback` and `cancelIdleCallback` are backed by a timer rather than real idle detection: the callback runs about a frame later and its deadline advertises a fixed 5 ms budget, against 50 ms natively, so treat it as "soon", not as "when the thread is free". Each callback gets its own budget, so `timeRemaining()` never winds down across an idle period. `timeout` is not a deadline: it can only pull the callback earlier than that frame, and `didTimeout` is true only when the callback really did run at or after the timeout you asked for. As in the spec, `timeout: 0` means "no timeout".
 
 ### DOM access
 
@@ -830,7 +830,7 @@ Each element forwards its own properties to the host DOM (`href` on `a`, `src`/`
 
 Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` element, is injected into the host page's `head` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
 
-`CSS.escape()` works, and `CSS.supports()` answers `true` for custom properties and for a short allowlist of common layout properties (`display`, `position`, `flex-wrap`, ...). Everything else returns `false`, including values the browser supports and any condition combining `and`, `or` or `not`, so write the CSS directly instead of feature-detecting it.
+`CSS.supports()` is a stub: it answers `true` for custom properties and for a short table of exact property/value pairs (`display: flex`, `position: sticky`, `container-type: inline-size`, ...), so `display: ruby` is `false` even though `display: flex` is `true`. Everything else returns `false`, including values the browser supports (`gap`, `aspect-ratio`) and any condition combining `and`, `or` or `not`, so write the CSS directly instead of feature-detecting it. `CSS.escape()` follows the spec, but the sandbox's own `querySelector` does not understand the escapes it emits, so use it for stylesheet text you hand to the host, not to build a selector you then query.
 
 ### Storage and network
 
@@ -850,5 +850,5 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 
 - **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Their web equivalents are available, see [global scope](#global-scope).
+- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
