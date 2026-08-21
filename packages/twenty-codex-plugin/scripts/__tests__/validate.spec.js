@@ -111,6 +111,27 @@ test('assertCliGuidanceSplit passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertCliGuidanceSplit), []);
 });
 
+test('assertCliGuidanceSplit catches deprecated dev --once guidance', () => {
+  const cliAndSyncPath = path.join(
+    PLUGIN_ROOT,
+    'references',
+    'manage-app',
+    'cli-and-sync.md',
+  );
+
+  withFileMutation(
+    cliAndSyncPath,
+    (contents) => contents.replace('yarn twenty apply', 'yarn twenty dev --once'),
+    () => {
+      const failures = collectFailures(crossDocContracts.assertCliGuidanceSplit);
+
+      assert.ok(
+        failures.some((failure) => failure.includes('yarn twenty dev --once')),
+      );
+    },
+  );
+});
+
 test('assertTestingGuidance passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertTestingGuidance), []);
 });
