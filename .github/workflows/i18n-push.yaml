@@ -1,5 +1,9 @@
 name: 'Push translations to Crowdin'
 
+# Only extract when app source changes. Ignore locale catalogs so merging an
+# i18n PR does not re-run extract (Lingui and Crowdin wrap the same strings
+# differently). Website-only pushes used to trigger this too.
+
 permissions:
   contents: write
   pull-requests: write
@@ -9,6 +13,15 @@ on:
   workflow_call:
   push:
     branches: ['main']
+    paths:
+      - 'packages/twenty-front/**'
+      - '!packages/twenty-front/src/locales/**'
+      - 'packages/twenty-server/**'
+      - '!packages/twenty-server/src/engine/core-modules/i18n/locales/**'
+      - 'packages/twenty-emails/**'
+      - '!packages/twenty-emails/src/locales/**'
+      - '.github/crowdin-app.yml'
+      - '.github/workflows/i18n-push.yaml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}

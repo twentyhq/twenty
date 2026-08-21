@@ -93,6 +93,16 @@ jobs:
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      # Crowdin rewrites multiline msgid/msgstr wrapping. Re-extract without
+      # --clean so catalogs match Lingui's format without dropping strings
+      # Crowdin just filled. Otherwise the next extract pass opens a wrapping-only PR.
+      - name: Normalize PO wrapping to Lingui format
+        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          yarn workspace twenty-server exec lingui extract --overwrite
+          yarn workspace twenty-emails exec lingui extract --overwrite
+          yarn workspace twenty-front exec lingui extract --overwrite
+
       - name: Compile translations
         id: compile_translations
         run: |

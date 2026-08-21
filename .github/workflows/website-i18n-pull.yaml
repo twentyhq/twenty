@@ -87,6 +87,13 @@ jobs:
       - name: Fix file permissions
         run: sudo chown -R runner:docker .
 
+      # Crowdin rewrites multiline msgid/msgstr wrapping. Re-extract without
+      # --clean so catalogs match Lingui's format without dropping strings
+      # Crowdin just filled. Otherwise the next extract pass opens a wrapping-only PR.
+      - name: Normalize PO wrapping to Lingui format
+        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: yarn workspace twenty-website exec lingui extract --overwrite
+
       - name: Compile website translations
         id: compile_translations
         run: |
