@@ -182,31 +182,17 @@ export class FieldMetadataResolver {
     context: { loaders: IDataloaders } & I18nContext,
     workspaceId: string,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
-
-    const standardApplicationId =
-      await context.loaders.standardApplicationIdLoader.load({ workspaceId });
-
-    const isStandardApp = fieldMetadata.applicationId === standardApplicationId;
-
-    const applicationCatalog =
-      await context.loaders.applicationTranslationCatalogLoader.load({
-        applicationId: fieldMetadata.applicationId,
-        workspaceId,
-        locale: context.req.locale,
-      });
-
     return resolveEffectiveEntityProperty({
       metadataName: 'fieldMetadata',
       baseValue: fieldMetadata[labelKey],
       overrides: fieldMetadata.overrides,
       property: labelKey,
-      i18nContext: {
+      i18nContext: await this.i18nService.buildEffectiveEntityI18nContext({
+        applicationId: fieldMetadata.applicationId ?? undefined,
+        loaders: context.loaders,
         locale: context.req.locale,
-        i18nInstance: i18n,
-        isStandardApp,
-        applicationCatalog,
-      },
+        workspaceId,
+      }),
     });
   }
 
