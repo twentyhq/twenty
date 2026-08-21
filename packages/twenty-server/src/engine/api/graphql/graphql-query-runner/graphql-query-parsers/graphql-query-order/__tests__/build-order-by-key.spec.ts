@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   buildOrderByColumnExpression,
+  renderOrderByColumnSql,
   shouldCastToText,
   shouldUseCaseInsensitiveOrder,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
@@ -37,9 +38,9 @@ describe('shouldUseCaseInsensitiveOrder', () => {
     expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.SELECT)).toBe(true);
   });
 
-  it('should return true for MULTI_SELECT fields', () => {
+  it('should return false for MULTI_SELECT fields', () => {
     expect(shouldUseCaseInsensitiveOrder(FieldMetadataType.MULTI_SELECT)).toBe(
-      true,
+      false,
     );
   });
 
@@ -69,8 +70,8 @@ describe('shouldCastToText', () => {
     expect(shouldCastToText(FieldMetadataType.SELECT)).toBe(true);
   });
 
-  it('should return true for MULTI_SELECT fields', () => {
-    expect(shouldCastToText(FieldMetadataType.MULTI_SELECT)).toBe(true);
+  it('should return false for MULTI_SELECT fields', () => {
+    expect(shouldCastToText(FieldMetadataType.MULTI_SELECT)).toBe(false);
   });
 
   it('should return false for TEXT fields', () => {
@@ -83,5 +84,39 @@ describe('shouldCastToText', () => {
 
   it('should return false for DATE_TIME fields', () => {
     expect(shouldCastToText(FieldMetadataType.DATE_TIME)).toBe(false);
+  });
+});
+
+describe('renderOrderByColumnSql', () => {
+  it('should quote a bare alias.column expression', () => {
+    expect(renderOrderByColumnSql('company.name', {})).toBe('"company"."name"');
+  });
+
+  it('should quote a column expression without an alias', () => {
+    expect(renderOrderByColumnSql('name', {})).toBe('"name"');
+  });
+
+  it('should wrap a case-insensitively ordered column in LOWER()', () => {
+    expect(renderOrderByColumnSql('company.name', { useLower: true })).toBe(
+      'LOWER("company"."name")',
+    );
+  });
+
+  it('should cast to text before lowercasing an enum column', () => {
+    expect(
+      renderOrderByColumnSql('opportunity.stage', {
+        useLower: true,
+        castToText: true,
+      }),
+    ).toBe('LOWER("opportunity"."stage"::text)');
+  });
+
+  it('should leave an already rendered expression alone', () => {
+    expect(renderOrderByColumnSql('COUNT("opportunity"."id")', {})).toBe(
+      'COUNT("opportunity"."id")',
+    );
+    expect(renderOrderByColumnSql('"opportunity"."stage"', {})).toBe(
+      '"opportunity"."stage"',
+    );
   });
 });
