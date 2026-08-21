@@ -5,9 +5,9 @@ import { resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { getActingUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-acting-user-from-auth-context.util';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -62,12 +62,7 @@ export class CodeWorkflowAction implements WorkflowAction {
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
-      ...(isUserAuthContext(authContext)
-        ? {
-            actingUserId: authContext.user.id,
-            actingUserWorkspaceId: authContext.userWorkspaceId,
-          }
-        : {}),
+      ...getActingUserFromAuthContext(authContext),
     });
 
     await this.persistStepLog({

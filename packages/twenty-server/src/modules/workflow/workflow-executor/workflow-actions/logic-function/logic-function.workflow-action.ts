@@ -4,9 +4,9 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { getActingUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-acting-user-from-auth-context.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
@@ -86,12 +86,7 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
-      ...(isUserAuthContext(authContext)
-        ? {
-            actingUserId: authContext.user.id,
-            actingUserWorkspaceId: authContext.userWorkspaceId,
-          }
-        : {}),
+      ...getActingUserFromAuthContext(authContext),
     });
 
     if (result.error) {
