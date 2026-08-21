@@ -1923,8 +1923,8 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     overrides: {
-      toCompare: false,
-      toStringify: false,
+      toCompare: true,
+      toStringify: true,
       universalProperty: undefined,
     },
     createdAt: {

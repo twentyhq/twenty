@@ -322,6 +322,35 @@ describe('timeline activity rule metadata API (integration)', () => {
     );
   });
 
+  it('should reject a self rule on an object that records no timeline activity', async () => {
+    const { objects } = await findManyObjectMetadata({
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id nameSingular isSystem',
+    });
+
+    const systemObjectMetadata = objects.find(
+      (objectMetadata) => objectMetadata.isSystem === true,
+    );
+
+    expect(systemObjectMetadata).toBeDefined();
+
+    const objectMetadataId = (
+      systemObjectMetadata as { id: string; nameSingular: string }
+    ).id;
+
+    const response = await makeMetadataAPIRequest({
+      query: UPSERT_TIMELINE_ACTIVITY_RULE,
+      variables: { input: { objectMetadataId, isActive: false } },
+    });
+
+    // The rejection has to land before the migration runs. A row that is stored
+    // and then fails its read back reports 'not found after upsert' instead,
+    // which is how this used to leave an invisible row behind.
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'does not record timeline activities',
+    );
+  });
+
   it('should reject an unknown action', async () => {
     const noteRule = await findNoteRule();
 
