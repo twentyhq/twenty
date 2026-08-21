@@ -37,6 +37,10 @@ export const transformEventBatchToEventPayloads = ({
         logicFunctionId: logicFunction.id,
         workspaceId: logicFunction.workspaceId,
         payload,
+        ...(isDefined(event.userId) ? { actingUserId: event.userId } : {}),
+        ...(isDefined(event.userWorkspaceId)
+          ? { actingUserWorkspaceId: event.userWorkspaceId }
+          : {}),
       });
     }
   }

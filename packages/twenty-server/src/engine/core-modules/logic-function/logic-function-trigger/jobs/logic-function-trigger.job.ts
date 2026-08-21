@@ -20,6 +20,8 @@ export type LogicFunctionTriggerJobData = {
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;
+  actingUserId?: string;
+  actingUserWorkspaceId?: string;
   applicationRetryCount?: number;
 };
 
@@ -61,7 +63,9 @@ export class LogicFunctionTriggerJob {
             payload: logicFunctionPayload.payload ?? {},
             userId: logicFunctionPayload.userId,
             userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-            context: { retryCount, maxRetries },
+            actingUserId: logicFunctionPayload.actingUserId,
+            actingUserWorkspaceId: logicFunctionPayload.actingUserWorkspaceId,
+            retry: { retryCount, maxRetries },
           });
 
         if (

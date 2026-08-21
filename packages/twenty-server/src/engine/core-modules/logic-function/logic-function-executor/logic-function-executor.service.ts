@@ -7,7 +7,10 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
-import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+import {
+  type LogicFunctionExecutionContext,
+  type LogicFunctionRetryContext,
+} from 'twenty-shared/logic-function';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -58,6 +61,7 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { resolveActingWorkspaceMemberId } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-acting-workspace-member-id.util';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {
@@ -109,16 +113,22 @@ export class LogicFunctionExecutorService {
     payload,
     userId,
     userWorkspaceId,
+    actingUserId,
+    actingUserWorkspaceId,
     executionMode,
-    context = { retryCount: 0, maxRetries: 0 },
+    retry = { retryCount: 0, maxRetries: 0 },
   }: {
     logicFunctionId: string;
     workspaceId: string;
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
+    // The person the run is for, when they are not bound to the token. Reaches
+    // the handler's context and never widens what the run may do.
+    actingUserId?: string;
+    actingUserWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
-    context?: LogicFunctionExecutionContext;
+    retry?: LogicFunctionRetryContext;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -138,6 +148,13 @@ export class LogicFunctionExecutorService {
       applicationVariableMaps,
       userId,
       userWorkspaceId,
+    });
+
+    const context = await this.buildExecutionContext({
+      workspaceId,
+      retry,
+      userId: userId ?? actingUserId,
+      userWorkspaceId: userWorkspaceId ?? actingUserWorkspaceId,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -320,6 +337,42 @@ export class LogicFunctionExecutorService {
     }
 
     return { flatApplication, flatLogicFunction, applicationVariableMaps };
+  }
+
+  private async buildExecutionContext({
+    workspaceId,
+    retry,
+    userId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    retry: LogicFunctionRetryContext;
+    userId: string | undefined;
+    userWorkspaceId: string | undefined;
+  }): Promise<LogicFunctionExecutionContext> {
+    return {
+      ...retry,
+      workspaceId,
+      userWorkspaceId: userWorkspaceId ?? null,
+      workspaceMemberId: isDefined(userId)
+        ? await this.resolveWorkspaceMemberId({ workspaceId, userId })
+        : null,
+    };
+  }
+
+  private async resolveWorkspaceMemberId({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<string | null> {
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return resolveActingWorkspaceMemberId({ userId, flatWorkspaceMemberMaps });
   }
 
   private async getExecutionEnvVariables({

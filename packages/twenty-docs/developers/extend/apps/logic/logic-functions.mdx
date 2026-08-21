@@ -447,6 +447,39 @@ const handler = async (event: PersonDestroyedEvent) => {
 };
 ```
 
+#### Execution context
+
+Every handler receives a second argument describing the run itself, whatever triggered it. Where the first argument changes shape per trigger, this one does not:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `workspaceId` | `string` | The workspace the run belongs to. |
+| `userWorkspaceId` | `string \| null` | The person who triggered the run, as their membership of this workspace. |
+| `workspaceMemberId` | `string \| null` | The same person as a workspace member record, which is what you link records to. |
+| `retryCount` | `number` | `0` on the first attempt. See [Background jobs](/developers/extend/apps/logic/background-jobs). |
+| `maxRetries` | `number` | Upper bound on application-requested retries. |
+
+`userWorkspaceId` and `workspaceMemberId` are `null` when nobody triggered the run: cron schedules, install hooks and unauthenticated webhooks have no person behind them. They are also `null` when the person has no workspace member record, or theirs has been deleted.
+
+<Note>
+**The context tells you who triggered the run, not what the run may do.** A logic function always acts with its application's own access, whoever triggered it. Use these ids to attribute records or to enforce your own business rules, not as a substitute for permissions.
+</Note>
+
 #### Exposing a function as an AI tool or workflow action
 
 Logic functions can be exposed on two surfaces, each with its own trigger:
