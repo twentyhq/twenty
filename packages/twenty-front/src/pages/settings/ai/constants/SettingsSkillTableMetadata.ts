@@ -21,6 +21,6 @@ export const SETTINGS_SKILL_TABLE_METADATA: TableMetadata<Skill> = {
   ],
   initialSort: {
     fieldName: 'name',
-    orderBy: 'AscNullsLast',
+    direction: 'asc',
   },
 };

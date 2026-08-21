@@ -1,6 +1,6 @@
-import { type OrderBy } from 'twenty-shared/types';
+export type TableSortDirection = 'asc' | 'desc';
 
 export type TableSortValue = {
   fieldName: string;
-  orderBy: OrderBy;
+  direction: TableSortDirection;
 };
