@@ -1,4 +1,8 @@
-import { type MarketplacePartner } from './marketplace-partner';
+import {
+  PARTNER_TIERS,
+  type PartnerTier,
+  type RankedMarketplacePartner,
+} from './marketplace-partner';
 import { type CurrencyValue, type LinkValue } from './marketplace-api-types';
 import { linkUrl } from './link-url';
 import { microsToUsd } from './micros-to-usd';
@@ -23,6 +27,11 @@ type ApiPartner = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  partnerTier: PartnerTier | null;
+  serviceCount: number;
+  approvedCaseStudyCount: number;
+  approvedCaseStudyWithCoverCount: number;
+  rotationKey: string;
 };
 
 type ApiResponse = {
@@ -30,19 +39,72 @@ type ApiResponse = {
   ok?: boolean;
 };
 
+const RANKING_COUNTS = [
+  'serviceCount',
+  'approvedCaseStudyCount',
+  'approvedCaseStudyWithCoverCount',
+] as const;
+
+// The ranking tuple carries no defaults on purpose. A missing count turns the
+// score into NaN, which the comparator silently skips, so a partial payload
+// would seat a partner in a slot it never earned.
+const assertRankingContract = (apiPartner: ApiPartner): void => {
+  if (
+    typeof apiPartner.rotationKey !== 'string' ||
+    apiPartner.rotationKey.length === 0
+  ) {
+    throw new Error(
+      `partners API returned no rotationKey for "${apiPartner.slug}" (${JSON.stringify(apiPartner.rotationKey)})`,
+    );
+  }
+
+  const invalidCount = RANKING_COUNTS.find(
+    (count) => !Number.isInteger(apiPartner[count]) || apiPartner[count] < 0,
+  );
+
+  if (invalidCount !== undefined) {
+    throw new Error(
+      `partners API returned an invalid ${invalidCount} for "${apiPartner.slug}" (${JSON.stringify(apiPartner[invalidCount])})`,
+    );
+  }
+};
+
+// partnerTier is a CRM select the API owns, so it can gain values this build
+// never heard of. An unknown one ranks as unset instead of breaking the tier
+// comparison.
+const readPartnerTier = (value: unknown): PartnerTier | null =>
+  PARTNER_TIERS.find((tier) => tier === value) ?? null;
+
 // The live source: normalize the CRM payload into MarketplacePartner. Degrades
-// to [] on any failure (matching the old getPartners) so the page renders the
-// empty state rather than crashing.
+// to [] when the API is unreachable or shapeless (matching the old getPartners)
+// so the page renders the empty state rather than crashing. A payload that
+// breaks the ranking contract throws instead — see assertRankingContract.
 export async function fetchLiveMarketplacePartners(): Promise<
-  readonly MarketplacePartner[]
+  readonly RankedMarketplacePartner[]
 > {
+  let data: ApiResponse;
+
   try {
-    const data = (await partnersApiFetch('/s/partners')) as ApiResponse;
-    const partners = data.partners;
-    if (!Array.isArray(partners)) {
-      throw new Error('partners API response missing partners array');
-    }
-    return partners.map((apiPartner) => ({
+    data = (await partnersApiFetch('/s/partners')) as ApiResponse;
+  } catch (error) {
+    console.error('[partners-marketplace] live fetch failed:', error);
+    return [];
+  }
+
+  const partners = data.partners;
+
+  if (!Array.isArray(partners)) {
+    console.error(
+      '[partners-marketplace] live fetch failed:',
+      new Error('partners API response missing partners array'),
+    );
+    return [];
+  }
+
+  return partners.map((apiPartner) => {
+    assertRankingContract(apiPartner);
+
+    return {
       slug: apiPartner.slug,
       name: apiPartner.name,
       description: apiPartner.introduction ?? '',
@@ -65,9 +127,12 @@ export async function fetchLiveMarketplacePartners(): Promise<
       services: [],
       portfolio: [],
       clients: [],
-    }));
-  } catch (error) {
-    console.error('[partners-marketplace] live fetch failed:', error);
-    return [];
-  }
+      partnerTier: readPartnerTier(apiPartner.partnerTier),
+      serviceCount: apiPartner.serviceCount,
+      approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,
+      approvedCaseStudyWithCoverCount:
+        apiPartner.approvedCaseStudyWithCoverCount,
+      rotationKey: apiPartner.rotationKey,
+    };
+  });
 }
