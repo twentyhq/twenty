@@ -13,7 +13,6 @@ import {
   PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import {
-  APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
   APPLICATION_NAME_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_PARTNER_FIELD_ID,
@@ -433,11 +432,6 @@ export default defineRole({
     {
       objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
-      canUpdateFieldValue: false,
-    },
-    {
-      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
       canUpdateFieldValue: false,
     },
   ],

@@ -134,7 +134,6 @@ describe('on-application-created', () => {
     expect(args.data.partnerId).toBe(PARTNER_ID);
     expect(args.data.partnerUserId).toBe(MEMBER_ID);
     expect(args.data.state).toBe('APPLIED');
-    expect(typeof args.data.lastActivityAt).toBe('string');
   });
 
   it('stamps normally when no duplicate exists for the same opportunity and partner', async () => {

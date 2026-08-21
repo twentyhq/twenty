@@ -41,7 +41,7 @@ describe('on-opportunity-partner-won cascade', () => {
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('on assign: winner -> WON, other active apps -> BACKUP, DECLINED untouched', async () => {
+  it('on assign: winner -> WON, every other application -> DECLINED', async () => {
     queryMock.mockResolvedValue(
       apps(
         { id: 'app-win', partnerId: P_WIN, state: 'APPLIED' },
@@ -52,23 +52,32 @@ describe('on-opportunity-partner-won cascade', () => {
     await handler(event({ id: OPP, partnerId: P_WIN }, ['partnerId']));
     const updates = stateUpdates();
     expect(updates).toContainEqual({ id: 'app-win', state: 'WON' });
-    expect(updates).toContainEqual({ id: 'app-other', state: 'BACKUP' });
+    expect(updates).toContainEqual({ id: 'app-other', state: 'DECLINED' });
     expect(updates.find((u) => u.id === 'app-declined')).toBeUndefined();
   });
 
-  it('on unassign: WON and BACKUP -> APPLIED, DECLINED untouched', async () => {
+  it('on assign: a winner sitting at DECLINED still moves to WON (no longer frozen)', async () => {
+    queryMock.mockResolvedValue(
+      apps({ id: 'app-win-was-declined', partnerId: P_WIN, state: 'DECLINED' }),
+    );
+    await handler(event({ id: OPP, partnerId: P_WIN }, ['partnerId']));
+    const updates = stateUpdates();
+    expect(updates).toContainEqual({ id: 'app-win-was-declined', state: 'WON' });
+  });
+
+  it('on unassign: WON and DECLINED -> APPLIED, BACKUP untouched', async () => {
     queryMock.mockResolvedValue(
       apps(
         { id: 'app-win', partnerId: P_WIN, state: 'WON' },
-        { id: 'app-bk', partnerId: P_OTHER, state: 'BACKUP' },
-        { id: 'app-declined', partnerId: 'p3', state: 'DECLINED' },
+        { id: 'app-declined', partnerId: P_OTHER, state: 'DECLINED' },
+        { id: 'app-bk', partnerId: 'p3', state: 'BACKUP' },
       ),
     );
     await handler(event({ id: OPP, partnerId: null }, ['partnerId']));
     const updates = stateUpdates();
     expect(updates).toContainEqual({ id: 'app-win', state: 'APPLIED' });
-    expect(updates).toContainEqual({ id: 'app-bk', state: 'APPLIED' });
-    expect(updates.find((u) => u.id === 'app-declined')).toBeUndefined();
+    expect(updates).toContainEqual({ id: 'app-declined', state: 'APPLIED' });
+    expect(updates.find((u) => u.id === 'app-bk')).toBeUndefined();
   });
 
   it('does not rewrite an app already in its target state', async () => {
