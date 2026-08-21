@@ -81,7 +81,8 @@ const handler = async (event: RoutePayload): Promise<Response> => {
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
-  const { documents } = await new CoreApiClient().query({
+  // Public route, so nobody triggered this run: act as the application.
+  const { documents } = await new CoreApiClient({ runAs: 'application' }).query({
     documents: {
       __args: { filter: { id: { eq: documentId } }, first: 1 },
       edges: { node: { id: true, name: true, content: true } },

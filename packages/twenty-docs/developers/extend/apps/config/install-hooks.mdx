@@ -44,7 +44,7 @@ Each app may define **at most one** of each hook (pre-install, post-install, uni
 - The config is a `defineLogicFunction` config minus the trigger settings, plus `shouldRunOnVersionUpgrade`.
 - **When it runs**: fresh installs only, by default. Set `shouldRunOnVersionUpgrade: true` to also run on upgrades. Use `previousVersion` / `newVersion` to branch on the upgrade path.
 - **Idempotency matters**: async post-install may be retried, and either hook re-runs on upgrades when `shouldRunOnVersionUpgrade` is on.
-- The usual logic-function environment (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) is injected, so you can call the Twenty API with your app's token.
+- The usual logic-function environment (`APPLICATION_ID`, `API_URL`) is injected, so you can call the Twenty API with your app's token. Nobody triggers an install, so there is no person to act as: build every client with `runAs: 'application'`. See [Whose access a call uses](/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 - The hook is attached to the application manifest automatically at build time (`preInstallLogicFunction` / `postInstallLogicFunction`) — nothing to reference in [`defineApplication()`](/developers/extend/apps/config/application).
 - The default `timeoutSeconds` is 300 to allow longer setup tasks like data seeding.
 - **Not executed in dev mode**: `yarn twenty dev` skips the install flow and syncs files directly, so hooks never run there. Trigger them manually instead:
@@ -66,7 +66,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   if (previousVersion) return; // fresh installs only
 
-  const client = new CoreApiClient();
+  const client = new CoreApiClient({ runAs: 'application' });
   await client.mutation({
     createPostCard: {
       __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
@@ -110,7 +110,7 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
     return;
   }
 
-  const client = new CoreApiClient();
+  const client = new CoreApiClient({ runAs: 'application' });
   const { postCards } = await client.query({
     postCards: {
       __args: { filter: { notes: { isNot: null } } },
@@ -164,7 +164,7 @@ import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {
-  const client = new CoreApiClient();
+  const client = new CoreApiClient({ runAs: 'application' });
   const { meetingBots } = await client.query({
     meetingBots: { edges: { node: { id: true, externalBotId: true } } },
   });
