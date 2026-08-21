@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -59,12 +60,14 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = useMemo(() => {
-    const searchTerm = normalizeSearchText(searchFilter);
+  const filterOptions = (searchText: string) => {
+    const searchTerm = normalizeSearchText(searchText);
     return options.filter((option) => {
       return normalizeSearchText(option.label).includes(searchTerm);
     });
-  }, [options, searchFilter]);
+  };
+
+  const filteredOptionsInDropDown = filterOptions(searchFilter);
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -113,6 +116,7 @@ export const MultiSelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       focusId={focusId}
+      shouldPreselectFirstItem={isNonEmptyString(searchFilter)}
     >
       <DropdownContent
         ref={containerRef}

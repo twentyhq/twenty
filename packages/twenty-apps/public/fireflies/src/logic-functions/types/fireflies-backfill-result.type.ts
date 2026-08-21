@@ -1,4 +1,4 @@
-import type { FIREFLIES_BACKFILL_OUTCOME } from 'src/logic-functions/constants/fireflies-backfill-outcome.constant';
+import type { FIREFLIES_BACKFILL_OUTCOME } from 'src/constants/fireflies-backfill-outcome.constant';
 
 export type FirefliesBackfillResult =
   | {

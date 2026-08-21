@@ -35,6 +35,7 @@ const CREATABLE_VIEW_TYPES = [
   ViewType.CALENDAR,
   ViewType.TABLE_WIDGET,
   ViewType.KANBAN_WIDGET,
+  ViewType.LIST_WIDGET,
   ViewType.CALENDAR_WIDGET,
 ] as const;
 
@@ -78,7 +79,7 @@ const CreateViewInputSchema = z.object({
     .optional()
     .default(ViewType.TABLE)
     .describe(
-      'View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.',
+      'View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.',
     ),
   visibility: z
     .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])

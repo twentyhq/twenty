@@ -13,7 +13,6 @@ export const SettingsGraphQLPlayground = () => {
   const navigateSettings = useNavigateSettings();
   const { schema: urlSchema = 'core' } = useParams<{ schema: string }>();
 
-  // Convert lowercase URL parameter to PlaygroundSchemas enum
   const schema =
     urlSchema === 'metadata'
       ? PlaygroundSchemas.METADATA

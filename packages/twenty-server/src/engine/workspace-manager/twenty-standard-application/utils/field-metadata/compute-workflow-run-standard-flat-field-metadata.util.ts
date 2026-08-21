@@ -32,8 +32,10 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
@@ -51,8 +53,12 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
@@ -71,8 +77,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
@@ -91,8 +104,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
@@ -110,8 +130,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Name`),
-      description: i18nLabel(msg`Name of the workflow run`),
+      label: i18nLabel(
+        msg({ message: `Name`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Name of the workflow run`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconSettingsAutomation',
       isNullable: true,
       isUIEditable: false,
@@ -127,8 +154,18 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'enqueuedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Workflow run enqueued at`),
-      description: i18nLabel(msg`Workflow run enqueued at`),
+      label: i18nLabel(
+        msg({
+          message: `Workflow run enqueued at`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow run enqueued at`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHistory',
       isNullable: true,
       isUIEditable: false,
@@ -144,8 +181,18 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'startedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Workflow run started at`),
-      description: i18nLabel(msg`Workflow run started at`),
+      label: i18nLabel(
+        msg({
+          message: `Workflow run started at`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow run started at`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHistory',
       isNullable: true,
       isUIEditable: false,
@@ -161,8 +208,18 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'endedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Workflow run ended at`),
-      description: i18nLabel(msg`Workflow run ended at`),
+      label: i18nLabel(
+        msg({
+          message: `Workflow run ended at`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow run ended at`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHistory',
       isNullable: true,
       isUIEditable: false,
@@ -178,8 +235,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'status',
       type: FieldMetadataType.SELECT,
-      label: i18nLabel(msg`Workflow run status`),
-      description: i18nLabel(msg`Workflow run status`),
+      label: i18nLabel(
+        msg({ message: `Workflow run status`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow run status`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconStatusChange',
       isNullable: false,
       isUIEditable: false,
@@ -188,49 +252,63 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
         {
           id: '20202020-2ec6-40d8-b9e1-1b1e567bcca9',
           value: 'NOT_STARTED',
-          label: i18nLabel(msg`Not started`),
+          label: i18nLabel(
+            msg({ message: `Not started`, context: 'fieldMetadata.label' }),
+          ),
           position: 0,
           color: 'gray',
         },
         {
           id: '20202020-3166-46be-995a-67cb1f4c41d5',
           value: 'RUNNING',
-          label: i18nLabel(msg`Running`),
+          label: i18nLabel(
+            msg({ message: `Running`, context: 'fieldMetadata.label' }),
+          ),
           position: 1,
           color: 'yellow',
         },
         {
           id: '20202020-cde8-4fb6-840a-2fdc4f021b0c',
           value: 'COMPLETED',
-          label: i18nLabel(msg`Completed`),
+          label: i18nLabel(
+            msg({ message: `Completed`, context: 'fieldMetadata.label' }),
+          ),
           position: 2,
           color: 'green',
         },
         {
           id: '20202020-fb77-41c7-bf7c-9be97cce805e',
           value: 'FAILED',
-          label: i18nLabel(msg`Failed`),
+          label: i18nLabel(
+            msg({ message: `Failed`, context: 'fieldMetadata.label' }),
+          ),
           position: 3,
           color: 'red',
         },
         {
           id: '20202020-c518-4c95-8255-82a05739c88d',
           value: 'ENQUEUED',
-          label: i18nLabel(msg`Enqueued`),
+          label: i18nLabel(
+            msg({ message: `Enqueued`, context: 'fieldMetadata.label' }),
+          ),
           position: 4,
           color: 'blue',
         },
         {
           id: '20202020-e8df-4314-829d-165e296c4eb6',
           value: 'STOPPING',
-          label: i18nLabel(msg`Stopping`),
+          label: i18nLabel(
+            msg({ message: `Stopping`, context: 'fieldMetadata.label' }),
+          ),
           position: 5,
           color: 'orange',
         },
         {
           id: '20202020-729b-44f9-a9c7-0bf401a0b51c',
           value: 'STOPPED',
-          label: i18nLabel(msg`Stopped`),
+          label: i18nLabel(
+            msg({ message: `Stopped`, context: 'fieldMetadata.label' }),
+          ),
           position: 6,
           color: 'gray',
         },
@@ -247,8 +325,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Executed by`),
-      description: i18nLabel(msg`The executor of the workflow`),
+      label: i18nLabel(
+        msg({ message: `Executed by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The executor of the workflow`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
       isNullable: false,
@@ -270,9 +355,14 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
@@ -295,8 +385,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'state',
       type: FieldMetadataType.RAW_JSON,
-      label: i18nLabel(msg`State`),
-      description: i18nLabel(msg`State of the workflow run`),
+      label: i18nLabel(
+        msg({ message: `State`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `State of the workflow run`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isNullable: false,
       isUIEditable: false,
@@ -312,9 +409,14 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'stepLogs',
       type: FieldMetadataType.RAW_JSON,
-      label: i18nLabel(msg`Step logs`),
+      label: i18nLabel(
+        msg({ message: `Step logs`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`Per-step observability payload (token usage, tool calls, log entries)`,
+        msg({
+          message: `Per-step observability payload (token usage, tool calls, log entries)`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconTerminal2',
       isSystem: true,
@@ -332,8 +434,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Workflow run position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow run position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -351,8 +460,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
@@ -370,8 +486,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'workflowVersion',
-      label: i18nLabel(msg`Workflow version`),
-      description: i18nLabel(msg`Workflow version linked to the run.`),
+      label: i18nLabel(
+        msg({ message: `Workflow version`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow version linked to the run.`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconVersions',
       isNullable: false,
       isUIEditable: false,
@@ -395,8 +518,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'workflow',
-      label: i18nLabel(msg`Workflow`),
-      description: i18nLabel(msg`Workflow linked to the run.`),
+      label: i18nLabel(
+        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workflow linked to the run.`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconSettingsAutomation',
       isNullable: false,
       isUIEditable: false,
@@ -425,7 +555,12 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
           .label,
       ),
-      description: i18nLabel(msg`Timeline activities linked to the run`),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activities linked to the run`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
         .timelineActivity.icon,
       isNullable: false,

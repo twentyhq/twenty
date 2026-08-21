@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -19,15 +19,14 @@ export class MessagingMessageParticipantService {
   public async saveMessageParticipants(
     participants: ParticipantWithMessageId[],
     workspaceId: string,
-    transactionManager?: WorkspaceEntityManager,
+    transactionScope: WorkspaceTransactionScope,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageParticipantRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-            workspaceId,
+          transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
             'messageParticipant',
           );
 
@@ -63,17 +62,19 @@ export class MessagingMessageParticipantService {
             };
           });
 
-        const createdParticipants = await messageParticipantRepository.insert(
-          participantsToCreate,
-          transactionManager,
-        );
+        const { identifiers } =
+          await messageParticipantRepository.insert(participantsToCreate);
+
+        const createdParticipants = await messageParticipantRepository.find({
+          where: { id: In(identifiers.map(({ id }) => id)) },
+        });
 
         await this.matchParticipantService.matchParticipants({
-          participants: createdParticipants.raw ?? [],
+          participants: createdParticipants,
           objectMetadataName: 'messageParticipant',
-          transactionManager,
           matchWith: 'workspaceMemberAndPerson',
           workspaceId,
+          transactionScope,
         });
       },
       authContext,

@@ -32,7 +32,6 @@ export const Card = ({
             } as CSSProperties)
           : style
       }
-      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

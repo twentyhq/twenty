@@ -114,7 +114,7 @@ test('Create and update record', async ({ page }) => {
     recordFieldList.getByText('Work Preference').first().click({force: true});
 
     // Open full record page to get person ID
-    await page.getByRole('button', { name: /^Open/ }).click();
+    await page.getByRole('button', { name: 'Expand record' }).click();
     await page.waitForURL(/\/object\/person\//);
     const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];
 

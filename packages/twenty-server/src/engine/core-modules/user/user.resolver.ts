@@ -46,6 +46,7 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
+import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -505,6 +506,10 @@ export class UserResolver {
       update: input.update,
     });
 
+    assertWorkspaceMemberUpdateValuesAreValid({
+      update: input.update,
+    });
+
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () =>
         this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -575,7 +580,23 @@ export class UserResolver {
     if (!workspace) return null;
 
     return this.onboardingService.getOnboardingStatus({
-      user,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
+  async previousOnboardingStatus(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
+    return this.onboardingService.getPreviousReversibleOnboardingStatus({
+      userId: user.id,
       workspaceId: workspace.id,
     });
   }

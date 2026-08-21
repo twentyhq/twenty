@@ -19,6 +19,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
+import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -390,6 +391,21 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsDataModelFieldDescriptionForm
                 fieldMetadataItem={fieldMetadataItem}
                 disabled={readonly}
+              />
+            </Section>
+
+            <Section>
+              <H2Title
+                title={t`Translations`}
+                description={t`What each language displays for this field's labels`}
+              />
+              <SettingsTranslationsButton
+                target={{
+                  metadataName: 'fieldMetadata',
+                  recordId: fieldMetadataItem.id,
+                  objectMetadataId: objectMetadataItem.id,
+                  label: fieldMetadataItem.label,
+                }}
               />
             </Section>
 

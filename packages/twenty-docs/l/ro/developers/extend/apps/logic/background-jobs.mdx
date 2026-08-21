@@ -36,10 +36,10 @@ Funcția țintă primește `payload` ca argument al handlerului, exact ca orice 
 
 ## Opțiuni job
 
-| Opțiune      | Implicit | Interval                 | Ce face                                                                                                                                  |
-| ------------ | -------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`      | `0`–`10`                 | Încercări suplimentare dacă rularea aruncă o eroare. Crește această valoare numai pentru handleri care sunt siguri de rulat de două ori. |
-| `delayMs`    | `0`      | `0`–`604800000` (7 zile) | Așteaptă atât timp înainte ca rularea să devină eligibilă.                                                                               |
+| Opțiune      | Implicit | Interval                 | Ce face                                                                                                                                                                                           |
+| ------------ | -------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`      | `0`–`10`                 | Numărul total de încercări suplimentare în coadă. Reîncercările solicitate de aplicație sunt limitate la `3`. Crește această valoare numai pentru handleri care sunt siguri de rulat de două ori. |
+| `delayMs`    | `0`      | `0`–`604800000` (7 zile) | Așteaptă atât timp înainte ca rularea să devină eligibilă.                                                                                                                                        |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 Rularea pusă în coadă moștenește utilizatorul activ al funcției care a pus-o în coadă, astfel încât acționează cu aceleași permisiuni.
+
+## Reîncercați după un eșec temporar
+
+Twenty nu reîncearcă fiecare excepție din codul aplicației. O eroare obișnuită lansată este tratată ca un eșec permanent. Pentru un eșec temporar, o funcție logică pusă în coadă poate solicita până la trei reîncercări prin lansarea `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Lansați direct `RetryableLogicFunctionError` atunci când este posibil. Dacă o extindeți, nu îi înlocuiți `name`: Twenty recunoaște numele serializat `RetryableLogicFunctionError` în toate mediile de execuție.
+
+`retryCount` este `0` pentru execuția inițială și crește doar atunci când codul aplicației solicită o reîncercare. `maxRetries` este cel mult `3` și poate fi mai mic atunci când sarcina din coadă are o limită totală de reîncercări mai mică. Eșecurile platformei nu cresc `retryCount`, deși consumă în continuare bugetul general de siguranță al cozii.
+
+Coada întârzie încercările de reîncercare folosind backoff exponențial și jitter. Întârzierea exactă nu este garantată în mod intenționat, astfel că codul aplicației nu ar trebui să depindă de producerea unei reîncercări la un moment precis. După ce se atinge `maxRetries`, o altă `RetryableLogicFunctionError` este înregistrată ca eșecul final al aplicației, fără o altă execuție.
+
+<Warning>
+Reîncercările rulează din nou întregul handler și se pot produce după ce unele efecte secundare au reușit. Faceți handlerul idempotent înainte de a solicita reîncercări.
+</Warning>
 
 ## Folosește-l: parcurge pe pagini o sincronizare lungă
 
@@ -159,7 +193,3 @@ Ce îl face robust:
 * **Păstrează progresul înainte de a pune în coadă următoarea rulare**, astfel încât o verigă eșuată să repornească de la ultimul segment finalizat în loc de la început.
 * **Păstrează fiecare segment idempotent.** Reprocesarea unui segment după o reîncercare nu trebuie să ducă la scrieri duble — leagă scrierile de înregistrarea sau ID-ul extern pe care îl procesezi.
 * **Preferă un lanț segmentat în locul unei dispersări uriașe** atunci când munca lovește o terță parte cu limită de rată: un lanț cu `delayMs` își dozează singur ritmul, în timp ce mii de joburi puse în coadă deodată devin toate eligibile imediat.
-
-<Warning>
-Reîncercările rulează din nou întregul handler. Păstrează handlerii puși în coadă idempotenți înainte de a seta `retryLimit` peste `0`.
-</Warning>

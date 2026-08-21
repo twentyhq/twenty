@@ -25,12 +25,11 @@ test('Sign up with invite link via email', async ({
 
   await test.step('Go to invite link', async () => {
     await settingsPage.logout();
+    // Logging out replaces the document, which would interrupt the goto below.
+    await page.waitForURL('**/welcome');
 
-    await Promise.all([
-      expect(page.getByText(/Join .+ team/)).toBeVisible(),
-
-      page.goto(inviteLink),
-    ]);
+    await page.goto(inviteLink);
+    await expect(page.getByText(/Join .+ team/)).toBeVisible();
   });
 
   await test.step('Create new account', async () => {

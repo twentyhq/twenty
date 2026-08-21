@@ -1,4 +1,4 @@
-import { type PropertySchema } from './PropertySchema';
+import { type PropertySchema } from '@/types/PropertySchema';
 
 export const SVG_PRESENTATION_PROPERTIES: Record<string, PropertySchema> = {
   fill: { type: 'string', optional: true },

@@ -8,7 +8,7 @@ El SDK proporciona APIs programáticas que te permiten compilar, desplegar, inst
 
 ## Uso de paquetes de npm
 
-Puedes instalar y usar cualquier paquete de npm en tu aplicación. Tanto las funciones de lógica como los componentes de frontend se empaquetan con [esbuild](https://esbuild.github.io/), que incorpora todas las dependencias en la salida — no se necesitan `node_modules` en tiempo de ejecución.
+Puedes instalar y usar cualquier paquete de npm en tu aplicación. Tanto las funciones de lógica como los componentes de frontend se empaquetan con [esbuild](https://esbuild.github.io/), que incorpora sus dependencias en la salida — no se necesitan `node_modules` en tiempo de ejecución.
 
 ### Instalar un paquete
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Cómo funciona el empaquetado
 
-El paso de compilación usa esbuild para producir un solo archivo autónomo por función de lógica y por componente de frontend. Todos los paquetes importados se insertan en el bundle.
+El paso de compilación usa esbuild para producir un solo archivo autónomo por función de lógica y por componente de frontend. Los paquetes importados se integran en el paquete, excepto los que se enumeran a continuación.
 
 **Las funciones de lógica** se ejecutan en un entorno Node.js. Los módulos integrados de Node (`fs`, `path`, `crypto`, `http`, etc.) están disponibles y no necesitan instalarse.
 
 **Los componentes de frontend** se ejecutan en un Web Worker. Los módulos integrados de Node **no** están disponibles — solo paquetes de npm que funcionen en un entorno de navegador. Ten en cuenta que la sandbox implementa un DOM *parcial*, por lo que un paquete puede compilarse correctamente y aun así fallar en tiempo de ejecución; consulta [Limitaciones actuales](/l/es/developers/extend/apps/layout/front-components#current-limitations).
 
 Ambos entornos tienen `twenty-client-sdk/core` y `twenty-client-sdk/metadata` disponibles como módulos preproporcionados — estos no se incluyen en el bundle sino que se resuelven en tiempo de ejecución por el servidor.
+
+Los componentes de frontend también pueden compartir dependencias mediante un [paquete de dependencias compartidas](/l/es/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Los paquetes listados en el campo `frontComponentSharedDependencies` del package.json de la aplicación se construyen una sola vez en un archivo separado y se cargan desde allí en tiempo de ejecución en lugar de integrarse en cada componente, por lo que un componente que importa solo paquetes compartidos prácticamente no lleva código de dependencias propio.
 
 ## Configuración
 

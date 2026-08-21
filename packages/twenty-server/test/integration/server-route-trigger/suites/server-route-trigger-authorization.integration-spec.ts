@@ -5,8 +5,12 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
-import { type LogicFunctionManifest } from 'twenty-shared/application';
+import {
+  type LogicFunctionManifest,
+  type ServerRouteTriggerSettings,
+} from 'twenty-shared/application';
 import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -25,6 +29,8 @@ const TARGET_FUNCTION_UNIVERSAL_IDENTIFIER =
   '4d4f983f-5c1a-4c60-a3c8-7d0e2a4a44d4';
 const HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
   '5e5f983f-5c1a-4c60-a3c8-7d0e2a4a55e5';
+const GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '6f6f983f-5c1a-4c60-a3c8-7d0e2a4a66f6';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -43,6 +49,16 @@ const HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event)
 });
 `;
 
+// Mirrors how a provider verifies a webhook: the challenge arrives in the query
+// string of a GET, and the answer must be the bare value, not JSON.
+const GET_HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event) => ({
+  ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
+  status: 200,
+  headers: { 'content-type': 'text/plain' },
+  body: event.queryStringParameters['hub.challenge'],
+});
+`;
+
 const TARGET_BUILT_HANDLER_CODE = `export const main = async () => (${JSON.stringify(
   TARGET_FUNCTION_RESPONSE,
 )});
@@ -53,11 +69,13 @@ const buildLogicFunctionManifest = ({
   name,
   serverRouteExposed,
   authRequired,
+  httpMethods,
 }: {
   universalIdentifier: string;
   name: string;
   serverRouteExposed: boolean;
   authRequired: boolean;
+  httpMethods?: ServerRouteTriggerSettings['httpMethods'];
 }): LogicFunctionManifest => ({
   universalIdentifier,
   name,
@@ -75,7 +93,12 @@ const buildLogicFunctionManifest = ({
       }
     : {}),
   ...(serverRouteExposed
-    ? { serverRouteTriggerSettings: { forwardedRequestHeaders: [] } }
+    ? {
+        serverRouteTriggerSettings: {
+          forwardedRequestHeaders: [],
+          ...(isDefined(httpMethods) ? { httpMethods } : {}),
+        },
+      }
     : {}),
 });
 
@@ -123,6 +146,11 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/get-handshake-resolver.mjs',
+      builtHandlerCode: GET_HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
       builtHandlerPath: 'dist/target-function.mjs',
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
@@ -158,6 +186,13 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               authRequired: false,
             }),
             buildLogicFunctionManifest({
+              universalIdentifier: GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'get-handshake-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
+              httpMethods: ['GET', 'POST'],
+            }),
+            buildLogicFunctionManifest({
               universalIdentifier: TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
               name: 'target-function',
               serverRouteExposed: false,
@@ -189,12 +224,12 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       });
     });
 
-    it('dispatches a server-route-exposed resolver, queues the target, and acks with 202', async () => {
+    it('dispatches a server-route-exposed resolver, queues the target, and acks with 200', async () => {
       const response = await request(baseUrl)
         .post(`/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`)
         .send({ any: 'payload' });
 
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(200);
       expect(response.body).toEqual({ queued: true });
     }, 60000);
 
@@ -213,6 +248,74 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         .send({ any: 'payload' });
 
       expect(response.status).toBe(403);
+      expectOneNotInternalServerErrorHttpResponseSnapshot({
+        status: response.status,
+        body: response.body,
+      });
+    });
+  });
+
+  describe('GET /webhooks/server/:universalIdentifier (public, unauthenticated)', () => {
+    it('rejects a GET on a resolver that did not declare it', async () => {
+      const response = await request(baseUrl).get(
+        `/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(405);
+      expectOneNotInternalServerErrorHttpResponseSnapshot({
+        status: response.status,
+        body: response.body,
+      });
+    });
+
+    // Express dispatches HEAD to the GET handler, so it reaches the same gate.
+    it('rejects a HEAD on a resolver that did not declare it', async () => {
+      const response = await request(baseUrl).head(
+        `/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(405);
+    });
+
+    it('answers the verification challenge of a resolver that declared GET', async () => {
+      const response = await request(baseUrl)
+        .get(`/webhooks/server/${GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`)
+        .query({
+          'hub.mode': 'subscribe',
+          'hub.challenge': 'challenge-abc123',
+          'hub.verify_token': 'a-token',
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toContain('text/plain');
+      expect(response.text).toBe('challenge-abc123');
+    }, 60000);
+
+    // HEAD is not an HTTPMethod a resolver can declare, so it stays rejected even
+    // on a route that answers GET, rather than executing the function for a
+    // request that cannot carry the challenge back.
+    it('rejects a HEAD on a resolver that declared GET', async () => {
+      const response = await request(baseUrl).head(
+        `/webhooks/server/${GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(405);
+    });
+
+    it('still dispatches a POST on a resolver that declared both methods', async () => {
+      const response = await request(baseUrl)
+        .post(`/webhooks/server/${GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`)
+        .send({ any: 'payload' });
+
+      expect(response.status).toBe(200);
+    }, 60000);
+
+    it('answers 404, not 405, for an identifier that resolves to nothing', async () => {
+      const response = await request(baseUrl).get(
+        `/webhooks/server/${NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(404);
       expectOneNotInternalServerErrorHttpResponseSnapshot({
         status: response.status,
         body: response.body,

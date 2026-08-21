@@ -53,21 +53,6 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: '5412e4ca-cc96-4be8-8652-b73dace7673b',
-      type: FieldType.RATING,
-      name: 'ranking',
-      label: 'Ranking',
-      icon: 'IconStar',
-      isNullable: true,
-      options: [
-        { id: 'e4c784f0-7e2b-4eca-94dc-fc447266f252', value: 'RATING_1', label: '1', position: 0 },
-        { id: '79d033bd-4189-4f69-a9d1-a54d7cbbc5bc', value: 'RATING_2', label: '2', position: 1 },
-        { id: '1206bdcc-a804-4649-a3ce-bd001a3abc2c', value: 'RATING_3', label: '3', position: 2 },
-        { id: '1c195738-d823-415e-b4db-44a6cdc09ec5', value: 'RATING_4', label: '4', position: 3 },
-        { id: '92cd3a72-8d5b-4077-a369-ddfe429aa2aa', value: 'RATING_5', label: '5', position: 4 },
-      ],
-    },
-    {
       universalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
       type: FieldType.SELECT,
       name: 'partnerTier',

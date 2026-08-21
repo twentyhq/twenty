@@ -3,7 +3,7 @@ import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-edit
 import { parseLegacyHtmlDocument } from '@/advanced-text-editor/utils/parseLegacyHtmlDocument';
 
 export const INLINE_EMAIL_BODY_EDITOR_PROFILE = {
-  chrome: 'field',
+  chrome: 'document',
   minHeight: 120,
   enableFullScreen: true,
   parseLegacyDocument: parseLegacyHtmlDocument,

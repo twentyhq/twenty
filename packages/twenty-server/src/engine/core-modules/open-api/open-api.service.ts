@@ -119,46 +119,16 @@ export class OpenApiService {
     }
 
     schema.paths = flatObjectMetadataArray.reduce((paths, item) => {
-      paths[`/${item.namePlural}`] = computeManyResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/batch/${item.namePlural}`] = computeBatchPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/${item.namePlural}/duplicates`] = computeDuplicatesResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/restore/${item.namePlural}/{id}`] = computeRestoreOneResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-      paths[`/${item.namePlural}/groupBy`] = computeGroupByResultPath(
-        item,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
+      paths[`/${item.namePlural}`] = computeManyResultPath(item);
+      paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
+      paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
+      paths[`/${item.namePlural}/duplicates`] =
+        computeDuplicatesResultPath(item);
+      paths[`/restore/${item.namePlural}/{id}`] =
+        computeRestoreOneResultPath(item);
+      paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(item);
+      paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(item);
+      paths[`/${item.namePlural}/groupBy`] = computeGroupByResultPath(item);
 
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
@@ -194,34 +164,19 @@ export class OpenApiService {
             DatabaseEventAction.CREATED,
             item.nameSingular,
           )
-        ] = computeWebhooks(
-          DatabaseEventAction.CREATED,
-          item,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        );
+        ] = computeWebhooks(DatabaseEventAction.CREATED, item);
         paths[
           this.createWebhookEventName(
             DatabaseEventAction.UPDATED,
             item.nameSingular,
           )
-        ] = computeWebhooks(
-          DatabaseEventAction.UPDATED,
-          item,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        );
+        ] = computeWebhooks(DatabaseEventAction.UPDATED, item);
         paths[
           this.createWebhookEventName(
             DatabaseEventAction.DELETED,
             item.nameSingular,
           )
-        ] = computeWebhooks(
-          DatabaseEventAction.DELETED,
-          item,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        );
+        ] = computeWebhooks(DatabaseEventAction.DELETED, item);
 
         return paths;
       },
@@ -332,7 +287,10 @@ export class OpenApiService {
             { $ref: '#/components/parameters/endingBefore' },
           ],
           responses: {
-            '200': getFindManyResponse200(item),
+            '200': getFindManyResponse200({
+              item,
+              isDirectDataFeatureFlagged: true,
+            }),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -391,7 +349,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeMetadataSchemaComponents(metadata),
-      parameters: computeParameterComponents(true),
+      parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),
         '401': get401ErrorResponses(),

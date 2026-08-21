@@ -20,6 +20,9 @@ import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dto
 import { PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
+import { AdminPanelWorkspaceCreditGrantDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-credit-grant.dto';
+import { GrantWorkspaceCreditsInput } from 'src/engine/core-modules/admin-panel/dtos/grant-workspace-credits.input';
+import { RevokeWorkspaceCreditGrantInput } from 'src/engine/core-modules/admin-panel/dtos/revoke-workspace-credit-grant.input';
 import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
@@ -99,6 +102,7 @@ import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-model
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { aiProviderModelConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.schema';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
@@ -625,6 +629,17 @@ export class AdminPanelResolver {
     @Args('modelConfig', { type: () => GraphQLJSON })
     modelConfig: AiProviderModelConfig,
   ): Promise<boolean> {
+    const validatedModelConfig =
+      aiProviderModelConfigSchema.safeParse(modelConfig);
+
+    if (!validatedModelConfig.success) {
+      throw new UserInputError(
+        `Invalid model configuration: ${validatedModelConfig.error.issues
+          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
+          .join(', ')}`,
+      );
+    }
+
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
@@ -639,18 +654,22 @@ export class AdminPanelResolver {
 
     const existingModels = existing.models ?? [];
     const alreadyExists = existingModels.some(
-      (model: AiProviderModelConfig) => model.name === modelConfig.name,
+      (model: AiProviderModelConfig) =>
+        model.name === validatedModelConfig.data.name,
     );
 
     if (alreadyExists) {
       throw new UserInputError(
-        `Model "${modelConfig.name}" already exists on provider "${providerName}"`,
+        `Model "${validatedModelConfig.data.name}" already exists on provider "${providerName}"`,
       );
     }
 
     customProviders[providerName] = {
       ...existing,
-      models: [...existingModels, { ...modelConfig, source: 'manual' }],
+      models: [
+        ...existingModels,
+        { ...validatedModelConfig.data, source: 'manual' },
+      ],
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
@@ -785,6 +804,35 @@ export class AdminPanelResolver {
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
   ): Promise<AdminPanelWorkspaceBillingDTO | null> {
     return this.adminBillingService.getWorkspaceBilling(workspaceId);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => AdminPanelWorkspaceCreditGrantDTO)
+  async grantWorkspaceCredits(
+    @Args() input: GrantWorkspaceCreditsInput,
+    @AuthUser() actor: AuthContextUser,
+  ): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    return this.adminBillingService.grantWorkspaceCredits({
+      workspaceId: input.workspaceId,
+      amount: input.amount,
+      type: input.type,
+      reason: input.reason,
+      clientOperationId: input.clientOperationId,
+      grantedByUserId: actor.id,
+    });
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => AdminPanelWorkspaceCreditGrantDTO)
+  async revokeWorkspaceCreditGrant(
+    @Args() input: RevokeWorkspaceCreditGrantInput,
+    @AuthUser() actor: AuthContextUser,
+  ): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    return this.adminBillingService.revokeWorkspaceCreditGrant({
+      workspaceId: input.workspaceId,
+      creditGrantId: input.creditGrantId,
+      revokedByUserId: actor.id,
+    });
   }
 
   @UseGuards(ServerLevelImpersonateGuard)

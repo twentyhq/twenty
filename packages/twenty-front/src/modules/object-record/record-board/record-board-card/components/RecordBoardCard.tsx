@@ -12,7 +12,7 @@ import { RecordBoardCardCellEditModePortal } from '@/object-record/record-board/
 import { RecordBoardCardCellHoveredPortal } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellHoveredPortal';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
-import { RecordBoardCardMultiDragStack } from '@/object-record/record-board/record-board-card/components/RecordBoardCardMultiDragStack';
+import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
@@ -182,7 +182,7 @@ export const RecordBoardCard = () => {
             isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
           >
             {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-              <RecordBoardCardMultiDragStack />
+              <RecordDragMultiDragStack />
             )}
             <RecordCard
               data-selected={isRecordBoardCardSelected}

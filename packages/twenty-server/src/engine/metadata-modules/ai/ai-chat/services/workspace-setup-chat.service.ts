@@ -3,9 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 import { QueryFailedError } from 'typeorm';
-import { v5 } from 'uuid';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -13,12 +15,12 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { buildWorkspaceSetupPromptText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-prompt-text.util';
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -56,16 +58,20 @@ export class WorkspaceSetupChatService {
 
   async startWorkspaceSetupChat({
     userId,
+    userEmail,
     userLocale,
     userWorkspaceId,
     workspace,
     companyContext,
+    personContext,
   }: {
     userId: string;
+    userEmail: string;
     userLocale: string | null;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
+    personContext: WorkspacePersonEnrichment | null;
   }): Promise<StartWorkspaceSetupChatServiceResult> {
     if (!this.twentyConfigService.get('IS_ONBOARDING_AI_CHAT_ENABLED')) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
@@ -91,10 +97,10 @@ export class WorkspaceSetupChatService {
       workspaceId: workspace.id,
     });
 
-    const threadId = v5(
-      `${workspace.id}:${userWorkspaceId}`,
-      WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-    );
+    const threadId = buildWorkspaceSetupChatThreadId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
 
     let thread = await this.agentChatService.findThreadById({
       threadId,
@@ -158,8 +164,14 @@ export class WorkspaceSetupChatService {
         thread,
         userWorkspaceId,
         workspace,
-        text: buildWorkspaceSetupPromptText({
+        text: buildWorkspaceSetupKickoffMessageText({
           companyEnrichment: companyContext,
+          personEnrichment: personContext,
+          workspaceContext: {
+            workspaceDisplayName: workspace.displayName ?? null,
+            workspaceSubdomain: workspace.subdomain,
+            userEmail,
+          },
           locale,
         }),
         modelId: workspace.fastModel,

@@ -118,6 +118,9 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useCallback(() => {
+    // The assign below is the only navigation: keep the redirect effect from
+    // racing it to the sign-in page once the session is cleared.
+    store.set(isAppEffectRedirectEnabledState.atom, false);
     sessionStorage.clear();
     store.set(tokenPairState.atom, null);
     store.set(isCookieAuthActiveState.atom, false);

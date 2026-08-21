@@ -10,6 +10,6 @@ export const SLACK_CHANNEL_WELCOME_THREAD_TEXT = [
     "- I only act when you mention me, or in a thread I've already replied in. Channel threads stay open to me for 24 hours after my last reply",
     '- When you mention me I read recent messages in that thread for context',
     "- I can read, create, update and archive people, companies, opportunities, notes and tasks. I can't permanently delete anything and I can't change workspace settings",
-    '- Everyone in this channel talks to me through the same **Slack Assistant** role, so anyone who can message me sees whatever that role can see',
+    "- If your Slack email matches your Twenty account, I act as you and can't see or change anything you couldn't yourself. Otherwise I fall back to the shared **Slack Assistant** role",
   ].join('\n'),
 ].join('\n\n');

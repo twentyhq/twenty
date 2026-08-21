@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { type KeyboardEvent } from 'react';
 
+import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import {
   StyledEventRowContainer,
   StyledEventRowContent,
-  StyledEventRowDate,
   StyledEventRowLinkedRecord,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -69,7 +69,7 @@ export const EventRowGenericLinked = ({
           <OverflowingTextWithTooltip text={linkedRecordName} />
         </StyledEventRowLinkedRecord>
       </StyledEventRowContent>
-      <StyledEventRowDate>{createdAt}</StyledEventRowDate>
+      <EventRowDate createdAt={createdAt} />
     </StyledEventRowContainer>
   );
 };

@@ -1,7 +1,6 @@
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { isDefaultPageLayoutId } from '@/page-layout/utils/isDefaultPageLayoutId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
@@ -29,10 +28,6 @@ export const PageLayoutRecordPageCustomizationSessionRegistrationEffect =
       }
 
       if (pageLayoutPersisted.type !== PageLayoutType.RECORD_PAGE) {
-        return;
-      }
-
-      if (isDefaultPageLayoutId(pageLayoutPersisted.id)) {
         return;
       }
 

@@ -103,6 +103,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     pageLayoutTab: true,
     frontComponent: true,
+    fieldMetadata: true,
   },
   rowLevelPermissionPredicate: {
     fieldMetadata: true,

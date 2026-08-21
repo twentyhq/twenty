@@ -1,4 +1,5 @@
 import { lazy, useMemo } from 'react';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,6 +27,12 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
+
+const WorkflowCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
+    default: module.WorkflowCoreIndexPage,
+  })),
+);
 
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
@@ -117,6 +124,12 @@ const AiChatPage = lazy(() =>
   })),
 );
 
+const MobileHomePage = lazy(() =>
+  import('~/pages/mobile-home/MobileHomePage').then((module) => ({
+    default: module.MobileHomePage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -135,10 +148,17 @@ const preloadOnboardingPages = () => {
   return null;
 };
 
-const createWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-) =>
+type CreateWorkspaceAppRouterArgs = {
+  isFunctionSettingsEnabled?: boolean;
+  isAdminPageEnabled?: boolean;
+  isWorkflowCoreIndexPageEnabled?: boolean;
+};
+
+const createWorkspaceAppRouter = ({
+  isFunctionSettingsEnabled,
+  isAdminPageEnabled,
+  isWorkflowCoreIndexPageEnabled,
+}: CreateWorkspaceAppRouterArgs) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -148,6 +168,16 @@ const createWorkspaceAppRouter = (
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
             <Route element={<MainAppLayoutWithSidePanel />}>
+              {isWorkflowCoreIndexPageEnabled && (
+                <Route
+                  path={AppPath.WorkflowCoreIndexPage}
+                  element={
+                    <LazyRoute>
+                      <WorkflowCoreIndexPage />
+                    </LazyRoute>
+                  }
+                />
+              )}
               <Route
                 path={indexAppPath.getIndexAppPath()}
                 element={<RecordIndexSkeletonLoader />}
@@ -181,6 +211,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <AiChatPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.Home}
+                element={
+                  <LazyRoute>
+                    <MobileHomePage />
                   </LazyRoute>
                 }
               />
@@ -334,12 +372,21 @@ const createWorkspaceAppRouter = (
     ),
   );
 
-export const useCreateWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-) =>
+export const useCreateWorkspaceAppRouter = ({
+  isFunctionSettingsEnabled,
+  isAdminPageEnabled,
+  isWorkflowCoreIndexPageEnabled,
+}: CreateWorkspaceAppRouterArgs) =>
   useMemo(
     () =>
-      createWorkspaceAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled),
-    [isFunctionSettingsEnabled, isAdminPageEnabled],
+      createWorkspaceAppRouter({
+        isFunctionSettingsEnabled,
+        isAdminPageEnabled,
+        isWorkflowCoreIndexPageEnabled,
+      }),
+    [
+      isFunctionSettingsEnabled,
+      isAdminPageEnabled,
+      isWorkflowCoreIndexPageEnabled,
+    ],
   );

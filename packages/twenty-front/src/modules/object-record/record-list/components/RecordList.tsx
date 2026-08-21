@@ -8,7 +8,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -29,11 +29,14 @@ export const RecordList = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerElement, setContainerElement] =
+    useState<HTMLDivElement | null>(null);
 
   return (
-    <StyledContainer ref={containerRef}>
-      <RecordListResponsiveFieldCountEffect containerRef={containerRef} />
+    <StyledContainer ref={setContainerElement}>
+      <RecordListResponsiveFieldCountEffect
+        containerElement={containerElement}
+      />
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
         defaultEnableXScroll={false}

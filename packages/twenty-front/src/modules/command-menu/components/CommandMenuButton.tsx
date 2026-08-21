@@ -1,6 +1,4 @@
-import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { styled } from '@linaria/react';
-import { type MessageDescriptor } from '@lingui/core';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,8 +14,8 @@ const StyledWrapper = styled.div`
 export type CommandMenuButtonProps = {
   command: {
     key: string;
-    label: Nullable<string | MessageDescriptor>;
-    shortLabel?: Nullable<string | MessageDescriptor>;
+    label: string;
+    shortLabel?: Nullable<string>;
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
@@ -25,6 +23,7 @@ export type CommandMenuButtonProps = {
   to?: string;
   disabled?: boolean;
   isPrimaryAction?: boolean;
+  shouldHideLabel?: boolean;
 };
 
 export const CommandMenuButton = ({
@@ -33,14 +32,15 @@ export const CommandMenuButton = ({
   to,
   disabled = false,
   isPrimaryAction = false,
+  shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
-  const resolvedLabel = getCommandMenuItemLabel(command.label);
+  const resolvedShortLabel =
+    isDefined(command.shortLabel) && !shouldHideLabel
+      ? command.shortLabel
+      : undefined;
 
-  const resolvedShortLabel = isDefined(command.shortLabel)
-    ? getCommandMenuItemLabel(command.shortLabel)
-    : undefined;
-
-  const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
+  const buttonAccent =
+    isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
 
   return (
     <>
@@ -48,30 +48,30 @@ export const CommandMenuButton = ({
         <Button
           Icon={command.Icon}
           size="small"
-          variant={isPrimaryAction ? 'primary' : 'secondary'}
-          accent={isPrimaryAction ? 'blue' : buttonAccent}
+          variant="primary"
+          accent={buttonAccent}
           to={to}
           onClick={onClick}
           disabled={disabled}
           title={resolvedShortLabel}
-          ariaLabel={resolvedLabel}
+          ariaLabel={command.label}
         />
       ) : (
         <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
           <IconButton
             Icon={command.Icon}
             size="small"
-            variant={isPrimaryAction ? 'primary' : 'secondary'}
-            accent={isPrimaryAction ? 'blue' : buttonAccent}
+            variant="primary"
+            accent={buttonAccent}
             to={to}
             onClick={onClick}
             disabled={disabled}
-            ariaLabel={resolvedLabel}
+            ariaLabel={command.label}
           />
           <StyledWrapper>
             <AppTooltip
               anchorSelect={`#command-menu-item-entry-${command.key}`}
-              content={resolvedLabel}
+              content={command.label}
               delay={TooltipDelay.longDelay}
               place={TooltipPosition.Bottom}
               offset={5}

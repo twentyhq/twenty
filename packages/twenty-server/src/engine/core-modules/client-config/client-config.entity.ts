@@ -191,6 +191,9 @@ export class Sentry {
 
   @Field(() => String, { nullable: true })
   dsn?: string;
+
+  @Field(() => Number, { nullable: true })
+  tracesSampleRate?: number;
 }
 
 @ObjectType()
@@ -280,12 +283,6 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 
-  @Field(() => Number, {
-    deprecationReason:
-      'Subdomain minimum length is no longer configurable; kept one release for API compatibility, no longer read by the frontend.',
-  })
-  subdomainMinLength: number;
-
   @Field(() => String)
   frontDomain: string;
 
@@ -318,6 +315,8 @@ export class ClientConfig {
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
 
+  // Always true now that cookie sessions are the only web auth path. Kept in
+  // the schema because removing a field breaks the public API contract.
   @Field(() => Boolean)
   isCookieSessionEnabled: boolean;
 

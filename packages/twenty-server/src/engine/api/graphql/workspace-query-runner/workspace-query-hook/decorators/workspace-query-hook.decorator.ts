@@ -23,7 +23,6 @@ export function WorkspaceQueryHook(
       ? keyOrOptions
       : { key: keyOrOptions };
 
-  // Default to PreHook
   if (!options.type) {
     options.type = WorkspaceQueryHookType.PRE_HOOK;
   }

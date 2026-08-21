@@ -5,11 +5,16 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
+import {
+  type LogicFunctionExecutionContext,
+  type LogicFunctionRetryContext,
+} from 'twenty-shared/logic-function';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -57,6 +62,7 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {
@@ -109,6 +115,8 @@ export class LogicFunctionExecutorService {
     userId,
     userWorkspaceId,
     executionMode,
+    workspaceDeletionRequestTimestamp,
+    retry = { retryCount: 0, maxRetries: 0 },
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -116,6 +124,8 @@ export class LogicFunctionExecutorService {
     userId?: string;
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
+    workspaceDeletionRequestTimestamp?: string;
+    retry?: LogicFunctionRetryContext;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -133,6 +143,14 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       applicationVariableMaps,
+      userId,
+      userWorkspaceId,
+      workspaceDeletionRequestTimestamp,
+    });
+
+    const context = await this.buildExecutionContext({
+      workspaceId,
+      retry,
       userId,
       userWorkspaceId,
     });
@@ -160,6 +178,7 @@ export class LogicFunctionExecutorService {
         flatApplication,
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
         payload,
+        context,
         env: envVariables,
         timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
         forceExecutionMode: effectiveExecutionMode,
@@ -318,26 +337,83 @@ export class LogicFunctionExecutorService {
     return { flatApplication, flatLogicFunction, applicationVariableMaps };
   }
 
+  private async buildExecutionContext({
+    workspaceId,
+    retry,
+    userId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    retry: LogicFunctionRetryContext;
+    userId: string | undefined;
+    userWorkspaceId: string | undefined;
+  }): Promise<LogicFunctionExecutionContext> {
+    return {
+      ...retry,
+      workspaceId,
+      userWorkspaceId: userWorkspaceId ?? null,
+      workspaceMemberId: isDefined(userId)
+        ? await this.resolveWorkspaceMemberId({ workspaceId, userId })
+        : null,
+    };
+  }
+
+  private async resolveWorkspaceMemberId({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<string | null> {
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return resolveWorkspaceMemberIdForUser({ userId, flatWorkspaceMemberMaps });
+  }
+
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
     applicationVariableMaps,
     userId,
     userWorkspaceId,
+    workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
+    workspaceDeletionRequestTimestamp?: string;
   }) {
-    const applicationAccessToken =
-      await this.applicationTokenService.generateApplicationAccessToken({
-        workspaceId,
-        applicationId: flatApplication.id,
-        userId,
-        userWorkspaceId,
-      });
+    // Two tokens so a handler can choose per call which access it acts with,
+    // rather than the whole run being locked to one of them.
+    const hasTriggeringPerson = isDefined(userId) && isDefined(userWorkspaceId);
+
+    const [applicationAccessToken, delegatedAccessToken] = await Promise.all([
+      isDefined(workspaceDeletionRequestTimestamp)
+        ? this.applicationTokenService.generateWorkspaceDeletionApplicationAccessToken(
+            {
+              workspaceId,
+              applicationId: flatApplication.id,
+              workspaceDeletionRequestTimestamp,
+            },
+          )
+        : this.applicationTokenService.generateApplicationAccessToken({
+            workspaceId,
+            applicationId: flatApplication.id,
+          }),
+      hasTriggeringPerson && !isDefined(workspaceDeletionRequestTimestamp)
+        ? this.applicationTokenService.generateApplicationAccessToken({
+            workspaceId,
+            applicationId: flatApplication.id,
+            userId,
+            userWorkspaceId,
+          })
+        : null,
+    ]);
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
@@ -357,7 +433,12 @@ export class LogicFunctionExecutorService {
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
+      // Falls back to the application when nobody triggered the run, so a cron
+      // schedule or an install hook keeps working without asking for anything.
+      [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
+        delegatedAccessToken ?? applicationAccessToken
+      ).token,
+      [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
       APPLICATION_ID: flatApplication.id,
@@ -376,6 +457,7 @@ export class LogicFunctionExecutorService {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: { subdomain: true },
+      withDeleted: true,
     });
 
     if (!isDefined(workspace)) {
@@ -403,20 +485,19 @@ export class LogicFunctionExecutorService {
 
     const serverVariables =
       await this.applicationRegistrationVariableRepository.find({
-        where: {
-          applicationRegistrationId,
-          encryptedValue: Not(''),
-        },
+        where: { applicationRegistrationId },
       });
 
     const envMap: Record<string, string> = {};
 
     for (const variable of serverVariables) {
-      if (variable.encryptedValue !== '') {
-        envMap[variable.key] =
-          this.secretEncryptionService.decryptVersionedOrThrow(
-            variable.encryptedValue,
-          );
+      const plaintextValue =
+        this.secretEncryptionService.decryptVersionedOrThrow(
+          variable.encryptedValue,
+        );
+
+      if (plaintextValue !== '') {
+        envMap[variable.key] = plaintextValue;
       }
     }
 

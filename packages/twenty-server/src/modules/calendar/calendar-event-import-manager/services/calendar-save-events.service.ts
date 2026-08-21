@@ -4,7 +4,6 @@ import { Any } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -36,35 +35,27 @@ export class CalendarSaveEventsService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarEventRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
-            workspaceId,
-            'calendarEvent',
-          );
-
-        const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-            workspaceId,
-            'calendarChannelEventAssociation',
-          );
-
-        const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-        await workspaceDataSource.transaction(
-          async (transactionManager: WorkspaceEntityManager) => {
-            const existingAssociations =
-              await calendarChannelEventAssociationRepository.find(
-                {
-                  where: {
-                    eventExternalId: Any(
-                      fetchedCalendarEvents.map((event) => event.id),
-                    ),
-                    calendarChannelId: calendarChannel.id,
-                  },
-                },
-                transactionManager,
+        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            const calendarEventRepository =
+              transactionScope.getRepository<CalendarEventWorkspaceEntity>(
+                'calendarEvent',
               );
+
+            const calendarChannelEventAssociationRepository =
+              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+                'calendarChannelEventAssociation',
+              );
+
+            const existingAssociations =
+              await calendarChannelEventAssociationRepository.find({
+                where: {
+                  eventExternalId: Any(
+                    fetchedCalendarEvents.map((event) => event.id),
+                  ),
+                  calendarChannelId: calendarChannel.id,
+                },
+              });
 
             const existingCalendarEventIdByExternalId = new Map(
               existingAssociations.map((association) => [
@@ -134,10 +125,7 @@ export class CalendarSaveEventsService {
               });
 
             if (newCalendarEventsToInsert.length > 0) {
-              await calendarEventRepository.insert(
-                newCalendarEventsToInsert,
-                transactionManager,
-              );
+              await calendarEventRepository.insert(newCalendarEventsToInsert);
             }
 
             const fetchedCalendarEventsWithDBEventsEnrichedWithSavedEvents: FetchedCalendarEventWithDBEvent[] =
@@ -196,10 +184,7 @@ export class CalendarSaveEventsService {
                 });
 
             if (existingEventsToUpdate.length > 0) {
-              await calendarEventRepository.updateMany(
-                existingEventsToUpdate,
-                transactionManager,
-              );
+              await calendarEventRepository.updateMany(existingEventsToUpdate);
             }
 
             const calendarChannelEventAssociationsToSave: Pick<
@@ -232,7 +217,6 @@ export class CalendarSaveEventsService {
             if (calendarChannelEventAssociationsToSave.length > 0) {
               await calendarChannelEventAssociationRepository.insert(
                 calendarChannelEventAssociationsToSave,
-                transactionManager,
               );
             }
 
@@ -254,7 +238,6 @@ export class CalendarSaveEventsService {
             if (existingAssociationsToUpdate.length > 0) {
               await calendarChannelEventAssociationRepository.updateMany(
                 existingAssociationsToUpdate,
-                transactionManager,
               );
             }
 
@@ -307,7 +290,7 @@ export class CalendarSaveEventsService {
               {
                 participantsToCreate,
                 participantsToUpdate,
-                transactionManager,
+                transactionScope,
                 calendarChannel,
                 connectedAccount,
                 workspaceId,

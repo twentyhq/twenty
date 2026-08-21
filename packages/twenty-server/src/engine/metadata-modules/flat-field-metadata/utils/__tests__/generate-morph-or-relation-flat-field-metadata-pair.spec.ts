@@ -35,6 +35,8 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   defaultRoleId: null,
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
+  uninstallLogicFunctionId: null,
+  uninstallHookCompletedForRequestedAt: null,
   canBeUninstalled: false,
   autoUpgrade: false,
   applicationRegistrationId: null,
@@ -44,6 +46,8 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   deletedAt: null,
   isSdkLayerStale: true,
   sdkClientCoreChecksum: null,
+  frontComponentSharedDependenciesChecksum: null,
+  frontComponentSharedDependenciesBuiltPath: null,
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairTestInput = Parameters<

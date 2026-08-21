@@ -8,30 +8,35 @@ export const setupApplicationForSync = async ({
   applicationUniversalIdentifier,
   name,
   sourcePath,
+  token,
 }: {
   applicationUniversalIdentifier: string;
   name: string;
   description: string;
   sourcePath: string;
+  token?: string;
 }) => {
   jest.useRealTimers();
 
-  const registrationResponse = await makeMetadataAPIRequest({
-    query: gql`
-      mutation CreateApplicationRegistration(
-        $input: CreateApplicationRegistrationInput!
-      ) {
-        createApplicationRegistration(input: $input) {
-          applicationRegistration {
-            id
+  const registrationResponse = await makeMetadataAPIRequest(
+    {
+      query: gql`
+        mutation CreateApplicationRegistration(
+          $input: CreateApplicationRegistrationInput!
+        ) {
+          createApplicationRegistration(input: $input) {
+            applicationRegistration {
+              id
+            }
           }
         }
-      }
-    `,
-    variables: {
-      input: { name, universalIdentifier: applicationUniversalIdentifier },
+      `,
+      variables: {
+        input: { name, universalIdentifier: applicationUniversalIdentifier },
+      },
     },
-  });
+    token,
+  );
 
   if (isDefined(registrationResponse.body.errors)) {
     throw new Error(
@@ -41,22 +46,25 @@ export const setupApplicationForSync = async ({
     );
   }
 
-  const developmentApplicationResponse = await makeMetadataAPIRequest({
-    query: gql`
-      mutation CreateDevelopmentApplication(
-        $universalIdentifier: String!
-        $name: String!
-      ) {
-        createDevelopmentApplication(
-          universalIdentifier: $universalIdentifier
-          name: $name
+  const developmentApplicationResponse = await makeMetadataAPIRequest(
+    {
+      query: gql`
+        mutation CreateDevelopmentApplication(
+          $universalIdentifier: String!
+          $name: String!
         ) {
-          id
+          createDevelopmentApplication(
+            universalIdentifier: $universalIdentifier
+            name: $name
+          ) {
+            id
+          }
         }
-      }
-    `,
-    variables: { universalIdentifier: applicationUniversalIdentifier, name },
-  });
+      `,
+      variables: { universalIdentifier: applicationUniversalIdentifier, name },
+    },
+    token,
+  );
 
   if (isDefined(developmentApplicationResponse.body.errors)) {
     throw new Error(
@@ -78,6 +86,7 @@ export const setupApplicationForSync = async ({
     fileBuffer: Buffer.from(packageJson),
     filename: 'package.json',
     expectToFail: false,
+    token,
   });
 
   jest.useFakeTimers();

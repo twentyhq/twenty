@@ -1,0 +1,195 @@
+---
+title: Tarefas em segundo plano
+description: Entregue trabalhos longos ou com limitação de taxa aos workers do Twenty colocando na fila outra execução de função de lógica, em vez de fazer tudo inline.
+icon: layer-group
+---
+
+Uma execução de função de lógica é limitada pelo seu `timeoutSeconds` (máximo de 900 segundos). Qualquer coisa que não consiga terminar nesse intervalo — uma re-sincronização completa, uma distribuição por registro, uma API de terceiros que impõe limitações de taxa — precisa ser dividida em execuções menores.
+
+`enqueueJob` faz exatamente isso: solicita aos workers do Twenty que executem mais tarde uma das funções de lógica do seu aplicativo, em seu próprio processo, com seu próprio tempo limite. O chamador retorna imediatamente.
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Colocar uma execução na fila
+
+Importe `enqueueJob` de `twenty-sdk/logic-function` e aponte-o para o `universalIdentifier` da função de lógica que você quer executar.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+A função de destino recebe `payload` como argumento do handler, exatamente como qualquer outro gatilho. Ela deve pertencer à **mesma aplicação** que quem a chama — colocar na fila a função de outra aplicação é rejeitado com `Logic function not found`.
+
+<Note>
+`enqueueJob` retorna assim que o job é aceito, não quando ele é executado. Ele não retorna o resultado do destino — faça o destino gravar o que produzir no [repositório de chave-valor](/l/pt/developers/extend/apps/logic/key-value-store) ou em um registro do workspace se você precisar ler isso de volta.
+</Note>
+
+## Opções do job
+
+| Opção        | Padrão | Intervalo                | O que faz                                                                                                                                                                                      |
+| ------------ | ------ | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`    | `0`–`10`                 | Total de tentativas adicionais na fila. As novas tentativas solicitadas pelo aplicativo são limitadas a `3`. Só aumente isso para handlers que sejam seguros para serem executados duas vezes. |
+| `delayMs`    | `0`    | `0`–`604800000` (7 dias) | Espere esse tempo antes de a execução se tornar elegível.                                                                                                                                      |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**A prioridade ainda não é configurável.** Jobs em fila sempre são executados na prioridade mais baixa, então o trabalho da plataforma nunca é atrasado por jobs da aplicação. O controle sobre prioridade estará disponível em breve.
+</Note>
+
+A execução em fila herda o usuário ativo da função que a colocou na fila, portanto age com as mesmas permissões.
+
+## Tentar novamente uma falha transitória
+
+O Twenty não tenta novamente todas as exceções do código da aplicação. Um erro comum lançado é tratado como uma falha permanente. Para uma falha transitória, uma função lógica enfileirada pode solicitar até três novas tentativas lançando `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Lance `RetryableLogicFunctionError` diretamente quando possível. Se você estendê-lo, não substitua seu `name`: o Twenty reconhece o nome serializado `RetryableLogicFunctionError` em todos os ambientes de execução.
+
+`retryCount` é `0` para a execução inicial e aumenta apenas quando o código da aplicação solicita uma nova tentativa. `maxRetries` é no máximo `3` e pode ser menor quando o trabalho enfileirado tem um limite geral de novas tentativas menor. As falhas da plataforma não aumentam `retryCount`, embora ainda consumam o orçamento geral de segurança da fila.
+
+A fila atrasa as tentativas de repetição com recuo exponencial e jitter. O atraso exato não é garantido intencionalmente, portanto o código da aplicação não deve depender de uma nova tentativa ocorrer em um momento preciso. Quando `maxRetries` é atingido, outro `RetryableLogicFunctionError` é registrado como a falha final da aplicação sem outra execução.
+
+<Warning>
+As novas tentativas executam novamente todo o manipulador e podem ocorrer depois que alguns efeitos colaterais foram bem-sucedidos. Torne o manipulador idempotente antes de solicitar novas tentativas.
+</Warning>
+
+## Use assim: pagine uma sincronização longa
+
+O formato clássico é uma função que coloca *a si mesma* na fila com o próximo cursor. Cada execução faz uma página de trabalho bem dentro do seu próprio tempo limite, e a cadeia para quando não resta nada.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Ramificar por registro
+
+Quando o trabalho é naturalmente por item, coloque um job por item na fila e deixe os workers processarem em paralelo em vez de fazer o loop inline.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## Boas práticas para trabalho de longa duração
+
+Duas regras cobrem quase todo job longo: **faça recursão em vez de loop** e **processe um fragmento limitado por execução**.
+
+Uma execução que tenta fazer tudo é o modo de falha — ela atinge o tempo limite e, com uma nova tentativa, começa tudo de novo do zero. Em vez disso, defina o tamanho de um fragmento para que ele termine confortavelmente dentro de `timeoutSeconds`, persista sua posição e coloque a próxima execução na fila.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+O que torna isso robusto:
+
+* **Defina o tamanho do fragmento a partir do item mais lento, não da média.** `CHUNK_SIZE × tempo do item em pior caso` precisa caber em `timeoutSeconds` com alguma folga, ou o final de um fragmento é perdido quando a execução é interrompida.
+* **Deixe a condição de parada explícita.** Faça recursão apenas enquanto um fragmento completo for retornado. Uma cadeia que para apenas em "sem resultados" continuará para sempre se a origem algum dia retornar uma página curta no meio do caminho.
+* **Persista o progresso antes de colocar a próxima execução na fila,** assim um elo com falha reinicia a partir do último fragmento concluído em vez do começo.
+* **Mantenha cada fragmento idempotente.** Reprocessar um fragmento após uma nova tentativa não deve gerar escrita em dobro — faça as gravações com base no registro ou id externo que você está processando.
+* **Prefira uma cadeia fragmentada em vez de uma grande ramificação** quando o trabalho aciona um serviço de terceiros com limitação de taxa: uma cadeia com `delayMs` se regula sozinha, enquanto milhares de jobs colocados na fila de uma vez se tornam elegíveis imediatamente.

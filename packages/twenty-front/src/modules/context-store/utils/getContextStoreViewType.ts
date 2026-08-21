@@ -13,6 +13,7 @@ const VIEW_TYPE_TO_CONTEXT_STORE_VIEW_TYPE: Record<
   [ViewType.FIELDS_WIDGET]: ContextStoreViewType.Table,
   [ViewType.KANBAN]: ContextStoreViewType.Kanban,
   [ViewType.KANBAN_WIDGET]: ContextStoreViewType.Kanban,
+  [ViewType.LIST_WIDGET]: ContextStoreViewType.Table,
   [ViewType.CALENDAR]: ContextStoreViewType.Calendar,
   [ViewType.CALENDAR_WIDGET]: ContextStoreViewType.Calendar,
 };

@@ -49,6 +49,21 @@ describe('billingGraphqlApiExceptionHandler', () => {
     );
   });
 
+  it('maps an already existing subscription to BAD_USER_INPUT', () => {
+    const error = new BillingException(
+      'Customer already has a non-canceled billing subscription',
+      BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS,
+    );
+
+    const graphqlError = catchGraphqlError(error);
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+    expect(graphqlError.extensions.subCode).toBe(
+      BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS,
+    );
+    expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
+  });
+
   it('maps internal billing failures to INTERNAL_SERVER_ERROR', () => {
     const error = new BillingException(
       'Invalid price tiers',

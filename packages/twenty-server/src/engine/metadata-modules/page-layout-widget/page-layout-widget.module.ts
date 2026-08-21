@@ -1,3 +1,4 @@
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -19,6 +20,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
 
 @Module({
   imports: [
+    ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([PageLayoutWidgetEntity, WorkspaceEntity]),
     TwentyORMModule,
     PermissionsModule,

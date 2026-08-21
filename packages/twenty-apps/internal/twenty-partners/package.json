@@ -1,12 +1,12 @@
 {
   "name": "twenty-partners",
-  "version": "1.6.1",
+  "version": "1.6.4",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.23.0"
+    "twenty": ">=2.31.0"
   },
   "keywords": [],
   "packageManager": "yarn@4.13.0",
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "react-markdown": "^10.1.0",
-    "twenty-client-sdk": "2.23.0-alpha.2",
-    "twenty-sdk": "2.23.0-alpha.2",
+    "twenty-client-sdk": "2.31.0",
+    "twenty-sdk": "2.31.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {

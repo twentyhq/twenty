@@ -51,8 +51,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### 언제 무엇을 사용할지
 
-* **`<Trans>…</Trans>`** — JSX 안의 정적 텍스트입니다. 보간을 위해 `message` 및 `values`
-  props를 사용하세요 (`<Trans message="Hi {name}" values={{ name }} />`);
+* **`Trans`** — JSX 안의 정적 텍스트입니다. 보간을 위해 `message` 및 `values` props를 사용하세요
+  (`Trans message="Hi {name}" values={{ name }}`);
   children 안에서 직접 보간하는 것은 정적으로 추출할 수 없습니다.
 * **`useTranslate().t`** — 컴포넌트 내부에서 사용하는 동적 문자열입니다. 사용자가 언어를 전환하면
   다시 렌더링됩니다. render 내부에서는 이것을 사용하는 것을 권장합니다.
@@ -70,6 +70,9 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+컨텍스트 문자열은 로케일 카탈로그에서 해당 컨텍스트를 키로 하는 그룹으로 나타납니다:
+`"\<context>": { "\<message>": "\<translation>" }`. 매니페스트 레이블은 설계상 컨텍스트 정보를 포함합니다. 각 레이블은 자신이 수행하는 메타데이터 역할(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …)을 담고 있으므로, 같은 단어라도 객체 이름으로 쓰일 때와 뷰 이름으로 쓰일 때 서로 다르게 번역될 수 있습니다.
+
 ## 추출 및 번역
 
 앱 디렉터리에서 extract 명령을 실행하세요:
@@ -79,7 +82,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-추출 과정에서는 manifest 레이블과 front-component 소스의 `t()`/`msg()`/`\<Trans>`
+추출 과정에서는 manifest 레이블과 front-component 소스의 `t()`/`msg()`/`Trans`
 문자열을 모두 `locales/\<locale>.json` 파일에 소스 문자열을 키로 하여 수집합니다. 번역을 채워 넣으세요:
 
 ```json
@@ -87,25 +90,39 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+문맥이 없는 문자열은 평면 엔트리이고, 문맥이 있는 문자열(모든 매니페스트 레이블 포함)은 해당 컨텍스트 키 아래에 중첩됩니다.
 
 `{name}`과 같은 플레이스홀더는 런타임에 치환되므로 — 번역문에도 그대로 유지해야 합니다. 비워 둔 문자열은 소스 텍스트를 그대로 사용합니다.
 
 ## 실행 방식
 
 `twenty dev:build`는 카탈로그를 컴파일하고 현재 사용자에게 맞는 언어를 제공합니다.
-manifest 레이블은 서버 측에서 처리되고, front-component 카탈로그는 각 컴포넌트 번들에 내장됩니다. 런타임에는 컴포넌트가 실행 컨텍스트(호스트의 현재 언어)에서 로케일을 읽고, 각 문자열을 해당 카탈로그에서 찾아 해석하며, 번역이 없으면 소스 텍스트로 대체합니다. 호스트에서 언어를 전환하면 `\<Trans>`와
+manifest 레이블은 서버 측에서 처리되고, front-component 카탈로그는 각 컴포넌트 번들에 내장됩니다. 런타임에는 컴포넌트가 실행 컨텍스트(호스트의 현재 언어)에서 로케일을 읽고, 각 문자열을 해당 카탈로그에서 찾아 해석하며, 번역이 없으면 소스 텍스트로 대체합니다. 호스트에서 언어를 전환하면 `Trans`와
 `useTranslate().t` 문자열이 실시간으로 다시 렌더링됩니다.
 
-카탈로그는 빌드 시점에 컴파일되므로, 번역을 업데이트하려면
-`twenty dev:build`를 다시 실행하고(및 재배포) 다른 변경 사항과 마찬가지로 처리해야 합니다.
+매니페스트 레이블은 모든 동기화 시 — `twenty dev:build`, `twenty apply`
+및 연속적인 `twenty dev` 감시 모두에서 — 컴파일되므로, 로캘 파일을 편집하고
+동기화하면 새 텍스트를 확인할 수 있습니다. Front 컴포넌트 카탈로그는 빌드 시
+각 컴포넌트 번들에 포함되므로, 그중 하나를 변경하려면 여전히
+`twenty dev:build`를 다시 실행하고 (재배포해야) 합니다.
 
-<Note>
-번역은 `twenty dev:build`(및 `twenty apply`)에 의해 컴파일됩니다. 연속 실행되는 `twenty dev` watch에서는 소스 문자열이 표시되므로,
-로컬라이즈된 출력을 테스트하려면 일회성 빌드를 수행하세요.
-</Note>
+`Trans`의 텍스트 children은 여러 줄에 걸쳐 있을 수 있으며 — 공백은 JSX에서와 동일한 방식으로 축약되므로,
+둘 다 `Welcome back` 키로 추출됩니다.
 
-`<Trans>`의 텍스트 children은 여러 줄에 걸쳐 있을 수 있으며 — 공백은 JSX에서와 동일한 방식으로
-축약되므로, `<Trans>Welcome\n  back</Trans>`과 추출된 key는 모두 `Welcome back`이 됩니다.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

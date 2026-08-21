@@ -134,6 +134,7 @@ export const BaseChip = ({
       deletable={isDeletable}
       danger={danger}
       selected={selected}
+      data-selected={selected}
       data-flashing={isFlashing}
       onDoubleClick={onDoubleClick}
     >

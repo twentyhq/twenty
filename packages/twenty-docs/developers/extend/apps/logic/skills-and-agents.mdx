@@ -178,10 +178,13 @@ const { result } = await runAgent({
 });
 ```
 
-The run is then restricted to what **both** the agent's role and the member's
-role allow, records it creates are attributed to that member, and the member's
-row-level permissions apply. Omit the field for autonomous runs (scheduled
-jobs, database-event triggers): those keep the agent's own role.
+The run then acts with the **member's own role**: it can do whatever that
+member can do and nothing more, records it creates are attributed to them, and
+their row-level permissions apply. The agent's role does not participate — it
+is the app's default for runs with nobody behind them. Omit the field for
+autonomous runs (scheduled jobs, database-event triggers): those keep the
+agent's own role. The acting application stays attached to the run's context
+for provenance, without narrowing the member's permissions.
 
 Your app is responsible for mapping the person who triggered the run to a
 workspace member. Naming one requires an app access token, and what a token may
