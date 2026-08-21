@@ -1,6 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { findPartnerByMember } from 'src/modules/partner/self-service/graphql/queries/find-partner-by-member';
+import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
 
 // Self-service routes run with the app-privileged token in production. Under the vitest
 // harness TWENTY_APP_ACCESS_TOKEN is a crafted identity-only token (decoded for userId but
