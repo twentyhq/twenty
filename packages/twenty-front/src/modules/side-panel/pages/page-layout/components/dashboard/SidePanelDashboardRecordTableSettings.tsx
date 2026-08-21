@@ -8,6 +8,7 @@ import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/recor
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import {
   getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
   RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
@@ -91,11 +92,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
-  const isRecordMutationEnabled =
+  const isWidgetContentEditable =
     isRecordTableConfiguration &&
     isDefined(configuration) &&
-    'isRecordMutationEnabled' in configuration
-      ? (configuration.isRecordMutationEnabled ?? false)
+    'isWidgetContentEditable' in configuration
+      ? (configuration.isWidgetContentEditable ?? false)
       : false;
 
   const {
@@ -120,11 +121,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
     });
   };
 
-  const handleIsRecordMutationEnabledChange = (
-    nextIsRecordMutationEnabled: boolean,
+  const handleIsWidgetContentEditableChange = (
+    nextIsWidgetContentEditable: boolean,
   ) => {
     updateCurrentWidgetConfig({
-      configToUpdate: { isRecordMutationEnabled: nextIsRecordMutationEnabled },
+      configToUpdate: {
+        isWidgetContentEditable: nextIsWidgetContentEditable,
+      },
     });
   };
 
@@ -159,6 +162,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
   const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
     RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
+  const isWidgetContentEditingSupported =
+    isRecordTableWidgetContentEditingSupported(widgetView?.type);
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 
@@ -221,7 +226,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
             ? ['record-table-hide-empty-groups']
             : []),
           ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
-          'record-table-editable-records',
+          ...(isWidgetContentEditingSupported
+            ? ['record-table-allow-editing']
+            : []),
         ]
       : []),
   ];
@@ -439,15 +446,17 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
-                  <SelectableListItem itemId="record-table-editable-records">
-                    <CommandMenuItemToggle
-                      LeftIcon={IconPencil}
-                      text={t`Allow editing`}
-                      id="record-table-editable-records"
-                      toggled={isRecordMutationEnabled}
-                      onToggleChange={handleIsRecordMutationEnabledChange}
-                    />
-                  </SelectableListItem>
+                  {isWidgetContentEditingSupported && (
+                    <SelectableListItem itemId="record-table-allow-editing">
+                      <CommandMenuItemToggle
+                        LeftIcon={IconPencil}
+                        text={t`Allow editing`}
+                        id="record-table-allow-editing"
+                        toggled={isWidgetContentEditable}
+                        onToggleChange={handleIsWidgetContentEditableChange}
+                      />
+                    </SelectableListItem>
+                  )}
                 </>
               )}
             </SidePanelGroup>

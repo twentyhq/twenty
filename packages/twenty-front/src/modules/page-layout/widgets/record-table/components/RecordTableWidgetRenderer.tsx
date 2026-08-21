@@ -29,9 +29,9 @@ export const RecordTableWidgetRenderer = ({
       ? (configuration.recordLimit as number | undefined)
       : undefined;
 
-  const isRecordMutationEnabled =
-    isRecordTableConfiguration && 'isRecordMutationEnabled' in configuration
-      ? (configuration.isRecordMutationEnabled ?? false)
+  const isWidgetContentEditable =
+    isRecordTableConfiguration && 'isWidgetContentEditable' in configuration
+      ? (configuration.isWidgetContentEditable ?? false)
       : false;
 
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
@@ -46,7 +46,9 @@ export const RecordTableWidgetRenderer = ({
         widgetId={widget.id}
         isEmptyStateHidden
         recordLimit={recordLimit}
-        isReadOnly={isPageLayoutInEditMode || !isRecordMutationEnabled}
+        isWidgetContentEditable={
+          !isPageLayoutInEditMode && isWidgetContentEditable
+        }
       />
     </StyledWidgetTableOutline>
   );

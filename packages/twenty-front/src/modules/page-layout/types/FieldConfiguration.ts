@@ -10,5 +10,5 @@ export type FieldConfiguration = {
   fieldDisplayMode: FieldDisplayMode;
   viewId?: string;
   nestedRelationFieldMetadataId?: string | null;
-  isRecordMutationEnabled?: boolean;
+  isWidgetContentEditable?: boolean;
 };

@@ -94,7 +94,7 @@ export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: SerializedRelation | null;
   recordLimit?: number;
-  isRecordMutationEnabled?: boolean;
+  isWidgetContentEditable?: boolean;
 };
 
 export type FieldConfiguration = {
@@ -105,7 +105,7 @@ export type FieldConfiguration = {
   // One-to-many relation field on the relation target object, to list records
   // two relation hops away (e.g. Company -> People -> Owned opportunities)
   nestedRelationFieldMetadataId?: string | null;
-  isRecordMutationEnabled?: boolean;
+  isWidgetContentEditable?: boolean;
 };
 
 export type FieldsConfiguration = {
