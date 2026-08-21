@@ -35,10 +35,9 @@ import {
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { CreateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-permission.guard';
-import { DeleteViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-permission.guard';
-import { UpdateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-permission.guard';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/viewFilters`)
 @UseGuards(WorkspaceAuthGuard)
@@ -100,7 +99,7 @@ export class ViewFilterController {
   }
 
   @Post()
-  @UseGuards(CreateViewFilterPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async create(
     @Body() input: CreateViewFilterInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -112,7 +111,7 @@ export class ViewFilterController {
   }
 
   @Patch(':id')
-  @UseGuards(UpdateViewFilterPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewFilter'))
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterInput,
@@ -130,7 +129,7 @@ export class ViewFilterController {
   }
 
   @Delete(':id')
-  @UseGuards(DeleteViewFilterPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewFilter'))
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

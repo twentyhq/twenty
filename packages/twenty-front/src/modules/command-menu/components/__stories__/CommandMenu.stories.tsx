@@ -13,7 +13,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 import {
   mockCurrentWorkspace,
   mockedLimitedPermissionsUserData,
@@ -84,7 +84,7 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
     (Story) => {
       jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
       jotaiStore.set(metadataStoreState.atomFamily('commandMenuItems'), {
-        current: mockedBackendCommandMenuItems,
+        current: mockedCommandMenuItems,
         draft: [],
         status: 'up-to-date',
       });

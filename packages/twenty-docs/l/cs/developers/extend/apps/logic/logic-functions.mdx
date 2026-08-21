@@ -283,6 +283,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Identifikátor je `universalIdentifier` resolveru z vašeho manifestu. Zaregistrujte tuto adresu URL u poskytovatele.
 
+**Odpověď na ověřovací požadavek GET.** Někteří poskytovatelé ověřují koncový bod před doručováním tím, že na stejnou adresu URL, na kterou budou později pomocí `POST` odesílat události, zašlou požadavek `GET` s výzvou — jedním z nich je WhatsApp Cloud API od společnosti Meta. Trasa serveru odpovídá pouze na `POST`, pokud neuvedete jinak, proto deklarujte obě metody:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Výzva dorazí v `event.queryStringParameters` a vrácením objektu `Response` ji ve stejném požadavku odešlete zpět poskytovateli. Tělo řetězce se odesílá jako `text/plain`, což tito poskytovatelé očekávají:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` nahrazuje výchozí nastavení, namísto aby je doplňovalo, takže samotné `['GET']` způsobí, že trasa odmítne `POST`. Podporovány jsou pouze `GET` a `POST`. Ponechte je nenastavené, pokud poskytovatel nepotřebuje druhé sloveso: trasa, která deklaruje `GET`, bude mít svůj resolver spuštěný jakýmkoli neověřeným volajícím, včetně crawlerů a nástrojů pro rozbalení odkazů, které bez vyžádání odesílají `GET`. Na cokoli, pro co platforma nemá metodu, se odpoví `405`, aniž by se resolver kdy spustil.
+
 <Note>
 **Aplikace musí být převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.** Protože resolver běží v **pracovním prostoru vlastníka** (pracovní prostor, který vlastní registraci aplikace), spouštěč serverové trasy funguje pouze tehdy, když byla aplikace *převzata do vlastnictví* — tj. má pracovní prostor vlastníka — **a** tato aplikace je **nainstalována v pracovním prostoru vlastníka**. Dokud nejsou obě podmínky splněny, resolver nemá kde běžet, takže trasu nelze zpracovat. Aplikace, která zpřístupňuje logickou funkci `serverRouteTriggerSettings`, proto nemůže být uvedena na Marketplace, dokud není převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.
 </Note>
