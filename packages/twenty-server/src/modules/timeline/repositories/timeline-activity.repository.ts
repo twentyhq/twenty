@@ -11,17 +11,18 @@ import { type TimelineActivityPayload } from 'src/modules/timeline/types/timelin
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
 // Compaction identity is structural: the legacy name is a display field and
-// must never decide which rows are the same event.
+// must never decide which rows are the same event. An unset value is null on a
+// stored row and undefined on a payload, so both normalize to the same key part.
 const buildMergeKey = ({
   recordId,
   workspaceMemberId,
   sourceObjectMetadataId,
   linkedRecordId,
 }: {
-  recordId: unknown;
-  workspaceMemberId: unknown;
-  sourceObjectMetadataId: unknown;
-  linkedRecordId: unknown;
+  recordId: string;
+  workspaceMemberId: string | null | undefined;
+  sourceObjectMetadataId: string | null | undefined;
+  linkedRecordId: string | null | undefined;
 }): string =>
   [recordId, workspaceMemberId, sourceObjectMetadataId, linkedRecordId]
     .map((keyPart) => keyPart ?? null)
