@@ -217,6 +217,33 @@ export const Interactive: Story = {
   },
 };
 
+export const SurvivesFullScreenToggle: Story = {
+  args: {
+    ...DEFAULT_PROPS,
+    label: 'Full Screen Field',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const typedContent = 'Content typed before going full screen';
+
+    const editor = await canvas.findByRole('textbox');
+    await userEvent.click(editor);
+    await userEvent.type(editor, typedContent);
+
+    const maximizeButton = await canvas.findByRole('button');
+    await userEvent.click(maximizeButton);
+
+    // The full screen editor is portaled to document.body, outside canvasElement.
+    const body = within(canvasElement.ownerDocument.body);
+    expect(await body.findByText(typedContent)).toBeVisible();
+
+    const closeButton = await body.findByRole('button');
+    await userEvent.click(closeButton);
+
+    expect(await canvas.findByText(typedContent)).toBeVisible();
+  },
+};
+
 export const WithVariablePicker: Story = {
   args: {
     ...DEFAULT_PROPS,
