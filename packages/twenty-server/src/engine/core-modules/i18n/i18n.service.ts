@@ -10,7 +10,6 @@ import {
 import { compileMessage } from '@lingui/message-utils/compileMessage';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
-
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
 import { messages as arMessages } from 'src/engine/core-modules/i18n/locales/generated/ar-SA';
 import { messages as caMessages } from 'src/engine/core-modules/i18n/locales/generated/ca-ES';
