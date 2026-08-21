@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Twenty für externen Zugriff freigeben
 
-Standardmäßig läuft Twenty auf `localhost` an Port `3000`. Um über eine externe Domain oder IP-Adresse darauf zuzugreifen, müssen Sie die `SERVER_URL` in Ihrer `.env`-Datei konfigurieren.
+Standardmäßig läuft Twenty auf `localhost` an Port `3000`. Die UI bestimmt den API-Endpunkt aus dem eigenen Origin des Browsers, sodass sie von jedem Hostnamen geladen wird, der den Container erreicht – setze dennoch `SERVER_URL` auf deine öffentliche URL: Der Server verwendet sie für generierte Links (E-Mails, OAuth-Callbacks) und um HTTPS für sichere Cookies zu erkennen.
 
 #### Erläuterung von `SERVER_URL`
 
@@ -229,7 +229,7 @@ Zu Ihrer Crontab hinzufügen (`crontab -e`):
 1. Anwendung stoppen:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. Datenbank wiederherstellen:

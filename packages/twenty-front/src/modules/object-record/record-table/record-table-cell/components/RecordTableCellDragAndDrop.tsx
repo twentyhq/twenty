@@ -41,6 +41,7 @@ export const RecordTableCellDragAndDrop = () => {
   return (
     <RecordTableCellStyleWrapper
       data-select-disable
+      isDragging={isDragging}
       hasRightBorder={false}
       hasBottomBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME}

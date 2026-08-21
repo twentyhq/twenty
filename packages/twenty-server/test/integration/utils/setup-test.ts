@@ -4,6 +4,7 @@ import 'tsconfig-paths/register';
 
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
+import { assertForcedFeatureFlagsAreEnabled } from './assert-forced-feature-flags-are-enabled.util';
 import { createApp } from './create-app';
 
 export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
@@ -18,6 +19,8 @@ export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
   }
 
   await rawDataSource.initialize();
+
+  await assertForcedFeatureFlagsAreEnabled(rawDataSource);
 
   await app.listen(projectConfig.globals.APP_PORT as number);
 

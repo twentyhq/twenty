@@ -85,7 +85,10 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
         });
       }
 
-      const sentFolderPath = getImapFolderPath(sentFolder?.externalId);
+      const sentFolderPath = getImapFolderPath(
+        sentFolder?.externalId,
+        imapClient,
+      );
 
       if (isDefined(sentFolderPath)) {
         await imapClient.append(sentFolderPath, messageBuffer);

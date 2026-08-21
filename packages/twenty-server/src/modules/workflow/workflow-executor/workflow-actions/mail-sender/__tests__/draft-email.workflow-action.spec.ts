@@ -11,13 +11,6 @@ import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-execu
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
-jest.mock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
-  () => ({
-    renderRichTextToHtml: jest.fn().mockResolvedValue('<p>rendered html</p>'),
-  }),
-);
-
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {

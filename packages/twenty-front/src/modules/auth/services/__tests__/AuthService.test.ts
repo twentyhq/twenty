@@ -30,4 +30,23 @@ describe('AuthService', () => {
       expect(res).toEqual(tokens);
     });
   });
+
+  it('should send credentials so the renewal response can set the session cookie', async () => {
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: { renewToken: { tokens } },
+        }),
+      }),
+    );
+
+    await act(async () => {
+      await renewToken('http://localhost:3000', tokens);
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ credentials: 'include' }),
+    );
+  });
 });

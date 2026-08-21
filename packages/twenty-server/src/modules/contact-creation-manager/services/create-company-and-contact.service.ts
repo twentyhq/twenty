@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString, isNull } from '@sniptt/guards';
@@ -17,6 +17,10 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -33,8 +37,14 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
+const isDuplicateEntryError = (error: unknown) =>
+  error instanceof TwentyORMException &&
+  error.code === TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED;
+
 @Injectable()
 export class CreateCompanyAndPersonService {
+  private readonly logger = new Logger(CreateCompanyAndPersonService.name);
+
   constructor(
     private readonly createPersonService: CreatePersonService,
     private readonly createCompaniesService: CreateCompanyService,
@@ -183,19 +193,21 @@ export class CreateCompanyAndPersonService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: connectedAccount.userWorkspaceId },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      this.logger.warn(
+        `Skipping contact creation for connected account ${connectedAccount.id} in workspace ${workspaceId}: userWorkspace ${connectedAccount.userWorkspaceId} not found`,
+      );
+
+      return;
+    }
+
     const accountOwner =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const userWorkspace = await this.userWorkspaceRepository.findOne({
-            where: { id: connectedAccount.userWorkspaceId },
-          });
-
-          if (!userWorkspace) {
-            throw new Error(
-              `UserWorkspace with id ${connectedAccount.userWorkspaceId} not found`,
-            );
-          }
-
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
               workspaceId,
@@ -220,6 +232,13 @@ export class CreateCompanyAndPersonService {
           accountOwner,
         );
       } catch (error) {
+        // Concurrent imports for the same workspace can insert the same company
+        // domain or person email, and the loser hits the unique index. The
+        // record it wanted exists either way.
+        if (isDuplicateEntryError(error)) {
+          continue;
+        }
+
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {
             id: workspaceId,

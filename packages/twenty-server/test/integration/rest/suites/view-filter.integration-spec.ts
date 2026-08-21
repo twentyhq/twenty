@@ -5,6 +5,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
+  assertMetadataRestListResponse,
   assertRestApiErrorNotFoundResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
@@ -108,8 +109,10 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual([]);
+      expect(assertMetadataRestListResponse<ViewFilterDTO>(response)).toEqual(
+        [],
+      );
+      expect(response.body.totalCount).toBe(0);
     });
 
     it('should return all view filters for workspace when no viewId provided', async () => {
@@ -119,8 +122,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(Array.isArray(response.body)).toBe(true);
+      assertMetadataRestListResponse<ViewFilterDTO>(response);
     });
 
     it('should return view filters for a specific view after creating one', async () => {
@@ -139,10 +141,9 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(Array.isArray(response.body)).toBe(true);
-
-      const returnedViewFilter = response.body.find(
+      const viewFilters =
+        assertMetadataRestListResponse<ViewFilterDTO>(response);
+      const returnedViewFilter = viewFilters.find(
         (el: ViewFilterDTO) => el.id === viewFilter.id,
       );
 

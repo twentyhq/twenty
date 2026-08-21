@@ -172,6 +172,10 @@ Güvenlik nedenleriyle, yanıt üstbilgileri bir izin listesiyle sınırlandır�
 Durum kodu geçerli bir HTTP durum kodu olmalıdır (100 ile 599 arasında). Yanıt üstbilgisi adları büyük/küçük harfe duyarsız olarak eşleştirilir.
 </Note>
 
+#### Platform hata yanıtları
+
+İşleyicinizin kendi yanıtlarının ötesinde, platform bazı durumlarda rota çağrılarına doğrudan yanıt verir: rota veya fonksiyon mevcut olmadığında `404`, uygulama durdurulduğunda `403`, yürütme hız sınırına ulaşıldığında `429` ve uygulamanın üretim `dependencies` değerleri kurulamayacak kadar büyük olduğunda `422` — bkz. [dependencies boyut sınırları](/l/tr/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Sunucu rota tetikleyicisi
 
 `httpRouteTriggerSettings`, `/s/` altında bir fonksiyon sunar ve çalışma alanını istek ana bilgisayarından çözümler — bu da her çalışma alanının kendi alan adına sahip olduğu durumda işe yarar. Üçüncü taraf sağlayıcılar ise, her kiracının olaylarını **tek** URL’ye iletir. Bu durum için `serverRouteTriggerSettings` kullanın.
@@ -278,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 Tanımlayıcı, manifest'inizdeki resolver'ın `universalIdentifier` değeridir. Bu URL’yi sağlayıcıya kaydedin.
+
+**Bir doğrulama `GET` isteğine yanıt verme.** Bazı sağlayıcılar, daha sonra olayları `POST` edecekleri aynı URL'ye bir sorgu içeren `GET` isteği göndererek, teslimat yapmadan önce bir uç noktayı doğrular — Meta'nın WhatsApp Cloud API'si bunlardan biridir. Bir sunucu rotası, aksini belirtmediğiniz sürece yalnızca `POST` isteklerine yanıt verir; bu nedenle her iki yöntemi de bildirin:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Sorgu `event.queryStringParameters` içinde gelir ve bir `Response` döndürmek, onu aynı istekte sağlayıcıya geri iletir. Bir dize gövdesi `text/plain` olarak gönderilir; bu sağlayıcıların beklediği de budur:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods`, varsayılan ayara ekleme yapmak yerine onun yerini alır; bu nedenle tek başına `['GET']`, rotanın `POST` isteğini reddetmesine neden olur. Yalnızca `GET` ve `POST` desteklenir. Sağlayıcı ikinci HTTP yöntemine ihtiyaç duymadığı sürece bunu ayarlanmamış bırakın: `GET` bildiren bir rotanın resolver'ı, istek göndermeden `GET` gönderen tarayıcılar ve bağlantı önizleme araçları da dahil olmak üzere, kimliği doğrulanmamış herhangi bir çağıran tarafından çalıştırılır. Platformun yöntemi olmayan her şeye, resolver hiç çalışmadan `405` yanıtı verilir.
 
 <Note>
 **Uygulama, sahip çalışma alanında sahiplenilip kurulmalıdır.** Çözücü **sahip çalışma alanında** (uygulama kaydına sahip olan çalışma alanı) çalıştığı için, bir sunucu rota tetikleyicisi yalnızca uygulama *sahiplenildikten* — yani bir sahip çalışma alanına sahiptir — **ve** o uygulama **sahip çalışma alanına kurulduğunda** çalışır. Her ikisi de doğru olana kadar çözücünün çalışacağı bir yer yoktur, bu yüzden rota çalıştırılamaz. Bu nedenle, `serverRouteTriggerSettings` mantık işlevini sunan bir uygulama, sahip çalışma alanında sahiplenilip kurulana kadar pazaryerinde listelenemez.

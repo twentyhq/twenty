@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -14,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
@@ -31,6 +35,7 @@ export class ConnectedAccountMetadataService {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
+    private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
@@ -91,8 +96,7 @@ export class ConnectedAccountMetadataService {
     }
 
     if (
-      connectedAccount.visibility !== 'workspace' &&
-      connectedAccount.userWorkspaceId !== userWorkspaceId
+      !isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId })
     ) {
       throw new ConnectedAccountException(
         `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
@@ -245,6 +249,14 @@ export class ConnectedAccountMetadataService {
     await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
 
     await this.repository.delete({ id, workspaceId });
+
+    if (isDefined(connectedAccount.connectionProviderId)) {
+      await this.connectionProviderLifecycleHookService.dispatchOnDisconnect({
+        connectionProviderId: connectedAccount.connectionProviderId,
+        workspaceId,
+        connectedAccountId: id,
+      });
+    }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

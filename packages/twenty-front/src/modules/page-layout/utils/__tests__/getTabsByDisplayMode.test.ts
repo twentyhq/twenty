@@ -8,6 +8,8 @@ import {
 
 describe('getTabsByDisplayMode', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     id,
     applicationId: '',
     isActive: true,

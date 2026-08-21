@@ -363,25 +363,59 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         expectedWorkspaceId: workspace.id,
       });
 
-      if (isDefined(userContext)) {
-        context.user = userContext.user;
-        context.userWorkspace = userContext.userWorkspace;
-        context.userWorkspaceId = userContext.userWorkspace.id;
+      assertIsDefinedOrThrow(
+        userContext,
+        new AuthException(
+          'User or user workspace not found',
+          AuthExceptionCode.USER_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`User does not have access to this workspace`,
+          },
+        ),
+      );
 
-        const { flatWorkspaceMemberMaps } =
-          await this.workspaceCacheService.getOrRecompute(workspace.id, [
-            'flatWorkspaceMemberMaps',
-          ]);
+      context.user = userContext.user;
+      context.userWorkspace = userContext.userWorkspace;
+      context.userWorkspaceId = userContext.userWorkspace.id;
 
-        const workspaceMemberId =
-          flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
-
-        if (isDefined(workspaceMemberId)) {
-          context.workspaceMemberId = workspaceMemberId;
-          context.workspaceMember =
-            flatWorkspaceMemberMaps.byId[workspaceMemberId];
-        }
+      if (
+        workspace.activationStatus ===
+          WorkspaceActivationStatus.PENDING_CREATION ||
+        workspace.activationStatus ===
+          WorkspaceActivationStatus.ONGOING_CREATION
+      ) {
+        return context;
       }
+
+      const { flatWorkspaceMemberMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspace.id, [
+          'flatWorkspaceMemberMaps',
+        ]);
+
+      const workspaceMemberId =
+        flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
+
+      const cachedWorkspaceMember = isDefined(workspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+        : undefined;
+
+      const workspaceMember = isDefined(cachedWorkspaceMember?.deletedAt)
+        ? undefined
+        : cachedWorkspaceMember;
+
+      assertIsDefinedOrThrow(
+        workspaceMember,
+        new AuthException(
+          'User is not a member of the workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`User is not a member of the workspace.`,
+          },
+        ),
+      );
+
+      context.workspaceMemberId = workspaceMemberId;
+      context.workspaceMember = workspaceMember;
     }
 
     return context;

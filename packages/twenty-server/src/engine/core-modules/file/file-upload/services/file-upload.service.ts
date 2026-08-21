@@ -7,7 +7,7 @@ import { pipeline } from 'stream/promises';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import bytes from 'bytes';
-import { FileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -31,6 +31,7 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -43,6 +44,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.Workflow,
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
+  FileFolder.EmailImage,
 ] as const;
 
 @Injectable()
@@ -173,7 +175,7 @@ export class FileUploadService {
 
     return {
       fileId,
-      uploadUrl: `${serverUrl}/file-upload/${fileId}?token=${token}`,
+      uploadUrl: `${serverUrl}/${ApiPath.FileUpload}/${fileId}?token=${token}`,
       // octet-stream keeps the request body away from the server's json/text
       // body parsers; the real mime type is already on the file record.
       contentType: 'application/octet-stream',
@@ -365,6 +367,8 @@ export class FileUploadService {
       filename: file.path,
     });
 
+    this.assertMimeTypeAllowedForFolder(fileFolder as FileFolder, mimeType);
+
     await this.fileRepository.update(
       workspaceId,
       { id: fileId },
@@ -409,6 +413,25 @@ export class FileUploadService {
     });
 
     return mimeType;
+  }
+
+  private assertMimeTypeAllowedForFolder(
+    fileFolder: FileFolder,
+    mimeType: string,
+  ): void {
+    const { allowedMimeTypes } = fileFolderConfigs[fileFolder];
+
+    if (!allowedMimeTypes || allowedMimeTypes.includes(mimeType)) {
+      return;
+    }
+
+    throw new FileUploadException(
+      `MIME type ${mimeType} is not allowed in file folder ${fileFolder}`,
+      FileUploadExceptionCode.BAD_REQUEST,
+      {
+        userFriendlyMessage: msg`This file format is not supported.`,
+      },
+    );
   }
 
   private async resolveUploadLocation({

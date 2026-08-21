@@ -7,6 +7,8 @@ import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaState } from '@/client-config/states/captchaState';
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
@@ -105,6 +107,14 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
 
+  const setIsBookCallOnboardingStepEnabled = useSetAtomState(
+    isBookCallOnboardingStepEnabledState,
+  );
+
+  const setIsCompanyEnrichmentEnabled = useSetAtomState(
+    isCompanyEnrichmentEnabledState,
+  );
+
   const setIsEmailingDomainInDemoMode = useSetAtomState(
     isEmailingDomainInDemoModeState,
   );
@@ -180,6 +190,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         dsn: clientConfig?.sentry?.dsn,
         release: clientConfig?.sentry?.release,
         environment: clientConfig?.sentry?.environment,
+        tracesSampleRate: clientConfig?.sentry?.tracesSampleRate,
       });
 
       setCaptcha({
@@ -188,7 +199,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
 
       setApiConfig(clientConfig?.api);
-      setOnboardingConfig(clientConfig?.onboarding);
+      setOnboardingConfig(clientConfig?.onboarding ?? null);
       setDomainConfiguration({
         defaultSubdomain: clientConfig?.defaultSubdomain,
         frontDomain: clientConfig?.frontDomain,
@@ -210,6 +221,12 @@ export const useClientConfig = (): UseClientConfigResult => {
       }));
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
+      setIsBookCallOnboardingStepEnabled(
+        clientConfig?.isBookCallOnboardingStepEnabled ?? false,
+      );
+      setIsCompanyEnrichmentEnabled(
+        clientConfig?.isCompanyEnrichmentEnabled ?? false,
+      );
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
       setIsEmailingDomainInDemoMode(
         clientConfig?.isEmailingDomainInDemoMode ?? false,
@@ -255,6 +272,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsGoogleMessagingEnabled,
     setIsAnalyticsEnabled,
     setIsAttachmentPreviewEnabled,
+    setIsBookCallOnboardingStepEnabled,
+    setIsCompanyEnrichmentEnabled,
     setIsConfigVariablesInDbEnabled,
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,

@@ -415,9 +415,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                     <TableCell color={themeCssVariables.font.color.primary}>
                       {thread.title || t`Untitled`}
                     </TableCell>
-                    <TableCell align="right">
-                      {thread.conversationSize}
-                    </TableCell>
+                    <TableCell align="right">{thread.messageCount}</TableCell>
                     <TableCell align="right">
                       {new Date(thread.updatedAt).toLocaleDateString()}
                     </TableCell>

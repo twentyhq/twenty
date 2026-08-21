@@ -1,18 +1,18 @@
 import { type JSX } from 'react';
 import { Text } from 'react-email';
 
-import { emailTheme } from 'src/common-style';
+import { canvasTheme } from 'src/common-style';
 
 type ShadowTextProps = {
   children: JSX.Element | JSX.Element[] | string;
 };
 
 const shadowTextStyle = {
-  fontSize: emailTheme.font.size.sm,
-  fontWeight: emailTheme.font.weight.regular,
-  color: emailTheme.font.colors.tertiary,
+  fontSize: canvasTheme.font.size.sm,
+  fontWeight: canvasTheme.font.weight.regular,
+  color: canvasTheme.font.colors.tertiary,
   margin: '0 0 12px 0',
-  lineHeight: emailTheme.font.lineHeight,
+  lineHeight: canvasTheme.font.lineHeight,
 };
 
 export const ShadowText = ({ children }: ShadowTextProps) => {

@@ -1,8 +1,10 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
+import {
+  SYSTEM_VIEW_KEYS,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -69,7 +71,7 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
       objectMetadataApplicationUniversalIdentifier:
         updatedFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
 
     const indexFlatView =

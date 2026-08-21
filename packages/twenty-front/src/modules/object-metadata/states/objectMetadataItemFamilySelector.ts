@@ -1,4 +1,5 @@
-import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { objectMetadataItemsByNamePluralMapSelector } from '@/object-metadata/states/objectMetadataItemsByNamePluralMapSelector';
+import { objectMetadataItemsByNameSingularMapSelector } from '@/object-metadata/states/objectMetadataItemsByNameSingularMapSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
@@ -15,23 +16,18 @@ export const objectMetadataItemFamilySelector = createAtomFamilySelector<
   get:
     ({ objectNameType, objectName }: ObjectMetadataItemSelector) =>
     ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
-
       if (objectNameType === 'singular') {
         return (
-          objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.nameSingular === objectName,
-          ) ?? null
+          get(objectMetadataItemsByNameSingularMapSelector).get(objectName) ??
+          null
         );
       } else if (objectNameType === 'plural') {
         return (
-          objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.namePlural === objectName,
-          ) ?? null
+          get(objectMetadataItemsByNamePluralMapSelector).get(objectName) ??
+          null
         );
       }
       return null;
     },
+  areEqual: (previous, next) => previous === next,
 });

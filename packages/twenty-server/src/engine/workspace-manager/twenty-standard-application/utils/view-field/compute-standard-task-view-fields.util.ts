@@ -8,7 +8,6 @@ export const computeStandardTaskViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'task'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // allTasks view fields
     allTasksTitle: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',
@@ -106,7 +105,6 @@ export const computeStandardTaskViewFields = (
       },
     }),
 
-    // byStatus view fields
     byStatusTitle: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',
@@ -168,7 +166,6 @@ export const computeStandardTaskViewFields = (
       },
     }),
 
-    // assignedToMe view fields
     assignedToMeTitle: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',
@@ -349,7 +346,6 @@ export const computeStandardTaskViewFields = (
         },
       },
     ),
-    // System group
     taskRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',

@@ -9,7 +9,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
-@WorkspaceCache('featureFlagsMap')
+@WorkspaceCache('featureFlagsMap', { packingPonderation: 1 })
 export class WorkspaceFeatureFlagsMapCacheService extends WorkspaceCacheProvider<FeatureFlagMap> {
   constructor(
     @InjectWorkspaceScopedRepository(FeatureFlagEntity)

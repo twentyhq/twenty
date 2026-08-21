@@ -21,7 +21,8 @@ export type SidePanelListProps = {
 
 const StyledInnerList = styled.div`
   max-height: calc(
-    100dvh - ${SIDE_PANEL_TOP_BAR_HEIGHT}px - ${SIDE_PANEL_LIST_PADDING * 2}px
+    calc(100dvh / var(--t-zoom, 1)) - ${SIDE_PANEL_TOP_BAR_HEIGHT}px -
+      ${SIDE_PANEL_LIST_PADDING * 2}px
   );
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
@@ -30,7 +31,8 @@ const StyledInnerList = styled.div`
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {
     max-height: calc(
-      100dvh - ${SIDE_PANEL_TOP_BAR_HEIGHT}px - ${SIDE_PANEL_LIST_PADDING * 2}px
+      calc(100dvh / var(--t-zoom, 1)) - ${SIDE_PANEL_TOP_BAR_HEIGHT}px -
+        ${SIDE_PANEL_LIST_PADDING * 2}px
     );
   }
 `;

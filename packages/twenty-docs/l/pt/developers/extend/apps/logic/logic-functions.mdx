@@ -171,6 +171,10 @@ Por motivos de segurança, os cabeçalhos de resposta são restringidos a uma li
 O código de status deve ser um código de status HTTP válido (entre 100 e 599). Os nomes dos cabeçalhos de resposta são comparados sem distinção entre maiúsculas e minúsculas.
 </Note>
 
+#### Respostas de erro da plataforma
+
+Além das próprias respostas do seu handler, a plataforma responde diretamente às chamadas de rota em algumas situações: `404` quando a rota ou função não existe, `403` quando a aplicação está parada, `429` quando o limite de taxa de execução é atingido e `422` quando as `dependencies` de produção da aplicação são grandes demais para serem instaladas — consulte [limites de tamanho de dependencies](/l/pt/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Gatilho de rota de servidor
 
 `httpRouteTriggerSettings` expõe uma função em `/s/` e resolve o workspace a partir do host da solicitação — o que funciona quando cada workspace tem seu próprio domínio. Provedores de terceiros, entretanto, entregam os eventos de todos os workspaces para **uma** URL. Para esse caso, use `serverRouteTriggerSettings`.
@@ -277,6 +281,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 O identificador é o `universalIdentifier` do resolver, vindo do seu manifest. Registre essa URL junto ao provedor.
+
+**Respondendo a uma verificação GET.** Alguns provedores verificam um endpoint antes de enviar dados a ele, enviando um `GET` com um desafio para a mesma URL à qual posteriormente enviarão eventos por `POST` — a API do WhatsApp Cloud da Meta é um deles. Uma rota do servidor responde somente a `POST`, a menos que você indique o contrário, portanto declare ambos os métodos:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+O desafio chega em `event.queryStringParameters`, e retornar uma `Response` o repete para o provedor na mesma solicitação. Um corpo de string é enviado como `text/plain`, que é o que esses provedores esperam:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` substitui o padrão em vez de ser adicionado a ele; portanto, apenas `['GET']` faz com que a rota rejeite `POST`. Apenas `GET` e `POST` são compatíveis. Deixe-o não definido, a menos que o provedor precise do segundo verbo: uma rota que declara `GET` terá seu resolvedor executado por qualquer chamador não autenticado, incluindo os rastreadores e expansores de links que enviam `GET` sem solicitação. Qualquer coisa para a qual a plataforma não tenha um método recebe a resposta `405` sem que o resolvedor seja executado.
 
 <Note>
 **O aplicativo deve ser reivindicado e instalado em seu workspace proprietário.** Como o resolvedor é executado no **workspace proprietário** (o workspace que é proprietário do registro do aplicativo), um acionador de rota de servidor só funciona depois que o aplicativo tiver sido *reivindicado* — ou seja, tiver um workspace proprietário — **e** esse aplicativo estiver **instalado no workspace proprietário**. Até que ambas as condições sejam verdadeiras, o resolvedor não tem onde ser executado, portanto a rota não pode ser despachada. Um aplicativo que expõe uma função lógica `serverRouteTriggerSettings`, portanto, não pode ser listado no marketplace até que seja reivindicado e instalado em seu workspace proprietário.

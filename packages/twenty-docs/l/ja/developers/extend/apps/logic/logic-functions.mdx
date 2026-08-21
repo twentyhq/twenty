@@ -172,6 +172,10 @@ const handler = async (event: RoutePayload) => {
 ステータスコードは、有効な HTTP ステータスコード（100 から 599 の間）でなければなりません。 レスポンスヘッダー名は、大文字と小文字を区別せずに照合されます。
 </Note>
 
+#### プラットフォームのエラー応答
+
+ハンドラー自身のレスポンス以外に、いくつかの状況ではプラットフォームがルート呼び出しに直接応答します。ルートまたは関数が存在しない場合は `404`、アプリケーションが停止している場合は `403`、実行レート制限に達した場合は `429`、アプリケーションの本番用 `dependencies` が大きすぎてインストールできない場合は `422` が返されます。詳しくは [dependencies size limits](/l/ja/developers/extend/apps/getting-started/project-structure#dependencies) を参照してください。
+
 #### サーバールートトリガー
 
 `httpRouteTriggerSettings` は `/s/` 配下に関数を公開し、リクエストホストからワークスペースを特定します。これは、各ワークスペースが独自ドメインを持つ場合に機能します。 しかし、サードパーティプロバイダーは、すべてのテナントのイベントを **1 つの** URL に配信します。 その場合は、`serverRouteTriggerSettings` を使用します。
@@ -278,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 識別子は、マニフェストに記載されている resolver の `universalIdentifier` です。 その URL をプロバイダーに登録します。
+
+**検証用 GET への応答。** 一部のプロバイダーは、後でイベントを `POST` する同じ URL にチャレンジを含む `GET` を送信して、配信先のエンドポイントを事前に検証します。Meta の WhatsApp Cloud API はその一例です。 特に指定しない限り、サーバールートは `POST` にのみ応答するため、両方のメソッドを宣言します。
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+チャレンジは `event.queryStringParameters` で受信され、`Response` を返すと、同じリクエストでプロバイダーにチャレンジが返されます。 文字列のボディは `text/plain` として送信され、これはこれらのプロバイダーが想定する形式です。
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` はデフォルトに追加するのではなく置き換えるため、`['GET']` のみを指定すると、ルートは `POST` を拒否します。 サポートされているのは `GET` と `POST` のみです。 プロバイダーが2つ目の動詞を必要とする場合を除き、未設定のままにしてください。`GET` を宣言するルートでは、認証されていないすべての呼び出し元（予告なく `GET` を送信するクローラーやリンク展開ツールを含む）によってリゾルバーが実行されます。 プラットフォームにメソッドが存在しないものには、リゾルバーが実行されることなく `405` が返されます。
 
 <Note>
 **アプリケーションは所有者ワークスペースでクレームされ、インストールされている必要があります。** リゾルバーは **所有者ワークスペース**（アプリケーション登録を所有しているワークスペース）上で実行されるため、サーバールートトリガーが動作するのは、アプリケーションが*クレーム*されている、つまり所有者ワークスペースを持っていること **かつ** そのアプリケーションが **所有者ワークスペースにインストールされている** 場合のみです。 この2つの条件がどちらも満たされるまでは、リゾルバーを実行する場所が存在しないため、ルートをディスパッチできません。 したがって、`serverRouteTriggerSettings` ロジック関数を公開するアプリケーションは、所有者ワークスペースでクレームされインストールされるまで、マーケットプレイスに掲載することはできません。

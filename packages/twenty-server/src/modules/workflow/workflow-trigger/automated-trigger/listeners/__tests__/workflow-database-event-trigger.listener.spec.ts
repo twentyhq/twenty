@@ -1,8 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -13,6 +15,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
   let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
+  let featureFlagService: jest.Mocked<FeatureFlagService>;
+  let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
 
   const mockRepository = {
     find: jest.fn(),
@@ -58,6 +62,15 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       add: jest.fn(),
     } as any;
 
+    // Default flag off so the existing suite exercises the workspace-entity path.
+    featureFlagService = {
+      isFeatureEnabled: jest.fn().mockResolvedValue(false),
+    } as any;
+
+    workspaceCacheService = {
+      getOrRecompute: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowDatabaseEventTriggerListener,
@@ -68,6 +81,14 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: MessageQueueService,
           useValue: messageQueueService,
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: featureFlagService,
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: workspaceCacheService,
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
@@ -129,6 +150,29 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
       await listener.handleObjectRecordUpdateEvent(mockPayload);
 
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: mockPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('reads listeners from the core trigger map when dispatch-from-core is enabled', async () => {
+      featureFlagService.isFeatureEnabled.mockResolvedValue(true);
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        workflowAutomatedTriggerMaps: {
+          byWorkflowId: { [workflowId]: mockEventListeners[0] },
+        },
+      } as any);
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      // Dispatch is driven by the core map, not the workspace entity.
+      expect(mockRepository.find).not.toHaveBeenCalled();
       expect(messageQueueService.add).toHaveBeenCalledWith(
         WorkflowTriggerJob.name,
         {

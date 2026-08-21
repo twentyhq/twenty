@@ -36,10 +36,10 @@ Die Zielfunktion erhält `payload` als Handler-Argument, genau wie jeder andere 
 
 ## Job-Optionen
 
-| Option       | Standard | Bereich                  | Was es tut                                                                                                                                    |
-| ------------ | -------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`      | `0`–`10`                 | Zusätzliche Versuche, falls der Lauf eine Exception auslöst. Erhöhe diesen Wert nur für Handler, die sicher zweimal ausgeführt werden können. |
-| `delayMs`    | `0`      | `0`–`604800000` (7 Tage) | So lange warten, bevor der Lauf zur Ausführung ansteht.                                                                                       |
+| Option       | Standard | Bereich                  | Was es tut                                                                                                                                                                                                 |
+| ------------ | -------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`      | `0`–`10`                 | Zusätzliche Warteschlangenversuche insgesamt. Von der Anwendung angeforderte Wiederholungsversuche sind auf `3` begrenzt. Erhöhe diesen Wert nur für Handler, die sicher zweimal ausgeführt werden können. |
+| `delayMs`    | `0`      | `0`–`604800000` (7 Tage) | So lange warten, bevor der Lauf zur Ausführung ansteht.                                                                                                                                                    |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 Der eingereihte Lauf erbt den agierenden Benutzer der Funktion, die ihn eingereiht hat, sodass er mit denselben Berechtigungen agiert.
+
+## Wiederholen eines vorübergehenden Fehlers
+
+Twenty wiederholt nicht jede Ausnahme aus dem Anwendungscode. Ein gewöhnlicher ausgelöster Fehler wird als dauerhafter Fehler behandelt. Bei einem vorübergehenden Fehler kann eine eingereihte Logikfunktion durch Auslösen von `RetryableLogicFunctionError` bis zu drei Wiederholungen anfordern.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Löse `RetryableLogicFunctionError` nach Möglichkeit direkt aus. Wenn du sie erweiterst, ersetze ihren `name` nicht: Twenty erkennt den serialisierten Namen `RetryableLogicFunctionError` in allen Laufzeitumgebungen.
+
+`retryCount` ist bei der initialen Ausführung `0` und erhöht sich nur, wenn der Anwendungscode eine Wiederholung anfordert. `maxRetries` beträgt höchstens `3` und kann geringer sein, wenn der Job in der Warteschlange ein niedrigeres Gesamtlimit für Wiederholungen hat. Plattformfehler erhöhen `retryCount` nicht, verbrauchen jedoch weiterhin das Gesamtsicherheitsbudget der Warteschlange.
+
+Die Warteschlange verzögert Wiederholungsversuche mit exponentiellem Backoff und Jitter. Die genaue Verzögerung wird absichtlich nicht garantiert, daher sollte der Anwendungscode nicht davon abhängen, dass eine Wiederholung zu einem genauen Zeitpunkt erfolgt. Sobald `maxRetries` erreicht ist, wird ein weiterer `RetryableLogicFunctionError` ohne weitere Ausführung als endgültiger Anwendungsfehler erfasst.
+
+<Warning>
+Wiederholungen führen den gesamten Handler erneut aus und können erfolgen, nachdem einige Nebenwirkungen erfolgreich waren. Mache den Handler idempotent, bevor du Wiederholungen anforderst.
+</Warning>
 
 ## Verwendung: eine lange Synchronisation seitenweise verarbeiten
 
@@ -159,7 +193,3 @@ Warum das funktioniert:
 * **Persistiere den Fortschritt, bevor du den nächsten Lauf einreihst,** damit ein fehlgeschlagener Link beim letzten abgeschlossenen Chunk und nicht am Anfang neu startet.
 * **Halte jeden Chunk idempotent.** Die erneute Verarbeitung eines Chunks nach einem Retry darf nicht zu doppelten Schreibvorgängen führen — führe Schlüsselschreibvorgänge auf dem Datensatz oder der externen ID aus, die du verarbeitest.
 * **Bevorzuge eine verkettete Chunk-Verarbeitung gegenüber einem riesigen Fan-out**, wenn die Arbeit auf einen rate-limitierten Drittanbieter trifft: Eine Kette mit `delayMs` taktet sich selbst, wohingegen Tausende auf einmal eingereihte Jobs sofort zur Ausführung anstehen.
-
-<Warning>
-Retries führen den gesamten Handler erneut aus. Halte eingereihte Handler idempotent, bevor du `retryLimit` über `0` setzt.
-</Warning>

@@ -67,12 +67,10 @@ describe('AppHealthIndicator', () => {
   });
 
   it('should maintain state history across health checks', async () => {
-    // First check - healthy state
     workspaceRepository.count.mockResolvedValue(2);
 
     await service.isHealthy();
 
-    // Second check - error state
     workspaceRepository.count.mockRejectedValue(
       new Error('Database connection failed'),
     );

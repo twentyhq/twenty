@@ -6,15 +6,17 @@ export const useCampaignBodyState = ({
 }: {
   campaign: MessageCampaign;
 }) => {
-  const { draft, updateDraft, flush } = usePersistedCampaignDraft({
-    campaignId: campaign.id,
-    initialDraft: () => ({ bodyTemplate: campaign.bodyTemplate ?? '' }),
-    toUpdateOneRecordInput: ({ bodyTemplate }) => ({ bodyTemplate }),
-  });
+  const { draft, updateDraft, flush, draftResyncKey } =
+    usePersistedCampaignDraft({
+      campaignId: campaign.id,
+      initialDraft: () => ({ bodyTemplate: campaign.bodyTemplate ?? '' }),
+      toUpdateOneRecordInput: ({ bodyTemplate }) => ({ bodyTemplate }),
+    });
 
   return {
     body: draft.bodyTemplate,
     setBody: (bodyTemplate: string) => updateDraft({ bodyTemplate }),
     flush,
+    draftResyncKey,
   };
 };

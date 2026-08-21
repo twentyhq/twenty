@@ -1,3 +1,7 @@
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+
 import { type Preview } from '@storybook/react-vite';
 import '@ui/theme-constants/theme-light.css';
 import '@ui/theme-constants/theme-dark.css';

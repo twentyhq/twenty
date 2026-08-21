@@ -12,6 +12,7 @@
     "twenty-app"
   ],
   "packageManager": "yarn@4.13.0",
+  "frontComponentSharedDependencies": ["react", "react-dom/client"],
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",

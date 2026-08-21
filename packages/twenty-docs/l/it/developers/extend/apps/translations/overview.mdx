@@ -55,9 +55,9 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Quando usare cosa
 
-* **`<Trans>…</Trans>`** — testo statico in JSX. Usa le prop `message` e `values`
-  per l’interpolazione (`<Trans message="Hi {name}" values={{ name }} />`);
-  l’interpolazione direttamente nei children non è estraibile staticamente.
+* **`Trans`** — testo statico in JSX. Usa le prop `message` e `values` per
+  l'interpolazione, come in `Trans message="Hi {name}" values={{ name }}`;
+  l'interpolazione direttamente nei figli non è estraibile staticamente.
 * **`useTranslate().t`** — stringhe dinamiche all’interno di un componente. Esegue il re-render quando
   l’utente cambia lingua. Preferiscilo all’interno del render.
 * **`t(...)`** (importato direttamente) — traduzione eager utilizzabile **ovunque**,
@@ -76,6 +76,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Le stringhe contestuali compaiono nei cataloghi delle impostazioni locali come un gruppo indicizzato dal loro
+contesto: `"\<context>": { "\<message>": "\<translation>" }`. Le etichette del manifest sono
+contestuali per costruzione — ognuna porta con sé il ruolo di metadato che svolge
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), quindi
+la stessa parola può essere tradotta in modo diverso come nome di oggetto e come nome di vista.
+
 ## Estrazione e traduzione
 
 Esegui il comando di estrazione dalla directory della tua app:
@@ -85,18 +91,27 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-L’estrazione raccoglie sia le etichette del manifest sia le stringhe `t()`/`msg()`/`\<Trans>`
-dal sorgente dei tuoi front-component in `locales/\<locale>.json`, con chiave
-la stringa sorgente. Compila le traduzioni:
+L'estrazione raccoglie sia le etichette del manifest sia le stringhe `t()`/`msg()`/`Trans`
+dal tuo sorgente front-component in `locales/\<locale>.json`, indicizzate per
+stringa sorgente. Compila le traduzioni:
 
 ```json
 // locales/fr-FR.json
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Le stringhe prive di contesto sono voci piatte; le stringhe contestuali — inclusa ogni
+etichetta del manifest — sono annidate sotto la loro chiave di contesto.
 
 I segnaposto come `{name}` vengono sostituiti a runtime — mantienili nella
 traduzione. Qualsiasi stringa lasciata vuota fa fallback al testo sorgente.
@@ -108,17 +123,22 @@ corrente: le etichette del manifest vengono risolte lato server e i cataloghi de
 front-component vengono inclusi in ogni bundle di componente. A runtime un componente legge la
 locale dal proprio contesto di esecuzione (la lingua corrente dell’host) e risolve
 ogni stringa rispetto al proprio catalogo, facendo fallback alla sorgente quando
-una traduzione manca. Il cambio di lingua nell’host esegue il re-render delle stringhe `\<Trans>` e
+una traduzione manca. Cambiare lingua nell'host esegue nuovamente il render delle stringhe `Trans` e
 `useTranslate().t` in tempo reale.
 
-Poiché i cataloghi vengono compilati in fase di build, aggiornare una traduzione significa
-eseguire nuovamente `twenty dev:build` (e ridistribuire), come per qualsiasi altra modifica.
+Le etichette del manifest vengono compilate a ogni sincronizzazione — `twenty dev:build`, `twenty apply`
+e anche il monitoraggio continuo di `twenty dev` — quindi è sufficiente modificare un file di lingua e
+sincronizzare per vedere il nuovo testo. I cataloghi dei componenti Front vengono incorporati in
+ogni bundle di componenti al momento della build, quindi modificarne uno significa comunque
+rieseguire `twenty dev:build` (e ridistribuire).
 
-<Note>
-Le traduzioni vengono compilate da `twenty dev:build` (e `twenty apply`). La modalità watch continua di `twenty dev` mostra le stringhe sorgente, quindi testa l’output localizzato
-con una build una tantum.
-</Note>
+I figli di testo di `Trans` possono estendersi su più righe — gli spazi bianchi vengono compressi
+nello stesso modo in cui JSX li comprime, quindi entrambe queste varianti vengono estratte con la chiave `Welcome back`:
 
-I figli di testo di `<Trans>` possono estendersi su più righe — gli spazi bianchi vengono compressi
-nello stesso modo in cui JSX li comprime, quindi `<Trans>Welcome\n  back</Trans>` e la chiave estratta
-diventano entrambi `Welcome back`.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

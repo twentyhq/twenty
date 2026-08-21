@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Los componentes de frontend pueden activar navegación, modales y notificaciones usando funciones de `twenty-sdk`:
 
-| Función                                         | Descripción                                  |
-| ----------------------------------------------- | -------------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navegar a una página en la aplicación        |
-| `openSidePanelPage(params)`                     | Abrir un panel lateral                       |
-| `closeSidePanel()`                              | Cerrar el panel lateral                      |
-| `openCommandConfirmationModal(params)`          | Mostrar un cuadro de diálogo de confirmación |
-| `enqueueSnackbar(params)`                       | Mostrar una notificación tipo toast          |
-| `unmountFrontComponent()`                       | Desmontar el componente                      |
-| `updateProgress(progress)`                      | Actualizar un indicador de progreso          |
+| Función                                            | Descripción                                                                                                                                                                                 |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navegar a una página en la aplicación                                                                                                                                                       |
+| `openSidePanelPage(params)`                        | Abrir un panel lateral                                                                                                                                                                      |
+| `closeSidePanel()`                                 | Cerrar el panel lateral                                                                                                                                                                     |
+| `openCommandConfirmationModal(params)`             | Mostrar un cuadro de diálogo de confirmación                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | Mostrar una notificación tipo toast                                                                                                                                                         |
+| `unmountFrontComponent()`                          | Desmontar el componente                                                                                                                                                                     |
+| `updateProgress(progress)`                         | Actualizar un indicador de progreso                                                                                                                                                         |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Sube un `Blob` a un campo FILES; se resuelve en `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` o `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Aquí tienes un ejemplo que usa la API del host para mostrar un snackbar y cerrar el panel lateral después de que una acción finaliza:
 
@@ -519,6 +520,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### Almacenamiento
+
+`localStorage` y `sessionStorage` funcionan como lo hacen en una página normal, con la API síncrona estándar. Tus claves están limitadas al ámbito de la instalación de tu aplicación y del usuario que ha iniciado sesión: ninguna otra aplicación puede leerlas, y otro usuario que inicie sesión en el mismo navegador comenzará con un almacenamiento vacío. Los valores escritos en `localStorage` permanecen en el dispositivo a través de las recargas; `sessionStorage` dura mientras dure la sesión del navegador.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty almacena los valores en nombre de tu aplicación, por lo que una escritura se aplica localmente de inmediato y se guarda en segundo plano. Las lecturas nunca esperan al host. Nada se sincroniza: los valores no siguen al usuario a otro navegador o máquina, así que usa el [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store) de una función de lógica para cualquier cosa que deba sobrevivir a un cambio de dispositivo.
+
+Las escrituras están limitadas y cada límite cuenta caracteres en lugar de bytes: las claves tienen como máximo 512 caracteres, un solo valor como máximo 262.144 caracteres y cada almacenamiento como máximo 1.048.576 caracteres por aplicación y usuario. Una escritura que excede un límite lanza un `QuotaExceededError`, como la API del navegador.
 
 ### Trabajar con varios registros
 
@@ -600,6 +634,43 @@ export default defineFrontComponent({
 ```
 
 Consulta la [sección de recursos públicos](/l/es/developers/extend/apps/config/public-assets) para más detalles.
+
+## Dependencias compartidas en los componentes frontales
+
+Por defecto, cada componente frontal agrupa su propia copia de las librerías que importa, por lo que una aplicación con cinco componentes viene React cinco veces. Declara las dependencias compartidas en el paquete `package de tu aplicación. son` para construir esas librerías una vez y tener cada componente de la aplicación cargarlas desde un solo archivo caché:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Cada componente importa sus dependencias exactamente como antes — nada cambia en su código de componente:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Algunas cosas que debes saber:
+
+* **Un paquete de dependencias compartidas por aplicación.** El paquete se construye a partir de las propias dependencias de tu aplicación, por lo que conservas el control total de las versiones que envías.
+* **Lista los especificadores exactos que importas.** `twenty-ui/input` y `twenty-ui/display` son dos entradas; un nombre de paquete solo no cubre sus subrutas. La lista `react` cubre automáticamente `react/jsx-runtime`.
+* **Comparte `react-dom/client` junto a `react`.** Cada componente renderiza a través de `createRoot`, así que dejarlo fuera significa que cada componente todavía incluye React DOM.
+* \*\*El paquete está en caché. \* Se sirve bajo una URL de contenido hash con un caché inmutable de larga duración, para que se descargue una vez y se vuelva a utilizar a través de todos los componentes de la aplicación hasta que una de sus dependencias cambie.
+* **Los componentes que no importan ninguno de los paquetes compartidos nunca lo descargan.**
 
 ## Estilo
 
@@ -703,24 +774,24 @@ Para hacer bifurcaciones explícitamente según el esquema activo, léelo con `u
 
 ## Limitaciones actuales
 
-Los componentes de Front están en desarrollo activo. El renderizado, el estilo y el manejo de eventos funcionan bien. Cualquier cosa que vaya *más allá* del renderizado (medir un elemento, llamar a un método del DOM en un ref, hacer portal fuera de tu árbol, acceder al almacenamiento del navegador) falta o está incompleta hoy, y la mayoría falla silenciosamente: no hay excepción ni error de TypeScript tampoco, ya que el andamiaje está tipado contra el DOM completo del navegador.
+Los componentes de Front están en desarrollo activo. El renderizado, el estilo, el manejo de eventos, la medición de elementos y el almacenamiento del navegador funcionan bien. Cualquier cosa que vaya *más allá* de eso (llamar a un método del DOM en un ref, observar cambios de tamaño de elementos, hacer portal fuera de tu árbol) falta o está incompleta hoy, y la mayoría falla silenciosamente: no hay excepción ni error de TypeScript tampoco, ya que el andamiaje está tipado contra el DOM completo del navegador.
 
 Si una de estas cosas te bloquea, [abre una incidencia](https://github.com/twentyhq/twenty/issues/new/choose) para que se priorice.
 
 ### Diseño y medición
 
-Nada puede medirse a sí mismo todavía.
+Los elementos pueden medirse a sí mismos: el host refleja la geometría en el sandbox, de modo que las lecturas se responden localmente pero pueden tener hasta un fotograma de desfase, y la primera lectura de un elemento nunca medido devuelve ceros. Después de escribir, vuelve a leer en un callback de `requestAnimationFrame` o en un efecto.
 
-| API                                                           | Qué ocurre                                                                                        |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Lanza una excepción                                                                               |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silenciosamente `undefined`, por lo que `width ?? 0` produce `0` y `width > 600` siempre es falso |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (las comprobaciones con `typeof` sí funcionan)                                   |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Lanza una excepción                                                                               |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silenciosamente `undefined`                                                                       |
-| `new MutationObserver(fn)`                                    | Se construye, luego `.observe()` lanza una excepción                                              |
+| API                                                                                      | Qué ocurre                                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funcionan, desde el espejo; asignar `scrollTop` / `scrollLeft` no tiene ningún efecto                                              |
+| `getClientRects()`, `window.matchMedia()`                                                | Lanza una excepción                                                                                                                |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funcionan, informando el **viewport del navegador**; el tamaño propio de tu widget es `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Devuelve solo los estilos en línea del elemento, nunca la cascada calculada del host                                               |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (las comprobaciones con `typeof` sí funcionan)                                                                    |
+| `MutationObserver`                                                                       | Funciona, incluyendo `subtree`, `attributeFilter`, valores antiguos y `takeRecords()`                                              |
 
-Así que `ResponsiveContainer` de recharts, Floating UI / Popper, la virtualización de listas y arrastrar-para-redimensionar todavía no funcionan. Haz el diseño en CSS en su lugar: tu hoja de estilos llega a la página real, por lo que flexbox, grid, `aspect-ratio`, `clamp()` y `@container` se comportan con normalidad.
+El posicionamiento mediante `getBoundingClientRect` ahora funciona, pero cualquier cosa que observe cambios de tamaño a través de `ResizeObserver` (el `ResponsiveContainer` de recharts, `autoUpdate` de Floating UI) todavía no funciona. Aun así, prefiere usar CSS para el diseño: tu hoja de estilos llega a la página real, por lo que flexbox, grid, `aspect-ratio`, `clamp()` y `@container` se comportan con normalidad, sin desfase de fotogramas.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` y `queueMicrotask` funcionan sin el prefijo `window.`. Solo `window.requestAnimationFrame(...)` y similares lanzan una excepción.
@@ -730,32 +801,32 @@ Así que `ResponsiveContainer` de recharts, Floating UI / Popper, la virtualizac
 
 Un `ref` te da un elemento sandbox, no un `HTMLElement`.
 
-| Lo que escribes                                                                                             | Qué ocurre                                                     | Usa en su lugar                                                                                         |
-| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lanza una excepción                                            | Componentes controlados; lee los valores de `event.target`                                              |
-| `element.classList.add(...)`                                                                                | Lanza una excepción (`classList` es `undefined`)               | Construye tú mismo la cadena `className`                                                                |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Lanza una excepción                                            | `querySelector()` / `querySelectorAll()`, que sí funcionan                                              |
-| `document.activeElement`                                                                                    | Siempre `undefined`                                            | Controla el foco con `onFocus` / `onBlur`                                                               |
-| `\<canvas>`                                                                                | No renderiza nada, sin error                                   | SVG, o dibuja fuera de pantalla y muestra un `<img src={dataUrl}>`                                      |
-| `createPortal(node, document.body)`                                                                         | No renderiza nada, mientras que `isConnected` informa de éxito | Superposiciones en línea con `position: absolute`, o pasa a la biblioteca tu propio elemento contenedor |
+| Lo que escribes                                                                                             | Qué ocurre                                                     | Usa en su lugar                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lanza una excepción                                            | Componentes controlados; lee los valores de `event.target`                                                                                                                                  |
+| `element.classList.add(...)`                                                                                | Lanza una excepción (`classList` es `undefined`)               | Construye tú mismo la cadena `className`                                                                                                                                                    |
+| `document.createTreeWalker()`                                                                               | Lanza una excepción                                            | `querySelector()` / `querySelectorAll()` y `getElementById()` funcionan; `getElementsByClassName()` también funciona, pero devuelve una colección estática, no una `HTMLCollection` en vivo |
+| `document.activeElement`                                                                                    | Siempre `undefined`                                            | Controla el foco con `onFocus` / `onBlur`                                                                                                                                                   |
+| `canvas`                                                                                                    | No renderiza nada, sin error                                   | SVG, o dibujar fuera de pantalla y mostrar el resultado en un elemento `img`                                                                                                                |
+| `createPortal(node, document.body)`                                                                         | No renderiza nada, mientras que `isConnected` informa de éxito | Superposiciones en línea con `position: absolute`, o pasa a la biblioteca tu propio elemento contenedor                                                                                     |
 
 La brecha del portal es la razón por la que los popovers de Radix, Headless UI, MUI y react-select no renderizan nada de forma predeterminada. La mayoría acepta una prop de contenedor; apúntala a un elemento que hayas renderizado.
 
 ### Eventos
 
-Eventos de ratón, puntero, tacto, arrastre, teclado, foco, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` y `animationend`/`transitionend` pasan al host, además de algunos específicos por elemento: `load`/`error` en `<img>`, portapapeles y composición en `<input>`/`\<textarea>`, medios en `\<video>`/`\<audio>`, `toggle` en `\<details>`/`\<dialog>`. Cualquier otra cosa (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, captura de puntero, `onLoad` fuera de `<img>`) se descarta sin aviso.
+Eventos de ratón, puntero, tacto, arrastre, teclado, foco, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` y `animationend`/`transitionend` pasan al host, además de algunos específicos por elemento: `load`/`error` en `img`, portapapeles y composición en `input`/`textarea`, medios en `video`/`audio`, `toggle` en `details`/`dialog`. Cualquier otra cosa (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, captura de puntero, `onLoad` fuera de `img`) se descarta sin aviso.
 
 `document.addEventListener()` y `window.addEventListener()` se registran sin error y nunca se disparan, lo que explica por qué un arrastre se detiene tan pronto como el puntero sale del elemento en el que comenzó. `event.preventDefault()` tampoco cruza; el envío de formularios, `dragover`/`drop` y los clics en enlaces ya están protegidos por ti.
 
 ### Atributos y estilos
 
-Cada elemento reenvía sus propias propiedades al DOM del host (`href` en `\<a>`, `src`/`alt` en `<img>`, `value`/`placeholder`/`disabled` en `<input>`, etc.), además de un conjunto común en cada elemento: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` y cualquier atributo `aria-*` / `data-*` (con guiones, por lo que `ariaLabel` se descarta). Cualquier cosa fuera de eso se descarta silenciosamente, así que expresa el estado personalizado como `data-*`.
+Cada elemento reenvía sus propias propiedades al DOM del host (`href` en `a`, `src`/`alt` en `img`, `value`/`placeholder`/`disabled` en `input`, etc.), además de un conjunto común en cada elemento: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` y cualquier atributo `aria-*` / `data-*` (con guiones, por lo que `ariaLabel` se descarta). Cualquier cosa fuera de eso se descarta silenciosamente, así que expresa el estado personalizado como `data-*`.
 
-El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elemento `\<style>`, se inyecta en el `\<head>` de la página del host **sin ámbito**. Así que los nombres de clase colisionan con los de Twenty (ponles un prefijo y nunca escribas `div { ... }` como selectores), y `@media` coincide con la ventana del navegador en lugar de con tu widget (usa `@container` con tu propio `container-type`). Las props de `style` en línea no se ven afectadas.
+El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elemento `style`, se inyecta en el `head` de la página del host **sin ámbito**. Así que los nombres de clase colisionan con los de Twenty (ponles un prefijo y nunca escribas `div { ... }` como selectores), y `@media` coincide con la ventana del navegador en lugar de con tu widget (usa `@container` con tu propio `container-type`). Las props de `style` en línea no se ven afectadas.
 
 ### Almacenamiento y red
 
-`localStorage`, `sessionStorage`, IndexedDB, las cookies, la Cache API y `BroadcastChannel` no están disponibles, ya que el componente se ejecuta en un worker en un origen opaco. Para persistir el estado, llama a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions) y usa su [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store).
+`localStorage` y `sessionStorage` son proporcionados por Twenty en lugar del navegador: el componente se ejecuta en un worker en un origen opaco, por lo que el host almacena los valores en nombre de tu aplicación. Consulta [almacenamiento](#storage) para ver su ámbito y límites. IndexedDB, las cookies, la Cache API y `BroadcastChannel` siguen sin estar disponibles. Para mantener el estado entre dispositivos, llama a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions) y usa su [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store).
 
 `fetch` funciona, con matices:
 
@@ -763,9 +834,13 @@ El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elem
 * Otros orígenes salen del sandbox con `Origin: null`, por lo que una API de terceros responde solo si envía `Access-Control-Allow-Origin: *`. Llámala desde una función de lógica en su lugar.
 * `fetch('/rest/people')` nunca se hace coincidir con la API de Twenty, porque el sandbox no tiene URL de página contra la que resolver una ruta relativa.
 
+### Captura de medios
+
+`navigator.mediaDevices.getUserMedia()` y `MediaRecorder` funcionan dentro de los front components mediante polyfills de sandbox, por lo que el código estándar de grabación se ejecuta sin cambios y `MediaRecorder.isTypeSupported` indica si se admite para combinaciones habituales de contenedor/códec. Se aceptan objetos de restricciones detalladas de `getUserMedia`, pero no se reenvían: el host captura con sus valores predeterminados para los tipos solicitados, y solo una captura puede estar activa a la vez entre aplicaciones. Almacena un `Blob` grabado con la función host `uploadFile`.
+
 ### Otras carencias
 
-* **Contenido de archivos.** `<input type="file">` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` y las subidas no son posibles todavía.
+* **Contenido de archivos.** Un `input` de tipo `file` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` no está disponible. Para subir un `Blob` que tu código ya tiene — por ejemplo, uno producido por `MediaRecorder` — usa la función host `uploadFile`.
 * **Cargas útiles de arrastrar y soltar.** Los eventos de arrastre se disparan, pero `event.dataTransfer` es `undefined`.
 * **Integraciones nativas de Node.** `fs`, `path` y `node:crypto` hacen que la compilación falle, así que mueve ese trabajo a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` y `URL` están disponibles.
-* **`\<iframe>`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.
+* **`iframe`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.

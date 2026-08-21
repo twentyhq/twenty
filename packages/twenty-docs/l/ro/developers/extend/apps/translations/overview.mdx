@@ -54,9 +54,9 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Când să utilizaţi care
 
-* **`<Trans>…</Trans>`** — text static în JSX. Utilizaţi `message` şi `values`
-  props pentru interpolare (`<Trans message="Hi {name}" values={{ name }} />`);
-  interpolând direct la copii nu poate fi extras static.
+* **`Trans`** — text static în JSX. Folosește proprietățile `message` și `values` pentru
+  interpolare, ca în `Trans message="Hi {name}" values={{ name }}`;
+  interpolarea direct în elementele copil nu poate fi extrasă static.
 * **`useTranslate().t`** - șiruri dinamice în interiorul unei componente. Re-randează atunci când utilizatorul
   schimbă limba. Preferă acest lucru în redare.
 * **`t(...)`** (importat direct) - traducerea mai ușoară **oriunde**,
@@ -75,6 +75,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Șirurile contextuale apar în cataloagele de localizare ca un grup indexat după
+contextul lor: `"\<context>": { "\<message>": "\<translation>" }`. Etichetele din manifest sunt
+contextuale prin construcție — fiecare poartă rolul de metadată pe care îl joacă
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), astfel încât
+același cuvânt poate fi tradus diferit ca nume de obiect și ca nume de vizualizare.
+
 ## Extragerea și traducerea
 
 Rulează comanda de extragere din directorul aplicației:
@@ -84,18 +90,26 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extragerea colectează atât etichetele manifestului cât şi `t()`/`msg()`/`\<Trans>`
-din sursa componentei front-line în `locales/\<locale>. son`, keyed by
-source string. Completează traducerile:
+Procesul de extragere colectează atât etichetele manifestului, cât și șirurile `t()`/`msg()`/`Trans`
+din sursa front-component în `locales/\<locale>.json`, indexate după
+șirul sursă. Completează traducerile:
 
 ```json
 // locales/fr-FR.json
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Șirurile fără context sunt intrări simple; șirurile contextuale — inclusiv fiecare etichetă din manifest — sunt îmbricate sub cheia lor de context.
 
 Localnicii ca `{name}` sunt substituiți la timp - țineți-le în traducerea
 . Orice şir rămas gol se întoarce la textul sursă.
@@ -107,18 +121,22 @@ Localnicii ca `{name}` sunt substituiți la timp - țineți-le în traducerea
 sunt copite în fiecare pachet de componente. La runtime, o componentă citește localizarea
 din contextul de execuție (limba curentă a gazdei) și rezolvă
 fiecare șir din catalog, revenind la sursă atunci când lipsește o traducere
-. Schimbarea limbii în șir rerandează `\<Trans>` și
-șirurile `useTranslate().t` live.
+. Schimbarea limbii în gazdă reafișează în timp real șirurile `Trans` și
+`useTranslate().t`.
 
-Deoarece cataloagele sunt compilate la ora de construcție, actualizarea unei traduceri înseamnă
-repornirea `douăzeci dev:build` (și redistribuirea), la fel ca orice altă schimbare.
+Etichetele manifestului sunt compilate la fiecare sincronizare — `twenty dev:build`, `twenty apply`
+și monitorizarea continuă `twenty dev` — astfel că editarea unui fișier de localizare și
+sincronizarea sunt suficiente pentru a vedea textul nou. Cataloagele componentelor Front sunt integrate în
+fiecare pachet de componente la momentul compilării, astfel că modificarea unuia dintre ele înseamnă totuși
+rularea din nou a `twenty dev:build` (și redistribuirea).
 
-<Note>
-Traducerile sunt compilate de `douăzeci dev:build` (și `douăzeci apply`).
-ceasul continuu `douăzeci de dev` arată șirurile sursă, așa că testează rezultatul localizat
-cu o singură construcție.
-</Note>
+Elementele text copil ale `Trans` pot acoperi mai multe linii — spațiile albe sunt comprimate în
+același mod în care JSX le comprimă, astfel încât ambele variante sunt extrase cu cheia `Welcome back`:
 
-`<Trans>` text copii pot parcurge mai multe linii - spațiul alb este prăbușit
-la fel cum JSX o destramă, Așa că '<Trans>Bun venit\n  înapoi</Trans>' iar cheia
-a fost extrasă devin 'Bine ați revenit'.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

@@ -55,9 +55,9 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Quando usar qual
 
-* **`<Trans>…</Trans>`** — texto estático em JSX. Use as propriedades `message` e`values`
-  para interpolação (`<Trans message="Hi {name}" values={{ name }} />`);
-  interpolar diretamente nos filhos não é estaticamente extracurável.
+* **`Trans`** — texto estático em JSX. Use as props `message` e `values` para
+  interpolação, como em `Trans message="Hi {name}" values={{ name }}`;
+  a interpolação diretamente em children não pode ser extraída estaticamente.
 * **`useTranslate().t`** — strings dinâmicas dentro de um componente. Rerenderiza quando o usuário
   muda de linguagem. Prefere isso dentro de renderização.
 * **`t(...)`** (importado diretamente) — tradução ávida utilizável **em qualquer lugar**,
@@ -76,6 +76,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Strings contextuais aparecem nos catálogos de configurações regionais como um grupo indexado pelo seu
+contexto: `"\<context>": { "\<message>": "\<translation>" }`. Os rótulos do manifesto são
+contextuais por definição — cada um traz o papel de metadados que desempenha
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), por isso
+a mesma palavra pode ser traduzida de forma diferente como nome de objeto e como nome de visualização.
+
 ## Extraindo e traduzindo
 
 Execute o comando extracto a partir do diretório do seu aplicativo:
@@ -85,8 +91,8 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extração coleta as duas strings do seu manifesto e `t()`/`msg()`/`\<Trans>
-do código do seu front-component em `locales/\<locale>. son\`, chave por
+A extração coleta tanto os rótulos do seu manifesto quanto as strings de `t()`/`msg()`/`Trans`
+no código-fonte do seu front-component em `locales/\<locale>.json`, indexadas pela
 string de origem. Preencha as traduções:
 
 ```json
@@ -94,9 +100,17 @@ string de origem. Preencha as traduções:
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Strings sem contexto são entradas simples; strings contextuais — incluindo cada rótulo de manifesto — são aninhadas sob sua chave de contexto.
 
 Espaços reservados como `{name}` são substituídos no tempo de execução — mantenha-os na tradução
 . Qualquer cadeia de caracteres deixada vazia retorna ao texto de origem.
@@ -108,18 +122,22 @@ usuário atual: os rótulos do manifesto são resolvidos no lado do servidor e o
 são incorporados em cada pacote de componente. No tempo de execução, um componente lê a localidade
 de seu contexto de execução (o idioma atual do host) e resolve
 cada seqüência de caracteres contra seu catálogo, voltando à fonte quando uma tradução
-estiver faltando. Mudar idioma no host renderiza novamente as strings `\<Trans>e
-`useTranslate().t\` ao vivo.
+estiver faltando. Mudar o idioma no host faz com que as strings de `Trans` e
+`useTranslate().t` sejam renderizadas novamente em tempo real.
 
-Como os catálogos são compilados no tempo de construção, atualizar uma tradução significa
-reexecutar `vinte dev:build` (e redistribuir), o mesmo que qualquer outra mudança.
+Os rótulos do manifesto são compilados a cada sincronização — `twenty dev:build`, `twenty apply`
+e também durante a observação contínua de `twenty dev` — portanto, editar um arquivo de localidade e
+sincronizar é suficiente para ver o novo texto. Os catálogos de componentes do front-end são incorporados a
+cada pacote de componentes no momento da compilação, portanto, alterar um deles ainda exige
+executar novamente `twenty dev:build` (e reimplantar).
 
-<Note>
-As traduções são compiladas por `vinte dev:build` (e `vinte aplicam`). O relógio
-contínuo `vinte dev` mostra strings de origem, então teste saída localizada
-com uma compilação única.
-</Note>
+O conteúdo de texto (children) de `Trans` pode se estender por várias linhas — os espaços em branco são colapsados da
+mesma forma que o JSX os colapsa, portanto, ambos são extraídos para a chave `Welcome back`:
 
-`<Trans>` Crianças de texto podem span várias linhas — espaço em branco é recolhido o
-da mesma forma que JSX o colapsa, so `<Trans>Bem-vindo\n  de volta</Trans>` e a chave extraída
-ambas se tornam `Bem-vindo de volta`.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

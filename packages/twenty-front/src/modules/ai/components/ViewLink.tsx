@@ -1,11 +1,13 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
-import { flatObjectMetadataItemsSelector } from '@/object-metadata/states/flatObjectMetadataItemsSelector';
+import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
+import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { AppPath } from 'twenty-shared/types';
-import { findById, getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 type ViewLinkProps = {
   viewId: string;
@@ -15,14 +17,15 @@ type ViewLinkProps = {
 export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { openViewTarget } = useChatTargetNavigation();
 
   const { view } = useViewById(viewId);
-  const flatObjectMetadataItems = useAtomStateValue(
-    flatObjectMetadataItemsSelector,
+  const objectMetadataItemsByIdMap = useAtomStateValue(
+    objectMetadataItemsByIdMapSelector,
   );
 
   const objectMetadataItem = isDefined(view)
-    ? flatObjectMetadataItems.find(findById(view.objectMetadataId))
+    ? objectMetadataItemsByIdMap.get(view.objectMetadataId)
     : undefined;
 
   if (!isDefined(view) || !isDefined(objectMetadataItem)) {
@@ -30,6 +33,13 @@ export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
   }
 
   const Icon = getIcon(view.icon);
+
+  const handleOpenViewTarget = () => {
+    openViewTarget({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      viewId,
+    });
+  };
 
   return (
     <ChatReferenceChipDisplay
@@ -39,6 +49,7 @@ export const ViewLink = ({ viewId, displayName }: ViewLinkProps) => {
         { objectNamePlural: objectMetadataItem.namePlural },
         { viewId },
       )}
+      onClick={isCurrentPathAiChatPage() ? handleOpenViewTarget : undefined}
       leftComponent={
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }
