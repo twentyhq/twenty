@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type TimelineActivityRuleResolution } from 'src/engine/metadata-modules/timeline-activity-rule/types/timeline-activity-rule-resolution.type';
 
 // An effective rule: id is null while the rule is only derived from the data
 // model and no override row has been persisted yet.
@@ -30,7 +31,7 @@ export class TimelineActivityRuleDTO {
 
   @IsString()
   @Field()
-  resolution: string;
+  resolution: TimelineActivityRuleResolution;
 
   @IsArray()
   @Field(() => [String])
