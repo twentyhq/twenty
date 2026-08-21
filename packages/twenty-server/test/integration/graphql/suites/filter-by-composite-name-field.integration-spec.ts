@@ -1,9 +1,13 @@
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+
+type PersonNode = {
+  name: { firstName: string; lastName: string };
+};
 
 const PERSON_GQL_FIELDS = `
   id
@@ -17,29 +21,20 @@ const JOHN_DOE_ID = '20202020-8f4a-4a3f-9c1b-000000000001';
 const JANE_SMITH_ID = '20202020-8f4a-4a3f-9c1b-000000000002';
 const JOHN_SMITH_ID = '20202020-8f4a-4a3f-9c1b-000000000003';
 
-// Mirrors the FULL_NAME / CONTAINS branch of turnRecordFilterIntoGqlOperationFilter,
-// which wraps the generated subfield clauses in a top-level `or`.
 const findPeopleMatching = async (filterString: string) => {
-  const response = await makeGraphqlAPIRequest(
-    findManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: PERSON_GQL_FIELDS,
-      filter: {
-        or: generateILikeFiltersForCompositeFields(filterString, 'name', [
-          'firstName',
-          'lastName',
-        ]),
-      },
-    }),
+  const nodes = await findRecordNodesByFilter<PersonNode>(
+    'person',
+    'people',
+    PERSON_GQL_FIELDS,
+    {
+      or: generateILikeFiltersForCompositeFields(filterString, 'name', [
+        'firstName',
+        'lastName',
+      ]),
+    },
   );
 
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.people.edges.map(
-    // @ts-expect-error legacy noImplicitAny
-    (edge) => `${edge.node.name.firstName} ${edge.node.name.lastName}`,
-  );
+  return nodes.map((node) => `${node.name.firstName} ${node.name.lastName}`);
 };
 
 describe('filter by composite name field (integration)', () => {
@@ -67,8 +62,6 @@ describe('filter by composite name field (integration)', () => {
   });
 
   it('should only return people matching every token when filtering on last and first name', async () => {
-    // 'John Smith' also matches 'John' alone and 'Smith' alone, so it guards
-    // against tokens being OR-ed together across subfields.
     expect(await findPeopleMatching('Doe John')).toEqual(['John Doe']);
   });
 
