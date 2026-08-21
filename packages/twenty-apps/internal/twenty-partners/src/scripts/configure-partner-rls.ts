@@ -100,11 +100,10 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
 ]);
 
 const APPLY_WORKFLOW_WARNING =
-  `[rls:configure] \u26a0 The "Apply to Brief" workflow in this workspace MUST map\n` +
-  `  Opportunity, Partner User -> {{trigger.workspaceMember}} and pitch, and lock\n` +
-  `  every other field. Pre-run Applications need \`yarn backfill:partner-user\`.\n` +
-  `  Otherwise partners cannot apply, and admin invites stay invisible to them.\n` +
-  `  See src/workflows/README.md.\n`;
+  `[rls:configure] The apply path ships in the app manifest: a command menu item\n` +
+  `  opens a front component that calls POST /apply-to-brief. No workflow needs\n` +
+  `  building for it. That app route creates the Application under the\n` +
+  `  application role.\n`;
 
 type ObjectInfo = {
   objectMetadataId: string;

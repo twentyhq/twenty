@@ -14,11 +14,12 @@ type ApplicationCreatedProperties = DatabaseEventPayload<
   ObjectRecordCreateEvent<CoreSchema.Application>
 >['properties'];
 
-// A partner self-applies via the "Apply to brief as partner" workflow: a Create Record action
-// makes an Application with the opportunity set, createdBy = the clicking member and
-// partnerUser = that member (mandatory — the Partner role's RLS rejects the insert otherwise),
-// but no partner. Resolve the partner from createdBy and complete the candidacy. The name is
-// set by on-application-set-name, which fires on the partnerId update below.
+// The app route POST /apply-to-brief creates the Application with partnerId and
+// partnerUserId already set, so this service returns at its first branch and does nothing.
+// It still serves the admin path: an invite or an import sets partnerId but no
+// partnerUserId, and this service stamps the partner's user so RLS doesn't hide the row
+// from its own partner. The createdBy-based self-apply branch below is a fallback for rows
+// created by a member without a partner set.
 export async function resolveCandidacy(
   client: CoreApiClient,
   after: ApplicationCreatedProperties['after'],
