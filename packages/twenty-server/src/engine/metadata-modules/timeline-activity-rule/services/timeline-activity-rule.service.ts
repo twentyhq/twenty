@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { getTimelineActivityRuleUniversalIdentifier } from 'twenty-shared/application';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -232,8 +232,6 @@ export class TimelineActivityRuleService {
     return effectiveRule;
   }
 
-  // Reset removes the customization: a standard rule goes back to its standard
-  // definition, a materialized self override or a custom rule is deleted.
   async reset(
     input: ResetTimelineActivityRuleInput,
     workspaceId: string,
@@ -446,11 +444,9 @@ export class TimelineActivityRuleService {
       objectMetadataId: flatObjectMetadata.id,
       relationFieldMetadataId: null,
       resolution: 'MATERIALIZED',
-      actions:
-        isDefined(selfOverrideFlatRule) &&
-        selfOverrideFlatRule.actions.length > 0
-          ? selfOverrideFlatRule.actions
-          : derivedSelfRule.actions,
+      actions: isNonEmptyArray(selfOverrideFlatRule?.actions)
+        ? selfOverrideFlatRule.actions
+        : derivedSelfRule.actions,
       triggerFieldMetadataIds:
         selfOverrideFlatRule?.triggerFieldMetadataIds ?? null,
       isActive: selfOverrideFlatRule?.isActive ?? true,
