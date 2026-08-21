@@ -20,6 +20,7 @@ export const deriveDefaultTimelineActivityRule = (
 
   return {
     sourceFlatObjectMetadata: flatObjectMetadata,
+    relationFieldMetadataId: null,
     actions: [...SELF_RULE_ACTIONS],
     triggerFieldNames: null,
     targetShape: { kind: 'SELF' },

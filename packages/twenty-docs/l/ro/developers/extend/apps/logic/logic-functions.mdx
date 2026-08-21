@@ -448,6 +448,78 @@ const handler = async (event: PersonDestroyedEvent) => {
 };
 ```
 
+#### Contextul execuției.
+
+Fiecare gestionar primește un al doilea argument care descrie execuția propriu-zisă, indiferent de ce a declanșat-o. În timp ce primul argument își schimbă forma pentru fiecare declanșator, acesta nu se schimbă:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Câmp                | Tip              | Descriere                                                                                              |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------ |
+| `workspaceId`       | `string`         | Spațiul de lucru căruia îi aparține execuția.                                                          |
+| `userWorkspaceId`   | `string \| null` | Persoana care a declanșat execuția, ca membru al acestui spațiu de lucru.                              |
+| `workspaceMemberId` | `string \| null` | Aceeași persoană ca înregistrare de membru al spațiului de lucru, la care conectați înregistrări.      |
+| `retryCount`        | `number`         | `0` la prima încercare. Consultați [sarcini de fundal](/l/ro/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | Limita superioară a reîncercărilor solicitate de aplicație.                                            |
+
+`userWorkspaceId` și `workspaceMemberId` sunt `null` atunci când nimeni nu a declanșat execuția: programările cron, hookurile de instalare și webhookurile neautentificate nu au nicio persoană în spatele lor. De asemenea, sunt `null` atunci când persoana nu are o înregistrare de membru al spațiului de lucru sau când aceasta a fost ștearsă.
+
+<Note>
+**Contextul vă indică cine a declanșat execuția.** Ceea ce poate *face* execuția este o declarație separată, mai jos.
+</Note>
+
+#### Ale cui accesări le utilizează un apel
+
+Fiecare client — `CoreApiClient`, `MetadataApiClient` și `RestApiClient` — acționează ca persoana care a declanșat execuția: rolul acesteia se intersectează cu cel al aplicației dvs., astfel încât apelul nu poate face niciodată mai mult decât poate face oricare dintre voi. Acesta este comportamentul implicit și înseamnă că o persoană nu poate folosi niciodată aplicația dvs. pentru a-și depăși propriile permisiuni.
+
+Când nimeni nu a declanșat execuția, nu există nicio persoană în numele căreia să se acționeze, astfel încât același client revine la accesul propriu al aplicației dvs.: programările cron, hookurile de instalare și webhookurile neautentificate nu necesită o gestionare specială.
+
+Unele apeluri au nevoie în mod legitim de accesul propriu al aplicației chiar și atunci când o persoană *se află* în spatele execuției — de exemplu, pentru a citi înregistrările de configurare ale aplicației dvs. sau pentru a efectua lucrări pe care persoana respectivă nu le-ar putea face singură. Creați un al doilea client pentru acestea:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Creați-le pe amândouă o singură dată, la nivel de modul, iar fiecare loc de apel indică apoi accesul utilizat prin clientul pe care îl apelează. `RestApiClient` acceptă aceeași opțiune:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**O execuție pe care nu a declanșat-o nimeni acționează ca aplicația dvs.** Programările cron, hookurile de instalare și webhookurile neautentificate nu au nicio persoană în spatele lor, astfel încât clientul implicit revine la accesul propriu al aplicației dvs. și continuă să funcționeze. `runAs: 'application'` este necesar doar când doriți acel acces într-o execuție pe care o persoană *a* declanșat-o.
+
+Verificați `context.workspaceMemberId` atunci când o funcție se comportă diferit în funcție de existența unei persoane în spatele ei, de exemplu pentru a atribui o înregistrare.
+</Note>
+
+Ajutoarele SDK care accesează resursele proprii ale aplicației dvs. folosesc întotdeauna accesul acesteia și ignoră `runAs`: [stocarea cheie-valoare](/l/ro/developers/extend/apps/logic/key-value-store), [conexiunile](/l/ro/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` și taxarea creditelor.
+
 #### Expunerea unei funcții ca instrument AI sau ca acțiune în fluxul de lucru
 
 Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșator:
@@ -723,7 +795,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="Configurația spațiului de lucru, aplicații și încărcări de fișiere">
 
-`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere.
+`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere. Acceptă aceeași opțiune `runAs` ca `CoreApiClient` — consultați [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses).
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -777,7 +849,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ------------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
 | `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)               |
-| `contentType`                      | `string` | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
+| `contentType`                      | `șir`    | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
 | `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
@@ -791,7 +863,8 @@ Puncte cheie:
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
   * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
+  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă pentru accesul implicit: rolul unei persoane se intersectează cu cel al aplicației dvs. atunci când cineva se află în spatele execuției, iar rolul propriu al aplicației dvs. atunci când nu se află nimeni. Persoana este cea care a declanșat execuția într-o funcție logică sau cea care privește pagina într-o componentă front-end.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată numai la rolul propriu al aplicației dvs. Numai funcții logice, injectată întotdeauna acolo și utilizată de `runAs: 'application'`.
 
-  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`).
+  Nu trebuie să transmiteți aceste valori clienților — aceștia citesc automat din `process.env`, iar [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses) explică alegerea dintre ele. Permisiunile proprii ale aplicației dvs. sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`); o execuție care acționează ca o persoană nu poate depăși niciodată acel rol sau rolul persoanei.
 </Note>

@@ -13,6 +13,9 @@ export type TimelineActivityPayload = {
   // still parse it
   action: TimelineActivityRuleAction;
   sourceObjectMetadataId: string;
+  // Relation the rule walked, null for a rule on the record itself. With the
+  // source object it names the rule that produced the entry.
+  ruleRelationFieldMetadataId: string | null;
   recordId: string;
   objectSingularName?: string;
 };

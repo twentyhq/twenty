@@ -71,9 +71,18 @@ function(options?: ClientOptions): Client {
 // injected into. They enable full typecheck/lint on this file.
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
+const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
+  'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-type MetadataApiClientOptions = ClientOptions;
+// The default acts as the person who triggered the run, limited to their role
+// intersected with the application's, and as the application alone when nobody
+// triggered it. 'application' asks for the application's access either way.
+type TwentyClientRunAs = 'user' | 'application';
+
+type MetadataApiClientOptions = ClientOptions & {
+  runAs?: TwentyClientRunAs;
+};
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
@@ -197,6 +206,7 @@ export class MetadataApiClient {
       fetch: customFetchImplementation,
       fetcher: _fetcher,
       batch: _batch,
+      runAs,
       ...requestOptions
     } = merged;
 
@@ -211,10 +221,15 @@ export class MetadataApiClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > app access token > api key (legacy).
+    // Priority: explicit header > the token for the requested access > api key
+    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
-      processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
+      processEnvironment[
+        runAs === 'application'
+          ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
+          : APP_ACCESS_TOKEN_ENV_KEY
+      ] ??
       processEnvironment[API_KEY_ENV_KEY] ??
       null;
 
