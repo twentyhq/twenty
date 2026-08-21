@@ -48,7 +48,6 @@ describe('installWindowAliasesPolyfill', () => {
       'AbortController',
       'Headers',
       'URL',
-      'CSS',
     ]) {
       expect(polyfillWindow[aliasName]).toBeDefined();
     }

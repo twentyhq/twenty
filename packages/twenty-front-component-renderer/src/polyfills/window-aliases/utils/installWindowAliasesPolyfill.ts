@@ -1,6 +1,5 @@
 import { createSetTimeoutAnimationFrameScheduler } from '@/polyfills/window-aliases/utils/createSetTimeoutAnimationFrameScheduler';
 import { createSetTimeoutIdleCallbackScheduler } from '@/polyfills/window-aliases/utils/createSetTimeoutIdleCallbackScheduler';
-import { installCssNamespacePolyfill } from '@/polyfills/window-aliases/utils/installCssNamespacePolyfill';
 import { installFetchWindowAlias } from '@/polyfills/window-aliases/utils/installFetchWindowAlias';
 import { installNativeWindowAliases } from '@/polyfills/window-aliases/utils/installNativeWindowAliases';
 import { installSchedulerPairAliases } from '@/polyfills/window-aliases/utils/installSchedulerPairAliases';
@@ -29,6 +28,4 @@ export const installWindowAliasesPolyfill = ({
     cancelFunctionName: 'cancelIdleCallback',
     createFallbackSchedulerPair: createSetTimeoutIdleCallbackScheduler,
   });
-
-  installCssNamespacePolyfill(globalScope);
 };

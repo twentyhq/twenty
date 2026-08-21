@@ -1,3 +1,5 @@
+import { Window } from '@remote-dom/polyfill';
+
 import { installCssNamespacePolyfill } from '../installCssNamespacePolyfill';
 
 type CssNamespace = {
@@ -40,6 +42,16 @@ describe('installCssNamespacePolyfill', () => {
     const cssNamespace = globalScope.CSS as CssNamespace;
 
     expect(cssNamespace.supports(Symbol('display'))).toBe(false);
+  });
+
+  it('should define the CSS namespace on a remote-dom window', () => {
+    const polyfillWindow = new Window() as unknown as Record<string, unknown>;
+    const globalScope: Record<string, unknown> = { window: polyfillWindow };
+
+    installCssNamespacePolyfill(globalScope);
+
+    expect(polyfillWindow.CSS).toBeDefined();
+    expect(polyfillWindow.CSS).toBe(globalScope.CSS);
   });
 
   it('should alias an existing CSS namespace onto the window instead of shadowing it', () => {

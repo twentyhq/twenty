@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CSS_WIDE_KEYWORDS } from '@/polyfills/window-aliases/constants/CssWideKeywords';
-import { SUPPORTED_CSS_PROPERTY_KEYWORDS } from '@/polyfills/window-aliases/constants/SupportedCssPropertyKeywords';
+import { CSS_WIDE_KEYWORDS } from '@/polyfills/css/constants/CssWideKeywords';
+import { SUPPORTED_CSS_PROPERTY_KEYWORDS } from '@/polyfills/css/constants/SupportedCssPropertyKeywords';
 import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
 import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
 

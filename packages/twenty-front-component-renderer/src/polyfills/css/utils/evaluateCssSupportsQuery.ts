@@ -1,5 +1,5 @@
-import { evaluateCssSupportsCondition } from '@/polyfills/window-aliases/utils/evaluateCssSupportsCondition';
-import { evaluateCssSupportsDeclaration } from '@/polyfills/window-aliases/utils/evaluateCssSupportsDeclaration';
+import { evaluateCssSupportsCondition } from '@/polyfills/css/utils/evaluateCssSupportsCondition';
+import { evaluateCssSupportsDeclaration } from '@/polyfills/css/utils/evaluateCssSupportsDeclaration';
 
 export const evaluateCssSupportsQuery = (
   supportsArguments: readonly unknown[],

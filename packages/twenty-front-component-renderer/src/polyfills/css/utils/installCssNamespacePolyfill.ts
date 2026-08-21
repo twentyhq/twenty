@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { escapeCssIdentifier } from '@/polyfills/css/utils/escapeCssIdentifier';
+import { evaluateCssSupportsQuery } from '@/polyfills/css/utils/evaluateCssSupportsQuery';
 import { defineAbsentGlobalScopeValues } from '@/polyfills/utils/defineAbsentGlobalScopeValues';
-import { escapeCssIdentifier } from '@/polyfills/window-aliases/utils/escapeCssIdentifier';
-import { evaluateCssSupportsQuery } from '@/polyfills/window-aliases/utils/evaluateCssSupportsQuery';
 
 const CSS_NAMESPACE_POLYFILL = {
   escape: (...escapeArguments: unknown[]) => {

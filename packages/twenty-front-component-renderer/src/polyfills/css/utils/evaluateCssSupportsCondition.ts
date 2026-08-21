@@ -1,4 +1,4 @@
-import { evaluateCssSupportsDeclaration } from '@/polyfills/window-aliases/utils/evaluateCssSupportsDeclaration';
+import { evaluateCssSupportsDeclaration } from '@/polyfills/css/utils/evaluateCssSupportsDeclaration';
 import { stripImportantPriorityFromCssValue } from '@/utils/css/stripImportantPriorityFromCssValue';
 
 export const evaluateCssSupportsCondition = (condition: string): boolean => {
