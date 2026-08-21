@@ -57,6 +57,25 @@ const userContextCarryingApplication = {
   application: { id: OWNING_APPLICATION_ID },
 } as WorkspaceAuthContext;
 
+const plainUserContext = {
+  type: 'user',
+  workspace: { id: 'workspace-1' },
+  userWorkspaceId: 'user-workspace-1',
+  user: { id: 'user-1' },
+  workspaceMemberId: 'workspace-member-1',
+  workspaceMember: { id: 'workspace-member-1' },
+} as WorkspaceAuthContext;
+
+const otherApplicationUserContext = {
+  type: 'user',
+  workspace: { id: 'workspace-1' },
+  userWorkspaceId: 'user-workspace-1',
+  user: { id: 'user-1' },
+  workspaceMemberId: 'workspace-member-1',
+  workspaceMember: { id: 'workspace-member-1' },
+  application: { id: 'app-2' },
+} as WorkspaceAuthContext;
+
 const validate = ({
   objectWritability = MetadataWritability.OPEN,
   fieldWritability = MetadataWritability.OPEN,
@@ -112,11 +131,29 @@ describe('validateWritabilityOrThrow', () => {
     ).toThrow(/not writable/);
   });
 
-  it('should refuse a user context on an APPLICATION object', () => {
+  it('should let the owning application write while serving a person', () => {
     expect(() =>
       validate({
         objectWritability: MetadataWritability.APPLICATION,
         authContext: userContextCarryingApplication,
+      }),
+    ).not.toThrow();
+  });
+
+  it('should refuse a plain session on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: plainUserContext,
+      }),
+    ).toThrow();
+  });
+
+  it('should refuse another application serving a person on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: otherApplicationUserContext,
       }),
     ).toThrow(/not writable/);
   });
@@ -152,7 +189,7 @@ describe('validateWritabilityOrThrow', () => {
     expect(() =>
       validate({
         fieldWritability: MetadataWritability.APPLICATION,
-        authContext: userContextCarryingApplication,
+        authContext: plainUserContext,
       }),
     ).toThrow(/field "status".*not writable/);
   });

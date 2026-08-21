@@ -10,6 +10,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
@@ -83,15 +84,18 @@ export class GraphqlQueryFilterFieldParser {
     const objectPermissions =
       outerQueryBuilder.objectRecordsPermissions[this.flatObjectMetadata.id];
 
-    if (
-      objectPermissions?.canReadObjectRecords === false ||
-      objectPermissions?.restrictedFields[fieldMetadata.id]?.canRead === false
-    ) {
+    if (objectPermissions?.canReadObjectRecords === false) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
+
+    assertFieldIsReadableOrThrow({
+      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
+      objectMetadataId: this.flatObjectMetadata.id,
+      fieldMetadataId: fieldMetadata.id,
+    });
 
     if (
       isReferencedByFieldName &&
