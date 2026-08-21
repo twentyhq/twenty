@@ -13,13 +13,13 @@ import {
 } from '~/testing/mock-data/tableData';
 
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { type TableSortDirection } from '@/ui/layout/table/types/TableSortValue';
+import { type ArraySortDirection } from 'twenty-shared/types';
 
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 
 const createSortedWrapper = (
   fieldName: keyof MockedTableType,
-  direction: TableSortDirection,
+  direction: ArraySortDirection,
 ) => {
   const store = createStore();
   store.set(
