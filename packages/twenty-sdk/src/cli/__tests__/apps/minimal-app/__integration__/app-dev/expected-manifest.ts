@@ -56,7 +56,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000010',
       name: 'my-function',
       timeoutSeconds: 5,
-      runsWithUserAuthority: true,
       httpRouteTriggerSettings: {
         path: '/my-function',
         httpMethod: 'GET',

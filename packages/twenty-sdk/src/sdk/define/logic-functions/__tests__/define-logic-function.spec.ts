@@ -19,25 +19,7 @@ describe('defineLogicFunction', () => {
   it('should return the config when valid with route trigger', () => {
     const result = defineLogicFunction(validRouteConfig as any);
 
-    expect(result.config).toEqual({
-      ...validRouteConfig,
-      runsWithUserAuthority: true,
-    });
-  });
-
-  it('should make a function act as its caller unless it says otherwise', () => {
-    const result = defineLogicFunction(validRouteConfig as any);
-
-    expect(result.config.runsWithUserAuthority).toBe(true);
-  });
-
-  it('should let a function keep the application access instead', () => {
-    const result = defineLogicFunction({
-      ...validRouteConfig,
-      runsWithUserAuthority: false,
-    } as any);
-
-    expect(result.config.runsWithUserAuthority).toBe(false);
+    expect(result.config).toEqual(validRouteConfig);
   });
 
   it('should accept cronTriggerSettings', () => {

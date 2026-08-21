@@ -130,7 +130,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "logicFunction": {
     "propertiesToCompare": [
       "name",
-      "runsWithUserAuthority",
       "description",
       "timeoutSeconds",
       "checksum",

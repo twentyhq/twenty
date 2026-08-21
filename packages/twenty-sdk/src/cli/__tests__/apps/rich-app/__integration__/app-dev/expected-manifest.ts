@@ -858,7 +858,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
       timeoutSeconds: 5,
-      runsWithUserAuthority: true,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
         isAuthRequired: false,
@@ -873,7 +872,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'greeting-function',
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
-      runsWithUserAuthority: true,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
         isAuthRequired: false,
@@ -889,7 +887,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'lookup-recipient',
       sourceHandlerPath: 'src/logic-functions/lookup-recipient.function.ts',
       timeoutSeconds: 5,
-      runsWithUserAuthority: true,
       toolTriggerSettings: {
         inputSchema: {
           type: 'object',
@@ -911,7 +908,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'enrich-post-cards',
       sourceHandlerPath: 'src/logic-functions/enrich-post-cards.function.ts',
       timeoutSeconds: 5,
-      runsWithUserAuthority: true,
       workflowActionTriggerSettings: {
         label: 'Enrich Post Cards',
         icon: 'IconMail',
@@ -946,7 +942,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'on-post-card-created',
       sourceHandlerPath: 'src/logic-functions/on-post-card-created.function.ts',
       timeoutSeconds: 5,
-      runsWithUserAuthority: true,
       universalIdentifier: 'a1b2c3d4-db01-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
@@ -956,7 +951,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'test-function-2',
       sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
       timeoutSeconds: 2,
-      runsWithUserAuthority: true,
       cronTriggerSettings: {
         pattern: '0 0 1 1 *',
       },
@@ -969,7 +963,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'test-function',
       sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
       timeoutSeconds: 2,
-      runsWithUserAuthority: true,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],
         httpMethod: 'GET',

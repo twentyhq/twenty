@@ -141,6 +141,7 @@ describe('Generated client wrapper auth behavior', () => {
 
   beforeEach(() => {
     delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
     delete process.env.TWENTY_API_KEY;
     delete (globalThis as Record<string, unknown>)
       .frontComponentHostCommunicationApi;
@@ -150,6 +151,76 @@ describe('Generated client wrapper auth behavior', () => {
     if (temporaryDir) {
       await rm(temporaryDir, { recursive: true, force: true });
     }
+  });
+
+  const runQueryCapturingAuthorization = async (
+    clientOptions: Record<string, unknown>,
+  ) => {
+    const capturedAuthorizationHeaders: string[] = [];
+    const fetchMock = vi.fn(
+      async (_url: string | URL | Request, requestInit?: RequestInit) => {
+        const authorizationHeaderValue =
+          getAuthorizationHeaderValue(requestInit);
+
+        if (authorizationHeaderValue) {
+          capturedAuthorizationHeaders.push(authorizationHeaderValue);
+        }
+
+        return createJsonResponse({
+          body: { data: { record: { id: 'record-id' } } },
+        });
+      },
+    );
+
+    const twentyClient = new TwentyClass({
+      url: 'https://example.com/graphql',
+      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      ...clientOptions,
+    });
+
+    await twentyClient.query({ record: { id: true } });
+
+    return capturedAuthorizationHeaders;
+  };
+
+  it('should act as the triggering person by default', async () => {
+    process.env.TWENTY_APP_ACCESS_TOKEN = 'delegated-token';
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+
+    expect(await runQueryCapturingAuthorization({})).toEqual([
+      'Bearer delegated-token',
+    ]);
+  });
+
+  it('should act as the application when asked to', async () => {
+    process.env.TWENTY_APP_ACCESS_TOKEN = 'delegated-token';
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+
+    expect(
+      await runQueryCapturingAuthorization({ runAs: 'application' }),
+    ).toEqual(['Bearer application-token']);
+  });
+
+  it('should refuse to act as a person nobody triggered the run as', () => {
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+
+    expect(
+      () => new TwentyClass({ url: 'https://example.com/graphql' }),
+    ).toThrow(/Nobody triggered this run/);
+  });
+
+  it('should still serve a run nobody triggered when asked for the application', async () => {
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+
+    expect(
+      await runQueryCapturingAuthorization({ runAs: 'application' }),
+    ).toEqual(['Bearer application-token']);
+  });
+
+  it('should not refuse outside a logic function run', () => {
+    expect(
+      () => new TwentyClass({ url: 'https://example.com/graphql' }),
+    ).not.toThrow();
   });
 
   it('uses TWENTY_APP_ACCESS_TOKEN before TWENTY_API_KEY', async () => {

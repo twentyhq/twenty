@@ -32,9 +32,18 @@ declare class GenqlError extends Error {
 // __STRIPPED_DURING_INJECTION_END__
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
+const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
+  'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-type TwentyGeneratedClientOptions = ClientOptions;
+// 'user' acts as the person who triggered the run, limited to their role
+// intersected with the application's. 'application' acts as the application
+// alone, for work the triggering person could not do themselves.
+type TwentyClientRunAs = 'user' | 'application';
+
+type TwentyGeneratedClientOptions = ClientOptions & {
+  runAs?: TwentyClientRunAs;
+};
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
@@ -158,6 +167,7 @@ export class TwentyGeneratedClient {
       fetch: customFetchImplementation,
       fetcher: _fetcher,
       batch: _batch,
+      runAs,
       ...requestOptions
     } = merged;
 
@@ -172,10 +182,27 @@ export class TwentyGeneratedClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > app access token > api key (legacy).
+    const applicationToken =
+      processEnvironment[APP_APPLICATION_ACCESS_TOKEN_ENV_KEY];
+    const delegatedToken = processEnvironment[APP_ACCESS_TOKEN_ENV_KEY];
+
+    // The application token is only ever set by the logic function runtime, so
+    // its absence means we are somewhere else entirely and must not refuse.
+    if (
+      runAs !== 'application' &&
+      applicationToken !== undefined &&
+      delegatedToken === undefined
+    ) {
+      throw new Error(
+        "Nobody triggered this run, so there is no one to act as. Check context.workspaceMemberId first, or build the client with runAs: 'application'.",
+      );
+    }
+
+    // Priority: explicit header > the token for the requested access > api key
+    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
-      processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
+      (runAs === 'application' ? applicationToken : delegatedToken) ??
       processEnvironment[API_KEY_ENV_KEY] ??
       null;
 

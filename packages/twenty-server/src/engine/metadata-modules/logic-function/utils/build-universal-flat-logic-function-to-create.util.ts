@@ -47,7 +47,6 @@ export const buildUniversalFlatLogicFunctionToCreate = (
     handlerName: input.handlerName,
     sourceHandlerPath: input.sourceHandlerPath,
     builtHandlerPath: input.builtHandlerPath,
-    runsWithUserAuthority: input.runsWithUserAuthority ?? null,
     cronTriggerSettings: input.cronTriggerSettings ?? null,
     databaseEventTriggerSettings: input.databaseEventTriggerSettings ?? null,
     httpRouteTriggerSettings: input.httpRouteTriggerSettings ?? null,

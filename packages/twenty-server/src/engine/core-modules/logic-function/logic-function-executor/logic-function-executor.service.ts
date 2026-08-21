@@ -5,6 +5,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 import {
@@ -62,7 +63,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
-import { resolveRunsWithUserAuthority } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-runs-with-user-authority.util';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {
@@ -139,16 +139,12 @@ export class LogicFunctionExecutorService {
 
     await this.throttleExecution(workspaceId);
 
-    const runsWithUserAuthority = resolveRunsWithUserAuthority({
-      runsWithUserAuthority: flatLogicFunction.runsWithUserAuthority,
-      httpRouteTriggerSettings: flatLogicFunction.httpRouteTriggerSettings,
-    });
-
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
       applicationVariableMaps,
-      ...(runsWithUserAuthority ? { userId, userWorkspaceId } : {}),
+      userId,
+      userWorkspaceId,
     });
 
     const context = await this.buildExecutionContext({
@@ -389,13 +385,26 @@ export class LogicFunctionExecutorService {
     userId?: string;
     userWorkspaceId?: string;
   }) {
-    const applicationAccessToken =
-      await this.applicationTokenService.generateApplicationAccessToken({
+    // Two tokens so a handler can choose per call which access it acts with,
+    // rather than the whole run being locked to one of them. The delegated one
+    // is absent when nobody triggered the run, which is what lets the client
+    // refuse rather than quietly fall back to the application's own access.
+    const hasTriggeringPerson = isDefined(userId) && isDefined(userWorkspaceId);
+
+    const [applicationAccessToken, delegatedAccessToken] = await Promise.all([
+      this.applicationTokenService.generateApplicationAccessToken({
         workspaceId,
         applicationId: flatApplication.id,
-        userId,
-        userWorkspaceId,
-      });
+      }),
+      hasTriggeringPerson
+        ? this.applicationTokenService.generateApplicationAccessToken({
+            workspaceId,
+            applicationId: flatApplication.id,
+            userId,
+            userWorkspaceId,
+          })
+        : null,
+    ]);
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
@@ -415,7 +424,10 @@ export class LogicFunctionExecutorService {
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
+      ...(isDefined(delegatedAccessToken)
+        ? { [DEFAULT_APP_ACCESS_TOKEN_NAME]: delegatedAccessToken.token }
+        : {}),
+      [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
       APPLICATION_ID: flatApplication.id,
