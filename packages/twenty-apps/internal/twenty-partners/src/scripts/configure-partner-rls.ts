@@ -14,7 +14,9 @@
 //    (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
 //    expected lock is missing, the script exits non-zero and tells you to re-sync.
 //
-// 3. Verifies Application field permissions the same way (pitch editable; rest locked).
+// 3. Verifies Application field permissions the same way. The Partner role cannot write
+//    Application at all (canUpdateObjectRecords: false); the field locks are kept as
+//    intent on top of that object-level block, not as the mechanism.
 //
 // Usage:
 //   yarn rls:configure          # against .env.local
@@ -77,7 +79,9 @@ const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'position',
 ]);
 
-// Application fields that must be locked (pitch + opportunity are partner-editable).
+// Application fields that must be locked. pitch + opportunity are exempt from this set —
+// not because a partner can edit them (they can't; the whole object is write-blocked) but
+// because the apply route sets both once, at creation, under the application role.
 const APPLICATION_FIELD_LOCK_EXPECTED = new Set([
   'name',
   'partner',
@@ -86,7 +90,8 @@ const APPLICATION_FIELD_LOCK_EXPECTED = new Set([
 ]);
 
 // Application fields that must NOT be locked: system columns, pitch + opportunity
-// (editable), and updatedBy/position (server-managed — locking them breaks every update).
+// (set once by the apply route, not by the partner), and updatedBy/position
+// (server-managed — locking them breaks every update).
 const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
@@ -709,8 +714,9 @@ async function main() {
 
   if (pitchIsLocked) {
     console.warn(
-      `[rls:configure] WARNING: pitch field is locked — it should be editable. ` +
-        `Remove it from fieldPermissions in partner.role.ts and re-sync.`,
+      `[rls:configure] NOTE: pitch field is locked on the Partner role, beyond the ` +
+        `expected set. Harmless — canUpdateObjectRecords already blocks every Partner ` +
+        `write to Application, so this lock has no additional effect.`,
     );
   }
 
@@ -738,7 +744,7 @@ async function main() {
   }
 
   console.log(
-    `[rls:configure] ✓ ${appLockedFps.length} Application fields locked (pitch editable) — field permissions verified`,
+    `[rls:configure] ✓ ${appLockedFps.length} Application fields locked (Partner role cannot write Application at all; locks kept as intent) — field permissions verified`,
   );
 }
 

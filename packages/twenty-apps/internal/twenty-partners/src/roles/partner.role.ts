@@ -55,10 +55,11 @@ import { REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportu
 export const PARTNER_ROLE_LABEL = 'Partner';
 
 // External partner self-service role: a partner sees only its own records, can edit its
-// own Partner profile and an Application's pitch (and set opportunity on apply/create); Company/
-// Person are read-only. Opportunity stage/amount are admin-only (read-only for partners).
-// Application rows are scoped to own partnerUser (RLS). Row-level predicates can't ship in
-// the manifest, so run `yarn rls:configure` after install.
+// own Partner profile; Company/Person are read-only. Application is read-only too — the
+// pitch is set once by the apply route (application role) at creation and is never
+// editable by the partner afterwards. Opportunity stage/amount are admin-only (read-only
+// for partners). Application rows are scoped to own partnerUser (RLS). Row-level
+// predicates can't ship in the manifest, so run `yarn rls:configure` after install.
 //
 // `updatedBy` and `position` must stay editable even though they're not partner-facing: the
 // server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
@@ -70,7 +71,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile and an Application’s pitch; Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile; Application is read-only (the pitch is set once at apply time and cannot be edited afterwards); Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -413,10 +414,12 @@ export default defineRole({
       fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID,
       canUpdateFieldValue: false,
     },
-    // Application — lock every field except pitch and opportunity (partner sets opportunity
-    // on apply/create; state is populated by on-application-created as the app). partnerUser
-    // is listed as locked but stays writable at insert — the server exempts RLS predicate
-    // fields there (permissions.utils.ts, insert case only).
+    // Application — lock every field except pitch and opportunity: the apply route sets
+    // both once, at creation, under the application role — not the partner role, which
+    // cannot write this object at all (canUpdateObjectRecords: false). state is populated
+    // by on-application-created as the app. partnerUser is listed as locked but stays
+    // writable at insert — the server exempts RLS predicate fields there
+    // (permissions.utils.ts, insert case only).
     // System/server-managed fields (id, timestamps, updatedBy, position, searchVector) stay
     // out — locking updatedBy/position breaks every update (same trap as Opportunity above).
     {
