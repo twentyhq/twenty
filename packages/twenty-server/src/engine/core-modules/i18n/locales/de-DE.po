@@ -822,7 +822,7 @@ msgstr "Apostroph und Punkt"
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
-msgstr ""
+msgstr "Die Bereinigung der Anwendung wird noch durchgeführt. Bitte versuchen Sie es erneut."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -873,7 +873,7 @@ msgstr "Variable der Anwendungsregistrierung nicht gefunden."
 #. js-lingui-id: P+wtF/
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application uninstall logic function failed."
-msgstr ""
+msgstr "Die Deinstallationslogikfunktion der Anwendung ist fehlgeschlagen."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -1291,7 +1291,7 @@ msgstr "Für das Widget \"{widgetTitle}\" muss der Inhalt ein Objekt sein."
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
-msgstr ""
+msgstr "Boom"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6723,7 +6723,7 @@ msgstr "Keine Berechtigung für den Zugriff auf diesen OAuth-Anbieter."
 #. js-lingui-id: KPx1UV
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Not found"
-msgstr ""
+msgstr "Nicht gefunden"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
