@@ -590,3 +590,130 @@ describe('Cursor pagination ordered by a TEXT field with empty values', () => {
     ]);
   });
 });
+
+// TEXT and SELECT columns are ordered through LOWER(), so the continuation has
+// to compare on that same expression: a raw comparison resolves case ties
+// against the scan order and skips or duplicates rows at page boundaries
+// (issue #24359)
+describe('Cursor pagination ordered by a case-insensitively sorted TEXT field', () => {
+  const caseTiedCompanyIds = [
+    '20202020-ffff-4000-8000-000000000001',
+    '20202020-ffff-4000-8000-000000000002',
+    '20202020-ffff-4000-8000-000000000003',
+  ];
+  const lastCompanyId = '20202020-ffff-4000-8000-000000000004';
+  const allCompanyIds = [...caseTiedCompanyIds, lastCompanyId];
+
+  beforeAll(async () => {
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: [
+          // Three spellings of one lowercased value: every page boundary below
+          // lands inside the tie they form
+          { id: caseTiedCompanyIds[0], name: 'acme' },
+          { id: caseTiedCompanyIds[1], name: 'ACME' },
+          { id: caseTiedCompanyIds[2], name: 'Acme' },
+          { id: lastCompanyId, name: 'Zebra' },
+        ],
+        upsert: true,
+      }),
+    ).expect(200);
+  });
+
+  it.each(['AscNullsLast', 'DescNullsLast'])(
+    'should neither skip nor repeat records across a case tie with %s',
+    async (direction) => {
+      const { ids } = await paginateForward({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        filter: { id: { in: allCompanyIds } },
+        orderBy: { name: direction },
+        // One record per page puts a cursor between every pair of tied rows
+        first: 1,
+      });
+
+      expect(ids).toHaveLength(allCompanyIds.length);
+      expect(new Set(ids)).toEqual(new Set(allCompanyIds));
+    },
+  );
+
+  it('should keep the tied rows together on one side of the later name', async () => {
+    const { ids } = await paginateForward({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      filter: { id: { in: allCompanyIds } },
+      orderBy: { name: 'AscNullsLast' },
+      first: 1,
+    });
+
+    expect(new Set(ids.slice(0, caseTiedCompanyIds.length))).toEqual(
+      new Set(caseTiedCompanyIds),
+    );
+    expect(ids[ids.length - 1]).toBe(lastCompanyId);
+  });
+});
+
+// A SELECT column is an enum: a raw comparison follows the enum's declaration
+// order (NEW, SCREENING, MEETING, PROPOSAL, CUSTOMER) while the ordering sorts
+// by LOWER(stage::text), so the two disagree wholesale rather than only at ties
+describe('Cursor pagination ordered by a SELECT field', () => {
+  const stagesInDeclarationOrder = [
+    'NEW',
+    'SCREENING',
+    'MEETING',
+    'PROPOSAL',
+    'CUSTOMER',
+  ];
+  const opportunityIdByStage: Record<string, string> = {
+    NEW: '20202020-ffff-4100-8000-000000000001',
+    SCREENING: '20202020-ffff-4100-8000-000000000002',
+    MEETING: '20202020-ffff-4100-8000-000000000003',
+    PROPOSAL: '20202020-ffff-4100-8000-000000000004',
+    CUSTOMER: '20202020-ffff-4100-8000-000000000005',
+  };
+  const allOpportunityIds = Object.values(opportunityIdByStage);
+
+  beforeAll(async () => {
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'id',
+        data: stagesInDeclarationOrder.map((stage) => ({
+          id: opportunityIdByStage[stage],
+          name: `Stage ${stage} opportunity`,
+          stage,
+        })),
+        upsert: true,
+      }),
+    ).expect(200);
+  });
+
+  it('should follow the lowercased text order the scan uses, not the enum order', async () => {
+    const { ids } = await paginateForward({
+      filter: { id: { in: allOpportunityIds } },
+      orderBy: { stage: 'AscNullsLast' },
+      first: 2,
+    });
+
+    expect(ids).toEqual(
+      ['CUSTOMER', 'MEETING', 'NEW', 'PROPOSAL', 'SCREENING'].map(
+        (stage) => opportunityIdByStage[stage],
+      ),
+    );
+  });
+
+  it('should neither skip nor repeat records when paged one at a time', async () => {
+    const { ids } = await paginateForward({
+      filter: { id: { in: allOpportunityIds } },
+      orderBy: { stage: 'DescNullsLast' },
+      first: 1,
+    });
+
+    expect(ids).toHaveLength(allOpportunityIds.length);
+    expect(new Set(ids)).toEqual(new Set(allOpportunityIds));
+  });
+});
