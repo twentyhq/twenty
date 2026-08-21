@@ -9,7 +9,7 @@ export default defineCommandMenuItem({
   universalIdentifier: APPLY_TO_BRIEF_COMMAND_MENU_ITEM_ID,
   label: 'Apply to this brief',
   shortLabel: 'Apply',
-  isPinned: false,
+  isPinned: true,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
