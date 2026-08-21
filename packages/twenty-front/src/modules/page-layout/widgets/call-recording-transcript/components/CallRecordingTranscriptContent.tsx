@@ -10,14 +10,30 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 type CallRecordingTranscriptContentProps = {
   callRecording: CalendarEventCallRecordingCandidate;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
+  activeEntryIndex?: number;
+  lastStartedEntryIndex?: number;
+  videoElement?: HTMLVideoElement | null;
+  onEntrySelect?: (entryStartSeconds: number) => void;
 };
 
 export const CallRecordingTranscriptContent = ({
   callRecording,
   transcriptEntries,
+  activeEntryIndex,
+  lastStartedEntryIndex,
+  videoElement,
+  onEntrySelect,
 }: CallRecordingTranscriptContentProps) => {
   if (isNonEmptyArray(transcriptEntries)) {
-    return <CallRecordingTranscriptEntryList entries={transcriptEntries} />;
+    return (
+      <CallRecordingTranscriptEntryList
+        entries={transcriptEntries}
+        activeEntryIndex={activeEntryIndex}
+        lastStartedEntryIndex={lastStartedEntryIndex}
+        videoElement={videoElement}
+        onEntrySelect={onEntrySelect}
+      />
+    );
   }
 
   if (isCallRecordingTranscriptPending(callRecording)) {

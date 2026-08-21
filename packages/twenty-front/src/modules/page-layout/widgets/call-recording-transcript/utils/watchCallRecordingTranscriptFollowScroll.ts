@@ -1,0 +1,95 @@
+import { getCallRecordingTranscriptFollowScrollTop } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptFollowScrollTop';
+import { isDefined } from 'twenty-shared/utils';
+
+const FOLLOW_SCROLL_SYNC_EVENT_NAMES = [
+  'seeking',
+  'seeked',
+  'timeupdate',
+] as const;
+
+const CURRENT_SPOKEN_WORD_SELECTOR = '[data-current-spoken-word="true"]';
+
+type FollowScrollTargetElement = {
+  getBoundingClientRect: () => Pick<DOMRect, 'bottom' | 'top'>;
+};
+
+type FollowScrollContainerElement = FollowScrollTargetElement & {
+  clientHeight: number;
+  scrollTop: number;
+  querySelector: (selector: string) => FollowScrollTargetElement | null;
+  scrollTo: (options: ScrollToOptions) => void;
+};
+
+type WatchCallRecordingTranscriptFollowScrollParams = {
+  videoElement: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>;
+  scrollContainerElement: FollowScrollContainerElement;
+  getActiveEntryElement: () => FollowScrollTargetElement | null;
+};
+
+export const watchCallRecordingTranscriptFollowScroll = ({
+  videoElement,
+  scrollContainerElement,
+  getActiveEntryElement,
+}: WatchCallRecordingTranscriptFollowScrollParams) => {
+  let animationFrameId: number | undefined;
+
+  const followPlaybackPosition = () => {
+    const followTargetElement =
+      scrollContainerElement.querySelector(CURRENT_SPOKEN_WORD_SELECTOR) ??
+      getActiveEntryElement();
+
+    if (!isDefined(followTargetElement)) {
+      return;
+    }
+
+    const followTargetRectangle = followTargetElement.getBoundingClientRect();
+    const scrollContainerRectangle =
+      scrollContainerElement.getBoundingClientRect();
+    const scrollTop = getCallRecordingTranscriptFollowScrollTop({
+      followTargetBottom: followTargetRectangle.bottom,
+      followTargetTop: followTargetRectangle.top,
+      scrollContainerClientHeight: scrollContainerElement.clientHeight,
+      scrollContainerScrollTop: scrollContainerElement.scrollTop,
+      scrollContainerTop: scrollContainerRectangle.top,
+    });
+
+    if (!isDefined(scrollTop)) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    scrollContainerElement.scrollTo({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      top: scrollTop,
+    });
+  };
+
+  // Measured on the next frame so React has committed the word marker for the
+  // playback position that triggered the event.
+  const scheduleFollowScroll = () => {
+    if (isDefined(animationFrameId)) {
+      cancelAnimationFrame(animationFrameId);
+    }
+
+    animationFrameId = requestAnimationFrame(followPlaybackPosition);
+  };
+
+  FOLLOW_SCROLL_SYNC_EVENT_NAMES.forEach((eventName) =>
+    videoElement.addEventListener(eventName, scheduleFollowScroll),
+  );
+
+  scheduleFollowScroll();
+
+  return () => {
+    if (isDefined(animationFrameId)) {
+      cancelAnimationFrame(animationFrameId);
+    }
+
+    FOLLOW_SCROLL_SYNC_EVENT_NAMES.forEach((eventName) =>
+      videoElement.removeEventListener(eventName, scheduleFollowScroll),
+    );
+  };
+};
