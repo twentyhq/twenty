@@ -69,25 +69,27 @@ export class MatchParticipantService<
     transactionScope?: WorkspaceTransactionScope,
   ) {
     if (objectMetadataName === 'messageParticipant') {
-      return (
-        transactionScope?.getRepository<MessageParticipantWorkspaceEntity>(
+      if (isDefined(transactionScope)) {
+        return transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
           objectMetadataName,
-        ) ??
-        (await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-          workspaceId,
-          objectMetadataName,
-        ))
+        );
+      }
+
+      return await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+        workspaceId,
+        objectMetadataName,
       );
     }
 
-    return (
-      transactionScope?.getRepository<CalendarEventParticipantWorkspaceEntity>(
+    if (isDefined(transactionScope)) {
+      return transactionScope.getRepository<CalendarEventParticipantWorkspaceEntity>(
         objectMetadataName,
-      ) ??
-      (await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-        workspaceId,
-        objectMetadataName,
-      ))
+      );
+    }
+
+    return await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+      workspaceId,
+      objectMetadataName,
     );
   }
 
