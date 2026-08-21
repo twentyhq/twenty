@@ -92,6 +92,20 @@ export class FlatTimelineActivityRuleValidatorService {
         });
       }
 
+      // A self rule only ever resolves against an object that derives one, so
+      // persisting an override on a system or non audit logged object would
+      // store a row that can never be read back.
+      if (
+        isDefined(flatObjectMetadata) &&
+        (!flatObjectMetadata.isAuditLogged || flatObjectMetadata.isSystem)
+      ) {
+        errors.push({
+          code: TimelineActivityRuleExceptionCode.INVALID_TIMELINE_ACTIVITY_RULE_INPUT,
+          message: t`This object does not record timeline activities`,
+          userFriendlyMessage: msg`This object does not record timeline activities`,
+        });
+      }
+
       return errors;
     }
 
