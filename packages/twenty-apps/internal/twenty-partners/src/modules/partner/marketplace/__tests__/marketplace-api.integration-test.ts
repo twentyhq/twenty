@@ -93,6 +93,15 @@ describe('list-available-partners handler', () => {
     expect(partner.name.length).toBeGreaterThan(0);
     expect(partner.introduction.length).toBeGreaterThan(0);
     expect(partner.introduction).not.toMatch(/^##\s/m);
+    expect(['ADVANCED', 'INTERMEDIATE', 'NEW', null]).toContain(
+      partner.partnerTier,
+    );
+    expect(partner.serviceCount).toBeGreaterThanOrEqual(0);
+    expect(partner.approvedCaseStudyCount).toBeGreaterThanOrEqual(0);
+    expect(partner.approvedCaseStudyWithCoverCount).toBeLessThanOrEqual(
+      partner.approvedCaseStudyCount,
+    );
+    expect(partner.rotationKey).toMatch(/^[a-f0-9]{64}$/);
     expect('projectBudgetTypical' in partner).toBe(false);
     expect('profileLinks' in partner).toBe(false);
     expect('services' in partner).toBe(false);
