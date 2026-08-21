@@ -35,7 +35,6 @@ export const FormLinksFieldInput = ({
   const allowsSecondaryLinks = maxNumberOfValues !== 1;
   const secondaryLinks = defaultValue?.secondaryLinks;
 
-  // the primary link takes one of the field's allowed values
   const maxSecondaryLinkCount = isDefined(maxNumberOfValues)
     ? maxNumberOfValues - 1
     : undefined;
