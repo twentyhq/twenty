@@ -37,6 +37,16 @@ import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-f
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
+type FileByIdRequest = Pick<Request, 'headers'> & {
+  workspaceId: string;
+};
+
+type FileByIdResponse = NodeJS.WritableStream &
+  Pick<
+    Response,
+    'destroy' | 'end' | 'headersSent' | 'redirect' | 'setHeader' | 'status'
+  >;
+
 @Controller()
 @UseFilters(FileApiExceptionFilter)
 export class FileController {
@@ -167,6 +177,13 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
+    if (fileResponse.type !== 'stream') {
+      throw new FileException(
+        'Error retrieving file',
+        FileExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     setFileResponseHeaders(res, fileResponse.mimeType, FileFolder.PublicAsset);
 
     try {
@@ -188,19 +205,19 @@ export class FileController {
   @Get(`${ApiPath.File}/:fileFolder/:id`)
   @UseGuards(FileByIdGuard, NoPermissionGuard)
   async getFileById(
-    @Res() res: Response,
-    @Req() req: Request,
+    @Res() res: FileByIdResponse,
+    @Req() req: FileByIdRequest,
     @Param('fileFolder') fileFolder: SupportedFileFolder,
     @Param('id') fileId: string,
   ) {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const workspaceId = (req as any)?.workspaceId;
+    const workspaceId = req.workspaceId;
 
     const fileResponse = await this.fileService
       .getFilePresignedUrlOrStreamById({
         fileId,
         workspaceId,
         fileFolder,
+        rangeHeader: req.headers.range,
       })
       .catch((error) => {
         this.logger.error(
@@ -227,7 +244,26 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
+    if (fileResponse.type === 'unsatisfiable-range') {
+      res.status(416);
+      res.setHeader('Content-Range', `bytes */${fileResponse.fileSizeInBytes}`);
+
+      return res.end();
+    }
+
     setFileResponseHeaders(res, fileResponse.mimeType, fileFolder);
+    res.setHeader('Accept-Ranges', 'bytes');
+
+    if (fileResponse.type === 'partial-stream') {
+      const { startByte, endByte } = fileResponse.byteRange;
+
+      res.status(206);
+      res.setHeader(
+        'Content-Range',
+        `bytes ${startByte}-${endByte}/${fileResponse.fileSizeInBytes}`,
+      );
+      res.setHeader('Content-Length', String(endByte - startByte + 1));
+    }
 
     try {
       await pipeline(fileResponse.stream, res);

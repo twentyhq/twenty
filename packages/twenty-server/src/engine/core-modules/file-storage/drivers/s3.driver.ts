@@ -34,6 +34,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
@@ -89,10 +90,16 @@ export class S3Driver implements StorageDriver {
     return this.s3Client;
   }
 
-  async readFile(params: { filePath: string }): Promise<Readable> {
+  async readFile(params: {
+    filePath: string;
+    byteRange?: ByteRange;
+  }): Promise<Readable> {
     const command = new GetObjectCommand({
       Key: params.filePath,
       Bucket: this.bucketName,
+      Range: isDefined(params.byteRange)
+        ? `bytes=${params.byteRange.startByte}-${params.byteRange.endByte}`
+        : undefined,
     });
 
     try {

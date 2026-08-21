@@ -30,11 +30,11 @@ describe('File-by-id controller download should succeed', () => {
     const response = await request(global.app.getHttpServer())
       .get(extractPathAndQueryFromUrl(signedUrl))
       .buffer(true)
-      .parse((res, callback) => {
+      .parse((responseStream, callback) => {
         const chunks: Buffer[] = [];
 
-        res.on('data', (chunk) => chunks.push(chunk));
-        res.on('end', () => callback(null, Buffer.concat(chunks)));
+        responseStream.on('data', (chunk) => chunks.push(chunk));
+        responseStream.on('end', () => callback(null, Buffer.concat(chunks)));
       });
 
     jest.useFakeTimers();
@@ -47,5 +47,46 @@ describe('File-by-id controller download should succeed', () => {
     const body = response.body as Buffer;
 
     expect(body.equals(ONE_BY_ONE_TRANSPARENT_PNG)).toBe(true);
+  }, 30000);
+
+  it('should stream a requested byte range using the persisted file size', async () => {
+    jest.useRealTimers();
+
+    const response = await request(global.app.getHttpServer())
+      .get(extractPathAndQueryFromUrl(signedUrl))
+      .set('Range', 'bytes=0-9')
+      .buffer(true)
+      .parse((responseStream, callback) => {
+        const chunks: Buffer[] = [];
+
+        responseStream.on('data', (chunk) => chunks.push(chunk));
+        responseStream.on('end', () => callback(null, Buffer.concat(chunks)));
+      });
+
+    jest.useFakeTimers();
+
+    expect(response.status).toBe(206);
+    expect(response.headers['accept-ranges']).toBe('bytes');
+    expect(response.headers['content-range']).toBe(
+      `bytes 0-9/${ONE_BY_ONE_TRANSPARENT_PNG.length}`,
+    );
+    expect(response.headers['content-length']).toBe('10');
+    expect(response.body).toEqual(ONE_BY_ONE_TRANSPARENT_PNG.subarray(0, 10));
+  }, 30000);
+
+  it('should reject a byte range beyond the persisted file size', async () => {
+    jest.useRealTimers();
+
+    const response = await request(global.app.getHttpServer())
+      .get(extractPathAndQueryFromUrl(signedUrl))
+      .set('Range', `bytes=${ONE_BY_ONE_TRANSPARENT_PNG.length}-`);
+
+    jest.useFakeTimers();
+
+    expect(response.status).toBe(416);
+    expect(response.headers['content-range']).toBe(
+      `bytes */${ONE_BY_ONE_TRANSPARENT_PNG.length}`,
+    );
+    expect(response.text).toBe('');
   }, 30000);
 });

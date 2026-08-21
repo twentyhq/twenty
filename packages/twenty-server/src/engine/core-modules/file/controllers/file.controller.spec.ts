@@ -1,7 +1,7 @@
 import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { Readable } from 'stream';
+import { PassThrough, Readable } from 'stream';
 import { pipeline } from 'node:stream/promises';
 
 import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
@@ -41,8 +41,20 @@ const createMockResponse = ({
 }: { headersSent?: boolean } = {}) => ({
   setHeader: jest.fn(),
   redirect: jest.fn(),
+  status: jest.fn(),
+  end: jest.fn(),
   headersSent,
   destroy: jest.fn(),
+});
+
+const createMockFileResponse = ({
+  headersSent = false,
+}: { headersSent?: boolean } = {}) =>
+  Object.assign(new PassThrough(), createMockResponse({ headersSent }));
+
+const createMockFileRequest = (range?: string) => ({
+  workspaceId: 'workspace-id',
+  headers: { range },
 });
 
 const mockPipeline = jest.mocked(pipeline);
@@ -112,8 +124,8 @@ describe('FileController', () => {
           presignedUrl: 'https://s3.example.com/file?signed=abc',
         });
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse() as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse();
 
       await controller.getFileById(
         mockResponse,
@@ -126,6 +138,7 @@ describe('FileController', () => {
         fileId: 'file-123',
         workspaceId: 'workspace-id',
         fileFolder: FileFolder.Workflow,
+        rangeHeader: undefined,
       });
       expect(mockResponse.redirect).toHaveBeenCalledWith(
         'https://s3.example.com/file?signed=abc',
@@ -144,8 +157,8 @@ describe('FileController', () => {
           mimeType: 'image/png',
         });
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse() as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse();
 
       await controller.getFileById(
         mockResponse,
@@ -173,6 +186,76 @@ describe('FileController', () => {
       expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
 
+    it('should return the requested byte range with partial content headers', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'partial-stream',
+          stream: mockStream,
+          mimeType: 'video/mp4',
+          byteRange: { startByte: 100, endByte: 199 },
+          fileSizeInBytes: 1_000,
+        });
+
+      const mockRequest = createMockFileRequest('bytes=100-199');
+      const mockResponse = createMockFileResponse();
+
+      await controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.FilesField,
+        'file-123',
+      );
+
+      expect(fileService.getFilePresignedUrlOrStreamById).toHaveBeenCalledWith({
+        fileId: 'file-123',
+        workspaceId: 'workspace-id',
+        fileFolder: FileFolder.FilesField,
+        rangeHeader: 'bytes=100-199',
+      });
+      expect(mockResponse.status).toHaveBeenCalledWith(206);
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Range',
+        'bytes 100-199/1000',
+      );
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Length',
+        '100',
+      );
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
+    });
+
+    it('should return an unsatisfiable response without opening a stream', async () => {
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'unsatisfiable-range',
+          fileSizeInBytes: 1_000,
+        });
+
+      const mockRequest = createMockFileRequest('bytes=1000-');
+      const mockResponse = createMockFileResponse();
+
+      mockPipeline.mockClear();
+
+      await controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.FilesField,
+        'file-123',
+      );
+
+      expect(mockResponse.status).toHaveBeenCalledWith(416);
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Range',
+        'bytes */1000',
+      );
+      expect(mockResponse.end).toHaveBeenCalledTimes(1);
+      expect(mockPipeline).not.toHaveBeenCalled();
+    });
+
     it('should force attachment disposition for non-safe MIME types', async () => {
       const mockStream = createMockStream();
 
@@ -184,8 +267,8 @@ describe('FileController', () => {
           mimeType: 'text/html',
         });
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse() as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse();
 
       await controller.getFileById(
         mockResponse,
@@ -209,8 +292,8 @@ describe('FileController', () => {
         .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
         .mockResolvedValue(null);
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse() as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse();
 
       await expect(
         controller.getFileById(
@@ -236,8 +319,8 @@ describe('FileController', () => {
         .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
         .mockRejectedValue(underlyingError);
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse() as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse();
 
       const promise = controller.getFileById(
         mockResponse,
@@ -273,8 +356,8 @@ describe('FileController', () => {
 
       mockPipeline.mockRejectedValue(new Error('source backend exploded'));
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse({ headersSent: false }) as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse({ headersSent: false });
 
       await expect(
         controller.getFileById(
@@ -306,8 +389,8 @@ describe('FileController', () => {
 
       mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
-      const mockResponse = createMockResponse({ headersSent: true }) as any;
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockFileResponse({ headersSent: true });
 
       // No throw expected — once headers are out, the controller cannot honestly
       // switch to a 500 response, so it tears the socket down instead.
