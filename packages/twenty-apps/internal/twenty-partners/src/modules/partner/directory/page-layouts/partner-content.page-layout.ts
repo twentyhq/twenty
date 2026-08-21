@@ -32,7 +32,7 @@ export default definePageLayout({
       title: 'Timeline',
       position: 20,
       icon: 'IconTimelineEvent',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: '1d293bf5-f6d4-41c4-a6f6-db7955759f35',

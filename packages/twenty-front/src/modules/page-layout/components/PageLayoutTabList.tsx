@@ -32,6 +32,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
@@ -347,19 +348,19 @@ export const PageLayoutTabList = ({
   // Record pages accept widget drops on vertical-list tabs (dnd-kit drags);
   // dashboards accept them on grid tabs (react-grid-layout drags bridged by
   // pointer hit-testing).
-  const widgetDropTargetTabIds = new Set(
+  const widgetDropTargetWidgetsByTabId = new Map<string, PageLayoutWidget[]>(
     pageLayoutType === PageLayoutType.RECORD_PAGE
       ? tabs
           .filter(
             (tab) => tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST,
           )
-          .map((tab) => tab.id)
+          .map((tab) => [tab.id, tab.widgets] as const)
       : pageLayoutType === PageLayoutType.DASHBOARD
         ? tabs
             .filter(
               (tab) => tab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST,
             )
-            .map((tab) => tab.id)
+            .map((tab) => [tab.id, tab.widgets] as const)
         : [],
   );
 
@@ -411,7 +412,7 @@ export const PageLayoutTabList = ({
             onChangeTab={onChangeTab}
             onSelectTab={handleSelectTab}
             canReorder={canReorderTabs}
-            widgetDropTargetTabIds={widgetDropTargetTabIds}
+            widgetDropTargetWidgetsByTabId={widgetDropTargetWidgetsByTabId}
             firstHiddenTabId={
               hasHiddenTabs ? (hiddenTabs[0]?.id ?? null) : null
             }
