@@ -16,6 +16,7 @@ import { CREATE_TIMELINE_ACTIVITY_RULE_CORE_TABLE_UPGRADE_COMMAND_NAME } from 's
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type TimelineActivityRuleOverrides } from 'src/engine/metadata-modules/timeline-activity-rule/types/timeline-activity-rule-overrides.type';
 import { type TimelineActivityRuleResolution } from 'src/engine/metadata-modules/timeline-activity-rule/types/timeline-activity-rule-resolution.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -25,7 +26,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
     CREATE_TIMELINE_ACTIVITY_RULE_CORE_TABLE_UPGRADE_COMMAND_NAME,
 })
 // Postgres treats NULLs as distinct, so the natural key needs two partial
-// unique indexes: one for the self rule, one per relation and resolution.
+// unique indexes: one for the self rule, one per relation. Resolution is an
+// implementation mode, not identity, so it stays out of both.
 @Index(
   'IDX_TIMELINE_ACTIVITY_RULE_SELF_UNIQUE',
   ['workspaceId', 'objectMetadataId'],
@@ -36,7 +38,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 )
 @Index(
   'IDX_TIMELINE_ACTIVITY_RULE_RELATION_UNIQUE',
-  ['workspaceId', 'objectMetadataId', 'relationFieldMetadataId', 'resolution'],
+  ['workspaceId', 'objectMetadataId', 'relationFieldMetadataId'],
   { unique: true, where: '"relationFieldMetadataId" IS NOT NULL' },
 )
 @Index('IDX_TIMELINE_ACTIVITY_RULE_WORKSPACE_ID', ['workspaceId'])
@@ -76,6 +78,11 @@ export class TimelineActivityRuleEntity extends SyncableEntity {
 
   @Column({ nullable: false, default: true, type: 'boolean' })
   isActive: boolean;
+
+  // A workspace edit to an application owned rule lands here, so application
+  // synchronization can update the definition without discarding the edit.
+  @Column({ type: 'jsonb', nullable: true })
+  overrides: TimelineActivityRuleOverrides | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

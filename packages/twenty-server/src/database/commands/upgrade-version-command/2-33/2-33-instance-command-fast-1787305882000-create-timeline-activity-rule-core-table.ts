@@ -20,6 +20,7 @@ export class CreateTimelineActivityRuleCoreTableFastInstanceCommand
         "actions" text array NOT NULL DEFAULT '{}',
         "triggerFieldMetadataIds" uuid array,
         "isActive" boolean NOT NULL DEFAULT true,
+        "overrides" jsonb,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_timelineActivityRule_id" PRIMARY KEY ("id"),
@@ -39,7 +40,8 @@ export class CreateTimelineActivityRuleCoreTableFastInstanceCommand
         ON "core"."timelineActivityRule" ("workspaceId", "universalIdentifier")`,
     );
     // Postgres treats NULLs as distinct, so the natural key needs two partial
-    // unique indexes: one for the self rule, one per relation and resolution.
+    // unique indexes: one for the self rule, one per relation. Resolution is an
+    // implementation mode, not identity, so it stays out of both.
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_TIMELINE_ACTIVITY_RULE_SELF_UNIQUE"
         ON "core"."timelineActivityRule" ("workspaceId", "objectMetadataId")
@@ -47,7 +49,7 @@ export class CreateTimelineActivityRuleCoreTableFastInstanceCommand
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_TIMELINE_ACTIVITY_RULE_RELATION_UNIQUE"
-        ON "core"."timelineActivityRule" ("workspaceId", "objectMetadataId", "relationFieldMetadataId", "resolution")
+        ON "core"."timelineActivityRule" ("workspaceId", "objectMetadataId", "relationFieldMetadataId")
         WHERE "relationFieldMetadataId" IS NOT NULL`,
     );
     await queryRunner.query(

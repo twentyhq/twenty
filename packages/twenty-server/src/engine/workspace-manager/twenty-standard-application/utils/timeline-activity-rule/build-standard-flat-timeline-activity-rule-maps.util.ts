@@ -66,6 +66,7 @@ export const buildStandardFlatTimelineActivityRuleMaps = ({
           ].id,
       ),
       isActive: true,
+      overrides: null,
       workspaceId,
       createdAt: now,
       updatedAt: now,
