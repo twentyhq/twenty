@@ -8,6 +8,8 @@ import { useLinkedObjectObjectMetadataItem } from '@/activities/timeline-activit
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
+import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -101,6 +103,13 @@ export const EventRow = ({
     event.linkedObjectMetadataId,
   );
 
+  const { timelineActivityTypeById } = useTimelineActivityTypes();
+
+  const eventAction = getTimelineActivityAction(
+    event,
+    timelineActivityTypeById,
+  );
+
   if (isUndefinedOrNull(currentWorkspaceMember)) {
     return null;
   }
@@ -133,7 +142,7 @@ export const EventRow = ({
         <StyledLeftContainer>
           <StyledIconContainer>
             <EventIconDynamicComponent
-              event={event}
+              eventAction={eventAction}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
             />
           </StyledIconContainer>
@@ -149,6 +158,7 @@ export const EventRow = ({
               authorFullName={authorFullName}
               labelIdentifierValue={labelIdentifier.name}
               event={event}
+              eventAction={eventAction}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
               createdAt={event.createdAt}

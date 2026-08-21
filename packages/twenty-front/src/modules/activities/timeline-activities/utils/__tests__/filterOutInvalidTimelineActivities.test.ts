@@ -1,4 +1,5 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
@@ -27,19 +28,46 @@ const taskObjectMetadataItem = {
   readableFields: [{ name: 'title' }, { name: 'body' }],
 } as EnrichedObjectMetadataItem;
 
+const UPDATED_TYPE_ID = '20202020-0000-4000-8000-0000000update';
+const LINKED_TYPE_ID = '20202020-0000-4000-8000-0000000linked';
+
+const timelineActivityTypeById = new Map<string, TimelineActivityType>([
+  [
+    UPDATED_TYPE_ID,
+    {
+      id: UPDATED_TYPE_ID,
+      name: 'recordUpdated',
+      label: 'updated',
+      action: 'updated',
+      icon: null,
+    },
+  ],
+  [
+    LINKED_TYPE_ID,
+    {
+      id: LINKED_TYPE_ID,
+      name: 'recordLinked',
+      label: 'was linked by',
+      action: 'linked',
+      icon: null,
+    },
+  ],
+]);
+
 const filter = (events: TimelineActivity[]) =>
-  filterOutInvalidTimelineActivities(events, 'company', [
-    mainObjectMetadataItem,
-    noteObjectMetadataItem,
-    taskObjectMetadataItem,
-  ]);
+  filterOutInvalidTimelineActivities(
+    events,
+    'company',
+    [mainObjectMetadataItem, noteObjectMetadataItem, taskObjectMetadataItem],
+    timelineActivityTypeById,
+  );
 
 describe('filterOutInvalidTimelineActivities', () => {
   it('keeps update diffs as-is and trims fields not in the readable fields', () => {
     const events = [
       {
         id: '1',
-        name: 'company.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         properties: {
           diff: {
             field1: { before: 'value1', after: 'value2' },
@@ -49,7 +77,7 @@ describe('filterOutInvalidTimelineActivities', () => {
       },
       {
         id: '2',
-        name: 'company.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         properties: {
           diff: {
             field1: { before: 'value7', after: 'value8' },
@@ -57,12 +85,12 @@ describe('filterOutInvalidTimelineActivities', () => {
           },
         },
       },
-    ] as TimelineActivity[];
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual([
       {
         id: '1',
-        name: 'company.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         properties: {
           diff: {
             field1: { before: 'value1', after: 'value2' },
@@ -72,7 +100,7 @@ describe('filterOutInvalidTimelineActivities', () => {
       },
       {
         id: '2',
-        name: 'company.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         properties: {
           diff: { field1: { before: 'value7', after: 'value8' } },
         },
@@ -84,29 +112,29 @@ describe('filterOutInvalidTimelineActivities', () => {
     const events = [
       {
         id: '1',
-        name: 'company.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         properties: {
           diff: { field4: { before: 'value11', after: 'value12' } },
         },
       },
-    ] as TimelineActivity[];
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual([]);
   });
 
   it('drops update events that have no diff', () => {
     const events = [
-      { id: '1', name: 'company.updated', properties: {} },
-    ] as TimelineActivity[];
+      { id: '1', timelineActivityTypeId: UPDATED_TYPE_ID, properties: {} },
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual([]);
   });
 
   it('keeps non-update events that have no diff', () => {
     const events = [
-      { id: '1', name: 'company.created', properties: {} },
-      { id: '2', name: 'company.deleted', properties: {} },
-    ] as TimelineActivity[];
+      { id: '1', timelineActivityTypeId: LINKED_TYPE_ID, properties: {} },
+      { id: '2', timelineActivityTypeId: LINKED_TYPE_ID, properties: {} },
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual(events);
   });
@@ -115,17 +143,17 @@ describe('filterOutInvalidTimelineActivities', () => {
     const events = [
       {
         id: '1',
-        name: 'linked-task.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         linkedObjectMetadataId: TASK_OBJECT_METADATA_ID,
         properties: {},
       },
       {
         id: '2',
-        name: 'linked-note.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: {},
       },
-    ] as TimelineActivity[];
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual(events);
   });
@@ -134,7 +162,7 @@ describe('filterOutInvalidTimelineActivities', () => {
     const events = [
       {
         id: '1',
-        name: 'linked-note.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: {
           diff: {
@@ -143,12 +171,12 @@ describe('filterOutInvalidTimelineActivities', () => {
           },
         },
       },
-    ] as TimelineActivity[];
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual([
       {
         id: '1',
-        name: 'linked-note.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: { diff: { title: { before: 'a', after: 'b' } } },
       },
@@ -159,35 +187,12 @@ describe('filterOutInvalidTimelineActivities', () => {
     const events = [
       {
         id: '1',
-        name: 'linked-note.updated',
+        timelineActivityTypeId: UPDATED_TYPE_ID,
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
         properties: { diff: { field1: { before: 'c', after: 'd' } } },
       },
-    ] as TimelineActivity[];
+    ] as unknown as TimelineActivity[];
 
     expect(filter(events)).toEqual([]);
-  });
-
-  it('resolves the linked object from the name for legacy rows without linkedObjectMetadataId', () => {
-    const events = [
-      {
-        id: '1',
-        name: 'linked-note.updated',
-        properties: {
-          diff: {
-            title: { before: 'a', after: 'b' },
-            field1: { before: 'c', after: 'd' },
-          },
-        },
-      },
-    ] as TimelineActivity[];
-
-    expect(filter(events)).toEqual([
-      {
-        id: '1',
-        name: 'linked-note.updated',
-        properties: { diff: { title: { before: 'a', after: 'b' } } },
-      },
-    ]);
   });
 });

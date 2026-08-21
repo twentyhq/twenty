@@ -15,7 +15,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
     labelIdentifierValue: 'Mock',
     event: {
       id: '1',
-      name: 'mock.updated',
+      timelineActivityTypeId: '20202020-0000-4000-8000-0000000update',
       properties: {
         diff: {
           jobTitle: {
@@ -34,7 +34,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
           },
         },
       },
-    } as TimelineActivity,
+    } as unknown as TimelineActivity,
     mainObjectMetadataItem: getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     ),

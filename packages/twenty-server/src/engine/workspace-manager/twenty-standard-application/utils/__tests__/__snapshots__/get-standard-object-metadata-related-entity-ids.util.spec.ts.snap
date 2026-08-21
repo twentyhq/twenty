@@ -2438,9 +2438,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "linkedRecordId": {
         "id": "00000000-0000-0000-0000-000000000743",
       },
-      "name": {
-        "id": "00000000-0000-0000-0000-000000000727",
-      },
       "position": {
         "id": "00000000-0000-0000-0000-000000000725",
       },
@@ -2483,6 +2480,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "targetWorkflowVersion": {
         "id": "00000000-0000-0000-0000-000000000737",
       },
+      "timelineActivityTypeId": {
+        "id": "00000000-0000-0000-0000-000000000727",
+      },
       "updatedAt": {
         "id": "00000000-0000-0000-0000-000000000721",
       },
@@ -2502,7 +2502,7 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
           "happensAt": {
             "id": "00000000-0000-0000-0000-000000000746",
           },
-          "name": {
+          "linkedRecordCachedName": {
             "id": "00000000-0000-0000-0000-000000000745",
           },
           "targetCompany": {

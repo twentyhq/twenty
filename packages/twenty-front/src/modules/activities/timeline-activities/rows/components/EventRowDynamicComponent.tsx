@@ -17,6 +17,7 @@ export const EventRowDynamicComponent = (
       <EventRowMainObject
         labelIdentifierValue={props.labelIdentifierValue}
         event={props.event}
+        eventAction={props.eventAction}
         mainObjectMetadataItem={props.mainObjectMetadataItem}
         linkedObjectMetadataItem={props.linkedObjectMetadataItem}
         authorFullName={props.authorFullName}
@@ -31,6 +32,7 @@ export const EventRowDynamicComponent = (
         <EventRowMessage
           labelIdentifierValue={props.labelIdentifierValue}
           event={props.event}
+          eventAction={props.eventAction}
           mainObjectMetadataItem={props.mainObjectMetadataItem}
           linkedObjectMetadataItem={props.linkedObjectMetadataItem}
           authorFullName={props.authorFullName}
@@ -41,6 +43,7 @@ export const EventRowDynamicComponent = (
         <EventRowCalendarEvent
           labelIdentifierValue={props.labelIdentifierValue}
           event={props.event}
+          eventAction={props.eventAction}
           mainObjectMetadataItem={props.mainObjectMetadataItem}
           linkedObjectMetadataItem={props.linkedObjectMetadataItem}
           authorFullName={props.authorFullName}
@@ -51,6 +54,7 @@ export const EventRowDynamicComponent = (
         <EventRowActivity
           labelIdentifierValue={props.labelIdentifierValue}
           event={props.event}
+          eventAction={props.eventAction}
           mainObjectMetadataItem={props.mainObjectMetadataItem}
           linkedObjectMetadataItem={props.linkedObjectMetadataItem}
           authorFullName={props.authorFullName}
@@ -63,6 +67,7 @@ export const EventRowDynamicComponent = (
         <EventRowActivity
           labelIdentifierValue={props.labelIdentifierValue}
           event={props.event}
+          eventAction={props.eventAction}
           mainObjectMetadataItem={props.mainObjectMetadataItem}
           linkedObjectMetadataItem={props.linkedObjectMetadataItem}
           authorFullName={props.authorFullName}
@@ -75,6 +80,7 @@ export const EventRowDynamicComponent = (
         <EventRowGenericLinked
           labelIdentifierValue={props.labelIdentifierValue}
           event={props.event}
+          eventAction={props.eventAction}
           mainObjectMetadataItem={props.mainObjectMetadataItem}
           linkedObjectMetadataItem={props.linkedObjectMetadataItem}
           authorFullName={props.authorFullName}

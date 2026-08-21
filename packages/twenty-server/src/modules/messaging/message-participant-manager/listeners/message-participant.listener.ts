@@ -11,6 +11,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
+import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @Injectable()
@@ -21,6 +22,7 @@ export class MessageParticipantListener {
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly timelineActivityTypeCacheService: TimelineActivityTypeCacheService,
   ) {}
 
   @OnCustomBatchEvent('messageParticipant_matched')
@@ -42,6 +44,16 @@ export class MessageParticipantListener {
         },
       });
 
+    const timelineActivityTypeId = (
+      await this.timelineActivityTypeCacheService.getTimelineActivityTypeIdByAction(
+        batchEvent.workspaceId,
+      )
+    ).linked;
+
+    if (!isDefined(timelineActivityTypeId)) {
+      return;
+    }
+
     const timelineActivityPayloads = batchEvent.events.flatMap((event) => {
       const messageParticipants = event.participants ?? [];
 
@@ -60,7 +72,7 @@ export class MessageParticipantListener {
           }
 
           return {
-            name: 'message.linked',
+            timelineActivityTypeId,
             properties: {},
             objectSingularName: 'person',
             recordId: participant.personId,

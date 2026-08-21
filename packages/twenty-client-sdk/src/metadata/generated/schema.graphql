@@ -3187,6 +3187,17 @@ enum MetadataTranslationProvenance {
   INHERITED
 }
 
+type TimelineActivityType {
+  id: UUID!
+  name: String!
+  label: String!
+  action: String
+  icon: String
+  applicationId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type CollectionHash {
   collectionName: AllMetadataName!
   hash: String!
@@ -3224,6 +3235,7 @@ enum AllMetadataName {
   applicationVariable
   connectionProvider
   searchFieldMetadata
+  timelineActivityType
 }
 
 type MinimalObjectMetadata {
@@ -3369,6 +3381,7 @@ type Query {
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
+  timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!

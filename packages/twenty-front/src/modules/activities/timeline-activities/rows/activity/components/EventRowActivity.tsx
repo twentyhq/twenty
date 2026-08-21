@@ -11,7 +11,7 @@ import {
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { parseTimelineActivityAction } from 'twenty-shared/timeline';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,6 +19,26 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
+
+const getEventActionSentence = (
+  eventAction: TimelineActivityAction | null,
+  objectNameSingular: CoreObjectNameSingular,
+): string => {
+  switch (eventAction) {
+    case 'created':
+      return t`created a related ${objectNameSingular}`;
+    case 'updated':
+      return t`updated a related ${objectNameSingular}`;
+    case 'deleted':
+      return t`deleted a related ${objectNameSingular}`;
+    case 'restored':
+      return t`restored a related ${objectNameSingular}`;
+    case 'unlinked':
+      return t`unlinked a related ${objectNameSingular}`;
+    default:
+      return t`linked a related ${objectNameSingular}`;
+  }
+};
 
 const StyledEventRow = styled.div`
   display: flex;
@@ -33,14 +53,11 @@ export const StyledEventRowItemText = styled.span`
 
 export const EventRowActivity = ({
   event,
+  eventAction,
   authorFullName,
   objectNameSingular,
   createdAt,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const eventAction = parseTimelineActivityAction(event.name);
-
-  const eventObject = objectNameSingular;
-
   if (!isTimelineActivityWithLinkedRecord(event)) {
     throw new Error('Could not find linked record id for event');
   }
@@ -76,7 +93,7 @@ export const EventRowActivity = ({
         <StyledEventRowContent>
           <EventRowItem>{authorFullName}</EventRowItem>
           <EventRowItem variant="action">
-            {t`${eventAction} a related ${eventObject}`}
+            {getEventActionSentence(eventAction, objectNameSingular)}
           </EventRowItem>
           <StyledEventRowLinkedRecord
             onClick={() =>

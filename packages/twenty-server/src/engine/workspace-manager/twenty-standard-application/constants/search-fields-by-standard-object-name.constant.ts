@@ -47,7 +47,9 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },
   ],
   taskTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
-  timelineActivity: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  timelineActivity: [
+    { name: 'linkedRecordCachedName', type: FieldMetadataType.TEXT },
+  ],
   workflow: [{ name: 'name', type: FieldMetadataType.TEXT }],
   workflowAutomatedTrigger: [{ name: 'id', type: FieldMetadataType.UUID }],
   workflowRun: [{ name: 'name', type: FieldMetadataType.TEXT }],

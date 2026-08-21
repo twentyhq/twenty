@@ -18,6 +18,7 @@ export const TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
   pageLayoutWidget: ['title'],
   commandMenuItem: ['label', 'shortLabel'],
   navigationMenuItem: ['name'],
+  timelineActivityType: ['label'],
 } as const satisfies Partial<Record<AllMetadataName, readonly string[]>>;
 
 export type TranslatableMetadataName =

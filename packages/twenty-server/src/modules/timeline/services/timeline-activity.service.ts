@@ -47,11 +47,21 @@ const SOURCE_EVENT_ACTIONS: Partial<
   restored: 'restored',
 };
 
+// Only the diff is worth storing: the rest of an event payload is the record
+// itself, which the timeline reads live.
+const keepDiffOnly = (
+  properties: ObjectRecordBaseEvent['properties'],
+): Pick<ObjectRecordBaseEvent['properties'], 'diff'> => {
+  const { diff } = properties;
+
+  return isDefined(diff) && Object.keys(diff).length > 0 ? { diff } : {};
+};
+
 // Both event streams write the same row shape; only the linked record, its
 // cached name and the persisted properties differ.
 const buildLinkedPayload = ({
   rule,
-  action,
+  timelineActivityTypeId,
   target,
   workspaceMemberId,
   linkedRecordId,
@@ -59,21 +69,21 @@ const buildLinkedPayload = ({
   properties,
 }: {
   rule: TimelineActivityRule;
-  action: DatabaseEventAction;
+  timelineActivityTypeId: string;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
   linkedRecordCachedName: string | undefined;
   properties: ObjectRecordBaseEvent['properties'];
 }): TimelineActivityPayload => ({
-  name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
+  timelineActivityTypeId,
   objectSingularName: target.targetObjectNameSingular,
   recordId: target.targetRecordId,
   workspaceMemberId,
   linkedRecordId,
   linkedObjectMetadataId: rule.sourceFlatObjectMetadata.id,
   linkedRecordCachedName,
-  properties,
+  properties: keepDiffOnly(properties),
 });
 
 @Injectable()
@@ -82,8 +92,8 @@ export class TimelineActivityService {
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly timelineActivityRuleResolverService: TimelineActivityRuleBuilderService,
-    private readonly timelineActivityTargetResolverService: TimelineActivityTargetQueryService,
+    private readonly timelineActivityRuleBuilderService: TimelineActivityRuleBuilderService,
+    private readonly timelineActivityTargetQueryService: TimelineActivityTargetQueryService,
   ) {}
 
   async upsertEvents({
@@ -98,11 +108,15 @@ export class TimelineActivityService {
 
     const { action } = parseEventNameOrThrow(name);
 
-    const { sourceRules, junctionRules, flatFieldMetadataMaps } =
-      await this.timelineActivityRuleResolverService.getRulesForEventBatch({
-        workspaceId,
-        flatObjectMetadata: objectMetadata,
-      });
+    const {
+      sourceRules,
+      junctionRules,
+      flatFieldMetadataMaps,
+      timelineActivityTypeIdByAction,
+    } = await this.timelineActivityRuleBuilderService.getRulesForEventBatch({
+      workspaceId,
+      flatObjectMetadata: objectMetadata,
+    });
 
     if (sourceRules.length === 0 && junctionRules.length === 0) {
       return;
@@ -132,6 +146,7 @@ export class TimelineActivityService {
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
+                timelineActivityTypeIdByAction,
               }),
             ),
             ...junctionRules.map((rule) =>
@@ -141,6 +156,7 @@ export class TimelineActivityService {
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
+                timelineActivityTypeIdByAction,
               }),
             ),
           ]);
@@ -201,16 +217,26 @@ export class TimelineActivityService {
     action,
     workspaceId,
     flatFieldMetadataMaps,
+    timelineActivityTypeIdByAction,
   }: {
     rule: TimelineActivityRule;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    timelineActivityTypeIdByAction: Partial<
+      Record<TimelineActivityRuleAction, string>
+    >;
   }): Promise<TimelineActivityPayload[]> {
     const ruleAction = SOURCE_EVENT_ACTIONS[action];
 
     if (!isDefined(ruleAction)) {
+      return [];
+    }
+
+    const timelineActivityTypeId = timelineActivityTypeIdByAction[ruleAction];
+
+    if (!isDefined(timelineActivityTypeId)) {
       return [];
     }
 
@@ -225,17 +251,29 @@ export class TimelineActivityService {
     const { nameSingular } = rule.sourceFlatObjectMetadata;
 
     if (rule.targetShape.kind === 'SELF') {
-      return matchingEvents.map((event) => ({
-        name: `${nameSingular}.${action}`,
-        objectSingularName: nameSingular,
-        recordId: event.recordId,
-        workspaceMemberId: event.workspaceMemberId,
-        properties: event.properties,
-      }));
+      return matchingEvents.flatMap((event) => {
+        const properties =
+          ruleAction === 'updated' ? keepDiffOnly(event.properties) : {};
+
+        // An update whose whole diff was filtered out has nothing to show
+        if (ruleAction === 'updated' && !isDefined(properties.diff)) {
+          return [];
+        }
+
+        return [
+          {
+            timelineActivityTypeId,
+            objectSingularName: nameSingular,
+            recordId: event.recordId,
+            workspaceMemberId: event.workspaceMemberId,
+            properties,
+          },
+        ];
+      });
     }
 
     const targetsBySourceRecordId =
-      await this.timelineActivityTargetResolverService.resolveTargetsBySourceRecordId(
+      await this.timelineActivityTargetQueryService.resolveTargetsBySourceRecordId(
         {
           rule,
           sourceRecordIds: matchingEvents.map((event) => event.recordId),
@@ -247,7 +285,7 @@ export class TimelineActivityService {
       (targetsBySourceRecordId.get(event.recordId) ?? []).map((target) =>
         buildLinkedPayload({
           rule,
-          action,
+          timelineActivityTypeId,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: event.recordId,
@@ -268,16 +306,26 @@ export class TimelineActivityService {
     action,
     workspaceId,
     flatFieldMetadataMaps,
+    timelineActivityTypeIdByAction,
   }: {
     rule: TimelineActivityRule;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    timelineActivityTypeIdByAction: Partial<
+      Record<TimelineActivityRuleAction, string>
+    >;
   }): Promise<TimelineActivityPayload[]> {
     const ruleAction = JUNCTION_EVENT_ACTIONS[action];
 
     if (!isDefined(ruleAction) || rule.targetShape.kind !== 'JUNCTION') {
+      return [];
+    }
+
+    const timelineActivityTypeId = timelineActivityTypeIdByAction[ruleAction];
+
+    if (!isDefined(timelineActivityTypeId)) {
       return [];
     }
 
@@ -291,7 +339,7 @@ export class TimelineActivityService {
           | undefined;
 
         const target =
-          this.timelineActivityTargetResolverService.resolveTargetFromJunctionRecord(
+          this.timelineActivityTargetQueryService.resolveTargetFromJunctionRecord(
             { rule, junctionRecord },
           );
 
@@ -310,7 +358,7 @@ export class TimelineActivityService {
     }
 
     const sourceRecordsByRecordId =
-      await this.timelineActivityTargetResolverService.findSourceRecordsByRecordId(
+      await this.timelineActivityTargetQueryService.findSourceRecordsByRecordId(
         {
           rule,
           recordIds: eventsWithJunctionRecord.map(
@@ -327,7 +375,7 @@ export class TimelineActivityService {
       .map(({ event, target, sourceRecordId }) =>
         buildLinkedPayload({
           rule,
-          action,
+          timelineActivityTypeId,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: sourceRecordId,

@@ -5,11 +5,15 @@ import { updateManyOperationFactory } from 'test/integration/graphql/utils/updat
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { gql } from 'graphql-tag';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
-  name
+  timelineActivityTypeId
   properties
   linkedRecordId
   linkedRecordCachedName
@@ -22,7 +26,7 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
 
 type TimelineActivityRow = {
   id: string;
-  name: string;
+  timelineActivityTypeId: string | null;
   properties: Record<string, unknown> | null;
   linkedRecordId: string | null;
   linkedRecordCachedName: string | null;
@@ -98,16 +102,41 @@ const findTimelineActivities = async (
 const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
 const findTimelineActivityRowsByLinkedRecordId = async ({
-  name,
+  timelineActivityTypeId,
   linkedRecordId,
 }: {
-  name: string;
+  timelineActivityTypeId: string;
   linkedRecordId: string;
 }): Promise<Pick<TimelineActivityRow, 'targetCompanyId' | 'targetNoteId'>[]> =>
   global.testDataSource.query(
-    `SELECT "targetCompanyId", "targetNoteId" FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE name = $1 AND "linkedRecordId" = $2`,
-    [name, linkedRecordId],
+    `SELECT "targetCompanyId", "targetNoteId" FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE "timelineActivityTypeId" = $1 AND "linkedRecordId" = $2`,
+    [timelineActivityTypeId, linkedRecordId],
   );
+
+const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
+  query FindManyTimelineActivityTypes {
+    timelineActivityTypes {
+      id
+      action
+    }
+  }
+`;
+
+const timelineActivityTypeIdByAction: Partial<
+  Record<TimelineActivityAction, string>
+> = {};
+
+const timelineActivityTypeIdForOrThrow = (
+  action: TimelineActivityAction,
+): string => {
+  const timelineActivityTypeId = timelineActivityTypeIdByAction[action];
+
+  if (!isDefined(timelineActivityTypeId)) {
+    throw new Error(`No timeline activity type seeded for action ${action}`);
+  }
+
+  return timelineActivityTypeId;
+};
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
@@ -140,6 +169,20 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
 // reproduce. Assertions describe what the hardcoded implementation does today,
 // including the parts that look accidental.
 describe('timeline activity write path (integration)', () => {
+  beforeAll(async () => {
+    const response = await makeMetadataAPIRequest({
+      query: FIND_MANY_TIMELINE_ACTIVITY_TYPES,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    for (const { id, action } of response.body.data.timelineActivityTypes) {
+      if (isDefined(action)) {
+        timelineActivityTypeIdByAction[action as TimelineActivityAction] = id;
+      }
+    }
+  });
+
   afterAll(async () => {
     for (const { objectMetadataSingularName, id } of CREATED_RECORD_IDS) {
       await makeGraphqlAPIRequest(
@@ -167,7 +210,9 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].name).toBe('company.created');
+      expect(timelineActivities[0].timelineActivityTypeId).toBe(
+        timelineActivityTypeIdForOrThrow('created'),
+      );
       expect(timelineActivities[0].targetCompanyId).toBe(COMPANY_ID);
       expect(timelineActivities[0].linkedRecordId).toBeNull();
     });
@@ -183,7 +228,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: COMPANY_ID },
-        name: { eq: 'company.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -225,7 +272,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: MERGE_COMPANY_ID },
-        name: { eq: 'company.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -266,7 +315,9 @@ describe('timeline activity write path (integration)', () => {
       for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
         const timelineActivities = await findTimelineActivities({
           targetCompanyId: { eq: id },
-          name: { eq: 'company.updated' },
+          timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
         });
 
         expect(timelineActivities).toHaveLength(1);
@@ -295,7 +346,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: POSITION_COMPANY_ID },
-        name: { eq: 'company.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(0);
@@ -326,7 +379,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.created' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('linked'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -338,7 +393,9 @@ describe('timeline activity write path (integration)', () => {
     it('should write the note own created entry on the note timeline', async () => {
       const timelineActivities = await findTimelineActivities({
         targetNoteId: { eq: NOTE_ID },
-        name: { eq: 'note.created' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('created'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -353,7 +410,9 @@ describe('timeline activity write path (integration)', () => {
 
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(onCompany).toHaveLength(1);
@@ -367,7 +426,7 @@ describe('timeline activity write path (integration)', () => {
 
       const rowsWithoutTarget = (
         await findTimelineActivityRowsByLinkedRecordId({
-          name: 'linked-note.updated',
+          timelineActivityTypeId: timelineActivityTypeIdForOrThrow('updated'),
           linkedRecordId: NOTE_ID,
         })
       ).filter((row) => row.targetCompanyId === null);
@@ -388,7 +447,9 @@ describe('timeline activity write path (integration)', () => {
 
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(onCompany).toHaveLength(1);
@@ -410,7 +471,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.deleted' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('unlinked'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);

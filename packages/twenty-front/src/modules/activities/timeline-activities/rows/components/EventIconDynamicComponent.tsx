@@ -1,10 +1,7 @@
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import {
-  parseTimelineActivityAction,
-  type TimelineActivityAction,
-} from 'twenty-shared/timeline';
+import { isDefined } from 'twenty-shared/utils';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import {
   IconCirclePlus,
   IconEditCircle,
@@ -23,15 +20,15 @@ const RECORD_CHANGE_ICONS: Partial<
 };
 
 export const EventIconDynamicComponent = ({
-  event,
+  eventAction,
   linkedObjectMetadataItem,
 }: {
-  event: TimelineActivity;
+  eventAction: TimelineActivityAction | null;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
-  const action = parseTimelineActivityAction(event.name);
-
-  const ActionIcon = RECORD_CHANGE_ICONS[action];
+  const ActionIcon = isDefined(eventAction)
+    ? RECORD_CHANGE_ICONS[eventAction]
+    : undefined;
 
   if (ActionIcon) {
     return <ActionIcon />;

@@ -4,6 +4,7 @@ import { type AgentManifest } from './agentManifestType';
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
 import { type ConnectionProviderManifest } from './connectionProviderManifestType';
+import { type TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
 import { type FieldManifest } from './fieldManifestType';
 import {
   type CommandMenuItemManifest,
@@ -41,6 +42,7 @@ export type Manifest = {
   skills: SkillManifest[];
   agents: AgentManifest[];
   connectionProviders?: ConnectionProviderManifest[];
+  timelineActivityTypes?: TimelineActivityTypeManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   viewFields: StandaloneViewFieldManifest[];
