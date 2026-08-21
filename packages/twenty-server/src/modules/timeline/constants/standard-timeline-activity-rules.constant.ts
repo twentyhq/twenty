@@ -1,6 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 
 type StandardTimelineActivityRule = {
   objectUniversalIdentifier: string;
