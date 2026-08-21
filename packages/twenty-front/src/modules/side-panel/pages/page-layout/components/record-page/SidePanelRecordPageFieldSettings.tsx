@@ -11,6 +11,7 @@ import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import {
   getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
   RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -116,14 +117,16 @@ export const SidePanelRecordPageFieldSettings = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const isRecordMutationEnabled =
-    fieldConfiguration?.isRecordMutationEnabled ?? true;
+  const isWidgetContentEditable =
+    fieldConfiguration?.isWidgetContentEditable ?? true;
 
-  const handleIsRecordMutationEnabledChange = (
-    nextIsRecordMutationEnabled: boolean,
+  const handleIsWidgetContentEditableChange = (
+    nextIsWidgetContentEditable: boolean,
   ) => {
     updateCurrentWidgetConfig({
-      configToUpdate: { isRecordMutationEnabled: nextIsRecordMutationEnabled },
+      configToUpdate: {
+        isWidgetContentEditable: nextIsWidgetContentEditable,
+      },
     });
   };
 
@@ -151,6 +154,8 @@ export const SidePanelRecordPageFieldSettings = () => {
   const embeddedViewLayoutViewType = getRecordTableWidgetLayoutViewType(
     embeddedWidgetView?.type,
   );
+  const isWidgetContentEditingSupported =
+    isRecordTableWidgetContentEditingSupported(embeddedWidgetView?.type);
   const isEmbeddedViewCalendarLayout =
     embeddedViewLayoutViewType === ViewType.CALENDAR_WIDGET;
   const embeddedViewHasGroupBy = isDefined(
@@ -203,7 +208,10 @@ export const SidePanelRecordPageFieldSettings = () => {
           isLayoutRowHidden: true,
         })
       : []),
-    ...(isTableDisplayMode ? ['fields', 'field-allow-editing'] : []),
+    ...(isTableDisplayMode ? ['fields'] : []),
+    ...(isTableDisplayMode && isWidgetContentEditingSupported
+      ? ['field-allow-editing']
+      : []),
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
@@ -275,14 +283,14 @@ export const SidePanelRecordPageFieldSettings = () => {
                 />
               </SelectableListItem>
             )}
-            {isTableDisplayMode && (
+            {isTableDisplayMode && isWidgetContentEditingSupported && (
               <SelectableListItem itemId="field-allow-editing">
                 <CommandMenuItemToggle
                   LeftIcon={IconPencil}
                   text={t`Allow editing`}
                   id="field-allow-editing"
-                  toggled={isRecordMutationEnabled}
-                  onToggleChange={handleIsRecordMutationEnabledChange}
+                  toggled={isWidgetContentEditable}
+                  onToggleChange={handleIsWidgetContentEditableChange}
                 />
               </SelectableListItem>
             )}

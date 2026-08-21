@@ -1251,7 +1251,7 @@ type FieldConfiguration {
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
   nestedRelationFieldMetadataId: String
-  isRecordMutationEnabled: Boolean
+  isWidgetContentEditable: Boolean
 }
 
 """Display mode for field configuration widgets"""
@@ -1298,7 +1298,7 @@ type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
   recordLimit: Int
-  isRecordMutationEnabled: Boolean
+  isWidgetContentEditable: Boolean
 }
 
 type WorkflowConfiguration {

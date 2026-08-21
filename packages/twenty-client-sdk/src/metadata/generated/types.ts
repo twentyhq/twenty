@@ -2446,7 +2446,7 @@ export default {
             "nestedRelationFieldMetadataId": [
                 1
             ],
-            "isRecordMutationEnabled": [
+            "isWidgetContentEditable": [
                 8
             ],
             "__typename": [
@@ -2529,7 +2529,7 @@ export default {
             "recordLimit": [
                 26
             ],
-            "isRecordMutationEnabled": [
+            "isWidgetContentEditable": [
                 8
             ],
             "__typename": [

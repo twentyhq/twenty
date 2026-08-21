@@ -12,11 +12,11 @@ const StyledBoardContainer = styled.div`
 `;
 
 type RecordBoardWidgetProps = {
-  isReadOnly?: boolean;
+  isWidgetContentEditable?: boolean;
 };
 
 export const RecordBoardWidget = ({
-  isReadOnly = true,
+  isWidgetContentEditable = false,
 }: RecordBoardWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
@@ -25,8 +25,8 @@ export const RecordBoardWidget = ({
     <>
       <RecordBoardWidgetViewSettingsReadOnlyEffect
         recordBoardId={recordIndexId}
-        isViewSettingsReadOnly={isReadOnly}
-        isRecordCellsNonEditable={isReadOnly}
+        isViewSettingsReadOnly={!isWidgetContentEditable}
+        isRecordCellsNonEditable={!isWidgetContentEditable}
       />
       <StyledBoardContainer>
         <RecordBoardContainer

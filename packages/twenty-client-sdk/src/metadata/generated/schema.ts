@@ -925,7 +925,7 @@ export interface FieldConfiguration {
     fieldDisplayMode: FieldDisplayMode
     viewId?: Scalars['String']
     nestedRelationFieldMetadataId?: Scalars['String']
-    isRecordMutationEnabled?: Scalars['Boolean']
+    isWidgetContentEditable?: Scalars['Boolean']
     __typename: 'FieldConfiguration'
 }
 
@@ -975,7 +975,7 @@ export interface RecordTableConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
     recordLimit?: Scalars['Int']
-    isRecordMutationEnabled?: Scalars['Boolean']
+    isWidgetContentEditable?: Scalars['Boolean']
     __typename: 'RecordTableConfiguration'
 }
 
@@ -4186,7 +4186,7 @@ export interface FieldConfigurationGenqlSelection{
     fieldDisplayMode?: boolean | number
     viewId?: boolean | number
     nestedRelationFieldMetadataId?: boolean | number
-    isRecordMutationEnabled?: boolean | number
+    isWidgetContentEditable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4240,7 +4240,7 @@ export interface RecordTableConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
     recordLimit?: boolean | number
-    isRecordMutationEnabled?: boolean | number
+    isWidgetContentEditable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

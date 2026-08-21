@@ -86,7 +86,7 @@ export const useCreatePageLayoutRecordTableWidget = (
           columnSpan: position.w,
         },
         objectMetadataId: objectMetadata?.id,
-        isRecordMutationEnabled:
+        isWidgetContentEditable:
           pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
       });
 
