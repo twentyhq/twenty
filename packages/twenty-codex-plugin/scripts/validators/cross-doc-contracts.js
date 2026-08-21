@@ -1,6 +1,6 @@
 const path = require('node:path');
 
-const { PLUGIN_ROOT, readText } = require('./lib');
+const { PLUGIN_ROOT, listFiles, readText } = require('./lib');
 
 const assertTwentyMcpFormattingContract = (fail) => {
   const skillPath = path.join(PLUGIN_ROOT, 'skills/use-twenty-mcp/SKILL.md');
@@ -264,6 +264,8 @@ const assertCliGuidanceSplit = (fail) => {
     'yarn lint',
     'yarn twenty plan',
     'yarn twenty apply',
+    '`yarn twenty plan` is read-only and requires the app to already be installed',
+    'For a first sync, run `yarn twenty apply`',
     'Use the bounded apply command to synchronize app changes with the active remote',
     'Do not use bare `yarn twenty dev` (watch mode)',
     'yarn twenty apply --verbose',
@@ -289,6 +291,24 @@ const assertCliGuidanceSplit = (fail) => {
   for (const fragment of forbiddenCliFragments) {
     if (cliAndSync.includes(fragment)) {
       fail(`cli-and-sync.md should not warn about the sandbox or reference the removed command-execution.md: ${fragment}`);
+    }
+  }
+
+  const agentFacingDocumentPaths = [
+    path.join(PLUGIN_ROOT, 'AGENTS.md'),
+    ...listFiles(path.join(PLUGIN_ROOT, 'skills')).filter((filePath) =>
+      filePath.endsWith('.md'),
+    ),
+    ...listFiles(path.join(PLUGIN_ROOT, 'references')).filter((filePath) =>
+      filePath.endsWith('.md'),
+    ),
+  ];
+
+  for (const documentPath of agentFacingDocumentPaths) {
+    if (readText(documentPath).includes('yarn twenty dev --once')) {
+      fail(
+        `${path.relative(PLUGIN_ROOT, documentPath)} contains deprecated yarn twenty dev --once guidance`,
+      );
     }
   }
 };

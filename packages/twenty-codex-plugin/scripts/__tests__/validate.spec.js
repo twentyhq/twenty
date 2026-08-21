@@ -132,6 +132,31 @@ test('assertCliGuidanceSplit catches deprecated dev --once guidance', () => {
   );
 });
 
+test('assertCliGuidanceSplit catches deprecated guidance outside the CLI reference', () => {
+  const manageSkillPath = path.join(
+    PLUGIN_ROOT,
+    'skills',
+    'manage-app',
+    'SKILL.md',
+  );
+
+  withFileMutation(
+    manageSkillPath,
+    (contents) => `${contents}\nRun yarn twenty dev --once after editing.\n`,
+    () => {
+      const failures = collectFailures(crossDocContracts.assertCliGuidanceSplit);
+
+      assert.ok(
+        failures.some(
+          (failure) =>
+            failure.includes('skills/manage-app/SKILL.md') &&
+            failure.includes('yarn twenty dev --once'),
+        ),
+      );
+    },
+  );
+});
+
 test('assertTestingGuidance passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertTestingGuidance), []);
 });

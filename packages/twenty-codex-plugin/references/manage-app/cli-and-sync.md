@@ -24,11 +24,24 @@ Use these commands to validate an app after changes:
 ```bash
 yarn twenty dev:typecheck
 yarn lint
+```
+
+If the app is already installed on the active remote, preview and then apply
+the metadata changes:
+
+```bash
 yarn twenty plan
 yarn twenty apply
 ```
 
 `yarn twenty dev:typecheck` checks generated app types and TypeScript compatibility. `yarn lint` checks local lint rules. `yarn twenty plan` previews metadata changes, and `yarn twenty apply` performs a bounded build/sync against the active remote.
+
+`yarn twenty plan` is read-only and requires the app to already be installed
+on the active remote. For a first sync, run `yarn twenty apply`; it registers
+the app before synchronizing it. `create-twenty-app` normally performs this
+initial sync, so a successfully scaffolded app does not need an extra apply.
+Use the first-sync path when the scaffold sync failed, or when the app was
+created or copied without being installed on this remote.
 
 If a validation command fails because of entity definitions, switch to `develop-app` for the fix. If it fails because of remotes, authentication, build tooling, sync, logs, deploys, or CI/CD, stay in `manage-app`.
 
