@@ -36,6 +36,7 @@ const buildSelfOverrideRow = (overrides: Record<string, unknown>) => ({
   actions: [],
   triggerFieldMetadataIds: null,
   isActive: true,
+  overrides: null,
   ...overrides,
 });
 
@@ -173,6 +174,35 @@ describe('TimelineActivityRuleResolverService', () => {
 
     expect(sourceRules).toHaveLength(1);
     expect(sourceRules[0].triggerFieldNames).toBeNull();
+  });
+
+  it('should let the overrides blob win over the application owned actions', async () => {
+    const service = await setup([
+      buildSelfOverrideRow({
+        actions: ['created', 'deleted'],
+        overrides: { actions: ['restored'] },
+      }),
+    ]);
+
+    const { sourceRules } = await service.getRulesForEventBatch({
+      workspaceId: WORKSPACE_ID,
+      flatObjectMetadata: companyFlatObjectMetadata,
+    });
+
+    expect(sourceRules[0].actions).toEqual(['restored']);
+  });
+
+  it('should let the overrides blob turn a rule off', async () => {
+    const service = await setup([
+      buildSelfOverrideRow({ isActive: true, overrides: { isActive: false } }),
+    ]);
+
+    const { sourceRules } = await service.getRulesForEventBatch({
+      workspaceId: WORKSPACE_ID,
+      flatObjectMetadata: companyFlatObjectMetadata,
+    });
+
+    expect(sourceRules).toHaveLength(0);
   });
 
   it('should not derive a self rule for a system object', async () => {

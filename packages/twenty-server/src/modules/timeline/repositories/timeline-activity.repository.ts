@@ -10,15 +10,22 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
+// Compaction identity is structural: the legacy name is a display field and
+// must never decide which rows are the same event.
 const buildMergeKey = ({
   recordId,
   workspaceMemberId,
-  name,
+  sourceObjectMetadataId,
+  linkedRecordId,
 }: {
   recordId: unknown;
   workspaceMemberId: unknown;
-  name: unknown;
-}): string => `${recordId}|${workspaceMemberId}|${name}`;
+  sourceObjectMetadataId: unknown;
+  linkedRecordId: unknown;
+}): string =>
+  [recordId, workspaceMemberId, sourceObjectMetadataId, linkedRecordId]
+    .map((keyPart) => keyPart ?? null)
+    .join('|');
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
@@ -57,12 +64,6 @@ export class TimelineActivityRepository {
             return [{ ...payload, properties: {} }];
           }
 
-          // An entry about a related record stays worth showing without a diff,
-          // an entry about the record itself does not.
-          if (isDefined(payload.linkedRecordId)) {
-            return [{ ...payload, properties: hasDiff ? { diff } : {} }];
-          }
-
           return hasDiff ? [{ ...payload, properties: { diff } }] : [];
         },
       );
@@ -89,7 +90,8 @@ export class TimelineActivityRepository {
         const mergeKey = buildMergeKey({
           recordId: timelineActivity[timelineActivityPropertyName],
           workspaceMemberId: timelineActivity.workspaceMemberId,
-          name: timelineActivity.name,
+          sourceObjectMetadataId: timelineActivity.sourceObjectMetadataId,
+          linkedRecordId: timelineActivity.linkedRecordId,
         });
 
         const bucket = recentTimelineActivitiesByMergeKey.get(mergeKey);
@@ -102,19 +104,19 @@ export class TimelineActivityRepository {
       }
 
       for (const payload of payloadsToUpsert) {
-        const recentTimelineActivity = recentTimelineActivitiesByMergeKey
-          .get(
-            buildMergeKey({
-              recordId: payload.recordId,
-              workspaceMemberId: payload.workspaceMemberId,
-              name: payload.name,
-            }),
-          )
-          ?.find(
-            (timelineActivity) =>
-              !isDefined(payload.linkedRecordId) ||
-              timelineActivity.linkedRecordId === payload.linkedRecordId,
-          );
+        // Only successive updates compact. Link transitions are discrete facts:
+        // folding an unlink into an earlier link would show the opposite event.
+        const recentTimelineActivity =
+          payload.action === 'updated'
+            ? recentTimelineActivitiesByMergeKey.get(
+                buildMergeKey({
+                  recordId: payload.recordId,
+                  workspaceMemberId: payload.workspaceMemberId,
+                  sourceObjectMetadataId: payload.sourceObjectMetadataId,
+                  linkedRecordId: payload.linkedRecordId,
+                }),
+              )?.[0]
+            : undefined;
 
         if (isDefined(recentTimelineActivity)) {
           mergesToApply.push({
@@ -164,7 +166,10 @@ export class TimelineActivityRepository {
       [timelineActivityPropertyName]: In(
         payloads.map((payload) => payload.recordId),
       ),
-      name: In(payloads.map((payload) => payload.name)),
+      action: 'updated',
+      sourceObjectMetadataId: In(
+        payloads.map((payload) => payload.sourceObjectMetadataId),
+      ),
       workspaceMemberId: In(
         payloads.map((payload) => payload.workspaceMemberId || null),
       ),
