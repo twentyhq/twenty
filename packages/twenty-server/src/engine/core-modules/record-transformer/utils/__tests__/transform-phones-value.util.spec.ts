@@ -64,7 +64,7 @@ describe('transformPhonesValue', () => {
     });
   });
 
-  it('should drop additionalPhones entries that are missing a number entirely, unlike an explicit empty string', () => {
+  it('should drop additionalPhones entries missing a number while keeping valid sibling entries', () => {
     const result = transformPhonesValue({
       input: {
         primaryPhoneNumber: '',

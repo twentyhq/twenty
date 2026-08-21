@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { additionalPhoneSchema } from 'twenty-shared/utils';
+
 export const UuidValueSchema = z.uuidv4();
 export const UuidValueOptionalSchema = UuidValueSchema.optional();
 
@@ -63,15 +65,7 @@ export const PhonesValueSchema = z.object({
   primaryPhoneNumber: z.string().optional(),
   primaryPhoneCountryCode: z.string().optional(),
   primaryPhoneCallingCode: z.string().optional(),
-  additionalPhones: z
-    .array(
-      z.object({
-        number: z.string(),
-        countryCode: z.string().optional(),
-        callingCode: z.string().optional(),
-      }),
-    )
-    .optional(),
+  additionalPhones: z.array(additionalPhoneSchema).optional(),
 });
 export const PhonesValueOptionalSchema = PhonesValueSchema.optional();
 

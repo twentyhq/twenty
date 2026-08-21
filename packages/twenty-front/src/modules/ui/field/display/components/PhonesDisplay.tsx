@@ -6,9 +6,8 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { isDefined } from 'twenty-shared/utils';
+import { additionalPhoneSchema, isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
-import { z } from 'zod';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
@@ -56,7 +55,7 @@ export const PhonesDisplay = ({
         .map(({ number, callingCode }) => {
           return {
             number,
-            callingCode,
+            callingCode: callingCode ?? '',
           };
         }),
     [
@@ -117,15 +116,13 @@ export const PhonesDisplay = ({
   );
 };
 
-const additionalPhoneSchema = z.object({
-  number: z.string().min(1),
-  callingCode: z.string().optional(),
-  countryCode: z.string().optional(),
-});
+const additionalPhoneSchemaWithNonEmptyNumber = additionalPhoneSchema.refine(
+  (phone) => phone.number.length > 0,
+);
 
 const parseAdditionalPhonesArray = (additionalPhones: unknown[]) =>
   additionalPhones
-    .map((phone) => additionalPhoneSchema.safeParse(phone))
+    .map((phone) => additionalPhoneSchemaWithNonEmptyNumber.safeParse(phone))
     .filter((result) => result.success)
     .map((result) => result.data);
 
