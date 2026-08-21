@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type TimelineActivityRuleTargetShape } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityRuleTargetShape } from 'src/modules/timeline/types/timeline-activity-rule-target-shape.type';
 import { buildTargetJoinColumn } from 'src/modules/timeline/utils/build-target-join-column.util';
 
 // A many-to-one relation is a lookup on the rule object: its join column points
