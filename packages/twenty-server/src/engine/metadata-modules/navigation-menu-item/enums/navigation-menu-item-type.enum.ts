@@ -1,9 +1,16 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  NavigationMenuItemType,
+  NavigationSystemPage,
+} from 'twenty-shared/types';
 
 registerEnumType(NavigationMenuItemType, {
   name: 'NavigationMenuItemType',
 });
 
-export { NavigationMenuItemType };
+registerEnumType(NavigationSystemPage, {
+  name: 'NavigationSystemPage',
+});
+
+export { NavigationMenuItemType, NavigationSystemPage };

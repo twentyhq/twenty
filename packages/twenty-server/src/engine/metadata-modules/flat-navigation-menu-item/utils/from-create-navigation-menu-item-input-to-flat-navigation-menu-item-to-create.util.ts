@@ -88,6 +88,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       pageLayoutUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
+      systemPage: null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,

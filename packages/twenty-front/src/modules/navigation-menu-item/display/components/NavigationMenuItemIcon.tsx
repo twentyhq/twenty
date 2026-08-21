@@ -73,7 +73,10 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
-  if (navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT) {
+  if (
+    navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT ||
+    navigationMenuItem.type === NavigationMenuItemType.SYSTEM
+  ) {
     const pageLayoutIcon = isDefined(navigationMenuItem.icon)
       ? getIcon(navigationMenuItem.icon)
       : undefined;

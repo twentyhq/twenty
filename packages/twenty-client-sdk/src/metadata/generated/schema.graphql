@@ -1560,6 +1560,7 @@ type NavigationMenuItem {
   type: NavigationMenuItemType!
   name: String
   link: String
+  systemPage: NavigationSystemPage
   icon: String
   color: String
   folderId: UUID
@@ -1578,6 +1579,11 @@ enum NavigationMenuItemType {
   OBJECT
   RECORD
   PAGE_LAYOUT
+  SYSTEM
+}
+
+enum NavigationSystemPage {
+  WORKFLOWS
 }
 
 type ObjectRecordEventProperties {
