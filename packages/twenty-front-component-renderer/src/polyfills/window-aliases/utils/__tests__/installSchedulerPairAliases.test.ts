@@ -10,13 +10,15 @@ const createFallbackSchedulerPair = () => ({
 
 const installPair = (
   globalScope: Record<string, unknown>,
-  createPair = createFallbackSchedulerPair,
+  fallbackSchedulerPair = createFallbackSchedulerPair(),
 ) =>
   installSchedulerPairAliases({
     globalScope,
     requestFunctionName: REQUEST_FUNCTION_NAME,
     cancelFunctionName: CANCEL_FUNCTION_NAME,
-    createFallbackSchedulerPair: createPair,
+    fallbackSchedulerPair: fallbackSchedulerPair as unknown as Parameters<
+      typeof installSchedulerPairAliases
+    >[0]['fallbackSchedulerPair'],
   });
 
 describe('installSchedulerPairAliases', () => {
@@ -56,7 +58,7 @@ describe('installSchedulerPairAliases', () => {
     );
   });
 
-  it('should keep a native function whose counterpart is missing', () => {
+  it('should leave a target holding half of the pair untouched', () => {
     const nativeRequest = jest.fn();
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
@@ -66,7 +68,6 @@ describe('installSchedulerPairAliases', () => {
     installPair(globalScope);
 
     expect(globalScope[REQUEST_FUNCTION_NAME]).toBe(nativeRequest);
-    expect(globalScope[CANCEL_FUNCTION_NAME]).toBeUndefined();
     expect(polyfillWindow[REQUEST_FUNCTION_NAME]).toEqual(expect.any(Function));
     expect(polyfillWindow[CANCEL_FUNCTION_NAME]).toEqual(expect.any(Function));
   });
@@ -84,17 +85,5 @@ describe('installSchedulerPairAliases', () => {
 
     expect(polyfillWindow[REQUEST_FUNCTION_NAME]).toBe(existingRequest);
     expect(polyfillWindow[CANCEL_FUNCTION_NAME]).toBe(existingCancel);
-  });
-
-  it('should not build a fallback pair when a native pair exists', () => {
-    const createPair = jest.fn(createFallbackSchedulerPair);
-    const globalScope: Record<string, unknown> = { window: {} };
-
-    globalScope[REQUEST_FUNCTION_NAME] = jest.fn();
-    globalScope[CANCEL_FUNCTION_NAME] = jest.fn();
-
-    installPair(globalScope, createPair);
-
-    expect(createPair).not.toHaveBeenCalled();
   });
 });

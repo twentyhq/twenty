@@ -61,10 +61,8 @@ describe('installWindowAliasesPolyfill', () => {
 
     await (polyfillWindow.fetch as typeof fetch)('https://api.twenty.com');
 
-    expect(proxiedFetch).toHaveBeenCalledWith(
-      'https://api.twenty.com',
-      undefined,
-    );
+    expect(proxiedFetch).toHaveBeenCalledWith('https://api.twenty.com');
+    expect(proxiedFetch.mock.contexts[0]).toBe(globalScope);
   });
 
   it('should not overwrite the properties the remote-dom window already owns', () => {

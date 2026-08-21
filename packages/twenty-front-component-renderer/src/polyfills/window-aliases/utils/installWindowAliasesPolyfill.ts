@@ -1,7 +1,6 @@
 import { createSetTimeoutAnimationFrameScheduler } from '@/polyfills/window-aliases/utils/createSetTimeoutAnimationFrameScheduler';
 import { createSetTimeoutIdleCallbackScheduler } from '@/polyfills/window-aliases/utils/createSetTimeoutIdleCallbackScheduler';
-import { installFetchWindowAlias } from '@/polyfills/window-aliases/utils/installFetchWindowAlias';
-import { installNativeWindowAliases } from '@/polyfills/window-aliases/utils/installNativeWindowAliases';
+import { installLiveWindowAliases } from '@/polyfills/window-aliases/utils/installLiveWindowAliases';
 import { installSchedulerPairAliases } from '@/polyfills/window-aliases/utils/installSchedulerPairAliases';
 
 type InstallWindowAliasesPolyfillInput = {
@@ -15,17 +14,15 @@ export const installWindowAliasesPolyfill = ({
     globalScope,
     requestFunctionName: 'requestAnimationFrame',
     cancelFunctionName: 'cancelAnimationFrame',
-    createFallbackSchedulerPair: () =>
-      createSetTimeoutAnimationFrameScheduler(globalScope),
+    fallbackSchedulerPair: createSetTimeoutAnimationFrameScheduler(),
   });
-
-  installFetchWindowAlias(globalScope);
-  installNativeWindowAliases(globalScope);
 
   installSchedulerPairAliases({
     globalScope,
     requestFunctionName: 'requestIdleCallback',
     cancelFunctionName: 'cancelIdleCallback',
-    createFallbackSchedulerPair: createSetTimeoutIdleCallbackScheduler,
+    fallbackSchedulerPair: createSetTimeoutIdleCallbackScheduler(),
   });
+
+  installLiveWindowAliases(globalScope);
 };

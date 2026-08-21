@@ -1,4 +1,4 @@
-export type SchedulerPair = {
-  request: (...requestArguments: never[]) => unknown;
-  cancel: (...cancelArguments: never[]) => void;
-};
+import { type AnimationFrameScheduler } from '@/polyfills/window-aliases/types/AnimationFrameScheduler';
+import { type IdleCallbackScheduler } from '@/polyfills/window-aliases/types/IdleCallbackScheduler';
+
+export type SchedulerPair = AnimationFrameScheduler | IdleCallbackScheduler;

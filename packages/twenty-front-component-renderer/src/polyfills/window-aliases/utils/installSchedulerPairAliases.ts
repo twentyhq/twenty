@@ -7,14 +7,14 @@ type InstallSchedulerPairAliasesInput = {
   globalScope: Record<string, unknown>;
   requestFunctionName: string;
   cancelFunctionName: string;
-  createFallbackSchedulerPair: () => SchedulerPair;
+  fallbackSchedulerPair: SchedulerPair;
 };
 
 export const installSchedulerPairAliases = ({
   globalScope,
   requestFunctionName,
   cancelFunctionName,
-  createFallbackSchedulerPair,
+  fallbackSchedulerPair,
 }: InstallSchedulerPairAliasesInput): void => {
   const nativeRequest = globalScope[requestFunctionName];
   const nativeCancel = globalScope[cancelFunctionName];
@@ -25,7 +25,7 @@ export const installSchedulerPairAliases = ({
           request: nativeRequest.bind(globalScope),
           cancel: nativeCancel.bind(globalScope),
         }
-      : createFallbackSchedulerPair();
+      : fallbackSchedulerPair;
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
     // A target holding half of the pair keeps it: overwriting a working native

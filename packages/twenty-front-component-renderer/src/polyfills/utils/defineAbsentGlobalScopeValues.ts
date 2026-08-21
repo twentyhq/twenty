@@ -5,8 +5,9 @@ type DefineAbsentGlobalScopeValuesInput = {
   values: Record<string, unknown>;
 };
 
-// A name a target already holds is left alone: the remote-dom window owns some
-// of these, and a native always beats the value this package would install.
+// A native always beats the value this package would install, and the check
+// walks the prototype chain on purpose: the worker's own natives live on
+// WorkerGlobalScope.prototype, not as own properties.
 export const defineAbsentGlobalScopeValues = ({
   globalScope,
   values,
