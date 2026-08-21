@@ -7,7 +7,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 
 // The ORM derives relation columns from the field name, so fall back to it
 // when settings carry no explicit join column.
-export const getJoinColumnNameForRelationFlatFieldMetadata = (
+export const getJoinColumnNameForRelationField = (
   flatFieldMetadata: FlatFieldMetadata,
 ): string => {
   const { settings } = flatFieldMetadata;
