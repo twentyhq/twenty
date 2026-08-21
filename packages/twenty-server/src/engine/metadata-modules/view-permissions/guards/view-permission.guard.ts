@@ -21,11 +21,11 @@ export class ViewPermissionGuard implements CanActivate {
     const viewId =
       [args?.id, request.params?.id].find(isNonEmptyString) ?? null;
 
-    return this.viewAccessService.canUserModifyView(
-      viewId,
-      request.userWorkspaceId,
-      request.workspace.id,
-      request.apiKey?.id,
-    );
+    return this.viewAccessService.canUserModifyView(viewId, {
+      workspaceId: request.workspace.id,
+      userWorkspaceId: request.userWorkspaceId,
+      apiKeyId: request.apiKey?.id,
+      applicationId: request.application?.id,
+    });
   }
 }

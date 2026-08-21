@@ -29,11 +29,11 @@ export class CreateViewPermissionGuard implements CanActivate {
       visibility = request.body.visibility as ViewVisibility;
     }
 
-    return this.viewAccessService.canUserCreateView(
-      visibility,
-      request.userWorkspaceId,
-      request.workspace.id,
-      request.apiKey?.id,
-    );
+    return this.viewAccessService.canUserCreateView(visibility, {
+      workspaceId: request.workspace.id,
+      userWorkspaceId: request.userWorkspaceId,
+      apiKeyId: request.apiKey?.id,
+      applicationId: request.application?.id,
+    });
   }
 }

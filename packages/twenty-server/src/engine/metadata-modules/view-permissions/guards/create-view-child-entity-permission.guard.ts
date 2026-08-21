@@ -19,11 +19,11 @@ export class CreateViewChildEntityPermissionGuard implements CanActivate {
 
     const viewId = resolveViewChildEntityViewId({ args, body: request.body });
 
-    return this.viewAccessService.canUserModifyViewByChildEntity(
-      viewId,
-      request.userWorkspaceId,
-      request.workspace.id,
-      request.apiKey?.id,
-    );
+    return this.viewAccessService.canUserModifyViewByChildEntity(viewId, {
+      workspaceId: request.workspace.id,
+      userWorkspaceId: request.userWorkspaceId,
+      apiKeyId: request.apiKey?.id,
+      applicationId: request.application?.id,
+    });
   }
 }
