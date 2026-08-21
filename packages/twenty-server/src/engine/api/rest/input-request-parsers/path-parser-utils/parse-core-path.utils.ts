@@ -13,10 +13,10 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  if (
-    queryAction.length > 2 ||
-    (queryAction.length > 3 && queryAction[0] === 'restore')
-  ) {
+  // A restore path carries an extra leading segment: /restore/{object}/{id}
+  const maximumSegmentCount = queryAction[0] === 'restore' ? 3 : 2;
+
+  if (queryAction.length > maximumSegmentCount) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /${ApiPath.Rest}/companies/id or /${ApiPath.Rest}/companies or /${ApiPath.Rest}/batch/companies`,
     );
