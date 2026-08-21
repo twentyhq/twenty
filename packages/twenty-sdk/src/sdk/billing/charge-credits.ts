@@ -1,7 +1,6 @@
-import {
-  DEFAULT_API_URL_NAME,
-  DEFAULT_APP_ACCESS_TOKEN_NAME,
-} from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+
+import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 
 const BILLING_CHARGE_TIMEOUT_MS = 5_000;
 
@@ -13,8 +12,8 @@ export type ChargeCreditsParams = {
 };
 
 // Records credit usage against the running application via the Twenty
-// server's `/app/billing/charge` endpoint. Reads `TWENTY_API_URL` and
-// `TWENTY_APP_ACCESS_TOKEN` from the execution env (injected by the
+// server's `/app/billing/charge` endpoint. Reads `TWENTY_API_URL` and the
+// application access token from the execution env (injected by the
 // logic-function runtime). No-ops silently when either is missing so
 // local/test runs don't crash. Failures are non-fatal — a billing error
 // never surfaces as a tool failure.
@@ -25,7 +24,7 @@ export const chargeCredits = async ({
   resourceContext,
 }: ChargeCreditsParams): Promise<void> => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
-  const token = process.env[DEFAULT_APP_ACCESS_TOKEN_NAME];
+  const token = getApplicationAccessToken();
 
   if (!apiUrl || !token) {
     return;

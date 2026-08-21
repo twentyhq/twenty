@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -15,6 +16,12 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
+
+type GetParticipantRepositoryArgs = {
+  workspaceId: string;
+  objectMetadataName: ObjectMetadataName;
+  transactionScope?: WorkspaceTransactionScope;
+};
 
 type MatchParticipantsForWorkspaceMembersArgs = {
   participantMatching: {
@@ -48,6 +55,7 @@ type MatchParticipantsArgs<
   objectMetadataName: ObjectMetadataName;
   matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
   workspaceId: string;
+  transactionScope?: WorkspaceTransactionScope;
 };
 
 @Injectable()
@@ -61,13 +69,26 @@ export class MatchParticipantService<
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  private async getParticipantRepository(
-    workspaceId: string,
-    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
-  ) {
+  private async getParticipantRepository({
+    workspaceId,
+    objectMetadataName,
+    transactionScope,
+  }: GetParticipantRepositoryArgs) {
     if (objectMetadataName === 'messageParticipant') {
+      if (isDefined(transactionScope)) {
+        return transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
+          objectMetadataName,
+        );
+      }
+
       return await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
         workspaceId,
+        objectMetadataName,
+      );
+    }
+
+    if (isDefined(transactionScope)) {
+      return transactionScope.getRepository<CalendarEventParticipantWorkspaceEntity>(
         objectMetadataName,
       );
     }
@@ -83,6 +104,7 @@ export class MatchParticipantService<
     objectMetadataName,
     matchWith = 'workspaceMemberAndPerson',
     workspaceId,
+    transactionScope,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
     if (participants.length === 0) {
       return;
@@ -95,10 +117,11 @@ export class MatchParticipantService<
         { shouldBypassPermissionChecks: true },
       );
 
-    const participantRepository = await this.getParticipantRepository(
+    const participantRepository = await this.getParticipantRepository({
       workspaceId,
       objectMetadataName,
-    );
+      transactionScope,
+    });
 
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -208,10 +231,10 @@ export class MatchParticipantService<
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const participantRepository = await this.getParticipantRepository(
+      const participantRepository = await this.getParticipantRepository({
         workspaceId,
         objectMetadataName,
-      );
+      });
 
       const participants = await participantRepository.find({
         where: {
@@ -243,10 +266,10 @@ export class MatchParticipantService<
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const participantRepository = await this.getParticipantRepository(
+      const participantRepository = await this.getParticipantRepository({
         workspaceId,
         objectMetadataName,
-      );
+      });
 
       let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
       let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];

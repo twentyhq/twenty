@@ -1,4 +1,4 @@
-export const MOVING_IMAGE: Record<string, string> = {
+export const MOVING_IMAGE = {
   noFile: '/images/placeholders/moving-image/no_file.png',
   noNote: '/images/placeholders/moving-image/no_note.png',
   noRecord: '/images/placeholders/moving-image/no_record.png',

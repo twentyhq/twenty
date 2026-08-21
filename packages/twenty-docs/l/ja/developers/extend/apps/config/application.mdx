@@ -97,7 +97,7 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 [`defineApplicationRole()`](/l/ja/developers/extend/apps/config/roles) で宣言されたロールは、アプリのロジック関数とフロントコンポーネントがアクセスできる内容を制御します。
 
-* `TWENTY_APP_ACCESS_TOKEN` として注入される実行時トークンは、このロールに基づいて生成されます。
+* ロジック関数に注入される実行時トークンは、このロールに基づいて生成されます。 人物として動作する呼び出しは、その人物が実行できる範囲によってさらに制限されるため、どちらか一方の権限を超えることはありません。 [呼び出しで使用されるアクセス権](/l/ja/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)を参照してください。
 * 型付き API クライアントは、そのロールに付与された権限に制限されます。
 * 最小権限の原則に従い、関数に必要な権限のみを宣言してください。
 
