@@ -274,13 +274,6 @@ msgstr ""
 msgid "{0} opted out of this topic"
 msgstr ""
 
-#. js-lingui-id: 74QHQw
-#. placeholder {0}: sourceObjectMetadataItem.labelPlural
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "{0} rule"
-msgstr ""
-
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
@@ -611,21 +604,6 @@ msgstr ""
 msgid "{serviceLabel} service is unreachable"
 msgstr ""
 
-#. js-lingui-id: 4ouvxy
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "{sourceLabelSingular} linked"
-msgstr ""
-
-#. js-lingui-id: +zixrp
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "{sourceLabelSingular} unlinked"
-msgstr ""
-
-#. js-lingui-id: AdPXje
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "{sourceLabelSingular} updated"
-msgstr ""
-
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
@@ -901,16 +879,6 @@ msgstr ""
 msgid "7d"
 msgstr ""
 
-#. js-lingui-id: eNjQJh
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "A {sourceLabelSingular} is attached to a {objectLabelSingular}."
-msgstr ""
-
-#. js-lingui-id: nINWkS
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "A {sourceLabelSingular} is detached from a {objectLabelSingular}."
-msgstr ""
-
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -924,11 +892,6 @@ msgstr ""
 #. js-lingui-id: OITESn
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
-msgstr ""
-
-#. js-lingui-id: 7bhFOf
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "A linked {sourceLabelSingular} changes."
 msgstr ""
 
 #. js-lingui-id: C6xZqR
@@ -1122,7 +1085,6 @@ msgstr ""
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -1476,11 +1438,6 @@ msgstr ""
 msgid "Add rule"
 msgstr ""
 
-#. js-lingui-id: bmQLn5
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
-msgid "Add Rule"
-msgstr ""
-
 #. js-lingui-id: cLBcTT
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -1701,6 +1658,7 @@ msgstr ""
 
 #. js-lingui-id: sxkWRg
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownAdvancedSectionHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownAdvancedSectionMenuItem.tsx
 msgid "Advanced"
@@ -1722,7 +1680,7 @@ msgid "Advanced options"
 msgstr ""
 
 #. js-lingui-id: 1Cox/a
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr ""
 
@@ -2265,8 +2223,6 @@ msgstr ""
 #: src/modules/page-layout/hooks/useResetPageLayoutToDefault.ts
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
-#: src/modules/settings/data-model/timeline-rules/hooks/useResetTimelineActivityRule.ts
-#: src/modules/settings/data-model/timeline-rules/hooks/useUpsertTimelineActivityRule.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
@@ -2431,6 +2387,7 @@ msgid "Apostrophe and dot"
 msgstr ""
 
 #. js-lingui-id: LMUw1U
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
@@ -2580,7 +2537,7 @@ msgid "Apps you're the developer of"
 msgstr ""
 
 #. js-lingui-id: 8HV3WN
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Arabic"
 msgstr ""
 
@@ -3282,6 +3239,11 @@ msgstr ""
 msgid "Brief explanation of this output field"
 msgstr ""
 
+#. js-lingui-id: IjfaX/
+#: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
+msgid "Broken field reference. Select the field again to fix this condition."
+msgstr ""
+
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Bronze"
@@ -3699,7 +3661,7 @@ msgid "Card payment is currently unavailable. Please verify your Stripe configur
 msgstr ""
 
 #. js-lingui-id: M1RLfx
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Catalan"
 msgstr ""
 
@@ -3868,12 +3830,12 @@ msgid "Checkout session error. Please retry or contact Twenty team"
 msgstr ""
 
 #. js-lingui-id: SviKkE
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Chinese — Simplified"
 msgstr ""
 
 #. js-lingui-id: dzb4Ep
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Chinese — Traditional"
 msgstr ""
 
@@ -4785,6 +4747,11 @@ msgstr ""
 msgid "Context window"
 msgstr ""
 
+#. js-lingui-id: uKvqU1
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Context window must be a positive integer"
+msgstr ""
+
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5255,11 +5222,6 @@ msgstr ""
 msgid "Create Role"
 msgstr ""
 
-#. js-lingui-id: 8ixQpY
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-msgid "Create rule"
-msgstr ""
-
 #. js-lingui-id: 6MP9lc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Create select field"
@@ -5317,7 +5279,6 @@ msgstr ""
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -5362,11 +5323,6 @@ msgstr ""
 #. js-lingui-id: m4ZE6a
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
 msgid "Creating your <0>workspace</0>..."
-msgstr ""
-
-#. js-lingui-id: BOWJsp
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
-msgid "Creation, updates, deletion and restoration of a {objectLabelSingular} write entries on its own timeline."
 msgstr ""
 
 #. js-lingui-id: HAzhV7
@@ -5771,7 +5727,7 @@ msgid "Cyan"
 msgstr ""
 
 #. js-lingui-id: w9VTXG
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Czech"
 msgstr ""
 
@@ -5804,7 +5760,7 @@ msgid "Danger zone"
 msgstr ""
 
 #. js-lingui-id: Fo2vDn
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Danish"
 msgstr ""
 
@@ -6018,7 +5974,6 @@ msgstr ""
 
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -6056,7 +6011,6 @@ msgstr ""
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -6439,7 +6393,6 @@ msgstr ""
 #: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
 #: src/modules/object-record/record-show/utils/getRecordGroupByValueLabel.ts
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Deleted"
 msgstr ""
 
@@ -6501,6 +6454,7 @@ msgstr ""
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
@@ -6628,11 +6582,6 @@ msgstr ""
 #. js-lingui-id: bzSI52
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
-msgstr ""
-
-#. js-lingui-id: MzDKRw
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "Discard your changes and follow the data model default again."
 msgstr ""
 
 #. js-lingui-id: +K0AvT
@@ -6926,7 +6875,7 @@ msgid "Duration"
 msgstr ""
 
 #. js-lingui-id: KIjvtr
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Dutch"
 msgstr ""
 
@@ -7045,7 +6994,6 @@ msgstr ""
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -7148,6 +7096,11 @@ msgstr ""
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
+msgstr ""
+
+#. js-lingui-id: /VLYQj
+#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+msgid "Edit translations"
 msgstr ""
 
 #. js-lingui-id: eMFB6/
@@ -7489,7 +7442,7 @@ msgid "Enforce two-step verification for every user login."
 msgstr ""
 
 #. js-lingui-id: lYGfRP
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "English"
 msgstr ""
 
@@ -8020,19 +7973,13 @@ msgid "Event visibility"
 msgstr ""
 
 #. js-lingui-id: tst44n
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Events"
 msgstr ""
 
 #. js-lingui-id: OF3gpC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Events on related records that also appear on this timeline, derived from your data model"
-msgstr ""
-
-#. js-lingui-id: SHvclC
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-msgid "Events on the related record will write to the {objectLabelSingular} timeline. A rule on a junction relation is shared by every object the junction reaches."
 msgstr ""
 
 #. js-lingui-id: jvNRZW
@@ -8865,11 +8812,6 @@ msgstr ""
 msgid "Fields Settings"
 msgstr ""
 
-#. js-lingui-id: XAvPtQ
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "Fields that trigger it"
-msgstr ""
-
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Fields to update"
@@ -9004,7 +8946,7 @@ msgid "Finish Setup"
 msgstr ""
 
 #. js-lingui-id: USZ2N6
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Finnish"
 msgstr ""
 
@@ -9181,7 +9123,7 @@ msgid "free credits per user"
 msgstr ""
 
 #. js-lingui-id: nLC6tu
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "French"
 msgstr ""
 
@@ -9339,7 +9281,7 @@ msgid "Generates a Google Meet or Microsoft Teams link depending on the account.
 msgstr ""
 
 #. js-lingui-id: DDcvSo
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "German"
 msgstr ""
 
@@ -9534,7 +9476,7 @@ msgid "Greater than or equal"
 msgstr ""
 
 #. js-lingui-id: CZXzs4
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Greek"
 msgstr ""
 
@@ -9693,7 +9635,7 @@ msgid "Health Status"
 msgstr ""
 
 #. js-lingui-id: 3oTCgM
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Hebrew"
 msgstr ""
 
@@ -9931,7 +9873,7 @@ msgid "Human Input"
 msgstr ""
 
 #. js-lingui-id: mkWad2
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Hungarian"
 msgstr ""
 
@@ -10751,7 +10693,7 @@ msgid "It natively comes with 7 standard objects."
 msgstr ""
 
 #. js-lingui-id: Lj7sBL
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Italian"
 msgstr ""
 
@@ -10776,7 +10718,7 @@ msgid "Jane Doe"
 msgstr ""
 
 #. js-lingui-id: dFtidv
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Japanese"
 msgstr ""
 
@@ -10907,11 +10849,12 @@ msgid "Kickoff prompt"
 msgstr ""
 
 #. js-lingui-id: h6S9Yz
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Korean"
 msgstr ""
 
 #. js-lingui-id: 87a/t/
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -10921,6 +10864,16 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Label"
+msgstr ""
+
+#. js-lingui-id: B9/B0O
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Label (plural)"
+msgstr ""
+
+#. js-lingui-id: J8GEvd
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Label (singular)"
 msgstr ""
 
 #. js-lingui-id: w8Rv8T
@@ -10942,6 +10895,11 @@ msgstr ""
 #. js-lingui-id: GAmD3h
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Languages"
+msgstr ""
+
+#. js-lingui-id: PEi+K2
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Languages without their own translation show the source text."
 msgstr ""
 
 #. js-lingui-id: k7rCa/
@@ -11117,6 +11075,11 @@ msgstr ""
 #. js-lingui-id: NYwqoV
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Last signed in"
+msgstr ""
+
+#. js-lingui-id: o1zvNS
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last update"
 msgstr ""
 
 #. js-lingui-id: C3yOz3
@@ -11409,7 +11372,7 @@ msgid "Link URL"
 msgstr ""
 
 #. js-lingui-id: jyIicI
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Linked"
 msgstr ""
 
@@ -11608,11 +11571,6 @@ msgstr ""
 #. js-lingui-id: 3guYwv
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Log out all other devices"
-msgstr ""
-
-#. js-lingui-id: U7+UTt
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
-msgid "Log record changes"
 msgstr ""
 
 #. js-lingui-id: qakNlV
@@ -11888,6 +11846,11 @@ msgstr ""
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output"
+msgstr ""
+
+#. js-lingui-id: D0Z4Jd
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Max output must be a positive integer"
 msgstr ""
 
 #. js-lingui-id: 2ICF9k
@@ -12415,6 +12378,7 @@ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -12425,8 +12389,8 @@ msgstr ""
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
@@ -12724,12 +12688,6 @@ msgstr ""
 #. js-lingui-id: ywJUqq
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New rollover limit"
-msgstr ""
-
-#. js-lingui-id: yBF5J5
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-msgid "New rule"
 msgstr ""
 
 #. js-lingui-id: gWnSyg
@@ -13665,7 +13623,7 @@ msgid "None"
 msgstr ""
 
 #. js-lingui-id: 1IipHp
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Norwegian"
 msgstr ""
 
@@ -13849,7 +13807,6 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -13931,8 +13888,6 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Objects"
 msgstr ""
 
@@ -14089,14 +14044,14 @@ msgstr ""
 msgid "Only applications published to npm can be claimed this way."
 msgstr ""
 
-#. js-lingui-id: cnUdxy
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "Only changes to these fields write an entry on linked timelines. With no field selected, any change does."
-msgstr ""
-
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
+msgstr ""
+
+#. js-lingui-id: aluwJP
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Only in {currentLanguageLabel}"
 msgstr ""
 
 #. js-lingui-id: Ecstfp
@@ -14562,7 +14517,7 @@ msgid "Parameters"
 msgstr ""
 
 #. js-lingui-id: MZHPuB
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Participants"
 msgstr ""
 
@@ -14941,17 +14896,17 @@ msgid "Plural"
 msgstr ""
 
 #. js-lingui-id: trnWaw
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Polish"
 msgstr ""
 
 #. js-lingui-id: 0nsqwk
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Portuguese — Brazil"
 msgstr ""
 
 #. js-lingui-id: xtXHeo
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Portuguese — Portugal"
 msgstr ""
 
@@ -15227,7 +15182,7 @@ msgid "Providers"
 msgstr ""
 
 #. js-lingui-id: YJgRqq
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Pseudo-English"
 msgstr ""
 
@@ -15664,8 +15619,7 @@ msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Relation"
 msgstr ""
 
@@ -15793,7 +15747,7 @@ msgid "Remove Favorite"
 msgstr ""
 
 #. js-lingui-id: /hrkZs
-#: src/modules/settings/data-model/components/SettingsDataModelFieldSelectRows.tsx
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
 msgid "Remove field"
 msgstr ""
 
@@ -15887,6 +15841,11 @@ msgstr ""
 #. js-lingui-id: 6PsaMr
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 msgid "Rename chat"
+msgstr ""
+
+#. js-lingui-id: 1PqGzu
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Rename for all languages"
 msgstr ""
 
 #. js-lingui-id: oQjB9l
@@ -15986,7 +15945,6 @@ msgstr ""
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Reset"
 msgstr ""
 
@@ -16012,14 +15970,13 @@ msgstr ""
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Reset to default"
 msgstr ""
 
@@ -16090,11 +16047,6 @@ msgstr ""
 #. js-lingui-id: 8KyDbM
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
-msgstr ""
-
-#. js-lingui-id: o8va6N
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
-msgid "Restored"
 msgstr ""
 
 #. js-lingui-id: hO3AfV
@@ -16268,7 +16220,7 @@ msgid "Rollover"
 msgstr ""
 
 #. js-lingui-id: uJc01W
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Romanian"
 msgstr ""
 
@@ -16370,7 +16322,7 @@ msgid "Running..."
 msgstr ""
 
 #. js-lingui-id: nji0/X
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Russian"
 msgstr ""
 
@@ -16537,7 +16489,7 @@ msgid "Search a role..."
 msgstr ""
 
 #. js-lingui-id: nn/psy
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectTimelineSection.tsx
 msgid "Search a rule..."
 msgstr ""
 
@@ -16981,7 +16933,7 @@ msgid "Select a date and time"
 msgstr ""
 
 #. js-lingui-id: 1YV5aa
-#: src/modules/settings/data-model/components/SettingsDataModelFieldSelectRows.tsx
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field"
 msgstr ""
@@ -17009,11 +16961,6 @@ msgstr ""
 #. js-lingui-id: dtAvBz
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
-msgstr ""
-
-#. js-lingui-id: 6r5VmA
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-msgid "Select a relation"
 msgstr ""
 
 #. js-lingui-id: dE5jOH
@@ -17279,7 +17226,7 @@ msgid "separator"
 msgstr ""
 
 #. js-lingui-id: 6oxz/y
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Cyrillic)"
 msgstr ""
 
@@ -17906,13 +17853,18 @@ msgstr ""
 msgid "Source Email Address"
 msgstr ""
 
+#. js-lingui-id: MEXVHu
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Source: {canonicalValue}"
+msgstr ""
+
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Spaces and comma"
 msgstr ""
 
 #. js-lingui-id: 65A04M
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Spanish"
 msgstr ""
 
@@ -18023,6 +17975,7 @@ msgstr ""
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
 #: src/modules/ai/components/AiChatThreadFilterDropdownStatusMenu.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -18327,7 +18280,7 @@ msgid "Supports reasoning"
 msgstr ""
 
 #. js-lingui-id: UaISq3
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Swedish"
 msgstr ""
 
@@ -18408,7 +18361,7 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr ""
 
 #. js-lingui-id: D+NlUC
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "System"
@@ -19273,26 +19226,6 @@ msgstr ""
 msgid "Timeline"
 msgstr ""
 
-#. js-lingui-id: f4myCm
-#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-msgid "timeline rule"
-msgstr ""
-
-#. js-lingui-id: SVJQd/
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
-msgid "Timeline Rule Options"
-msgstr ""
-
-#. js-lingui-id: kQvEH+
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "Timeline rule reset"
-msgstr ""
-
-#. js-lingui-id: phSYiI
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "Timeline rule saved"
-msgstr ""
-
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Timeout"
@@ -19537,6 +19470,18 @@ msgstr ""
 msgid "Transferring..."
 msgstr ""
 
+#. js-lingui-id: 0DTqrp
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Translate or rename?"
+msgstr ""
+
+#. js-lingui-id: kAy5R9
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "Translations"
+msgstr ""
+
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19667,7 +19612,7 @@ msgid "TTL"
 msgstr ""
 
 #. js-lingui-id: Kz91g/
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Turkish"
 msgstr ""
 
@@ -19806,7 +19751,7 @@ msgid "Types of content this model can process besides text"
 msgstr ""
 
 #. js-lingui-id: V9+2pH
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Ukrainian"
 msgstr ""
 
@@ -20020,7 +19965,7 @@ msgid "Unlimited"
 msgstr ""
 
 #. js-lingui-id: sEi4uU
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Unlinked"
 msgstr ""
 
@@ -20118,6 +20063,7 @@ msgstr ""
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
+#: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
@@ -20262,7 +20208,7 @@ msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20835,7 +20781,7 @@ msgid "Video"
 msgstr ""
 
 #. js-lingui-id: fROFIL
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Vietnamese"
 msgstr ""
 
@@ -21306,6 +21252,16 @@ msgstr ""
 msgid "What can I help you with?"
 msgstr ""
 
+#. js-lingui-id: /SZI25
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "What each language displays for this field's labels"
+msgstr ""
+
+#. js-lingui-id: 9IXG0o
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "What each language displays for this object's labels"
+msgstr ""
+
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -21368,11 +21324,6 @@ msgstr ""
 #. js-lingui-id: PAbCsV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
-msgstr ""
-
-#. js-lingui-id: 3PCkgW
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
-msgid "Which {sourceLabelSingular} events write an entry to the timeline of linked records."
 msgstr ""
 
 #. js-lingui-id: 9y+sLE
@@ -21521,8 +21472,6 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -21755,6 +21704,11 @@ msgstr ""
 #. js-lingui-id: Q1CQiy
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
 msgid "You already belong to this workspace"
+msgstr ""
+
+#. js-lingui-id: MuS9Gh
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
 msgstr ""
 
 #. js-lingui-id: MFDARJ

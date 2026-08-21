@@ -11,14 +11,17 @@ import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearch
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   extractRawVariableNamePart,
+  isStandaloneVariableString,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
+import { InputHint } from 'twenty-ui/input';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
@@ -92,11 +95,22 @@ export const WorkflowStepFilterFieldSelect = ({
   };
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
+
+  const isStepOutputKeyBroken =
+    isNonEmptyString(stepFilter.stepOutputKey) &&
+    !isStandaloneVariableString(stepFilter.stepOutputKey);
+
   const label = isSelectedFieldNotFound
     ? currentStepId === TRIGGER_STEP_ID
       ? t`Select a field`
       : t`Select a field from a previous step`
     : variableLabel;
+
+  const brokenFieldReferenceHint = isStepOutputKeyBroken ? (
+    <InputHint danger>
+      {t`Broken field reference. Select the field again to fix this condition.`}
+    </InputHint>
+  ) : null;
 
   const fullRecordIconProps = stepFilter.isFullRecord
     ? isDefined(filterObjectMetadataItem)
@@ -118,62 +132,68 @@ export const WorkflowStepFilterFieldSelect = ({
       : label;
 
     return (
+      <>
+        <Dropdown
+          dropdownId={dropdownId}
+          clickableComponent={
+            <SelectControl
+              selectedOption={{
+                value: stepFilter.stepOutputKey,
+                label: disabledLabel,
+                fullLabel: variablePathLabel,
+                Icon: icon,
+                iconThemeColor,
+              }}
+              isDisabled={true}
+            />
+          }
+          dropdownComponents={[]}
+        />
+        {brokenFieldReferenceHint}
+      </>
+    );
+  }
+
+  return (
+    <>
       <Dropdown
         dropdownId={dropdownId}
         clickableComponent={
           <SelectControl
             selectedOption={{
-              value: stepFilter.stepOutputKey,
-              label: disabledLabel,
+              label,
               fullLabel: variablePathLabel,
+              value: stepFilter.stepOutputKey,
               Icon: icon,
               iconThemeColor,
             }}
-            isDisabled={true}
+            textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
+            isDisabled={readonly}
           />
         }
-        dropdownComponents={[]}
+        dropdownComponents={
+          !isDefined(selectedStep) ? (
+            <WorkflowVariablesDropdownSteps
+              dropdownId={dropdownId}
+              steps={availableVariablesInWorkflowStep}
+              onSelect={handleStepSelect}
+            />
+          ) : (
+            <WorkflowDropdownStepOutputItems
+              stepFilter={stepFilter}
+              step={selectedStep}
+              onSelect={handleSubItemSelect}
+              onBack={handleBack}
+            />
+          )
+        }
+        dropdownPlacement="bottom-end"
+        dropdownOffset={{
+          x: 2,
+          y: 4,
+        }}
       />
-    );
-  }
-
-  return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <SelectControl
-          selectedOption={{
-            label,
-            fullLabel: variablePathLabel,
-            value: stepFilter.stepOutputKey,
-            Icon: icon,
-            iconThemeColor,
-          }}
-          textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
-          isDisabled={readonly}
-        />
-      }
-      dropdownComponents={
-        !isDefined(selectedStep) ? (
-          <WorkflowVariablesDropdownSteps
-            dropdownId={dropdownId}
-            steps={availableVariablesInWorkflowStep}
-            onSelect={handleStepSelect}
-          />
-        ) : (
-          <WorkflowDropdownStepOutputItems
-            stepFilter={stepFilter}
-            step={selectedStep}
-            onSelect={handleSubItemSelect}
-            onBack={handleBack}
-          />
-        )
-      }
-      dropdownPlacement="bottom-end"
-      dropdownOffset={{
-        x: 2,
-        y: 4,
-      }}
-    />
+      {brokenFieldReferenceHint}
+    </>
   );
 };
