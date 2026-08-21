@@ -26,10 +26,7 @@ jest.mock(
   '@/page-layout/widgets/constants/WidgetHeaderActionComponentsByWidgetType',
   () => ({
     WIDGET_HEADER_ACTION_COMPONENTS_BY_WIDGET_TYPE: {
-      NOTES: [
-        () => <button>Create</button>,
-        () => <button>Filter</button>,
-      ],
+      NOTES: [() => <button>Create</button>, () => <button>Filter</button>],
     },
   }),
 );
