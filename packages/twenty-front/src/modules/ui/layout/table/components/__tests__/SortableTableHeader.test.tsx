@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
@@ -26,11 +27,11 @@ const renderHeader = (initialSort: TableSortValue) => {
   return {
     click: () => userEvent.click(screen.getByText('Name')),
     getArrowDirection: () => {
-      if (container.querySelector('.tabler-icon-arrow-up') !== null) {
+      if (isDefined(container.querySelector('.tabler-icon-arrow-up'))) {
         return 'asc';
       }
 
-      return container.querySelector('.tabler-icon-arrow-down') !== null
+      return isDefined(container.querySelector('.tabler-icon-arrow-down'))
         ? 'desc'
         : 'none';
     },
