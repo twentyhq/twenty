@@ -50,6 +50,7 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       handlerName,
       sourceHandlerPath,
       builtHandlerPath,
+      runsWithUserAuthority: null,
       cronTriggerSettings:
         createLogicFunctionFromSourceInput.cronTriggerSettings ?? null,
       databaseEventTriggerSettings:

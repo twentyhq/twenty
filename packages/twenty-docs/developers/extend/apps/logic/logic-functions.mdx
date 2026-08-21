@@ -477,7 +477,29 @@ const handler = async (
 `userWorkspaceId` and `workspaceMemberId` are `null` when nobody triggered the run: cron schedules, install hooks and unauthenticated webhooks have no person behind them. They are also `null` when the person has no workspace member record, or theirs has been deleted.
 
 <Note>
-**The context tells you who triggered the run, not what the run may do.** A logic function always acts with its application's own access, whoever triggered it. Use these ids to attribute records or to enforce your own business rules, not as a substitute for permissions.
+**The context tells you who triggered the run.** What the run may *do* is a separate declaration, below.
+</Note>
+
+#### Whose access a run uses
+
+By default a function acts as the person who triggered it: their role is intersected with your application's, so the run can never do more than either. Declare `runsWithUserAuthority: false` when a function must act as the application itself, whoever set it off:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'reconcile-billing-state',
+  // Runs nightly and on records the triggering person may not be able to read.
+  runsWithUserAuthority: false,
+  handler,
+});
+```
+
+Reach for `false` when the function maintains your app's own data, or does work the triggering person legitimately shouldn't be able to do themselves. Leave it alone otherwise: acting as the caller is the safer default, and it means a person can never use your app to exceed their own permissions.
+
+Runs with nobody behind them — cron schedules, install hooks, unauthenticated webhooks — always act as the application, because there is no one to act as.
+
+<Note>
+Functions built before this setting existed keep the behaviour their trigger used to impose: authenticated HTTP routes acted as the caller, every other trigger acted as the application. Rebuilding against a current SDK opts the function into the default above, which is narrower — check that any function relying on the application's full access declares `runsWithUserAuthority: false`.
 </Note>
 
 #### Exposing a function as an AI tool or workflow action

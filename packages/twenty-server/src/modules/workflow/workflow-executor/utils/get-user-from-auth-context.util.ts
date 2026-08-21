@@ -3,12 +3,12 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 
 // Spread into a logic function execution call: a run started by the platform
 // rather than by a person contributes nothing rather than null fields.
-export const getActingUserFromAuthContext = (
+export const getUserFromAuthContext = (
   authContext: WorkspaceAuthContext,
-): { actingUserId?: string; actingUserWorkspaceId?: string } =>
+): { userId?: string; userWorkspaceId?: string } =>
   isUserAuthContext(authContext)
     ? {
-        actingUserId: authContext.user.id,
-        actingUserWorkspaceId: authContext.userWorkspaceId,
+        userId: authContext.user.id,
+        userWorkspaceId: authContext.userWorkspaceId,
       }
     : {};

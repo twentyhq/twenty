@@ -185,8 +185,8 @@ export class LogicFunctionResolver {
         id,
         payload,
         workspaceId,
-        actingUserId: userId,
-        actingUserWorkspaceId: userWorkspaceId,
+        userId,
+        userWorkspaceId,
       });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);

@@ -668,6 +668,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   },
   logicFunction: {
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    runsWithUserAuthority: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     description: {
       toCompare: true,
       toStringify: false,

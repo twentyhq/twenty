@@ -77,6 +77,11 @@ export class LogicFunctionEntity
   })
   executionMode: LogicFunctionExecutionMode;
 
+  // Null for functions declared before the setting existed; those keep the
+  // authority their trigger used to impose. See resolveRunsWithUserAuthority.
+  @Column({ nullable: true, type: 'boolean' })
+  runsWithUserAuthority: boolean | null;
+
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;
 

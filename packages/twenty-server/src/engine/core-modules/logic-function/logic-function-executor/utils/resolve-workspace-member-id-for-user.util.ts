@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 
-export const resolveActingWorkspaceMemberId = ({
+export const resolveWorkspaceMemberIdForUser = ({
   userId,
   flatWorkspaceMemberMaps,
 }: {

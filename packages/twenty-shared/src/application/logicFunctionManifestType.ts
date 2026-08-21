@@ -14,6 +14,9 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
+  // Whether a run acts as the person who triggered it, narrowing it to their
+  // role intersected with the application's, or acts as the application alone.
+  runsWithUserAuthority?: boolean;
   sourceHandlerPath: string;
   builtHandlerPath: string;
   builtHandlerChecksum: string;

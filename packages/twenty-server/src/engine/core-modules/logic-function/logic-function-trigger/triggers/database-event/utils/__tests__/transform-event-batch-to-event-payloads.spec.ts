@@ -42,7 +42,7 @@ const createMockWorkspaceEventBatch = (
 });
 
 describe('transformEventBatchToEventPayloads', () => {
-  describe('acting person', () => {
+  describe('triggering person', () => {
     it('should name the person whose mutation raised the event', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: [
@@ -59,8 +59,8 @@ describe('transformEventBatchToEventPayloads', () => {
       });
 
       expect(jobData).toMatchObject({
-        actingUserId: 'user-1',
-        actingUserWorkspaceId: 'user-workspace-1',
+        userId: 'user-1',
+        userWorkspaceId: 'user-workspace-1',
       });
     });
 
@@ -70,8 +70,8 @@ describe('transformEventBatchToEventPayloads', () => {
         logicFunctions: [createMockLogicFunction()],
       });
 
-      expect(jobData).not.toHaveProperty('actingUserId');
-      expect(jobData).not.toHaveProperty('actingUserWorkspaceId');
+      expect(jobData).not.toHaveProperty('userId');
+      expect(jobData).not.toHaveProperty('userWorkspaceId');
     });
   });
 

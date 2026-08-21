@@ -54,7 +54,12 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   }
 
   return createValidationResult({
-    config,
+    // Declared explicitly so the server can tell a function built against this
+    // SDK from one that predates the setting and must keep its old authority.
+    config: {
+      ...config,
+      runsWithUserAuthority: config.runsWithUserAuthority ?? true,
+    },
     errors,
   });
 };
