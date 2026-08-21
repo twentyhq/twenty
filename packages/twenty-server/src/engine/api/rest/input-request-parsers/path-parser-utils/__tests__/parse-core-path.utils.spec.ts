@@ -74,7 +74,10 @@ describe('parseCorePath', () => {
     });
   });
   it('should parse object and id from restore one request', () => {
-    const request: any = { path: `/rest/restore/companies/${testUUID}` };
+    const request: any = {
+      method: 'PATCH',
+      path: `/rest/restore/companies/${testUUID}`,
+    };
 
     expect(parseCorePath(request)).toEqual({
       object: 'companies',
@@ -83,7 +86,7 @@ describe('parseCorePath', () => {
   });
 
   it('should parse object from restore many request', () => {
-    const request: any = { path: '/rest/restore/companies' };
+    const request: any = { method: 'PATCH', path: '/rest/restore/companies' };
 
     expect(parseCorePath(request)).toEqual({
       object: 'companies',
@@ -93,7 +96,10 @@ describe('parseCorePath', () => {
 
   it('should throw for malformed uuid in restore one request', () => {
     const malformedUUID = 'malformed-uuid';
-    const request: any = { path: `/rest/restore/companies/${malformedUUID}` };
+    const request: any = {
+      method: 'PATCH',
+      path: `/rest/restore/companies/${malformedUUID}`,
+    };
 
     expect(() => parseCorePath(request)).toThrow(
       `'${malformedUUID}' is not a valid UUID`,
@@ -101,10 +107,29 @@ describe('parseCorePath', () => {
   });
 
   it('should throw for an over-long restore request', () => {
-    const request: any = { path: `/rest/restore/companies/${testUUID}/toto` };
+    const request: any = {
+      method: 'PATCH',
+      path: `/rest/restore/companies/${testUUID}/toto`,
+    };
 
     expect(() => parseCorePath(request)).toThrow(
       `Query path '/rest/restore/companies/${testUUID}/toto' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
     );
   });
+  // The wildcard routes for the other methods would otherwise pick up a
+  // restore-shaped path, and DELETE would read the trailing segment as a
+  // destroy target.
+  it.each(['DELETE', 'GET', 'POST', 'PUT'])(
+    'should throw for a restore-shaped path on %s',
+    (method) => {
+      const request: any = {
+        method,
+        path: `/rest/restore/companies/${testUUID}`,
+      };
+
+      expect(() => parseCorePath(request)).toThrow(
+        `Query path '/rest/restore/companies/${testUUID}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+      );
+    },
+  );
 });

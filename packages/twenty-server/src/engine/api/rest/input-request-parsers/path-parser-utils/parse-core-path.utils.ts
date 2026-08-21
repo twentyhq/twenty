@@ -13,8 +13,14 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  // A restore path carries an extra leading segment: /restore/{object}/{id}
-  const maximumSegmentCount = queryAction[0] === 'restore' ? 3 : 2;
+  // Restore is the one route with an extra leading segment
+  // (/restore/{object}/{id}), and it is only mounted on PATCH. Allowing the
+  // segment on other methods would let a restore-shaped path through their
+  // wildcard routes, where DELETE would read it as a destroy target.
+  const isRestoreRequest =
+    request.method === 'PATCH' && queryAction[0] === 'restore';
+
+  const maximumSegmentCount = isRestoreRequest ? 3 : 2;
 
   if (queryAction.length > maximumSegmentCount) {
     throw new BadRequestException(
