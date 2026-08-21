@@ -8,10 +8,15 @@ const connectedAccount = {
 describe('resolveOutboundFromHandleOrThrow', () => {
   it('should return undefined when no sender is requested, letting the caller keep its default', () => {
     expect(
-      resolveOutboundFromHandleOrThrow({ connectedAccount, requestedFromHandle: '' }),
+      resolveOutboundFromHandleOrThrow({
+        connectedAccount,
+        requestedFromHandle: '',
+      }),
     ).toBeUndefined();
 
-    expect(resolveOutboundFromHandleOrThrow({ connectedAccount })).toBeUndefined();
+    expect(
+      resolveOutboundFromHandleOrThrow({ connectedAccount }),
+    ).toBeUndefined();
   });
 
   it('should accept the connected account handle itself', () => {
