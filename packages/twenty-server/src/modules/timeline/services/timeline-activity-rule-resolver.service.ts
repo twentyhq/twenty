@@ -105,6 +105,7 @@ export class TimelineActivityRuleResolverService {
 
         return {
           sourceFlatObjectMetadata,
+          relationFieldMetadataId: relationFlatFieldMetadata.id,
           actions: standardRule.actions,
           triggerFieldNames:
             standardRule.triggerFieldUniversalIdentifiers

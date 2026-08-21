@@ -414,6 +414,34 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  ruleRelationFieldMetadataId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'ruleRelationFieldMetadataId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({
+          message: `Rule Relation Field Metadata Id`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Relation the rule that produced this entry walked, empty for a rule on the record itself`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconAbc',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,

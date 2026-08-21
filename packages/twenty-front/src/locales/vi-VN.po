@@ -2395,7 +2395,6 @@ msgstr "Dấu nháy đơn và dấu chấm"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
@@ -3258,11 +3257,6 @@ msgstr "Đồng"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
 msgstr "Nâu"
-
-#. js-lingui-id: O2UpM1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Browse"
-msgstr "Duyệt"
 
 #. js-lingui-id: 041SWy
 #: src/pages/settings/admin-panel/SettingsAdminChats.tsx
@@ -4225,11 +4219,6 @@ msgstr "Đã sao chép lệnh vào bảng tạm"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "Biểu tượng menu lệnh"
-
-#. js-lingui-id: V1zWD4
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Command menu"
-msgstr "Menu lệnh"
 
 #. js-lingui-id: PUMdxH
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
@@ -5780,17 +5769,11 @@ msgstr "Giao diện tối"
 msgid "Dashboard duplicated successfully"
 msgstr "Nhân bản thành công bảng điều khiển"
 
-#. js-lingui-id: w6iIMm
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Dashboards"
-msgstr "Bảng điều khiển"
-
 #. js-lingui-id: HKH+W+
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Data"
 msgstr "Dữ liệu"
@@ -6528,11 +6511,6 @@ msgstr "Chi tiết"
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
 msgid "Detected application version running on this instance"
 msgstr "Phiên bản ứng dụng được phát hiện đang chạy trên bản cài đặt này"
-
-#. js-lingui-id: QYXe1O
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Develop"
-msgstr "Phát triển"
 
 #. js-lingui-id: 7aDnUb
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -8766,13 +8744,10 @@ msgstr "trường"
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Fields"
 msgstr "\"Trường\""
@@ -9451,7 +9426,6 @@ msgstr "Cấp quyền thực hiện tất cả các hành động có sẵn mà 
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "GraphQL"
 msgstr "GraphQL"
 
@@ -10317,7 +10291,6 @@ msgstr "Nhập chi tiết thanh toán của bạn để nhận bản dùng thử
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Install"
 msgstr "Cài đặt"
@@ -10554,7 +10527,6 @@ msgstr "Thư mời"
 #. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/utils/title-utils.ts
 msgid "Invite"
@@ -12166,7 +12138,6 @@ msgstr "ID mô hình là bắt buộc"
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Mô hình"
 
@@ -12437,7 +12408,6 @@ msgstr "N/A"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -13272,11 +13242,6 @@ msgstr "Không có mô hình nào có sẵn. Vui lòng cấu hình mô hình AI 
 msgid "No notes"
 msgstr "Không có ghi chú"
 
-#. js-lingui-id: 14uqQk
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "No object found"
-msgstr "Không tìm thấy đối tượng nào"
-
 #. js-lingui-id: YFHO2u
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
@@ -13899,7 +13864,6 @@ msgstr "đối tượng"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -13910,14 +13874,8 @@ msgstr "đối tượng"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Objects"
 msgstr "Các đối tượng"
-
-#. js-lingui-id: tmyEbd
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "Objects and fields managed by this app"
-msgstr "Các đối tượng và trường do ứng dụng này quản lý"
 
 #. js-lingui-id: /8Yh6y
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -15522,7 +15480,6 @@ msgstr "Nhãn hồ sơ"
 
 #. js-lingui-id: XueM/X
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
 msgstr "Trang hồ sơ"
 
@@ -15659,7 +15616,6 @@ msgstr "Loại quan hệ"
 #. js-lingui-id: g87L9j
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Relations"
 msgstr "Mối quan hệ"
 
@@ -16036,7 +15992,6 @@ msgstr ""
 
 #. js-lingui-id: WHiaOl
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 msgid "REST"
 msgstr "REST"
@@ -16232,7 +16187,6 @@ msgstr "vai trò"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Vai trò"
@@ -16587,7 +16541,6 @@ msgstr "Tìm kiếm một đối tượng"
 #. js-lingui-id: BoNHR0
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 msgid "Search an object..."
 msgstr "Tìm kiếm một đối tượng..."
 
@@ -17539,11 +17492,6 @@ msgstr "Bảng điều khiển bên"
 msgid "Side Panel"
 msgstr "Bảng điều khiển bên"
 
-#. js-lingui-id: uWi2Q+
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Sidebar"
-msgstr "Thanh bên"
-
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Sidebar items"
@@ -17676,7 +17624,6 @@ msgstr "kỹ năng"
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Skills"
@@ -18509,7 +18456,6 @@ msgid "Task Title"
 msgstr "Tiêu đề nhiệm vụ"
 
 #. js-lingui-id: KM6m8p
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr "Nhóm"
@@ -19441,7 +19387,6 @@ msgstr "Tạo công cụ"
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr "Công cụ"
@@ -20974,7 +20919,6 @@ msgstr "Xem mức sử dụng"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "Các chế độ xem"
@@ -21063,6 +21007,16 @@ msgstr "Đang chờ trẻ em"
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Đang chờ đầu ra..."
+
+#. js-lingui-id: THYlSm
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Walkthrough"
+msgstr "Hướng dẫn"
 
 #. js-lingui-id: r6y+jM
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx

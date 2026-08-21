@@ -2395,7 +2395,6 @@ msgstr "單引號與句點"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
@@ -3258,11 +3257,6 @@ msgstr "青銅色"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
 msgstr "棕色"
-
-#. js-lingui-id: O2UpM1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Browse"
-msgstr "瀏覽"
 
 #. js-lingui-id: 041SWy
 #: src/pages/settings/admin-panel/SettingsAdminChats.tsx
@@ -4225,11 +4219,6 @@ msgstr "命令已複製到剪貼板"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "指令圖標"
-
-#. js-lingui-id: V1zWD4
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Command menu"
-msgstr "指令選單"
 
 #. js-lingui-id: PUMdxH
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
@@ -5780,17 +5769,11 @@ msgstr "深色模式"
 msgid "Dashboard duplicated successfully"
 msgstr "儀表板複製成功"
 
-#. js-lingui-id: w6iIMm
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Dashboards"
-msgstr "儀表板"
-
 #. js-lingui-id: HKH+W+
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Data"
 msgstr "數據"
@@ -6528,11 +6511,6 @@ msgstr "詳細資訊"
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
 msgid "Detected application version running on this instance"
 msgstr "偵測到此實例正在執行的應用程式版本"
-
-#. js-lingui-id: QYXe1O
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Develop"
-msgstr "開發"
 
 #. js-lingui-id: 7aDnUb
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -8766,13 +8744,10 @@ msgstr "字段"
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Fields"
 msgstr "字段"
@@ -9451,7 +9426,6 @@ msgstr "授予執行所有可用操作的許可權，無任何限制。"
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "GraphQL"
 msgstr "GraphQL"
 
@@ -10294,7 +10268,6 @@ msgstr "輸入您的帳單資訊，以取得免費試用及更多 AI 點數"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Install"
 msgstr "安裝"
@@ -10531,7 +10504,6 @@ msgstr "邀請函"
 #. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/utils/title-utils.ts
 msgid "Invite"
@@ -12143,7 +12115,6 @@ msgstr "需要提供模型 ID"
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "模型"
 
@@ -12414,7 +12385,6 @@ msgstr "N/A"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -13249,11 +13219,6 @@ msgstr "無模型可用。請在工作區設置中配置AI模型。"
 msgid "No notes"
 msgstr "沒有筆記"
 
-#. js-lingui-id: 14uqQk
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "No object found"
-msgstr "找不到物件"
-
 #. js-lingui-id: YFHO2u
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
@@ -13876,7 +13841,6 @@ msgstr "對象"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -13887,14 +13851,8 @@ msgstr "對象"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Objects"
 msgstr "對象"
-
-#. js-lingui-id: tmyEbd
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "Objects and fields managed by this app"
-msgstr "由此應用程式管理的物件與欄位"
 
 #. js-lingui-id: /8Yh6y
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -15499,7 +15457,6 @@ msgstr "記錄標籤"
 
 #. js-lingui-id: XueM/X
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
 msgstr "記錄頁面"
 
@@ -15636,7 +15593,6 @@ msgstr "關係類型"
 #. js-lingui-id: g87L9j
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Relations"
 msgstr "關係"
 
@@ -16013,7 +15969,6 @@ msgstr ""
 
 #. js-lingui-id: WHiaOl
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 msgid "REST"
 msgstr "REST"
@@ -16209,7 +16164,6 @@ msgstr "角色"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "角色"
@@ -16564,7 +16518,6 @@ msgstr "搜索對象"
 #. js-lingui-id: BoNHR0
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 msgid "Search an object..."
 msgstr "搜索對象..."
 
@@ -17516,11 +17469,6 @@ msgstr "側邊面板"
 msgid "Side Panel"
 msgstr "側邊面板"
 
-#. js-lingui-id: uWi2Q+
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Sidebar"
-msgstr "側邊欄"
-
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Sidebar items"
@@ -17653,7 +17601,6 @@ msgstr "技能"
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Skills"
@@ -18486,7 +18433,6 @@ msgid "Task Title"
 msgstr "任務標題"
 
 #. js-lingui-id: KM6m8p
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr "團隊"
@@ -19388,7 +19334,6 @@ msgstr "工具產生"
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr "工具"
@@ -20921,7 +20866,6 @@ msgstr "查看使用情況"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "檢視"
@@ -21010,6 +20954,16 @@ msgstr "等待的子項"
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "等待輸出中..."
+
+#. js-lingui-id: THYlSm
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Walkthrough"
+msgstr "導覽"
 
 #. js-lingui-id: r6y+jM
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx

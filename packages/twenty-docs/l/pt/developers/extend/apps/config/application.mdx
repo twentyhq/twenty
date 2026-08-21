@@ -97,7 +97,7 @@ O mesmo se aplica a componentes de front-end que leem valores via `getApplicatio
 
 O papel declarado com [`defineApplicationRole()`](/l/pt/developers/extend/apps/config/roles) controla o que as funções de lógica e os componentes de front-end do aplicativo podem acessar:
 
-* O token em tempo de execução injetado como `TWENTY_APP_ACCESS_TOKEN` é derivado desse papel.
+* Os tokens de tempo de execução injetados nas suas funções de lógica são derivados desse papel. Uma chamada que atua como uma pessoa é ainda mais limitada pelo que essa pessoa pode fazer, portanto nunca pode exceder nenhum dos dois. Consulte [Qual acesso uma chamada usa](/l/pt/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * O cliente de API tipado é restrito às permissões concedidas a esse papel.
 * Siga o princípio do menor privilégio: declare apenas as permissões de que suas funções precisam.
 
