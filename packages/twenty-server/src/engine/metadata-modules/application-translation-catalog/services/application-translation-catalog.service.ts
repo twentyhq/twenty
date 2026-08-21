@@ -10,6 +10,7 @@ import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/applicati
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
 import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
@@ -93,9 +94,50 @@ export class ApplicationTranslationCatalogService {
     return { standardApplicationId, catalogByApplicationId };
   }
 
-  // Every REST controller needs the same thing the GraphQL resolvers get from
-  // buildEffectiveEntityI18nContext, minus the per-request dataloaders that
-  // only exist in a GraphQL context: one context per application, batched.
+  // The single-entity context. GraphQL resolves labels in per-entity
+  // ResolveFields, so it passes its request dataloaders to coalesce the N
+  // calls one page produces; REST resolves a whole page in one call and has
+  // nothing to coalesce, so it passes none. Same resolution either way.
+  async buildEffectiveEntityI18nContext({
+    applicationId,
+    loaders,
+    locale,
+    workspaceId,
+  }: {
+    applicationId: string | undefined;
+    loaders?: IDataloaders;
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<EffectiveEntityI18nContext> {
+    const safeLocale = locale ?? SOURCE_LOCALE;
+
+    if (!isDefined(loaders)) {
+      const getI18nContext = await this.getI18nContextByApplicationId({
+        applicationIds: [applicationId],
+        locale,
+        workspaceId,
+      });
+
+      return getI18nContext(applicationId);
+    }
+
+    return {
+      locale,
+      i18nInstance: this.i18nService.getI18nInstance(safeLocale),
+      isStandardApp:
+        applicationId ===
+        (await loaders.standardApplicationIdLoader.load({ workspaceId })),
+      applicationCatalog: isDefined(applicationId)
+        ? await loaders.applicationTranslationCatalogLoader.load({
+            applicationId,
+            workspaceId,
+            locale: safeLocale,
+          })
+        : undefined,
+    };
+  }
+
+  // The batched counterpart: one context per application for a whole page.
   async getI18nContextByApplicationId({
     applicationIds,
     locale,

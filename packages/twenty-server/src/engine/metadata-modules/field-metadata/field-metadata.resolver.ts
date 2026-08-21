@@ -21,7 +21,6 @@ import {
   ForbiddenError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -52,6 +51,7 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
 import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 // Keep @Parent() structurally typed so ResolverValidationPipe does not validate
 // FieldMetadataDTO date decorators on already-loaded parent records.
@@ -70,7 +70,7 @@ type FieldMetadataStandardOverrideParent = Pick<
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
@@ -187,12 +187,15 @@ export class FieldMetadataResolver {
       baseValue: fieldMetadata[labelKey],
       overrides: fieldMetadata.overrides,
       property: labelKey,
-      i18nContext: await this.i18nService.buildEffectiveEntityI18nContext({
-        applicationId: fieldMetadata.applicationId ?? undefined,
-        loaders: context.loaders,
-        locale: context.req.locale,
-        workspaceId,
-      }),
+      i18nContext:
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: fieldMetadata.applicationId ?? undefined,
+            loaders: context.loaders,
+            locale: context.req.locale,
+            workspaceId,
+          },
+        ),
     });
   }
 
