@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { type FullNameMetadata } from 'twenty-shared/types';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, type FullNameMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
@@ -92,7 +91,11 @@ export class AdminPanelUserLookupService {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'> | undefined,
     userIds: string[],
   ): Promise<Map<string, FullNameMetadata>> {
-    if (!workspace || !isWorkspaceProvisioned(workspace) || userIds.length === 0) {
+    if (
+      !workspace ||
+      !isWorkspaceProvisioned(workspace) ||
+      userIds.length === 0
+    ) {
       return new Map();
     }
 
