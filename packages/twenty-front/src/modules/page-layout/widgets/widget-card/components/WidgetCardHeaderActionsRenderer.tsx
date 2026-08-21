@@ -1,9 +1,9 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE } from '@/page-layout/widgets/constants/WidgetHeaderActionComponentByWidgetType';
+import { WIDGET_HEADER_ACTION_COMPONENTS_BY_WIDGET_TYPE } from '@/page-layout/widgets/constants/WidgetHeaderActionComponentsByWidgetType';
 import { useCurrentWidgetOrNull } from '@/page-layout/widgets/hooks/useCurrentWidgetOrNull';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -29,16 +29,18 @@ export const WidgetCardHeaderActionsRenderer = () => {
     return null;
   }
 
-  const HeaderActionComponent =
-    WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE[widget.type];
+  const headerActionComponents =
+    WIDGET_HEADER_ACTION_COMPONENTS_BY_WIDGET_TYPE[widget.type];
 
-  if (!isDefined(HeaderActionComponent)) {
+  if (!isNonEmptyArray(headerActionComponents)) {
     return null;
   }
 
   return (
     <StyledActionsContainer>
-      <HeaderActionComponent widget={widget} />
+      {headerActionComponents.map((HeaderActionComponent, index) => (
+        <HeaderActionComponent key={index} widget={widget} />
+      ))}
     </StyledActionsContainer>
   );
 };

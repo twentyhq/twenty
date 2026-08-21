@@ -11,12 +11,15 @@ export type WidgetHeaderActionComponentProps = {
   widget: PageLayoutWidget;
 };
 
-export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
-  Record<WidgetType, ComponentType<WidgetHeaderActionComponentProps>>
+// A widget declares the actions its header offers, in render order. Actions
+// that share visibility state stay behind one component, as the field widget
+// does, so the shared hook runs once.
+export const WIDGET_HEADER_ACTION_COMPONENTS_BY_WIDGET_TYPE: Partial<
+  Record<WidgetType, ComponentType<WidgetHeaderActionComponentProps>[]>
 > = {
-  [WidgetType.FIELD]: WidgetFieldActions,
-  [WidgetType.EMAILS]: WidgetActionEmailCompose,
-  [WidgetType.TASKS]: WidgetActionTaskCreate,
-  [WidgetType.NOTES]: WidgetActionNoteCreate,
-  [WidgetType.FILES]: WidgetActionFileAttach,
+  [WidgetType.FIELD]: [WidgetFieldActions],
+  [WidgetType.EMAILS]: [WidgetActionEmailCompose],
+  [WidgetType.TASKS]: [WidgetActionTaskCreate],
+  [WidgetType.NOTES]: [WidgetActionNoteCreate],
+  [WidgetType.FILES]: [WidgetActionFileAttach],
 };
