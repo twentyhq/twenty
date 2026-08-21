@@ -14,6 +14,7 @@ import { buildThemeSpacing } from '../design-tokens/pipeline/buildThemeSpacing';
 import { buildThemeSubtreeConstant } from '../design-tokens/pipeline/buildThemeSubtreeConstant';
 import { buildThemeTypes } from '../design-tokens/pipeline/buildThemeTypes';
 import { collectLeaves } from '../design-tokens/pipeline/collectLeaves';
+import { THEME_COMMON_ROOT_KEYS } from '../design-tokens/themeCommonRootKeys';
 import { THEME_CSS_FILE_NAME_BY_SCHEME } from '../design-tokens/themeCssFileNameByScheme';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -53,7 +54,7 @@ const sourceOutputs = [
   },
   {
     path: resolve(themeDirectory, 'constants/ThemeCommon.ts'),
-    content: buildThemeCommon(leaves),
+    content: buildThemeCommon({ leaves, rootKeys: THEME_COMMON_ROOT_KEYS }),
   },
   {
     path: resolve(themeDirectory, 'constants/MainColorNames.ts'),
