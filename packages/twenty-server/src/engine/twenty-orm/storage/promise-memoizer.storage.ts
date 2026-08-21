@@ -7,6 +7,7 @@ type AsyncFactoryCallback<T> = () => Promise<T | null>;
 type PromiseMemoizerEntry<T> =
   | {
       state: 'pending';
+      generation: symbol;
       promise: Promise<T | null>;
     }
   | {
@@ -40,9 +41,9 @@ export class PromiseMemoizer<T> {
         : existingEntry.promise;
     }
 
-    let newPromise: Promise<T | null>;
+    const generation = Symbol();
 
-    newPromise = (async () => {
+    const newPromise = (async () => {
       try {
         const value = await factory();
 
@@ -51,7 +52,7 @@ export class PromiseMemoizer<T> {
         if (
           value &&
           currentEntry?.state === 'pending' &&
-          currentEntry.promise === newPromise
+          currentEntry.generation === generation
         ) {
           this.cache.set(cacheKey, {
             state: 'resolved',
@@ -66,7 +67,7 @@ export class PromiseMemoizer<T> {
 
         if (
           currentEntry?.state === 'pending' &&
-          currentEntry.promise === newPromise
+          currentEntry.generation === generation
         ) {
           this.cache.delete(cacheKey);
         }
@@ -75,6 +76,7 @@ export class PromiseMemoizer<T> {
 
     this.cache.set(cacheKey, {
       state: 'pending',
+      generation,
       promise: newPromise,
     });
 
