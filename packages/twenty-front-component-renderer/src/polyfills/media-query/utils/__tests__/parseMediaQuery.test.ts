@@ -133,6 +133,21 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('only (min-width: 600px)')).toBeNull();
   });
 
+  it('should accept not when it is not followed by a media type', () => {
+    expect(parseMediaQuery('not (min-width: 600px)')).toEqual({
+      isNegated: true,
+      matchesMediaType: true,
+      conditions: [
+        {
+          kind: 'numeric',
+          source: 'componentWidth',
+          comparison: 'min',
+          value: 600,
+        },
+      ],
+    });
+  });
+
   it('should reject webkit-prefixed features other than device pixel ratio', () => {
     expect(parseMediaQuery('(-webkit-min-width: 600px)')).toBeNull();
   });
