@@ -20,6 +20,8 @@ import { buildTimelineActivityTypeBackfillQuery } from 'src/database/commands/up
 const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
 const LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-7207-46e8-9dab-849505ae8497';
+const LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  TIMELINE_ACTIVITY.fields.linkedRecordCachedName.universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.33.0', 1787400001000)
 @Command({
@@ -97,6 +99,12 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     });
 
     await this.backfillTimelineActivityTypeIds({ workspaceId, dataSource });
+
+    await this.repointLabelIdentifierToLinkedRecordCachedName({
+      workspaceId,
+      applicationUniversalIdentifier:
+        twentyStandardFlatApplication.universalIdentifier,
+    });
 
     await this.deleteLegacyNameField({
       workspaceId,
@@ -235,6 +243,64 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     this.logger.log(
       `Backfilled ${result?.[1] ?? 0} timelineActivity rows for workspace ${workspaceId}`,
     );
+  }
+
+  // On a workspace created before this change the object still points its label
+  // identifier at `name`, and the migration refuses to delete a field while it
+  // holds that role.
+  private async repointLabelIdentifierToLinkedRecordCachedName({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    const timelineActivityObjectMetadata =
+      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: TIMELINE_ACTIVITY.universalIdentifier,
+      });
+
+    if (
+      !isDefined(timelineActivityObjectMetadata) ||
+      timelineActivityObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
+        LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER
+    ) {
+      return;
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          workspaceId,
+          applicationUniversalIdentifier,
+          allFlatEntityOperationByMetadataName: {
+            objectMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [
+                {
+                  ...timelineActivityObjectMetadata,
+                  labelIdentifierFieldMetadataUniversalIdentifier:
+                    LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+                },
+              ],
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new Error(
+        `Failed to repoint the timelineActivity label identifier for workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
+      );
+    }
   }
 
   private async deleteLegacyNameField({
