@@ -3259,11 +3259,6 @@ msgstr "Bronz"
 msgid "Brown"
 msgstr "Kahverengi"
 
-#. js-lingui-id: O2UpM1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Browse"
-msgstr "Göz at"
-
 #. js-lingui-id: 041SWy
 #: src/pages/settings/admin-panel/SettingsAdminChats.tsx
 msgid "Browse AI chat threads across all workspaces ({totalCount} matching)"
@@ -4225,11 +4220,6 @@ msgstr "Komut panoya kopyalandı"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "Komut Simgesi"
-
-#. js-lingui-id: V1zWD4
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Command menu"
-msgstr "Komut Menüsü"
 
 #. js-lingui-id: PUMdxH
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
@@ -5780,11 +5770,6 @@ msgstr "Karanlık"
 msgid "Dashboard duplicated successfully"
 msgstr "Gösterge paneli başarıyla çoğaltıldı"
 
-#. js-lingui-id: w6iIMm
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Dashboards"
-msgstr "Gösterge Panelleri"
-
 #. js-lingui-id: HKH+W+
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -6528,11 +6513,6 @@ msgstr "Ayrıntılar"
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
 msgid "Detected application version running on this instance"
 msgstr "Bu örnekte çalışan uygulamanın tespit edilen sürümü"
-
-#. js-lingui-id: QYXe1O
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Develop"
-msgstr "Geliştir"
 
 #. js-lingui-id: 7aDnUb
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -8762,7 +8742,6 @@ msgstr "alanlar"
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Fields"
 msgstr "Alanlar"
@@ -9441,7 +9420,6 @@ msgstr "Tüm mevcut eylemleri kısıtlama olmaksızın gerçekleştirme izni ver
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "GraphQL"
 msgstr "GraphQL"
 
@@ -10307,7 +10285,6 @@ msgstr "Ücretsiz deneme ve daha fazla Yapay Zeka kredisi almak için fatura bil
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Install"
 msgstr "Yükle"
@@ -10544,7 +10521,6 @@ msgstr "Davetiye"
 #. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/utils/title-utils.ts
 msgid "Invite"
@@ -12150,7 +12126,6 @@ msgstr "Model kimliği gerekli"
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr "Modeller"
@@ -13894,7 +13869,6 @@ msgstr "nesneler"
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Objects"
 msgstr "Nesneler"
 
@@ -15501,7 +15475,6 @@ msgstr "Kayıt etiketi"
 
 #. js-lingui-id: XueM/X
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
 msgstr "Kayıt sayfası"
 
@@ -15637,7 +15610,6 @@ msgstr "İlişki türü"
 #. js-lingui-id: g87L9j
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Relations"
 msgstr "İlişkiler"
 
@@ -16014,7 +15986,6 @@ msgstr ""
 
 #. js-lingui-id: WHiaOl
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 msgid "REST"
 msgstr "Dinlenme"
@@ -16210,7 +16181,6 @@ msgstr "roller"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Roller"
@@ -17512,11 +17482,6 @@ msgstr "Yan Panel"
 msgid "Side Panel"
 msgstr "Yan Panel"
 
-#. js-lingui-id: uWi2Q+
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Sidebar"
-msgstr "Kenar çubuğu"
-
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Sidebar items"
@@ -17649,7 +17614,6 @@ msgstr "beceriler"
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Skills"
@@ -18481,7 +18445,6 @@ msgid "Task Title"
 msgstr "Görev Başlığı"
 
 #. js-lingui-id: KM6m8p
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr "Ekip"
@@ -19412,7 +19375,6 @@ msgstr "Araç oluşturma"
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr "Araçlar"
@@ -20939,7 +20901,6 @@ msgstr "Kullanımı görüntüle"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr "Görünümler"
@@ -21028,6 +20989,16 @@ msgstr "Bekleyen Çocuklar"
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Çıktı bekleniyor..."
+
+#. js-lingui-id: THYlSm
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Walkthrough"
+msgstr ""
 
 #. js-lingui-id: r6y+jM
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx

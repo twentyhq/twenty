@@ -3254,11 +3254,6 @@ msgstr ""
 msgid "Brown"
 msgstr ""
 
-#. js-lingui-id: O2UpM1
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Browse"
-msgstr ""
-
 #. js-lingui-id: 041SWy
 #: src/pages/settings/admin-panel/SettingsAdminChats.tsx
 msgid "Browse AI chat threads across all workspaces ({totalCount} matching)"
@@ -4219,11 +4214,6 @@ msgstr ""
 #. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
-msgstr ""
-
-#. js-lingui-id: V1zWD4
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Command menu"
 msgstr ""
 
 #. js-lingui-id: PUMdxH
@@ -5775,11 +5765,6 @@ msgstr ""
 msgid "Dashboard duplicated successfully"
 msgstr ""
 
-#. js-lingui-id: w6iIMm
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Dashboards"
-msgstr ""
-
 #. js-lingui-id: HKH+W+
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -6522,11 +6507,6 @@ msgstr ""
 #. js-lingui-id: /RlqQE
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
 msgid "Detected application version running on this instance"
-msgstr ""
-
-#. js-lingui-id: QYXe1O
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Develop"
 msgstr ""
 
 #. js-lingui-id: 7aDnUb
@@ -8757,7 +8737,6 @@ msgstr ""
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Fields"
 msgstr ""
@@ -9436,7 +9415,6 @@ msgstr ""
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "GraphQL"
 msgstr ""
 
@@ -10279,7 +10257,6 @@ msgstr ""
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Install"
 msgstr ""
@@ -10516,7 +10493,6 @@ msgstr ""
 #. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/utils/title-utils.ts
 msgid "Invite"
@@ -12122,7 +12098,6 @@ msgstr ""
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Models"
 msgstr ""
@@ -13866,7 +13841,6 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Objects"
 msgstr ""
 
@@ -15473,7 +15447,6 @@ msgstr ""
 
 #. js-lingui-id: XueM/X
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 msgid "Record page"
 msgstr ""
 
@@ -15609,7 +15582,6 @@ msgstr ""
 #. js-lingui-id: g87L9j
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Relations"
 msgstr ""
 
@@ -15986,7 +15958,6 @@ msgstr ""
 
 #. js-lingui-id: WHiaOl
 #: src/modules/settings/mcp-and-apis/components/PlaygroundSetupForm.tsx
-#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 msgid "REST"
 msgstr ""
@@ -16182,7 +16153,6 @@ msgstr ""
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr ""
@@ -17484,11 +17454,6 @@ msgstr ""
 msgid "Side Panel"
 msgstr ""
 
-#. js-lingui-id: uWi2Q+
-#: src/pages/settings/layout/SettingsLayout.tsx
-msgid "Sidebar"
-msgstr ""
-
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Sidebar items"
@@ -17621,7 +17586,6 @@ msgstr ""
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Skills"
@@ -18453,7 +18417,6 @@ msgid "Task Title"
 msgstr ""
 
 #. js-lingui-id: KM6m8p
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr ""
@@ -19354,7 +19317,6 @@ msgstr ""
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tools"
 msgstr ""
@@ -20881,7 +20843,6 @@ msgstr ""
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Views"
 msgstr ""
@@ -20969,6 +20930,16 @@ msgstr ""
 #. js-lingui-id: TdQd9Q
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Waiting for output..."
+msgstr ""
+
+#. js-lingui-id: THYlSm
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Walkthrough"
 msgstr ""
 
 #. js-lingui-id: r6y+jM
