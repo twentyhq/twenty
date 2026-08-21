@@ -1,20 +1,8 @@
 import { parseTimelineActivityAction } from '@/timeline/parseTimelineActivityAction';
-import { type TimelineActivityAction } from '@/timeline/TimelineActivityAction';
-import { isDefined } from '@/utils/validation';
-
-const TIMELINE_ACTIVITY_ACTIONS: TimelineActivityAction[] = [
-  'created',
-  'updated',
-  'deleted',
-  'restored',
-  'linked',
-  'unlinked',
-];
-
-const isTimelineActivityAction = (
-  value: string | null | undefined,
-): value is TimelineActivityAction =>
-  isDefined(value) && (TIMELINE_ACTIVITY_ACTIONS as string[]).includes(value);
+import {
+  isTimelineActivityAction,
+  type TimelineActivityAction,
+} from '@/timeline/TimelineActivityAction';
 
 // The stored action is authoritative where it disagrees with the legacy name:
 // a junction row creation is a link, its deletion an unlink. Rows written
