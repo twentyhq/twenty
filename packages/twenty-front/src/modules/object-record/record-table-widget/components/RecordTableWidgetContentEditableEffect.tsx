@@ -60,12 +60,7 @@ export const RecordTableWidgetContentEditableEffect = ({
       }),
       isEmptyStateHidden,
     );
-  }, [
-    store,
-    recordTableId,
-    isWidgetContentEditable,
-    isEmptyStateHidden,
-  ]);
+  }, [store, recordTableId, isWidgetContentEditable, isEmptyStateHidden]);
 
   return null;
 };
