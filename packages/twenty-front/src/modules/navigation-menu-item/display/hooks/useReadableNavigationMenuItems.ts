@@ -1,12 +1,18 @@
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { NavigationSystemPage } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 
 type UseReadableNavigationMenuItemsArgs = {
   topLevelItems: NavigationMenuItem[];
@@ -23,10 +29,21 @@ export const useReadableNavigationMenuItems = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const permissionFlagMap = usePermissionFlagMap();
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
+
+  const readableSystemPages =
+    isWorkflowCoreIndexPageEnabled &&
+    permissionFlagMap[PermissionFlagType.WORKFLOWS]
+      ? [NavigationSystemPage.WORKFLOWS]
+      : [];
 
   const isItemReadable = (item: NavigationMenuItem) =>
     isNavigationMenuItemReadable({
       item,
+      readableSystemPages,
       objectMetadataItems,
       views,
       objectPermissionsByObjectMetadataId,

@@ -170,6 +170,7 @@ export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
+export { NavigationSystemPage } from './NavigationSystemPage';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';

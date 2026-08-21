@@ -9,6 +9,7 @@ import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 
 type IsNavigationMenuItemReadableArgs = {
   item: NavigationMenuItem;
+  readableSystemPages: string[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: ViewWithRelations[];
   objectPermissionsByObjectMetadataId: Parameters<
@@ -18,6 +19,7 @@ type IsNavigationMenuItemReadableArgs = {
 
 export const isNavigationMenuItemReadable = ({
   item,
+  readableSystemPages,
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
@@ -30,6 +32,13 @@ export const isNavigationMenuItemReadable = ({
     itemType === NavigationMenuItemType.PAGE_LAYOUT
   ) {
     return true;
+  }
+
+  if (itemType === NavigationMenuItemType.SYSTEM) {
+    return (
+      isDefined(item.systemPage) &&
+      readableSystemPages.includes(item.systemPage)
+    );
   }
 
   if (
