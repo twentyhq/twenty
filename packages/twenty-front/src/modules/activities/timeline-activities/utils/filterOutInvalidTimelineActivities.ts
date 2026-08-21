@@ -48,6 +48,32 @@ const findLegacyObjectMetadataItemFromName = (
   );
 };
 
+// A row about a related record names its object in three places, oldest last:
+// the stored source column, the linked column, and the legacy name.
+const findLinkedObjectMetadataItem = (
+  timelineActivity: TimelineActivity,
+  objectMetadataItems: EnrichedObjectMetadataItem[],
+): EnrichedObjectMetadataItem | undefined => {
+  if (!isDefined(timelineActivity.linkedRecordId)) {
+    return undefined;
+  }
+
+  const findById = (
+    objectMetadataId: string | null,
+  ): EnrichedObjectMetadataItem | undefined =>
+    isDefined(objectMetadataId)
+      ? objectMetadataItems.find(
+          (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
+        )
+      : undefined;
+
+  return (
+    findById(timelineActivity.sourceObjectMetadataId) ??
+    findById(timelineActivity.linkedObjectMetadataId) ??
+    findLegacyObjectMetadataItemFromName(timelineActivity, objectMetadataItems)
+  );
+};
+
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],
   mainObjectSingularName: string,
@@ -63,18 +89,23 @@ export const filterOutInvalidTimelineActivities = (
   }
 
   return timelineActivities
-    .map((timelineActivity) => {
-      const linkedObjectMetadataItem = isDefined(
-        timelineActivity.linkedObjectMetadataId,
+    .map((rawTimelineActivity) => {
+      const linkedObjectMetadataItem = findLinkedObjectMetadataItem(
+        rawTimelineActivity,
+        objectMetadataItems,
+      );
+
+      // Resolved once here so the renderer never has to parse a legacy name to
+      // work out which object a row came from.
+      const timelineActivity: TimelineActivity = isDefined(
+        linkedObjectMetadataItem,
       )
-        ? objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
-          )
-        : findLegacyObjectMetadataItemFromName(
-            timelineActivity,
-            objectMetadataItems,
-          );
+        ? {
+            ...rawTimelineActivity,
+            sourceObjectMetadataId: linkedObjectMetadataItem.id,
+            linkedObjectMetadataId: linkedObjectMetadataItem.id,
+          }
+        : rawTimelineActivity;
 
       const action = getTimelineActivityAction(timelineActivity);
 
