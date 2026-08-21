@@ -5,7 +5,8 @@ export type TimelineActivityAction =
   | 'updated'
   | 'deleted'
   | 'restored'
-  | 'linked';
+  | 'linked'
+  | 'unlinked';
 
 export const TIMELINE_ACTIVITY_ACTIONS: TimelineActivityAction[] = [
   'created',
@@ -13,6 +14,7 @@ export const TIMELINE_ACTIVITY_ACTIONS: TimelineActivityAction[] = [
   'deleted',
   'restored',
   'linked',
+  'unlinked',
 ];
 
 export const isTimelineActivityAction = (
