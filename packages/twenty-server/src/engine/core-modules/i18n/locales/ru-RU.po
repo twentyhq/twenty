@@ -8122,6 +8122,12 @@ msgstr "Фильтры связей могут проходить только �
 msgid "Relation is not enabled for this field."
 msgstr "Связь не включена для этого поля."
 
+#. js-lingui-id: DedWrQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Relation the rule that produced this entry walked, empty for a rule on the record itself"
+msgstr ""
+
 #. js-lingui-id: g87L9j
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Relations"
@@ -8533,6 +8539,12 @@ msgstr "Предикат разрешений на уровне строк дл�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Предикат разрешений на уровне строк с таким универсальным идентификатором уже существует"
+
+#. js-lingui-id: dk0Z3L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rule Relation Field Metadata Id"
+msgstr ""
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

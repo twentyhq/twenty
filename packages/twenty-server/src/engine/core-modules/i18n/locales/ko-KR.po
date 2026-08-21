@@ -8122,6 +8122,12 @@ msgstr "관계 필터는 한 단계의 관계까지만 탐색할 수 있습니�
 msgid "Relation is not enabled for this field."
 msgstr "이 필드에는 관계가 활성화되어 있지 않습니다."
 
+#. js-lingui-id: DedWrQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Relation the rule that produced this entry walked, empty for a rule on the record itself"
+msgstr ""
+
 #. js-lingui-id: g87L9j
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Relations"
@@ -8533,6 +8539,12 @@ msgstr "업데이트할 레코드 수준 권한 조건을 찾을 수 없음"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "이 범용 식별자를 가진 레코드 수준 권한 조건이 이미 존재합니다"
+
+#. js-lingui-id: dk0Z3L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rule Relation Field Metadata Id"
+msgstr ""
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

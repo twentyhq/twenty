@@ -8122,6 +8122,12 @@ msgstr "Filtrele de relație pot parcurge doar o singură relație în profunzim
 msgid "Relation is not enabled for this field."
 msgstr "Relația nu este activată pentru acest câmp."
 
+#. js-lingui-id: DedWrQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Relation the rule that produced this entry walked, empty for a rule on the record itself"
+msgstr ""
+
 #. js-lingui-id: g87L9j
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "Relations"
@@ -8533,6 +8539,12 @@ msgstr "Predicatul de permisiune la nivel de rând de actualizat nu a fost găsi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Predicatul de permisiune la nivel de rând cu acest identificator universal există deja"
+
+#. js-lingui-id: dk0Z3L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rule Relation Field Metadata Id"
+msgstr ""
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
