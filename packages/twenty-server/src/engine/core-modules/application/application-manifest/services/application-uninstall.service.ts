@@ -44,10 +44,39 @@ export class ApplicationUninstallService {
     workspaceId: string;
     workspaceDeletedAt: Date;
   }): Promise<void> {
-    await this.runUninstallHooksForWorkspaceDeletionRequest({
-      workspaceId,
-      workspaceDeletedAt,
-    });
+    const applications =
+      await this.applicationService.findManyApplications(workspaceId);
+    const pendingApplications = applications.filter((application) =>
+      isApplicationUninstallHookPending(application, workspaceDeletedAt),
+    );
+    const applicationUninstallHookFailures: string[] = [];
+
+    for (const application of pendingApplications) {
+      try {
+        await this.runUninstallHookForWorkspaceDeletion({
+          application,
+          workspaceId,
+          workspaceDeletedAt,
+        });
+        await this.applicationRepository.update(application.id, {
+          uninstallHookCompletedForRequestedAt: workspaceDeletedAt,
+        });
+      } catch (error) {
+        const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
+
+        applicationUninstallHookFailures.push(applicationUninstallHookFailure);
+        this.logger.warn(
+          `workspace-deletion uninstall hook failed: ${applicationUninstallHookFailure}`,
+        );
+      }
+    }
+
+    if (isNonEmptyArray(applicationUninstallHookFailures)) {
+      throw new ApplicationException(
+        `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
+        ApplicationExceptionCode.UNINSTALL_ERROR,
+      );
+    }
   }
 
   async runUninstallHooksForWorkspaceDeletionBestEffort({
@@ -131,48 +160,6 @@ export class ApplicationUninstallService {
     } catch (error) {
       this.logger.warn(
         `Uninstall hook failed for application ${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  private async runUninstallHooksForWorkspaceDeletionRequest({
-    workspaceId,
-    workspaceDeletedAt,
-  }: {
-    workspaceId: string;
-    workspaceDeletedAt: Date;
-  }): Promise<void> {
-    const applications =
-      await this.applicationService.findManyApplications(workspaceId);
-    const pendingApplications = applications.filter((application) =>
-      isApplicationUninstallHookPending(application, workspaceDeletedAt),
-    );
-    const applicationUninstallHookFailures: string[] = [];
-
-    for (const application of pendingApplications) {
-      try {
-        await this.runUninstallHookForWorkspaceDeletion({
-          application,
-          workspaceId,
-          workspaceDeletedAt,
-        });
-        await this.applicationRepository.update(application.id, {
-          uninstallHookCompletedForRequestedAt: workspaceDeletedAt,
-        });
-      } catch (error) {
-        const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
-
-        applicationUninstallHookFailures.push(applicationUninstallHookFailure);
-        this.logger.warn(
-          `workspace-deletion uninstall hook failed: ${applicationUninstallHookFailure}`,
-        );
-      }
-    }
-
-    if (isNonEmptyArray(applicationUninstallHookFailures)) {
-      throw new ApplicationException(
-        `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
-        ApplicationExceptionCode.UNINSTALL_ERROR,
       );
     }
   }
