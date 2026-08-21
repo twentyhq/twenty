@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Max,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -1198,6 +1199,17 @@ export class ConfigVariables {
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of front-end traces sent to Sentry, between 0 and 1. Front-end traces propagate their sampling decision to the server, so this also drives the rate for browser-originated server traces.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @Max(1)
+  @IsOptional()
+  SENTRY_FRONT_TRACES_SAMPLE_RATE = 0.1;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
