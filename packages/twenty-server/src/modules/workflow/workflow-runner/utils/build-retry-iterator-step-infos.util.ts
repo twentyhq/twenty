@@ -52,10 +52,16 @@ export const buildRetryIteratorStepInfos = ({
   const stepInfosToUpdate: Record<string, WorkflowRunStepInfo> = {};
 
   for (const loopStepId of loopStepIds) {
-    stepInfosToUpdate[loopStepId] = { status: StepStatus.NOT_STARTED };
+    stepInfosToUpdate[loopStepId] = {
+      status: StepStatus.NOT_STARTED,
+      retryCount: undefined,
+    };
   }
 
-  stepInfosToUpdate[iteratorStep.id] = { status: StepStatus.NOT_STARTED };
+  stepInfosToUpdate[iteratorStep.id] = {
+    status: StepStatus.NOT_STARTED,
+    retryCount: undefined,
+  };
 
   return {
     stepInfosToUpdate,

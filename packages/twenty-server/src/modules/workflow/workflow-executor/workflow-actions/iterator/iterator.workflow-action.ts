@@ -196,6 +196,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
           status: StepStatus.NOT_STARTED,
           result: undefined,
           error: undefined,
+          retryCount: undefined,
           history: [
             ...(stepInfos[stepId]?.history ?? []),
             {

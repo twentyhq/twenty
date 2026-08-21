@@ -532,20 +532,29 @@ export class LogicFunctionExecutorService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
+      // The function has already run by the time we get here, so a failure to
+      // account for it must not be reported as a failure to execute it: the
+      // caller would take it for a transient error and run the function again.
+      try {
+        const { currentBillingSubscription } =
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'currentBillingSubscription',
+          ]);
 
-      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
-        periodStart = currentBillingSubscription.currentPeriodStart;
+        if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+          periodStart = currentBillingSubscription.currentPeriodStart;
 
-        if (creditsUsedMicro > 0) {
-          await this.billingUsageService.decrementAvailableCreditsInCache({
-            workspaceId,
-            usedCredits: creditsUsedMicro,
-          });
+          if (creditsUsedMicro > 0) {
+            await this.billingUsageService.decrementAvailableCreditsInCache({
+              workspaceId,
+              usedCredits: creditsUsedMicro,
+            });
+          }
         }
+      } catch (error) {
+        this.logger.error(
+          `Failed to account for the execution of logic function ${flatLogicFunction.id} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
 

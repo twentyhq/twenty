@@ -36,6 +36,8 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { executeWithTransientRetry } from 'src/modules/workflow/workflow-executor/utils/execute-with-transient-retry.util';
+import { getStepMaxAttempts } from 'src/modules/workflow/workflow-executor/utils/get-step-max-attempts.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
@@ -326,17 +328,25 @@ export class WorkflowExecutorWorkspaceService {
   ) {
     let periodStart: Date | undefined;
     if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
+      // The step has already run, and its SUCCESS is not persisted yet, so a
+      // failure to account for it must not end the run as a system error.
+      try {
+        const { currentBillingSubscription } =
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'currentBillingSubscription',
+          ]);
 
-      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
-        periodStart = currentBillingSubscription.currentPeriodStart;
+        if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+          periodStart = currentBillingSubscription.currentPeriodStart;
 
-        await this.billingUsageService.decrementAvailableCreditsInCache({
-          workspaceId,
-          usedCredits: 100,
+          await this.billingUsageService.decrementAvailableCreditsInCache({
+            workspaceId,
+            usedCredits: 100,
+          });
+        }
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: workspaceId },
         });
       }
     }
@@ -447,6 +457,8 @@ export class WorkflowExecutorWorkspaceService {
 
     const workflowAction = this.workflowActionFactory.get(step.type);
 
+    const maxAttempts = getStepMaxAttempts(step.type);
+
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
       stepInfo: {
@@ -458,14 +470,29 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      return await workflowAction.execute({
-        currentStepId: stepId,
-        steps,
-        context: getWorkflowRunContext(stepInfos),
-        runInfo: {
-          workflowRunId,
-          workspaceId,
-        },
+      return await executeWithTransientRetry({
+        maxAttempts,
+        execute: () =>
+          workflowAction.execute({
+            currentStepId: stepId,
+            steps,
+            context: getWorkflowRunContext(stepInfos),
+            runInfo: {
+              workflowRunId,
+              workspaceId,
+            },
+          }),
+        onFailedAttempt: ({ attempt }) =>
+          this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+            stepInfos: {
+              [stepId]: {
+                status: StepStatus.RUNNING,
+                retryCount: (stepInfos[stepId]?.retryCount ?? 0) + attempt,
+              },
+            },
+            workflowRunId,
+            workspaceId,
+          }),
       });
     } catch (error) {
       const isUserError =

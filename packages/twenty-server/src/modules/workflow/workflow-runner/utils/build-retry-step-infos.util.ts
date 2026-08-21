@@ -43,7 +43,10 @@ export const buildRetryStepInfos = ({
       continue;
     }
 
-    stepInfosToUpdate[step.id] = { status: StepStatus.NOT_STARTED };
+    stepInfosToUpdate[step.id] = {
+      status: StepStatus.NOT_STARTED,
+      retryCount: undefined,
+    };
     stepIdsToRetry.push(step.id);
   }
 
