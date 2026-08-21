@@ -22,7 +22,6 @@ import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-m
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @UseGuards(
@@ -61,9 +60,7 @@ export class AgentTurnResolver {
     @Args('turnId', { type: () => UUIDScalarType }) turnId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentTurnEvaluationDTO> {
-    return withDedicatedAiTrace(() =>
-      this.graderService.evaluateTurn({ turnId, workspaceId }),
-    );
+    return this.graderService.evaluateTurn({ turnId, workspaceId });
   }
 
   @Mutation(() => AgentTurnDTO)
