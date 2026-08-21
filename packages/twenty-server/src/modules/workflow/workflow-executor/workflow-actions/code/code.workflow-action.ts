@@ -6,6 +6,8 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -24,6 +26,7 @@ export class CodeWorkflowAction implements WorkflowAction {
 
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
   ) {}
 
@@ -52,10 +55,14 @@ export class CodeWorkflowAction implements WorkflowAction {
 
     const { workspaceId } = runInfo;
 
+    const { authContext } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
+      ...getUserFromAuthContext(authContext),
     });
 
     await this.persistStepLog({

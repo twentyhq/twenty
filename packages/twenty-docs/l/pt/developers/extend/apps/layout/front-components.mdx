@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 Para chamar rotas HTTP do aplicativo ou ler e gravar registros da Twenty a partir de um front component, use `RestApiClient` de `twenty-client-sdk/rest`. Ele envia caminhos `/s/...` para a URL base das funções do seu workspace e qualquer outro caminho, incluindo `/rest/...`, para `TWENTY_API_URL`.
 
+Ele sempre atua como a pessoa que está visualizando a página. `runAs: 'application'` é uma opção apenas de função de lógica: um componente nunca recebe o token do seu próprio aplicativo, portanto, solicitá-lo aqui gera um erro. Coloque o trabalho que precisa do acesso do próprio aplicativo atrás de uma função de lógica e chame-a em vez disso.
+
 | Método                            | Descrição                                                                       |
 | --------------------------------- | ------------------------------------------------------------------------------- |
 | `get(path, options?)`             | Envia uma requisição `GET`                                                      |
@@ -445,10 +447,10 @@ Variáveis secretas (`isSecret: true`) **não** são expostas aos componentes de
 
 As seguintes variáveis de sistema estão sempre disponíveis via `process.env`:
 
-| Variável                  | Descrição                                                     |
-| ------------------------- | ------------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL base da API principal da Twenty                           |
-| `TWENTY_APP_ACCESS_TOKEN` | Token de curta duração limitado ao escopo do papel do seu app |
+| Variável                  | Descrição                                                                                                                                                                                                  |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL base da API principal da Twenty                                                                                                                                                                        |
+| `TWENTY_APP_ACCESS_TOKEN` | Token de curta duração com escopo limitado à interseção entre a função da pessoa conectada e a do seu aplicativo, de modo que um componente nunca possa fazer mais do que a pessoa que o está visualizando |
 
 ### `TWENTY_FUNCTIONS_URL`
 
