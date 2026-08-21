@@ -67,26 +67,21 @@ export const SettingsObjectIndexesSection = ({
       objectMetadataItem.fields.map((field) => [field.id, field]),
     );
 
-    const morphFieldLabelsById = new Map<string, string>();
+    const objectLabelsById = new Map(
+      objectMetadataItems.map(({ id, labelSingular }) => [id, labelSingular]),
+    );
 
-    for (const field of objectMetadataItem.fields) {
-      for (const morphRelation of field.morphRelations ?? []) {
-        const morphFieldId = morphRelation.sourceFieldMetadata.id;
-
-        if (!fieldsById.has(morphFieldId)) {
-          const targetObjectMetadataItem = objectMetadataItems.find(
-            ({ id }) => id === morphRelation.targetObjectMetadata.id,
-          );
-
-          if (isDefined(targetObjectMetadataItem)) {
-            morphFieldLabelsById.set(
-              morphFieldId,
-              targetObjectMetadataItem.labelSingular,
-            );
-          }
-        }
-      }
-    }
+    const morphFieldLabelsById = new Map(
+      objectMetadataItem.fields
+        .flatMap((field) => field.morphRelations ?? [])
+        .filter(
+          ({ sourceFieldMetadata }) => !fieldsById.has(sourceFieldMetadata.id),
+        )
+        .map(({ sourceFieldMetadata, targetObjectMetadata }) => [
+          sourceFieldMetadata.id,
+          objectLabelsById.get(targetObjectMetadata.id),
+        ]),
+    );
 
     return objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
       id: indexMetadataItem.id,
