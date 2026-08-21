@@ -19,7 +19,18 @@
         "command": "mintlify validate"
       }
     },
-    "lint": {},
+    "lint": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx oxlint -c .oxlintrc.json .",
+          "npx tsx scripts/lint-mdx.ts"
+        ],
+        "parallel": false
+      }
+    },
     "fmt": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -32,6 +43,12 @@
         "fix": {
           "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
         }
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --config {projectRoot}/vitest.config.mts"
       }
     }
   }
