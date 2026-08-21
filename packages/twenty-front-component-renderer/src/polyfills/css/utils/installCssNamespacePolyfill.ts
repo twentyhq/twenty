@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { escapeCssIdentifier } from '@/polyfills/css/utils/escapeCssIdentifier';
 import { evaluateCssSupportsQuery } from '@/polyfills/css/utils/evaluateCssSupportsQuery';
+import { assertCssArgumentIsStringifiable } from '@/polyfills/css/utils/assertCssArgumentIsStringifiable';
 import { defineAbsentGlobalScopeValues } from '@/polyfills/utils/defineAbsentGlobalScopeValues';
 
 const CSS_NAMESPACE_POLYFILL = {
@@ -10,6 +11,11 @@ const CSS_NAMESPACE_POLYFILL = {
       throw new TypeError('CSS.escape requires an argument');
     }
 
+    assertCssArgumentIsStringifiable({
+      functionName: 'escape',
+      argument: escapeArguments[0],
+    });
+
     return escapeCssIdentifier(escapeArguments[0]);
   },
   supports: (...supportsArguments: unknown[]) => {
@@ -17,11 +23,15 @@ const CSS_NAMESPACE_POLYFILL = {
       throw new TypeError('CSS.supports requires an argument');
     }
 
-    try {
-      return evaluateCssSupportsQuery(supportsArguments);
-    } catch {
-      return false;
+    // Only the arguments the overload reads are coerced, like the native api
+    for (const supportsArgument of supportsArguments.slice(0, 2)) {
+      assertCssArgumentIsStringifiable({
+        functionName: 'supports',
+        argument: supportsArgument,
+      });
     }
+
+    return evaluateCssSupportsQuery(supportsArguments);
   },
 };
 

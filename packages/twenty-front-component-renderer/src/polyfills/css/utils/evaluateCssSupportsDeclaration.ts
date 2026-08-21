@@ -5,6 +5,7 @@ import { CSS_WIDE_KEYWORDS } from '@/polyfills/css/constants/CssWideKeywords';
 import { SUPPORTED_CSS_PROPERTY_KEYWORDS } from '@/polyfills/css/constants/SupportedCssPropertyKeywords';
 import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
 import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
+import { stripImportantPriorityFromCssValue } from '@/utils/css/stripImportantPriorityFromCssValue';
 
 type EvaluateCssSupportsDeclarationInput = {
   property: string;
@@ -15,14 +16,24 @@ export const evaluateCssSupportsDeclaration = ({
   property,
   value,
 }: EvaluateCssSupportsDeclarationInput): boolean => {
-  const normalizedProperty = normalizeCssPropertyName(property.trim());
+  // The property is not trimmed: native rejects a padded property name in the
+  // two-argument form, and the condition form trims before it gets here.
+  const normalizedProperty = normalizeCssPropertyName(property);
   const normalizedValue = value.trim().toLowerCase();
 
   if (!isNonEmptyString(normalizedValue)) {
     return false;
   }
 
-  if (isCssCustomPropertyName(normalizedProperty)) {
+  // A priority is only ever valid in the condition form, which strips it first
+  if (stripImportantPriorityFromCssValue(normalizedValue) !== normalizedValue) {
+    return false;
+  }
+
+  if (
+    isCssCustomPropertyName(normalizedProperty) &&
+    normalizedProperty.length > 2
+  ) {
     return true;
   }
 

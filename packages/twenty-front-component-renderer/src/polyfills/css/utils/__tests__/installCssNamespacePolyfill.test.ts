@@ -34,14 +34,30 @@ describe('installCssNamespacePolyfill', () => {
     expect(() => cssNamespace.supports()).toThrow(TypeError);
   });
 
-  it('should never throw on unstringifiable supports arguments', () => {
+  it('should throw a TypeError on a symbol argument, like the native api', () => {
     const globalScope: Record<string, unknown> = { window: {} };
 
     installCssNamespacePolyfill(globalScope);
 
     const cssNamespace = globalScope.CSS as CssNamespace;
 
-    expect(cssNamespace.supports(Symbol('display'))).toBe(false);
+    expect(() => cssNamespace.supports(Symbol('display'))).toThrow(TypeError);
+    expect(() => cssNamespace.supports('display', Symbol('flex'))).toThrow(
+      TypeError,
+    );
+    expect(() => cssNamespace.escape(Symbol('identifier'))).toThrow(TypeError);
+  });
+
+  it('should ignore arguments past the ones the overload reads', () => {
+    const globalScope: Record<string, unknown> = { window: {} };
+
+    installCssNamespacePolyfill(globalScope);
+
+    const cssNamespace = globalScope.CSS as CssNamespace;
+
+    expect(cssNamespace.supports('display', 'flex', Symbol('extra'))).toBe(
+      true,
+    );
   });
 
   it('should define the CSS namespace on a remote-dom window', () => {

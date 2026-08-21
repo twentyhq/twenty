@@ -7,8 +7,14 @@ describe('evaluateCssSupportsQuery', () => {
     expect(evaluateCssSupportsQuery(['position', 'sticky'])).toBe(true);
   });
 
-  it('should normalize casing and whitespace', () => {
-    expect(evaluateCssSupportsQuery([' DISPLAY ', ' Flex '])).toBe(true);
+  it('should normalize casing, and trim the value but not the property', () => {
+    expect(evaluateCssSupportsQuery(['DISPLAY', ' Flex '])).toBe(true);
+    expect(evaluateCssSupportsQuery([' DISPLAY ', 'flex'])).toBe(false);
+  });
+
+  it('should allow whitespace anywhere in the condition form', () => {
+    expect(evaluateCssSupportsQuery(['( display : grid )'])).toBe(true);
+    expect(evaluateCssSupportsQuery(['  display: grid  '])).toBe(true);
   });
 
   it('should support css-wide keywords on known properties only', () => {
@@ -30,6 +36,23 @@ describe('evaluateCssSupportsQuery', () => {
     expect(evaluateCssSupportsQuery(['--custom-property', ''])).toBe(false);
   });
 
+  it('should reject a priority and a bare double hyphen on a custom property', () => {
+    expect(evaluateCssSupportsQuery(['--brand', 'red !important'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['--', 'x'])).toBe(false);
+  });
+
+  it('should reject a condition holding more than one declaration', () => {
+    expect(evaluateCssSupportsQuery(['--x: 1; made-up: nonsense'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['display: flex;'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['--x: "a;b"'])).toBe(true);
+  });
+
+  it('should support the container-type keywords the docs recommend', () => {
+    expect(evaluateCssSupportsQuery(['container-type', 'inline-size'])).toBe(
+      true,
+    );
+  });
+
   it('should not resolve property names through the object prototype', () => {
     expect(evaluateCssSupportsQuery(['toString', 'inherit'])).toBe(false);
     expect(evaluateCssSupportsQuery(['constructor', 'flex'])).toBe(false);
@@ -39,6 +62,7 @@ describe('evaluateCssSupportsQuery', () => {
 
   it('should not report support for values no browser implements', () => {
     expect(evaluateCssSupportsQuery(['user-select', 'contain'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['user-select', 'all'])).toBe(false);
     expect(evaluateCssSupportsQuery(['overflow-anchor', 'none'])).toBe(false);
   });
 

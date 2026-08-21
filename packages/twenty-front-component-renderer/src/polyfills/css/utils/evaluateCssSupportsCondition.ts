@@ -1,4 +1,5 @@
 import { evaluateCssSupportsDeclaration } from '@/polyfills/css/utils/evaluateCssSupportsDeclaration';
+import { splitCssDeclarations } from '@/utils/css/splitCssDeclarations';
 import { stripImportantPriorityFromCssValue } from '@/utils/css/stripImportantPriorityFromCssValue';
 
 export const evaluateCssSupportsCondition = (condition: string): boolean => {
@@ -18,6 +19,12 @@ export const evaluateCssSupportsCondition = (condition: string): boolean => {
     return false;
   }
 
+  // A condition holds one declaration, so anything the quote-aware splitter
+  // reads as several is malformed rather than a supported declaration.
+  if (splitCssDeclarations(unwrappedCondition).length !== 1) {
+    return false;
+  }
+
   const declarationSeparatorIndex = unwrappedCondition.indexOf(':');
 
   if (declarationSeparatorIndex === -1) {
@@ -25,7 +32,7 @@ export const evaluateCssSupportsCondition = (condition: string): boolean => {
   }
 
   return evaluateCssSupportsDeclaration({
-    property: unwrappedCondition.slice(0, declarationSeparatorIndex),
+    property: unwrappedCondition.slice(0, declarationSeparatorIndex).trim(),
     value: stripImportantPriorityFromCssValue(
       unwrappedCondition.slice(declarationSeparatorIndex + 1),
     ),

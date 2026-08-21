@@ -17,8 +17,8 @@ const isSafeIdentifierCharacter = (character: string): boolean =>
   isAsciiDigit(character) ||
   isAsciiLetter(character);
 
-const escapeAsHexCodePoint = (character: string): string =>
-  `\\${character.charCodeAt(0).toString(16)} `;
+const escapeAsHexCodeUnit = (codeUnit: number): string =>
+  `\\${codeUnit.toString(16)} `;
 
 export const escapeCssIdentifier = (value: unknown): string => {
   const identifier = String(value);
@@ -44,7 +44,7 @@ export const escapeCssIdentifier = (value: unknown): string => {
       (index === 0 && isAsciiDigit(character)) ||
       (index === 1 && startsWithHyphen && isAsciiDigit(character))
     ) {
-      escapedIdentifier += escapeAsHexCodePoint(character);
+      escapedIdentifier += escapeAsHexCodeUnit(codeUnit);
       continue;
     }
 

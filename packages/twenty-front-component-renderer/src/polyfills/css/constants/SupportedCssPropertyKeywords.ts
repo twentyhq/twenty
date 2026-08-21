@@ -6,6 +6,7 @@ export const SUPPORTED_CSS_PROPERTY_KEYWORDS = new Map<
   readonly string[]
 >([
   ['box-sizing', ['border-box', 'content-box']],
+  ['container-type', ['inline-size', 'normal', 'size']],
   [
     'display',
     [
@@ -30,7 +31,7 @@ export const SUPPORTED_CSS_PROPERTY_KEYWORDS = new Map<
   ['scroll-behavior', ['auto', 'smooth']],
   ['text-overflow', ['clip', 'ellipsis']],
   ['touch-action', ['auto', 'manipulation', 'none', 'pan-x', 'pan-y']],
-  ['user-select', ['all', 'auto', 'none', 'text']],
+  ['user-select', ['auto', 'none', 'text']],
   ['visibility', ['collapse', 'hidden', 'visible']],
   [
     'white-space',
