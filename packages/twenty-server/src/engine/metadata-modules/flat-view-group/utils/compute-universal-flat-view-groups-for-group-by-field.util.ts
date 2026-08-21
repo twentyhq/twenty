@@ -14,9 +14,6 @@ type ComputeUniversalFlatViewGroupsForGroupByFieldArgs = {
   now: string;
 };
 
-// Single source of truth for deriving a grouped view's view groups from its
-// group-by field: one group per select option in option order, plus a trailing
-// empty-value group when the field is nullable.
 export const computeUniversalFlatViewGroupsForGroupByField = ({
   viewUniversalIdentifier,
   mainGroupByFlatFieldMetadata,
