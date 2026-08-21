@@ -474,8 +474,10 @@ export default defineRole({
     },
     {
       objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      // Insert permission checks canUpdateObjectRecords; disabling prevents
+      // partners from creating bare Applications (created by apply-to-brief route instead).
       canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
