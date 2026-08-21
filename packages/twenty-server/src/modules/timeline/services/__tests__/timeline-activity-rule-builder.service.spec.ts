@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { TimelineActivityRuleResolverService } from 'src/modules/timeline/services/timeline-activity-rule-resolver.service';
+import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const COMPANY_OBJECT_ID = 'company-object-id';
@@ -40,14 +40,14 @@ const buildSelfOverrideRow = (overrides: Record<string, unknown>) => ({
   ...overrides,
 });
 
-describe('TimelineActivityRuleResolverService', () => {
+describe('TimelineActivityRuleBuilderService', () => {
   const setup = async (
     ruleRows: Record<string, unknown>[],
     fieldRows: { universalIdentifier: string; id: string; name: string }[] = [],
   ) => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        TimelineActivityRuleResolverService,
+        TimelineActivityRuleBuilderService,
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
@@ -71,7 +71,7 @@ describe('TimelineActivityRuleResolverService', () => {
       ],
     }).compile();
 
-    return moduleRef.get(TimelineActivityRuleResolverService);
+    return moduleRef.get(TimelineActivityRuleBuilderService);
   };
 
   it('should derive the self rule when no override row exists', async () => {
