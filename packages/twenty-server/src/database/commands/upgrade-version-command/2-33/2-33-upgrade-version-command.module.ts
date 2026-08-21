@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillActivityTargetsJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123540000-backfill-activity-targets-junction-target.command';
-import { AddTimelineActivityStructuredColumnsCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123550000-add-timeline-activity-structured-columns.command';
-import { BackfillTimelineActivityStructuredColumnsCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123560000-backfill-timeline-activity-structured-columns.command';
+import { AddTimelineActivityStructuredColumnsCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787305880000-add-timeline-activity-structured-columns.command';
+import { BackfillTimelineActivityStructuredColumnsCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787305881000-backfill-timeline-activity-structured-columns.command';
 import { MigrateCommandMenuItemLabelsToPlaceholdersCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787127900000-migrate-command-menu-item-labels-to-placeholders.command';
 import { MarkSearchVectorFieldsSystemCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787138325228-mark-search-vector-fields-system.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
