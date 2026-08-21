@@ -122,8 +122,10 @@ export class OpenApiService {
       paths[`/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
       paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
-      paths[`/${item.namePlural}/duplicates`] = computeDuplicatesResultPath(item);
-      paths[`/restore/${item.namePlural}/{id}`] = computeRestoreOneResultPath(item);
+      paths[`/${item.namePlural}/duplicates`] =
+        computeDuplicatesResultPath(item);
+      paths[`/restore/${item.namePlural}/{id}`] =
+        computeRestoreOneResultPath(item);
       paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(item);
       paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(item);
       paths[`/${item.namePlural}/groupBy`] = computeGroupByResultPath(item);
