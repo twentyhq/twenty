@@ -10,15 +10,17 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
+// An unset author is null on a stored row and undefined on a payload, so both
+// are normalized before they can decide whether two events are the same.
 const buildMergeKey = ({
   recordId,
   workspaceMemberId,
   name,
 }: {
-  recordId: unknown;
-  workspaceMemberId: unknown;
-  name: unknown;
-}): string => `${recordId}|${workspaceMemberId}|${name}`;
+  recordId: string;
+  workspaceMemberId: string | null | undefined;
+  name: string;
+}): string => `${recordId}|${workspaceMemberId ?? null}|${name}`;
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
