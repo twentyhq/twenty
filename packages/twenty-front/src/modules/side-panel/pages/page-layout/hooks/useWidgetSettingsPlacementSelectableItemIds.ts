@@ -4,15 +4,20 @@ import { useWidgetSettingsPlacement } from '@/side-panel/pages/page-layout/hooks
 export const useWidgetSettingsPlacementSelectableItemIds = (
   pageLayoutId: string,
 ) => {
+  const widgetSettingsPlacement = useWidgetSettingsPlacement(pageLayoutId);
+
   const {
     isPlacementSectionVisible,
     showAddWidgetBelow,
     showMoveDown,
     showMoveUp,
-  } = useWidgetSettingsPlacement(pageLayoutId);
+  } = widgetSettingsPlacement;
 
   if (!isPlacementSectionVisible) {
-    return { placementSelectableItemIds: [] };
+    return {
+      placementSelectableItemIds: [],
+      widgetSettingsPlacement,
+    };
   }
 
   const placementSelectableItemIds = [
@@ -25,5 +30,5 @@ export const useWidgetSettingsPlacementSelectableItemIds = (
       : []),
   ];
 
-  return { placementSelectableItemIds };
+  return { placementSelectableItemIds, widgetSettingsPlacement };
 };

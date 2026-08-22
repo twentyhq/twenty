@@ -11,7 +11,7 @@ export const SidePanelPageLayoutWidgetSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const { placementSelectableItemIds } =
+  const { placementSelectableItemIds, widgetSettingsPlacement } =
     useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
 
   if (!isDefined(widgetInEditMode)) {
@@ -29,7 +29,18 @@ export const SidePanelPageLayoutWidgetSettings = () => {
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
       <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
-      <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
+      <WidgetSettingsPlacementSection
+        pageLayoutId={pageLayoutId}
+        isPlacementSectionVisible={
+          widgetSettingsPlacement.isPlacementSectionVisible
+        }
+        pageLayoutEditingWidgetId={
+          widgetSettingsPlacement.pageLayoutEditingWidgetId
+        }
+        showAddWidgetBelow={widgetSettingsPlacement.showAddWidgetBelow}
+        showMoveDown={widgetSettingsPlacement.showMoveDown}
+        showMoveUp={widgetSettingsPlacement.showMoveUp}
+      />
     </SidePanelList>
   );
 };

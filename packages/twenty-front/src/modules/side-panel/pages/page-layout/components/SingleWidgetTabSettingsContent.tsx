@@ -11,7 +11,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -29,7 +28,7 @@ const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
 
 type SingleWidgetTabSettingsContentProps = {
   pageLayoutId: string;
-  singleWidget: PageLayoutWidget | undefined;
+  singleWidget: PageLayoutWidget;
   canSetAsPinned: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
@@ -60,7 +59,7 @@ export const SingleWidgetTabSettingsContent = ({
   const { openModal } = useModal();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
-    singleWidget?.conditionalAvailabilityExpression,
+    singleWidget.conditionalAvailabilityExpression,
   );
 
   const handleResetToDefault = () => {
@@ -74,9 +73,7 @@ export const SingleWidgetTabSettingsContent = ({
     ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
     ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
     ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
-    ...(isDefined(singleWidget)
-      ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION]
-      : []),
+    TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
   ];
@@ -126,34 +123,32 @@ export const SingleWidgetTabSettingsContent = ({
           )}
         </SidePanelGroup>
         <SidePanelGroup heading={t`Manage`}>
-          {isDefined(singleWidget) && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-            >
-              <CommandMenuItemDropdown
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-                label={t`Visibility restriction`}
-                Icon={IconEyeX}
-                dropdownId={
-                  TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-                }
-                dropdownComponents={
-                  <DropdownContent>
-                    <SingleWidgetTabVisibilityDropdownContent
-                      widgetId={singleWidget.id}
-                      currentExpression={
-                        singleWidget.conditionalAvailabilityExpression
-                      }
-                      pageLayoutId={pageLayoutId}
-                    />
-                  </DropdownContent>
-                }
-                dropdownPlacement="bottom-end"
-                description={visibilityLabel}
-                contextualTextPosition="right"
-              />
-            </SelectableListItem>
-          )}
+          <SelectableListItem
+            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+          >
+            <CommandMenuItemDropdown
+              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+              label={t`Visibility restriction`}
+              Icon={IconEyeX}
+              dropdownId={
+                TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
+              }
+              dropdownComponents={
+                <DropdownContent>
+                  <SingleWidgetTabVisibilityDropdownContent
+                    widgetId={singleWidget.id}
+                    currentExpression={
+                      singleWidget.conditionalAvailabilityExpression
+                    }
+                    pageLayoutId={pageLayoutId}
+                  />
+                </DropdownContent>
+              }
+              dropdownPlacement="bottom-end"
+              description={visibilityLabel}
+              contextualTextPosition="right"
+            />
+          </SelectableListItem>
           <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
