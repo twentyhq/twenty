@@ -103,6 +103,29 @@ export const buildTimelineActivityTypeBackfillQuery = ({
     for (const [databaseAction, action] of Object.entries(
       LINKED_ACTION_BY_DATABASE_ACTION,
     )) {
+      if (databaseAction === 'updated') {
+        const legacyUpdatedName = `linked-${legacyName}.updated`;
+
+        // Source-record updates and junction repoints shared this legacy name.
+        // A source update carries the field diff; a junction event does not.
+        pushWhenClause(
+          `"name" = '${legacyUpdatedName}' AND jsonb_typeof("properties"->'diff') = 'object' AND "properties"->'diff' <> '{}'::jsonb`,
+          resolveTimelineActivityTypeId({
+            action,
+            objectUniversalIdentifier: universalIdentifier,
+          }),
+        );
+        pushWhenClause(
+          `"name" = '${legacyUpdatedName}'`,
+          resolveTimelineActivityTypeId({
+            action: 'linked',
+            objectUniversalIdentifier: universalIdentifier,
+          }),
+        );
+
+        continue;
+      }
+
       pushWhenClause(
         `"name" = 'linked-${legacyName}.${databaseAction}'`,
         resolveTimelineActivityTypeId({

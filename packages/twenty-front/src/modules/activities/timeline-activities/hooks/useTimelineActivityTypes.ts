@@ -25,6 +25,8 @@ export const useTimelineActivityTypes = () => {
             renderer: isTimelineActivityRenderer(timelineActivityType.renderer)
               ? timelineActivityType.renderer
               : null,
+            objectUniversalIdentifier:
+              timelineActivityType.objectUniversalIdentifier ?? null,
           },
         ]),
       ),

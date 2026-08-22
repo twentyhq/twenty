@@ -62,6 +62,7 @@ const keepDiffOnly = (
 // cached name and the persisted properties differ.
 const buildLinkedPayload = ({
   rule,
+  name,
   timelineActivityTypeId,
   target,
   workspaceMemberId,
@@ -70,6 +71,7 @@ const buildLinkedPayload = ({
   properties,
 }: {
   rule: TimelineActivityRule;
+  name: string;
   timelineActivityTypeId: string;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
@@ -77,6 +79,7 @@ const buildLinkedPayload = ({
   linkedRecordCachedName: string | undefined;
   properties: ObjectRecordBaseEvent['properties'];
 }): TimelineActivityPayload => ({
+  name,
   timelineActivityTypeId,
   objectSingularName: target.targetObjectNameSingular,
   recordId: target.targetRecordId,
@@ -276,6 +279,7 @@ export class TimelineActivityService {
 
         return [
           {
+            name: `${nameSingular}.${action}`,
             timelineActivityTypeId,
             objectSingularName: nameSingular,
             recordId: event.recordId,
@@ -299,6 +303,7 @@ export class TimelineActivityService {
       (targetsBySourceRecordId.get(event.recordId) ?? []).map((target) =>
         buildLinkedPayload({
           rule,
+          name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
           timelineActivityTypeId,
           target,
           workspaceMemberId: event.workspaceMemberId,
@@ -395,6 +400,7 @@ export class TimelineActivityService {
       .map(({ event, target, sourceRecordId }) =>
         buildLinkedPayload({
           rule,
+          name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
           timelineActivityTypeId,
           target,
           workspaceMemberId: event.workspaceMemberId,

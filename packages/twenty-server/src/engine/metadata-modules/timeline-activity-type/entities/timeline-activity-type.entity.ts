@@ -32,8 +32,8 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: false, type: 'varchar' })
   label: string;
 
-  // The verb the entry describes. Null for a type nothing stamps on a row, which
-  // exists so the timeline can offer creating one.
+  // The verb the entry describes. Null leaves the label authoritative for a
+  // custom renderer instead of selecting built-in action copy.
   @Column({ nullable: true, type: 'varchar' })
   action: TimelineActivityAction | null;
 

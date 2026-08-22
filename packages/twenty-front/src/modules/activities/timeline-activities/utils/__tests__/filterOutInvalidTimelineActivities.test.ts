@@ -13,9 +13,11 @@ const mainObjectMetadataItem = {
 
 const NOTE_OBJECT_METADATA_ID = '20202020-0000-4000-8000-00000000note';
 const TASK_OBJECT_METADATA_ID = '20202020-0000-4000-8000-00000000task';
+const NOTE_OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000010';
 
 const noteObjectMetadataItem = {
   id: NOTE_OBJECT_METADATA_ID,
+  universalIdentifier: NOTE_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'note',
   namePlural: 'notes',
   readableFields: [{ name: 'title' }, { name: 'body' }],
@@ -30,6 +32,7 @@ const taskObjectMetadataItem = {
 
 const UPDATED_TYPE_ID = '20202020-0000-4000-8000-0000000update';
 const LINKED_TYPE_ID = '20202020-0000-4000-8000-0000000linked';
+const NOTE_UPDATED_TYPE_ID = '20202020-0000-4000-8000-000000000011';
 
 const timelineActivityTypeById = new Map<string, TimelineActivityType>([
   [
@@ -41,6 +44,7 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
       action: 'updated',
       icon: null,
       renderer: null,
+      objectUniversalIdentifier: null,
     },
   ],
   [
@@ -52,6 +56,19 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
       action: 'linked',
       icon: null,
       renderer: null,
+      objectUniversalIdentifier: null,
+    },
+  ],
+  [
+    NOTE_UPDATED_TYPE_ID,
+    {
+      id: NOTE_UPDATED_TYPE_ID,
+      name: 'noteUpdated',
+      label: 'updated a related note',
+      action: 'updated',
+      icon: null,
+      renderer: 'activity',
+      objectUniversalIdentifier: NOTE_OBJECT_UNIVERSAL_IDENTIFIER,
     },
   ],
 ]);
@@ -180,6 +197,58 @@ describe('filterOutInvalidTimelineActivities', () => {
         id: '1',
         timelineActivityTypeId: UPDATED_TYPE_ID,
         linkedObjectMetadataId: NOTE_OBJECT_METADATA_ID,
+        properties: { diff: { title: { before: 'a', after: 'b' } } },
+      },
+    ]);
+  });
+
+  it('resolves the linked object from the type for a historical row', () => {
+    const events = [
+      {
+        id: '1',
+        timelineActivityTypeId: NOTE_UPDATED_TYPE_ID,
+        linkedObjectMetadataId: null,
+        properties: {
+          diff: {
+            title: { before: 'a', after: 'b' },
+            field1: { before: 'c', after: 'd' },
+          },
+        },
+      },
+    ];
+
+    expect(filter(events)).toEqual([
+      {
+        id: '1',
+        timelineActivityTypeId: NOTE_UPDATED_TYPE_ID,
+        linkedObjectMetadataId: null,
+        properties: { diff: { title: { before: 'a', after: 'b' } } },
+      },
+    ]);
+  });
+
+  it('resolves the linked object from name for a row written by an old pod', () => {
+    const events = [
+      {
+        id: '1',
+        timelineActivityTypeId: null,
+        linkedObjectMetadataId: null,
+        name: 'linked-note.updated',
+        properties: {
+          diff: {
+            title: { before: 'a', after: 'b' },
+            field1: { before: 'c', after: 'd' },
+          },
+        },
+      },
+    ];
+
+    expect(filter(events)).toEqual([
+      {
+        id: '1',
+        timelineActivityTypeId: null,
+        linkedObjectMetadataId: null,
+        name: 'linked-note.updated',
         properties: { diff: { title: { before: 'a', after: 'b' } } },
       },
     ]);

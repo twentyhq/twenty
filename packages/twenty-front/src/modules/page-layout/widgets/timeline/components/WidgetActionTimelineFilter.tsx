@@ -29,8 +29,8 @@ export const WidgetActionTimelineFilter = () => {
     targetRecord.id,
   );
 
-  // Only a type an event can carry is worth offering: types without an action
-  // are never stamped on a row, they exist to be created from the + button.
+  // Action-less types rely on a custom renderer and do not map to the built-in
+  // event categories exposed by this filter.
   const filterableTimelineActivityTypes = [
     ...timelineActivityTypeById.values(),
   ].filter((timelineActivityType) => isDefined(timelineActivityType.action));

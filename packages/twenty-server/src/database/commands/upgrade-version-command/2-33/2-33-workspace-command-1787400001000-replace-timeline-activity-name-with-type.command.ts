@@ -26,7 +26,7 @@ const LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER =
 @Command({
   name: 'upgrade:2-33:replace-timeline-activity-name-with-type',
   description:
-    'Seed the standard timelineActivityType rows, add timelineActivity.timelineActivityTypeId and backfill it from the legacy name column, which upgrade:2-34 drops a release later',
+    'Seed the standard timelineActivityType rows, add timelineActivity.timelineActivityTypeId and backfill it from the deprecated name column',
 })
 export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

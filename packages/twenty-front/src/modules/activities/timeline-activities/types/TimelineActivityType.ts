@@ -10,4 +10,5 @@ export type TimelineActivityType = {
   action: TimelineActivityAction | null;
   icon: string | null;
   renderer: TimelineActivityRenderer | null;
+  objectUniversalIdentifier: string | null;
 };

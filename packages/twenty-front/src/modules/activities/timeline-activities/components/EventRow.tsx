@@ -4,18 +4,20 @@ import { useContext } from 'react';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
-import { useLinkedObjectObjectMetadataItem } from '@/activities/timeline-activities/hooks/useLinkedObjectObjectMetadataItem';
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
+import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
 import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
+import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
@@ -99,16 +101,26 @@ export const EventRow = ({
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const linkedObjectMetadataItem = useLinkedObjectObjectMetadataItem(
-    event.linkedObjectMetadataId,
-  );
-
   const { timelineActivityTypeById } = useTimelineActivityTypes();
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const timelineActivityType = getTimelineActivityType(
     event,
     timelineActivityTypeById,
   );
+
+  const timelineActivityAction = getTimelineActivityAction(
+    event,
+    timelineActivityTypeById,
+  );
+
+  const linkedObjectMetadataItem =
+    getTimelineActivityLinkedObjectMetadataItem({
+      timelineActivity: event,
+      timelineActivityTypeById,
+      objectMetadataItems,
+    }) ?? null;
 
   if (isUndefinedOrNull(currentWorkspaceMember)) {
     return null;
@@ -158,7 +170,7 @@ export const EventRow = ({
               authorFullName={authorFullName}
               labelIdentifierValue={labelIdentifier.name}
               event={event}
-              eventAction={timelineActivityType?.action ?? null}
+              eventAction={timelineActivityAction}
               eventRenderer={timelineActivityType?.renderer ?? null}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}

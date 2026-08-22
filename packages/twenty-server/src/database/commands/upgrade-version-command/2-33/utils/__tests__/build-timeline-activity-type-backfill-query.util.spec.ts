@@ -45,6 +45,7 @@ const getTypeIdForCondition = (
 
 const NOTE_LINKED_TYPE_ID = '00000000-0000-4000-8000-00000000000a';
 const MESSAGE_LINKED_TYPE_ID = '00000000-0000-4000-8000-00000000000b';
+const NOTE_UPDATED_TYPE_ID = '00000000-0000-4000-8000-00000000000c';
 
 const buildFlatTimelineActivityTypeMapsWithObjectBoundTypes =
   (): TimelineActivityTypeResolutionMaps => ({
@@ -55,6 +56,11 @@ const buildFlatTimelineActivityTypeMapsWithObjectBoundTypes =
       noteLinked: {
         id: NOTE_LINKED_TYPE_ID,
         action: 'linked',
+        objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
+      },
+      noteUpdated: {
+        id: NOTE_UPDATED_TYPE_ID,
+        action: 'updated',
         objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
       },
       messageLinked: {
@@ -131,6 +137,25 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
 
     expect(
       getTypeIdForCondition(query!, `"name" = 'linked-note.created'`),
+    ).toBe(NOTE_LINKED_TYPE_ID);
+  });
+
+  it('distinguishes a linked record update from a junction repoint by its diff', () => {
+    const query = buildTimelineActivityTypeBackfillQuery({
+      schemaName: 'workspace_1',
+      batchSize: 5000,
+      flatTimelineActivityTypeMaps:
+        buildFlatTimelineActivityTypeMapsWithObjectBoundTypes(),
+    });
+
+    expect(
+      getTypeIdForCondition(
+        query!,
+        `"name" = 'linked-note.updated' AND jsonb_typeof("properties"->'diff') = 'object' AND "properties"->'diff' <> '{}'::jsonb`,
+      ),
+    ).toBe(NOTE_UPDATED_TYPE_ID);
+    expect(
+      getTypeIdForCondition(query!, `"name" = 'linked-note.updated'`),
     ).toBe(NOTE_LINKED_TYPE_ID);
   });
 

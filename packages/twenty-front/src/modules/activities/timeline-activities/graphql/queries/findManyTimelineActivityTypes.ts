@@ -9,6 +9,7 @@ export const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
       action
       icon
       renderer
+      objectUniversalIdentifier
     }
   }
 `;

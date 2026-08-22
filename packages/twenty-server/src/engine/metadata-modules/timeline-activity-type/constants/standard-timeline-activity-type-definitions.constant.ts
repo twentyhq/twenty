@@ -10,8 +10,6 @@ export type StandardTimelineActivityTypeDefinition = {
   name: string;
   universalIdentifier: string;
   label: MessageDescriptor;
-  // Null marks a type nothing stamps on a row: it exists so the timeline can
-  // offer creating one, and it renders from its label and icon alone.
   action: TimelineActivityAction | null;
   icon: string | null;
   renderer: TimelineActivityRenderer | null;
@@ -95,30 +93,6 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'unlinked',
       icon: 'IconUnlink',
-      renderer: null,
-      objectUniversalIdentifier: null,
-    },
-    {
-      name: 'note',
-      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c07',
-      label: msg({
-        message: `Note`,
-        context: 'timelineActivityType.label',
-      }),
-      action: null,
-      icon: 'IconNotes',
-      renderer: null,
-      objectUniversalIdentifier: null,
-    },
-    {
-      name: 'task',
-      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c08',
-      label: msg({
-        message: `Task`,
-        context: 'timelineActivityType.label',
-      }),
-      action: null,
-      icon: 'IconCheckbox',
       renderer: null,
       objectUniversalIdentifier: null,
     },

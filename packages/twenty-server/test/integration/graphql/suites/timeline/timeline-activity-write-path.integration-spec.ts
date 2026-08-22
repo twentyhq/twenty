@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
+  name
   timelineActivityTypeId
   properties
   linkedRecordId
@@ -27,6 +28,7 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
 
 type TimelineActivityRow = {
   id: string;
+  name: string | null;
   timelineActivityTypeId: string | null;
   properties: Record<string, unknown> | null;
   linkedRecordId: string | null;
@@ -189,11 +191,8 @@ describe('timeline activity write path (integration)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    for (const {
-      id,
-      action,
-      objectUniversalIdentifier,
-    } of response.body.data.timelineActivityTypes) {
+    for (const { id, action, objectUniversalIdentifier } of response.body.data
+      .timelineActivityTypes) {
       if (isDefined(action)) {
         timelineActivityTypeIdByObjectAndAction.set(
           buildKey(
@@ -236,6 +235,7 @@ describe('timeline activity write path (integration)', () => {
       expect(timelineActivities[0].timelineActivityTypeId).toBe(
         timelineActivityTypeIdForOrThrow('created'),
       );
+      expect(timelineActivities[0].name).toBe('company.created');
       expect(timelineActivities[0].targetCompanyId).toBe(COMPANY_ID);
       expect(timelineActivities[0].linkedRecordId).toBeNull();
     });
@@ -339,8 +339,8 @@ describe('timeline activity write path (integration)', () => {
         const timelineActivities = await findTimelineActivities({
           targetCompanyId: { eq: id },
           timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated'),
-        },
+            eq: timelineActivityTypeIdForOrThrow('updated'),
+          },
         });
 
         expect(timelineActivities).toHaveLength(1);
@@ -403,7 +403,10 @@ describe('timeline activity write path (integration)', () => {
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('linked', NOTE_UNIVERSAL_IDENTIFIER),
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
         },
       });
 
@@ -434,7 +437,10 @@ describe('timeline activity write path (integration)', () => {
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated', NOTE_UNIVERSAL_IDENTIFIER),
+          eq: timelineActivityTypeIdForOrThrow(
+            'updated',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
         },
       });
 
@@ -474,7 +480,10 @@ describe('timeline activity write path (integration)', () => {
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated', NOTE_UNIVERSAL_IDENTIFIER),
+          eq: timelineActivityTypeIdForOrThrow(
+            'updated',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
         },
       });
 
@@ -498,7 +507,10 @@ describe('timeline activity write path (integration)', () => {
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('unlinked', NOTE_UNIVERSAL_IDENTIFIER),
+          eq: timelineActivityTypeIdForOrThrow(
+            'unlinked',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
         },
       });
 

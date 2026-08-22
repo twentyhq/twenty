@@ -2,6 +2,7 @@ import { type FilterableTimelineActivity } from '@/activities/timeline-activitie
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
+import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,14 +51,12 @@ export const filterOutInvalidTimelineActivities = <
 
   return timelineActivities
     .map((timelineActivity) => {
-      const linkedObjectMetadataItem = isDefined(
-        timelineActivity.linkedObjectMetadataId,
-      )
-        ? objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
-          )
-        : undefined;
+      const linkedObjectMetadataItem =
+        getTimelineActivityLinkedObjectMetadataItem({
+          timelineActivity,
+          timelineActivityTypeById,
+          objectMetadataItems,
+        });
 
       const action = getTimelineActivityAction(
         timelineActivity,

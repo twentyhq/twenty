@@ -5,5 +5,8 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 // nullable fields are optional because every reader guards them with isDefined.
 export type FilterableTimelineActivity = Pick<TimelineActivity, 'properties'> &
   Partial<
-    Pick<TimelineActivity, 'linkedObjectMetadataId' | 'timelineActivityTypeId'>
+    Pick<
+      TimelineActivity,
+      'linkedObjectMetadataId' | 'name' | 'timelineActivityTypeId'
+    >
   >;
