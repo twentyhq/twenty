@@ -30,13 +30,8 @@ export type {
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export type {
-  UsageOperationTypeValue,
   BillableOperationManifest,
   BillableOperations,
-} from './billableOperationsType';
-export {
-  USAGE_OPERATION_TYPES,
-  isUsageOperationTypeValue,
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
@@ -164,6 +159,11 @@ export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectio
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
+export type { UsageOperationTypeValue } from './usageOperationTypesType';
+export {
+  USAGE_OPERATION_TYPES,
+  isUsageOperationTypeValue,
+} from './usageOperationTypesType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
