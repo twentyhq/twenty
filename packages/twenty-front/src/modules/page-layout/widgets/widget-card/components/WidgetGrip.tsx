@@ -47,6 +47,7 @@ export const WidgetGrip = ({ className }: WidgetGripProps) => {
   } | null>(null);
 
   const handlePointerDown = (event: ReactPointerEvent) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
     setPointerDownPosition({
       x: event.clientX,
       y: event.clientY,

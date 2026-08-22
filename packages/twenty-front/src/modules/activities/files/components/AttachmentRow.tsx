@@ -101,6 +101,7 @@ export const AttachmentRow = ({
   const fileCategory = getFileCategoryFromExtension(attachment.file.extension);
 
   const fileUrl = attachment.file.url;
+  const safeFileUrl = getSafeUrl(fileUrl);
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -163,7 +164,11 @@ export const AttachmentRow = ({
       return;
     }
 
-    window.open(getSafeUrl(fileUrl), '_blank', 'noopener,noreferrer');
+    if (!isDefined(safeFileUrl)) {
+      return;
+    }
+
+    window.open(safeFileUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleFileLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -208,7 +213,7 @@ export const AttachmentRow = ({
             <StyledLinkContainer>
               <StyledLink
                 onClick={handleFileLinkClick}
-                href={getSafeUrl(fileUrl)}
+                href={safeFileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >

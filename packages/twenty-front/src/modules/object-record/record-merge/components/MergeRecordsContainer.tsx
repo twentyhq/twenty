@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
-import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useRef } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
@@ -13,6 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useMergeRecordsContainerTabs } from '@/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
+import { MergeRecordsContentScrollResetEffect } from '@/object-record/record-merge/components/MergeRecordsContentScrollResetEffect';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { MergePreviewTab } from './MergePreviewTab';
@@ -36,8 +36,6 @@ const StyledTabListContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   background: ${themeCssVariables.background.primary};
-  container-name: tab-viewport;
-  container-type: size;
   flex: 1;
   overflow-y: auto;
 `;
@@ -63,12 +61,6 @@ export const MergeRecordsContainer = ({
 
   const contentContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isDefined(contentContainerRef.current)) {
-      contentContainerRef.current.scrollTop = 0;
-    }
-  }, [activeTabId]);
-
   return (
     <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
@@ -84,6 +76,10 @@ export const MergeRecordsContainer = ({
               />
             </StyledTabListContainer>
           </TabListComponentInstanceContext.Provider>
+          <MergeRecordsContentScrollResetEffect
+            activeTabId={activeTabId}
+            contentContainerRef={contentContainerRef}
+          />
           <StyledContentContainer ref={contentContainerRef}>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
               <MergePreviewTab objectNameSingular={objectNameSingular} />
