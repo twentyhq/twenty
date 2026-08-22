@@ -122,7 +122,7 @@ export default defineTimelineActivityType({
 });
 ```
 
-The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
+An override must include `emit`, because it replaces an existing automatic emit slot rather than an explicit-only type. The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
 
 ## Workspace overrides and muting
 
@@ -175,6 +175,6 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `emit.through.relationFieldUniversalIdentifier`    | No        | Junction relation used to fan events out to related record timelines  |
 | `emit.through.triggerFieldUniversalIdentifiers`    | No        | Source fields that can trigger an `updated` through event             |
 | `frontComponentUniversalIdentifier`                | No        | App-owned front component mounted when the row is expanded            |
-| `overridesTimelineActivityTypeUniversalIdentifier` | No        | Existing type explicitly replaced when targeting another app's object |
+| `overridesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                          |
 
 Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
