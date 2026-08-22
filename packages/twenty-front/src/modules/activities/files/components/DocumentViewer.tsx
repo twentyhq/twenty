@@ -4,13 +4,15 @@ import {
   type CsvPreviewData,
   fetchCsvPreview,
 } from '@/activities/files/utils/fetchCsvPreview';
+import { useMediaLoadStatus } from '@/activities/files/hooks/useMediaLoadStatus';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -32,6 +34,7 @@ const StyledDocumentViewerContainer = styled.div`
   flex-direction: column;
   height: calc(100vh / var(--t-zoom, 1) - 200px);
   min-height: 500px;
+  position: relative;
   width: 100%;
 
   #react-doc-viewer #header-bar {
@@ -55,6 +58,14 @@ const StyledDocumentViewerContainer = styled.div`
     overflow: auto;
     width: 100%;
   }
+`;
+
+const StyledMediaLoadingOverlay = styled.div`
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
 `;
 
 const StyledUnavailablePreviewContainer = styled.div`
@@ -213,10 +224,18 @@ export const DocumentViewer = ({
     ? documentExtension.toLowerCase().replace('.', '')
     : (extension?.toLowerCase().replace('.', '') ?? '');
   const fileCategory = getFileType(documentName);
+  const isVideo = fileCategory === 'VIDEO';
   const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
   const isMsOfficeFile = MS_OFFICE_EXTENSIONS.includes(fileExtension);
 
   const mimeType = isPreviewable ? MIME_TYPE_MAPPING[fileExtension] : undefined;
+
+  const viewerContainerRef = useRef<HTMLDivElement>(null);
+  const mediaStatus = useMediaLoadStatus({
+    containerRef: viewerContainerRef,
+    isEnabled: isVideo,
+    resetKey: documentUrl,
+  });
 
   useEffect(() => {
     if (fileExtension === 'csv') {
@@ -308,8 +327,37 @@ export const DocumentViewer = ({
     );
   }
 
+  if (isVideo && mediaStatus === 'error') {
+    return (
+      <StyledDocumentViewerContainer>
+        <StyledUnavailablePreviewContainer>
+          <StyledTitle>
+            <Trans>Preview Not Available</Trans>
+          </StyledTitle>
+          <StyledMessage>
+            <Trans>
+              This video could not be loaded. Please download the file to view
+              it.
+            </Trans>
+          </StyledMessage>
+          <Button
+            Icon={IconDownload}
+            title={t`Download File`}
+            onClick={() => downloadFile(documentUrl, documentName)}
+            variant="secondary"
+          />
+        </StyledUnavailablePreviewContainer>
+      </StyledDocumentViewerContainer>
+    );
+  }
+
   return (
-    <StyledDocumentViewerContainer>
+    <StyledDocumentViewerContainer ref={viewerContainerRef}>
+      {isVideo && mediaStatus === 'loading' && (
+        <StyledMediaLoadingOverlay>
+          <Loader />
+        </StyledMediaLoadingOverlay>
+      )}
       <DocViewer
         documents={[
           {
