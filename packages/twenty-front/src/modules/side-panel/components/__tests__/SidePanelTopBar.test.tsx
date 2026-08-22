@@ -281,6 +281,36 @@ describe('SidePanelTopBar', () => {
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   });
 
+  it('goes back with Escape while the search input is not focused', () => {
+    const { store } = renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelPage: SidePanelPages.SearchRecords,
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    fireEvent.keyDown(document.body, {
+      key: 'Escape',
+      code: 'Escape',
+    });
+
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  });
+
   it('renders the close button after the command menu content', () => {
     renderSidePanelCommandMenu();
 
