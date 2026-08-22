@@ -33,7 +33,7 @@ const createPrototypeWithInstalledContains = (
     ...(original ? { contains: original } : {}),
   };
 
-  installElementContainsPolyfill(prototype as never);
+  installElementContainsPolyfill(prototype);
 
   return prototype;
 };

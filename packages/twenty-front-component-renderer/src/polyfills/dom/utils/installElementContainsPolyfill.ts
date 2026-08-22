@@ -10,18 +10,22 @@ type NodeLike = {
  * (#24573).
  */
 export const installElementContainsPolyfill = (
-  elementPrototype: NodeLike & Record<string, unknown>,
+  elementPrototype: object,
 ): void => {
-  elementPrototype.contains = function contains(other: unknown): boolean {
-    let currentNode: unknown = other;
+  // Typed loosely on purpose: the caller hands over the runtime's own
+  // Element.prototype, whose class type is not assignable to an index
+  // signature under this package's strict settings.
+  (elementPrototype as { contains?: (other: unknown) => boolean }).contains =
+    function contains(this: NodeLike, other: unknown): boolean {
+      let currentNode: unknown = other;
 
-    while (currentNode != null) {
-      if (currentNode === this) {
-        return true;
+      while (currentNode != null) {
+        if (currentNode === this) {
+          return true;
+        }
+        currentNode = (currentNode as NodeLike).parentNode;
       }
-      currentNode = (currentNode as NodeLike).parentNode;
-    }
 
-    return false;
-  };
+      return false;
+    };
 };
