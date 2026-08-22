@@ -544,7 +544,7 @@ jobs:
                   "## 🚨 Removed Endpoints (" + (.missingEndpoints | length | tostring) + ")\n" +
                   (.missingEndpoints | map("- **" + .method + " " + .pathUrl + "**: " + (.summary // "")) | join("\n"))
                 else "" end,
-                ([.changedOperations[] | select(.incompatible)] | if length > 0 then
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
                   "\n## ⚠️ Incompatible Operations (" + (length | tostring) + ")\n" +
                   (map("- **" + .httpMethod + " " + .pathUrl + "**: " + (.summary // "Modified operation")) | join("\n"))
                 else "" end),
@@ -615,7 +615,7 @@ jobs:
                   "## 🚨 Removed Endpoints (" + (.missingEndpoints | length | tostring) + ")\n" +
                   (.missingEndpoints | map("- **" + .method + " " + .pathUrl + "**: " + (.summary // "")) | join("\n"))
                 else "" end,
-                ([.changedOperations[] | select(.incompatible)] | if length > 0 then
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
                   "\n## ⚠️ Incompatible Operations (" + (length | tostring) + ")\n" +
                   (map("- **" + .httpMethod + " " + .pathUrl + "**: " + (.summary // "Modified operation")) | join("\n"))
                 else "" end),
@@ -682,7 +682,7 @@ jobs:
                   "  Removed endpoints:\n" +
                   (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end),
-                ([.changedOperations[] | select(.incompatible)] | if length > 0 then
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
                   "  Incompatible operations:\n" +
                   (map("    - " + (.httpMethod // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end)
@@ -701,7 +701,7 @@ jobs:
                   "  Removed endpoints:\n" +
                   (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end),
-                ([.changedOperations[] | select(.incompatible)] | if length > 0 then
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
                   "  Incompatible operations:\n" +
                   (map("    - " + (.httpMethod // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end)
