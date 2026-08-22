@@ -70,6 +70,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
     expect(
       buildTimelineActivityTypeBackfillQuery({
         schemaName: 'workspace_1',
+        batchSize: 5000,
         flatTimelineActivityTypeMaps: buildFlatTimelineActivityTypeMaps([
           'created',
         ]),
@@ -80,6 +81,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
   it('maps a deleted junction row to unlinked and a deleted record to deleted', () => {
     const query = buildTimelineActivityTypeBackfillQuery({
       schemaName: 'workspace_1',
+      batchSize: 5000,
       flatTimelineActivityTypeMaps: buildFlatTimelineActivityTypeMaps(
         Object.keys(TYPE_ID_BY_ACTION) as (keyof typeof TYPE_ID_BY_ACTION)[],
       ),
@@ -104,6 +106,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
   it('falls back to linked for names it cannot parse and only touches unset rows', () => {
     const query = buildTimelineActivityTypeBackfillQuery({
       schemaName: 'workspace_1',
+      batchSize: 5000,
       flatTimelineActivityTypeMaps: buildFlatTimelineActivityTypeMaps(
         Object.keys(TYPE_ID_BY_ACTION) as (keyof typeof TYPE_ID_BY_ACTION)[],
       ),
@@ -113,7 +116,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
       TYPE_ID_BY_ACTION.linked,
     );
     expect(query!.sql).toContain(
-      `ELSE $${query!.parameters.length}::uuid END WHERE "timelineActivityTypeId" IS NULL`,
+      `ELSE $${query!.parameters.length}::uuid END WHERE "id" IN (SELECT "id" FROM "workspace_1"."timelineActivity" WHERE "timelineActivityTypeId" IS NULL LIMIT 5000)`,
     );
     expect(query!.sql).toContain('UPDATE "workspace_1"."timelineActivity"');
   });
@@ -121,6 +124,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
   it('stamps a linked note with the note type rather than the shared linked type', () => {
     const query = buildTimelineActivityTypeBackfillQuery({
       schemaName: 'workspace_1',
+      batchSize: 5000,
       flatTimelineActivityTypeMaps:
         buildFlatTimelineActivityTypeMapsWithObjectBoundTypes(),
     });
@@ -133,6 +137,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
   it('stamps the participant-written message name with the message type', () => {
     const query = buildTimelineActivityTypeBackfillQuery({
       schemaName: 'workspace_1',
+      batchSize: 5000,
       flatTimelineActivityTypeMaps:
         buildFlatTimelineActivityTypeMapsWithObjectBoundTypes(),
     });
@@ -145,6 +150,7 @@ describe('buildTimelineActivityTypeBackfillQuery', () => {
   it('orders object-bound arms before the shared arm for the same action', () => {
     const query = buildTimelineActivityTypeBackfillQuery({
       schemaName: 'workspace_1',
+      batchSize: 5000,
       flatTimelineActivityTypeMaps:
         buildFlatTimelineActivityTypeMapsWithObjectBoundTypes(),
     });

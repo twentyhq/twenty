@@ -18,8 +18,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { buildTimelineActivityTypeBackfillQuery } from 'src/database/commands/upgrade-version-command/2-33/utils/build-timeline-activity-type-backfill-query.util';
 
 const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
-const LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER =
-  '20202020-7207-46e8-9dab-849505ae8497';
+const BACKFILL_BATCH_SIZE = 5000;
 const LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER =
   TIMELINE_ACTIVITY.fields.linkedRecordCachedName.universalIdentifier;
 
@@ -27,7 +26,7 @@ const LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER =
 @Command({
   name: 'upgrade:2-33:replace-timeline-activity-name-with-type',
   description:
-    'Seed the standard timelineActivityType rows, add timelineActivity.timelineActivityTypeId, backfill it from the legacy name column and drop that column',
+    'Seed the standard timelineActivityType rows, add timelineActivity.timelineActivityTypeId and backfill it from the legacy name column, which upgrade:2-34 drops a release later',
 })
 export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -101,12 +100,6 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     await this.backfillTimelineActivityTypeIds({ workspaceId, dataSource });
 
     await this.repointLabelIdentifierToLinkedRecordCachedName({
-      workspaceId,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-    });
-
-    await this.deleteLegacyNameField({
       workspaceId,
       applicationUniversalIdentifier:
         twentyStandardFlatApplication.universalIdentifier,
@@ -225,6 +218,7 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     const backfillQuery = buildTimelineActivityTypeBackfillQuery({
       schemaName: getWorkspaceSchemaName(workspaceId),
       flatTimelineActivityTypeMaps,
+      batchSize: BACKFILL_BATCH_SIZE,
     });
 
     if (!isDefined(backfillQuery)) {
@@ -233,15 +227,25 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
       );
     }
 
-    const result = await dataSource.query(
-      backfillQuery.sql,
-      backfillQuery.parameters,
-      undefined,
-      { shouldBypassPermissionChecks: true },
-    );
+    let backfilledRowCount = 0;
+    let lastBatchRowCount = 0;
+
+    // Each batch commits on its own, so an interrupted run resumes where it
+    // stopped: the query only ever picks rows that still have no type.
+    do {
+      const result = await dataSource.query(
+        backfillQuery.sql,
+        backfillQuery.parameters,
+        undefined,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      lastBatchRowCount = result?.[1] ?? 0;
+      backfilledRowCount += lastBatchRowCount;
+    } while (lastBatchRowCount === BACKFILL_BATCH_SIZE);
 
     this.logger.log(
-      `Backfilled ${result?.[1] ?? 0} timelineActivity rows for workspace ${workspaceId}`,
+      `Backfilled ${backfilledRowCount} timelineActivity rows for workspace ${workspaceId}`,
     );
   }
 
@@ -303,47 +307,4 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     }
   }
 
-  private async deleteLegacyNameField({
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    const legacyNameField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER
-      ];
-
-    if (!isDefined(legacyNameField)) {
-      return;
-    }
-
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [legacyNameField],
-              flatEntityToUpdate: [],
-            },
-          },
-        },
-      );
-
-    if (result.status === 'fail') {
-      throw new Error(
-        `Failed to drop timelineActivity.name for workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-      );
-    }
-  }
 }

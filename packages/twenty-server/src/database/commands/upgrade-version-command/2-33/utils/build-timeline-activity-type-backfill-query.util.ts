@@ -45,12 +45,17 @@ const LEGACY_PARTICIPANT_NAMES = [
   },
 ] as const;
 
+// Bounded so each batch is a short transaction: timelineActivity is one of the
+// largest tables in a workspace and a single unbounded UPDATE would hold row
+// locks and grow WAL for the whole rewrite.
 export const buildTimelineActivityTypeBackfillQuery = ({
   schemaName,
   flatTimelineActivityTypeMaps,
+  batchSize,
 }: {
   schemaName: string;
   flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps;
+  batchSize: number;
 }):
   | {
       sql: string;
@@ -129,7 +134,7 @@ export const buildTimelineActivityTypeBackfillQuery = ({
   parameters.push(fallbackTypeId);
 
   return {
-    sql: `UPDATE "${schemaName}"."timelineActivity" SET "timelineActivityTypeId" = CASE ${whenClauses.join(' ')} ELSE $${parameters.length}::uuid END WHERE "timelineActivityTypeId" IS NULL`,
+    sql: `UPDATE "${schemaName}"."timelineActivity" SET "timelineActivityTypeId" = CASE ${whenClauses.join(' ')} ELSE $${parameters.length}::uuid END WHERE "id" IN (SELECT "id" FROM "${schemaName}"."timelineActivity" WHERE "timelineActivityTypeId" IS NULL LIMIT ${batchSize})`,
     parameters,
   };
 };
