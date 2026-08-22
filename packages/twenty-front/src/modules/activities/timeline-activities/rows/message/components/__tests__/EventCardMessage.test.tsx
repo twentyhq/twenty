@@ -29,7 +29,7 @@ describe('EventCardMessage', () => {
         subject: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
         text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
         messageThreadId: 'thread-id',
-        messageParticipants: [],
+        messageParticipants: [{ handle: 'private@example.com' }],
       },
       loading: false,
       error: undefined,
@@ -42,6 +42,7 @@ describe('EventCardMessage', () => {
     expect(
       screen.queryByText(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText('private@example.com')).not.toBeInTheDocument();
   });
 
   it('renders the not-shared state when record access is forbidden', () => {
