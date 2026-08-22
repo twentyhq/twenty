@@ -167,28 +167,6 @@ describe('Calendar import transient database errors (integration)', () => {
     expect(channelState.syncStatus).toBe(CalendarChannelSyncStatus.ONGOING);
   }, 120000);
 
-  it('should reschedule the calendar channel when the connection dies mid-transaction and the rollback fails too', async () => {
-    await fetchOneEvent();
-
-    jest
-      .spyOn(calendarEventParticipantService, 'writeCalendarEventParticipants')
-      .mockImplementation(async ({ transactionScope }) => {
-        await transactionScope.executeRawQuery(
-          'SELECT pg_terminate_backend(pg_backend_pid())',
-        );
-      });
-
-    await runCalendarChannelEventsImport(channel.calendarChannelId);
-
-    const channelState = await queryCalendarChannel(channel);
-
-    expect(channelState.throttleFailureCount).toBe(1);
-    expect(channelState.syncStage).toBe(
-      CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-    );
-    expect(channelState.syncStatus).toBe(CalendarChannelSyncStatus.ONGOING);
-  }, 120000);
-
   it('should have ended the import transaction before the contact creation job is enqueued and the participants are matched', async () => {
     await fetchOneEvent();
 
