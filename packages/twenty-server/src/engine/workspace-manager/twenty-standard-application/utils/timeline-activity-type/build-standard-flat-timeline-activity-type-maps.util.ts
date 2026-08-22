@@ -53,6 +53,8 @@ export const buildStandardFlatTimelineActivityTypeMaps = ({
             ? null
             : (definition.triggerFieldUniversalIdentifiers ?? null),
         overridesTimelineActivityTypeUniversalIdentifier: null,
+        isActive: true,
+        overrides: null,
         workspaceId,
         applicationId: twentyStandardApplicationId,
         universalIdentifier: definition.universalIdentifier,

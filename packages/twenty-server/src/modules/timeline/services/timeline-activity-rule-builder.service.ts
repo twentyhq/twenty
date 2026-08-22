@@ -108,11 +108,7 @@ export class TimelineActivityRuleBuilderService {
         allTimelineActivityTypeUniversalIdentifiers,
       );
 
-      if (isDefined(effectiveTimelineActivityType)) {
-        effectiveDeclaredTimelineActivityTypes.push(
-          effectiveTimelineActivityType,
-        );
-      } else {
+      if (!isDefined(effectiveTimelineActivityType)) {
         const [candidate] = candidates;
 
         this.timelineActivityMetadataDiagnosticsService.report({
@@ -121,6 +117,14 @@ export class TimelineActivityRuleBuilderService {
           action: candidate.action ?? 'unknown',
           objectUniversalIdentifier: candidate.objectUniversalIdentifier,
         });
+
+        continue;
+      }
+
+      if (effectiveTimelineActivityType.isActive) {
+        effectiveDeclaredTimelineActivityTypes.push(
+          effectiveTimelineActivityType,
+        );
       }
     }
 

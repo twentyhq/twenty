@@ -5,6 +5,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { partitionTimelineActivityTypesByValidity } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
 import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
 
@@ -23,6 +24,8 @@ type ResolvableTimelineActivityType = Pick<
   | 'triggerFieldUniversalIdentifiers'
   | 'frontComponentUniversalIdentifier'
   | 'overridesTimelineActivityTypeUniversalIdentifier'
+  | 'isActive'
+  | 'overrides'
 >;
 
 export type TimelineActivityTypeResolutionMaps = {
@@ -69,9 +72,9 @@ export const toResolvedTimelineActivityType = (
     id: timelineActivityType.id,
     universalIdentifier: timelineActivityType.universalIdentifier,
     name: timelineActivityType.name,
-    label: timelineActivityType.label,
+    label: resolveOverridableEntityProperty(timelineActivityType, 'label'),
     action: timelineActivityType.action,
-    icon: timelineActivityType.icon,
+    icon: resolveOverridableEntityProperty(timelineActivityType, 'icon'),
     objectUniversalIdentifier: timelineActivityType.objectUniversalIdentifier,
     frontComponentUniversalIdentifier:
       timelineActivityType.frontComponentUniversalIdentifier,
@@ -147,6 +150,7 @@ export const buildResolvedTimelineActivityTypeResolver = (
   >();
   const typeByObjectAndAction = new Map<string, ResolvedTimelineActivityType>();
   const conflictedObjectAndActionKeys = new Set<string>();
+  const suppressedObjectAndActionKeys = new Set<string>();
 
   for (const [action, candidates] of candidatesByAction) {
     const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
@@ -154,12 +158,12 @@ export const buildResolvedTimelineActivityTypeResolver = (
       allTimelineActivityTypeUniversalIdentifiers,
     );
 
-    if (isDefined(effectiveTimelineActivityType)) {
+    if (effectiveTimelineActivityType?.isActive === true) {
       typeByAction.set(
         action,
         toResolvedTimelineActivityType(effectiveTimelineActivityType),
       );
-    } else {
+    } else if (!isDefined(effectiveTimelineActivityType)) {
       conflicts.push({ action, objectUniversalIdentifier: null });
     }
   }
@@ -170,11 +174,13 @@ export const buildResolvedTimelineActivityTypeResolver = (
       allTimelineActivityTypeUniversalIdentifiers,
     );
 
-    if (isDefined(effectiveTimelineActivityType)) {
+    if (effectiveTimelineActivityType?.isActive === true) {
       typeByObjectAndAction.set(
         key,
         toResolvedTimelineActivityType(effectiveTimelineActivityType),
       );
+    } else if (isDefined(effectiveTimelineActivityType)) {
+      suppressedObjectAndActionKeys.add(key);
     } else {
       const { action, objectUniversalIdentifier } = candidates[0];
 
@@ -195,7 +201,8 @@ export const buildResolvedTimelineActivityTypeResolver = (
 
     if (
       isDefined(objectAndActionKey) &&
-      conflictedObjectAndActionKeys.has(objectAndActionKey)
+      (conflictedObjectAndActionKeys.has(objectAndActionKey) ||
+        suppressedObjectAndActionKeys.has(objectAndActionKey))
     ) {
       return undefined;
     }

@@ -25,6 +25,8 @@ const noteLinkedTimelineActivityType = {
   triggerFieldUniversalIdentifiers: null,
   frontComponentUniversalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   overridesTimelineActivityTypeUniversalIdentifier: null,
+  isActive: true,
+  overrides: null,
 };
 
 const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
@@ -43,6 +45,8 @@ const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
       triggerFieldUniversalIdentifiers: null,
       frontComponentUniversalIdentifier: null,
       overridesTimelineActivityTypeUniversalIdentifier: null,
+      isActive: true,
+      overrides: null,
     },
     noteLinked: noteLinkedTimelineActivityType,
   },
@@ -86,6 +90,51 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
         objectUniversalIdentifier: '00000000-0000-4000-8000-000000000099',
       })?.id,
     ).toBe(SHARED_LINKED_ID);
+  });
+
+  it('does not fall back when the matching object type is inactive', () => {
+    const { resolveTimelineActivityType: resolver } =
+      buildResolvedTimelineActivityTypeResolver({
+        ...flatTimelineActivityTypeMaps,
+        byUniversalIdentifier: {
+          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+          noteLinked: {
+            ...noteLinkedTimelineActivityType,
+            isActive: false,
+          },
+        },
+      });
+
+    expect(
+      resolver({
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('stores workspace presentation overrides in the durable snapshot', () => {
+    const { resolveTimelineActivityType: resolver } =
+      buildResolvedTimelineActivityTypeResolver({
+        ...flatTimelineActivityTypeMaps,
+        byUniversalIdentifier: {
+          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+          noteLinked: {
+            ...noteLinkedTimelineActivityType,
+            overrides: {
+              label: 'Added a note',
+              icon: 'IconPencil',
+            },
+          },
+        },
+      });
+
+    expect(
+      resolver({
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      })?.snapshot,
+    ).toMatchObject({ label: 'Added a note', icon: 'IconPencil' });
   });
 
   it('does not treat a routed type as a source record resolver', () => {

@@ -61,6 +61,7 @@ describe('createTimelineActivity', () => {
               {
                 id: TYPE_ID,
                 universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+                isActive: true,
               },
             ],
             objects: {
@@ -140,6 +141,37 @@ describe('createTimelineActivity', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('fails before writing when the application type is inactive', async () => {
+    const createTimelineActivity = await importCreateTimelineActivity();
+
+    fetchSpy.mockResolvedValueOnce(
+      response({
+        data: {
+          timelineActivityTypes: [
+            {
+              id: TYPE_ID,
+              universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+              isActive: false,
+            },
+          ],
+          objects: { edges: [] },
+        },
+      }),
+    );
+
+    await expect(
+      createTimelineActivity({
+        timelineActivityTypeUniversalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+        targetObjectUniversalIdentifier: TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+        targetRecordId: '44444444-4444-4444-8444-444444444444',
+      }),
+    ).rejects.toThrow(
+      `Timeline activity type ${TYPE_UNIVERSAL_IDENTIFIER} is inactive`,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('fails before writing when the target object is not installed', async () => {
     const createTimelineActivity = await importCreateTimelineActivity();
 
@@ -150,6 +182,7 @@ describe('createTimelineActivity', () => {
             {
               id: TYPE_ID,
               universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+              isActive: true,
             },
           ],
           objects: { edges: [] },
@@ -186,6 +219,7 @@ describe('createTimelineActivity', () => {
               {
                 id: TYPE_ID,
                 universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+                isActive: true,
               },
             ],
             objects: {

@@ -2,6 +2,7 @@ import {
   ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
   ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+  TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
 } from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
@@ -11,6 +12,8 @@ const CURRENT_COLUMNS = [
   'targetRelationFieldUniversalIdentifier',
   'triggerFieldUniversalIdentifiers',
   'overridesTimelineActivityTypeUniversalIdentifier',
+  'overrides',
+  'isActive',
 ].map((propertyName) => ({ propertyName, databaseName: propertyName }));
 
 const resolveAt = (appliedSteps: string[]) =>
@@ -38,6 +41,8 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
         'targetRelationFieldUniversalIdentifier',
         'triggerFieldUniversalIdentifiers',
         'overridesTimelineActivityTypeUniversalIdentifier',
+        'overrides',
+        'isActive',
       ]),
     );
 
@@ -46,13 +51,28 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
         REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
-    ).toEqual(new Set(['overridesTimelineActivityTypeUniversalIdentifier']));
+    ).toEqual(
+      new Set([
+        'overridesTimelineActivityTypeUniversalIdentifier',
+        'overrides',
+        'isActive',
+      ]),
+    );
 
     expect(
       resolveAt([
         REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+      ]).hiddenPropertyNames,
+    ).toEqual(new Set(['overrides', 'isActive']));
+
+    expect(
+      resolveAt([
+        REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+        TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
     ).toEqual(new Set());
   });

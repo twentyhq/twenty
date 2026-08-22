@@ -1,4 +1,5 @@
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -12,11 +13,20 @@ import {
   ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
   ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+  TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
 } from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type TimelineActivityTypeOverrides = {
+  label?: string;
+  icon?: string | null;
+  translations?: Partial<
+    Record<keyof typeof APP_LOCALES, { label?: string | null }>
+  > | null;
+};
 
 @Entity({ name: 'timelineActivityType', schema: 'core' })
 @Unique('IDX_TIMELINE_ACTIVITY_TYPE_NAME_APPLICATION_WORKSPACE_UNIQUE', [
@@ -25,7 +35,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceId',
 ])
 export class TimelineActivityTypeEntity
-  extends SyncableEntity
+  extends OverridableEntity<TimelineActivityTypeOverrides>
   implements Required<TimelineActivityTypeEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -89,3 +99,12 @@ export class TimelineActivityTypeEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(TimelineActivityTypeEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(TimelineActivityTypeEntity.prototype, 'isActive');
