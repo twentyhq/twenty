@@ -1,4 +1,4 @@
-import { StyledWidgetContentContainer } from '@/page-layout/widgets/components/WidgetContentContainer';
+import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { type ReactNode } from 'react';
