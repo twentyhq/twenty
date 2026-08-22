@@ -10,7 +10,6 @@ export const StyledWidgetContentFrame = styled.div`
   width: 100%;
 `;
 
-// Chrome for a widget body that embeds a record table.
 export const StyledWidgetTableOutline = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
