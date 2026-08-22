@@ -106,7 +106,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     return (
       <SingleWidgetTabSettingsContent
         pageLayoutId={pageLayoutId}
-        singleWidget={activeWidgets.at(0)}
+        singleWidget={activeWidgets.at(0)!}
         canSetAsPinned={canSetAsPinned}
         canMoveLeft={canMoveLeft}
         canMoveRight={canMoveRight}

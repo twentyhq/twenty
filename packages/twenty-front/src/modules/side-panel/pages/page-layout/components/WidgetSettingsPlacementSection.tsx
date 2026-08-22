@@ -7,7 +7,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { MoveToTabDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/MoveToTabDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { useWidgetSettingsPlacement } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacement';
+import { type WidgetSettingsPlacement } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacement';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -23,22 +23,19 @@ import {
   IconRowInsertTop,
 } from 'twenty-ui/icon';
 
-type WidgetSettingsPlacementSectionProps = {
+type WidgetSettingsPlacementSectionProps = WidgetSettingsPlacement & {
   pageLayoutId: string;
 };
 
 export const WidgetSettingsPlacementSection = ({
   pageLayoutId,
+  isPlacementSectionVisible,
+  pageLayoutEditingWidgetId,
+  showAddWidgetBelow,
+  showMoveDown,
+  showMoveUp,
 }: WidgetSettingsPlacementSectionProps) => {
   const { t } = useLingui();
-
-  const {
-    isPlacementSectionVisible,
-    pageLayoutEditingWidgetId,
-    showAddWidgetBelow,
-    showMoveDown,
-    showMoveUp,
-  } = useWidgetSettingsPlacement(pageLayoutId);
 
   const widgetInsertionContextState = useAtomComponentStateCallbackState(
     widgetInsertionContextComponentState,
