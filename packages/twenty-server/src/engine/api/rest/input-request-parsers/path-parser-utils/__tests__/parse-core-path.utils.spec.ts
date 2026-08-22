@@ -76,7 +76,7 @@ describe('parseCorePath', () => {
   it('should parse object and id from restore one request', () => {
     const request: any = {
       method: 'PATCH',
-      path: `/rest/restore/companies/${testUUID}`,
+      path: `/rest/companies/${testUUID}/restore`,
     };
 
     expect(parseCorePath(request)).toEqual({
@@ -86,7 +86,7 @@ describe('parseCorePath', () => {
   });
 
   it('should parse object from restore many request', () => {
-    const request: any = { method: 'PATCH', path: '/rest/restore/companies' };
+    const request: any = { method: 'PATCH', path: '/rest/companies/restore' };
 
     expect(parseCorePath(request)).toEqual({
       object: 'companies',
@@ -98,7 +98,7 @@ describe('parseCorePath', () => {
     const malformedUUID = 'malformed-uuid';
     const request: any = {
       method: 'PATCH',
-      path: `/rest/restore/companies/${malformedUUID}`,
+      path: `/rest/companies/${malformedUUID}/restore`,
     };
 
     expect(() => parseCorePath(request)).toThrow(
@@ -109,26 +109,26 @@ describe('parseCorePath', () => {
   it('should throw for an over-long restore request', () => {
     const request: any = {
       method: 'PATCH',
-      path: `/rest/restore/companies/${testUUID}/toto`,
+      path: `/rest/companies/${testUUID}/toto/restore`,
     };
 
     expect(() => parseCorePath(request)).toThrow(
-      `Query path '/rest/restore/companies/${testUUID}/toto' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+      `Query path '/rest/companies/${testUUID}/toto/restore' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
     );
   });
-  // The wildcard routes for the other methods would otherwise pick up a
-  // restore-shaped path, and DELETE would read the trailing segment as a
-  // destroy target.
+
+  // Every method has a wildcard route on this controller, so without the
+  // method check DELETE would read the id as a destroy target.
   it.each(['DELETE', 'GET', 'POST', 'PUT'])(
     'should throw for a restore-shaped path on %s',
     (method) => {
       const request: any = {
         method,
-        path: `/rest/restore/companies/${testUUID}`,
+        path: `/rest/companies/${testUUID}/restore`,
       };
 
       expect(() => parseCorePath(request)).toThrow(
-        `Query path '/rest/restore/companies/${testUUID}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+        `Query path '/rest/companies/${testUUID}/restore' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
       );
     },
   );
