@@ -1068,7 +1068,7 @@ export const STANDARD_OBJECTS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         fields: STANDARD_OBJECT_FIELDS.timelineActivity,
         viewFieldNames: [
-          'name',
+          'linkedRecordCachedName',
           'happensAt',
           'workspaceMember',
           'targetPerson',

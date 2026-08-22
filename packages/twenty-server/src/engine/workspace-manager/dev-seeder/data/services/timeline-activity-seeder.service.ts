@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
+import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
@@ -35,7 +38,7 @@ type RecordSeedWithId = Pick<ObjectRecord, 'id'> & Record<string, unknown>;
 type TimelineActivitySeedData = Pick<
   TimelineActivityWorkspaceEntity,
   | 'id'
-  | 'name'
+  | 'timelineActivityTypeId'
   | 'linkedRecordCachedName'
   | 'linkedRecordId'
   | 'linkedObjectMetadataId'
@@ -61,6 +64,7 @@ type CreateTimelineActivityParams = {
   entityType: string;
   recordSeed: RecordSeedWithId;
   index: number;
+  resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
 };
 
 type CreateLinkedActivityParams = {
@@ -70,6 +74,7 @@ type CreateLinkedActivityParams = {
   activityIndex: number;
   linkedObjectMetadataId: string;
   targetInfo: ActivityTargetInfo;
+  resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
 };
 
 type EntityConfig = {
@@ -109,15 +114,10 @@ export class TimelineActivitySeederService {
     'message',
   ]);
 
-  constructor(private readonly objectMetadataService: ObjectMetadataService) {}
-
-  private getLinkedActivityName(activityType: string): string {
-    if (activityType === 'note' || activityType === 'task') {
-      return `linked-${activityType}.created`;
-    }
-
-    return `${activityType}.linked`;
-  }
+  constructor(
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly timelineActivityTypeCacheService: TimelineActivityTypeCacheService,
+  ) {}
 
   async seedTimelineActivities({
     entityManager,
@@ -133,6 +133,10 @@ export class TimelineActivitySeederService {
     const messageParticipants = getMessageParticipantDataSeeds(workspaceId);
     const timelineActivities: TimelineActivitySeedData[] = [];
     const metadataIds = await this.getObjectMetadataIds(workspaceId);
+    const resolveTimelineActivityTypeId =
+      await this.timelineActivityTypeCacheService.getTimelineActivityTypeResolver(
+        workspaceId,
+      );
     let activityIndex = 0;
 
     const entityConfigs: EntityConfig[] = [
@@ -154,6 +158,7 @@ export class TimelineActivitySeederService {
           entityType: type,
           recordSeed: seed,
           index,
+          resolveTimelineActivityTypeId,
         });
 
         timelineActivities.push(activity);
@@ -175,6 +180,7 @@ export class TimelineActivitySeederService {
           linkedObjectMetadataId,
           calendarEventParticipants,
           messageParticipants,
+          resolveTimelineActivityTypeId,
         });
 
         timelineActivities.push(...linkedActivities);
@@ -196,6 +202,7 @@ export class TimelineActivitySeederService {
           linkedObjectMetadataId,
           calendarEventParticipants,
           messageParticipants,
+          resolveTimelineActivityTypeId,
         });
 
         timelineActivities.push(...linkedActivities);
@@ -244,7 +251,7 @@ export class TimelineActivitySeederService {
         .insert()
         .into(`${schemaName}.timelineActivity`, [
           'id',
-          'name',
+          'timelineActivityTypeId',
           'properties',
           'linkedRecordCachedName',
           'linkedRecordId',
@@ -269,6 +276,7 @@ export class TimelineActivitySeederService {
     entityType,
     recordSeed,
     index,
+    resolveTimelineActivityTypeId,
   }: CreateTimelineActivityParams): TimelineActivitySeedData {
     const timelineActivityId = this.generateTimelineActivityId(
       entityType,
@@ -279,7 +287,8 @@ export class TimelineActivitySeederService {
 
     const timelineActivity: TimelineActivitySeedData = {
       id: timelineActivityId,
-      name: `${entityType}.created`,
+      timelineActivityTypeId:
+        resolveTimelineActivityTypeId({ action: 'created' }) ?? null,
       properties: JSON.stringify({
         after: this.getEventAfterRecordProperties(entityType, recordSeed),
       }),
@@ -394,6 +403,7 @@ export class TimelineActivitySeederService {
     linkedObjectMetadataId,
     calendarEventParticipants,
     messageParticipants,
+    resolveTimelineActivityTypeId,
   }: {
     activityType: 'note' | 'task' | 'calendarEvent' | 'message';
     recordSeed: RecordSeedWithId;
@@ -402,6 +412,7 @@ export class TimelineActivitySeederService {
     linkedObjectMetadataId: string;
     calendarEventParticipants: CalendarEventParticipantDataSeed[];
     messageParticipants: MessageParticipantDataSeed[];
+    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
   }): TimelineActivitySeedData[] {
     const targetInfos = this.getActivityTargetInfos(
       activityType,
@@ -422,6 +433,7 @@ export class TimelineActivitySeederService {
         activityIndex: activityIndex + targetIndex,
         linkedObjectMetadataId,
         targetInfo,
+        resolveTimelineActivityTypeId,
       }),
     );
   }
@@ -563,6 +575,7 @@ export class TimelineActivitySeederService {
     activityIndex,
     linkedObjectMetadataId,
     targetInfo,
+    resolveTimelineActivityTypeId,
   }: CreateLinkedActivityParams): TimelineActivitySeedData {
     const linkedActivityId = this.generateLinkedTimelineActivityId(
       activityType,
@@ -575,7 +588,12 @@ export class TimelineActivitySeederService {
 
     const linkedActivity: TimelineActivitySeedData = {
       id: linkedActivityId,
-      name: this.getLinkedActivityName(activityType),
+      timelineActivityTypeId:
+        resolveTimelineActivityTypeId({
+          action: 'linked',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS[activityType].universalIdentifier,
+        }) ?? null,
       properties: JSON.stringify({ after: linkedProperties }),
       linkedRecordCachedName,
       linkedRecordId: recordSeed.id,

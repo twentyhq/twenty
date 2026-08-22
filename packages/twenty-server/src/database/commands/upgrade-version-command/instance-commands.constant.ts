@@ -149,6 +149,7 @@ import { AddWritabilityToMetadataFastInstanceCommand } from 'src/database/comman
 import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786959731000-add-uninstall-logic-function-id-to-application';
 import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786959731001-backfill-uninstall-logic-function-id-on-application';
 import { AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787151824000-add-uninstall-hook-completed-for-requested-at-to-application';
+import { AddTimelineActivityTypeTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787352088649-add-timeline-activity-type-table';
 import { AddBillableOperationsToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787382162924-add-billable-operations-to-application';
 import { AddPricingDescriptionToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787387962455-add-pricing-description-to-application-registration';
 
@@ -302,6 +303,7 @@ export const INSTANCE_COMMANDS = [
   AddUninstallLogicFunctionIdToApplicationFastInstanceCommand,
   BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand,
   AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand,
+  AddTimelineActivityTypeTableFastInstanceCommand,
   AddBillableOperationsToApplicationFastInstanceCommand,
   AddPricingDescriptionToApplicationRegistrationFastInstanceCommand,
 ];

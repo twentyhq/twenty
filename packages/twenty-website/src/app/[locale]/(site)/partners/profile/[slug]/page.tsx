@@ -6,10 +6,7 @@ import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
-import {
-  getMarketplacePartnerBySlug,
-  getMarketplacePartners,
-} from '@/partners-marketplace/marketplace-partners-source';
+import { getMarketplacePartnerBySlug } from '@/partners-marketplace/marketplace-partners-source';
 import { PartnerProfile } from '@/partners-marketplace/PartnerProfile';
 import { richTextExcerpt } from '@/partners-marketplace/rich-text-excerpt';
 import { buildBreadcrumbListJsonLd, JsonLd } from '@/platform/seo';
@@ -20,11 +17,6 @@ type PartnerProfileParams = { locale: string; slug: string };
 export const dynamic = 'force-dynamic';
 
 export const dynamicParams = true;
-
-export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const partners = await getMarketplacePartners();
-  return partners.map((partner) => ({ slug: partner.slug }));
-}
 
 export async function generateMetadata({
   params,

@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 Uygulama HTTP rotalarını çağırmak veya bir front bileşeninden Twenty kayıtlarını okumak ve yazmak için `twenty-client-sdk/rest` paketinden `RestApiClient` kullanın. `/s/...` yollarını çalışma alanınızdaki işlevlerin temel URL'sine, `/rest/...` dahil diğer tüm yolları ise `TWENTY_API_URL`'ye gönderir.
 
+Her zaman sayfayı görüntüleyen kişi olarak hareket eder. `runAs: 'application'` yalnızca bir mantık işlevi seçeneğidir: bir bileşen uygulamanızın kendi token'ını asla almaz; dolayısıyla burada bunu istemek hata verir. Uygulamanın kendi erişimini gerektiren işleri bir mantık işlevinin arkasına yerleştirin ve bunun yerine onu çağırın.
+
 | Yöntem                            | Açıklama                                                                 |
 | --------------------------------- | ------------------------------------------------------------------------ |
 | `get(path, options?)`             | Bir `GET` isteği gönderir                                                |
@@ -445,10 +447,10 @@ Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar
 
 Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
 
-| Değişken                  | Açıklama                                                  |
-| ------------------------- | --------------------------------------------------------- |
-| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                    |
-| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç |
+| Değişken                  | Açıklama                                                                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                                                                                                                                         |
+| `TWENTY_APP_ACCESS_TOKEN` | Oturum açmış kişinin roluyla uygulamanızın rolunun kesişimiyle kapsamı belirlenen kısa ömürlü token; böylece bir bileşen, onu görüntüleyen kişiden asla daha fazlasını yapamaz |
 
 ### `TWENTY_FUNCTIONS_URL`
 

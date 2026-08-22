@@ -1,14 +1,21 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { gql } from 'graphql-tag';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
   name
+  timelineActivityTypeId
   properties
   linkedRecordId
   linkedRecordCachedName
@@ -21,7 +28,8 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
 
 type TimelineActivityRow = {
   id: string;
-  name: string;
+  name: string | null;
+  timelineActivityTypeId: string | null;
   properties: Record<string, unknown> | null;
   linkedRecordId: string | null;
   linkedRecordCachedName: string | null;
@@ -97,16 +105,53 @@ const findTimelineActivities = async (
 const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
 const findTimelineActivityRowsByLinkedRecordId = async ({
-  name,
+  timelineActivityTypeId,
   linkedRecordId,
 }: {
-  name: string;
+  timelineActivityTypeId: string;
   linkedRecordId: string;
 }): Promise<Pick<TimelineActivityRow, 'targetCompanyId' | 'targetNoteId'>[]> =>
   global.testDataSource.query(
-    `SELECT "targetCompanyId", "targetNoteId" FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE name = $1 AND "linkedRecordId" = $2`,
-    [name, linkedRecordId],
+    `SELECT "targetCompanyId", "targetNoteId" FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE "timelineActivityTypeId" = $1 AND "linkedRecordId" = $2`,
+    [timelineActivityTypeId, linkedRecordId],
   );
+
+const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
+  query FindManyTimelineActivityTypes {
+    timelineActivityTypes {
+      id
+      action
+      objectUniversalIdentifier
+    }
+  }
+`;
+
+// Mirrors the server resolver: several types share an action, and the one bound
+// to the event's object wins over the shared one.
+const timelineActivityTypeIdByObjectAndAction = new Map<string, string>();
+
+const buildKey = (
+  action: TimelineActivityAction,
+  objectUniversalIdentifier: string | null,
+): string => `${objectUniversalIdentifier ?? 'shared'}|${action}`;
+
+const timelineActivityTypeIdForOrThrow = (
+  action: TimelineActivityAction,
+  objectUniversalIdentifier: string | null = null,
+): string => {
+  const timelineActivityTypeId =
+    timelineActivityTypeIdByObjectAndAction.get(
+      buildKey(action, objectUniversalIdentifier),
+    ) ?? timelineActivityTypeIdByObjectAndAction.get(buildKey(action, null));
+
+  if (!isDefined(timelineActivityTypeId)) {
+    throw new Error(`No timeline activity type seeded for action ${action}`);
+  }
+
+  return timelineActivityTypeId;
+};
+
+const NOTE_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.note.universalIdentifier;
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
@@ -115,12 +160,20 @@ const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
 const MESSAGE_LIST_ID = '20202020-7171-4000-8000-000000000007';
+const BATCH_COMPANY_IDS = [
+  '20202020-7171-4000-8000-000000000008',
+  '20202020-7171-4000-8000-000000000009',
+];
 
 const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
   [
     { objectMetadataSingularName: 'noteTarget', id: NOTE_TARGET_ID },
     { objectMetadataSingularName: 'note', id: NOTE_ID },
     { objectMetadataSingularName: 'messageList', id: MESSAGE_LIST_ID },
+    ...BATCH_COMPANY_IDS.map((id) => ({
+      objectMetadataSingularName: 'company',
+      id,
+    })),
     { objectMetadataSingularName: 'company', id: NOTE_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: MERGE_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: POSITION_COMPANY_ID },
@@ -131,6 +184,27 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
 // reproduce. Assertions describe what the hardcoded implementation does today,
 // including the parts that look accidental.
 describe('timeline activity write path (integration)', () => {
+  beforeAll(async () => {
+    const response = await makeMetadataAPIRequest({
+      query: FIND_MANY_TIMELINE_ACTIVITY_TYPES,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    for (const { id, action, objectUniversalIdentifier } of response.body.data
+      .timelineActivityTypes) {
+      if (isDefined(action)) {
+        timelineActivityTypeIdByObjectAndAction.set(
+          buildKey(
+            action as TimelineActivityAction,
+            objectUniversalIdentifier ?? null,
+          ),
+          id,
+        );
+      }
+    }
+  });
+
   afterAll(async () => {
     for (const { objectMetadataSingularName, id } of CREATED_RECORD_IDS) {
       await makeGraphqlAPIRequest(
@@ -158,6 +232,9 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
+      expect(timelineActivities[0].timelineActivityTypeId).toBe(
+        timelineActivityTypeIdForOrThrow('created'),
+      );
       expect(timelineActivities[0].name).toBe('company.created');
       expect(timelineActivities[0].targetCompanyId).toBe(COMPANY_ID);
       expect(timelineActivities[0].linkedRecordId).toBeNull();
@@ -174,7 +251,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: COMPANY_ID },
-        name: { eq: 'company.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -216,7 +295,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: MERGE_COMPANY_ID },
-        name: { eq: 'company.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -225,6 +306,50 @@ describe('timeline activity write path (integration)', () => {
           name: { before: 'Merge Window', after: 'Merge Window Twice' },
         },
       });
+    });
+
+    it('should merge every record of a multi record batch', async () => {
+      for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
+        await createRecord({
+          objectMetadataSingularName: 'company',
+          data: { id, name: `Batch ${index}` },
+        });
+      }
+
+      const updateBatchTo = async (name: string) => {
+        const response = await makeGraphqlAPIRequest(
+          updateManyOperationFactory({
+            objectMetadataSingularName: 'company',
+            objectMetadataPluralName: 'companies',
+            gqlFields: 'id',
+            data: { name },
+            filter: { id: { in: BATCH_COMPANY_IDS } },
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+      };
+
+      await updateBatchTo('Batch renamed once');
+      await waitForAllJobsToFinish();
+
+      await updateBatchTo('Batch renamed twice');
+
+      for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
+        const timelineActivities = await findTimelineActivities({
+          targetCompanyId: { eq: id },
+          timelineActivityTypeId: {
+            eq: timelineActivityTypeIdForOrThrow('updated'),
+          },
+        });
+
+        expect(timelineActivities).toHaveLength(1);
+        expect(timelineActivities[0].properties).toEqual({
+          diff: {
+            name: { before: `Batch ${index}`, after: 'Batch renamed twice' },
+          },
+        });
+      }
     });
 
     it('should not write an entry for a position only change', async () => {
@@ -244,7 +369,9 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: POSITION_COMPANY_ID },
-        name: { eq: 'company.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(0);
@@ -275,7 +402,12 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.created' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
@@ -287,51 +419,80 @@ describe('timeline activity write path (integration)', () => {
     it('should write the note own created entry on the note timeline', async () => {
       const timelineActivities = await findTimelineActivities({
         targetNoteId: { eq: NOTE_ID },
-        name: { eq: 'note.created' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('created'),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);
     });
 
-    // Known defect: computeTimelineActivityPayloadsForActivities reads the
-    // relation property instead of its join column, so the entry lands with no
-    // target at all rather than on the linked company.
-    it('should write an orphan linked entry when the note title changes', async () => {
-      // Orphan rows carry no target, so nothing cascades them away when the
-      // company is destroyed and they accumulate across runs: count the
-      // difference rather than the total, which a previous run would satisfy.
-      const orphanRowCountBefore = (
-        await findTimelineActivityRowsByLinkedRecordId({
-          name: 'linked-note.updated',
-          linkedRecordId: NOTE_ID,
-        })
-      ).length;
-
+    it('should write a linked entry on the company when the note title changes', async () => {
       await updateRecord({
         objectMetadataSingularName: 'note',
         recordId: NOTE_ID,
         data: { title: 'Linked note renamed' },
       });
-      await waitForAllJobsToFinish();
 
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.updated' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'updated',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+        },
       });
 
-      expect(onCompany).toHaveLength(0);
-
-      const orphanRows = await findTimelineActivityRowsByLinkedRecordId({
-        name: 'linked-note.updated',
-        linkedRecordId: NOTE_ID,
+      expect(onCompany).toHaveLength(1);
+      expect(onCompany[0].linkedRecordId).toBe(NOTE_ID);
+      expect(onCompany[0].linkedRecordCachedName).toBe('Linked note renamed');
+      expect(onCompany[0].properties).toEqual({
+        diff: {
+          title: { before: 'Linked note', after: 'Linked note renamed' },
+        },
       });
 
-      expect(orphanRows).toHaveLength(orphanRowCountBefore + 1);
-      expect(
-        orphanRows.every(
-          (row) => row.targetCompanyId === null && row.targetNoteId === null,
-        ),
-      ).toBe(true);
+      const rowsWithoutTarget = (
+        await findTimelineActivityRowsByLinkedRecordId({
+          timelineActivityTypeId: timelineActivityTypeIdForOrThrow(
+            'updated',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+          linkedRecordId: NOTE_ID,
+        })
+      ).filter((row) => row.targetCompanyId === null);
+
+      expect(rowsWithoutTarget).toHaveLength(0);
+    });
+
+    // The note rule only fans out on its trigger field, so editing the body
+    // leaves the linked timelines alone.
+    it('should not write a linked entry when a non trigger field changes', async () => {
+      await updateRecord({
+        objectMetadataSingularName: 'note',
+        recordId: NOTE_ID,
+        data: {
+          bodyV2: { blocknote: null, markdown: 'Body only change' },
+        },
+      });
+
+      const onCompany = await findTimelineActivities({
+        targetCompanyId: { eq: NOTE_COMPANY_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'updated',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(onCompany).toHaveLength(1);
+      expect(onCompany[0].properties).toEqual({
+        diff: {
+          title: { before: 'Linked note', after: 'Linked note renamed' },
+        },
+      });
     });
 
     it('should write a linked entry on the company when the note target is deleted', async () => {
@@ -345,7 +506,12 @@ describe('timeline activity write path (integration)', () => {
 
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
-        name: { eq: 'linked-note.deleted' },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'unlinked',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+        },
       });
 
       expect(timelineActivities).toHaveLength(1);

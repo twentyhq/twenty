@@ -255,6 +255,31 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  timelineActivityTypeId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'timelineActivityTypeId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({ message: `Event type`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activity type describing this event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconAbc',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   properties: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

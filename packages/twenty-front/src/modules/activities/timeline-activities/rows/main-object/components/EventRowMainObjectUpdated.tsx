@@ -15,7 +15,7 @@ type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
-  event: TimelineActivity;
+  event: Pick<TimelineActivity, 'id' | 'properties'>;
   createdAt?: string;
 };
 

@@ -421,11 +421,6 @@ msgstr "crwdns105200:0decimals={decimals}crwdnd105200:00={0}crwdnd105200:0decima
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "crwdns8648:0deletedCount={deletedCount}crwdnd8648:0deletedCount={deletedCount}crwdnd8648:0deletedCount={deletedCount}crwdne8648:0"
 
-#. js-lingui-id: JBSWmp
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "{eventAction} a related {eventObject}"
-msgstr "crwdns65844:0{eventAction}crwdnd65844:0{eventObject}crwdne65844:0"
-
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -3959,6 +3954,11 @@ msgstr "crwdns133065:0crwdne133065:0"
 msgid "Clear"
 msgstr "crwdns5047:0crwdne5047:0"
 
+#. js-lingui-id: Q2mGA7
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Clear filter"
+msgstr "crwdns140193:0crwdne140193:0"
+
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
@@ -5292,6 +5292,11 @@ msgstr "crwdns64654:0{beautifiedCreatedAt}crwdne64654:0"
 msgid "Created {objectLabel}"
 msgstr "crwdns133127:0{objectLabel}crwdne133127:0"
 
+#. js-lingui-id: 2K/oCx
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "created a related {objectNameSingular}"
+msgstr "crwdns140195:0{objectNameSingular}crwdne140195:0"
+
 #. js-lingui-id: NCIYDF
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Created by"
@@ -6389,6 +6394,11 @@ msgstr "crwdns66014:0crwdne66014:0"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Deleted {objectLabel}"
 msgstr "crwdns133185:0{objectLabel}crwdne133185:0"
+
+#. js-lingui-id: P65ogp
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "deleted a related {objectNameSingular}"
+msgstr "crwdns140197:0{objectNameSingular}crwdne140197:0"
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -8872,6 +8882,11 @@ msgstr "crwdns119480:0crwdne119480:0"
 msgid "Filter group rule options"
 msgstr "crwdns66118:0crwdne66118:0"
 
+#. js-lingui-id: 0i36a3
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Filter timeline"
+msgstr "crwdns140199:0crwdne140199:0"
+
 #. js-lingui-id: j/O9Sh
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 msgid "Filter unsubscribers"
@@ -11334,6 +11349,11 @@ msgstr "crwdns133433:0{objectLabel}crwdne133433:0"
 msgid "linked a calendar event with {labelIdentifierValue}"
 msgstr "crwdns66192:0{labelIdentifierValue}crwdne66192:0"
 
+#. js-lingui-id: ZJ5OOX
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "linked a related {objectNameSingular}"
+msgstr "crwdns140201:0{objectNameSingular}crwdne140201:0"
+
 #. js-lingui-id: fd8C68
 #: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
 msgid "linked an email with"
@@ -12775,6 +12795,11 @@ msgstr "crwdns133511:0crwdne133511:0"
 msgid "No active subscription."
 msgstr "crwdns119152:0crwdne119152:0"
 
+#. js-lingui-id: LM+N3q
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No activity matches the selected types."
+msgstr "crwdns140203:0crwdne140203:0"
+
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 msgid "No activity yet"
@@ -13152,6 +13177,11 @@ msgstr "crwdns128431:0crwdne128431:0"
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No logs yet"
 msgstr "crwdns64748:0crwdne64748:0"
+
+#. js-lingui-id: WqPs8R
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No matching activity"
+msgstr "crwdns140205:0crwdne140205:0"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -15972,6 +16002,11 @@ msgstr "crwdns5417:0crwdne5417:0"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "crwdns115338:0{objectLabel}crwdne115338:0"
+
+#. js-lingui-id: RyMA1t
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "restored a related {objectNameSingular}"
+msgstr "crwdns140207:0{objectNameSingular}crwdne140207:0"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -19122,6 +19157,11 @@ msgstr "crwdns5299:0crwdne5299:0"
 msgid "Timeline"
 msgstr "crwdns7748:0crwdne7748:0"
 
+#. js-lingui-id: HUJOEf
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "timeline activity type"
+msgstr "crwdns140209:0crwdne140209:0"
+
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Timeout"
@@ -19859,6 +19899,11 @@ msgstr "crwdns119742:0crwdne119742:0"
 msgid "Unlimited"
 msgstr "crwdns133853:0crwdne133853:0"
 
+#. js-lingui-id: CfClM4
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "unlinked a related {objectNameSingular}"
+msgstr "crwdns140211:0{objectNameSingular}crwdne140211:0"
+
 #. js-lingui-id: WDcQq9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -20115,6 +20160,11 @@ msgstr "crwdns107102:0crwdne107102:0"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Updated {objectLabel}"
 msgstr "crwdns133873:0{objectLabel}crwdne133873:0"
+
+#. js-lingui-id: OFU7Sk
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "updated a related {objectNameSingular}"
+msgstr "crwdns140213:0{objectNameSingular}crwdne140213:0"
 
 #. js-lingui-id: xuCD/Q
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts

@@ -340,6 +340,11 @@ msgstr "Une erreur temporaire s'est produite. Veuillez réessayer."
 msgid "A temporary network error occurred."
 msgstr "Une erreur réseau temporaire s'est produite."
 
+#. js-lingui-id: JJamm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type with this name already exists for this application"
+msgstr "Un type d'activité de la chronologie portant ce nom existe déjà pour cette application"
+
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
@@ -813,6 +818,11 @@ msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrophe et point"
 
+#. js-lingui-id: 1WWVFC
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Application cleanup is still in progress. Please try again."
+msgstr "Le nettoyage de l'application est toujours en cours. Veuillez réessayer."
+
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -858,6 +868,11 @@ msgstr "Enregistrement d'application introuvable."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr "Variable d'enregistrement de l'application introuvable."
+
+#. js-lingui-id: P+wtF/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application uninstall logic function failed."
+msgstr "La fonction logique de désinstallation de l'application a échoué."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -1065,6 +1080,12 @@ msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the workflow"
 msgstr "Pièces jointes associées au workflow"
 
+#. js-lingui-id: mGHuob
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attended a calendar event"
+msgstr "a participé à un événement de calendrier"
+
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -1271,6 +1292,11 @@ msgstr "Le corps du texte doit être un objet"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Le corps du texte doit être un objet pour le widget \"{widgetTitle}\""
+
+#. js-lingui-id: rEDXNA
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Boom"
+msgstr "Boom"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -3458,6 +3484,12 @@ msgstr "Participants à l'événement"
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "Cible de l'événement"
+
+#. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Event type"
+msgstr "Type d'événement"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5793,6 +5825,18 @@ msgstr "La disposition est obligatoire pour le graphique à barres"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "La disposition est obligatoire pour le widget de graphique à barres \"{widgetTitle}\""
 
+#. js-lingui-id: sAG9OB
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related note"
+msgstr "a lié une note associée"
+
+#. js-lingui-id: ecrchg
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related task"
+msgstr "a lié une tâche associée"
+
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6698,6 +6742,11 @@ msgstr "Transcription diarisée normalisée"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr "Non autorisé à accéder à ce fournisseur OAuth."
+
+#. js-lingui-id: KPx1UV
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Not found"
+msgstr "Introuvable"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8839,6 +8888,12 @@ msgctxt "fieldMetadata.label"
 msgid "Sent count"
 msgstr "Nombre d'envois"
 
+#. js-lingui-id: ttuub1
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "sent or received an email"
+msgstr "a envoyé ou reçu un e-mail"
+
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10386,6 +10441,21 @@ msgstr "Ce sous-domaine est déjà pris."
 msgid "This suppressed address no longer exists."
 msgstr "Cette adresse sur la liste d’exclusion n’existe plus."
 
+#. js-lingui-id: 0GMgIa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity action is not supported"
+msgstr "Cette action d'activité de la chronologie n'est pas prise en charge"
+
+#. js-lingui-id: O6/sEz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity renderer is not supported"
+msgstr "Ce moteur de rendu d'activité de la chronologie n'est pas pris en charge"
+
+#. js-lingui-id: jDoSzT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity renderer requires the type to reference an object"
+msgstr "Ce moteur de rendu d'activité de la chronologie exige que le type fasse référence à un objet"
+
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "This type of record cannot be merged."
@@ -10557,6 +10627,44 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "Position de l'enregistrement de l'activité de la chronologie"
 
+#. js-lingui-id: 7e7stO
+#. placeholder {0}: flatTimelineActivityType.renderer
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity renderer {0} requires the type to reference an object"
+msgstr "Le moteur de rendu d'activité de la chronologie {0} exige que le type fasse référence à un objet"
+
+#. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Timeline activity type describing this event"
+msgstr "Type d'activité de la chronologie décrivant cet événement"
+
+#. js-lingui-id: sqmSqj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type label is required"
+msgstr "Le libellé du type d'activité de la chronologie est requis"
+
+#. js-lingui-id: 0QdkGz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type name is required"
+msgstr "Le nom du type d'activité de la chronologie est requis"
+
+#. js-lingui-id: kNsVJi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type not found"
+msgstr "Type d'activité de la chronologie introuvable"
+
+#. js-lingui-id: 8VTlb5
+#. placeholder {0}: flatTimelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type with name {0} already exists for this application"
+msgstr "Un type d'activité de la chronologie nommé {0} existe déjà pour cette application"
+
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10721,6 +10829,30 @@ msgstr "Opération inconnue."
 msgid "Unknown permission required."
 msgstr "Une autorisation inconnue est requise."
 
+#. js-lingui-id: o/bbIF
+#. placeholder {0}: flatTimelineActivityType.action
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity action {0}"
+msgstr "Action d'activité de la chronologie inconnue {0}"
+
+#. js-lingui-id: iiqbeU
+#. placeholder {0}: flatTimelineActivityType.renderer
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity renderer {0}"
+msgstr "Moteur de rendu d'activité de la chronologie inconnu {0}"
+
+#. js-lingui-id: spJjXJ
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related note"
+msgstr "a dissocié une note associée"
+
+#. js-lingui-id: IYBfg3
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related task"
+msgstr "a dissocié une tâche associée"
+
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10798,6 +10930,24 @@ msgstr "Date et heure de mise à jour"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Les restrictions de champ de mise à jour s'appliquent uniquement aux objets modifiables."
+
+#. js-lingui-id: 7YsDpr
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated"
+msgstr "mis à jour"
+
+#. js-lingui-id: Hp+aAn
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related note"
+msgstr "a mis à jour une note associée"
+
+#. js-lingui-id: FoQjXC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related task"
+msgstr "a mis à jour une tâche associée"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11421,6 +11571,36 @@ msgstr "L'ID Vue est requis pour créer un groupe de vue."
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "L'ID Vue est requis pour créer un tri de vue."
+
+#. js-lingui-id: vuzFx0
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was created by"
+msgstr "a été créé par"
+
+#. js-lingui-id: edc5Bh
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was deleted by"
+msgstr "a été supprimé par"
+
+#. js-lingui-id: SfnmZe
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was linked by"
+msgstr "a été lié par"
+
+#. js-lingui-id: tKm/LA
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was restored by"
+msgstr "a été restauré par"
+
+#. js-lingui-id: 0i3MMx
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was unlinked by"
+msgstr "a été dissocié par"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
