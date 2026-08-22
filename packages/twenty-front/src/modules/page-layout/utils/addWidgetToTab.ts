@@ -13,8 +13,8 @@ export const addWidgetToTab = (
     if (tab.id === activeTabId) {
       const existingWidgets =
         tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
-          ? sortWidgetsByVerticalListPosition(tab.widgets ?? [])
-          : (tab.widgets ?? []);
+          ? sortWidgetsByVerticalListPosition(tab.widgets)
+          : tab.widgets;
       const widgets = [...existingWidgets, newWidget];
 
       return {
