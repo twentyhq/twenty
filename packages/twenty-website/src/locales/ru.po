@@ -150,11 +150,9 @@ msgstr "+$7000/организация в месяц"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+$75/пользователь в месяц\n"
+msgstr "+$75/пользователь в месяц\n"
 "Перейдите на enterprise-тариф!"
 
 #. js-lingui-id: iK+ikF
@@ -164,12 +162,10 @@ msgstr "+10 тыс. других"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+20% от чистых расходов\n"
+msgstr "+20% от чистых расходов\n"
 "+$75/пользователь в месяц\n"
 "Перейдите на enterprise-тариф!"
 
@@ -253,12 +249,10 @@ msgstr "от 1 500 $ до 3 500 $"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"$1/запуск оркестрации/организация\n"
+msgstr "$1/запуск оркестрации/организация\n"
 "+$75/пользователь в месяц\n"
 "Перейдите на enterprise-тариф!"
 
@@ -486,11 +480,9 @@ msgstr "100 в минуту"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
-msgstr ""
-"11 групп\n"
+msgstr "11 групп\n"
 "разрешений"
 
 #. js-lingui-id: 2szX5S
@@ -562,11 +554,9 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 2-летний контракт\n"
+msgstr "3 2-летний контракт\n"
 "-33% скидка"
 
 #. js-lingui-id: /jgC+9
@@ -646,11 +636,9 @@ msgstr "CRM для команд, которые *двигаются быстро
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM that\n"
+msgid "A CRM that\n"
 "*grows* with you"
-msgstr ""
-"CRM, который\n"
+msgstr "CRM, который\n"
 "*растет* вместе с вами"
 
 #. js-lingui-id: diWAWP
@@ -665,11 +653,9 @@ msgstr "CRM, который растет вместе с вами | NetZero и T
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM they\n"
+msgid "A CRM they\n"
 "*actually own*"
-msgstr ""
-"CRM, который\n"
+msgstr "CRM, который\n"
 "*действительно им принадлежит*"
 
 #. js-lingui-id: muZzEA
@@ -684,20 +670,16 @@ msgstr "Пользовательский CRM дает вашей организ�
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A feature-by-feature price check, with sources.\n"
+msgid "A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr ""
-"Помесячная проверка цен по функциям с указанием источников.\n"
+msgstr "Помесячная проверка цен по функциям с указанием источников.\n"
 "Большинство возможностей, которые HubSpot закрывает за уровнями тарифов, в Twenty просто включены."
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A friendly price on the front page.\n"
+msgid "A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr ""
-"Привлекательная цена на главной странице.\n"
+msgstr "Привлекательная цена на главной странице.\n"
 "Ограничения всплывают уже после подписания контракта."
 
 #. js-lingui-id: uNIo/j
@@ -732,11 +714,9 @@ msgstr "Платформа, готовая к росту"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A real estate agency on WhatsApp built a\n"
+msgid "A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr ""
-"Агентство недвижимости в WhatsApp построило\n"
+msgstr "Агентство недвижимости в WhatsApp построило\n"
 "вокруг него *CRM*"
 
 #. js-lingui-id: hwoGni
@@ -1223,11 +1203,9 @@ msgstr "Приложение не найдено — Twenty"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Apply to build\n"
+msgid "Apply to build\n"
 "*the future of CRM*"
-msgstr ""
-"Подайте заявку, чтобы создавать\n"
+msgstr "Подайте заявку, чтобы создавать\n"
 "*будущее CRM*"
 
 #. js-lingui-id: LJCDxT
@@ -1394,11 +1372,9 @@ msgstr "Поскольку API Twenty полностью открыт, я смо
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid ""
-"Become\n"
+msgid "Become\n"
 "*our partner*"
-msgstr ""
-"Станьте\n"
+msgstr "Станьте\n"
 "*нашим партнером*"
 
 #. js-lingui-id: PKMHNe
@@ -3416,11 +3392,9 @@ msgstr "Гибкие связи"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"Оркестрация\n"
+msgstr "Оркестрация\n"
 "потоков"
 
 #. js-lingui-id: obrJBN
@@ -3530,11 +3504,9 @@ msgstr "От документов к открытым API"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"From Salesforce to\n"
+msgid "From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr ""
-"От Salesforce к\n"
+msgstr "От Salesforce к\n"
 "*self-hosted Twenty*"
 
 #. js-lingui-id: kl+hEJ
@@ -3903,11 +3875,9 @@ msgstr "Как Nine Dots Ventures перестроила сингапурско�
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid ""
-"How teams\n"
+msgid "How teams\n"
 "*built with Twenty*"
-msgstr ""
-"Как команды\n"
+msgstr "Как команды\n"
 "*строят с Twenty*"
 
 #. js-lingui-id: Z3Cabh
@@ -4481,11 +4451,9 @@ msgstr "LATAM"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid ""
-"Latest\n"
+msgid "Latest\n"
 "*Releases*"
-msgstr ""
-"Последние\n"
+msgstr "Последние\n"
 "*релизы*"
 
 #. js-lingui-id: 7OHfcc
@@ -5227,11 +5195,9 @@ msgstr "Нет. Стройте пользовательские объекты, 
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid ""
-"Nobody buys Dynamics, they license it.\n"
+msgid "Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr ""
-"Dynamics не покупают, его лицензируют.\n"
+msgstr "Dynamics не покупают, его лицензируют.\n"
 "Вот сколько он стоит, когда добавляются хранилище и дополнения."
 
 #. js-lingui-id: EVSOLf
@@ -6473,11 +6439,9 @@ msgstr "Аудит безопасности и DPA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid ""
-"See how teams\n"
+msgid "See how teams\n"
 "build *on Twenty*"
-msgstr ""
-"Смотрите, как команды\n"
+msgstr "Смотрите, как команды\n"
 "строят *на Twenty*"
 
 #. js-lingui-id: aB+XpI
@@ -6710,11 +6674,9 @@ msgstr "Зарегистрируйтесь в Cloud меньше чем за м�
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Simple\n"
+msgid "Simple\n"
 "*Pricing*"
-msgstr ""
-"Простое\n"
+msgstr "Простое\n"
 "*ценообразование*"
 
 #. js-lingui-id: 0eG5g+
@@ -6934,11 +6896,9 @@ msgstr "Начните двигаться *быстрее уже сегодня.
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Start your free trial today\n"
+msgid "Start your free trial today\n"
 "without credit card."
-msgstr ""
-"Начните свой бесплатный пробный период уже сегодня\n"
+msgstr "Начните свой бесплатный пробный период уже сегодня\n"
 "без кредитной карты."
 
 #. js-lingui-id: ThcPyu
@@ -7193,11 +7153,9 @@ msgstr "Расскажите нам больше"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid ""
-"Tell us what you need\n"
+msgid "Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr ""
-"Расскажите, что вам нужно\n"
+msgstr "Расскажите, что вам нужно\n"
 "*Мы найдём подходящего партнёра*"
 
 #. js-lingui-id: kjnQvE
@@ -7381,11 +7339,9 @@ msgstr "Ключевым решением было не строить всё с
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The license is the cheap part.\n"
+msgid "The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr ""
-"Лицензия — дешевая часть.\n"
+msgstr "Лицензия — дешевая часть.\n"
 "Вот сколько стоит SAP Sales Cloud к моменту запуска в продакшене."
 
 #. js-lingui-id: gav9Hl
@@ -7400,11 +7356,9 @@ msgstr "Строки счёта накапливаются"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The list price is only the beginning.\n"
+msgid "The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr ""
-"Прайсовая цена — только начало.\n"
+msgstr "Прайсовая цена — только начало.\n"
 "Вот как выглядит счёт, когда на платформе работает реальная команда."
 
 #. js-lingui-id: nf1NnD
@@ -7710,11 +7664,9 @@ msgstr "Twenty Apps открывает возможность строить п�
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"Twenty as the\n"
+msgid "Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr ""
-"Twenty как\n"
+msgstr "Twenty как\n"
 "*API-основа* go-to-market-стека"
 
 #. js-lingui-id: +w9xZW
@@ -8330,47 +8282,37 @@ msgstr "По каким вопросам вам нужна помощь? *"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Dynamics 365* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*Dynamics 365*?"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*HubSpot* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*HubSpot*?"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Pipedrive* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*Pipedrive*?"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Salesforce* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*Salesforce*?"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*SAP Sales Cloud*?"
 
 #. js-lingui-id: phiBjc
@@ -8456,11 +8398,9 @@ msgstr "Когда поставщик выдёрнул вилку из розе�
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"When your CRM is\n"
+msgid "When your CRM is\n"
 "*the product*"
-msgstr ""
-"Когда ваш CRM —\n"
+msgstr "Когда ваш CRM —\n"
 "*это продукт*"
 
 #. js-lingui-id: OQ41z8
@@ -8883,3 +8823,4 @@ msgstr "Зимбабве 🇿🇼"
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr "Масштаб"
+
