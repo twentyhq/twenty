@@ -9,13 +9,16 @@ import { gql } from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  type TimelineActivityAction,
+  type TimelineActivityTypeSnapshot,
+} from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
-  name
   timelineActivityTypeId
+  timelineActivityTypeSnapshot
   properties
   linkedRecordId
   linkedRecordCachedName
@@ -28,8 +31,8 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
 
 type TimelineActivityRow = {
   id: string;
-  name: string | null;
-  timelineActivityTypeId: string | null;
+  timelineActivityTypeId: string;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
   properties: Record<string, unknown> | null;
   linkedRecordId: string | null;
   linkedRecordCachedName: string | null;
@@ -152,14 +155,24 @@ const timelineActivityTypeIdForOrThrow = (
 };
 
 const NOTE_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.note.universalIdentifier;
+const MESSAGE_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.message.universalIdentifier;
+const CALENDAR_EVENT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.calendarEvent.universalIdentifier;
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
-const MERGE_COMPANY_ID = '20202020-7171-4000-8000-000000000003';
 const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
 const MESSAGE_LIST_ID = '20202020-7171-4000-8000-000000000007';
+const ROUTED_PERSON_ID = '20202020-7171-4000-8000-000000000010';
+const ROUTED_MESSAGE_THREAD_ID = '20202020-7171-4000-8000-000000000011';
+const ROUTED_MESSAGE_ID = '20202020-7171-4000-8000-000000000012';
+const ROUTED_MESSAGE_PARTICIPANT_ID = '20202020-7171-4000-8000-000000000013';
+const ROUTED_CALENDAR_EVENT_ID = '20202020-7171-4000-8000-000000000014';
+const ROUTED_CALENDAR_EVENT_PARTICIPANT_ID =
+  '20202020-7171-4000-8000-000000000015';
 const BATCH_COMPANY_IDS = [
   '20202020-7171-4000-8000-000000000008',
   '20202020-7171-4000-8000-000000000009',
@@ -167,6 +180,24 @@ const BATCH_COMPANY_IDS = [
 
 const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
   [
+    {
+      objectMetadataSingularName: 'calendarEventParticipant',
+      id: ROUTED_CALENDAR_EVENT_PARTICIPANT_ID,
+    },
+    {
+      objectMetadataSingularName: 'calendarEvent',
+      id: ROUTED_CALENDAR_EVENT_ID,
+    },
+    {
+      objectMetadataSingularName: 'messageParticipant',
+      id: ROUTED_MESSAGE_PARTICIPANT_ID,
+    },
+    { objectMetadataSingularName: 'message', id: ROUTED_MESSAGE_ID },
+    {
+      objectMetadataSingularName: 'messageThread',
+      id: ROUTED_MESSAGE_THREAD_ID,
+    },
+    { objectMetadataSingularName: 'person', id: ROUTED_PERSON_ID },
     { objectMetadataSingularName: 'noteTarget', id: NOTE_TARGET_ID },
     { objectMetadataSingularName: 'note', id: NOTE_ID },
     { objectMetadataSingularName: 'messageList', id: MESSAGE_LIST_ID },
@@ -175,14 +206,12 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
       id,
     })),
     { objectMetadataSingularName: 'company', id: NOTE_COMPANY_ID },
-    { objectMetadataSingularName: 'company', id: MERGE_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: POSITION_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: COMPANY_ID },
   ];
 
 // Pins the write-path behavior that the timeline activity rule engine must
-// reproduce. Assertions describe what the hardcoded implementation does today,
-// including the parts that look accidental.
+// reproduce.
 describe('timeline activity write path (integration)', () => {
   beforeAll(async () => {
     const response = await makeMetadataAPIRequest({
@@ -235,7 +264,10 @@ describe('timeline activity write path (integration)', () => {
       expect(timelineActivities[0].timelineActivityTypeId).toBe(
         timelineActivityTypeIdForOrThrow('created'),
       );
-      expect(timelineActivities[0].name).toBe('company.created');
+      expect(timelineActivities[0].timelineActivityTypeSnapshot).toMatchObject({
+        id: timelineActivityTypeIdForOrThrow('created'),
+        action: 'created',
+      });
       expect(timelineActivities[0].targetCompanyId).toBe(COMPANY_ID);
       expect(timelineActivities[0].linkedRecordId).toBeNull();
     });
@@ -263,47 +295,6 @@ describe('timeline activity write path (integration)', () => {
             before: 'Timeline Write Path',
             after: 'Timeline Write Path Renamed',
           },
-        },
-      });
-    });
-
-    it('should merge two updates from the same author into a single entry', async () => {
-      await createRecord({
-        objectMetadataSingularName: 'company',
-        data: {
-          id: MERGE_COMPANY_ID,
-          name: 'Merge Window',
-        },
-      });
-
-      await updateRecord({
-        objectMetadataSingularName: 'company',
-        recordId: MERGE_COMPANY_ID,
-        data: {
-          name: 'Merge Window Once',
-        },
-      });
-      await waitForAllJobsToFinish();
-
-      await updateRecord({
-        objectMetadataSingularName: 'company',
-        recordId: MERGE_COMPANY_ID,
-        data: {
-          name: 'Merge Window Twice',
-        },
-      });
-
-      const timelineActivities = await findTimelineActivities({
-        targetCompanyId: { eq: MERGE_COMPANY_ID },
-        timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated'),
-        },
-      });
-
-      expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].properties).toEqual({
-        diff: {
-          name: { before: 'Merge Window', after: 'Merge Window Twice' },
         },
       });
     });
@@ -411,6 +402,14 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
+      expect(timelineActivities[0].timelineActivityTypeSnapshot).toMatchObject({
+        id: timelineActivityTypeIdForOrThrow(
+          'linked',
+          NOTE_UNIVERSAL_IDENTIFIER,
+        ),
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      });
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
       expect(timelineActivities[0].linkedRecordCachedName).toBe('Linked note');
       expect(timelineActivities[0].linkedObjectMetadataId).not.toBeNull();
@@ -516,6 +515,98 @@ describe('timeline activity write path (integration)', () => {
 
       expect(timelineActivities).toHaveLength(1);
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
+    });
+  });
+
+  describe('metadata-declared junction routing', () => {
+    it('should route message and calendar event links through the generic rule engine', async () => {
+      await createRecord({
+        objectMetadataSingularName: 'person',
+        data: {
+          id: ROUTED_PERSON_ID,
+          name: { firstName: 'Generic', lastName: 'Target' },
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'messageThread',
+        data: { id: ROUTED_MESSAGE_THREAD_ID },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'message',
+        data: {
+          id: ROUTED_MESSAGE_ID,
+          messageThreadId: ROUTED_MESSAGE_THREAD_ID,
+          subject: 'Generic message routing',
+          text: 'No specialized listener required',
+          receivedAt: new Date().toISOString(),
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'messageParticipant',
+        data: {
+          id: ROUTED_MESSAGE_PARTICIPANT_ID,
+          messageId: ROUTED_MESSAGE_ID,
+          personId: ROUTED_PERSON_ID,
+          role: 'TO',
+          handle: 'generic.target@example.com',
+          displayName: 'Generic Target',
+        },
+      });
+
+      const messageActivities = await findTimelineActivities({
+        targetPersonId: { eq: ROUTED_PERSON_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            MESSAGE_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(messageActivities).toHaveLength(1);
+      expect(messageActivities[0]).toMatchObject({
+        linkedRecordId: ROUTED_MESSAGE_ID,
+        linkedRecordCachedName: 'Generic message routing',
+      });
+
+      await createRecord({
+        objectMetadataSingularName: 'calendarEvent',
+        data: {
+          id: ROUTED_CALENDAR_EVENT_ID,
+          title: 'Generic calendar routing',
+          isFullDay: false,
+          startsAt: new Date().toISOString(),
+          endsAt: new Date().toISOString(),
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'calendarEventParticipant',
+        data: {
+          id: ROUTED_CALENDAR_EVENT_PARTICIPANT_ID,
+          calendarEventId: ROUTED_CALENDAR_EVENT_ID,
+          personId: ROUTED_PERSON_ID,
+          handle: 'generic.target@example.com',
+          displayName: 'Generic Target',
+          responseStatus: 'ACCEPTED',
+          isOrganizer: false,
+        },
+      });
+
+      const calendarActivities = await findTimelineActivities({
+        targetPersonId: { eq: ROUTED_PERSON_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            CALENDAR_EVENT_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(calendarActivities).toHaveLength(1);
+      expect(calendarActivities[0]).toMatchObject({
+        linkedRecordId: ROUTED_CALENDAR_EVENT_ID,
+        linkedRecordCachedName: 'Generic calendar routing',
+      });
     });
   });
 

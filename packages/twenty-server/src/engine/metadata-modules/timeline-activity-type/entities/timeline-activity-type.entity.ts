@@ -1,7 +1,5 @@
-import {
-  type TimelineActivityAction,
-  type TimelineActivityRenderer,
-} from 'twenty-shared/timeline';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +9,24 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import {
+  ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+  ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+  REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+  TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+} from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type TimelineActivityTypeOverrides = {
+  label?: string;
+  icon?: string | null;
+  translations?: Partial<
+    Record<keyof typeof APP_LOCALES, { label?: string | null }>
+  > | null;
+};
 
 @Entity({ name: 'timelineActivityType', schema: 'core' })
 @Unique('IDX_TIMELINE_ACTIVITY_TYPE_NAME_APPLICATION_WORKSPACE_UNIQUE', [
@@ -20,7 +35,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceId',
 ])
 export class TimelineActivityTypeEntity
-  extends SyncableEntity
+  extends OverridableEntity<TimelineActivityTypeOverrides>
   implements Required<TimelineActivityTypeEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -32,18 +47,26 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: false, type: 'varchar' })
   label: string;
 
-  // The verb the entry describes. Null leaves the label authoritative for a
-  // custom renderer instead of selecting built-in action copy.
+  // The verb used by automatic audit writers to resolve a type. Null leaves
+  // the type available only to explicit writers addressing its identifier.
   @Column({ nullable: true, type: 'varchar' })
   action: TimelineActivityAction | null;
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  // Names the frontend component that draws the row. Null falls back to the
-  // generic renderer, which needs nothing but the label and icon.
+  // A 2.33 server still selects this column during a rolling deployment. It is
+  // no longer mapped into current metadata. The decorator and physical drop
+  // are both deferred to 2.35; the branded type lets flat builders omit it.
   @Column({ nullable: true, type: 'varchar' })
-  renderer: TimelineActivityRenderer | null;
+  renderer: WasRemovedInUpgrade<string | null>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  frontComponentUniversalIdentifier: string | null;
 
   // The object whose records this entry is about, as a soft reference rather
   // than a relation: it is resolved through the flat maps at write time to pick
@@ -51,9 +74,37 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'uuid' })
   objectUniversalIdentifier: string | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  targetRelationFieldUniversalIdentifier: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid', array: true })
+  triggerFieldUniversalIdentifiers: string[] | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  overridesTimelineActivityTypeUniversalIdentifier: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(TimelineActivityTypeEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(TimelineActivityTypeEntity.prototype, 'isActive');

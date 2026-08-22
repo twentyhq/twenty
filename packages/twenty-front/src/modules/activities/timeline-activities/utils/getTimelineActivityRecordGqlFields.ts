@@ -10,7 +10,9 @@ type GetTimelineActivityRecordGqlFieldsParams = Pick<
   'objectMetadataItems' | 'fields'
 >;
 
-// Timeline rows render scalars and the author only, and the server resolves every requested morph target with its own relation query.
+// Cached linked labels are captured before record permissions are applied, so
+// only the authorized live record identifier may reach the native renderer.
+// Morph targets are resolved separately because each target has its own query.
 export const getTimelineActivityRecordGqlFields = ({
   objectMetadataItems,
   fields,
@@ -18,7 +20,9 @@ export const getTimelineActivityRecordGqlFields = ({
   generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
     fields: fields.filter(
-      (field) => field.type !== FieldMetadataType.MORPH_RELATION,
+      (field) =>
+        field.type !== FieldMetadataType.MORPH_RELATION &&
+        field.name !== 'linkedRecordCachedName',
     ),
     depth: 1,
   });

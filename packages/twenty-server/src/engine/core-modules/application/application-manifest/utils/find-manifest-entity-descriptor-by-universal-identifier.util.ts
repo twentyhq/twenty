@@ -84,11 +84,13 @@ const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
-  // Seeded by the twenty-standard application only: an app manifest cannot
-  // declare timeline activity types, so it never contributes a candidate.
   timelineActivityType: {
     entityKind: 'timeline activity type',
-    getCandidates: () => [],
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.timelineActivityTypes,
+        (timelineActivityType) => timelineActivityType.label,
+      ),
   },
   view: {
     entityKind: 'view',

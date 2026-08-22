@@ -1,0 +1,11 @@
+export const REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME =
+  '2.34.0_RefactorTimelineActivityTypeRenderingFastInstanceCommand_1787401441616';
+
+export const ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME =
+  '2.34.0_AddTimelineActivityRoutingFastInstanceCommand_1787411152000';
+
+export const ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME =
+  '2.34.0_AddTimelineActivityTypeOverridesFastInstanceCommand_1787411154000';
+
+export const TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME =
+  '2.34.0_TimelineActivityTypeOverridableEntityFastInstanceCommand_1787422468123';

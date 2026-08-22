@@ -234,6 +234,8 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  // Kept through 2.34 so new workspaces remain writable by 2.33 pods during a
+  // rolling deployment. The 2.34 implementation ignores this field.
   name: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -271,6 +273,32 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
         }),
       ),
       icon: 'IconAbc',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  // A 2.33 pod cannot populate this field during the 2.34 rolling deployment.
+  timelineActivityTypeSnapshot: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'timelineActivityTypeSnapshot',
+      type: FieldMetadataType.RAW_JSON,
+      label: i18nLabel(
+        msg({ message: `Event type`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activity type describing this event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconArchive',
       isSystem: true,
       isNullable: true,
       isUIEditable: false,
