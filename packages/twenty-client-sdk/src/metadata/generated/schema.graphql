@@ -4972,6 +4972,7 @@ input CreateCalendarEventInput {
 
 input SendEmailInput {
   connectedAccountId: String!
+  fromHandle: String
   to: String!
   cc: String
   bcc: String

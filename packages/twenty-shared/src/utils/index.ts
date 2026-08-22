@@ -51,6 +51,7 @@ export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDate
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
 export { formatEmailAddress } from './email/formatEmailAddress';
+export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';

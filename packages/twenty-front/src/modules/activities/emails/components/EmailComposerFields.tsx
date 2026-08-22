@@ -5,7 +5,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
@@ -20,6 +19,9 @@ import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/type
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
+import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
+import { formatConnectedAccountSenderValue } from '@/accounts/utils/formatConnectedAccountSenderValue';
+import { parseConnectedAccountSenderValue } from '@/accounts/utils/parseConnectedAccountSenderValue';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { Select } from '@/ui/input/components/Select';
@@ -135,16 +137,29 @@ export const EmailComposerFields = ({
   const { theme } = useContext(ThemeContext);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
-    myConnectedAccounts: { id: string; handle: string }[];
+    myConnectedAccounts: {
+      id: string;
+      handle: string;
+      handleAliases: string[] | null;
+    }[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
 
-  const accountOptions: SelectOption<string>[] =
-    accountsData?.myConnectedAccounts?.map((account) => ({
-      label: account.handle,
-      value: account.id,
-    })) ?? [];
+  const connectedAccounts = accountsData?.myConnectedAccounts ?? [];
 
-  const hasMultipleAccounts = accountOptions.length > 1;
+  const senderOptions = buildConnectedAccountSenderOptions(connectedAccounts);
+
+  const hasMultipleSenders = senderOptions.length > 1;
+
+  const selectedAccount = connectedAccounts.find(
+    (account) => account.id === composerState.connectedAccountId,
+  );
+
+  const selectedSenderValue = isDefined(selectedAccount)
+    ? formatConnectedAccountSenderValue({
+        connectedAccountId: selectedAccount.id,
+        handle: composerState.fromHandle ?? selectedAccount.handle,
+      })
+    : undefined;
 
   const allRecipientKeys = [
     ...composerState.to,
@@ -197,15 +212,17 @@ export const EmailComposerFields = ({
           onDragEnd={handlers.onDragEnd}
         >
           <StyledHeaderRows>
-            {hasMultipleAccounts && (
+            {hasMultipleSenders && (
               <EmailComposerFieldRow label={t`From`}>
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
-                  value={composerState.connectedAccountId}
-                  options={accountOptions}
+                  value={selectedSenderValue}
+                  options={senderOptions}
                   onChange={(value) =>
-                    composerState.setConnectedAccountId(value)
+                    composerState.setSender(
+                      parseConnectedAccountSenderValue(value),
+                    )
                   }
                 />
               </EmailComposerFieldRow>
