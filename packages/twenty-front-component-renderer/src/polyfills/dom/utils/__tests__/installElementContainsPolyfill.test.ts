@@ -9,8 +9,10 @@ const createElement = (): FakeNode => ({
   parentNode: null,
 });
 
-const createBrokenRemoteDomContains =
-  (): ((this: FakeNode, other: unknown) => boolean) =>
+const createBrokenRemoteDomContains = (): ((
+  this: FakeNode,
+  other: unknown,
+) => boolean) =>
   // The exact @remote-dom/polyfill implementation this polyfill replaces:
   // it re-reads the ORIGINAL node's parentNode on every iteration, so any
   // indirect descendant loops forever.
