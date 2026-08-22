@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import {
+  ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
   ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
 } from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
@@ -50,8 +51,6 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'varchar' })
   renderer: WasRemovedInUpgrade<string | null>;
 
-  // App front components are the extension point for custom row presentation.
-  // The universal identifier stays stable across workspaces and app upgrades.
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
@@ -65,21 +64,24 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'uuid' })
   objectUniversalIdentifier: string | null;
 
-  // When set, events on the source object fan out through this relation to the
-  // target records whose timelines receive the entry.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid' })
   targetRelationFieldUniversalIdentifier: string | null;
 
-  // An updated event is emitted only when at least one of these source fields
-  // changed. Null means every non-position field can trigger the type.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid', array: true })
   triggerFieldUniversalIdentifiers: string[] | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  overridesTimelineActivityTypeUniversalIdentifier: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

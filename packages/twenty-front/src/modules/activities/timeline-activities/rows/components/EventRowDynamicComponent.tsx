@@ -1,8 +1,32 @@
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
+import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
+import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FrontComponentRenderer } from '@/front-components/components/FrontComponentRenderer';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
+const StyledNativeRowContainer = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
+const StyledNativeRow = styled.div`
+  min-width: 0;
+  width: 100%;
+`;
 
 export const EventRowDynamicComponent = ({
   labelIdentifierValue,
@@ -13,8 +37,9 @@ export const EventRowDynamicComponent = ({
   mainObjectMetadataItem,
   linkedObjectMetadataItem,
   authorFullName,
-  createdAt,
+  happensAt,
 }: EventRowDynamicComponentProps) => {
+  const [isFrontComponentOpen, setIsFrontComponentOpen] = useState(false);
   const EventRowComponent = isDefined(event.linkedRecordId)
     ? EventRowGenericLinked
     : EventRowMainObject;
@@ -29,7 +54,7 @@ export const EventRowDynamicComponent = ({
       mainObjectMetadataItem={mainObjectMetadataItem}
       linkedObjectMetadataItem={linkedObjectMetadataItem}
       authorFullName={authorFullName}
-      createdAt={createdAt}
+      happensAt={happensAt}
     />
   );
 
@@ -38,11 +63,22 @@ export const EventRowDynamicComponent = ({
   }
 
   return (
-    <FrontComponentRenderer
-      frontComponentId={frontComponentId}
-      timelineActivityId={event.id}
-      loadingFallback={nativeRenderer}
-      unavailableFallback={nativeRenderer}
-    />
+    <StyledContainer>
+      <StyledNativeRowContainer>
+        <StyledNativeRow>{nativeRenderer}</StyledNativeRow>
+        <EventCardToggleButton
+          isOpen={isFrontComponentOpen}
+          setIsOpen={setIsFrontComponentOpen}
+        />
+      </StyledNativeRowContainer>
+      {isFrontComponentOpen && (
+        <EventCard isOpen>
+          <FrontComponentRenderer
+            frontComponentId={frontComponentId}
+            timelineActivityId={event.id}
+          />
+        </EventCard>
+      )}
+    </StyledContainer>
   );
 };

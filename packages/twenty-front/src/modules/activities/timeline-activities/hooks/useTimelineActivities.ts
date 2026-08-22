@@ -69,7 +69,7 @@ export const useTimelineActivities = (
     filter,
     orderBy: [
       {
-        createdAt: 'DescNullsFirst',
+        happensAt: 'DescNullsFirst',
       },
     ],
     recordGqlFields,

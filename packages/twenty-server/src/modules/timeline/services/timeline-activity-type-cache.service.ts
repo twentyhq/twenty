@@ -10,24 +10,53 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { TimelineException } from 'src/modules/timeline/exceptions/timeline.exception';
 import { isDefined } from 'twenty-shared/utils';
+import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 
 @Injectable()
 export class TimelineActivityTypeCacheService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
 
   async getTimelineActivityTypeResolver(
     workspaceId: string,
   ): Promise<TimelineActivityTypeResolver> {
-    const { flatTimelineActivityTypeMaps } =
+    const { flatTimelineActivityTypeMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatTimelineActivityTypeMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatTimelineActivityTypeMaps',
+            'flatObjectMetadataMaps',
+          ],
+        },
       );
 
-    return buildResolvedTimelineActivityTypeResolver(
-      flatTimelineActivityTypeMaps,
-    );
+    const { resolveTimelineActivityType, conflicts, invalidContracts } =
+      buildResolvedTimelineActivityTypeResolver({
+        ...flatTimelineActivityTypeMaps,
+        objectMetadataByUniversalIdentifier:
+          flatObjectMetadataMaps.byUniversalIdentifier,
+      });
+
+    for (const conflict of conflicts) {
+      this.timelineActivityMetadataDiagnosticsService.report({
+        workspaceId,
+        reason: 'ambiguous-resolver',
+        ...conflict,
+      });
+    }
+
+    for (const invalidContract of invalidContracts) {
+      this.timelineActivityMetadataDiagnosticsService.report({
+        workspaceId,
+        reason: 'invalid-contract',
+        ...invalidContract,
+      });
+    }
+
+    return resolveTimelineActivityType;
   }
 
   async getTimelineActivityTypeByIdOrThrow({

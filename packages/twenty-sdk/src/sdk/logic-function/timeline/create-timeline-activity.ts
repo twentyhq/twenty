@@ -33,6 +33,29 @@ export type CreatedTimelineActivity = {
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
 };
 
+const OBJECT_METADATA_PAGE_SIZE = 100;
+
+const getObjectMetadataPageSelection = (after?: string) => ({
+  __args: {
+    paging: {
+      first: OBJECT_METADATA_PAGE_SIZE,
+      ...(isDefined(after) ? { after } : {}),
+    },
+    filter: {},
+  },
+  edges: {
+    node: {
+      id: true,
+      universalIdentifier: true,
+      nameSingular: true,
+    },
+  },
+  pageInfo: {
+    endCursor: true,
+    hasNextPage: true,
+  },
+});
+
 // App code addresses manifest entities by their stable universal identifier;
 // the workspace row deliberately stores the installation-specific metadata ID.
 export const createTimelineActivity = async ({
@@ -43,22 +66,14 @@ export const createTimelineActivity = async ({
   ...input
 }: CreateTimelineActivityInput): Promise<CreatedTimelineActivity> => {
   const metadataClient = new MetadataApiClient();
-  const { timelineActivityTypes, objects } = await metadataClient.query({
-    timelineActivityTypes: {
-      id: true,
-      universalIdentifier: true,
-    },
-    objects: {
-      __args: { paging: { first: 1000 }, filter: {} },
-      edges: {
-        node: {
-          id: true,
-          universalIdentifier: true,
-          nameSingular: true,
-        },
+  const { timelineActivityTypes, objects: firstObjectsPage } =
+    await metadataClient.query({
+      timelineActivityTypes: {
+        id: true,
+        universalIdentifier: true,
       },
-    },
-  });
+      objects: getObjectMetadataPageSelection(),
+    });
 
   const timelineActivityType = timelineActivityTypes.find(
     ({ universalIdentifier }) =>
@@ -71,12 +86,50 @@ export const createTimelineActivity = async ({
     );
   }
 
-  const targetObject = objects.edges
-    .map(({ node }) => node)
-    .find(
-      ({ universalIdentifier }) =>
-        universalIdentifier === targetObjectUniversalIdentifier,
+  const requiredObjectUniversalIdentifiers = new Set(
+    [
+      targetObjectUniversalIdentifier,
+      linkedObjectMetadataUniversalIdentifier,
+    ].filter(isDefined),
+  );
+  const objectMetadataByUniversalIdentifier = new Map<
+    string,
+    { id: string; nameSingular: string }
+  >();
+  let objectsPage = firstObjectsPage;
+
+  while (true) {
+    for (const { node } of objectsPage.edges) {
+      if (requiredObjectUniversalIdentifiers.has(node.universalIdentifier)) {
+        objectMetadataByUniversalIdentifier.set(node.universalIdentifier, node);
+      }
+    }
+
+    const foundEveryRequiredObject = [
+      ...requiredObjectUniversalIdentifiers,
+    ].every((universalIdentifier) =>
+      objectMetadataByUniversalIdentifier.has(universalIdentifier),
     );
+    const endCursor = objectsPage.pageInfo?.endCursor;
+
+    if (
+      foundEveryRequiredObject ||
+      !objectsPage.pageInfo?.hasNextPage ||
+      !isDefined(endCursor)
+    ) {
+      break;
+    }
+
+    const nextPageResult = await metadataClient.query({
+      objects: getObjectMetadataPageSelection(endCursor),
+    });
+
+    objectsPage = nextPageResult.objects;
+  }
+
+  const targetObject = objectMetadataByUniversalIdentifier.get(
+    targetObjectUniversalIdentifier,
+  );
 
   if (!isDefined(targetObject)) {
     throw new Error(
@@ -86,12 +139,9 @@ export const createTimelineActivity = async ({
 
   const targetFieldName = `target${capitalize(targetObject.nameSingular)}Id`;
   const linkedObject = isDefined(linkedObjectMetadataUniversalIdentifier)
-    ? objects.edges
-        .map(({ node }) => node)
-        .find(
-          ({ universalIdentifier }) =>
-            universalIdentifier === linkedObjectMetadataUniversalIdentifier,
-        )
+    ? objectMetadataByUniversalIdentifier.get(
+        linkedObjectMetadataUniversalIdentifier,
+      )
     : undefined;
 
   if (

@@ -66,10 +66,6 @@ const StyledVerticalLine = styled.div`
   width: 2px;
 `;
 
-const StyledSummary = styled.summary`
-  width: 100%;
-`;
-
 const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   align-items: flex-start;
   display: flex;
@@ -103,14 +99,14 @@ export const EventRow = ({
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const { timelineActivityTypeById } = useTimelineActivityTypes();
+  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
   const frontComponents = useAtomStateValue(frontComponentsSelector);
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const timelineActivityType = getTimelineActivityType(
     event,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
 
   const frontComponentId = isDefined(
@@ -125,13 +121,13 @@ export const EventRow = ({
 
   const timelineActivityAction = getTimelineActivityAction(
     event,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
 
   const linkedObjectMetadataItem =
     getTimelineActivityLinkedObjectMetadataItem({
       timelineActivity: event,
-      timelineActivityTypeById,
+      timelineActivityTypeMaps,
       objectMetadataItems,
     }) ?? null;
 
@@ -174,19 +170,17 @@ export const EventRow = ({
           )}
         </StyledLeftContainer>
         <StyledItemContainer isMarginBottom={!isLastEvent}>
-          <StyledSummary>
-            <EventRowDynamicComponent
-              authorFullName={authorFullName}
-              labelIdentifierValue={labelIdentifier.name}
-              event={event}
-              eventAction={timelineActivityAction}
-              eventTypeLabel={timelineActivityType?.label}
-              frontComponentId={frontComponentId}
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              linkedObjectMetadataItem={linkedObjectMetadataItem}
-              createdAt={event.createdAt}
-            />
-          </StyledSummary>
+          <EventRowDynamicComponent
+            authorFullName={authorFullName}
+            labelIdentifierValue={labelIdentifier.name}
+            event={event}
+            eventAction={timelineActivityAction}
+            eventTypeLabel={timelineActivityType?.label}
+            frontComponentId={frontComponentId}
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            linkedObjectMetadataItem={linkedObjectMetadataItem}
+            happensAt={event.happensAt}
+          />
         </StyledItemContainer>
       </StyledTimelineItemContainer>
     </>

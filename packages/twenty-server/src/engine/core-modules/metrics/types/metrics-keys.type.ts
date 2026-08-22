@@ -93,4 +93,5 @@ export enum MetricsKeys {
   WorkspaceMigrationActionCount = 'workspace-migration/action-count',
   OrmV2ReadPathUsed = 'orm-v2/read-path-used',
   OrmV2WritePathUsed = 'orm-v2/write-path-used',
+  TimelineActivityMetadataIssue = 'timeline-activity/metadata-issue',
 }

@@ -34,8 +34,6 @@ export class TimelineActivityTargetQueryService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  // Source events: walk the junction in one batched query and return, per source
-  // record, every record whose timeline receives an entry.
   async resolveTargetsBySourceRecordId({
     rule,
     sourceRecordIds,
@@ -88,7 +86,6 @@ export class TimelineActivityTargetQueryService {
     return targetsBySourceRecordId;
   }
 
-  // Link events: the junction row is the event payload, no query needed.
   resolveTargetFromJunctionRecord({
     rule,
     junctionRecord,

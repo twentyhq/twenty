@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ObjectRecord } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import {
   type ResolveTimelineActivityTypeArgs,
   type ResolvedTimelineActivityType,
-  resolveTimelineActivityTypeOrThrow,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
+import { TimelineException } from 'src/modules/timeline/exceptions/timeline.exception';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
@@ -148,12 +148,17 @@ export class TimelineActivitySeederService {
       );
     const resolveRequiredTimelineActivityType = (
       args: ResolveTimelineActivityTypeArgs,
-    ) =>
-      resolveTimelineActivityTypeOrThrow({
-        ...args,
-        resolveTimelineActivityType,
-        workspaceId,
-      });
+    ) => {
+      const timelineActivityType = resolveTimelineActivityType(args);
+
+      if (!isDefined(timelineActivityType)) {
+        throw new TimelineException(
+          `Timeline activity type ${args.action} is required to seed workspace ${workspaceId}`,
+        );
+      }
+
+      return timelineActivityType;
+    };
     let activityIndex = 0;
 
     const entityConfigs: EntityConfig[] = [

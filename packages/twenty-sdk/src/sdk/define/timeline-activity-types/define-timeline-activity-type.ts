@@ -46,5 +46,24 @@ export const defineTimelineActivityType: DefineEntity<
     );
   }
 
+  if (
+    config.triggerFieldUniversalIdentifiers &&
+    new Set(config.triggerFieldUniversalIdentifiers).size !==
+      config.triggerFieldUniversalIdentifiers.length
+  ) {
+    errors.push(
+      'TimelineActivityType triggerFieldUniversalIdentifiers must be unique',
+    );
+  }
+
+  if (
+    config.overridesTimelineActivityTypeUniversalIdentifier &&
+    (!config.action || !config.objectUniversalIdentifier)
+  ) {
+    errors.push(
+      'TimelineActivityType overridesTimelineActivityTypeUniversalIdentifier requires action and objectUniversalIdentifier',
+    );
+  }
+
   return createValidationResult({ config, errors });
 };

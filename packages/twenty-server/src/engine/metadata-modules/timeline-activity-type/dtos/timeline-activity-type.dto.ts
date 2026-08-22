@@ -59,6 +59,10 @@ export class TimelineActivityTypeDTO {
   @Field(() => [UUIDScalarType], { nullable: true })
   triggerFieldUniversalIdentifiers: string[] | null;
 
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  overridesTimelineActivityTypeUniversalIdentifier: string | null;
+
   @HideField()
   workspaceId: string;
 

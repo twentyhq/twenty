@@ -20,7 +20,6 @@ import { TimelineActivityRepository } from 'src/modules/timeline/repositories/ti
 import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
 import {
   type ResolvedTimelineActivityType,
-  resolveTimelineActivityTypeOrThrow,
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
@@ -31,6 +30,7 @@ import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/time
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 
 // An event on the junction object is a change to the link, not to the linked
 // record. `updated` covers a junction row being repointed at another target.
@@ -100,6 +100,7 @@ export class TimelineActivityService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly timelineActivityRuleBuilderService: TimelineActivityRuleBuilderService,
     private readonly timelineActivityTargetQueryService: TimelineActivityTargetQueryService,
+    private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
 
   async upsertEvents({
@@ -240,13 +241,23 @@ export class TimelineActivityService {
 
     const timelineActivityType =
       rule.timelineActivityType ??
-      resolveTimelineActivityTypeOrThrow({
-        resolveTimelineActivityType,
-        workspaceId,
+      resolveTimelineActivityType({
         action: ruleAction,
         objectUniversalIdentifier:
           rule.sourceFlatObjectMetadata.universalIdentifier,
       });
+
+    if (!isDefined(timelineActivityType)) {
+      this.timelineActivityMetadataDiagnosticsService.report({
+        workspaceId,
+        reason: 'missing-type',
+        action: ruleAction,
+        objectUniversalIdentifier:
+          rule.sourceFlatObjectMetadata.universalIdentifier,
+      });
+
+      return [];
+    }
 
     const matchingEvents = events.filter((event) =>
       this.ruleMatchesEvent({ rule, ruleAction, event }),
@@ -332,13 +343,23 @@ export class TimelineActivityService {
 
     const timelineActivityType =
       rule.timelineActivityType ??
-      resolveTimelineActivityTypeOrThrow({
-        resolveTimelineActivityType,
-        workspaceId,
+      resolveTimelineActivityType({
         action: ruleAction,
         objectUniversalIdentifier:
           rule.sourceFlatObjectMetadata.universalIdentifier,
       });
+
+    if (!isDefined(timelineActivityType)) {
+      this.timelineActivityMetadataDiagnosticsService.report({
+        workspaceId,
+        reason: 'missing-type',
+        action: ruleAction,
+        objectUniversalIdentifier:
+          rule.sourceFlatObjectMetadata.universalIdentifier,
+      });
+
+      return [];
+    }
 
     const { junctionSourceJoinColumnName } = rule.targetShape;
 

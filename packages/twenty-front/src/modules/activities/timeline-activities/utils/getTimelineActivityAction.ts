@@ -1,5 +1,5 @@
 import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
-import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
 import {
   parseTimelineActivityAction,
@@ -9,11 +9,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const getTimelineActivityAction = (
   timelineActivity: FilterableTimelineActivity,
-  timelineActivityTypeById: Map<string, TimelineActivityType>,
+  timelineActivityTypeMaps: TimelineActivityTypeMaps,
 ): TimelineActivityAction | null => {
   const timelineActivityType = getTimelineActivityType(
     timelineActivity,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
 
   if (isDefined(timelineActivityType)) {

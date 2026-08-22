@@ -1,5 +1,6 @@
 import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
 
 const TIMELINE_ACTIVITY_TYPE_ID = '00000000-0000-4000-8000-000000000001';
@@ -34,23 +35,64 @@ const timelineActivity = {
   },
 } satisfies FilterableTimelineActivity;
 
+const getMaps = (
+  timelineActivityTypes: TimelineActivityType[],
+): TimelineActivityTypeMaps => ({
+  byId: new Map(
+    timelineActivityTypes.map((timelineActivityType) => [
+      timelineActivityType.id,
+      timelineActivityType,
+    ]),
+  ),
+  byUniversalIdentifier: new Map(
+    timelineActivityTypes.map((timelineActivityType) => [
+      timelineActivityType.universalIdentifier,
+      timelineActivityType,
+    ]),
+  ),
+});
+
 describe('getTimelineActivityType', () => {
-  it('uses snapshot semantics with the translated live label', () => {
+  it('uses snapshot semantics with live presentation', () => {
     expect(
       getTimelineActivityType(
         timelineActivity,
-        new Map([[TIMELINE_ACTIVITY_TYPE_ID, liveTimelineActivityType]]),
+        getMaps([liveTimelineActivityType]),
       ),
     ).toEqual({
       ...timelineActivity.timelineActivityTypeSnapshot,
+      id: liveTimelineActivityType.id,
+      name: liveTimelineActivityType.name,
       label: liveTimelineActivityType.label,
+      icon: liveTimelineActivityType.icon,
+      frontComponentUniversalIdentifier:
+        liveTimelineActivityType.frontComponentUniversalIdentifier,
     });
   });
 
   it('keeps rendering after the provider application is uninstalled', () => {
-    expect(getTimelineActivityType(timelineActivity, new Map())).toEqual(
+    expect(getTimelineActivityType(timelineActivity, getMaps([]))).toEqual(
       timelineActivity.timelineActivityTypeSnapshot,
     );
+  });
+
+  it('finds live presentation after the application is reinstalled', () => {
+    const reinstalledTimelineActivityType = {
+      ...liveTimelineActivityType,
+      id: '00000000-0000-4000-8000-000000000004',
+    };
+
+    expect(
+      getTimelineActivityType(
+        timelineActivity,
+        getMaps([reinstalledTimelineActivityType]),
+      ),
+    ).toMatchObject({
+      id: reinstalledTimelineActivityType.id,
+      label: liveTimelineActivityType.label,
+      icon: liveTimelineActivityType.icon,
+      action: timelineActivity.timelineActivityTypeSnapshot.action,
+    });
   });
 
   it('reads live metadata for pre-snapshot typed rows', () => {
@@ -60,7 +102,7 @@ describe('getTimelineActivityType', () => {
           properties: {},
           timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
         },
-        new Map([[TIMELINE_ACTIVITY_TYPE_ID, liveTimelineActivityType]]),
+        getMaps([liveTimelineActivityType]),
       ),
     ).toBe(liveTimelineActivityType);
   });

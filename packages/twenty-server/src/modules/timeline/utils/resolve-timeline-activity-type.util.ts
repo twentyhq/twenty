@@ -5,12 +5,14 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
-import { TimelineException } from 'src/modules/timeline/exceptions/timeline.exception';
+import { partitionTimelineActivityTypesByValidity } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
+import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
 
 type ResolvableTimelineActivityType = Pick<
   FlatTimelineActivityType,
   | 'id'
   | 'applicationId'
+  | 'applicationUniversalIdentifier'
   | 'universalIdentifier'
   | 'name'
   | 'label'
@@ -18,12 +20,17 @@ type ResolvableTimelineActivityType = Pick<
   | 'icon'
   | 'objectUniversalIdentifier'
   | 'targetRelationFieldUniversalIdentifier'
+  | 'triggerFieldUniversalIdentifiers'
   | 'frontComponentUniversalIdentifier'
+  | 'overridesTimelineActivityTypeUniversalIdentifier'
 >;
 
 export type TimelineActivityTypeResolutionMaps = {
   byUniversalIdentifier: Partial<
     Record<string, ResolvableTimelineActivityType>
+  >;
+  objectMetadataByUniversalIdentifier: Partial<
+    Record<string, { applicationUniversalIdentifier: string }>
   >;
 };
 
@@ -38,9 +45,20 @@ export type ResolvedTimelineActivityType = {
   snapshot: TimelineActivityTypeSnapshot;
 };
 
+export type TimelineActivityTypeResolutionConflict = {
+  action: TimelineActivityAction;
+  objectUniversalIdentifier: string | null;
+};
+
 export type TimelineActivityTypeResolver = (
   args: ResolveTimelineActivityTypeArgs,
 ) => ResolvedTimelineActivityType | undefined;
+
+export type TimelineActivityTypeResolution = {
+  resolveTimelineActivityType: TimelineActivityTypeResolver;
+  conflicts: TimelineActivityTypeResolutionConflict[];
+  invalidContracts: TimelineActivityTypeResolutionConflict[];
+};
 
 export const toResolvedTimelineActivityType = (
   timelineActivityType: ResolvableTimelineActivityType,
@@ -60,80 +78,141 @@ export const toResolvedTimelineActivityType = (
   },
 });
 
-export const resolveTimelineActivityTypeOrThrow = ({
-  resolveTimelineActivityType,
-  workspaceId,
-  ...args
-}: ResolveTimelineActivityTypeArgs & {
-  resolveTimelineActivityType: TimelineActivityTypeResolver;
-  workspaceId: string;
-}): ResolvedTimelineActivityType => {
-  const timelineActivityType = resolveTimelineActivityType(args);
-
-  if (!isDefined(timelineActivityType)) {
-    const objectContext = isDefined(args.objectUniversalIdentifier)
-      ? ` for object ${args.objectUniversalIdentifier}`
-      : '';
-
-    throw new TimelineException(
-      `No timeline activity type resolves action ${args.action}${objectContext} in workspace ${workspaceId}`,
-    );
-  }
-
-  return timelineActivityType;
-};
-
-// Object-bound types override shared types. Ambiguity is rejected because
-// metadata ordering must never decide the audit semantics of an event.
 export const buildResolvedTimelineActivityTypeResolver = (
   flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps,
-): TimelineActivityTypeResolver => {
-  const typeByObjectAndAction = new Map<string, ResolvedTimelineActivityType>();
-  const typeByAction = new Map<
-    TimelineActivityAction,
-    ResolvedTimelineActivityType
+): TimelineActivityTypeResolution => {
+  const candidatesByObjectAndAction = new Map<
+    string,
+    ResolvableTimelineActivityType[]
   >();
-
-  for (const timelineActivityType of Object.values(
+  const candidatesByAction = new Map<
+    TimelineActivityAction,
+    ResolvableTimelineActivityType[]
+  >();
+  const allUnvalidatedTimelineActivityTypes = Object.values(
     flatTimelineActivityTypeMaps.byUniversalIdentifier,
-  )) {
+  ).filter(isDefined);
+  const timelineActivityTypeByUniversalIdentifier = Object.fromEntries(
+    allUnvalidatedTimelineActivityTypes.map((timelineActivityType) => [
+      timelineActivityType.universalIdentifier,
+      timelineActivityType,
+    ]),
+  );
+  const {
+    validTimelineActivityTypes: allTimelineActivityTypes,
+    invalidTimelineActivityTypes,
+  } = partitionTimelineActivityTypesByValidity({
+    timelineActivityTypes: allUnvalidatedTimelineActivityTypes,
+    objectMetadataByUniversalIdentifier:
+      flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+    timelineActivityTypeByUniversalIdentifier,
+  });
+  const allTimelineActivityTypeUniversalIdentifiers = new Set(
+    allTimelineActivityTypes.map(
+      (timelineActivityType) => timelineActivityType.universalIdentifier,
+    ),
+  );
+
+  for (const timelineActivityType of allTimelineActivityTypes) {
     if (
-      !isDefined(timelineActivityType) ||
       !isDefined(timelineActivityType.action) ||
       isDefined(timelineActivityType.targetRelationFieldUniversalIdentifier)
     ) {
       continue;
     }
 
-    const resolvedTimelineActivityType =
-      toResolvedTimelineActivityType(timelineActivityType);
     const { action, objectUniversalIdentifier } = timelineActivityType;
 
     if (!isDefined(objectUniversalIdentifier)) {
-      if (typeByAction.has(action)) {
-        throw new TimelineException(
-          `Multiple timeline activity types resolve shared action ${action}`,
-        );
-      }
-
-      typeByAction.set(action, resolvedTimelineActivityType);
+      candidatesByAction.set(action, [
+        ...(candidatesByAction.get(action) ?? []),
+        timelineActivityType,
+      ]);
 
       continue;
     }
 
     const key = `${objectUniversalIdentifier}|${action}`;
 
-    if (typeByObjectAndAction.has(key)) {
-      throw new TimelineException(
-        `Multiple timeline activity types resolve action ${action} for object ${objectUniversalIdentifier}`,
-      );
-    }
-
-    typeByObjectAndAction.set(key, resolvedTimelineActivityType);
+    candidatesByObjectAndAction.set(key, [
+      ...(candidatesByObjectAndAction.get(key) ?? []),
+      timelineActivityType,
+    ]);
   }
 
-  return ({ action, objectUniversalIdentifier }) =>
-    (isDefined(objectUniversalIdentifier)
-      ? typeByObjectAndAction.get(`${objectUniversalIdentifier}|${action}`)
-      : undefined) ?? typeByAction.get(action);
+  const conflicts: TimelineActivityTypeResolutionConflict[] = [];
+  const typeByAction = new Map<
+    TimelineActivityAction,
+    ResolvedTimelineActivityType
+  >();
+  const typeByObjectAndAction = new Map<string, ResolvedTimelineActivityType>();
+  const conflictedObjectAndActionKeys = new Set<string>();
+
+  for (const [action, candidates] of candidatesByAction) {
+    const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
+      candidates,
+      allTimelineActivityTypeUniversalIdentifiers,
+    );
+
+    if (isDefined(effectiveTimelineActivityType)) {
+      typeByAction.set(
+        action,
+        toResolvedTimelineActivityType(effectiveTimelineActivityType),
+      );
+    } else {
+      conflicts.push({ action, objectUniversalIdentifier: null });
+    }
+  }
+
+  for (const [key, candidates] of candidatesByObjectAndAction) {
+    const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
+      candidates,
+      allTimelineActivityTypeUniversalIdentifiers,
+    );
+
+    if (isDefined(effectiveTimelineActivityType)) {
+      typeByObjectAndAction.set(
+        key,
+        toResolvedTimelineActivityType(effectiveTimelineActivityType),
+      );
+    } else {
+      const { action, objectUniversalIdentifier } = candidates[0];
+
+      if (isDefined(action) && isDefined(objectUniversalIdentifier)) {
+        conflicts.push({ action, objectUniversalIdentifier });
+        conflictedObjectAndActionKeys.add(key);
+      }
+    }
+  }
+
+  const resolveTimelineActivityType = ({
+    action,
+    objectUniversalIdentifier,
+  }: ResolveTimelineActivityTypeArgs) => {
+    const objectAndActionKey = isDefined(objectUniversalIdentifier)
+      ? `${objectUniversalIdentifier}|${action}`
+      : undefined;
+
+    if (
+      isDefined(objectAndActionKey) &&
+      conflictedObjectAndActionKeys.has(objectAndActionKey)
+    ) {
+      return undefined;
+    }
+
+    return (
+      (isDefined(objectAndActionKey)
+        ? typeByObjectAndAction.get(objectAndActionKey)
+        : undefined) ?? typeByAction.get(action)
+    );
+  };
+
+  return {
+    resolveTimelineActivityType,
+    conflicts,
+    invalidContracts: invalidTimelineActivityTypes.flatMap(
+      ({ action, objectUniversalIdentifier }) =>
+        isDefined(action) ? [{ action, objectUniversalIdentifier }] : [],
+    ),
+  };
 };

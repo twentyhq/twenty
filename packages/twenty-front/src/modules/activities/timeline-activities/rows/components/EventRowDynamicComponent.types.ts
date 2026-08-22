@@ -11,5 +11,5 @@ export type EventRowDynamicComponentProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
   authorFullName: string;
-  createdAt?: string;
+  happensAt?: string;
 };

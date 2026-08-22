@@ -11,6 +11,8 @@ import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation }
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { TimelineActivityTypeExceptionCode } from 'src/engine/metadata-modules/timeline-activity-type/enums/timeline-activity-type-exception-code.enum';
+import { isValidTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
+import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -45,60 +47,7 @@ export class FlatTimelineActivityTypeValidatorService {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
     };
 
-    if (!isNonEmptyString(flatTimelineActivityType.name)) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity type name is required`,
-        userFriendlyMessage: msg`Timeline activity type name is required`,
-      });
-    }
-
-    if (!isNonEmptyString(flatTimelineActivityType.label)) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity type label is required`,
-        userFriendlyMessage: msg`Timeline activity type label is required`,
-      });
-    }
-
-    if (
-      isDefined(flatTimelineActivityType.action) &&
-      !isTimelineActivityAction(flatTimelineActivityType.action)
-    ) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Unknown timeline activity action ${flatTimelineActivityType.action}`,
-        userFriendlyMessage: msg`This timeline activity action is not supported`,
-      });
-    }
-
-    this.validateTimelineActivityTypeDependencies({
-      timelineActivityType: flatTimelineActivityType,
-      validationMaps,
-      validationResult,
-    });
-
-    const existingByName = Object.values(
-      optimisticFlatTimelineActivityTypeMaps.byUniversalIdentifier,
-    ).find(
-      (existing) =>
-        isDefined(existing) &&
-        existing.name === flatTimelineActivityType.name &&
-        existing.applicationUniversalIdentifier ===
-          flatTimelineActivityType.applicationUniversalIdentifier &&
-        existing.universalIdentifier !==
-          flatTimelineActivityType.universalIdentifier,
-    );
-
-    if (isDefined(existingByName)) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.TIMELINE_ACTIVITY_TYPE_NAME_ALREADY_EXISTS,
-        message: t`Timeline activity type with name ${flatTimelineActivityType.name} already exists for this application`,
-        userFriendlyMessage: msg`A timeline activity type with this name already exists for this application`,
-      });
-    }
-
-    this.validateTimelineActivityTypeResolverConflict({
+    this.validateTimelineActivityTypeConfiguration({
       timelineActivityType: flatTimelineActivityType,
       validationMaps,
       validationResult,
@@ -180,52 +129,6 @@ export class FlatTimelineActivityTypeValidatorService {
       ...flatEntityUpdate,
     };
 
-    if (!isNonEmptyString(updatedTimelineActivityType.name)) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity type name is required`,
-        userFriendlyMessage: msg`Timeline activity type name is required`,
-      });
-    }
-
-    if (!isNonEmptyString(updatedTimelineActivityType.label)) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity type label is required`,
-        userFriendlyMessage: msg`Timeline activity type label is required`,
-      });
-    }
-
-    const existingByUpdatedName = Object.values(
-      optimisticFlatTimelineActivityTypeMaps.byUniversalIdentifier,
-    ).find(
-      (existing) =>
-        isDefined(existing) &&
-        existing.universalIdentifier !== universalIdentifier &&
-        existing.name === updatedTimelineActivityType.name &&
-        existing.applicationUniversalIdentifier ===
-          updatedTimelineActivityType.applicationUniversalIdentifier,
-    );
-
-    if (isDefined(existingByUpdatedName)) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.TIMELINE_ACTIVITY_TYPE_NAME_ALREADY_EXISTS,
-        message: t`Timeline activity type with name ${updatedTimelineActivityType.name} already exists for this application`,
-        userFriendlyMessage: msg`A timeline activity type with this name already exists for this application`,
-      });
-    }
-
-    if (
-      isDefined(updatedTimelineActivityType.action) &&
-      !isTimelineActivityAction(updatedTimelineActivityType.action)
-    ) {
-      validationResult.errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Unknown timeline activity action ${updatedTimelineActivityType.action}`,
-        userFriendlyMessage: msg`This timeline activity action is not supported`,
-      });
-    }
-
     const validationMaps = {
       flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
       flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
@@ -233,19 +136,84 @@ export class FlatTimelineActivityTypeValidatorService {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
     };
 
-    this.validateTimelineActivityTypeDependencies({
-      timelineActivityType: updatedTimelineActivityType,
-      validationMaps,
-      validationResult,
-    });
-
-    this.validateTimelineActivityTypeResolverConflict({
+    this.validateTimelineActivityTypeConfiguration({
       timelineActivityType: updatedTimelineActivityType,
       validationMaps,
       validationResult,
     });
 
     return validationResult;
+  }
+
+  private validateTimelineActivityTypeConfiguration({
+    timelineActivityType,
+    validationMaps,
+    validationResult,
+  }: {
+    timelineActivityType: UniversalFlatTimelineActivityType;
+    validationMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'timelineActivityType'>;
+    validationResult: FailedFlatEntityValidation<
+      'timelineActivityType',
+      'create' | 'update'
+    >;
+  }): void {
+    if (!isNonEmptyString(timelineActivityType.name)) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Timeline activity type name is required`,
+        userFriendlyMessage: msg`Timeline activity type name is required`,
+      });
+    }
+
+    if (!isNonEmptyString(timelineActivityType.label)) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Timeline activity type label is required`,
+        userFriendlyMessage: msg`Timeline activity type label is required`,
+      });
+    }
+
+    if (
+      isDefined(timelineActivityType.action) &&
+      !isTimelineActivityAction(timelineActivityType.action)
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Unknown timeline activity action ${timelineActivityType.action}`,
+        userFriendlyMessage: msg`This timeline activity action is not supported`,
+      });
+    }
+
+    const existingByName = Object.values(
+      validationMaps.flatTimelineActivityTypeMaps.byUniversalIdentifier,
+    ).find(
+      (existing) =>
+        isDefined(existing) &&
+        existing.universalIdentifier !==
+          timelineActivityType.universalIdentifier &&
+        existing.name === timelineActivityType.name &&
+        existing.applicationUniversalIdentifier ===
+          timelineActivityType.applicationUniversalIdentifier,
+    );
+
+    if (isDefined(existingByName)) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.TIMELINE_ACTIVITY_TYPE_NAME_ALREADY_EXISTS,
+        message: t`Timeline activity type with name ${timelineActivityType.name} already exists for this application`,
+        userFriendlyMessage: msg`A timeline activity type with this name already exists for this application`,
+      });
+    }
+
+    this.validateTimelineActivityTypeDependencies({
+      timelineActivityType,
+      validationMaps,
+      validationResult,
+    });
+    this.validateTimelineActivityTypeResolverConflict({
+      timelineActivityType,
+      validationMaps,
+      validationResult,
+    });
   }
 
   private validateTimelineActivityTypeDependencies({
@@ -265,20 +233,60 @@ export class FlatTimelineActivityTypeValidatorService {
       frontComponentUniversalIdentifier,
       targetRelationFieldUniversalIdentifier,
       triggerFieldUniversalIdentifiers,
+      overridesTimelineActivityTypeUniversalIdentifier,
     } = timelineActivityType;
 
-    if (
-      isDefined(objectUniversalIdentifier) &&
-      !isDefined(
-        validationMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+    const objectMetadata = isDefined(objectUniversalIdentifier)
+      ? validationMaps.flatObjectMetadataMaps.byUniversalIdentifier[
           objectUniversalIdentifier
-        ],
-      )
-    ) {
+        ]
+      : undefined;
+
+    if (isDefined(objectUniversalIdentifier) && !isDefined(objectMetadata)) {
       validationResult.errors.push({
         code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
         message: t`Timeline activity type references an object that does not exist`,
         userFriendlyMessage: msg`The object used by this timeline activity type is not available`,
+      });
+    }
+
+    const overridesTimelineActivityType = isDefined(
+      overridesTimelineActivityTypeUniversalIdentifier,
+    )
+      ? validationMaps.flatTimelineActivityTypeMaps.byUniversalIdentifier[
+          overridesTimelineActivityTypeUniversalIdentifier
+        ]
+      : undefined;
+
+    const targetsAnotherApplication =
+      isDefined(timelineActivityType.action) &&
+      isDefined(objectMetadata) &&
+      objectMetadata.applicationUniversalIdentifier !==
+        timelineActivityType.applicationUniversalIdentifier;
+
+    if (
+      targetsAnotherApplication &&
+      !isDefined(overridesTimelineActivityTypeUniversalIdentifier)
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`A timeline activity type targeting another application's object must declare the timeline activity type it overrides`,
+        userFriendlyMessage: msg`Choose an existing timeline activity type to override`,
+      });
+    }
+
+    if (
+      isDefined(overridesTimelineActivityTypeUniversalIdentifier) &&
+      !isValidTimelineActivityTypeOverride({
+        timelineActivityType,
+        objectOwner: objectMetadata,
+        overriddenTimelineActivityType: overridesTimelineActivityType,
+      })
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Timeline activity type override must reference a compatible type owned by the target object's application`,
+        userFriendlyMessage: msg`The timeline activity type override is not compatible with this event`,
       });
     }
 
@@ -315,6 +323,8 @@ export class FlatTimelineActivityTypeValidatorService {
         timelineActivityType.action !== 'updated' ||
         !isDefined(targetRelationFieldUniversalIdentifier) ||
         triggerFieldUniversalIdentifiers.length === 0 ||
+        new Set(triggerFieldUniversalIdentifiers).size !==
+          triggerFieldUniversalIdentifiers.length ||
         triggerFieldUniversalIdentifiers.some((universalIdentifier) => {
           const triggerField =
             validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
@@ -375,24 +385,42 @@ export class FlatTimelineActivityTypeValidatorService {
       return;
     }
 
-    const conflictingResolverType = Object.values(
+    const existingTimelineActivityTypes = Object.values(
       validationMaps.flatTimelineActivityTypeMaps.byUniversalIdentifier,
-    ).find(
-      (existing) =>
-        isDefined(existing) &&
-        existing.universalIdentifier !==
-          timelineActivityType.universalIdentifier &&
-        existing.action === timelineActivityType.action &&
-        existing.objectUniversalIdentifier ===
-          timelineActivityType.objectUniversalIdentifier &&
-        existing.targetRelationFieldUniversalIdentifier ===
-          timelineActivityType.targetRelationFieldUniversalIdentifier,
+    ).filter(isDefined);
+    const resolverCandidates = [
+      ...existingTimelineActivityTypes.filter(
+        (existing) =>
+          existing.universalIdentifier !==
+            timelineActivityType.universalIdentifier &&
+          existing.action === timelineActivityType.action &&
+          existing.objectUniversalIdentifier ===
+            timelineActivityType.objectUniversalIdentifier &&
+          existing.targetRelationFieldUniversalIdentifier ===
+            timelineActivityType.targetRelationFieldUniversalIdentifier,
+      ),
+      timelineActivityType,
+    ];
+    const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
+      resolverCandidates,
+      new Set([
+        ...existingTimelineActivityTypes.map(
+          (existing) => existing.universalIdentifier,
+        ),
+        timelineActivityType.universalIdentifier,
+      ]),
     );
 
-    if (isDefined(conflictingResolverType)) {
+    if (!isDefined(effectiveTimelineActivityType)) {
+      const conflictingResolverType = resolverCandidates.find(
+        (candidate) =>
+          candidate.universalIdentifier !==
+          timelineActivityType.universalIdentifier,
+      );
+
       validationResult.errors.push({
         code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity type conflicts with ${conflictingResolverType.name} for the same action, object, and target relation`,
+        message: t`Timeline activity type conflicts with ${conflictingResolverType?.name ?? timelineActivityType.name} for the same action, object, and target relation`,
         userFriendlyMessage: msg`Another timeline activity type already handles this action, object, and target relation`,
       });
     }

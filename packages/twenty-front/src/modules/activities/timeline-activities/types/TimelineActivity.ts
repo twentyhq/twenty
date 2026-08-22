@@ -5,11 +5,14 @@ import { type WorkspaceMember } from '~/generated-metadata/graphql';
 export type TimelineActivity = {
   id: string;
   createdAt: string;
+  happensAt: string;
   updatedAt: string;
   deletedAt: string | null;
   workspaceMemberId: string;
   workspaceMember: WorkspaceMember;
-  properties: any;
+  properties: Record<string, unknown> & {
+    diff?: Record<string, { before: unknown; after: unknown }>;
+  };
   name: string | null;
   timelineActivityTypeId: string | null;
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
@@ -17,7 +20,7 @@ export type TimelineActivity = {
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;
   __typename: 'TimelineActivity';
-} & Record<string, any>;
+} & Record<string, unknown>;
 
 export type TimelineActivityWithRecord = TimelineActivity & {
   linkedRecordId: string;
