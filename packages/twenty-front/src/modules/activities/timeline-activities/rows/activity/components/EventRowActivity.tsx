@@ -9,9 +9,9 @@ import {
   StyledEventRowContent,
   StyledEventRowLinkedRecord,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
+import { getTimelineActivityActionSentence } from '@/activities/timeline-activities/rows/utils/getTimelineActivityActionSentence';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,26 +19,6 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
-
-const getEventActionSentence = (
-  eventAction: TimelineActivityAction | null,
-  objectNameSingular: string,
-): string => {
-  switch (eventAction) {
-    case 'created':
-      return t`created a related ${objectNameSingular}`;
-    case 'updated':
-      return t`updated a related ${objectNameSingular}`;
-    case 'deleted':
-      return t`deleted a related ${objectNameSingular}`;
-    case 'restored':
-      return t`restored a related ${objectNameSingular}`;
-    case 'unlinked':
-      return t`unlinked a related ${objectNameSingular}`;
-    default:
-      return t`linked a related ${objectNameSingular}`;
-  }
-};
 
 const StyledEventRow = styled.div`
   display: flex;
@@ -54,6 +34,7 @@ export const StyledEventRowItemText = styled.span`
 export const EventRowActivity = ({
   event,
   eventAction,
+  timelineActivityTypeLabel,
   authorFullName,
   linkedObjectMetadataItem,
   createdAt,
@@ -99,7 +80,11 @@ export const EventRowActivity = ({
         <StyledEventRowContent>
           <EventRowItem>{authorFullName}</EventRowItem>
           <EventRowItem variant="action">
-            {getEventActionSentence(eventAction, objectNameSingular)}
+            {getTimelineActivityActionSentence({
+              eventAction,
+              objectNameSingular,
+              timelineActivityTypeLabel,
+            })}
           </EventRowItem>
           <StyledEventRowLinkedRecord
             onClick={() =>

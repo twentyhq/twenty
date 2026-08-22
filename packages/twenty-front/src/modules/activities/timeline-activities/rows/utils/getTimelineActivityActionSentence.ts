@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
-export const getGenericTimelineActivityActionSentence = ({
+export const getTimelineActivityActionSentence = ({
   eventAction,
   objectNameSingular,
   timelineActivityTypeLabel,

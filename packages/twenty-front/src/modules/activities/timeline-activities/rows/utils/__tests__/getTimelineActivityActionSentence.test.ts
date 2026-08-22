@@ -1,14 +1,14 @@
 import { i18n } from '@lingui/core';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
-import { getGenericTimelineActivityActionSentence } from '@/activities/timeline-activities/rows/generic/utils/getGenericTimelineActivityActionSentence';
+import { getTimelineActivityActionSentence } from '@/activities/timeline-activities/rows/utils/getTimelineActivityActionSentence';
 
 beforeEach(() => {
   i18n.load('en', {});
   i18n.activate('en');
 });
 
-describe('getGenericTimelineActivityActionSentence', () => {
+describe('getTimelineActivityActionSentence', () => {
   it.each([
     ['created', 'created a related company'],
     ['updated', 'updated a related company'],
@@ -20,7 +20,7 @@ describe('getGenericTimelineActivityActionSentence', () => {
     'renders the %s action',
     (eventAction, expectedSentence) => {
       expect(
-        getGenericTimelineActivityActionSentence({
+        getTimelineActivityActionSentence({
           eventAction,
           objectNameSingular: 'company',
           timelineActivityTypeLabel: 'Custom label',
@@ -31,7 +31,7 @@ describe('getGenericTimelineActivityActionSentence', () => {
 
   it('uses the type label when the action is intentionally unset', () => {
     expect(
-      getGenericTimelineActivityActionSentence({
+      getTimelineActivityActionSentence({
         eventAction: null,
         objectNameSingular: 'company',
         timelineActivityTypeLabel: 'qualified',
@@ -41,7 +41,7 @@ describe('getGenericTimelineActivityActionSentence', () => {
 
   it('uses a neutral fallback when neither action nor label is available', () => {
     expect(
-      getGenericTimelineActivityActionSentence({
+      getTimelineActivityActionSentence({
         eventAction: null,
         objectNameSingular: 'company',
         timelineActivityTypeLabel: null,

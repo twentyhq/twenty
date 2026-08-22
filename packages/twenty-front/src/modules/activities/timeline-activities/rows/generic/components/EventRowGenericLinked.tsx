@@ -9,7 +9,7 @@ import {
   StyledEventRowContent,
   StyledEventRowLinkedRecord,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
-import { getGenericTimelineActivityActionSentence } from '@/activities/timeline-activities/rows/generic/utils/getGenericTimelineActivityActionSentence';
+import { getTimelineActivityActionSentence } from '@/activities/timeline-activities/rows/utils/getTimelineActivityActionSentence';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -62,7 +62,7 @@ export const EventRowGenericLinked = ({
       <StyledEventRowContent>
         <EventRowItem>{authorFullName}</EventRowItem>
         <EventRowItem variant="action">
-          {getGenericTimelineActivityActionSentence({
+          {getTimelineActivityActionSentence({
             eventAction,
             objectNameSingular,
             timelineActivityTypeLabel,
