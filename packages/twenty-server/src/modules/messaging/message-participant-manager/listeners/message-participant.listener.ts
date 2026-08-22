@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -11,6 +12,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
+import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @Injectable()
@@ -21,6 +23,7 @@ export class MessageParticipantListener {
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly timelineActivityTypeCacheService: TimelineActivityTypeCacheService,
   ) {}
 
   @OnCustomBatchEvent('messageParticipant_matched')
@@ -42,6 +45,20 @@ export class MessageParticipantListener {
         },
       });
 
+    const resolveTimelineActivityTypeId =
+      await this.timelineActivityTypeCacheService.getTimelineActivityTypeResolver(
+        batchEvent.workspaceId,
+      );
+
+    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+      action: 'linked',
+      objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+    });
+
+    if (!isDefined(timelineActivityTypeId)) {
+      return;
+    }
+
     const timelineActivityPayloads = batchEvent.events.flatMap((event) => {
       const messageParticipants = event.participants ?? [];
 
@@ -61,6 +78,7 @@ export class MessageParticipantListener {
 
           return {
             name: 'message.linked',
+            timelineActivityTypeId,
             properties: {},
             objectSingularName: 'person',
             recordId: participant.personId,

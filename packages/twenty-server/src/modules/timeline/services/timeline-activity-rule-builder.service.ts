@@ -8,6 +8,8 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { STANDARD_TIMELINE_ACTIVITY_RULES } from 'src/modules/timeline/constants/standard-timeline-activity-rules.constant';
+import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
+import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
@@ -20,12 +22,15 @@ type TimelineActivityRulesForEventBatch = {
   junctionRules: TimelineActivityRule[];
   // Returned so callers reading field metadata do not fetch the cache again
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  // Picks the timeline activity type stamped on the rows a rule produces
+  resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
 };
 
 @Injectable()
 export class TimelineActivityRuleBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly timelineActivityTypeCacheService: TimelineActivityTypeCacheService,
   ) {}
 
   async getRulesForEventBatch({
@@ -64,7 +69,15 @@ export class TimelineActivityRuleBuilderService {
         rule.targetShape.junctionObjectMetadataId === flatObjectMetadata.id,
     );
 
-    return { sourceRules, junctionRules, flatFieldMetadataMaps };
+    return {
+      sourceRules,
+      junctionRules,
+      flatFieldMetadataMaps,
+      resolveTimelineActivityTypeId:
+        await this.timelineActivityTypeCacheService.getTimelineActivityTypeResolver(
+          workspaceId,
+        ),
+    };
   }
 
   private buildStandardRules({

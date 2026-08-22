@@ -9,7 +9,8 @@ export type TimelineActivity = {
   workspaceMemberId: string;
   workspaceMember: WorkspaceMember;
   properties: any;
-  name: string;
+  name: string | null;
+  timelineActivityTypeId: string | null;
   linkedRecordCachedName: string;
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;

@@ -5,6 +5,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
+import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -20,7 +21,8 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     TimelineActivityService,
     TimelineActivityRuleBuilderService,
     TimelineActivityTargetQueryService,
+    TimelineActivityTypeCacheService,
   ],
-  exports: [TimelineActivityService],
+  exports: [TimelineActivityService, TimelineActivityTypeCacheService],
 })
 export class TimelineActivityModule {}

@@ -23,6 +23,7 @@ import { MessageParticipantWorkspaceMemberListener } from 'src/modules/messaging
 import { MessageParticipantListener } from 'src/modules/messaging/message-participant-manager/listeners/message-participant.listener';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     MessagingCommonModule,
     MatchParticipantModule,
     WorkspaceCacheModule,
+    TimelineActivityModule,
   ],
   providers: [
     MessagingMessageParticipantService,
