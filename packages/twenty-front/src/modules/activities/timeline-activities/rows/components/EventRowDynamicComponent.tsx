@@ -4,10 +4,15 @@ import { EventCardToggleButton } from '@/activities/timeline-activities/rows/com
 import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FrontComponentRenderer } from '@/front-components/components/FrontComponentRenderer';
+
+const FrontComponentRenderer = lazy(() =>
+  import('@/front-components/components/FrontComponentRenderer').then(
+    (module) => ({ default: module.FrontComponentRenderer }),
+  ),
+);
 
 const StyledContainer = styled.div`
   display: flex;
@@ -33,13 +38,13 @@ export const EventRowDynamicComponent = ({
   event,
   eventAction,
   eventTypeLabel,
-  frontComponentId,
+  renderer,
   mainObjectMetadataItem,
   linkedObjectMetadataItem,
   authorFullName,
   happensAt,
 }: EventRowDynamicComponentProps) => {
-  const [isFrontComponentOpen, setIsFrontComponentOpen] = useState(false);
+  const [isRendererOpen, setIsRendererOpen] = useState(false);
   const EventRowComponent = isDefined(event.linkedRecordId)
     ? EventRowGenericLinked
     : EventRowMainObject;
@@ -50,7 +55,7 @@ export const EventRowDynamicComponent = ({
       event={event}
       eventAction={eventAction}
       eventTypeLabel={eventTypeLabel}
-      frontComponentId={frontComponentId}
+      hasRenderer={isDefined(renderer)}
       mainObjectMetadataItem={mainObjectMetadataItem}
       linkedObjectMetadataItem={linkedObjectMetadataItem}
       authorFullName={authorFullName}
@@ -58,7 +63,7 @@ export const EventRowDynamicComponent = ({
     />
   );
 
-  if (!isDefined(frontComponentId)) {
+  if (!isDefined(renderer)) {
     return nativeRenderer;
   }
 
@@ -67,16 +72,25 @@ export const EventRowDynamicComponent = ({
       <StyledNativeRowContainer>
         <StyledNativeRow>{nativeRenderer}</StyledNativeRow>
         <EventCardToggleButton
-          isOpen={isFrontComponentOpen}
-          setIsOpen={setIsFrontComponentOpen}
+          isOpen={isRendererOpen}
+          setIsOpen={setIsRendererOpen}
         />
       </StyledNativeRowContainer>
-      {isFrontComponentOpen && (
+      {isRendererOpen && (
         <EventCard isOpen>
-          <FrontComponentRenderer
-            frontComponentId={frontComponentId}
-            timelineActivityId={event.id}
-          />
+          <Suspense fallback={null}>
+            {renderer.type === 'standard' ? (
+              <renderer.Component
+                event={event}
+                authorFullName={authorFullName}
+              />
+            ) : (
+              <FrontComponentRenderer
+                frontComponentId={renderer.frontComponentId}
+                timelineActivityId={event.id}
+              />
+            )}
+          </Suspense>
         </EventCard>
       )}
     </StyledContainer>

@@ -6,6 +6,8 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { getStandardTimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/StandardTimelineActivityRenderer';
+import { type TimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/TimelineActivityRenderer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
@@ -109,15 +111,22 @@ export const EventRow = ({
     timelineActivityTypeMaps,
   );
 
-  const frontComponentId = isDefined(
-    timelineActivityType?.frontComponentUniversalIdentifier,
-  )
+  const rendererUniversalIdentifier =
+    timelineActivityType?.frontComponentUniversalIdentifier;
+  const StandardRenderer = getStandardTimelineActivityRenderer(
+    rendererUniversalIdentifier,
+  );
+  const frontComponentId = isDefined(rendererUniversalIdentifier)
     ? (frontComponents.find(
         (frontComponent) =>
-          frontComponent.universalIdentifier ===
-          timelineActivityType.frontComponentUniversalIdentifier,
+          frontComponent.universalIdentifier === rendererUniversalIdentifier,
       )?.id ?? null)
     : null;
+  const renderer: TimelineActivityRenderer | null = isDefined(StandardRenderer)
+    ? { type: 'standard', Component: StandardRenderer }
+    : isDefined(frontComponentId)
+      ? { type: 'frontComponent', frontComponentId }
+      : null;
 
   const timelineActivityAction = getTimelineActivityAction(
     event,
@@ -176,7 +185,7 @@ export const EventRow = ({
             event={event}
             eventAction={timelineActivityAction}
             eventTypeLabel={timelineActivityType?.label}
-            frontComponentId={frontComponentId}
+            renderer={renderer}
             mainObjectMetadataItem={mainObjectMetadataItem}
             linkedObjectMetadataItem={linkedObjectMetadataItem}
             happensAt={event.happensAt}

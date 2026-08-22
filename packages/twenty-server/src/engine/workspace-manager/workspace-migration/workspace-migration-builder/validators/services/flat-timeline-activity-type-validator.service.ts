@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isTimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  isStandardTimelineActivityRendererUniversalIdentifier,
+  isTimelineActivityAction,
+} from 'twenty-shared/timeline';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -379,12 +382,26 @@ export class FlatTimelineActivityTypeValidatorService {
       return;
     }
 
+    const isStandardRenderer =
+      isStandardTimelineActivityRendererUniversalIdentifier(
+        frontComponentUniversalIdentifier,
+      );
+    const usesStandardRenderer =
+      isStandardRenderer &&
+      timelineActivityType.applicationUniversalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier;
+
+    if (usesStandardRenderer) {
+      return;
+    }
+
     const frontComponent =
       validationMaps.flatFrontComponentMaps.byUniversalIdentifier[
         frontComponentUniversalIdentifier
       ];
 
     if (
+      isStandardRenderer ||
       !isDefined(frontComponent) ||
       frontComponent.applicationUniversalIdentifier !==
         timelineActivityType.applicationUniversalIdentifier

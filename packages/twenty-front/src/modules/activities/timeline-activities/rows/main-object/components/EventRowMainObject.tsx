@@ -1,5 +1,5 @@
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
-import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import { styled } from '@linaria/react';
@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type EventRowMainObjectProps = EventRowDynamicComponentProps;
+type EventRowMainObjectProps = EventRowNativeComponentProps;
 
 const StyledMainContainer = styled.div`
   display: flex;
@@ -38,7 +38,7 @@ export const EventRowMainObject = ({
   eventTypeLabel,
   mainObjectMetadataItem,
   happensAt,
-  frontComponentId,
+  hasRenderer,
 }: EventRowMainObjectProps) => {
   switch (eventAction) {
     case 'created': {
@@ -66,7 +66,7 @@ export const EventRowMainObject = ({
           eventTypeLabel={eventTypeLabel}
           mainObjectMetadataItem={mainObjectMetadataItem}
           happensAt={happensAt}
-          hasFrontComponent={isDefined(frontComponentId)}
+          hasRenderer={hasRenderer === true}
         />
       );
     }
