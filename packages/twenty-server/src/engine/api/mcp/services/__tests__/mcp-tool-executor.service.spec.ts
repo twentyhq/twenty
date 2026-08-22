@@ -120,4 +120,149 @@ describe('McpToolExecutorService', () => {
       );
     });
   });
+
+  describe('handleToolCall progress notifications', () => {
+    const buildSseWriter = () => jest.fn();
+
+    it('should echo the progress token the client supplied in _meta', async () => {
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue({}));
+      const sseWriter = buildSseWriter();
+
+      await service.handleToolCall(
+        4,
+        toolSet,
+        {
+          name: 'create_person',
+          arguments: {},
+          _meta: { progressToken: 'abc123' },
+        },
+        sseWriter,
+      );
+
+      expect(sseWriter).toHaveBeenCalledWith({
+        jsonrpc: '2.0',
+        method: 'notifications/progress',
+        params: {
+          progressToken: 'abc123',
+          progress: 0,
+          total: 1,
+        },
+      });
+    });
+
+    it('should echo a numeric progress token unchanged', async () => {
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue({}));
+      const sseWriter = buildSseWriter();
+
+      await service.handleToolCall(
+        4,
+        toolSet,
+        {
+          name: 'create_person',
+          arguments: {},
+          _meta: { progressToken: 4 },
+        },
+        sseWriter,
+      );
+
+      expect(sseWriter).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ progressToken: 4 }),
+        }),
+      );
+    });
+
+    it('should send no progress notification when the client did not ask for progress', async () => {
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue({}));
+      const sseWriter = buildSseWriter();
+
+      await service.handleToolCall(
+        4,
+        toolSet,
+        { name: 'create_person', arguments: {} },
+        sseWriter,
+      );
+
+      expect(sseWriter).not.toHaveBeenCalled();
+    });
+
+    it('should send no progress notification when the token is neither a string nor a number', async () => {
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue({}));
+      const sseWriter = buildSseWriter();
+
+      await service.handleToolCall(
+        4,
+        toolSet,
+        {
+          name: 'create_person',
+          arguments: {},
+          _meta: { progressToken: { nested: true } },
+        },
+        sseWriter,
+      );
+
+      expect(sseWriter).not.toHaveBeenCalled();
+    });
+
+    it('should send no progress notification when the numeric token is fractional', async () => {
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue({}));
+      const sseWriter = buildSseWriter();
+
+      await service.handleToolCall(
+        4,
+        toolSet,
+        {
+          name: 'create_person',
+          arguments: {},
+          _meta: { progressToken: 1.5 },
+        },
+        sseWriter,
+      );
+
+      expect(sseWriter).not.toHaveBeenCalled();
+    });
+
+    it('should send no progress notification when the tool is unknown', async () => {
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue({}));
+      const sseWriter = buildSseWriter();
+
+      await service.handleToolCall(
+        4,
+        toolSet,
+        {
+          name: 'non_existent_tool',
+          arguments: {},
+          _meta: { progressToken: 'abc123' },
+        },
+        sseWriter,
+      );
+
+      expect(sseWriter).not.toHaveBeenCalled();
+    });
+
+    it('should still return the tool result when the client asked for progress', async () => {
+      const toolOutput = { success: true, message: 'Created' };
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue(toolOutput));
+
+      const response = await service.handleToolCall(
+        4,
+        toolSet,
+        {
+          name: 'create_person',
+          arguments: {},
+          _meta: { progressToken: 'abc123' },
+        },
+        buildSseWriter(),
+      );
+
+      expect(response).toEqual({
+        id: 4,
+        jsonrpc: '2.0',
+        result: {
+          content: [{ type: 'text', text: JSON.stringify(toolOutput) }],
+          isError: false,
+        },
+      });
+    });
+  });
 });
