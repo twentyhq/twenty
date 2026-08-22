@@ -22,6 +22,7 @@ type SettingsApplicationDetailAboutTabProps = {
   displayName: string;
   description?: string;
   aboutDescription?: string;
+  pricingDescription?: string;
   screenshots?: string[];
   author?: string;
   category?: string;
@@ -98,6 +99,7 @@ export const SettingsApplicationDetailAboutTab = ({
   displayName,
   description,
   aboutDescription,
+  pricingDescription,
   screenshots,
   author,
   category,
@@ -206,6 +208,7 @@ export const SettingsApplicationDetailAboutTab = ({
 
         <SettingsApplicationAboutSidebar
           actionButton={getActionButton()}
+          pricingDescription={pricingDescription}
           author={author}
           category={category}
           contentEntries={contentEntries}

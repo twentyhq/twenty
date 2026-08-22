@@ -2,8 +2,13 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
@@ -14,13 +19,18 @@ export type UsageBreakdownItem = {
   creditsUsed: number;
 };
 
+export type UsageApplicationBreakdownItem = {
+  applicationId: string;
+  operation: string;
+  creditsUsed: number;
+};
+
 export type UsageTimeSeriesPoint = {
   date: string;
   creditsUsed: number;
 };
 
-type BreakdownRowMicro = {
-  key: string;
+type BreakdownRowMicro<TColumn extends string> = Record<TColumn, string> & {
   creditsUsedMicro: number;
 };
 
@@ -74,11 +84,14 @@ export class UsageAnalyticsService {
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
-      periodStart: formatDateTimeForClickHouse(params.periodStart),
-      periodEnd: formatDateTimeForClickHouse(params.periodEnd),
-      operationTypes: aiOperationTypes,
-    });
+    const rows = await this.clickHouseService.select<BreakdownRowMicro<'key'>>(
+      query,
+      {
+        periodStart: formatDateTimeForClickHouse(params.periodStart),
+        periodEnd: formatDateTimeForClickHouse(params.periodEnd),
+        operationTypes: aiOperationTypes,
+      },
+    );
 
     return rows.map((row) => ({
       key: row.key,
@@ -113,6 +126,106 @@ export class UsageAnalyticsService {
         extraParams: { userWorkspaceId: params.userWorkspaceId },
       }),
     });
+  }
+
+  // Apps pick their operation type from a closed platform enum, so unrelated
+  // apps merge under whichever one they picked. Grouping on the application
+  // and on the operation it declared answers "what did this app charge me
+  // for" without disturbing the operation-type breakdown, which still
+  // accounts for every credit.
+  //
+  // Contexts the app never declared collapse here rather than in the
+  // resolver, so a row is a displayed slice and the limit truncates the same
+  // way it does for every other breakdown.
+  async getUsageByApplication({
+    workspaceId,
+    periodStart,
+    periodEnd,
+    operationTypes,
+    userWorkspaceId,
+    declaredOperations,
+  }: PeriodParams & {
+    userWorkspaceId?: string;
+    declaredOperations: string[];
+  }): Promise<UsageApplicationBreakdownItem[]> {
+    const hasOperationTypes = isNonEmptyArray(operationTypes);
+
+    const query = `
+      SELECT
+        resourceId,
+        if(
+          has({declaredOperations:Array(String)}, resourceContext),
+          resourceContext,
+          ''
+        ) AS operation,
+        sum(creditsUsedMicro) AS creditsUsedMicro
+      FROM usageEvent
+      WHERE workspaceId = {workspaceId:String}
+        AND timestamp >= {periodStart:String}
+        AND timestamp < {periodEnd:String}
+        AND resourceType = {appResourceType:String}
+        AND resourceId != ''
+        ${hasOperationTypes ? 'AND operationType IN ({operationTypes:Array(String)})' : ''}
+        ${isDefined(userWorkspaceId) ? 'AND userWorkspaceId = {userWorkspaceId:String}' : ''}
+      GROUP BY resourceId, operation
+      ORDER BY creditsUsedMicro DESC
+      LIMIT ${BREAKDOWN_QUERY_LIMIT}
+    `;
+
+    const rows = await this.clickHouseService.select<
+      BreakdownRowMicro<'resourceId' | 'operation'>
+    >(query, {
+      workspaceId,
+      periodStart: formatDateTimeForClickHouse(periodStart),
+      periodEnd: formatDateTimeForClickHouse(periodEnd),
+      appResourceType: UsageResourceType.APP,
+      declaredOperations,
+      ...(hasOperationTypes ? { operationTypes } : {}),
+      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+    });
+
+    return rows.map((row) => ({
+      applicationId: row.resourceId,
+      operation: row.operation,
+      creditsUsed: row.creditsUsedMicro,
+    }));
+  }
+
+  // Which recurring charges an application has already been billed for in a
+  // period. The usage row is itself the record of the charge, so re-running the
+  // cron re-reads it instead of needing separate bookkeeping. Compared with >=
+  // rather than = so a truncated timestamp cannot miss the current period.
+  async getChargedRecurringKeys({
+    workspaceId,
+    periodStart,
+  }: {
+    workspaceId: string;
+    periodStart: Date;
+  }): Promise<Set<string>> {
+    const query = `
+      SELECT resourceId, resourceContext
+      FROM usageEvent
+      WHERE workspaceId = {workspaceId:String}
+        AND resourceType = {appResourceType:String}
+        AND operationType = {subscriptionOperationType:String}
+        AND periodStart >= {periodStart:String}
+      GROUP BY resourceId, resourceContext
+    `;
+
+    const rows = await this.clickHouseService.select<
+      Record<'resourceId' | 'resourceContext', string>
+    >(query, {
+      workspaceId,
+      appResourceType: UsageResourceType.APP,
+      subscriptionOperationType: UsageOperationType.SUBSCRIPTION,
+      periodStart: formatDateTimeForClickHouse(periodStart),
+    });
+
+    return new Set(
+      rows.map((row) =>
+        buildRecurringChargeKey(row.resourceId, row.resourceContext),
+      ),
+    );
   }
 
   async getUsageByUserTimeSeries(
@@ -172,15 +285,18 @@ export class UsageAnalyticsService {
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
-      workspaceId,
-      periodStart: formatDateTimeForClickHouse(periodStart),
-      periodEnd: formatDateTimeForClickHouse(periodEnd),
-      ...(operationTypes && operationTypes.length > 0
-        ? { operationTypes }
-        : {}),
-      ...(extraParams ?? {}),
-    });
+    const rows = await this.clickHouseService.select<BreakdownRowMicro<'key'>>(
+      query,
+      {
+        workspaceId,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
+        ...(operationTypes && operationTypes.length > 0
+          ? { operationTypes }
+          : {}),
+        ...(extraParams ?? {}),
+      },
+    );
 
     return rows.map((row) => ({
       key: row.key,

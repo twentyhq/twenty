@@ -86,6 +86,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'category',
     'websiteUrl',
     'aboutDescription',
+    'pricingDescription',
     'termsUrl',
     'emailSupport',
     'issueReportUrl',

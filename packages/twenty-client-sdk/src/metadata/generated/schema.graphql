@@ -2138,6 +2138,7 @@ type MarketplaceAppDetail {
   logoUrl: String
   websiteUrl: String
   aboutDescription: String
+  pricingDescription: String
   termsUrl: String
   emailSupport: String
   issueReportUrl: String
@@ -2550,6 +2551,7 @@ type UsageUserDaily {
 type UsageAnalytics {
   usageByUser: [UsageBreakdownItem!]!
   usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
   usageByModel: [UsageBreakdownItem!]!
   timeSeries: [UsageTimeSeries!]!
   periodStart: DateTime!
@@ -3515,6 +3517,7 @@ enum UsageOperationType {
   WEB_SEARCH
   CALL_RECORDING
   EMAIL_SEND
+  SUBSCRIPTION
 }
 
 type Mutation {

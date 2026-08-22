@@ -4279,6 +4279,9 @@ export default {
             "aboutDescription": [
                 1
             ],
+            "pricingDescription": [
+                1
+            ],
             "termsUrl": [
                 1
             ],
@@ -5030,6 +5033,9 @@ export default {
                 199
             ],
             "usageByOperationType": [
+                199
+            ],
+            "usageByApplication": [
                 199
             ],
             "usageByModel": [

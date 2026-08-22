@@ -10,6 +10,9 @@ export enum UsageOperationType {
   WEB_SEARCH = 'WEB_SEARCH',
   CALL_RECORDING = 'CALL_RECORDING',
   EMAIL_SEND = 'EMAIL_SEND',
+  // Platform-raised, once per billing period. Not in twenty-shared's
+  // USAGE_OPERATION_TYPES: an app declares the amount, it never charges this.
+  SUBSCRIPTION = 'SUBSCRIPTION',
 }
 
 registerEnumType(UsageOperationType, {

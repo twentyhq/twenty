@@ -1814,6 +1814,7 @@ export interface MarketplaceAppDetail {
     logoUrl?: Scalars['String']
     websiteUrl?: Scalars['String']
     aboutDescription?: Scalars['String']
+    pricingDescription?: Scalars['String']
     termsUrl?: Scalars['String']
     emailSupport?: Scalars['String']
     issueReportUrl?: Scalars['String']
@@ -2222,6 +2223,7 @@ export interface UsageUserDaily {
 export interface UsageAnalytics {
     usageByUser: UsageBreakdownItem[]
     usageByOperationType: UsageBreakdownItem[]
+    usageByApplication: UsageBreakdownItem[]
     usageByModel: UsageBreakdownItem[]
     timeSeries: UsageTimeSeries[]
     periodStart: Scalars['DateTime']
@@ -3006,7 +3008,7 @@ export interface Query {
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'SUBSCRIPTION'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -5160,6 +5162,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     logoUrl?: boolean | number
     websiteUrl?: boolean | number
     aboutDescription?: boolean | number
+    pricingDescription?: boolean | number
     termsUrl?: boolean | number
     emailSupport?: boolean | number
     issueReportUrl?: boolean | number
@@ -5597,6 +5600,7 @@ export interface UsageUserDailyGenqlSelection{
 export interface UsageAnalyticsGenqlSelection{
     usageByUser?: UsageBreakdownItemGenqlSelection
     usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByApplication?: UsageBreakdownItemGenqlSelection
     usageByModel?: UsageBreakdownItemGenqlSelection
     timeSeries?: UsageTimeSeriesGenqlSelection
     periodStart?: boolean | number
@@ -10040,7 +10044,8 @@ export const enumUsageOperationType = {
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
    WEB_SEARCH: 'WEB_SEARCH' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
-   EMAIL_SEND: 'EMAIL_SEND' as const
+   EMAIL_SEND: 'EMAIL_SEND' as const,
+   SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
 export const enumFileFolder = {

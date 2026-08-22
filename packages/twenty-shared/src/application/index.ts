@@ -12,6 +12,19 @@ export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
 export type {
+  RecurringChargePeriod,
+  RecurringChargeUnit,
+  RecurringCharge,
+  RecurringCharges,
+  ApplicationBilling,
+} from './applicationBillingType';
+export {
+  RECURRING_CHARGE_PERIODS,
+  isRecurringChargePeriod,
+  RECURRING_CHARGE_UNITS,
+  isRecurringChargeUnit,
+} from './applicationBillingType';
+export type {
   KnownApplicationCategory,
   ApplicationCategory,
 } from './applicationCategoryType';
@@ -29,6 +42,10 @@ export type {
 } from './applicationVariablesType';
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
+export type {
+  BillableOperationManifest,
+  BillableOperations,
+} from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -155,6 +172,11 @@ export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectio
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
+export type { UsageOperationTypeValue } from './usageOperationTypesType';
+export {
+  USAGE_OPERATION_TYPES,
+  isUsageOperationTypeValue,
+} from './usageOperationTypesType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
