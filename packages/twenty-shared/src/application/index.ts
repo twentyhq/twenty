@@ -11,6 +11,7 @@ export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
+export type { ApplicationBilling } from './applicationBillingType';
 export type {
   KnownApplicationCategory,
   ApplicationCategory,

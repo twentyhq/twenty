@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { type BillableOperations } from 'twenty-shared/application';
+import { type ApplicationBilling } from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -105,15 +105,15 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'jsonb', nullable: false, default: {} })
   availablePackages: Record<string, string>;
 
-  // What the app declares it bills for, keyed by the operation name it charges
-  // against: the billing category the platform meters, plus the app-authored
-  // label shown for that spend.
+  // What the app declares it bills for: the operations it charges against,
+  // each with the billing category the platform meters and the app-authored
+  // label shown for that spend, plus the pricing line the marketplace shows.
   @Column({ type: 'jsonb', nullable: false, default: {} })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.33.0_AddBillableOperationsToApplicationFastInstanceCommand_1787382162924',
+      '2.33.0_AddBillingToApplicationFastInstanceCommand_1787400002000',
   })
-  billableOperations: BillableOperations;
+  billing: ApplicationBilling;
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;

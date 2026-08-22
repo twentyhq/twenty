@@ -12,7 +12,7 @@ export const fromManifestApplicationToDisplayFields = (
   category: application?.category ?? null,
   websiteUrl: application?.websiteUrl ?? null,
   aboutDescription: application?.aboutDescription ?? null,
-  pricingDescription: application?.pricingDescription ?? null,
+  pricingDescription: application?.billing?.description ?? null,
   termsUrl: application?.termsUrl ?? null,
   emailSupport: application?.emailSupport ?? null,
   issueReportUrl: application?.issueReportUrl ?? null,

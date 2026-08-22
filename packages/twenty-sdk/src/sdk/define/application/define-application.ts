@@ -40,7 +40,7 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   }
 
   for (const [operationName, billableOperation] of Object.entries(
-    config.billableOperations ?? {},
+    config.billing?.operations ?? {},
   )) {
     if (!isDefined(billableOperation)) {
       continue;

@@ -3,7 +3,7 @@ import { type PreInstallLogicFunctionApplicationManifest } from '@/application/p
 import { type SettingsFrontComponentApplicationManifest } from '@/application/settingsFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
-import { type BillableOperations } from './billableOperationsType';
+import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './server-variables.type';
@@ -14,7 +14,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   displayName: string;
   description: string;
   applicationVariables?: ApplicationVariables;
-  billableOperations?: BillableOperations;
+  billing?: ApplicationBilling;
   serverVariables?: ServerVariables;
   author?: string;
   category?: ApplicationCategory;
@@ -29,7 +29,6 @@ export type ApplicationManifest = SyncableEntityOptions & {
   screenshots?: string[];
   galleryImages?: string[];
   aboutDescription?: string;
-  pricingDescription?: string;
   websiteUrl?: string;
   termsUrl?: string;
   emailSupport?: string;

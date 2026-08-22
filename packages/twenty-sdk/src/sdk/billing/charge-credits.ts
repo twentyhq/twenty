@@ -12,7 +12,7 @@ export type ChargeCreditsParams = {
   userWorkspaceId?: string;
 } & (
   | {
-      // An operation name declared in `billableOperations` on the application
+      // An operation name declared in `billing.operations` on the application
       // manifest. The platform resolves its billing category and its label.
       operation: string;
       operationType?: never;

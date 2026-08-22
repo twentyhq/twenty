@@ -4,18 +4,35 @@ description: Declare what your app bills for and charge workspace credits from a
 icon: "coins"
 ---
 
-Apps that cost money to run — a call recorder paying a transcription provider, an enrichment app paying per match — charge the workspace in **credits**. Declare what you bill for in your application config, then charge against a declared operation from a logic function.
-
-## Declaring billable operations
-
-Each entry maps an operation name you choose onto the billing category the platform meters, plus the label shown to workspace admins in **Settings > Usage**.
+Apps that cost money to run — a call recorder paying a transcription provider, an enrichment app paying per match — charge the workspace in **credits**. Everything an app bills for is declared in one `billing` block on your application config:
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
 
 export default defineApplication({
   // ...identity, variables...
-  billableOperations: {
+  billing: {
+    description: '$0.02 per minute recorded',
+    operations: {
+      recordMeeting: {
+        operationType: 'CALL_RECORDING',
+        label: 'Meeting recording',
+      },
+    },
+  },
+});
+```
+
+- `operations` — what you charge for as you use it, from a logic function.
+- `description` — one friendly line shown to buyers on your marketplace listing.
+
+## Billable operations
+
+An operation is what your app charges for as it works. Each entry maps an operation name you choose onto the billing category the platform meters, plus the label shown to workspace admins in **Settings > Usage**.
+
+```ts src/application-config.ts
+billing: {
+  operations: {
     recordMeeting: {
       operationType: 'CALL_RECORDING',
       label: 'Meeting recording',
@@ -25,7 +42,7 @@ export default defineApplication({
       label: 'Meeting summary',
     },
   },
-});
+},
 ```
 
 `operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
@@ -51,20 +68,19 @@ await chargeCredits({
 Notes:
 
 - Declaring operations is what lets Usage split your app's spend by what it charged for. An app that declares nothing is still reported, as a single slice under its display name.
-- Charging an operation your manifest does not declare is rejected. Add it to `billableOperations` and sync.
+- Charging an operation your manifest does not declare is rejected. Add it to `billing.operations` and sync.
 - Several operations may share one `operationType`. Two enrichment operations both metered as `CODE_EXECUTION` still show as two labelled slices.
 - Without `operation`, name the billing category directly with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
 - Charging never fails your function. A billing error is logged and swallowed, and the call no-ops outside the logic function runtime so local runs and tests do not crash.
 
 ## Telling people what it costs
 
-Declaring operations tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `pricingDescription` on `defineApplication` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
+Declaring operations tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
 
 ```ts src/application-config.ts
-export default defineApplication({
-  // ...identity, billableOperations...
-  pricingDescription: '$0.02 per minute recorded, billed to your Twenty credits',
-});
+billing: {
+  description: '$0.02 per minute recorded, billed to your Twenty credits',
+},
 ```
 
 It is free text on purpose: real pricing has tiers, minimums and per-unit rates that a single number cannot express. Keep it to a line — it renders in a narrow column.

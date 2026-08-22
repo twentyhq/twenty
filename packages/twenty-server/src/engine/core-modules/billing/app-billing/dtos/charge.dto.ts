@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import {
-  IsEnum,
+  IsIn,
   IsInt,
   IsOptional,
   IsString,
@@ -11,9 +11,11 @@ import {
   ValidateIf,
 } from 'class-validator';
 
+import {
+  USAGE_OPERATION_TYPES,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 // $1000 in micro-credits (1 USD = 1_000_000 micro-credits). Bounds a single
 // charge so a compromised or buggy app can't drain credits in one request.
@@ -31,17 +33,18 @@ export class ChargeDto {
   @Max(MAX_QUANTITY_PER_CHARGE)
   quantity!: number;
 
-  // An operation name declared in `billableOperations` on the application
+  // An operation name declared in `billing.operations` on the application
   // manifest; the server resolves its billing category and its label.
   @IsOptional()
   @IsString()
   operation?: string;
 
-  // Applications that declare no billable operations name the platform
-  // billing category directly.
+  // Applications that declare no billable operations name the platform billing
+  // category directly. Restricted to the app-facing vocabulary in
+  // twenty-shared, so platform-raised categories cannot be charged by an app.
   @ValidateIf((charge: ChargeDto) => !isDefined(charge.operation))
-  @IsEnum(UsageOperationType)
-  operationType?: UsageOperationType;
+  @IsIn(USAGE_OPERATION_TYPES)
+  operationType?: UsageOperationTypeValue;
 
   @IsOptional()
   @IsString()

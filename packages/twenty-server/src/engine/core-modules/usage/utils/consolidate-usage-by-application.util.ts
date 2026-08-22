@@ -27,12 +27,12 @@ export const consolidateUsageByApplication = ({
   for (const item of items) {
     const application = flatApplicationMaps.byId[item.applicationId];
     // Undefined until the upgrade that adds the column has run.
-    const billableOperations = application?.billableOperations ?? {};
-    const declaredOperation = billableOperations[item.operation];
+    const declaredOperations = application?.billing?.operations ?? {};
+    const declaredCharge = declaredOperations[item.operation];
     const applicationName = application?.name ?? item.applicationId;
 
-    const key = isDefined(declaredOperation)
-      ? `${applicationName} · ${declaredOperation.label}`
+    const key = isDefined(declaredCharge)
+      ? `${applicationName} · ${declaredCharge.label}`
       : applicationName;
 
     creditsByKey.set(key, (creditsByKey.get(key) ?? 0) + item.creditsUsed);

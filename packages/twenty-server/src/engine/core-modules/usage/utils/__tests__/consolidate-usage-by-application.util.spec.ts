@@ -33,14 +33,16 @@ describe('consolidateUsageByApplication', () => {
         {
           id: 'app-1',
           name: 'Call Recorder',
-          billableOperations: {
-            recordMeeting: {
-              operationType: 'CALL_RECORDING',
-              label: 'Meeting recording',
-            },
-            summarizeMeeting: {
-              operationType: 'AI_CHAT_TOKEN',
-              label: 'Meeting summary',
+          billing: {
+            operations: {
+              recordMeeting: {
+                operationType: 'CALL_RECORDING',
+                label: 'Meeting recording',
+              },
+              summarizeMeeting: {
+                operationType: 'AI_CHAT_TOKEN',
+                label: 'Meeting summary',
+              },
             },
           },
         },
@@ -69,7 +71,7 @@ describe('consolidateUsageByApplication', () => {
         { applicationId: 'app-1', operation: '', creditsUsed: 40 },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
-        { id: 'app-1', name: 'People Data Labs', billableOperations: {} },
+        { id: 'app-1', name: 'People Data Labs', billing: {} },
       ]),
     });
 
@@ -89,7 +91,7 @@ describe('consolidateUsageByApplication', () => {
         {
           id: 'app-1',
           name: 'Retired App',
-          billableOperations: {},
+          billing: {},
           deletedAt: new Date('2026-08-01T00:00:00.000Z'),
         },
       ]),
@@ -118,8 +120,8 @@ describe('consolidateUsageByApplication', () => {
         { applicationId: 'app-2', operation: '', creditsUsed: 25 },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
-        { id: 'app-1', name: 'Enricher', billableOperations: {} },
-        { id: 'app-2', name: 'Enricher', billableOperations: {} },
+        { id: 'app-1', name: 'Enricher', billing: {} },
+        { id: 'app-2', name: 'Enricher', billing: {} },
       ]),
     });
 
@@ -136,8 +138,8 @@ describe('consolidateUsageByApplication', () => {
         { applicationId: 'app-1', operation: 'undeclared', creditsUsed: 50 },
       ],
       flatApplicationMaps: buildFlatApplicationMaps([
-        { id: 'app-1', name: 'Small', billableOperations: {} },
-        { id: 'app-2', name: 'Large', billableOperations: {} },
+        { id: 'app-1', name: 'Small', billing: {} },
+        { id: 'app-2', name: 'Large', billing: {} },
       ]),
     });
 
@@ -147,8 +149,8 @@ describe('consolidateUsageByApplication', () => {
     ]);
   });
 
-  // billableOperations is hidden from TypeORM until its upgrade has run.
-  it('should treat a missing billableOperations column as no declarations', () => {
+  // billing is hidden from TypeORM until its upgrade has run.
+  it('should treat a missing billing column as no declarations', () => {
     const result = consolidateUsageByApplication({
       items: [
         { applicationId: 'app-1', operation: 'recordMeeting', creditsUsed: 75 },

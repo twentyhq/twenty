@@ -31,7 +31,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   yarnLockChecksum: null,
   yarnLockFileId: null,
   availablePackages: {},
-  billableOperations: {},
+  billing: {},
   logicFunctionLayerId: null,
   defaultRoleId: null,
   defaultRole: null,

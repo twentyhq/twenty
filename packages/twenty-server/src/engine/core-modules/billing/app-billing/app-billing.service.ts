@@ -107,7 +107,7 @@ export class AppBillingService {
         );
       }
 
-      return charge.operationType;
+      return UsageOperationType[charge.operationType];
     }
 
     const { flatApplicationMaps } =
@@ -120,7 +120,7 @@ export class AppBillingService {
       applicationId,
     );
     // Undefined until the upgrade that adds the column has run.
-    const billableOperations = application?.billableOperations ?? {};
+    const billableOperations = application?.billing?.operations ?? {};
     const billableOperation = billableOperations[charge.operation];
 
     if (!isDefined(billableOperation)) {

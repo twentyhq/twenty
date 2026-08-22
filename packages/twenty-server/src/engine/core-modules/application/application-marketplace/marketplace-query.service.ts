@@ -123,7 +123,7 @@ export class MarketplaceQueryService {
         undefined,
       pricingDescription:
         registration.pricingDescription ??
-        registration.manifest?.application?.pricingDescription ??
+        registration.manifest?.application?.billing?.description ??
         undefined,
       termsUrl:
         registration.termsUrl ??

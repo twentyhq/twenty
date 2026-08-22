@@ -69,7 +69,7 @@ export class UsageResolver {
     const declaredOperations = [
       ...new Set(
         Object.values(flatApplicationMaps.byId).flatMap((application) =>
-          Object.keys(application?.billableOperations ?? {}),
+          Object.keys(application?.billing?.operations ?? {}),
         ),
       ),
     ];

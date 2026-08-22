@@ -129,10 +129,12 @@ describe('defineApplication', () => {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
-      billableOperations: {
-        recordMeeting: {
-          operationType: 'CALL_RECORDING',
-          label: 'Meeting recording',
+      billing: {
+        operations: {
+          recordMeeting: {
+            operationType: 'CALL_RECORDING',
+            label: 'Meeting recording',
+          },
         },
       },
     });
@@ -146,10 +148,12 @@ describe('defineApplication', () => {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
-      billableOperations: {
-        recordMeeting: {
-          operationType: 'MEETING_RECORDING' as never,
-          label: 'Meeting recording',
+      billing: {
+        operations: {
+          recordMeeting: {
+            operationType: 'MEETING_RECORDING' as never,
+            label: 'Meeting recording',
+          },
         },
       },
     });
@@ -165,8 +169,10 @@ describe('defineApplication', () => {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
-      billableOperations: {
-        recordMeeting: { operationType: 'CALL_RECORDING', label: '' },
+      billing: {
+        operations: {
+          recordMeeting: { operationType: 'CALL_RECORDING', label: '' },
+        },
       },
     });
 
