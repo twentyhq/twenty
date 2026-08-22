@@ -58,7 +58,20 @@ export const EventRowMainObjectUpdated = ({
 
   const diffEntries = Object.entries(diff);
   if (diffEntries.length === 0) {
-    throw new Error('Cannot render update description without changes');
+    return (
+      <StyledEventRowMainObjectUpdatedContainer>
+        <StyledRowContainer>
+          <StyledRow>
+            <EventRowItem>{authorFullName}</EventRowItem>
+            <EventRowItem variant="action">
+              {eventTypeLabel ?? t`updated`}
+            </EventRowItem>
+            <EventRowItem>{labelIdentifierValue}</EventRowItem>
+          </StyledRow>
+          <EventRowDate happensAt={happensAt} />
+        </StyledRowContainer>
+      </StyledEventRowMainObjectUpdatedContainer>
+    );
   }
 
   const fieldCount = diffEntries.length;
@@ -69,7 +82,9 @@ export const EventRowMainObjectUpdated = ({
       <StyledRowContainer>
         <StyledRow>
           <EventRowItem>{authorFullName}</EventRowItem>
-          {eventTypeLabel ?? t`updated`}
+          <EventRowItem variant="action">
+            {eventTypeLabel ?? t`updated`}
+          </EventRowItem>
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}

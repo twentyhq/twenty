@@ -3204,9 +3204,11 @@ type TimelineActivityType {
   name: String!
   label: String!
   emit: TimelineActivityTypeEmit
+  action: String @deprecated(reason: "Use emit.on")
   icon: String
   renderer: String @deprecated(reason: "Use frontComponentUniversalIdentifier")
   frontComponentUniversalIdentifier: UUID
+  objectUniversalIdentifier: UUID @deprecated(reason: "Use emit.objectUniversalIdentifier")
   overridesTimelineActivityTypeUniversalIdentifier: UUID
   isActive: Boolean!
   applicationId: UUID

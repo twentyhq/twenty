@@ -5598,6 +5598,8 @@ export type TasksConfiguration = {
 
 export type TimelineActivityType = {
   __typename?: 'TimelineActivityType';
+  /** @deprecated Use emit.on */
+  action?: Maybe<Scalars['String']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   emit?: Maybe<TimelineActivityTypeEmit>;
@@ -5607,6 +5609,8 @@ export type TimelineActivityType = {
   isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  /** @deprecated Use emit.objectUniversalIdentifier */
+  objectUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   overridesTimelineActivityTypeUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   /** @deprecated Use frontComponentUniversalIdentifier */
   renderer?: Maybe<Scalars['String']['output']>;

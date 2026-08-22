@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TimelineActivityTypeEmitDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type-emit.dto';
@@ -37,6 +38,13 @@ export class TimelineActivityTypeDTO {
   emit: TimelineActivityTypeEmitDTO | null;
 
   @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Use emit.on',
+  })
+  action: TimelineActivityAction | null;
+
+  @IsOptional()
   @Field(() => String, { nullable: true })
   icon: string | null;
 
@@ -51,6 +59,13 @@ export class TimelineActivityTypeDTO {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   frontComponentUniversalIdentifier: string | null;
+
+  @IsOptional()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use emit.objectUniversalIdentifier',
+  })
+  objectUniversalIdentifier: string | null;
 
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

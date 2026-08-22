@@ -21,6 +21,7 @@ const buildSnapshot = (
 });
 
 const payload = {
+  happensAt: new Date('2026-08-22T12:00:00.000Z'),
   timelineActivityTypeId: TYPE_ID,
   timelineActivityTypeSnapshot: buildSnapshot('updated'),
   objectSingularName: 'company',

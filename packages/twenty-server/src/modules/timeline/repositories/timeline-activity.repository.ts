@@ -211,6 +211,7 @@ export class TimelineActivityRepository {
 
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
+        happensAt: payload.happensAt,
         timelineActivityTypeId: payload.timelineActivityTypeId,
         timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
         properties: payload.properties,

@@ -16,7 +16,6 @@ export type TimelineActivity = {
   name: string | null;
   timelineActivityTypeId: string | null;
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
-  linkedRecordCachedName: string;
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;
   __typename: 'TimelineActivity';
