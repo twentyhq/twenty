@@ -58,6 +58,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
   "skill": [],
+  "timelineActivityType": [],
   "view": [
     "name",
     "type",
@@ -114,11 +115,17 @@ exports[`registry-derived override property maps derives the translatable proper
     "labelPlural",
     "description",
   ],
+  "pageLayout": [
+    "name",
+  ],
   "pageLayoutTab": [
     "title",
   ],
   "pageLayoutWidget": [
     "title",
+  ],
+  "timelineActivityType": [
+    "label",
   ],
   "view": [
     "name",

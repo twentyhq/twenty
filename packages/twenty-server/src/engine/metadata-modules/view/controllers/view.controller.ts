@@ -12,11 +12,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
+import { hasObjectMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,14 +28,10 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
-import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
-import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
@@ -51,6 +47,8 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/views`)
 @UseGuards(WorkspaceAuthGuard)
@@ -64,7 +62,7 @@ export class ViewController {
   constructor(
     private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @Get()
@@ -150,7 +148,7 @@ export class ViewController {
   }
 
   @Patch(':id')
-  @UseGuards(UpdateViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
@@ -178,7 +176,7 @@ export class ViewController {
   }
 
   @Delete(':id')
-  @UseGuards(DeleteViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -197,45 +195,44 @@ export class ViewController {
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
-      view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER),
+      hasObjectMetadataLabelPlaceholder(view.name),
     );
 
     if (!hasTemplates && views.every((view) => view.isCustom)) {
       return views;
     }
 
-    const { flatObjectMetadataMaps, flatApplicationMaps } =
+    const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatApplicationMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
 
-    const standardApplicationId =
-      getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
-
-    const i18nInstance = this.i18nService.getI18nInstance(
-      locale ?? SOURCE_LOCALE,
-    );
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: views.map((view) => view.applicationId),
+          locale,
+          workspaceId,
+        },
+      );
 
     return views.map((view) => {
-      const objectMetadata = view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER)
+      const objectMetadata = hasObjectMetadataLabelPlaceholder(view.name)
         ? findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: view.objectMetadataId,
             flatEntityMaps: flatObjectMetadataMaps,
           })
         : undefined;
 
-      const objectLabelPlural = isDefined(objectMetadata)
-        ? resolveEffectiveEntityProperty({
-            metadataName: 'objectMetadata',
-            baseValue: objectMetadata.labelPlural,
-            overrides: objectMetadata.overrides ?? undefined,
-            property: 'labelPlural',
+      const objectLabelPlaceholderValues = isDefined(objectMetadata)
+        ? buildViewNameObjectLabels({
+            viewName: view.name,
+            objectMetadata,
             i18nContext: {
-              locale,
-              i18nInstance,
+              ...getI18nContext(objectMetadata.applicationId ?? undefined),
               isStandardApp: belongsToTwentyStandardApp(objectMetadata),
             },
           })
@@ -245,16 +242,8 @@ export class ViewController {
         ...view,
         name: resolveViewName({
           view,
-          objectLabelPlural,
-          i18nContext: {
-            locale,
-            i18nInstance,
-            isStandardApp: view.applicationId === standardApplicationId,
-            // This REST path reads from the flat entity cache and has no
-            // dataloader, so installed-application catalogs are not resolved
-            // here the way they are in the GraphQL resolver.
-            applicationCatalog: undefined,
-          },
+          objectLabelPlaceholderValues,
+          i18nContext: getI18nContext(view.applicationId),
         }),
       };
     });

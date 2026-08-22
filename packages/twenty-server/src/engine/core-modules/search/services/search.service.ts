@@ -16,6 +16,8 @@ import {
 } from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
 
+import { type APP_LOCALES } from 'twenty-shared/translations';
+
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -39,6 +41,7 @@ import {
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -47,11 +50,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -70,6 +75,7 @@ export class SearchService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async getAllRecordsWithObjectMetadataItems({
@@ -778,13 +784,44 @@ export class SearchService {
     workspaceId,
     limit,
     after,
+    loaders,
+    locale,
   }: {
     recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
     limit: number;
     after?: string;
+    loaders: IDataloaders;
+    locale: keyof typeof APP_LOCALES | undefined;
   }): Promise<SearchResultConnectionDTO> {
+    const objectLabelSingularByObjectMetadataId = new Map(
+      await Promise.all(
+        recordsWithObjectMetadataItems.map(
+          async ({ objectMetadataItem }) =>
+            [
+              objectMetadataItem.id,
+              resolveEffectiveEntityProperty({
+                metadataName: 'objectMetadata',
+                baseValue: objectMetadataItem.labelSingular,
+                overrides: objectMetadataItem.overrides,
+                property: 'labelSingular',
+                i18nContext:
+                  await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+                    {
+                      applicationId:
+                        objectMetadataItem.applicationId ?? undefined,
+                      loaders,
+                      locale,
+                      workspaceId,
+                    },
+                  ),
+              }),
+            ] as const,
+        ),
+      ),
+    );
+
     const recordPromises = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
         return records.map(async (record) => {
@@ -792,8 +829,9 @@ export class SearchService {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
             objectLabelSingular:
-              objectMetadataItem.overrides?.labelSingular ??
-              objectMetadataItem.labelSingular,
+              objectLabelSingularByObjectMetadataId.get(
+                objectMetadataItem.id,
+              ) ?? objectMetadataItem.labelSingular,
             label: this.getLabelIdentifierValue(
               record,
               objectMetadataItem,

@@ -1405,7 +1405,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' | 'IS_ORM_V2_READ_PATH_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' | 'IS_ORM_V2_READ_PATH_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1541,6 +1541,7 @@ export interface Sentry {
     environment?: Scalars['String']
     release?: Scalars['String']
     dsn?: Scalars['String']
+    tracesSampleRate?: Scalars['Float']
     __typename: 'Sentry'
 }
 
@@ -2813,13 +2814,44 @@ export interface MessageFolder {
 
 export type MessageFolderPendingSyncAction = 'FOLDER_DELETION' | 'FOLDER_IMPORT' | 'NONE'
 
+export interface MetadataTranslation {
+    metadataName: Scalars['String']
+    recordId: Scalars['UUID']
+    objectMetadataId?: Scalars['UUID']
+    property: Scalars['String']
+    locale: Scalars['String']
+    sourceValue: Scalars['String']
+    canonicalValue: Scalars['String']
+    value: Scalars['String']
+    provenance: MetadataTranslationProvenance
+    __typename: 'MetadataTranslation'
+}
+
+
+/** Where a resolved metadata label comes from: a workspace-authored translation, a shipped application catalog, or inheritance from the canonical value */
+export type MetadataTranslationProvenance = 'WORKSPACE' | 'SHIPPED' | 'INHERITED'
+
+export interface TimelineActivityType {
+    id: Scalars['UUID']
+    name: Scalars['String']
+    label: Scalars['String']
+    action?: Scalars['String']
+    icon?: Scalars['String']
+    renderer?: Scalars['String']
+    objectUniversalIdentifier?: Scalars['UUID']
+    applicationId?: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'TimelineActivityType'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2949,6 +2981,8 @@ export interface Query {
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
+    timelineActivityTypes: TimelineActivityType[]
+    metadataTranslations: MetadataTranslation[]
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
@@ -4828,6 +4862,7 @@ export interface SentryGenqlSelection{
     environment?: boolean | number
     release?: boolean | number
     dsn?: boolean | number
+    tracesSampleRate?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6176,6 +6211,35 @@ export interface MessageFolderGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MetadataTranslationGenqlSelection{
+    metadataName?: boolean | number
+    recordId?: boolean | number
+    objectMetadataId?: boolean | number
+    property?: boolean | number
+    locale?: boolean | number
+    sourceValue?: boolean | number
+    canonicalValue?: boolean | number
+    value?: boolean | number
+    provenance?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TimelineActivityTypeGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    label?: boolean | number
+    action?: boolean | number
+    icon?: boolean | number
+    renderer?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -6326,6 +6390,8 @@ export interface QueryGenqlSelection{
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    timelineActivityTypes?: TimelineActivityTypeGenqlSelection
+    metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -6365,6 +6431,8 @@ export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],
 export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReason | null),searchTerm?: (Scalars['String'] | null),unsubscribeTopicId?: (Scalars['UUID'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
+
+export interface MetadataTranslationsInput {objectMetadataId?: (Scalars['UUID'] | null),fieldMetadataId?: (Scalars['UUID'] | null),locale?: (Scalars['String'] | null)}
 
 export interface EventLogQueryInput {table: EventLogTable,filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),after?: (Scalars['String'] | null)}
 
@@ -6823,7 +6891,9 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+
+export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
 
 export interface CreateOneIndexInput {
 /** The custom index to create */
@@ -6899,7 +6969,7 @@ id: Scalars['UUID'],
 /** The record to update */
 update: UpdateFieldInput}
 
-export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
+export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
@@ -9153,6 +9223,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const MetadataTranslation_possibleTypes: string[] = ['MetadataTranslation']
+    export const isMetadataTranslation = (obj?: { __typename?: any } | null): obj is MetadataTranslation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataTranslation"')
+      return MetadataTranslation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']
+    export const isTimelineActivityType = (obj?: { __typename?: any } | null): obj is TimelineActivityType => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityType"')
+      return TimelineActivityType_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
     export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
@@ -9680,8 +9766,8 @@ export const enumFeatureFlagKey = {
    IS_LIST_VIEW_ENABLED: 'IS_LIST_VIEW_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
-   IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const,
+   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
    IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const,
    IS_ORM_V2_READ_PATH_ENABLED: 'IS_ORM_V2_READ_PATH_ENABLED' as const
@@ -9898,6 +9984,12 @@ export const enumMessageFolderPendingSyncAction = {
    NONE: 'NONE' as const
 }
 
+export const enumMetadataTranslationProvenance = {
+   WORKSPACE: 'WORKSPACE' as const,
+   SHIPPED: 'SHIPPED' as const,
+   INHERITED: 'INHERITED' as const
+}
+
 export const enumAllMetadataName = {
    fieldMetadata: 'fieldMetadata' as const,
    objectMetadata: 'objectMetadata' as const,
@@ -9929,7 +10021,8 @@ export const enumAllMetadataName = {
    webhook: 'webhook' as const,
    applicationVariable: 'applicationVariable' as const,
    connectionProvider: 'connectionProvider' as const,
-   searchFieldMetadata: 'searchFieldMetadata' as const
+   searchFieldMetadata: 'searchFieldMetadata' as const,
+   timelineActivityType: 'timelineActivityType' as const
 }
 
 export const enumEventLogTable = {

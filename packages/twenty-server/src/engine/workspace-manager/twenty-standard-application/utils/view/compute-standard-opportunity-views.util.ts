@@ -1,12 +1,14 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { AggregateOperations, ViewType, ViewKey } from 'twenty-shared/types';
 
+import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
-import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
 
 export const computeStandardOpportunityViews = (
   args: Omit<CreateStandardViewArgs<'opportunity'>, 'context'>,
@@ -17,7 +19,7 @@ export const computeStandardOpportunityViews = (
       objectName: 'opportunity',
       context: {
         viewName: 'allOpportunities',
-        name: `All ${OBJECT_LABEL_PLURAL_PLACEHOLDER}`,
+        name: INDEX_VIEW_NAME,
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
@@ -29,7 +31,7 @@ export const computeStandardOpportunityViews = (
       objectName: 'opportunity',
       context: {
         viewName: 'byStage',
-        name: 'By Stage',
+        name: i18nLabel(msg({ message: `By Stage`, context: 'view.name' })),
         type: ViewType.KANBAN,
         key: null,
         position: 2,

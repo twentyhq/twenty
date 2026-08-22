@@ -178,6 +178,7 @@ export class CalendarEventParticipantService {
           objectMetadataName: 'calendarEventParticipant',
           matchWith: 'workspaceMemberAndPerson',
           workspaceId,
+          transactionScope,
         });
       },
       authContext,

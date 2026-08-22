@@ -1,14 +1,36 @@
-import { type MarketplacePartner } from './marketplace-partner';
+import { type RankedMarketplacePartner } from './marketplace-partner';
 
-export const completenessScore = (p: MarketplacePartner): number => {
-  let s = 0;
-  if (p.description.trim().length >= 120) s += 2;
-  if (p.profilePictureUrl) s += 1;
-  if (p.services.length >= 1) s += 2;
-  if (p.portfolio.length >= 1) s += 2;
-  if (p.clients.length >= 1) s += 1;
-  if (p.calendarLink) s += 1;
-  if (p.hourlyRateUsd != null || p.projectBudgetMinUsd != null) s += 1;
-  if (p.partnerScope.length >= 1) s += 1;
-  return s;
+const MIN_DESCRIPTION_LENGTH = 120;
+const MAX_COUNTED_CASE_STUDIES = 3;
+// An approved case study has to outweigh picture + calendar + rate combined,
+// otherwise three quick form fields beat evidence of delivered client work.
+const POINTS_PER_CASE_STUDY = 4;
+const POINTS_PER_CASE_STUDY_COVER = 1;
+
+export const completenessScore = (
+  partner: RankedMarketplacePartner,
+): number => {
+  const countedCaseStudies = Math.min(
+    partner.approvedCaseStudyCount,
+    MAX_COUNTED_CASE_STUDIES,
+  );
+  const countedCovers = Math.min(
+    partner.approvedCaseStudyWithCoverCount,
+    countedCaseStudies,
+  );
+
+  let score =
+    countedCaseStudies * POINTS_PER_CASE_STUDY +
+    countedCovers * POINTS_PER_CASE_STUDY_COVER;
+
+  if (partner.description.trim().length >= MIN_DESCRIPTION_LENGTH) score += 2;
+  if (partner.serviceCount >= 1) score += 2;
+  if (partner.profilePictureUrl) score += 1;
+  if (partner.calendarLink) score += 1;
+  if (partner.hourlyRateUsd !== null || partner.projectBudgetMinUsd !== null) {
+    score += 1;
+  }
+  if (partner.partnerScope.length >= 1) score += 1;
+
+  return score;
 };

@@ -33,11 +33,10 @@ export const EventRowMainObject = ({
   authorFullName,
   labelIdentifierValue,
   event,
+  eventAction,
   mainObjectMetadataItem,
   createdAt,
 }: EventRowMainObjectProps) => {
-  const [, eventAction] = event.name.split('.');
-
   switch (eventAction) {
     case 'created': {
       return (
