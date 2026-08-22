@@ -343,7 +343,7 @@ msgstr "Ett tillfälligt nätverksfel inträffade."
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr ""
+msgstr "En tidslinjeaktivitetstyp med detta namn finns redan för denna applikation."
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1084,7 +1084,7 @@ msgstr "Bilagor kopplade till arbetsflödet"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attended a calendar event"
-msgstr ""
+msgstr "deltog i ett kalenderevenemang"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -5829,13 +5829,13 @@ msgstr "Layout krävs för stapeldiagramwidgeten \"{widgetTitle}\""
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related note"
-msgstr ""
+msgstr "länkade en relaterad anteckning"
 
 #. js-lingui-id: ecrchg
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related task"
-msgstr ""
+msgstr "länkade en relaterad uppgift"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6448,8 +6448,7 @@ msgstr "Modell-ID får inte vara tomt"
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr ""
-"M\n"
+msgstr "M\n"
 "ndags"
 
 #. js-lingui-id: mEl3m6
@@ -8595,8 +8594,7 @@ msgstr "Körningar"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr ""
-"L\n"
+msgstr "L\n"
 "urdag"
 
 #. js-lingui-id: 8gi8vY
@@ -8896,7 +8894,7 @@ msgstr "Antal skickade"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "sent or received an email"
-msgstr ""
+msgstr "skickade eller tog emot ett e-postmeddelande"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9272,8 +9270,7 @@ msgstr "Sammanfattning"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr ""
-"S\n"
+msgstr "S\n"
 "nd"
 
 #. js-lingui-id: D+NlUC
@@ -10450,17 +10447,17 @@ msgstr "Denna spärrade adress finns inte längre."
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
-msgstr ""
+msgstr "Den här åtgärden för tidslinjeaktivitet stöds inte"
 
 #. js-lingui-id: O6/sEz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer is not supported"
-msgstr ""
+msgstr "Den här renderaren för tidslinjeaktivitet stöds inte"
 
 #. js-lingui-id: jDoSzT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer requires the type to reference an object"
-msgstr ""
+msgstr "Den här renderaren för tidslinjeaktivitet kräver att typen refererar till ett objekt"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10637,25 +10634,25 @@ msgstr "Position för tidslinjeaktivitetens post"
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity renderer {0} requires the type to reference an object"
-msgstr ""
+msgstr "Renderaren för tidslinjeaktivitet {0} kräver att typen refererar till ett objekt"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline activity type describing this event"
-msgstr ""
+msgstr "Tidslinjeaktivitetstyp som beskriver denna händelse"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type label is required"
-msgstr ""
+msgstr "Etikett för tidslinjeaktivitetstyp krävs"
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type name is required"
-msgstr ""
+msgstr "Namn på tidslinjeaktivitetstyp krävs"
 
 #. js-lingui-id: kNsVJi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10663,13 +10660,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type not found"
-msgstr ""
+msgstr "Tidslinjeaktivitetstypen hittades inte"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: flatTimelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type with name {0} already exists for this application"
-msgstr ""
+msgstr "Tidslinjeaktivitetstyp med namnet {0} finns redan för denna applikation"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -10839,25 +10836,25 @@ msgstr "Okänd behörighet krävs."
 #. placeholder {0}: flatTimelineActivityType.action
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity action {0}"
-msgstr ""
+msgstr "Okänd åtgärd för tidslinjeaktivitet {0}"
 
 #. js-lingui-id: iiqbeU
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity renderer {0}"
-msgstr ""
+msgstr "Okänd renderare för tidslinjeaktivitet {0}"
 
 #. js-lingui-id: spJjXJ
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related note"
-msgstr ""
+msgstr "tog bort länken till en relaterad anteckning"
 
 #. js-lingui-id: IYBfg3
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related task"
-msgstr ""
+msgstr "tog bort länken till en relaterad uppgift"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10947,13 +10944,13 @@ msgstr "uppdaterad"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related note"
-msgstr ""
+msgstr "uppdaterade en relaterad anteckning"
 
 #. js-lingui-id: FoQjXC
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related task"
-msgstr ""
+msgstr "uppdaterade en relaterad uppgift"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11594,7 +11591,7 @@ msgstr "raderades av"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was linked by"
-msgstr ""
+msgstr "länkades av"
 
 #. js-lingui-id: tKm/LA
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11606,7 +11603,7 @@ msgstr "återställdes av"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was unlinked by"
-msgstr ""
+msgstr "kopplades bort av"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
