@@ -9,13 +9,13 @@ export class AddBillingToApplicationFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."application" ADD "billing" jsonb NOT NULL DEFAULT \'{}\'',
+      'ALTER TABLE "core"."application" ADD COLUMN IF NOT EXISTS "billing" jsonb NOT NULL DEFAULT \'{}\'',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."application" DROP COLUMN "billing"',
+      'ALTER TABLE "core"."application" DROP COLUMN IF EXISTS "billing"',
     );
   }
 }

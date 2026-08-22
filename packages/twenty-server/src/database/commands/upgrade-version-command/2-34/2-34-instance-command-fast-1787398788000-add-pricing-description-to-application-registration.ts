@@ -9,13 +9,13 @@ export class AddPricingDescriptionToApplicationRegistrationFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."applicationRegistration" ADD "pricingDescription" text',
+      'ALTER TABLE "core"."applicationRegistration" ADD COLUMN IF NOT EXISTS "pricingDescription" text',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."applicationRegistration" DROP COLUMN "pricingDescription"',
+      'ALTER TABLE "core"."applicationRegistration" DROP COLUMN IF EXISTS "pricingDescription"',
     );
   }
 }
