@@ -10,6 +10,7 @@ Every app must have exactly one `defineApplication` call. It declares:
 - **Permissions** — which role its logic functions and front components run under.
 - **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
 - **Pre-install / post-install / uninstall hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
+- **Billable operations** *(optional)* — what your app charges credits for; see [Charging Credits](/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
