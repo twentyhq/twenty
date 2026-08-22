@@ -48,6 +48,11 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         value: settingsDraftRoleObjectPermissions?.canReadObjectRecords,
       },
       {
+        key: 'canCreateObjectRecords',
+        label: t`Create ${objectLabelPlural}`,
+        value: settingsDraftRoleObjectPermissions?.canCreateObjectRecords,
+      },
+      {
         key: 'canUpdateObjectRecords',
         label: t`Edit ${objectLabelPlural}`,
         value: settingsDraftRoleObjectPermissions?.canUpdateObjectRecords,

@@ -20,6 +20,7 @@ export const getObjectPermissionsForObject = (
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
+      canCreateObjectRecords: true,
       restrictedFields: {},
       objectMetadataId,
       rowLevelPermissionPredicates: [],
@@ -33,6 +34,7 @@ export const getObjectPermissionsForObject = (
     canSoftDeleteObjectRecords:
       objectPermissions.canSoftDeleteObjectRecords ?? true,
     canDestroyObjectRecords: objectPermissions.canDestroyObjectRecords ?? true,
+    canCreateObjectRecords: objectPermissions.canCreateObjectRecords ?? true,
     restrictedFields: objectPermissions.restrictedFields ?? {},
     objectMetadataId,
     rowLevelPermissionPredicates:

@@ -68,10 +68,13 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
       ];
 
     const rolePermission =
-      permissionMappings[permission.key as keyof typeof permissionMappings];
+      permission.key in permissionMappings
+        ? permissionMappings[permission.key as keyof typeof permissionMappings]
+        : undefined;
 
-    const settingsDraftRoleGlobalPermissionValue =
-      settingsDraftRole[rolePermission as keyof Role];
+    const settingsDraftRoleGlobalPermissionValue = isDefined(rolePermission)
+      ? settingsDraftRole[rolePermission as keyof Role]
+      : true;
 
     const isChecked = !!settingsDraftRoleObjectPermissionValue;
 

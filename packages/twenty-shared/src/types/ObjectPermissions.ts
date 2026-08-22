@@ -7,6 +7,7 @@ export type ObjectPermissions = {
   canUpdateObjectRecords: boolean;
   canSoftDeleteObjectRecords: boolean;
   canDestroyObjectRecords: boolean;
+  canCreateObjectRecords?: boolean;
   restrictedFields: RestrictedFieldsPermissions;
   rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
   rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];

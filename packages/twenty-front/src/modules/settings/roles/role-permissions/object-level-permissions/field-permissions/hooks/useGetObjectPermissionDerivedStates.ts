@@ -25,7 +25,8 @@ export const useGetObjectPermissionDerivedStates = ({
       !isDefined(objectPermission.canReadObjectRecords) &&
       !isDefined(objectPermission.canUpdateObjectRecords) &&
       !isDefined(objectPermission.canSoftDeleteObjectRecords) &&
-      !isDefined(objectPermission.canDestroyObjectRecords);
+      !isDefined(objectPermission.canDestroyObjectRecords) &&
+      !isDefined(objectPermission.canCreateObjectRecords);
 
     const readIsRestrictedOnAllObjectsByDefault =
       settingsDraftRole.canReadAllObjectRecords === false;
@@ -64,6 +65,18 @@ export const useGetObjectPermissionDerivedStates = ({
     const objectHasNoOverrideOnRead =
       !isObjectPermissionDefined ||
       (!objectHasReadGranted && !objectHasReadRevoked);
+
+    const objectHasCreateGranted =
+      isObjectPermissionDefined &&
+      objectPermission.canCreateObjectRecords === true;
+
+    const objectHasCreateRevoked =
+      isObjectPermissionDefined &&
+      objectPermission.canCreateObjectRecords === false;
+
+    const objectHasNoOverrideOnCreate =
+      !isObjectPermissionDefined ||
+      (!objectHasCreateGranted && !objectHasCreateRevoked);
 
     const objectHasUpdateGranted =
       updateIsRestrictedOnAllObjectsByDefault &&
@@ -109,6 +122,7 @@ export const useGetObjectPermissionDerivedStates = ({
 
     const objectHasNoOverrideOnObjectPermission =
       objectHasNoOverrideOnRead &&
+      objectHasNoOverrideOnCreate &&
       objectHasNoOverrideOnUpdate &&
       objectHasNoOverrideOnDelete &&
       objectHasNoOverrideOnDestroy;
@@ -186,10 +200,12 @@ export const useGetObjectPermissionDerivedStates = ({
       cannotAllowFieldUpdateRestrict,
       cannotAllowFieldReadRestrict,
       objectHasReadRevoked,
+      objectHasCreateRevoked,
       objectHasUpdateRevoked,
       objectHasDeleteRevoked,
       objectHasDestroyRevoked,
       objectHasReadGranted,
+      objectHasCreateGranted,
       objectHasUpdateGranted,
       objectHasDeleteGranted,
       objectHasDestroyGranted,

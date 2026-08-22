@@ -13,6 +13,7 @@ export const MOCK_ROLE_ID_REVOKES_ALL = 'role-id-2';
 export const MOCK_OBJECT_PERMISSION_1_REVOKES_ALL: ObjectPermission = {
   objectMetadataId: 'object-metadata-1',
   canReadObjectRecords: false,
+  canCreateObjectRecords: false,
   canUpdateObjectRecords: false,
   canSoftDeleteObjectRecords: false,
   canDestroyObjectRecords: false,
@@ -21,6 +22,7 @@ export const MOCK_OBJECT_PERMISSION_1_REVOKES_ALL: ObjectPermission = {
 export const MOCK_OBJECT_PERMISSION_2_GRANTS_ALL: ObjectPermission = {
   objectMetadataId: 'object-metadata-2',
   canReadObjectRecords: true,
+  canCreateObjectRecords: true,
   canUpdateObjectRecords: true,
   canSoftDeleteObjectRecords: true,
   canDestroyObjectRecords: true,
@@ -29,6 +31,7 @@ export const MOCK_OBJECT_PERMISSION_2_GRANTS_ALL: ObjectPermission = {
 export const MOCK_OBJECT_PERMISSION_3_NULL_ALL: ObjectPermission = {
   objectMetadataId: 'object-metadata-3',
   canReadObjectRecords: null,
+  canCreateObjectRecords: null,
   canUpdateObjectRecords: null,
   canSoftDeleteObjectRecords: null,
   canDestroyObjectRecords: null,
