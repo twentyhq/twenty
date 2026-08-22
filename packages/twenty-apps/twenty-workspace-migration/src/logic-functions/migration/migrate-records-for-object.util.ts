@@ -5,33 +5,23 @@ import { findManyRecords } from "src/logic-functions/requests/find-many-records.
 import { createManyRecords } from "src/logic-functions/requests/create-many-records.util";
 import { ObjectType } from "src/logic-functions/types/find-objects-fields.type";
 import { buildRecordDataToCreate } from "src/logic-functions/utils/build-record-data-to-create.util";
-import { migrationState, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { logger } from "src/logic-functions/utils/logger.util";
-import { PAGE_SIZE } from "src/constants/page-size";
-import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
-
-const setObjectCursor = (namePlural: string, after: string | null): void => {
-  const objectRecordsToMigrate = new Map(migrationState.objectRecordsToMigrate);
-  if (after === null) {
-    objectRecordsToMigrate.delete(namePlural);
-  } else {
-    objectRecordsToMigrate.set(namePlural, after);
-  }
-  setStateRef('objectRecordsToMigrate', objectRecordsToMigrate);
-};
+import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
+import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
 
 export const migrateRecordsForObject = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
   sourceObject: ObjectType,
   recordIdMap: Map<string, string>,
-) => {
+): Promise<true | void> => {
   const plan = buildRecordFieldPlan(sourceObject.fieldsList, fieldsToOmitFromRecordMigration);
   const enumDataKeys = new Set(plan.enumDataKeys);
 
   let after: string | null = migrationState.objectRecordsToMigrate.get(sourceObject.namePlural) ?? null;
-  let migratedCount = 0;
+  let migratedPages = 0;
 
   while (true) {
     const page = await findManyRecords(sourceWorkspace, sourceObject.namePlural, plan.selectionSet, after);
@@ -41,14 +31,14 @@ export const migrateRecordsForObject = async (
       const dataToCreate = nodes.map((node) =>
         buildRecordDataToCreate(node, plan.dataKeys, plan.relationForeignKeyNames, recordIdMap),
       );
-      const created = await executeWithRetry(() =>
+      const created = await executeWithRetryAndCheckpoint(() =>
         createManyRecords(targetWorkspace, sourceObject.namePlural, dataToCreate, enumDataKeys),
       );
 
       nodes.forEach((node, index) => {
         recordIdMap.set(node.id as string, created[index].id);
       });
-      migratedCount += nodes.length;
+      migratedPages += 1;
     }
 
     if (!page.pageInfo.hasNextPage) {
@@ -57,10 +47,10 @@ export const migrateRecordsForObject = async (
     }
     after = page.pageInfo.endCursor;
     setObjectCursor(sourceObject.namePlural, after);
-    if (migratedCount % (PAGE_SIZE * migrationState.maxRequests) === 0) {
-      await stopIfTimeBudgetExceeded();
+    if (await stopIfTimeBudgetExceeded()) {
+      return true;
     }
   }
 
-  logger.log(`Migrated ${migratedCount} record(s) for ${sourceObject.nameSingular}`);
+  logger.log(`Migrated ${migratedPages} record(s) for ${sourceObject.nameSingular}`);
 };

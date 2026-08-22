@@ -1,20 +1,24 @@
 import type { AxiosInstance } from "axios";
-import { findSkills } from "src/logic-functions/requests/find-skills.util";
-import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
 import { logger } from "src/logic-functions/utils/logger.util";
+import { Skill } from "src/logic-functions/types/skill.type";
+import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { migrationState, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 
-export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Awaited<ReturnType<typeof findSkills>>, targetSkills: Awaited<ReturnType<typeof findSkills>>) => {
-  const existingTargetSkillIds = new Set(targetSkills.map((skill) => skill.id));
-
-  let createdCount = 0;
-  for (const skill of sourceSkills) {
-    // Standard skills already exist in every workspace by construction (and the server
-    // blocks non-standard-app callers from modifying them) - only custom ones need migrating.
-    if (!skill.isCustom || existingTargetSkillIds.has(skill.id)) {
-      continue;
+export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Skill[], targetSkills: Skill[]) => {
+  const mappedSourceSkills: Record<string, Skill> = sourceSkills.filter(skill => skill.isCustom === true).reduce((pre, skill) => ({...pre, [skill.id]: skill}), {});
+  const mappedTargetSkills: Record<string, Skill> = targetSkills.filter(skill => skill.isCustom === true).reduce((pre, skill) => ({...pre, [skill.id]: skill}), {});
+  const skillsToMigrate: Skill[] = [];
+  const targetSkillsIds = Object.values(mappedTargetSkills).map(skill => skill.id);
+  for (const key in Object.values(mappedSourceSkills).map(skill => skill.id)) {
+    if (targetSkillsIds.indexOf(key) === -1) {
+      skillsToMigrate.push(mappedSourceSkills[key]);
     }
-    await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createSkill', 'input', 'CreateSkillInput', {
+  }
+  let recordsMigrated = 2;
+  for (const skill of skillsToMigrate) {
+    await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createSkill', 'input', 'CreateSkillInput', {
       id: skill.id,
       name: skill.name,
       label: skill.label,
@@ -22,8 +26,15 @@ export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills
       description: skill.description,
       content: skill.content,
     }));
-    createdCount += 1;
+    recordsMigrated++;
+    if (recordsMigrated % migrationState.maxRequests === 0) {
+      recordsMigrated = 0;
+      if (await stopIfTimeBudgetExceeded()) {
+        return false;
+      }
+    }
   }
-
-  logger.log(`Skills: created ${createdCount}`);
+  setStateRef('migratedSkills', true);
+  logger.log(`Skills migrated`);
+  return true;
 };

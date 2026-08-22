@@ -1,6 +1,6 @@
 import {
   migrationState,
-  saveMigrationStateCheckpoint,
+  saveMigrationStateCheckpointAndStop,
   setStateRef
 } from "src/logic-functions/utils/migration-state.util";
 import { type AxiosInstance } from "axios";
@@ -21,9 +21,11 @@ export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
       logger.warn(`Skipping records for "${sourceObject.nameSingular}": no matching target object (schema creation may have failed for it)`);
       continue;
     }
-    await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIdMap);
+    if (await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIdMap)) {
+      return;
+    }
     setStateRef('recordMigrationOrder', recordMigrationOrder.slice(recordMigrationOrder.indexOf(sourceObject)));
   }
   setStateRef('stage', 4);
-  await saveMigrationStateCheckpoint();
+  await saveMigrationStateCheckpointAndStop();
 }

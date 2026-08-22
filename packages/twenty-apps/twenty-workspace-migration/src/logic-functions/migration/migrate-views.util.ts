@@ -1,8 +1,10 @@
 import type { AxiosInstance } from "axios";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
-import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
+import { createMetadataEntity, createManyMetadataEntities } from "src/logic-functions/requests/create-metadata-entity.util";
 import { logger } from "src/logic-functions/utils/logger.util";
 import { View } from "src/logic-functions/types/view-entities.type";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 
 export const migrateViews = async (
   targetWorkspace: AxiosInstance,
@@ -77,31 +79,35 @@ export const migrateViews = async (
       }
     }
 
-    for (const viewFieldGroup of view.viewFieldGroups) {
-      if (existingTargetViewFieldGroupIds.has(viewFieldGroup.id)) {
-        continue;
-      }
-      await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewFieldGroup', 'input', 'CreateViewFieldGroupInput', {
+    // createManyViewFieldGroups/createManyViewFields/createManyViewGroups exist as bulk
+    // mutations server-side (unlike view/viewFilter/viewFilterGroup, which only have a
+    // single-create one) - batching each of these into one request per view instead of one
+    // request per row is a straight win with no ordering constraints to preserve, since none
+    // of these three reference each other within the batch the way filter groups do.
+    const viewFieldGroupsToCreate = view.viewFieldGroups.filter((viewFieldGroup) => existingTargetViewFieldGroupIds.has(viewFieldGroup.id) === false);
+    if (viewFieldGroupsToCreate.length > 0) {
+      await executeWithRetryAndCheckpoint(() => createManyMetadataEntities(targetWorkspace, 'createManyViewFieldGroups', 'inputs', 'CreateViewFieldGroupInput', viewFieldGroupsToCreate.map((viewFieldGroup) => ({
         id: viewFieldGroup.id,
         name: viewFieldGroup.name,
         viewId: effectiveViewId,
         position: viewFieldGroup.position,
         isVisible: viewFieldGroup.isVisible,
-      }));
-      createdSubEntities += 1;
+      }))));
+      createdSubEntities += viewFieldGroupsToCreate.length;
     }
 
-    for (const viewField of view.viewFields) {
+    const viewFieldsToCreate = view.viewFields.flatMap((viewField) => {
       const targetFieldMetadataId = resolveFieldId(viewField.fieldMetadataId);
       if (targetFieldMetadataId === null) {
         logger.warn(`Skipping view field "${viewField.id}" on view "${view.name}": target field not found for field ${viewField.fieldMetadataId}`);
-        continue;
+        return [];
       }
       const viewFieldKey = `${effectiveViewId}::${targetFieldMetadataId}`;
       if (existingTargetViewFieldKeys.has(viewFieldKey)) {
-        continue;
+        return [];
       }
-      await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewField', 'input', 'CreateViewFieldInput', {
+      existingTargetViewFieldKeys.add(viewFieldKey);
+      return [{
         id: viewField.id,
         fieldMetadataId: targetFieldMetadataId,
         viewId: effectiveViewId,
@@ -110,9 +116,11 @@ export const migrateViews = async (
         position: viewField.position,
         aggregateOperation: viewField.aggregateOperation,
         viewFieldGroupId: viewField.viewFieldGroupId,
-      }));
-      existingTargetViewFieldKeys.add(viewFieldKey);
-      createdSubEntities += 1;
+      }];
+    });
+    if (viewFieldsToCreate.length > 0) {
+      await executeWithRetryAndCheckpoint(() => createManyMetadataEntities(targetWorkspace, 'createManyViewFields', 'inputs', 'CreateViewFieldInput', viewFieldsToCreate));
+      createdSubEntities += viewFieldsToCreate.length;
     }
 
     const remainingFilterGroups = [...view.viewFilterGroups];
@@ -189,20 +197,23 @@ export const migrateViews = async (
       continue;
     }
 
-    for (const viewGroup of view.viewGroups) {
-      if (existingTargetViewGroupIds.has(viewGroup.id)) {
-        continue;
-      }
-      await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewGroup', 'input', 'CreateViewGroupInput', {
+    const viewGroupsToCreate = view.viewGroups.filter((viewGroup) => !existingTargetViewGroupIds.has(viewGroup.id));
+    if (viewGroupsToCreate.length > 0) {
+      await executeWithRetryAndCheckpoint(() => createManyMetadataEntities(targetWorkspace, 'createManyViewGroups', 'inputs', 'CreateViewGroupInput', viewGroupsToCreate.map((viewGroup) => ({
         id: viewGroup.id,
         isVisible: viewGroup.isVisible,
         fieldValue: viewGroup.fieldValue,
         position: viewGroup.position,
         viewId: effectiveViewId,
-      }));
-      createdSubEntities += 1;
+      }))));
+      createdSubEntities += viewGroupsToCreate.length;
+    }
+    if (await stopIfTimeBudgetExceeded()) {
+      return false;
     }
   }
 
+  setStateRef('migratedViews', true);
   logger.log(`Views: created ${createdViews} view(s) and ${createdSubEntities} related entitie(s)`);
+  return true;
 };

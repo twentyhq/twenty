@@ -53,3 +53,25 @@ export const upsertFieldPermissions = async (
     upsertFieldPermissionsInput: { roleId, fieldPermissions },
   });
 }
+
+// Enterprise-only: throws if the calling workspace's plan doesn't have row-level permissions
+// enabled - callers are expected to catch that and skip rather than abort the whole migration.
+export const upsertRowLevelPermissionPredicates = async (
+  client: AxiosInstance,
+  roleId: string,
+  objectMetadataId: string,
+  predicates: Record<string, unknown>[],
+  predicateGroups: Record<string, unknown>[],
+): Promise<void> => {
+  const mutation = `mutation UpsertRowLevelPermissionPredicates($input: UpsertRowLevelPermissionPredicatesInput!) {
+  upsertRowLevelPermissionPredicates(input: $input) {
+    predicates {
+      id
+    }
+  }
+}`;
+
+  await postGraphql(client, '/metadata', 'UpsertRowLevelPermissionPredicates', mutation, {
+    input: { roleId, objectMetadataId, predicates, predicateGroups },
+  });
+}

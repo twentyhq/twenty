@@ -122,15 +122,6 @@ const buildQuery = (pageLayoutType: 'DASHBOARD' | 'RECORD_PAGE') => `query findP
           ... on TimelineConfiguration {
             configurationType
           }
-          ... on WorkflowConfiguration {
-            configurationType
-          }
-          ... on WorkflowRunConfiguration {
-            configurationType
-          }
-          ... on WorkflowVersionConfiguration {
-            configurationType
-          }
         }
       }
     }

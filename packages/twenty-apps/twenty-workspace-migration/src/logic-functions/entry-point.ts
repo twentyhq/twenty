@@ -10,6 +10,7 @@ import { stage4 } from "src/logic-functions/stages/stage4";
 import { stage5 } from "src/logic-functions/stages/stage5";
 import { stage6 } from "src/logic-functions/stages/stage6";
 import { stage7 } from "src/logic-functions/stages/stage7";
+import { stage8 } from "src/logic-functions/stages/stage8";
 import { TRIGGER_ROUTE_PATH } from "src/constants/trigger-route-path";
 
 // Logic:
@@ -98,8 +99,10 @@ const handler = async () => {
     case 7:
       await stage7(sourceWorkspace, targetWorkspace);
       break;
+    case 8:
+      await stage8(sourceWorkspace, targetWorkspace);
+      break;
   }
-  return;
 };
 
 export default defineLogicFunction({

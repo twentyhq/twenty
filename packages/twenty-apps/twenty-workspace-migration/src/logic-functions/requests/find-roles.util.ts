@@ -35,9 +35,22 @@ const QUERY = `query findRoles {
     }
     rowLevelPermissionPredicates {
       id
+      fieldMetadataId
+      objectMetadataId
+      operand
+      value
+      subFieldName
+      workspaceMemberFieldMetadataId
+      workspaceMemberSubFieldName
+      rowLevelPermissionPredicateGroupId
+      positionInRowLevelPermissionPredicateGroup
     }
     rowLevelPermissionPredicateGroups {
       id
+      parentRowLevelPermissionPredicateGroupId
+      logicalOperator
+      positionInRowLevelPermissionPredicateGroup
+      objectMetadataId
     }
   }
 }`;

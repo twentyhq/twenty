@@ -6,6 +6,8 @@ import { createMetadataEntity } from "src/logic-functions/requests/create-metada
 import { applyPageLayoutTabsAndWidgets } from "src/logic-functions/utils/apply-page-layout-tabs-and-widgets.util";
 import { remapWidgetConfiguration } from "src/logic-functions/utils/remap-widget-configuration.util";
 import { logger } from "src/logic-functions/utils/logger.util";
+import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 
 const createCustomWidget = async (
   targetWorkspace: AxiosInstance,
@@ -138,9 +140,10 @@ export const migrateRecordPageLayouts = async (
   targetWorkspace: AxiosInstance,
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
 ) => {
-  const sourcePageLayouts = await findPageLayouts(sourceWorkspace, 'RECORD_PAGE');
-  const targetPageLayouts = await findPageLayouts(targetWorkspace, 'RECORD_PAGE');
+  const sourcePageLayouts = await executeWithRetry(() => findPageLayouts(sourceWorkspace, 'RECORD_PAGE'));
+  const targetPageLayouts = await executeWithRetryAndCheckpoint(() => findPageLayouts(targetWorkspace, 'RECORD_PAGE'));
 
   let createdCount = 0;
 
@@ -176,6 +179,7 @@ export const migrateRecordPageLayouts = async (
         type: sourceLayout.type,
         objectMetadataId: targetObjectMetadataId,
       }));
+      targetPageLayoutIdBySourcePageLayoutId.set(sourceLayout.id, createdPageLayout.id);
 
       await applyPageLayoutTabsAndWidgets(
         targetWorkspace,
@@ -212,6 +216,7 @@ export const migrateRecordPageLayouts = async (
       logger.warn(`Skipping default record page customization for object ${sourceLayout.objectMetadataId}: target object has no system RECORD_PAGE layout`);
       continue;
     }
+    targetPageLayoutIdBySourcePageLayoutId.set(sourceLayout.id, targetLayout.id);
 
     createdCount += await migrateSystemLayoutCustomization(
       targetWorkspace,
@@ -220,7 +225,11 @@ export const migrateRecordPageLayouts = async (
       targetObjectIdBySourceObjectId,
       targetFieldIdBySourceFieldId,
     );
+    if (await stopIfTimeBudgetExceeded()) {
+      return false;
+    }
   }
 
   logger.log(`Record page layouts: created ${createdCount}`);
+  return true;
 };

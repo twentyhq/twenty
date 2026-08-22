@@ -17,6 +17,27 @@ export type RolePermissionFlag = {
   flag: string;
 };
 
+export type RowLevelPermissionPredicate = {
+  id: string;
+  fieldMetadataId: string;
+  objectMetadataId: string;
+  operand: string;
+  value: unknown;
+  subFieldName: string | null;
+  workspaceMemberFieldMetadataId: string | null;
+  workspaceMemberSubFieldName: string | null;
+  rowLevelPermissionPredicateGroupId: string | null;
+  positionInRowLevelPermissionPredicateGroup: number | null;
+};
+
+export type RowLevelPermissionPredicateGroup = {
+  id: string;
+  parentRowLevelPermissionPredicateGroupId: string | null;
+  logicalOperator: string;
+  positionInRowLevelPermissionPredicateGroup: number | null;
+  objectMetadataId: string;
+};
+
 export type Role = {
   id: string;
   label: string;
@@ -34,7 +55,7 @@ export type Role = {
   permissionFlags: RolePermissionFlag[];
   objectPermissions: ObjectPermission[];
   fieldPermissions: FieldPermission[];
-  // Only read to detect and warn about a non-empty source - not migrated by this tool.
-  rowLevelPermissionPredicates: unknown[];
-  rowLevelPermissionPredicateGroups: unknown[];
+  // Enterprise-only feature
+  rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
+  rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
 };

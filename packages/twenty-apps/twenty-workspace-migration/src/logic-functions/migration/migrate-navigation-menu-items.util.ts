@@ -1,22 +1,30 @@
 import type { AxiosInstance } from "axios";
-import { findNavigationMenuItems } from "src/logic-functions/requests/find-navigation-menu-items.util";
-import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
 import { logger } from "src/logic-functions/utils/logger.util";
+import { NavigationMenuItem } from "src/logic-functions/types/navigation-menu-item.type";
+import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 
 export const migrateNavigationMenuItems = async (
   targetWorkspace: AxiosInstance,
-  sourceItems: Awaited<ReturnType<typeof findNavigationMenuItems>>,
-  targetItems: Awaited<ReturnType<typeof findNavigationMenuItems>>,
+  sourceItems: NavigationMenuItem[],
+  targetItems: NavigationMenuItem[],
   targetObjectIdBySourceObjectId: Map<string, string>,
   recordIdMap: Map<string, string>,
+  targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
 ) => {
   // Folders can be parents of other items, so an item is only attempted once its folder (if
-  // any) is already resolved in the target. Items skipped for any reason (personal, page
-  // layout, unresolved target) are never marked resolved, so anything nested under them is
+  // any) is already resolved in the target. Items skipped for any reason (personal,
+  // unresolved page layout/target) are never marked resolved, so anything nested under them is
   // correctly left unresolved too, rather than pointing at a folder that was never created.
   const resolvedItemIds = new Set(targetItems.map((item) => item.id));
-  const remainingItems = [...sourceItems];
+  const remainingItems = sourceItems.sort((a,b) => {
+    if (a.folderId !== null && b.folderId === null) return 1;
+    if (a.folderId === null && b.folderId !== null) return -1;
+    if (a.folderId === null && b.folderId === null) return 0;
+    return 0;
+  }).filter(item => resolvedItemIds.has(item.id) === false);
   let createdCount = 0;
 
   while (remainingItems.length > 0) {
@@ -38,8 +46,11 @@ export const migrateNavigationMenuItems = async (
         logger.warn(`Skipping personal navigation menu item "${item.name ?? item.id}": personal items aren't portable across workspaces via API key`);
         continue;
       }
-      if (item.pageLayoutId !== null) {
-        logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": page layouts aren't migrated by this tool`);
+      const targetPageLayoutId = item.pageLayoutId !== null
+        ? targetPageLayoutIdBySourcePageLayoutId.get(item.pageLayoutId)
+        : undefined;
+      if (item.pageLayoutId !== null && targetPageLayoutId === undefined) {
+        logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": target page layout not found for page layout ${item.pageLayoutId}`);
         continue;
       }
 
@@ -59,7 +70,7 @@ export const migrateNavigationMenuItems = async (
         continue;
       }
 
-      await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createNavigationMenuItem', 'input', 'CreateNavigationMenuItemInput', {
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createNavigationMenuItem', 'input', 'CreateNavigationMenuItemInput', {
         id: item.id,
         targetRecordId: targetRecordId ?? null,
         targetObjectMetadataId: targetObjectMetadataId ?? null,
@@ -70,12 +81,18 @@ export const migrateNavigationMenuItems = async (
         icon: item.icon,
         color: item.color,
         folderId: item.folderId,
+        pageLayoutId: targetPageLayoutId ?? null,
         position: item.position,
       }));
       resolvedItemIds.add(item.id);
       createdCount += 1;
     }
+    if (await stopIfTimeBudgetExceeded()) {
+      return false;
+    }
   }
 
+  setStateRef('migratedNavigationMenuItems', true);
   logger.log(`Navigation menu items: created ${createdCount}`);
+  return true;
 };

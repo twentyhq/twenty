@@ -1,4 +1,4 @@
-import { saveMigrationStateCheckpoint } from "src/logic-functions/utils/migration-state.util";
+import { saveMigrationStateCheckpointAndStop } from "src/logic-functions/utils/migration-state.util";
 import { TIMEOUT_SECONDS } from "src/constants/timeout-seconds";
 
 const TIME_BUDGET_SAFETY_MARGIN_MS = 60_000;
@@ -14,6 +14,6 @@ export const stopIfTimeBudgetExceeded = async (): Promise<boolean> => {
   if (startedAt === null || Date.now() - startedAt <= MAX_RUNTIME_MS) {
     return false;
   }
-  await saveMigrationStateCheckpoint();
+  await saveMigrationStateCheckpointAndStop();
   return true;
 };

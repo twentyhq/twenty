@@ -6,87 +6,80 @@ import { createMetadataEntity } from "src/logic-functions/requests/create-metada
 import { createManyRecords } from "src/logic-functions/requests/create-many-records.util";
 import { applyPageLayoutTabsAndWidgets } from "src/logic-functions/utils/apply-page-layout-tabs-and-widgets.util";
 import { logger } from "src/logic-functions/utils/logger.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
+import { migrationState } from "src/logic-functions/utils/migration-state.util";
 
 export const migrateDashboards = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  recordIdMap: Map<string, string>,
+  targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
 ) => {
-  const readAllDashboards = async (client: AxiosInstance, selectionSet: string) => {
-    const nodes: Record<string, unknown>[] = [];
-    let after: string | null = null;
-    while (true) {
-      const page = await findManyRecords(client, 'dashboards', selectionSet, after);
-      nodes.push(...page.edges.map((edge) => edge.node));
-      if (!page.pageInfo.hasNextPage) {
-        break;
-      }
-      after = page.pageInfo.endCursor;
-    }
-    return nodes;
-  };
-
-  const sourceDashboards = await readAllDashboards(sourceWorkspace, 'title\npageLayoutId\nposition');
-  const targetDashboards = await readAllDashboards(targetWorkspace, 'id');
-  const existingTargetDashboardIds = new Set(targetDashboards.map((node) => node.id as string));
-
   const sourcePageLayouts = await findPageLayouts(sourceWorkspace, 'DASHBOARD');
   const sourcePageLayoutById = new Map(sourcePageLayouts.map((layout) => [layout.id, layout]));
 
   let createdCount = 0;
+  let after: string | null = migrationState.objectRecordsToMigrate.get('dashboards') ?? null;
+  while (true) {
+    const page = await findManyRecords(sourceWorkspace, 'dashboards', 'title\npageLayoutId\nposition', after, migrationState.maxRequests / 3);
+    const nodes = page.edges.map((edge) => edge.node);
+    for (const dashboard of nodes) {
+      const dashboardId = dashboard.id as string;
+      const title = dashboard.title as string;
 
-  for (const dashboard of sourceDashboards) {
-    const dashboardId = dashboard.id as string;
-    const title = dashboard.title as string;
+      const sourcePageLayout = sourcePageLayoutById.get(dashboard.pageLayoutId as string);
+      if (sourcePageLayout === undefined) {
+        logger.warn(`Skipping dashboard "${title}": its page layout was not found`);
+        continue;
+      }
 
-    // PageLayout has no client-settable id or natural key (unlike Dashboard itself), so
-    // re-run idempotency only works one level up: if a Dashboard with the reused source id
-    // already exists, its whole layout tree was already built in a prior run, and the entire
-    // dashboard - not just parts of it - is skipped.
-    if (existingTargetDashboardIds.has(dashboardId)) {
-      continue;
+      try {
+        const targetLayoutObjectMetadataId = sourcePageLayout.objectMetadataId !== null
+          ? targetObjectIdBySourceObjectId.get(sourcePageLayout.objectMetadataId) ?? null
+          : null;
+
+        const createdPageLayout = await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createPageLayout', 'input', 'CreatePageLayoutInput', {
+          name: sourcePageLayout.name,
+          type: sourcePageLayout.type,
+          objectMetadataId: targetLayoutObjectMetadataId,
+        }));
+        targetPageLayoutIdBySourcePageLayoutId.set(sourcePageLayout.id, createdPageLayout.id);
+
+        await applyPageLayoutTabsAndWidgets(
+          targetWorkspace,
+          createdPageLayout.id,
+          sourcePageLayout.tabs,
+          targetObjectIdBySourceObjectId,
+          targetFieldIdBySourceFieldId,
+          `dashboard "${title}"`,
+        );
+
+        await executeWithRetryAndCheckpoint(() => createManyRecords(targetWorkspace, 'dashboards', [{
+          id: dashboardId,
+          title,
+          pageLayoutId: createdPageLayout.id,
+          position: dashboard.position,
+        }], new Set()));
+        recordIdMap.set(dashboardId, dashboardId);
+        createdCount += 1;
+      } catch (error) {
+        logger.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
-
-    const sourcePageLayout = sourcePageLayoutById.get(dashboard.pageLayoutId as string);
-    if (sourcePageLayout === undefined) {
-      logger.warn(`Skipping dashboard "${title}": its page layout was not found`);
-      continue;
+    if (!page.pageInfo.hasNextPage) {
+      setObjectCursor('dashboards', null)
+      break;
     }
-
-    try {
-      const targetLayoutObjectMetadataId = sourcePageLayout.objectMetadataId !== null
-        ? targetObjectIdBySourceObjectId.get(sourcePageLayout.objectMetadataId) ?? null
-        : null;
-
-      const createdPageLayout = await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createPageLayout', 'input', 'CreatePageLayoutInput', {
-        name: sourcePageLayout.name,
-        type: sourcePageLayout.type,
-        objectMetadataId: targetLayoutObjectMetadataId,
-      }));
-
-      await applyPageLayoutTabsAndWidgets(
-        targetWorkspace,
-        createdPageLayout.id,
-        sourcePageLayout.tabs,
-        targetObjectIdBySourceObjectId,
-        targetFieldIdBySourceFieldId,
-        `dashboard "${title}"`,
-      );
-
-      await executeWithRetryAndCheckpoint(() => createManyRecords(targetWorkspace, 'dashboards', [{
-        id: dashboardId,
-        title,
-        pageLayoutId: createdPageLayout.id,
-        position: dashboard.position,
-      }], new Set()));
-      createdCount += 1;
-    } catch (error) {
-      // A dashboard whose layout/tab/widget tree fails to apply can't be meaningfully
-      // partially migrated - skip it and move on to the rest.
-      logger.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
+    after = page.pageInfo.endCursor;
+    setObjectCursor('dashboards', after);
+    if (await stopIfTimeBudgetExceeded()) {
+      return false;
     }
   }
 
   logger.log(`Dashboards: created ${createdCount}`);
+  return true;
 };

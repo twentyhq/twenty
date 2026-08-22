@@ -63,6 +63,9 @@ Publishing with provenance is also how you prove ownership when claiming your ap
 
 Notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
 
+## Caveats
+- if API names of custom objects' standard fields (name, createdBy, createdAt, etc.) are changed, they'll be recreated instead of updated as the only identifying field is no longer the same 
+
 ## Learn more
 
 - [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)

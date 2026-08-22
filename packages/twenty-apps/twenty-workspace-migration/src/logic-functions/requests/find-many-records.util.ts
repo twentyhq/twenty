@@ -13,11 +13,12 @@ export const findManyRecords = async (
   namePlural: string,
   selectionSet: string,
   after: string | null,
+  pageSize?: number,
 ): Promise<RecordsPage> => {
   const afterArg = after !== null ? `, after: ${JSON.stringify(after)}` : '';
   const operationName = `findMany${capitalize(namePlural)}`;
   const query = `query ${operationName} {
-  ${namePlural}(first: ${PAGE_SIZE}${afterArg}) {
+  ${namePlural}(first: ${pageSize ?? PAGE_SIZE}${afterArg}) {
     edges {
       node {
         id

@@ -4,10 +4,119 @@ import { createMetadataEntity } from "src/logic-functions/requests/create-metada
 import {
   upsertFieldPermissions,
   upsertObjectPermissions,
-  upsertPermissionFlags
+  upsertPermissionFlags,
+  upsertRowLevelPermissionPredicates
 } from "src/logic-functions/requests/upsert-role-permissions.util";
-import { Role } from "src/logic-functions/types/role.type";
+import { Role, RowLevelPermissionPredicateGroup } from "src/logic-functions/types/role.type";
 import { logger } from "src/logic-functions/utils/logger.util";
+import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { migrationState, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+
+// A group can reference a parent group, so parents need to be created (or, here, ordered
+// ahead) before their children - same problem as viewFilterGroups in migrate-views.util.ts.
+// Unlike that one, this API takes the whole (role, object) set in a single call rather than
+// one create per group, so it's enough to sort once rather than resolve incrementally.
+const sortGroupsByParentChain = (
+  groups: RowLevelPermissionPredicateGroup[],
+  warningContext: string,
+): RowLevelPermissionPredicateGroup[] => {
+  const remaining = [...groups];
+  const resolvedIds = new Set<string>();
+  const sorted: RowLevelPermissionPredicateGroup[] = [];
+
+  while (remaining.length > 0) {
+    const resolvableNow = remaining.filter(
+      (group) => group.parentRowLevelPermissionPredicateGroupId === null || resolvedIds.has(group.parentRowLevelPermissionPredicateGroupId),
+    );
+    if (resolvableNow.length === 0) {
+      logger.warn(`Skipping ${remaining.length} row-level permission predicate group(s) on ${warningContext}: unresolved parent chain`);
+      break;
+    }
+    for (const group of resolvableNow) {
+      remaining.splice(remaining.indexOf(group), 1);
+      resolvedIds.add(group.id);
+      sorted.push(group);
+    }
+  }
+
+  return sorted;
+};
+
+const migrateRowLevelPermissionPredicatesForRole = async (
+  targetWorkspace: AxiosInstance,
+  targetRoleId: string,
+  role: Role,
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+): Promise<void> => {
+  const groupsByObjectId = new Map<string, typeof role.rowLevelPermissionPredicateGroups>();
+  for (const group of role.rowLevelPermissionPredicateGroups) {
+    groupsByObjectId.set(group.objectMetadataId, [...(groupsByObjectId.get(group.objectMetadataId) ?? []), group]);
+  }
+  const predicatesByObjectId = new Map<string, typeof role.rowLevelPermissionPredicates>();
+  for (const predicate of role.rowLevelPermissionPredicates) {
+    predicatesByObjectId.set(predicate.objectMetadataId, [...(predicatesByObjectId.get(predicate.objectMetadataId) ?? []), predicate]);
+  }
+
+  const sourceObjectMetadataIds = new Set([...groupsByObjectId.keys(), ...predicatesByObjectId.keys()]);
+
+  for (const sourceObjectMetadataId of sourceObjectMetadataIds) {
+    const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(sourceObjectMetadataId);
+    if (targetObjectMetadataId === undefined) {
+      logger.warn(`Role "${role.label}": skipping row-level permission predicates - target object not found for object ${sourceObjectMetadataId}`);
+      continue;
+    }
+
+    const warningContext = `role "${role.label}"`;
+    const sortedGroups = sortGroupsByParentChain(groupsByObjectId.get(sourceObjectMetadataId) ?? [], warningContext);
+    const resolvedGroupIds = new Set(sortedGroups.map((group) => group.id));
+
+    const predicateGroups = sortedGroups.map((group) => ({
+      id: group.id,
+      objectMetadataId: targetObjectMetadataId,
+      parentRowLevelPermissionPredicateGroupId: group.parentRowLevelPermissionPredicateGroupId,
+      logicalOperator: group.logicalOperator,
+      positionInRowLevelPermissionPredicateGroup: group.positionInRowLevelPermissionPredicateGroup,
+    }));
+
+    const predicates = (predicatesByObjectId.get(sourceObjectMetadataId) ?? []).flatMap((predicate) => {
+      const targetFieldMetadataId = targetFieldIdBySourceFieldId.get(predicate.fieldMetadataId);
+      if (targetFieldMetadataId === undefined) {
+        logger.warn(`Role "${role.label}": skipping row-level permission predicate - target field not found for field ${predicate.fieldMetadataId}`);
+        return [];
+      }
+      const targetWorkspaceMemberFieldMetadataId = predicate.workspaceMemberFieldMetadataId !== null
+        ? targetFieldIdBySourceFieldId.get(predicate.workspaceMemberFieldMetadataId) ?? null
+        : null;
+      return [{
+        id: predicate.id,
+        fieldMetadataId: targetFieldMetadataId,
+        operand: predicate.operand,
+        value: predicate.value,
+        subFieldName: predicate.subFieldName,
+        workspaceMemberFieldMetadataId: targetWorkspaceMemberFieldMetadataId,
+        workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+        rowLevelPermissionPredicateGroupId: predicate.rowLevelPermissionPredicateGroupId !== null && resolvedGroupIds.has(predicate.rowLevelPermissionPredicateGroupId)
+          ? predicate.rowLevelPermissionPredicateGroupId
+          : null,
+        positionInRowLevelPermissionPredicateGroup: predicate.positionInRowLevelPermissionPredicateGroup,
+      }];
+    });
+
+    if (predicates.length === 0 && predicateGroups.length === 0) {
+      continue;
+    }
+
+    try {
+      await executeWithRetryAndCheckpoint(() =>
+        upsertRowLevelPermissionPredicates(targetWorkspace, targetRoleId, targetObjectMetadataId, predicates, predicateGroups),
+      );
+    } catch (error) {
+      logger.warn(`Role "${role.label}": skipping row-level permission predicates for object ${sourceObjectMetadataId} - ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+};
 
 export const migrateRoles = async (
   targetWorkspace: AxiosInstance,
@@ -17,19 +126,11 @@ export const migrateRoles = async (
   targetFieldIdBySourceFieldId: Map<string, string>,
 ) => {
   const targetRoleIdByLabel = new Map(targetRoles.map((role) => [role.label, role.id]));
+  const sourceRolesToMigrate = sourceRoles.filter(role => targetRoleIdByLabel.has(role.label) === false);
+  let createdCount = 2;
 
-  let createdCount = 0;
-
-  for (const role of sourceRoles) {
-    if (targetRoleIdByLabel.has(role.label)) {
-      continue;
-    }
-
-    if (role.rowLevelPermissionPredicates.length > 0 || role.rowLevelPermissionPredicateGroups.length > 0) {
-      logger.warn(`Role "${role.label}": has row-level permission predicates, which this tool doesn't migrate - review manually`);
-    }
-
-    const created = await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createOneRole', 'createRoleInput', 'CreateRoleInput', {
+  for (const role of sourceRolesToMigrate) {
+    const created = await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createOneRole', 'createRoleInput', 'CreateRoleInput', {
       label: role.label,
       description: role.description,
       icon: role.icon,
@@ -47,9 +148,10 @@ export const migrateRoles = async (
     createdCount += 1;
 
     if (role.permissionFlags.length > 0) {
-      await executeWithRetryAndCheckpoint(() =>
+      await executeWithRetry(() =>
         upsertPermissionFlags(targetWorkspace, targetRoleId, role.permissionFlags.map((flag) => flag.flag)),
       );
+      createdCount += 1;
     }
 
     const objectPermissions = role.objectPermissions.flatMap((permission) => {
@@ -67,7 +169,8 @@ export const migrateRoles = async (
       }];
     });
     if (objectPermissions.length > 0) {
-      await executeWithRetryAndCheckpoint(() => upsertObjectPermissions(targetWorkspace, targetRoleId, objectPermissions));
+      await executeWithRetry(() => upsertObjectPermissions(targetWorkspace, targetRoleId, objectPermissions));
+      createdCount += 1;
     }
 
     const fieldPermissions = role.fieldPermissions.flatMap((permission) => {
@@ -86,8 +189,22 @@ export const migrateRoles = async (
     });
     if (fieldPermissions.length > 0) {
       await executeWithRetryAndCheckpoint(() => upsertFieldPermissions(targetWorkspace, targetRoleId, fieldPermissions));
+      createdCount += 1;
+    }
+
+    if (role.rowLevelPermissionPredicates.length > 0 || role.rowLevelPermissionPredicateGroups.length > 0) {
+      await migrateRowLevelPermissionPredicatesForRole(targetWorkspace, targetRoleId, role, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+      createdCount += 1;
+    }
+
+    if (createdCount >= migrationState.maxRequests) {
+      createdCount -= migrationState.maxRequests;
+      if (await stopIfTimeBudgetExceeded()) {
+        return false;
+      }
     }
   }
-
-  logger.log(`Roles: created ${createdCount}`);
+  setStateRef('migratedRoles', true);
+  logger.log(`Roles migrated`);
+  return true;
 };

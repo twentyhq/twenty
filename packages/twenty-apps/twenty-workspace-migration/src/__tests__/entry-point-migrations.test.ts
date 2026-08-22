@@ -11,6 +11,11 @@ import { migrateViews } from "src/logic-functions/migration/migrate-views.util";
 import { migrateRecordsForObject } from "src/logic-functions/migration/migrate-records-for-object.util";
 import { migrateRecordPageLayouts } from "src/logic-functions/migration/migrate-page-record-layouts.util";
 import { PageLayout, PageLayoutWidget } from "src/logic-functions/types/dashboard.type";
+import { migrateRoles } from "src/logic-functions/migration/migrate-roles.util";
+import { Role } from "src/logic-functions/types/role.type";
+import { migrateDashboards } from "src/logic-functions/migration/migrate-dashboards.util";
+import { migrateNavigationMenuItems } from "src/logic-functions/migration/migrate-navigation-menu-items.util";
+import { NavigationMenuItem } from "src/logic-functions/types/navigation-menu-item.type";
 
 describe('migrateSkills', () => {
   const buildSkill = (overrides: Partial<Skill> = {}): Skill => ({
@@ -57,7 +62,7 @@ describe('migrateWebhooks', () => {
       createWebhook: { createWebhook: { id: 'target-webhook-1' } },
     });
 
-    await migrateWebhooks(client, [webhook]);
+    await migrateWebhooks(client, [webhook], []);
 
     const createCalls = calls.filter((call) => call.operationName === 'createWebhook');
     expect(createCalls).toHaveLength(1);
@@ -230,6 +235,54 @@ describe('migrateViews', () => {
 
     expect(calls.filter((call) => call.operationName === 'createViewField')).toHaveLength(0);
   });
+
+  it('batches multiple view fields, field groups and groups into one createMany call each instead of one request per row', async () => {
+    const viewWithBatchableSubEntities: View = {
+      ...view,
+      viewFilters: [],
+      viewFieldGroups: [
+        { id: 'field-group-1', name: 'Group A', viewId: 'view-1', position: 0, isVisible: true },
+        { id: 'field-group-2', name: 'Group B', viewId: 'view-1', position: 1, isVisible: true },
+      ],
+      viewFields: [
+        { id: 'view-field-1', fieldMetadataId: 'source-field-1', isVisible: true, size: 100, position: 0, aggregateOperation: null, viewId: 'view-1', viewFieldGroupId: null },
+        { id: 'view-field-2', fieldMetadataId: 'source-field-2', isVisible: true, size: 100, position: 1, aggregateOperation: null, viewId: 'view-1', viewFieldGroupId: null },
+      ],
+      viewGroups: [
+        { id: 'view-group-1', isVisible: true, fieldValue: 'todo', position: 0, viewId: 'view-1' },
+        { id: 'view-group-2', isVisible: true, fieldValue: 'done', position: 1, viewId: 'view-1' },
+      ],
+    };
+    const { client, calls } = createMockGraphqlClient({
+      createView: { createView: { id: 'view-1' } },
+      createManyViewFieldGroups: { createManyViewFieldGroups: [{ id: 'field-group-1' }, { id: 'field-group-2' }] },
+      createManyViewFields: { createManyViewFields: [{ id: 'view-field-1' }, { id: 'view-field-2' }] },
+      createManyViewGroups: { createManyViewGroups: [{ id: 'view-group-1' }, { id: 'view-group-2' }] },
+    });
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+    const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1'], ['source-field-2', 'target-field-2']]);
+
+    await migrateViews(client, [viewWithBatchableSubEntities], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    expect(calls.filter((call) => call.operationName === 'createViewFieldGroup')).toHaveLength(0);
+    expect(calls.filter((call) => call.operationName === 'createViewField')).toHaveLength(0);
+    expect(calls.filter((call) => call.operationName === 'createViewGroup')).toHaveLength(0);
+
+    const fieldGroupCalls = calls.filter((call) => call.operationName === 'createManyViewFieldGroups');
+    expect(fieldGroupCalls).toHaveLength(1);
+    expect(fieldGroupCalls[0].variables.inputs).toHaveLength(2);
+
+    const fieldCalls = calls.filter((call) => call.operationName === 'createManyViewFields');
+    expect(fieldCalls).toHaveLength(1);
+    expect(fieldCalls[0].variables.inputs).toMatchObject([
+      { id: 'view-field-1', fieldMetadataId: 'target-field-1' },
+      { id: 'view-field-2', fieldMetadataId: 'target-field-2' },
+    ]);
+
+    const groupCalls = calls.filter((call) => call.operationName === 'createManyViewGroups');
+    expect(groupCalls).toHaveLength(1);
+    expect(groupCalls[0].variables.inputs).toHaveLength(2);
+  });
 });
 
 describe('migrateRecordsForObject', () => {
@@ -393,7 +446,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
 
     expect(targetCalls.filter((call) => call.operationName === 'updatePageLayoutWithTabsAndWidgets')).toHaveLength(0);
     expect(targetCalls.filter((call) => call.operationName === 'createPageLayout')).toHaveLength(0);
@@ -448,7 +501,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
 
     expect(targetCalls.filter((call) => call.operationName === 'updatePageLayoutWithTabsAndWidgets')).toHaveLength(0);
     const tabCalls = targetCalls.filter((call) => call.operationName === 'createPageLayoutTab');
@@ -502,7 +555,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
 
     expect(targetCalls.filter((call) => call.operationName === 'createPageLayoutWidget')).toHaveLength(0);
   });
@@ -529,10 +582,205 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
 
     const createLayoutCalls = targetCalls.filter((call) => call.operationName === 'createPageLayout');
     expect(createLayoutCalls).toHaveLength(1);
     expect(createLayoutCalls[0].variables.input).toMatchObject({ name: 'Sales Overview', objectMetadataId: 'target-object-1' });
+  });
+});
+
+describe('migrateRoles', () => {
+  const buildRole = (overrides: Partial<Role> = {}): Role => ({
+    id: 'source-role-1',
+    label: 'Custom Role',
+    description: null,
+    icon: null,
+    canUpdateAllSettings: false,
+    canAccessAllTools: false,
+    canReadAllObjectRecords: false,
+    canUpdateAllObjectRecords: false,
+    canSoftDeleteAllObjectRecords: false,
+    canDestroyAllObjectRecords: false,
+    canBeAssignedToUsers: true,
+    canBeAssignedToAgents: false,
+    canBeAssignedToApiKeys: false,
+    permissionFlags: [],
+    objectPermissions: [],
+    fieldPermissions: [],
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
+    ...overrides,
+  });
+
+  const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+  const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1'], ['source-field-2', 'target-field-2']]);
+
+  it('migrates predicates and groups, remapping fields and reusing source ids', async () => {
+    const role = buildRole({
+      rowLevelPermissionPredicateGroups: [
+        { id: 'group-parent', parentRowLevelPermissionPredicateGroupId: null, logicalOperator: 'AND', positionInRowLevelPermissionPredicateGroup: 0, objectMetadataId: 'source-object-1' },
+        { id: 'group-child', parentRowLevelPermissionPredicateGroupId: 'group-parent', logicalOperator: 'OR', positionInRowLevelPermissionPredicateGroup: 0, objectMetadataId: 'source-object-1' },
+      ],
+      rowLevelPermissionPredicates: [
+        { id: 'predicate-1', fieldMetadataId: 'source-field-1', objectMetadataId: 'source-object-1', operand: 'IS', value: 'Acme', subFieldName: null, workspaceMemberFieldMetadataId: null, workspaceMemberSubFieldName: null, rowLevelPermissionPredicateGroupId: 'group-child', positionInRowLevelPermissionPredicateGroup: 0 },
+      ],
+    });
+    const { client, calls } = createMockGraphqlClient({
+      createOneRole: { createOneRole: { id: 'target-role-1' } },
+      UpsertRowLevelPermissionPredicates: { upsertRowLevelPermissionPredicates: { predicates: [] } },
+    });
+
+    await migrateRoles(client, [role], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    const upsertCalls = calls.filter((call) => call.operationName === 'UpsertRowLevelPermissionPredicates');
+    expect(upsertCalls).toHaveLength(1);
+    const input = upsertCalls[0].variables.input as Record<string, unknown>;
+    expect(input).toMatchObject({ roleId: 'target-role-1', objectMetadataId: 'target-object-1' });
+    expect(input.predicateGroups).toEqual([
+      { id: 'group-parent', objectMetadataId: 'target-object-1', parentRowLevelPermissionPredicateGroupId: null, logicalOperator: 'AND', positionInRowLevelPermissionPredicateGroup: 0 },
+      { id: 'group-child', objectMetadataId: 'target-object-1', parentRowLevelPermissionPredicateGroupId: 'group-parent', logicalOperator: 'OR', positionInRowLevelPermissionPredicateGroup: 0 },
+    ]);
+    expect(input.predicates).toMatchObject([
+      { id: 'predicate-1', fieldMetadataId: 'target-field-1', rowLevelPermissionPredicateGroupId: 'group-child' },
+    ]);
+  });
+
+  it('drops a predicate referencing a group with an unresolved parent chain instead of sending a dangling reference', async () => {
+    const role = buildRole({
+      rowLevelPermissionPredicateGroups: [
+        { id: 'orphan-group', parentRowLevelPermissionPredicateGroupId: 'missing-parent', logicalOperator: 'AND', positionInRowLevelPermissionPredicateGroup: 0, objectMetadataId: 'source-object-1' },
+      ],
+      rowLevelPermissionPredicates: [
+        { id: 'predicate-1', fieldMetadataId: 'source-field-1', objectMetadataId: 'source-object-1', operand: 'IS', value: null, subFieldName: null, workspaceMemberFieldMetadataId: null, workspaceMemberSubFieldName: null, rowLevelPermissionPredicateGroupId: 'orphan-group', positionInRowLevelPermissionPredicateGroup: 0 },
+      ],
+    });
+    const { client, calls } = createMockGraphqlClient({
+      createOneRole: { createOneRole: { id: 'target-role-1' } },
+      UpsertRowLevelPermissionPredicates: { upsertRowLevelPermissionPredicates: { predicates: [] } },
+    });
+
+    await migrateRoles(client, [role], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    const input = calls.find((call) => call.operationName === 'UpsertRowLevelPermissionPredicates')?.variables.input as Record<string, unknown>;
+    expect(input.predicateGroups).toEqual([]);
+    expect(input.predicates).toMatchObject([{ id: 'predicate-1', rowLevelPermissionPredicateGroupId: null }]);
+  });
+
+  it('skips a predicate whose field cannot be resolved in the target workspace, without dropping the rest', async () => {
+    const role = buildRole({
+      rowLevelPermissionPredicates: [
+        { id: 'predicate-unresolvable', fieldMetadataId: 'unknown-field', objectMetadataId: 'source-object-1', operand: 'IS', value: null, subFieldName: null, workspaceMemberFieldMetadataId: null, workspaceMemberSubFieldName: null, rowLevelPermissionPredicateGroupId: null, positionInRowLevelPermissionPredicateGroup: 0 },
+        { id: 'predicate-ok', fieldMetadataId: 'source-field-2', objectMetadataId: 'source-object-1', operand: 'IS', value: null, subFieldName: null, workspaceMemberFieldMetadataId: null, workspaceMemberSubFieldName: null, rowLevelPermissionPredicateGroupId: null, positionInRowLevelPermissionPredicateGroup: 1 },
+      ],
+    });
+    const { client, calls } = createMockGraphqlClient({
+      createOneRole: { createOneRole: { id: 'target-role-1' } },
+      UpsertRowLevelPermissionPredicates: { upsertRowLevelPermissionPredicates: { predicates: [] } },
+    });
+
+    await migrateRoles(client, [role], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    const input = calls.find((call) => call.operationName === 'UpsertRowLevelPermissionPredicates')?.variables.input as Record<string, unknown>;
+    expect(input.predicates).toMatchObject([{ id: 'predicate-ok', fieldMetadataId: 'target-field-2' }]);
+  });
+
+  it('skips row-level permission predicates for a role without aborting the migration when the upsert fails (e.g. Enterprise feature disabled)', async () => {
+    const role = buildRole({
+      rowLevelPermissionPredicateGroups: [
+        { id: 'group-1', parentRowLevelPermissionPredicateGroupId: null, logicalOperator: 'AND', positionInRowLevelPermissionPredicateGroup: 0, objectMetadataId: 'source-object-1' },
+      ],
+    });
+    const client = {
+      post: async (_path: string, body: { operationName: string }) => {
+        if (body.operationName === 'UpsertRowLevelPermissionPredicates') {
+          throw new Error('Row level permission predicate feature is disabled');
+        }
+        return { data: { data: { createOneRole: { id: 'target-role-1' } } } };
+      },
+    } as unknown as Parameters<typeof migrateRoles>[0];
+
+    await expect(migrateRoles(client, [role], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId)).resolves.not.toThrow();
+  });
+});
+
+describe('migrateDashboards', () => {
+  it("creates a new dashboard, mapping its id into recordIdMap and its page layout id into the page layout map", async () => {
+    const { client: sourceClient } = createMockGraphqlClient({
+      findManyDashboards: { dashboards: { edges: [{ node: { id: 'dash-1', title: 'My Dashboard', pageLayoutId: 'layout-1', position: 0 } }], pageInfo: { hasNextPage: false, endCursor: null } } },
+      findPageLayouts: { getPageLayouts: [{ id: 'layout-1', name: 'Dashboard Layout', type: 'DASHBOARD', objectMetadataId: null, isSystemSideEffect: false, tabs: [] }] },
+    });
+    const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
+      findManyDashboards: { dashboards: { edges: [], pageInfo: { hasNextPage: false, endCursor: null } } },
+      createPageLayout: { createPageLayout: { id: 'target-layout-1' } },
+      UpdatePageLayoutWithTabsAndWidgets: { updatePageLayoutWithTabsAndWidgets: { id: 'target-layout-1' } },
+      createDashboards: { createDashboards: [{ id: 'dash-1' }] },
+    });
+    const recordIdMap = new Map<string, string>();
+    const targetPageLayoutIdBySourcePageLayoutId = new Map<string, string>();
+
+    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIdMap, targetPageLayoutIdBySourcePageLayoutId);
+
+    expect(recordIdMap.get('dash-1')).toBe('dash-1');
+    expect(targetPageLayoutIdBySourcePageLayoutId.get('layout-1')).toBe('target-layout-1');
+    expect(targetCalls.filter((call) => call.operationName === 'createDashboards')).toHaveLength(1);
+  });
+
+  it("maps an already-migrated dashboard's id identically without re-creating it", async () => {
+    const { client: sourceClient } = createMockGraphqlClient({
+      findManyDashboards: { dashboards: { edges: [{ node: { id: 'dash-1', title: 'My Dashboard', pageLayoutId: 'layout-1', position: 0 } }], pageInfo: { hasNextPage: false, endCursor: null } } },
+      findPageLayouts: { getPageLayouts: [{ id: 'layout-1', name: 'Dashboard Layout', type: 'DASHBOARD', objectMetadataId: null, isSystemSideEffect: false, tabs: [] }] },
+    });
+    const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
+      findManyDashboards: { dashboards: { edges: [{ node: { id: 'dash-1' } }], pageInfo: { hasNextPage: false, endCursor: null } } },
+    });
+    const recordIdMap = new Map<string, string>();
+
+    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIdMap, new Map());
+
+    expect(recordIdMap.get('dash-1')).toBe('dash-1');
+    expect(targetCalls.filter((call) => call.operationName === 'createDashboards')).toHaveLength(0);
+  });
+});
+
+describe('migrateNavigationMenuItems', () => {
+  const buildItem = (overrides: Partial<NavigationMenuItem> = {}): NavigationMenuItem => ({
+    id: 'nav-item-1',
+    userWorkspaceId: null,
+    targetRecordId: null,
+    targetObjectMetadataId: null,
+    viewId: null,
+    type: 'PAGE',
+    name: 'Dashboard link',
+    link: null,
+    icon: null,
+    color: null,
+    folderId: null,
+    pageLayoutId: null,
+    position: 0,
+    ...overrides,
+  });
+
+  it('resolves pageLayoutId through the target page layout map instead of skipping it', async () => {
+    const item = buildItem({ pageLayoutId: 'source-layout-1' });
+    const { client, calls } = createMockGraphqlClient({
+      createNavigationMenuItem: { createNavigationMenuItem: { id: 'nav-item-1' } },
+    });
+    const targetPageLayoutIdBySourcePageLayoutId = new Map([['source-layout-1', 'target-layout-1']]);
+
+    await migrateNavigationMenuItems(client, [item], [], new Map(), new Map(), targetPageLayoutIdBySourcePageLayoutId);
+
+    const createCalls = calls.filter((call) => call.operationName === 'createNavigationMenuItem');
+    expect(createCalls).toHaveLength(1);
+    expect(createCalls[0].variables.input).toMatchObject({ pageLayoutId: 'target-layout-1' });
+  });
+
+  it('skips a navigation menu item whose page layout was not migrated', async () => {
+    const item = buildItem({ pageLayoutId: 'source-layout-missing' });
+    const { client, calls } = createMockGraphqlClient({});
+
+    await migrateNavigationMenuItems(client, [item], [], new Map(), new Map(), new Map());
+
+    expect(calls).toHaveLength(0);
   });
 });

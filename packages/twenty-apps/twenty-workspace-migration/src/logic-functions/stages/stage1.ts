@@ -12,7 +12,7 @@ import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { mapEntities } from "src/logic-functions/utils/map-entities.util";
 import { fieldsToOmit, objectsToOmit, objectsToOmitFromRecordMigration, sourceAppsToOmit } from "src/constants/to-omit";
 import { buildFieldToCreate } from "src/logic-functions/utils/build-field-to-create.util";
-import { saveMigrationStateCheckpoint, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { saveMigrationStateCheckpointAndStop, setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { sortObjectsByDependency } from "src/logic-functions/utils/sort-objects-by-dependency.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { estimateMigrationDuration } from "src/logic-functions/utils/estimate-migration-duration.util";
@@ -20,13 +20,13 @@ import { logger } from "src/logic-functions/utils/logger.util";
 import { fetchCurrentWorkspace } from "src/logic-functions/requests/fetch-current-workspace.util";
 
 export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
-  const currentWorkspace = await fetchCurrentWorkspace(sourceWorkspace);
+  const currentWorkspace = await executeWithRetry(() => fetchCurrentWorkspace(sourceWorkspace));
   const MAX_REQUESTS = (currentWorkspace.length === 1 && currentWorkspace[0].metadata.plan === 'PRO') ? 50 : 100;
   setStateRef('maxRequests', MAX_REQUESTS);
 
   // Before any migration, check if all apps are installed with the same version and all workspace members are in new instance
-  const { data: sourceWorkspaceInstalledApps } = await findInstalledApplications(sourceWorkspace);
-  const { data: targetWorkspaceInstalledApps } = await findInstalledApplications(targetWorkspace);
+  const { data: sourceWorkspaceInstalledApps } = await executeWithRetry(() => findInstalledApplications(sourceWorkspace));
+  const { data: targetWorkspaceInstalledApps } = await executeWithRetry(() => findInstalledApplications(targetWorkspace));
   const sourceApps: Record<string, { name: string, version: string }> = {};
   sourceWorkspaceInstalledApps.findManyApplications.filter((app) => app.applicationRegistration !== null && sourceAppsToOmit.indexOf(app.applicationRegistration.sourceType) === -1).map((app) => sourceApps[app.universalIdentifier] = {
     name: app.name,
@@ -56,8 +56,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   }
 
   // Check for workspace members to prevent data loss with X object to workspace members relation
-  const sourceWorkspaceMembers = extractNodes((await FindWorkspaceMembers(sourceWorkspace)).data.workspaceMembers);
-  const targetWorkspaceMembers = extractNodes((await FindWorkspaceMembers(targetWorkspace)).data.workspaceMembers);
+  const sourceWorkspaceMembers = extractNodes((await executeWithRetry(() => FindWorkspaceMembers(sourceWorkspace))).data.workspaceMembers);
+  const targetWorkspaceMembers = extractNodes((await executeWithRetry(() => FindWorkspaceMembers(targetWorkspace))).data.workspaceMembers);
   const missingWorkspaceMembers = sourceWorkspaceMembers.filter(mem => targetWorkspaceMembers.find(mem2 => mem2.userEmail === mem.userEmail) === undefined);
   if (missingWorkspaceMembers.length > 0) {
     logger.error("Add missing workspace members before proceeding:", ...missingWorkspaceMembers.filter(mem => mem.userEmail));
@@ -80,12 +80,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
 
   const { data: sourceWorkspaceObjectsFields } = await executeWithRetry(() => FindAllObjectsAndFields(sourceWorkspace));
   const { data: targetWorkspaceObjectsFields } = await executeWithRetry(() => FindAllObjectsAndFields(targetWorkspace));
-  const extractedSourceWorkspaceObjects = extractNodes(sourceWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
-  const extractedTargetWorkspaceObjects = extractNodes(targetWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
-
-  const systemSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => n.applicationId === sourceStandardAppUUID));
-  const systemTargetObjects = mapEntities(extractedTargetWorkspaceObjects.filter(n => n.applicationId === targetStandardAppUUID));
-  const customSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => n.applicationId !== sourceStandardAppUUID));
+  const mappedSourceObjects = mapEntities(extractNodes(sourceWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false));
+  const mappedTargetObjects = mapEntities(extractNodes(targetWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false));
 
   const objectsToUpdate: UpdateOneObjectType[] = [];
   const fieldsToCreate: CreateOneFieldType[] = [];
@@ -97,12 +93,12 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     return fieldsList.filter(field => fieldsToOmit.includes(field.name) === false && [targetStandardAppUUID, targetCustomAppUUID].includes(field.applicationId) && !(field.type === 'RELATION' && field.relation.type === 'ONE_TO_MANY'));
   }
 
-  for (const object of extractedTargetWorkspaceObjects) {
+  for (const object of mappedTargetObjects.values()) {
     targetWorkspaceObjects.push(object);
   }
   // starting from recreating custom objects so that any relation from/to custom object to/from standard object can be easily introduced
-  for (const key of Array.from(customSourceObjects.keys())) {
-    const object = customSourceObjects.get(key);
+  for (const key of Array.from(mappedSourceObjects.keys())) {
+    const object = mappedSourceObjects.get(key);
     if (object === undefined || object.applicationId !== sourceCustomAppUUID) {
       continue;
     }
@@ -116,13 +112,13 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   }
 
   // compare standard objects and their fields
-  for (const key of Array.from(systemSourceObjects.keys())) {
-    const sourceObject = systemSourceObjects.get(key);
+  for (const key of Array.from(mappedSourceObjects.keys())) {
+    const sourceObject = mappedSourceObjects.get(key);
     // guardrail against typechecker
     if (sourceObject === undefined) {
       continue;
     }
-    const targetObject = systemTargetObjects.get(key);
+    const targetObject = mappedTargetObjects.get(key);
     if (targetObject === undefined) {
       continue; // not possible but it needs to be here
     }
@@ -148,27 +144,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     }
   }
 
-  for (const key of Array.from(customSourceObjects.keys())) {
-    const object = customSourceObjects.get(key);
-    if (object === undefined) {
-      continue;
-    }
-    const targetObjectId = targetWorkspaceObjects.find(obj => obj.nameSingular === object.nameSingular)?.id;
-    if (targetObjectId === undefined) {
-      continue;
-    }
-    for (const field of filterFields(object.fieldsList)) {
-      const fieldToCreate = buildFieldToCreate(field, targetObjectId, targetWorkspaceObjects);
-      if (fieldToCreate !== undefined) {
-        fieldsToCreate.push(fieldToCreate);
-      }
-    }
-  }
-
-  const recordMigrationOrder = sortObjectsByDependency([
-    ...Array.from(systemSourceObjects.values()),
-    ...Array.from(customSourceObjects.values()),
-  ].filter((object) => [...objectsToOmit, ...objectsToOmitFromRecordMigration].includes(object.nameSingular) === false));
+  const recordMigrationOrder = sortObjectsByDependency(
+    [...mappedSourceObjects.values()].filter((object) => [...objectsToOmit, ...objectsToOmitFromRecordMigration].includes(object.nameSingular) === false));
 
   const { estimatedMinutes, batchableRecordCount, otherRecordCount } = await estimateMigrationDuration(
     sourceWorkspace,
@@ -180,5 +157,5 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   setStateRef('fieldsToUpdate', fieldsToUpdate);
   setStateRef('recordMigrationOrder', recordMigrationOrder);
   setStateRef('stage', 2);
-  await saveMigrationStateCheckpoint();
+  await saveMigrationStateCheckpointAndStop();
 }
