@@ -3489,7 +3489,7 @@ msgstr "Händelsemål"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Event type"
-msgstr ""
+msgstr "Händelsetyp"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6448,8 +6448,7 @@ msgstr "Modell-ID får inte vara tomt"
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr ""
-"M\n"
+msgstr "M\n"
 "ndags"
 
 #. js-lingui-id: mEl3m6
@@ -8595,8 +8594,7 @@ msgstr "Körningar"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr ""
-"L\n"
+msgstr "L\n"
 "urdag"
 
 #. js-lingui-id: 8gi8vY
@@ -9272,8 +9270,7 @@ msgstr "Sammanfattning"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr ""
-"S\n"
+msgstr "S\n"
 "nd"
 
 #. js-lingui-id: D+NlUC
@@ -10941,7 +10938,7 @@ msgstr "Begränsningar för uppdatering av fält gäller endast objekt som kan u
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated"
-msgstr ""
+msgstr "uppdaterad"
 
 #. js-lingui-id: Hp+aAn
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11582,13 +11579,13 @@ msgstr "ViewId krävs för att skapa en vynsortering."
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was created by"
-msgstr ""
+msgstr "skapades av"
 
 #. js-lingui-id: edc5Bh
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was deleted by"
-msgstr ""
+msgstr "raderades av"
 
 #. js-lingui-id: SfnmZe
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11600,7 +11597,7 @@ msgstr ""
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was restored by"
-msgstr ""
+msgstr "återställdes av"
 
 #. js-lingui-id: 0i3MMx
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

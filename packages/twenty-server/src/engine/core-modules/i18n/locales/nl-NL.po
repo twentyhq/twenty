@@ -343,7 +343,7 @@ msgstr "Er is een tijdelijke netwerkfout opgetreden."
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr ""
+msgstr "Er bestaat al een tijdlijnactiviteitstype met deze naam voor deze applicatie"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1084,7 +1084,7 @@ msgstr "Bijlagen gekoppeld aan de workflow"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attended a calendar event"
-msgstr ""
+msgstr "heeft een agenda-evenement bijgewoond"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -3489,7 +3489,7 @@ msgstr "Gebeurtenisdoel"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Event type"
-msgstr ""
+msgstr "Gebeurtenistype"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5829,13 +5829,13 @@ msgstr "Indeling is vereist voor staafdiagramwidget \"{widgetTitle}\""
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related note"
-msgstr ""
+msgstr "heeft een gerelateerde notitie gekoppeld"
 
 #. js-lingui-id: ecrchg
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related task"
-msgstr ""
+msgstr "heeft een gerelateerde taak gekoppeld"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8892,7 +8892,7 @@ msgstr "Aantal verzonden"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "sent or received an email"
-msgstr ""
+msgstr "heeft een e-mail verzonden of ontvangen"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10444,17 +10444,17 @@ msgstr "Dit onderdrukte adres bestaat niet meer."
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
-msgstr ""
+msgstr "Deze actie voor tijdlijnactiviteiten wordt niet ondersteund"
 
 #. js-lingui-id: O6/sEz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer is not supported"
-msgstr ""
+msgstr "Deze renderer voor tijdlijnactiviteiten wordt niet ondersteund"
 
 #. js-lingui-id: jDoSzT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer requires the type to reference an object"
-msgstr ""
+msgstr "Deze renderer voor tijdlijnactiviteiten vereist dat het type naar een object verwijst"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10631,25 +10631,25 @@ msgstr "Tijdlijnactiviteitrecordpositie"
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity renderer {0} requires the type to reference an object"
-msgstr ""
+msgstr "Renderer voor tijdlijnactiviteiten {0} vereist dat het type naar een object verwijst"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline activity type describing this event"
-msgstr ""
+msgstr "Tijdlijnactiviteitstype dat deze gebeurtenis beschrijft"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type label is required"
-msgstr ""
+msgstr "Label van tijdlijnactiviteitstype is vereist"
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type name is required"
-msgstr ""
+msgstr "Naam van tijdlijnactiviteitstype is vereist"
 
 #. js-lingui-id: kNsVJi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10657,13 +10657,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type not found"
-msgstr ""
+msgstr "Tijdlijnactiviteitstype niet gevonden"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: flatTimelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type with name {0} already exists for this application"
-msgstr ""
+msgstr "Er bestaat al een tijdlijnactiviteitstype met de naam {0} voor deze applicatie"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -10833,25 +10833,25 @@ msgstr "Onbekende machtiging vereist."
 #. placeholder {0}: flatTimelineActivityType.action
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity action {0}"
-msgstr ""
+msgstr "Onbekende actie voor tijdlijnactiviteiten {0}"
 
 #. js-lingui-id: iiqbeU
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity renderer {0}"
-msgstr ""
+msgstr "Onbekende renderer voor tijdlijnactiviteiten {0}"
 
 #. js-lingui-id: spJjXJ
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related note"
-msgstr ""
+msgstr "heeft de koppeling met een gerelateerde notitie verwijderd"
 
 #. js-lingui-id: IYBfg3
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related task"
-msgstr ""
+msgstr "heeft de koppeling met een gerelateerde taak verwijderd"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10935,19 +10935,19 @@ msgstr "Beperkingen voor updatevelden zijn alleen van toepassing op objecten die
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated"
-msgstr ""
+msgstr "bijgewerkt"
 
 #. js-lingui-id: Hp+aAn
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related note"
-msgstr ""
+msgstr "heeft een gerelateerde notitie bijgewerkt"
 
 #. js-lingui-id: FoQjXC
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related task"
-msgstr ""
+msgstr "heeft een gerelateerde taak bijgewerkt"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11576,31 +11576,31 @@ msgstr "ViewId is vereist om een weergavesortering te maken."
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was created by"
-msgstr ""
+msgstr "werd gemaakt door"
 
 #. js-lingui-id: edc5Bh
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was deleted by"
-msgstr ""
+msgstr "werd verwijderd door"
 
 #. js-lingui-id: SfnmZe
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was linked by"
-msgstr ""
+msgstr "werd gekoppeld door"
 
 #. js-lingui-id: tKm/LA
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was restored by"
-msgstr ""
+msgstr "werd hersteld door"
 
 #. js-lingui-id: 0i3MMx
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was unlinked by"
-msgstr ""
+msgstr "werd ontkoppeld door"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts

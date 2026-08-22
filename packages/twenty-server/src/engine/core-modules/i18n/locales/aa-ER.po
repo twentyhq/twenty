@@ -340,6 +340,11 @@ msgstr "crwdns65116:0crwdne65116:0"
 msgid "A temporary network error occurred."
 msgstr "crwdns65118:0crwdne65118:0"
 
+#. js-lingui-id: JJamm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type with this name already exists for this application"
+msgstr "crwdns140215:0crwdne140215:0"
+
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A user with this email already exists."
@@ -1074,6 +1079,12 @@ msgstr "crwdns138479:0crwdne138479:0"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the workflow"
 msgstr "crwdns138481:0crwdne138481:0"
+
+#. js-lingui-id: mGHuob
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attended a calendar event"
+msgstr "crwdns140217:0crwdne140217:0"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -3474,6 +3485,12 @@ msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "crwdns138865:0crwdne138865:0"
 
+#. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Event type"
+msgstr "crwdns140219:0crwdne140219:0"
+
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5807,6 +5824,18 @@ msgstr "crwdns105832:0crwdne105832:0"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "crwdns105834:0{widgetTitle}crwdne105834:0"
+
+#. js-lingui-id: sAG9OB
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related note"
+msgstr "crwdns140221:0crwdne140221:0"
+
+#. js-lingui-id: ecrchg
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related task"
+msgstr "crwdns140223:0crwdne140223:0"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8859,6 +8888,12 @@ msgctxt "fieldMetadata.label"
 msgid "Sent count"
 msgstr "crwdns139477:0crwdne139477:0"
 
+#. js-lingui-id: ttuub1
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "sent or received an email"
+msgstr "crwdns140225:0crwdne140225:0"
+
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10406,6 +10441,21 @@ msgstr "crwdns65740:0crwdne65740:0"
 msgid "This suppressed address no longer exists."
 msgstr "crwdns136111:0crwdne136111:0"
 
+#. js-lingui-id: 0GMgIa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity action is not supported"
+msgstr "crwdns140227:0crwdne140227:0"
+
+#. js-lingui-id: O6/sEz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity renderer is not supported"
+msgstr "crwdns140229:0crwdne140229:0"
+
+#. js-lingui-id: jDoSzT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity renderer requires the type to reference an object"
+msgstr "crwdns140231:0crwdne140231:0"
+
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "This type of record cannot be merged."
@@ -10577,6 +10627,44 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "crwdns139695:0crwdne139695:0"
 
+#. js-lingui-id: 7e7stO
+#. placeholder {0}: flatTimelineActivityType.renderer
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity renderer {0} requires the type to reference an object"
+msgstr "crwdns140233:0{0}crwdne140233:0"
+
+#. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Timeline activity type describing this event"
+msgstr "crwdns140235:0crwdne140235:0"
+
+#. js-lingui-id: sqmSqj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type label is required"
+msgstr "crwdns140237:0crwdne140237:0"
+
+#. js-lingui-id: 0QdkGz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type name is required"
+msgstr "crwdns140239:0crwdne140239:0"
+
+#. js-lingui-id: kNsVJi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type not found"
+msgstr "crwdns140241:0crwdne140241:0"
+
+#. js-lingui-id: 8VTlb5
+#. placeholder {0}: flatTimelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type with name {0} already exists for this application"
+msgstr "crwdns140243:0{0}crwdne140243:0"
+
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10741,6 +10829,30 @@ msgstr "crwdns65764:0crwdne65764:0"
 msgid "Unknown permission required."
 msgstr "crwdns65766:0crwdne65766:0"
 
+#. js-lingui-id: o/bbIF
+#. placeholder {0}: flatTimelineActivityType.action
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity action {0}"
+msgstr "crwdns140245:0{0}crwdne140245:0"
+
+#. js-lingui-id: iiqbeU
+#. placeholder {0}: flatTimelineActivityType.renderer
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity renderer {0}"
+msgstr "crwdns140247:0{0}crwdne140247:0"
+
+#. js-lingui-id: spJjXJ
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related note"
+msgstr "crwdns140249:0crwdne140249:0"
+
+#. js-lingui-id: IYBfg3
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related task"
+msgstr "crwdns140251:0crwdne140251:0"
+
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10818,6 +10930,24 @@ msgstr "crwdns139719:0crwdne139719:0"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "crwdns65774:0crwdne65774:0"
+
+#. js-lingui-id: 7YsDpr
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated"
+msgstr "crwdns140253:0crwdne140253:0"
+
+#. js-lingui-id: Hp+aAn
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related note"
+msgstr "crwdns140255:0crwdne140255:0"
+
+#. js-lingui-id: FoQjXC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related task"
+msgstr "crwdns140257:0crwdne140257:0"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11441,6 +11571,36 @@ msgstr "crwdns7104:0crwdne7104:0"
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "crwdns7106:0crwdne7106:0"
+
+#. js-lingui-id: vuzFx0
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was created by"
+msgstr "crwdns140259:0crwdne140259:0"
+
+#. js-lingui-id: edc5Bh
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was deleted by"
+msgstr "crwdns140261:0crwdne140261:0"
+
+#. js-lingui-id: SfnmZe
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was linked by"
+msgstr "crwdns140263:0crwdne140263:0"
+
+#. js-lingui-id: tKm/LA
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was restored by"
+msgstr "crwdns140265:0crwdne140265:0"
+
+#. js-lingui-id: 0i3MMx
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was unlinked by"
+msgstr "crwdns140267:0crwdne140267:0"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts

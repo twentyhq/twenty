@@ -3489,7 +3489,7 @@ msgstr "יעד האירוע"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Event type"
-msgstr ""
+msgstr "סוג אירוע"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10935,7 +10935,7 @@ msgstr "הגבלות שדה לעדכון חלות רק על אובייקטים �
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated"
-msgstr ""
+msgstr "עודכן"
 
 #. js-lingui-id: Hp+aAn
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11576,13 +11576,13 @@ msgstr "ViewId נדרש ליצירת מיון תצוגה."
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was created by"
-msgstr ""
+msgstr "נוצר על ידי"
 
 #. js-lingui-id: edc5Bh
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was deleted by"
-msgstr ""
+msgstr "נמחק על ידי"
 
 #. js-lingui-id: SfnmZe
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11594,7 +11594,7 @@ msgstr ""
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was restored by"
-msgstr ""
+msgstr "שוחזר על ידי"
 
 #. js-lingui-id: 0i3MMx
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
