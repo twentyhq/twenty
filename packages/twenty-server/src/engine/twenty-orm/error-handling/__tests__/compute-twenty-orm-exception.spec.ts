@@ -9,6 +9,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { UnknownException } from 'src/utils/custom-exception';
 
 jest.mock(
   'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util',
@@ -169,17 +170,85 @@ describe('computeTwentyORMException', () => {
   });
 
   it('should throw the generic PostgresException when error is a known postgres code without dedicated handling', async () => {
-    const error = buildQueryFailedError(
-      POSTGRESQL_ERROR_CODES.SERIALIZATION_FAILURE,
-    );
+    const error = buildQueryFailedError(POSTGRESQL_ERROR_CODES.SYNTAX_ERROR);
 
     await expect(computeTwentyORMException(error)).rejects.toThrow(
       PostgresException,
     );
     await expect(computeTwentyORMException(error)).rejects.toMatchObject({
       message: 'Data validation error.',
-      code: POSTGRESQL_ERROR_CODES.SERIALIZATION_FAILURE,
+      code: POSTGRESQL_ERROR_CODES.SYNTAX_ERROR,
     });
+  });
+
+  it('should return a TRANSIENT_DATABASE_ERROR exception when the transaction is killed by the idle-in-transaction timeout', async () => {
+    const error = buildQueryFailedError(
+      POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
+      'terminating connection due to idle-in-transaction timeout',
+    );
+
+    const result = await computeTwentyORMException(error);
+
+    expect(result).toMatchObject({
+      code: TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR,
+      message: 'terminating connection due to idle-in-transaction timeout',
+    });
+  });
+
+  it('should return a TRANSIENT_DATABASE_ERROR exception for a connection error that is not a QueryFailedError', async () => {
+    const error = Object.assign(new Error('Connection terminated'), {
+      code: POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,
+    });
+
+    const result = await computeTwentyORMException(error);
+
+    expect(result).toMatchObject({
+      code: TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR,
+    });
+  });
+
+  it.each([
+    POSTGRESQL_ERROR_CODES.CONNECTION_DOES_NOT_EXIST,
+    POSTGRESQL_ERROR_CODES.SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION,
+    POSTGRESQL_ERROR_CODES.SERIALIZATION_FAILURE,
+    POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
+    POSTGRESQL_ERROR_CODES.QUERY_CANCELED,
+    POSTGRESQL_ERROR_CODES.ADMIN_SHUTDOWN,
+  ])(
+    'should return a TRANSIENT_DATABASE_ERROR exception when the transaction fails with the transient code %s',
+    async (code) => {
+      const result = await computeTwentyORMException(
+        buildQueryFailedError(code),
+      );
+
+      expect(result).toBeInstanceOf(TwentyORMException);
+      expect((result as TwentyORMException).code).toBe(
+        TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR,
+      );
+    },
+  );
+
+  it('should leave a non-transient postgres code on a plain error untouched', async () => {
+    const error = Object.assign(
+      new Error('duplicate key value violates unique constraint'),
+      { code: POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION },
+    );
+
+    const result = await computeTwentyORMException(error);
+
+    expect(result).toBe(error);
+  });
+
+  it('should return a domain exception untouched when its own code collides with a transient postgres sqlstate', async () => {
+    const alreadyComputed = new UnknownException(
+      'A deadlock was detected',
+      POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
+      { userFriendlyMessage: msg`Please try again later.` },
+    );
+
+    const result = await computeTwentyORMException(alreadyComputed);
+
+    expect(result).toBe(alreadyComputed);
   });
 
   it('should rethrow the original error when error is a QueryFailedError with an unknown code', async () => {

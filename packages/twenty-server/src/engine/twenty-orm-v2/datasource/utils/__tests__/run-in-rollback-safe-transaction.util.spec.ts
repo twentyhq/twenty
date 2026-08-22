@@ -1,6 +1,11 @@
 import { type Pool, type PoolClient } from 'pg';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm-v2/datasource/utils/run-in-rollback-safe-transaction.util';
+import {
+  TwentyOrmV2Exception,
+  TwentyOrmV2ExceptionCode,
+} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 
 const buildClient = () => ({
   query: jest.fn().mockResolvedValue({ rows: [] }),
@@ -29,7 +34,7 @@ describe('runInRollbackSafeTransaction', () => {
 
   it('should roll back and rethrow the work error', async () => {
     const client = buildClient();
-    const workError = new Error('Query read timeout');
+    const workError = new Error('work failed');
 
     await expect(
       runInRollbackSafeTransaction({
@@ -83,6 +88,65 @@ describe('runInRollbackSafeTransaction', () => {
     ).rejects.toThrow('original failure');
 
     expect(client.release).toHaveBeenCalledWith(true);
+  });
+
+  it.each([
+    POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
+    POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,
+    POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
+    POSTGRESQL_ERROR_CODES.QUERY_CANCELED,
+  ])(
+    'should surface the transient postgres failure %s raised at COMMIT as TRANSIENT_DATABASE_ERROR',
+    async (code) => {
+      const client = buildClient();
+      const commitError = Object.assign(
+        new Error('terminating connection due to idle-in-transaction timeout'),
+        { code },
+      );
+
+      client.query.mockImplementation((statement: string) =>
+        statement === 'COMMIT'
+          ? Promise.reject(commitError)
+          : Promise.resolve({ rows: [] }),
+      );
+
+      const error = await runInRollbackSafeTransaction({
+        pool: buildPool(client),
+        work: async () => 'done',
+      }).catch((thrownError: Error) => thrownError);
+
+      expect(error).toBeInstanceOf(TwentyOrmV2Exception);
+      expect((error as TwentyOrmV2Exception).code).toBe(
+        TwentyOrmV2ExceptionCode.TRANSIENT_DATABASE_ERROR,
+      );
+      expect((error as Error & { cause?: Error }).cause).toBe(commitError);
+    },
+  );
+
+  it('should still surface the original transient failure as TRANSIENT_DATABASE_ERROR when ROLLBACK also fails', async () => {
+    const client = buildClient();
+    const workError = Object.assign(
+      new Error('terminating connection due to administrator command'),
+      { code: POSTGRESQL_ERROR_CODES.ADMIN_SHUTDOWN },
+    );
+
+    client.query.mockImplementation((statement: string) =>
+      statement === 'ROLLBACK'
+        ? Promise.reject(new Error('Connection terminated unexpectedly'))
+        : Promise.resolve({ rows: [] }),
+    );
+
+    const error = await runInRollbackSafeTransaction({
+      pool: buildPool(client),
+      work: async () => {
+        throw workError;
+      },
+    }).catch((thrownError: Error) => thrownError);
+
+    expect((error as TwentyOrmV2Exception).code).toBe(
+      TwentyOrmV2ExceptionCode.TRANSIENT_DATABASE_ERROR,
+    );
+    expect((error as Error & { cause?: Error }).cause).toBe(workError);
   });
 
   it('should rethrow a BEGIN failure and release the client reusable when ROLLBACK succeeds', async () => {

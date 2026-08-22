@@ -1,36 +1,25 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import chunk from 'lodash.chunk';
-import differenceWith from 'lodash.differencewith';
 import { FieldActorSource } from 'twenty-shared/types';
 import { Any, In } from 'typeorm';
 
-import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE } from 'src/modules/calendar/calendar-event-participant-manager/constants/calendar-event-participant-chunk-size';
+import { type CalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/types/calendar-event-participant-save-operations';
+import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
-
-type FetchedCalendarEventParticipantWithCalendarEventId =
-  FetchedCalendarEventParticipant & {
-    calendarEventId: string;
-  };
-
-type FetchedCalendarEventParticipantWithCalendarEventIdAndExistingId =
-  FetchedCalendarEventParticipantWithCalendarEventId & {
-    id: string;
-  };
 
 @Injectable()
 export class CalendarEventParticipantService {
@@ -41,17 +30,74 @@ export class CalendarEventParticipantService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  public async upsertAndDeleteCalendarEventParticipants({
-    participantsToCreate,
-    participantsToUpdate,
+  public async findCalendarEventParticipantsByCalendarEventIds({
+    calendarEventIds,
+    workspaceId,
+  }: {
+    calendarEventIds: string[];
+    workspaceId: string;
+  }): Promise<CalendarEventParticipantWorkspaceEntity[]> {
+    const calendarEventParticipantRepository =
+      await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+        workspaceId,
+        'calendarEventParticipant',
+      );
+
+    const participants: CalendarEventParticipantWorkspaceEntity[] = [];
+
+    for (const calendarEventIdsChunk of chunk(
+      [...new Set(calendarEventIds)],
+      CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
+    )) {
+      const participantsChunk = await calendarEventParticipantRepository.find({
+        where: { calendarEventId: Any(calendarEventIdsChunk) },
+      });
+
+      participants.push(...participantsChunk);
+    }
+
+    return participants;
+  }
+
+  public async writeCalendarEventParticipants({
+    operations,
     transactionScope,
+  }: {
+    operations: CalendarEventParticipantSaveOperations;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<void> {
+    const calendarEventParticipantRepository =
+      transactionScope.getRepository<CalendarEventParticipantWorkspaceEntity>(
+        'calendarEventParticipant',
+      );
+
+    if (operations.participantIdsToDelete.length > 0) {
+      await calendarEventParticipantRepository.delete({
+        id: Any(operations.participantIdsToDelete),
+      });
+    }
+
+    if (operations.participantsToUpdate.length > 0) {
+      await calendarEventParticipantRepository.updateMany(
+        operations.participantsToUpdate,
+      );
+    }
+
+    for (const participantsChunk of chunk(
+      operations.participantsToInsert,
+      CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
+    )) {
+      await calendarEventParticipantRepository.insert(participantsChunk);
+    }
+  }
+
+  public async matchParticipantsAndEnqueueContactCreationJob({
+    savedParticipantIds,
     calendarChannel,
     connectedAccount,
     workspaceId,
   }: {
-    participantsToCreate: FetchedCalendarEventParticipantWithCalendarEventId[];
-    participantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventId[];
-    transactionScope: WorkspaceTransactionScope;
+    savedParticipantIds: string[];
     calendarChannel: CalendarChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
@@ -60,101 +106,24 @@ export class CalendarEventParticipantService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const chunkedParticipantsToUpdate = chunk(participantsToUpdate, 200);
-
         const calendarEventParticipantRepository =
-          transactionScope.getRepository<CalendarEventParticipantWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+            workspaceId,
             'calendarEventParticipant',
           );
 
-        for (const participantsToUpdateChunk of chunkedParticipantsToUpdate) {
-          const existingCalendarEventParticipants =
-            await calendarEventParticipantRepository.find({
-              where: {
-                calendarEventId: Any(
-                  participantsToUpdateChunk
-                    .map((participant) => participant.calendarEventId)
-                    .filter(isDefined),
-                ),
-              },
-            });
-
-          const {
-            calendarEventParticipantsToUpdate,
-            newCalendarEventParticipants,
-          } = participantsToUpdateChunk.reduce<{
-            calendarEventParticipantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventIdAndExistingId[];
-            newCalendarEventParticipants: FetchedCalendarEventParticipantWithCalendarEventId[];
-          }>(
-            (acc, calendarEventParticipant) => {
-              const existingCalendarEventParticipant =
-                existingCalendarEventParticipants.find(
-                  (existingCalendarEventParticipant) =>
-                    existingCalendarEventParticipant.handle ===
-                      calendarEventParticipant.handle &&
-                    existingCalendarEventParticipant.calendarEventId ===
-                      calendarEventParticipant.calendarEventId,
-                );
-
-              if (existingCalendarEventParticipant) {
-                acc.calendarEventParticipantsToUpdate.push({
-                  ...calendarEventParticipant,
-                  id: existingCalendarEventParticipant.id,
-                });
-              } else {
-                acc.newCalendarEventParticipants.push(calendarEventParticipant);
-              }
-
-              return acc;
-            },
-            {
-              calendarEventParticipantsToUpdate: [],
-              newCalendarEventParticipants: [],
-            },
-          );
-
-          const calendarEventParticipantsToDelete = differenceWith(
-            existingCalendarEventParticipants,
-            participantsToUpdateChunk,
-            (existingCalendarEventParticipant, participantToUpdate) =>
-              existingCalendarEventParticipant.handle ===
-                participantToUpdate.handle &&
-              existingCalendarEventParticipant.calendarEventId ===
-                participantToUpdate.calendarEventId,
-          );
-
-          await calendarEventParticipantRepository.delete({
-            id: Any(
-              calendarEventParticipantsToDelete.map(
-                (calendarEventParticipant) => calendarEventParticipant.id,
-              ),
-            ),
-          });
-
-          await calendarEventParticipantRepository.updateMany(
-            calendarEventParticipantsToUpdate.map((participant) => ({
-              criteria: participant.id,
-              partialEntity: participant,
-            })),
-          );
-          participantsToCreate.push(...newCalendarEventParticipants);
-        }
-
-        const chunkedParticipantsToCreate = chunk(participantsToCreate, 200);
         const savedParticipants: CalendarEventParticipantWorkspaceEntity[] = [];
 
-        for (const participantsToCreateChunk of chunkedParticipantsToCreate) {
-          const { identifiers } =
-            await calendarEventParticipantRepository.insert(
-              participantsToCreateChunk,
-            );
-
-          const insertedParticipants =
+        for (const savedParticipantIdsChunk of chunk(
+          savedParticipantIds,
+          CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE,
+        )) {
+          const participantsChunk =
             await calendarEventParticipantRepository.find({
-              where: { id: In(identifiers.map(({ id }) => id)) },
+              where: { id: In(savedParticipantIdsChunk) },
             });
 
-          savedParticipants.push(...insertedParticipants);
+          savedParticipants.push(...participantsChunk);
         }
 
         if (calendarChannel.isContactAutoCreationEnabled) {

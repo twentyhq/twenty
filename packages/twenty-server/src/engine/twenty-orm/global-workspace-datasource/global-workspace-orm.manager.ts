@@ -1,4 +1,4 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,6 +7,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
@@ -24,6 +25,8 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 
 @Injectable()
 export class GlobalWorkspaceOrmManager {
+  private readonly logger = new Logger(GlobalWorkspaceOrmManager.name);
+
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -175,7 +178,17 @@ export class GlobalWorkspaceOrmManager {
         return result;
       } catch (error) {
         if (queryRunner.isTransactionActive) {
-          await queryRunner.rollbackTransaction();
+          await queryRunner
+            .rollbackTransaction()
+            .catch((rollbackError: Error) =>
+              this.logger.warn(
+                `Transaction rollback failed: ${rollbackError.message}`,
+              ),
+            );
+        }
+
+        if (error instanceof Error) {
+          throw await computeTwentyORMException(error);
         }
 
         throw error;

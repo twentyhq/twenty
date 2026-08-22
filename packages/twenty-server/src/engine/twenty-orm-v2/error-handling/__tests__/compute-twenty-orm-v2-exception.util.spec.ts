@@ -68,6 +68,28 @@ describe('computeTwentyOrmV2Exception', () => {
     );
   });
 
+  it.each([
+    POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
+    POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,
+    POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
+    POSTGRESQL_ERROR_CODES.QUERY_CANCELED,
+  ])(
+    'should map the transient failure %s to TRANSIENT_DATABASE_ERROR',
+    (code) => {
+      const result = computeTwentyOrmV2Exception(
+        buildPostgresError(
+          'terminating connection due to idle-in-transaction timeout',
+          code,
+        ),
+      );
+
+      expect(result).toBeInstanceOf(TwentyOrmV2Exception);
+      expect((result as TwentyOrmV2Exception).code).toBe(
+        TwentyOrmV2ExceptionCode.TRANSIENT_DATABASE_ERROR,
+      );
+    },
+  );
+
   it('should map any other known postgres code to a PostgresException carrying that code', () => {
     const error = buildPostgresError(
       'cannot execute UPDATE in a read-only transaction',
