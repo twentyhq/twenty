@@ -1,9 +1,7 @@
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import {
-  buildRecurringChargeKey,
-  collectDueRecurringCharges,
-} from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
+import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
+import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 
 const APPLICATION_ID = '20202020-1111-0000-0000-000000000001';
 

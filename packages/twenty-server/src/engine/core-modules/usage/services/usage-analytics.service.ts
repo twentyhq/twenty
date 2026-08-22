@@ -8,6 +8,7 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
@@ -221,7 +222,9 @@ export class UsageAnalyticsService {
     });
 
     return new Set(
-      rows.map((row) => `${row.resourceId}:${row.resourceContext}`),
+      rows.map((row) =>
+        buildRecurringChargeKey(row.resourceId, row.resourceContext),
+      ),
     );
   }
 

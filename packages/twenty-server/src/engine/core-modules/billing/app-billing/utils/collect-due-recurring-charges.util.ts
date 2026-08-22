@@ -7,6 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 
 export type DueRecurringCharge = {
   applicationId: string;
@@ -18,11 +19,6 @@ type CollectDueRecurringChargesParams = {
   flatApplicationMaps: FlatApplicationCacheMaps;
   alreadyChargedKeys: Set<string>;
 };
-
-export const buildRecurringChargeKey = (
-  applicationId: string,
-  chargeKey: string,
-): string => `${applicationId}:${chargeKey}`;
 
 // The recurring charges an installed application declares that this period does
 // not already carry. Uninstalled applications are skipped so a removed app stops
