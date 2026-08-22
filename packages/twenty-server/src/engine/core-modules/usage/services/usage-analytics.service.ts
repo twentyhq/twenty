@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -187,6 +188,41 @@ export class UsageAnalyticsService {
       operation: row.operation,
       creditsUsed: row.creditsUsedMicro,
     }));
+  }
+
+  // Which recurring charges an application has already been billed for in a
+  // period. The usage row is itself the record of the charge, so re-running the
+  // cron re-reads it instead of needing separate bookkeeping. Compared with >=
+  // rather than = so a truncated timestamp cannot miss the current period.
+  async getChargedRecurringKeys({
+    workspaceId,
+    periodStart,
+  }: {
+    workspaceId: string;
+    periodStart: Date;
+  }): Promise<Set<string>> {
+    const query = `
+      SELECT resourceId, resourceContext
+      FROM usageEvent
+      WHERE workspaceId = {workspaceId:String}
+        AND resourceType = {appResourceType:String}
+        AND operationType = {subscriptionOperationType:String}
+        AND periodStart >= {periodStart:String}
+      GROUP BY resourceId, resourceContext
+    `;
+
+    const rows = await this.clickHouseService.select<
+      Record<'resourceId' | 'resourceContext', string>
+    >(query, {
+      workspaceId,
+      appResourceType: UsageResourceType.APP,
+      subscriptionOperationType: UsageOperationType.SUBSCRIPTION,
+      periodStart: formatDateTimeForClickHouse(periodStart),
+    });
+
+    return new Set(
+      rows.map((row) => `${row.resourceId}:${row.resourceContext}`),
+    );
   }
 
   async getUsageByUserTimeSeries(

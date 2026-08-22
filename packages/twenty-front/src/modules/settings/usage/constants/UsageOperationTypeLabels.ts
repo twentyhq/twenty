@@ -16,4 +16,5 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.WEB_SEARCH]: msg`Web Search`,
   [UsageOperationType.CALL_RECORDING]: msg`Call Recording`,
   [UsageOperationType.EMAIL_SEND]: msg`Email Send`,
+  [UsageOperationType.SUBSCRIPTION]: msg`Subscription`,
 };

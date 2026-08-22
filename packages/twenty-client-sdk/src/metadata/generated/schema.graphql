@@ -3517,6 +3517,7 @@ enum UsageOperationType {
   WEB_SEARCH
   CALL_RECORDING
   EMAIL_SEND
+  SUBSCRIPTION
 }
 
 type Mutation {

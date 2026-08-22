@@ -12,7 +12,14 @@ import { defineApplication } from 'twenty-sdk/define';
 export default defineApplication({
   // ...identity, variables...
   billing: {
-    description: '$0.02 per minute recorded',
+    description: '$20/month + $0.02 per minute recorded',
+    recurring: {
+      platformFee: {
+        period: 'MONTH',
+        amountMicroCredits: 20_000_000,
+        label: 'Platform fee',
+      },
+    },
     operations: {
       recordMeeting: {
         operationType: 'CALL_RECORDING',
@@ -23,8 +30,47 @@ export default defineApplication({
 });
 ```
 
+- `recurring` — flat and per-member fees the **platform** raises for you, once per billing period.
 - `operations` — what you charge for as you use it, from a logic function.
 - `description` — one friendly line shown to buyers on your marketplace listing.
+
+All three land on the same credit meter and the same **Settings > Usage** breakdown, so a workspace sees one bill.
+
+## Recurring charges
+
+A recurring charge is a subscription fee: a flat monthly amount, an amount per workspace member, or both. You declare the amount and the platform charges it. Your app never calls `chargeCredits` for these.
+
+```ts src/application-config.ts
+billing: {
+  recurring: {
+    platformFee: {
+      period: 'MONTH',
+      amountMicroCredits: 20_000_000,
+      label: 'Platform fee',
+    },
+    seat: {
+      period: 'MONTH',
+      amountMicroCredits: 5_000_000,
+      per: 'WORKSPACE_MEMBER',
+      label: 'Per member',
+    },
+  },
+},
+```
+
+| Field | Description |
+|-------|-------------|
+| `period` | `MONTH` — the only period today |
+| `amountMicroCredits` | Amount in micro-credits (1 USD = 1,000,000), a positive integer |
+| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` multiplies the amount by the number of members in the workspace when the period is charged |
+| `label` | What admins read for that line in Usage |
+
+How they are raised:
+
+- Once per workspace billing period, on the workspace's own period boundary, not on the first of the month.
+- Not prorated. An app installed mid-period is charged the full amount for that period; uninstalling stops the next period, it does not refund the current one.
+- Per-member charges count all workspace members at the moment the charge is raised, so a workspace that grows mid-period pays the higher count from the next period.
+- Only on monthly subscriptions. A workspace on a yearly plan is not charged a `MONTH` fee, rather than being charged once for the whole year.
 
 ## Billable operations
 
@@ -47,7 +93,7 @@ billing: {
 
 `operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
 
-The build rejects an unknown `operationType` or an empty `label`.
+The build rejects an unknown `operationType`, an empty `label`, and a name used by both a recurring charge and an operation.
 
 ## Charging
 
@@ -75,7 +121,7 @@ Notes:
 
 ## Telling people what it costs
 
-Declaring operations tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
+Declaring charges tells the platform how to *meter* your app; it does not tell a buyer what they will pay. Set `billing.description` for that — one short, friendly line rendered next to the install button on your marketplace listing, before anyone installs.
 
 ```ts src/application-config.ts
 billing: {
@@ -99,3 +145,5 @@ await chargeCredits({
 ```
 
 Where to get one: `context.userWorkspaceId` on a triggered run, or [`listConnections()`](/developers/extend/apps/logic/connections), which returns the `userWorkspaceId` of each connection's owner.
+
+Recurring charges have no triggering person, so they are reported against the app only, never against a member.

@@ -68,9 +68,10 @@ export class UsageResolver {
 
     const declaredOperations = [
       ...new Set(
-        Object.values(flatApplicationMaps.byId).flatMap((application) =>
-          Object.keys(application?.billing?.operations ?? {}),
-        ),
+        Object.values(flatApplicationMaps.byId).flatMap((application) => [
+          ...Object.keys(application?.billing?.recurring ?? {}),
+          ...Object.keys(application?.billing?.operations ?? {}),
+        ]),
       ),
     ];
 

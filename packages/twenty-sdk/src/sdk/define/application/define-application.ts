@@ -2,7 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
+  isRecurringChargePeriod,
+  isRecurringChargeUnit,
   isUsageOperationTypeValue,
+  RECURRING_CHARGE_PERIODS,
+  RECURRING_CHARGE_UNITS,
   USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -39,8 +43,11 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     }
   }
 
+  const billableOperations = config.billing?.operations ?? {};
+  const recurringCharges = config.billing?.recurring ?? {};
+
   for (const [operationName, billableOperation] of Object.entries(
-    config.billing?.operations ?? {},
+    billableOperations,
   )) {
     if (!isDefined(billableOperation)) {
       continue;
@@ -57,6 +64,55 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (!isNonEmptyString(billableOperation.label)) {
       errors.push(
         `Billable operation "${operationName}" must have a non empty label`,
+      );
+    }
+  }
+
+  for (const [chargeName, recurringCharge] of Object.entries(
+    recurringCharges,
+  )) {
+    if (!isDefined(recurringCharge)) {
+      continue;
+    }
+
+    if (!isRecurringChargePeriod(recurringCharge.period)) {
+      errors.push(
+        `Recurring charge "${chargeName}" must have a known period (${RECURRING_CHARGE_PERIODS.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (
+      isDefined(recurringCharge.per) &&
+      !isRecurringChargeUnit(recurringCharge.per)
+    ) {
+      errors.push(
+        `Recurring charge "${chargeName}" must be charged per a known unit (${RECURRING_CHARGE_UNITS.join(
+          ', ',
+        )}) or omit \`per\` for a flat fee`,
+      );
+    }
+
+    if (
+      !Number.isSafeInteger(recurringCharge.amountMicroCredits) ||
+      recurringCharge.amountMicroCredits <= 0
+    ) {
+      errors.push(
+        `Recurring charge "${chargeName}" must have a positive integer amountMicroCredits`,
+      );
+    }
+
+    if (!isNonEmptyString(recurringCharge.label)) {
+      errors.push(
+        `Recurring charge "${chargeName}" must have a non empty label`,
+      );
+    }
+
+    // Both land in the same per-application usage breakdown, keyed by name.
+    if (isDefined(billableOperations[chargeName])) {
+      errors.push(
+        `"${chargeName}" is declared both as a recurring charge and as a billable operation. Give them distinct names.`,
       );
     }
   }

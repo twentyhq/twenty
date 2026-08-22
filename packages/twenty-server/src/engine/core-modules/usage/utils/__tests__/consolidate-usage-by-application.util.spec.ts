@@ -63,6 +63,49 @@ describe('consolidateUsageByApplication', () => {
     ]);
   });
 
+  it('should give each declared recurring charge its own slice', () => {
+    const result = consolidateUsageByApplication({
+      items: [
+        { applicationId: 'app-1', operation: 'seat', creditsUsed: 50 },
+        { applicationId: 'app-1', operation: 'platformFee', creditsUsed: 20 },
+      ],
+      flatApplicationMaps: buildFlatApplicationMaps([
+        {
+          id: 'app-1',
+          name: 'Call Recorder',
+          billing: {
+            recurring: {
+              seat: {
+                period: 'MONTH',
+                amountMicroCredits: 10_000_000,
+                per: 'WORKSPACE_MEMBER',
+                label: 'Per member',
+              },
+              platformFee: {
+                period: 'MONTH',
+                amountMicroCredits: 20_000_000,
+                label: 'Platform fee',
+              },
+            },
+          },
+        },
+      ]),
+    });
+
+    expect(result).toEqual([
+      {
+        key: 'Call Recorder · Per member',
+        label: 'Call Recorder · Per member',
+        creditsUsed: 50,
+      },
+      {
+        key: 'Call Recorder · Platform fee',
+        label: 'Call Recorder · Platform fee',
+        creditsUsed: 20,
+      },
+    ]);
+  });
+
   it('should fold undeclared operations into a single app-level slice', () => {
     const result = consolidateUsageByApplication({
       items: [

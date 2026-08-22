@@ -11,7 +11,19 @@ export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
-export type { ApplicationBilling } from './applicationBillingType';
+export type {
+  RecurringChargePeriod,
+  RecurringChargeUnit,
+  RecurringCharge,
+  RecurringCharges,
+  ApplicationBilling,
+} from './applicationBillingType';
+export {
+  RECURRING_CHARGE_PERIODS,
+  isRecurringChargePeriod,
+  RECURRING_CHARGE_UNITS,
+  isRecurringChargeUnit,
+} from './applicationBillingType';
 export type {
   KnownApplicationCategory,
   ApplicationCategory,
