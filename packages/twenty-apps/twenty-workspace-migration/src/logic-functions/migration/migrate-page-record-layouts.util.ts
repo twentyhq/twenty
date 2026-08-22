@@ -193,6 +193,9 @@ export const migrateRecordPageLayouts = async (
     } catch (error) {
       logger.warn(`Skipping record page layout "${sourceLayout.name}": ${error instanceof Error ? error.message : String(error)}`);
     }
+    if (await stopIfTimeBudgetExceeded()) {
+      return false;
+    }
   }
 
   // isSystemSideEffect only ever gets set on a *new* tab/widget a user adds - it's never

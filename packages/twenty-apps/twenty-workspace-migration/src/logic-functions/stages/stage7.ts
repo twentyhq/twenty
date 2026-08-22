@@ -24,33 +24,32 @@ export const stage7 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   if (migrationState.migratedNavigationMenuItems === false) {
     const sourceNavigationMenuItems = await executeWithRetry(() => findNavigationMenuItems(sourceWorkspace));
     const targetNavigationMenuItems = await executeWithRetryAndCheckpoint(() => findNavigationMenuItems(targetWorkspace));
-    if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIdMap, targetPageLayoutIdBySourcePageLayoutId)) {
-      await saveMigrationStateCheckpointAndStop();
+    if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIdMap, targetPageLayoutIdBySourcePageLayoutId) === false) {
+      return;
     }
-    return;
   }
   if (migrationState.migratedSkills === false) {
     const sourceSkills = await executeWithRetry(() => findSkills(sourceWorkspace));
     const targetSkills = await executeWithRetryAndCheckpoint(() => findSkills(targetWorkspace));
-    if (await migrateSkills(targetWorkspace, sourceSkills, targetSkills)) {
-      await saveMigrationStateCheckpointAndStop();
+    if (await migrateSkills(targetWorkspace, sourceSkills, targetSkills) === false) {
+      return;
     }
-    return;
   }
   if (migrationState.migratedWebhooks === false) {
     const sourceWebhooks = await executeWithRetry(() => findWebhooks(sourceWorkspace));
     const targetWebhooks = await executeWithRetryAndCheckpoint(() => findWebhooks(targetWorkspace));
-    if (await migrateWebhooks(targetWorkspace, sourceWebhooks, targetWebhooks)) {
-      await saveMigrationStateCheckpointAndStop();
+    if (await migrateWebhooks(targetWorkspace, sourceWebhooks, targetWebhooks) === false) {
+      return;
     }
-    return;
   }
   if (migrationState.migratedRoles === false) {
     const sourceRoles = await executeWithRetry(() => findRoles(sourceWorkspace));
     const targetRoles = await executeWithRetryAndCheckpoint(() => findRoles(targetWorkspace));
-    if (await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId)) {
-      setStateRef('stage', 8);
-      await saveMigrationStateCheckpointAndStop();
+    if (await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId) === false) {
+      return;
     }
   }
+
+  setStateRef('stage', 8);
+  await saveMigrationStateCheckpointAndStop();
 }

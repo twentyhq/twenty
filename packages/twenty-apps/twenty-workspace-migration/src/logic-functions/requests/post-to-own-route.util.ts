@@ -23,7 +23,7 @@ export const postToOwnRoute = async (): Promise<boolean> => {
 
     if (process.env.NODE_ENV !== 'test') {
       logger.error(
-        `[call-recorder] request to own route ${TRIGGER_ROUTE_PATH} failed to fire: ${error instanceof Error ? error.message : String(error)}`,
+        `Request to own route ${TRIGGER_ROUTE_PATH} failed to fire: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 

@@ -23,6 +23,9 @@ export type RecordFieldPlan = {
   // subset of dataKeys that hold a MANY_TO_ONE relation's target record id and need remapping
   // from the source workspace's record ids to the target workspace's record ids
   relationForeignKeyNames: string[];
+  // nameSingular of the object each of those foreign keys points at, used to work out which
+  // ones can still be unresolved at insert time (self-references and dependency cycles)
+  relationTargetNameSingularByForeignKeyName: Map<string, string>;
   // subset of dataKeys (SELECT/RATING: single value, MULTI_SELECT: array of values) whose values
   // are GraphQL enum literals and must be emitted unquoted rather than as quoted strings
   enumDataKeys: string[];
@@ -37,6 +40,7 @@ export const buildRecordFieldPlan = (
   const selectionParts: string[] = [];
   const dataKeys: string[] = [];
   const relationForeignKeyNames: string[] = [];
+  const relationTargetNameSingularByForeignKeyName = new Map<string, string>();
   const enumDataKeys: string[] = [];
 
   for (const field of fieldsList) {
@@ -56,6 +60,7 @@ export const buildRecordFieldPlan = (
       selectionParts.push(foreignKeyName);
       dataKeys.push(foreignKeyName);
       relationForeignKeyNames.push(foreignKeyName);
+      relationTargetNameSingularByForeignKeyName.set(foreignKeyName, field.relation.targetObjectMetadata.nameSingular);
       continue;
     }
 
@@ -80,6 +85,7 @@ export const buildRecordFieldPlan = (
     selectionSet: selectionParts.join('\n'),
     dataKeys,
     relationForeignKeyNames,
+    relationTargetNameSingularByForeignKeyName,
     enumDataKeys,
   };
 };

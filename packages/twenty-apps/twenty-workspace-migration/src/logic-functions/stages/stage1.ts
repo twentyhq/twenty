@@ -9,10 +9,10 @@ import { areFieldsListsIdentical, areObjectsIdentical } from "src/logic-function
 import { type AxiosInstance } from "axios";
 import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { mapEntities } from "src/logic-functions/utils/map-entities.util";
-import { fieldsToOmit, objectsToOmit, objectsToOmitFromRecordMigration, sourceAppsToOmit } from "src/constants/to-omit";
+import { fieldsToOmit, objectsToOmit, sourceAppsToOmit } from "src/constants/to-omit";
 import { buildFieldToCreate } from "src/logic-functions/utils/build-field-to-create.util";
 import { saveMigrationStateCheckpointAndStop, setStateRef } from "src/logic-functions/utils/migration-state.util";
-import { sortObjectsByDependency } from "src/logic-functions/utils/sort-objects-by-dependency.util";
+import { buildRecordMigrationOrder } from "src/logic-functions/utils/build-record-migration-order.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { estimateMigrationDuration } from "src/logic-functions/utils/estimate-migration-duration.util";
 import { logger } from "src/logic-functions/utils/logger.util";
@@ -54,7 +54,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   // Check for workspace members to prevent data loss with X object to workspace members relation
   const sourceWorkspaceMembers = extractNodes((await executeWithRetry(() => FindWorkspaceMembers(sourceWorkspace))).data.workspaceMembers);
   const targetWorkspaceMembers = extractNodes((await executeWithRetry(() => FindWorkspaceMembers(targetWorkspace))).data.workspaceMembers);
-  const missingWorkspaceMembers = sourceWorkspaceMembers.filter(mem => targetWorkspaceMembers.find(mem2 => mem2.userEmail === mem.userEmail) === undefined);
+  const targetWorkspaceMemberByEmail = new Map(targetWorkspaceMembers.map(mem => [mem.userEmail, mem]));
+  const missingWorkspaceMembers = sourceWorkspaceMembers.filter(mem => targetWorkspaceMemberByEmail.get(mem.userEmail) === undefined);
   if (missingWorkspaceMembers.length > 0) {
     logger.error("Add missing workspace members before proceeding:", ...missingWorkspaceMembers.filter(mem => mem.userEmail));
     return;
@@ -62,7 +63,7 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   // merge both workspaceMembers arrays into one
   const mergedWorkspaceMembers: Map<string, string> = new Map();
   for (const sourceMember of sourceWorkspaceMembers) {
-    const targetMember = targetWorkspaceMembers.find(mem => mem.userEmail === sourceMember.userEmail);
+    const targetMember = targetWorkspaceMemberByEmail.get(sourceMember.userEmail);
     if (targetMember === undefined) {
       logger.warn(`Skipping workspace member "${sourceMember.userEmail}": no matching member found in target workspace`);
       continue;
@@ -136,14 +137,14 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     }
   }
 
-  const recordMigrationOrder = sortObjectsByDependency(
-    [...mappedSourceObjects.values()].filter((object) => [...objectsToOmit, ...objectsToOmitFromRecordMigration].includes(object.nameSingular) === false));
+  const recordMigrationOrder = buildRecordMigrationOrder([...mappedSourceObjects.values()]);
 
   const { estimatedMinutes, batchableRecordCount, otherRecordCount } = await estimateMigrationDuration(
     sourceWorkspace,
   );
   logger.log(`Estimated migration time: ~${estimatedMinutes} minute(s) worst case (${batchableRecordCount} record(s) via createManyRecords, ${otherRecordCount} attachment(s))`);
 
+  setStateRef('sourceWorkspaceObjects', [...mappedSourceObjects.values()]);
   setStateRef('objectsToUpdate', objectsToUpdate);
   setStateRef('fieldsToCreate', fieldsToCreate);
   setStateRef('fieldsToUpdate', fieldsToUpdate);

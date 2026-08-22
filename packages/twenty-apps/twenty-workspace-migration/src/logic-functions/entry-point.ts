@@ -12,6 +12,7 @@ import { stage6 } from "src/logic-functions/stages/stage6";
 import { stage7 } from "src/logic-functions/stages/stage7";
 import { stage8 } from "src/logic-functions/stages/stage8";
 import { TRIGGER_ROUTE_PATH } from "src/constants/trigger-route-path";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 // On purpose for bigger requests like FindAllObjectsAndFields
 const API_CLIENT_TIMEOUT_MS = 60 * 1000;
@@ -41,7 +42,7 @@ const handler = async () => {
       await stage1(sourceWorkspace, targetWorkspace);
       break;
     case 2:
-      await stage2(sourceWorkspace, targetWorkspace);
+      await stage2(targetWorkspace);
       break;
     case 3:
       await stage3(sourceWorkspace, targetWorkspace);
@@ -60,6 +61,9 @@ const handler = async () => {
       break;
     case 8:
       await stage8(sourceWorkspace, targetWorkspace);
+      break;
+    case 9:
+      logger.log('Migration already completed - nothing to do');
       break;
   }
 };

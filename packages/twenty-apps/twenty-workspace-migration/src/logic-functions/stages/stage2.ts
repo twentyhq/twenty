@@ -10,14 +10,13 @@ import { createOneField } from "src/logic-functions/requests/create-one-field.ut
 import { AxiosInstance } from "axios";
 import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { FindAllObjectsAndFields } from "src/logic-functions/requests/find-all-objects-and-fields.util";
-import { objectsToOmit } from "src/constants/to-omit";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { decapitalize } from "src/logic-functions/utils/decapitalize.util";
 
 const ATTACHMENT_TARGET_FIELD_NAME_PREFIX = 'target';
 
-export const stage2 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
+export const stage2 = async (targetWorkspace: AxiosInstance) => {
   const objectsToUpdate = migrationState.objectsToUpdate;
   const fieldsToUpdate = migrationState.fieldsToUpdate;
   const fieldsToCreate = migrationState.fieldsToCreate;
@@ -61,8 +60,7 @@ export const stage2 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     }
   }
 
-  const { data: sourceWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(sourceWorkspace));
-  const extractedSourceWorkspaceObjects = extractNodes(sourceWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
+  const extractedSourceWorkspaceObjects = migrationState.sourceWorkspaceObjects;
   const { data: refetchedTargetWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(targetWorkspace));
   const refetchedTargetObjectsByNameSingular = new Map(
     extractNodes(refetchedTargetWorkspaceObjectsFields.objects).map((object) => [object.nameSingular, object]),

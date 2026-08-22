@@ -47,6 +47,17 @@ describe('migrateSkills', () => {
     expect(createCalls).toHaveLength(1);
     expect(createCalls[0].variables.input).toMatchObject({ id: 'custom-missing', name: 'custom-missing' });
   });
+
+  it('skips a standard skill even when the target workspace has no skill with that id', async () => {
+    // Standard skills are provisioned per workspace, so their ids need not match across the
+    // two - dedup by id alone would recreate them as duplicates.
+    const sourceSkills = [buildSkill({ id: 'standard-only', name: 'standard-only', isCustom: false })];
+    const { client, calls } = createMockGraphqlClient({});
+
+    await migrateSkills(client, sourceSkills, []);
+
+    expect(calls).toHaveLength(0);
+  });
 });
 
 describe('migrateWebhooks', () => {
@@ -764,15 +775,15 @@ describe('migrateNavigationMenuItems', () => {
   it('resolves pageLayoutId through the target page layout map instead of skipping it', async () => {
     const item = buildItem({ pageLayoutId: 'source-layout-1' });
     const { client, calls } = createMockGraphqlClient({
-      createNavigationMenuItem: { createNavigationMenuItem: { id: 'nav-item-1' } },
+      createManyNavigationMenuItems: { createManyNavigationMenuItems: [{ id: 'nav-item-1' }] },
     });
     const targetPageLayoutIdBySourcePageLayoutId = new Map([['source-layout-1', 'target-layout-1']]);
 
     await migrateNavigationMenuItems(client, [item], [], new Map(), new Map(), targetPageLayoutIdBySourcePageLayoutId);
 
-    const createCalls = calls.filter((call) => call.operationName === 'createNavigationMenuItem');
+    const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
     expect(createCalls).toHaveLength(1);
-    expect(createCalls[0].variables.input).toMatchObject({ pageLayoutId: 'target-layout-1' });
+    expect(createCalls[0].variables.inputs).toMatchObject([{ pageLayoutId: 'target-layout-1' }]);
   });
 
   it('skips a navigation menu item whose page layout was not migrated', async () => {
@@ -780,6 +791,36 @@ describe('migrateNavigationMenuItems', () => {
     const { client, calls } = createMockGraphqlClient({});
 
     await migrateNavigationMenuItems(client, [item], [], new Map(), new Map(), new Map());
+
+    expect(calls).toHaveLength(0);
+  });
+
+  it('batches one create per folder-nesting level, parents before children', async () => {
+    const items = [
+      buildItem({ id: 'nested', name: 'Nested', folderId: 'folder' }),
+      buildItem({ id: 'folder', name: 'Folder', type: 'FOLDER' }),
+      buildItem({ id: 'top-level', name: 'Top level' }),
+    ];
+    const { client, calls } = createMockGraphqlClient({
+      createManyNavigationMenuItems: { createManyNavigationMenuItems: [] },
+    });
+
+    await migrateNavigationMenuItems(client, items, [], new Map(), new Map(), new Map());
+
+    const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
+    expect(createCalls).toHaveLength(2);
+    expect(createCalls[0].variables.inputs).toMatchObject([{ id: 'folder' }, { id: 'top-level' }]);
+    expect(createCalls[1].variables.inputs).toMatchObject([{ id: 'nested' }]);
+  });
+
+  it('does not create items nested under a skipped folder', async () => {
+    const items = [
+      buildItem({ id: 'personal-folder', name: 'Personal', type: 'FOLDER', userWorkspaceId: 'user-workspace-1' }),
+      buildItem({ id: 'under-personal', name: 'Under personal', folderId: 'personal-folder' }),
+    ];
+    const { client, calls } = createMockGraphqlClient({});
+
+    await migrateNavigationMenuItems(client, items, [], new Map(), new Map(), new Map());
 
     expect(calls).toHaveLength(0);
   });

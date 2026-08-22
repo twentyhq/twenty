@@ -17,16 +17,16 @@ export const migrateAttachments = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
   recordIdMap: Map<string, string>,
-): Promise<void> => {
+): Promise<boolean> => {
   const targetFieldNameByObjectName = migrationState.attachmentTargetFieldNameByObjectName;
   const targetFileFieldId = migrationState.targetAttachmentFileFieldId;
   if (targetFileFieldId === null) {
     logger.warn('Skipping attachments: target workspace has no attachment.file field metadata id');
-    return;
+    return true;
   }
   if (targetFieldNameByObjectName.size === 0) {
     logger.warn('Skipping attachments: source workspace has no attachment target fields');
-    return;
+    return true;
   }
 
   const targetForeignKeyNames = Array.from(targetFieldNameByObjectName.values(), (fieldName) => `${fieldName}Id`);
@@ -44,9 +44,10 @@ file {
   let after: string | null = migrationState.objectRecordsToMigrate.get('attachments') ?? null;
 
   while (true) {
-    const page = await executeWithRetryAndCheckpoint(() => findManyRecords(sourceWorkspace, 'attachments', selectionSet, after, (migrationState.maxRequests / 3)));
+    const page = await executeWithRetryAndCheckpoint(() => findManyRecords(sourceWorkspace, 'attachments', selectionSet, after, (migrationState.maxRequests / 2) - 1));
     const nodes = page.edges.map((edge) => edge.node);
     if (nodes.length > 0) {
+      const attachmentsToCreate: Record<string, unknown>[] = [];
       for (const attachment of nodes) {
         const attachmentId = attachment.id as string;
         const name = attachment.name as string;
@@ -97,17 +98,28 @@ file {
 
           await executeWithRetryAndCheckpoint(() => completeFileUpload(targetWorkspace, uploadTarget.fileId));
 
-          await executeWithRetryAndCheckpoint(() => createManyRecords(targetWorkspace, 'attachments', [{
+          attachmentsToCreate.push({
             id: attachmentId,
             name,
             file: [{ fileId: uploadTarget.fileId, label: sourceFile.label }],
             ...targetFields,
-          }], new Set()));
-          createdCount += 1;
+          });
         } catch (error) {
           // An attachment whose file can't be downloaded/re-uploaded can't be meaningfully
           // partially migrated - skip it and move on to the rest.
           logger.warn(`Skipping attachment "${name}": ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+
+      if (attachmentsToCreate.length > 0) {
+        // Batching trades per-attachment error isolation for one request per page, so a single
+        // rejected row now costs the whole page - contain it here rather than letting it abort
+        // the stage, since the files themselves are already uploaded either way.
+        try {
+          await executeWithRetryAndCheckpoint(() => createManyRecords(targetWorkspace, 'attachments', attachmentsToCreate, new Set()));
+          createdCount += attachmentsToCreate.length;
+        } catch (error) {
+          logger.warn(`Skipping ${attachmentsToCreate.length} attachment(s) in this page: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
     }
@@ -118,9 +130,10 @@ file {
     after = page.pageInfo.endCursor;
     setObjectCursor('attachments', after);
     if (await stopIfTimeBudgetExceeded()) {
-      return;
+      return false;
     }
   }
 
   logger.log(`Attachments: created ${createdCount}`);
+  return true;
 };

@@ -10,6 +10,7 @@ import { PAGE_SIZE } from "src/constants/page-size";
 import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { Role } from "src/logic-functions/types/role.type";
 import { View } from "src/logic-functions/types/view-entities.type";
+import { NavigationMenuItem } from "src/logic-functions/types/navigation-menu-item.type";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { objectsToOmitFromCounting } from "src/constants/to-omit";
 
@@ -21,21 +22,36 @@ export type MigrationDurationEstimate = {
 
 const REQUESTS_PER_DASHBOARD = 3; // createPageLayout + updatePageLayoutWithTabsAndWidgets + createManyRecords(1)
 const REQUESTS_PER_RECORD_PAGE_LAYOUT = 2; // createPageLayout + updatePageLayoutWithTabsAndWidgets
-const REQUESTS_PER_ATTACHMENT = 5; // download + createFileUpload + upload PUT + completeFileUpload + createManyRecords(1)
+const REQUESTS_PER_ATTACHMENT = 4; // download + createFileUpload + upload PUT + completeFileUpload
 
 const countViewRequests = (views: View[]): number =>
   views.reduce(
     (sum, view) =>
       sum
       + 1 // createView
-      + view.viewFieldGroups.length
-      + view.viewFields.length
+      + (view.viewFieldGroups.length > 0 ? 1 : 0)
+      + (view.viewFields.length > 0 ? 1 : 0)
+      + (view.viewGroups.length > 0 ? 1 : 0)
       + view.viewFilterGroups.length
       + view.viewFilters.length
-      + view.viewSorts.length
-      + view.viewGroups.length,
+      + view.viewSorts.length,
     0,
   );
+
+const countNavigationMenuItemRequests = (items: NavigationMenuItem[]): number => {
+  const itemById = new Map(items.map((item) => [item.id, item]));
+  const getDepth = (item: NavigationMenuItem): number => {
+    let depth = 1;
+    let parent = item.folderId !== null ? itemById.get(item.folderId) : undefined;
+    while (parent !== undefined) {
+      depth += 1;
+      parent = parent.folderId !== null ? itemById.get(parent.folderId) : undefined;
+    }
+    return depth;
+  };
+
+  return items.reduce((deepest, item) => Math.max(deepest, getDepth(item)), 0);
+};
 
 const countRoleRequests = (roles: Role[]): number =>
   roles.reduce(
@@ -77,7 +93,7 @@ export const estimateMigrationDuration = async (
   const customViews = views.filter((view) => view.key !== 'INDEX');
 
   const otherRecordCount = countViewRequests(customViews)
-    + navigationMenuItems.length
+    + countNavigationMenuItemRequests(navigationMenuItems)
     + customSkillCount
     + webhooks.length
     + countRoleRequests(roles)

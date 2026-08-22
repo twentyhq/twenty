@@ -11,9 +11,12 @@ export const startTimeBudget = (): void => {
 };
 
 export const stopIfTimeBudgetExceeded = async (): Promise<boolean> => {
-  if (startedAt === null || Date.now() - startedAt <= MAX_RUNTIME_MS) {
+  if (getRemainingTimeBudgetMs() > 0) {
     return false;
   }
   await saveMigrationStateCheckpointAndStop();
   return true;
 };
+
+export const getRemainingTimeBudgetMs = (): number =>
+  startedAt === null ? Number.POSITIVE_INFINITY : MAX_RUNTIME_MS - (Date.now() - startedAt);

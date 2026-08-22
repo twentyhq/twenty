@@ -17,17 +17,15 @@ const createInitialMigrationState = (): MigrationState => ({
   targetObjectIdBySourceObjectId: new Map(),
   targetFieldIdBySourceFieldId: new Map(),
   objectRecordsToMigrate: new Map(),
+  reconciliationObjectIndex: 0,
   recordMigrationOrder: [],
   targetPageLayoutIdBySourcePageLayoutId: new Map(),
   attachmentTargetFieldNameByObjectName: new Map(),
   targetAttachmentFileFieldId: null,
-  migratedViews: false,
   migratedNavigationMenuItems: false,
   migratedSkills: false,
   migratedWebhooks: false,
   migratedRoles: false,
-  migratedDashboards: false,
-  migratedRecordPageLayouts: false,
 });
 
 export const migrationState: MigrationState = createInitialMigrationState();
@@ -94,16 +92,14 @@ export const loadMigrationStateCheckpoint = async (): Promise<void> => {
     migrationState.targetObjectIdBySourceObjectId = new Map(Object.entries(saved.targetObjectIdBySourceObjectId));
     migrationState.targetFieldIdBySourceFieldId = new Map(Object.entries(saved.targetFieldIdBySourceFieldId));
     migrationState.objectRecordsToMigrate = new Map(Object.entries(saved.objectRecordsToMigrate));
+    migrationState.reconciliationObjectIndex = saved.reconciliationObjectIndex;
     migrationState.targetPageLayoutIdBySourcePageLayoutId = new Map(Object.entries(saved.targetPageLayoutIdBySourcePageLayoutId));
     migrationState.attachmentTargetFieldNameByObjectName = new Map(Object.entries(saved.attachmentTargetFieldNameByObjectName));
     migrationState.targetAttachmentFileFieldId = saved.targetAttachmentFileFieldId;
-    migrationState.migratedViews = saved.migratedViews;
     migrationState.migratedNavigationMenuItems = saved.migratedNavigationMenuItems;
     migrationState.migratedSkills = saved.migratedSkills;
     migrationState.migratedWebhooks = saved.migratedWebhooks;
     migrationState.migratedRoles = saved.migratedRoles;
-    migrationState.migratedDashboards = saved.migratedDashboards;
-    migrationState.migratedRecordPageLayouts = saved.migratedRecordPageLayouts;
   } catch (error) {
     logger.warn(`Failed to load migration state checkpoint: ${error instanceof Error ? error.message : String(error)}`);
   }

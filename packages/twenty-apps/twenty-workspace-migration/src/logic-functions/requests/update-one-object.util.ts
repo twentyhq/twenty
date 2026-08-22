@@ -26,7 +26,6 @@ export const updateOneObject = async (
           icon: update.object.icon,
           isActive: update.object.isActive,
           isLabelSyncedWithName: update.object.isLabelSyncedWithName,
-          labelIdentifierFieldMetadataId: update.object.labelIdentifierFieldMetadataId,
           labelPlural: update.object.labelPlural,
           labelSingular: update.object.labelSingular,
           namePlural: update.object.namePlural,

@@ -1,13 +1,22 @@
 import { FieldRelationInfo, FieldsListType, ObjectType } from "src/logic-functions/types/find-objects-fields.type";
 
+// Field metadata ids are per-workspace, so the label identifier can only be compared across
+// workspaces through the name of the field it points at.
+export const getLabelIdentifierFieldName = (object: ObjectType): string | undefined =>
+  object.fieldsList.find((field) => field.id === object.labelIdentifierFieldMetadataId)?.name;
+
+// Everything updateOneObject writes has to be compared here, otherwise a difference in an
+// unlisted property is judged identical and never queued for update.
 export const areObjectsIdentical = (a: ObjectType, b: ObjectType) => {
   return a.color === b.color &&
     a.description === b.description &&
+    a.isActive === b.isActive &&
     a.isLabelSyncedWithName === b.isLabelSyncedWithName &&
     a.labelPlural === b.labelPlural &&
     a.labelSingular === b.labelSingular &&
     a.nameSingular === b.nameSingular &&
     a.namePlural === b.namePlural &&
+    a.openRecordIn === b.openRecordIn &&
     a.icon === b.icon;
 }
 

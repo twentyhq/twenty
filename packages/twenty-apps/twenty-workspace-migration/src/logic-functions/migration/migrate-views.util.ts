@@ -4,7 +4,7 @@ import { createMetadataEntity, createManyMetadataEntities } from "src/logic-func
 import { logger } from "src/logic-functions/utils/logger.util";
 import { View } from "src/logic-functions/types/view-entities.type";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
-import { setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { createParentChainQueue } from "src/logic-functions/utils/parent-chain-queue.util";
 
 export const migrateViews = async (
   targetWorkspace: AxiosInstance,
@@ -123,18 +123,17 @@ export const migrateViews = async (
       createdSubEntities += viewFieldsToCreate.length;
     }
 
-    const remainingFilterGroups = [...view.viewFilterGroups];
+    const filterGroupQueue = createParentChainQueue(
+      view.viewFilterGroups,
+      (group) => group.id,
+      (group) => group.parentViewFilterGroupId,
+      existingTargetViewFilterGroupIds,
+    );
     const resolvedFilterGroupIds = new Set(existingTargetViewFilterGroupIds);
-    while (remainingFilterGroups.length > 0) {
-      const creatableNow = remainingFilterGroups.filter(
-        (group) => group.parentViewFilterGroupId === null || resolvedFilterGroupIds.has(group.parentViewFilterGroupId),
-      );
-      if (creatableNow.length === 0) {
-        logger.warn(`Skipping ${remainingFilterGroups.length} view filter group(s) on view "${view.name}": unresolved parent chain`);
-        break;
-      }
-      for (const group of creatableNow) {
-        remainingFilterGroups.splice(remainingFilterGroups.indexOf(group), 1);
+    let processedFilterGroupCount = 0;
+    while (filterGroupQueue.hasPending()) {
+      for (const group of filterGroupQueue.drainWave()) {
+        processedFilterGroupCount += 1;
         if (!resolvedFilterGroupIds.has(group.id)) {
           await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewFilterGroup', 'input', 'CreateViewFilterGroupInput', {
             id: group.id,
@@ -146,7 +145,11 @@ export const migrateViews = async (
           createdSubEntities += 1;
         }
         resolvedFilterGroupIds.add(group.id);
+        filterGroupQueue.enqueueChildrenOf(group);
       }
+    }
+    if (processedFilterGroupCount < view.viewFilterGroups.length) {
+      logger.warn(`Skipping ${view.viewFilterGroups.length - processedFilterGroupCount} view filter group(s) on view "${view.name}": unresolved parent chain`);
     }
 
     for (const viewFilter of view.viewFilters) {
@@ -213,7 +216,6 @@ export const migrateViews = async (
     }
   }
 
-  setStateRef('migratedViews', true);
   logger.log(`Views: created ${createdViews} view(s) and ${createdSubEntities} related entitie(s)`);
   return true;
 };

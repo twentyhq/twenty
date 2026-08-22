@@ -136,6 +136,7 @@ describe('areObjectsIdentical', () => {
   it('ignores fields not part of the comparison (e.g. id, universalIdentifier)', () => {
     expect(areObjectsIdentical(buildObject({ id: 'a' }), buildObject({ id: 'b' }))).toBe(true);
   });
+
 });
 
 describe('areRelationsIdentical', () => {

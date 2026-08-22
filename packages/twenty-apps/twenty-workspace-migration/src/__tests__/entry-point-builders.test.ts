@@ -125,7 +125,7 @@ describe('buildFieldToCreate', () => {
 
 describe('buildRecordDataToCreate', () => {
   const dataKeys = ['title', 'companyId'];
-  const relationForeignKeyNames = ['companyId'];
+  const relationForeignKeyNames = new Set(['companyId']);
 
   it('passes non-relation fields through unchanged', () => {
     const result = buildRecordDataToCreate({ title: 'Deal', companyId: null }, dataKeys, relationForeignKeyNames, new Map());

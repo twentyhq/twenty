@@ -1,9 +1,18 @@
 import { type AxiosInstance } from "axios";
-import { FindObjectsFieldsType } from "src/logic-functions/types/find-objects-fields.type";
+import { FindObjectsFieldsType, ObjectType } from "src/logic-functions/types/find-objects-fields.type";
 import { postGraphql } from "src/logic-functions/requests/graphql-client.util";
 
-const QUERY = `query findObjectsAndFields {
-  objects(paging: {first: 1000}) {
+const OBJECTS_PAGE_SIZE = 1000;
+
+type ObjectsPage = {
+  objects: {
+    edges: { node: ObjectType }[];
+    pageInfo: { endCursor: string | null; hasNextPage: boolean };
+  };
+};
+
+const buildQuery = (after: string | null) => `query findObjectsAndFields {
+  objects(paging: {first: ${OBJECTS_PAGE_SIZE}${after !== null ? `, after: ${JSON.stringify(after)}` : ''}}) {
     edges {
       node {
         applicationId
@@ -65,18 +74,32 @@ const QUERY = `query findObjectsAndFields {
         }
       }
     }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
   }
 }`;
 
 export const FindAllObjectsAndFields = async (
   client: AxiosInstance,
 ): Promise<FindObjectsFieldsType> => {
-  const data = await postGraphql<FindObjectsFieldsType['data']>(
-    client,
-    '/metadata',
-    'findObjectsAndFields',
-    QUERY,
-  );
+  const edges: { node: ObjectType }[] = [];
+  let after: string | null = null;
 
-  return { data };
+  while (true) {
+    const page: ObjectsPage = await postGraphql<ObjectsPage>(
+      client,
+      '/metadata',
+      'findObjectsAndFields',
+      buildQuery(after),
+    );
+
+    edges.push(...page.objects.edges);
+
+    if (page.objects.pageInfo.hasNextPage === false) {
+      return { data: { objects: { edges } } };
+    }
+    after = page.objects.pageInfo.endCursor;
+  }
 }

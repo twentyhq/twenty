@@ -10,8 +10,9 @@ import {
 import { Role, RowLevelPermissionPredicateGroup } from "src/logic-functions/types/role.type";
 import { logger } from "src/logic-functions/utils/logger.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
-import { migrationState, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { createParentChainQueue } from "src/logic-functions/utils/parent-chain-queue.util";
 
 // A group can reference a parent group, so parents need to be created (or, here, ordered
 // ahead) before their children - same problem as viewFilterGroups in migrate-views.util.ts.
@@ -21,23 +22,23 @@ const sortGroupsByParentChain = (
   groups: RowLevelPermissionPredicateGroup[],
   warningContext: string,
 ): RowLevelPermissionPredicateGroup[] => {
-  const remaining = [...groups];
-  const resolvedIds = new Set<string>();
+  const queue = createParentChainQueue(
+    groups,
+    (group) => group.id,
+    (group) => group.parentRowLevelPermissionPredicateGroupId,
+    new Set(),
+  );
   const sorted: RowLevelPermissionPredicateGroup[] = [];
 
-  while (remaining.length > 0) {
-    const resolvableNow = remaining.filter(
-      (group) => group.parentRowLevelPermissionPredicateGroupId === null || resolvedIds.has(group.parentRowLevelPermissionPredicateGroupId),
-    );
-    if (resolvableNow.length === 0) {
-      logger.warn(`Skipping ${remaining.length} row-level permission predicate group(s) on ${warningContext}: unresolved parent chain`);
-      break;
-    }
-    for (const group of resolvableNow) {
-      remaining.splice(remaining.indexOf(group), 1);
-      resolvedIds.add(group.id);
+  while (queue.hasPending()) {
+    for (const group of queue.drainWave()) {
       sorted.push(group);
+      queue.enqueueChildrenOf(group);
     }
+  }
+
+  if (sorted.length < groups.length) {
+    logger.warn(`Skipping ${groups.length - sorted.length} row-level permission predicate group(s) on ${warningContext}: unresolved parent chain`);
   }
 
   return sorted;
@@ -127,7 +128,7 @@ export const migrateRoles = async (
 ) => {
   const targetRoleIdByLabel = new Map(targetRoles.map((role) => [role.label, role.id]));
   const sourceRolesToMigrate = sourceRoles.filter(role => targetRoleIdByLabel.has(role.label) === false);
-  let createdCount = 2;
+  let createdCount = 0;
 
   for (const role of sourceRolesToMigrate) {
     const created = await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createOneRole', 'createRoleInput', 'CreateRoleInput', {
@@ -151,7 +152,6 @@ export const migrateRoles = async (
       await executeWithRetry(() =>
         upsertPermissionFlags(targetWorkspace, targetRoleId, role.permissionFlags.map((flag) => flag.flag)),
       );
-      createdCount += 1;
     }
 
     const objectPermissions = role.objectPermissions.flatMap((permission) => {
@@ -170,7 +170,6 @@ export const migrateRoles = async (
     });
     if (objectPermissions.length > 0) {
       await executeWithRetry(() => upsertObjectPermissions(targetWorkspace, targetRoleId, objectPermissions));
-      createdCount += 1;
     }
 
     const fieldPermissions = role.fieldPermissions.flatMap((permission) => {
@@ -189,22 +188,18 @@ export const migrateRoles = async (
     });
     if (fieldPermissions.length > 0) {
       await executeWithRetryAndCheckpoint(() => upsertFieldPermissions(targetWorkspace, targetRoleId, fieldPermissions));
-      createdCount += 1;
     }
 
     if (role.rowLevelPermissionPredicates.length > 0 || role.rowLevelPermissionPredicateGroups.length > 0) {
       await migrateRowLevelPermissionPredicatesForRole(targetWorkspace, targetRoleId, role, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
-      createdCount += 1;
     }
 
-    if (createdCount >= migrationState.maxRequests) {
-      createdCount -= migrationState.maxRequests;
-      if (await stopIfTimeBudgetExceeded()) {
-        return false;
-      }
+    if (await stopIfTimeBudgetExceeded()) {
+      return false;
     }
   }
+
   setStateRef('migratedRoles', true);
-  logger.log(`Roles migrated`);
+  logger.log(`Roles: created ${createdCount}`);
   return true;
 };

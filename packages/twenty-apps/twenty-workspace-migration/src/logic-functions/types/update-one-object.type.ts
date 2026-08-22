@@ -6,5 +6,6 @@ export type UpdateOneObjectType = {
     | 'fieldsList'
     | 'id'
     | 'isSystem'
+    | 'labelIdentifierFieldMetadataId'
     | 'universalIdentifier'>
 };

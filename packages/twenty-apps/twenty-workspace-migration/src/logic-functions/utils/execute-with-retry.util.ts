@@ -1,3 +1,5 @@
+import { getRemainingTimeBudgetMs } from "src/logic-functions/utils/time-budget.util";
+
 const MAX_ATTEMPTS = 5;
 const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -44,8 +46,13 @@ export const executeWithRetry = async <TResult>(
         MAX_RETRY_DELAY_MS,
       );
       const jitterMs = Math.random() * MAX_JITTER_MS;
+      const delayMs = Math.max(backoffMs, retryAfterMs) + jitterMs;
 
-      await sleep(Math.max(backoffMs, retryAfterMs) + jitterMs);
+      if (delayMs >= getRemainingTimeBudgetMs()) {
+        throw error;
+      }
+
+      await sleep(delayMs);
     }
   }
 };
