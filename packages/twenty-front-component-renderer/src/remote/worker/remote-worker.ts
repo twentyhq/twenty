@@ -11,6 +11,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installElementContainsPolyfill } from '@/polyfills/dom/utils/installElementContainsPolyfill';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
@@ -40,7 +41,10 @@ installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
 installErrorEventBridge();
 
+// #24573: the upstream Node#contains walks the argument's own parentNode
+// forever, hanging the worker for any indirect descendant.
 installDocumentGetElementById(document);
+installElementContainsPolyfill(Element.prototype);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
 installLocalStyleOnBaseElements(Element.prototype);
