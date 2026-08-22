@@ -3,6 +3,7 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { RECORD_TABLE_WIDGET_CONTENT_EDITABLE_DEFAULT } from '@/page-layout/constants/RecordTableWidgetContentEditableDefault';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
@@ -96,8 +97,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
     isRecordTableConfiguration &&
     isDefined(configuration) &&
     'isWidgetContentEditable' in configuration
-      ? (configuration.isWidgetContentEditable ?? false)
-      : false;
+      ? (configuration.isWidgetContentEditable ??
+        RECORD_TABLE_WIDGET_CONTENT_EDITABLE_DEFAULT)
+      : RECORD_TABLE_WIDGET_CONTENT_EDITABLE_DEFAULT;
 
   const {
     sourceDescription,

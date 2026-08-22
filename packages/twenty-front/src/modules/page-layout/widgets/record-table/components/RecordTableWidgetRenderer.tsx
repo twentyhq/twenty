@@ -1,3 +1,4 @@
+import { RECORD_TABLE_WIDGET_CONTENT_EDITABLE_DEFAULT } from '@/page-layout/constants/RecordTableWidgetContentEditableDefault';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
@@ -30,8 +31,9 @@ export const RecordTableWidgetRenderer = ({
 
   const isWidgetContentEditable =
     isRecordTableConfiguration && 'isWidgetContentEditable' in configuration
-      ? (configuration.isWidgetContentEditable ?? false)
-      : false;
+      ? (configuration.isWidgetContentEditable ??
+        RECORD_TABLE_WIDGET_CONTENT_EDITABLE_DEFAULT)
+      : RECORD_TABLE_WIDGET_CONTENT_EDITABLE_DEFAULT;
 
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
     return null;

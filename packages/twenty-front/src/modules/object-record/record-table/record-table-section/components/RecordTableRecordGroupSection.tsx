@@ -22,8 +22,7 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-r
 
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
-import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
-import { useContext } from 'react';
+import { useIsWidgetPageLayoutInEditMode } from '@/object-record/record-table-widget/hooks/useIsWidgetPageLayoutInEditMode';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -144,8 +143,7 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
-  const isAggregateDropdownNonInteractive =
-    useContext(RecordTableWidgetContext)?.isPageLayoutInEditMode ?? false;
+  const isAggregateDropdownNonInteractive = useIsWidgetPageLayoutInEditMode();
 
   const visibleRecordFieldsWithoutLabelIdentifier = visibleRecordFields.filter(
     filterOutByProperty(

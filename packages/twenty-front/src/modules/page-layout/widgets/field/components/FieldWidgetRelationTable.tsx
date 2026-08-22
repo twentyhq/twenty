@@ -4,6 +4,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { FIELD_WIDGET_CONTENT_EDITABLE_DEFAULT } from '@/page-layout/constants/FieldWidgetContentEditableDefault';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
 import { getFieldWidgetNestedRelationCreateThrough } from '@/page-layout/widgets/field/utils/getFieldWidgetNestedRelationCreateThrough';
@@ -58,10 +59,10 @@ export const FieldWidgetRelationTable = ({
   const viewId = isFieldWidget(widget)
     ? widget.configuration.viewId
     : undefined;
-  // Record page relation widget content defaults to editable, unlike dashboards.
   const isWidgetContentEditable = isFieldWidget(widget)
-    ? (widget.configuration.isWidgetContentEditable ?? true)
-    : true;
+    ? (widget.configuration.isWidgetContentEditable ??
+      FIELD_WIDGET_CONTENT_EDITABLE_DEFAULT)
+    : FIELD_WIDGET_CONTENT_EDITABLE_DEFAULT;
   const nestedRelationFieldMetadataId = isFieldWidget(widget)
     ? widget.configuration.nestedRelationFieldMetadataId
     : undefined;

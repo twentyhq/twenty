@@ -3,6 +3,7 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { FIELD_WIDGET_CONTENT_EDITABLE_DEFAULT } from '@/page-layout/constants/FieldWidgetContentEditableDefault';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
@@ -118,7 +119,8 @@ export const SidePanelRecordPageFieldSettings = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const isWidgetContentEditable =
-    fieldConfiguration?.isWidgetContentEditable ?? true;
+    fieldConfiguration?.isWidgetContentEditable ??
+    FIELD_WIDGET_CONTENT_EDITABLE_DEFAULT;
 
   const handleIsWidgetContentEditableChange = (
     nextIsWidgetContentEditable: boolean,

@@ -22,28 +22,13 @@ export type RecordTableWidgetLayoutViewType =
   (typeof RECORD_TABLE_WIDGET_LAYOUT_VIEW_TYPES)[number];
 
 export const RECORD_TABLE_WIDGET_LAYOUT_OPTIONS = {
-  [ViewType.TABLE_WIDGET]: {
-    Icon: IconTable,
-    label: msg`Table`,
-  },
-  [ViewType.KANBAN_WIDGET]: {
-    Icon: IconLayoutKanban,
-    label: msg`Kanban`,
-  },
-  [ViewType.LIST_WIDGET]: {
-    Icon: IconList,
-    label: msg`List`,
-  },
-  [ViewType.CALENDAR_WIDGET]: {
-    Icon: IconCalendar,
-    label: msg`Calendar`,
-  },
+  [ViewType.TABLE_WIDGET]: { Icon: IconTable, label: msg`Table` },
+  [ViewType.KANBAN_WIDGET]: { Icon: IconLayoutKanban, label: msg`Kanban` },
+  [ViewType.LIST_WIDGET]: { Icon: IconList, label: msg`List` },
+  [ViewType.CALENDAR_WIDGET]: { Icon: IconCalendar, label: msg`Calendar` },
 } satisfies Record<
   RecordTableWidgetLayoutViewType,
-  {
-    Icon: IconComponent;
-    label: MessageDescriptor;
-  }
+  { Icon: IconComponent; label: MessageDescriptor }
 >;
 
 // A widget view backed by a record table renders as a table unless its type

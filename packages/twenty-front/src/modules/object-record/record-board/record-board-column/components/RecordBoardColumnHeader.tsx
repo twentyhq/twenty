@@ -19,6 +19,7 @@ import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { useIsWidgetPageLayoutInEditMode } from '@/object-record/record-table-widget/hooks/useIsWidgetPageLayoutInEditMode';
 import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
@@ -147,12 +148,11 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
-  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
-
   // Creating in a nested relation widget requires picking the related record
   // to create through, which only the table layout offers today.
-  const nestedRelationCreateThrough =
-    recordTableWidgetContext?.nestedRelationCreateThrough;
+  const nestedRelationCreateThrough = useContext(
+    RecordTableWidgetContext,
+  )?.nestedRelationCreateThrough;
 
   const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
     isRecordBoardCellsNonEditableComponentState,
@@ -166,8 +166,7 @@ export const RecordBoardColumnHeader = () => {
       objectMetadataItem,
     });
 
-  const isAggregateDropdownNonInteractive =
-    recordTableWidgetContext?.isPageLayoutInEditMode ?? false;
+  const isAggregateDropdownNonInteractive = useIsWidgetPageLayoutInEditMode();
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
