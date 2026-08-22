@@ -6,25 +6,25 @@ A Twenty App that migrates data from one Twenty workspace into another over the 
 
 - **Schema sync** - compares custom and standard objects/fields between the source and target workspace and recreates whatever's missing (relation dependencies are respected, so a field can't be created before the object it points at exists).
 - **Record migration** - copies records for every non-system, non-omitted object, in dependency order, remapping relation foreign keys from source-workspace ids to target-workspace ids as it goes.
-- **Views, navigation menu items, skills, webhooks, roles** - migrated with their sub-entities (view filters/sorts/groups, role permissions, etc.), deduplicated against the target workspace where a stable id or natural key exists.
-- **Dashboards and record page layouts** - rebuilt via the page layout tab/widget tree, with widget configuration (field/object references) remapped to the target workspace.
+- **Views, dashboards, record page layouts, navigation menu items, skills, webhooks, roles** - migrated with their sub-entities (view filters/sorts/groups, page layout tabs/widgets, role permissions and row-level permission predicates, etc.), deduplicated against the target workspace where a stable id or natural key exists. A navigation menu item that links directly to a dashboard or a custom record page layout resolves correctly because dashboards and page layouts are migrated first.
 - **Attachments** - each attachment's underlying file is downloaded from the source workspace and re-uploaded into the target workspace's own storage before the record is created, since files are stored workspace-scoped server-side. Attachment target links are discovered dynamically from the live schema, so this covers any non-system object - standard (Company, Person, ...) or custom (user-created or app-installed) - not just a fixed list.
-- **Checkpointing** - migration progress is saved to this app's own key-value store after every stage and periodically during long stages, so a run that's cut off by the platform's timeout leaves a record of how far it got.
+- **Duration estimate** - before any data moves, the migration logs a worst-case time estimate based on record counts and non-batchable entity counts (views, dashboards, page layouts, attachments, ...), so you know roughly what to expect.
+- **Checkpointing and self-resumption** - migration progress is saved to this app's own key-value store after every stage (and periodically during long stages), and the app re-triggers its own HTTP route to continue automatically - a run cut off by the platform's timeout picks back up on its own rather than needing a manual re-invocation.
 
 ## How it works
 
 The migration runs as a single logic function (`src/logic-functions/entry-point.ts`), organized into stages:
 
-1. Read installed apps and workspace members (source and target must have the same apps at the same version; missing workspace members are reported instead of silently dropping their data).
-2. Compare objects and fields between the two workspaces.
-3. Recreate missing objects and fields, and update ones that differ.
-4. Migrate records, in relation-dependency order.
-5. Migrate views, navigation menu items, skills, webhooks, and roles.
-6. Migrate dashboards.
-7. Migrate custom record page layouts.
+1. Read installed apps and workspace members (source and target must have the same apps at the same version; missing workspace members are reported instead of silently dropping their data), then log a worst-case duration estimate.
+2. Compare objects and fields between the two workspaces, recreate missing ones and update ones that differ, and precompute the attachment target-field mapping used later by stage 8.
+3. Migrate records, in relation-dependency order.
+4. Migrate views.
+5. Migrate dashboards.
+6. Migrate custom record page layouts.
+7. Migrate navigation menu items, skills, webhooks, and roles - deliberately after dashboards and record page layouts, since a navigation menu item can link directly to either.
 8. Migrate attachments (and their files).
 
-A logic function has a hard execution timeout; this app tracks its own elapsed runtime and stops cleanly at a stage/object boundary before that limit hits, rather than being killed mid-request.
+A logic function has a hard execution timeout; this app tracks its own elapsed runtime and stops cleanly at a stage/object boundary before that limit hits, checkpoints its state, and triggers a fresh invocation of itself to continue - rather than being killed mid-request or requiring a manual re-run.
 
 ## Configuration
 
@@ -43,7 +43,7 @@ The target workspace must already have every workspace member that owns/is assig
 
 - **Workflows aren't migrated** (`workflow`, `workflowRun`, `workflowVersion`, `workflowAutomatedTrigger`) - the public API doesn't allow creating or fully updating workflow versions for API-key callers, so there's no way to recreate a workflow's steps/trigger through this tool.
 - **Activity history isn't migrated** (`timelineActivity`) - a deliberate choice, not an API limitation; audit history tied to the source workspace generally isn't meaningful to replay into a new one.
-- **Records owned by other installed apps aren't migrated yet.** Only objects belonging to the standard Twenty app or the workspace's own custom-object app are currently picked up - objects provisioned by a third installed app (e.g. a marketplace app) are skipped entirely, with no warning.
+- **Row-level permission predicates require an Enterprise plan on both workspaces.** They're migrated best-effort; if the target workspace's plan doesn't have the feature enabled, that role's predicates are skipped with a warning instead of failing the whole migration.
 - **Re-running isn't fully idempotent.** Views, skills, webhooks, dashboards, roles, and attachments are deduplicated (by reused id, natural key, or label), but plain record migration has no dedupe by source id - re-running after records were already created will create duplicates.
 
 ## Getting started
