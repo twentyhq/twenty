@@ -116,7 +116,10 @@ export const AiChatQuestionOtherOption = ({
           }
         }}
         onChange={(event) => onChange(event.target.value)}
-        onKeyDown={onTextareaKeyDown}
+        onKeyDown={(event) => {
+          event.stopPropagation();
+          onTextareaKeyDown(event);
+        }}
       />
     </StyledContainer>
   );
