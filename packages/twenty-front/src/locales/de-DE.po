@@ -421,11 +421,6 @@ msgstr "{decimals, plural, one {z. B. {0} für {decimals} Dezimalstelle} other {
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "{deletedCount, plural, one {Erfolgreich {deletedCount} Aufgabe gelöscht} other {Erfolgreich {deletedCount} Aufgaben gelöscht}}"
 
-#. js-lingui-id: JBSWmp
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "{eventAction} a related {eventObject}"
-msgstr "{eventAction} ein zugehöriges {eventObject}"
-
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -3959,6 +3954,11 @@ msgstr "Claude-Installationslinks erfordern eine HTTPS-MCP-URL."
 msgid "Clear"
 msgstr "Löschen"
 
+#. js-lingui-id: Q2mGA7
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Clear filter"
+msgstr ""
+
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
@@ -5292,6 +5292,11 @@ msgstr "Hinzugefügt am {beautifiedCreatedAt}"
 msgid "Created {objectLabel}"
 msgstr "Erstellt {objectLabel}"
 
+#. js-lingui-id: 2K/oCx
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "created a related {objectNameSingular}"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Created by"
@@ -6389,6 +6394,11 @@ msgstr "Gelöscht"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Deleted {objectLabel}"
 msgstr "Gelöscht {objectLabel}"
+
+#. js-lingui-id: P65ogp
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "deleted a related {objectNameSingular}"
+msgstr ""
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -8871,6 +8881,11 @@ msgstr "Chats filtern"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
 msgstr "Optionen für Filterregelgruppe"
+
+#. js-lingui-id: 0i36a3
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Filter timeline"
+msgstr ""
 
 #. js-lingui-id: j/O9Sh
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -11366,6 +11381,11 @@ msgstr "hat ein {objectLabel} verknüpft"
 msgid "linked a calendar event with {labelIdentifierValue}"
 msgstr "hat ein Kalenderereignis mit {labelIdentifierValue} verknüpft"
 
+#. js-lingui-id: ZJ5OOX
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "linked a related {objectNameSingular}"
+msgstr ""
+
 #. js-lingui-id: fd8C68
 #: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
 msgid "linked an email with"
@@ -12807,6 +12827,11 @@ msgstr "Kein Zugriff"
 msgid "No active subscription."
 msgstr "Kein aktives Abonnement."
 
+#. js-lingui-id: LM+N3q
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No activity matches the selected types."
+msgstr ""
+
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 msgid "No activity yet"
@@ -13183,6 +13208,11 @@ msgstr "Für diesen Schritt wurden keine Protokolle aufgezeichnet."
 #. js-lingui-id: 5sf2dF
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No logs yet"
+msgstr ""
+
+#. js-lingui-id: WqPs8R
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No matching activity"
 msgstr ""
 
 #. js-lingui-id: UwvrGq
@@ -16004,6 +16034,11 @@ msgstr "Wiederherstellen"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "{objectLabel} wiederherstellen"
+
+#. js-lingui-id: RyMA1t
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "restored a related {objectNameSingular}"
+msgstr ""
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -19196,6 +19231,11 @@ msgstr "Zeitzone"
 msgid "Timeline"
 msgstr "Zeitleiste"
 
+#. js-lingui-id: HUJOEf
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "timeline activity type"
+msgstr ""
+
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Timeout"
@@ -19933,6 +19973,11 @@ msgstr "Unbekannter Arbeitsbereich"
 msgid "Unlimited"
 msgstr "Unbegrenzt"
 
+#. js-lingui-id: CfClM4
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "unlinked a related {objectNameSingular}"
+msgstr ""
+
 #. js-lingui-id: WDcQq9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -20189,6 +20234,11 @@ msgstr "Aktualisiert (bei bestimmten Feldern)"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Updated {objectLabel}"
 msgstr "Aktualisiert {objectLabel}"
+
+#. js-lingui-id: OFU7Sk
+#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
+msgid "updated a related {objectNameSingular}"
+msgstr ""
 
 #. js-lingui-id: xuCD/Q
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
