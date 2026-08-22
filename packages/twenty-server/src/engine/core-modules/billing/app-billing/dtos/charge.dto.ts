@@ -47,9 +47,9 @@ export class ChargeDto {
   @IsString()
   resourceContext?: string;
 
-  // Webhook and cron runs have no triggering person on the token, so the owner
-  // can only come from workspace data, which names people by workspace member.
+  // Webhook and cron runs carry no triggering person on the token, so an app
+  // that knows who the spend belongs to names them here instead.
   @IsOptional()
   @IsUUID()
-  workspaceMemberId?: string;
+  userWorkspaceId?: string;
 }

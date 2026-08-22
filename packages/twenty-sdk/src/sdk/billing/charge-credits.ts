@@ -7,8 +7,9 @@ const BILLING_CHARGE_TIMEOUT_MS = 5_000;
 export type ChargeCreditsParams = {
   creditsUsedMicro: number;
   quantity?: number;
-  // Ignored when the run has a triggering user: the token already names them.
-  workspaceMemberId?: string;
+  // Who the spend belongs to, for runs with no triggering user (a webhook, a
+  // cron). Ignored otherwise: the token already names them.
+  userWorkspaceId?: string;
 } & (
   | {
       // An operation name declared in `billableOperations` on the application
@@ -38,7 +39,7 @@ export const chargeCredits = async ({
   operation,
   operationType,
   resourceContext,
-  workspaceMemberId,
+  userWorkspaceId,
 }: ChargeCreditsParams): Promise<void> => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const token = getApplicationAccessToken();
@@ -62,7 +63,7 @@ export const chargeCredits = async ({
           operation,
           operationType,
           resourceContext,
-          workspaceMemberId,
+          userWorkspaceId,
         }),
         signal: AbortSignal.timeout(BILLING_CHARGE_TIMEOUT_MS),
       },

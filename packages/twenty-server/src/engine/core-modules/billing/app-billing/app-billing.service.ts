@@ -57,12 +57,11 @@ export class AppBillingService {
     const [operationType, attributedUserWorkspaceId, periodStart] =
       await Promise.all([
         this.resolveOperationType({ workspaceId, applicationId, charge }),
-        isDefined(userWorkspaceId)
-          ? userWorkspaceId
-          : this.resolveUserWorkspaceIdForWorkspaceMember({
-              workspaceId,
-              workspaceMemberId: charge.workspaceMemberId,
-            }),
+        userWorkspaceId ??
+          this.findWorkspaceScopedUserWorkspaceId(
+            workspaceId,
+            charge.userWorkspaceId,
+          ),
         this.resolveBillingPeriodStart(workspaceId),
       ]);
 
@@ -153,32 +152,18 @@ export class AppBillingService {
       : currentBillingSubscription.currentPeriodStart;
   }
 
-  // Workspace-scoped on both hops, so an app cannot attribute its spend to
+  // Scoped to the token's workspace, so an app cannot attribute its spend to
   // someone outside the workspace its token was issued for.
-  private async resolveUserWorkspaceIdForWorkspaceMember({
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    workspaceId: string;
-    workspaceMemberId?: string;
-  }): Promise<string | null> {
-    if (!isDefined(workspaceMemberId)) {
-      return null;
-    }
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
-
-    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
+  private async findWorkspaceScopedUserWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId?: string,
+  ): Promise<string | null> {
+    if (!isDefined(userWorkspaceId)) {
       return null;
     }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: workspaceMember.userId, workspaceId },
+      where: { id: userWorkspaceId, workspaceId },
       select: { id: true },
     });
 

@@ -92,6 +92,59 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 The same applies to front components reading values via `getApplicationVariable('VARIABLE_NAME')` — the returned value is a string; parse it as needed.
 
+## Billable operations
+
+If your app charges credits, declare what it charges for. Each entry maps an operation name you choose onto the billing category the platform meters, plus the label shown to workspace admins in **Settings > Usage**.
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, variables...
+  billableOperations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+    },
+    summarizeMeeting: {
+      operationType: 'AI_CHAT_TOKEN',
+      label: 'Meeting summary',
+    },
+  },
+});
+```
+
+Charge against a declared operation by name:
+
+```ts
+import { chargeCredits } from 'twenty-sdk/billing';
+
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+});
+```
+
+`operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
+
+Notes:
+- Declaring operations is what lets Usage split your app's spend by what it charged for. An app that declares nothing is still reported, as a single slice under its display name.
+- Charging an operation your manifest does not declare is rejected. Add it to `billableOperations` and sync.
+- Several operations may share one `operationType`. Two enrichment operations both metered as `CODE_EXECUTION` still show as two labelled slices.
+- Without `operation`, name the billing category directly with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
+
+Spend is attributed to whoever triggered the run, so it shows up in **Usage by User**. Runs with nobody behind them (a webhook, a cron) have no triggering person — pass `userWorkspaceId` if your app knows who the spend belongs to. It must belong to the workspace the app is installed in, and it is ignored when the run does have a triggering user.
+
+```ts
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+  userWorkspaceId: storedOwnerUserWorkspaceId,
+});
+```
+
 ## Default function role
 
 The role declared with [`defineApplicationRole()`](/developers/extend/apps/config/roles) controls what the app's logic functions and front components can access:
