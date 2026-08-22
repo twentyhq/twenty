@@ -60,6 +60,8 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
     keepTimelineActivitiesOfSelectedTypes(
       events,
       timelineActivityTypeIdsFilter,
+      timelineActivityTypeById,
+      objectMetadataItems,
     ),
     targetableObject.targetObjectNameSingular,
     objectMetadataItems,
