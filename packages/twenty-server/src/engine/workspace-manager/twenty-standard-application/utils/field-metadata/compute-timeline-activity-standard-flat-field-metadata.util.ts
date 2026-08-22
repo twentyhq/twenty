@@ -247,7 +247,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
         msg({ message: `Event name`, context: 'fieldMetadata.description' }),
       ),
       icon: 'IconAbc',
-      isSystem: true,
       isNullable: true,
       isUIEditable: false,
     },
