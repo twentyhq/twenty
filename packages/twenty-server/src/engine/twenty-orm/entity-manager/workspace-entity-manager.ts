@@ -212,14 +212,16 @@ export class WorkspaceEntityManager extends EntityManager {
       queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as EntityTarget<Entity>,
         alias as string,
-        queryRunner as QueryRunner | undefined,
+        (queryRunner ?? this.queryRunner) as QueryRunner | undefined,
         {
           calledByWorkspaceEntityManager: true,
         },
       );
     } else {
       queryBuilder = this.connection.createQueryBuilder(
-        entityClassOrQueryRunner as QueryRunner,
+        ((entityClassOrQueryRunner as QueryRunner) ??
+          queryRunner ??
+          this.queryRunner) as QueryRunner | undefined,
         {
           calledByWorkspaceEntityManager: true,
         },

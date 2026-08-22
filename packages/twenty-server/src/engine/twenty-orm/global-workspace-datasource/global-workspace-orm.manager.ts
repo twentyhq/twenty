@@ -1,4 +1,4 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,6 +24,8 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 
 @Injectable()
 export class GlobalWorkspaceOrmManager {
+  private readonly logger = new Logger(GlobalWorkspaceOrmManager.name);
+
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -175,7 +177,13 @@ export class GlobalWorkspaceOrmManager {
         return result;
       } catch (error) {
         if (queryRunner.isTransactionActive) {
-          await queryRunner.rollbackTransaction();
+          await queryRunner
+            .rollbackTransaction()
+            .catch((rollbackError: Error) =>
+              this.logger.warn(
+                `Discarding failed transaction ROLLBACK: ${rollbackError.message}`,
+              ),
+            );
         }
 
         throw error;
