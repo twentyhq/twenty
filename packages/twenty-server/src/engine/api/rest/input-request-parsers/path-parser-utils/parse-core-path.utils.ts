@@ -7,8 +7,6 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 export const parseCorePath = (
   request: Request,
 ): { object: string; id?: string } => {
-  // Anchored: an unanchored replace also eats the `/rest` inside a trailing
-  // `/restore`.
   const queryAction = request.path
     .replace(new RegExp(`^/${ApiPath.Rest}`), '')
     .split('/')
