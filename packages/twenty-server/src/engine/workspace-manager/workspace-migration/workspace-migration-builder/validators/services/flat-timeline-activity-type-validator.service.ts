@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isTimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  isTimelineActivityAction,
+  isTimelineActivityRenderer,
+  type TimelineActivityRenderer,
+} from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -12,6 +16,13 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+
+// The two renderers that draw from the row itself rather than from a linked
+// record, so they need no object on the type.
+const UNBOUND_TIMELINE_ACTIVITY_RENDERERS: TimelineActivityRenderer[] = [
+  'mainObject',
+  'genericLinked',
+];
 
 @Injectable()
 export class FlatTimelineActivityTypeValidatorService {
@@ -56,6 +67,33 @@ export class FlatTimelineActivityTypeValidatorService {
         code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
         message: t`Unknown timeline activity action ${flatTimelineActivityType.action}`,
         userFriendlyMessage: msg`This timeline activity action is not supported`,
+      });
+    }
+
+    if (
+      isDefined(flatTimelineActivityType.renderer) &&
+      !isTimelineActivityRenderer(flatTimelineActivityType.renderer)
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Unknown timeline activity renderer ${flatTimelineActivityType.renderer}`,
+        userFriendlyMessage: msg`This timeline activity renderer is not supported`,
+      });
+    }
+
+    // Every renderer but the generic ones reads a linked record off the row, so
+    // it only ever makes sense on a type bound to the object it draws.
+    if (
+      isDefined(flatTimelineActivityType.renderer) &&
+      !UNBOUND_TIMELINE_ACTIVITY_RENDERERS.includes(
+        flatTimelineActivityType.renderer,
+      ) &&
+      !isDefined(flatTimelineActivityType.objectUniversalIdentifier)
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Timeline activity renderer ${flatTimelineActivityType.renderer} requires the type to reference an object`,
+        userFriendlyMessage: msg`This timeline activity renderer requires the type to reference an object`,
       });
     }
 

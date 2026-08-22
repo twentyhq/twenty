@@ -23,15 +23,25 @@ export type TimelineActivityTypeResolver = (args: {
 // A type bound to the event's object wins, so a linked note is stamped with the
 // note type and renders through its own component; the unbound type for the same
 // action is the fallback every other object shares.
+//
+// Candidates are ordered by universal identifier before the first one wins, so a
+// workspace whose types collide on a dispatch key still resolves the same way on
+// every run rather than following map iteration order.
 export const buildTimelineActivityTypeResolver = (
   flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps,
 ): TimelineActivityTypeResolver => {
   const idByObjectAndAction = new Map<string, string>();
   const idByAction = new Map<TimelineActivityAction, string>();
 
-  for (const flatTimelineActivityType of Object.values(
+  const orderedFlatTimelineActivityTypes = Object.entries(
     flatTimelineActivityTypeMaps.byUniversalIdentifier,
-  )) {
+  )
+    .sort(([leftUniversalIdentifier], [rightUniversalIdentifier]) =>
+      leftUniversalIdentifier.localeCompare(rightUniversalIdentifier),
+    )
+    .map(([, flatTimelineActivityType]) => flatTimelineActivityType);
+
+  for (const flatTimelineActivityType of orderedFlatTimelineActivityTypes) {
     if (
       !isDefined(flatTimelineActivityType) ||
       !isDefined(flatTimelineActivityType.action)

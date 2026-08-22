@@ -417,7 +417,6 @@
                       "developers/extend/apps/config/application",
                       "developers/extend/apps/config/roles",
                       "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/timeline-activity-types",
                       "developers/extend/apps/config/public-assets"
                     ]
                   },
