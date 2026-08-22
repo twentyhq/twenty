@@ -90,4 +90,28 @@ describe('findAngleBracketPlaceholders', () => {
       'second-id',
     ]);
   });
+  // A running parity counter would treat every later match as inline code.
+  it('is not blinded by an unpaired backtick earlier in the file', () => {
+    const violations = findAngleBracketPlaceholders(
+      'a stray ` backtick\n\nthen use <workspace-id> here',
+    );
+
+    expect(violations).toHaveLength(1);
+    expect(violations[0].name).toBe('workspace-id');
+  });
+
+  it('pairs backtick runs by length', () => {
+    expect(
+      findAngleBracketPlaceholders('``code with ` tick and <env>``'),
+    ).toEqual([]);
+  });
+
+  it('does not treat a backtick on a previous line as opening a span', () => {
+    const violations = findAngleBracketPlaceholders(
+      'ends with a tick `\nnext line has <api-key>',
+    );
+
+    expect(violations).toHaveLength(1);
+    expect(violations[0].name).toBe('api-key');
+  });
 });

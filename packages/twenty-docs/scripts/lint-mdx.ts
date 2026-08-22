@@ -125,20 +125,47 @@ const getFencedCodeRanges = (text: string): Range[] => {
 const isInsideRange = (position: number, ranges: Range[]) =>
   ranges.some((range) => position >= range.start && position < range.end);
 
-const isInsideInlineCode = (
-  position: number,
-  text: string,
-  fencedRanges: Range[],
-) => {
-  let backtickCount = 0;
+// Backtick runs are paired within a line, never across one. A running parity
+// counter would let a single unpaired backtick silently suppress every finding
+// in the rest of the file.
+const getInlineCodeRanges = (text: string, fencedRanges: Range[]): Range[] => {
+  const ranges: Range[] = [];
+  let lineStart = 0;
 
-  for (let index = 0; index < position; index++) {
-    if (text[index] === '`' && !isInsideRange(index, fencedRanges)) {
-      backtickCount++;
+  for (const line of text.split('\n')) {
+    const runs: { start: number; length: number }[] = [];
+
+    for (const match of line.matchAll(/`+/g)) {
+      const start = lineStart + match.index;
+
+      if (!isInsideRange(start, fencedRanges)) {
+        runs.push({ start, length: match[0].length });
+      }
     }
+
+    const unclosed: typeof runs = [];
+
+    for (const run of runs) {
+      const openerIndex = unclosed.findIndex(
+        (candidate) => candidate.length === run.length,
+      );
+
+      if (openerIndex === -1) {
+        unclosed.push(run);
+        continue;
+      }
+
+      ranges.push({
+        start: unclosed[openerIndex].start,
+        end: run.start + run.length,
+      });
+      unclosed.splice(0, openerIndex + 1);
+    }
+
+    lineStart += line.length + 1;
   }
 
-  return backtickCount % 2 !== 0;
+  return ranges;
 };
 
 const getLineAndColumn = (text: string, position: number) => {
@@ -153,6 +180,7 @@ const getLineAndColumn = (text: string, position: number) => {
 
 export const findAngleBracketPlaceholders = (text: string): MdxViolation[] => {
   const fencedRanges = getFencedCodeRanges(text);
+  const inlineCodeRanges = getInlineCodeRanges(text, fencedRanges);
   const violations: MdxViolation[] = [];
 
   for (const match of text.matchAll(PLACEHOLDER_PATTERN)) {
@@ -169,7 +197,7 @@ export const findAngleBracketPlaceholders = (text: string): MdxViolation[] => {
 
     if (
       isInsideRange(position, fencedRanges) ||
-      isInsideInlineCode(position, text, fencedRanges)
+      isInsideRange(position, inlineCodeRanges)
     ) {
       continue;
     }
