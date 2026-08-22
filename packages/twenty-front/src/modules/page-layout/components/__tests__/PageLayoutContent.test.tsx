@@ -1,5 +1,5 @@
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { fireEvent, render, screen } from '@testing-library/react';
 import type * as React from 'react';
@@ -39,11 +39,12 @@ const mockWidget = {
   updatedAt: '2026-08-19T00:00:00.000Z',
 } satisfies PageLayoutWidget;
 
-const mockTab = {
-  id: 'tab-id',
-  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-  widgets: [mockWidget],
-} as PageLayoutTab;
+const mockTab = makeTab(
+  'tab-id',
+  [mockWidget],
+  0,
+  PageLayoutTabLayoutMode.VERTICAL_LIST,
+);
 
 jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
   usePageLayoutContentContext: () => ({
