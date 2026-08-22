@@ -20,10 +20,8 @@ import {
 } from '~/utils/format/formatDate';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const StyledEventCardCalendarEventContainer = styled.div<{
-  canOpen: boolean;
-}>`
-  cursor: ${({ canOpen }) => (canOpen ? 'pointer' : 'not-allowed')};
+const StyledEventCardCalendarEventContainer = styled.div`
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[2]};
@@ -152,6 +150,12 @@ export const EventCardCalendarEvent = ({
     return <CalendarEventNotSharedContent />;
   }
 
+  if (
+    calendarEvent.title === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+  ) {
+    return <CalendarEventNotSharedContent />;
+  }
+
   if (isUndefinedOrNull(calendarEvent.startsAt)) {
     return <div>{t`Calendar event has no start date`}</div>;
   }
@@ -171,13 +175,9 @@ export const EventCardCalendarEvent = ({
   const endsAtTime = isDefined(calendarEvent.endsAt)
     ? formatToHumanReadableTime(calendarEvent.endsAt, timeZone)
     : null;
-  const canOpen =
-    calendarEvent.title !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
-
   return (
     <StyledEventCardCalendarEventContainer
-      canOpen={canOpen}
-      onClick={() => canOpen && openCalendarEventInSidePanel(calendarEventId)}
+      onClick={() => openCalendarEventInSidePanel(calendarEventId)}
     >
       <StyledCalendarEventDateCard>
         <StyledCalendarEventDateCardMonth>
@@ -189,13 +189,9 @@ export const EventCardCalendarEvent = ({
       </StyledCalendarEventDateCard>
       <StyledCalendarEventContent>
         <StyledCalendarEventTop>
-          {canOpen ? (
-            <StyledCalendarEventTitle>
-              {calendarEvent.title}
-            </StyledCalendarEventTitle>
-          ) : (
-            <CalendarEventNotSharedContent />
-          )}
+          <StyledCalendarEventTitle>
+            {calendarEvent.title}
+          </StyledCalendarEventTitle>
           {((calendarEvent.calendarEventParticipants?.length ?? 0) > 0 ||
             (calendarEvent.callRecordings?.length ?? 0) > 0) && (
             <CalendarEventParticipantsAvatarGroup

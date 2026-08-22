@@ -5,8 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS } from 'src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const STANDARD_ROUTINGS = STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS.filter(
   ({ targetRelationFieldUniversalIdentifier }) =>
@@ -39,6 +41,8 @@ const JUNCTION_TARGETS = [
 export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
   }
@@ -62,9 +66,14 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
       return;
     }
 
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const routingValueClauses = STANDARD_ROUTINGS.map(
       (_, index) =>
-        `($${index * 3 + 2}::uuid, $${index * 3 + 3}::uuid, $${index * 3 + 4}::uuid[])`,
+        `($${index * 3 + 3}::uuid, $${index * 3 + 4}::uuid, $${index * 3 + 5}::uuid[])`,
     ).join(', ');
     const routingParameters = STANDARD_ROUTINGS.flatMap((definition) => [
       definition.universalIdentifier,
@@ -82,8 +91,9 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
          "triggerFieldUniversalIdentifiers"
        )
        WHERE timeline_activity_type."workspaceId" = $1
+         AND timeline_activity_type."applicationId" = $2
          AND timeline_activity_type."universalIdentifier" = routing."universalIdentifier"`,
-      [workspaceId, ...routingParameters],
+      [workspaceId, twentyStandardFlatApplication.id, ...routingParameters],
       undefined,
       { shouldBypassPermissionChecks: true },
     );
@@ -116,5 +126,10 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
       undefined,
       { shouldBypassPermissionChecks: true },
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatTimelineActivityTypeMaps',
+      'flatFieldMetadataMaps',
+    ]);
   }
 }

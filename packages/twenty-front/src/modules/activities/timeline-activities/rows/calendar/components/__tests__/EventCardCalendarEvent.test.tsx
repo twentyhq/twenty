@@ -62,6 +62,7 @@ describe('EventCardCalendarEvent', () => {
     expect(
       screen.queryByText(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText(/10:00/)).not.toBeInTheDocument();
   });
 
   it('renders the not-shared state when record access is forbidden', () => {
