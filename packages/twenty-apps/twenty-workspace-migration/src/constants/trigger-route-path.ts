@@ -1,0 +1,1 @@
+export const TRIGGER_ROUTE_PATH = '/workspace-migration'
