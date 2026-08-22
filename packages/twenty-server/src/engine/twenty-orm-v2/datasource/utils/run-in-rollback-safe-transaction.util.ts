@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { type Pool, type PoolClient } from 'pg';
 
+import { computeTwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/error-handling/compute-twenty-orm-v2-exception.util';
+
 const logger = new Logger('runInRollbackSafeTransaction');
 
 export const runInRollbackSafeTransaction = async <T>({
@@ -37,7 +39,7 @@ export const runInRollbackSafeTransaction = async <T>({
       );
     }
 
-    throw error;
+    throw computeTwentyOrmV2Exception(error);
   } finally {
     client.release(shouldDestroyConnection);
   }

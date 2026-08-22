@@ -4,6 +4,7 @@ import { QueryFailedError } from 'typeorm';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constants';
 import {
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
   QUERY_READ_TIMEOUT_MESSAGE,
@@ -17,10 +18,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-
-interface QueryFailedErrorWithCode extends QueryFailedError {
-  code?: string;
-}
+import { CustomException } from 'src/utils/custom-exception';
 
 export const computeTwentyORMException = async (
   error: Error,
@@ -28,6 +26,23 @@ export const computeTwentyORMException = async (
   entityManager?: WorkspaceEntityManager,
   internalContext?: WorkspaceInternalContext,
 ): Promise<Error | TwentyORMException> => {
+  if (error instanceof CustomException) {
+    return error;
+  }
+
+  const errorCode =
+    'code' in error && typeof error.code === 'string' ? error.code : undefined;
+
+  if (
+    isDefined(errorCode) &&
+    TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode)
+  ) {
+    return new TwentyORMException(
+      error.message,
+      TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR,
+    );
+  }
+
   if (error instanceof QueryFailedError) {
     if (error.message.includes(QUERY_READ_TIMEOUT_MESSAGE)) {
       return new TwentyORMException(
@@ -38,8 +53,6 @@ export const computeTwentyORMException = async (
         },
       );
     }
-
-    const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (
       errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION &&

@@ -57,6 +57,7 @@ export class CalendarEventImportErrorHandlerService {
         );
         break;
       case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
+      case TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
       case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         await this.handleTemporaryException(

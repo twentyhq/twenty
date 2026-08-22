@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constants';
 import {
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
   DUPLICATE_ENTRY_DETECTED_MESSAGE,
@@ -8,6 +9,7 @@ import {
   INVALID_INPUT_USER_FRIENDLY_MESSAGE,
   QUERY_READ_TIMEOUT_MESSAGE,
   QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
+  TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
 } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import {
@@ -19,12 +21,6 @@ import { CustomException } from 'src/utils/custom-exception';
 const KNOWN_POSTGRES_ERROR_CODES: string[] = Object.values(
   POSTGRESQL_ERROR_CODES,
 );
-
-const getPostgresErrorCode = (error: Error): string | undefined => {
-  const { code } = error as Error & { code?: unknown };
-
-  return typeof code === 'string' ? code : undefined;
-};
 
 // The pg error carries the failing statement's detail; the sentry driver reads `cause`
 const withCause = <TError extends Error>(
@@ -52,10 +48,22 @@ export const computeTwentyOrmV2Exception = (error: unknown): Error => {
     );
   }
 
-  const errorCode = getPostgresErrorCode(error);
+  const errorCode =
+    'code' in error && typeof error.code === 'string' ? error.code : undefined;
 
   if (!isDefined(errorCode)) {
     return error;
+  }
+
+  if (TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode)) {
+    return withCause(
+      new TwentyOrmV2Exception(
+        error.message,
+        TwentyOrmV2ExceptionCode.TRANSIENT_DATABASE_ERROR,
+        TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
+      ),
+      error,
+    );
   }
 
   if (errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {
