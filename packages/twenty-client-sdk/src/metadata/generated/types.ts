@@ -6328,6 +6328,9 @@ export default {
             "id": [
                 3
             ],
+            "universalIdentifier": [
+                3
+            ],
             "name": [
                 1
             ],
@@ -6343,7 +6346,16 @@ export default {
             "renderer": [
                 1
             ],
+            "frontComponentUniversalIdentifier": [
+                3
+            ],
             "objectUniversalIdentifier": [
+                3
+            ],
+            "targetRelationFieldUniversalIdentifier": [
+                3
+            ],
+            "triggerFieldUniversalIdentifiers": [
                 3
             ],
             "applicationId": [

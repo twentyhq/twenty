@@ -67,6 +67,12 @@ export type {
   EnqueueJobResult,
 } from 'twenty-shared/application';
 
+export { createTimelineActivity } from '@/sdk/logic-function/timeline/create-timeline-activity';
+export type {
+  CreatedTimelineActivity,
+  CreateTimelineActivityInput,
+} from '@/sdk/logic-function/timeline/create-timeline-activity';
+
 export { kv } from '@/sdk/logic-function/key-value/kv';
 export type { AppKeyValue, AppKeyValueScope } from 'twenty-shared/application';
 

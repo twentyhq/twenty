@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -552,6 +553,9 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.calendarEventParticipant.fields.person
+          .universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

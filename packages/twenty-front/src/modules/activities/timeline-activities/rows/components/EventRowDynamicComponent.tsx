@@ -1,61 +1,48 @@
-import { TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER } from '@/activities/timeline-activities/constants/TimelineActivityRowComponentByRenderer';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type TimelineActivityRenderer } from 'twenty-shared/timeline';
+import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
+import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { isDefined } from 'twenty-shared/utils';
-
-const getLegacyTimelineActivityRenderer = (
-  linkedObjectNameSingular: string | undefined,
-): TimelineActivityRenderer => {
-  switch (linkedObjectNameSingular) {
-    case CoreObjectNameSingular.Note:
-    case CoreObjectNameSingular.Task:
-      return 'activity';
-    case CoreObjectNameSingular.Message:
-      return 'message';
-    case CoreObjectNameSingular.CalendarEvent:
-      return 'calendarEvent';
-    default:
-      return isDefined(linkedObjectNameSingular)
-        ? 'genericLinked'
-        : 'mainObject';
-  }
-};
+import { FrontComponentRenderer } from '@/front-components/components/FrontComponentRenderer';
 
 export const EventRowDynamicComponent = ({
   labelIdentifierValue,
   event,
   eventAction,
-  eventRenderer,
+  eventTypeLabel,
+  frontComponentId,
   mainObjectMetadataItem,
   linkedObjectMetadataItem,
   authorFullName,
   createdAt,
 }: EventRowDynamicComponentProps) => {
-  const renderer =
-    eventRenderer ??
-    // Old pods can write name-only rows after the 2.33 backfill has run.
-    (isDefined(event.timelineActivityTypeId)
-      ? isDefined(linkedObjectMetadataItem)
-        ? 'genericLinked'
-        : 'mainObject'
-      : getLegacyTimelineActivityRenderer(
-          linkedObjectMetadataItem?.nameSingular,
-        ));
+  const EventRowComponent = isDefined(event.linkedRecordId)
+    ? EventRowGenericLinked
+    : EventRowMainObject;
 
-  const EventRowComponent =
-    TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER[renderer];
-
-  return (
+  const nativeRenderer = (
     <EventRowComponent
       labelIdentifierValue={labelIdentifierValue}
       event={event}
       eventAction={eventAction}
-      eventRenderer={eventRenderer}
+      eventTypeLabel={eventTypeLabel}
+      frontComponentId={frontComponentId}
       mainObjectMetadataItem={mainObjectMetadataItem}
       linkedObjectMetadataItem={linkedObjectMetadataItem}
       authorFullName={authorFullName}
       createdAt={createdAt}
+    />
+  );
+
+  if (!isDefined(frontComponentId)) {
+    return nativeRenderer;
+  }
+
+  return (
+    <FrontComponentRenderer
+      frontComponentId={frontComponentId}
+      timelineActivityId={event.id}
+      loadingFallback={nativeRenderer}
+      unavailableFallback={nativeRenderer}
     />
   );
 };

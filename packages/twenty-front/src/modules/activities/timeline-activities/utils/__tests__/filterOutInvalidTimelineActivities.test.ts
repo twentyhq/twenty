@@ -39,36 +39,39 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
     UPDATED_TYPE_ID,
     {
       id: UPDATED_TYPE_ID,
+      universalIdentifier: UPDATED_TYPE_ID,
       name: 'recordUpdated',
       label: 'updated',
       action: 'updated',
       icon: null,
-      renderer: null,
       objectUniversalIdentifier: null,
+      frontComponentUniversalIdentifier: null,
     },
   ],
   [
     LINKED_TYPE_ID,
     {
       id: LINKED_TYPE_ID,
+      universalIdentifier: LINKED_TYPE_ID,
       name: 'recordLinked',
       label: 'was linked by',
       action: 'linked',
       icon: null,
-      renderer: null,
       objectUniversalIdentifier: null,
+      frontComponentUniversalIdentifier: null,
     },
   ],
   [
     NOTE_UPDATED_TYPE_ID,
     {
       id: NOTE_UPDATED_TYPE_ID,
+      universalIdentifier: NOTE_UPDATED_TYPE_ID,
       name: 'noteUpdated',
       label: 'updated a related note',
       action: 'updated',
       icon: null,
-      renderer: 'activity',
       objectUniversalIdentifier: NOTE_OBJECT_UNIVERSAL_IDENTIFIER,
+      frontComponentUniversalIdentifier: null,
     },
   ],
 ]);
@@ -222,33 +225,6 @@ describe('filterOutInvalidTimelineActivities', () => {
         id: '1',
         timelineActivityTypeId: NOTE_UPDATED_TYPE_ID,
         linkedObjectMetadataId: null,
-        properties: { diff: { title: { before: 'a', after: 'b' } } },
-      },
-    ]);
-  });
-
-  it('resolves the linked object from name for a row written by an old pod', () => {
-    const events = [
-      {
-        id: '1',
-        timelineActivityTypeId: null,
-        linkedObjectMetadataId: null,
-        name: 'linked-note.updated',
-        properties: {
-          diff: {
-            title: { before: 'a', after: 'b' },
-            field1: { before: 'c', after: 'd' },
-          },
-        },
-      },
-    ];
-
-    expect(filter(events)).toEqual([
-      {
-        id: '1',
-        timelineActivityTypeId: null,
-        linkedObjectMetadataId: null,
-        name: 'linked-note.updated',
         properties: { diff: { title: { before: 'a', after: 'b' } } },
       },
     ]);

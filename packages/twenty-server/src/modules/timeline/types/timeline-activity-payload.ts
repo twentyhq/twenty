@@ -1,4 +1,5 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
 export type TimelineActivityPayload = {
   properties: ObjectRecordBaseEvent['properties'];
@@ -6,9 +7,8 @@ export type TimelineActivityPayload = {
   linkedRecordId?: string;
   linkedRecordCachedName?: string;
   workspaceMemberId?: string;
-  // Kept only to merge with name-only rows written during a rolling upgrade.
-  legacyName: string;
   timelineActivityTypeId: string;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
   recordId: string;
   objectSingularName?: string;
 };

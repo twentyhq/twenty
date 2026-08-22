@@ -123,5 +123,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     fieldMetadata: true,
   },
-  timelineActivityType: {},
+  timelineActivityType: {
+    objectMetadata: true,
+    fieldMetadata: true,
+    frontComponent: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

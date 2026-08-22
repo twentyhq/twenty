@@ -3189,12 +3189,16 @@ enum MetadataTranslationProvenance {
 
 type TimelineActivityType {
   id: UUID!
+  universalIdentifier: UUID!
   name: String!
   label: String!
   action: String
   icon: String
-  renderer: String
+  renderer: String @deprecated(reason: "Use frontComponentUniversalIdentifier")
+  frontComponentUniversalIdentifier: UUID
   objectUniversalIdentifier: UUID
+  targetRelationFieldUniversalIdentifier: UUID
+  triggerFieldUniversalIdentifiers: [UUID!]
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!

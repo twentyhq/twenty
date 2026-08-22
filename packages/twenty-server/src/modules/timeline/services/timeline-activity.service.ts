@@ -19,9 +19,10 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
 import {
-  resolveTimelineActivityTypeIdOrThrow,
+  type ResolvedTimelineActivityType,
+  resolveTimelineActivityTypeOrThrow,
   type TimelineActivityTypeResolver,
-} from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
+} from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
@@ -65,8 +66,7 @@ const keepDiffOnly = (
 // cached name and the persisted properties differ.
 const buildLinkedPayload = ({
   rule,
-  legacyName,
-  timelineActivityTypeId,
+  timelineActivityType,
   target,
   workspaceMemberId,
   linkedRecordId,
@@ -74,16 +74,15 @@ const buildLinkedPayload = ({
   properties,
 }: {
   rule: TimelineActivityRule;
-  legacyName: string;
-  timelineActivityTypeId: string;
+  timelineActivityType: ResolvedTimelineActivityType;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
   linkedRecordCachedName: string | undefined;
   properties: ObjectRecordBaseEvent['properties'];
 }): TimelineActivityPayload => ({
-  legacyName,
-  timelineActivityTypeId,
+  timelineActivityTypeId: timelineActivityType.id,
+  timelineActivityTypeSnapshot: timelineActivityType.snapshot,
   objectSingularName: target.targetObjectNameSingular,
   recordId: target.targetRecordId,
   workspaceMemberId,
@@ -119,7 +118,7 @@ export class TimelineActivityService {
       sourceRules,
       junctionRules,
       flatFieldMetadataMaps,
-      resolveTimelineActivityTypeId,
+      resolveTimelineActivityType,
     } = await this.timelineActivityRuleBuilderService.getRulesForEventBatch({
       workspaceId,
       flatObjectMetadata: objectMetadata,
@@ -153,7 +152,7 @@ export class TimelineActivityService {
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
-                resolveTimelineActivityTypeId,
+                resolveTimelineActivityType,
               }),
             ),
             ...junctionRules.map((rule) =>
@@ -163,7 +162,7 @@ export class TimelineActivityService {
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
-                resolveTimelineActivityTypeId,
+                resolveTimelineActivityType,
               }),
             ),
           ]);
@@ -224,14 +223,14 @@ export class TimelineActivityService {
     action,
     workspaceId,
     flatFieldMetadataMaps,
-    resolveTimelineActivityTypeId,
+    resolveTimelineActivityType,
   }: {
     rule: TimelineActivityRule;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
+    resolveTimelineActivityType: TimelineActivityTypeResolver;
   }): Promise<TimelineActivityPayload[]> {
     const ruleAction = SOURCE_EVENT_ACTIONS[action];
 
@@ -239,18 +238,15 @@ export class TimelineActivityService {
       return [];
     }
 
-    // A self rule writes the record's own row, which carries no linked record,
-    // so it must not take the object-bound type: that one renders as a linked
-    // entry and has no linked object to draw.
-    const timelineActivityTypeId = resolveTimelineActivityTypeIdOrThrow({
-      resolveTimelineActivityTypeId,
-      workspaceId,
-      action: ruleAction,
-      objectUniversalIdentifier:
-        rule.targetShape.kind === 'SELF'
-          ? undefined
-          : rule.sourceFlatObjectMetadata.universalIdentifier,
-    });
+    const timelineActivityType =
+      rule.timelineActivityType ??
+      resolveTimelineActivityTypeOrThrow({
+        resolveTimelineActivityType,
+        workspaceId,
+        action: ruleAction,
+        objectUniversalIdentifier:
+          rule.sourceFlatObjectMetadata.universalIdentifier,
+      });
 
     const matchingEvents = events.filter((event) =>
       this.ruleMatchesEvent({ rule, ruleAction, event }),
@@ -274,8 +270,8 @@ export class TimelineActivityService {
 
         return [
           {
-            legacyName: `${nameSingular}.${action}`,
-            timelineActivityTypeId,
+            timelineActivityTypeId: timelineActivityType.id,
+            timelineActivityTypeSnapshot: timelineActivityType.snapshot,
             objectSingularName: nameSingular,
             recordId: event.recordId,
             workspaceMemberId: event.workspaceMemberId,
@@ -298,8 +294,7 @@ export class TimelineActivityService {
       (targetsBySourceRecordId.get(event.recordId) ?? []).map((target) =>
         buildLinkedPayload({
           rule,
-          legacyName: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
-          timelineActivityTypeId,
+          timelineActivityType,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: event.recordId,
@@ -320,14 +315,14 @@ export class TimelineActivityService {
     action,
     workspaceId,
     flatFieldMetadataMaps,
-    resolveTimelineActivityTypeId,
+    resolveTimelineActivityType,
   }: {
     rule: TimelineActivityRule;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
+    resolveTimelineActivityType: TimelineActivityTypeResolver;
   }): Promise<TimelineActivityPayload[]> {
     const ruleAction = JUNCTION_EVENT_ACTIONS[action];
 
@@ -335,13 +330,15 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityTypeId = resolveTimelineActivityTypeIdOrThrow({
-      resolveTimelineActivityTypeId,
-      workspaceId,
-      action: ruleAction,
-      objectUniversalIdentifier:
-        rule.sourceFlatObjectMetadata.universalIdentifier,
-    });
+    const timelineActivityType =
+      rule.timelineActivityType ??
+      resolveTimelineActivityTypeOrThrow({
+        resolveTimelineActivityType,
+        workspaceId,
+        action: ruleAction,
+        objectUniversalIdentifier:
+          rule.sourceFlatObjectMetadata.universalIdentifier,
+      });
 
     const { junctionSourceJoinColumnName } = rule.targetShape;
 
@@ -389,8 +386,7 @@ export class TimelineActivityService {
       .map(({ event, target, sourceRecordId }) =>
         buildLinkedPayload({
           rule,
-          legacyName: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
-          timelineActivityTypeId,
+          timelineActivityType,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: sourceRecordId,

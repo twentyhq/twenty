@@ -15,6 +15,7 @@ type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
+  eventTypeLabel?: string;
   event: Pick<TimelineActivity, 'id' | 'properties'>;
   createdAt?: string;
 };
@@ -43,6 +44,7 @@ const StyledEventRowMainObjectUpdatedContainer = styled.div`
 export const EventRowMainObjectUpdated = ({
   authorFullName,
   labelIdentifierValue,
+  eventTypeLabel,
   event,
   mainObjectMetadataItem,
   createdAt,
@@ -66,7 +68,7 @@ export const EventRowMainObjectUpdated = ({
       <StyledRowContainer>
         <StyledRow>
           <EventRowItem>{authorFullName}</EventRowItem>
-          {t`updated`}
+          {eventTypeLabel ?? t`updated`}
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
