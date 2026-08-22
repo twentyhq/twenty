@@ -1,0 +1,50 @@
+---
+title: Timeline Activity Types
+description: Declare the kinds of entry your app writes to a record's timeline, and how each one is drawn.
+icon: "clock-rotate-left"
+---
+
+A **timeline activity type** describes one kind of entry on a record's timeline. Every row stored in `timelineActivity` points at one, and the type carries everything the timeline needs to present it: the phrase to show, the icon, and which component draws the row.
+
+Twenty seeds its own types for record changes (created, updated, deleted, restored) and for links to notes, tasks, messages and calendar events. An app declares its own through `timelineActivityTypes` in its manifest.
+
+<Note>
+There is no `defineTimelineActivityType` helper in `twenty-sdk` yet. Declare types directly in the manifest until one lands.
+</Note>
+
+## Shape
+
+| Field | Required | Meaning |
+|---|---|---|
+| `name` | yes | Machine key, unique per application. |
+| `label` | yes | The phrase shown on the timeline row. |
+| `action` | no | The verb the entry describes. Omit for a type that is only offered for creation and never stamped on a row. |
+| `icon` | no | The row icon. Falls back to the linked object's icon. |
+| `renderer` | no | The component that draws the row. Omit to render from the label and icon alone. |
+| `objectUniversalIdentifier` | no | The object whose records the entry is about. Events on that object are stamped with this type instead of the shared one for the same action. |
+
+### `action` values
+
+`created`, `updated`, `deleted`, `restored`, `linked`, `unlinked`.
+
+A record's own change uses `created`, `updated`, `deleted` or `restored`. `linked` and `unlinked` describe a relation to another record appearing or going away, which is distinct from that record itself being deleted.
+
+### `renderer` values
+
+| Value | Draws |
+|---|---|
+| `mainObject` | A change to the record the timeline belongs to, including its field diff. |
+| `genericLinked` | A link to another record, labelled by that record's display name. |
+| `activity` | A linked note or task, with its title. |
+| `message` | A linked email, with its subject and preview. |
+| `calendarEvent` | A linked calendar event, with its title and time. |
+
+## How a type is chosen
+
+When Twenty writes a timeline row it looks for a type matching both the object the event is about and the action. A type carrying `objectUniversalIdentifier` wins for events on that object; the type carrying none is the fallback every other object shares.
+
+That is what lets a linked note draw through the `activity` renderer while a link to any other object falls back to `genericLinked`, without either side branching on the object.
+
+<Note>
+A type bound to an object only applies to entries *about* that object appearing on another record's timeline. A record's own changes always take the shared type for the action, so they draw as a main-object row.
+</Note>
