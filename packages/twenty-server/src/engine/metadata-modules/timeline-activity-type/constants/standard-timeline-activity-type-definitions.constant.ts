@@ -6,13 +6,16 @@ export type StandardTimelineActivityTypeDefinition = {
   name: string;
   universalIdentifier: string;
   label: MessageDescriptor;
-  action: TimelineActivityAction;
+  // Null marks a type nothing stamps on a row: it exists so the timeline can
+  // offer creating one, and it renders from its label and icon alone.
+  action: TimelineActivityAction | null;
   icon: string | null;
 };
 
-// One type per rule action. The stored `name` column these replace conflated the
-// action with the source object and could not tell a linked record being
-// deleted from the link itself being removed.
+// One type per rule action, plus the entries the timeline can offer creating.
+// The stored `name` column these replace conflated the action with the source
+// object and could not tell a linked record being deleted from the link itself
+// being removed.
 export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivityTypeDefinition[] =
   [
     {
@@ -74,5 +77,25 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'unlinked',
       icon: 'IconUnlink',
+    },
+    {
+      name: 'note',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c07',
+      label: msg({
+        message: `Note`,
+        context: 'timelineActivityType.label',
+      }),
+      action: null,
+      icon: 'IconNotes',
+    },
+    {
+      name: 'task',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c08',
+      label: msg({
+        message: `Task`,
+        context: 'timelineActivityType.label',
+      }),
+      action: null,
+      icon: 'IconCheckbox',
     },
   ];

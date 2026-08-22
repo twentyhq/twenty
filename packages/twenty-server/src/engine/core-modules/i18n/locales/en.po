@@ -6758,6 +6758,12 @@ msgctxt "pageLayoutWidget.title"
 msgid "Note"
 msgstr "Note"
 
+#. js-lingui-id: wNtGsC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "Note"
+msgstr "Note"
+
 #. js-lingui-id: wmdbyt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9347,6 +9353,12 @@ msgstr "Task"
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
+msgid "Task"
+msgstr "Task"
+
+#. js-lingui-id: CsQxT6
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
 msgid "Task"
 msgstr "Task"
 
