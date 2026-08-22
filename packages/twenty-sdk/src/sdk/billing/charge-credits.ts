@@ -6,12 +6,25 @@ const BILLING_CHARGE_TIMEOUT_MS = 5_000;
 
 export type ChargeCreditsParams = {
   creditsUsedMicro: number;
-  operationType: string;
   quantity?: number;
-  resourceContext?: string;
   // Ignored when the run has a triggering user: the token already names them.
   workspaceMemberId?: string;
-};
+} & (
+  | {
+      // An operation name declared in `billableOperations` on the application
+      // manifest. The platform resolves its billing category and its label.
+      operation: string;
+      operationType?: never;
+      resourceContext?: never;
+    }
+  | {
+      // For applications that declare no billable operations: name the
+      // platform billing category directly, unlabelled.
+      operationType: string;
+      operation?: never;
+      resourceContext?: string;
+    }
+);
 
 // Records credit usage against the running application via the Twenty
 // server's `/app/billing/charge` endpoint. Reads `TWENTY_API_URL` and the
@@ -21,8 +34,9 @@ export type ChargeCreditsParams = {
 // never surfaces as a tool failure.
 export const chargeCredits = async ({
   creditsUsedMicro,
-  operationType,
   quantity = 1,
+  operation,
+  operationType,
   resourceContext,
   workspaceMemberId,
 }: ChargeCreditsParams): Promise<void> => {
@@ -45,6 +59,7 @@ export const chargeCredits = async ({
         body: JSON.stringify({
           creditsUsedMicro,
           quantity,
+          operation,
           operationType,
           resourceContext,
           workspaceMemberId,

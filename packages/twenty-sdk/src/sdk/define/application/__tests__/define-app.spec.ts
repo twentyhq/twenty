@@ -124,6 +124,58 @@ describe('defineApplication', () => {
     expect(warnings.some((warning) => warning.includes('API_KEY'))).toBe(true);
   });
 
+  it('should accept a billable operation mapped to a known operationType', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billableOperations: {
+        recordMeeting: {
+          operationType: 'CALL_RECORDING',
+          label: 'Meeting recording',
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should return error when a billable operation maps to an unknown operationType', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billableOperations: {
+        recordMeeting: {
+          operationType: 'MEETING_RECORDING' as never,
+          label: 'Meeting recording',
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      (result.errors ?? []).some((error) => error.includes('recordMeeting')),
+    ).toBe(true);
+  });
+
+  it('should return error when a billable operation has an empty label', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billableOperations: {
+        recordMeeting: { operationType: 'CALL_RECORDING', label: '' },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Billable operation "recordMeeting" must have a non empty label',
+    );
+  });
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       displayName: 'My App',

@@ -15,13 +15,18 @@ export type UsageBreakdownItem = {
   creditsUsed: number;
 };
 
+export type UsageApplicationBreakdownItem = {
+  applicationId: string;
+  operation: string;
+  creditsUsed: number;
+};
+
 export type UsageTimeSeriesPoint = {
   date: string;
   creditsUsed: number;
 };
 
-type BreakdownRowMicro = {
-  key: string;
+type BreakdownRowMicro<TColumn extends string> = Record<TColumn, string> & {
   creditsUsedMicro: number;
 };
 
@@ -75,11 +80,14 @@ export class UsageAnalyticsService {
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
-      periodStart: formatDateTimeForClickHouse(params.periodStart),
-      periodEnd: formatDateTimeForClickHouse(params.periodEnd),
-      operationTypes: aiOperationTypes,
-    });
+    const rows = await this.clickHouseService.select<BreakdownRowMicro<'key'>>(
+      query,
+      {
+        periodStart: formatDateTimeForClickHouse(params.periodStart),
+        periodEnd: formatDateTimeForClickHouse(params.periodEnd),
+        operationTypes: aiOperationTypes,
+      },
+    );
 
     return rows.map((row) => ({
       key: row.key,
@@ -88,44 +96,60 @@ export class UsageAnalyticsService {
   }
 
   async getUsageByUser(params: PeriodParams): Promise<UsageBreakdownItem[]> {
-    return this.queryBreakdown({
+    const rows = await this.queryBreakdown({
       ...params,
-      groupByField: 'userWorkspaceId',
+      groupByFields: ['userWorkspaceId'],
       extraWhere: "AND userWorkspaceId != ''",
     });
+
+    return rows.map((row) => ({
+      key: row.userWorkspaceId,
+      creditsUsed: row.creditsUsedMicro,
+    }));
   }
 
   async getUsageByModel(params: PeriodParams): Promise<UsageBreakdownItem[]> {
-    return this.queryBreakdown({
+    const rows = await this.queryBreakdown({
       ...params,
-      groupByField: 'resourceContext',
+      groupByFields: ['resourceContext'],
       extraWhere: "AND resourceContext != ''",
     });
+
+    return rows.map((row) => ({
+      key: row.resourceContext,
+      creditsUsed: row.creditsUsedMicro,
+    }));
   }
 
   async getUsageByOperationType(
     params: PeriodParams & { userWorkspaceId?: string },
   ): Promise<UsageBreakdownItem[]> {
-    return this.queryBreakdown({
+    const rows = await this.queryBreakdown({
       ...params,
-      groupByField: 'operationType',
+      groupByFields: ['operationType'],
       ...(params.userWorkspaceId && {
         extraWhere: 'AND userWorkspaceId = {userWorkspaceId:String}',
         extraParams: { userWorkspaceId: params.userWorkspaceId },
       }),
     });
+
+    return rows.map((row) => ({
+      key: row.operationType,
+      creditsUsed: row.creditsUsedMicro,
+    }));
   }
 
   // Apps pick their operation type from a closed platform enum, so unrelated
   // apps merge under whichever one they picked. Grouping on the application
-  // instead answers "which app spent my credits" without disturbing the
-  // operation-type breakdown, which still accounts for every credit.
+  // and on the operation it declared answers "what did this app charge me
+  // for" without disturbing the operation-type breakdown, which still
+  // accounts for every credit.
   async getUsageByApplication(
     params: PeriodParams & { userWorkspaceId?: string },
-  ): Promise<UsageBreakdownItem[]> {
-    return this.queryBreakdown({
+  ): Promise<UsageApplicationBreakdownItem[]> {
+    const rows = await this.queryBreakdown({
       ...params,
-      groupByField: 'resourceId',
+      groupByFields: ['resourceId', 'resourceContext'],
       extraWhere: [
         'AND resourceType = {appResourceType:String}',
         "AND resourceId != ''",
@@ -140,6 +164,12 @@ export class UsageAnalyticsService {
           : {}),
       },
     });
+
+    return rows.map((row) => ({
+      applicationId: row.resourceId,
+      operation: row.resourceContext,
+      creditsUsed: row.creditsUsedMicro,
+    }));
   }
 
   async getUsageByUserTimeSeries(
@@ -158,25 +188,23 @@ export class UsageAnalyticsService {
     return this.queryTimeSeries(params);
   }
 
-  private async queryBreakdown({
+  private async queryBreakdown<const TFields extends readonly GroupByField[]>({
     workspaceId,
     periodStart,
     periodEnd,
-    groupByField,
+    groupByFields,
     operationTypes,
     extraWhere = '',
     extraParams,
   }: PeriodParams & {
-    groupByField: GroupByField;
+    groupByFields: TFields;
     extraWhere?: string;
     extraParams?: Record<string, unknown>;
-  }): Promise<UsageBreakdownItem[]> {
-    if (
-      !ALLOWED_GROUP_BY_FIELDS.includes(
-        groupByField as (typeof ALLOWED_GROUP_BY_FIELDS)[number],
-      )
-    ) {
-      throw new Error(`Invalid groupByField: ${groupByField}`);
+  }): Promise<BreakdownRowMicro<TFields[number]>[]> {
+    for (const groupByField of groupByFields) {
+      if (!ALLOWED_GROUP_BY_FIELDS.includes(groupByField)) {
+        throw new Error(`Invalid groupByField: ${groupByField}`);
+      }
     }
 
     const opTypeFilter =
@@ -184,9 +212,11 @@ export class UsageAnalyticsService {
         ? 'AND operationType IN ({operationTypes:Array(String)})'
         : '';
 
+    const groupBy = groupByFields.join(', ');
+
     const query = `
       SELECT
-        ${groupByField} AS key,
+        ${groupBy},
         sum(creditsUsedMicro) AS creditsUsedMicro
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
@@ -194,25 +224,23 @@ export class UsageAnalyticsService {
         AND timestamp < {periodEnd:String}
         ${opTypeFilter}
         ${extraWhere}
-      GROUP BY ${groupByField}
+      GROUP BY ${groupBy}
       ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
-      workspaceId,
-      periodStart: formatDateTimeForClickHouse(periodStart),
-      periodEnd: formatDateTimeForClickHouse(periodEnd),
-      ...(operationTypes && operationTypes.length > 0
-        ? { operationTypes }
-        : {}),
-      ...(extraParams ?? {}),
-    });
-
-    return rows.map((row) => ({
-      key: row.key,
-      creditsUsed: row.creditsUsedMicro,
-    }));
+    return this.clickHouseService.select<BreakdownRowMicro<TFields[number]>>(
+      query,
+      {
+        workspaceId,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
+        ...(operationTypes && operationTypes.length > 0
+          ? { operationTypes }
+          : {}),
+        ...(extraParams ?? {}),
+      },
+    );
   }
 
   private async queryTimeSeries({

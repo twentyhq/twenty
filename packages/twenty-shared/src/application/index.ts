@@ -29,6 +29,15 @@ export type {
 } from './applicationVariablesType';
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
+export type {
+  UsageOperationTypeValue,
+  BillableOperationManifest,
+  BillableOperations,
+} from './billableOperationsType';
+export {
+  USAGE_OPERATION_TYPES,
+  isUsageOperationTypeValue,
+} from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { ASSETS_DIR } from './constants/AssetDirectory';

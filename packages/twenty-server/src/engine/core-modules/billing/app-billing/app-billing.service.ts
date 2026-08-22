@@ -1,11 +1,12 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -52,40 +53,87 @@ export class AppBillingService {
     charge: ChargeDto;
   }): Promise<void> {
     const { workspaceId, applicationId, userWorkspaceId, charge } = params;
-    const unit = USAGE_UNIT_BY_OPERATION_TYPE[charge.operationType];
+
+    const [operationType, attributedUserWorkspaceId, periodStart] =
+      await Promise.all([
+        this.resolveOperationType({ workspaceId, applicationId, charge }),
+        isDefined(userWorkspaceId)
+          ? userWorkspaceId
+          : this.resolveUserWorkspaceIdForWorkspaceMember({
+              workspaceId,
+              workspaceMemberId: charge.workspaceMemberId,
+            }),
+        this.resolveBillingPeriodStart(workspaceId),
+      ]);
+
+    const unit = USAGE_UNIT_BY_OPERATION_TYPE[operationType];
 
     this.logger.log(
       `App charge from applicationId=${applicationId} workspaceId=${workspaceId}: ` +
-        `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${charge.operationType})`,
+        `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
-
-    const [attributedUserWorkspaceId, periodStart] = await Promise.all([
-      isDefined(userWorkspaceId)
-        ? userWorkspaceId
-        : this.resolveUserWorkspaceIdForWorkspaceMember({
-            workspaceId,
-            workspaceMemberId: charge.workspaceMemberId,
-          }),
-      this.resolveBillingPeriodStart(workspaceId),
-    ]);
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
         {
           resourceType: UsageResourceType.APP,
-          operationType: charge.operationType,
+          operationType,
           creditsUsedMicro: charge.creditsUsedMicro,
           quantity: charge.quantity,
           unit,
           resourceId: applicationId,
-          resourceContext: charge.resourceContext ?? null,
+          resourceContext: charge.operation ?? charge.resourceContext ?? null,
           userWorkspaceId: attributedUserWorkspaceId,
           periodStart,
         },
       ],
       workspaceId,
     );
+  }
+
+  private async resolveOperationType({
+    workspaceId,
+    applicationId,
+    charge,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    charge: ChargeDto;
+  }): Promise<UsageOperationType> {
+    if (!isDefined(charge.operation)) {
+      if (!isDefined(charge.operationType)) {
+        throw new BadRequestException(
+          'A charge must name either an operation or an operationType.',
+        );
+      }
+
+      return charge.operationType;
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
+    );
+    // Undefined until the upgrade that adds the column has run.
+    const billableOperations = application?.billableOperations ?? {};
+    const billableOperation = billableOperations[charge.operation];
+
+    if (!isDefined(billableOperation)) {
+      throw new BadRequestException(
+        `Application declares no billable operation named "${charge.operation}".`,
+      );
+    }
+
+    // Indexing the enum by the manifest literal is what stops twenty-shared's
+    // USAGE_OPERATION_TYPES from promising apps a category the platform does
+    // not meter: a drifted value fails to compile here.
+    return UsageOperationType[billableOperation.operationType];
   }
 
   private async resolveBillingPeriodStart(

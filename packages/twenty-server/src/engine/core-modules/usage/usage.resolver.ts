@@ -9,12 +9,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
 import { UsageAnalyticsDTO } from 'src/engine/core-modules/usage/dtos/usage-analytics.dto';
 import {
+  type UsageApplicationBreakdownItem,
   UsageAnalyticsService,
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -86,9 +86,7 @@ export class UsageResolver {
         this.resolveBreakdownKeys(usageByUser, (ids) =>
           this.resolveUserNames(ids, workspace.id),
         ),
-        this.resolveBreakdownKeys(usageByApplication, (ids) =>
-          this.resolveApplicationNames(ids, workspace.id),
-        ),
+        this.resolveApplicationBreakdown(usageByApplication, workspace.id),
       ],
     );
 
@@ -160,14 +158,17 @@ export class UsageResolver {
     }));
   }
 
-  private async resolveApplicationNames(
-    applicationIds: string[],
+  // Operations an app declared in its manifest get their own slice under the
+  // app name; anything it charged without declaring folds back into a single
+  // app-level slice, so undeclared context strings never reach a screen.
+  // Uninstalled apps are looked up too, otherwise their spend would drop out
+  // of the pie while still counting towards the bill.
+  private async resolveApplicationBreakdown(
+    items: UsageApplicationBreakdownItem[],
     workspaceId: string,
-  ): Promise<Map<string, string>> {
-    const nameById = new Map<string, string>();
-
-    if (applicationIds.length === 0) {
-      return nameById;
+  ): Promise<UsageBreakdownItem[]> {
+    if (items.length === 0) {
+      return [];
     }
 
     const { flatApplicationMaps } =
@@ -175,18 +176,25 @@ export class UsageResolver {
         'flatApplicationMaps',
       ]);
 
-    for (const applicationId of applicationIds) {
-      const application = findActiveFlatApplicationById(
-        flatApplicationMaps,
-        applicationId,
-      );
+    const creditsByKey = new Map<string, number>();
 
-      if (isDefined(application)) {
-        nameById.set(applicationId, application.name);
-      }
+    for (const item of items) {
+      const application = flatApplicationMaps.byId[item.applicationId];
+      // Undefined until the upgrade that adds the column has run.
+      const billableOperations = application?.billableOperations ?? {};
+      const declaredOperation = billableOperations[item.operation];
+      const applicationName = application?.name ?? item.applicationId;
+
+      const key = isDefined(declaredOperation)
+        ? `${applicationName} · ${declaredOperation.label}`
+        : applicationName;
+
+      creditsByKey.set(key, (creditsByKey.get(key) ?? 0) + item.creditsUsed);
     }
 
-    return nameById;
+    return [...creditsByKey.entries()]
+      .map(([key, creditsUsed]) => ({ key, label: key, creditsUsed }))
+      .sort((a, b) => b.creditsUsed - a.creditsUsed);
   }
 
   private async resolveUserNames(

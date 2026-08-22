@@ -8,7 +8,10 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateIf,
 } from 'class-validator';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
@@ -28,8 +31,17 @@ export class ChargeDto {
   @Max(MAX_QUANTITY_PER_CHARGE)
   quantity!: number;
 
+  // An operation name declared in `billableOperations` on the application
+  // manifest; the server resolves its billing category and its label.
+  @IsOptional()
+  @IsString()
+  operation?: string;
+
+  // Applications that declare no billable operations name the platform
+  // billing category directly.
+  @ValidateIf((charge: ChargeDto) => !isDefined(charge.operation))
   @IsEnum(UsageOperationType)
-  operationType!: UsageOperationType;
+  operationType?: UsageOperationType;
 
   @IsOptional()
   @IsString()

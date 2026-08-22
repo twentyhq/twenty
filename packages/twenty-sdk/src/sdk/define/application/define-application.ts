@@ -2,9 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
+  isUsageOperationTypeValue,
+  USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
@@ -33,6 +35,28 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (requiresOptions && !isNonEmptyArray(variable.options)) {
       errors.push(
         `Application variable "${variableName}" of type ${variable.type} must define non-empty options`,
+      );
+    }
+  }
+
+  for (const [operationName, billableOperation] of Object.entries(
+    config.billableOperations ?? {},
+  )) {
+    if (!isDefined(billableOperation)) {
+      continue;
+    }
+
+    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+      errors.push(
+        `Billable operation "${operationName}" must map to a known operationType (${USAGE_OPERATION_TYPES.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (!isNonEmptyString(billableOperation.label)) {
+      errors.push(
+        `Billable operation "${operationName}" must have a non empty label`,
       );
     }
   }
