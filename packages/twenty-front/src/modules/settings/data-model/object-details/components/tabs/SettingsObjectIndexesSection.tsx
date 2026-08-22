@@ -1,4 +1,5 @@
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -53,6 +54,7 @@ export const SettingsObjectIndexesSection = ({
   const { openModal, closeModal } = useModal();
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [hideSystemIndexes, setHideSystemIndexes] = useState(false);
@@ -64,6 +66,24 @@ export const SettingsObjectIndexesSection = ({
     const fieldsById = new Map(
       objectMetadataItem.fields.map((field) => [field.id, field]),
     );
+
+    // Indexes reference every concrete morph field, but the server only exposes
+    // one representative per morph group, so the labels of the other ones have
+    // to be recovered from that representative's morph relations.
+    const objectLabelsById = new Map(
+      objectMetadataItems.map((item) => [item.id, item.labelSingular]),
+    );
+    const morphFieldLabelsById = new Map<string, string>();
+
+    for (const field of objectMetadataItem.fields) {
+      for (const morphRelation of field.morphRelations ?? []) {
+        morphFieldLabelsById.set(
+          morphRelation.sourceFieldMetadata.id,
+          objectLabelsById.get(morphRelation.targetObjectMetadata.id) ??
+            morphRelation.targetObjectMetadata.nameSingular,
+        );
+      }
+    }
 
     return objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
       id: indexMetadataItem.id,
@@ -79,7 +99,9 @@ export const SettingsObjectIndexesSection = ({
               indexField.fieldMetadataId,
             );
 
-            if (!isDefined(fieldMetadataItem)) return undefined;
+            if (!isDefined(fieldMetadataItem)) {
+              return morphFieldLabelsById.get(indexField.fieldMetadataId);
+            }
 
             if (isNonEmptyString(indexField.subFieldName)) {
               return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
@@ -93,7 +115,11 @@ export const SettingsObjectIndexesSection = ({
           .filter((label): label is string => Boolean(label))
           .join(', ') ?? '',
     }));
-  }, [objectMetadataItem.indexMetadatas, objectMetadataItem.fields]);
+  }, [
+    objectMetadataItem.indexMetadatas,
+    objectMetadataItem.fields,
+    objectMetadataItems,
+  ]);
 
   const filteredItems = useMemo(() => {
     const searchNormalized = normalizeSearchText(searchTerm);
