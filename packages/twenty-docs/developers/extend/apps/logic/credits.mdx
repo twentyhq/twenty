@@ -1,0 +1,72 @@
+---
+title: Charging Credits
+description: Declare what your app bills for and charge workspace credits from a logic function.
+icon: "coins"
+---
+
+Apps that cost money to run — a call recorder paying a transcription provider, an enrichment app paying per match — charge the workspace in **credits**. Declare what you bill for in your application config, then charge against a declared operation from a logic function.
+
+## Declaring billable operations
+
+Each entry maps an operation name you choose onto the billing category the platform meters, plus the label shown to workspace admins in **Settings > Usage**.
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, variables...
+  billableOperations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+    },
+    summarizeMeeting: {
+      operationType: 'AI_CHAT_TOKEN',
+      label: 'Meeting summary',
+    },
+  },
+});
+```
+
+`operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
+
+The build rejects an unknown `operationType` or an empty `label`.
+
+## Charging
+
+Charge against a declared operation by name:
+
+```ts
+import { chargeCredits } from 'twenty-sdk/billing';
+
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+});
+```
+
+`creditsUsedMicro` is the amount in micro-credits (1 USD = 1,000,000). `quantity` is how many units the charge covers, in the unit implied by the operation's category — minutes for `CALL_RECORDING`, invocations for `CODE_EXECUTION`, and so on.
+
+Notes:
+
+- Declaring operations is what lets Usage split your app's spend by what it charged for. An app that declares nothing is still reported, as a single slice under its display name.
+- Charging an operation your manifest does not declare is rejected. Add it to `billableOperations` and sync.
+- Several operations may share one `operationType`. Two enrichment operations both metered as `CODE_EXECUTION` still show as two labelled slices.
+- Without `operation`, name the billing category directly with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
+- Charging never fails your function. A billing error is logged and swallowed, and the call no-ops outside the logic function runtime so local runs and tests do not crash.
+
+## Attribution
+
+Spend is attributed to whoever triggered the run, so it shows up in **Usage by User**. Runs with nobody behind them (a webhook, a cron) have no triggering person — pass `userWorkspaceId` if your app knows who the spend belongs to. It must belong to the workspace the app is installed in, and it is ignored when the run does have a triggering user.
+
+```ts
+await chargeCredits({
+  operation: 'recordMeeting',
+  creditsUsedMicro: 250_000,
+  quantity: 12,
+  userWorkspaceId: ownerUserWorkspaceId,
+});
+```
+
+Where to get one: `context.userWorkspaceId` on a triggered run, or [`listConnections()`](/developers/extend/apps/logic/connections), which returns the `userWorkspaceId` of each connection's owner.
