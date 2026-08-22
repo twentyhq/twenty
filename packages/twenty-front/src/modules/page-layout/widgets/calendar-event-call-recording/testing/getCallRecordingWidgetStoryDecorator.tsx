@@ -61,6 +61,7 @@ export const getCallRecordingWidgetStoryDecorator =
               value={{
                 tabId,
                 layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                presentation: 'stack',
               }}
             >
               <WidgetComponentInstanceContext.Provider

@@ -6,9 +6,18 @@ import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+
+let mockPageLayoutType = PageLayoutType.RECORD_PAGE;
+
+jest.mock('@/page-layout/hooks/useCurrentPageLayoutOrThrow', () => ({
+  useCurrentPageLayoutOrThrow: () => ({
+    currentPageLayout: { type: mockPageLayoutType },
+  }),
+}));
 
 jest.mock('@/page-layout/widgets/components/WidgetContentRenderer', () => ({
   WidgetContentRenderer: () => <div data-testid="widget-content" />,
@@ -75,7 +84,13 @@ const renderWidgetCardShell = ({
   widgetType = WidgetType.FIELDS,
 }: RenderWidgetCardShellParams = {}) =>
   render(
-    <PageLayoutContentProvider value={{ layoutMode, tabId: 'tab-under-test' }}>
+    <PageLayoutContentProvider
+      value={{
+        layoutMode,
+        presentation: 'stack',
+        tabId: 'tab-under-test',
+      }}
+    >
       <WidgetCardShell
         widget={{ ...widget, type: widgetType }}
         variant={variant}
@@ -94,6 +109,7 @@ const renderWidgetCardShell = ({
 describe('WidgetCardShell layout behavior', () => {
   beforeEach(() => {
     mockWidgetCardContent.mockClear();
+    mockPageLayoutType = PageLayoutType.RECORD_PAGE;
   });
 
   it('renders the widget content', () => {
@@ -107,6 +123,16 @@ describe('WidgetCardShell layout behavior', () => {
 
     expect(mockWidgetCardContent).toHaveBeenCalledWith(
       expect.objectContaining({ isFixedHeight: true }),
+    );
+  });
+
+  it('does not apply the fixed iframe height outside record pages', () => {
+    mockPageLayoutType = PageLayoutType.STANDALONE_PAGE;
+
+    renderWidgetCardShell({ widgetType: WidgetType.IFRAME });
+
+    expect(mockWidgetCardContent).toHaveBeenCalledWith(
+      expect.objectContaining({ isFixedHeight: false }),
     );
   });
 

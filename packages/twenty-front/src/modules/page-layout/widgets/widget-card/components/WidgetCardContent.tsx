@@ -1,4 +1,5 @@
 import { type WidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
+import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
@@ -33,7 +34,7 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   padding-block: ${({ contentPadding, hasHeader, isEditable, variant }) =>
     contentPadding === 'none'
       ? '0'
-      : hasHeader && !isEditable && variant === 'flush'
+      : hasHeader && isWidgetCardFlushInViewMode({ isEditable, variant })
         ? `${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}`
         : themeCssVariables.spacing[2]};
   padding-inline: ${({ contentPadding }) =>

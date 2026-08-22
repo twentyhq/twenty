@@ -13,6 +13,10 @@ const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
   shouldUseWhiteBackground: boolean;
 }>`
+  --widget-card-content-overflow: visible;
+  --widget-height: auto;
+  --widget-scroll-overflow: visible;
+
   background: ${({ shouldUseWhiteBackground }) =>
     shouldUseWhiteBackground
       ? themeCssVariables.background.primary
@@ -23,6 +27,15 @@ const StyledVerticalListContainer = styled.div<{
     variant === 'side-column' ? 0 : themeCssVariables.spacing[2]};
   padding: ${({ variant }) =>
     variant === 'side-column' ? 0 : themeCssVariables.spacing[2]};
+`;
+
+const StyledWidgetSlot = styled.div<{ shouldShowDivider: boolean }>`
+  &:not(:last-child) {
+    border-bottom: ${({ shouldShowDivider }) =>
+      shouldShowDivider
+        ? `1px solid ${themeCssVariables.border.color.light}`
+        : 'none'};
+  }
 `;
 
 type PageLayoutVerticalListViewerProps = {
@@ -48,9 +61,12 @@ export const PageLayoutVerticalListViewer = ({
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
       {widgets.map((widget) => (
-        <div key={widget.id}>
+        <StyledWidgetSlot
+          key={widget.id}
+          shouldShowDivider={variant === 'side-column'}
+        >
           <WidgetRenderer widget={widget} />
-        </div>
+        </StyledWidgetSlot>
       ))}
     </StyledVerticalListContainer>
   );

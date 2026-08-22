@@ -1,4 +1,5 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
@@ -7,6 +8,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
+import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -17,6 +19,7 @@ import { IconLock } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -59,14 +62,19 @@ export const WidgetCardShell = ({
 }: WidgetCardShellProps) => {
   const { theme } = useContext(ThemeContext);
   const { layoutMode } = usePageLayoutContentContext();
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const isFixedHeightIframe =
-    isVerticalList && widget.type === WidgetType.IFRAME;
-  const contentPadding =
-    isEditable || variant !== 'flush'
-      ? 'default'
-      : getWidgetContentPadding(widget.type);
+    currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
+    isVerticalList &&
+    widget.type === WidgetType.IFRAME;
+  const contentPadding = isWidgetCardFlushInViewMode({
+    isEditable,
+    variant,
+  })
+    ? getWidgetContentPadding(widget.type)
+    : 'default';
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;

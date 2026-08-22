@@ -406,6 +406,7 @@ const renderFieldWidgetStory = ({
               <PageLayoutContentProvider
                 value={{
                   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  presentation: 'stack',
                   tabId: 'fields',
                 }}
               >

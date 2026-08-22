@@ -321,6 +321,7 @@ export const WithNumberChart: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -415,6 +416,7 @@ export const WithBarChart: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -512,6 +514,7 @@ export const SmallWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -613,6 +616,7 @@ export const MediumWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -714,6 +718,7 @@ export const LargeWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -811,6 +816,7 @@ export const WideWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -912,6 +918,7 @@ export const TallWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1033,6 +1040,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1147,6 +1155,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1268,6 +1277,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1383,6 +1393,7 @@ export const OnMobile: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1483,6 +1494,7 @@ export const InSidePanel: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.GRID,
+                    presentation: 'stack',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1781,6 +1793,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode,
+                    presentation: 'stack',
                     tabId:
                       scenario === 'side-column'
                         ? 'pinned-tab'

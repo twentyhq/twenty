@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
+import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 
 type WidgetCardStyledProps = {
   variant: WidgetCardVariant;
@@ -38,11 +39,11 @@ const shouldUseSecondaryBackground = (
 // oxlint-disable-next-line twenty/sort-css-properties-alphabetically
 const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   --widget-card-padding-inline: ${({ variant, isEditable }) =>
-    variant === 'flush' && !isEditable
+    isWidgetCardFlushInViewMode({ variant, isEditable })
       ? themeCssVariables.spacing[4]
       : themeCssVariables.spacing[2]};
   --widget-card-title-padding-top: ${({ variant, isEditable }) =>
-    variant === 'flush' && !isEditable
+    isWidgetCardFlushInViewMode({ variant, isEditable })
       ? themeCssVariables.spacing[3]
       : themeCssVariables.spacing[2]};
 
