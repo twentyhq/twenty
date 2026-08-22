@@ -11,7 +11,7 @@ export const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebh
   const mappedTargetWebhooks: Record<string, Webhook> = targetWebhooks.reduce((pre, webhook) => ({...pre, [webhook.id]: webhook}), {});
   const webhooksToMigrate: Webhook[] = [];
   const targetWebhooksIds = Object.values(mappedTargetWebhooks).map(webhook => webhook.id);
-  for (const key in Object.values(mappedSourceWebhooks).map(webhook => webhook.id)) {
+  for (const key of Object.values(mappedSourceWebhooks).map(webhook => webhook.id)) {
     if (targetWebhooksIds.indexOf(key) === -1) {
       webhooksToMigrate.push(mappedSourceWebhooks[key]);
     }

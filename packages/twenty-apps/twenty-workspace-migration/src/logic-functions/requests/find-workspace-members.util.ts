@@ -8,7 +8,7 @@ export const FindWorkspaceMembers = async (
   const data = await postGraphql<FindWorkspaceMembersType['data']>(
     client,
     '/graphql',
-    'findObjectsAndFields',
+    'findWorkspaceMembers',
     `query FindWorkspaceMembers {
   workspaceMembers {
     edges {

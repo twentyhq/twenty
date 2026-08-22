@@ -11,7 +11,7 @@ export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills
   const mappedTargetSkills: Record<string, Skill> = targetSkills.filter(skill => skill.isCustom === true).reduce((pre, skill) => ({...pre, [skill.id]: skill}), {});
   const skillsToMigrate: Skill[] = [];
   const targetSkillsIds = Object.values(mappedTargetSkills).map(skill => skill.id);
-  for (const key in Object.values(mappedSourceSkills).map(skill => skill.id)) {
+  for (const key of Object.values(mappedSourceSkills).map(skill => skill.id)) {
     if (targetSkillsIds.indexOf(key) === -1) {
       skillsToMigrate.push(mappedSourceSkills[key]);
     }

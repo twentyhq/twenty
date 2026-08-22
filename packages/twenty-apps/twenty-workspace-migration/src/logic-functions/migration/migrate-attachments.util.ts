@@ -117,7 +117,9 @@ file {
     }
     after = page.pageInfo.endCursor;
     setObjectCursor('attachments', after);
-    await stopIfTimeBudgetExceeded();
+    if (await stopIfTimeBudgetExceeded()) {
+      return;
+    }
   }
 
   logger.log(`Attachments: created ${createdCount}`);

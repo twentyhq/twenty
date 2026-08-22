@@ -24,7 +24,7 @@ export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     if (await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIdMap)) {
       return;
     }
-    setStateRef('recordMigrationOrder', recordMigrationOrder.slice(recordMigrationOrder.indexOf(sourceObject)));
+    setStateRef('recordMigrationOrder', recordMigrationOrder.slice(recordMigrationOrder.indexOf(sourceObject) + 1));
   }
   setStateRef('stage', 4);
   await saveMigrationStateCheckpointAndStop();

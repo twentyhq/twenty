@@ -4,7 +4,6 @@ import { FindAllObjectsAndFields } from "src/logic-functions/requests/find-all-o
 import { UpdateOneObjectType } from "src/logic-functions/types/update-one-object.type";
 import { CreateOneFieldType } from "src/logic-functions/types/create-one-field.type";
 import { UpdateOneFieldType } from "src/logic-functions/types/update-one-field.type";
-import { FieldsListType } from "src/logic-functions/types/find-objects-fields.type";
 import { createOneObject } from "src/logic-functions/requests/create-one-object.util";
 import { areFieldsListsIdentical, areObjectsIdentical } from "src/logic-functions/utils/comparators.util";
 import { type AxiosInstance } from "axios";
@@ -32,11 +31,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     name: app.name,
     version: app.version
   });
-  const { universalIdentifier: sourceStandardAppUUID } = sourceWorkspaceInstalledApps.findManyApplications.filter(app => !app.canBeUninstalled && app.applicationRegistration === null)[0];
   const { universalIdentifier: sourceCustomAppUUID } = sourceWorkspaceInstalledApps.findManyApplications.filter(app => !app.canBeUninstalled && app.applicationRegistration?.sourceType === 'LOCAL')[0];
   const targetApps: Record<string, string> = {}; // <uuid, version>
-  const { universalIdentifier: targetStandardAppUUID } = targetWorkspaceInstalledApps.findManyApplications.filter(app => !app.canBeUninstalled && app.applicationRegistration === null)[0];
-  const { universalIdentifier: targetCustomAppUUID } = targetWorkspaceInstalledApps.findManyApplications.filter(app => !app.canBeUninstalled && app.applicationRegistration?.sourceType === 'LOCAL')[0];
   targetWorkspaceInstalledApps.findManyApplications.filter((app) => app.applicationRegistration !== null && sourceAppsToOmit.indexOf(app.applicationRegistration.sourceType) === -1).map((app) => targetApps[app.universalIdentifier] = app.version);
   const sourceAppsIds = Object.keys(sourceApps);
   const missingAppsIds = sourceAppsIds.filter((app) => Object.keys(targetApps).indexOf(app) < 0);
@@ -89,10 +85,6 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
 
   const targetWorkspaceObjects: { nameSingular: string, id: string, universalIdentifier: string }[] = [];
 
-  const filterFields = (fieldsList: FieldsListType[]) => {
-    return fieldsList.filter(field => fieldsToOmit.includes(field.name) === false && [targetStandardAppUUID, targetCustomAppUUID].includes(field.applicationId) && !(field.type === 'RELATION' && field.relation.type === 'ONE_TO_MANY'));
-  }
-
   for (const object of mappedTargetObjects.values()) {
     targetWorkspaceObjects.push(object);
   }
@@ -125,8 +117,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     if (!areObjectsIdentical(sourceObject, targetObject)) {
       objectsToUpdate.push({ id: targetObject.id, object: sourceObject });
     }
-    const sourceObjectFields = mapEntities(filterFields(sourceObject.fieldsList));
-    const targetObjectFields = mapEntities(filterFields(targetObject.fieldsList));
+    const sourceObjectFields = mapEntities(sourceObject.fieldsList.filter(field => fieldsToOmit.includes(field.name) === false));
+    const targetObjectFields = mapEntities(targetObject.fieldsList.filter(field => fieldsToOmit.includes(field.name) === false));
     for (const key of Array.from(sourceObjectFields.keys())) {
       const sourceObjectField = sourceObjectFields.get(key);
       if (sourceObjectField === undefined) {

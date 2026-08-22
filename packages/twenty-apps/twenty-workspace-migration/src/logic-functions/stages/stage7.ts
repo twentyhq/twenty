@@ -12,6 +12,8 @@ import { migrateNavigationMenuItems } from "src/logic-functions/migration/migrat
 import { migrateRoles } from "src/logic-functions/migration/migrate-roles.util";
 import { migrateWebhooks } from "src/logic-functions/migration/migrate-webhooks.util";
 import { migrateSkills } from "src/logic-functions/migration/migrate-skills.util";
+import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 
 export const stage7 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
   const targetFieldIdBySourceFieldId = migrationState.targetFieldIdBySourceFieldId;
@@ -20,32 +22,32 @@ export const stage7 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   const targetPageLayoutIdBySourcePageLayoutId = migrationState.targetPageLayoutIdBySourcePageLayoutId;
 
   if (migrationState.migratedNavigationMenuItems === false) {
-    const sourceNavigationMenuItems = await findNavigationMenuItems(sourceWorkspace);
-    const targetNavigationMenuItems = await findNavigationMenuItems(targetWorkspace);
+    const sourceNavigationMenuItems = await executeWithRetry(() => findNavigationMenuItems(sourceWorkspace));
+    const targetNavigationMenuItems = await executeWithRetryAndCheckpoint(() => findNavigationMenuItems(targetWorkspace));
     if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIdMap, targetPageLayoutIdBySourcePageLayoutId)) {
       await saveMigrationStateCheckpointAndStop();
     }
     return;
   }
   if (migrationState.migratedSkills === false) {
-    const sourceSkills = await findSkills(sourceWorkspace);
-    const targetSkills = await findSkills(targetWorkspace);
+    const sourceSkills = await executeWithRetry(() => findSkills(sourceWorkspace));
+    const targetSkills = await executeWithRetryAndCheckpoint(() => findSkills(targetWorkspace));
     if (await migrateSkills(targetWorkspace, sourceSkills, targetSkills)) {
       await saveMigrationStateCheckpointAndStop();
     }
     return;
   }
   if (migrationState.migratedWebhooks === false) {
-    const sourceWebhooks = await findWebhooks(sourceWorkspace);
-    const targetWebhooks = await findWebhooks(targetWorkspace);
+    const sourceWebhooks = await executeWithRetry(() => findWebhooks(sourceWorkspace));
+    const targetWebhooks = await executeWithRetryAndCheckpoint(() => findWebhooks(targetWorkspace));
     if (await migrateWebhooks(targetWorkspace, sourceWebhooks, targetWebhooks)) {
       await saveMigrationStateCheckpointAndStop();
     }
     return;
   }
   if (migrationState.migratedRoles === false) {
-    const sourceRoles = await findRoles(sourceWorkspace);
-    const targetRoles = await findRoles(targetWorkspace);
+    const sourceRoles = await executeWithRetry(() => findRoles(sourceWorkspace));
+    const targetRoles = await executeWithRetryAndCheckpoint(() => findRoles(targetWorkspace));
     if (await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId)) {
       setStateRef('stage', 8);
       await saveMigrationStateCheckpointAndStop();

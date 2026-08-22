@@ -53,7 +53,7 @@ export const estimateMigrationDuration = async (
 ): Promise<MigrationDurationEstimate> => {
   const recordCountsByNamePlural = await executeWithRetry(() => findObjectRecordCounts(sourceWorkspace));
   const batchableObjects = recordCountsByNamePlural;
-  for (const obj in objectsToOmitFromCounting) {
+  for (const obj of objectsToOmitFromCounting) {
     batchableObjects.delete(obj);
   }
   let batchableRecordCount = 0;

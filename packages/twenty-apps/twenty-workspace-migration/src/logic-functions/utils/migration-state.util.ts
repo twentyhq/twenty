@@ -7,7 +7,7 @@ const MIGRATION_STATE_KV_KEY = 'migrationState';
 
 const createInitialMigrationState = (): MigrationState => ({
   stage: 1,
-  maxRequests: 0,
+  maxRequests: 50, // assuming lower bound
   sourceWorkspaceObjects: [],
   targetWorkspaceObjects: [],
   objectsToUpdate: [],
