@@ -12,14 +12,11 @@ export const useTimelineActivityTypes = () => {
   const timelineActivityTypeMaps = useMemo<TimelineActivityTypeMaps>(() => {
     const timelineActivityTypes: TimelineActivityType[] = (
       data?.timelineActivityTypes ?? []
-    ).map((timelineActivityType) => ({
+    ).map(({ emit, ...timelineActivityType }) => ({
       ...timelineActivityType,
-      action: isTimelineActivityAction(timelineActivityType.action)
-        ? timelineActivityType.action
-        : null,
+      action: isTimelineActivityAction(emit?.on) ? emit.on : null,
       icon: timelineActivityType.icon ?? null,
-      objectUniversalIdentifier:
-        timelineActivityType.objectUniversalIdentifier ?? null,
+      objectUniversalIdentifier: emit?.objectUniversalIdentifier ?? null,
       frontComponentUniversalIdentifier:
         timelineActivityType.frontComponentUniversalIdentifier ?? null,
     }));

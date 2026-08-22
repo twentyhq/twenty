@@ -65,6 +65,11 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
       label: 'was added by',
       icon: 'IconSparkles',
       isActive: false,
+      emit: {
+        on: 'created',
+        objectUniversalIdentifier: null,
+        through: null,
+      },
     });
   });
 

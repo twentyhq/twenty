@@ -13,6 +13,7 @@ import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata
 import { TimelineActivityTypeExceptionCode } from 'src/engine/metadata-modules/timeline-activity-type/enums/timeline-activity-type-exception-code.enum';
 import { isValidTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
 import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -247,6 +248,33 @@ export class FlatTimelineActivityTypeValidatorService {
         code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
         message: t`Timeline activity type references an object that does not exist`,
         userFriendlyMessage: msg`The object used by this timeline activity type is not available`,
+      });
+    }
+
+    if (
+      isDefined(timelineActivityType.action) &&
+      !isDefined(objectUniversalIdentifier) &&
+      timelineActivityType.applicationUniversalIdentifier !==
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`An application timeline activity emitter must target one of its objects`,
+        userFriendlyMessage: msg`Choose the object that emits this timeline activity type`,
+      });
+    }
+
+    if (
+      (timelineActivityType.action === 'linked' ||
+        timelineActivityType.action === 'unlinked') &&
+      !isDefined(targetRelationFieldUniversalIdentifier) &&
+      timelineActivityType.applicationUniversalIdentifier !==
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Linked and unlinked timeline activity emitters require a target relation`,
+        userFriendlyMessage: msg`Choose the relation used by this timeline activity type`,
       });
     }
 

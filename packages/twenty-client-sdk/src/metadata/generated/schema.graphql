@@ -3187,18 +3187,26 @@ enum MetadataTranslationProvenance {
   INHERITED
 }
 
+type TimelineActivityTypeEmitThrough {
+  relationFieldUniversalIdentifier: UUID!
+  triggerFieldUniversalIdentifiers: [UUID!]
+}
+
+type TimelineActivityTypeEmit {
+  on: String!
+  objectUniversalIdentifier: UUID
+  through: TimelineActivityTypeEmitThrough
+}
+
 type TimelineActivityType {
   id: UUID!
   universalIdentifier: UUID!
   name: String!
   label: String!
-  action: String
+  emit: TimelineActivityTypeEmit
   icon: String
   renderer: String @deprecated(reason: "Use frontComponentUniversalIdentifier")
   frontComponentUniversalIdentifier: UUID
-  objectUniversalIdentifier: UUID
-  targetRelationFieldUniversalIdentifier: UUID
-  triggerFieldUniversalIdentifiers: [UUID!]
   overridesTimelineActivityTypeUniversalIdentifier: UUID
   isActive: Boolean!
   applicationId: UUID

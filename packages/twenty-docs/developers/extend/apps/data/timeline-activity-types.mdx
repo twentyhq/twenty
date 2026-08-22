@@ -4,7 +4,7 @@ description: Define automatic audit events and explicit app events that render i
 icon: 'clock-rotate-left'
 ---
 
-A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally bind to an object action, and can optionally render through one of your app's [front components](/developers/extend/apps/layout/front-components).
+A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/developers/extend/apps/layout/front-components).
 
 <Note>
   Timeline activity types are in beta and are coming soon in Twenty 2.34. The
@@ -28,17 +28,21 @@ export default defineTimelineActivityType({
   universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
   name: 'postCardCreated',
   label: 'created a post card',
-  action: 'created',
   icon: 'IconMail',
-  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
 });
 ```
 
 ## Automatic and explicit events
 
-Set both `action` and `objectUniversalIdentifier` when this type should describe the object's automatic audit events. The supported actions are `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`. Only one effective type can handle the same action/object/target-relation combination in a workspace.
+Add `emit` when Twenty should create this type automatically. `emit.on` supports `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`, while `emit.objectUniversalIdentifier` identifies the source object. Only one effective type can handle the same emit key—`on`, object, and optional through relation—in a workspace.
 
-By default, the event is written on the source record's own timeline. To fan the event out to related records, set `targetRelationFieldUniversalIdentifier` to a one-to-many junction relation on the source object. Creating or deleting a junction row then produces `linked` or `unlinked`, while changes to the source record produce its normal action on every related target timeline.
+Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to a one-to-many junction relation on the source object. Creating or deleting a junction row then produces `linked` or `unlinked`, while changes to the source record produce its normal action on every related target timeline.
+
+`linked` and `unlinked` events require `emit.through`, because their trigger is the creation or deletion of the junction row.
 
 For example, this is the same generic contract used by notes, tasks, messages, and calendar events:
 
@@ -52,29 +56,30 @@ export default defineTimelineActivityType({
   universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
   name: 'postCardLinked',
   label: 'received a post card',
-  action: 'linked',
   icon: 'IconMail',
-  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-  targetRelationFieldUniversalIdentifier:
-    POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
 });
 ```
 
-An `updated` relation event is emitted for every source update by default. Set `triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
+An `updated` through event is emitted for every source update by default. Set `emit.through.triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
 
-Omit `action` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
+Omit `emit` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
 
 ```ts filename="src/timeline-activity-types/post-card-sent.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
-
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 export default defineTimelineActivityType({
   universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
   name: 'postCardSent',
   label: 'sent a post card',
   icon: 'IconSend',
-  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -92,7 +97,6 @@ export default defineTimelineActivityType({
   name: 'postCardSent',
   label: 'sent a post card',
   icon: 'IconSend',
-  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
   frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
 });
 ```
@@ -108,8 +112,10 @@ export default defineTimelineActivityType({
   universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
   name: 'companyCreatedWithDeploymentContext',
   label: 'was created from a deployment',
-  action: 'created',
-  objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
   overridesTimelineActivityTypeUniversalIdentifier:
     RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
   frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
@@ -120,17 +126,18 @@ The referenced type must belong to the target object's application and describe 
 
 ## Configuration fields
 
-| Field                                              | Required | Description                                                                 |
-| -------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
-| `universalIdentifier`                              | Yes      | Stable UUID for the type across installations and upgrades                  |
-| `name`                                             | Yes      | App-local programmatic name                                                 |
-| `label`                                            | Yes      | User-facing action text used by the native renderer                         |
-| `action`                                           | No       | Automatic audit action handled by this type                                 |
-| `icon`                                             | No       | Twenty icon name displayed beside the event                                 |
-| `objectUniversalIdentifier`                        | No       | Object this type describes; required for object-specific automatic handling |
-| `targetRelationFieldUniversalIdentifier`           | No       | Junction relation used to route events to related record timelines          |
-| `triggerFieldUniversalIdentifiers`                 | No       | Source fields that can trigger an `updated` relation event                  |
-| `frontComponentUniversalIdentifier`                | No       | App-owned front component mounted when the row is expanded                  |
-| `overridesTimelineActivityTypeUniversalIdentifier` | No       | Existing type explicitly replaced when targeting another app's object       |
+| Field                                              | Required  | Description                                                           |
+| -------------------------------------------------- | --------- | --------------------------------------------------------------------- |
+| `universalIdentifier`                              | Yes       | Stable UUID for the type across installations and upgrades            |
+| `name`                                             | Yes       | App-local programmatic name                                           |
+| `label`                                            | Yes       | User-facing action text used by the native renderer                   |
+| `icon`                                             | No        | Twenty icon name displayed beside the event                           |
+| `emit`                                             | No        | Automatic emission declaration; omit for explicit-only types          |
+| `emit.on`                                          | With emit | Audit action that causes this type to be written                      |
+| `emit.objectUniversalIdentifier`                   | With emit | Object whose records emit this type                                   |
+| `emit.through.relationFieldUniversalIdentifier`    | No        | Junction relation used to fan events out to related record timelines  |
+| `emit.through.triggerFieldUniversalIdentifiers`    | No        | Source fields that can trigger an `updated` through event             |
+| `frontComponentUniversalIdentifier`                | No        | App-owned front component mounted when the row is expanded            |
+| `overridesTimelineActivityTypeUniversalIdentifier` | No        | Existing type explicitly replaced when targeting another app's object |
 
 Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.

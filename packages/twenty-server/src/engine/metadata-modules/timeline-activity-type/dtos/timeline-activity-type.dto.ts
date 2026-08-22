@@ -7,9 +7,9 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { TimelineActivityTypeEmitDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type-emit.dto';
 import { type TimelineActivityTypeOverrides } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 
 @ObjectType('TimelineActivityType')
@@ -32,11 +32,9 @@ export class TimelineActivityTypeDTO {
   @Field()
   label: string;
 
-  // Explicit type: the action union is erased at runtime, so reflection cannot
-  // infer a GraphQL type from it.
   @IsOptional()
-  @Field(() => String, { nullable: true })
-  action: TimelineActivityAction | null;
+  @Field(() => TimelineActivityTypeEmitDTO, { nullable: true })
+  emit: TimelineActivityTypeEmitDTO | null;
 
   @IsOptional()
   @Field(() => String, { nullable: true })
@@ -53,18 +51,6 @@ export class TimelineActivityTypeDTO {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   frontComponentUniversalIdentifier: string | null;
-
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  objectUniversalIdentifier: string | null;
-
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  targetRelationFieldUniversalIdentifier: string | null;
-
-  @IsOptional()
-  @Field(() => [UUIDScalarType], { nullable: true })
-  triggerFieldUniversalIdentifiers: string[] | null;
 
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

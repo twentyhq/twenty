@@ -7,9 +7,11 @@ export const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
       universalIdentifier
       name
       label
-      action
       icon
-      objectUniversalIdentifier
+      emit {
+        on
+        objectUniversalIdentifier
+      }
       frontComponentUniversalIdentifier
       isActive
     }

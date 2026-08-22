@@ -10,6 +10,5 @@ export default defineTimelineActivityType({
   universalIdentifier: '${uuidv4()}',
   name: '${name}',
   label: '${name}',
-  action: 'created',
 });
 `;
