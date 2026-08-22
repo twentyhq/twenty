@@ -32,9 +32,10 @@ import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolv
 import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
+import { doesTimelineActivityJunctionLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-junction-link-change.util';
 
 // An event on the junction object is a change to the link, not to the linked
-// record. `updated` covers a junction row being repointed at another target.
+// record. `updated` is filtered to join-column changes below.
 const JUNCTION_EVENT_ACTIONS: Partial<
   Record<DatabaseEventAction, TimelineActivityRuleAction>
 > = {
@@ -367,9 +368,18 @@ export class TimelineActivityService {
       return [];
     }
 
-    const { junctionSourceJoinColumnName } = rule.targetShape;
+    const targetShape = rule.targetShape;
+    const { junctionSourceJoinColumnName } = targetShape;
 
     const eventsWithJunctionRecord = events
+      .filter(
+        (event) =>
+          action !== 'updated' ||
+          doesTimelineActivityJunctionLinkChange({
+            event,
+            targetShape,
+          }),
+      )
       .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))
       .map((event) => {
         const junctionRecord = event.properties.after as

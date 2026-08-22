@@ -105,7 +105,7 @@ The native row remains the collapsed presentation. Twenty mounts the front compo
 
 ## Overriding another application's presentation
 
-An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `overridesTimelineActivityTypeUniversalIdentifier`:
+An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `replacesTimelineActivityTypeUniversalIdentifier`:
 
 ```ts
 export default defineTimelineActivityType({
@@ -116,7 +116,7 @@ export default defineTimelineActivityType({
     on: 'created',
     objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
   },
-  overridesTimelineActivityTypeUniversalIdentifier:
+  replacesTimelineActivityTypeUniversalIdentifier:
     RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
   frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
 });
@@ -163,18 +163,18 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Configuration fields
 
-| Field                                              | Required  | Description                                                           |
-| -------------------------------------------------- | --------- | --------------------------------------------------------------------- |
-| `universalIdentifier`                              | Yes       | Stable UUID for the type across installations and upgrades            |
-| `name`                                             | Yes       | App-local programmatic name                                           |
-| `label`                                            | Yes       | User-facing action text used by the native renderer                   |
-| `icon`                                             | No        | Twenty icon name displayed beside the event                           |
-| `emit`                                             | No        | Automatic emission declaration; omit for explicit-only types          |
-| `emit.on`                                          | With emit | Audit action that causes this type to be written                      |
-| `emit.objectUniversalIdentifier`                   | With emit | Object whose records emit this type                                   |
-| `emit.through.relationFieldUniversalIdentifier`    | No        | Junction relation used to fan events out to related record timelines  |
-| `emit.through.triggerFieldUniversalIdentifiers`    | No        | Source fields that can trigger an `updated` through event             |
-| `frontComponentUniversalIdentifier`                | No        | App-owned front component mounted when the row is expanded            |
-| `overridesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                          |
+| Field                                             | Required  | Description                                                          |
+| ------------------------------------------------- | --------- | -------------------------------------------------------------------- |
+| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades           |
+| `name`                                            | Yes       | App-local programmatic name                                          |
+| `label`                                           | Yes       | User-facing action text used by the native renderer                  |
+| `icon`                                            | No        | Twenty icon name displayed beside the event                          |
+| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types         |
+| `emit.on`                                         | With emit | Audit action that causes this type to be written                     |
+| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                  |
+| `emit.through.relationFieldUniversalIdentifier`   | No        | Junction relation used to fan events out to related record timelines |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event            |
+| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded           |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                         |
 
 Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.

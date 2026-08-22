@@ -3209,7 +3209,7 @@ type TimelineActivityType {
   renderer: String @deprecated(reason: "Use frontComponentUniversalIdentifier")
   frontComponentUniversalIdentifier: UUID
   objectUniversalIdentifier: UUID @deprecated(reason: "Use emit.objectUniversalIdentifier")
-  overridesTimelineActivityTypeUniversalIdentifier: UUID
+  replacesTimelineActivityTypeUniversalIdentifier: UUID
   isActive: Boolean!
   applicationId: UUID
   createdAt: DateTime!
@@ -3434,6 +3434,7 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
+  universalIdentifier: UUIDFilterComparison
   isActive: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isSearchable: BooleanFieldComparison

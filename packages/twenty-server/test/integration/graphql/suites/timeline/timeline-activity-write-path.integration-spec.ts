@@ -569,6 +569,24 @@ describe('timeline activity write path (integration)', () => {
         linkedRecordCachedName: 'Generic message routing',
       });
 
+      await updateRecord({
+        objectMetadataSingularName: 'messageParticipant',
+        recordId: ROUTED_MESSAGE_PARTICIPANT_ID,
+        data: { handle: 'refreshed.target@example.com' },
+      });
+
+      expect(
+        await findTimelineActivities({
+          targetPersonId: { eq: ROUTED_PERSON_ID },
+          timelineActivityTypeId: {
+            eq: timelineActivityTypeIdForOrThrow(
+              'linked',
+              MESSAGE_UNIVERSAL_IDENTIFIER,
+            ),
+          },
+        }),
+      ).toHaveLength(1);
+
       await createRecord({
         objectMetadataSingularName: 'calendarEvent',
         data: {

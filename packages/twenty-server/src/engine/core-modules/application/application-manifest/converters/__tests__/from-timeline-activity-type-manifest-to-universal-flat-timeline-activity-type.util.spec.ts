@@ -5,6 +5,8 @@ const TYPE_UNIVERSAL_IDENTIFIER = '22222222-2222-4222-8222-222222222222';
 const OBJECT_UNIVERSAL_IDENTIFIER = '33333333-3333-4333-8333-333333333333';
 const RELATION_UNIVERSAL_IDENTIFIER = '44444444-4444-4444-8444-444444444444';
 const TRIGGER_UNIVERSAL_IDENTIFIER = '55555555-5555-4555-8555-555555555555';
+const REPLACED_TYPE_UNIVERSAL_IDENTIFIER =
+  '66666666-6666-4666-8666-666666666666';
 const NOW = '2026-08-22T00:00:00.000Z';
 
 describe('fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType', () => {
@@ -74,6 +76,29 @@ describe('fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType', 
       objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       targetRelationFieldUniversalIdentifier: null,
       triggerFieldUniversalIdentifiers: null,
+    });
+  });
+
+  it('maps the public replacement identifier to internal metadata', () => {
+    expect(
+      fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        now: NOW,
+        timelineActivityTypeManifest: {
+          universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+          name: 'customRecordCreated',
+          label: 'created a custom record',
+          emit: {
+            on: 'created',
+            objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          },
+          replacesTimelineActivityTypeUniversalIdentifier:
+            REPLACED_TYPE_UNIVERSAL_IDENTIFIER,
+        },
+      }),
+    ).toMatchObject({
+      overridesTimelineActivityTypeUniversalIdentifier:
+        REPLACED_TYPE_UNIVERSAL_IDENTIFIER,
     });
   });
 });

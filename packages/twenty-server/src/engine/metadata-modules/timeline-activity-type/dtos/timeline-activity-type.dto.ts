@@ -69,7 +69,7 @@ export class TimelineActivityTypeDTO {
 
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  overridesTimelineActivityTypeUniversalIdentifier: string | null;
+  replacesTimelineActivityTypeUniversalIdentifier: string | null;
 
   @IsBoolean()
   @Field()

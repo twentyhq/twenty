@@ -168,13 +168,13 @@ describe('defineTimelineActivityType', () => {
     const result = defineTimelineActivityType({
       ...baseValidConfig,
       emit: undefined,
-      overridesTimelineActivityTypeUniversalIdentifier:
+      replacesTimelineActivityTypeUniversalIdentifier:
         '66666666-6666-4666-8666-666666666666',
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'TimelineActivityType overridesTimelineActivityTypeUniversalIdentifier requires emit',
+      'TimelineActivityType replacesTimelineActivityTypeUniversalIdentifier requires emit',
     );
   });
 

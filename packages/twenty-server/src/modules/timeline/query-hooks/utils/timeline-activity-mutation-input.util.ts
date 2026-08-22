@@ -45,8 +45,7 @@ export const assertTimelineActivityCreationInputIsValid = ({
         isDefined(record.linkedRecordId) !==
           isDefined(record.linkedObjectMetadataId) ||
         Object.entries(record).filter(
-          ([key, value]) =>
-            key.startsWith('target') && key.endsWith('Id') && isDefined(value),
+          ([key, value]) => key.startsWith('target') && isDefined(value),
         ).length !== 1,
     )
   ) {

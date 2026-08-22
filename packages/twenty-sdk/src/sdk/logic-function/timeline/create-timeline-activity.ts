@@ -33,15 +33,16 @@ export type CreatedTimelineActivity = {
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
 };
 
-const OBJECT_METADATA_PAGE_SIZE = 100;
-
-const getObjectMetadataPageSelection = (after?: string) => ({
+const getObjectMetadataSelection = (universalIdentifiers: string[]) => ({
   __args: {
     paging: {
-      first: OBJECT_METADATA_PAGE_SIZE,
-      ...(isDefined(after) ? { after } : {}),
+      first: universalIdentifiers.length,
     },
-    filter: {},
+    filter: {
+      universalIdentifier: {
+        in: universalIdentifiers,
+      },
+    },
   },
   edges: {
     node: {
@@ -49,10 +50,6 @@ const getObjectMetadataPageSelection = (after?: string) => ({
       universalIdentifier: true,
       nameSingular: true,
     },
-  },
-  pageInfo: {
-    endCursor: true,
-    hasNextPage: true,
   },
 });
 
@@ -65,16 +62,23 @@ export const createTimelineActivity = async ({
   targetRecordId,
   ...input
 }: CreateTimelineActivityInput): Promise<CreatedTimelineActivity> => {
+  const requiredObjectUniversalIdentifiers = [
+    ...new Set(
+      [
+        targetObjectUniversalIdentifier,
+        linkedObjectMetadataUniversalIdentifier,
+      ].filter(isDefined),
+    ),
+  ];
   const metadataClient = new MetadataApiClient();
-  const { timelineActivityTypes, objects: firstObjectsPage } =
-    await metadataClient.query({
-      timelineActivityTypes: {
-        id: true,
-        universalIdentifier: true,
-        isActive: true,
-      },
-      objects: getObjectMetadataPageSelection(),
-    });
+  const { timelineActivityTypes, objects } = await metadataClient.query({
+    timelineActivityTypes: {
+      id: true,
+      universalIdentifier: true,
+      isActive: true,
+    },
+    objects: getObjectMetadataSelection(requiredObjectUniversalIdentifiers),
+  });
 
   const timelineActivityType = timelineActivityTypes.find(
     ({ universalIdentifier }) =>
@@ -93,46 +97,9 @@ export const createTimelineActivity = async ({
     );
   }
 
-  const requiredObjectUniversalIdentifiers = new Set(
-    [
-      targetObjectUniversalIdentifier,
-      linkedObjectMetadataUniversalIdentifier,
-    ].filter(isDefined),
+  const objectMetadataByUniversalIdentifier = new Map(
+    objects.edges.map(({ node }) => [node.universalIdentifier, node]),
   );
-  const objectMetadataByUniversalIdentifier = new Map<
-    string,
-    { id: string; nameSingular: string }
-  >();
-  let objectsPage = firstObjectsPage;
-
-  while (true) {
-    for (const { node } of objectsPage.edges) {
-      if (requiredObjectUniversalIdentifiers.has(node.universalIdentifier)) {
-        objectMetadataByUniversalIdentifier.set(node.universalIdentifier, node);
-      }
-    }
-
-    const foundEveryRequiredObject = [
-      ...requiredObjectUniversalIdentifiers,
-    ].every((universalIdentifier) =>
-      objectMetadataByUniversalIdentifier.has(universalIdentifier),
-    );
-    const endCursor = objectsPage.pageInfo?.endCursor;
-
-    if (
-      foundEveryRequiredObject ||
-      !objectsPage.pageInfo?.hasNextPage ||
-      !isDefined(endCursor)
-    ) {
-      break;
-    }
-
-    const nextPageResult = await metadataClient.query({
-      objects: getObjectMetadataPageSelection(endCursor),
-    });
-
-    objectsPage = nextPageResult.objects;
-  }
 
   const targetObject = objectMetadataByUniversalIdentifier.get(
     targetObjectUniversalIdentifier,

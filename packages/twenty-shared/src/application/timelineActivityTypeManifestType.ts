@@ -19,5 +19,5 @@ export type TimelineActivityTypeManifest = SyncableEntityOptions & {
   icon?: string;
   emit?: TimelineActivityTypeEmitManifest;
   frontComponentUniversalIdentifier?: string;
-  overridesTimelineActivityTypeUniversalIdentifier?: string;
+  replacesTimelineActivityTypeUniversalIdentifier?: string;
 };

@@ -104,6 +104,12 @@ describe('createTimelineActivity', () => {
     ).resolves.toEqual(createdTimelineActivity);
 
     expect(fetchSpy.mock.calls[0][0]).toBe('https://api.test/metadata');
+    expect(fetchSpy.mock.calls[0][1]?.body).toContain(
+      TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
+    );
+    expect(fetchSpy.mock.calls[0][1]?.body).toContain(
+      LINKED_OBJECT_UNIVERSAL_IDENTIFIER,
+    );
     expect(fetchSpy.mock.calls[1][0]).toBe(
       'https://api.test/rest/timelineActivities',
     );
@@ -201,68 +207,5 @@ describe('createTimelineActivity', () => {
     );
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('continues through object metadata pages until it finds the target', async () => {
-    const createTimelineActivity = await importCreateTimelineActivity();
-    const createdTimelineActivity = {
-      id: '33333333-3333-4333-8333-333333333333',
-      timelineActivityTypeId: TYPE_ID,
-      timelineActivityTypeSnapshot: { label: 'updated a post card' },
-    };
-
-    fetchSpy
-      .mockResolvedValueOnce(
-        response({
-          data: {
-            timelineActivityTypes: [
-              {
-                id: TYPE_ID,
-                universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
-                isActive: true,
-              },
-            ],
-            objects: {
-              edges: [],
-              pageInfo: { hasNextPage: true, endCursor: 'first-page' },
-            },
-          },
-        }),
-      )
-      .mockResolvedValueOnce(
-        response({
-          data: {
-            objects: {
-              edges: [
-                {
-                  node: {
-                    id: '99999999-9999-4999-8999-999999999999',
-                    universalIdentifier: TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
-                    nameSingular: 'postCard',
-                  },
-                },
-              ],
-              pageInfo: { hasNextPage: false, endCursor: 'second-page' },
-            },
-          },
-        }),
-      )
-      .mockResolvedValueOnce(
-        response({
-          data: { createTimelineActivity: createdTimelineActivity },
-        }),
-      );
-
-    await expect(
-      createTimelineActivity({
-        timelineActivityTypeUniversalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
-        targetObjectUniversalIdentifier: TARGET_OBJECT_UNIVERSAL_IDENTIFIER,
-        targetRecordId: '44444444-4444-4444-8444-444444444444',
-      }),
-    ).resolves.toEqual(createdTimelineActivity);
-
-    expect(fetchSpy).toHaveBeenCalledTimes(3);
-    expect(fetchSpy.mock.calls[1][0]).toBe('https://api.test/metadata');
-    expect(fetchSpy.mock.calls[1][1]?.body).toContain('first-page');
   });
 });

@@ -2858,7 +2858,7 @@ export interface TimelineActivityType {
     frontComponentUniversalIdentifier?: Scalars['UUID']
     /** @deprecated Use emit.objectUniversalIdentifier */
     objectUniversalIdentifier?: Scalars['UUID']
-    overridesTimelineActivityTypeUniversalIdentifier?: Scalars['UUID']
+    replacesTimelineActivityTypeUniversalIdentifier?: Scalars['UUID']
     isActive: Scalars['Boolean']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -6277,7 +6277,7 @@ export interface TimelineActivityTypeGenqlSelection{
     frontComponentUniversalIdentifier?: boolean | number
     /** @deprecated Use emit.objectUniversalIdentifier */
     objectUniversalIdentifier?: boolean | number
-    overridesTimelineActivityTypeUniversalIdentifier?: boolean | number
+    replacesTimelineActivityTypeUniversalIdentifier?: boolean | number
     isActive?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -6466,7 +6466,7 @@ export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
 
-export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isRemote?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
+export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),universalIdentifier?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isRemote?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
 
 export interface LogicFunctionIdInput {
 /** The id of the function. */

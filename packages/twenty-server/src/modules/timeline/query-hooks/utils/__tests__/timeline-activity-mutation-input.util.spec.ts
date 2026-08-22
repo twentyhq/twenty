@@ -70,6 +70,37 @@ describe('timeline activity mutation input', () => {
     ).toThrow('complete linked record metadata');
   });
 
+  it('accepts a nested target relation input', () => {
+    expect(() =>
+      assertTimelineActivityCreationInputIsValid({
+        records: [
+          {
+            timelineActivityTypeId: TYPE_ID,
+            targetPerson: {
+              connect: { id: '00000000-0000-4000-8000-000000000010' },
+            },
+          },
+        ],
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects targets split across scalar and nested relation inputs', () => {
+    expect(() =>
+      assertTimelineActivityCreationInputIsValid({
+        records: [
+          {
+            timelineActivityTypeId: TYPE_ID,
+            targetPersonId: '00000000-0000-4000-8000-000000000010',
+            targetCompany: {
+              connect: { id: '00000000-0000-4000-8000-000000000011' },
+            },
+          },
+        ],
+      }),
+    ).toThrow('A timeline activity requires exactly one target');
+  });
+
   it('rejects an untyped timeline activity', () => {
     expect(() =>
       assertTimelineActivityCreationInputIsValid({

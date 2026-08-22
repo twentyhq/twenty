@@ -6380,7 +6380,7 @@ export default {
             "objectUniversalIdentifier": [
                 3
             ],
-            "overridesTimelineActivityTypeUniversalIdentifier": [
+            "replacesTimelineActivityTypeUniversalIdentifier": [
                 3
             ],
             "isActive": [
@@ -7385,6 +7385,9 @@ export default {
                 367
             ],
             "id": [
+                29
+            ],
+            "universalIdentifier": [
                 29
             ],
             "isActive": [

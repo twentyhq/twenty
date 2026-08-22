@@ -79,9 +79,9 @@ export const defineTimelineActivityType: DefineEntity<
     );
   }
 
-  if (config.overridesTimelineActivityTypeUniversalIdentifier && !config.emit) {
+  if (config.replacesTimelineActivityTypeUniversalIdentifier && !config.emit) {
     errors.push(
-      'TimelineActivityType overridesTimelineActivityTypeUniversalIdentifier requires emit',
+      'TimelineActivityType replacesTimelineActivityTypeUniversalIdentifier requires emit',
     );
   }
 
