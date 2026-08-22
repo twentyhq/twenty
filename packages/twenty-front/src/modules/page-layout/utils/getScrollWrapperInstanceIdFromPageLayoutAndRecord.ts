@@ -2,6 +2,7 @@ import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/
 import { type LayoutRenderingContextType } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type PageLayoutScrollWrapperArea = 'left-panel' | 'tab-content';
 
@@ -21,7 +22,9 @@ export const getScrollWrapperInstanceIdFromPageLayoutAndRecord = ({
   pageLayoutTabId?: string;
 }) => {
   const recordId =
-    layoutType === 'RECORD_PAGE' ? targetRecordIdentifier?.id : undefined;
+    layoutType === PageLayoutType.RECORD_PAGE
+      ? targetRecordIdentifier?.id
+      : undefined;
   const recordScope = isDefined(recordId) ? `-${recordId}` : '';
   const renderingScope = isInSidePanel ? 'side-panel' : 'main-view';
   const tabScope = isDefined(pageLayoutTabId) ? `-${pageLayoutTabId}` : '';
