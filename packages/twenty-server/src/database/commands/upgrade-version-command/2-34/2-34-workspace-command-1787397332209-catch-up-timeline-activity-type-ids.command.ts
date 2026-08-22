@@ -95,7 +95,7 @@ export class CatchUpTimelineActivityTypeIdsCommand extends ProvisionedWorkspaceC
       validTimelineActivityTypeIds,
     });
 
-    if (options.dryRun === true) {
+    if (options.dryRun) {
       this.logger.log(
         `[DRY RUN] Would backfill ${auditBefore.nullTypeIdCount} timelineActivity row(s); found ${auditBefore.danglingTypeIdCount} dangling type reference(s) for workspace ${workspaceId}`,
       );
