@@ -1,9 +1,13 @@
+import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
-const widget = (isActive: boolean) => ({ isActive }) as PageLayoutWidget;
+const widget = (id: string, isActive: boolean): PageLayoutWidget => ({
+  ...makeWidget(id, 0),
+  isActive,
+});
 
 const tabWith = (
   layoutMode: PageLayoutTabLayoutMode,
@@ -14,7 +18,9 @@ describe('getIsSingleWidgetTab', () => {
   it('returns true for a list tab holding a single active widget', () => {
     expect(
       getIsSingleWidgetTab({
-        tab: tabWith(PageLayoutTabLayoutMode.VERTICAL_LIST, [widget(true)]),
+        tab: tabWith(PageLayoutTabLayoutMode.VERTICAL_LIST, [
+          widget('widget-1', true),
+        ]),
       }),
     ).toBe(true);
   });
@@ -23,8 +29,8 @@ describe('getIsSingleWidgetTab', () => {
     expect(
       getIsSingleWidgetTab({
         tab: tabWith(PageLayoutTabLayoutMode.VERTICAL_LIST, [
-          widget(true),
-          widget(false),
+          widget('widget-1', true),
+          widget('widget-2', false),
         ]),
       }),
     ).toBe(true);
@@ -34,8 +40,8 @@ describe('getIsSingleWidgetTab', () => {
     expect(
       getIsSingleWidgetTab({
         tab: tabWith(PageLayoutTabLayoutMode.VERTICAL_LIST, [
-          widget(true),
-          widget(true),
+          widget('widget-1', true),
+          widget('widget-2', true),
         ]),
       }),
     ).toBe(false);
@@ -52,7 +58,7 @@ describe('getIsSingleWidgetTab', () => {
   it('returns false for grid tabs', () => {
     expect(
       getIsSingleWidgetTab({
-        tab: tabWith(PageLayoutTabLayoutMode.GRID, [widget(true)]),
+        tab: tabWith(PageLayoutTabLayoutMode.GRID, [widget('widget-1', true)]),
       }),
     ).toBe(false);
   });
