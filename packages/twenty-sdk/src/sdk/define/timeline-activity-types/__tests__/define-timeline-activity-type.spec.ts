@@ -79,4 +79,35 @@ describe('defineTimelineActivityType', () => {
       'TimelineActivityType triggerFieldUniversalIdentifiers requires an updated target relation event',
     );
   });
+
+  it('rejects duplicate trigger fields', () => {
+    const triggerFieldUniversalIdentifier =
+      baseValidConfig.triggerFieldUniversalIdentifiers[0];
+    const result = defineTimelineActivityType({
+      ...baseValidConfig,
+      triggerFieldUniversalIdentifiers: [
+        triggerFieldUniversalIdentifier,
+        triggerFieldUniversalIdentifier,
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'TimelineActivityType triggerFieldUniversalIdentifiers must be unique',
+    );
+  });
+
+  it('requires a concrete event contract for overrides', () => {
+    const result = defineTimelineActivityType({
+      ...baseValidConfig,
+      action: undefined,
+      overridesTimelineActivityTypeUniversalIdentifier:
+        '66666666-6666-4666-8666-666666666666',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'TimelineActivityType overridesTimelineActivityTypeUniversalIdentifier requires action and objectUniversalIdentifier',
+    );
+  });
 });

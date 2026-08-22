@@ -36,7 +36,7 @@ export default defineTimelineActivityType({
 
 ## Automatic and explicit events
 
-Set both `action` and `objectUniversalIdentifier` when this type should describe the object's automatic audit events. The supported actions are `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`. Only one type can handle the same action/object/target-relation combination in a workspace.
+Set both `action` and `objectUniversalIdentifier` when this type should describe the object's automatic audit events. The supported actions are `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`. Only one effective type can handle the same action/object/target-relation combination in a workspace.
 
 By default, the event is written on the source record's own timeline. To fan the event out to related records, set `targetRelationFieldUniversalIdentifier` to a one-to-many junction relation on the source object. Creating or deleting a junction row then produces `linked` or `unlinked`, while changes to the source record produce its normal action on every related target timeline.
 
@@ -84,7 +84,7 @@ Create explicit events with [`createTimelineActivity()`](/developers/extend/apps
 
 Without a front component, Twenty renders a native generic row from the type label, icon, and linked-object metadata. This works for standard and custom objects without an object-specific renderer.
 
-For a fully custom row, set `frontComponentUniversalIdentifier` to a front component owned by the same app:
+For custom details, set `frontComponentUniversalIdentifier` to a front component owned by the same app:
 
 ```ts
 export default defineTimelineActivityType({
@@ -97,20 +97,40 @@ export default defineTimelineActivityType({
 });
 ```
 
-Inside that component, call `useTimelineActivityId()` from `twenty-sdk/front-component` to read the row ID and fetch any data your presentation needs. It returns `null` when the component is rendered outside a timeline row.
+The native row remains the collapsed presentation. Twenty mounts the front component only after the user expands that row, avoiding a sandbox and worker for every visible event. Inside the component, call `useTimelineActivityId()` from `twenty-sdk/front-component` to read the row ID and fetch any data your presentation needs. It returns `null` when the component is rendered outside a timeline row.
+
+## Overriding another application's presentation
+
+An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `overridesTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  action: 'created',
+  objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  overridesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
 
 ## Configuration fields
 
-| Field                                    | Required | Description                                                                   |
-| ---------------------------------------- | -------- | ----------------------------------------------------------------------------- |
-| `universalIdentifier`                    | Yes      | Stable UUID for the type across installations and upgrades                    |
-| `name`                                   | Yes      | App-local programmatic name                                                   |
-| `label`                                  | Yes      | User-facing action text used by the native renderer                           |
-| `action`                                 | No       | Automatic audit action handled by this type                                   |
-| `icon`                                   | No       | Twenty icon name displayed beside the event                                   |
-| `objectUniversalIdentifier`              | No       | Object this type describes; required for object-specific automatic handling   |
-| `targetRelationFieldUniversalIdentifier` | No       | Junction relation used to route events to related record timelines            |
-| `triggerFieldUniversalIdentifiers`       | No       | Source fields that can trigger an `updated` relation event                    |
-| `frontComponentUniversalIdentifier`      | No       | App-owned front component that replaces the native row                        |
+| Field                                              | Required | Description                                                                 |
+| -------------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `universalIdentifier`                              | Yes      | Stable UUID for the type across installations and upgrades                  |
+| `name`                                             | Yes      | App-local programmatic name                                                 |
+| `label`                                            | Yes      | User-facing action text used by the native renderer                         |
+| `action`                                           | No       | Automatic audit action handled by this type                                 |
+| `icon`                                             | No       | Twenty icon name displayed beside the event                                 |
+| `objectUniversalIdentifier`                        | No       | Object this type describes; required for object-specific automatic handling |
+| `targetRelationFieldUniversalIdentifier`           | No       | Junction relation used to route events to related record timelines          |
+| `triggerFieldUniversalIdentifiers`                 | No       | Source fields that can trigger an `updated` relation event                  |
+| `frontComponentUniversalIdentifier`                | No       | App-owned front component mounted when the row is expanded                  |
+| `overridesTimelineActivityTypeUniversalIdentifier` | No       | Existing type explicitly replaced when targeting another app's object       |
 
-Twenty snapshots these values when an event is created, so historical rows retain their meaning after a type is edited or its app is uninstalled.
+Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.

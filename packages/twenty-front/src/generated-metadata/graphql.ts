@@ -5595,6 +5595,7 @@ export type TimelineActivityType = {
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   objectUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
+  overridesTimelineActivityTypeUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   /** @deprecated Use frontComponentUniversalIdentifier */
   renderer?: Maybe<Scalars['String']['output']>;
   targetRelationFieldUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;

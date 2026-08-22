@@ -1,6 +1,5 @@
 import {
   buildResolvedTimelineActivityTypeResolver,
-  resolveTimelineActivityTypeOrThrow,
   type TimelineActivityTypeResolutionMaps,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
@@ -10,10 +9,12 @@ const NOTE_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000010';
 const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-000000000020';
 const APPLICATION_ID = '00000000-0000-4000-8000-000000000030';
+const APPLICATION_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000031';
 
 const noteLinkedTimelineActivityType = {
   id: NOTE_LINKED_ID,
   applicationId: APPLICATION_ID,
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   universalIdentifier: '00000000-0000-4000-8000-000000000102',
   name: 'note.linked',
   label: 'Linked a note',
@@ -21,7 +22,9 @@ const noteLinkedTimelineActivityType = {
   icon: 'IconNotes',
   objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
   targetRelationFieldUniversalIdentifier: null,
+  triggerFieldUniversalIdentifiers: null,
   frontComponentUniversalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  overridesTimelineActivityTypeUniversalIdentifier: null,
 };
 
 const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
@@ -29,6 +32,7 @@ const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
     recordLinked: {
       id: SHARED_LINKED_ID,
       applicationId: APPLICATION_ID,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       universalIdentifier: '00000000-0000-4000-8000-000000000101',
       name: 'record.linked',
       label: 'Linked a record',
@@ -36,16 +40,22 @@ const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
       icon: 'IconLink',
       objectUniversalIdentifier: null,
       targetRelationFieldUniversalIdentifier: null,
+      triggerFieldUniversalIdentifiers: null,
       frontComponentUniversalIdentifier: null,
+      overridesTimelineActivityTypeUniversalIdentifier: null,
     },
     noteLinked: noteLinkedTimelineActivityType,
+  },
+  objectMetadataByUniversalIdentifier: {
+    [NOTE_UNIVERSAL_IDENTIFIER]: {
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    },
   },
 };
 
 describe('buildResolvedTimelineActivityTypeResolver', () => {
-  const resolveTimelineActivityType = buildResolvedTimelineActivityTypeResolver(
-    flatTimelineActivityTypeMaps,
-  );
+  const { resolveTimelineActivityType } =
+    buildResolvedTimelineActivityTypeResolver(flatTimelineActivityTypeMaps);
 
   it('returns the object-bound type and its immutable render snapshot', () => {
     expect(
@@ -79,18 +89,21 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
   });
 
   it('does not treat a routed type as a source record resolver', () => {
-    const resolver = buildResolvedTimelineActivityTypeResolver({
-      byUniversalIdentifier: {
-        ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
-        routedNoteLinked: {
-          ...noteLinkedTimelineActivityType,
-          id: '00000000-0000-4000-8000-000000000004',
-          universalIdentifier: '00000000-0000-4000-8000-000000000104',
-          targetRelationFieldUniversalIdentifier:
-            '00000000-0000-4000-8000-000000000105',
+    const { resolveTimelineActivityType: resolver } =
+      buildResolvedTimelineActivityTypeResolver({
+        objectMetadataByUniversalIdentifier:
+          flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+        byUniversalIdentifier: {
+          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+          routedNoteLinked: {
+            ...noteLinkedTimelineActivityType,
+            id: '00000000-0000-4000-8000-000000000004',
+            universalIdentifier: '00000000-0000-4000-8000-000000000104',
+            targetRelationFieldUniversalIdentifier:
+              '00000000-0000-4000-8000-000000000105',
+          },
         },
-      },
-    });
+      });
 
     expect(
       resolver({
@@ -100,9 +113,11 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
     ).toBe(NOTE_LINKED_ID);
   });
 
-  it('rejects ambiguous types before any row can be stamped', () => {
-    expect(() =>
+  it('isolates an ambiguous object contract without falling back', () => {
+    const { resolveTimelineActivityType: resolver, conflicts } =
       buildResolvedTimelineActivityTypeResolver({
+        objectMetadataByUniversalIdentifier:
+          flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
         byUniversalIdentifier: {
           ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
           duplicate: {
@@ -111,28 +126,85 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
             universalIdentifier: '00000000-0000-4000-8000-000000000103',
           },
         },
-      }),
-    ).toThrow(
-      `Multiple timeline activity types resolve action linked for object ${NOTE_UNIVERSAL_IDENTIFIER}`,
-    );
-  });
-});
+      });
 
-describe('resolveTimelineActivityTypeOrThrow', () => {
-  const resolveTimelineActivityType = buildResolvedTimelineActivityTypeResolver(
-    flatTimelineActivityTypeMaps,
-  );
-
-  it('throws with the missing event context', () => {
-    expect(() =>
-      resolveTimelineActivityTypeOrThrow({
-        resolveTimelineActivityType,
-        workspaceId: 'workspace-id',
-        action: 'deleted',
+    expect(
+      resolver({
+        action: 'linked',
         objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
       }),
-    ).toThrow(
-      `No timeline activity type resolves action deleted for object ${NOTE_UNIVERSAL_IDENTIFIER} in workspace workspace-id`,
-    );
+    ).toBeUndefined();
+    expect(
+      resolver({
+        action: 'linked',
+        objectUniversalIdentifier: '00000000-0000-4000-8000-000000000099',
+      })?.id,
+    ).toBe(SHARED_LINKED_ID);
+    expect(conflicts).toEqual([
+      {
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      },
+    ]);
+  });
+
+  it('selects an explicit override deterministically', () => {
+    const overrideUniversalIdentifier = '00000000-0000-4000-8000-000000000103';
+    const { resolveTimelineActivityType: resolver, conflicts } =
+      buildResolvedTimelineActivityTypeResolver({
+        objectMetadataByUniversalIdentifier:
+          flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+        byUniversalIdentifier: {
+          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+          override: {
+            ...noteLinkedTimelineActivityType,
+            id: '00000000-0000-4000-8000-000000000003',
+            applicationUniversalIdentifier:
+              '00000000-0000-4000-8000-000000000032',
+            universalIdentifier: overrideUniversalIdentifier,
+            overridesTimelineActivityTypeUniversalIdentifier:
+              noteLinkedTimelineActivityType.universalIdentifier,
+          },
+        },
+      });
+
+    expect(
+      resolver({
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      })?.snapshot.universalIdentifier,
+    ).toBe(overrideUniversalIdentifier);
+    expect(conflicts).toEqual([]);
+  });
+
+  it('ignores and reports an implicit foreign-object takeover', () => {
+    const { resolveTimelineActivityType: resolver, invalidContracts } =
+      buildResolvedTimelineActivityTypeResolver({
+        objectMetadataByUniversalIdentifier:
+          flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+        byUniversalIdentifier: {
+          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+          takeover: {
+            ...noteLinkedTimelineActivityType,
+            id: '00000000-0000-4000-8000-000000000005',
+            applicationUniversalIdentifier:
+              '00000000-0000-4000-8000-000000000032',
+            universalIdentifier: '00000000-0000-4000-8000-000000000105',
+          },
+        },
+      });
+
+    expect(
+      resolver({
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      })?.id,
+    ).toBe(NOTE_LINKED_ID);
+    expect(invalidContracts).toEqual([
+      {
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      },
+    ]);
   });
 });

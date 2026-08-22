@@ -20,6 +20,12 @@ export const useLinkedRecordsIdentifiers = ({
         objectMetadataItem,
       ]),
     );
+    const objectMetadataItemByUniversalIdentifier = new Map(
+      objectMetadataItems.map((objectMetadataItem) => [
+        objectMetadataItem.universalIdentifier,
+        objectMetadataItem,
+      ]),
+    );
     const recordIdsByObjectMetadataId = new Map<string, Set<string>>();
 
     for (const timelineActivity of timelineActivities) {
@@ -30,16 +36,28 @@ export const useLinkedRecordsIdentifiers = ({
         continue;
       }
 
+      const linkedObjectMetadataItem =
+        objectMetadataItemById.get(timelineActivity.linkedObjectMetadataId) ??
+        (isDefined(
+          timelineActivity.timelineActivityTypeSnapshot
+            ?.objectUniversalIdentifier,
+        )
+          ? objectMetadataItemByUniversalIdentifier.get(
+              timelineActivity.timelineActivityTypeSnapshot
+                .objectUniversalIdentifier,
+            )
+          : undefined);
+
+      if (!isDefined(linkedObjectMetadataItem)) {
+        continue;
+      }
+
       const recordIds =
-        recordIdsByObjectMetadataId.get(
-          timelineActivity.linkedObjectMetadataId,
-        ) ?? new Set<string>();
+        recordIdsByObjectMetadataId.get(linkedObjectMetadataItem.id) ??
+        new Set<string>();
 
       recordIds.add(timelineActivity.linkedRecordId);
-      recordIdsByObjectMetadataId.set(
-        timelineActivity.linkedObjectMetadataId,
-        recordIds,
-      );
+      recordIdsByObjectMetadataId.set(linkedObjectMetadataItem.id, recordIds);
     }
 
     return [...recordIdsByObjectMetadataId.entries()]

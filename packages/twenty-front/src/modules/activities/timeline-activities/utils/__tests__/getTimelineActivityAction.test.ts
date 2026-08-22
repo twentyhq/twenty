@@ -1,23 +1,26 @@
-import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
 
 const UPDATED_TYPE_ID = '20202020-0000-4000-8000-000000000001';
 
-const timelineActivityTypeById = new Map<string, TimelineActivityType>([
-  [
-    UPDATED_TYPE_ID,
-    {
-      id: UPDATED_TYPE_ID,
-      universalIdentifier: UPDATED_TYPE_ID,
-      name: 'recordUpdated',
-      label: 'updated',
-      action: 'updated',
-      icon: null,
-      objectUniversalIdentifier: null,
-      frontComponentUniversalIdentifier: null,
-    },
-  ],
-]);
+const timelineActivityTypeMaps: TimelineActivityTypeMaps = {
+  byId: new Map([
+    [
+      UPDATED_TYPE_ID,
+      {
+        id: UPDATED_TYPE_ID,
+        universalIdentifier: UPDATED_TYPE_ID,
+        name: 'recordUpdated',
+        label: 'updated',
+        action: 'updated',
+        icon: null,
+        objectUniversalIdentifier: null,
+        frontComponentUniversalIdentifier: null,
+      },
+    ],
+  ]),
+  byUniversalIdentifier: new Map(),
+};
 
 describe('getTimelineActivityAction', () => {
   it('reads the action from the activity type', () => {
@@ -27,7 +30,7 @@ describe('getTimelineActivityAction', () => {
           timelineActivityTypeId: UPDATED_TYPE_ID,
           properties: {},
         },
-        timelineActivityTypeById,
+        timelineActivityTypeMaps,
       ),
     ).toBe('updated');
   });
@@ -36,7 +39,7 @@ describe('getTimelineActivityAction', () => {
     expect(
       getTimelineActivityAction(
         { timelineActivityTypeId: 'missing', properties: {} },
-        timelineActivityTypeById,
+        timelineActivityTypeMaps,
       ),
     ).toBeNull();
   });
@@ -45,7 +48,7 @@ describe('getTimelineActivityAction', () => {
     expect(
       getTimelineActivityAction(
         { name: 'company.updated', properties: {} },
-        timelineActivityTypeById,
+        timelineActivityTypeMaps,
       ),
     ).toBe('updated');
   });

@@ -23,6 +23,20 @@ const buildMergeKey = ({
   discriminator: string;
 }): string => `${recordId}|${workspaceMemberId ?? null}|${discriminator}`;
 
+const buildTimelineActivityTypeMergeDiscriminator = ({
+  timelineActivityTypeId,
+  timelineActivityTypeSnapshot,
+}: {
+  timelineActivityTypeId: string;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
+}): string =>
+  JSON.stringify([
+    timelineActivityTypeId,
+    timelineActivityTypeSnapshot?.universalIdentifier,
+    timelineActivityTypeSnapshot?.action,
+    timelineActivityTypeSnapshot?.objectUniversalIdentifier,
+  ]);
+
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
     properties: Pick<TimelineActivityPayload['properties'], 'diff'>;
@@ -57,8 +71,6 @@ export class TimelineActivityRepository {
         id: string;
         properties: Partial<ObjectRecord>;
         workspaceMemberId: string | undefined;
-        timelineActivityTypeId: string;
-        timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
       }[] = [];
 
       const timelineActivityPropertyName =
@@ -75,7 +87,11 @@ export class TimelineActivityRepository {
         const mergeKey = buildMergeKey({
           recordId: timelineActivity[timelineActivityPropertyName],
           workspaceMemberId: timelineActivity.workspaceMemberId,
-          discriminator: `type:${timelineActivity.timelineActivityTypeId}`,
+          discriminator: buildTimelineActivityTypeMergeDiscriminator({
+            timelineActivityTypeId: timelineActivity.timelineActivityTypeId,
+            timelineActivityTypeSnapshot:
+              timelineActivity.timelineActivityTypeSnapshot,
+          }),
         });
 
         const bucket = recentTimelineActivitiesByMergeKey.get(mergeKey);
@@ -91,7 +107,10 @@ export class TimelineActivityRepository {
         const typeMergeKey = buildMergeKey({
           recordId: payload.recordId,
           workspaceMemberId: payload.workspaceMemberId,
-          discriminator: `type:${payload.timelineActivityTypeId}`,
+          discriminator: buildTimelineActivityTypeMergeDiscriminator({
+            timelineActivityTypeId: payload.timelineActivityTypeId,
+            timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
+          }),
         });
         const recentTimelineActivity = (
           recentTimelineActivitiesByMergeKey.get(typeMergeKey) ?? []
@@ -109,8 +128,6 @@ export class TimelineActivityRepository {
               payload.properties,
             ),
             workspaceMemberId: payload.workspaceMemberId,
-            timelineActivityTypeId: payload.timelineActivityTypeId,
-            timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
           });
         } else {
           payloadsToInsert.push(payload);
@@ -214,8 +231,6 @@ export class TimelineActivityRepository {
       id: string;
       properties: Partial<ObjectRecord>;
       workspaceMemberId: string | undefined;
-      timelineActivityTypeId: string;
-      timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
     }[];
     workspaceId: string;
   }) {
@@ -233,20 +248,11 @@ export class TimelineActivityRepository {
       );
 
     await Promise.all(
-      merges.map(
-        ({
-          id,
+      merges.map(({ id, properties, workspaceMemberId }) =>
+        timelineActivityTypeORMRepository.update(id, {
           properties,
           workspaceMemberId,
-          timelineActivityTypeId,
-          timelineActivityTypeSnapshot,
-        }) =>
-          timelineActivityTypeORMRepository.update(id, {
-            properties,
-            workspaceMemberId,
-            timelineActivityTypeId,
-            timelineActivityTypeSnapshot,
-          }),
+        }),
       ),
     );
   }

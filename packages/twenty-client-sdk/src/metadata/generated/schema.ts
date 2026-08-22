@@ -2844,6 +2844,7 @@ export interface TimelineActivityType {
     objectUniversalIdentifier?: Scalars['UUID']
     targetRelationFieldUniversalIdentifier?: Scalars['UUID']
     triggerFieldUniversalIdentifiers?: Scalars['UUID'][]
+    overridesTimelineActivityTypeUniversalIdentifier?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -6243,6 +6244,7 @@ export interface TimelineActivityTypeGenqlSelection{
     objectUniversalIdentifier?: boolean | number
     targetRelationFieldUniversalIdentifier?: boolean | number
     triggerFieldUniversalIdentifiers?: boolean | number
+    overridesTimelineActivityTypeUniversalIdentifier?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number

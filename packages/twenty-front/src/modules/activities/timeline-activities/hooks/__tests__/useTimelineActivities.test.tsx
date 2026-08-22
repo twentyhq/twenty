@@ -77,5 +77,10 @@ describe('useTimelineActivities', () => {
     expect(result.current.timelineActivities).not.toEqual(
       wrongMockedTimelineActivities,
     );
+    expect(useFindManyRecordsMock.useFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: [{ happensAt: 'DescNullsFirst' }],
+      }),
+    );
   });
 });

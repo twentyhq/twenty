@@ -1,4 +1,5 @@
 import {
+  ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
   ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
 } from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
@@ -9,6 +10,7 @@ const CURRENT_COLUMNS = [
   'frontComponentUniversalIdentifier',
   'targetRelationFieldUniversalIdentifier',
   'triggerFieldUniversalIdentifiers',
+  'overridesTimelineActivityTypeUniversalIdentifier',
 ].map((propertyName) => ({ propertyName, databaseName: propertyName }));
 
 const resolveAt = (appliedSteps: string[]) =>
@@ -35,6 +37,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       new Set([
         'targetRelationFieldUniversalIdentifier',
         'triggerFieldUniversalIdentifiers',
+        'overridesTimelineActivityTypeUniversalIdentifier',
       ]),
     );
 
@@ -42,6 +45,14 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       resolveAt([
         REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+      ]).hiddenPropertyNames,
+    ).toEqual(new Set(['overridesTimelineActivityTypeUniversalIdentifier']));
+
+    expect(
+      resolveAt([
+        REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
     ).toEqual(new Set());
   });

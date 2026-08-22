@@ -6358,6 +6358,9 @@ export default {
             "triggerFieldUniversalIdentifiers": [
                 3
             ],
+            "overridesTimelineActivityTypeUniversalIdentifier": [
+                3
+            ],
             "applicationId": [
                 3
             ],

@@ -4,7 +4,7 @@ import { type ReactElement } from 'react';
 import { EventsGroup } from '@/activities/timeline-activities/components/EventsGroup';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
-import { timelineActivityTypeIdsFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeIdsFilterFamilyState';
+import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
 import { keepTimelineActivitiesOfSelectedTypes } from '@/activities/timeline-activities/utils/keepTimelineActivitiesOfSelectedTypes';
 import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
@@ -49,21 +49,23 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { timelineActivityTypeById } = useTimelineActivityTypes();
+  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
 
-  const timelineActivityTypeIdsFilter = useAtomFamilyStateValue(
-    timelineActivityTypeIdsFilterFamilyState,
-    targetableObject.id,
-  );
+  const timelineActivityTypeUniversalIdentifiersFilter =
+    useAtomFamilyStateValue(
+      timelineActivityTypeUniversalIdentifiersFilterFamilyState,
+      targetableObject.id,
+    );
 
   const filteredEvents = filterOutInvalidTimelineActivities(
     keepTimelineActivitiesOfSelectedTypes(
       events,
-      timelineActivityTypeIdsFilter,
+      timelineActivityTypeUniversalIdentifiersFilter,
+      timelineActivityTypeMaps,
     ),
     targetableObject.targetObjectNameSingular,
     objectMetadataItems,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
 
   const groupedEvents = groupEventsByMonth(filteredEvents);
@@ -93,7 +95,7 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
             mainObjectMetadataItem={mainObjectMetadataItem}
             key={group.year.toString() + group.month}
             group={group}
-            month={new Date(group.items[0].createdAt).toLocaleString(
+            month={new Date(group.items[0].happensAt).toLocaleString(
               'default',
               { month: 'long' },
             )}

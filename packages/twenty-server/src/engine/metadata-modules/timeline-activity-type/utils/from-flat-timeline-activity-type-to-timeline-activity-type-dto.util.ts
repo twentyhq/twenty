@@ -18,6 +18,8 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
     flatTimelineActivityType.targetRelationFieldUniversalIdentifier,
   triggerFieldUniversalIdentifiers:
     flatTimelineActivityType.triggerFieldUniversalIdentifiers,
+  overridesTimelineActivityTypeUniversalIdentifier:
+    flatTimelineActivityType.overridesTimelineActivityTypeUniversalIdentifier,
   workspaceId: flatTimelineActivityType.workspaceId,
   applicationId: flatTimelineActivityType.applicationId,
   createdAt: new Date(flatTimelineActivityType.createdAt),

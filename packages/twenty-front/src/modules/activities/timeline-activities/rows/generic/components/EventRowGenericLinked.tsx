@@ -55,7 +55,8 @@ export const EventRowGenericLinked = ({
   eventTypeLabel,
   authorFullName,
   linkedObjectMetadataItem,
-  createdAt,
+  happensAt,
+  frontComponentId,
 }: EventRowGenericLinkedProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const [isOpen, setIsOpen] = useState(false);
@@ -124,13 +125,13 @@ export const EventRowGenericLinked = ({
           >
             <OverflowingTextWithTooltip text={linkedRecordName} />
           </StyledEventRowLinkedRecord>
-          {canOpen && (
+          {canOpen && !isDefined(frontComponentId) && (
             <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
           )}
         </StyledEventRowContent>
-        <EventRowDate createdAt={createdAt} />
+        <EventRowDate happensAt={happensAt} />
       </StyledEventRowContainer>
-      {isDefined(linkedRecord) && (
+      {isDefined(linkedRecord) && !isDefined(frontComponentId) && (
         <EventCard isOpen={isOpen}>
           <SidePanelSearchRecordPreviewCard
             objectNameSingular={linkedRecord.objectNameSingular}

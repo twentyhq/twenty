@@ -3199,6 +3199,7 @@ type TimelineActivityType {
   objectUniversalIdentifier: UUID
   targetRelationFieldUniversalIdentifier: UUID
   triggerFieldUniversalIdentifiers: [UUID!]
+  overridesTimelineActivityTypeUniversalIdentifier: UUID
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!

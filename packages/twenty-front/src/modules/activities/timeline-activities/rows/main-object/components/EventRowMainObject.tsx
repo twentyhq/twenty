@@ -37,7 +37,8 @@ export const EventRowMainObject = ({
   eventAction,
   eventTypeLabel,
   mainObjectMetadataItem,
-  createdAt,
+  happensAt,
+  frontComponentId,
 }: EventRowMainObjectProps) => {
   switch (eventAction) {
     case 'created': {
@@ -51,7 +52,7 @@ export const EventRowMainObject = ({
               </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
-            <EventRowDate createdAt={createdAt} />
+            <EventRowDate happensAt={happensAt} />
           </StyledRowContainer>
         </StyledMainContainer>
       );
@@ -64,7 +65,8 @@ export const EventRowMainObject = ({
           event={event}
           eventTypeLabel={eventTypeLabel}
           mainObjectMetadataItem={mainObjectMetadataItem}
-          createdAt={createdAt}
+          happensAt={happensAt}
+          hasFrontComponent={isDefined(frontComponentId)}
         />
       );
     }
@@ -79,7 +81,7 @@ export const EventRowMainObject = ({
               </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
-            <EventRowDate createdAt={createdAt} />
+            <EventRowDate happensAt={happensAt} />
           </StyledRowContainer>
         </StyledMainContainer>
       );
@@ -95,7 +97,7 @@ export const EventRowMainObject = ({
               </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
-            <EventRowDate createdAt={createdAt} />
+            <EventRowDate happensAt={happensAt} />
           </StyledRowContainer>
         </StyledMainContainer>
       );
@@ -113,7 +115,7 @@ export const EventRowMainObject = ({
               <EventRowItem variant="action">{eventTypeLabel}</EventRowItem>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
             </StyledRow>
-            <EventRowDate createdAt={createdAt} />
+            <EventRowDate happensAt={happensAt} />
           </StyledRowContainer>
         </StyledMainContainer>
       );

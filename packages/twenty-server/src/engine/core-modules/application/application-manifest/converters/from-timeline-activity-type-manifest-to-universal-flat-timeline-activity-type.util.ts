@@ -27,6 +27,9 @@ export const fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType
       null,
     triggerFieldUniversalIdentifiers:
       timelineActivityTypeManifest.triggerFieldUniversalIdentifiers ?? null,
+    overridesTimelineActivityTypeUniversalIdentifier:
+      timelineActivityTypeManifest.overridesTimelineActivityTypeUniversalIdentifier ??
+      null,
     createdAt: now,
     updatedAt: now,
   });

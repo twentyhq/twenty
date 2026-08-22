@@ -11,4 +11,5 @@ export type TimelineActivityTypeManifest = SyncableEntityOptions & {
   targetRelationFieldUniversalIdentifier?: string;
   triggerFieldUniversalIdentifiers?: string[];
   frontComponentUniversalIdentifier?: string;
+  overridesTimelineActivityTypeUniversalIdentifier?: string;
 };
