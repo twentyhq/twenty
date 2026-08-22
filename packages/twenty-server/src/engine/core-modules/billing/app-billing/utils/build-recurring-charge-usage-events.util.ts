@@ -12,10 +12,6 @@ type BuildRecurringChargeUsageEventsParams = {
   periodStart: Date;
 };
 
-export const isPerWorkspaceMemberCharge = ({
-  charge,
-}: DueRecurringCharge): boolean => charge.per === 'WORKSPACE_MEMBER';
-
 // A per-member charge multiplies by the member count at the moment the period is
 // raised, so a workspace with no members raises nothing rather than a zero-credit
 // row that would still count as charged and suppress the next attempt.
@@ -24,9 +20,8 @@ export const buildRecurringChargeUsageEvents = ({
   workspaceMemberCount,
   periodStart,
 }: BuildRecurringChargeUsageEventsParams): UsageEvent[] =>
-  dueCharges.flatMap((dueCharge) => {
-    const { applicationId, chargeKey, charge } = dueCharge;
-    const isPerMember = isPerWorkspaceMemberCharge(dueCharge);
+  dueCharges.flatMap(({ applicationId, chargeKey, charge }) => {
+    const isPerMember = charge.per === 'WORKSPACE_MEMBER';
     const quantity = isPerMember ? workspaceMemberCount : 1;
 
     if (quantity <= 0) {

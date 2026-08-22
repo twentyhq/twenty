@@ -3,19 +3,19 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.33.0', 1787400002000)
-export class AddBillingToApplicationFastInstanceCommand
+@RegisteredInstanceCommand('2.34.0', 1787398788000)
+export class AddPricingDescriptionToApplicationRegistrationFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."application" ADD "billing" jsonb NOT NULL DEFAULT \'{}\'',
+      'ALTER TABLE "core"."applicationRegistration" ADD "pricingDescription" text',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."application" DROP COLUMN "billing"',
+      'ALTER TABLE "core"."applicationRegistration" DROP COLUMN "pricingDescription"',
     );
   }
 }

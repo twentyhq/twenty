@@ -2,10 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  buildRecurringChargeUsageEvents,
-  isPerWorkspaceMemberCharge,
-} from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
+import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
 import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -73,7 +70,9 @@ export class ApplicationRecurringChargeService {
       return 0;
     }
 
-    const workspaceMemberCount = dueCharges.some(isPerWorkspaceMemberCharge)
+    const workspaceMemberCount = dueCharges.some(
+      ({ charge }) => charge.per === 'WORKSPACE_MEMBER',
+    )
       ? await this.countWorkspaceMembers(workspaceId)
       : 0;
 
