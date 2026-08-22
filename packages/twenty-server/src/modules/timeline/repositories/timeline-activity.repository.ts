@@ -107,7 +107,7 @@ export class TimelineActivityRepository {
         const nameMergeKey = buildMergeKey({
           recordId: payload.recordId,
           workspaceMemberId: payload.workspaceMemberId,
-          discriminator: `name:${payload.name}`,
+          discriminator: `name:${payload.legacyName}`,
         });
 
         const recentTimelineActivity = [
@@ -187,7 +187,7 @@ export class TimelineActivityRepository {
         },
         {
           ...whereConditions,
-          name: In(payloads.map((payload) => payload.name)),
+          name: In(payloads.map((payload) => payload.legacyName)),
         },
       ],
       order: { createdAt: 'DESC' },
@@ -217,7 +217,8 @@ export class TimelineActivityRepository {
 
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
-        name: payload.name,
+        // Omitting a standard text field applies its empty-string default.
+        name: null,
         timelineActivityTypeId: payload.timelineActivityTypeId,
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,

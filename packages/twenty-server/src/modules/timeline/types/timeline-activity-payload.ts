@@ -6,7 +6,8 @@ export type TimelineActivityPayload = {
   linkedRecordId?: string;
   linkedRecordCachedName?: string;
   workspaceMemberId?: string;
-  name: string;
+  // Kept only to merge with name-only rows written during a rolling upgrade.
+  legacyName: string;
   timelineActivityTypeId: string;
   recordId: string;
   objectSingularName?: string;

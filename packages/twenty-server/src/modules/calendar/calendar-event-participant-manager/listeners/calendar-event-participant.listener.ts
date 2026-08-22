@@ -79,7 +79,7 @@ export class CalendarEventParticipantListener {
           }
 
           return {
-            name: 'calendarEvent.linked',
+            legacyName: 'calendarEvent.linked',
             timelineActivityTypeId,
             properties: {},
             objectSingularName: 'person',
