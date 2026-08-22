@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical } from 'twenty-ui/icon';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import {
@@ -58,7 +59,7 @@ export const WidgetGrip = ({ className }: WidgetGripProps) => {
     setPointerDownPosition(null);
 
     if (
-      pointerDownPosition !== null &&
+      isDefined(pointerDownPosition) &&
       Math.hypot(
         event.clientX - pointerDownPosition.x,
         event.clientY - pointerDownPosition.y,
