@@ -57,6 +57,50 @@ type ValidateTimelineActivityTypePropertiesArgs = {
   updatedProperties?: UniversalFlatEntityUpdate<'timelineActivityType'>;
 };
 
+const validateSpecializedRendererContract = ({
+  flatTimelineActivityType,
+  updatedProperties,
+}: ValidateTimelineActivityTypePropertiesArgs): FlatEntityValidationError[] => {
+  const isUpdate = isDefined(updatedProperties);
+  const shouldValidate =
+    !isUpdate ||
+    'renderer' in updatedProperties ||
+    'action' in updatedProperties ||
+    'objectUniversalIdentifier' in updatedProperties;
+  const renderer = flatTimelineActivityType.renderer;
+  const rendererContract = isDefined(renderer)
+    ? SPECIALIZED_TIMELINE_ACTIVITY_RENDERER_CONTRACTS[renderer]
+    : undefined;
+
+  if (!shouldValidate || !isDefined(renderer) || !isDefined(rendererContract)) {
+    return [];
+  }
+
+  const errors: FlatEntityValidationError[] = [];
+
+  if (flatTimelineActivityType.action !== rendererContract.action) {
+    errors.push({
+      code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+      message: t`Timeline activity renderer ${renderer} only supports the ${rendererContract.action} action`,
+      userFriendlyMessage: msg`This timeline activity renderer does not support the selected action`,
+    });
+  }
+
+  if (
+    isDefined(flatTimelineActivityType.objectUniversalIdentifier) &&
+    flatTimelineActivityType.objectUniversalIdentifier !==
+      rendererContract.objectUniversalIdentifier
+  ) {
+    errors.push({
+      code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+      message: t`Timeline activity renderer ${renderer} must reference its supported object`,
+      userFriendlyMessage: msg`This timeline activity renderer does not support the selected object`,
+    });
+  }
+
+  return errors;
+};
+
 const validateTimelineActivityTypeProperties = ({
   flatTimelineActivityType,
   updatedProperties,
@@ -132,43 +176,12 @@ const validateTimelineActivityTypeProperties = ({
     });
   }
 
-  const shouldValidateSpecializedRendererContract =
-    !isUpdate ||
-    'renderer' in updatedProperties ||
-    'action' in updatedProperties ||
-    'objectUniversalIdentifier' in updatedProperties;
-  const renderer = flatTimelineActivityType.renderer;
-  const specializedRendererContract = isDefined(renderer)
-    ? SPECIALIZED_TIMELINE_ACTIVITY_RENDERER_CONTRACTS[renderer]
-    : undefined;
-
-  if (
-    shouldValidateSpecializedRendererContract &&
-    isDefined(renderer) &&
-    isDefined(specializedRendererContract)
-  ) {
-    if (
-      flatTimelineActivityType.action !== specializedRendererContract.action
-    ) {
-      errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity renderer ${renderer} only supports the ${specializedRendererContract.action} action`,
-        userFriendlyMessage: msg`This timeline activity renderer does not support the selected action`,
-      });
-    }
-
-    if (
-      isDefined(flatTimelineActivityType.objectUniversalIdentifier) &&
-      flatTimelineActivityType.objectUniversalIdentifier !==
-        specializedRendererContract.objectUniversalIdentifier
-    ) {
-      errors.push({
-        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-        message: t`Timeline activity renderer ${renderer} must reference its supported object`,
-        userFriendlyMessage: msg`This timeline activity renderer does not support the selected object`,
-      });
-    }
-  }
+  errors.push(
+    ...validateSpecializedRendererContract({
+      flatTimelineActivityType,
+      updatedProperties,
+    }),
+  );
 
   return errors;
 };
