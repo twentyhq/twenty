@@ -2647,6 +2647,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetWorkflowVersion": {
         "universalIdentifier": "2da44ef9-dc63-5c9c-a9fb-58933ed03bc2",
       },
+      "timelineActivityTypeId": {
+        "universalIdentifier": "20202020-e5f8-4839-9dcf-781e260624ee",
+      },
       "updatedAt": {
         "universalIdentifier": "01b33b31-f011-5b55-942f-5bf3ec56f9b3",
       },
@@ -2702,8 +2705,8 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "happensAt": {
             "universalIdentifier": "3ccb9611-f9ec-56c5-82df-f12f7e26e694",
           },
-          "name": {
-            "universalIdentifier": "821f0d94-72e0-5b04-ba97-50538f5a73c2",
+          "linkedRecordCachedName": {
+            "universalIdentifier": "a7b9dfbb-4c2b-508f-9901-ae1874600042",
           },
           "targetCompany": {
             "universalIdentifier": "d271d5b4-86ad-513d-a042-d4f8a9c41665",

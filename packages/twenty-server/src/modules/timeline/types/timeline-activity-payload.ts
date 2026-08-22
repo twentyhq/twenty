@@ -7,6 +7,7 @@ export type TimelineActivityPayload = {
   linkedRecordCachedName?: string;
   workspaceMemberId?: string;
   name: string;
+  timelineActivityTypeId: string;
   recordId: string;
   objectSingularName?: string;
 };

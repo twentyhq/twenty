@@ -20,6 +20,7 @@ import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
+import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
     ContactCreationManagerModule,
     MatchParticipantModule,
     WorkspaceCacheModule,
+    TimelineActivityModule,
   ],
   providers: [
     CalendarEventParticipantService,

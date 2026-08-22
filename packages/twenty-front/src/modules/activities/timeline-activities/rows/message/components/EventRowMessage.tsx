@@ -26,13 +26,13 @@ const StyledRowContainer = styled.div`
 
 export const EventRowMessage = ({
   event,
+  eventAction,
   authorFullName,
   labelIdentifierValue,
 }: EventRowMessageProps) => {
-  const [, eventAction] = event.name.split('.');
   const [isOpen, setIsOpen] = useState(false);
 
-  if (['linked'].includes(eventAction) === false) {
+  if (eventAction !== 'linked') {
     throw new Error('Invalid event action for message event type.');
   }
 
