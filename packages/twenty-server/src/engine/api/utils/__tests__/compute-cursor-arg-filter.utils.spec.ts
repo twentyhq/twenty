@@ -80,6 +80,20 @@ describe('computeCursorArgFilter', () => {
     isNullable: true,
   });
 
+  const priorityField = createMockField({
+    id: 'priority-id',
+    type: FieldMetadataType.SELECT,
+    name: 'priority',
+    label: 'Priority',
+  });
+
+  const tagsField = createMockField({
+    id: 'tags-id',
+    type: FieldMetadataType.MULTI_SELECT,
+    name: 'tags',
+    label: 'Tags',
+  });
+
   const companyField = {
     ...createMockField({
       id: 'company-id',
@@ -139,6 +153,8 @@ describe('computeCursorArgFilter', () => {
     fullNameField,
     idField,
     closeDateField,
+    priorityField,
+    tagsField,
     companyField,
     companyNameField,
     companyContactNameField,
@@ -167,6 +183,8 @@ describe('computeCursorArgFilter', () => {
       'fullname-id',
       'id-id',
       'closedate-id',
+      'priority-id',
+      'tags-id',
       'company-id',
     ],
     indexMetadataIds: [],
@@ -225,7 +243,12 @@ describe('computeCursorArgFilter', () => {
       // TEXT columns hold SQL NULL for rows written empty or without the
       // field, so the trailing NULL block is part of the continuation
       expect(result).toEqual([
-        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
+        {
+          or: [
+            { name: { gtCaseInsensitive: 'John' } },
+            { name: { isStrictly: 'NULL' } },
+          ],
+        },
       ]);
     });
 
@@ -242,7 +265,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: false,
       });
 
-      expect(result).toEqual([{ name: { lt: 'John' } }]);
+      expect(result).toEqual([{ name: { ltCaseInsensitive: 'John' } }]);
     });
   });
 
@@ -264,10 +287,15 @@ describe('computeCursorArgFilter', () => {
       });
 
       expect(result).toEqual([
-        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
+        {
+          or: [
+            { name: { gtCaseInsensitive: 'John' } },
+            { name: { isStrictly: 'NULL' } },
+          ],
+        },
         {
           and: [
-            { name: { eqStrict: 'John' } },
+            { name: { eqStrictCaseInsensitive: 'John' } },
             { or: [{ age: { lt: 30 } }, { age: { isStrictly: 'NULL' } }] },
           ],
         },
@@ -301,7 +329,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { gtCaseInsensitive: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -309,12 +337,12 @@ describe('computeCursorArgFilter', () => {
           and: [
             {
               fullName: {
-                firstName: { eqStrict: 'John' },
+                firstName: { eqStrictCaseInsensitive: 'John' },
               },
             },
             {
               or: [
-                { fullName: { lastName: { gt: 'Doe' } } },
+                { fullName: { lastName: { gtCaseInsensitive: 'Doe' } } },
                 { fullName: { lastName: { isStrictly: 'NULL' } } },
               ],
             },
@@ -347,7 +375,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { gtCaseInsensitive: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -380,7 +408,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { gtCaseInsensitive: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -388,12 +416,12 @@ describe('computeCursorArgFilter', () => {
           and: [
             {
               fullName: {
-                firstName: { eqStrict: 'John' },
+                firstName: { eqStrictCaseInsensitive: 'John' },
               },
             },
             {
               or: [
-                { fullName: { lastName: { gt: 'Doe' } } },
+                { fullName: { lastName: { gtCaseInsensitive: 'Doe' } } },
                 { fullName: { lastName: { isStrictly: 'NULL' } } },
               ],
             },
@@ -427,24 +455,106 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           fullName: {
-            firstName: { lt: 'John' },
+            firstName: { ltCaseInsensitive: 'John' },
           },
         },
         {
           and: [
             {
               fullName: {
-                firstName: { eqStrict: 'John' },
+                firstName: { eqStrictCaseInsensitive: 'John' },
               },
             },
             {
               fullName: {
-                lastName: { lt: 'Doe' },
+                lastName: { ltCaseInsensitive: 'Doe' },
               },
             },
           ],
         },
       ]);
+    });
+  });
+
+  describe('ordering relation of the continuation', () => {
+    // The SQL ordering sorts TEXT and SELECT columns through LOWER(), so a raw
+    // comparison here resolves case ties against the scan order and skips or
+    // duplicates rows across page boundaries (issue #24359)
+    it('should continue a SELECT ordering on the lowercased column', () => {
+      const result = computeCursorArgFilter({
+        cursor: { priority: 'Medium' },
+        orderBy: [{ priority: OrderByDirection.AscNullsLast }],
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
+
+      expect(result).toEqual([
+        {
+          or: [
+            { priority: { gtCaseInsensitive: 'Medium' } },
+            { priority: { isStrictly: 'NULL' } },
+          ],
+        },
+      ]);
+    });
+
+    it('should tie a SELECT ordering on the lowercased column too', () => {
+      // Values differing only by case are one tie for the ordering: comparing
+      // them exactly would strand the rows the id tie-breaker should reach
+      const result = computeCursorArgFilter({
+        cursor: { priority: 'Medium', id: 'uuid-1' },
+        orderBy: [
+          { priority: OrderByDirection.AscNullsFirst },
+          { id: OrderByDirection.AscNullsFirst },
+        ],
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
+
+      expect(result).toEqual([
+        { priority: { gtCaseInsensitive: 'Medium' } },
+        {
+          and: [
+            { priority: { eqStrictCaseInsensitive: 'Medium' } },
+            { id: { gt: 'uuid-1' } },
+          ],
+        },
+      ]);
+    });
+
+    it.each([
+      ['a NUMBER field', 'age', 30],
+      ['a DATE_TIME field', 'closeDate', '2026-01-01T00:00:00.000Z'],
+    ])('should keep comparing %s raw', (_label, fieldName, cursorValue) => {
+      const result = computeCursorArgFilter({
+        cursor: { [fieldName]: cursorValue },
+        orderBy: [{ [fieldName]: OrderByDirection.AscNullsFirst }],
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
+
+      expect(result).toEqual([{ [fieldName]: { gt: cursorValue } }]);
+    });
+
+    it('should keep comparing a MULTI_SELECT field raw', () => {
+      // Its cursor value is an array, so the ordering leaves it raw too: a
+      // scalar LOWER() comparison could not mirror the array rendering
+      const result = computeCursorArgFilter({
+        cursor: { tags: ['URGENT'] } as unknown as ObjectRecordCursor,
+        orderBy: [{ tags: OrderByDirection.AscNullsFirst }],
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
+
+      expect(result).toEqual([{ tags: { gt: ['URGENT'] } }]);
     });
   });
 
@@ -697,13 +807,13 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { company: { name: { gt: 'Acme' } } },
+            { company: { name: { gtCaseInsensitive: 'Acme' } } },
             { company: { name: { isStrictly: 'NULL' } } },
           ],
         },
         {
           and: [
-            { company: { name: { eqStrict: 'Acme' } } },
+            { company: { name: { eqStrictCaseInsensitive: 'Acme' } } },
             { id: { gt: 'uuid-1' } },
           ],
         },
@@ -780,16 +890,30 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { company: { contactName: { firstName: { gt: 'Ada' } } } },
+            {
+              company: {
+                contactName: { firstName: { gtCaseInsensitive: 'Ada' } },
+              },
+            },
             { company: { contactName: { firstName: { isStrictly: 'NULL' } } } },
           ],
         },
         {
           and: [
-            { company: { contactName: { firstName: { eqStrict: 'Ada' } } } },
+            {
+              company: {
+                contactName: { firstName: { eqStrictCaseInsensitive: 'Ada' } },
+              },
+            },
             {
               or: [
-                { company: { contactName: { lastName: { gt: 'Lovelace' } } } },
+                {
+                  company: {
+                    contactName: {
+                      lastName: { gtCaseInsensitive: 'Lovelace' },
+                    },
+                  },
+                },
                 {
                   company: {
                     contactName: { lastName: { isStrictly: 'NULL' } },
@@ -801,9 +925,17 @@ describe('computeCursorArgFilter', () => {
         },
         {
           and: [
-            { company: { contactName: { firstName: { eqStrict: 'Ada' } } } },
             {
-              company: { contactName: { lastName: { eqStrict: 'Lovelace' } } },
+              company: {
+                contactName: { firstName: { eqStrictCaseInsensitive: 'Ada' } },
+              },
+            },
+            {
+              company: {
+                contactName: {
+                  lastName: { eqStrictCaseInsensitive: 'Lovelace' },
+                },
+              },
             },
             { id: { gt: 'uuid-1' } },
           ],

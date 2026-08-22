@@ -89,8 +89,9 @@ findMany round trip.
   `formatResult` the v1 path uses. Same shape to callers.
 - Soft delete: `deletedAt IS NULL` unless `withDeleted()`, and a nested bracket group does
   not carry its own copy of the predicate.
-- `orderBy` ignores `castToText` / `useLower` on the builder path, matching v1. Only
-  `getOrderByRawSQL` honours them, and that is a separate path.
+- `orderBy` ignores `castToText` / `useLower` on the builder path, matching v1. Callers
+  that need them render them into the ORDER BY expression before handing it over
+  (`GraphqlQueryParser`), so both builders and `getOrderByRawSQL` emit the same clause.
 - Row-level permission predicates come from the same resolver and renderer as v1.
 
 ## Covered so far
