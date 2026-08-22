@@ -15,6 +15,7 @@ import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-ta
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -110,7 +111,11 @@ export const RecordTableAggregateFooterCell = ({
     isRecordTableColumnResizableComponentState,
   );
 
-  const isFooterReadOnly = !isRecordTableColumnResizable;
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+
+  const isFooterReadOnly = isDefined(recordTableWidgetContext)
+    ? recordTableWidgetContext.isPageLayoutInEditMode
+    : !isRecordTableColumnResizable;
 
   const recordField = visibleRecordFields.find(
     findByProperty('fieldMetadataItemId', fieldMetadataId),

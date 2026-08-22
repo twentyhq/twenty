@@ -176,6 +176,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         fieldMetadataId
         viewId
         nestedRelationFieldMetadataId
+        isWidgetContentEditable
       }
       ... on FieldRichTextConfiguration {
         configurationType
@@ -204,6 +205,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on RecordTableConfiguration {
         configurationType
         viewId
+        recordLimit
+        isWidgetContentEditable
       }
       ... on WorkflowConfiguration {
         configurationType

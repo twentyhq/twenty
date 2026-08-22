@@ -58,6 +58,10 @@ export const FieldWidgetRelationTable = ({
   const viewId = isFieldWidget(widget)
     ? widget.configuration.viewId
     : undefined;
+  // Record page relation widget content defaults to editable, unlike dashboards.
+  const isWidgetContentEditable = isFieldWidget(widget)
+    ? (widget.configuration.isWidgetContentEditable ?? true)
+    : true;
   const nestedRelationFieldMetadataId = isFieldWidget(widget)
     ? widget.configuration.nestedRelationFieldMetadataId
     : undefined;
@@ -180,7 +184,9 @@ export const FieldWidgetRelationTable = ({
           objectMetadataId={tableObjectMetadataId}
           viewId={viewId}
           widgetId={widget.id}
-          isReadOnly={isPageLayoutInEditMode}
+          isWidgetContentEditable={
+            !isPageLayoutInEditMode && isWidgetContentEditable
+          }
           isEmptyStateHidden
           instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
           nestedRelationCreateThrough={nestedRelationCreateThrough}

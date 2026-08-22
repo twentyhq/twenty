@@ -1,6 +1,6 @@
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordTableWidgetSetReadOnlyColumnHeadersEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetSetReadOnlyColumnHeadersEffect';
+import { RecordTableWidgetContentEditableEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetContentEditableEffect';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { styled } from '@linaria/react';
 
@@ -10,12 +10,12 @@ const StyledTableContainer = styled.div`
 `;
 
 type RecordTableWidgetProps = {
-  isReadOnly?: boolean;
+  isWidgetContentEditable?: boolean;
   isEmptyStateHidden?: boolean;
 };
 
 export const RecordTableWidget = ({
-  isReadOnly = true,
+  isWidgetContentEditable = false,
   isEmptyStateHidden = false,
 }: RecordTableWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
@@ -23,9 +23,9 @@ export const RecordTableWidget = ({
 
   return (
     <>
-      <RecordTableWidgetSetReadOnlyColumnHeadersEffect
+      <RecordTableWidgetContentEditableEffect
         recordTableId={recordIndexId}
-        isReadOnly={isReadOnly}
+        isWidgetContentEditable={isWidgetContentEditable}
         isEmptyStateHidden={isEmptyStateHidden}
       />
       <RecordIndexTableContainerEffect />

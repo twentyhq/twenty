@@ -8,6 +8,7 @@ import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/recor
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import {
   getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
   RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
@@ -42,6 +43,7 @@ import {
   IconFilter,
   IconLayoutList,
   IconListDetails,
+  IconPencil,
 } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
@@ -90,6 +92,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
+  const isWidgetContentEditable =
+    isRecordTableConfiguration &&
+    isDefined(configuration) &&
+    'isWidgetContentEditable' in configuration
+      ? (configuration.isWidgetContentEditable ?? false)
+      : false;
+
   const {
     sourceDescription,
     fieldsDescription,
@@ -109,6 +118,16 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
     updateCurrentWidgetConfig({
       configToUpdate: { recordLimit: nextLimit },
+    });
+  };
+
+  const handleIsWidgetContentEditableChange = (
+    nextIsWidgetContentEditable: boolean,
+  ) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        isWidgetContentEditable: nextIsWidgetContentEditable,
+      },
     });
   };
 
@@ -143,6 +162,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
   const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
     RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
+  const isWidgetContentEditingSupported =
+    isRecordTableWidgetContentEditingSupported(widgetView?.type);
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 
@@ -205,6 +226,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
             ? ['record-table-hide-empty-groups']
             : []),
           ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
+          ...(isWidgetContentEditingSupported
+            ? ['record-table-allow-editing']
+            : []),
         ]
       : []),
   ];
@@ -419,6 +443,17 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         value={isDefined(limit) ? `${limit}` : ''}
                         onChange={handleLimitChange}
                         placeholder={t`No limit`}
+                      />
+                    </SelectableListItem>
+                  )}
+                  {isWidgetContentEditingSupported && (
+                    <SelectableListItem itemId="record-table-allow-editing">
+                      <CommandMenuItemToggle
+                        LeftIcon={IconPencil}
+                        text={t`Allow editing`}
+                        id="record-table-allow-editing"
+                        toggled={isWidgetContentEditable}
+                        onToggleChange={handleIsWidgetContentEditableChange}
                       />
                     </SelectableListItem>
                   )}
