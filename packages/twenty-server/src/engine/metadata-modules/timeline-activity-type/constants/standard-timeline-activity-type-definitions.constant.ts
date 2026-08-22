@@ -76,11 +76,3 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       icon: 'IconUnlink',
     },
   ];
-
-export const STANDARD_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER_BY_ACTION =
-  Object.fromEntries(
-    STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS.map((definition) => [
-      definition.action,
-      definition.universalIdentifier,
-    ]),
-  ) as Record<TimelineActivityAction, string>;
