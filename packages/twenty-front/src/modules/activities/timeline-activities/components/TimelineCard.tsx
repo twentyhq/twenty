@@ -4,7 +4,7 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
-import { StyledWidgetScrollContainer } from '@/page-layout/widgets/components/WidgetContentContainer';
+import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';

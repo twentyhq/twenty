@@ -3,7 +3,7 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
-import { StyledWidgetContentContainer } from '@/page-layout/widgets/components/WidgetContentContainer';
+import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

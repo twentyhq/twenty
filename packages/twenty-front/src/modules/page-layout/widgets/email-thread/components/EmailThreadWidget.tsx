@@ -12,7 +12,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
-} from '@/page-layout/widgets/components/WidgetContentContainer';
+} from '@/ui/layout/components/WidgetContentContainer';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
