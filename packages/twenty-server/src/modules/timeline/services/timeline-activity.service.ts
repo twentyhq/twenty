@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
@@ -89,6 +89,8 @@ const buildLinkedPayload = ({
 
 @Injectable()
 export class TimelineActivityService {
+  private readonly logger = new Logger(TimelineActivityService.name);
+
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
@@ -245,6 +247,10 @@ export class TimelineActivityService {
     });
 
     if (!isDefined(timelineActivityTypeId)) {
+      this.logger.warn(
+        `No timeline activity type resolves ${ruleAction} on ${rule.sourceFlatObjectMetadata.nameSingular} in workspace ${workspaceId}, dropping ${events.length} events`,
+      );
+
       return [];
     }
 
@@ -336,6 +342,10 @@ export class TimelineActivityService {
     });
 
     if (!isDefined(timelineActivityTypeId)) {
+      this.logger.warn(
+        `No timeline activity type resolves ${ruleAction} on ${rule.sourceFlatObjectMetadata.nameSingular} in workspace ${workspaceId}, dropping ${events.length} events`,
+      );
+
       return [];
     }
 
