@@ -61,9 +61,9 @@ export const computeWorkflowLayout = ({
   return nodes.map((node) => {
     const layoutedNode = graph.node(node.id);
 
-    const x = layoutedNode.x - layoutedNode.width / 2;
-    const y = layoutedNode.y - layoutedNode.height / 2;
-
-    return { id: node.id, position: { x, y } };
+    return {
+      id: node.id,
+      position: { x: layoutedNode.x, y: layoutedNode.y },
+    };
   });
 };
