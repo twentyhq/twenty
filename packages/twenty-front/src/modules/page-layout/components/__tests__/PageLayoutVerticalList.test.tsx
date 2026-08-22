@@ -21,11 +21,11 @@ jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
 }));
 
 jest.mock('@/page-layout/hooks/useIsSideColumnContext', () => ({
-  useIsSideColumnContext: () => mockIsSideColumnContext,
-}));
-
-jest.mock('@/page-layout/widgets/hooks/useIsInPinnedTab', () => ({
-  useIsInPinnedTab: () => ({ isInPinnedTab: mockIsInPinnedTab }),
+  useIsSideColumnContext: () => ({
+    isInPinnedTab: mockIsInPinnedTab,
+    isMobile: false,
+    isSideColumnContext: mockIsSideColumnContext,
+  }),
 }));
 
 jest.mock('@/page-layout/widgets/components/WidgetRenderer', () => ({
@@ -69,10 +69,6 @@ jest.mock(
 
 jest.mock('@dnd-kit/react', () => ({
   useDroppable: () => ({ ref: jest.fn() }),
-}));
-
-jest.mock('twenty-ui/utilities', () => ({
-  useIsMobile: () => false,
 }));
 
 const makeWidget = (id: string, type: WidgetType): PageLayoutWidget => ({

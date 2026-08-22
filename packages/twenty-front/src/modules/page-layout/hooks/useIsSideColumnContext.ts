@@ -1,4 +1,3 @@
-import { getPageLayoutVerticalListViewerVariant } from '@/page-layout/components/utils/getPageLayoutVerticalListViewerVariant';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -17,11 +16,6 @@ export const useIsSideColumnContext = (): UseIsSideColumnContextReturn => {
   return {
     isInPinnedTab,
     isMobile,
-    isSideColumnContext:
-      getPageLayoutVerticalListViewerVariant({
-        isInPinnedTab,
-        isMobile,
-        isInSidePanel,
-      }) === 'side-column',
+    isSideColumnContext: isInPinnedTab || isMobile || isInSidePanel,
   };
 };

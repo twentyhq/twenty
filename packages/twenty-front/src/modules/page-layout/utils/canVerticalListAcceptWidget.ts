@@ -14,5 +14,6 @@ export const canVerticalListAcceptWidget = ({
   !destinationWidgets.some(
     (destinationWidget) =>
       destinationWidget.id !== widget.id &&
+      destinationWidget.isActive &&
       isViewportFillingWidgetType(destinationWidget.type),
   );

@@ -6,6 +6,7 @@ import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/Pa
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -13,6 +14,7 @@ import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/page
 import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -70,6 +72,7 @@ const PageLayoutSingleTabRendererTabContent = ({
   firstTabId,
 }: PageLayoutSingleTabRendererTabContentProps) => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const firstTabWithVisibleWidgets =
     usePageLayoutTabWithVisibleWidgetsOrThrow(firstTabId);
@@ -79,11 +82,18 @@ const PageLayoutSingleTabRendererTabContent = ({
     pageLayoutType: currentPageLayout.type,
   });
 
+  const presentation = getTabPresentation({
+    widgets: firstTabWithVisibleWidgets.widgets,
+    layoutMode,
+    isInEditMode: isPageLayoutInEditMode,
+  });
+
   return (
     <PageLayoutContentProvider
       value={{
         tabId: firstTabId,
         layoutMode,
+        presentation,
       }}
     >
       <PageLayoutWidgetDndProvider>

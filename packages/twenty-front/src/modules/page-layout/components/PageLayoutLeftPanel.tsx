@@ -81,6 +81,7 @@ export const PageLayoutLeftPanel = ({
         value={{
           tabId: pinnedLeftTabId,
           layoutMode,
+          presentation: 'stack',
         }}
       >
         <ScrollWrapper
