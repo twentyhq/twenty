@@ -31,7 +31,7 @@ export const buildStandardFlatTimelineActivityTypeMaps = ({
         id: v4(),
         name: definition.name,
         label: i18nLabel(definition.label),
-        action: definition.action,
+        action: definition.emit.on,
         icon: definition.icon,
         frontComponentUniversalIdentifier:
           hiddenTimelineActivityTypeColumnPropertyNames.has(
@@ -39,19 +39,21 @@ export const buildStandardFlatTimelineActivityTypeMaps = ({
           )
             ? null
             : definition.frontComponentUniversalIdentifier,
-        objectUniversalIdentifier: definition.objectUniversalIdentifier,
+        objectUniversalIdentifier: definition.emit.objectUniversalIdentifier,
         targetRelationFieldUniversalIdentifier:
           hiddenTimelineActivityTypeColumnPropertyNames.has(
             'targetRelationFieldUniversalIdentifier',
           )
             ? null
-            : (definition.targetRelationFieldUniversalIdentifier ?? null),
+            : (definition.emit.through?.relationFieldUniversalIdentifier ??
+              null),
         triggerFieldUniversalIdentifiers:
           hiddenTimelineActivityTypeColumnPropertyNames.has(
             'triggerFieldUniversalIdentifiers',
           )
             ? null
-            : (definition.triggerFieldUniversalIdentifiers ?? null),
+            : (definition.emit.through?.triggerFieldUniversalIdentifiers ??
+              null),
         overridesTimelineActivityTypeUniversalIdentifier: null,
         isActive: true,
         overrides: null,

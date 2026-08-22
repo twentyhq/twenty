@@ -1,7 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isTimelineActivityAction } from 'twenty-shared/timeline';
+
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
-import { isTimelineActivityAction } from 'twenty-shared/timeline';
 
 export const defineTimelineActivityType: DefineEntity<
   TimelineActivityTypeConfig
@@ -20,48 +22,66 @@ export const defineTimelineActivityType: DefineEntity<
     errors.push('TimelineActivityType must have a label');
   }
 
-  if (config.action && !isTimelineActivityAction(config.action)) {
+  if (config.emit?.on && !isTimelineActivityAction(config.emit.on)) {
     errors.push(
-      `TimelineActivityType action ${config.action} is not supported`,
+      `TimelineActivityType emit.on ${config.emit.on} is not supported`,
+    );
+  }
+
+  if (config.emit && !isNonEmptyString(config.emit.on)) {
+    errors.push('TimelineActivityType emit must have an on action');
+  }
+
+  if (config.emit && !isNonEmptyString(config.emit.objectUniversalIdentifier)) {
+    errors.push(
+      'TimelineActivityType emit must have an objectUniversalIdentifier',
     );
   }
 
   if (
-    config.targetRelationFieldUniversalIdentifier &&
-    (!config.action || !config.objectUniversalIdentifier)
+    config.emit?.through &&
+    !isNonEmptyString(config.emit.through.relationFieldUniversalIdentifier)
   ) {
     errors.push(
-      'TimelineActivityType targetRelationFieldUniversalIdentifier requires action and objectUniversalIdentifier',
+      'TimelineActivityType emit.through must have a relationFieldUniversalIdentifier',
     );
   }
 
   if (
-    config.triggerFieldUniversalIdentifiers &&
-    (config.action !== 'updated' ||
-      !config.targetRelationFieldUniversalIdentifier ||
-      config.triggerFieldUniversalIdentifiers.length === 0)
+    (config.emit?.on === 'linked' || config.emit?.on === 'unlinked') &&
+    !config.emit.through
   ) {
     errors.push(
-      'TimelineActivityType triggerFieldUniversalIdentifiers requires an updated target relation event',
+      'TimelineActivityType linked and unlinked emitters require through routing',
+    );
+  }
+
+  const triggerFieldUniversalIdentifiers =
+    config.emit?.through?.triggerFieldUniversalIdentifiers;
+
+  if (
+    triggerFieldUniversalIdentifiers &&
+    (config.emit?.on !== 'updated' ||
+      triggerFieldUniversalIdentifiers.length === 0)
+  ) {
+    errors.push(
+      'TimelineActivityType emit.through.triggerFieldUniversalIdentifiers requires an updated event',
     );
   }
 
   if (
-    config.triggerFieldUniversalIdentifiers &&
-    new Set(config.triggerFieldUniversalIdentifiers).size !==
-      config.triggerFieldUniversalIdentifiers.length
+    triggerFieldUniversalIdentifiers &&
+    new Set(triggerFieldUniversalIdentifiers).size !==
+      triggerFieldUniversalIdentifiers.length
   ) {
     errors.push(
-      'TimelineActivityType triggerFieldUniversalIdentifiers must be unique',
+      'TimelineActivityType emit.through.triggerFieldUniversalIdentifiers must be unique',
     );
   }
 
-  if (
-    config.overridesTimelineActivityTypeUniversalIdentifier &&
-    (!config.action || !config.objectUniversalIdentifier)
-  ) {
+  if (config.overridesTimelineActivityTypeUniversalIdentifier && !config.emit) {
     errors.push(
-      'TimelineActivityType overridesTimelineActivityTypeUniversalIdentifier requires action and objectUniversalIdentifier',
+      'TimelineActivityType overridesTimelineActivityTypeUniversalIdentifier requires emit',
     );
   }
 

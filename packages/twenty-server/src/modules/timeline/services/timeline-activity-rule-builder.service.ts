@@ -17,7 +17,7 @@ import {
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
-import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
+import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
@@ -73,7 +73,7 @@ export class TimelineActivityRuleBuilderService {
         (timelineActivityType) => timelineActivityType.universalIdentifier,
       ),
     );
-    const declaredCandidatesByRoute = new Map<
+    const declaredCandidatesByEmitKey = new Map<
       string,
       typeof timelineActivityTypes
     >();
@@ -81,20 +81,19 @@ export class TimelineActivityRuleBuilderService {
     for (const timelineActivityType of timelineActivityTypes) {
       if (
         !isDefined(timelineActivityType.action) ||
-        !isDefined(timelineActivityType.objectUniversalIdentifier) ||
-        !isDefined(timelineActivityType.targetRelationFieldUniversalIdentifier)
+        !isDefined(timelineActivityType.objectUniversalIdentifier)
       ) {
         continue;
       }
 
-      const routeKey = [
+      const emitKey = [
         timelineActivityType.action,
         timelineActivityType.objectUniversalIdentifier,
-        timelineActivityType.targetRelationFieldUniversalIdentifier,
+        timelineActivityType.targetRelationFieldUniversalIdentifier ?? 'SELF',
       ].join('|');
 
-      declaredCandidatesByRoute.set(routeKey, [
-        ...(declaredCandidatesByRoute.get(routeKey) ?? []),
+      declaredCandidatesByEmitKey.set(emitKey, [
+        ...(declaredCandidatesByEmitKey.get(emitKey) ?? []),
         timelineActivityType,
       ]);
     }
@@ -102,7 +101,7 @@ export class TimelineActivityRuleBuilderService {
     const effectiveDeclaredTimelineActivityTypes: typeof timelineActivityTypes =
       [];
 
-    for (const candidates of declaredCandidatesByRoute.values()) {
+    for (const candidates of declaredCandidatesByEmitKey.values()) {
       const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
         candidates,
         allTimelineActivityTypeUniversalIdentifiers,
@@ -128,7 +127,7 @@ export class TimelineActivityRuleBuilderService {
       }
     }
 
-    const declaredRules = effectiveDeclaredTimelineActivityTypes
+    const declaredThroughRules = effectiveDeclaredTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {
         if (
           !isDefined(timelineActivityType.action) ||
@@ -187,17 +186,19 @@ export class TimelineActivityRuleBuilderService {
       })
       .filter(isDefined);
 
-    const derivedSelfRule =
-      deriveDefaultTimelineActivityRule(flatObjectMetadata);
+    const selfRule = buildTimelineActivitySelfRule({
+      flatObjectMetadata,
+      timelineActivityTypes: effectiveDeclaredTimelineActivityTypes,
+    });
 
     const sourceRules = [
-      ...(isDefined(derivedSelfRule) ? [derivedSelfRule] : []),
-      ...declaredRules.filter(
+      ...(isDefined(selfRule) ? [selfRule] : []),
+      ...declaredThroughRules.filter(
         (rule) => rule.sourceFlatObjectMetadata.id === flatObjectMetadata.id,
       ),
     ];
 
-    const junctionRules = declaredRules.filter(
+    const junctionRules = declaredThroughRules.filter(
       (rule) =>
         rule.targetShape.kind === 'JUNCTION' &&
         rule.targetShape.junctionObjectMetadataId === flatObjectMetadata.id,

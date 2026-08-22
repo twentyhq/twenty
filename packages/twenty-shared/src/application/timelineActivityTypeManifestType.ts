@@ -2,14 +2,22 @@ import { type TimelineActivityAction } from '@/timeline';
 
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
+export type TimelineActivityTypeEmitThroughManifest = {
+  relationFieldUniversalIdentifier: string;
+  triggerFieldUniversalIdentifiers?: string[];
+};
+
+export type TimelineActivityTypeEmitManifest = {
+  on: TimelineActivityAction;
+  objectUniversalIdentifier: string;
+  through?: TimelineActivityTypeEmitThroughManifest;
+};
+
 export type TimelineActivityTypeManifest = SyncableEntityOptions & {
   name: string;
   label: string;
-  action?: TimelineActivityAction;
   icon?: string;
-  objectUniversalIdentifier?: string;
-  targetRelationFieldUniversalIdentifier?: string;
-  triggerFieldUniversalIdentifiers?: string[];
+  emit?: TimelineActivityTypeEmitManifest;
   frontComponentUniversalIdentifier?: string;
   overridesTimelineActivityTypeUniversalIdentifier?: string;
 };

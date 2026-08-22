@@ -2831,19 +2831,29 @@ export interface MetadataTranslation {
 /** Where a resolved metadata label comes from: a workspace-authored translation, a shipped application catalog, or inheritance from the canonical value */
 export type MetadataTranslationProvenance = 'WORKSPACE' | 'SHIPPED' | 'INHERITED'
 
+export interface TimelineActivityTypeEmitThrough {
+    relationFieldUniversalIdentifier: Scalars['UUID']
+    triggerFieldUniversalIdentifiers?: Scalars['UUID'][]
+    __typename: 'TimelineActivityTypeEmitThrough'
+}
+
+export interface TimelineActivityTypeEmit {
+    on: Scalars['String']
+    objectUniversalIdentifier?: Scalars['UUID']
+    through?: TimelineActivityTypeEmitThrough
+    __typename: 'TimelineActivityTypeEmit'
+}
+
 export interface TimelineActivityType {
     id: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
     name: Scalars['String']
     label: Scalars['String']
-    action?: Scalars['String']
+    emit?: TimelineActivityTypeEmit
     icon?: Scalars['String']
     /** @deprecated Use frontComponentUniversalIdentifier */
     renderer?: Scalars['String']
     frontComponentUniversalIdentifier?: Scalars['UUID']
-    objectUniversalIdentifier?: Scalars['UUID']
-    targetRelationFieldUniversalIdentifier?: Scalars['UUID']
-    triggerFieldUniversalIdentifiers?: Scalars['UUID'][]
     overridesTimelineActivityTypeUniversalIdentifier?: Scalars['UUID']
     isActive: Scalars['Boolean']
     applicationId?: Scalars['UUID']
@@ -6234,19 +6244,31 @@ export interface MetadataTranslationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TimelineActivityTypeEmitThroughGenqlSelection{
+    relationFieldUniversalIdentifier?: boolean | number
+    triggerFieldUniversalIdentifiers?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TimelineActivityTypeEmitGenqlSelection{
+    on?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    through?: TimelineActivityTypeEmitThroughGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface TimelineActivityTypeGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
     name?: boolean | number
     label?: boolean | number
-    action?: boolean | number
+    emit?: TimelineActivityTypeEmitGenqlSelection
     icon?: boolean | number
     /** @deprecated Use frontComponentUniversalIdentifier */
     renderer?: boolean | number
     frontComponentUniversalIdentifier?: boolean | number
-    objectUniversalIdentifier?: boolean | number
-    targetRelationFieldUniversalIdentifier?: boolean | number
-    triggerFieldUniversalIdentifiers?: boolean | number
     overridesTimelineActivityTypeUniversalIdentifier?: boolean | number
     isActive?: boolean | number
     applicationId?: boolean | number
@@ -9249,6 +9271,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       return MetadataTranslation_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const TimelineActivityTypeEmitThrough_possibleTypes: string[] = ['TimelineActivityTypeEmitThrough']
+    export const isTimelineActivityTypeEmitThrough = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmitThrough => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmitThrough"')
+      return TimelineActivityTypeEmitThrough_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const TimelineActivityTypeEmit_possibleTypes: string[] = ['TimelineActivityTypeEmit']
+    export const isTimelineActivityTypeEmit = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmit => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmit"')
+      return TimelineActivityTypeEmit_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']

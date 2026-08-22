@@ -16,17 +16,18 @@ export const fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType
     applicationUniversalIdentifier,
     name: timelineActivityTypeManifest.name,
     label: timelineActivityTypeManifest.label,
-    action: timelineActivityTypeManifest.action ?? null,
+    action: timelineActivityTypeManifest.emit?.on ?? null,
     icon: timelineActivityTypeManifest.icon ?? null,
     frontComponentUniversalIdentifier:
       timelineActivityTypeManifest.frontComponentUniversalIdentifier ?? null,
     objectUniversalIdentifier:
-      timelineActivityTypeManifest.objectUniversalIdentifier ?? null,
+      timelineActivityTypeManifest.emit?.objectUniversalIdentifier ?? null,
     targetRelationFieldUniversalIdentifier:
-      timelineActivityTypeManifest.targetRelationFieldUniversalIdentifier ??
-      null,
+      timelineActivityTypeManifest.emit?.through
+        ?.relationFieldUniversalIdentifier ?? null,
     triggerFieldUniversalIdentifiers:
-      timelineActivityTypeManifest.triggerFieldUniversalIdentifiers ?? null,
+      timelineActivityTypeManifest.emit?.through
+        ?.triggerFieldUniversalIdentifiers ?? null,
     overridesTimelineActivityTypeUniversalIdentifier:
       timelineActivityTypeManifest.overridesTimelineActivityTypeUniversalIdentifier ??
       null,

@@ -19,18 +19,21 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'postCardCreated',
       label: 'created a post card',
       icon: 'IconMail',
-      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
       frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
     },
     {
       universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
       name: 'postCardLinked',
       label: 'received a post card',
-      action: 'linked',
       icon: 'IconMail',
-      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-      targetRelationFieldUniversalIdentifier:
-        'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      emit: {
+        on: 'linked',
+        objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+        through: {
+          relationFieldUniversalIdentifier:
+            'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      },
       frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
     },
   ],
