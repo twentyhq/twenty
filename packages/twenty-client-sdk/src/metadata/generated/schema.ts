@@ -9278,7 +9278,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmitThrough"')
       return TimelineActivityTypeEmitThrough_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const TimelineActivityTypeEmit_possibleTypes: string[] = ['TimelineActivityTypeEmit']
@@ -9286,7 +9286,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmit"')
       return TimelineActivityTypeEmit_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']
