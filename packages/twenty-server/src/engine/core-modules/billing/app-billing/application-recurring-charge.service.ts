@@ -3,19 +3,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  type ApplicationBilling,
-  type RecurringCharge,
-} from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+  buildRecurringChargeUsageEvents,
+  isPerWorkspaceMemberCharge,
+} from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
+import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -23,12 +18,6 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-type DueCharge = {
-  applicationId: string;
-  chargeKey: string;
-  charge: RecurringCharge;
-};
 
 // Flat fees and per-seat fees an app declares in its manifest, raised by the
 // platform once per billing period as ordinary credit usage. Charging through
@@ -68,60 +57,31 @@ export class ApplicationRecurringChargeService {
     }
 
     const periodStart = currentBillingSubscription.currentPeriodStart;
-    const declaredCharges = this.collectDeclaredCharges(flatApplicationMaps);
 
-    if (declaredCharges.length === 0) {
-      return 0;
-    }
-
-    const alreadyCharged =
+    const alreadyChargedKeys =
       await this.usageAnalyticsService.getChargedRecurringKeys({
         workspaceId,
         periodStart,
       });
 
-    const dueCharges = declaredCharges.filter(
-      ({ applicationId, chargeKey }) =>
-        !alreadyCharged.has(`${applicationId}:${chargeKey}`),
-    );
+    const dueCharges = collectDueRecurringCharges({
+      flatApplicationMaps,
+      alreadyChargedKeys,
+    });
 
     if (dueCharges.length === 0) {
       return 0;
     }
 
-    const workspaceMemberCount = dueCharges.some(
-      ({ charge }) => charge.per === 'WORKSPACE_MEMBER',
-    )
+    const workspaceMemberCount = dueCharges.some(isPerWorkspaceMemberCharge)
       ? await this.countWorkspaceMembers(workspaceId)
       : 0;
 
-    const events = dueCharges.flatMap(
-      ({ applicationId, chargeKey, charge }) => {
-        const quantity =
-          charge.per === 'WORKSPACE_MEMBER' ? workspaceMemberCount : 1;
-
-        if (quantity <= 0) {
-          return [];
-        }
-
-        return [
-          {
-            resourceType: UsageResourceType.APP,
-            operationType: UsageOperationType.SUBSCRIPTION,
-            creditsUsedMicro: charge.amountMicroCredits * quantity,
-            quantity,
-            unit:
-              charge.per === 'WORKSPACE_MEMBER'
-                ? UsageUnit.SEAT
-                : UsageUnit.CREDIT,
-            resourceId: applicationId,
-            resourceContext: chargeKey,
-            userWorkspaceId: null,
-            periodStart,
-          } satisfies UsageEvent,
-        ];
-      },
-    );
+    const events = buildRecurringChargeUsageEvents({
+      dueCharges,
+      workspaceMemberCount,
+      periodStart,
+    });
 
     if (events.length === 0) {
       return 0;
@@ -138,26 +98,6 @@ export class ApplicationRecurringChargeService {
     );
 
     return events.length;
-  }
-
-  private collectDeclaredCharges(flatApplicationMaps: {
-    byId: Partial<Record<string, FlatApplication>>;
-  }): DueCharge[] {
-    return Object.values(flatApplicationMaps.byId).flatMap((application) => {
-      if (!isDefined(application) || isDefined(application.deletedAt)) {
-        return [];
-      }
-
-      // Undefined until the upgrade that adds the column has run.
-      const billing: ApplicationBilling = application.billing ?? {};
-
-      return Object.entries(billing.recurring ?? {}).flatMap(
-        ([chargeKey, charge]) =>
-          isDefined(charge)
-            ? [{ applicationId: application.id, chargeKey, charge }]
-            : [],
-      );
-    });
   }
 
   private async countWorkspaceMembers(workspaceId: string): Promise<number> {
