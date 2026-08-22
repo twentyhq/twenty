@@ -10,7 +10,10 @@ const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
 
 describe('ConfigureTimelineActivityRoutingCommand', () => {
   it('backfills standard types and participant junctions into the generic contract', async () => {
-    const query = jest.fn().mockResolvedValue([[], 0]);
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce([[], 8])
+      .mockResolvedValueOnce([[], 2]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
     const command = new ConfigureTimelineActivityRoutingCommand(
       {} as WorkspaceIteratorService,
@@ -68,5 +71,36 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
       'flatTimelineActivityTypeMaps',
       'flatFieldMetadataMaps',
     ]);
+  });
+
+  it('fails when a standard routing is missing', async () => {
+    const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
+    const command = new ConfigureTimelineActivityRoutingCommand(
+      {} as WorkspaceIteratorService,
+      {
+        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+          .fn()
+          .mockResolvedValue({
+            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+          }),
+      } as unknown as ApplicationService,
+      { invalidateAndRecompute } as unknown as WorkspaceCacheService,
+    );
+
+    await expect(
+      command.runOnWorkspace({
+        workspaceId: WORKSPACE_ID,
+        dataSource: {
+          query: jest
+            .fn()
+            .mockResolvedValueOnce([[], 7])
+            .mockResolvedValueOnce([[], 2]),
+        } as never,
+        options: {},
+        index: 0,
+        total: 1,
+      }),
+    ).rejects.toThrow('updated 7');
+    expect(invalidateAndRecompute).toHaveBeenCalledTimes(1);
   });
 });

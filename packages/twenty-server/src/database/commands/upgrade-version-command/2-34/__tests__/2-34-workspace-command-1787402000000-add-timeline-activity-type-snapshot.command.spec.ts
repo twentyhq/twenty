@@ -12,7 +12,7 @@ const APPLICATION_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-000000000003';
 describe('AddTimelineActivityTypeSnapshotCommand', () => {
   it('repairs rolling-upgrade rows while compatibility fields stay nullable', async () => {
-    const validateBuildAndRunLegacyWorkspaceMigration = jest
+    const validateBuildAndRunWorkspaceMigration = jest
       .fn()
       .mockResolvedValue({ status: 'success' });
     const query = jest.fn().mockResolvedValue([[], 0]);
@@ -64,7 +64,7 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
       } as unknown as ApplicationService,
       { getOrRecompute } as unknown as WorkspaceCacheService,
       {
-        validateBuildAndRunLegacyWorkspaceMigration,
+        validateBuildAndRunWorkspaceMigration,
       } as unknown as WorkspaceMigrationValidateBuildAndRunService,
     );
 
@@ -85,7 +85,7 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
     );
 
     const createOperation =
-      validateBuildAndRunLegacyWorkspaceMigration.mock.calls[0][0]
+      validateBuildAndRunWorkspaceMigration.mock.calls[0][0]
         .allFlatEntityOperationByMetadataName.fieldMetadata;
     expect(createOperation.flatEntityToCreate).toEqual([
       expect.objectContaining({
@@ -93,8 +93,78 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
         isNullable: true,
       }),
     ]);
-    expect(validateBuildAndRunLegacyWorkspaceMigration).toHaveBeenCalledTimes(
-      1,
+    expect(validateBuildAndRunWorkspaceMigration).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses the last updated identifier to keyset large snapshot backfills', async () => {
+    const lastTimelineActivityId =
+      'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce([[], 0])
+      .mockResolvedValueOnce([
+        Array.from({ length: 5000 }, () => ({ id: lastTimelineActivityId })),
+        5000,
+      ])
+      .mockResolvedValueOnce([[], 0]);
+    const command = new AddTimelineActivityTypeSnapshotCommand(
+      {} as WorkspaceIteratorService,
+      {
+        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+          .fn()
+          .mockResolvedValue({
+            twentyStandardFlatApplication: {
+              id: APPLICATION_ID,
+              universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+            },
+          }),
+      } as unknown as ApplicationService,
+      {
+        getOrRecompute: jest
+          .fn()
+          .mockResolvedValueOnce({
+            flatObjectMetadataMaps: {
+              byUniversalIdentifier: {
+                [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {
+                  universalIdentifier:
+                    STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+                },
+              },
+            },
+          })
+          .mockResolvedValueOnce({
+            flatFieldMetadataMaps: {
+              byUniversalIdentifier: {
+                [STANDARD_OBJECTS.timelineActivity.fields
+                  .timelineActivityTypeSnapshot.universalIdentifier]: {},
+              },
+            },
+          })
+          .mockResolvedValueOnce({
+            flatTimelineActivityTypeMaps: {
+              byUniversalIdentifier: {
+                linked: {
+                  id: '00000000-0000-4000-8000-000000000008',
+                  action: 'linked',
+                  objectUniversalIdentifier: null,
+                },
+              },
+            },
+          }),
+      } as unknown as WorkspaceCacheService,
+      {} as WorkspaceMigrationValidateBuildAndRunService,
     );
+
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource: { query } as never,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+
+    expect(query).toHaveBeenCalledTimes(3);
+    expect(query.mock.calls[1][1]).toEqual([null, 5000]);
+    expect(query.mock.calls[2][1]).toEqual([lastTimelineActivityId, 5000]);
   });
 });

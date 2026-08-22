@@ -1,10 +1,13 @@
 export const buildTimelineActivityTypeSnapshotBackfillQuery = ({
   schemaName,
   batchSize,
+  afterTimelineActivityId,
 }: {
   schemaName: string;
   batchSize: number;
-}): string => `WITH rows_to_update AS (
+  afterTimelineActivityId: string | null;
+}): { sql: string; parameters: [string | null, number] } => ({
+  sql: `WITH rows_to_update AS (
   SELECT
     timeline_activity."id" AS "timelineActivityId",
     timeline_activity_type."id" AS "timelineActivityTypeId",
@@ -19,7 +22,9 @@ export const buildTimelineActivityTypeSnapshotBackfillQuery = ({
   INNER JOIN "core"."timelineActivityType" timeline_activity_type
     ON timeline_activity_type."id" = timeline_activity."timelineActivityTypeId"
   WHERE timeline_activity."timelineActivityTypeSnapshot" IS NULL
-  LIMIT ${batchSize}
+    AND ($1::uuid IS NULL OR timeline_activity."id" > $1::uuid)
+  ORDER BY timeline_activity."id"
+  LIMIT $2
 )
 UPDATE "${schemaName}"."timelineActivity" timeline_activity
 SET "timelineActivityTypeSnapshot" = jsonb_build_object(
@@ -33,4 +38,7 @@ SET "timelineActivityTypeSnapshot" = jsonb_build_object(
   'frontComponentUniversalIdentifier', rows_to_update."frontComponentUniversalIdentifier"
 )
 FROM rows_to_update
-WHERE timeline_activity."id" = rows_to_update."timelineActivityId"`;
+WHERE timeline_activity."id" = rows_to_update."timelineActivityId"
+RETURNING timeline_activity."id"`,
+  parameters: [afterTimelineActivityId, batchSize],
+});

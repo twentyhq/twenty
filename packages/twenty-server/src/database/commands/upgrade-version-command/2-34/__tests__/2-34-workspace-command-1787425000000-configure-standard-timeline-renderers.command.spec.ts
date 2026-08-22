@@ -10,7 +10,7 @@ const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
 
 describe('ConfigureStandardTimelineRenderersCommand', () => {
   it('attaches trusted renderer identifiers to their standard types', async () => {
-    const query = jest.fn().mockResolvedValue([[], 0]);
+    const query = jest.fn().mockResolvedValue([[], 2]);
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
     const command = new ConfigureStandardTimelineRenderersCommand(
       {} as WorkspaceIteratorService,
@@ -50,5 +50,31 @@ describe('ConfigureStandardTimelineRenderersCommand', () => {
     expect(invalidateAndRecompute).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatTimelineActivityTypeMaps',
     ]);
+  });
+
+  it('fails after refreshing the cache when a standard renderer is missing', async () => {
+    const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
+    const command = new ConfigureStandardTimelineRenderersCommand(
+      {} as WorkspaceIteratorService,
+      {
+        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+          .fn()
+          .mockResolvedValue({
+            twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+          }),
+      } as unknown as ApplicationService,
+      { invalidateAndRecompute } as unknown as WorkspaceCacheService,
+    );
+
+    await expect(
+      command.runOnWorkspace({
+        workspaceId: WORKSPACE_ID,
+        dataSource: { query: jest.fn().mockResolvedValue([[], 1]) } as never,
+        options: {},
+        index: 0,
+        total: 1,
+      }),
+    ).rejects.toThrow('updated 1');
+    expect(invalidateAndRecompute).toHaveBeenCalledTimes(1);
   });
 });

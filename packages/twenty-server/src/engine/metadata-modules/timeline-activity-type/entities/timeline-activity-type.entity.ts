@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -34,6 +35,12 @@ export type TimelineActivityTypeOverrides = {
   'applicationId',
   'workspaceId',
 ])
+@Index('IDX_TIMELINE_ACTIVITY_TYPE_BASE_EMIT_SLOT_UNIQUE', {
+  synchronize: false,
+})
+@Index('IDX_TIMELINE_ACTIVITY_TYPE_OVERRIDE_EMIT_SLOT_UNIQUE', {
+  synchronize: false,
+})
 export class TimelineActivityTypeEntity
   extends OverridableEntity<TimelineActivityTypeOverrides>
   implements Required<TimelineActivityTypeEntity>

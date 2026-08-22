@@ -154,6 +154,7 @@ import { RefactorTimelineActivityTypeRenderingFastInstanceCommand } from 'src/da
 import { AddTimelineActivityRoutingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787411152000-add-timeline-activity-routing';
 import { AddTimelineActivityTypeOverridesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787411154000-add-timeline-activity-type-overrides';
 import { TimelineActivityTypeOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787422468123-timeline-activity-type-overridable-entity';
+import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787442504032-enforce-timeline-activity-type-emit-uniqueness';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -310,4 +311,5 @@ export const INSTANCE_COMMANDS = [
   AddTimelineActivityRoutingFastInstanceCommand,
   AddTimelineActivityTypeOverridesFastInstanceCommand,
   TimelineActivityTypeOverridableEntityFastInstanceCommand,
+  EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand,
 ];

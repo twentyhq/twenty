@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -148,7 +148,7 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
     };
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,
@@ -217,20 +217,38 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
     const schemaName = getWorkspaceSchemaName(workspaceId);
     let backfilledRowCount = 0;
     let lastBatchRowCount = 0;
+    let afterTimelineActivityId: string | null = null;
 
     do {
-      const result = await dataSource.query(
-        buildTimelineActivityTypeSnapshotBackfillQuery({
-          schemaName,
-          batchSize: BACKFILL_BATCH_SIZE,
-        }),
-        [],
-        undefined,
-        { shouldBypassPermissionChecks: true },
-      );
+      const backfillQuery = buildTimelineActivityTypeSnapshotBackfillQuery({
+        schemaName,
+        batchSize: BACKFILL_BATCH_SIZE,
+        afterTimelineActivityId,
+      });
+      const [updatedTimelineActivities, updatedRowCount] =
+        await dataSource.query<[Array<{ id: string }>, number]>(
+          backfillQuery.sql,
+          backfillQuery.parameters,
+          undefined,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      lastBatchRowCount = result?.[1] ?? 0;
+      lastBatchRowCount = updatedRowCount;
       backfilledRowCount += lastBatchRowCount;
+
+      if (lastBatchRowCount === BACKFILL_BATCH_SIZE) {
+        if (!isNonEmptyArray(updatedTimelineActivities)) {
+          throw new Error(
+            `Snapshot backfill for workspace ${workspaceId} updated rows without returning their identifiers`,
+          );
+        }
+
+        afterTimelineActivityId = updatedTimelineActivities.reduce(
+          (latestId, timelineActivity) =>
+            timelineActivity.id > latestId ? timelineActivity.id : latestId,
+          updatedTimelineActivities[0].id,
+        );
+      }
     } while (lastBatchRowCount === BACKFILL_BATCH_SIZE);
 
     this.logger.log(

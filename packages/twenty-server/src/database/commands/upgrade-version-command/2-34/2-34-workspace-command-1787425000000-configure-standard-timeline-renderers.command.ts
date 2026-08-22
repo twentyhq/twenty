@@ -6,17 +6,21 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS } from 'src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const STANDARD_TYPES_WITH_RENDERERS =
-  STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS.filter(
-    (
-      definition,
-    ): definition is typeof definition & {
-      frontComponentUniversalIdentifier: string;
-    } => isDefined(definition.frontComponentUniversalIdentifier),
-  );
+// Replaying 2.34 must not pick up renderers introduced by a later release.
+const STANDARD_TYPES_WITH_RENDERERS = [
+  {
+    universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0f',
+    frontComponentUniversalIdentifier:
+      '8b4da8ed-4a87-480d-bcad-a791262cb890',
+  },
+  {
+    universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c10',
+    frontComponentUniversalIdentifier:
+      '3c70dd28-42f3-41da-8f41-22013d65ff50',
+  },
+] as const;
 
 @RegisteredWorkspaceCommand('2.34.0', 1787425000000)
 @Command({
@@ -64,7 +68,7 @@ export class ConfigureStandardTimelineRenderersCommand extends ProvisionedWorksp
       definition.frontComponentUniversalIdentifier,
     ]);
 
-    await dataSource.query(
+    const [, updatedRowCount] = await dataSource.query<[unknown[], number]>(
       `UPDATE "core"."timelineActivityType" AS timeline_activity_type
        SET "frontComponentUniversalIdentifier" = renderer."frontComponentUniversalIdentifier"
        FROM (VALUES ${values}) AS renderer(
@@ -82,5 +86,11 @@ export class ConfigureStandardTimelineRenderersCommand extends ProvisionedWorksp
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatTimelineActivityTypeMaps',
     ]);
+
+    if (updatedRowCount !== STANDARD_TYPES_WITH_RENDERERS.length) {
+      throw new Error(
+        `Expected to configure ${STANDARD_TYPES_WITH_RENDERERS.length} standard timeline renderers for workspace ${workspaceId}, updated ${updatedRowCount}`,
+      );
+    }
   }
 }
