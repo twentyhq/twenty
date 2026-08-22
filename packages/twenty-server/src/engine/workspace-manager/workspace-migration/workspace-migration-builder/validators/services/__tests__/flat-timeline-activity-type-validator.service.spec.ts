@@ -1,5 +1,13 @@
+import {
+  FeatureFlagKey,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
+
 import { TimelineActivityTypeExceptionCode } from 'src/engine/metadata-modules/timeline-activity-type/enums/timeline-activity-type-exception-code.enum';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
 import { FlatTimelineActivityTypeValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service';
 
@@ -11,6 +19,61 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000b1';
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-0000000000b2';
 const OBJECT_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000c1';
+
+const featureFlagsMap = {
+  [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: false,
+  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
+  [FeatureFlagKey.IS_JSON_FILTER_ENABLED]: false,
+  [FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED]: false,
+  [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: false,
+  [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: false,
+  [FeatureFlagKey.IS_LIST_VIEW_ENABLED]: false,
+  [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: false,
+  [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED]: false,
+  [FeatureFlagKey.IS_WORKFLOW_VERSION_IN_CORE_ENABLED]: false,
+  [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: false,
+  [FeatureFlagKey.IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED]: false,
+  [FeatureFlagKey.IS_NATIVE_CALL_RECORDING_TABS_ENABLED]: false,
+  [FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED]: false,
+} satisfies Record<FeatureFlagKey, boolean>;
+
+const buildObjectMetadata = (
+  universalIdentifier: string,
+): UniversalFlatObjectMetadata => ({
+  universalIdentifier,
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'note',
+  namePlural: 'notes',
+  labelSingular: 'Note',
+  labelPlural: 'Notes',
+  description: null,
+  icon: null,
+  color: null,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+  overrides: null,
+  targetTableName: 'DEPRECATED',
+  isRemote: false,
+  isActive: true,
+  isSystem: false,
+  isUIEditable: true,
+  isUICreatable: true,
+  writability: MetadataWritability.OPEN,
+  isAuditLogged: true,
+  isSearchable: false,
+  duplicateCriteria: null,
+  shortcut: null,
+  isLabelSyncedWithName: false,
+  createdAt: '2026-08-22T00:00:00.000Z',
+  updatedAt: '2026-08-22T00:00:00.000Z',
+  fieldUniversalIdentifiers: [],
+  indexMetadataUniversalIdentifiers: [],
+  searchFieldMetadataUniversalIdentifiers: [],
+  objectPermissionUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
+  viewUniversalIdentifiers: [],
+  labelIdentifierFieldMetadataUniversalIdentifier: null,
+  imageIdentifierFieldMetadataUniversalIdentifier: null,
+});
 
 const buildTimelineActivityType = (
   overrides: Partial<UniversalFlatTimelineActivityType> = {},
@@ -48,11 +111,16 @@ const buildCreationArgs = ({
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatTimelineActivityTypeMaps: mapsFrom([flatTimelineActivityType]),
       flatObjectMetadataMaps: mapsFrom(
-        objectUniversalIdentifiers.map((universalIdentifier) => ({
-          universalIdentifier,
-        })),
+        objectUniversalIdentifiers.map(buildObjectMetadata),
       ),
     },
+    buildOptions: {
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      isSystemBuild: false,
+    },
+    workspaceId: 'workspace-id',
+    remainingFlatEntityMapsToValidate: mapsFrom([]),
+    additionalCacheDataMaps: { featureFlagsMap },
   }) satisfies Parameters<
     FlatTimelineActivityTypeValidatorService['validateFlatTimelineActivityTypeCreation']
   >[0];
@@ -64,7 +132,7 @@ const buildUpdateArgs = ({
   callerApplicationUniversalIdentifier = APPLICATION_UNIVERSAL_IDENTIFIER,
 }: {
   existingTimelineActivityTypes?: UniversalFlatTimelineActivityType[];
-  flatEntityUpdate: Record<string, unknown>;
+  flatEntityUpdate: UniversalFlatEntityUpdate<'timelineActivityType'>;
   universalIdentifier?: string;
   callerApplicationUniversalIdentifier?: string;
 }) =>
@@ -74,13 +142,15 @@ const buildUpdateArgs = ({
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatTimelineActivityTypeMaps: mapsFrom(existingTimelineActivityTypes),
       flatObjectMetadataMaps: mapsFrom([
-        { universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER },
+        buildObjectMetadata(OBJECT_UNIVERSAL_IDENTIFIER),
       ]),
     },
     buildOptions: {
       applicationUniversalIdentifier: callerApplicationUniversalIdentifier,
       isSystemBuild: false,
     },
+    workspaceId: 'workspace-id',
+    additionalCacheDataMaps: { featureFlagsMap },
   }) satisfies Parameters<
     FlatTimelineActivityTypeValidatorService['validateFlatTimelineActivityTypeUpdate']
   >[0];
@@ -96,11 +166,15 @@ const buildDeletionArgs = ({
     flatEntityToValidate: flatTimelineActivityType,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatTimelineActivityTypeMaps: mapsFrom([flatTimelineActivityType]),
+      flatObjectMetadataMaps: mapsFrom([]),
     },
     buildOptions: {
       applicationUniversalIdentifier: callerApplicationUniversalIdentifier,
       isSystemBuild: false,
     },
+    workspaceId: 'workspace-id',
+    remainingFlatEntityMapsToValidate: mapsFrom([]),
+    additionalCacheDataMaps: { featureFlagsMap },
   }) satisfies Parameters<
     FlatTimelineActivityTypeValidatorService['validateFlatTimelineActivityTypeDeletion']
   >[0];
