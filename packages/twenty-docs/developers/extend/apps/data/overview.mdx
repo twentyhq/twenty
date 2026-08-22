@@ -50,7 +50,7 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 | **Index** | A database index to speed up a recurring query on one of your objects | `defineIndex()` |
 | **Timeline activity type** | An automatic audit event or explicit domain event shown in record timelines | `defineTimelineActivityType()` |
 
-The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, and `src/indexes/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/indexes/`, and `src/timeline-activity-types/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
 
 ## Indexes (optional)
 
