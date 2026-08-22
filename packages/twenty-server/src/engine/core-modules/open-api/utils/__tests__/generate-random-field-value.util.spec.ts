@@ -2,8 +2,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
 
-const buildField = (name: string, type: FieldMetadataType) =>
-  ({ name, type }) as any;
+const buildField = (name: string, type: FieldMetadataType) => ({
+  name,
+  type,
+  options: null,
+});
 
 describe('generateRandomFieldValue', () => {
   // The document is diffed against main's in CI, so two generations of the same

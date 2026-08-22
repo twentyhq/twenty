@@ -8,12 +8,17 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
+type ExampleField = Pick<
+  FieldMetadataEntity | FlatFieldMetadata,
+  'name' | 'type' | 'options'
+>;
+
 // Its own instance so seeding cannot disturb the shared faker other callers use.
 const faker = new Faker({ locale: en });
 
 // CI diffs this document against the one main generates, so an example may only
 // depend on the field it describes. Field ids are per-workspace, hence the name.
-const seedForField = (field: FieldMetadataEntity | FlatFieldMetadata) => {
+const seedForField = (field: ExampleField) => {
   let seed = 0;
 
   for (const character of `${field.name}:${field.type}`) {
@@ -29,7 +34,7 @@ const EXAMPLE_REFERENCE_DATE = new Date('2024-01-01T00:00:00.000Z');
 export const generateRandomFieldValue = ({
   field,
 }: {
-  field: FieldMetadataEntity | FlatFieldMetadata;
+  field: ExampleField;
 }): FieldMetadataDefaultValue => {
   seedForField(field);
 
