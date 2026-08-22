@@ -71,6 +71,7 @@ export const createTimelineActivity = async ({
       timelineActivityTypes: {
         id: true,
         universalIdentifier: true,
+        isActive: true,
       },
       objects: getObjectMetadataPageSelection(),
     });
@@ -83,6 +84,12 @@ export const createTimelineActivity = async ({
   if (!isDefined(timelineActivityType)) {
     throw new Error(
       `Timeline activity type ${timelineActivityTypeUniversalIdentifier} is not installed`,
+    );
+  }
+
+  if (!timelineActivityType.isActive) {
+    throw new Error(
+      `Timeline activity type ${timelineActivityTypeUniversalIdentifier} is inactive`,
     );
   }
 

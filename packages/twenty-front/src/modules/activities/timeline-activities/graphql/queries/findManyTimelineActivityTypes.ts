@@ -11,6 +11,7 @@ export const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
       icon
       objectUniversalIdentifier
       frontComponentUniversalIdentifier
+      isActive
     }
   }
 `;

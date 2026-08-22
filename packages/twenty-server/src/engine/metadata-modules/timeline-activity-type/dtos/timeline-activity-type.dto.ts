@@ -1,9 +1,16 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
-import { IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type TimelineActivityTypeOverrides } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 
 @ObjectType('TimelineActivityType')
 export class TimelineActivityTypeDTO {
@@ -63,11 +70,18 @@ export class TimelineActivityTypeDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   overridesTimelineActivityTypeUniversalIdentifier: string | null;
 
+  @IsBoolean()
+  @Field()
+  isActive: boolean;
+
   @HideField()
   workspaceId: string;
 
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
+
+  @HideField()
+  overrides: TimelineActivityTypeOverrides | null;
 
   @IsDateString()
   @Field()

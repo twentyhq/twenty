@@ -30,6 +30,8 @@ export const fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType
     overridesTimelineActivityTypeUniversalIdentifier:
       timelineActivityTypeManifest.overridesTimelineActivityTypeUniversalIdentifier ??
       null,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   });

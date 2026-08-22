@@ -76,9 +76,9 @@ export class TimelineActivityTypeCacheService {
       flatEntityMaps: flatTimelineActivityTypeMaps,
     });
 
-    if (!isDefined(timelineActivityType)) {
+    if (!isDefined(timelineActivityType) || !timelineActivityType.isActive) {
       throw new TimelineException(
-        `Timeline activity type ${timelineActivityTypeId} was not found in workspace ${workspaceId}`,
+        `Active timeline activity type ${timelineActivityTypeId} was not found in workspace ${workspaceId}`,
       );
     }
 

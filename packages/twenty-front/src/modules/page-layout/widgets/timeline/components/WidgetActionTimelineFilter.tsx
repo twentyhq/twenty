@@ -31,7 +31,9 @@ export const WidgetActionTimelineFilter = () => {
       targetRecord.id,
     );
 
-  const timelineActivityTypes = [...timelineActivityTypeMaps.byId.values()];
+  const timelineActivityTypes = [
+    ...timelineActivityTypeMaps.byId.values(),
+  ].filter(({ isActive }) => isActive !== false);
 
   if (timelineActivityTypes.length === 0) {
     return null;
