@@ -6365,6 +6365,9 @@ export default {
             "emit": [
                 357
             ],
+            "action": [
+                1
+            ],
             "icon": [
                 1
             ],
@@ -6372,6 +6375,9 @@ export default {
                 1
             ],
             "frontComponentUniversalIdentifier": [
+                3
+            ],
+            "objectUniversalIdentifier": [
                 3
             ],
             "overridesTimelineActivityTypeUniversalIdentifier": [

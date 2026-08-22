@@ -6,13 +6,13 @@ import { EventCardToggleButton } from '@/activities/timeline-activities/rows/com
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
+import { getAuthorizedLinkedRecordName } from '@/activities/timeline-activities/rows/generic/utils/getAuthorizedLinkedRecordName';
 import {
   StyledEventRowContainer,
   StyledEventRowContent,
   StyledEventRowLinkedRecord,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
@@ -31,24 +31,6 @@ const StyledGenericLinkedContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
-
-const getLinkedRecordName = ({
-  recordIdentifierName,
-  linkedRecordCachedName,
-}: {
-  recordIdentifierName: string | undefined;
-  linkedRecordCachedName: string | null | undefined;
-}) => {
-  if (isNonEmptyString(recordIdentifierName)) {
-    return recordIdentifierName;
-  }
-
-  if (isNonEmptyString(linkedRecordCachedName)) {
-    return linkedRecordCachedName;
-  }
-
-  return t`Untitled`;
-};
 
 export const EventRowGenericLinked = ({
   event,
@@ -75,10 +57,9 @@ export const EventRowGenericLinked = ({
   const objectLabel =
     linkedObjectMetadataItem?.labelSingular?.toLowerCase() ?? t`record`;
 
-  const linkedRecordName = getLinkedRecordName({
-    recordIdentifierName: linkedRecordIdentifier?.name,
-    linkedRecordCachedName: event.linkedRecordCachedName,
-  });
+  const linkedRecordName = getAuthorizedLinkedRecordName(
+    linkedRecordIdentifier?.name,
+  );
 
   const linkedRecord =
     isDefined(event.linkedRecordId) &&
@@ -89,7 +70,10 @@ export const EventRowGenericLinked = ({
         }
       : undefined;
 
-  const canOpen = isDefined(linkedRecord);
+  const canOpen =
+    !isDefined(frontComponentId) &&
+    isDefined(linkedRecord) &&
+    isDefined(linkedRecordName);
 
   const handleOpen = () => {
     if (!isDefined(linkedRecord)) {
@@ -117,21 +101,23 @@ export const EventRowGenericLinked = ({
           <EventRowItem variant="action">
             {eventTypeLabel ?? t`linked a ${objectLabel}`}
           </EventRowItem>
-          <StyledEventRowLinkedRecord
-            role={canOpen ? 'button' : undefined}
-            tabIndex={canOpen ? 0 : undefined}
-            onClick={handleOpen}
-            onKeyDown={handleKeyDown}
-          >
-            <OverflowingTextWithTooltip text={linkedRecordName} />
-          </StyledEventRowLinkedRecord>
+          {canOpen && (
+            <StyledEventRowLinkedRecord
+              role="button"
+              tabIndex={0}
+              onClick={handleOpen}
+              onKeyDown={handleKeyDown}
+            >
+              <OverflowingTextWithTooltip text={linkedRecordName} />
+            </StyledEventRowLinkedRecord>
+          )}
           {canOpen && !isDefined(frontComponentId) && (
             <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
           )}
         </StyledEventRowContent>
         <EventRowDate happensAt={happensAt} />
       </StyledEventRowContainer>
-      {isDefined(linkedRecord) && !isDefined(frontComponentId) && (
+      {canOpen && (
         <EventCard isOpen={isOpen}>
           <SidePanelSearchRecordPreviewCard
             objectNameSingular={linkedRecord.objectNameSingular}

@@ -29,6 +29,7 @@ import { type TimelineActivityPayload } from 'src/modules/timeline/types/timelin
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
+import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 
@@ -71,6 +72,7 @@ const buildLinkedPayload = ({
   workspaceMemberId,
   linkedRecordId,
   linkedRecordCachedName,
+  happensAt,
   properties,
 }: {
   rule: TimelineActivityRule;
@@ -79,8 +81,10 @@ const buildLinkedPayload = ({
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
   linkedRecordCachedName: string | undefined;
+  happensAt: Date;
   properties: ObjectRecordBaseEvent['properties'];
 }): TimelineActivityPayload => ({
+  happensAt,
   timelineActivityTypeId: timelineActivityType.id,
   timelineActivityTypeSnapshot: timelineActivityType.snapshot,
   objectSingularName: target.targetObjectNameSingular,
@@ -283,6 +287,7 @@ export class TimelineActivityService {
           {
             timelineActivityTypeId: timelineActivityType.id,
             timelineActivityTypeSnapshot: timelineActivityType.snapshot,
+            happensAt: resolveTimelineActivityHappensAt(event),
             objectSingularName: nameSingular,
             recordId: event.recordId,
             workspaceMemberId: event.workspaceMemberId,
@@ -314,6 +319,7 @@ export class TimelineActivityService {
             record: event.properties.after as ObjectRecord | undefined,
             flatFieldMetadataMaps,
           }),
+          happensAt: resolveTimelineActivityHappensAt(event),
           properties: event.properties,
         }),
       ),
@@ -416,6 +422,7 @@ export class TimelineActivityService {
             record: sourceRecordsByRecordId.get(sourceRecordId),
             flatFieldMetadataMaps,
           }),
+          happensAt: resolveTimelineActivityHappensAt(event),
           properties: {},
         }),
       );

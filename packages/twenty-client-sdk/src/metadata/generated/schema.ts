@@ -2850,10 +2850,14 @@ export interface TimelineActivityType {
     name: Scalars['String']
     label: Scalars['String']
     emit?: TimelineActivityTypeEmit
+    /** @deprecated Use emit.on */
+    action?: Scalars['String']
     icon?: Scalars['String']
     /** @deprecated Use frontComponentUniversalIdentifier */
     renderer?: Scalars['String']
     frontComponentUniversalIdentifier?: Scalars['UUID']
+    /** @deprecated Use emit.objectUniversalIdentifier */
+    objectUniversalIdentifier?: Scalars['UUID']
     overridesTimelineActivityTypeUniversalIdentifier?: Scalars['UUID']
     isActive: Scalars['Boolean']
     applicationId?: Scalars['UUID']
