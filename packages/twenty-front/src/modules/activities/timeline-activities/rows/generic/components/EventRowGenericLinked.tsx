@@ -27,7 +27,7 @@ export const EventRowGenericLinked = ({
 }: EventRowGenericLinkedProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const objectLabel =
+  const objectNameSingular =
     linkedObjectMetadataItem?.labelSingular?.toLowerCase() ?? t`record`;
 
   const linkedRecordName = isNonEmptyString(event.linkedRecordCachedName)
@@ -64,7 +64,7 @@ export const EventRowGenericLinked = ({
         <EventRowItem variant="action">
           {getGenericTimelineActivityActionSentence({
             eventAction,
-            objectLabel,
+            objectNameSingular,
             timelineActivityTypeLabel,
           })}
         </EventRowItem>

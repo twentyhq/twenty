@@ -22,7 +22,7 @@ describe('getGenericTimelineActivityActionSentence', () => {
       expect(
         getGenericTimelineActivityActionSentence({
           eventAction,
-          objectLabel: 'company',
+          objectNameSingular: 'company',
           timelineActivityTypeLabel: 'Custom label',
         }),
       ).toBe(expectedSentence);
@@ -33,7 +33,7 @@ describe('getGenericTimelineActivityActionSentence', () => {
     expect(
       getGenericTimelineActivityActionSentence({
         eventAction: null,
-        objectLabel: 'company',
+        objectNameSingular: 'company',
         timelineActivityTypeLabel: 'qualified',
       }),
     ).toBe('qualified');
@@ -43,7 +43,7 @@ describe('getGenericTimelineActivityActionSentence', () => {
     expect(
       getGenericTimelineActivityActionSentence({
         eventAction: null,
-        objectLabel: 'company',
+        objectNameSingular: 'company',
         timelineActivityTypeLabel: null,
       }),
     ).toBe('interacted with a related company');
