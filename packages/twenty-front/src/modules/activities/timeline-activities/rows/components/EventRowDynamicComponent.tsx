@@ -6,6 +6,7 @@ export const EventRowDynamicComponent = ({
   labelIdentifierValue,
   event,
   eventAction,
+  timelineActivityTypeLabel,
   eventRenderer,
   mainObjectMetadataItem,
   linkedObjectMetadataItem,
@@ -26,6 +27,7 @@ export const EventRowDynamicComponent = ({
       labelIdentifierValue={labelIdentifierValue}
       event={event}
       eventAction={eventAction}
+      timelineActivityTypeLabel={timelineActivityTypeLabel}
       eventRenderer={eventRenderer}
       mainObjectMetadataItem={mainObjectMetadataItem}
       linkedObjectMetadataItem={linkedObjectMetadataItem}

@@ -171,6 +171,7 @@ export const EventRow = ({
               labelIdentifierValue={labelIdentifier.name}
               event={event}
               eventAction={timelineActivityAction}
+              timelineActivityTypeLabel={timelineActivityType?.label ?? null}
               eventRenderer={timelineActivityType?.renderer ?? null}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}

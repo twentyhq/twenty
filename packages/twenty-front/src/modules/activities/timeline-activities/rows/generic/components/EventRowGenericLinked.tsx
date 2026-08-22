@@ -9,6 +9,7 @@ import {
   StyledEventRowContent,
   StyledEventRowLinkedRecord,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
+import { getGenericTimelineActivityActionSentence } from '@/activities/timeline-activities/rows/generic/utils/getGenericTimelineActivityActionSentence';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -18,6 +19,8 @@ type EventRowGenericLinkedProps = EventRowDynamicComponentProps;
 
 export const EventRowGenericLinked = ({
   event,
+  eventAction,
+  timelineActivityTypeLabel,
   authorFullName,
   linkedObjectMetadataItem,
   createdAt,
@@ -31,18 +34,19 @@ export const EventRowGenericLinked = ({
     ? event.linkedRecordCachedName
     : t`Untitled`;
 
+  const linkedRecordId = event.linkedRecordId;
+  const linkedObjectNameSingular = linkedObjectMetadataItem?.nameSingular;
   const canOpen =
-    isDefined(event.linkedRecordId) &&
-    isDefined(linkedObjectMetadataItem?.nameSingular);
+    isDefined(linkedRecordId) && isDefined(linkedObjectNameSingular);
 
   const handleOpen = () => {
-    if (!canOpen) {
+    if (!isDefined(linkedRecordId) || !isDefined(linkedObjectNameSingular)) {
       return;
     }
 
     openRecordInSidePanel({
-      recordId: event.linkedRecordId as string,
-      objectNameSingular: linkedObjectMetadataItem?.nameSingular as string,
+      recordId: linkedRecordId,
+      objectNameSingular: linkedObjectNameSingular,
     });
   };
 
@@ -58,7 +62,11 @@ export const EventRowGenericLinked = ({
       <StyledEventRowContent>
         <EventRowItem>{authorFullName}</EventRowItem>
         <EventRowItem variant="action">
-          {t`linked a ${objectLabel}`}
+          {getGenericTimelineActivityActionSentence({
+            eventAction,
+            objectLabel,
+            timelineActivityTypeLabel,
+          })}
         </EventRowItem>
         <StyledEventRowLinkedRecord
           role={canOpen ? 'button' : undefined}

@@ -9,6 +9,7 @@ export type EventRowDynamicComponentProps = {
   labelIdentifierValue: string;
   event: TimelineActivity;
   eventAction: TimelineActivityAction | null;
+  timelineActivityTypeLabel: string | null;
   eventRenderer: TimelineActivityRenderer | null;
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
