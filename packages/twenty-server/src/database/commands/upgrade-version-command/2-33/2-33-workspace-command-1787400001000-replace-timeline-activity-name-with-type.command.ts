@@ -72,7 +72,7 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would replace timelineActivity.name with timelineActivityTypeId for workspace ${workspaceId}`,
+        `[DRY RUN] Would add and backfill timelineActivity.timelineActivityTypeId for workspace ${workspaceId}`,
       );
 
       return;
@@ -106,7 +106,7 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     });
 
     this.logger.log(
-      `Replaced timelineActivity.name with timelineActivityTypeId for workspace ${workspaceId}`,
+      `Added and backfilled timelineActivity.timelineActivityTypeId for workspace ${workspaceId}`,
     );
   }
 
@@ -249,9 +249,8 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     );
   }
 
-  // On a workspace created before this change the object still points its label
-  // identifier at `name`, and the migration refuses to delete a field while it
-  // holds that role.
+  // Repointing now makes the later removal of `name` independent of this
+  // migration while giving the object a useful label during compatibility.
   private async repointLabelIdentifierToLinkedRecordCachedName({
     workspaceId,
     applicationUniversalIdentifier,
@@ -306,5 +305,4 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
       );
     }
   }
-
 }
