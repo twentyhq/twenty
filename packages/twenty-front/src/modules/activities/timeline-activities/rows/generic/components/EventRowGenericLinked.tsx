@@ -4,7 +4,7 @@ import { type KeyboardEvent, useState } from 'react';
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
-import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { getAuthorizedLinkedRecordName } from '@/activities/timeline-activities/rows/generic/utils/getAuthorizedLinkedRecordName';
 import {
@@ -23,7 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type EventRowGenericLinkedProps = EventRowDynamicComponentProps;
+type EventRowGenericLinkedProps = EventRowNativeComponentProps;
 
 const StyledGenericLinkedContainer = styled.div`
   display: flex;
@@ -38,7 +38,7 @@ export const EventRowGenericLinked = ({
   authorFullName,
   linkedObjectMetadataItem,
   happensAt,
-  frontComponentId,
+  hasRenderer,
 }: EventRowGenericLinkedProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +71,7 @@ export const EventRowGenericLinked = ({
       : undefined;
 
   const canOpen =
-    !isDefined(frontComponentId) &&
+    hasRenderer !== true &&
     isDefined(linkedRecord) &&
     isDefined(linkedRecordName);
 
@@ -111,7 +111,7 @@ export const EventRowGenericLinked = ({
               <OverflowingTextWithTooltip text={linkedRecordName} />
             </StyledEventRowLinkedRecord>
           )}
-          {canOpen && !isDefined(frontComponentId) && (
+          {canOpen && (
             <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
           )}
         </StyledEventRowContent>

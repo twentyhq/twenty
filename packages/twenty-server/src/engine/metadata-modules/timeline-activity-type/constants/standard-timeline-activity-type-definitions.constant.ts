@@ -1,7 +1,10 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS,
+  type TimelineActivityAction,
+} from 'twenty-shared/timeline';
 
 type StandardTimelineActivityTypeDefinitionSource = {
   name: string;
@@ -219,7 +222,8 @@ const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivi
         context: 'timelineActivityType.label',
       }),
       icon: 'IconMail',
-      frontComponentUniversalIdentifier: null,
+      frontComponentUniversalIdentifier:
+        STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS.message,
       emit: {
         on: 'linked',
         objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
@@ -238,7 +242,8 @@ const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivi
         context: 'timelineActivityType.label',
       }),
       icon: 'IconCalendar',
-      frontComponentUniversalIdentifier: null,
+      frontComponentUniversalIdentifier:
+        STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS.calendarEvent,
       emit: {
         on: 'linked',
         objectUniversalIdentifier:

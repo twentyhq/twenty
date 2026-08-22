@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecord } from 'twenty-shared/types';
-import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
@@ -9,33 +8,8 @@ import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/uti
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { buildTimelineActivityMergeKey } from 'src/modules/timeline/utils/build-timeline-activity-merge-key.util';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
-
-// An unset author is null on a stored row and undefined on a payload, so both
-// are normalized before they can decide whether two events are the same.
-const buildMergeKey = ({
-  recordId,
-  workspaceMemberId,
-  discriminator,
-}: {
-  recordId: string;
-  workspaceMemberId: string | null | undefined;
-  discriminator: string;
-}): string => `${recordId}|${workspaceMemberId ?? null}|${discriminator}`;
-
-const buildTimelineActivityTypeMergeDiscriminator = ({
-  timelineActivityTypeId,
-  timelineActivityTypeSnapshot,
-}: {
-  timelineActivityTypeId: string;
-  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
-}): string =>
-  JSON.stringify([
-    timelineActivityTypeId,
-    timelineActivityTypeSnapshot?.universalIdentifier,
-    timelineActivityTypeSnapshot?.action,
-    timelineActivityTypeSnapshot?.objectUniversalIdentifier,
-  ]);
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
@@ -84,14 +58,12 @@ export class TimelineActivityRepository {
       >();
 
       for (const timelineActivity of recentTimelineActivities) {
-        const mergeKey = buildMergeKey({
+        const mergeKey = buildTimelineActivityMergeKey({
           recordId: timelineActivity[timelineActivityPropertyName],
           workspaceMemberId: timelineActivity.workspaceMemberId,
-          discriminator: buildTimelineActivityTypeMergeDiscriminator({
-            timelineActivityTypeId: timelineActivity.timelineActivityTypeId,
-            timelineActivityTypeSnapshot:
-              timelineActivity.timelineActivityTypeSnapshot,
-          }),
+          timelineActivityTypeId: timelineActivity.timelineActivityTypeId,
+          timelineActivityTypeSnapshot:
+            timelineActivity.timelineActivityTypeSnapshot,
         });
 
         const bucket = recentTimelineActivitiesByMergeKey.get(mergeKey);
@@ -104,13 +76,11 @@ export class TimelineActivityRepository {
       }
 
       for (const payload of payloads) {
-        const typeMergeKey = buildMergeKey({
+        const typeMergeKey = buildTimelineActivityMergeKey({
           recordId: payload.recordId,
           workspaceMemberId: payload.workspaceMemberId,
-          discriminator: buildTimelineActivityTypeMergeDiscriminator({
-            timelineActivityTypeId: payload.timelineActivityTypeId,
-            timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
-          }),
+          timelineActivityTypeId: payload.timelineActivityTypeId,
+          timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
         });
         const recentTimelineActivity = (
           recentTimelineActivitiesByMergeKey.get(typeMergeKey) ?? []

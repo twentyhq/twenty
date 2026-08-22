@@ -18,7 +18,7 @@ type EventRowMainObjectUpdatedProps = {
   eventTypeLabel?: string;
   event: Pick<TimelineActivity, 'id' | 'properties'>;
   happensAt?: string;
-  hasFrontComponent?: boolean;
+  hasRenderer?: boolean;
 };
 
 const StyledRowContainer = styled.div`
@@ -49,7 +49,7 @@ export const EventRowMainObjectUpdated = ({
   event,
   mainObjectMetadataItem,
   happensAt,
-  hasFrontComponent,
+  hasRenderer,
 }: EventRowMainObjectUpdatedProps) => {
   const { t } = useLingui();
   const diff = event.properties.diff ?? {};
@@ -96,7 +96,7 @@ export const EventRowMainObjectUpdated = ({
           {diffEntries.length > 1 && (
             <>
               <span>{t`${fieldCount} fields on ${recordLabel}`}</span>
-              {!hasFrontComponent && (
+              {!hasRenderer && (
                 <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
               )}
             </>
@@ -104,7 +104,7 @@ export const EventRowMainObjectUpdated = ({
         </StyledRow>
         <EventRowDate happensAt={happensAt} />
       </StyledRowContainer>
-      {diffEntries.length > 1 && !hasFrontComponent && (
+      {diffEntries.length > 1 && !hasRenderer && (
         <EventCard isOpen={isOpen}>
           {diffEntries.map(([diffKey, diffValue]) => (
             <EventFieldDiffContainer

@@ -6269,10 +6269,14 @@ export interface TimelineActivityTypeGenqlSelection{
     name?: boolean | number
     label?: boolean | number
     emit?: TimelineActivityTypeEmitGenqlSelection
+    /** @deprecated Use emit.on */
+    action?: boolean | number
     icon?: boolean | number
     /** @deprecated Use frontComponentUniversalIdentifier */
     renderer?: boolean | number
     frontComponentUniversalIdentifier?: boolean | number
+    /** @deprecated Use emit.objectUniversalIdentifier */
+    objectUniversalIdentifier?: boolean | number
     overridesTimelineActivityTypeUniversalIdentifier?: boolean | number
     isActive?: boolean | number
     applicationId?: boolean | number

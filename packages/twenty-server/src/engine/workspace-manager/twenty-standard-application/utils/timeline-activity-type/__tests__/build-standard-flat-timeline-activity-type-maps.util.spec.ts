@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -62,5 +63,11 @@ describe('buildStandardFlatTimelineActivityTypeMaps', () => {
       getTimelineActivityTypeOrThrow(maps, 'noteUpdated')
         .triggerFieldUniversalIdentifiers,
     ).toEqual([STANDARD_OBJECTS.note.fields.title.universalIdentifier]);
+    expect(
+      getTimelineActivityTypeOrThrow(maps, 'messageLinked')
+        .frontComponentUniversalIdentifier,
+    ).toBe(
+      STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS.message,
+    );
   });
 });
