@@ -7,6 +7,7 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { INVALID_PHONES_TEST_CASES } from 'test/integration/utils/invalid-phones-test-cases';
 import { FieldActorSource } from 'twenty-shared/types';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -213,4 +214,20 @@ describe('Core REST API Create One endpoint', () => {
         expect(res.body.error).toBe('BadRequestException');
       });
   });
+
+  it.each(INVALID_PHONES_TEST_CASES)(
+    'should return a BadRequestException when trying to create a person with $label',
+    async ({ phones, expectedSubCode, expectedMessage }) => {
+      await makeRestAPIRequest({
+        method: 'post',
+        path: `/people`,
+        body: { phones },
+      })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.messages[0]).toBe(expectedMessage);
+          expect(res.body.code).toBe(expectedSubCode);
+        });
+    },
+  );
 });

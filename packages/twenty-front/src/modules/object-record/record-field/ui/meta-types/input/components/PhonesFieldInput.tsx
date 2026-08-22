@@ -21,10 +21,12 @@ import {
 import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { useContext } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 const StyledCustomPhoneInputContainer = styled.div<{
@@ -97,16 +99,24 @@ export const PhonesFieldInput = () => {
   const parseArrayToPhonesValue = (phones: PhoneRecord[]) => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
 
+    const sanitizedAdditionalPhones = nextAdditionalPhones.filter(
+      (phone) => isDefined(phone) && isNonEmptyString(phone.number),
+    );
+
     const nextValue: FieldPhonesValue = {
       primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
       primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
       primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
-      additionalPhones: nextAdditionalPhones,
+      additionalPhones: sanitizedAdditionalPhones,
     };
     const parseResponse = phonesFieldValueSchema.safeParse(nextValue);
     if (parseResponse.success) {
       return parseResponse.data;
     }
+
+    logError(
+      `Failed to parse phones field value: ${parseResponse.error.message}`,
+    );
   };
 
   const handlePhonesChange = (updatedPhones: PhoneRecord[]) => {

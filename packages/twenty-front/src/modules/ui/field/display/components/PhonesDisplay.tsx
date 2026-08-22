@@ -6,7 +6,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { isDefined } from 'twenty-shared/utils';
+import { additionalPhoneSchema, isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
 import { logError } from '~/utils/logError';
 
@@ -55,7 +55,7 @@ export const PhonesDisplay = ({
         .map(({ number, callingCode }) => {
           return {
             number,
-            callingCode,
+            callingCode: callingCode ?? '',
           };
         }),
     [
@@ -116,18 +116,29 @@ export const PhonesDisplay = ({
   );
 };
 
-const parseAdditionalPhones = (additionalPhones?: any) => {
+const additionalPhoneSchemaWithNonEmptyNumber = additionalPhoneSchema.refine(
+  (phone) => phone.number.length > 0,
+);
+
+const parseAdditionalPhonesArray = (additionalPhones: unknown[]) =>
+  additionalPhones
+    .map((phone) => additionalPhoneSchemaWithNonEmptyNumber.safeParse(phone))
+    .filter((result) => result.success)
+    .map((result) => result.data);
+
+const parseAdditionalPhones = (additionalPhones?: unknown) => {
   if (!additionalPhones) {
     return [];
   }
 
-  if (typeof additionalPhones === 'object') {
-    return additionalPhones;
+  if (Array.isArray(additionalPhones)) {
+    return parseAdditionalPhonesArray(additionalPhones);
   }
 
   if (typeof additionalPhones === 'string') {
     try {
-      return JSON.parse(additionalPhones);
+      const parsed = JSON.parse(additionalPhones);
+      return Array.isArray(parsed) ? parseAdditionalPhonesArray(parsed) : [];
     } catch (error) {
       logError(t`Error parsing additional phones: ${String(error)}`);
     }
