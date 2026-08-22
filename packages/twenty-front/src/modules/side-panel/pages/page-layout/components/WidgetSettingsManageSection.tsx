@@ -11,6 +11,7 @@ import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-lay
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { getReplaceWidgetSidePanelPage } from '@/side-panel/pages/page-layout/utils/getReplaceWidgetSidePanelPage';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -19,7 +20,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconEyeX,
@@ -28,7 +28,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { AppTooltip } from 'twenty-ui/surfaces';
-import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -92,10 +91,7 @@ export const WidgetSettingsManageSection = ({
 
   const handleReplaceWidget = () => {
     navigatePageLayoutSidePanel({
-      sidePanelPage:
-        pageLayoutDraft.type === PageLayoutType.DASHBOARD
-          ? SidePanelPages.PageLayoutDashboardWidgetTypeSelect
-          : SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
+      sidePanelPage: getReplaceWidgetSidePanelPage(pageLayoutDraft.type),
     });
   };
 
