@@ -29,6 +29,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   screenshots?: string[];
   galleryImages?: string[];
   aboutDescription?: string;
+  pricingDescription?: string;
   websiteUrl?: string;
   termsUrl?: string;
   emailSupport?: string;

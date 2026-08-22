@@ -1814,6 +1814,7 @@ export interface MarketplaceAppDetail {
     logoUrl?: Scalars['String']
     websiteUrl?: Scalars['String']
     aboutDescription?: Scalars['String']
+    pricingDescription?: Scalars['String']
     termsUrl?: Scalars['String']
     emailSupport?: Scalars['String']
     issueReportUrl?: Scalars['String']
@@ -5146,6 +5147,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     logoUrl?: boolean | number
     websiteUrl?: boolean | number
     aboutDescription?: boolean | number
+    pricingDescription?: boolean | number
     termsUrl?: boolean | number
     emailSupport?: boolean | number
     issueReportUrl?: boolean | number

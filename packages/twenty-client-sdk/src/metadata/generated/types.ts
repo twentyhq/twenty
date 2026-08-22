@@ -4279,6 +4279,9 @@ export default {
             "aboutDescription": [
                 1
             ],
+            "pricingDescription": [
+                1
+            ],
             "termsUrl": [
                 1
             ],
