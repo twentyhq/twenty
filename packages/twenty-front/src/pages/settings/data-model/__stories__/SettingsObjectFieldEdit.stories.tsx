@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -33,5 +34,24 @@ export const CustomField: Story = {
       ':objectNamePlural': 'companies',
       ':fieldName': 'employees',
     },
+  },
+};
+
+export const SelectFieldWithOptionAddedFromRecord: Story = {
+  args: {
+    routeParams: {
+      ':objectNamePlural': 'opportunities',
+      ':fieldName': 'stage',
+    },
+    searchParams: { newOption: 'Negotiation' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByDisplayValue('Negotiation');
+
+    const saveButton = await canvas.findByRole('button', { name: /Save/ });
+
+    await expect(saveButton).toBeEnabled();
   },
 };
