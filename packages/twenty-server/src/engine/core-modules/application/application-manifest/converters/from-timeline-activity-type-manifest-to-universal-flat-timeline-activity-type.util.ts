@@ -18,6 +18,9 @@ export const fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType
     label: timelineActivityTypeManifest.label,
     action: timelineActivityTypeManifest.action ?? null,
     icon: timelineActivityTypeManifest.icon ?? null,
+    renderer: timelineActivityTypeManifest.renderer ?? null,
+    objectUniversalIdentifier:
+      timelineActivityTypeManifest.objectUniversalIdentifier ?? null,
     createdAt: now,
     updatedAt: now,
   });

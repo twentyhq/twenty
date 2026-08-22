@@ -1,7 +1,10 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import { IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  type TimelineActivityAction,
+  type TimelineActivityRenderer,
+} from 'twenty-shared/timeline';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -29,6 +32,15 @@ export class TimelineActivityTypeDTO {
   @IsOptional()
   @Field(() => String, { nullable: true })
   icon: string | null;
+
+  // Explicit type for the same reason as action: the renderer union is erased.
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  renderer: TimelineActivityRenderer | null;
+
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  objectUniversalIdentifier: string | null;
 
   @HideField()
   workspaceId: string;

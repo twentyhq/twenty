@@ -9,6 +9,8 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
   label: flatTimelineActivityType.label,
   action: flatTimelineActivityType.action,
   icon: flatTimelineActivityType.icon,
+  renderer: flatTimelineActivityType.renderer,
+  objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,
   workspaceId: flatTimelineActivityType.workspaceId,
   applicationId: flatTimelineActivityType.applicationId,
   createdAt: new Date(flatTimelineActivityType.createdAt),

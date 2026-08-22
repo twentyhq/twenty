@@ -1901,6 +1901,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    renderer: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    objectUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,

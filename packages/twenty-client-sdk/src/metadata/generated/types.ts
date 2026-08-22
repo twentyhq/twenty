@@ -6340,6 +6340,12 @@ export default {
             "icon": [
                 1
             ],
+            "renderer": [
+                1
+            ],
+            "objectUniversalIdentifier": [
+                3
+            ],
             "applicationId": [
                 3
             ],

@@ -1,4 +1,7 @@
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  type TimelineActivityAction,
+  type TimelineActivityRenderer,
+} from 'twenty-shared/timeline';
 import {
   Column,
   CreateDateColumn,
@@ -29,13 +32,24 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: false, type: 'varchar' })
   label: string;
 
-  // Selects the built-in timeline row renderer. Null for an application-declared
-  // type, which renders from its label and icon alone.
+  // The verb the entry describes. Null for a type nothing stamps on a row, which
+  // exists so the timeline can offer creating one.
   @Column({ nullable: true, type: 'varchar' })
   action: TimelineActivityAction | null;
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
+
+  // Names the frontend component that draws the row. Null falls back to the
+  // generic renderer, which needs nothing but the label and icon.
+  @Column({ nullable: true, type: 'varchar' })
+  renderer: TimelineActivityRenderer | null;
+
+  // The object whose records this entry is about, as a soft reference rather
+  // than a relation: it is resolved through the flat maps at write time to pick
+  // the type for an event, and null means any object.
+  @Column({ nullable: true, type: 'uuid' })
+  objectUniversalIdentifier: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

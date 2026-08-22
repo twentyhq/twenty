@@ -40,6 +40,7 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
       label: 'updated',
       action: 'updated',
       icon: null,
+      renderer: null,
     },
   ],
   [
@@ -50,6 +51,7 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
       label: 'was linked by',
       action: 'linked',
       icon: null,
+      renderer: null,
     },
   ],
 ]);

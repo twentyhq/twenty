@@ -18,6 +18,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
+import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
@@ -112,7 +113,7 @@ export class TimelineActivityService {
       sourceRules,
       junctionRules,
       flatFieldMetadataMaps,
-      timelineActivityTypeIdByAction,
+      resolveTimelineActivityTypeId,
     } = await this.timelineActivityRuleBuilderService.getRulesForEventBatch({
       workspaceId,
       flatObjectMetadata: objectMetadata,
@@ -146,7 +147,7 @@ export class TimelineActivityService {
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
-                timelineActivityTypeIdByAction,
+                resolveTimelineActivityTypeId,
               }),
             ),
             ...junctionRules.map((rule) =>
@@ -156,7 +157,7 @@ export class TimelineActivityService {
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
-                timelineActivityTypeIdByAction,
+                resolveTimelineActivityTypeId,
               }),
             ),
           ]);
@@ -217,16 +218,14 @@ export class TimelineActivityService {
     action,
     workspaceId,
     flatFieldMetadataMaps,
-    timelineActivityTypeIdByAction,
+    resolveTimelineActivityTypeId,
   }: {
     rule: TimelineActivityRule;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    timelineActivityTypeIdByAction: Partial<
-      Record<TimelineActivityRuleAction, string>
-    >;
+    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
   }): Promise<TimelineActivityPayload[]> {
     const ruleAction = SOURCE_EVENT_ACTIONS[action];
 
@@ -234,7 +233,11 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityTypeId = timelineActivityTypeIdByAction[ruleAction];
+    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+      action: ruleAction,
+      objectUniversalIdentifier:
+        rule.sourceFlatObjectMetadata.universalIdentifier,
+    });
 
     if (!isDefined(timelineActivityTypeId)) {
       return [];
@@ -306,16 +309,14 @@ export class TimelineActivityService {
     action,
     workspaceId,
     flatFieldMetadataMaps,
-    timelineActivityTypeIdByAction,
+    resolveTimelineActivityTypeId,
   }: {
     rule: TimelineActivityRule;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    timelineActivityTypeIdByAction: Partial<
-      Record<TimelineActivityRuleAction, string>
-    >;
+    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
   }): Promise<TimelineActivityPayload[]> {
     const ruleAction = JUNCTION_EVENT_ACTIONS[action];
 
@@ -323,7 +324,11 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityTypeId = timelineActivityTypeIdByAction[ruleAction];
+    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+      action: ruleAction,
+      objectUniversalIdentifier:
+        rule.sourceFlatObjectMetadata.universalIdentifier,
+    });
 
     if (!isDefined(timelineActivityTypeId)) {
       return [];

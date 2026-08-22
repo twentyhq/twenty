@@ -1,10 +1,11 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  buildTimelineActivityTypeIdByAction,
-  type TimelineActivityTypeIdAndActionMaps,
-} from 'src/modules/timeline/utils/build-timeline-activity-type-id-by-action.util';
+  buildTimelineActivityTypeResolver,
+  type TimelineActivityTypeResolutionMaps,
+} from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 
 // The legacy name held `<object>.<databaseAction>` for a record's own events and
 // `linked-<object>.<databaseAction>` for events about a linked record. A junction
@@ -25,23 +26,42 @@ const SELF_ACTION_BY_DATABASE_ACTION: Record<string, TimelineActivityAction> = {
   restored: 'restored',
 };
 
+// Notes and tasks were written through the junction path, messages and calendar
+// events through their own listeners, which is why only the first two carry the
+// `linked-` prefix.
+const LEGACY_JUNCTION_OBJECTS = [
+  { legacyName: 'note', universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier },
+  { legacyName: 'task', universalIdentifier: STANDARD_OBJECTS.task.universalIdentifier },
+] as const;
+
+const LEGACY_PARTICIPANT_NAMES = [
+  {
+    legacyName: 'message.linked',
+    universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+  },
+  {
+    legacyName: 'calendarEvent.linked',
+    universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  },
+] as const;
+
 export const buildTimelineActivityTypeBackfillQuery = ({
   schemaName,
   flatTimelineActivityTypeMaps,
 }: {
   schemaName: string;
-  flatTimelineActivityTypeMaps: TimelineActivityTypeIdAndActionMaps;
+  flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps;
 }):
   | {
       sql: string;
       parameters: string[];
     }
   | undefined => {
-  const timelineActivityTypeIdByAction = buildTimelineActivityTypeIdByAction(
+  const resolveTimelineActivityTypeId = buildTimelineActivityTypeResolver(
     flatTimelineActivityTypeMaps,
   );
 
-  const fallbackTypeId = timelineActivityTypeIdByAction.linked;
+  const fallbackTypeId = resolveTimelineActivityTypeId({ action: 'linked' });
 
   if (!isDefined(fallbackTypeId)) {
     return undefined;
@@ -50,9 +70,10 @@ export const buildTimelineActivityTypeBackfillQuery = ({
   const parameters: string[] = [];
   const whenClauses: string[] = [];
 
-  const pushWhenClause = (condition: string, action: TimelineActivityAction) => {
-    const typeId = timelineActivityTypeIdByAction[action];
-
+  const pushWhenClause = (
+    condition: string,
+    typeId: string | undefined,
+  ): void => {
     if (!isDefined(typeId)) {
       return;
     }
@@ -61,12 +82,38 @@ export const buildTimelineActivityTypeBackfillQuery = ({
     whenClauses.push(`WHEN ${condition} THEN $${parameters.length}::uuid`);
   };
 
+  // The object-bound arms come first so a linked note keeps its own type rather
+  // than matching the shared arm for the same action.
+  for (const { legacyName, universalIdentifier } of LEGACY_PARTICIPANT_NAMES) {
+    pushWhenClause(
+      `"name" = '${legacyName}'`,
+      resolveTimelineActivityTypeId({
+        action: 'linked',
+        objectUniversalIdentifier: universalIdentifier,
+      }),
+    );
+  }
+
+  for (const { legacyName, universalIdentifier } of LEGACY_JUNCTION_OBJECTS) {
+    for (const [databaseAction, action] of Object.entries(
+      LINKED_ACTION_BY_DATABASE_ACTION,
+    )) {
+      pushWhenClause(
+        `"name" = 'linked-${legacyName}.${databaseAction}'`,
+        resolveTimelineActivityTypeId({
+          action,
+          objectUniversalIdentifier: universalIdentifier,
+        }),
+      );
+    }
+  }
+
   for (const [databaseAction, action] of Object.entries(
     LINKED_ACTION_BY_DATABASE_ACTION,
   )) {
     pushWhenClause(
       `"name" LIKE 'linked-%' AND split_part("name", '.', 2) = '${databaseAction}'`,
-      action,
+      resolveTimelineActivityTypeId({ action }),
     );
   }
 
@@ -75,7 +122,7 @@ export const buildTimelineActivityTypeBackfillQuery = ({
   )) {
     pushWhenClause(
       `"name" NOT LIKE 'linked-%' AND split_part("name", '.', 2) = '${databaseAction}'`,
-      action,
+      resolveTimelineActivityTypeId({ action }),
     );
   }
 

@@ -27,6 +27,8 @@ export const buildStandardFlatTimelineActivityTypeMaps = ({
         label: i18nLabel(definition.label),
         action: definition.action,
         icon: definition.icon,
+        renderer: definition.renderer,
+        objectUniversalIdentifier: definition.objectUniversalIdentifier,
         workspaceId,
         applicationId: twentyStandardApplicationId,
         universalIdentifier: definition.universalIdentifier,

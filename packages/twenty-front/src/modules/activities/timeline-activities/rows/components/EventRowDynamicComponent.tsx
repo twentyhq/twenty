@@ -1,91 +1,36 @@
-import { EventRowActivity } from '@/activities/timeline-activities/rows/activity/components/EventRowActivity';
-import { EventRowCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent';
+import { TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER } from '@/activities/timeline-activities/constants/TimelineActivityRowComponentByRenderer';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
-import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
-import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
-import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const EventRowDynamicComponent = (
-  props: EventRowDynamicComponentProps,
-) => {
-  const { linkedObjectMetadataItem } = props;
+export const EventRowDynamicComponent = ({
+  labelIdentifierValue,
+  event,
+  eventAction,
+  eventRenderer,
+  mainObjectMetadataItem,
+  linkedObjectMetadataItem,
+  authorFullName,
+  createdAt,
+}: EventRowDynamicComponentProps) => {
+  // A type naming no renderer comes from an application that did not pick one,
+  // so the row falls back on whether it is about a linked record.
+  const renderer =
+    eventRenderer ??
+    (isDefined(linkedObjectMetadataItem) ? 'genericLinked' : 'mainObject');
 
-  if (!isDefined(linkedObjectMetadataItem)) {
-    return (
-      <EventRowMainObject
-        labelIdentifierValue={props.labelIdentifierValue}
-        event={props.event}
-        eventAction={props.eventAction}
-        mainObjectMetadataItem={props.mainObjectMetadataItem}
-        linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-        authorFullName={props.authorFullName}
-        createdAt={props.createdAt}
-      />
-    );
-  }
+  const EventRowComponent =
+    TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER[renderer];
 
-  switch (linkedObjectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Message:
-      return (
-        <EventRowMessage
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          eventAction={props.eventAction}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-        />
-      );
-    case CoreObjectNameSingular.CalendarEvent:
-      return (
-        <EventRowCalendarEvent
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          eventAction={props.eventAction}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-        />
-      );
-    case CoreObjectNameSingular.Note:
-      return (
-        <EventRowActivity
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          eventAction={props.eventAction}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-          createdAt={props.createdAt}
-          objectNameSingular={CoreObjectNameSingular.Note}
-        />
-      );
-    case CoreObjectNameSingular.Task:
-      return (
-        <EventRowActivity
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          eventAction={props.eventAction}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-          createdAt={props.createdAt}
-          objectNameSingular={CoreObjectNameSingular.Task}
-        />
-      );
-    default:
-      return (
-        <EventRowGenericLinked
-          labelIdentifierValue={props.labelIdentifierValue}
-          event={props.event}
-          eventAction={props.eventAction}
-          mainObjectMetadataItem={props.mainObjectMetadataItem}
-          linkedObjectMetadataItem={props.linkedObjectMetadataItem}
-          authorFullName={props.authorFullName}
-          createdAt={props.createdAt}
-        />
-      );
-  }
+  return (
+    <EventRowComponent
+      labelIdentifierValue={labelIdentifierValue}
+      event={event}
+      eventAction={eventAction}
+      eventRenderer={eventRenderer}
+      mainObjectMetadataItem={mainObjectMetadataItem}
+      linkedObjectMetadataItem={linkedObjectMetadataItem}
+      authorFullName={authorFullName}
+      createdAt={createdAt}
+    />
+  );
 };

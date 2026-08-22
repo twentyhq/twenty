@@ -1,6 +1,10 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  type TimelineActivityAction,
+  type TimelineActivityRenderer,
+} from 'twenty-shared/timeline';
 
 export type StandardTimelineActivityTypeDefinition = {
   name: string;
@@ -10,12 +14,16 @@ export type StandardTimelineActivityTypeDefinition = {
   // offer creating one, and it renders from its label and icon alone.
   action: TimelineActivityAction | null;
   icon: string | null;
+  renderer: TimelineActivityRenderer | null;
+  objectUniversalIdentifier: string | null;
 };
 
-// One type per rule action, plus the entries the timeline can offer creating.
-// The stored `name` column these replace conflated the action with the source
-// object and could not tell a linked record being deleted from the link itself
-// being removed.
+// The vocabulary a timeline row is stamped from. Types carrying an object are
+// preferred for events about that object's records, so a note link renders
+// through its own component; the ones carrying none are the fallback for every
+// other object and for a record's own changes. The stored `name` column these
+// replace conflated the action with the source object and could not tell a
+// linked record being deleted from the link itself being removed.
 export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivityTypeDefinition[] =
   [
     {
@@ -27,6 +35,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'created',
       icon: 'IconCirclePlus',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'recordUpdated',
@@ -37,6 +47,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'updated',
       icon: 'IconEditCircle',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'recordDeleted',
@@ -47,6 +59,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'deleted',
       icon: 'IconTrash',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'recordRestored',
@@ -57,6 +71,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'restored',
       icon: 'IconRestore',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'recordLinked',
@@ -67,6 +83,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'linked',
       icon: 'IconLink',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'recordUnlinked',
@@ -77,6 +95,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: 'unlinked',
       icon: 'IconUnlink',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'note',
@@ -87,6 +107,8 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: null,
       icon: 'IconNotes',
+      renderer: null,
+      objectUniversalIdentifier: null,
     },
     {
       name: 'task',
@@ -97,5 +119,104 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       }),
       action: null,
       icon: 'IconCheckbox',
+      renderer: null,
+      objectUniversalIdentifier: null,
+    },
+    {
+      name: 'noteLinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c09',
+      label: msg({
+        message: `linked a related note`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'linked',
+      icon: 'IconLink',
+      renderer: 'activity',
+      objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
+    },
+    {
+      name: 'noteUnlinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0a',
+      label: msg({
+        message: `unlinked a related note`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'unlinked',
+      icon: 'IconUnlink',
+      renderer: 'activity',
+      objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
+    },
+    {
+      name: 'noteUpdated',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0b',
+      label: msg({
+        message: `updated a related note`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'updated',
+      icon: 'IconEditCircle',
+      renderer: 'activity',
+      objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
+    },
+    {
+      name: 'taskLinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0c',
+      label: msg({
+        message: `linked a related task`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'linked',
+      icon: 'IconLink',
+      renderer: 'activity',
+      objectUniversalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
+    },
+    {
+      name: 'taskUnlinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0d',
+      label: msg({
+        message: `unlinked a related task`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'unlinked',
+      icon: 'IconUnlink',
+      renderer: 'activity',
+      objectUniversalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
+    },
+    {
+      name: 'taskUpdated',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0e',
+      label: msg({
+        message: `updated a related task`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'updated',
+      icon: 'IconEditCircle',
+      renderer: 'activity',
+      objectUniversalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
+    },
+    {
+      name: 'messageLinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0f',
+      label: msg({
+        message: `sent or received an email`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'linked',
+      icon: 'IconMail',
+      renderer: 'message',
+      objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+    },
+    {
+      name: 'calendarEventLinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c10',
+      label: msg({
+        message: `attended a calendar event`,
+        context: 'timelineActivityType.label',
+      }),
+      action: 'linked',
+      icon: 'IconCalendar',
+      renderer: 'calendarEvent',
+      objectUniversalIdentifier:
+        STANDARD_OBJECTS.calendarEvent.universalIdentifier,
     },
   ];

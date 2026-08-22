@@ -12,8 +12,8 @@ import {
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -22,7 +22,7 @@ type EventRowActivityProps = EventRowDynamicComponentProps;
 
 const getEventActionSentence = (
   eventAction: TimelineActivityAction | null,
-  objectNameSingular: CoreObjectNameSingular,
+  objectNameSingular: string,
 ): string => {
   switch (eventAction) {
     case 'created':
@@ -55,12 +55,18 @@ export const EventRowActivity = ({
   event,
   eventAction,
   authorFullName,
-  objectNameSingular,
+  linkedObjectMetadataItem,
   createdAt,
-}: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
+}: EventRowActivityProps) => {
   if (!isTimelineActivityWithLinkedRecord(event)) {
     throw new Error('Could not find linked record id for event');
   }
+
+  if (!isDefined(linkedObjectMetadataItem)) {
+    throw new Error('Could not find linked object metadata for event');
+  }
+
+  const { nameSingular: objectNameSingular } = linkedObjectMetadataItem;
 
   const getActivityFromCache = useGetRecordFromCache({
     objectNameSingular,

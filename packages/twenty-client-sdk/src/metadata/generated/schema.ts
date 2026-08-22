@@ -2837,6 +2837,8 @@ export interface TimelineActivityType {
     label: Scalars['String']
     action?: Scalars['String']
     icon?: Scalars['String']
+    renderer?: Scalars['String']
+    objectUniversalIdentifier?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -6229,6 +6231,8 @@ export interface TimelineActivityTypeGenqlSelection{
     label?: boolean | number
     action?: boolean | number
     icon?: boolean | number
+    renderer?: boolean | number
+    objectUniversalIdentifier?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number

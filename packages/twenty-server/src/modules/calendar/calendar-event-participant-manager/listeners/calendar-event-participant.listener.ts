@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -44,11 +45,16 @@ export class CalendarEventParticipantListener {
         },
       });
 
-    const timelineActivityTypeId = (
-      await this.timelineActivityTypeCacheService.getTimelineActivityTypeIdByAction(
+    const resolveTimelineActivityTypeId =
+      await this.timelineActivityTypeCacheService.getTimelineActivityTypeResolver(
         batchEvent.workspaceId,
-      )
-    ).linked;
+      );
+
+    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+      action: 'linked',
+      objectUniversalIdentifier:
+        STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+    });
 
     if (!isDefined(timelineActivityTypeId)) {
       return;

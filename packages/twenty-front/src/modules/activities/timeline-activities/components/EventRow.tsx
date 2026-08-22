@@ -9,7 +9,7 @@ import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
-import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
+import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -105,7 +105,7 @@ export const EventRow = ({
 
   const { timelineActivityTypeById } = useTimelineActivityTypes();
 
-  const eventAction = getTimelineActivityAction(
+  const timelineActivityType = getTimelineActivityType(
     event,
     timelineActivityTypeById,
   );
@@ -142,7 +142,7 @@ export const EventRow = ({
         <StyledLeftContainer>
           <StyledIconContainer>
             <EventIconDynamicComponent
-              eventAction={eventAction}
+              eventIcon={timelineActivityType?.icon ?? null}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
             />
           </StyledIconContainer>
@@ -158,7 +158,8 @@ export const EventRow = ({
               authorFullName={authorFullName}
               labelIdentifierValue={labelIdentifier.name}
               event={event}
-              eventAction={eventAction}
+              eventAction={timelineActivityType?.action ?? null}
+              eventRenderer={timelineActivityType?.renderer ?? null}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
               createdAt={event.createdAt}

@@ -3193,6 +3193,8 @@ type TimelineActivityType {
   label: String!
   action: String
   icon: String
+  renderer: String
+  objectUniversalIdentifier: UUID
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!

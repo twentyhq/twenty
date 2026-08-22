@@ -1,4 +1,7 @@
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import {
+  type TimelineActivityAction,
+  type TimelineActivityRenderer,
+} from 'twenty-shared/timeline';
 
 export type TimelineActivityType = {
   id: string;
@@ -6,4 +9,5 @@ export type TimelineActivityType = {
   label: string;
   action: TimelineActivityAction | null;
   icon: string | null;
+  renderer: TimelineActivityRenderer | null;
 };

@@ -8,6 +8,7 @@ export const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
       label
       action
       icon
+      renderer
     }
   }
 `;

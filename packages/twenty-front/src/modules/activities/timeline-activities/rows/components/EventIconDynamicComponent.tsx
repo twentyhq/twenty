@@ -1,38 +1,22 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
-import { type TimelineActivityAction } from 'twenty-shared/timeline';
-import {
-  IconCirclePlus,
-  IconEditCircle,
-  type IconComponent,
-  IconRestore,
-  IconTrash,
-} from 'twenty-ui/icon';
-
-const RECORD_CHANGE_ICONS: Partial<
-  Record<TimelineActivityAction, IconComponent>
-> = {
-  created: IconCirclePlus,
-  updated: IconEditCircle,
-  deleted: IconTrash,
-  restored: IconRestore,
-};
+import { useIcons } from 'twenty-ui/icon';
 
 export const EventIconDynamicComponent = ({
-  eventAction,
+  eventIcon,
   linkedObjectMetadataItem,
 }: {
-  eventAction: TimelineActivityAction | null;
+  eventIcon: string | null;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
-  const ActionIcon = isDefined(eventAction)
-    ? RECORD_CHANGE_ICONS[eventAction]
-    : undefined;
+  const { getIcon } = useIcons();
 
-  if (ActionIcon) {
-    return <ActionIcon />;
+  if (!isDefined(eventIcon)) {
+    return <ObjectMetadataIcon objectMetadataItem={linkedObjectMetadataItem} />;
   }
 
-  return <ObjectMetadataIcon objectMetadataItem={linkedObjectMetadataItem} />;
+  const EventIcon = getIcon(eventIcon);
+
+  return <EventIcon />;
 };

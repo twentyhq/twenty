@@ -12,3 +12,8 @@ export {
   TIMELINE_ACTIVITY_ACTIONS,
   isTimelineActivityAction,
 } from './TimelineActivityAction';
+export type { TimelineActivityRenderer } from './TimelineActivityRenderer';
+export {
+  TIMELINE_ACTIVITY_RENDERERS,
+  isTimelineActivityRenderer,
+} from './TimelineActivityRenderer';
