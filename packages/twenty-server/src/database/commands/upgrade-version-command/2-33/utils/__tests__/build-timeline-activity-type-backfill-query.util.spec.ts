@@ -1,6 +1,5 @@
 import { buildTimelineActivityTypeBackfillQuery } from 'src/database/commands/upgrade-version-command/2-33/utils/build-timeline-activity-type-backfill-query.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { type TimelineActivityTypeIdAndActionMaps } from 'src/modules/timeline/utils/build-timeline-activity-type-id-by-action.util';
 
 const TYPE_ID_BY_ACTION = {
   created: '00000000-0000-4000-8000-000000000001',
@@ -13,15 +12,11 @@ const TYPE_ID_BY_ACTION = {
 
 const buildFlatTimelineActivityTypeMaps = (
   actions: (keyof typeof TYPE_ID_BY_ACTION)[],
-): FlatEntityMaps<FlatTimelineActivityType> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      actions.map((action) => [
-        action,
-        { id: TYPE_ID_BY_ACTION[action], action },
-      ]),
-    ),
-  }) as unknown as FlatEntityMaps<FlatTimelineActivityType>;
+): TimelineActivityTypeIdAndActionMaps => ({
+  byUniversalIdentifier: Object.fromEntries(
+    actions.map((action) => [action, { id: TYPE_ID_BY_ACTION[action], action }]),
+  ),
+});
 
 describe('buildTimelineActivityTypeBackfillQuery', () => {
   it('returns undefined when the fallback linked type is missing', () => {

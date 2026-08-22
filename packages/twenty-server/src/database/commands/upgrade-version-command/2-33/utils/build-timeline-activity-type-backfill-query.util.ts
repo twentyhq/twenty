@@ -1,9 +1,10 @@
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
-import { buildTimelineActivityTypeIdByAction } from 'src/modules/timeline/utils/build-timeline-activity-type-id-by-action.util';
+import {
+  buildTimelineActivityTypeIdByAction,
+  type TimelineActivityTypeIdAndActionMaps,
+} from 'src/modules/timeline/utils/build-timeline-activity-type-id-by-action.util';
 
 // The legacy name held `<object>.<databaseAction>` for a record's own events and
 // `linked-<object>.<databaseAction>` for events about a linked record. A junction
@@ -29,7 +30,7 @@ export const buildTimelineActivityTypeBackfillQuery = ({
   flatTimelineActivityTypeMaps,
 }: {
   schemaName: string;
-  flatTimelineActivityTypeMaps: FlatEntityMaps<FlatTimelineActivityType>;
+  flatTimelineActivityTypeMaps: TimelineActivityTypeIdAndActionMaps;
 }):
   | {
       sql: string;

@@ -1,5 +1,4 @@
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -15,7 +14,6 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
     labelIdentifierValue: 'Mock',
     event: {
       id: '1',
-      timelineActivityTypeId: '20202020-0000-4000-8000-0000000update',
       properties: {
         diff: {
           jobTitle: {
@@ -34,7 +32,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
           },
         },
       },
-    } as unknown as TimelineActivity,
+    },
     mainObjectMetadataItem: getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     ),
