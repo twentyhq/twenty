@@ -1,7 +1,6 @@
 import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { keepTimelineActivitiesOfSelectedTypes } from '@/activities/timeline-activities/utils/keepTimelineActivitiesOfSelectedTypes';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 const UPDATED_TYPE_ID = '20202020-0000-4000-8000-0000000update';
@@ -67,7 +66,7 @@ const objectMetadataItems = [
     id: 'note-object-metadata-id',
     nameSingular: 'note',
     universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
-  } as EnrichedObjectMetadataItem,
+  },
 ];
 
 const filterTimelineActivities = (
@@ -75,12 +74,12 @@ const filterTimelineActivities = (
   selectedTimelineActivityTypeIds: string[],
   typeById = timelineActivityTypeById,
 ) =>
-  keepTimelineActivitiesOfSelectedTypes(
+  keepTimelineActivitiesOfSelectedTypes({
     timelineActivities,
     selectedTimelineActivityTypeIds,
-    typeById,
+    timelineActivityTypeById: typeById,
     objectMetadataItems,
-  );
+  });
 
 describe('keepTimelineActivitiesOfSelectedTypes', () => {
   it('keeps everything when nothing is selected', () => {

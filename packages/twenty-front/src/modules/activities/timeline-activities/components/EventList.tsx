@@ -57,12 +57,12 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
   );
 
   const filteredEvents = filterOutInvalidTimelineActivities(
-    keepTimelineActivitiesOfSelectedTypes(
-      events,
-      timelineActivityTypeIdsFilter,
+    keepTimelineActivitiesOfSelectedTypes({
+      timelineActivities: events,
+      selectedTimelineActivityTypeIds: timelineActivityTypeIdsFilter,
       timelineActivityTypeById,
       objectMetadataItems,
-    ),
+    }),
     targetableObject.targetObjectNameSingular,
     objectMetadataItems,
     timelineActivityTypeById,

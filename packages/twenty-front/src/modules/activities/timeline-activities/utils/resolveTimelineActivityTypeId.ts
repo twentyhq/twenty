@@ -1,8 +1,10 @@
 import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
-import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import {
+  getTimelineActivityLinkedObjectMetadataItem,
+  type TimelineActivityObjectMetadataItem,
+} from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 const getUniqueTimelineActivityTypeId = (
@@ -13,11 +15,13 @@ const getUniqueTimelineActivityTypeId = (
 export const resolveTimelineActivityTypeId = ({
   timelineActivity,
   timelineActivityTypeById,
+  timelineActivityTypes,
   objectMetadataItems,
 }: {
   timelineActivity: FilterableTimelineActivity;
   timelineActivityTypeById: Map<string, TimelineActivityType>;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  timelineActivityTypes: TimelineActivityType[];
+  objectMetadataItems: TimelineActivityObjectMetadataItem[];
 }): string | undefined => {
   if (isDefined(timelineActivity.timelineActivityTypeId)) {
     return timelineActivity.timelineActivityTypeId;
@@ -37,8 +41,6 @@ export const resolveTimelineActivityTypeId = ({
     timelineActivityTypeById,
     objectMetadataItems,
   });
-  const timelineActivityTypes = [...timelineActivityTypeById.values()];
-
   if (isDefined(linkedObjectMetadataItem)) {
     const objectBoundTimelineActivityTypes = timelineActivityTypes.filter(
       (timelineActivityType) =>

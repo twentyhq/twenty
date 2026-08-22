@@ -4,15 +4,22 @@ import { getTimelineActivityType } from '@/activities/timeline-activities/utils/
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getTimelineActivityLinkedObjectMetadataItem = ({
+export type TimelineActivityObjectMetadataItem = Pick<
+  EnrichedObjectMetadataItem,
+  'id' | 'nameSingular' | 'universalIdentifier'
+>;
+
+export const getTimelineActivityLinkedObjectMetadataItem = <
+  TObjectMetadataItem extends TimelineActivityObjectMetadataItem,
+>({
   timelineActivity,
   timelineActivityTypeById,
   objectMetadataItems,
 }: {
   timelineActivity: FilterableTimelineActivity;
   timelineActivityTypeById: Map<string, TimelineActivityType>;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
-}): EnrichedObjectMetadataItem | undefined => {
+  objectMetadataItems: TObjectMetadataItem[];
+}): TObjectMetadataItem | undefined => {
   if (isDefined(timelineActivity.linkedObjectMetadataId)) {
     return objectMetadataItems.find(
       (objectMetadataItem) =>
