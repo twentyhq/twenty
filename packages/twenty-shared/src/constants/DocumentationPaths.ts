@@ -26,6 +26,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_CONFIG_PUBLIC_ASSETS:
     '/developers/extend/apps/config/public-assets',
   DEVELOPERS_EXTEND_APPS_CONFIG_ROLES: '/developers/extend/apps/config/roles',
+  DEVELOPERS_EXTEND_APPS_CONFIG_TIMELINE_ACTIVITY_TYPES:
+    '/developers/extend/apps/config/timeline-activity-types',
   DEVELOPERS_EXTEND_APPS_DATA_EXTENDING_OBJECTS:
     '/developers/extend/apps/data/extending-objects',
   DEVELOPERS_EXTEND_APPS_DATA_OBJECTS: '/developers/extend/apps/data/objects',
