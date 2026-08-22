@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
@@ -14,6 +13,7 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { resolveTimelineActivityTypeIdOrThrow } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 
 @Injectable()
 export class MessageParticipantListener {
@@ -22,7 +22,6 @@ export class MessageParticipantListener {
     private readonly timelineActivityRepository: TimelineActivityRepository,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly timelineActivityTypeCacheService: TimelineActivityTypeCacheService,
   ) {}
 
@@ -50,14 +49,12 @@ export class MessageParticipantListener {
         batchEvent.workspaceId,
       );
 
-    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+    const timelineActivityTypeId = resolveTimelineActivityTypeIdOrThrow({
+      resolveTimelineActivityTypeId,
+      workspaceId: batchEvent.workspaceId,
       action: 'linked',
       objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
     });
-
-    if (!isDefined(timelineActivityTypeId)) {
-      return;
-    }
 
     const timelineActivityPayloads = batchEvent.events.flatMap((event) => {
       const messageParticipants = event.participants ?? [];

@@ -1,5 +1,6 @@
 import {
   buildTimelineActivityTypeResolver,
+  resolveTimelineActivityTypeIdOrThrow,
   type TimelineActivityTypeResolutionMaps,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 
@@ -72,5 +73,75 @@ describe('buildTimelineActivityTypeResolver', () => {
         objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
       }),
     ).toBe(NOTE_UPDATED_ID);
+  });
+
+  it('rejects ambiguous shared types', () => {
+    expect(() =>
+      buildTimelineActivityTypeResolver({
+        byUniversalIdentifier: {
+          first: {
+            id: SHARED_LINKED_ID,
+            action: 'linked',
+            objectUniversalIdentifier: null,
+          },
+          second: {
+            id: NOTE_LINKED_ID,
+            action: 'linked',
+            objectUniversalIdentifier: null,
+          },
+        },
+      }),
+    ).toThrow('Multiple timeline activity types resolve shared action linked');
+  });
+
+  it('rejects ambiguous object-bound types', () => {
+    expect(() =>
+      buildTimelineActivityTypeResolver({
+        byUniversalIdentifier: {
+          first: {
+            id: SHARED_LINKED_ID,
+            action: 'linked',
+            objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+          },
+          second: {
+            id: NOTE_LINKED_ID,
+            action: 'linked',
+            objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      }),
+    ).toThrow(
+      `Multiple timeline activity types resolve action linked for object ${NOTE_UNIVERSAL_IDENTIFIER}`,
+    );
+  });
+});
+
+describe('resolveTimelineActivityTypeIdOrThrow', () => {
+  const resolveTimelineActivityTypeId = buildTimelineActivityTypeResolver(
+    flatTimelineActivityTypeMaps,
+  );
+
+  it('returns the resolved type id', () => {
+    expect(
+      resolveTimelineActivityTypeIdOrThrow({
+        resolveTimelineActivityTypeId,
+        workspaceId: 'workspace-id',
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toBe(NOTE_LINKED_ID);
+  });
+
+  it('throws when the workspace has no type for the event', () => {
+    expect(() =>
+      resolveTimelineActivityTypeIdOrThrow({
+        resolveTimelineActivityTypeId,
+        workspaceId: 'workspace-id',
+        action: 'deleted',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toThrow(
+      `No timeline activity type resolves action deleted for object ${NOTE_UNIVERSAL_IDENTIFIER} in workspace workspace-id`,
+    );
   });
 });
