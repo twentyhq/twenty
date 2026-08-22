@@ -51,4 +51,18 @@ describe('canVerticalListAcceptWidget', () => {
       }),
     ).toBe(true);
   });
+
+  it('ignores inactive viewport-filling widgets in the destination', () => {
+    expect(
+      canVerticalListAcceptWidget({
+        destinationWidgets: [
+          {
+            ...makeWidgetWithType('emails', WidgetType.EMAILS, 'tab-2'),
+            isActive: false,
+          },
+        ],
+        widget: makeWidgetWithType('notes', WidgetType.NOTES),
+      }),
+    ).toBe(true);
+  });
 });
