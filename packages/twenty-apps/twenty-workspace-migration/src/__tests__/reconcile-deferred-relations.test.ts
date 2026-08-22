@@ -9,6 +9,7 @@ import {
   RelationType,
 } from 'src/logic-functions/types/find-objects-fields.type';
 import { migrationState } from 'src/logic-functions/utils/migration-state.util';
+import { buildTestRecordIds } from 'src/__tests__/utils/build-test-record-ids';
 
 const buildIdField = (): FieldsListType => ({
   applicationId: 'app-1',
@@ -104,9 +105,9 @@ describe('reconcileDeferredRelations', () => {
     const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
       updateCompany: { updateCompany: { id: 'child-1' } },
     });
-    const recordIdMap = new Map([['child-1', 'child-1'], ['parent-1', 'parent-1']]);
+    const recordIds = buildTestRecordIds(['child-1', 'parent-1']);
 
-    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company], recordIdMap);
+    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company], recordIds);
 
     expect(result).toBe(true);
     const updateCalls = targetCalls.filter((call) => call.operationName === 'updateCompany');
@@ -122,7 +123,7 @@ describe('reconcileDeferredRelations', () => {
     const { client: sourceClient, calls: sourceCalls } = createMockGraphqlClient({});
     const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({});
 
-    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company, person], new Map());
+    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company, person], buildTestRecordIds());
 
     expect(result).toBe(true);
     expect(sourceCalls).toHaveLength(0);
@@ -142,9 +143,9 @@ describe('reconcileDeferredRelations', () => {
       },
     });
     const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({});
-    const recordIdMap = new Map([['child-1', 'child-1']]);
+    const recordIds = buildTestRecordIds(['child-1']);
 
-    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company], recordIdMap);
+    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company], recordIds);
 
     expect(result).toBe(true);
     expect(targetCalls).toHaveLength(0);
@@ -158,7 +159,7 @@ describe('reconcileDeferredRelations', () => {
     const { client: sourceClient, calls: sourceCalls } = createMockGraphqlClient({});
     const { client: targetClient } = createMockGraphqlClient({});
 
-    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company], new Map());
+    const result = await reconcileDeferredRelations(sourceClient, targetClient, [company], buildTestRecordIds());
 
     expect(result).toBe(true);
     expect(sourceCalls).toHaveLength(0);

@@ -10,6 +10,7 @@ import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
 import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { RecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
 
 const findExistingTargetDashboardIds = async (targetWorkspace: AxiosInstance): Promise<Set<string>> => {
   const existingIds = new Set<string>();
@@ -32,7 +33,7 @@ export const migrateDashboards = async (
   targetWorkspace: AxiosInstance,
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
-  recordIdMap: Map<string, string>,
+  recordIds: RecordIdResolution,
   targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
 ) => {
   const sourcePageLayouts = await executeWithRetry(() => findPageLayouts(sourceWorkspace, 'DASHBOARD'));
@@ -52,7 +53,7 @@ export const migrateDashboards = async (
       // dashboard (and its page layout) was created by an earlier invocation. Re-creating it
       // would mint a second page layout, since createPageLayout always generates a fresh id.
       if (existingTargetDashboardIds.has(dashboardId)) {
-        recordIdMap.set(dashboardId, dashboardId);
+        recordIds.migratedRecordIds.add(dashboardId);
         continue;
       }
 
@@ -89,7 +90,7 @@ export const migrateDashboards = async (
           pageLayoutId: createdPageLayout.id,
           position: dashboard.position,
         }], new Set()));
-        recordIdMap.set(dashboardId, dashboardId);
+        recordIds.migratedRecordIds.add(dashboardId);
         createdCount += 1;
       } catch (error) {
         logger.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);

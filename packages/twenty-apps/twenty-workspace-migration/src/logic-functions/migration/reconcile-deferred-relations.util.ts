@@ -10,6 +10,7 @@ import { migrationState, setStateRef } from "src/logic-functions/utils/migration
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { logger } from "src/logic-functions/utils/logger.util";
+import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
 
 // Namespaced so a reconciliation cursor can't collide with the migration cursor for the same
 // object, which lives in the same map.
@@ -45,7 +46,7 @@ export const reconcileDeferredRelations = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
   recordMigrationOrder: ObjectType[],
-  recordIdMap: Map<string, string>,
+  recordIds: RecordIdResolution,
 ): Promise<boolean> => {
   const orderIndexByNameSingular = new Map(
     recordMigrationOrder.map((object, index) => [object.nameSingular, index]),
@@ -72,7 +73,7 @@ export const reconcileDeferredRelations = async (
       );
 
       for (const edge of page.edges) {
-        const targetRecordId = recordIdMap.get(edge.node.id as string);
+        const targetRecordId = resolveTargetRecordId(recordIds, edge.node.id as string);
         if (targetRecordId === undefined) {
           continue;
         }
@@ -83,7 +84,7 @@ export const reconcileDeferredRelations = async (
           if (sourceTargetId === null || sourceTargetId === undefined) {
             continue;
           }
-          const resolvedTargetId = recordIdMap.get(sourceTargetId as string);
+          const resolvedTargetId = resolveTargetRecordId(recordIds, sourceTargetId as string);
           if (resolvedTargetId !== undefined) {
             data[foreignKeyName] = resolvedTargetId;
           }

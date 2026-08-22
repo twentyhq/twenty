@@ -8,6 +8,7 @@ import { findSkills } from "src/logic-functions/requests/find-skills.util";
 import { findWebhooks } from "src/logic-functions/requests/find-webhooks.util";
 import { findRoles } from "src/logic-functions/requests/find-roles.util";
 import { type AxiosInstance } from "axios";
+import { buildRecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
 import { migrateNavigationMenuItems } from "src/logic-functions/migration/migrate-navigation-menu-items.util";
 import { migrateRoles } from "src/logic-functions/migration/migrate-roles.util";
 import { migrateWebhooks } from "src/logic-functions/migration/migrate-webhooks.util";
@@ -18,13 +19,13 @@ import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute
 export const stage7 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
   const targetFieldIdBySourceFieldId = migrationState.targetFieldIdBySourceFieldId;
   const targetObjectIdBySourceObjectId = migrationState.targetObjectIdBySourceObjectId;
-  const recordIdMap = migrationState.recordIdMap;
+  const recordIds = buildRecordIdResolution();
   const targetPageLayoutIdBySourcePageLayoutId = migrationState.targetPageLayoutIdBySourcePageLayoutId;
 
   if (migrationState.migratedNavigationMenuItems === false) {
     const sourceNavigationMenuItems = await executeWithRetry(() => findNavigationMenuItems(sourceWorkspace));
     const targetNavigationMenuItems = await executeWithRetryAndCheckpoint(() => findNavigationMenuItems(targetWorkspace));
-    if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIdMap, targetPageLayoutIdBySourcePageLayoutId) === false) {
+    if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIds, targetPageLayoutIdBySourcePageLayoutId) === false) {
       return;
     }
   }

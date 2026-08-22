@@ -4,13 +4,14 @@ import {
   setStateRef
 } from "src/logic-functions/utils/migration-state.util";
 import { type AxiosInstance } from "axios";
+import { buildRecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
 import { migrateRecordsForObject } from "src/logic-functions/migration/migrate-records-for-object.util";
 import { logger } from "src/logic-functions/utils/logger.util";
 import { reconcileDeferredRelations } from "src/logic-functions/migration/reconcile-deferred-relations.util";
 import { buildRecordMigrationOrder } from "src/logic-functions/utils/build-record-migration-order.util";
 
 export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
-  const recordIdMap = migrationState.recordIdMap;
+  const recordIds = buildRecordIdResolution();
   const targetWorkspaceObjects = migrationState.targetWorkspaceObjects;
   const recordMigrationOrder = migrationState.recordMigrationOrder;
   const targetObjectIdByNameSingular = new Map(
@@ -23,7 +24,7 @@ export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
       logger.warn(`Skipping records for "${sourceObject.nameSingular}": no matching target object (schema creation may have failed for it)`);
       continue;
     }
-    if (await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIdMap)) {
+    if (await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIds)) {
       return;
     }
     setStateRef('recordMigrationOrder', recordMigrationOrder.slice(index + 1));
@@ -36,7 +37,7 @@ export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     sourceWorkspace,
     targetWorkspace,
     buildRecordMigrationOrder(migrationState.sourceWorkspaceObjects),
-    recordIdMap,
+    recordIds,
   );
   if (reconciled === false) {
     return;

@@ -6,6 +6,7 @@ import { View } from 'src/logic-functions/types/view-entities.type';
 import { Skill } from 'src/logic-functions/types/skill.type';
 import { Webhook } from 'src/logic-functions/types/webhook.type';
 import { createMockGraphqlClient } from 'src/__tests__/utils/mock-graphql-client';
+import { buildTestRecordIds } from 'src/__tests__/utils/build-test-record-ids';
 import { migrateSkills } from "src/logic-functions/migration/migrate-skills.util";
 import { migrateViews } from "src/logic-functions/migration/migrate-views.util";
 import { migrateRecordsForObject } from "src/logic-functions/migration/migrate-records-for-object.util";
@@ -341,7 +342,7 @@ describe('migrateRecordsForObject', () => {
     universalIdentifier: 'universal-object-task',
   };
 
-  it('migrates every record in a page and populates recordIdMap by zipping source/target ids in order', async () => {
+  it('migrates every record in a page and records each source id as migrated', async () => {
     const { client: sourceClient } = createMockGraphqlClient({
       findManyTasks: {
         tasks: {
@@ -354,15 +355,34 @@ describe('migrateRecordsForObject', () => {
       },
     });
     const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
-      createTasks: { createTasks: [{ id: 'target-task-1' }, { id: 'target-task-2' }] },
+      // The server echoes back the ids we send, because `id` is part of the create payload.
+      createTasks: { createTasks: [{ id: 'source-task-1' }, { id: 'source-task-2' }] },
     });
 
-    const recordIdMap = new Map<string, string>();
-    await migrateRecordsForObject(sourceClient, targetClient, taskObject, recordIdMap);
+    const recordIds = buildTestRecordIds();
+    await migrateRecordsForObject(sourceClient, targetClient, taskObject, recordIds);
 
-    expect(recordIdMap.get('source-task-1')).toBe('target-task-1');
-    expect(recordIdMap.get('source-task-2')).toBe('target-task-2');
+    expect(recordIds.migratedRecordIds.has('source-task-1')).toBe(true);
+    expect(recordIds.migratedRecordIds.has('source-task-2')).toBe(true);
     expect(targetCalls.filter((call) => call.operationName === 'createTasks')).toHaveLength(1);
+  });
+
+  it('fails loudly if the target assigns a different id, since every later remap assumes identity', async () => {
+    const { client: sourceClient } = createMockGraphqlClient({
+      findManyTasks: {
+        tasks: {
+          edges: [{ node: { id: 'source-task-1', title: 'Task A' } }],
+          pageInfo: { hasNextPage: false, endCursor: null },
+        },
+      },
+    });
+    const { client: targetClient } = createMockGraphqlClient({
+      createTasks: { createTasks: [{ id: 'server-generated-id' }] },
+    });
+
+    await expect(
+      migrateRecordsForObject(sourceClient, targetClient, taskObject, buildTestRecordIds()),
+    ).rejects.toThrow('created under a different id');
   });
 
   it('does not call createTasks at all when the source object has no records', async () => {
@@ -373,7 +393,7 @@ describe('migrateRecordsForObject', () => {
     });
     const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({});
 
-    await migrateRecordsForObject(sourceClient, targetClient, taskObject, new Map());
+    await migrateRecordsForObject(sourceClient, targetClient, taskObject, buildTestRecordIds());
 
     expect(targetCalls).toHaveLength(0);
   });
@@ -727,12 +747,12 @@ describe('migrateDashboards', () => {
       UpdatePageLayoutWithTabsAndWidgets: { updatePageLayoutWithTabsAndWidgets: { id: 'target-layout-1' } },
       createDashboards: { createDashboards: [{ id: 'dash-1' }] },
     });
-    const recordIdMap = new Map<string, string>();
+    const recordIds = buildTestRecordIds();
     const targetPageLayoutIdBySourcePageLayoutId = new Map<string, string>();
 
-    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIdMap, targetPageLayoutIdBySourcePageLayoutId);
+    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIds, targetPageLayoutIdBySourcePageLayoutId);
 
-    expect(recordIdMap.get('dash-1')).toBe('dash-1');
+    expect(recordIds.migratedRecordIds.has('dash-1')).toBe(true);
     expect(targetPageLayoutIdBySourcePageLayoutId.get('layout-1')).toBe('target-layout-1');
     expect(targetCalls.filter((call) => call.operationName === 'createDashboards')).toHaveLength(1);
   });
@@ -745,11 +765,11 @@ describe('migrateDashboards', () => {
     const { client: targetClient, calls: targetCalls } = createMockGraphqlClient({
       findManyDashboards: { dashboards: { edges: [{ node: { id: 'dash-1' } }], pageInfo: { hasNextPage: false, endCursor: null } } },
     });
-    const recordIdMap = new Map<string, string>();
+    const recordIds = buildTestRecordIds();
 
-    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIdMap, new Map());
+    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIds, new Map());
 
-    expect(recordIdMap.get('dash-1')).toBe('dash-1');
+    expect(recordIds.migratedRecordIds.has('dash-1')).toBe(true);
     expect(targetCalls.filter((call) => call.operationName === 'createDashboards')).toHaveLength(0);
   });
 });
@@ -779,7 +799,7 @@ describe('migrateNavigationMenuItems', () => {
     });
     const targetPageLayoutIdBySourcePageLayoutId = new Map([['source-layout-1', 'target-layout-1']]);
 
-    await migrateNavigationMenuItems(client, [item], [], new Map(), new Map(), targetPageLayoutIdBySourcePageLayoutId);
+    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), targetPageLayoutIdBySourcePageLayoutId);
 
     const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
     expect(createCalls).toHaveLength(1);
@@ -790,7 +810,7 @@ describe('migrateNavigationMenuItems', () => {
     const item = buildItem({ pageLayoutId: 'source-layout-missing' });
     const { client, calls } = createMockGraphqlClient({});
 
-    await migrateNavigationMenuItems(client, [item], [], new Map(), new Map(), new Map());
+    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), new Map());
 
     expect(calls).toHaveLength(0);
   });
@@ -805,7 +825,7 @@ describe('migrateNavigationMenuItems', () => {
       createManyNavigationMenuItems: { createManyNavigationMenuItems: [] },
     });
 
-    await migrateNavigationMenuItems(client, items, [], new Map(), new Map(), new Map());
+    await migrateNavigationMenuItems(client, items, [], new Map(), buildTestRecordIds(), new Map());
 
     const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
     expect(createCalls).toHaveLength(2);
@@ -820,7 +840,7 @@ describe('migrateNavigationMenuItems', () => {
     ];
     const { client, calls } = createMockGraphqlClient({});
 
-    await migrateNavigationMenuItems(client, items, [], new Map(), new Map(), new Map());
+    await migrateNavigationMenuItems(client, items, [], new Map(), buildTestRecordIds(), new Map());
 
     expect(calls).toHaveLength(0);
   });

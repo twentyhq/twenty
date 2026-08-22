@@ -6,6 +6,7 @@ import { createManyRecords } from "src/logic-functions/requests/create-many-reco
 import { ObjectType } from "src/logic-functions/types/find-objects-fields.type";
 import { buildRecordDataToCreate, type DroppedRelationCounts } from "src/logic-functions/utils/build-record-data-to-create.util";
 import { migrationState } from "src/logic-functions/utils/migration-state.util";
+import { RecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
 import { logger } from "src/logic-functions/utils/logger.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
@@ -16,7 +17,7 @@ export const migrateRecordsForObject = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
   sourceObject: ObjectType,
-  recordIdMap: Map<string, string>,
+  recordIds: RecordIdResolution,
 ): Promise<true | void> => {
   const plan = buildRecordFieldPlan(sourceObject.fieldsList, fieldsToOmitFromRecordMigration);
   const enumDataKeys = new Set(plan.enumDataKeys);
@@ -32,15 +33,22 @@ export const migrateRecordsForObject = async (
     if (nodes.length > 0) {
       const droppedRelationCounts: DroppedRelationCounts = new Map();
       const dataToCreate = nodes.map((node) =>
-        buildRecordDataToCreate(node, plan.dataKeys, relationForeignKeyNames, recordIdMap, droppedRelationCounts),
+        buildRecordDataToCreate(node, plan.dataKeys, relationForeignKeyNames, recordIds, droppedRelationCounts),
       );
       const created = await executeWithRetryAndCheckpoint(() =>
         createManyRecords(targetWorkspace, sourceObject.namePlural, dataToCreate, enumDataKeys),
       );
 
-      nodes.forEach((node, index) => {
-        recordIdMap.set(node.id as string, created[index].id);
-      });
+      // Every later relation remap assumes the target kept the source id, so a server that
+      // stopped honouring the id we send would silently produce references to nothing.
+      const createdIds = new Set(created.map((record) => record.id));
+      for (const node of nodes) {
+        const sourceRecordId = node.id as string;
+        if (createdIds.has(sourceRecordId) === false) {
+          throw new Error(`Record ${sourceRecordId} was created under a different id in the target workspace`);
+        }
+        recordIds.migratedRecordIds.add(sourceRecordId);
+      }
       migratedRecords += nodes.length;
 
       for (const [foreignKeyName, count] of droppedRelationCounts) {

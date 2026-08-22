@@ -6,13 +6,14 @@ import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.u
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { createParentChainQueue } from "src/logic-functions/utils/parent-chain-queue.util";
+import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
 
 export const migrateNavigationMenuItems = async (
   targetWorkspace: AxiosInstance,
   sourceItems: NavigationMenuItem[],
   targetItems: NavigationMenuItem[],
   targetObjectIdBySourceObjectId: Map<string, string>,
-  recordIdMap: Map<string, string>,
+  recordIds: RecordIdResolution,
   targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
 ) => {
   // Folders can be parents of other items, so an item is only attempted once its folder (if
@@ -58,7 +59,7 @@ export const migrateNavigationMenuItems = async (
       }
 
       const targetRecordId = item.targetRecordId !== null
-        ? recordIdMap.get(item.targetRecordId)
+        ? resolveTargetRecordId(recordIds, item.targetRecordId)
         : undefined;
       if (item.targetRecordId !== null && targetRecordId === undefined) {
         logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": target record not found for record ${item.targetRecordId}`);

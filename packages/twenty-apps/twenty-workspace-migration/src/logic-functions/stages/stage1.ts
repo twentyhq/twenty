@@ -70,7 +70,7 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     }
     mergedWorkspaceMembers.set(sourceMember.id, targetMember.id);
   }
-  setStateRef('recordIdMap', mergedWorkspaceMembers);
+  setStateRef('workspaceMemberIdMap', mergedWorkspaceMembers);
 
   // compare standard objects and fields and check if they need an update
   // compare custom objects and fields and check if they need an update

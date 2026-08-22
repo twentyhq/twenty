@@ -97,7 +97,7 @@ export const FindAllObjectsAndFields = async (
 
     edges.push(...page.objects.edges);
 
-    if (page.objects.pageInfo.hasNextPage === false) {
+    if (page.objects.pageInfo.hasNextPage === false || page.objects.pageInfo.endCursor === null) {
       return { data: { objects: { edges } } };
     }
     after = page.objects.pageInfo.endCursor;

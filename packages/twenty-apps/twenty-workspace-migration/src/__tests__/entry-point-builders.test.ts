@@ -6,6 +6,7 @@ import { PageLayoutTab } from 'src/logic-functions/types/dashboard.type';
 import { buildRecordDataToCreate } from "src/logic-functions/utils/build-record-data-to-create.util";
 import { remapWidgetConfiguration } from "src/logic-functions/utils/remap-widget-configuration.util";
 import { buildPageLayoutTabsInput } from "src/logic-functions/utils/build-page-layout-tabs-input.util";
+import { buildTestRecordIds } from "src/__tests__/utils/build-test-record-ids";
 
 const baseField = {
   applicationId: 'app-1',
@@ -128,25 +129,43 @@ describe('buildRecordDataToCreate', () => {
   const relationForeignKeyNames = new Set(['companyId']);
 
   it('passes non-relation fields through unchanged', () => {
-    const result = buildRecordDataToCreate({ title: 'Deal', companyId: null }, dataKeys, relationForeignKeyNames, new Map());
+    const result = buildRecordDataToCreate({ title: 'Deal', companyId: null }, dataKeys, relationForeignKeyNames, buildTestRecordIds());
     expect(result.title).toBe('Deal');
   });
 
-  it('remaps a relation foreign key using the record id map', () => {
-    const recordIdMap = new Map([['source-company-1', 'target-company-1']]);
-    const result = buildRecordDataToCreate({ title: 'Deal', companyId: 'source-company-1' }, dataKeys, relationForeignKeyNames, recordIdMap);
-    expect(result.companyId).toBe('target-company-1');
+  it('keeps a migrated relation foreign key as-is, since records keep their source id', () => {
+    const recordIds = buildTestRecordIds(['source-company-1']);
+    const result = buildRecordDataToCreate({ title: 'Deal', companyId: 'source-company-1' }, dataKeys, relationForeignKeyNames, recordIds);
+    expect(result.companyId).toBe('source-company-1');
+  });
+
+  it('remaps a workspace member foreign key, the one id that differs between workspaces', () => {
+    const recordIds = buildTestRecordIds([], [['source-member-1', 'target-member-1']]);
+    const result = buildRecordDataToCreate(
+      { title: 'Deal', assigneeId: 'source-member-1' },
+      ['title', 'assigneeId'],
+      new Set(['assigneeId']),
+      recordIds,
+    );
+    expect(result.assigneeId).toBe('target-member-1');
   });
 
   it('passes through a null relation value as null', () => {
-    const result = buildRecordDataToCreate({ title: 'Deal', companyId: null }, dataKeys, relationForeignKeyNames, new Map());
+    const result = buildRecordDataToCreate({ title: 'Deal', companyId: null }, dataKeys, relationForeignKeyNames, buildTestRecordIds());
     expect(result.companyId).toBeNull();
   });
 
   it('drops a relation key entirely when the referenced record was not migrated', () => {
-    const result = buildRecordDataToCreate({ title: 'Deal', companyId: 'source-company-unmigrated' }, dataKeys, relationForeignKeyNames, new Map());
+    const result = buildRecordDataToCreate({ title: 'Deal', companyId: 'source-company-unmigrated' }, dataKeys, relationForeignKeyNames, buildTestRecordIds());
     expect('companyId' in result).toBe(false);
     expect(result.title).toBe('Deal');
+  });
+
+  it('counts dropped relation keys instead of warning per record', () => {
+    const droppedRelationCounts = new Map<string, number>();
+    buildRecordDataToCreate({ title: 'A', companyId: 'gone' }, dataKeys, relationForeignKeyNames, buildTestRecordIds(), droppedRelationCounts);
+    buildRecordDataToCreate({ title: 'B', companyId: 'gone' }, dataKeys, relationForeignKeyNames, buildTestRecordIds(), droppedRelationCounts);
+    expect(droppedRelationCounts.get('companyId')).toBe(2);
   });
 });
 

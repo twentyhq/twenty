@@ -13,7 +13,8 @@ const createInitialMigrationState = (): MigrationState => ({
   objectsToUpdate: [],
   fieldsToCreate: [],
   fieldsToUpdate: [],
-  recordIdMap: new Map(),
+  workspaceMemberIdMap: new Map(),
+  migratedRecordIds: new Set(),
   targetObjectIdBySourceObjectId: new Map(),
   targetFieldIdBySourceFieldId: new Map(),
   objectRecordsToMigrate: new Map(),
@@ -36,7 +37,8 @@ export const setStateRef = <K extends keyof MigrationState>(key: K, value: Migra
 
 const serializeMigrationState = () => ({
   ...migrationState,
-  recordIdMap: Object.fromEntries(migrationState.recordIdMap),
+  workspaceMemberIdMap: Object.fromEntries(migrationState.workspaceMemberIdMap),
+  migratedRecordIds: [...migrationState.migratedRecordIds],
   targetObjectIdBySourceObjectId: Object.fromEntries(migrationState.targetObjectIdBySourceObjectId),
   targetFieldIdBySourceFieldId: Object.fromEntries(migrationState.targetFieldIdBySourceFieldId),
   objectRecordsToMigrate: Object.fromEntries(migrationState.objectRecordsToMigrate),
@@ -46,9 +48,10 @@ const serializeMigrationState = () => ({
 
 type SerializedMigrationState = Omit<
   MigrationState,
-  'recordIdMap' | 'targetObjectIdBySourceObjectId' | 'targetFieldIdBySourceFieldId' | 'objectRecordsToMigrate' | 'targetPageLayoutIdBySourcePageLayoutId' | 'attachmentTargetFieldNameByObjectName'
+  'workspaceMemberIdMap' | 'migratedRecordIds' | 'targetObjectIdBySourceObjectId' | 'targetFieldIdBySourceFieldId' | 'objectRecordsToMigrate' | 'targetPageLayoutIdBySourcePageLayoutId' | 'attachmentTargetFieldNameByObjectName'
 > & {
-  recordIdMap: Record<string, string>;
+  workspaceMemberIdMap: Record<string, string>;
+  migratedRecordIds: string[];
   targetObjectIdBySourceObjectId: Record<string, string>;
   targetFieldIdBySourceFieldId: Record<string, string>;
   objectRecordsToMigrate: Record<string, string>;
@@ -88,7 +91,8 @@ export const loadMigrationStateCheckpoint = async (): Promise<void> => {
     migrationState.fieldsToCreate = saved.fieldsToCreate;
     migrationState.fieldsToUpdate = saved.fieldsToUpdate;
     migrationState.recordMigrationOrder = saved.recordMigrationOrder;
-    migrationState.recordIdMap = new Map(Object.entries(saved.recordIdMap));
+    migrationState.workspaceMemberIdMap = new Map(Object.entries(saved.workspaceMemberIdMap));
+    migrationState.migratedRecordIds = new Set(saved.migratedRecordIds);
     migrationState.targetObjectIdBySourceObjectId = new Map(Object.entries(saved.targetObjectIdBySourceObjectId));
     migrationState.targetFieldIdBySourceFieldId = new Map(Object.entries(saved.targetFieldIdBySourceFieldId));
     migrationState.objectRecordsToMigrate = new Map(Object.entries(saved.objectRecordsToMigrate));

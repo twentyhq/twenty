@@ -8,6 +8,7 @@ import { logger } from "src/logic-functions/utils/logger.util";
 import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
 
 // Copies a source attachment's underlying file into the target workspace's own storage (files
 // are stored workspace-scoped server-side, so reusing the source record's `file.fileId`/path
@@ -16,7 +17,7 @@ import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.
 export const migrateAttachments = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
-  recordIdMap: Map<string, string>,
+  recordIds: RecordIdResolution,
 ): Promise<boolean> => {
   const targetFieldNameByObjectName = migrationState.attachmentTargetFieldNameByObjectName;
   const targetFileFieldId = migrationState.targetAttachmentFileFieldId;
@@ -69,7 +70,7 @@ file {
           if (sourceRecordId === null || sourceRecordId === undefined) {
             continue;
           }
-          const targetRecordId = recordIdMap.get(sourceRecordId as string);
+          const targetRecordId = resolveTargetRecordId(recordIds, sourceRecordId as string);
           if (targetRecordId === undefined) {
             logger.warn(`Attachment "${name}": dropping ${foreignKeyName} - referenced record ${sourceRecordId as string} was not migrated`);
             continue;

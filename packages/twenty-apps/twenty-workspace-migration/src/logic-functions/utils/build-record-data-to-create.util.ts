@@ -1,10 +1,12 @@
+import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
+
 export type DroppedRelationCounts = Map<string, number>;
 
 export const buildRecordDataToCreate = (
   node: Record<string, unknown>,
   dataKeys: string[],
   relationForeignKeyNames: ReadonlySet<string>,
-  recordIdMap: Map<string, string>,
+  recordIds: RecordIdResolution,
   // Counting dropped keys and reporting once per page keeps a systematically unresolvable
   // relation from emitting one warning per record across a whole object's worth of them.
   droppedRelationCounts?: DroppedRelationCounts,
@@ -18,7 +20,7 @@ export const buildRecordDataToCreate = (
         data[key] = null;
         continue;
       }
-      const targetRecordId = recordIdMap.get(sourceRecordId as string);
+      const targetRecordId = resolveTargetRecordId(recordIds, sourceRecordId as string);
       if (targetRecordId === undefined) {
         droppedRelationCounts?.set(key, (droppedRelationCounts.get(key) ?? 0) + 1);
         continue;
