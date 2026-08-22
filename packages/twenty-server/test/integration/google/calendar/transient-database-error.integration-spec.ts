@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constants';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
@@ -98,29 +99,32 @@ describe('Calendar import transient database errors (integration)', () => {
     jest.restoreAllMocks();
   });
 
-  it('should reschedule the calendar channel instead of failing it when the connection is killed by the idle-in-transaction timeout', async () => {
-    await fetchOneEvent();
+  it.each(TRANSIENT_POSTGRESQL_ERROR_CODES)(
+    'should reschedule the calendar channel when the import transaction fails with sqlstate %s',
+    async (sqlState) => {
+      await fetchOneEvent();
 
-    jest
-      .spyOn(calendarEventParticipantService, 'writeCalendarEventParticipants')
-      .mockImplementation(async ({ transactionScope }) => {
-        await transactionScope.executeRawQuery(
-          raiseSqlState(
-            POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
-          ),
-        );
-      });
+      jest
+        .spyOn(
+          calendarEventParticipantService,
+          'writeCalendarEventParticipants',
+        )
+        .mockImplementation(async ({ transactionScope }) => {
+          await transactionScope.executeRawQuery(raiseSqlState(sqlState));
+        });
 
-    await runCalendarChannelEventsImport(channel.calendarChannelId);
+      await runCalendarChannelEventsImport(channel.calendarChannelId);
 
-    const channelState = await queryCalendarChannel(channel);
+      const channelState = await queryCalendarChannel(channel);
 
-    expect(channelState.throttleFailureCount).toBe(1);
-    expect(channelState.syncStage).toBe(
-      CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-    );
-    expect(channelState.syncStatus).toBe(CalendarChannelSyncStatus.ONGOING);
-  }, 120000);
+      expect(channelState.throttleFailureCount).toBe(1);
+      expect(channelState.syncStage).toBe(
+        CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+      );
+      expect(channelState.syncStatus).toBe(CalendarChannelSyncStatus.ONGOING);
+    },
+    120000,
+  );
 
   it('should fail the calendar channel as unknown when a unique violation aborts the import transaction', async () => {
     await fetchOneEvent();

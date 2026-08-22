@@ -9,7 +9,6 @@ import {
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
   QUERY_READ_TIMEOUT_MESSAGE,
   QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
-  TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
 } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
@@ -47,9 +46,6 @@ export const computeTwentyORMException = async (
     return new TwentyORMException(
       error.message,
       TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR,
-      {
-        userFriendlyMessage: TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
-      },
     );
   }
 

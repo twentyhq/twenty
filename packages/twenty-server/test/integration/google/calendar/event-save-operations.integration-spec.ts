@@ -4,6 +4,9 @@ import { type calendar_v3 } from 'googleapis';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -13,6 +16,7 @@ import { googleCalendarEvent } from 'test/integration/google/mocks/google-calend
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { resetCalendarChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
@@ -47,6 +51,8 @@ describe('Calendar event save operations (integration)', () => {
   const google = setupGoogleMock({ handle: HANDLE });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
+  let calendarEventParticipantService: CalendarEventParticipantService;
+  let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
 
   const importEvents = async (
     events: calendar_v3.Schema$Event[],
@@ -115,6 +121,16 @@ describe('Calendar event save operations (integration)', () => {
       provider: ConnectedAccountProvider.GOOGLE,
       handle: HANDLE,
     });
+
+    calendarEventParticipantService =
+      getAppProviderByClassName<CalendarEventParticipantService>(
+        'CalendarEventParticipantService',
+      );
+
+    globalWorkspaceOrmManager =
+      getAppProviderByClassName<GlobalWorkspaceOrmManager>(
+        'GlobalWorkspaceOrmManager',
+      );
   }, 60000);
 
   afterAll(async () => {
@@ -415,4 +431,42 @@ describe('Calendar event save operations (integration)', () => {
     expect(participants).toHaveLength(1);
     expect(participants[0].personId).toBe(personId);
   }, 240000);
+
+  it('should return participants from every chunk when the lookup spans more than one read chunk', async () => {
+    const eventExternalId = `google-calendar-event-${randomUUID()}`;
+    const title = `Calendar event ${randomUUID()}`;
+    const attendee = `attendee-${randomUUID()}@acme.com`;
+
+    await importEvent(
+      googleCalendarEvent({
+        id: eventExternalId,
+        summary: title,
+        attendees: [{ email: attendee }],
+      }),
+    );
+
+    const [event] = await findEventsByTitle(title);
+
+    const paddedCalendarEventIds = [
+      ...Array.from({ length: 240 }, () => randomUUID()),
+      event.id,
+    ];
+
+    const participants =
+      await globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          calendarEventParticipantService.findCalendarEventParticipantsByCalendarEventIds(
+            {
+              calendarEventIds: paddedCalendarEventIds,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            },
+          ),
+        buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+        { lite: true },
+      );
+
+    expect(participants.map((participant) => participant.handle)).toEqual([
+      attendee,
+    ]);
+  }, 180000);
 });

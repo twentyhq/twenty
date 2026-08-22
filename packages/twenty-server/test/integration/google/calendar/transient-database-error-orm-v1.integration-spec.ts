@@ -144,4 +144,22 @@ describe('Calendar import transient database errors on the ORM v1 path (integrat
     expect(channelState.syncStage).toBe(CalendarChannelSyncStage.FAILED);
     expect(channelState.throttleFailureCount).toBe(0);
   }, 120000);
+
+  it('should fail the calendar channel as unknown when the import transaction throws a value that is not an error', async () => {
+    await fetchOneEvent();
+
+    jest
+      .spyOn(calendarEventParticipantService, 'writeCalendarEventParticipants')
+      .mockImplementation(async () => {
+        // oxlint-disable-next-line no-throw-literal
+        throw 'not an error instance';
+      });
+
+    await runCalendarChannelEventsImport(channel.calendarChannelId);
+
+    const channelState = await queryCalendarChannel(channel);
+
+    expect(channelState.syncStage).toBe(CalendarChannelSyncStage.FAILED);
+    expect(channelState.throttleFailureCount).toBe(0);
+  }, 120000);
 });
