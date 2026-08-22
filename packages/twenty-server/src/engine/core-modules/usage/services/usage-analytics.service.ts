@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -96,47 +98,32 @@ export class UsageAnalyticsService {
   }
 
   async getUsageByUser(params: PeriodParams): Promise<UsageBreakdownItem[]> {
-    const rows = await this.queryBreakdown({
+    return this.queryBreakdown({
       ...params,
-      groupByFields: ['userWorkspaceId'],
+      groupByField: 'userWorkspaceId',
       extraWhere: "AND userWorkspaceId != ''",
     });
-
-    return rows.map((row) => ({
-      key: row.userWorkspaceId,
-      creditsUsed: row.creditsUsedMicro,
-    }));
   }
 
   async getUsageByModel(params: PeriodParams): Promise<UsageBreakdownItem[]> {
-    const rows = await this.queryBreakdown({
+    return this.queryBreakdown({
       ...params,
-      groupByFields: ['resourceContext'],
+      groupByField: 'resourceContext',
       extraWhere: "AND resourceContext != ''",
     });
-
-    return rows.map((row) => ({
-      key: row.resourceContext,
-      creditsUsed: row.creditsUsedMicro,
-    }));
   }
 
   async getUsageByOperationType(
     params: PeriodParams & { userWorkspaceId?: string },
   ): Promise<UsageBreakdownItem[]> {
-    const rows = await this.queryBreakdown({
+    return this.queryBreakdown({
       ...params,
-      groupByFields: ['operationType'],
+      groupByField: 'operationType',
       ...(params.userWorkspaceId && {
         extraWhere: 'AND userWorkspaceId = {userWorkspaceId:String}',
         extraParams: { userWorkspaceId: params.userWorkspaceId },
       }),
     });
-
-    return rows.map((row) => ({
-      key: row.operationType,
-      creditsUsed: row.creditsUsedMicro,
-    }));
   }
 
   // Apps pick their operation type from a closed platform enum, so unrelated
@@ -144,30 +131,60 @@ export class UsageAnalyticsService {
   // and on the operation it declared answers "what did this app charge me
   // for" without disturbing the operation-type breakdown, which still
   // accounts for every credit.
-  async getUsageByApplication(
-    params: PeriodParams & { userWorkspaceId?: string },
-  ): Promise<UsageApplicationBreakdownItem[]> {
-    const rows = await this.queryBreakdown({
-      ...params,
-      groupByFields: ['resourceId', 'resourceContext'],
-      extraWhere: [
-        'AND resourceType = {appResourceType:String}',
-        "AND resourceId != ''",
-        ...(params.userWorkspaceId
-          ? ['AND userWorkspaceId = {userWorkspaceId:String}']
-          : []),
-      ].join(' '),
-      extraParams: {
-        appResourceType: UsageResourceType.APP,
-        ...(params.userWorkspaceId
-          ? { userWorkspaceId: params.userWorkspaceId }
-          : {}),
-      },
+  //
+  // Contexts the app never declared collapse here rather than in the
+  // resolver, so a row is a displayed slice and the limit truncates the same
+  // way it does for every other breakdown.
+  async getUsageByApplication({
+    workspaceId,
+    periodStart,
+    periodEnd,
+    operationTypes,
+    userWorkspaceId,
+    declaredOperations,
+  }: PeriodParams & {
+    userWorkspaceId?: string;
+    declaredOperations: string[];
+  }): Promise<UsageApplicationBreakdownItem[]> {
+    const hasOperationTypes = isNonEmptyArray(operationTypes);
+
+    const query = `
+      SELECT
+        resourceId,
+        if(
+          has({declaredOperations:Array(String)}, resourceContext),
+          resourceContext,
+          ''
+        ) AS operation,
+        sum(creditsUsedMicro) AS creditsUsedMicro
+      FROM usageEvent
+      WHERE workspaceId = {workspaceId:String}
+        AND timestamp >= {periodStart:String}
+        AND timestamp < {periodEnd:String}
+        AND resourceType = {appResourceType:String}
+        AND resourceId != ''
+        ${hasOperationTypes ? 'AND operationType IN ({operationTypes:Array(String)})' : ''}
+        ${isDefined(userWorkspaceId) ? 'AND userWorkspaceId = {userWorkspaceId:String}' : ''}
+      GROUP BY resourceId, operation
+      ORDER BY creditsUsedMicro DESC
+      LIMIT ${BREAKDOWN_QUERY_LIMIT}
+    `;
+
+    const rows = await this.clickHouseService.select<
+      BreakdownRowMicro<'resourceId' | 'operation'>
+    >(query, {
+      workspaceId,
+      periodStart: formatDateTimeForClickHouse(periodStart),
+      periodEnd: formatDateTimeForClickHouse(periodEnd),
+      appResourceType: UsageResourceType.APP,
+      declaredOperations,
+      ...(hasOperationTypes ? { operationTypes } : {}),
+      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
     });
 
     return rows.map((row) => ({
       applicationId: row.resourceId,
-      operation: row.resourceContext,
+      operation: row.operation,
       creditsUsed: row.creditsUsedMicro,
     }));
   }
@@ -188,23 +205,25 @@ export class UsageAnalyticsService {
     return this.queryTimeSeries(params);
   }
 
-  private async queryBreakdown<const TFields extends readonly GroupByField[]>({
+  private async queryBreakdown({
     workspaceId,
     periodStart,
     periodEnd,
-    groupByFields,
+    groupByField,
     operationTypes,
     extraWhere = '',
     extraParams,
   }: PeriodParams & {
-    groupByFields: TFields;
+    groupByField: GroupByField;
     extraWhere?: string;
     extraParams?: Record<string, unknown>;
-  }): Promise<BreakdownRowMicro<TFields[number]>[]> {
-    for (const groupByField of groupByFields) {
-      if (!ALLOWED_GROUP_BY_FIELDS.includes(groupByField)) {
-        throw new Error(`Invalid groupByField: ${groupByField}`);
-      }
+  }): Promise<UsageBreakdownItem[]> {
+    if (
+      !ALLOWED_GROUP_BY_FIELDS.includes(
+        groupByField as (typeof ALLOWED_GROUP_BY_FIELDS)[number],
+      )
+    ) {
+      throw new Error(`Invalid groupByField: ${groupByField}`);
     }
 
     const opTypeFilter =
@@ -212,11 +231,9 @@ export class UsageAnalyticsService {
         ? 'AND operationType IN ({operationTypes:Array(String)})'
         : '';
 
-    const groupBy = groupByFields.join(', ');
-
     const query = `
       SELECT
-        ${groupBy},
+        ${groupByField} AS key,
         sum(creditsUsedMicro) AS creditsUsedMicro
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
@@ -224,12 +241,12 @@ export class UsageAnalyticsService {
         AND timestamp < {periodEnd:String}
         ${opTypeFilter}
         ${extraWhere}
-      GROUP BY ${groupBy}
+      GROUP BY ${groupByField}
       ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    return this.clickHouseService.select<BreakdownRowMicro<TFields[number]>>(
+    const rows = await this.clickHouseService.select<BreakdownRowMicro<'key'>>(
       query,
       {
         workspaceId,
@@ -241,6 +258,11 @@ export class UsageAnalyticsService {
         ...(extraParams ?? {}),
       },
     );
+
+    return rows.map((row) => ({
+      key: row.key,
+      creditsUsed: row.creditsUsedMicro,
+    }));
   }
 
   private async queryTimeSeries({

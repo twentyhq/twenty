@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
@@ -61,6 +62,19 @@ export class UsageResolver {
       operationTypes: input?.operationTypes ?? undefined,
     };
 
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const declaredOperations = [
+      ...new Set(
+        Object.values(flatApplicationMaps.byId).flatMap((application) =>
+          Object.keys(application?.billableOperations ?? {}),
+        ),
+      ),
+    ];
+
     const [
       usageByUser,
       usageByOperationType,
@@ -76,18 +90,20 @@ export class UsageResolver {
       this.usageAnalyticsService.getUsageByApplication({
         ...periodParams,
         userWorkspaceId: input?.userWorkspaceId ?? undefined,
+        declaredOperations,
       }),
       this.usageAnalyticsService.getUsageByModel(periodParams),
       this.usageAnalyticsService.getUsageTimeSeries(periodParams),
     ]);
 
-    const [resolvedUsageByUser, resolvedUsageByApplication] = await Promise.all(
-      [
-        this.resolveBreakdownKeys(usageByUser, (ids) =>
-          this.resolveUserNames(ids, workspace.id),
-        ),
-        this.resolveApplicationBreakdown(usageByApplication, workspace.id),
-      ],
+    const resolvedUsageByUser = await this.resolveBreakdownKeys(
+      usageByUser,
+      (ids) => this.resolveUserNames(ids, workspace.id),
+    );
+
+    const resolvedUsageByApplication = this.resolveApplicationBreakdown(
+      usageByApplication,
+      flatApplicationMaps,
     );
 
     const result: UsageAnalyticsDTO = {
@@ -159,23 +175,16 @@ export class UsageResolver {
   }
 
   // Operations an app declared in its manifest get their own slice under the
-  // app name; anything it charged without declaring folds back into a single
-  // app-level slice, so undeclared context strings never reach a screen.
-  // Uninstalled apps are looked up too, otherwise their spend would drop out
-  // of the pie while still counting towards the bill.
-  private async resolveApplicationBreakdown(
+  // app name; anything it charged without declaring arrives already folded
+  // into a single app-level slice, so undeclared context strings never reach
+  // a screen. Uninstalled apps are looked up too, otherwise their spend would
+  // drop out of the pie while still counting towards the bill. Keying on the
+  // label also merges two apps sharing a display name, which would otherwise
+  // collide as one chart id.
+  private resolveApplicationBreakdown(
     items: UsageApplicationBreakdownItem[],
-    workspaceId: string,
-  ): Promise<UsageBreakdownItem[]> {
-    if (items.length === 0) {
-      return [];
-    }
-
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
+    flatApplicationMaps: FlatApplicationCacheMaps,
+  ): UsageBreakdownItem[] {
     const creditsByKey = new Map<string, number>();
 
     for (const item of items) {
