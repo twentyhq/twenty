@@ -6,6 +6,7 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { gql } from 'graphql-tag';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
@@ -118,18 +119,28 @@ const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
     timelineActivityTypes {
       id
       action
+      objectUniversalIdentifier
     }
   }
 `;
 
-const timelineActivityTypeIdByAction: Partial<
-  Record<TimelineActivityAction, string>
-> = {};
+// Mirrors the server resolver: several types share an action, and the one bound
+// to the event's object wins over the shared one.
+const timelineActivityTypeIdByObjectAndAction = new Map<string, string>();
+
+const buildKey = (
+  action: TimelineActivityAction,
+  objectUniversalIdentifier: string | null,
+): string => `${objectUniversalIdentifier ?? 'shared'}|${action}`;
 
 const timelineActivityTypeIdForOrThrow = (
   action: TimelineActivityAction,
+  objectUniversalIdentifier: string | null = null,
 ): string => {
-  const timelineActivityTypeId = timelineActivityTypeIdByAction[action];
+  const timelineActivityTypeId =
+    timelineActivityTypeIdByObjectAndAction.get(
+      buildKey(action, objectUniversalIdentifier),
+    ) ?? timelineActivityTypeIdByObjectAndAction.get(buildKey(action, null));
 
   if (!isDefined(timelineActivityTypeId)) {
     throw new Error(`No timeline activity type seeded for action ${action}`);
@@ -137,6 +148,8 @@ const timelineActivityTypeIdForOrThrow = (
 
   return timelineActivityTypeId;
 };
+
+const NOTE_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.note.universalIdentifier;
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
@@ -176,9 +189,19 @@ describe('timeline activity write path (integration)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    for (const { id, action } of response.body.data.timelineActivityTypes) {
+    for (const {
+      id,
+      action,
+      objectUniversalIdentifier,
+    } of response.body.data.timelineActivityTypes) {
       if (isDefined(action)) {
-        timelineActivityTypeIdByAction[action as TimelineActivityAction] = id;
+        timelineActivityTypeIdByObjectAndAction.set(
+          buildKey(
+            action as TimelineActivityAction,
+            objectUniversalIdentifier ?? null,
+          ),
+          id,
+        );
       }
     }
   });
@@ -380,7 +403,7 @@ describe('timeline activity write path (integration)', () => {
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('linked'),
+          eq: timelineActivityTypeIdForOrThrow('linked', NOTE_UNIVERSAL_IDENTIFIER),
         },
       });
 
@@ -411,7 +434,7 @@ describe('timeline activity write path (integration)', () => {
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated'),
+          eq: timelineActivityTypeIdForOrThrow('updated', NOTE_UNIVERSAL_IDENTIFIER),
         },
       });
 
@@ -426,7 +449,10 @@ describe('timeline activity write path (integration)', () => {
 
       const rowsWithoutTarget = (
         await findTimelineActivityRowsByLinkedRecordId({
-          timelineActivityTypeId: timelineActivityTypeIdForOrThrow('updated'),
+          timelineActivityTypeId: timelineActivityTypeIdForOrThrow(
+            'updated',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
           linkedRecordId: NOTE_ID,
         })
       ).filter((row) => row.targetCompanyId === null);
@@ -448,7 +474,7 @@ describe('timeline activity write path (integration)', () => {
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated'),
+          eq: timelineActivityTypeIdForOrThrow('updated', NOTE_UNIVERSAL_IDENTIFIER),
         },
       });
 
@@ -472,7 +498,7 @@ describe('timeline activity write path (integration)', () => {
       const timelineActivities = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('unlinked'),
+          eq: timelineActivityTypeIdForOrThrow('unlinked', NOTE_UNIVERSAL_IDENTIFIER),
         },
       });
 

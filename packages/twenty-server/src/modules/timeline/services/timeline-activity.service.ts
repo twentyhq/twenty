@@ -233,10 +233,15 @@ export class TimelineActivityService {
       return [];
     }
 
+    // A self rule writes the record's own row, which carries no linked record,
+    // so it must not take the object-bound type: that one renders as a linked
+    // entry and has no linked object to draw.
     const timelineActivityTypeId = resolveTimelineActivityTypeId({
       action: ruleAction,
       objectUniversalIdentifier:
-        rule.sourceFlatObjectMetadata.universalIdentifier,
+        rule.targetShape.kind === 'SELF'
+          ? undefined
+          : rule.sourceFlatObjectMetadata.universalIdentifier,
     });
 
     if (!isDefined(timelineActivityTypeId)) {
