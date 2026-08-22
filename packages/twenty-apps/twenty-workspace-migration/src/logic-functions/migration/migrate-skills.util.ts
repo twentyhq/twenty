@@ -7,15 +7,8 @@ import { migrationState, setStateRef } from "src/logic-functions/utils/migration
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 
 export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Skill[], targetSkills: Skill[]) => {
-  const mappedSourceSkills: Record<string, Skill> = sourceSkills.filter(skill => skill.isCustom === true).reduce((pre, skill) => ({...pre, [skill.id]: skill}), {});
-  const mappedTargetSkills: Record<string, Skill> = targetSkills.filter(skill => skill.isCustom === true).reduce((pre, skill) => ({...pre, [skill.id]: skill}), {});
-  const skillsToMigrate: Skill[] = [];
-  const targetSkillsIds = Object.values(mappedTargetSkills).map(skill => skill.id);
-  for (const key of Object.values(mappedSourceSkills).map(skill => skill.id)) {
-    if (targetSkillsIds.indexOf(key) === -1) {
-      skillsToMigrate.push(mappedSourceSkills[key]);
-    }
-  }
+  const targetSkillsIds = new Set(targetSkills.map(webhook => webhook.id));
+  const skillsToMigrate: Skill[] = targetSkillsIds.size === 0 ? sourceSkills : sourceSkills.filter(webhook => targetSkillsIds.has(webhook.id) === false);
   let recordsMigrated = 2;
   for (const skill of skillsToMigrate) {
     await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createSkill', 'input', 'CreateSkillInput', {

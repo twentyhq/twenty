@@ -111,6 +111,16 @@ describe('buildFieldToCreate', () => {
     const result = buildFieldToCreate(buildMorphRelationField(), 'target-object-1', [targetObjects[0]]);
     expect(result).toBeUndefined();
   });
+
+  it('skips a MORPH_RELATION field whose relation is the server-managed inverse (ONE_TO_MANY) side', () => {
+    const inverseMorphField = buildMorphRelationField({
+      morphRelations: [
+        { type: RelationType.ONE_TO_MANY, targetObjectMetadata: { nameSingular: 'company' }, targetFieldMetadata: { icon: 'IconBuilding', label: 'Notes' } },
+      ],
+    } as Partial<FieldsListType>);
+    const result = buildFieldToCreate(inverseMorphField, 'target-object-1', targetObjects);
+    expect(result).toBeUndefined();
+  });
 });
 
 describe('buildRecordDataToCreate', () => {

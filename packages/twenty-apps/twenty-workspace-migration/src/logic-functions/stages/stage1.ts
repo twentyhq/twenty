@@ -121,7 +121,7 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     const targetObjectFields = mapEntities(targetObject.fieldsList.filter(field => fieldsToOmit.includes(field.name) === false));
     for (const key of Array.from(sourceObjectFields.keys())) {
       const sourceObjectField = sourceObjectFields.get(key);
-      if (sourceObjectField === undefined) {
+      if (sourceObjectField === undefined || (sourceObjectField.type === 'RELATION' && sourceObjectField.relation.type === 'ONE_TO_MANY')) {
         continue;
       }
       const targetObjectField = targetObjectFields.get(key);

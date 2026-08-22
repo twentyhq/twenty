@@ -5,7 +5,7 @@ export const triggerWorkspaceMigration = async () => {
 
   if (!continueMigration) {
     throw new Error(
-      `Failed to continue migration}`,
+      `Failed to continue migration`,
     );
   }
 };

@@ -7,15 +7,8 @@ import { migrationState, setStateRef } from "src/logic-functions/utils/migration
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 
 export const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebhooks: Webhook[], targetWebhooks: Webhook[]) => {
-  const mappedSourceWebhooks: Record<string, Webhook> = sourceWebhooks.reduce((pre, webhook) => ({...pre, [webhook.id]: webhook}), {});
-  const mappedTargetWebhooks: Record<string, Webhook> = targetWebhooks.reduce((pre, webhook) => ({...pre, [webhook.id]: webhook}), {});
-  const webhooksToMigrate: Webhook[] = [];
-  const targetWebhooksIds = Object.values(mappedTargetWebhooks).map(webhook => webhook.id);
-  for (const key of Object.values(mappedSourceWebhooks).map(webhook => webhook.id)) {
-    if (targetWebhooksIds.indexOf(key) === -1) {
-      webhooksToMigrate.push(mappedSourceWebhooks[key]);
-    }
-  }
+  const targetWebhooksIds = new Set(targetWebhooks.map(webhook => webhook.id));
+  const webhooksToMigrate: Webhook[] = targetWebhooksIds.size === 0 ? sourceWebhooks : sourceWebhooks.filter(webhook => targetWebhooksIds.has(webhook.id) === false);
   let recordsMigrated = 2;
   for (const webhook of webhooksToMigrate) {
     // `secret` is deliberately not copied - omitting it makes the server generate a fresh

@@ -52,12 +52,13 @@ export const estimateMigrationDuration = async (
   sourceWorkspace: AxiosInstance,
 ): Promise<MigrationDurationEstimate> => {
   const recordCountsByNamePlural = await executeWithRetry(() => findObjectRecordCounts(sourceWorkspace));
-  const batchableObjects = recordCountsByNamePlural;
+  const dashboardCount = recordCountsByNamePlural.get('dashboards') ?? 0;
+  const attachmentCount = recordCountsByNamePlural.get('attachments') ?? 0;
   for (const obj of objectsToOmitFromCounting) {
-    batchableObjects.delete(obj);
+    recordCountsByNamePlural.delete(obj);
   }
   let batchableRecordCount = 0;
-  for (const object of batchableObjects.values()) {
+  for (const object of recordCountsByNamePlural.values()) {
     batchableRecordCount += object ?? 0;
   }
 
@@ -68,8 +69,6 @@ export const estimateMigrationDuration = async (
   const roles = await executeWithRetry(() => findRoles(sourceWorkspace));
   const recordPageLayouts = await executeWithRetry(() => findPageLayouts(sourceWorkspace, 'RECORD_PAGE'));
 
-  const dashboardCount = recordCountsByNamePlural.get('dashboards') ?? 0;
-  const attachmentCount = recordCountsByNamePlural.get('attachments') ?? 0;
   const customSkillCount = skills.filter((skill) => skill.isCustom).length;
   const customRecordPageLayoutCount = recordPageLayouts.filter((layout) => !layout.isSystemSideEffect).length;
 
