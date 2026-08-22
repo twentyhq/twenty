@@ -4,6 +4,26 @@ import { getTimelineActivityType } from '@/activities/timeline-activities/utils/
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
+// Legacy rows encode the linked object in their name, as either
+// "linked-<object>.<action>" or "<object>.linked".
+const parseLegacyLinkedObjectName = (
+  name: string | null | undefined,
+): string | undefined => {
+  if (!isDefined(name)) {
+    return undefined;
+  }
+
+  if (name.startsWith('linked-')) {
+    return name.split('.')[0].replace('linked-', '');
+  }
+
+  if (name.endsWith('.linked')) {
+    return name.split('.')[0];
+  }
+
+  return undefined;
+};
+
 export const getTimelineActivityLinkedObjectMetadataItem = ({
   timelineActivity,
   timelineActivityTypeById,
@@ -33,16 +53,14 @@ export const getTimelineActivityLinkedObjectMetadataItem = ({
     );
   }
 
-  const legacyObjectName = timelineActivity.name?.startsWith('linked-')
-    ? timelineActivity.name.split('.')[0].replace('linked-', '')
-    : timelineActivity.name?.endsWith('.linked')
-      ? timelineActivity.name.split('.')[0]
-      : undefined;
+  const legacyObjectName = parseLegacyLinkedObjectName(timelineActivity.name);
 
-  return isDefined(legacyObjectName)
-    ? objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === legacyObjectName,
-      )
-    : undefined;
+  if (!isDefined(legacyObjectName)) {
+    return undefined;
+  }
+
+  return objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === legacyObjectName,
+  );
 };

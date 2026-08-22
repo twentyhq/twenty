@@ -22,6 +22,30 @@ const getLegacyTimelineActivityRenderer = (
   }
 };
 
+const resolveTimelineActivityRenderer = ({
+  eventRenderer,
+  timelineActivityTypeId,
+  linkedObjectMetadataItem,
+}: Pick<
+  EventRowDynamicComponentProps,
+  'eventRenderer' | 'linkedObjectMetadataItem'
+> & {
+  timelineActivityTypeId: string | null;
+}): TimelineActivityRenderer => {
+  if (isDefined(eventRenderer)) {
+    return eventRenderer;
+  }
+
+  // Old pods can write name-only rows after the 2.33 backfill has run.
+  if (!isDefined(timelineActivityTypeId)) {
+    return getLegacyTimelineActivityRenderer(
+      linkedObjectMetadataItem?.nameSingular,
+    );
+  }
+
+  return isDefined(linkedObjectMetadataItem) ? 'genericLinked' : 'mainObject';
+};
+
 export const EventRowDynamicComponent = ({
   labelIdentifierValue,
   event,
@@ -32,16 +56,11 @@ export const EventRowDynamicComponent = ({
   authorFullName,
   createdAt,
 }: EventRowDynamicComponentProps) => {
-  const renderer =
-    eventRenderer ??
-    // Old pods can write name-only rows after the 2.33 backfill has run.
-    (isDefined(event.timelineActivityTypeId)
-      ? isDefined(linkedObjectMetadataItem)
-        ? 'genericLinked'
-        : 'mainObject'
-      : getLegacyTimelineActivityRenderer(
-          linkedObjectMetadataItem?.nameSingular,
-        ));
+  const renderer = resolveTimelineActivityRenderer({
+    eventRenderer,
+    timelineActivityTypeId: event.timelineActivityTypeId,
+    linkedObjectMetadataItem,
+  });
 
   const EventRowComponent =
     TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER[renderer];
