@@ -3489,7 +3489,7 @@ msgstr "Mục tiêu sự kiện"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Event type"
-msgstr ""
+msgstr "Loại sự kiện"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10935,7 +10935,7 @@ msgstr "Giới hạn trường cập nhật chỉ áp dụng cho các đối tư
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated"
-msgstr ""
+msgstr "đã cập nhật"
 
 #. js-lingui-id: Hp+aAn
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11576,13 +11576,13 @@ msgstr "ViewId là cần thiết để tạo một sắp xếp xem."
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was created by"
-msgstr ""
+msgstr "được tạo bởi"
 
 #. js-lingui-id: edc5Bh
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was deleted by"
-msgstr ""
+msgstr "đã bị xóa bởi"
 
 #. js-lingui-id: SfnmZe
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11594,7 +11594,7 @@ msgstr ""
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was restored by"
-msgstr ""
+msgstr "đã được khôi phục bởi"
 
 #. js-lingui-id: 0i3MMx
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

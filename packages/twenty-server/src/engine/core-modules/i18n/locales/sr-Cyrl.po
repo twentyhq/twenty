@@ -3489,7 +3489,7 @@ msgstr "Циљ догађаја"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Event type"
-msgstr ""
+msgstr "Тип догађаја"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10935,7 +10935,7 @@ msgstr "Ограничења ажурирања поља важе само за 
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated"
-msgstr ""
+msgstr "ажурирано"
 
 #. js-lingui-id: Hp+aAn
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11576,7 +11576,7 @@ msgstr "ViewId је обавезан за креирање сортирања п
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was created by"
-msgstr ""
+msgstr "је креирао/ла"
 
 #. js-lingui-id: edc5Bh
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

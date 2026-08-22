@@ -3957,7 +3957,7 @@ msgstr "נקה"
 #. js-lingui-id: Q2mGA7
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 msgid "Clear filter"
-msgstr ""
+msgstr "נקה מסנן"
 
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -5295,7 +5295,7 @@ msgstr "נוצר {objectLabel}"
 #. js-lingui-id: 2K/oCx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "created a related {objectNameSingular}"
-msgstr ""
+msgstr "יצר {objectNameSingular} קשור"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -6398,7 +6398,7 @@ msgstr "נמחק {objectLabel}"
 #. js-lingui-id: P65ogp
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "deleted a related {objectNameSingular}"
-msgstr ""
+msgstr "מחק {objectNameSingular} קשור"
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -8885,7 +8885,7 @@ msgstr "אפשרויות כלל של קבוצת סינון"
 #. js-lingui-id: 0i36a3
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 msgid "Filter timeline"
-msgstr ""
+msgstr "סנן את ציר הזמן"
 
 #. js-lingui-id: j/O9Sh
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9715,53 +9715,35 @@ msgstr "קו מפריד אופקי"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"אחסנו את ההתאמות האישיות והדריסות של סביבת העבודה שלכם.\n"
-"\n"
+msgstr "אחסנו את ההתאמות האישיות והדריסות של סביבת העבודה שלכם.\n\n"
 "#### מה זה כולל\n"
-"כל הרחבה שאתם יוצרים על גבי האפליקציה הסטנדרטית מקובצת תחת Custom. היא שומרת את שינויי הסכימה, שינויי הממשק, והלוגיקה הייחודית לסביבת העבודה במקום אחד.\n"
-"\n"
+"כל הרחבה שאתם יוצרים על גבי האפליקציה הסטנדרטית מקובצת תחת Custom. היא שומרת את שינויי הסכימה, שינויי הממשק, והלוגיקה הייחודית לסביבת העבודה במקום אחד.\n\n"
 "- אובייקטים ושדות מותאמים אישית עבור מודל הנתונים שלכם\n"
 "- תצוגות, פריטי ניווט ופריסות רשומות המעצבות את אופן העבודה של הצוות שלכם\n"
-"- פונקציות לוגיקה, רכיבי ממשק, וסוכנים שמבצעים אוטומציה או מרחיבים את סביבת העבודה\n"
-"\n"
+"- פונקציות לוגיקה, רכיבי ממשק, וסוכנים שמבצעים אוטומציה או מרחיבים את סביבת העבודה\n\n"
 "#### למה זה קיים\n"
-"השתמשו באפליקציה זו להתאמות ייחודיות לסביבת עבודה שאמורות להישאר מקומיות לסביבת עבודה זו.\n"
-"\n"
-"אם אתם מעצבים סביבת עבודה אחת עבור עסק אחד, השאירו זאת כאן. אם אתם בונים אפליקציה עסקית לשימוש חוזר עם מודל נתונים, ממשק משתמש (UI), ואוטומציה משל עצמה, שאמורה להיות מנוהלת בגרסאות, משותפת או מותקנת בין סביבות עבודה שונות, צרו במקום זאת אפליקציה ייעודית.\n"
-"\n"
-"#### בנו אפליקציה משלכם\n"
-"\n"
-"צרו שלד לאפליקציה חדשה בפקודה אחת:\n"
-"\n"
+"השתמשו באפליקציה זו להתאמות ייחודיות לסביבת עבודה שאמורות להישאר מקומיות לסביבת עבודה זו.\n\n"
+"אם אתם מעצבים סביבת עבודה אחת עבור עסק אחד, השאירו זאת כאן. אם אתם בונים אפליקציה עסקית לשימוש חוזר עם מודל נתונים, ממשק משתמש (UI), ואוטומציה משל עצמה, שאמורה להיות מנוהלת בגרסאות, משותפת או מותקנת בין סביבות עבודה שונות, צרו במקום זאת אפליקציה ייעודית.\n\n"
+"#### בנו אפליקציה משלכם\n\n"
+"צרו שלד לאפליקציה חדשה בפקודה אחת:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "ראו את [מדריך ההתחלה](https://twenty.com/developers/extend/apps/getting-started) לסקירה מלאה, ואת [בניית אפליקציות](https://twenty.com/developers/extend/apps/building) עבור ממשקי ה-API של `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: yY8wAv
@@ -11384,7 +11366,7 @@ msgstr "קישר אירוע יומן עם {labelIdentifierValue}"
 #. js-lingui-id: ZJ5OOX
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "linked a related {objectNameSingular}"
-msgstr ""
+msgstr "קישר/ה {objectNameSingular} קשור"
 
 #. js-lingui-id: fd8C68
 #: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
@@ -12830,7 +12812,7 @@ msgstr "אין מנוי פעיל."
 #. js-lingui-id: LM+N3q
 #: src/modules/activities/timeline-activities/components/EventList.tsx
 msgid "No activity matches the selected types."
-msgstr ""
+msgstr "אין פעילות התואמת לסוגים שנבחרו."
 
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -13213,7 +13195,7 @@ msgstr ""
 #. js-lingui-id: WqPs8R
 #: src/modules/activities/timeline-activities/components/EventList.tsx
 msgid "No matching activity"
-msgstr ""
+msgstr "אין פעילות תואמת"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -16038,7 +16020,7 @@ msgstr "שחזר את {objectLabel}"
 #. js-lingui-id: RyMA1t
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "restored a related {objectNameSingular}"
-msgstr ""
+msgstr "שחזר/ה {objectNameSingular} קשור"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -18565,67 +18547,45 @@ msgstr "אזור ה-AWS עבור Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"מודל הנתונים הבסיסי שעליו פועלת כל סביבת עבודה של Twenty.\n"
-"\n"
-"#### מה פירוש \"בסיס\"\n"
-"\n"
-"כל סביבת עבודה של Twenty מתחילה עם קבוצת האובייקטים הזו. הם מגדירים את המבנה של ה-CRM שלכם, כולל קשרים, פעילות ודיווח. כל השאר, כולל אפליקציות מהשוק, סוכני בינה מלאכותית (AI), ואובייקטים מותאמים אישית, מתחבר אליהם.\n"
-"\n"
+msgstr "מודל הנתונים הבסיסי שעליו פועלת כל סביבת עבודה של Twenty.\n\n"
+"#### מה פירוש \"בסיס\"\n\n"
+"כל סביבת עבודה של Twenty מתחילה עם קבוצת האובייקטים הזו. הם מגדירים את המבנה של ה-CRM שלכם, כולל קשרים, פעילות ודיווח. כל השאר, כולל אפליקציות מהשוק, סוכני בינה מלאכותית (AI), ואובייקטים מותאמים אישית, מתחבר אליהם.\n\n"
 "#### אובייקטים כלולים\n"
 "- **אנשים וחברות**: רשומות אנשי קשר וחשבונות\n"
 "- **הזדמנויות**: צינור המכירות שלכם\n"
 "- **הערות ומשימות**: פעילות ומעקבים\n"
-"- **תהליכי עבודה ולוחות מחוונים**: אוטומציה ודיווח\n"
-"\n"
-"הסרת האפליקציה הזו תשאיר את שאר Twenty ללא בסיס להישען עליו.\n"
-"\n"
-"#### בנו אפליקציה משלכם\n"
-"\n"
-"הרחיבו את Twenty באמצעות אובייקטים, שדות, פונקציות לוגיקה או יכולות בינה מלאכותית (AI) משלכם. צרו שלד לאפליקציה חדשה בפקודה אחת:\n"
-"\n"
+"- **תהליכי עבודה ולוחות מחוונים**: אוטומציה ודיווח\n\n"
+"הסרת האפליקציה הזו תשאיר את שאר Twenty ללא בסיס להישען עליו.\n\n"
+"#### בנו אפליקציה משלכם\n\n"
+"הרחיבו את Twenty באמצעות אובייקטים, שדות, פונקציות לוגיקה או יכולות בינה מלאכותית (AI) משלכם. צרו שלד לאפליקציה חדשה בפקודה אחת:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"ולאחר מכן בתוך התיקייה:\n"
-"\n"
+"```\n\n"
+"ולאחר מכן בתוך התיקייה:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "ראו את [מדריך ההתחלה](https://twenty.com/developers/extend/apps/getting-started) לסקירה מלאה, ואת [בניית אפליקציות](https://twenty.com/developers/extend/apps/building) עבור ממשקי ה-API של `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: VsxjzF
@@ -18878,8 +18838,7 @@ msgstr "פעולה זו לא ניתנת לביטול. חבר זה יוסר וי�
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "לא ניתן לבטל פעולה זו. זה ימחק לצמיתות את כל החשבון שלך."
 
@@ -19234,7 +19193,7 @@ msgstr "ציר זמן"
 #. js-lingui-id: HUJOEf
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "timeline activity type"
-msgstr ""
+msgstr "סוג פעילות בציר זמנים"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -19976,7 +19935,7 @@ msgstr "ללא הגבלה"
 #. js-lingui-id: CfClM4
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "unlinked a related {objectNameSingular}"
-msgstr ""
+msgstr "ניתק/ה קישור ל-{objectNameSingular} קשור"
 
 #. js-lingui-id: WDcQq9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -20238,7 +20197,7 @@ msgstr "עודכן {objectLabel}"
 #. js-lingui-id: OFU7Sk
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "updated a related {objectNameSingular}"
-msgstr ""
+msgstr "עדכן/ה {objectNameSingular} קשור"
 
 #. js-lingui-id: xuCD/Q
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -21836,11 +21795,9 @@ msgstr "אתה עומד לשנות את תת-הדומיין של סביבת הע
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"הגעת למגבלת השימוש שלך. \n"
+msgstr "הגעת למגבלת השימוש שלך. \n"
 "פנה/י לצוות התמיכה שלנו כדי לשדרג."
 
 #. js-lingui-id: NTyvVW
@@ -21848,11 +21805,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"הגעת למגבלת השימוש שלך. \n"
+msgstr "הגעת למגבלת השימוש שלך. \n"
 "שדרג/י ל-{0} נקודות עבור ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS
