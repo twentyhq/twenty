@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 
 import { IsNumberOrString } from 'src/engine/api/mcp/decorators/string-or-number';
+import { type McpProgressToken } from 'src/engine/api/mcp/types/mcp-progress-token.type';
 
 export class JsonRpc {
   @IsString()
@@ -25,6 +26,9 @@ export class JsonRpc {
   params?: {
     name: string;
     arguments: unknown;
+    _meta?: {
+      progressToken?: McpProgressToken;
+    };
   };
 
   @IsOptional()
