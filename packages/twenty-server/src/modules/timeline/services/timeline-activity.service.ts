@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
@@ -18,7 +18,10 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
-import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
+import {
+  resolveTimelineActivityTypeIdOrThrow,
+  type TimelineActivityTypeResolver,
+} from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
@@ -92,8 +95,6 @@ const buildLinkedPayload = ({
 
 @Injectable()
 export class TimelineActivityService {
-  private readonly logger = new Logger(TimelineActivityService.name);
-
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
@@ -241,21 +242,15 @@ export class TimelineActivityService {
     // A self rule writes the record's own row, which carries no linked record,
     // so it must not take the object-bound type: that one renders as a linked
     // entry and has no linked object to draw.
-    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+    const timelineActivityTypeId = resolveTimelineActivityTypeIdOrThrow({
+      resolveTimelineActivityTypeId,
+      workspaceId,
       action: ruleAction,
       objectUniversalIdentifier:
         rule.targetShape.kind === 'SELF'
           ? undefined
           : rule.sourceFlatObjectMetadata.universalIdentifier,
     });
-
-    if (!isDefined(timelineActivityTypeId)) {
-      this.logger.warn(
-        `No timeline activity type resolves ${ruleAction} on ${rule.sourceFlatObjectMetadata.nameSingular} in workspace ${workspaceId}, dropping ${events.length} events`,
-      );
-
-      return [];
-    }
 
     const matchingEvents = events.filter((event) =>
       this.ruleMatchesEvent({ rule, ruleAction, event }),
@@ -340,19 +335,13 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityTypeId = resolveTimelineActivityTypeId({
+    const timelineActivityTypeId = resolveTimelineActivityTypeIdOrThrow({
+      resolveTimelineActivityTypeId,
+      workspaceId,
       action: ruleAction,
       objectUniversalIdentifier:
         rule.sourceFlatObjectMetadata.universalIdentifier,
     });
-
-    if (!isDefined(timelineActivityTypeId)) {
-      this.logger.warn(
-        `No timeline activity type resolves ${ruleAction} on ${rule.sourceFlatObjectMetadata.nameSingular} in workspace ${workspaceId}, dropping ${events.length} events`,
-      );
-
-      return [];
-    }
 
     const { junctionSourceJoinColumnName } = rule.targetShape;
 
