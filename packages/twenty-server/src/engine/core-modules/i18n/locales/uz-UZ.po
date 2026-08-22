@@ -343,7 +343,7 @@ msgstr "Vaqtinchalik tarmoq xatosi yuz berdi."
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr ""
+msgstr "Bu ilova uchun ushbu nomga ega vaqt jadvali faoliyati turi allaqachon mavjud"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1084,7 +1084,7 @@ msgstr "Ish jarayoniga bog‘langan ilova qilingan fayllar"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attended a calendar event"
-msgstr ""
+msgstr "kalendar hodisasida qatnashdi"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -5829,13 +5829,13 @@ msgstr "\"{widgetTitle}\" ustunli diagramma vidjeti uchun joylashuv (layout) tal
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related note"
-msgstr ""
+msgstr "tegishli eslatmani bog‘ladi"
 
 #. js-lingui-id: ecrchg
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related task"
-msgstr ""
+msgstr "tegishli vazifani bog‘ladi"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8892,7 +8892,7 @@ msgstr "Yuborilganlar soni"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "sent or received an email"
-msgstr ""
+msgstr "elektron pochta xabarini yubordi yoki qabul qildi"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10444,17 +10444,17 @@ msgstr "Bu cheklangan manzil endi mavjud emas."
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
-msgstr ""
+msgstr "Ushbu vaqt jadvali faoliyati amali qo‘llab-quvvatlanmaydi"
 
 #. js-lingui-id: O6/sEz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer is not supported"
-msgstr ""
+msgstr "Ushbu vaqt jadvali faoliyati rendereri qo‘llab-quvvatlanmaydi"
 
 #. js-lingui-id: jDoSzT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer requires the type to reference an object"
-msgstr ""
+msgstr "Ushbu vaqt jadvali faoliyati rendereri tur obyektga havola qilishini talab qiladi"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10631,25 +10631,25 @@ msgstr "Vaqt jadvali faoliyati yozuvining pozitsiyasi"
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity renderer {0} requires the type to reference an object"
-msgstr ""
+msgstr "{0} vaqt jadvali faoliyati rendereri tur obyektga havola qilishini talab qiladi"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline activity type describing this event"
-msgstr ""
+msgstr "Ushbu hodisani tavsiflovchi vaqt jadvali faoliyati turi"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type label is required"
-msgstr ""
+msgstr "Vaqt jadvali faoliyati turi yorlig‘i talab qilinadi"
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type name is required"
-msgstr ""
+msgstr "Vaqt jadvali faoliyati turi nomi talab qilinadi"
 
 #. js-lingui-id: kNsVJi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10657,13 +10657,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type not found"
-msgstr ""
+msgstr "Vaqt jadvali faoliyati turi topilmadi"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: flatTimelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type with name {0} already exists for this application"
-msgstr ""
+msgstr "Bu ilova uchun {0} nomli vaqt jadvali faoliyati turi allaqachon mavjud"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -10833,25 +10833,25 @@ msgstr "Noma’lum ruxsat talab etiladi."
 #. placeholder {0}: flatTimelineActivityType.action
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity action {0}"
-msgstr ""
+msgstr "Noma’lum vaqt jadvali faoliyati amali: {0}"
 
 #. js-lingui-id: iiqbeU
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity renderer {0}"
-msgstr ""
+msgstr "Noma’lum vaqt jadvali faoliyati rendereri: {0}"
 
 #. js-lingui-id: spJjXJ
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related note"
-msgstr ""
+msgstr "tegishli eslatmaning bog‘lanishini olib tashladi"
 
 #. js-lingui-id: IYBfg3
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related task"
-msgstr ""
+msgstr "tegishli vazifaning bog‘lanishini olib tashladi"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10941,13 +10941,13 @@ msgstr "yangilangan"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related note"
-msgstr ""
+msgstr "tegishli eslatmani yangiladi"
 
 #. js-lingui-id: FoQjXC
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related task"
-msgstr ""
+msgstr "tegishli vazifani yangiladi"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11588,7 +11588,7 @@ msgstr "tomonidan o‘chirib tashlangan"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was linked by"
-msgstr ""
+msgstr "tomonidan bog‘langan"
 
 #. js-lingui-id: tKm/LA
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11600,7 +11600,7 @@ msgstr "tomonidan tiklangan"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was unlinked by"
-msgstr ""
+msgstr "tomonidan bog‘lanishi olib tashlangan"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts

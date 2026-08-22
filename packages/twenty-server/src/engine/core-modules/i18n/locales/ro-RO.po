@@ -343,7 +343,7 @@ msgstr "A apărut o eroare temporară de rețea."
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
-msgstr ""
+msgstr "Există deja un tip de activitate din cronologie cu acest nume pentru această aplicație."
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -1084,7 +1084,7 @@ msgstr "Atașamente legate de fluxul de lucru"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attended a calendar event"
-msgstr ""
+msgstr "a participat la un eveniment din calendar"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -5829,13 +5829,13 @@ msgstr "Layoutul este obligatoriu pentru widgetul cu diagramă cu bare \"{widget
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related note"
-msgstr ""
+msgstr "a asociat o notă asociată"
 
 #. js-lingui-id: ecrchg
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "linked a related task"
-msgstr ""
+msgstr "a asociat o sarcină asociată"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8892,7 +8892,7 @@ msgstr "Număr de mesaje trimise"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "sent or received an email"
-msgstr ""
+msgstr "a trimis sau a primit un e-mail"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10444,17 +10444,17 @@ msgstr "Această adresă suprimată nu mai există."
 #. js-lingui-id: 0GMgIa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
-msgstr ""
+msgstr "Această acțiune a activității din cronologie nu este acceptată"
 
 #. js-lingui-id: O6/sEz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer is not supported"
-msgstr ""
+msgstr "Acest renderer al activității din cronologie nu este acceptat"
 
 #. js-lingui-id: jDoSzT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity renderer requires the type to reference an object"
-msgstr ""
+msgstr "Acest renderer al activității din cronologie necesită ca tipul să facă referire la un obiect"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10631,25 +10631,25 @@ msgstr "Poziția înregistrării activității din cronologie"
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity renderer {0} requires the type to reference an object"
-msgstr ""
+msgstr "Rendererul activității din cronologie {0} necesită ca tipul să facă referire la un obiect"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline activity type describing this event"
-msgstr ""
+msgstr "Tipul de activitate din cronologie care descrie acest eveniment"
 
 #. js-lingui-id: sqmSqj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type label is required"
-msgstr ""
+msgstr "Eticheta tipului de activitate din cronologie este obligatorie"
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type name is required"
-msgstr ""
+msgstr "Numele tipului de activitate din cronologie este obligatoriu"
 
 #. js-lingui-id: kNsVJi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10657,13 +10657,13 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type not found"
-msgstr ""
+msgstr "Tipul de activitate din cronologie nu a fost găsit"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: flatTimelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type with name {0} already exists for this application"
-msgstr ""
+msgstr "Există deja un tip de activitate din cronologie cu numele {0} pentru această aplicație"
 
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -10833,25 +10833,25 @@ msgstr "Este necesară o permisiune necunoscută."
 #. placeholder {0}: flatTimelineActivityType.action
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity action {0}"
-msgstr ""
+msgstr "Acțiune necunoscută a activității din cronologie {0}"
 
 #. js-lingui-id: iiqbeU
 #. placeholder {0}: flatTimelineActivityType.renderer
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity renderer {0}"
-msgstr ""
+msgstr "Renderer necunoscut al activității din cronologie {0}"
 
 #. js-lingui-id: spJjXJ
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related note"
-msgstr ""
+msgstr "a disociat o notă asociată"
 
 #. js-lingui-id: IYBfg3
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "unlinked a related task"
-msgstr ""
+msgstr "a disociat o sarcină asociată"
 
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10941,13 +10941,13 @@ msgstr "actualizat"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related note"
-msgstr ""
+msgstr "a actualizat o notă asociată"
 
 #. js-lingui-id: FoQjXC
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "updated a related task"
-msgstr ""
+msgstr "a actualizat o sarcină asociată"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11588,7 +11588,7 @@ msgstr "a fost șters de"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was linked by"
-msgstr ""
+msgstr "a fost asociat de"
 
 #. js-lingui-id: tKm/LA
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -11600,7 +11600,7 @@ msgstr "a fost restaurat de"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "was unlinked by"
-msgstr ""
+msgstr "a fost disociat de"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
