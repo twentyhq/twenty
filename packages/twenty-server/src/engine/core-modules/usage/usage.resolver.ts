@@ -9,16 +9,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
 import { UsageAnalyticsDTO } from 'src/engine/core-modules/usage/dtos/usage-analytics.dto';
 import {
-  type UsageApplicationBreakdownItem,
   UsageAnalyticsService,
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { consolidateUsageByApplication } from 'src/engine/core-modules/usage/utils/consolidate-usage-by-application.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -101,10 +100,10 @@ export class UsageResolver {
       (ids) => this.resolveUserNames(ids, workspace.id),
     );
 
-    const resolvedUsageByApplication = this.resolveApplicationBreakdown(
-      usageByApplication,
+    const resolvedUsageByApplication = consolidateUsageByApplication({
+      items: usageByApplication,
       flatApplicationMaps,
-    );
+    });
 
     const result: UsageAnalyticsDTO = {
       usageByUser: resolvedUsageByUser.map((item) => ({
@@ -172,38 +171,6 @@ export class UsageResolver {
       ...item,
       label: nameMap.get(item.key),
     }));
-  }
-
-  // Operations an app declared in its manifest get their own slice under the
-  // app name; anything it charged without declaring arrives already folded
-  // into a single app-level slice, so undeclared context strings never reach
-  // a screen. Uninstalled apps are looked up too, otherwise their spend would
-  // drop out of the pie while still counting towards the bill. Keying on the
-  // label also merges two apps sharing a display name, which would otherwise
-  // collide as one chart id.
-  private resolveApplicationBreakdown(
-    items: UsageApplicationBreakdownItem[],
-    flatApplicationMaps: FlatApplicationCacheMaps,
-  ): UsageBreakdownItem[] {
-    const creditsByKey = new Map<string, number>();
-
-    for (const item of items) {
-      const application = flatApplicationMaps.byId[item.applicationId];
-      // Undefined until the upgrade that adds the column has run.
-      const billableOperations = application?.billableOperations ?? {};
-      const declaredOperation = billableOperations[item.operation];
-      const applicationName = application?.name ?? item.applicationId;
-
-      const key = isDefined(declaredOperation)
-        ? `${applicationName} · ${declaredOperation.label}`
-        : applicationName;
-
-      creditsByKey.set(key, (creditsByKey.get(key) ?? 0) + item.creditsUsed);
-    }
-
-    return [...creditsByKey.entries()]
-      .map(([key, creditsUsed]) => ({ key, label: key, creditsUsed }))
-      .sort((a, b) => b.creditsUsed - a.creditsUsed);
   }
 
   private async resolveUserNames(
