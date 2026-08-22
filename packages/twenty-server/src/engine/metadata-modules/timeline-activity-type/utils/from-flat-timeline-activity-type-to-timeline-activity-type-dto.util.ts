@@ -5,12 +5,19 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
   flatTimelineActivityType: FlatTimelineActivityType,
 ): TimelineActivityTypeDTO => ({
   id: flatTimelineActivityType.id,
+  universalIdentifier: flatTimelineActivityType.universalIdentifier,
   name: flatTimelineActivityType.name,
   label: flatTimelineActivityType.label,
   action: flatTimelineActivityType.action,
   icon: flatTimelineActivityType.icon,
-  renderer: flatTimelineActivityType.renderer,
+  renderer: null,
+  frontComponentUniversalIdentifier:
+    flatTimelineActivityType.frontComponentUniversalIdentifier,
   objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,
+  targetRelationFieldUniversalIdentifier:
+    flatTimelineActivityType.targetRelationFieldUniversalIdentifier,
+  triggerFieldUniversalIdentifiers:
+    flatTimelineActivityType.triggerFieldUniversalIdentifiers,
   workspaceId: flatTimelineActivityType.workspaceId,
   applicationId: flatTimelineActivityType.applicationId,
   createdAt: new Date(flatTimelineActivityType.createdAt),

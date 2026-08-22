@@ -107,20 +107,24 @@ export class EntityEventsToDbListener {
       ),
     );
 
-    if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
-      promises.push(
-        this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
-          CreateEventLogFromInternalEvent.name,
-          batchEvent,
-        ),
-      );
-
+    if (action !== DatabaseEventAction.DESTROYED) {
+      // Application-declared routing can use junction objects that are not
+      // audit logged, such as message and calendar event participants.
       promises.push(
         this.entityEventsToDbQueueService.add<
           WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>
         >(
           UpsertTimelineActivityFromInternalEvent.name,
           batchEvent as WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+        ),
+      );
+    }
+
+    if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
+      promises.push(
+        this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+          CreateEventLogFromInternalEvent.name,
+          batchEvent,
         ),
       );
     }

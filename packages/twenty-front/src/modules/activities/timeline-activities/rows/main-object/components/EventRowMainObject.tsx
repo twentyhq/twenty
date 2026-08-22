@@ -4,6 +4,7 @@ import { EventRowItem } from '@/activities/timeline-activities/rows/components/E
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectProps = EventRowDynamicComponentProps;
@@ -34,6 +35,7 @@ export const EventRowMainObject = ({
   labelIdentifierValue,
   event,
   eventAction,
+  eventTypeLabel,
   mainObjectMetadataItem,
   createdAt,
 }: EventRowMainObjectProps) => {
@@ -44,7 +46,9 @@ export const EventRowMainObject = ({
           <StyledRowContainer>
             <StyledRow>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
-              <EventRowItem variant="action">{t`was created by`}</EventRowItem>
+              <EventRowItem variant="action">
+                {eventTypeLabel ?? t`was created by`}
+              </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <EventRowDate createdAt={createdAt} />
@@ -58,6 +62,7 @@ export const EventRowMainObject = ({
           authorFullName={authorFullName}
           labelIdentifierValue={labelIdentifierValue}
           event={event}
+          eventTypeLabel={eventTypeLabel}
           mainObjectMetadataItem={mainObjectMetadataItem}
           createdAt={createdAt}
         />
@@ -69,7 +74,9 @@ export const EventRowMainObject = ({
           <StyledRowContainer>
             <StyledRow>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
-              <EventRowItem variant="action">{t`was deleted by`}</EventRowItem>
+              <EventRowItem variant="action">
+                {eventTypeLabel ?? t`was deleted by`}
+              </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <EventRowDate createdAt={createdAt} />
@@ -83,7 +90,9 @@ export const EventRowMainObject = ({
           <StyledRowContainer>
             <StyledRow>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
-              <EventRowItem variant="action">{t`was restored by`}</EventRowItem>
+              <EventRowItem variant="action">
+                {eventTypeLabel ?? t`was restored by`}
+              </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <EventRowDate createdAt={createdAt} />
@@ -91,7 +100,23 @@ export const EventRowMainObject = ({
         </StyledMainContainer>
       );
     }
-    default:
-      return null;
+    default: {
+      if (!isDefined(eventTypeLabel)) {
+        return null;
+      }
+
+      return (
+        <StyledMainContainer>
+          <StyledRowContainer>
+            <StyledRow>
+              <EventRowItem>{authorFullName}</EventRowItem>
+              <EventRowItem variant="action">{eventTypeLabel}</EventRowItem>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+            </StyledRow>
+            <EventRowDate createdAt={createdAt} />
+          </StyledRowContainer>
+        </StyledMainContainer>
+      );
+    }
   }
 };

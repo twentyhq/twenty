@@ -8,12 +8,13 @@ const timelineActivityTypeById = new Map<string, TimelineActivityType>([
     UPDATED_TYPE_ID,
     {
       id: UPDATED_TYPE_ID,
+      universalIdentifier: UPDATED_TYPE_ID,
       name: 'recordUpdated',
       label: 'updated',
       action: 'updated',
       icon: null,
-      renderer: null,
       objectUniversalIdentifier: null,
+      frontComponentUniversalIdentifier: null,
     },
   ],
 ]);
@@ -24,7 +25,6 @@ describe('getTimelineActivityAction', () => {
       getTimelineActivityAction(
         {
           timelineActivityTypeId: UPDATED_TYPE_ID,
-          name: 'company.created',
           properties: {},
         },
         timelineActivityTypeById,
@@ -32,25 +32,21 @@ describe('getTimelineActivityAction', () => {
     ).toBe('updated');
   });
 
-  it('falls back to the deprecated name for a row written by an old pod', () => {
+  it('returns null when the type does not resolve', () => {
     expect(
       getTimelineActivityAction(
-        {
-          timelineActivityTypeId: null,
-          name: 'company.created',
-          properties: {},
-        },
-        timelineActivityTypeById,
-      ),
-    ).toBe('created');
-  });
-
-  it('returns null when neither representation resolves', () => {
-    expect(
-      getTimelineActivityAction(
-        { timelineActivityTypeId: null, name: null, properties: {} },
+        { timelineActivityTypeId: 'missing', properties: {} },
         timelineActivityTypeById,
       ),
     ).toBeNull();
+  });
+
+  it('falls back to the legacy name for a row written during a rolling upgrade', () => {
+    expect(
+      getTimelineActivityAction(
+        { name: 'company.updated', properties: {} },
+        timelineActivityTypeById,
+      ),
+    ).toBe('updated');
   });
 });

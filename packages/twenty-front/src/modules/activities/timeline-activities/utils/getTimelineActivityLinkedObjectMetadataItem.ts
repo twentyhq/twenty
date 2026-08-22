@@ -33,16 +33,5 @@ export const getTimelineActivityLinkedObjectMetadataItem = ({
     );
   }
 
-  const legacyObjectName = timelineActivity.name?.startsWith('linked-')
-    ? timelineActivity.name.split('.')[0].replace('linked-', '')
-    : timelineActivity.name?.endsWith('.linked')
-      ? timelineActivity.name.split('.')[0]
-      : undefined;
-
-  return isDefined(legacyObjectName)
-    ? objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === legacyObjectName,
-      )
-    : undefined;
+  return undefined;
 };

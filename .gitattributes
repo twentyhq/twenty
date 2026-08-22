@@ -26,3 +26,5 @@
 *.ttf binary
 *.eot binary
 
+# This source previously contained a NUL delimiter; keep its migration diff reviewable.
+packages/twenty-sdk/src/cli/utilities/translations/collect-translatable-strings.ts diff

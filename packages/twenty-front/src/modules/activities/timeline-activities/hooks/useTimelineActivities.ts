@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
+import { useLinkedRecordsIdentifiers } from '@/activities/timeline-activities/hooks/useLinkedRecordsIdentifiers';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -38,16 +38,6 @@ export const useTimelineActivities = (
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
   const { objectMetadataItems: allObjectMetadataItems } =
     useObjectMetadataItems();
-
-  const noteObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note,
-  );
-
-  const taskObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Task,
-  );
 
   const hasTimelineActivityField = timelineActivityMetadata.fields.some(
     (field) =>
@@ -115,24 +105,7 @@ export const useTimelineActivities = (
     objectMetadataItemId: timelineActivityMetadata.id,
   });
 
-  const noteAndTaskObjectMetadataIds = [
-    noteObjectMetadataItem?.id,
-    taskObjectMetadataItem?.id,
-  ].filter(isDefined);
-
-  // Notes and tasks expose a title that we resolve to label their timeline rows.
-  const noteAndTaskLinkedRecordIds = timelineActivities
-    .filter(
-      (timelineActivity) =>
-        isDefined(timelineActivity.linkedObjectMetadataId) &&
-        noteAndTaskObjectMetadataIds.includes(
-          timelineActivity.linkedObjectMetadataId,
-        ),
-    )
-    .map((timelineActivity) => timelineActivity.linkedRecordId)
-    .filter(isDefined);
-
-  useLinkedObjectsTitle(noteAndTaskLinkedRecordIds);
+  useLinkedRecordsIdentifiers({ timelineActivities, objectMetadataItems });
 
   const firstQueryLoading =
     loadingTimelineActivities && timelineActivities.length === 0;

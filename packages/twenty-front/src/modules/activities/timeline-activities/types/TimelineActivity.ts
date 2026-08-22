@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type TimelineActivity = {
@@ -11,6 +12,7 @@ export type TimelineActivity = {
   properties: any;
   name: string | null;
   timelineActivityTypeId: string | null;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
   linkedRecordCachedName: string;
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;

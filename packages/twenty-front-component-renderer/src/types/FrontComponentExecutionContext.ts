@@ -9,6 +9,8 @@ export type FrontComponentExecutionContext = {
   recordId: string | null;
   /** All selected record IDs */
   selectedRecordIds: string[];
+  // Set only when the component is mounted as a timeline activity renderer.
+  timelineActivityId: string | null;
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';
   locale?: AppLocale;

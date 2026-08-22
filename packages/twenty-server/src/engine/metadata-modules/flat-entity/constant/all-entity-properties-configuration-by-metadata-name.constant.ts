@@ -1901,12 +1901,22 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
-    renderer: {
+    frontComponentUniversalIdentifier: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     objectUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    targetRelationFieldUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    triggerFieldUniversalIdentifiers: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

@@ -7,6 +7,9 @@ export type FilterableTimelineActivity = Pick<TimelineActivity, 'properties'> &
   Partial<
     Pick<
       TimelineActivity,
-      'linkedObjectMetadataId' | 'name' | 'timelineActivityTypeId'
+      | 'name'
+      | 'linkedObjectMetadataId'
+      | 'timelineActivityTypeId'
+      | 'timelineActivityTypeSnapshot'
     >
   >;

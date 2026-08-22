@@ -153,6 +153,7 @@ export type { SettingsFrontComponentApplicationManifest } from './settingsFrontC
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export type { TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
 export {

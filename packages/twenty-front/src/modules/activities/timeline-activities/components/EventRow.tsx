@@ -21,6 +21,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTimelineItemContainer = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -102,6 +104,7 @@ export const EventRow = ({
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const { timelineActivityTypeById } = useTimelineActivityTypes();
+  const frontComponents = useAtomStateValue(frontComponentsSelector);
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -109,6 +112,16 @@ export const EventRow = ({
     event,
     timelineActivityTypeById,
   );
+
+  const frontComponentId = isDefined(
+    timelineActivityType?.frontComponentUniversalIdentifier,
+  )
+    ? (frontComponents.find(
+        (frontComponent) =>
+          frontComponent.universalIdentifier ===
+          timelineActivityType.frontComponentUniversalIdentifier,
+      )?.id ?? null)
+    : null;
 
   const timelineActivityAction = getTimelineActivityAction(
     event,
@@ -144,10 +157,6 @@ export const EventRow = ({
     currentWorkspaceMember,
   );
 
-  if (isUndefinedOrNull(mainObjectMetadataItem)) {
-    throw new Error('mainObjectMetadataItem is required');
-  }
-
   return (
     <>
       <StyledTimelineItemContainer>
@@ -171,7 +180,8 @@ export const EventRow = ({
               labelIdentifierValue={labelIdentifier.name}
               event={event}
               eventAction={timelineActivityAction}
-              eventRenderer={timelineActivityType?.renderer ?? null}
+              eventTypeLabel={timelineActivityType?.label}
+              frontComponentId={frontComponentId}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
               createdAt={event.createdAt}
