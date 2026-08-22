@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FeatureFlagKey,
   MetadataWritability,
@@ -19,6 +20,17 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000b1';
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-0000000000b2';
 const OBJECT_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-0000000000c1';
+const SPECIALIZED_RENDERER_CONTRACTS = [
+  {
+    renderer: 'message',
+    objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+  },
+  {
+    renderer: 'calendarEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  },
+] as const;
 
 const featureFlagsMap = {
   [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: false,
@@ -101,7 +113,11 @@ const mapsFrom = <TEntity extends { universalIdentifier: string }>(
 
 const buildCreationArgs = ({
   flatTimelineActivityType = buildTimelineActivityType(),
-  objectUniversalIdentifiers = [OBJECT_UNIVERSAL_IDENTIFIER],
+  objectUniversalIdentifiers = [
+    OBJECT_UNIVERSAL_IDENTIFIER,
+    STANDARD_OBJECTS.message.universalIdentifier,
+    STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  ],
 }: {
   flatTimelineActivityType?: UniversalFlatTimelineActivityType;
   objectUniversalIdentifiers?: string[];
@@ -143,6 +159,10 @@ const buildUpdateArgs = ({
       flatTimelineActivityTypeMaps: mapsFrom(existingTimelineActivityTypes),
       flatObjectMetadataMaps: mapsFrom([
         buildObjectMetadata(OBJECT_UNIVERSAL_IDENTIFIER),
+        buildObjectMetadata(STANDARD_OBJECTS.message.universalIdentifier),
+        buildObjectMetadata(
+          STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+        ),
       ]),
     },
     buildOptions: {
@@ -250,12 +270,84 @@ describe('FlatTimelineActivityTypeValidatorService', () => {
             objectUniversalIdentifier: null,
           }),
         ],
-        flatEntityUpdate: { renderer: 'message' },
+        flatEntityUpdate: { renderer: 'message', action: 'linked' },
       }),
     );
 
     expect(result.errors).toHaveLength(1);
     expect(result.errors[0].message).toContain('requires');
+  });
+
+  it.each(SPECIALIZED_RENDERER_CONTRACTS)(
+    'should accept the $renderer renderer with its linked object contract',
+    ({ renderer, objectUniversalIdentifier }) => {
+      const result = service.validateFlatTimelineActivityTypeCreation(
+        buildCreationArgs({
+          flatTimelineActivityType: buildTimelineActivityType({
+            action: 'linked',
+            renderer,
+            objectUniversalIdentifier,
+          }),
+        }),
+      );
+
+      expect(result.errors).toEqual([]);
+    },
+  );
+
+  it.each(SPECIALIZED_RENDERER_CONTRACTS)(
+    'should reject an unsupported action for the $renderer renderer',
+    ({ renderer, objectUniversalIdentifier }) => {
+      const result = service.validateFlatTimelineActivityTypeCreation(
+        buildCreationArgs({
+          flatTimelineActivityType: buildTimelineActivityType({
+            action: 'updated',
+            renderer,
+            objectUniversalIdentifier,
+          }),
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain('linked');
+    },
+  );
+
+  it.each(SPECIALIZED_RENDERER_CONTRACTS)(
+    'should reject the wrong object for the $renderer renderer',
+    ({ renderer }) => {
+      const result = service.validateFlatTimelineActivityTypeCreation(
+        buildCreationArgs({
+          flatTimelineActivityType: buildTimelineActivityType({
+            action: 'linked',
+            renderer,
+            objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          }),
+        }),
+      );
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].message).toContain('must reference');
+    },
+  );
+
+  it('should validate a partial action update against the existing specialized renderer', () => {
+    const result = service.validateFlatTimelineActivityTypeUpdate(
+      buildUpdateArgs({
+        existingTimelineActivityTypes: [
+          buildTimelineActivityType({
+            action: 'linked',
+            renderer: 'message',
+            objectUniversalIdentifier:
+              STANDARD_OBJECTS.message.universalIdentifier,
+          }),
+        ],
+        flatEntityUpdate: { action: 'updated' },
+      }),
+    );
+
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors[0].message).toContain('linked');
   });
 
   it('should reject binding a type to an object that does not exist', () => {

@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   isTimelineActivityAction,
   isTimelineActivityRenderer,
+  type TimelineActivityAction,
   type TimelineActivityRenderer,
 } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,6 +31,26 @@ const UNBOUND_TIMELINE_ACTIVITY_RENDERERS: TimelineActivityRenderer[] = [
   'mainObject',
   'genericLinked',
 ];
+
+const SPECIALIZED_TIMELINE_ACTIVITY_RENDERER_CONTRACTS: Partial<
+  Record<
+    TimelineActivityRenderer,
+    {
+      action: TimelineActivityAction;
+      objectUniversalIdentifier: string;
+    }
+  >
+> = {
+  message: {
+    action: 'linked',
+    objectUniversalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+  },
+  calendarEvent: {
+    action: 'linked',
+    objectUniversalIdentifier:
+      STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  },
+};
 
 type ValidateTimelineActivityTypePropertiesArgs = {
   flatTimelineActivityType: UniversalFlatTimelineActivityType;
@@ -109,6 +130,44 @@ const validateTimelineActivityTypeProperties = ({
       message: t`Timeline activity renderer ${flatTimelineActivityType.renderer} requires the type to reference an object`,
       userFriendlyMessage: msg`This timeline activity renderer requires the type to reference an object`,
     });
+  }
+
+  const shouldValidateSpecializedRendererContract =
+    !isUpdate ||
+    'renderer' in updatedProperties ||
+    'action' in updatedProperties ||
+    'objectUniversalIdentifier' in updatedProperties;
+  const renderer = flatTimelineActivityType.renderer;
+  const specializedRendererContract = isDefined(renderer)
+    ? SPECIALIZED_TIMELINE_ACTIVITY_RENDERER_CONTRACTS[renderer]
+    : undefined;
+
+  if (
+    shouldValidateSpecializedRendererContract &&
+    isDefined(renderer) &&
+    isDefined(specializedRendererContract)
+  ) {
+    if (
+      flatTimelineActivityType.action !== specializedRendererContract.action
+    ) {
+      errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Timeline activity renderer ${renderer} only supports the ${specializedRendererContract.action} action`,
+        userFriendlyMessage: msg`This timeline activity renderer does not support the selected action`,
+      });
+    }
+
+    if (
+      isDefined(flatTimelineActivityType.objectUniversalIdentifier) &&
+      flatTimelineActivityType.objectUniversalIdentifier !==
+        specializedRendererContract.objectUniversalIdentifier
+    ) {
+      errors.push({
+        code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+        message: t`Timeline activity renderer ${renderer} must reference its supported object`,
+        userFriendlyMessage: msg`This timeline activity renderer does not support the selected object`,
+      });
+    }
   }
 
   return errors;
