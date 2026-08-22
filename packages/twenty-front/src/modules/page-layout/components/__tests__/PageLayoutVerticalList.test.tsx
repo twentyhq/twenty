@@ -1,11 +1,11 @@
 import { PageLayoutVerticalList } from '@/page-layout/components/PageLayoutVerticalList';
+import { makeWidget as makePageLayoutWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagram/contexts/WorkflowDiagramAllowPageScrollContext';
 import { render, screen } from '@testing-library/react';
 import { type ReactNode, useContext } from 'react';
 import {
   PageLayoutTabLayoutMode,
-  type WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -72,28 +72,8 @@ jest.mock('@dnd-kit/react', () => ({
 }));
 
 const makeWidget = (id: string, type: WidgetType): PageLayoutWidget => ({
-  __typename: 'PageLayoutWidget',
-  applicationId: 'application-id',
-  configuration: {
-    configurationType: type as unknown as WidgetConfigurationType,
-  } as PageLayoutWidget['configuration'],
-  createdAt: '2026-08-19T00:00:00.000Z',
-  deletedAt: null,
-  gridPosition: {
-    column: 0,
-    columnSpan: 1,
-    row: 0,
-    rowSpan: 1,
-  },
-  id,
-  isActive: true,
-  isSystemSideEffect: false,
-  objectMetadataId: null,
-  pageLayoutTabId: 'tab-id',
-  title: id,
+  ...makePageLayoutWidget(id, 0, 'tab-id'),
   type,
-  universalIdentifier: `${id}-universal`,
-  updatedAt: '2026-08-19T00:00:00.000Z',
 });
 
 describe('PageLayoutVerticalList', () => {
