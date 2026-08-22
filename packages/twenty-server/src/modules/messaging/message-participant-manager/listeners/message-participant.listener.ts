@@ -77,7 +77,7 @@ export class MessageParticipantListener {
           }
 
           return {
-            name: 'message.linked',
+            legacyName: 'message.linked',
             timelineActivityTypeId,
             properties: {},
             objectSingularName: 'person',
