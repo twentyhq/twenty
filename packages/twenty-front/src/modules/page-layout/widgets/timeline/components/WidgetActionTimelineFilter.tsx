@@ -10,7 +10,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
@@ -35,7 +35,7 @@ export const WidgetActionTimelineFilter = () => {
     ...timelineActivityTypeMaps.byId.values(),
   ].filter(({ isActive }) => isActive !== false);
 
-  if (timelineActivityTypes.length === 0) {
+  if (!isNonEmptyArray(timelineActivityTypes)) {
     return null;
   }
 
@@ -90,7 +90,7 @@ export const WidgetActionTimelineFilter = () => {
               />
             ))}
           </DropdownMenuItemsContainer>
-          {timelineActivityTypeUniversalIdentifiersFilter.length > 0 && (
+          {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>

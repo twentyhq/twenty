@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
@@ -56,7 +56,7 @@ export const fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpda
         'timelineActivityType',
       );
 
-    if (invalidTranslationProperties.length > 0) {
+    if (isNonEmptyArray(invalidTranslationProperties)) {
       throw new TimelineActivityTypeException(
         `Cannot translate timeline activity type properties: ${invalidTranslationProperties.join(', ')}`,
         TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,

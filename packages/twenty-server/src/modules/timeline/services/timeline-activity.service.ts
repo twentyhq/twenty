@@ -54,6 +54,15 @@ const SOURCE_EVENT_ACTIONS: Partial<
   restored: 'restored',
 };
 
+type BuildPayloadsForRuleArgs = {
+  rule: TimelineActivityRule;
+  events: ObjectRecordBaseEvent[];
+  action: DatabaseEventAction;
+  workspaceId: string;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  resolveTimelineActivityType: TimelineActivityTypeResolver;
+};
+
 // Only the diff is worth storing: the rest of an event payload is the record
 // itself, which the timeline reads live.
 const keepDiffOnly = (
@@ -64,8 +73,6 @@ const keepDiffOnly = (
   return isDefined(diff) && Object.keys(diff).length > 0 ? { diff } : {};
 };
 
-// Both event streams write the same row shape; only the linked record, its
-// cached name and the persisted properties differ.
 const buildLinkedPayload = ({
   rule,
   timelineActivityType,
@@ -223,27 +230,17 @@ export class TimelineActivityService {
     );
   }
 
-  private async buildPayloadsForSourceRule({
+  private resolveTimelineActivityTypeForRule({
     rule,
-    events,
-    action,
+    ruleAction,
     workspaceId,
-    flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: {
     rule: TimelineActivityRule;
-    events: ObjectRecordBaseEvent[];
-    action: DatabaseEventAction;
+    ruleAction: TimelineActivityRuleAction;
     workspaceId: string;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     resolveTimelineActivityType: TimelineActivityTypeResolver;
-  }): Promise<TimelineActivityPayload[]> {
-    const ruleAction = SOURCE_EVENT_ACTIONS[action];
-
-    if (!isDefined(ruleAction)) {
-      return [];
-    }
-
+  }): ResolvedTimelineActivityType | undefined {
     const timelineActivityType =
       rule.timelineActivityType ??
       resolveTimelineActivityType({
@@ -260,7 +257,33 @@ export class TimelineActivityService {
         objectUniversalIdentifier:
           rule.sourceFlatObjectMetadata.universalIdentifier,
       });
+    }
 
+    return timelineActivityType;
+  }
+
+  private async buildPayloadsForSourceRule({
+    rule,
+    events,
+    action,
+    workspaceId,
+    flatFieldMetadataMaps,
+    resolveTimelineActivityType,
+  }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
+    const ruleAction = SOURCE_EVENT_ACTIONS[action];
+
+    if (!isDefined(ruleAction)) {
+      return [];
+    }
+
+    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+      rule,
+      ruleAction,
+      workspaceId,
+      resolveTimelineActivityType,
+    });
+
+    if (!isDefined(timelineActivityType)) {
       return [];
     }
 
@@ -334,37 +357,21 @@ export class TimelineActivityService {
     workspaceId,
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
-  }: {
-    rule: TimelineActivityRule;
-    events: ObjectRecordBaseEvent[];
-    action: DatabaseEventAction;
-    workspaceId: string;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    resolveTimelineActivityType: TimelineActivityTypeResolver;
-  }): Promise<TimelineActivityPayload[]> {
+  }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
     const ruleAction = JUNCTION_EVENT_ACTIONS[action];
 
     if (!isDefined(ruleAction) || rule.targetShape.kind !== 'JUNCTION') {
       return [];
     }
 
-    const timelineActivityType =
-      rule.timelineActivityType ??
-      resolveTimelineActivityType({
-        action: ruleAction,
-        objectUniversalIdentifier:
-          rule.sourceFlatObjectMetadata.universalIdentifier,
-      });
+    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+      rule,
+      ruleAction,
+      workspaceId,
+      resolveTimelineActivityType,
+    });
 
     if (!isDefined(timelineActivityType)) {
-      this.timelineActivityMetadataDiagnosticsService.report({
-        workspaceId,
-        reason: 'missing-type',
-        action: ruleAction,
-        objectUniversalIdentifier:
-          rule.sourceFlatObjectMetadata.universalIdentifier,
-      });
-
       return [];
     }
 

@@ -13,7 +13,7 @@ type ObjectOwner = {
   applicationUniversalIdentifier: string;
 };
 
-const haveSameValues = (
+const containSameValues = (
   firstValues: string[] | null,
   secondValues: string[] | null,
 ): boolean => {
@@ -74,7 +74,7 @@ export const isValidTimelineActivityTypeOverride = ({
         timelineActivityType.objectUniversalIdentifier) &&
     overriddenTimelineActivityType.targetRelationFieldUniversalIdentifier ===
       timelineActivityType.targetRelationFieldUniversalIdentifier &&
-    haveSameValues(
+    containSameValues(
       overriddenTimelineActivityType.triggerFieldUniversalIdentifiers,
       timelineActivityType.triggerFieldUniversalIdentifiers,
     )

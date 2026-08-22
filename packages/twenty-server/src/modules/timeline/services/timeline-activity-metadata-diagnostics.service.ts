@@ -14,6 +14,11 @@ type TimelineActivityMetadataIssue = {
   objectUniversalIdentifier: string | null;
 };
 
+type TimelineActivityMetadataIssueDetails = Pick<
+  TimelineActivityMetadataIssue,
+  'action' | 'objectUniversalIdentifier'
+>;
+
 @Injectable()
 export class TimelineActivityMetadataDiagnosticsService {
   private readonly logger = new Logger(
@@ -21,6 +26,18 @@ export class TimelineActivityMetadataDiagnosticsService {
   );
 
   constructor(private readonly metricsService: MetricsService) {}
+
+  reportAll({
+    workspaceId,
+    reason,
+    issues,
+  }: Pick<TimelineActivityMetadataIssue, 'workspaceId' | 'reason'> & {
+    issues: TimelineActivityMetadataIssueDetails[];
+  }): void {
+    for (const issue of issues) {
+      this.report({ workspaceId, reason, ...issue });
+    }
+  }
 
   report(issue: TimelineActivityMetadataIssue): void {
     this.logger.warn(

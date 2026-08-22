@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isTimelineActivityAction } from 'twenty-shared/timeline';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
@@ -62,7 +63,7 @@ export const defineTimelineActivityType: DefineEntity<
   if (
     triggerFieldUniversalIdentifiers &&
     (config.emit?.on !== 'updated' ||
-      triggerFieldUniversalIdentifiers.length === 0)
+      !isNonEmptyArray(triggerFieldUniversalIdentifiers))
   ) {
     errors.push(
       'TimelineActivityType emit.through.triggerFieldUniversalIdentifiers requires an updated event',

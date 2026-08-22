@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
@@ -41,7 +41,7 @@ export const buildTimelineActivitySelfRule = ({
     ...new Set([...defaultActions, ...declaredActions]),
   ];
 
-  if (actions.length === 0) {
+  if (!isNonEmptyArray(actions)) {
     return undefined;
   }
 

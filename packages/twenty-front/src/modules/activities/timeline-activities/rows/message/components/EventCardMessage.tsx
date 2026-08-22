@@ -1,9 +1,8 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -113,10 +112,7 @@ export const EventCardMessage = ({
     return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
   }
 
-  if (
-    message.subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ||
-    message.text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-  ) {
+  if ([message.subject, message.text].some(isFieldValueRestricted)) {
     return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
   }
 

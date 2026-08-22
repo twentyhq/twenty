@@ -66,7 +66,7 @@ export const EventRowMainObject = ({
           eventTypeLabel={eventTypeLabel}
           mainObjectMetadataItem={mainObjectMetadataItem}
           happensAt={happensAt}
-          hasRenderer={hasRenderer === true}
+          hasRenderer={hasRenderer}
         />
       );
     }

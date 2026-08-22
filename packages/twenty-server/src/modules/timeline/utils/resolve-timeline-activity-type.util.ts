@@ -9,7 +9,7 @@ import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/ut
 import { partitionTimelineActivityTypesByValidity } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
 import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
 
-type ResolvableTimelineActivityType = Pick<
+export type ResolvableTimelineActivityType = Pick<
   FlatTimelineActivityType,
   | 'id'
   | 'applicationId'
@@ -59,7 +59,9 @@ export type TimelineActivityTypeResolver = (
 
 export type TimelineActivityTypeResolution = {
   resolveTimelineActivityType: TimelineActivityTypeResolver;
-  conflicts: TimelineActivityTypeResolutionConflict[];
+  effectiveTimelineActivityTypes: ResolvableTimelineActivityType[];
+  routingConflicts: TimelineActivityTypeResolutionConflict[];
+  resolverConflicts: TimelineActivityTypeResolutionConflict[];
   invalidContracts: TimelineActivityTypeResolutionConflict[];
 };
 
@@ -81,17 +83,9 @@ export const toResolvedTimelineActivityType = (
   },
 });
 
-export const buildResolvedTimelineActivityTypeResolver = (
+export const buildTimelineActivityTypeResolution = (
   flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps,
 ): TimelineActivityTypeResolution => {
-  const candidatesByObjectAndAction = new Map<
-    string,
-    ResolvableTimelineActivityType[]
-  >();
-  const candidatesByAction = new Map<
-    TimelineActivityAction,
-    ResolvableTimelineActivityType[]
-  >();
   const allUnvalidatedTimelineActivityTypes = Object.values(
     flatTimelineActivityTypeMaps.byUniversalIdentifier,
   ).filter(isDefined);
@@ -115,79 +109,109 @@ export const buildResolvedTimelineActivityTypeResolver = (
       (timelineActivityType) => timelineActivityType.universalIdentifier,
     ),
   );
+  const candidatesByEmitKey = new Map<
+    string,
+    ResolvableTimelineActivityType[]
+  >();
 
   for (const timelineActivityType of allTimelineActivityTypes) {
+    if (!isDefined(timelineActivityType.action)) {
+      continue;
+    }
+
+    const emitKey = [
+      timelineActivityType.action,
+      timelineActivityType.objectUniversalIdentifier ?? 'ANY_OBJECT',
+      timelineActivityType.targetRelationFieldUniversalIdentifier ?? 'SELF',
+    ].join('|');
+
+    const candidates = candidatesByEmitKey.get(emitKey);
+
+    if (isDefined(candidates)) {
+      candidates.push(timelineActivityType);
+    } else {
+      candidatesByEmitKey.set(emitKey, [timelineActivityType]);
+    }
+  }
+
+  const effectiveTimelineActivityTypes: ResolvableTimelineActivityType[] = [];
+  const routingConflicts: TimelineActivityTypeResolutionConflict[] = [];
+  const resolverConflicts: TimelineActivityTypeResolutionConflict[] = [];
+  const conflictedObjectAndActionKeys = new Set<string>();
+
+  for (const candidates of candidatesByEmitKey.values()) {
+    const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
+      candidates,
+      allTimelineActivityTypeUniversalIdentifiers,
+    );
+
+    if (isDefined(effectiveTimelineActivityType)) {
+      effectiveTimelineActivityTypes.push(effectiveTimelineActivityType);
+      continue;
+    }
+
+    const [candidate] = candidates;
+
+    if (!isDefined(candidate.action)) {
+      continue;
+    }
+
+    const conflict = {
+      action: candidate.action,
+      objectUniversalIdentifier: candidate.objectUniversalIdentifier,
+    };
+
+    if (isDefined(candidate.targetRelationFieldUniversalIdentifier)) {
+      routingConflicts.push(conflict);
+      continue;
+    }
+
+    resolverConflicts.push(conflict);
+
+    if (isDefined(conflict.objectUniversalIdentifier)) {
+      conflictedObjectAndActionKeys.add(
+        `${conflict.objectUniversalIdentifier}|${conflict.action}`,
+      );
+    }
+  }
+
+  const typeByAction = new Map<
+    TimelineActivityAction,
+    ResolvedTimelineActivityType
+  >();
+  const typeByObjectAndAction = new Map<string, ResolvedTimelineActivityType>();
+  const suppressedObjectAndActionKeys = new Set<string>();
+
+  for (const timelineActivityType of effectiveTimelineActivityTypes) {
+    const { action, objectUniversalIdentifier } = timelineActivityType;
+
     if (
-      !isDefined(timelineActivityType.action) ||
+      !isDefined(action) ||
       isDefined(timelineActivityType.targetRelationFieldUniversalIdentifier)
     ) {
       continue;
     }
 
-    const { action, objectUniversalIdentifier } = timelineActivityType;
-
     if (!isDefined(objectUniversalIdentifier)) {
-      candidatesByAction.set(action, [
-        ...(candidatesByAction.get(action) ?? []),
-        timelineActivityType,
-      ]);
+      if (timelineActivityType.isActive) {
+        typeByAction.set(
+          action,
+          toResolvedTimelineActivityType(timelineActivityType),
+        );
+      }
 
       continue;
     }
 
     const key = `${objectUniversalIdentifier}|${action}`;
 
-    candidatesByObjectAndAction.set(key, [
-      ...(candidatesByObjectAndAction.get(key) ?? []),
-      timelineActivityType,
-    ]);
-  }
-
-  const conflicts: TimelineActivityTypeResolutionConflict[] = [];
-  const typeByAction = new Map<
-    TimelineActivityAction,
-    ResolvedTimelineActivityType
-  >();
-  const typeByObjectAndAction = new Map<string, ResolvedTimelineActivityType>();
-  const conflictedObjectAndActionKeys = new Set<string>();
-  const suppressedObjectAndActionKeys = new Set<string>();
-
-  for (const [action, candidates] of candidatesByAction) {
-    const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
-      candidates,
-      allTimelineActivityTypeUniversalIdentifiers,
-    );
-
-    if (effectiveTimelineActivityType?.isActive === true) {
-      typeByAction.set(
-        action,
-        toResolvedTimelineActivityType(effectiveTimelineActivityType),
-      );
-    } else if (!isDefined(effectiveTimelineActivityType)) {
-      conflicts.push({ action, objectUniversalIdentifier: null });
-    }
-  }
-
-  for (const [key, candidates] of candidatesByObjectAndAction) {
-    const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
-      candidates,
-      allTimelineActivityTypeUniversalIdentifiers,
-    );
-
-    if (effectiveTimelineActivityType?.isActive === true) {
+    if (timelineActivityType.isActive) {
       typeByObjectAndAction.set(
         key,
-        toResolvedTimelineActivityType(effectiveTimelineActivityType),
+        toResolvedTimelineActivityType(timelineActivityType),
       );
-    } else if (isDefined(effectiveTimelineActivityType)) {
-      suppressedObjectAndActionKeys.add(key);
     } else {
-      const { action, objectUniversalIdentifier } = candidates[0];
-
-      if (isDefined(action) && isDefined(objectUniversalIdentifier)) {
-        conflicts.push({ action, objectUniversalIdentifier });
-        conflictedObjectAndActionKeys.add(key);
-      }
+      suppressedObjectAndActionKeys.add(key);
     }
   }
 
@@ -216,7 +240,9 @@ export const buildResolvedTimelineActivityTypeResolver = (
 
   return {
     resolveTimelineActivityType,
-    conflicts,
+    effectiveTimelineActivityTypes,
+    routingConflicts,
+    resolverConflicts,
     invalidContracts: invalidTimelineActivityTypes.flatMap(
       ({ action, objectUniversalIdentifier }) =>
         isDefined(action) ? [{ action, objectUniversalIdentifier }] : [],

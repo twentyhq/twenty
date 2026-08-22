@@ -1,5 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
+import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type TimelineActivity = {
@@ -21,13 +21,13 @@ export type TimelineActivity = {
   __typename: 'TimelineActivity';
 } & Record<string, unknown>;
 
-export type TimelineActivityWithRecord = TimelineActivity & {
+export type TimelineActivityWithLinkedRecord = TimelineActivity & {
   linkedRecordId: string;
   linkedObjectMetadataId: string;
 };
 
 export const isTimelineActivityWithLinkedRecord = (
   timelineActivity: TimelineActivity,
-): timelineActivity is TimelineActivityWithRecord =>
+): timelineActivity is TimelineActivityWithLinkedRecord =>
   isDefined(timelineActivity.linkedObjectMetadataId) &&
   isDefined(timelineActivity.linkedRecordId);

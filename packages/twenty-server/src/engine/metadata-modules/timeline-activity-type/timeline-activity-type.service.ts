@@ -47,14 +47,8 @@ export class TimelineActivityTypeService {
     input: UpdateTimelineActivityTypeInput;
     workspaceId: string;
   }): Promise<TimelineActivityTypeDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-    const { flatTimelineActivityTypeMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatTimelineActivityTypeMaps'] },
-      );
+    const { workspaceCustomFlatApplication, flatTimelineActivityTypeMaps } =
+      await this.getWorkspaceUpdateContext(workspaceId);
     const flatTimelineActivityTypeToUpdate =
       fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateOrThrow(
         {
@@ -82,14 +76,8 @@ export class TimelineActivityTypeService {
     id: string;
     workspaceId: string;
   }): Promise<TimelineActivityTypeDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-    const { flatTimelineActivityTypeMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatTimelineActivityTypeMaps'] },
-      );
+    const { workspaceCustomFlatApplication, flatTimelineActivityTypeMaps } =
+      await this.getWorkspaceUpdateContext(workspaceId);
     const existingFlatTimelineActivityType = findFlatEntityByIdInFlatEntityMaps(
       { flatEntityId: id, flatEntityMaps: flatTimelineActivityTypeMaps },
     );
@@ -122,6 +110,23 @@ export class TimelineActivityTypeService {
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
     });
+  }
+
+  private async getWorkspaceUpdateContext(workspaceId: string) {
+    const [applicationContext, metadataMaps] = await Promise.all([
+      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      ),
+      this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatTimelineActivityTypeMaps'] },
+      ),
+    ]);
+
+    return {
+      workspaceCustomFlatApplication:
+        applicationContext.workspaceCustomFlatApplication,
+      flatTimelineActivityTypeMaps: metadataMaps.flatTimelineActivityTypeMaps,
+    };
   }
 
   private async persistUpdate({

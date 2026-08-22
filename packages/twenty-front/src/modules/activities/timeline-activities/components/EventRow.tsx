@@ -86,6 +86,24 @@ type EventRowProps = {
   event: TimelineActivity;
 };
 
+const getTimelineActivityRenderer = ({
+  standardRenderer,
+  frontComponentId,
+}: {
+  standardRenderer: ReturnType<typeof getStandardTimelineActivityRenderer>;
+  frontComponentId: string | null;
+}): TimelineActivityRenderer | null => {
+  if (isDefined(standardRenderer)) {
+    return { type: 'standard', Component: standardRenderer };
+  }
+
+  if (isDefined(frontComponentId)) {
+    return { type: 'frontComponent', frontComponentId };
+  }
+
+  return null;
+};
+
 export const EventRow = ({
   isLastEvent,
   event,
@@ -113,7 +131,7 @@ export const EventRow = ({
 
   const rendererUniversalIdentifier =
     timelineActivityType?.frontComponentUniversalIdentifier;
-  const StandardRenderer = getStandardTimelineActivityRenderer(
+  const standardRenderer = getStandardTimelineActivityRenderer(
     rendererUniversalIdentifier,
   );
   const frontComponentId = isDefined(rendererUniversalIdentifier)
@@ -122,11 +140,10 @@ export const EventRow = ({
           frontComponent.universalIdentifier === rendererUniversalIdentifier,
       )?.id ?? null)
     : null;
-  const renderer: TimelineActivityRenderer | null = isDefined(StandardRenderer)
-    ? { type: 'standard', Component: StandardRenderer }
-    : isDefined(frontComponentId)
-      ? { type: 'frontComponent', frontComponentId }
-      : null;
+  const renderer = getTimelineActivityRenderer({
+    standardRenderer,
+    frontComponentId,
+  });
 
   const timelineActivityAction = getTimelineActivityAction(
     event,

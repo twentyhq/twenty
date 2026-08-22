@@ -210,8 +210,6 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
     { objectMetadataSingularName: 'company', id: COMPANY_ID },
   ];
 
-// Pins the write-path behavior that the timeline activity rule engine must
-// reproduce.
 describe('timeline activity write path (integration)', () => {
   beforeAll(async () => {
     const response = await makeMetadataAPIRequest({

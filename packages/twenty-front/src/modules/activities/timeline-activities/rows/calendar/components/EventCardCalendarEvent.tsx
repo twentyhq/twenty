@@ -2,9 +2,12 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldValueRestricted,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
@@ -150,9 +153,7 @@ export const EventCardCalendarEvent = ({
     return <CalendarEventNotSharedContent />;
   }
 
-  if (
-    calendarEvent.title === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-  ) {
+  if (isFieldValueRestricted(calendarEvent.title)) {
     return <CalendarEventNotSharedContent />;
   }
 
@@ -192,8 +193,8 @@ export const EventCardCalendarEvent = ({
           <StyledCalendarEventTitle>
             {calendarEvent.title}
           </StyledCalendarEventTitle>
-          {((calendarEvent.calendarEventParticipants?.length ?? 0) > 0 ||
-            (calendarEvent.callRecordings?.length ?? 0) > 0) && (
+          {(isNonEmptyArray(calendarEvent.calendarEventParticipants) ||
+            isNonEmptyArray(calendarEvent.callRecordings)) && (
             <CalendarEventParticipantsAvatarGroup
               participants={calendarEvent.calendarEventParticipants ?? []}
               callRecordings={calendarEvent.callRecordings ?? []}

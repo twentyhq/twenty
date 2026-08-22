@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -86,6 +86,6 @@ export const useLinkedRecordsIdentifiers = ({
 
   return useCombinedFindManyRecords({
     operationSignatures,
-    skip: operationSignatures.length === 0,
+    skip: !isNonEmptyArray(operationSignatures),
   });
 };

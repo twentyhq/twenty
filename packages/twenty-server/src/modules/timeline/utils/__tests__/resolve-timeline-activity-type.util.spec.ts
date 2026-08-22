@@ -1,11 +1,13 @@
 import {
-  buildResolvedTimelineActivityTypeResolver,
+  buildTimelineActivityTypeResolution,
   type TimelineActivityTypeResolutionMaps,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
 const SHARED_LINKED_ID = '00000000-0000-4000-8000-000000000001';
 const NOTE_LINKED_ID = '00000000-0000-4000-8000-000000000002';
 const NOTE_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000010';
+const NOTE_TARGETS_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-000000000105';
 const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-000000000020';
 const APPLICATION_ID = '00000000-0000-4000-8000-000000000030';
@@ -57,9 +59,10 @@ const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
   },
 };
 
-describe('buildResolvedTimelineActivityTypeResolver', () => {
-  const { resolveTimelineActivityType } =
-    buildResolvedTimelineActivityTypeResolver(flatTimelineActivityTypeMaps);
+describe('buildTimelineActivityTypeResolution', () => {
+  const { resolveTimelineActivityType } = buildTimelineActivityTypeResolution(
+    flatTimelineActivityTypeMaps,
+  );
 
   it('returns the object-bound type and its immutable render snapshot', () => {
     expect(
@@ -94,7 +97,7 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
 
   it('does not fall back when the matching object type is inactive', () => {
     const { resolveTimelineActivityType: resolver } =
-      buildResolvedTimelineActivityTypeResolver({
+      buildTimelineActivityTypeResolution({
         ...flatTimelineActivityTypeMaps,
         byUniversalIdentifier: {
           ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
@@ -115,7 +118,7 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
 
   it('stores workspace presentation overrides in the durable snapshot', () => {
     const { resolveTimelineActivityType: resolver } =
-      buildResolvedTimelineActivityTypeResolver({
+      buildTimelineActivityTypeResolution({
         ...flatTimelineActivityTypeMaps,
         byUniversalIdentifier: {
           ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
@@ -138,22 +141,69 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
   });
 
   it('does not treat a routed type as a source record resolver', () => {
-    const { resolveTimelineActivityType: resolver } =
-      buildResolvedTimelineActivityTypeResolver({
-        objectMetadataByUniversalIdentifier:
-          flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
-        byUniversalIdentifier: {
-          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
-          routedNoteLinked: {
-            ...noteLinkedTimelineActivityType,
-            id: '00000000-0000-4000-8000-000000000004',
-            universalIdentifier: '00000000-0000-4000-8000-000000000104',
-            targetRelationFieldUniversalIdentifier:
-              '00000000-0000-4000-8000-000000000105',
-          },
+    const {
+      resolveTimelineActivityType: resolver,
+      effectiveTimelineActivityTypes,
+    } = buildTimelineActivityTypeResolution({
+      objectMetadataByUniversalIdentifier:
+        flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+      byUniversalIdentifier: {
+        ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+        routedNoteLinked: {
+          ...noteLinkedTimelineActivityType,
+          id: '00000000-0000-4000-8000-000000000004',
+          universalIdentifier: '00000000-0000-4000-8000-000000000104',
+          targetRelationFieldUniversalIdentifier:
+            NOTE_TARGETS_UNIVERSAL_IDENTIFIER,
         },
-      });
+      },
+    });
 
+    expect(
+      resolver({
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      })?.id,
+    ).toBe(NOTE_LINKED_ID);
+    expect(effectiveTimelineActivityTypes.map(({ id }) => id)).toContain(
+      '00000000-0000-4000-8000-000000000004',
+    );
+  });
+
+  it('isolates a routed emit conflict from the source record resolver', () => {
+    const routedTimelineActivityType = {
+      ...noteLinkedTimelineActivityType,
+      id: '00000000-0000-4000-8000-000000000004',
+      universalIdentifier: '00000000-0000-4000-8000-000000000104',
+      targetRelationFieldUniversalIdentifier: NOTE_TARGETS_UNIVERSAL_IDENTIFIER,
+    };
+    const {
+      resolveTimelineActivityType: resolver,
+      routingConflicts,
+      effectiveTimelineActivityTypes,
+    } = buildTimelineActivityTypeResolution({
+      objectMetadataByUniversalIdentifier:
+        flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+      byUniversalIdentifier: {
+        ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+        routed: routedTimelineActivityType,
+        duplicateRouted: {
+          ...routedTimelineActivityType,
+          id: '00000000-0000-4000-8000-000000000005',
+          universalIdentifier: '00000000-0000-4000-8000-000000000106',
+        },
+      },
+    });
+
+    expect(routingConflicts).toEqual([
+      {
+        action: 'linked',
+        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+      },
+    ]);
+    expect(effectiveTimelineActivityTypes.map(({ id }) => id)).not.toContain(
+      routedTimelineActivityType.id,
+    );
     expect(
       resolver({
         action: 'linked',
@@ -163,19 +213,22 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
   });
 
   it('isolates an ambiguous object contract without falling back', () => {
-    const { resolveTimelineActivityType: resolver, conflicts } =
-      buildResolvedTimelineActivityTypeResolver({
-        objectMetadataByUniversalIdentifier:
-          flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
-        byUniversalIdentifier: {
-          ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
-          duplicate: {
-            ...noteLinkedTimelineActivityType,
-            id: '00000000-0000-4000-8000-000000000003',
-            universalIdentifier: '00000000-0000-4000-8000-000000000103',
-          },
+    const {
+      resolveTimelineActivityType: resolver,
+      routingConflicts,
+      resolverConflicts,
+    } = buildTimelineActivityTypeResolution({
+      objectMetadataByUniversalIdentifier:
+        flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+      byUniversalIdentifier: {
+        ...flatTimelineActivityTypeMaps.byUniversalIdentifier,
+        duplicate: {
+          ...noteLinkedTimelineActivityType,
+          id: '00000000-0000-4000-8000-000000000003',
+          universalIdentifier: '00000000-0000-4000-8000-000000000103',
         },
-      });
+      },
+    });
 
     expect(
       resolver({
@@ -189,18 +242,19 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
         objectUniversalIdentifier: '00000000-0000-4000-8000-000000000099',
       })?.id,
     ).toBe(SHARED_LINKED_ID);
-    expect(conflicts).toEqual([
+    expect(resolverConflicts).toEqual([
       {
         action: 'linked',
         objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
       },
     ]);
+    expect(routingConflicts).toEqual([]);
   });
 
   it('selects an explicit override deterministically', () => {
     const overrideUniversalIdentifier = '00000000-0000-4000-8000-000000000103';
-    const { resolveTimelineActivityType: resolver, conflicts } =
-      buildResolvedTimelineActivityTypeResolver({
+    const { resolveTimelineActivityType: resolver, resolverConflicts } =
+      buildTimelineActivityTypeResolution({
         objectMetadataByUniversalIdentifier:
           flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
         byUniversalIdentifier: {
@@ -223,12 +277,12 @@ describe('buildResolvedTimelineActivityTypeResolver', () => {
         objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
       })?.snapshot.universalIdentifier,
     ).toBe(overrideUniversalIdentifier);
-    expect(conflicts).toEqual([]);
+    expect(resolverConflicts).toEqual([]);
   });
 
   it('ignores and reports an implicit foreign-object takeover', () => {
     const { resolveTimelineActivityType: resolver, invalidContracts } =
-      buildResolvedTimelineActivityTypeResolver({
+      buildTimelineActivityTypeResolution({
         objectMetadataByUniversalIdentifier:
           flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
         byUniversalIdentifier: {

@@ -8,7 +8,7 @@ import {
   isTimelineActivityAction,
 } from 'twenty-shared/timeline';
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -23,16 +23,19 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
 
+type TimelineActivityTypeValidationMaps =
+  MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'timelineActivityType'>;
+
+type TimelineActivityTypeValidationResult = FailedFlatEntityValidation<
+  'timelineActivityType',
+  'create' | 'update'
+>;
+
 @Injectable()
 export class FlatTimelineActivityTypeValidatorService {
   public validateFlatTimelineActivityTypeCreation({
     flatEntityToValidate: flatTimelineActivityType,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
-      flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
-      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: validationMaps,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.timelineActivityType
   >): FailedFlatEntityValidation<'timelineActivityType', 'create'> {
@@ -44,13 +47,6 @@ export class FlatTimelineActivityTypeValidatorService {
       metadataName: 'timelineActivityType',
       type: 'create',
     });
-    const validationMaps = {
-      flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
-      flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
-      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-    };
-
     this.validateTimelineActivityTypeConfiguration({
       timelineActivityType: flatTimelineActivityType,
       validationMaps,
@@ -102,9 +98,6 @@ export class FlatTimelineActivityTypeValidatorService {
   >): FailedFlatEntityValidation<'timelineActivityType', 'update'> {
     const {
       flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
-      flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
-      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
     } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -133,16 +126,9 @@ export class FlatTimelineActivityTypeValidatorService {
       ...flatEntityUpdate,
     };
 
-    const validationMaps = {
-      flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
-      flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
-      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-    };
-
     this.validateTimelineActivityTypeConfiguration({
       timelineActivityType: updatedTimelineActivityType,
-      validationMaps,
+      validationMaps: optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
       validationResult,
     });
 
@@ -155,11 +141,8 @@ export class FlatTimelineActivityTypeValidatorService {
     validationResult,
   }: {
     timelineActivityType: UniversalFlatTimelineActivityType;
-    validationMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'timelineActivityType'>;
-    validationResult: FailedFlatEntityValidation<
-      'timelineActivityType',
-      'create' | 'update'
-    >;
+    validationMaps: TimelineActivityTypeValidationMaps;
+    validationResult: TimelineActivityTypeValidationResult;
   }): void {
     if (!isNonEmptyString(timelineActivityType.name)) {
       validationResult.errors.push({
@@ -226,11 +209,8 @@ export class FlatTimelineActivityTypeValidatorService {
     validationResult,
   }: {
     timelineActivityType: UniversalFlatTimelineActivityType;
-    validationMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'timelineActivityType'>;
-    validationResult: FailedFlatEntityValidation<
-      'timelineActivityType',
-      'create' | 'update'
-    >;
+    validationMaps: TimelineActivityTypeValidationMaps;
+    validationResult: TimelineActivityTypeValidationResult;
   }): void {
     const {
       objectUniversalIdentifier,
@@ -353,7 +333,7 @@ export class FlatTimelineActivityTypeValidatorService {
       const hasInvalidTriggerField =
         timelineActivityType.action !== 'updated' ||
         !isDefined(targetRelationFieldUniversalIdentifier) ||
-        triggerFieldUniversalIdentifiers.length === 0 ||
+        !isNonEmptyArray(triggerFieldUniversalIdentifiers) ||
         new Set(triggerFieldUniversalIdentifiers).size !==
           triggerFieldUniversalIdentifiers.length ||
         triggerFieldUniversalIdentifiers.some((universalIdentifier) => {
@@ -420,11 +400,8 @@ export class FlatTimelineActivityTypeValidatorService {
     validationResult,
   }: {
     timelineActivityType: UniversalFlatTimelineActivityType;
-    validationMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'timelineActivityType'>;
-    validationResult: FailedFlatEntityValidation<
-      'timelineActivityType',
-      'create' | 'update'
-    >;
+    validationMaps: TimelineActivityTypeValidationMaps;
+    validationResult: TimelineActivityTypeValidationResult;
   }): void {
     if (!isDefined(timelineActivityType.action)) {
       return;

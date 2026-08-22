@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { TimelineException } from 'src/modules/timeline/exceptions/timeline.exception';
+import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 import {
-  buildResolvedTimelineActivityTypeResolver,
+  buildTimelineActivityTypeResolution,
   toResolvedTimelineActivityType,
   type ResolvedTimelineActivityType,
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { TimelineException } from 'src/modules/timeline/exceptions/timeline.exception';
-import { isDefined } from 'twenty-shared/utils';
-import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 
 @Injectable()
 export class TimelineActivityTypeCacheService {
@@ -33,28 +34,23 @@ export class TimelineActivityTypeCacheService {
         },
       );
 
-    const { resolveTimelineActivityType, conflicts, invalidContracts } =
-      buildResolvedTimelineActivityTypeResolver({
+    const { resolveTimelineActivityType, resolverConflicts, invalidContracts } =
+      buildTimelineActivityTypeResolution({
         ...flatTimelineActivityTypeMaps,
         objectMetadataByUniversalIdentifier:
           flatObjectMetadataMaps.byUniversalIdentifier,
       });
 
-    for (const conflict of conflicts) {
-      this.timelineActivityMetadataDiagnosticsService.report({
-        workspaceId,
-        reason: 'ambiguous-resolver',
-        ...conflict,
-      });
-    }
-
-    for (const invalidContract of invalidContracts) {
-      this.timelineActivityMetadataDiagnosticsService.report({
-        workspaceId,
-        reason: 'invalid-contract',
-        ...invalidContract,
-      });
-    }
+    this.timelineActivityMetadataDiagnosticsService.reportAll({
+      workspaceId,
+      reason: 'ambiguous-resolver',
+      issues: resolverConflicts,
+    });
+    this.timelineActivityMetadataDiagnosticsService.reportAll({
+      workspaceId,
+      reason: 'invalid-contract',
+      issues: invalidContracts,
+    });
 
     return resolveTimelineActivityType;
   }

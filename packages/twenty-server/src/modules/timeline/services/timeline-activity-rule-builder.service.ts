@@ -7,11 +7,9 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { partitionTimelineActivityTypesByValidity } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
-import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
-import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 import {
+  buildTimelineActivityTypeResolution,
   toResolvedTimelineActivityType,
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
@@ -30,7 +28,6 @@ type TimelineActivityRulesForEventBatch = {
 export class TimelineActivityRuleBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly timelineActivityTypeCacheService: TimelineActivityTypeCacheService,
     private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
 
@@ -57,77 +54,39 @@ export class TimelineActivityRuleBuilderService {
         },
       );
 
-    const unvalidatedTimelineActivityTypes = Object.values(
-      flatTimelineActivityTypeMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-    const { validTimelineActivityTypes: timelineActivityTypes } =
-      partitionTimelineActivityTypesByValidity({
-        timelineActivityTypes: unvalidatedTimelineActivityTypes,
-        objectMetadataByUniversalIdentifier:
-          flatObjectMetadataMaps.byUniversalIdentifier,
-        timelineActivityTypeByUniversalIdentifier:
-          flatTimelineActivityTypeMaps.byUniversalIdentifier,
-      });
-    const allTimelineActivityTypeUniversalIdentifiers = new Set(
-      timelineActivityTypes.map(
-        (timelineActivityType) => timelineActivityType.universalIdentifier,
-      ),
+    const {
+      effectiveTimelineActivityTypes,
+      routingConflicts,
+      resolverConflicts,
+      invalidContracts,
+      resolveTimelineActivityType,
+    } = buildTimelineActivityTypeResolution({
+      ...flatTimelineActivityTypeMaps,
+      objectMetadataByUniversalIdentifier:
+        flatObjectMetadataMaps.byUniversalIdentifier,
+    });
+
+    this.timelineActivityMetadataDiagnosticsService.reportAll({
+      workspaceId,
+      reason: 'ambiguous-declared-rule',
+      issues: routingConflicts,
+    });
+    this.timelineActivityMetadataDiagnosticsService.reportAll({
+      workspaceId,
+      reason: 'ambiguous-resolver',
+      issues: resolverConflicts,
+    });
+    this.timelineActivityMetadataDiagnosticsService.reportAll({
+      workspaceId,
+      reason: 'invalid-contract',
+      issues: invalidContracts,
+    });
+
+    const activeTimelineActivityTypes = effectiveTimelineActivityTypes.filter(
+      (timelineActivityType) => timelineActivityType.isActive,
     );
-    const declaredCandidatesByEmitKey = new Map<
-      string,
-      typeof timelineActivityTypes
-    >();
 
-    for (const timelineActivityType of timelineActivityTypes) {
-      if (
-        !isDefined(timelineActivityType.action) ||
-        !isDefined(timelineActivityType.objectUniversalIdentifier)
-      ) {
-        continue;
-      }
-
-      const emitKey = [
-        timelineActivityType.action,
-        timelineActivityType.objectUniversalIdentifier,
-        timelineActivityType.targetRelationFieldUniversalIdentifier ?? 'SELF',
-      ].join('|');
-
-      declaredCandidatesByEmitKey.set(emitKey, [
-        ...(declaredCandidatesByEmitKey.get(emitKey) ?? []),
-        timelineActivityType,
-      ]);
-    }
-
-    const effectiveDeclaredTimelineActivityTypes: typeof timelineActivityTypes =
-      [];
-
-    for (const candidates of declaredCandidatesByEmitKey.values()) {
-      const effectiveTimelineActivityType = resolveTimelineActivityTypeOverride(
-        candidates,
-        allTimelineActivityTypeUniversalIdentifiers,
-      );
-
-      if (!isDefined(effectiveTimelineActivityType)) {
-        const [candidate] = candidates;
-
-        this.timelineActivityMetadataDiagnosticsService.report({
-          workspaceId,
-          reason: 'ambiguous-declared-rule',
-          action: candidate.action ?? 'unknown',
-          objectUniversalIdentifier: candidate.objectUniversalIdentifier,
-        });
-
-        continue;
-      }
-
-      if (effectiveTimelineActivityType.isActive) {
-        effectiveDeclaredTimelineActivityTypes.push(
-          effectiveTimelineActivityType,
-        );
-      }
-    }
-
-    const declaredThroughRules = effectiveDeclaredTimelineActivityTypes
+    const declaredThroughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {
         if (
           !isDefined(timelineActivityType.action) ||
@@ -188,7 +147,7 @@ export class TimelineActivityRuleBuilderService {
 
     const selfRule = buildTimelineActivitySelfRule({
       flatObjectMetadata,
-      timelineActivityTypes: effectiveDeclaredTimelineActivityTypes,
+      timelineActivityTypes: activeTimelineActivityTypes,
     });
 
     const sourceRules = [
@@ -208,10 +167,7 @@ export class TimelineActivityRuleBuilderService {
       sourceRules,
       junctionRules,
       flatFieldMetadataMaps,
-      resolveTimelineActivityType:
-        await this.timelineActivityTypeCacheService.getTimelineActivityTypeResolver(
-          workspaceId,
-        ),
+      resolveTimelineActivityType,
     };
   }
 }
