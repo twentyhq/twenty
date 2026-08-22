@@ -53,11 +53,7 @@ const buildCreationArgs = ({
         })),
       ),
     },
-    buildOptions: {
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      isSystemBuild: false,
-    },
-  }) as unknown as Parameters<
+  }) satisfies Parameters<
     FlatTimelineActivityTypeValidatorService['validateFlatTimelineActivityTypeCreation']
   >[0];
 
@@ -85,7 +81,7 @@ const buildUpdateArgs = ({
       applicationUniversalIdentifier: callerApplicationUniversalIdentifier,
       isSystemBuild: false,
     },
-  }) as unknown as Parameters<
+  }) satisfies Parameters<
     FlatTimelineActivityTypeValidatorService['validateFlatTimelineActivityTypeUpdate']
   >[0];
 
@@ -105,7 +101,7 @@ const buildDeletionArgs = ({
       applicationUniversalIdentifier: callerApplicationUniversalIdentifier,
       isSystemBuild: false,
     },
-  }) as unknown as Parameters<
+  }) satisfies Parameters<
     FlatTimelineActivityTypeValidatorService['validateFlatTimelineActivityTypeDeletion']
   >[0];
 

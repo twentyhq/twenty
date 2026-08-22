@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   isTimelineActivityAction,
   isTimelineActivityRenderer,
@@ -22,8 +21,7 @@ import {
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
-import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 // The two renderers that draw from the row itself rather than from a linked
 // record, so they need no object on the type.
@@ -148,17 +146,23 @@ const validateTimelineActivityTypeNameUniqueness = ({
 
 type ValidateTimelineActivityTypeObjectBindingArgs = {
   flatTimelineActivityType: UniversalFlatTimelineActivityType;
-  existingObjectUniversalIdentifiers: string[];
+  flatObjectMetadataMaps: {
+    byUniversalIdentifier: Partial<
+      Record<string, { universalIdentifier: string }>
+    >;
+  };
 };
 
 const validateTimelineActivityTypeObjectBinding = ({
   flatTimelineActivityType,
-  existingObjectUniversalIdentifiers,
+  flatObjectMetadataMaps,
 }: ValidateTimelineActivityTypeObjectBindingArgs): FlatEntityValidationError[] => {
   if (
     !isDefined(flatTimelineActivityType.objectUniversalIdentifier) ||
-    existingObjectUniversalIdentifiers.includes(
-      flatTimelineActivityType.objectUniversalIdentifier,
+    isDefined(
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        flatTimelineActivityType.objectUniversalIdentifier
+      ],
     )
   ) {
     return [];
@@ -173,12 +177,31 @@ const validateTimelineActivityTypeObjectBinding = ({
   ];
 };
 
-const getExistingObjectUniversalIdentifiers = (
-  flatObjectMetadataMaps: MetadataUniversalFlatEntityMaps<'objectMetadata'>,
-): string[] =>
-  Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
-    .filter(isDefined)
-    .map((flatObjectMetadata) => flatObjectMetadata.universalIdentifier);
+type TimelineActivityTypeValidationMaps = {
+  flatTimelineActivityTypeMaps: MetadataUniversalFlatEntityMaps<'timelineActivityType'>;
+  flatObjectMetadataMaps: ValidateTimelineActivityTypeObjectBindingArgs['flatObjectMetadataMaps'];
+};
+
+type TimelineActivityTypeCreationValidationArgs = {
+  flatEntityToValidate: UniversalFlatTimelineActivityType;
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: TimelineActivityTypeValidationMaps;
+};
+
+type TimelineActivityTypeDeletionValidationArgs = {
+  flatEntityToValidate: UniversalFlatTimelineActivityType;
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: Pick<
+    TimelineActivityTypeValidationMaps,
+    'flatTimelineActivityTypeMaps'
+  >;
+  buildOptions: WorkspaceMigrationBuilderOptions;
+};
+
+type TimelineActivityTypeUpdateValidationArgs = {
+  universalIdentifier: string;
+  flatEntityUpdate: UniversalFlatEntityUpdate<'timelineActivityType'>;
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: TimelineActivityTypeValidationMaps;
+  buildOptions: WorkspaceMigrationBuilderOptions;
+};
 
 @Injectable()
 export class FlatTimelineActivityTypeValidatorService {
@@ -188,9 +211,10 @@ export class FlatTimelineActivityTypeValidatorService {
       flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     },
-  }: UniversalFlatEntityValidationArgs<
-    typeof ALL_METADATA_NAME.timelineActivityType
-  >): FailedFlatEntityValidation<'timelineActivityType', 'create'> {
+  }: TimelineActivityTypeCreationValidationArgs): FailedFlatEntityValidation<
+    'timelineActivityType',
+    'create'
+  > {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatTimelineActivityType.universalIdentifier,
@@ -203,9 +227,6 @@ export class FlatTimelineActivityTypeValidatorService {
     const existingFlatTimelineActivityTypes = Object.values(
       optimisticFlatTimelineActivityTypeMaps.byUniversalIdentifier,
     ).filter(isDefined);
-    const existingObjectUniversalIdentifiers =
-      getExistingObjectUniversalIdentifiers(optimisticFlatObjectMetadataMaps);
-
     validationResult.errors.push(
       ...validateTimelineActivityTypeProperties({ flatTimelineActivityType }),
       ...validateTimelineActivityTypeNameUniqueness({
@@ -214,7 +235,7 @@ export class FlatTimelineActivityTypeValidatorService {
       }),
       ...validateTimelineActivityTypeObjectBinding({
         flatTimelineActivityType,
-        existingObjectUniversalIdentifiers,
+        flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
       }),
     );
 
@@ -227,9 +248,10 @@ export class FlatTimelineActivityTypeValidatorService {
       flatTimelineActivityTypeMaps: optimisticFlatTimelineActivityTypeMaps,
     },
     buildOptions,
-  }: UniversalFlatEntityValidationArgs<
-    typeof ALL_METADATA_NAME.timelineActivityType
-  >): FailedFlatEntityValidation<'timelineActivityType', 'delete'> {
+  }: TimelineActivityTypeDeletionValidationArgs): FailedFlatEntityValidation<
+    'timelineActivityType',
+    'delete'
+  > {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatEntityToValidate.universalIdentifier,
@@ -276,9 +298,10 @@ export class FlatTimelineActivityTypeValidatorService {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     },
     buildOptions,
-  }: FlatEntityUpdateValidationArgs<
-    typeof ALL_METADATA_NAME.timelineActivityType
-  >): FailedFlatEntityValidation<'timelineActivityType', 'update'> {
+  }: TimelineActivityTypeUpdateValidationArgs): FailedFlatEntityValidation<
+    'timelineActivityType',
+    'update'
+  > {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier,
@@ -345,10 +368,7 @@ export class FlatTimelineActivityTypeValidatorService {
       validationResult.errors.push(
         ...validateTimelineActivityTypeObjectBinding({
           flatTimelineActivityType: optimisticFlatTimelineActivityType,
-          existingObjectUniversalIdentifiers:
-            getExistingObjectUniversalIdentifiers(
-              optimisticFlatObjectMetadataMaps,
-            ),
+          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
         }),
       );
     }
