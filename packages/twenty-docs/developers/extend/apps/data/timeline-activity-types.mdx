@@ -46,7 +46,7 @@ For a direct relation, creating or restoring the source record produces `linked`
 
 For a junction relation, `universalSettings.junctionTargetFieldUniversalIdentifier` identifies the relation from the junction object to the target. Creating or deleting a junction row produces `linked` or `unlinked`. Repointing either side of a junction row also produces a link event; updates to unrelated junction fields do not.
 
-`linked` and `unlinked` events require `emit.through`, because their trigger is the creation or deletion of the junction row.
+`linked` and `unlinked` events require `emit.through`, because their trigger is a change to the configured direct or junction relation.
 
 For example, this is the same generic contract used by notes, tasks, messages, and calendar events:
 
