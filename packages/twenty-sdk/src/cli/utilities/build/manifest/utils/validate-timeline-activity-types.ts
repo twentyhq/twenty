@@ -10,6 +10,11 @@ import {
   isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
 
+const isValidUniversalIdentifier = (universalIdentifier: string): boolean =>
+  uuidValidate(universalIdentifier) &&
+  uuidVersion(universalIdentifier) >=
+    MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION;
+
 export const validateTimelineActivityTypes = (
   manifest: Pick<
     Manifest,
@@ -96,13 +101,32 @@ export const validateTimelineActivityTypes = (
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" targets object "${emit.objectUniversalIdentifier}", which is not defined by this application. Types targeting another application's object must declare replacesTimelineActivityTypeUniversalIdentifier.`,
         );
-      } else if (
-        !uuidValidate(replacementUniversalIdentifier) ||
-        uuidVersion(replacementUniversalIdentifier) <
-          MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION
-      ) {
+      } else if (!isValidUniversalIdentifier(replacementUniversalIdentifier)) {
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" references an invalid replacement universal identifier "${replacementUniversalIdentifier}".`,
+        );
+      }
+
+      if (
+        isDefined(through) &&
+        !isValidUniversalIdentifier(
+          through.relationFieldUniversalIdentifier,
+        )
+      ) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" references an invalid through relation field universal identifier "${through.relationFieldUniversalIdentifier}".`,
+        );
+      }
+
+      const invalidTriggerFieldUniversalIdentifiers =
+        triggerFieldUniversalIdentifiers?.filter(
+          (universalIdentifier) =>
+            !isValidUniversalIdentifier(universalIdentifier),
+        ) ?? [];
+
+      if (invalidTriggerFieldUniversalIdentifiers.length > 0) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" references invalid trigger field universal identifiers: ${invalidTriggerFieldUniversalIdentifiers.join(', ')}.`,
         );
       }
 

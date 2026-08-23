@@ -783,6 +783,32 @@ describe('manifestValidate', () => {
       expect(manifestValidate(manifest).errors).toHaveLength(0);
     });
 
+    it('validates external-object route identifiers without resolving their metadata', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.objectUniversalIdentifier =
+        '0bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+      timelineActivityType.emit!.through!.relationFieldUniversalIdentifier =
+        'not-a-relation-field-uuid';
+      timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers = [
+        'not-a-trigger-field-uuid',
+      ];
+
+      expect(manifestValidate(manifest).errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining(
+            'invalid through relation field universal identifier',
+          ),
+          expect.stringContaining(
+            'invalid trigger field universal identifiers',
+          ),
+        ]),
+      );
+    });
+
     it('rejects replacement contracts that cannot be valid locally', () => {
       const explicitManifest = buildTimelineManifest();
       const [explicitTimelineActivityType] =
