@@ -7,7 +7,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRestore, useIcons } from 'twenty-ui/icon';
 import { Checkbox, LightIconButton } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
@@ -32,7 +32,7 @@ export const SettingsApplicationTimelineActivityTypesSubtable = ({
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
-  if (timelineActivityTypes.length === 0) {
+  if (!isNonEmptyArray(timelineActivityTypes)) {
     return null;
   }
 
