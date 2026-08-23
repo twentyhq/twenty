@@ -12,15 +12,11 @@ import { IconFilter } from 'twenty-ui/icon';
 export const WidgetActionTimelineFilter = () => {
   const { t } = useLingui();
   const targetRecord = useTargetRecord();
-  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
+  const { activeTimelineActivityTypes } = useTimelineActivityTypes();
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
-  const timelineActivityTypes = [
-    ...timelineActivityTypeMaps.byId.values(),
-  ].filter(({ isActive }) => isActive !== false);
-
-  if (!isNonEmptyArray(timelineActivityTypes)) {
+  if (!isNonEmptyArray(activeTimelineActivityTypes)) {
     return null;
   }
 

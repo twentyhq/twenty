@@ -26,7 +26,7 @@ export const SidePanelTimelineFilterPage = () => {
   const { instanceId: targetRecordId } = useAtomStateValue(
     sidePanelPageInfoState,
   );
-  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
+  const { activeTimelineActivityTypes } = useTimelineActivityTypes();
 
   const timelineActivityTypeUniversalIdentifiersFilter =
     useAtomFamilyStateValue(
@@ -39,17 +39,14 @@ export const SidePanelTimelineFilterPage = () => {
       targetRecordId,
     );
 
-  const timelineActivityTypes = [
-    ...timelineActivityTypeMaps.byId.values(),
-  ].filter(({ isActive }) => isActive !== false);
-
   const normalizedSearch = normalizeSearchText(sidePanelSearch);
-  const filteredTimelineActivityTypes = timelineActivityTypes.filter(
+  const filteredTimelineActivityTypes = activeTimelineActivityTypes.filter(
     ({ label }) => normalizeSearchText(label).includes(normalizedSearch),
   );
-  const allTimelineActivityTypeUniversalIdentifiers = timelineActivityTypes.map(
-    ({ universalIdentifier }) => universalIdentifier,
-  );
+  const allTimelineActivityTypeUniversalIdentifiers =
+    activeTimelineActivityTypes.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    );
   const isFiltering = isNonEmptyArray(
     timelineActivityTypeUniversalIdentifiersFilter,
   );
