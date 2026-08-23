@@ -4,6 +4,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { Toggle } from 'twenty-ui/input';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelCreateRecordToggleProps = {
   roleId: string;
@@ -23,11 +24,13 @@ export const SettingsRolePermissionsObjectLevelCreateRecordToggle = ({
 
   const objectPermission = settingsDraftRole.objectPermissions?.find(
     (permission) => permission.objectMetadataId === objectMetadataItem.id,
-  );
+  ) as
+    | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+    | undefined;
 
   const { upsertObjectPermission } = useUpsertObjectPermission({ roleId });
 
-  const isCreatable = objectPermission?.canCreateObjectRecords !== false;
+  const isCreatable = objectPermission?.canCreateObjectRecords ?? true;
   const isDisabled = !isEditable || !objectMetadataItem.isUICreatable;
 
   const handleToggle = (newValue: boolean) => {

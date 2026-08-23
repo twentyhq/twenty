@@ -8,7 +8,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type Role } from '~/generated-metadata/graphql';
+import { type ObjectPermission, type Role } from '~/generated-metadata/graphql';
 
 const ROLE_ID = 'test-role-id';
 
@@ -220,7 +220,9 @@ describe('SettingsRolePermissionsObjectLevelCreateRecordToggle', () => {
 
     const perm = updatedDraftRole.objectPermissions?.find(
       (p) => p.objectMetadataId === mockObjectMetadataItem.id,
-    );
+    ) as
+      | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+      | undefined;
 
     expect(perm?.canCreateObjectRecords).toBe(false);
   });

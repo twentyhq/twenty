@@ -9,6 +9,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -36,7 +37,9 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
   const settingsDraftRoleObjectPermissions =
     settingsDraftRole.objectPermissions?.find(
       (permission) => permission.objectMetadataId === objectMetadataItem.id,
-    );
+    ) as
+      | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+      | undefined;
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
 

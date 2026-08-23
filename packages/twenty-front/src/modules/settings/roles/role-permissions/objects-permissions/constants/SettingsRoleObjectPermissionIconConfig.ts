@@ -1,8 +1,8 @@
 import {
   type IconComponent,
-  IconBan,
   IconEye,
   IconEyeOff,
+  IconForbid,
   IconPencil,
   IconPencilOff,
   IconPlus,
@@ -34,7 +34,7 @@ export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   },
   canCreateObjectRecords: {
     Icon: IconPlus,
-    IconForbidden: IconBan,
+    IconForbidden: IconForbid,
   },
   canUpdateObjectRecords: {
     Icon: IconPencil,

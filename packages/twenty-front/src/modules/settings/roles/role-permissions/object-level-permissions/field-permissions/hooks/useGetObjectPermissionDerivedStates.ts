@@ -1,6 +1,7 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export const useGetObjectPermissionDerivedStates = ({
   roleId,
@@ -16,7 +17,9 @@ export const useGetObjectPermissionDerivedStates = ({
     const objectPermission = settingsDraftRole.objectPermissions?.find(
       (objectPermissionToFind) =>
         objectPermissionToFind.objectMetadataId === objectMetadataItemId,
-    );
+    ) as
+      | (ObjectPermission & { canCreateObjectRecords?: boolean | null })
+      | undefined;
 
     const isObjectPermissionDefined = isDefined(objectPermission);
 
