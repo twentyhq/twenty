@@ -1,8 +1,3 @@
-import { type FindManyTimelineActivityTypesQuery } from '~/generated-metadata/graphql';
-
-export type InstalledTimelineActivityType =
-  FindManyTimelineActivityTypesQuery['timelineActivityTypes'][number];
-
 export type SettingsApplicationTimelineActivityType = {
   action: string | null;
   icon?: string | null;

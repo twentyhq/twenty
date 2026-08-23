@@ -1,8 +1,6 @@
 import { type TimelineActivityTypeManifest } from 'twenty-shared/application';
-import {
-  type InstalledTimelineActivityType,
-  type SettingsApplicationTimelineActivityType,
-} from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { type InstalledTimelineActivityType } from '~/pages/settings/applications/types/installedTimelineActivityType';
+import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
 
 export const getSettingsApplicationTimelineActivityTypes = ({
   applicationId,
