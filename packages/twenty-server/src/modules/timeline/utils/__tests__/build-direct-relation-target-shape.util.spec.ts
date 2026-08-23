@@ -122,4 +122,24 @@ describe('buildDirectRelationTargetShape', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('isolates incomplete morph metadata as an invalid target shape', () => {
+    const objectMapsWithMissingMorphField = buildFlatEntityMaps([
+      {
+        ...ATTACHMENT_OBJECT,
+        fieldIds: [...ATTACHMENT_OBJECT.fieldIds, 'missing-morph-field'],
+      },
+      PERSON_OBJECT,
+      COMPANY_OBJECT,
+    ]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+
+    expect(
+      buildDirectRelationTargetShape({
+        relationFlatFieldMetadata:
+          TARGET_PERSON_FIELD as unknown as FlatFieldMetadata,
+        flatObjectMetadataMaps: objectMapsWithMissingMorphField,
+        flatFieldMetadataMaps,
+      }),
+    ).toBeUndefined();
+  });
 });

@@ -16,10 +16,12 @@ export const buildDirectRelationTargetShape = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): TimelineActivityRuleTargetShape | undefined => {
-  const { settings } = relationFlatFieldMetadata;
+  const { settings, type } = relationFlatFieldMetadata;
 
   if (
-    !isFieldMetadataSettingsOfType(settings, FieldMetadataType.RELATION) ||
+    (type !== FieldMetadataType.RELATION &&
+      type !== FieldMetadataType.MORPH_RELATION) ||
+    !isFieldMetadataSettingsOfType(settings, type) ||
     settings.relationType !== RelationType.MANY_TO_ONE
   ) {
     return undefined;

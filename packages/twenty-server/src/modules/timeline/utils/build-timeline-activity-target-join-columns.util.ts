@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
+import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -28,19 +29,29 @@ export const buildTimelineActivityTargetJoinColumns = ({
     return [];
   }
 
-  const targetFlatFieldMetadatas = isFlatFieldMetadataOfType(
-    targetFlatFieldMetadata,
-    FieldMetadataType.MORPH_RELATION,
-  )
-    ? [
-        targetFlatFieldMetadata,
-        ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
-          flatFieldMetadata: targetFlatFieldMetadata,
-          flatFieldMetadataMaps,
-          flatObjectMetadata: containingFlatObjectMetadata,
-        }),
-      ]
-    : [targetFlatFieldMetadata];
+  let targetFlatFieldMetadatas: FlatFieldMetadata[];
+
+  try {
+    targetFlatFieldMetadatas = isFlatFieldMetadataOfType(
+      targetFlatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    )
+      ? [
+          targetFlatFieldMetadata,
+          ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
+            flatFieldMetadata: targetFlatFieldMetadata,
+            flatFieldMetadataMaps,
+            flatObjectMetadata: containingFlatObjectMetadata,
+          }),
+        ]
+      : [targetFlatFieldMetadata];
+  } catch (error) {
+    if (error instanceof FlatEntityMapsException) {
+      return [];
+    }
+
+    throw error;
+  }
 
   return targetFlatFieldMetadatas
     .map(
