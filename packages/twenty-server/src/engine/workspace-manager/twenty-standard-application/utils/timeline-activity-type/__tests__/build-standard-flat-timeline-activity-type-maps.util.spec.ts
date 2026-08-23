@@ -67,5 +67,9 @@ describe('buildStandardFlatTimelineActivityTypeMaps', () => {
       getTimelineActivityTypeOrThrow(maps, 'messageLinked')
         .frontComponentUniversalIdentifier,
     ).toBe(STANDARD_TIMELINE_ACTIVITY_RENDERER_UNIVERSAL_IDENTIFIERS.message);
+    expect(
+      getTimelineActivityTypeOrThrow(maps, 'attachmentLinked')
+        .targetRelationFieldUniversalIdentifier,
+    ).toBe(STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier);
   });
 });

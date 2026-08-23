@@ -1,0 +1,184 @@
+---
+title: Типы активности хронологии
+description: Определяет автоматические события аудита и события приложения, отображающие время записи.
+icon: clock-rotate-left
+---
+
+Тип активности временной шкалы определяет стабильный словарь событий, отображаемых на временной шкале. Стандартные объекты и прикладные объекты используют тот же контракт: тип имеет метку и иконку, можно объявить при выдаче, и может при желании отображать один из [фронтальных компонентов](/l/ru/developers/extend/apps/layout/front-components).
+
+<Note>
+  Виды активностей на временной шкале находятся в бета-версии и скоро появятся в разделе Двадцать 2.34.
+  API может развиваться, пока мы учимся у разработчиков приложений.
+</Note>
+
+Создайте один с помощью лесника:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+Или определите его напрямую:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## Автоматические и явные события
+
+Добавьте `emit`, когда двадцать должен создать этот тип автоматически. `emit.on` поддерживает `created`, `updated`, `deleted`, `restored`, `linked`, и `unlinked`, а `emit.objectUniversalIdentifier` идентифицирует объект источника. Только один эффективный тип может справиться с тем же эмулируемым ключом - `on`, объектом и необязательным - в рабочей области.
+
+Без `emit.through` событие записывается на собственной временной шкале источника. Чтобы пообщаться с соответствующими записями, установите `emit.through. elationFieldUniversalIdentifier` в исходном объекте либо прямое отношение множества к одному или [отношение одного-много соединения](/l/ru/developers/extend/apps/data/relations#junction-relations). Morph отношения с каждым членом группы морфов, так что одно объявление может быть направлено на несколько типов объектов.
+
+Для прямой связи создание или восстановление записи источника производит `linked`, удаляя ее производит `unlinked`, и перенаправление отношения приводит к `unlinked` на предыдущей цели плюс `linked` на новую цель. Другие обновления источников не дают ссылки на события. Это контракт используется приложениями, целью которых является прямая связь.
+
+Для связи между перекрёстками 'universalSettings.junctionTargetFieldUniversalIdentifier' идентифицирует отношение объекта соединения к цели. Создание или удаление строки перекрёстка производит `linked` или `unlinked`. Переадресация на обе стороны строки перекрёсток также производит ссылку событие; обновления к несвязанным полям не делают.
+
+События `linked` и `unlinked` требуют `emit.through`, потому что их триггер-триггер является изменением настроенной связи или соединения.
+
+Например, это тот же общий контракт, который используется заметками, задачами, сообщениями и событиями в календаре:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+По умолчанию для каждого обновления источника выдается параметр «updated» через событие. Установите `emit.through.triggerFieldUniversalIdentifiers`, когда изменяются только выбранные исходные поля должны отображаться в целевые сроки.
+
+Omit `emit` для явного события домена, которое создаёт ваша логическая функция. Это позволяет избежать автоматического аудита и явной строки для одной и той же операции.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+Создать явные события с помощью [`createTimelineActivity()`](/l/ru/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). Код приложения использует стабильные универсальные идентификаторы; двадцать разрешает идентификаторы метаданных, специфичные для установки.
+
+## Пользовательский рендеринг
+
+Без переднего компонента двадцать передает обычный общий ряд из метаданных типа, значка и связанных объектов. Это работает для стандартных и пользовательских объектов без объектно-специфичного визуализатора.
+
+Для пользовательских деталей установите `frontComponentUniversalIdentifier` на передний компонент, принадлежащий тому же приложению:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Натуральная строка остается свернутой презентацией. Двадцать монтируют передний компонент только после того, как пользователь расширяет ряд, избегая песочницы и рабочих для каждого видимого события. Внутри компонента вызовите `useTimelineActivityId()` из `twenty-sdk/front-component` для чтения ID строки и получения любых данных, необходимых для презентации. Возвращает `null`, когда компонент отображается за пределами ленты времени.
+
+## Переопределение презентации другого приложения
+
+Приложение имеет автоматические контракты на временной шкале для собственных объектов. Чтобы настроить событие на объекте, принадлежащем другому приложению, явно объявить существующий тип заменой `reTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Переопределение должно включать `emit`, потому что оно заменяет существующую ячейку автоматического излучения вместо явного типа. Указанный тип должен принадлежать приложению целевого объекта и описывать одно и то же действие и маршрут. Удаление переопределения приложения возвращает базовый тип; удаление базового типа отключает переопределение.
+
+## Рабочая область переопределяет и отключает звук
+
+Администраторы рабочего пространства могут изменять презентацию типа или отключать автоматические и явные события без форсирования приложения. Используйте мутацию `updateTimelineActivityType` метаданных API с идентификатором определенного типа установки:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` и `icon` хранятся как переопределение рабочего пространства, поэтому последующие обновления приложения не перезаписывают выбор администратора. Установите `isActive` в `false`, чтобы остановить автоматическое излучение и отклонить новые явные события этого типа. Существующие строки остаются видимыми.
+
+Восстановить настройки по умолчанию, включая активное состояние, например:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## Поля конфигурации
+
+| Поле                                               | Обязательно  | Описание                                                                    |
+| -------------------------------------------------- | ------------ | --------------------------------------------------------------------------- |
+| `universalIdentifier`                              | Да           | Стабильный UUID для всех установок и обновлений                             |
+| `name`                                             | Да           | Локальное имя программы                                                     |
+| `label`                                            | Да           | Текст действий для пользователя, используемый родным рендерером             |
+| `icon`                                             | Нет          | Двадцать иконок, отображаемое рядом с событием                              |
+| `emit`                                             | Нет          | Автоматическое заявление о выбросах; опущение только для явных типов        |
+| `emit.on`                                          | С излучением | Ревизия для записи этого типа                                               |
+| `emit.objectUniversalIdentifier`                   | С излучением | Объект с записями излучающей этот тип                                       |
+| `emit.through.relationFieldUniversalIdentifier`    | Нет          | Прямое или перекрёстое, используемое для вентиляции в соответствующие сроки |
+| `emit.through.triggerFieldUniversalIdentifiers`    | Нет          | Исходные поля, которые могут инициировать «обновление» через событие        |
+| `frontComponentUniversalIdentifier`                | Нет          | Собственный фронтальный компонент монтируется при расширении ряда           |
+| `заменяет TimelineActivityTypeUniversalIdentifier` | Нет          | Существующий тип излучения заменён, требует `emit`                          |
+
+Двадцать снимков семантическая идентичность и прочная презентация, когда событие создается. Исторические строки сохраняют исходное значение действия и объекта. Пока тип установлен, в live отображаются текущая метка перевода, иконка и передние компоненты; после удаления резервный снимок сохраняет строку читаемой. Резолюция использует универсальный идентификатор, поэтому презентация также выживает после переустановки приложения.

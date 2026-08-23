@@ -8,7 +8,9 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { gql } from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   type TimelineActivityAction,
   type TimelineActivityTypeSnapshot,
@@ -17,6 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
+  happensAt
   timelineActivityTypeId
   timelineActivityTypeSnapshot
   properties
@@ -31,6 +34,7 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
 
 type TimelineActivityRow = {
   id: string;
+  happensAt: string;
   timelineActivityTypeId: string;
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
   properties: Record<string, unknown> | null;
@@ -80,6 +84,27 @@ const updateRecord = async ({
   );
 
   expect(response.body.errors).toBeUndefined();
+};
+
+const withOrmV2ReadPathSetting = async (
+  enabled: boolean,
+  callback: () => Promise<void>,
+) => {
+  await updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED,
+    value: enabled,
+    expectToFail: false,
+  });
+
+  try {
+    await callback();
+  } finally {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+  }
 };
 
 const findTimelineActivities = async (
@@ -159,9 +184,12 @@ const MESSAGE_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.message.universalIdentifier;
 const CALENDAR_EVENT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.calendarEvent.universalIdentifier;
+const ATTACHMENT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.attachment.universalIdentifier;
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
+const LEGACY_COMPOSITE_COMPANY_ID = '20202020-7171-4000-8000-000000000003';
 const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
@@ -173,6 +201,8 @@ const ROUTED_MESSAGE_PARTICIPANT_ID = '20202020-7171-4000-8000-000000000013';
 const ROUTED_CALENDAR_EVENT_ID = '20202020-7171-4000-8000-000000000014';
 const ROUTED_CALENDAR_EVENT_PARTICIPANT_ID =
   '20202020-7171-4000-8000-000000000015';
+const ATTACHMENT_ID = '20202020-7171-4000-8000-000000000016';
+const ORM_V2_COMPOSITE_COMPANY_ID = '20202020-7171-4000-8000-000000000017';
 const BATCH_COMPANY_IDS = [
   '20202020-7171-4000-8000-000000000008',
   '20202020-7171-4000-8000-000000000009',
@@ -180,6 +210,7 @@ const BATCH_COMPANY_IDS = [
 
 const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
   [
+    { objectMetadataSingularName: 'attachment', id: ATTACHMENT_ID },
     {
       objectMetadataSingularName: 'calendarEventParticipant',
       id: ROUTED_CALENDAR_EVENT_PARTICIPANT_ID,
@@ -206,6 +237,14 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
       id,
     })),
     { objectMetadataSingularName: 'company', id: NOTE_COMPANY_ID },
+    {
+      objectMetadataSingularName: 'company',
+      id: LEGACY_COMPOSITE_COMPANY_ID,
+    },
+    {
+      objectMetadataSingularName: 'company',
+      id: ORM_V2_COMPOSITE_COMPANY_ID,
+    },
     { objectMetadataSingularName: 'company', id: POSITION_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: COMPANY_ID },
   ];
@@ -296,6 +335,77 @@ describe('timeline activity write path (integration)', () => {
         },
       });
     });
+
+    it.each([
+      {
+        companyId: LEGACY_COMPOSITE_COMPANY_ID,
+        isOrmV2ReadPathEnabled: false,
+        ormName: 'legacy ORM',
+      },
+      {
+        companyId: ORM_V2_COMPOSITE_COMPANY_ID,
+        isOrmV2ReadPathEnabled: true,
+        ormName: 'ORM v2',
+      },
+    ])(
+      'should write an updated entry for a $ormName composite field change',
+      async ({ companyId, isOrmV2ReadPathEnabled }) => {
+        await withOrmV2ReadPathSetting(isOrmV2ReadPathEnabled, async () => {
+          await createRecord({
+            objectMetadataSingularName: 'company',
+            data: {
+              id: companyId,
+              name: 'Composite Field Timeline',
+            },
+          });
+
+          const updateStartedAt = Date.now();
+
+          await updateRecord({
+            objectMetadataSingularName: 'company',
+            recordId: companyId,
+            data: {
+              address: {
+                addressStreet1: '234 Composite Street',
+                addressStreet2: '',
+                addressCity: 'Paris',
+                addressState: '',
+                addressCountry: '',
+                addressPostcode: '',
+                addressLat: null,
+                addressLng: null,
+              },
+            },
+          });
+
+          const timelineActivities = await findTimelineActivities({
+            targetCompanyId: { eq: companyId },
+            timelineActivityTypeId: {
+              eq: timelineActivityTypeIdForOrThrow('updated'),
+            },
+          });
+
+          expect(timelineActivities).toHaveLength(1);
+          expect(
+            new Date(timelineActivities[0].happensAt).getTime(),
+          ).toBeGreaterThanOrEqual(updateStartedAt);
+          expect(timelineActivities[0].properties).toMatchObject({
+            diff: {
+              address: {
+                before: {
+                  addressStreet1: '',
+                  addressCity: '',
+                },
+                after: {
+                  addressStreet1: '234 Composite Street',
+                  addressCity: 'Paris',
+                },
+              },
+            },
+          });
+        });
+      },
+    );
 
     it('should merge every record of a multi record batch', async () => {
       for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
@@ -631,6 +741,90 @@ describe('timeline activity write path (integration)', () => {
         linkedRecordId: ROUTED_CALENDAR_EVENT_ID,
         linkedRecordCachedName: 'Generic calendar routing',
       });
+    });
+  });
+
+  describe('metadata-declared direct relation routing', () => {
+    it('routes attachment link lifecycle events without attachment-specific code', async () => {
+      await createRecord({
+        objectMetadataSingularName: 'attachment',
+        data: {
+          id: ATTACHMENT_ID,
+          name: 'proposal.pdf',
+          targetCompanyId: NOTE_COMPANY_ID,
+        },
+      });
+
+      const linkedTypeId = timelineActivityTypeIdForOrThrow(
+        'linked',
+        ATTACHMENT_UNIVERSAL_IDENTIFIER,
+      );
+      const unlinkedTypeId = timelineActivityTypeIdForOrThrow(
+        'unlinked',
+        ATTACHMENT_UNIVERSAL_IDENTIFIER,
+      );
+      const firstTargetActivities = await findTimelineActivities({
+        targetCompanyId: { eq: NOTE_COMPANY_ID },
+        timelineActivityTypeId: { eq: linkedTypeId },
+      });
+
+      expect(firstTargetActivities).toHaveLength(1);
+      expect(firstTargetActivities[0]).toMatchObject({
+        linkedRecordId: ATTACHMENT_ID,
+        linkedRecordCachedName: 'proposal.pdf',
+      });
+
+      await updateRecord({
+        objectMetadataSingularName: 'attachment',
+        recordId: ATTACHMENT_ID,
+        data: { name: 'proposal-final.pdf' },
+      });
+
+      expect(
+        await findTimelineActivities({
+          targetCompanyId: { eq: NOTE_COMPANY_ID },
+          timelineActivityTypeId: { eq: linkedTypeId },
+        }),
+      ).toHaveLength(1);
+
+      await updateRecord({
+        objectMetadataSingularName: 'attachment',
+        recordId: ATTACHMENT_ID,
+        data: { targetCompanyId: COMPANY_ID },
+      });
+
+      expect(
+        await findTimelineActivities({
+          targetCompanyId: { eq: NOTE_COMPANY_ID },
+          timelineActivityTypeId: { eq: unlinkedTypeId },
+        }),
+      ).toHaveLength(1);
+
+      const secondTargetActivities = await findTimelineActivities({
+        targetCompanyId: { eq: COMPANY_ID },
+        timelineActivityTypeId: { eq: linkedTypeId },
+      });
+
+      expect(secondTargetActivities).toHaveLength(1);
+      expect(secondTargetActivities[0].linkedRecordCachedName).toBe(
+        'proposal-final.pdf',
+      );
+
+      const deleteResponse = await makeGraphqlAPIRequest(
+        deleteOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          recordId: ATTACHMENT_ID,
+        }),
+      );
+
+      expect(deleteResponse.body.errors).toBeUndefined();
+      expect(
+        await findTimelineActivities({
+          targetCompanyId: { eq: COMPANY_ID },
+          timelineActivityTypeId: { eq: unlinkedTypeId },
+        }),
+      ).toHaveLength(1);
     });
   });
 

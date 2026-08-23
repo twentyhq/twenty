@@ -14,6 +14,7 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build-direct-relation-target-shape.util';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
@@ -125,11 +126,17 @@ export class TimelineActivityRuleBuilderService {
           return undefined;
         }
 
-        const targetShape = buildJunctionTargetShape({
-          relationFlatFieldMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        });
+        const targetShape =
+          buildDirectRelationTargetShape({
+            relationFlatFieldMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }) ??
+          buildJunctionTargetShape({
+            relationFlatFieldMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          });
 
         if (!isDefined(targetShape)) {
           invalidThroughRules.push({
