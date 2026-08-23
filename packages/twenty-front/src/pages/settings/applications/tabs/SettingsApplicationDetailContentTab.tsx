@@ -21,6 +21,7 @@ import {
 import { SettingsApplicationTimelineActivityTypesSubtable } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypesSubtable';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
+import { isTimelineActivityTypeResetAllowed } from '~/pages/settings/applications/utils/isTimelineActivityTypeResetAllowed';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -66,6 +67,12 @@ export const SettingsApplicationDetailContentTab = ({
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isInstalledApplication = isDefined(installedApplication);
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+  const canResetTimelineActivityTypes = isTimelineActivityTypeResetAllowed({
+    applicationId,
+    workspaceCustomApplicationId,
+  });
 
   const {
     installedTimelineActivityTypes,
@@ -336,11 +343,7 @@ export const SettingsApplicationDetailContentTab = ({
             />
             <SettingsApplicationTimelineActivityTypesSubtable
               timelineActivityTypes={filteredTimelineActivityTypes}
-              canReset={
-                isDefined(currentWorkspace) &&
-                currentWorkspace.workspaceCustomApplication?.id !==
-                  applicationId
-              }
+              canReset={canResetTimelineActivityTypes}
               mutatingTimelineActivityTypeIds={mutatingTimelineActivityTypeIds}
               onToggle={setTimelineActivityTypeIsActive}
               onReset={resetTimelineActivityTypeToDefault}

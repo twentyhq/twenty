@@ -28,63 +28,62 @@ export const useApplicationTimelineActivityTypes = ({
     ResetTimelineActivityTypeDocument,
   );
 
-  const setTimelineActivityTypeIsActive = async (
-    id: string,
-    isActive: boolean,
-  ) => {
+  const runTimelineActivityTypeMutation = async ({
+    errorMessage,
+    id,
+    mutation,
+  }: {
+    errorMessage: string;
+    id: string;
+    mutation: () => Promise<unknown>;
+  }) => {
     setMutatingTimelineActivityTypeIds((currentIds) =>
       new Set(currentIds).add(id),
     );
 
     try {
-      await updateTimelineActivityType({
-        variables: { input: { id, isActive } },
-        optimisticResponse: {
-          updateTimelineActivityType: {
-            __typename: 'TimelineActivityType',
-            id,
-            isActive,
+      await mutation();
+    } catch {
+      enqueueErrorSnackBar({
+        message: errorMessage,
+      });
+    } finally {
+      setMutatingTimelineActivityTypeIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+
+        nextIds.delete(id);
+
+        return nextIds;
+      });
+    }
+  };
+
+  const setTimelineActivityTypeIsActive = (id: string, isActive: boolean) =>
+    runTimelineActivityTypeMutation({
+      errorMessage: t`Failed to update the timeline activity type.`,
+      id,
+      mutation: () =>
+        updateTimelineActivityType({
+          variables: { input: { id, isActive } },
+          optimisticResponse: {
+            updateTimelineActivityType: {
+              __typename: 'TimelineActivityType',
+              id,
+              isActive,
+            },
           },
-        },
-      });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update the timeline activity type.`,
-      });
-    } finally {
-      setMutatingTimelineActivityTypeIds((currentIds) => {
-        const nextIds = new Set(currentIds);
+        }),
+    });
 
-        nextIds.delete(id);
-
-        return nextIds;
-      });
-    }
-  };
-
-  const resetTimelineActivityTypeToDefault = async (id: string) => {
-    setMutatingTimelineActivityTypeIds((currentIds) =>
-      new Set(currentIds).add(id),
-    );
-
-    try {
-      await resetTimelineActivityType({
-        variables: { id },
-      });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to reset the timeline activity type.`,
-      });
-    } finally {
-      setMutatingTimelineActivityTypeIds((currentIds) => {
-        const nextIds = new Set(currentIds);
-
-        nextIds.delete(id);
-
-        return nextIds;
-      });
-    }
-  };
+  const resetTimelineActivityTypeToDefault = (id: string) =>
+    runTimelineActivityTypeMutation({
+      errorMessage: t`Failed to reset the timeline activity type.`,
+      id,
+      mutation: () =>
+        resetTimelineActivityType({
+          variables: { id },
+        }),
+    });
 
   return {
     installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
