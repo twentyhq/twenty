@@ -20,12 +20,9 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useStore } from 'jotai';
-
-const REMOVE_RELATION_CONFIRMATION_MODAL_ID =
-  'multiple-record-picker-remove-relation-confirmation-modal';
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -36,6 +33,12 @@ export const MultipleRecordPickerMenuItems = ({
   onChange,
   focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
+  // Generate a unique modal ID per component instance so that two relation
+  // pickers open simultaneously don't share the same modal ID — which would
+  // cause a Cancel click on one to inadvertently close the other.
+  const componentId = useId();
+  const modalId = `multiple-record-picker-remove-relation-confirmation-modal_${componentId}`;
+
   const store = useStore();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -102,14 +105,14 @@ export const MultipleRecordPickerMenuItems = ({
         // The picker emits the NEW state — isSelected: false means the box was just unchecked
         setPendingRemovalItem(morphItem);
         setIsConfirmationModalOpen(true);
-        openModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
+        openModal(modalId);
       } else {
         // PASS THROUGH: the user is establishing a new relation
         handleChange(morphItem);
         onChange?.(morphItem);
       }
     },
-    [handleChange, onChange, openModal],
+    [handleChange, onChange, openModal, modalId],
   );
 
   const handleConfirmRemove = useCallback(() => {
@@ -119,14 +122,14 @@ export const MultipleRecordPickerMenuItems = ({
     }
     setPendingRemovalItem(null);
     setIsConfirmationModalOpen(false);
-    closeModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
-  }, [handleChange, onChange, closeModal, pendingRemovalItem]);
+    closeModal(modalId);
+  }, [handleChange, onChange, closeModal, pendingRemovalItem, modalId]);
 
   const handleCancelRemove = useCallback(() => {
     setPendingRemovalItem(null);
     setIsConfirmationModalOpen(false);
-    closeModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
-  }, [closeModal]);
+    closeModal(modalId);
+  }, [closeModal, modalId]);
 
   return (
     <>
@@ -160,7 +163,7 @@ export const MultipleRecordPickerMenuItems = ({
       {isConfirmationModalOpen &&
         createPortal(
           <ConfirmationModal
-            modalInstanceId={REMOVE_RELATION_CONFIRMATION_MODAL_ID}
+            modalInstanceId={modalId}
             title={t`Remove Relation`}
             subtitle={
               <Trans>
