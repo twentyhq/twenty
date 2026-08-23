@@ -33,18 +33,7 @@ import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/res
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
-import { resolveTimelineActivitySourceRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-source-rule-action.util';
-
-// An event on the junction object is a change to the link, not to the linked
-// record. `updated` is filtered to join-column changes below.
-const JUNCTION_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
-> = {
-  created: 'linked',
-  restored: 'linked',
-  updated: 'linked',
-  deleted: 'unlinked',
-};
+import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 
 type BuildPayloadsForRuleArgs = {
   rule: TimelineActivityRule;
@@ -64,6 +53,21 @@ const keepDiffOnly = (
 
   return isDefined(diff) && Object.keys(diff).length > 0 ? { diff } : {};
 };
+
+const resolveEventRecordForRuleAction = ({
+  event,
+  eventAction,
+  ruleAction,
+}: {
+  event: ObjectRecordBaseEvent;
+  eventAction: DatabaseEventAction;
+  ruleAction: TimelineActivityRuleAction;
+}): ObjectRecord | undefined =>
+  (eventAction === 'deleted' || ruleAction === 'unlinked'
+    ? (event.properties.before ?? event.properties.after)
+    : (event.properties.after ?? event.properties.before)) as
+    | ObjectRecord
+    | undefined;
 
 const buildLinkedPayload = ({
   rule,
@@ -262,10 +266,11 @@ export class TimelineActivityService {
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
-    const ruleAction = resolveTimelineActivitySourceRuleAction({
+    const ruleAction = resolveTimelineActivityRuleAction({
       actions: rule.actions,
       targetShape: rule.targetShape,
       eventAction: action,
+      eventSource: 'SOURCE',
     });
 
     if (!isDefined(ruleAction)) {
@@ -330,15 +335,16 @@ export class TimelineActivityService {
 
     if (rule.targetShape.kind === 'DIRECT_RELATION') {
       return matchingEvents.flatMap((event) => {
-        const record = (
-          action === 'deleted' || ruleAction === 'unlinked'
-            ? (event.properties.before ?? event.properties.after)
-            : (event.properties.after ?? event.properties.before)
-        ) as ObjectRecord | undefined;
+        const record = resolveEventRecordForRuleAction({
+          event,
+          eventAction: action,
+          ruleAction,
+        });
         const target =
-          this.timelineActivityTargetQueryService.resolveTargetFromDirectRelationRecord(
-            { rule, record },
-          );
+          this.timelineActivityTargetQueryService.resolveTargetFromRecord({
+            rule,
+            record,
+          });
 
         if (!isDefined(target)) {
           return [];
@@ -400,7 +406,12 @@ export class TimelineActivityService {
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
-    const ruleAction = JUNCTION_EVENT_ACTIONS[action];
+    const ruleAction = resolveTimelineActivityRuleAction({
+      actions: rule.actions,
+      targetShape: rule.targetShape,
+      eventAction: action,
+      eventSource: 'JUNCTION',
+    });
 
     if (!isDefined(ruleAction) || rule.targetShape.kind !== 'JUNCTION') {
       return [];
@@ -436,14 +447,17 @@ export class TimelineActivityService {
       )
       .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))
       .map((event) => {
-        const junctionRecord = event.properties.after as
-          | ObjectRecord
-          | undefined;
+        const junctionRecord = resolveEventRecordForRuleAction({
+          event,
+          eventAction: action,
+          ruleAction,
+        });
 
         const target =
-          this.timelineActivityTargetQueryService.resolveTargetFromJunctionRecord(
-            { rule, junctionRecord },
-          );
+          this.timelineActivityTargetQueryService.resolveTargetFromRecord({
+            rule,
+            record: junctionRecord,
+          });
 
         const sourceRecordId = junctionRecord?.[junctionSourceJoinColumnName];
 
