@@ -40,7 +40,11 @@ export default defineTimelineActivityType({
 
 Add `emit` when Twenty should create this type automatically. `emit.on` supports `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`, while `emit.objectUniversalIdentifier` identifies the source object. Only one effective type can handle the same emit key—`on`, object, and optional through relation—in a workspace.
 
-Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to a [one-to-many junction relation](/developers/extend/apps/data/relations#junction-relations) on the source object. Its `universalSettings.junctionTargetFieldUniversalIdentifier` must identify the relation from the junction object to the target. Creating or deleting a junction row then produces `linked` or `unlinked`, while changes to the source record produce its normal action on every related target timeline.
+Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to either a direct many-to-one relation or a [one-to-many junction relation](/developers/extend/apps/data/relations#junction-relations) on the source object. Morph relations fan out to every member of their morph group, so a single declaration can target several object types.
+
+For a direct relation, creating or restoring the source record produces `linked`, deleting it produces `unlinked`, and repointing the relation produces `unlinked` on the previous target plus `linked` on the new target. Other source updates do not produce link events. This is the contract used by attachments, whose target is a direct morph relation.
+
+For a junction relation, `universalSettings.junctionTargetFieldUniversalIdentifier` identifies the relation from the junction object to the target. Creating or deleting a junction row produces `linked` or `unlinked`. Repointing either side of a junction row also produces a link event; updates to unrelated junction fields do not.
 
 `linked` and `unlinked` events require `emit.through`, because their trigger is the creation or deletion of the junction row.
 
@@ -163,18 +167,18 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Configuration fields
 
-| Field                                             | Required  | Description                                                          |
-| ------------------------------------------------- | --------- | -------------------------------------------------------------------- |
-| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades           |
-| `name`                                            | Yes       | App-local programmatic name                                          |
-| `label`                                           | Yes       | User-facing action text used by the native renderer                  |
-| `icon`                                            | No        | Twenty icon name displayed beside the event                          |
-| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types         |
-| `emit.on`                                         | With emit | Audit action that causes this type to be written                     |
-| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                  |
-| `emit.through.relationFieldUniversalIdentifier`   | No        | Junction relation used to fan events out to related record timelines |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event            |
-| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded           |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                         |
+| Field                                             | Required  | Description                                                      |
+| ------------------------------------------------- | --------- | ---------------------------------------------------------------- |
+| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades       |
+| `name`                                            | Yes       | App-local programmatic name                                      |
+| `label`                                           | Yes       | User-facing action text used by the native renderer              |
+| `icon`                                            | No        | Twenty icon name displayed beside the event                      |
+| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types     |
+| `emit.on`                                         | With emit | Audit action that causes this type to be written                 |
+| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                              |
+| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event        |
+| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded       |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                     |
 
 Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.

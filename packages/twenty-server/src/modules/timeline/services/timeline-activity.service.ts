@@ -32,7 +32,8 @@ import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolv
 import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
-import { doesTimelineActivityJunctionLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-junction-link-change.util';
+import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
+import { resolveTimelineActivitySourceRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-source-rule-action.util';
 
 // An event on the junction object is a change to the link, not to the linked
 // record. `updated` is filtered to join-column changes below.
@@ -43,15 +44,6 @@ const JUNCTION_EVENT_ACTIONS: Partial<
   restored: 'linked',
   updated: 'linked',
   deleted: 'unlinked',
-};
-
-const SOURCE_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
-> = {
-  created: 'created',
-  updated: 'updated',
-  deleted: 'deleted',
-  restored: 'restored',
 };
 
 type BuildPayloadsForRuleArgs = {
@@ -270,7 +262,11 @@ export class TimelineActivityService {
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
-    const ruleAction = SOURCE_EVENT_ACTIONS[action];
+    const ruleAction = resolveTimelineActivitySourceRuleAction({
+      actions: rule.actions,
+      targetShape: rule.targetShape,
+      eventAction: action,
+    });
 
     if (!isDefined(ruleAction)) {
       return [];
@@ -287,9 +283,20 @@ export class TimelineActivityService {
       return [];
     }
 
-    const matchingEvents = events.filter((event) =>
-      this.ruleMatchesEvent({ rule, ruleAction, event }),
-    );
+    const matchingEvents = events
+      .filter(
+        (event) =>
+          rule.targetShape.kind !== 'DIRECT_RELATION' ||
+          action !== 'updated' ||
+          ruleAction === 'updated' ||
+          doesTimelineActivityLinkChange({
+            event,
+            joinColumnNames: rule.targetShape.targetJoinColumns.map(
+              ({ joinColumnName }) => joinColumnName,
+            ),
+          }),
+      )
+      .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }));
 
     if (matchingEvents.length === 0) {
       return [];
@@ -317,6 +324,41 @@ export class TimelineActivityService {
             workspaceMemberId: event.workspaceMemberId,
             properties,
           },
+        ];
+      });
+    }
+
+    if (rule.targetShape.kind === 'DIRECT_RELATION') {
+      return matchingEvents.flatMap((event) => {
+        const record = (
+          action === 'deleted' || ruleAction === 'unlinked'
+            ? (event.properties.before ?? event.properties.after)
+            : (event.properties.after ?? event.properties.before)
+        ) as ObjectRecord | undefined;
+        const target =
+          this.timelineActivityTargetQueryService.resolveTargetFromDirectRelationRecord(
+            { rule, record },
+          );
+
+        if (!isDefined(target)) {
+          return [];
+        }
+
+        return [
+          buildLinkedPayload({
+            rule,
+            timelineActivityType,
+            target,
+            workspaceMemberId: event.workspaceMemberId,
+            linkedRecordId: event.recordId,
+            linkedRecordCachedName: resolveLinkedRecordCachedName({
+              rule,
+              record,
+              flatFieldMetadataMaps,
+            }),
+            happensAt: resolveTimelineActivityHappensAt(event),
+            properties: event.properties,
+          }),
         ];
       });
     }
@@ -382,9 +424,14 @@ export class TimelineActivityService {
       .filter(
         (event) =>
           action !== 'updated' ||
-          doesTimelineActivityJunctionLinkChange({
+          doesTimelineActivityLinkChange({
             event,
-            targetShape,
+            joinColumnNames: [
+              targetShape.junctionSourceJoinColumnName,
+              ...targetShape.targetJoinColumns.map(
+                ({ joinColumnName }) => joinColumnName,
+              ),
+            ],
           }),
       )
       .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))

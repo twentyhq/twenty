@@ -306,6 +306,17 @@ export class FlatTimelineActivityTypeValidatorService {
         validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
           targetRelationFieldUniversalIdentifier
         ];
+      const hasSupportedRelationShape =
+        isDefined(targetRelationField) &&
+        isMorphOrRelationUniversalFlatFieldMetadata(targetRelationField) &&
+        (targetRelationField.universalSettings?.relationType ===
+          RelationType.MANY_TO_ONE ||
+          (targetRelationField.universalSettings?.relationType ===
+            RelationType.ONE_TO_MANY &&
+            isDefined(
+              targetRelationField.universalSettings
+                ?.junctionTargetFieldUniversalIdentifier,
+            )));
 
       if (
         !isDefined(timelineActivityType.action) ||
@@ -313,17 +324,11 @@ export class FlatTimelineActivityTypeValidatorService {
         !isDefined(targetRelationField) ||
         targetRelationField.objectMetadataUniversalIdentifier !==
           objectUniversalIdentifier ||
-        !isMorphOrRelationUniversalFlatFieldMetadata(targetRelationField) ||
-        targetRelationField.universalSettings?.relationType !==
-          RelationType.ONE_TO_MANY ||
-        !isDefined(
-          targetRelationField.universalSettings
-            ?.junctionTargetFieldUniversalIdentifier,
-        )
+        !hasSupportedRelationShape
       ) {
         validationResult.errors.push({
           code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
-          message: t`Timeline activity type target relation must be a junction relation on its source object`,
+          message: t`Timeline activity type target relation must be a direct or junction relation on its source object`,
           userFriendlyMessage: msg`The target relation used by this timeline activity type is not available`,
         });
       }
