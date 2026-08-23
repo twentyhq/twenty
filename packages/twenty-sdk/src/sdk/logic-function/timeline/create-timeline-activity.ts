@@ -9,18 +9,15 @@ type CreateTimelineActivityBaseInput = {
   targetRecordId: string;
   happensAt?: string;
   properties?: Record<string, unknown>;
-  workspaceMemberId?: string;
 };
 
 type CreateTimelineActivityLinkedRecordInput =
   | {
       linkedRecordId: string;
-      linkedRecordCachedName?: string;
       linkedObjectMetadataUniversalIdentifier: string;
     }
   | {
       linkedRecordId?: never;
-      linkedRecordCachedName?: never;
       linkedObjectMetadataUniversalIdentifier?: never;
     };
 

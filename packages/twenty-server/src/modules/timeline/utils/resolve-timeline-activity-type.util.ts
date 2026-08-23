@@ -8,6 +8,7 @@ import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-
 import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { partitionTimelineActivityTypesByValidity } from 'src/engine/metadata-modules/timeline-activity-type/utils/is-valid-timeline-activity-type-override.util';
 import { resolveTimelineActivityTypeOverride } from 'src/engine/metadata-modules/timeline-activity-type/utils/resolve-timeline-activity-type-override.util';
+import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
 
 export type ResolvableTimelineActivityType = Pick<
   FlatTimelineActivityType,
@@ -23,7 +24,7 @@ export type ResolvableTimelineActivityType = Pick<
   | 'targetRelationFieldUniversalIdentifier'
   | 'triggerFieldUniversalIdentifiers'
   | 'frontComponentUniversalIdentifier'
-  | 'overridesTimelineActivityTypeUniversalIdentifier'
+  | 'replacesTimelineActivityTypeUniversalIdentifier'
   | 'isActive'
   | 'overrides'
 >;
@@ -95,15 +96,22 @@ export const buildTimelineActivityTypeResolution = (
       timelineActivityType,
     ]),
   );
-  const {
-    validTimelineActivityTypes: allTimelineActivityTypes,
-    invalidTimelineActivityTypes,
-  } = partitionTimelineActivityTypesByValidity({
-    timelineActivityTypes: allUnvalidatedTimelineActivityTypes,
-    objectMetadataByUniversalIdentifier:
-      flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
-    timelineActivityTypeByUniversalIdentifier,
-  });
+  const { validTimelineActivityTypes, invalidTimelineActivityTypes } =
+    partitionTimelineActivityTypesByValidity({
+      timelineActivityTypes: allUnvalidatedTimelineActivityTypes,
+      objectMetadataByUniversalIdentifier:
+        flatTimelineActivityTypeMaps.objectMetadataByUniversalIdentifier,
+      timelineActivityTypeByUniversalIdentifier,
+    });
+  const allTimelineActivityTypes = validTimelineActivityTypes.map(
+    (timelineActivityType) => {
+      const routing = resolveTimelineActivityTypeRouting(timelineActivityType);
+
+      return isDefined(routing)
+        ? { ...timelineActivityType, ...routing }
+        : timelineActivityType;
+    },
+  );
   const allTimelineActivityTypeUniversalIdentifiers = new Set(
     allTimelineActivityTypes.map(
       (timelineActivityType) => timelineActivityType.universalIdentifier,

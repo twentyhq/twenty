@@ -11,7 +11,7 @@ const coreRecordCreated = {
   objectUniversalIdentifier: null,
   targetRelationFieldUniversalIdentifier: null,
   triggerFieldUniversalIdentifiers: null,
-  overridesTimelineActivityTypeUniversalIdentifier: null,
+  replacesTimelineActivityTypeUniversalIdentifier: null,
 };
 
 const thirdPartyCompanyCreated = {
@@ -20,7 +20,7 @@ const thirdPartyCompanyCreated = {
   objectUniversalIdentifier: COMPANY,
   targetRelationFieldUniversalIdentifier: null,
   triggerFieldUniversalIdentifiers: null,
-  overridesTimelineActivityTypeUniversalIdentifier: CORE_RECORD_CREATED,
+  replacesTimelineActivityTypeUniversalIdentifier: CORE_RECORD_CREATED,
 };
 
 describe('isValidTimelineActivityTypeOverride', () => {
@@ -29,7 +29,7 @@ describe('isValidTimelineActivityTypeOverride', () => {
       isValidTimelineActivityTypeOverride({
         timelineActivityType: {
           ...thirdPartyCompanyCreated,
-          overridesTimelineActivityTypeUniversalIdentifier: null,
+          replacesTimelineActivityTypeUniversalIdentifier: null,
         },
         objectOwner: {
           applicationUniversalIdentifier: THIRD_PARTY_APPLICATION,
@@ -44,7 +44,7 @@ describe('isValidTimelineActivityTypeOverride', () => {
       isValidTimelineActivityTypeOverride({
         timelineActivityType: {
           ...thirdPartyCompanyCreated,
-          overridesTimelineActivityTypeUniversalIdentifier: null,
+          replacesTimelineActivityTypeUniversalIdentifier: null,
         },
         objectOwner: { applicationUniversalIdentifier: CORE_APPLICATION },
         overriddenTimelineActivityType: undefined,
@@ -58,7 +58,7 @@ describe('isValidTimelineActivityTypeOverride', () => {
         timelineActivityType: {
           ...thirdPartyCompanyCreated,
           action: null,
-          overridesTimelineActivityTypeUniversalIdentifier: null,
+          replacesTimelineActivityTypeUniversalIdentifier: null,
         },
         objectOwner: { applicationUniversalIdentifier: CORE_APPLICATION },
         overriddenTimelineActivityType: undefined,

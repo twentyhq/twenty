@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 import {
-  ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+  ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
   ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
   TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
@@ -72,6 +72,8 @@ export class TimelineActivityTypeEntity
     upgradeCommandName:
       REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
   })
+  // Native renderers reserve identifiers in this namespace so snapshots use
+  // the same live-first resolution path as application front components.
   @Column({ nullable: true, type: 'uuid' })
   frontComponentUniversalIdentifier: string | null;
 
@@ -95,10 +97,10 @@ export class TimelineActivityTypeEntity
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+      ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid' })
-  overridesTimelineActivityTypeUniversalIdentifier: string | null;
+  replacesTimelineActivityTypeUniversalIdentifier: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

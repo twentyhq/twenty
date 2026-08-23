@@ -98,7 +98,6 @@ describe('createTimelineActivity', () => {
         linkedRecordId: '55555555-5555-4555-8555-555555555555',
         linkedObjectMetadataUniversalIdentifier:
           LINKED_OBJECT_UNIVERSAL_IDENTIFIER,
-        linkedRecordCachedName: 'Welcome card',
         properties: { delivery: 'express' },
       }),
     ).resolves.toEqual(createdTimelineActivity);
@@ -121,7 +120,6 @@ describe('createTimelineActivity', () => {
       targetPostCardId: '44444444-4444-4444-8444-444444444444',
       linkedRecordId: '55555555-5555-4555-8555-555555555555',
       linkedObjectMetadataId: LINKED_OBJECT_ID,
-      linkedRecordCachedName: 'Welcome card',
       properties: { delivery: 'express' },
     });
   });

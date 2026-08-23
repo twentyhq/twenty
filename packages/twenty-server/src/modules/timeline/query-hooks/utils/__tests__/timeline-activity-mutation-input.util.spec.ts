@@ -135,6 +135,34 @@ describe('timeline activity mutation input', () => {
     ).toThrow('An application can only create its own timeline activity types');
   });
 
+  it('does not let an application attribute an activity to a workspace member', () => {
+    const now = new Date('2026-08-23T12:00:00.000Z');
+
+    expect(
+      stampTimelineActivityTypeSnapshots({
+        applicationId: APPLICATION_ID,
+        now,
+        records: [
+          {
+            timelineActivityTypeId: TYPE_ID,
+            targetPersonId: '00000000-0000-4000-8000-000000000010',
+            workspaceMemberId: '00000000-0000-4000-8000-000000000011',
+            happensAt: '2026-08-24T12:00:00.000Z',
+          },
+        ],
+        resolvedTimelineActivityTypeById,
+      }),
+    ).toEqual([
+      {
+        timelineActivityTypeId: TYPE_ID,
+        timelineActivityTypeSnapshot: snapshot,
+        targetPersonId: '00000000-0000-4000-8000-000000000010',
+        workspaceMemberId: null,
+        happensAt: now.toISOString(),
+      },
+    ]);
+  });
+
   it('rejects changing either immutable type field after creation', () => {
     expect(() =>
       assertTimelineActivityTypeIsNotUpdated([

@@ -26,7 +26,7 @@ const noteLinkedTimelineActivityType = {
   targetRelationFieldUniversalIdentifier: null,
   triggerFieldUniversalIdentifiers: null,
   frontComponentUniversalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  overridesTimelineActivityTypeUniversalIdentifier: null,
+  replacesTimelineActivityTypeUniversalIdentifier: null,
   isActive: true,
   overrides: null,
 };
@@ -46,7 +46,7 @@ const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
       targetRelationFieldUniversalIdentifier: null,
       triggerFieldUniversalIdentifiers: null,
       frontComponentUniversalIdentifier: null,
-      overridesTimelineActivityTypeUniversalIdentifier: null,
+      replacesTimelineActivityTypeUniversalIdentifier: null,
       isActive: true,
       overrides: null,
     },
@@ -265,7 +265,7 @@ describe('buildTimelineActivityTypeResolution', () => {
             applicationUniversalIdentifier:
               '00000000-0000-4000-8000-000000000032',
             universalIdentifier: overrideUniversalIdentifier,
-            overridesTimelineActivityTypeUniversalIdentifier:
+            replacesTimelineActivityTypeUniversalIdentifier:
               noteLinkedTimelineActivityType.universalIdentifier,
           },
         },

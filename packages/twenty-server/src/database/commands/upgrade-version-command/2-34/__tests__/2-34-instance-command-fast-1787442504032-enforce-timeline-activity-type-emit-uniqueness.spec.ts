@@ -21,13 +21,13 @@ describe('EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand', () => {
     );
     expect(query.mock.calls[0][0]).toContain('NULLS NOT DISTINCT');
     expect(query.mock.calls[0][0]).toContain(
-      '"overridesTimelineActivityTypeUniversalIdentifier" IS NULL',
+      '"replacesTimelineActivityTypeUniversalIdentifier" IS NULL',
     );
     expect(query.mock.calls[1][0]).toContain(
       'IDX_TIMELINE_ACTIVITY_TYPE_OVERRIDE_EMIT_SLOT_UNIQUE',
     );
     expect(query.mock.calls[1][0]).toContain(
-      '"overridesTimelineActivityTypeUniversalIdentifier" IS NOT NULL',
+      '"replacesTimelineActivityTypeUniversalIdentifier" IS NOT NULL',
     );
   });
 

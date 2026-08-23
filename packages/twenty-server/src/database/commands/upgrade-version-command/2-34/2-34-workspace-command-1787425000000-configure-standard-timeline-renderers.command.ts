@@ -5,6 +5,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { hasTimelineActivityObjectMetadata } from 'src/database/commands/upgrade-version-command/2-34/utils/has-timeline-activity-object-metadata.util';
+import { validateStandardMetadataUpdateCount } from 'src/database/commands/upgrade-version-command/2-34/utils/validate-standard-metadata-update-count.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -13,13 +14,11 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const STANDARD_TYPES_WITH_RENDERERS = [
   {
     universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c0f',
-    frontComponentUniversalIdentifier:
-      '8b4da8ed-4a87-480d-bcad-a791262cb890',
+    frontComponentUniversalIdentifier: '8b4da8ed-4a87-480d-bcad-a791262cb890',
   },
   {
     universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c10',
-    frontComponentUniversalIdentifier:
-      '3c70dd28-42f3-41da-8f41-22013d65ff50',
+    frontComponentUniversalIdentifier: '3c70dd28-42f3-41da-8f41-22013d65ff50',
   },
 ] as const;
 
@@ -101,10 +100,12 @@ export class ConfigureStandardTimelineRenderersCommand extends ProvisionedWorksp
       'flatTimelineActivityTypeMaps',
     ]);
 
-    if (updatedRowCount !== STANDARD_TYPES_WITH_RENDERERS.length) {
-      throw new Error(
-        `Expected to configure ${STANDARD_TYPES_WITH_RENDERERS.length} standard timeline renderers for workspace ${workspaceId}, updated ${updatedRowCount}`,
-      );
-    }
+    validateStandardMetadataUpdateCount({
+      actualCount: updatedRowCount,
+      expectedCount: STANDARD_TYPES_WITH_RENDERERS.length,
+      logger: this.logger,
+      metadataLabel: 'standard timeline renderers',
+      workspaceId,
+    });
   }
 }

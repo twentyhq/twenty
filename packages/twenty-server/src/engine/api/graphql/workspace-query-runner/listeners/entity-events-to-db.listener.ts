@@ -23,6 +23,7 @@ import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-f
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
+import { TimelineActivityEventEligibilityService } from 'src/modules/timeline/services/timeline-activity-event-eligibility.service';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -34,6 +35,7 @@ export class EntityEventsToDbListener {
     @InjectMessageQueue(MessageQueue.triggerQueue)
     private readonly triggerQueueService: MessageQueueService,
     private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
+    private readonly timelineActivityEventEligibilityService: TimelineActivityEventEligibilityService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -79,6 +81,12 @@ export class EntityEventsToDbListener {
     }
 
     const isAuditLogBatchEvent = batchEvent.objectMetadata?.isAuditLogged;
+    const shouldCreateTimelineActivity =
+      action !== DatabaseEventAction.DESTROYED &&
+      (await this.timelineActivityEventEligibilityService.shouldProcessEvent({
+        flatObjectMetadata: batchEvent.objectMetadata,
+        workspaceId: batchEvent.workspaceId,
+      }));
 
     const batchEventForWebhook = {
       ...batchEvent,
@@ -107,9 +115,7 @@ export class EntityEventsToDbListener {
       ),
     );
 
-    if (action !== DatabaseEventAction.DESTROYED) {
-      // Application-declared routing can use junction objects that are not
-      // audit logged, such as message and calendar event participants.
+    if (shouldCreateTimelineActivity) {
       promises.push(
         this.entityEventsToDbQueueService.add<
           WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>

@@ -16,6 +16,26 @@ const throwInvalidTimelineActivityInput = (message: string): never => {
   );
 };
 
+export const sanitizeApplicationTimelineActivityInput = ({
+  now = new Date(),
+  record,
+}: {
+  now?: Date;
+  record: TimelineActivityMutationInput;
+}): TimelineActivityMutationInput => {
+  const happensAt = isDefined(record.happensAt)
+    ? new Date(record.happensAt)
+    : undefined;
+
+  return {
+    ...record,
+    workspaceMemberId: null,
+    ...(isDefined(happensAt) &&
+      !Number.isNaN(happensAt.getTime()) &&
+      happensAt > now && { happensAt: now.toISOString() }),
+  };
+};
+
 export const assertTimelineActivityCreationInputIsValid = ({
   records,
   upsert,
@@ -57,10 +77,12 @@ export const assertTimelineActivityCreationInputIsValid = ({
 
 export const stampTimelineActivityTypeSnapshots = ({
   applicationId,
+  now = new Date(),
   records,
   resolvedTimelineActivityTypeById,
 }: {
   applicationId?: string;
+  now?: Date;
   records: TimelineActivityMutationInput[];
   resolvedTimelineActivityTypeById: ReadonlyMap<
     string,
@@ -96,10 +118,17 @@ export const stampTimelineActivityTypeSnapshots = ({
       );
     }
 
-    return {
+    const stampedRecord = {
       ...record,
       timelineActivityTypeSnapshot: resolvedTimelineActivityType.snapshot,
     };
+
+    return isDefined(applicationId)
+      ? sanitizeApplicationTimelineActivityInput({
+          now,
+          record: stampedRecord,
+        })
+      : stampedRecord;
   });
 };
 

@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type TimelineActivityTypeOverride = {
   universalIdentifier: string;
-  overridesTimelineActivityTypeUniversalIdentifier: string | null;
+  replacesTimelineActivityTypeUniversalIdentifier: string | null;
 };
 
 export const resolveTimelineActivityTypeOverride = <
@@ -14,17 +14,17 @@ export const resolveTimelineActivityTypeOverride = <
   const validCandidates = timelineActivityTypes.filter(
     (timelineActivityType) =>
       !isDefined(
-        timelineActivityType.overridesTimelineActivityTypeUniversalIdentifier,
+        timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
       ) ||
       allTimelineActivityTypeUniversalIdentifiers.has(
-        timelineActivityType.overridesTimelineActivityTypeUniversalIdentifier,
+        timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
       ),
   );
   const overriddenUniversalIdentifiers = new Set(
     validCandidates
       .map(
         (timelineActivityType) =>
-          timelineActivityType.overridesTimelineActivityTypeUniversalIdentifier,
+          timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
       )
       .filter(isDefined),
   );

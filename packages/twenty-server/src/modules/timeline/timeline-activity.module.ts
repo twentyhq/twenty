@@ -8,13 +8,9 @@ import { TimelineActivityTargetQueryService } from 'src/modules/timeline/service
 import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { TimelineActivityMutationQueryHookService } from 'src/modules/timeline/query-hooks/timeline-activity-mutation-query-hook.service';
-import { TimelineActivityCreateOnePreQueryHook } from 'src/modules/timeline/query-hooks/timeline-activity-create-one.pre-query-hook';
-import { TimelineActivityCreateManyPreQueryHook } from 'src/modules/timeline/query-hooks/timeline-activity-create-many.pre-query-hook';
-import { TimelineActivityUpdateOnePreQueryHook } from 'src/modules/timeline/query-hooks/timeline-activity-update-one.pre-query-hook';
-import { TimelineActivityUpdateManyPreQueryHook } from 'src/modules/timeline/query-hooks/timeline-activity-update-many.pre-query-hook';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
+import { TimelineActivityEventEligibilityService } from 'src/modules/timeline/services/timeline-activity-event-eligibility.service';
 
 @Module({
   imports: [
@@ -30,13 +26,13 @@ import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline
     TimelineActivityRuleBuilderService,
     TimelineActivityTargetQueryService,
     TimelineActivityTypeCacheService,
-    TimelineActivityMutationQueryHookService,
-    TimelineActivityCreateOnePreQueryHook,
-    TimelineActivityCreateManyPreQueryHook,
-    TimelineActivityUpdateOnePreQueryHook,
-    TimelineActivityUpdateManyPreQueryHook,
     TimelineActivityMetadataDiagnosticsService,
+    TimelineActivityEventEligibilityService,
   ],
-  exports: [TimelineActivityService, TimelineActivityTypeCacheService],
+  exports: [
+    TimelineActivityService,
+    TimelineActivityTypeCacheService,
+    TimelineActivityEventEligibilityService,
+  ],
 })
 export class TimelineActivityModule {}

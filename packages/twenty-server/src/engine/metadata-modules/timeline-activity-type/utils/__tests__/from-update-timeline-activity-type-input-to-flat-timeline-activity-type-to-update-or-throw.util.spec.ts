@@ -22,7 +22,7 @@ const timelineActivityType: FlatTimelineActivityType = {
   objectUniversalIdentifier: null,
   targetRelationFieldUniversalIdentifier: null,
   triggerFieldUniversalIdentifiers: null,
-  overridesTimelineActivityTypeUniversalIdentifier: null,
+  replacesTimelineActivityTypeUniversalIdentifier: null,
   isActive: true,
   overrides: null,
   createdAt: '2026-08-22T00:00:00.000Z',

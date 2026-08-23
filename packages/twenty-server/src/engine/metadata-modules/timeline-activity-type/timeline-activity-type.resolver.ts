@@ -16,7 +16,10 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
@@ -76,7 +79,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async updateTimelineActivityType(
     @Args('input') input: UpdateTimelineActivityTypeInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -88,7 +91,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async resetTimelineActivityType(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

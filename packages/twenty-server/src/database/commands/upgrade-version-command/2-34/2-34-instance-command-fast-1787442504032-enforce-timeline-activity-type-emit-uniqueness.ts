@@ -14,10 +14,10 @@ export class EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "${BASE_EMIT_SLOT_INDEX_NAME}" ON "core"."timelineActivityType" ("workspaceId", "action", "objectUniversalIdentifier", "targetRelationFieldUniversalIdentifier") NULLS NOT DISTINCT WHERE "action" IS NOT NULL AND "overridesTimelineActivityTypeUniversalIdentifier" IS NULL`,
+      `CREATE UNIQUE INDEX "${BASE_EMIT_SLOT_INDEX_NAME}" ON "core"."timelineActivityType" ("workspaceId", "action", "objectUniversalIdentifier", "targetRelationFieldUniversalIdentifier") NULLS NOT DISTINCT WHERE "action" IS NOT NULL AND "replacesTimelineActivityTypeUniversalIdentifier" IS NULL`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "${OVERRIDE_EMIT_SLOT_INDEX_NAME}" ON "core"."timelineActivityType" ("workspaceId", "action", "objectUniversalIdentifier", "targetRelationFieldUniversalIdentifier") NULLS NOT DISTINCT WHERE "action" IS NOT NULL AND "overridesTimelineActivityTypeUniversalIdentifier" IS NOT NULL`,
+      `CREATE UNIQUE INDEX "${OVERRIDE_EMIT_SLOT_INDEX_NAME}" ON "core"."timelineActivityType" ("workspaceId", "action", "objectUniversalIdentifier", "targetRelationFieldUniversalIdentifier") NULLS NOT DISTINCT WHERE "action" IS NOT NULL AND "replacesTimelineActivityTypeUniversalIdentifier" IS NOT NULL`,
     );
   }
 

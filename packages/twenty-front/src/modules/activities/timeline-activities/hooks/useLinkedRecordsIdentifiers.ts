@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 export const useLinkedRecordsIdentifiers = ({
   timelineActivities,
@@ -84,8 +85,19 @@ export const useLinkedRecordsIdentifiers = ({
       .filter(isDefined);
   }, [objectMetadataItems, timelineActivities]);
 
-  return useCombinedFindManyRecords({
+  const queryResult = useCombinedFindManyRecords({
     operationSignatures,
     skip: !isNonEmptyArray(operationSignatures),
   });
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+  useEffect(() => {
+    const linkedRecords = Object.values(queryResult.result).flat();
+
+    if (isNonEmptyArray(linkedRecords)) {
+      upsertRecordsInStore({ partialRecords: linkedRecords });
+    }
+  }, [queryResult.result, upsertRecordsInStore]);
+
+  return queryResult;
 };

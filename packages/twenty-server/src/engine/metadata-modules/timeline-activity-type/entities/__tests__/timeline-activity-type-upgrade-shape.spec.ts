@@ -1,5 +1,5 @@
 import {
-  ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+  ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
   ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
   TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
@@ -11,7 +11,7 @@ const CURRENT_COLUMNS = [
   'frontComponentUniversalIdentifier',
   'targetRelationFieldUniversalIdentifier',
   'triggerFieldUniversalIdentifiers',
-  'overridesTimelineActivityTypeUniversalIdentifier',
+  'replacesTimelineActivityTypeUniversalIdentifier',
   'overrides',
   'isActive',
 ].map((propertyName) => ({ propertyName, databaseName: propertyName }));
@@ -40,7 +40,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       new Set([
         'targetRelationFieldUniversalIdentifier',
         'triggerFieldUniversalIdentifiers',
-        'overridesTimelineActivityTypeUniversalIdentifier',
+        'replacesTimelineActivityTypeUniversalIdentifier',
         'overrides',
         'isActive',
       ]),
@@ -53,7 +53,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       ]).hiddenPropertyNames,
     ).toEqual(
       new Set([
-        'overridesTimelineActivityTypeUniversalIdentifier',
+        'replacesTimelineActivityTypeUniversalIdentifier',
         'overrides',
         'isActive',
       ]),
@@ -63,7 +63,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       resolveAt([
         REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
-        ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
     ).toEqual(new Set(['overrides', 'isActive']));
 
@@ -71,7 +71,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       resolveAt([
         REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
-        ADD_TIMELINE_ACTIVITY_TYPE_OVERRIDES_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
         TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
     ).toEqual(new Set());

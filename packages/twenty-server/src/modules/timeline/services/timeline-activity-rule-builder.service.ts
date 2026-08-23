@@ -16,6 +16,7 @@ import {
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
+import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
 
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
@@ -86,14 +87,19 @@ export class TimelineActivityRuleBuilderService {
       (timelineActivityType) => timelineActivityType.isActive,
     );
 
+    const invalidThroughRules: {
+      action: string;
+      objectUniversalIdentifier: string | null;
+    }[] = [];
     const declaredThroughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {
+        const routing =
+          resolveTimelineActivityTypeRouting(timelineActivityType);
+
         if (
           !isDefined(timelineActivityType.action) ||
           !isDefined(timelineActivityType.objectUniversalIdentifier) ||
-          !isDefined(
-            timelineActivityType.targetRelationFieldUniversalIdentifier,
-          )
+          !isDefined(routing)
         ) {
           return undefined;
         }
@@ -104,14 +110,18 @@ export class TimelineActivityRuleBuilderService {
         });
         const relationFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatFieldMetadataMaps,
-          universalIdentifier:
-            timelineActivityType.targetRelationFieldUniversalIdentifier,
+          universalIdentifier: routing.targetRelationFieldUniversalIdentifier,
         });
 
         if (
           !isDefined(sourceFlatObjectMetadata) ||
           !isDefined(relationFlatFieldMetadata)
         ) {
+          invalidThroughRules.push({
+            action: timelineActivityType.action,
+            objectUniversalIdentifier:
+              timelineActivityType.objectUniversalIdentifier,
+          });
           return undefined;
         }
 
@@ -122,6 +132,11 @@ export class TimelineActivityRuleBuilderService {
         });
 
         if (!isDefined(targetShape)) {
+          invalidThroughRules.push({
+            action: timelineActivityType.action,
+            objectUniversalIdentifier:
+              timelineActivityType.objectUniversalIdentifier,
+          });
           return undefined;
         }
 
@@ -131,7 +146,7 @@ export class TimelineActivityRuleBuilderService {
           timelineActivityType:
             toResolvedTimelineActivityType(timelineActivityType),
           triggerFieldNames:
-            timelineActivityType.triggerFieldUniversalIdentifiers
+            routing.triggerFieldUniversalIdentifiers
               ?.map(
                 (universalIdentifier) =>
                   findFlatEntityByUniversalIdentifier({
@@ -144,6 +159,12 @@ export class TimelineActivityRuleBuilderService {
         };
       })
       .filter(isDefined);
+
+    this.timelineActivityMetadataDiagnosticsService.reportAll({
+      workspaceId,
+      reason: 'invalid-contract',
+      issues: invalidThroughRules,
+    });
 
     const selfRule = buildTimelineActivitySelfRule({
       flatObjectMetadata,

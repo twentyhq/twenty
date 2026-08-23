@@ -97,7 +97,7 @@ describe('fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType', 
         },
       }),
     ).toMatchObject({
-      overridesTimelineActivityTypeUniversalIdentifier:
+      replacesTimelineActivityTypeUniversalIdentifier:
         REPLACED_TYPE_UNIVERSAL_IDENTIFIER,
     });
   });

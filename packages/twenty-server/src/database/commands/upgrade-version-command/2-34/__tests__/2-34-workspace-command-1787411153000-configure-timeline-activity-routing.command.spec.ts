@@ -61,8 +61,7 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
         WORKSPACE_ID,
         STANDARD_APPLICATION_ID,
         STANDARD_OBJECTS.note.fields.noteTargets.universalIdentifier,
-        STANDARD_OBJECTS.message.fields.messageParticipants
-          .universalIdentifier,
+        STANDARD_OBJECTS.message.fields.messageParticipants.universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
           .universalIdentifier,
       ]),
@@ -84,7 +83,7 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
     ]);
   });
 
-  it('fails when a standard routing is missing', async () => {
+  it('does not block the fleet when optional standard metadata is missing', async () => {
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
     const command = new ConfigureTimelineActivityRoutingCommand(
       {} as WorkspaceIteratorService,
@@ -101,20 +100,18 @@ describe('ConfigureTimelineActivityRoutingCommand', () => {
       } as unknown as WorkspaceCacheService,
     );
 
-    await expect(
-      command.runOnWorkspace({
-        workspaceId: WORKSPACE_ID,
-        dataSource: {
-          query: jest
-            .fn()
-            .mockResolvedValueOnce([[], 7])
-            .mockResolvedValueOnce([[], 2]),
-        } as never,
-        options: {},
-        index: 0,
-        total: 1,
-      }),
-    ).rejects.toThrow('updated 7');
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource: {
+        query: jest
+          .fn()
+          .mockResolvedValueOnce([[], 7])
+          .mockResolvedValueOnce([[], 2]),
+      } as never,
+      options: {},
+      index: 0,
+      total: 1,
+    });
     expect(invalidateAndRecompute).toHaveBeenCalledTimes(1);
   });
 

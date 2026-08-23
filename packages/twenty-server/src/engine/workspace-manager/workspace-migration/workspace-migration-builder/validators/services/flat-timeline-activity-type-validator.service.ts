@@ -217,7 +217,7 @@ export class FlatTimelineActivityTypeValidatorService {
       frontComponentUniversalIdentifier,
       targetRelationFieldUniversalIdentifier,
       triggerFieldUniversalIdentifiers,
-      overridesTimelineActivityTypeUniversalIdentifier,
+      replacesTimelineActivityTypeUniversalIdentifier,
     } = timelineActivityType;
 
     const objectMetadata = isDefined(objectUniversalIdentifier)
@@ -262,10 +262,10 @@ export class FlatTimelineActivityTypeValidatorService {
     }
 
     const overridesTimelineActivityType = isDefined(
-      overridesTimelineActivityTypeUniversalIdentifier,
+      replacesTimelineActivityTypeUniversalIdentifier,
     )
       ? validationMaps.flatTimelineActivityTypeMaps.byUniversalIdentifier[
-          overridesTimelineActivityTypeUniversalIdentifier
+          replacesTimelineActivityTypeUniversalIdentifier
         ]
       : undefined;
 
@@ -277,7 +277,7 @@ export class FlatTimelineActivityTypeValidatorService {
 
     if (
       targetsAnotherApplication &&
-      !isDefined(overridesTimelineActivityTypeUniversalIdentifier)
+      !isDefined(replacesTimelineActivityTypeUniversalIdentifier)
     ) {
       validationResult.errors.push({
         code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
@@ -287,7 +287,7 @@ export class FlatTimelineActivityTypeValidatorService {
     }
 
     if (
-      isDefined(overridesTimelineActivityTypeUniversalIdentifier) &&
+      isDefined(replacesTimelineActivityTypeUniversalIdentifier) &&
       !isValidTimelineActivityTypeOverride({
         timelineActivityType,
         objectOwner: objectMetadata,

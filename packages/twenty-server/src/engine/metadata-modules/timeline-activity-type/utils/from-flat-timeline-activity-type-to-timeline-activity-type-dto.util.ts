@@ -35,7 +35,7 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
     flatTimelineActivityType.frontComponentUniversalIdentifier,
   objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,
   replacesTimelineActivityTypeUniversalIdentifier:
-    flatTimelineActivityType.overridesTimelineActivityTypeUniversalIdentifier,
+    flatTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
   isActive: flatTimelineActivityType.isActive,
   workspaceId: flatTimelineActivityType.workspaceId,
   applicationId: flatTimelineActivityType.applicationId,

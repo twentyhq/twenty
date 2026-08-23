@@ -64,7 +64,7 @@ describe('ConfigureStandardTimelineRenderersCommand', () => {
     ]);
   });
 
-  it('fails after refreshing the cache when a standard renderer is missing', async () => {
+  it('does not block the fleet when an optional standard renderer is missing', async () => {
     const invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
     const command = new ConfigureStandardTimelineRenderersCommand(
       {} as WorkspaceIteratorService,
@@ -81,15 +81,13 @@ describe('ConfigureStandardTimelineRenderersCommand', () => {
       } as unknown as WorkspaceCacheService,
     );
 
-    await expect(
-      command.runOnWorkspace({
-        workspaceId: WORKSPACE_ID,
-        dataSource: { query: jest.fn().mockResolvedValue([[], 1]) } as never,
-        options: {},
-        index: 0,
-        total: 1,
-      }),
-    ).rejects.toThrow('updated 1');
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource: { query: jest.fn().mockResolvedValue([[], 1]) } as never,
+      options: {},
+      index: 0,
+      total: 1,
+    });
     expect(invalidateAndRecompute).toHaveBeenCalledTimes(1);
   });
 

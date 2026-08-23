@@ -6,7 +6,7 @@ type TimelineActivityTypeOverrideContract = {
   objectUniversalIdentifier: string | null;
   targetRelationFieldUniversalIdentifier: string | null;
   triggerFieldUniversalIdentifiers: string[] | null;
-  overridesTimelineActivityTypeUniversalIdentifier: string | null;
+  replacesTimelineActivityTypeUniversalIdentifier: string | null;
 };
 
 type ObjectOwner = {
@@ -53,7 +53,7 @@ export const isValidTimelineActivityTypeOverride = ({
     objectOwner.applicationUniversalIdentifier !==
       timelineActivityType.applicationUniversalIdentifier;
   const overrideUniversalIdentifier =
-    timelineActivityType.overridesTimelineActivityTypeUniversalIdentifier;
+    timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier;
 
   if (!isDefined(timelineActivityType.action)) {
     return !isDefined(overrideUniversalIdentifier);
@@ -111,11 +111,10 @@ export const partitionTimelineActivityTypesByValidity = <
           ]
         : undefined,
       overriddenTimelineActivityType: isDefined(
-        timelineActivityType.overridesTimelineActivityTypeUniversalIdentifier,
+        timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier,
       )
         ? timelineActivityTypeByUniversalIdentifier[
-            timelineActivityType
-              .overridesTimelineActivityTypeUniversalIdentifier
+            timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier
           ]
         : undefined,
     });
