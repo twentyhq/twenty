@@ -97,8 +97,9 @@ export const MultipleRecordPickerMenuItems = ({
 
   const handleItemSelect = useCallback(
     (morphItem: RecordPickerPickableMorphItem) => {
-      if (morphItem.isSelected) {
+      if (!morphItem.isSelected) {
         // INTERCEPT: the user is unchecking (removing) an existing relation
+        // The picker emits the NEW state — isSelected: false means the box was just unchecked
         setPendingRemovalItem(morphItem);
         setIsConfirmationModalOpen(true);
         openModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
