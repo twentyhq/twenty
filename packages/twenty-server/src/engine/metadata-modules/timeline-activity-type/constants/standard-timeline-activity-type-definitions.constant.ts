@@ -255,6 +255,44 @@ const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivi
         },
       },
     },
+    {
+      name: 'attachmentLinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c11',
+      label: msg({
+        message: `attached a file`,
+        context: 'timelineActivityType.label',
+      }),
+      icon: 'IconPaperclip',
+      frontComponentUniversalIdentifier: null,
+      emit: {
+        on: 'linked',
+        objectUniversalIdentifier:
+          STANDARD_OBJECTS.attachment.universalIdentifier,
+        through: {
+          relationFieldUniversalIdentifier:
+            STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier,
+        },
+      },
+    },
+    {
+      name: 'attachmentUnlinked',
+      universalIdentifier: '20202020-0d1a-4f0e-8a55-1c0a2f0a2c12',
+      label: msg({
+        message: `removed an attachment`,
+        context: 'timelineActivityType.label',
+      }),
+      icon: 'IconUnlink',
+      frontComponentUniversalIdentifier: null,
+      emit: {
+        on: 'unlinked',
+        objectUniversalIdentifier:
+          STANDARD_OBJECTS.attachment.universalIdentifier,
+        through: {
+          relationFieldUniversalIdentifier:
+            STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier,
+        },
+      },
+    },
   ];
 
 // The normalized properties keep the committed 2.34 workspace command stable;

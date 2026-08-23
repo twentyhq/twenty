@@ -159,6 +159,8 @@ const MESSAGE_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.message.universalIdentifier;
 const CALENDAR_EVENT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.calendarEvent.universalIdentifier;
+const ATTACHMENT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.attachment.universalIdentifier;
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
@@ -173,6 +175,7 @@ const ROUTED_MESSAGE_PARTICIPANT_ID = '20202020-7171-4000-8000-000000000013';
 const ROUTED_CALENDAR_EVENT_ID = '20202020-7171-4000-8000-000000000014';
 const ROUTED_CALENDAR_EVENT_PARTICIPANT_ID =
   '20202020-7171-4000-8000-000000000015';
+const ATTACHMENT_ID = '20202020-7171-4000-8000-000000000016';
 const BATCH_COMPANY_IDS = [
   '20202020-7171-4000-8000-000000000008',
   '20202020-7171-4000-8000-000000000009',
@@ -180,6 +183,7 @@ const BATCH_COMPANY_IDS = [
 
 const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
   [
+    { objectMetadataSingularName: 'attachment', id: ATTACHMENT_ID },
     {
       objectMetadataSingularName: 'calendarEventParticipant',
       id: ROUTED_CALENDAR_EVENT_PARTICIPANT_ID,
@@ -631,6 +635,90 @@ describe('timeline activity write path (integration)', () => {
         linkedRecordId: ROUTED_CALENDAR_EVENT_ID,
         linkedRecordCachedName: 'Generic calendar routing',
       });
+    });
+  });
+
+  describe('metadata-declared direct relation routing', () => {
+    it('routes attachment link lifecycle events without attachment-specific code', async () => {
+      await createRecord({
+        objectMetadataSingularName: 'attachment',
+        data: {
+          id: ATTACHMENT_ID,
+          name: 'proposal.pdf',
+          targetCompanyId: NOTE_COMPANY_ID,
+        },
+      });
+
+      const linkedTypeId = timelineActivityTypeIdForOrThrow(
+        'linked',
+        ATTACHMENT_UNIVERSAL_IDENTIFIER,
+      );
+      const unlinkedTypeId = timelineActivityTypeIdForOrThrow(
+        'unlinked',
+        ATTACHMENT_UNIVERSAL_IDENTIFIER,
+      );
+      const firstTargetActivities = await findTimelineActivities({
+        targetCompanyId: { eq: NOTE_COMPANY_ID },
+        timelineActivityTypeId: { eq: linkedTypeId },
+      });
+
+      expect(firstTargetActivities).toHaveLength(1);
+      expect(firstTargetActivities[0]).toMatchObject({
+        linkedRecordId: ATTACHMENT_ID,
+        linkedRecordCachedName: 'proposal.pdf',
+      });
+
+      await updateRecord({
+        objectMetadataSingularName: 'attachment',
+        recordId: ATTACHMENT_ID,
+        data: { name: 'proposal-final.pdf' },
+      });
+
+      expect(
+        await findTimelineActivities({
+          targetCompanyId: { eq: NOTE_COMPANY_ID },
+          timelineActivityTypeId: { eq: linkedTypeId },
+        }),
+      ).toHaveLength(1);
+
+      await updateRecord({
+        objectMetadataSingularName: 'attachment',
+        recordId: ATTACHMENT_ID,
+        data: { targetCompanyId: COMPANY_ID },
+      });
+
+      expect(
+        await findTimelineActivities({
+          targetCompanyId: { eq: NOTE_COMPANY_ID },
+          timelineActivityTypeId: { eq: unlinkedTypeId },
+        }),
+      ).toHaveLength(1);
+
+      const secondTargetActivities = await findTimelineActivities({
+        targetCompanyId: { eq: COMPANY_ID },
+        timelineActivityTypeId: { eq: linkedTypeId },
+      });
+
+      expect(secondTargetActivities).toHaveLength(1);
+      expect(secondTargetActivities[0].linkedRecordCachedName).toBe(
+        'proposal-final.pdf',
+      );
+
+      const deleteResponse = await makeGraphqlAPIRequest(
+        deleteOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          recordId: ATTACHMENT_ID,
+        }),
+      );
+
+      expect(deleteResponse.body.errors).toBeUndefined();
+      expect(
+        await findTimelineActivities({
+          targetCompanyId: { eq: COMPANY_ID },
+          timelineActivityTypeId: { eq: unlinkedTypeId },
+        }),
+      ).toHaveLength(1);
     });
   });
 

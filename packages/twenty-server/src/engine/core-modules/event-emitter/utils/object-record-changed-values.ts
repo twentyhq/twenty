@@ -12,7 +12,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type RelationFieldChangeValue = {
@@ -25,11 +25,9 @@ const buildRelationFieldChangeValue = (
   id: isDefined(relationId) ? relationId : null,
 });
 
-const isManyToOneRelationField = (
-  field: FlatFieldMetadata,
-): field is FlatFieldMetadata<FieldMetadataType.RELATION> => {
+const isManyToOneMorphOrRelationField = (field: FlatFieldMetadata): boolean => {
   return (
-    isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
+    isMorphOrRelationFlatFieldMetadata(field) &&
     field.settings?.relationType === RelationType.MANY_TO_ONE
   );
 };
@@ -56,7 +54,7 @@ export const computeUpdatedFieldsFromDiff = (
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (isDefined(field) && isManyToOneRelationField(field)) {
+    if (isDefined(field) && isManyToOneMorphOrRelationField(field)) {
       return [
         diffKey,
         computeMorphOrRelationFieldJoinColumnName({ name: field.name }),
@@ -102,7 +100,7 @@ export const objectRecordChangedValues = (
       if (
         key === 'updatedAt' ||
         key === 'searchVector' ||
-        (isDefined(field) && isManyToOneRelationField(field)) ||
+        (isDefined(field) && isManyToOneMorphOrRelationField(field)) ||
         field?.type === FieldMetadataType.RELATION ||
         field?.type === FieldMetadataType.MORPH_RELATION
       ) {
@@ -129,7 +127,7 @@ export const objectRecordChangedValues = (
 
   for (const field of objectFields) {
     if (
-      !isManyToOneRelationField(field) ||
+      !isManyToOneMorphOrRelationField(field) ||
       isDefined(accumulator[field.name])
     ) {
       continue;
