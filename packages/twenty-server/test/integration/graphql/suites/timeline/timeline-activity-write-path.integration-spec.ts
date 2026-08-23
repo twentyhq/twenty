@@ -544,11 +544,15 @@ describe('timeline activity write path (integration)', () => {
         data: {
           id: ROUTED_MESSAGE_PARTICIPANT_ID,
           messageId: ROUTED_MESSAGE_ID,
-          personId: ROUTED_PERSON_ID,
           role: 'TO',
           handle: 'generic.target@example.com',
           displayName: 'Generic Target',
         },
+      });
+      await updateRecord({
+        objectMetadataSingularName: 'messageParticipant',
+        recordId: ROUTED_MESSAGE_PARTICIPANT_ID,
+        data: { personId: ROUTED_PERSON_ID },
       });
 
       const messageActivities = await findTimelineActivities({
@@ -600,12 +604,16 @@ describe('timeline activity write path (integration)', () => {
         data: {
           id: ROUTED_CALENDAR_EVENT_PARTICIPANT_ID,
           calendarEventId: ROUTED_CALENDAR_EVENT_ID,
-          personId: ROUTED_PERSON_ID,
           handle: 'generic.target@example.com',
           displayName: 'Generic Target',
           responseStatus: 'ACCEPTED',
           isOrganizer: false,
         },
+      });
+      await updateRecord({
+        objectMetadataSingularName: 'calendarEventParticipant',
+        recordId: ROUTED_CALENDAR_EVENT_PARTICIPANT_ID,
+        data: { personId: ROUTED_PERSON_ID },
       });
 
       const calendarActivities = await findTimelineActivities({

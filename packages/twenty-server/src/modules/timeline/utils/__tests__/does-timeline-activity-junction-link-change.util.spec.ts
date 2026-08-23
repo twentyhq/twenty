@@ -17,20 +17,40 @@ const targetShape: Extract<
   ],
 };
 
-const buildEvent = (diff?: Record<string, unknown>) =>
+const buildEvent = ({
+  updatedFields,
+  diff,
+}: {
+  updatedFields?: string[];
+  diff?: Record<string, unknown>;
+}) =>
   ({
     recordId: 'junction-record-id',
-    properties: { diff },
+    properties: { updatedFields, diff },
   }) as ObjectRecordBaseEvent<Record<string, unknown>>;
 
 describe('doesTimelineActivityJunctionLinkChange', () => {
+  it('detects a join column from canonical ORM updated fields', () => {
+    expect(
+      doesTimelineActivityJunctionLinkChange({
+        event: buildEvent({
+          updatedFields: ['person', 'personId'],
+          diff: { person: { before: { id: null }, after: { id: 'id' } } },
+        }),
+        targetShape,
+      }),
+    ).toBe(true);
+  });
+
   it.each(['messageId', 'personId', 'workspaceMemberId'])(
     'detects a change to the %s join column',
     (joinColumnName) => {
       expect(
         doesTimelineActivityJunctionLinkChange({
           event: buildEvent({
-            [joinColumnName]: { before: null, after: 'id' },
+            diff: {
+              [joinColumnName]: { before: null, after: 'id' },
+            },
           }),
           targetShape,
         }),
@@ -41,7 +61,10 @@ describe('doesTimelineActivityJunctionLinkChange', () => {
   it('ignores updates to non-link fields', () => {
     expect(
       doesTimelineActivityJunctionLinkChange({
-        event: buildEvent({ handle: { before: 'old', after: 'new' } }),
+        event: buildEvent({
+          updatedFields: ['handle'],
+          diff: { handle: { before: 'old', after: 'new' } },
+        }),
         targetShape,
       }),
     ).toBe(false);
@@ -50,7 +73,7 @@ describe('doesTimelineActivityJunctionLinkChange', () => {
   it('ignores updates without a diff', () => {
     expect(
       doesTimelineActivityJunctionLinkChange({
-        event: buildEvent(),
+        event: buildEvent({}),
         targetShape,
       }),
     ).toBe(false);

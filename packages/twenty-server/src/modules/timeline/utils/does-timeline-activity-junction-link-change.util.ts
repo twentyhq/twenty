@@ -10,18 +10,26 @@ export const doesTimelineActivityJunctionLinkChange = ({
   event: ObjectRecordBaseEvent;
   targetShape: Extract<TimelineActivityRuleTargetShape, { kind: 'JUNCTION' }>;
 }): boolean => {
-  const diff = event.properties.diff;
+  const { updatedFields, diff } = event.properties;
+
+  const joinColumnNames = [
+    targetShape.junctionSourceJoinColumnName,
+    ...targetShape.junctionTargetJoinColumns.map(
+      ({ joinColumnName }) => joinColumnName,
+    ),
+  ];
+
+  if (isDefined(updatedFields)) {
+    return joinColumnNames.some((joinColumnName) =>
+      updatedFields.includes(joinColumnName),
+    );
+  }
 
   if (!isDefined(diff)) {
     return false;
   }
 
-  return [
-    targetShape.junctionSourceJoinColumnName,
-    ...targetShape.junctionTargetJoinColumns.map(
-      ({ joinColumnName }) => joinColumnName,
-    ),
-  ].some((joinColumnName) =>
+  return joinColumnNames.some((joinColumnName) =>
     Object.prototype.hasOwnProperty.call(diff, joinColumnName),
   );
 };
