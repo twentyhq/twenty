@@ -51,6 +51,7 @@ export const useComposeCalendarEventForTargetRecord = () => {
 
   return {
     openComposer,
+    loading: accountsLoading || recipientLoading,
     disabled:
       accountsLoading || recipientLoading || !isNonEmptyString(defaultTo),
   };
