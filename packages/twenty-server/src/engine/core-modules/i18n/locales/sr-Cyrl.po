@@ -343,7 +343,7 @@ msgstr "Дошло је до привремене мрежне грешке."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr ""
+msgstr "Тип активности временске линије који циља објекат друге апликације мора да наведе тип активности временске линије који замењује."
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -678,7 +678,7 @@ msgstr "Агент са овим именом већ постоји."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr ""
+msgstr "Емитер активности временске линије апликације мора да циља један од њених објеката."
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -805,7 +805,7 @@ msgstr "Друга апликација у овом радном простор�
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr ""
+msgstr "Други тип активности временске линије већ обрађује ову радњу, објекат и циљну релацију."
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1965,17 +1965,17 @@ msgstr "Наслов теме ћаскања не може бити празан
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr ""
+msgstr "Изаберите постојећи тип активности временске линије који желите да замените."
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr ""
+msgstr "Изаберите објекат који емитује овај тип активности временске линије."
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr ""
+msgstr "Изаберите релацију коју користи овај тип активности временске линије."
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2658,7 +2658,7 @@ msgstr "Прилагођеном објекту недостаје поље ид
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
-msgstr ""
+msgstr "Прилагођени тип активности временске линије не може бити враћен на подразумевани."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5300,7 +5300,7 @@ msgstr "Неважећи циљни URL. Молимо наведите важе�
 #. js-lingui-id: G26J1R
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Invalid timeline activity type input."
-msgstr ""
+msgstr "Неважећи унос типа активности временске линије."
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -5881,7 +5881,7 @@ msgstr "повезао/ла повезани задатак"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr ""
+msgstr "Повезани и неповезани емитери активности временске линије захтевају циљну релацију."
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9824,7 +9824,7 @@ msgstr "Датотека је празна или премашује макси�
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr ""
+msgstr "Предња компонента коју користи овај тип активности временске линије није доступна."
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9892,7 +9892,7 @@ msgstr "Објекат који треба да се ажурира није п�
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr ""
+msgstr "Објекат који користи овај тип активности временске линије није доступан."
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10004,17 +10004,17 @@ msgstr "Претплата више није доступна код прова�
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr ""
+msgstr "Циљна релација коју користи овај тип активности временске линије није доступна."
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr ""
+msgstr "Замена типа активности временске линије није компатибилна са овим догађајем."
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr ""
+msgstr "Поља окидача која користи овај тип активности временске линије нису доступна."
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10692,7 +10692,7 @@ msgstr "Позиција записа активности временске л
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr ""
+msgstr "Тип активности временске линије је у сукобу са {0} за исту радњу, објекат и циљну релацију."
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10710,7 +10710,7 @@ msgstr "Ознака типа активности временске линиј
 #. js-lingui-id: jxz4n1
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type name already exists."
-msgstr ""
+msgstr "Назив типа активности временске линије већ постоји."
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10729,32 +10729,32 @@ msgstr "Тип активности временске линије није п�
 #. js-lingui-id: 1+EKCZ
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type not found."
-msgstr ""
+msgstr "Тип активности временске линије није пронађен."
 
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr ""
+msgstr "Замена типа активности временске линије мора да упућује на компатибилан тип у власништву апликације циљног објекта."
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr ""
+msgstr "Тип активности временске линије упућује на предњу компоненту која не припада његовој апликацији."
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr ""
+msgstr "Тип активности временске линије упућује на објекат који не постоји."
 
 #. js-lingui-id: PK64+E
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr ""
+msgstr "Циљна релација типа активности временске линије мора бити спојна релација на његовом изворном објекту."
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr ""
+msgstr "Поља окидача типа активности временске линије морају бити непразна поља на изворном објекту догађаја ажуриране релације."
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name

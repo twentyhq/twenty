@@ -3414,7 +3414,7 @@ msgstr "Kalender"
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event has no start date"
-msgstr ""
+msgstr "Kalendergebeurtenis het geen begindatum nie"
 
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -4151,7 +4151,7 @@ msgstr "Vou in"
 #. js-lingui-id: 183A6G
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
 msgid "Collapse details"
-msgstr ""
+msgstr "Vou besonderhede in"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -8126,7 +8126,7 @@ msgstr "Vou klets uit"
 #. js-lingui-id: xAo8pm
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
 msgid "Expand details"
-msgstr ""
+msgstr "Vou besonderhede uit"
 
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx

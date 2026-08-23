@@ -343,7 +343,7 @@ msgstr "Παρουσιάστηκε προσωρινό σφάλμα δικτύο�
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr ""
+msgstr "Ένας τύπος δραστηριότητας χρονολογίου που στοχεύει αντικείμενο άλλης εφαρμογής πρέπει να δηλώνει τον τύπο δραστηριότητας χρονολογίου που παρακάμπτει."
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -678,7 +678,7 @@ msgstr "Υπάρχει ήδη πράκτορας με αυτό το όνομα."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr ""
+msgstr "Ένας εκπομπός δραστηριότητας χρονολογίου εφαρμογής πρέπει να στοχεύει ένα από τα αντικείμενά της."
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -805,7 +805,7 @@ msgstr "Μια άλλη εφαρμογή σε αυτόν τον χώρο εργ�
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr ""
+msgstr "Ένας άλλος τύπος δραστηριότητας χρονολογίου χειρίζεται ήδη αυτή την ενέργεια, το αντικείμενο και τη σχέση προορισμού."
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1965,17 +1965,17 @@ msgstr ""
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr ""
+msgstr "Επιλέξτε έναν υπάρχοντα τύπο δραστηριότητας χρονολογίου για παράκαμψη."
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr ""
+msgstr "Επιλέξτε το αντικείμενο που εκπέμπει αυτόν τον τύπο δραστηριότητας χρονολογίου."
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr ""
+msgstr "Επιλέξτε τη σχέση που χρησιμοποιείται από αυτόν τον τύπο δραστηριότητας χρονολογίου."
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2658,7 +2658,7 @@ msgstr "Στο προσαρμοσμένο αντικείμενο λείπει π
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
-msgstr ""
+msgstr "Ο προσαρμοσμένος τύπος δραστηριότητας χρονολογίου δεν μπορεί να επαναφερθεί στην προεπιλογή."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5300,7 +5300,7 @@ msgstr "Μη έγκυρη διεύθυνση URL προορισμού. Παρα�
 #. js-lingui-id: G26J1R
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Invalid timeline activity type input."
-msgstr ""
+msgstr "Μη έγκυρη είσοδος τύπου δραστηριότητας χρονολογίου."
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -5881,7 +5881,7 @@ msgstr "σύνδεσε μια σχετική εργασία"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr ""
+msgstr "Οι συνδεδεμένοι και μη συνδεδεμένοι εκπομποί δραστηριότητας χρονολογίου απαιτούν σχέση προορισμού."
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9824,7 +9824,7 @@ msgstr "Το αρχείο είναι κενό ή υπερβαίνει το μέ�
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr ""
+msgstr "Το στοιχείο διεπαφής που χρησιμοποιείται από αυτόν τον τύπο δραστηριότητας χρονολογίου δεν είναι διαθέσιμο."
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9892,7 +9892,7 @@ msgstr "Το αντικείμενο προς ενημέρωση δεν βρέθ�
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr ""
+msgstr "Το αντικείμενο που χρησιμοποιείται από αυτόν τον τύπο δραστηριότητας χρονολογίου δεν είναι διαθέσιμο."
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10004,17 +10004,17 @@ msgstr "Η συνδρομή δεν είναι πλέον διαθέσιμη στ
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr ""
+msgstr "Η σχέση προορισμού που χρησιμοποιείται από αυτόν τον τύπο δραστηριότητας χρονολογίου δεν είναι διαθέσιμη."
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr ""
+msgstr "Η παράκαμψη του τύπου δραστηριότητας χρονολογίου δεν είναι συμβατή με αυτό το συμβάν."
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr ""
+msgstr "Τα πεδία ενεργοποίησης που χρησιμοποιούνται από αυτόν τον τύπο δραστηριότητας χρονολογίου δεν είναι διαθέσιμα."
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10692,7 +10692,7 @@ msgstr "Θέση εγγραφής δραστηριότητας χρονολογ�
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr ""
+msgstr "Ο τύπος δραστηριότητας χρονολογίου συγκρούεται με το {0} για την ίδια ενέργεια, αντικείμενο και σχέση προορισμού."
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10710,7 +10710,7 @@ msgstr "Απαιτείται ετικέτα τύπου δραστηριότητ�
 #. js-lingui-id: jxz4n1
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type name already exists."
-msgstr ""
+msgstr "Το όνομα του τύπου δραστηριότητας χρονολογίου υπάρχει ήδη."
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10729,32 +10729,32 @@ msgstr "Δεν βρέθηκε τύπος δραστηριότητας χρονο
 #. js-lingui-id: 1+EKCZ
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type not found."
-msgstr ""
+msgstr "Δεν βρέθηκε τύπος δραστηριότητας χρονολογίου."
 
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr ""
+msgstr "Η παράκαμψη τύπου δραστηριότητας χρονολογίου πρέπει να αναφέρεται σε συμβατό τύπο που ανήκει στην εφαρμογή του αντικειμένου προορισμού."
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr ""
+msgstr "Ο τύπος δραστηριότητας χρονολογίου αναφέρεται σε στοιχείο διεπαφής που δεν ανήκει στην εφαρμογή του."
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr ""
+msgstr "Ο τύπος δραστηριότητας χρονολογίου αναφέρεται σε αντικείμενο που δεν υπάρχει."
 
 #. js-lingui-id: PK64+E
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr ""
+msgstr "Η σχέση προορισμού του τύπου δραστηριότητας χρονολογίου πρέπει να είναι σχέση σύνδεσης στο αντικείμενο προέλευσής του."
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr ""
+msgstr "Τα πεδία ενεργοποίησης του τύπου δραστηριότητας χρονολογίου πρέπει να είναι μη κενά πεδία στο αντικείμενο προέλευσης ενός συμβάντος ενημερωμένης σχέσης."
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name

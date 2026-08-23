@@ -343,7 +343,7 @@ msgstr "일시적인 네트워크 오류가 발생했습니다."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr ""
+msgstr "다른 애플리케이션의 객체를 대상으로 하는 타임라인 활동 유형은 재정의하는 타임라인 활동 유형을 선언해야 합니다."
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -678,7 +678,7 @@ msgstr "이 이름을 가진 에이전트가 이미 존재합니다."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr ""
+msgstr "애플리케이션 타임라인 활동 이미터는 해당 애플리케이션의 객체 중 하나를 대상으로 해야 합니다."
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -805,7 +805,7 @@ msgstr "이 워크스페이스의 다른 애플리케이션에서 이미 이 키
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr ""
+msgstr "다른 타임라인 활동 유형이 이미 이 작업, 객체 및 대상 관계를 처리하고 있습니다."
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1965,17 +1965,17 @@ msgstr ""
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr ""
+msgstr "재정의할 기존 타임라인 활동 유형을 선택하세요."
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr ""
+msgstr "이 타임라인 활동 유형을 발생시키는 객체를 선택하세요."
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr ""
+msgstr "이 타임라인 활동 유형에서 사용할 관계를 선택하세요."
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2658,7 +2658,7 @@ msgstr "커스텀 객체에 레이블 식별자 필드가 없습니다."
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
-msgstr ""
+msgstr "사용자 지정 타임라인 활동 유형은 기본값으로 재설정할 수 없습니다."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5300,7 +5300,7 @@ msgstr "잘못된 대상 URL입니다. 유효한 HTTP 또는 HTTPS URL을 제공
 #. js-lingui-id: G26J1R
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Invalid timeline activity type input."
-msgstr ""
+msgstr "유효하지 않은 타임라인 활동 유형 입력입니다."
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -5881,7 +5881,7 @@ msgstr "관련 작업을 연결했습니다"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr ""
+msgstr "연결된 및 연결 해제된 타임라인 활동 이미터에는 대상 관계가 필요합니다."
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9824,7 +9824,7 @@ msgstr "파일이 비어 있거나 허용된 최대 크기를 초과했습니다
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr ""
+msgstr "이 타임라인 활동 유형에서 사용하는 프런트 컴포넌트를 사용할 수 없습니다."
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9892,7 +9892,7 @@ msgstr "업데이트할 객체를 찾을 수 없어 해당 레코드 페이지�
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr ""
+msgstr "이 타임라인 활동 유형에서 사용하는 객체를 사용할 수 없습니다."
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10004,17 +10004,17 @@ msgstr "이 구독은 더 이상 제공자에서 사용할 수 없습니다."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr ""
+msgstr "이 타임라인 활동 유형에서 사용하는 대상 관계를 사용할 수 없습니다."
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr ""
+msgstr "타임라인 활동 유형 재정의는 이 이벤트와 호환되지 않습니다."
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr ""
+msgstr "이 타임라인 활동 유형에서 사용하는 트리거 필드를 사용할 수 없습니다."
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10692,7 +10692,7 @@ msgstr "타임라인 활동 레코드 위치"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr ""
+msgstr "타임라인 활동 유형이 동일한 작업, 객체 및 대상 관계에 대해 {0}과(와) 충돌합니다."
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10710,7 +10710,7 @@ msgstr "타임라인 활동 유형 레이블이 필요합니다"
 #. js-lingui-id: jxz4n1
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type name already exists."
-msgstr ""
+msgstr "타임라인 활동 유형 이름이 이미 존재합니다."
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10729,32 +10729,32 @@ msgstr "타임라인 활동 유형을 찾을 수 없습니다"
 #. js-lingui-id: 1+EKCZ
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type not found."
-msgstr ""
+msgstr "타임라인 활동 유형을 찾을 수 없습니다."
 
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr ""
+msgstr "타임라인 활동 유형 재정의는 대상 객체의 애플리케이션이 소유한 호환 가능한 유형을 참조해야 합니다."
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr ""
+msgstr "타임라인 활동 유형이 해당 애플리케이션에 속하지 않는 프런트 컴포넌트를 참조합니다."
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr ""
+msgstr "타임라인 활동 유형이 존재하지 않는 객체를 참조합니다."
 
 #. js-lingui-id: PK64+E
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr ""
+msgstr "타임라인 활동 유형 대상 관계는 소스 객체의 접합 관계여야 합니다."
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr ""
+msgstr "타임라인 활동 유형 트리거 필드는 업데이트된 관계 이벤트의 소스 객체에 있는 비어 있지 않은 필드여야 합니다."
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name

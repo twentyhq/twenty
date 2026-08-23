@@ -343,7 +343,7 @@ msgstr "Ocorreu um erro de rede temporário."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr ""
+msgstr "Um tipo de atividade da linha do tempo direcionado ao objeto de outra aplicação deve declarar o tipo de atividade da linha do tempo que substitui"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -678,7 +678,7 @@ msgstr "Um agente com este nome já existe."
 #. js-lingui-id: SC8Bk0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "An application timeline activity emitter must target one of its objects"
-msgstr ""
+msgstr "Um emissor de atividade da linha do tempo de uma aplicação deve direcionar um de seus objetos"
 
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -805,7 +805,7 @@ msgstr "Outro aplicativo neste espaço de trabalho já registrou um sinalizador 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Another timeline activity type already handles this action, object, and target relation"
-msgstr ""
+msgstr "Outro tipo de atividade da linha do tempo já lida com esta ação, objeto e relação de destino"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1965,17 +1965,17 @@ msgstr "O título da conversa não pode estar vazio."
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
-msgstr ""
+msgstr "Escolha um tipo de atividade da linha do tempo existente para substituir"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
-msgstr ""
+msgstr "Escolha o objeto que emite este tipo de atividade da linha do tempo"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the relation used by this timeline activity type"
-msgstr ""
+msgstr "Escolha a relação usada por este tipo de atividade da linha do tempo"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2658,7 +2658,7 @@ msgstr "O objeto personalizado está sem um campo identificador de rótulo."
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
-msgstr ""
+msgstr "O tipo de atividade da linha do tempo personalizado não pode ser redefinido para o padrão."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5300,7 +5300,7 @@ msgstr "URL de destino inválida. Por favor, forneça uma URL HTTP ou HTTPS vál
 #. js-lingui-id: G26J1R
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Invalid timeline activity type input."
-msgstr ""
+msgstr "Entrada de tipo de atividade da linha do tempo inválida."
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -5881,7 +5881,7 @@ msgstr "associou uma tarefa relacionada"
 #. js-lingui-id: LXKHX6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Linked and unlinked timeline activity emitters require a target relation"
-msgstr ""
+msgstr "Emissores de atividade da linha do tempo vinculados e não vinculados exigem uma relação de destino"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9824,7 +9824,7 @@ msgstr "O ficheiro está vazio ou excede o tamanho máximo permitido."
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The front component used by this timeline activity type is not available"
-msgstr ""
+msgstr "O componente de front-end usado por este tipo de atividade da linha do tempo não está disponível"
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9892,7 +9892,7 @@ msgstr "Não foi possível encontrar o objeto a ser atualizado para reconciliar 
 #. js-lingui-id: QaaKZQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The object used by this timeline activity type is not available"
-msgstr ""
+msgstr "O objeto usado por este tipo de atividade da linha do tempo não está disponível"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -10004,17 +10004,17 @@ msgstr "A assinatura não está mais disponível no provedor."
 #. js-lingui-id: Eq5YMK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The target relation used by this timeline activity type is not available"
-msgstr ""
+msgstr "A relação de destino usada por este tipo de atividade da linha do tempo não está disponível"
 
 #. js-lingui-id: PLlXuR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The timeline activity type override is not compatible with this event"
-msgstr ""
+msgstr "A substituição do tipo de atividade da linha do tempo não é compatível com este evento"
 
 #. js-lingui-id: IT44Du
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "The trigger fields used by this timeline activity type are not available"
-msgstr ""
+msgstr "Os campos de acionamento usados por este tipo de atividade da linha do tempo não estão disponíveis"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10692,7 +10692,7 @@ msgstr "Posição do registo da atividade da cronologia"
 #. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
-msgstr ""
+msgstr "O tipo de atividade da linha do tempo entra em conflito com {0} para a mesma ação, objeto e relação de destino"
 
 #. js-lingui-id: xFv7OI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10710,7 +10710,7 @@ msgstr "O rótulo do tipo de atividade da cronologia é obrigatório"
 #. js-lingui-id: jxz4n1
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type name already exists."
-msgstr ""
+msgstr "O nome do tipo de atividade da linha do tempo já existe."
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10729,32 +10729,32 @@ msgstr "Tipo de atividade da cronologia não encontrado"
 #. js-lingui-id: 1+EKCZ
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Timeline activity type not found."
-msgstr ""
+msgstr "Tipo de atividade da linha do tempo não encontrado."
 
 #. js-lingui-id: 0VIqW4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
-msgstr ""
+msgstr "A substituição do tipo de atividade da linha do tempo deve referenciar um tipo compatível pertencente à aplicação do objeto de destino"
 
 #. js-lingui-id: kfv1kx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references a front component that does not belong to its application"
-msgstr ""
+msgstr "O tipo de atividade da linha do tempo referencia um componente de front-end que não pertence à sua aplicação"
 
 #. js-lingui-id: f7+vxa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type references an object that does not exist"
-msgstr ""
+msgstr "O tipo de atividade da linha do tempo referencia um objeto que não existe"
 
 #. js-lingui-id: PK64+E
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr ""
+msgstr "A relação de destino do tipo de atividade da linha do tempo deve ser uma relação de junção no objeto de origem"
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
-msgstr ""
+msgstr "Os campos de acionamento do tipo de atividade da linha do tempo devem ser campos não vazios no objeto de origem de um evento de relação atualizada"
 
 #. js-lingui-id: 8VTlb5
 #. placeholder {0}: timelineActivityType.name

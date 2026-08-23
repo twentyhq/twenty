@@ -340,6 +340,11 @@ msgstr "Vaqtinchalik xato yuz berdi. Iltimos, qayta urinib ko‘ring."
 msgid "A temporary network error occurred."
 msgstr "Vaqtinchalik tarmoq xatosi yuz berdi."
 
+#. js-lingui-id: WzDeE/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
+msgstr "Boshqa ilovaning obyektini nishonga oluvchi vaqt jadvali faoliyati turi o‘zi qayta belgilayotgan vaqt jadvali faoliyati turini ko‘rsatishi kerak"
+
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type with this name already exists for this application"
@@ -670,6 +675,11 @@ msgstr "Bu nomli agent allaqachon mavjud"
 msgid "An agent with this name already exists."
 msgstr "Bu nomga ega agent allaqachon mavjud."
 
+#. js-lingui-id: SC8Bk0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "An application timeline activity emitter must target one of its objects"
+msgstr "Ilovaning vaqt jadvali faoliyati emitenti uning obyektlaridan birini nishonga olishi kerak"
+
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -791,6 +801,11 @@ msgstr "Yillik daromad"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Ushbu ish maydonidagi boshqa ilova allaqachon shu kalit bilan ruxsat flagini ro‘yxatdan o‘tkazgan."
+
+#. js-lingui-id: 8IMyyd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Another timeline activity type already handles this action, object, and target relation"
+msgstr "Boshqa vaqt jadvali faoliyati turi ushbu amal, obyekt va maqsadli bog‘lanish kombinatsiyasini allaqachon qayta ishlamoqda"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1947,6 +1962,21 @@ msgstr "Chat mavzusi topilmadi."
 msgid "Chat thread title cannot be empty."
 msgstr "Chat mavzusi sarlavhasi bo‘sh bo‘lishi mumkin emas."
 
+#. js-lingui-id: 8kN7d7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose an existing timeline activity type to override"
+msgstr "Qayta belgilash uchun mavjud vaqt jadvali faoliyati turini tanlang"
+
+#. js-lingui-id: dRdO/y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the object that emits this timeline activity type"
+msgstr "Ushbu vaqt jadvali faoliyati turini chiqaradigan obyektni tanlang"
+
+#. js-lingui-id: PDwfT5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the relation used by this timeline activity type"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan bog‘lanishni tanlang"
+
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2624,6 +2654,11 @@ msgstr "Ushbu ish maydoni uchun maxsus (custom) domenlar o‘chirib qo‘yilgan.
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
 msgstr "Maxsus (custom) obyekt uchun yorliq identifikatori maydoni yetishmaydi."
+
+#. js-lingui-id: 7VVv8j
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Custom timeline activity type cannot be reset to default."
+msgstr "Maxsus vaqt jadvali faoliyati turini standart holatga qaytarib bo‘lmaydi."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -3486,6 +3521,7 @@ msgid "Event target"
 msgstr "Hodisaning ob’ekti"
 
 #. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Event type"
@@ -5261,6 +5297,11 @@ msgstr "Noto‘g‘ri maqsad URL kiritildi."
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
 msgstr "Noto‘g‘ri maqsad URL. Iltimos, yaroqli HTTP yoki HTTPS URL kiriting."
 
+#. js-lingui-id: G26J1R
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Invalid timeline activity type input."
+msgstr "Vaqt jadvali faoliyati turi uchun kiritilgan ma’lumot noto‘g‘ri."
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -5836,6 +5877,11 @@ msgstr "tegishli eslatmani bog‘ladi"
 msgctxt "timelineActivityType.label"
 msgid "linked a related task"
 msgstr "tegishli vazifani bog‘ladi"
+
+#. js-lingui-id: LXKHX6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Linked and unlinked timeline activity emitters require a target relation"
+msgstr "Bog‘langan va bog‘lanmagan vaqt jadvali faoliyati emitentlari maqsadli bog‘lanishni talab qiladi"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9775,6 +9821,11 @@ msgstr "Fayl hali yuklab qo‘yilmagan. Tasdiqlashdan oldin uni yuklab qo‘ying
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Fayl bo‘sh yoki ruxsat etilgan maksimal hajmdan oshib ketgan."
 
+#. js-lingui-id: 9TYO3w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The front component used by this timeline activity type is not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan frontend komponenti mavjud emas"
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -9837,6 +9888,11 @@ msgstr "INDEX ko‘rinishini moslashtirish uchun yangilanishi kerak bo‘lgan ob
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
 msgstr "Yozuv sahifasini moslashtirish uchun yangilanishi kerak bo‘lgan obyekt topilmadi"
+
+#. js-lingui-id: QaaKZQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The object used by this timeline activity type is not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan obyekt mavjud emas"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9944,6 +10000,21 @@ msgstr "Obyekt uchun birlik va ko‘plik nomlari bir xil bo‘lishi mumkin emas"
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
 msgstr "Obuna endi provayderda mavjud emas."
+
+#. js-lingui-id: Eq5YMK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The target relation used by this timeline activity type is not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan maqsadli bog‘lanish mavjud emas"
+
+#. js-lingui-id: PLlXuR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The timeline activity type override is not compatible with this event"
+msgstr "Vaqt jadvali faoliyati turini qayta belgilash ushbu hodisaga mos kelmaydi"
+
+#. js-lingui-id: IT44Du
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The trigger fields used by this timeline activity type are not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan trigger maydonlari mavjud emas"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10446,16 +10517,6 @@ msgstr "Bu cheklangan manzil endi mavjud emas."
 msgid "This timeline activity action is not supported"
 msgstr "Ushbu vaqt jadvali faoliyati amali qo‘llab-quvvatlanmaydi"
 
-#. js-lingui-id: O6/sEz
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "This timeline activity renderer is not supported"
-msgstr "Ushbu vaqt jadvali faoliyati rendereri qo‘llab-quvvatlanmaydi"
-
-#. js-lingui-id: jDoSzT
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "This timeline activity renderer requires the type to reference an object"
-msgstr "Ushbu vaqt jadvali faoliyati rendereri tur obyektga havola qilishini talab qiladi"
-
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "This type of record cannot be merged."
@@ -10627,13 +10688,14 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "Vaqt jadvali faoliyati yozuvining pozitsiyasi"
 
-#. js-lingui-id: 7e7stO
-#. placeholder {0}: flatTimelineActivityType.renderer
+#. js-lingui-id: wt+xfK
+#. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "Timeline activity renderer {0} requires the type to reference an object"
-msgstr "{0} vaqt jadvali faoliyati rendereri tur obyektga havola qilishini talab qiladi"
+msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
+msgstr "Vaqt jadvali faoliyati turi ayni amal, obyekt va maqsadli bog‘lanish uchun {0} bilan ziddiyatda"
 
 #. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline activity type describing this event"
@@ -10644,6 +10706,11 @@ msgstr "Ushbu hodisani tavsiflovchi vaqt jadvali faoliyati turi"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type label is required"
 msgstr "Vaqt jadvali faoliyati turi yorlig‘i talab qilinadi"
+
+#. js-lingui-id: jxz4n1
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type name already exists."
+msgstr "Vaqt jadvali faoliyati turi nomi allaqachon mavjud."
 
 #. js-lingui-id: 0QdkGz
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10659,8 +10726,38 @@ msgstr "Vaqt jadvali faoliyati turi nomi talab qilinadi"
 msgid "Timeline activity type not found"
 msgstr "Vaqt jadvali faoliyati turi topilmadi"
 
+#. js-lingui-id: 1+EKCZ
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type not found."
+msgstr "Vaqt jadvali faoliyati turi topilmadi."
+
+#. js-lingui-id: 0VIqW4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
+msgstr "Vaqt jadvali faoliyati turini qayta belgilash maqsadli obyekt ilovasiga tegishli mos turga havola qilishi kerak"
+
+#. js-lingui-id: kfv1kx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references a front component that does not belong to its application"
+msgstr "Vaqt jadvali faoliyati turi o‘z ilovasiga tegishli bo‘lmagan frontend komponentiga havola qiladi"
+
+#. js-lingui-id: f7+vxa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references an object that does not exist"
+msgstr "Vaqt jadvali faoliyati turi mavjud bo‘lmagan obyektga havola qiladi"
+
+#. js-lingui-id: PK64+E
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type target relation must be a junction relation on its source object"
+msgstr "Vaqt jadvali faoliyati turining maqsadli bog‘lanishi manba obyektidagi birlashtiruvchi bog‘lanish bo‘lishi kerak"
+
+#. js-lingui-id: ShcC6H
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
+msgstr "Vaqt jadvali faoliyati turining trigger maydonlari yangilangan bog‘lanish hodisasi manba obyektidagi bo‘sh bo‘lmagan maydonlar bo‘lishi kerak"
+
 #. js-lingui-id: 8VTlb5
-#. placeholder {0}: flatTimelineActivityType.name
+#. placeholder {0}: timelineActivityType.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type with name {0} already exists for this application"
 msgstr "Bu ilova uchun {0} nomli vaqt jadvali faoliyati turi allaqachon mavjud"
@@ -10830,16 +10927,10 @@ msgid "Unknown permission required."
 msgstr "Noma’lum ruxsat talab etiladi."
 
 #. js-lingui-id: o/bbIF
-#. placeholder {0}: flatTimelineActivityType.action
+#. placeholder {0}: timelineActivityType.action
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Unknown timeline activity action {0}"
 msgstr "Noma’lum vaqt jadvali faoliyati amali: {0}"
-
-#. js-lingui-id: iiqbeU
-#. placeholder {0}: flatTimelineActivityType.renderer
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "Unknown timeline activity renderer {0}"
-msgstr "Noma’lum vaqt jadvali faoliyati rendereri: {0}"
 
 #. js-lingui-id: spJjXJ
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts

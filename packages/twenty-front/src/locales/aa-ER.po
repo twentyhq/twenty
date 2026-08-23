@@ -3411,6 +3411,11 @@ msgstr "crwdns6674:0crwdne6674:0"
 msgid "Calendar"
 msgstr "crwdns159:0crwdne159:0"
 
+#. js-lingui-id: l7HQ8A
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
+msgid "Calendar event has no start date"
+msgstr "crwdns140521:0crwdne140521:0"
+
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
@@ -4142,6 +4147,11 @@ msgstr "crwdns63760:0crwdne63760:0"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Collapse"
 msgstr "crwdns5381:0crwdne5381:0"
+
+#. js-lingui-id: 183A6G
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Collapse details"
+msgstr "crwdns140523:0crwdne140523:0"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -5292,11 +5302,6 @@ msgstr "crwdns64654:0{beautifiedCreatedAt}crwdne64654:0"
 msgid "Created {objectLabel}"
 msgstr "crwdns133127:0{objectLabel}crwdne133127:0"
 
-#. js-lingui-id: 2K/oCx
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "created a related {objectNameSingular}"
-msgstr "crwdns140195:0{objectNameSingular}crwdne140195:0"
-
 #. js-lingui-id: NCIYDF
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Created by"
@@ -6394,11 +6399,6 @@ msgstr "crwdns66014:0crwdne66014:0"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Deleted {objectLabel}"
 msgstr "crwdns133185:0{objectLabel}crwdne133185:0"
-
-#. js-lingui-id: P65ogp
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "deleted a related {objectNameSingular}"
-msgstr "crwdns140197:0{objectNameSingular}crwdne140197:0"
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -8122,6 +8122,11 @@ msgstr "crwdns5389:0crwdne5389:0"
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Expand chat"
 msgstr "crwdns135399:0crwdne135399:0"
+
+#. js-lingui-id: xAo8pm
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Expand details"
+msgstr "crwdns140525:0crwdne140525:0"
 
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -11343,21 +11348,6 @@ msgstr "crwdns137787:0crwdne137787:0"
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 msgid "linked a {objectLabel}"
 msgstr "crwdns133433:0{objectLabel}crwdne133433:0"
-
-#. js-lingui-id: JYFFGu
-#: src/modules/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent.tsx
-msgid "linked a calendar event with {labelIdentifierValue}"
-msgstr "crwdns66192:0{labelIdentifierValue}crwdne66192:0"
-
-#. js-lingui-id: ZJ5OOX
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "linked a related {objectNameSingular}"
-msgstr "crwdns140201:0{objectNameSingular}crwdne140201:0"
-
-#. js-lingui-id: fd8C68
-#: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
-msgid "linked an email with"
-msgstr "crwdns66194:0crwdne66194:0"
 
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -16003,11 +15993,6 @@ msgstr "crwdns5417:0crwdne5417:0"
 msgid "Restore {objectLabel}"
 msgstr "crwdns115338:0{objectLabel}crwdne115338:0"
 
-#. js-lingui-id: RyMA1t
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "restored a related {objectNameSingular}"
-msgstr "crwdns140207:0{objectNameSingular}crwdne140207:0"
-
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Restrict available models to a curated list"
@@ -18083,7 +18068,6 @@ msgid "Subject and metadata will be shared with your team."
 msgstr "crwdns5279:0crwdne5279:0"
 
 #. js-lingui-id: DvSvG9
-#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
 msgid "Subject not shared"
 msgstr "crwdns6014:0crwdne6014:0"
@@ -19899,11 +19883,6 @@ msgstr "crwdns119742:0crwdne119742:0"
 msgid "Unlimited"
 msgstr "crwdns133853:0crwdne133853:0"
 
-#. js-lingui-id: CfClM4
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "unlinked a related {objectNameSingular}"
-msgstr "crwdns140211:0{objectNameSingular}crwdne140211:0"
-
 #. js-lingui-id: WDcQq9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -19991,8 +19970,6 @@ msgid "Unsupported image format"
 msgstr "crwdns137833:0crwdne137833:0"
 
 #. js-lingui-id: wja8aL
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-#: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
@@ -20138,6 +20115,7 @@ msgstr "crwdns7154:0crwdne7154:0"
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "updated"
 msgstr "crwdns66478:0crwdne66478:0"
 
@@ -20160,11 +20138,6 @@ msgstr "crwdns107102:0crwdne107102:0"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Updated {objectLabel}"
 msgstr "crwdns133873:0{objectLabel}crwdne133873:0"
-
-#. js-lingui-id: OFU7Sk
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "updated a related {objectNameSingular}"
-msgstr "crwdns140213:0{objectNameSingular}crwdne140213:0"
 
 #. js-lingui-id: xuCD/Q
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts

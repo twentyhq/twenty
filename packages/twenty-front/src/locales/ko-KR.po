@@ -3414,7 +3414,7 @@ msgstr "캘린더"
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event has no start date"
-msgstr ""
+msgstr "캘린더 이벤트에 시작일이 없습니다."
 
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -4151,7 +4151,7 @@ msgstr "접기"
 #. js-lingui-id: 183A6G
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
 msgid "Collapse details"
-msgstr ""
+msgstr "세부 정보 접기"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -8126,7 +8126,7 @@ msgstr "채팅을 확장합니다"
 #. js-lingui-id: xAo8pm
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
 msgid "Expand details"
-msgstr ""
+msgstr "세부 정보 펼치기"
 
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx

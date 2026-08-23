@@ -3414,7 +3414,7 @@ msgstr "Kalender"
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event has no start date"
-msgstr ""
+msgstr "Kalenderbegivenheden har ingen startdato"
 
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -4151,7 +4151,7 @@ msgstr "Skjul"
 #. js-lingui-id: 183A6G
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
 msgid "Collapse details"
-msgstr ""
+msgstr "Skjul detaljer"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -8126,7 +8126,7 @@ msgstr "Udvid chatten"
 #. js-lingui-id: xAo8pm
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
 msgid "Expand details"
-msgstr ""
+msgstr "Vis detaljer"
 
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
