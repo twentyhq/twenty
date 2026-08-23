@@ -9,6 +9,11 @@ import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/r
 
 @Injectable()
 export class TimelineActivityEventEligibilityService {
+  private readonly eligibleNonAuditedObjectIdsByWorkspaceId = new Map<
+    string,
+    { cacheKey: string; objectIds: Set<string> }
+  >();
+
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
@@ -24,50 +29,79 @@ export class TimelineActivityEventEligibilityService {
       return true;
     }
 
-    const { flatFieldMetadataMaps, flatTimelineActivityTypeMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    const { data, hashes } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
         {
           workspaceId,
           flatMapsKeys: [
             'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
             'flatTimelineActivityTypeMaps',
           ],
         },
       );
+    const cacheKey = [
+      hashes.flatFieldMetadataMaps,
+      hashes.flatObjectMetadataMaps,
+      hashes.flatTimelineActivityTypeMaps,
+    ].join('|');
+    const cachedEligibility =
+      this.eligibleNonAuditedObjectIdsByWorkspaceId.get(workspaceId);
 
-    return Object.values(flatTimelineActivityTypeMaps.byUniversalIdentifier)
+    if (cachedEligibility?.cacheKey === cacheKey) {
+      return cachedEligibility.objectIds.has(flatObjectMetadata.id);
+    }
+
+    const eligibleObjectIds = new Set<string>();
+    const {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatTimelineActivityTypeMaps,
+    } = data;
+
+    for (const timelineActivityType of Object.values(
+      flatTimelineActivityTypeMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
-      .some((timelineActivityType) => {
-        if (
-          !timelineActivityType.isActive ||
-          !isDefined(timelineActivityType.action)
-        ) {
-          return false;
-        }
-
-        if (
-          timelineActivityType.objectUniversalIdentifier ===
-          flatObjectMetadata.universalIdentifier
-        ) {
-          return true;
-        }
-
-        const routing =
-          resolveTimelineActivityTypeRouting(timelineActivityType);
-
-        if (!isDefined(routing)) {
-          return false;
-        }
-
-        const relationFieldMetadata = findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatFieldMetadataMaps,
-          universalIdentifier: routing.targetRelationFieldUniversalIdentifier,
+      .filter(
+        (timelineActivityType) =>
+          timelineActivityType.isActive &&
+          isDefined(timelineActivityType.action),
+      )) {
+      if (isDefined(timelineActivityType.objectUniversalIdentifier)) {
+        const sourceObjectMetadata = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier: timelineActivityType.objectUniversalIdentifier,
         });
 
-        return (
-          relationFieldMetadata?.relationTargetObjectMetadataId ===
-          flatObjectMetadata.id
-        );
+        if (isDefined(sourceObjectMetadata)) {
+          eligibleObjectIds.add(sourceObjectMetadata.id);
+        }
+      }
+
+      const routing = resolveTimelineActivityTypeRouting(timelineActivityType);
+
+      if (!isDefined(routing)) {
+        continue;
+      }
+
+      const relationFieldMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifier: routing.targetRelationFieldUniversalIdentifier,
       });
+
+      if (isDefined(relationFieldMetadata?.relationTargetObjectMetadataId)) {
+        eligibleObjectIds.add(
+          relationFieldMetadata.relationTargetObjectMetadataId,
+        );
+      }
+    }
+
+    this.eligibleNonAuditedObjectIdsByWorkspaceId.set(workspaceId, {
+      cacheKey,
+      objectIds: eligibleObjectIds,
+    });
+
+    return eligibleObjectIds.has(flatObjectMetadata.id);
   }
 }

@@ -13,44 +13,61 @@ const buildService = ({
   objectUniversalIdentifier: string;
   relationTargetObjectMetadataId?: string;
 }) => {
-  const getOrRecomputeManyOrAllFlatEntityMaps = jest.fn().mockResolvedValue({
-    flatFieldMetadataMaps: {
-      byUniversalIdentifier: {
-        [RELATION_FIELD_UNIVERSAL_IDENTIFIER]: {
-          relationTargetObjectMetadataId,
+  const getOrRecomputeManyOrAllFlatEntityMapsWithHashes = jest
+    .fn()
+    .mockResolvedValue({
+      data: {
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: {
+            [RELATION_FIELD_UNIVERSAL_IDENTIFIER]: {
+              relationTargetObjectMetadataId,
+            },
+          },
+        },
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            [SOURCE_OBJECT_UNIVERSAL_IDENTIFIER]: {
+              id: 'source-object-id',
+            },
+          },
+        },
+        flatTimelineActivityTypeMaps: {
+          byUniversalIdentifier: {
+            type: {
+              action: 'linked',
+              applicationUniversalIdentifier:
+                '00000000-0000-4000-8000-000000000004',
+              isActive: true,
+              objectUniversalIdentifier,
+              targetRelationFieldUniversalIdentifier:
+                RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+              triggerFieldUniversalIdentifiers: null,
+              universalIdentifier: '00000000-0000-4000-8000-000000000005',
+            },
+          },
         },
       },
-    },
-    flatTimelineActivityTypeMaps: {
-      byUniversalIdentifier: {
-        type: {
-          action: 'linked',
-          applicationUniversalIdentifier:
-            '00000000-0000-4000-8000-000000000004',
-          isActive: true,
-          objectUniversalIdentifier,
-          targetRelationFieldUniversalIdentifier:
-            RELATION_FIELD_UNIVERSAL_IDENTIFIER,
-          triggerFieldUniversalIdentifiers: null,
-          universalIdentifier: '00000000-0000-4000-8000-000000000005',
-        },
+      hashes: {
+        flatFieldMetadataMaps: 'field-hash',
+        flatObjectMetadataMaps: 'object-hash',
+        flatTimelineActivityTypeMaps: 'type-hash',
       },
-    },
-  });
+    });
 
   return {
-    getOrRecomputeManyOrAllFlatEntityMaps,
+    getOrRecomputeManyOrAllFlatEntityMapsWithHashes,
     service: new TimelineActivityEventEligibilityService({
-      getOrRecomputeManyOrAllFlatEntityMaps,
+      getOrRecomputeManyOrAllFlatEntityMapsWithHashes,
     } as never),
   };
 };
 
 describe('TimelineActivityEventEligibilityService', () => {
   it('keeps audit-logged objects on the timeline write path', async () => {
-    const { getOrRecomputeManyOrAllFlatEntityMaps, service } = buildService({
-      objectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
-    });
+    const { getOrRecomputeManyOrAllFlatEntityMapsWithHashes, service } =
+      buildService({
+        objectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
+      });
 
     await expect(
       service.shouldProcessEvent({
@@ -58,7 +75,9 @@ describe('TimelineActivityEventEligibilityService', () => {
         workspaceId: 'workspace-id',
       }),
     ).resolves.toBe(true);
-    expect(getOrRecomputeManyOrAllFlatEntityMaps).not.toHaveBeenCalled();
+    expect(
+      getOrRecomputeManyOrAllFlatEntityMapsWithHashes,
+    ).not.toHaveBeenCalled();
   });
 
   it('keeps non-audited declared source and junction objects', async () => {
