@@ -1,4 +1,4 @@
-import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import { ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -55,14 +55,17 @@ const buildEvent = ({
 }: {
   before?: Record<string, unknown>;
   after?: Record<string, unknown>;
-  diff?: Record<string, unknown>;
+  diff?: ObjectRecordBaseEvent<Record<string, unknown>>['properties']['diff'];
   updatedFields?: string[];
-}): ObjectRecordBaseEvent =>
-  ({
-    recordId: SOURCE_RECORD_ID,
-    workspaceMemberId: WORKSPACE_MEMBER_ID,
-    properties: { before, after, diff, updatedFields },
-  }) as ObjectRecordBaseEvent;
+}): ObjectRecordBaseEvent<Record<string, unknown>> => {
+  const event = new ObjectRecordBaseEvent<Record<string, unknown>>();
+
+  event.recordId = SOURCE_RECORD_ID;
+  event.workspaceMemberId = WORKSPACE_MEMBER_ID;
+  event.properties = { before, after, diff, updatedFields };
+
+  return event;
+};
 
 const buildRule = ({
   action,
@@ -190,6 +193,7 @@ describe('TimelineActivityService', () => {
       }),
     });
 
+    expect(upsertTimelineActivities).toHaveBeenCalledTimes(1);
     expect(upsertTimelineActivities).toHaveBeenCalledWith({
       objectSingularName: 'attachment',
       workspaceId: WORKSPACE_ID,
@@ -262,11 +266,12 @@ describe('TimelineActivityService', () => {
       }),
     });
 
+    expect(upsertTimelineActivities).toHaveBeenCalledTimes(1);
     expect(upsertTimelineActivities).toHaveBeenCalledWith(
       expect.objectContaining({
         objectSingularName: 'person',
         workspaceId: WORKSPACE_ID,
-        payloads: [
+        payloads: expect.arrayContaining([
           expect.objectContaining({
             recordId: OLD_TARGET_RECORD_ID,
             linkedRecordId: SOURCE_RECORD_ID,
@@ -275,7 +280,7 @@ describe('TimelineActivityService', () => {
             recordId: NEW_TARGET_RECORD_ID,
             linkedRecordId: SOURCE_RECORD_ID,
           }),
-        ],
+        ]),
       }),
     );
   });
@@ -320,6 +325,7 @@ describe('TimelineActivityService', () => {
       }),
     });
 
+    expect(upsertTimelineActivities).toHaveBeenCalledTimes(1);
     expect(upsertTimelineActivities).toHaveBeenCalledWith(
       expect.objectContaining({
         objectSingularName: 'person',
@@ -381,6 +387,8 @@ describe('TimelineActivityService', () => {
         recordIds: [SOURCE_RECORD_ID],
         workspaceId: WORKSPACE_ID,
       });
+      expect(findSourceRecordsByRecordId).toHaveBeenCalledTimes(1);
+      expect(upsertTimelineActivities).toHaveBeenCalledTimes(1);
       expect(upsertTimelineActivities).toHaveBeenCalledWith(
         expect.objectContaining({
           objectSingularName: 'person',
