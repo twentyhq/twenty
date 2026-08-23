@@ -283,6 +283,24 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.flatFieldMetadataMaps,
       );
 
+      if (
+        before.some(
+          (record) => record.id === '20202020-7171-4000-8000-000000000003',
+        )
+      ) {
+        // oxlint-disable-next-line no-console
+        console.log(
+          'LEGACY_COMPOSITE_EVENT_DEBUG',
+          JSON.stringify({
+            before,
+            eventUpdateValues,
+            after,
+            formattedBefore,
+            formattedAfter,
+          }),
+        );
+      }
+
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
