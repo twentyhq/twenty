@@ -1,10 +1,24 @@
 import {
+  getConcreteUpdateValues,
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
   mergeRecordWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
 
 describe('mergeRecordsWithUpdateValues', () => {
+  it('captures concrete values independently from later query-builder mutations', () => {
+    const values: Record<string, unknown> = {
+      addressStreet1: 'Updated street',
+      updatedAt: () => 'CURRENT_TIMESTAMP',
+    };
+
+    const concreteValues = getConcreteUpdateValues(values);
+
+    values.addressStreet1 = () => 'mutated expression';
+
+    expect(concreteValues).toEqual({ addressStreet1: 'Updated street' });
+  });
+
   it('merges shared concrete values into every record', () => {
     expect(
       mergeRecordsWithUpdateValues(

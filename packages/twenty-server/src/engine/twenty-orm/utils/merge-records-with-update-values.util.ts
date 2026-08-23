@@ -2,11 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-type UpdateValues<TRecord extends ObjectLiteral> =
+export type UpdateValues<TRecord extends ObjectLiteral> =
   | QueryDeepPartialEntity<TRecord>
   | ObjectLiteral;
 
-const getConcreteUpdateValues = <TRecord extends ObjectLiteral>(
+export const getConcreteUpdateValues = <TRecord extends ObjectLiteral>(
   values: UpdateValues<TRecord>,
 ): Partial<TRecord> =>
   Object.fromEntries(

@@ -39,6 +39,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import {
+  getConcreteUpdateValues,
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
   mergeRecordWithUpdateValues,
@@ -250,7 +251,13 @@ export class WorkspaceUpdateQueryBuilder<
       this.applyRowLevelPermissionPredicates();
 
       const valuesSet = this.expressionMap.valuesSet ?? {};
-      const updatedRecords = mergeRecordsWithUpdateValues(before, valuesSet);
+      const eventUpdateValues = Array.isArray(valuesSet)
+        ? valuesSet.map((values) => getConcreteUpdateValues(values))
+        : getConcreteUpdateValues(valuesSet);
+      const updatedRecords = mergeRecordsWithUpdateValues(
+        before,
+        eventUpdateValues,
+      );
 
       this.validateRLSPredicatesForUpdate({
         updatedRecords,
@@ -269,7 +276,7 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedAfter = formatResult<T[]>(
         mergeRecordsWithUpdateValues(
           getUpdateEventRecords(before, after),
-          valuesSet,
+          eventUpdateValues,
         ),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
