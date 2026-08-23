@@ -1,7 +1,9 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
 import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { Table } from '@/ui/layout/table/components/Table';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
@@ -16,6 +18,9 @@ import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
+import { SettingsApplicationTimelineActivityTypesSubtable } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypesSubtable';
+import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
+import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -59,6 +64,17 @@ export const SettingsApplicationDetailContentTab = ({
   applicationInfo,
 }: SettingsApplicationDetailContentTabProps) => {
   const { t } = useLingui();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isInstalledApplication = isDefined(installedApplication);
+
+  const {
+    installedTimelineActivityTypes,
+    mutatingTimelineActivityTypeId,
+    resetTimelineActivityTypeToDefault,
+    setTimelineActivityTypeIsActive,
+  } = useApplicationTimelineActivityTypes({
+    installedApplication: isInstalledApplication,
+  });
 
   const { objectRows, fieldRows } =
     useComputeObjectAndFieldsContentForApplication({
@@ -152,6 +168,27 @@ export const SettingsApplicationDetailContentTab = ({
   const [searchTerm, setSearchTerm] = useState('');
   const normalizedSearch = normalizeSearchText(searchTerm);
 
+  const timelineActivityTypes = getSettingsApplicationTimelineActivityTypes({
+    applicationId,
+    installedApplication: isInstalledApplication,
+    installedTimelineActivityTypes,
+    manifestTimelineActivityTypes: manifestContent?.timelineActivityTypes ?? [],
+  });
+  const filteredTimelineActivityTypes = timelineActivityTypes.filter(
+    (timelineActivityType) =>
+      normalizedSearch === '' ||
+      normalizeSearchText(timelineActivityType.label).includes(
+        normalizedSearch,
+      ) ||
+      normalizeSearchText(timelineActivityType.name).includes(
+        normalizedSearch,
+      ) ||
+      (isDefined(timelineActivityType.action) &&
+        normalizeSearchText(timelineActivityType.action).includes(
+          normalizedSearch,
+        )),
+  );
+
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),
     fields: filterRows(fieldRows, normalizedSearch),
@@ -179,7 +216,8 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.agents.length > 0 ||
     filtered.skills.length > 0 ||
     filtered.roles.length > 0 ||
-    filtered.connectionProviders.length > 0;
+    filtered.connectionProviders.length > 0 ||
+    filteredTimelineActivityTypes.length > 0;
 
   if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
     return null;
@@ -295,6 +333,17 @@ export const SettingsApplicationDetailContentTab = ({
               rows={filtered.connectionProviders}
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
+            />
+            <SettingsApplicationTimelineActivityTypesSubtable
+              timelineActivityTypes={filteredTimelineActivityTypes}
+              canReset={
+                isDefined(currentWorkspace) &&
+                currentWorkspace.workspaceCustomApplication?.id !==
+                  applicationId
+              }
+              mutatingTimelineActivityTypeId={mutatingTimelineActivityTypeId}
+              onToggle={setTimelineActivityTypeIsActive}
+              onReset={resetTimelineActivityTypeToDefault}
             />
           </Table>
         </Section>
