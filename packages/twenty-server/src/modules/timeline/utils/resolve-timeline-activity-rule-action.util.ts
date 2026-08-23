@@ -13,22 +13,31 @@ const SOURCE_EVENT_ACTIONS: Partial<
   restored: 'restored',
 };
 
-export const resolveTimelineActivitySourceRuleAction = ({
+export const resolveTimelineActivityRuleAction = ({
   actions,
   targetShape,
   eventAction,
+  eventSource,
 }: {
   actions: TimelineActivityRuleAction[];
   targetShape: TimelineActivityRuleTargetShape;
   eventAction: DatabaseEventAction;
+  eventSource: 'SOURCE' | 'JUNCTION';
 }): TimelineActivityRuleAction | undefined => {
   const sourceEventAction = SOURCE_EVENT_ACTIONS[eventAction];
 
-  if (isDefined(sourceEventAction) && actions.includes(sourceEventAction)) {
+  if (
+    eventSource === 'SOURCE' &&
+    isDefined(sourceEventAction) &&
+    actions.includes(sourceEventAction)
+  ) {
     return sourceEventAction;
   }
 
-  if (targetShape.kind !== 'DIRECT_RELATION') {
+  if (
+    (eventSource === 'SOURCE' && targetShape.kind !== 'DIRECT_RELATION') ||
+    (eventSource === 'JUNCTION' && targetShape.kind !== 'JUNCTION')
+  ) {
     return undefined;
   }
 
