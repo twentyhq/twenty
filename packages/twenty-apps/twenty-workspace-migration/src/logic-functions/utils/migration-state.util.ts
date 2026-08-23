@@ -19,7 +19,8 @@ const createInitialMigrationState = (): MigrationState => ({
   targetFieldIdBySourceFieldId: new Map(),
   objectRecordsToMigrate: new Map(),
   reconciliationObjectIndex: 0,
-  recordMigrationOrder: [],
+  recordMigrationIndex: 0,
+  targetViewIdBySourceViewId: new Map(),
   targetPageLayoutIdBySourcePageLayoutId: new Map(),
   attachmentTargetFieldNameByObjectName: new Map(),
   targetAttachmentFileFieldId: null,
@@ -46,30 +47,38 @@ const serializeMigrationState = () => ({
   targetObjectIdBySourceObjectId: Object.fromEntries(migrationState.targetObjectIdBySourceObjectId),
   targetFieldIdBySourceFieldId: Object.fromEntries(migrationState.targetFieldIdBySourceFieldId),
   objectRecordsToMigrate: Object.fromEntries(migrationState.objectRecordsToMigrate),
+  targetViewIdBySourceViewId: Object.fromEntries(migrationState.targetViewIdBySourceViewId),
   targetPageLayoutIdBySourcePageLayoutId: Object.fromEntries(migrationState.targetPageLayoutIdBySourcePageLayoutId),
   attachmentTargetFieldNameByObjectName: Object.fromEntries(migrationState.attachmentTargetFieldNameByObjectName),
 });
 
 type SerializedMigrationState = Omit<
   MigrationState,
-  'workspaceMemberIdMap' | 'migratedRecordIds' | 'targetObjectIdBySourceObjectId' | 'targetFieldIdBySourceFieldId' | 'objectRecordsToMigrate' | 'targetPageLayoutIdBySourcePageLayoutId' | 'attachmentTargetFieldNameByObjectName'
+  'workspaceMemberIdMap' | 'migratedRecordIds' | 'targetObjectIdBySourceObjectId' | 'targetFieldIdBySourceFieldId' | 'objectRecordsToMigrate' | 'targetViewIdBySourceViewId' | 'targetPageLayoutIdBySourcePageLayoutId' | 'attachmentTargetFieldNameByObjectName'
 > & {
   workspaceMemberIdMap: Record<string, string>;
   migratedRecordIds: string[];
   targetObjectIdBySourceObjectId: Record<string, string>;
   targetFieldIdBySourceFieldId: Record<string, string>;
   objectRecordsToMigrate: Record<string, string>;
+  targetViewIdBySourceViewId: Record<string, string>;
   targetPageLayoutIdBySourcePageLayoutId: Record<string, string>;
   attachmentTargetFieldNameByObjectName: Record<string, string>;
   logs: string[];
 };
 
 export const saveMigrationStateCheckpointAndStop = async (): Promise<void> => {
+  await saveMigrationStateCheckpoint();
+
+  // Kept separate from the save so a failed self re-trigger isn't reported as a failed save,
+  // and re-saved afterwards because the warning lands in the log buffer only after the save
+  // above already snapshotted it - without this the operator sees a stalled migration with no
+  // recorded reason.
   try {
-    await kv.set(MIGRATION_STATE_KV_KEY, serializeMigrationState());
     await triggerWorkspaceMigration();
   } catch (error) {
-    logger.warn(`Failed to save migration state checkpoint: ${error instanceof Error ? error.message : String(error)}`);
+    logger.error(`Migration stopped: failed to trigger the next invocation - ${error instanceof Error ? error.message : String(error)}`);
+    await saveMigrationStateCheckpoint();
   }
 };
 
@@ -81,6 +90,28 @@ export const saveMigrationStateCheckpoint = async (): Promise<void> => {
     logger.warn(`Failed to save migration state checkpoint: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
+
+export type MigrationStatusSnapshot = {
+  stage: number;
+  estimate: MigrationState['estimate'];
+  logs: string[];
+};
+
+// The status route polls this every few seconds while the migration runs. Reading the three
+// fields straight off the stored payload avoids rehydrating the migrated-record set and the
+// cached schema - work that grows with the workspace and is pure waste here.
+export const readMigrationStatusSnapshot = async (): Promise<MigrationStatusSnapshot> => {
+  try {
+    const saved = await kv.get<SerializedMigrationState>(MIGRATION_STATE_KV_KEY);
+    if (saved === null) {
+      return { stage: migrationState.stage, estimate: migrationState.estimate, logs: [] };
+    }
+    return { stage: saved.stage, estimate: saved.estimate, logs: saved.logs ?? [] };
+  } catch (error) {
+    logger.warn(`Failed to read migration status: ${error instanceof Error ? error.message : String(error)}`);
+    return { stage: migrationState.stage, estimate: migrationState.estimate, logs: [] };
+  }
+};
 
 export const loadMigrationStateCheckpoint = async (): Promise<void> => {
   try {
@@ -95,13 +126,14 @@ export const loadMigrationStateCheckpoint = async (): Promise<void> => {
     migrationState.objectsToUpdate = saved.objectsToUpdate;
     migrationState.fieldsToCreate = saved.fieldsToCreate;
     migrationState.fieldsToUpdate = saved.fieldsToUpdate;
-    migrationState.recordMigrationOrder = saved.recordMigrationOrder;
+    migrationState.recordMigrationIndex = saved.recordMigrationIndex;
     migrationState.workspaceMemberIdMap = new Map(Object.entries(saved.workspaceMemberIdMap));
     migrationState.migratedRecordIds = new Set(saved.migratedRecordIds);
     migrationState.targetObjectIdBySourceObjectId = new Map(Object.entries(saved.targetObjectIdBySourceObjectId));
     migrationState.targetFieldIdBySourceFieldId = new Map(Object.entries(saved.targetFieldIdBySourceFieldId));
     migrationState.objectRecordsToMigrate = new Map(Object.entries(saved.objectRecordsToMigrate));
     migrationState.reconciliationObjectIndex = saved.reconciliationObjectIndex;
+    migrationState.targetViewIdBySourceViewId = new Map(Object.entries(saved.targetViewIdBySourceViewId));
     migrationState.targetPageLayoutIdBySourcePageLayoutId = new Map(Object.entries(saved.targetPageLayoutIdBySourcePageLayoutId));
     migrationState.attachmentTargetFieldNameByObjectName = new Map(Object.entries(saved.attachmentTargetFieldNameByObjectName));
     migrationState.targetAttachmentFileFieldId = saved.targetAttachmentFileFieldId;

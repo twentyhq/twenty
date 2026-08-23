@@ -172,23 +172,27 @@ describe('buildRecordDataToCreate', () => {
 describe('remapWidgetConfiguration', () => {
   it('remaps a known field-reference key to the target field id', () => {
     const fieldMap = new Map([['source-field-1', 'target-field-1']]);
-    const result = remapWidgetConfiguration({ configurationType: 'AGGREGATE_CHART', aggregateFieldMetadataId: 'source-field-1' }, fieldMap);
+    const result = remapWidgetConfiguration({ configurationType: 'AGGREGATE_CHART', aggregateFieldMetadataId: 'source-field-1' }, fieldMap, new Map());
     expect(result.aggregateFieldMetadataId).toBe('target-field-1');
   });
 
   it('nulls out a field reference that cannot be resolved in the target workspace', () => {
-    const result = remapWidgetConfiguration({ configurationType: 'AGGREGATE_CHART', aggregateFieldMetadataId: 'unknown-field' }, new Map());
+    const result = remapWidgetConfiguration({ configurationType: 'AGGREGATE_CHART', aggregateFieldMetadataId: 'unknown-field' }, new Map(), new Map());
     expect(result.aggregateFieldMetadataId).toBeNull();
   });
 
   it('leaves non field-reference keys untouched', () => {
-    const result = remapWidgetConfiguration({ configurationType: 'IFRAME', url: 'https://example.com' }, new Map());
+    const result = remapWidgetConfiguration({ configurationType: 'IFRAME', url: 'https://example.com' }, new Map(), new Map());
     expect(result.url).toBe('https://example.com');
   });
 
-  it('leaves viewId untouched (views keep their source id across workspaces by design)', () => {
-    const result = remapWidgetConfiguration({ configurationType: 'RECORD_TABLE', viewId: 'view-1' }, new Map());
-    expect(result.viewId).toBe('view-1');
+  it('remaps viewId, since an INDEX view keeps the target workspace own id', () => {
+    const result = remapWidgetConfiguration(
+      { configurationType: 'RECORD_TABLE', viewId: 'source-view-1' },
+      new Map(),
+      new Map([['source-view-1', 'target-view-1']]),
+    );
+    expect(result.viewId).toBe('target-view-1');
   });
 });
 
@@ -229,33 +233,33 @@ describe('buildPageLayoutTabsInput', () => {
   ];
 
   it('mints a fresh id for the tab and widget rather than reusing the source ids', () => {
-    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, 'test context');
+    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map(), 'test context');
     expect(tab.id).not.toBe('source-tab-1');
     expect(typeof tab.id).toBe('string');
   });
 
   it('drops VIEW-type widgets (still rejected by the API even through the bulk mutation)', () => {
-    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, 'test context');
+    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map(), 'test context');
     const widgets = tab.widgets as Record<string, unknown>[];
     expect(widgets).toHaveLength(1);
     expect(widgets[0].title).toBe('Revenue');
   });
 
   it('remaps the widget objectMetadataId and links it to the freshly minted tab id', () => {
-    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, 'test context');
+    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map(), 'test context');
     const widgets = tab.widgets as Record<string, unknown>[];
     expect(widgets[0].objectMetadataId).toBe('target-object-1');
     expect(widgets[0].pageLayoutTabId).toBe(tab.id);
   });
 
   it('remaps field references inside the widget configuration', () => {
-    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, 'test context');
+    const [tab] = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map(), 'test context');
     const widgets = tab.widgets as { configuration: Record<string, unknown> }[];
     expect(widgets[0].configuration.aggregateFieldMetadataId).toBe('target-field-1');
   });
 
   it('drops a widget whose object cannot be resolved in the target workspace', () => {
-    const [tab] = buildPageLayoutTabsInput(sourceTabs, new Map(), targetFieldIdBySourceFieldId, 'test context');
+    const [tab] = buildPageLayoutTabsInput(sourceTabs, new Map(), targetFieldIdBySourceFieldId, new Map(), 'test context');
     expect(tab.widgets).toHaveLength(0);
   });
 });

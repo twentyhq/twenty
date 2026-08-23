@@ -13,6 +13,7 @@ export const migrateViews = async (
   targetViews: View[],
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
 ) => {
   const existingTargetViewIds = new Set(targetViews.map((view) => view.id));
   const existingTargetViewFilterIds = new Set(targetViews.flatMap((view) => view.viewFilters.map((f) => f.id)));
@@ -38,13 +39,17 @@ export const migrateViews = async (
   let createdSubEntities = 0;
 
   for (const view of sourceViews) {
+    const isIndexView = view.key === 'INDEX';
     const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(view.objectMetadataId);
     if (targetObjectMetadataId === undefined) {
       logger.warn(`Skipping view "${view.name}": target object not found for object ${view.objectMetadataId}`);
+      // Still charged in the estimate, so release it rather than leaving a permanent residual.
+      if (!isIndexView) {
+        decrementEstimate({ otherRecordCount: countViewRequests([view]) });
+      }
       continue;
     }
 
-    const isIndexView = view.key === 'INDEX';
     let effectiveViewId: string;
 
     if (isIndexView) {
@@ -79,6 +84,11 @@ export const migrateViews = async (
         createdViews += 1;
       }
     }
+
+    // An INDEX view keeps the target's own id, a migrated one keeps the source id - either way
+    // this is the only place that knows the pairing, so anything referencing a view later
+    // (navigation menu items, widget configurations) resolves through it.
+    targetViewIdBySourceViewId.set(view.id, effectiveViewId);
 
     // createManyViewFieldGroups/createManyViewFields/createManyViewGroups exist as bulk
     // mutations server-side (unlike view/viewFilter/viewFilterGroup, which only have a
@@ -197,22 +207,23 @@ export const migrateViews = async (
       createdSubEntities += 1;
     }
 
-    if (isIndexView) {
-      continue;
+    // An INDEX view has no viewGroups to migrate and was never charged in the estimate, but it
+    // still issued requests above - so it must not skip the budget check below.
+    if (!isIndexView) {
+      const viewGroupsToCreate = view.viewGroups.filter((viewGroup) => !existingTargetViewGroupIds.has(viewGroup.id));
+      if (viewGroupsToCreate.length > 0) {
+        await executeWithRetryAndCheckpoint(() => createManyMetadataEntities(targetWorkspace, 'createManyViewGroups', 'inputs', 'CreateViewGroupInput', viewGroupsToCreate.map((viewGroup) => ({
+          id: viewGroup.id,
+          isVisible: viewGroup.isVisible,
+          fieldValue: viewGroup.fieldValue,
+          position: viewGroup.position,
+          viewId: effectiveViewId,
+        }))));
+        createdSubEntities += viewGroupsToCreate.length;
+      }
+      decrementEstimate({ otherRecordCount: countViewRequests([view]) });
     }
 
-    const viewGroupsToCreate = view.viewGroups.filter((viewGroup) => !existingTargetViewGroupIds.has(viewGroup.id));
-    if (viewGroupsToCreate.length > 0) {
-      await executeWithRetryAndCheckpoint(() => createManyMetadataEntities(targetWorkspace, 'createManyViewGroups', 'inputs', 'CreateViewGroupInput', viewGroupsToCreate.map((viewGroup) => ({
-        id: viewGroup.id,
-        isVisible: viewGroup.isVisible,
-        fieldValue: viewGroup.fieldValue,
-        position: viewGroup.position,
-        viewId: effectiveViewId,
-      }))));
-      createdSubEntities += viewGroupsToCreate.length;
-    }
-    decrementEstimate({ otherRecordCount: countViewRequests([view]) });
     if (await stopIfTimeBudgetExceeded()) {
       return false;
     }

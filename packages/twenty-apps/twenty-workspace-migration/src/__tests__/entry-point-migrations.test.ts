@@ -132,7 +132,7 @@ describe('migrateViews', () => {
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
     const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
 
-    await migrateViews(client, [view], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+    await migrateViews(client, [view], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map());
 
     const createViewCalls = calls.filter((call) => call.operationName === 'createView');
     expect(createViewCalls).toHaveLength(1);
@@ -146,7 +146,7 @@ describe('migrateViews', () => {
   it('skips the whole view (and never touches its sub-entities) when its object cannot be resolved', async () => {
     const { client, calls } = createMockGraphqlClient({});
 
-    await migrateViews(client, [view], [], new Map(), new Map());
+    await migrateViews(client, [view], [], new Map(), new Map(), new Map());
 
     expect(calls).toHaveLength(0);
   });
@@ -161,7 +161,7 @@ describe('migrateViews', () => {
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
     const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
 
-    await migrateViews(client, [view], [targetViewWithoutFilters], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+    await migrateViews(client, [view], [targetViewWithoutFilters], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map());
 
     expect(calls.filter((call) => call.operationName === 'createView')).toHaveLength(0);
     expect(calls.filter((call) => call.operationName === 'createViewFilter')).toHaveLength(1);
@@ -183,7 +183,7 @@ describe('migrateViews', () => {
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
     const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
 
-    await migrateViews(client, [indexView], [targetIndexView], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+    await migrateViews(client, [indexView], [targetIndexView], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map());
 
     expect(calls.filter((call) => call.operationName === 'createView')).toHaveLength(0);
     const createFilterCalls = calls.filter((call) => call.operationName === 'createViewFilter');
@@ -197,7 +197,7 @@ describe('migrateViews', () => {
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
     const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
 
-    await migrateViews(client, [indexView], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+    await migrateViews(client, [indexView], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map());
 
     expect(calls).toHaveLength(0);
   });
@@ -243,7 +243,7 @@ describe('migrateViews', () => {
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
     const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
 
-    await migrateViews(client, [indexViewWithField], [targetIndexView], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+    await migrateViews(client, [indexViewWithField], [targetIndexView], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map());
 
     expect(calls.filter((call) => call.operationName === 'createViewField')).toHaveLength(0);
   });
@@ -274,7 +274,7 @@ describe('migrateViews', () => {
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
     const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1'], ['source-field-2', 'target-field-2']]);
 
-    await migrateViews(client, [viewWithBatchableSubEntities], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+    await migrateViews(client, [viewWithBatchableSubEntities], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, new Map());
 
     expect(calls.filter((call) => call.operationName === 'createViewFieldGroup')).toHaveLength(0);
     expect(calls.filter((call) => call.operationName === 'createViewField')).toHaveLength(0);
@@ -477,7 +477,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map(), new Map());
 
     expect(targetCalls.filter((call) => call.operationName === 'updatePageLayoutWithTabsAndWidgets')).toHaveLength(0);
     expect(targetCalls.filter((call) => call.operationName === 'createPageLayout')).toHaveLength(0);
@@ -532,7 +532,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map(), new Map());
 
     expect(targetCalls.filter((call) => call.operationName === 'updatePageLayoutWithTabsAndWidgets')).toHaveLength(0);
     const tabCalls = targetCalls.filter((call) => call.operationName === 'createPageLayoutTab');
@@ -586,7 +586,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map(), new Map());
 
     expect(targetCalls.filter((call) => call.operationName === 'createPageLayoutWidget')).toHaveLength(0);
   });
@@ -613,7 +613,7 @@ describe('migrateRecordPageLayouts', () => {
     });
     const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
 
-    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map());
+    await migrateRecordPageLayouts(sourceClient, targetClient, targetObjectIdBySourceObjectId, new Map(), new Map(), new Map());
 
     const createLayoutCalls = targetCalls.filter((call) => call.operationName === 'createPageLayout');
     expect(createLayoutCalls).toHaveLength(1);
@@ -750,7 +750,7 @@ describe('migrateDashboards', () => {
     const recordIds = buildTestRecordIds();
     const targetPageLayoutIdBySourcePageLayoutId = new Map<string, string>();
 
-    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIds, targetPageLayoutIdBySourcePageLayoutId);
+    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIds, targetPageLayoutIdBySourcePageLayoutId, new Map());
 
     expect(recordIds.migratedRecordIds.has('dash-1')).toBe(true);
     expect(targetPageLayoutIdBySourcePageLayoutId.get('layout-1')).toBe('target-layout-1');
@@ -767,7 +767,7 @@ describe('migrateDashboards', () => {
     });
     const recordIds = buildTestRecordIds();
 
-    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIds, new Map());
+    await migrateDashboards(sourceClient, targetClient, new Map(), new Map(), recordIds, new Map(), new Map());
 
     expect(recordIds.migratedRecordIds.has('dash-1')).toBe(true);
     expect(targetCalls.filter((call) => call.operationName === 'createDashboards')).toHaveLength(0);
@@ -799,7 +799,7 @@ describe('migrateNavigationMenuItems', () => {
     });
     const targetPageLayoutIdBySourcePageLayoutId = new Map([['source-layout-1', 'target-layout-1']]);
 
-    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), targetPageLayoutIdBySourcePageLayoutId);
+    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), targetPageLayoutIdBySourcePageLayoutId, new Map());
 
     const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
     expect(createCalls).toHaveLength(1);
@@ -810,7 +810,7 @@ describe('migrateNavigationMenuItems', () => {
     const item = buildItem({ pageLayoutId: 'source-layout-missing' });
     const { client, calls } = createMockGraphqlClient({});
 
-    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), new Map());
+    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), new Map(), new Map());
 
     expect(calls).toHaveLength(0);
   });
@@ -825,12 +825,38 @@ describe('migrateNavigationMenuItems', () => {
       createManyNavigationMenuItems: { createManyNavigationMenuItems: [] },
     });
 
-    await migrateNavigationMenuItems(client, items, [], new Map(), buildTestRecordIds(), new Map());
+    await migrateNavigationMenuItems(client, items, [], new Map(), buildTestRecordIds(), new Map(), new Map());
 
     const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
     expect(createCalls).toHaveLength(2);
     expect(createCalls[0].variables.inputs).toMatchObject([{ id: 'folder' }, { id: 'top-level' }]);
     expect(createCalls[1].variables.inputs).toMatchObject([{ id: 'nested' }]);
+  });
+
+  it('remaps viewId through the view map instead of copying the source id', async () => {
+    // An INDEX view is not recreated in the target, so migrateViews points it at the target's
+    // own view - a copied-through viewId would dangle.
+    const item = buildItem({ id: 'nav-view', name: 'All companies', viewId: 'source-view-1' });
+    const { client, calls } = createMockGraphqlClient({
+      createManyNavigationMenuItems: { createManyNavigationMenuItems: [{ id: 'nav-view' }] },
+    });
+
+    await migrateNavigationMenuItems(
+      client, [item], [], new Map(), buildTestRecordIds(), new Map(),
+      new Map([['source-view-1', 'target-view-1']]),
+    );
+
+    const createCalls = calls.filter((call) => call.operationName === 'createManyNavigationMenuItems');
+    expect(createCalls[0].variables.inputs).toMatchObject([{ viewId: 'target-view-1' }]);
+  });
+
+  it('skips a navigation menu item whose view was not migrated', async () => {
+    const item = buildItem({ id: 'nav-view', viewId: 'source-view-missing' });
+    const { client, calls } = createMockGraphqlClient({});
+
+    await migrateNavigationMenuItems(client, [item], [], new Map(), buildTestRecordIds(), new Map(), new Map());
+
+    expect(calls).toHaveLength(0);
   });
 
   it('does not create items nested under a skipped folder', async () => {
@@ -840,7 +866,7 @@ describe('migrateNavigationMenuItems', () => {
     ];
     const { client, calls } = createMockGraphqlClient({});
 
-    await migrateNavigationMenuItems(client, items, [], new Map(), buildTestRecordIds(), new Map());
+    await migrateNavigationMenuItems(client, items, [], new Map(), buildTestRecordIds(), new Map(), new Map());
 
     expect(calls).toHaveLength(0);
   });

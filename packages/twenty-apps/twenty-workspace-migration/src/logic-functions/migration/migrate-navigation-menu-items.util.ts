@@ -16,6 +16,7 @@ export const migrateNavigationMenuItems = async (
   targetObjectIdBySourceObjectId: Map<string, string>,
   recordIds: RecordIdResolution,
   targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
 ) => {
   // Folders can be parents of other items, so an item is only attempted once its folder (if
   // any) is already resolved in the target. Items skipped for any reason (personal,
@@ -59,6 +60,15 @@ export const migrateNavigationMenuItems = async (
         continue;
       }
 
+      // An INDEX view keeps the target's own id, so a copied-through viewId would dangle.
+      const targetViewId = item.viewId !== null
+        ? targetViewIdBySourceViewId.get(item.viewId)
+        : undefined;
+      if (item.viewId !== null && targetViewId === undefined) {
+        logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": target view not found for view ${item.viewId}`);
+        continue;
+      }
+
       const targetRecordId = item.targetRecordId !== null
         ? resolveTargetRecordId(recordIds, item.targetRecordId)
         : undefined;
@@ -71,7 +81,7 @@ export const migrateNavigationMenuItems = async (
         id: item.id,
         targetRecordId: targetRecordId ?? null,
         targetObjectMetadataId: targetObjectMetadataId ?? null,
-        viewId: item.viewId,
+        viewId: targetViewId ?? null,
         type: item.type,
         name: item.name,
         link: item.link,

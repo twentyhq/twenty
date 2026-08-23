@@ -13,12 +13,15 @@ import { buildRecordMigrationOrder } from "src/logic-functions/utils/build-recor
 export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
   const recordIds = buildRecordIdResolution();
   const targetWorkspaceObjects = migrationState.targetWorkspaceObjects;
-  const recordMigrationOrder = migrationState.recordMigrationOrder;
+  const recordMigrationOrder = buildRecordMigrationOrder(migrationState.sourceWorkspaceObjects);
   const targetObjectIdByNameSingular = new Map(
     targetWorkspaceObjects.map((obj) => [obj.nameSingular, obj.id]),
   );
 
   for (const [index, sourceObject] of recordMigrationOrder.entries()) {
+    if (index < migrationState.recordMigrationIndex) {
+      continue;
+    }
     const targetObjectId = targetObjectIdByNameSingular.get(sourceObject.nameSingular);
     if (targetObjectId === undefined) {
       logger.warn(`Skipping records for "${sourceObject.nameSingular}": no matching target object (schema creation may have failed for it)`);
@@ -27,22 +30,28 @@ export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     if (await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIds)) {
       return;
     }
-    setStateRef('recordMigrationOrder', recordMigrationOrder.slice(index + 1));
+    setStateRef('recordMigrationIndex', index + 1);
   }
 
   // Runs only once every record exists, so foreign keys dropped at insert time for pointing at
   // a record that hadn't been created yet (self-references, broken dependency cycles) can be
-  // written back. Rebuilt from the source objects because the loop above drains the order.
+  // written back.
   const reconciled = await reconcileDeferredRelations(
     sourceWorkspace,
     targetWorkspace,
-    buildRecordMigrationOrder(migrationState.sourceWorkspaceObjects),
+    recordMigrationOrder,
     recordIds,
   );
   if (reconciled === false) {
     return;
   }
 
+  setStateRef('sourceWorkspaceObjects', []);
+  setStateRef('targetWorkspaceObjects', []);
+  // Nothing past this stage reads the schema snapshots, and they are the largest thing in the
+  // checkpoint - dropping them keeps every later checkpoint small.
+  setStateRef('sourceWorkspaceObjects', []);
+  setStateRef('targetWorkspaceObjects', []);
   setStateRef('stage', 4);
   await saveMigrationStateCheckpointAndStop();
 }

@@ -3,7 +3,7 @@ import {
   saveMigrationStateCheckpointAndStop,
   setStateRef
 } from "src/logic-functions/utils/migration-state.util";
-import { chunk } from "src/logic-functions/utils/chunk";
+import { chunk } from "src/logic-functions/utils/chunk.util";
 import { updateOneObject } from "src/logic-functions/requests/update-one-object.util";
 import { updateOneField } from "src/logic-functions/requests/update-one-field.util";
 import { createOneField } from "src/logic-functions/requests/create-one-field.util";

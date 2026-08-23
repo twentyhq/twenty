@@ -1,6 +1,10 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import axios from "axios";
-import { loadMigrationStateCheckpoint, migrationState } from "src/logic-functions/utils/migration-state.util";
+import axios, { type AxiosInstance } from "axios";
+import {
+  loadMigrationStateCheckpoint,
+  migrationState,
+  saveMigrationStateCheckpoint
+} from "src/logic-functions/utils/migration-state.util";
 import { startTimeBudget } from "src/logic-functions/utils/time-budget.util";
 import { TIMEOUT_SECONDS } from "src/constants/timeout-seconds";
 import { stage1 } from "src/logic-functions/stages/stage1";
@@ -44,6 +48,16 @@ const handler = async () => {
 
   await loadMigrationStateCheckpoint();
 
+  try {
+    await dispatchStage(sourceWorkspace, targetWorkspace);
+  } catch (error) {
+    logger.error(`Migration failed during stage ${migrationState.stage}: ${error instanceof Error ? error.message : String(error)}`);
+    await saveMigrationStateCheckpoint();
+    throw error;
+  }
+};
+
+const dispatchStage = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
   switch (migrationState.stage) {
     case 1:
       await stage1(sourceWorkspace, targetWorkspace);

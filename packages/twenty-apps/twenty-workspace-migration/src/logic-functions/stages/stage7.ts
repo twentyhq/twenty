@@ -23,29 +23,37 @@ export const stage7 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   const targetPageLayoutIdBySourcePageLayoutId = migrationState.targetPageLayoutIdBySourcePageLayoutId;
 
   if (migrationState.migratedNavigationMenuItems === false) {
-    const sourceNavigationMenuItems = await executeWithRetry(() => findNavigationMenuItems(sourceWorkspace));
-    const targetNavigationMenuItems = await executeWithRetryAndCheckpoint(() => findNavigationMenuItems(targetWorkspace));
-    if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIds, targetPageLayoutIdBySourcePageLayoutId) === false) {
+    const [sourceNavigationMenuItems, targetNavigationMenuItems] = await Promise.all([
+      executeWithRetry(() => findNavigationMenuItems(sourceWorkspace)),
+      executeWithRetryAndCheckpoint(() => findNavigationMenuItems(targetWorkspace)),
+    ]);
+    if (await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIds, targetPageLayoutIdBySourcePageLayoutId, migrationState.targetViewIdBySourceViewId) === false) {
       return;
     }
   }
   if (migrationState.migratedSkills === false) {
-    const sourceSkills = await executeWithRetry(() => findSkills(sourceWorkspace));
-    const targetSkills = await executeWithRetryAndCheckpoint(() => findSkills(targetWorkspace));
+    const [sourceSkills, targetSkills] = await Promise.all([
+      executeWithRetry(() => findSkills(sourceWorkspace)),
+      executeWithRetryAndCheckpoint(() => findSkills(targetWorkspace)),
+    ]);
     if (await migrateSkills(targetWorkspace, sourceSkills, targetSkills) === false) {
       return;
     }
   }
   if (migrationState.migratedWebhooks === false) {
-    const sourceWebhooks = await executeWithRetry(() => findWebhooks(sourceWorkspace));
-    const targetWebhooks = await executeWithRetryAndCheckpoint(() => findWebhooks(targetWorkspace));
+    const [sourceWebhooks, targetWebhooks] = await Promise.all([
+      executeWithRetry(() => findWebhooks(sourceWorkspace)),
+      executeWithRetryAndCheckpoint(() => findWebhooks(targetWorkspace)),
+    ]);
     if (await migrateWebhooks(targetWorkspace, sourceWebhooks, targetWebhooks) === false) {
       return;
     }
   }
   if (migrationState.migratedRoles === false) {
-    const sourceRoles = await executeWithRetry(() => findRoles(sourceWorkspace));
-    const targetRoles = await executeWithRetryAndCheckpoint(() => findRoles(targetWorkspace));
+    const [sourceRoles, targetRoles] = await Promise.all([
+      executeWithRetry(() => findRoles(sourceWorkspace)),
+      executeWithRetryAndCheckpoint(() => findRoles(targetWorkspace)),
+    ]);
     if (await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId) === false) {
       return;
     }

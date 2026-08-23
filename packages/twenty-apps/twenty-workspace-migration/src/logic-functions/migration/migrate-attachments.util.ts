@@ -11,6 +11,20 @@ import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.
 import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
 import { REQUESTS_PER_ATTACHMENT, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
+type SourceAttachmentFile = {
+  fileId: string;
+  label: string;
+  extension: string;
+  url: string;
+};
+
+// The target foreign-key names are discovered at runtime from the source schema, so they can
+// only be reached through the index signature; name and file are always selected.
+type SourceAttachment = Record<string, unknown> & {
+  name: string;
+  file: SourceAttachmentFile[] | null;
+};
+
 // Copies a source attachment's underlying file into the target workspace's own storage (files
 // are stored workspace-scoped server-side, so reusing the source record's `file.fileId`/path
 // verbatim would point at a file that doesn't exist for the target workspace) and only then
@@ -24,10 +38,12 @@ export const migrateAttachments = async (
   const targetFileFieldId = migrationState.targetAttachmentFileFieldId;
   if (targetFileFieldId === null) {
     logger.warn('Skipping attachments: target workspace has no attachment.file field metadata id');
+    decrementEstimate({ otherRecordCount: migrationState.estimate?.otherRecordCount ?? 0 });
     return true;
   }
   if (targetFieldNameByObjectName.size === 0) {
     logger.warn('Skipping attachments: source workspace has no attachment target fields');
+    decrementEstimate({ otherRecordCount: migrationState.estimate?.otherRecordCount ?? 0 });
     return true;
   }
 
@@ -42,24 +58,21 @@ file {
   url
 }`;
 
+  // Attachments are the slowest thing to migrate (a download plus an upload each), so a large
+  // workspace spans many invocations - the cursor is persisted per page to resume from.
   let createdCount = 0;
   let after: string | null = migrationState.objectRecordsToMigrate.get('attachments') ?? null;
 
   while (true) {
-    const page = await executeWithRetryAndCheckpoint(() => findManyRecords(sourceWorkspace, 'attachments', selectionSet, after, (migrationState.maxRequests / 2) - 1));
+    const page = await executeWithRetryAndCheckpoint(() => findManyRecords<SourceAttachment>(sourceWorkspace, 'attachments', selectionSet, after, Math.floor(migrationState.maxRequests / 2) - 1));
     const nodes = page.edges.map((edge) => edge.node);
     if (nodes.length > 0) {
       const attachmentsToCreate: Record<string, unknown>[] = [];
       for (const attachment of nodes) {
-        const attachmentId = attachment.id as string;
-        const name = attachment.name as string;
+        const attachmentId = attachment.id;
+        const name = attachment.name;
         decrementEstimate({ otherRecordCount: REQUESTS_PER_ATTACHMENT });
-        const sourceFile = (attachment.file as {
-          fileId: string;
-          label: string;
-          extension: string;
-          url: string
-        }[] | null)?.[0];
+        const sourceFile = attachment.file?.[0];
         if (sourceFile === undefined) {
           logger.warn(`Skipping attachment "${name}": no underlying file`);
           continue;
@@ -69,12 +82,12 @@ file {
         for (const fieldName of targetFieldNameByObjectName.values()) {
           const foreignKeyName = `${fieldName}Id`;
           const sourceRecordId = attachment[foreignKeyName];
-          if (sourceRecordId === null || sourceRecordId === undefined) {
+          if (typeof sourceRecordId !== 'string') {
             continue;
           }
-          const targetRecordId = resolveTargetRecordId(recordIds, sourceRecordId as string);
+          const targetRecordId = resolveTargetRecordId(recordIds, sourceRecordId);
           if (targetRecordId === undefined) {
-            logger.warn(`Attachment "${name}": dropping ${foreignKeyName} - referenced record ${sourceRecordId as string} was not migrated`);
+            logger.warn(`Attachment "${name}": dropping ${foreignKeyName} - referenced record was not migrated`);
             continue;
           }
           targetFields[foreignKeyName] = targetRecordId;
@@ -126,7 +139,8 @@ file {
         }
       }
     }
-    if (page.pageInfo.hasNextPage === false) {
+
+    if (page.pageInfo.hasNextPage === false || page.pageInfo.endCursor === null) {
       setObjectCursor('attachments', null);
       break;
     }

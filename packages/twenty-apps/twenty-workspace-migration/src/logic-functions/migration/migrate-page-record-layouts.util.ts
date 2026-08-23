@@ -16,6 +16,7 @@ const createCustomWidget = async (
   widget: PageLayoutWidget,
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
   warningContext: string,
 ): Promise<boolean> => {
   if (widget.type === 'VIEW') {
@@ -37,7 +38,7 @@ const createCustomWidget = async (
     type: widget.type,
     objectMetadataId: targetObjectMetadataId ?? null,
     gridPosition: widget.gridPosition,
-    configuration: remapWidgetConfiguration(widget.configuration, targetFieldIdBySourceFieldId),
+    configuration: remapWidgetConfiguration(widget.configuration, targetFieldIdBySourceFieldId, targetViewIdBySourceViewId),
   }));
   return true;
 };
@@ -53,6 +54,7 @@ const migrateSystemLayoutCustomization = async (
   targetLayout: PageLayout,
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
 ): Promise<number> => {
   const warningContext = `default record page layout for object ${sourceLayout.objectMetadataId}`;
   let createdCount = 0;
@@ -91,7 +93,7 @@ const migrateSystemLayoutCustomization = async (
           layoutMode: sourceTab.layoutMode,
         }));
         for (const widget of sourceTab.widgets) {
-          await createCustomWidget(targetWorkspace, createdTab.id, widget, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, warningContext);
+          await createCustomWidget(targetWorkspace, createdTab.id, widget, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, targetViewIdBySourceViewId, warningContext);
         }
         createdCount += 1;
       } catch (error) {
@@ -122,7 +124,7 @@ const migrateSystemLayoutCustomization = async (
         continue;
       }
       try {
-        const created = await createCustomWidget(targetWorkspace, targetTabId, widget, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, warningContext);
+        const created = await createCustomWidget(targetWorkspace, targetTabId, widget, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, targetViewIdBySourceViewId, warningContext);
         if (created) {
           existingCustomWidgetKeys.add(widgetKey);
           createdCount += 1;
@@ -142,9 +144,12 @@ export const migrateRecordPageLayouts = async (
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
   targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
 ) => {
-  const sourcePageLayouts = await executeWithRetry(() => findPageLayouts(sourceWorkspace, 'RECORD_PAGE'));
-  const targetPageLayouts = await executeWithRetryAndCheckpoint(() => findPageLayouts(targetWorkspace, 'RECORD_PAGE'));
+  const [sourcePageLayouts, targetPageLayouts] = await Promise.all([
+    executeWithRetry(() => findPageLayouts(sourceWorkspace, 'RECORD_PAGE')),
+    executeWithRetryAndCheckpoint(() => findPageLayouts(targetWorkspace, 'RECORD_PAGE')),
+  ]);
 
   let createdCount = 0;
 
@@ -189,6 +194,7 @@ export const migrateRecordPageLayouts = async (
         sourceLayout.tabs,
         targetObjectIdBySourceObjectId,
         targetFieldIdBySourceFieldId,
+        targetViewIdBySourceViewId,
         `record page layout "${sourceLayout.name}"`,
       );
       createdCount += 1;
@@ -229,6 +235,7 @@ export const migrateRecordPageLayouts = async (
       targetLayout,
       targetObjectIdBySourceObjectId,
       targetFieldIdBySourceFieldId,
+      targetViewIdBySourceViewId,
     );
     if (await stopIfTimeBudgetExceeded()) {
       return false;

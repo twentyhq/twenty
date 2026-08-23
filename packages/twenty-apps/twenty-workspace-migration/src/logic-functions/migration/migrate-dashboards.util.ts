@@ -6,27 +6,17 @@ import { createMetadataEntity } from "src/logic-functions/requests/create-metada
 import { createManyRecords } from "src/logic-functions/requests/create-many-records.util";
 import { applyPageLayoutTabsAndWidgets } from "src/logic-functions/utils/apply-page-layout-tabs-and-widgets.util";
 import { logger } from "src/logic-functions/utils/logger.util";
-import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { RecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
 import { REQUESTS_PER_DASHBOARD, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
-const findExistingTargetDashboardIds = async (targetWorkspace: AxiosInstance): Promise<Set<string>> => {
-  const existingIds = new Set<string>();
-  let after: string | null = null;
-
-  while (true) {
-    const page = await executeWithRetry(() => findManyRecords(targetWorkspace, 'dashboards', '', after));
-    for (const edge of page.edges) {
-      existingIds.add(edge.node.id as string);
-    }
-    if (page.pageInfo.hasNextPage === false) {
-      return existingIds;
-    }
-    after = page.pageInfo.endCursor;
-  }
+type SourceDashboard = {
+  title: string;
+  pageLayoutId: string;
+  position: number;
 };
 
 export const migrateDashboards = async (
@@ -36,30 +26,24 @@ export const migrateDashboards = async (
   targetFieldIdBySourceFieldId: Map<string, string>,
   recordIds: RecordIdResolution,
   targetPageLayoutIdBySourcePageLayoutId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
 ) => {
   const sourcePageLayouts = await executeWithRetry(() => findPageLayouts(sourceWorkspace, 'DASHBOARD'));
   const sourcePageLayoutById = new Map(sourcePageLayouts.map((layout) => [layout.id, layout]));
-  const existingTargetDashboardIds = await findExistingTargetDashboardIds(targetWorkspace);
 
   let createdCount = 0;
   let after: string | null = migrationState.objectRecordsToMigrate.get('dashboards') ?? null;
+
   while (true) {
-    const page = await executeWithRetry(() => findManyRecords(sourceWorkspace, 'dashboards', 'title\npageLayoutId\nposition', after, migrationState.maxRequests / 3));
+    const page = await executeWithRetry(() => findManyRecords<SourceDashboard>(sourceWorkspace, 'dashboards', 'title\npageLayoutId\nposition', after, Math.floor(migrationState.maxRequests / 3)));
     const nodes = page.edges.map((edge) => edge.node);
     for (const dashboard of nodes) {
-      const dashboardId = dashboard.id as string;
-      const title = dashboard.title as string;
+      const dashboardId = dashboard.id;
+      const title = dashboard.title;
 
       decrementEstimate({ otherRecordCount: REQUESTS_PER_DASHBOARD });
-      // Dashboards keep their source id in the target, so an id already present means this
-      // dashboard (and its page layout) was created by an earlier invocation. Re-creating it
-      // would mint a second page layout, since createPageLayout always generates a fresh id.
-      if (existingTargetDashboardIds.has(dashboardId)) {
-        recordIds.migratedRecordIds.add(dashboardId);
-        continue;
-      }
 
-      const sourcePageLayout = sourcePageLayoutById.get(dashboard.pageLayoutId as string);
+      const sourcePageLayout = sourcePageLayoutById.get(dashboard.pageLayoutId);
       if (sourcePageLayout === undefined) {
         logger.warn(`Skipping dashboard "${title}": its page layout was not found`);
         continue;
@@ -83,6 +67,7 @@ export const migrateDashboards = async (
           sourcePageLayout.tabs,
           targetObjectIdBySourceObjectId,
           targetFieldIdBySourceFieldId,
+          targetViewIdBySourceViewId,
           `dashboard "${title}"`,
         );
 
@@ -95,11 +80,12 @@ export const migrateDashboards = async (
         recordIds.migratedRecordIds.add(dashboardId);
         createdCount += 1;
       } catch (error) {
-        logger.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
-      }
+      logger.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
     }
-    if (!page.pageInfo.hasNextPage) {
-      setObjectCursor('dashboards', null)
+  }
+
+    if (page.pageInfo.hasNextPage === false || page.pageInfo.endCursor === null) {
+      setObjectCursor('dashboards', null);
       break;
     }
     after = page.pageInfo.endCursor;

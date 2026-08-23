@@ -12,7 +12,8 @@ export const stage6 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     targetWorkspace,
     migrationState.targetObjectIdBySourceObjectId,
     migrationState.targetFieldIdBySourceFieldId,
-    migrationState.targetPageLayoutIdBySourcePageLayoutId)) {
+    migrationState.targetPageLayoutIdBySourcePageLayoutId,
+    migrationState.targetViewIdBySourceViewId)) {
     setStateRef('stage', 7);
     await saveMigrationStateCheckpointAndStop();
   }

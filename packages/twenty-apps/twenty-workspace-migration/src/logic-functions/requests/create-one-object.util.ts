@@ -16,8 +16,6 @@ export type CreatedObjectType = {
   universalIdentifier: string;
 };
 
-// Only the fields CreateObjectInput actually accepts are sent, regardless of what
-// extra properties the caller's object literal happens to carry (e.g. from a spread).
 export const createOneObject = async (
   client: AxiosInstance,
   object: CreateOneObjectType,
@@ -29,7 +27,17 @@ export const createOneObject = async (
     MUTATION,
     {
       input: {
-        object,
+        object: {
+          nameSingular: object.nameSingular,
+          namePlural: object.namePlural,
+          labelSingular: object.labelSingular,
+          labelPlural: object.labelPlural,
+          description: object.description,
+          icon: object.icon,
+          color: object.color,
+          isLabelSyncedWithName: object.isLabelSyncedWithName,
+          skipNameField: object.skipNameField,
+        },
       },
     },
   );

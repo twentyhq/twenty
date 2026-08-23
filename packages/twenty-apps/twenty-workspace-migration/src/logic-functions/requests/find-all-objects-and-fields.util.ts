@@ -97,6 +97,8 @@ export const FindAllObjectsAndFields = async (
 
     edges.push(...page.objects.edges);
 
+    // A null cursor alongside hasNextPage would re-request page one forever, so it ends the
+    // walk too rather than spinning until the function times out.
     if (page.objects.pageInfo.hasNextPage === false || page.objects.pageInfo.endCursor === null) {
       return { data: { objects: { edges } } };
     }

@@ -13,13 +13,20 @@ export type MigrationState = {
   fieldsToUpdate: UpdateOneFieldType[];
   workspaceMemberIdMap: Map<string, string>; // <sourceMemberId, targetMemberId>
   migratedRecordIds: Set<string>;
-  recordMigrationOrder: ObjectType[];
+  // An index into buildRecordMigrationOrder(sourceWorkspaceObjects) rather than a sliced copy
+  // of it: the order is derivable, and persisting the objects themselves meant every checkpoint
+  // re-serialized the whole schema a second time.
+  recordMigrationIndex: number;
   targetObjectIdBySourceObjectId: Map<string, string>;
   targetFieldIdBySourceFieldId: Map<string, string>;
   objectRecordsToMigrate: Map<string, string>; //<namePlural, after cursor>
   // How far the post-record-migration relation reconciliation has got through the record
   // migration order, so a resumed run doesn't re-scan objects it already reconciled.
   reconciliationObjectIndex: number;
+  // An INDEX view is not recreated in the target - migrateViews points it at the target's own
+  // pre-provisioned one, whose id differs - so view references have to be resolved through this
+  // rather than copied across verbatim.
+  targetViewIdBySourceViewId: Map<string, string>;
   targetPageLayoutIdBySourcePageLayoutId: Map<string, string>;
   attachmentTargetFieldNameByObjectName: Map<string, string>;
   targetAttachmentFileFieldId: string | null;

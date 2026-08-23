@@ -12,8 +12,9 @@ export const applyPageLayoutTabsAndWidgets = async (
   sourceTabs: PageLayoutTab[],
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
   warningContext: string,
 ): Promise<void> => {
-  const tabs = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, warningContext);
+  const tabs = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, targetViewIdBySourceViewId, warningContext);
   await executeWithRetryAndCheckpoint(() => updatePageLayoutWithTabsAndWidgets(targetWorkspace, targetPageLayoutId, tabs));
 };

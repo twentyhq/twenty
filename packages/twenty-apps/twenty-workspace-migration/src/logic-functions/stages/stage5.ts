@@ -13,7 +13,7 @@ export const stage5 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   const recordIds = buildRecordIdResolution();
   const targetPageLayoutIdBySourcePageLayoutId = migrationState.targetPageLayoutIdBySourcePageLayoutId;
 
-  if (await migrateDashboards(sourceWorkspace, targetWorkspace, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, recordIds, targetPageLayoutIdBySourcePageLayoutId)) {
+  if (await migrateDashboards(sourceWorkspace, targetWorkspace, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, recordIds, targetPageLayoutIdBySourcePageLayoutId, migrationState.targetViewIdBySourceViewId)) {
     setStateRef('stage', 6);
     await saveMigrationStateCheckpointAndStop();
   }

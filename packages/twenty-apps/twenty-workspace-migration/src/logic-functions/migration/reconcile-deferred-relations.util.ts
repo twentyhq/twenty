@@ -73,7 +73,7 @@ export const reconcileDeferredRelations = async (
       );
 
       for (const edge of page.edges) {
-        const targetRecordId = resolveTargetRecordId(recordIds, edge.node.id as string);
+        const targetRecordId = resolveTargetRecordId(recordIds, edge.node.id);
         if (targetRecordId === undefined) {
           continue;
         }
@@ -81,10 +81,10 @@ export const reconcileDeferredRelations = async (
         const data: Record<string, unknown> = {};
         for (const foreignKeyName of deferredForeignKeyNames) {
           const sourceTargetId = edge.node[foreignKeyName];
-          if (sourceTargetId === null || sourceTargetId === undefined) {
+          if (typeof sourceTargetId !== 'string') {
             continue;
           }
-          const resolvedTargetId = resolveTargetRecordId(recordIds, sourceTargetId as string);
+          const resolvedTargetId = resolveTargetRecordId(recordIds, sourceTargetId);
           if (resolvedTargetId !== undefined) {
             data[foreignKeyName] = resolvedTargetId;
           }
@@ -100,11 +100,11 @@ export const reconcileDeferredRelations = async (
           );
           patchedRecords += 1;
         } catch (error) {
-          logger.warn(`Could not reconcile relations on ${sourceObject.nameSingular} ${targetRecordId}: ${error instanceof Error ? error.message : String(error)}`);
-        }
+        logger.warn(`Could not reconcile relations on ${sourceObject.nameSingular} ${targetRecordId}: ${error instanceof Error ? error.message : String(error)}`);
       }
+    }
 
-      if (page.pageInfo.hasNextPage === false) {
+      if (page.pageInfo.hasNextPage === false || page.pageInfo.endCursor === null) {
         setObjectCursor(cursorKey, null);
         break;
       }

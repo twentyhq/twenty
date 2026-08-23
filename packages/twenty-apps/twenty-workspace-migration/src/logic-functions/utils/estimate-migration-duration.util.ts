@@ -101,12 +101,16 @@ export const estimateMigrationDuration = async (
     batchableRecordCount += object ?? 0;
   }
 
-  const views = await executeWithRetry(() => findViews(sourceWorkspace));
-  const navigationMenuItems = await executeWithRetry(() => findNavigationMenuItems(sourceWorkspace));
-  const skills = await executeWithRetry(() => findSkills(sourceWorkspace));
-  const webhooks = await executeWithRetry(() => findWebhooks(sourceWorkspace));
-  const roles = await executeWithRetry(() => findRoles(sourceWorkspace));
-  const recordPageLayouts = await executeWithRetry(() => findPageLayouts(sourceWorkspace, 'RECORD_PAGE'));
+  // Independent reads, so they go out together - awaited one by one they were six sequential
+  // round trips inside stage1's already-unbudgeted preamble.
+  const [views, navigationMenuItems, skills, webhooks, roles, recordPageLayouts] = await Promise.all([
+    executeWithRetry(() => findViews(sourceWorkspace)),
+    executeWithRetry(() => findNavigationMenuItems(sourceWorkspace)),
+    executeWithRetry(() => findSkills(sourceWorkspace)),
+    executeWithRetry(() => findWebhooks(sourceWorkspace)),
+    executeWithRetry(() => findRoles(sourceWorkspace)),
+    executeWithRetry(() => findPageLayouts(sourceWorkspace, 'RECORD_PAGE')),
+  ]);
 
   const customSkillCount = skills.filter((skill) => skill.isCustom).length;
   const customRecordPageLayoutCount = recordPageLayouts.filter((layout) => !layout.isSystemSideEffect).length;

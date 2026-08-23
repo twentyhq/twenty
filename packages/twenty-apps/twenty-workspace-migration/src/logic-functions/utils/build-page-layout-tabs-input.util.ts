@@ -6,6 +6,7 @@ export const buildPageLayoutTabsInput = (
   sourceTabs: PageLayoutTab[],
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
+  targetViewIdBySourceViewId: Map<string, string>,
   warningContext: string,
 ): Record<string, unknown>[] => {
   return sourceTabs.map((tab) => {
@@ -32,7 +33,7 @@ export const buildPageLayoutTabsInput = (
         type: widget.type,
         objectMetadataId: targetObjectMetadataId ?? null,
         gridPosition: widget.gridPosition,
-        configuration: remapWidgetConfiguration(widget.configuration, targetFieldIdBySourceFieldId),
+        configuration: remapWidgetConfiguration(widget.configuration, targetFieldIdBySourceFieldId, targetViewIdBySourceViewId),
       }];
     });
 

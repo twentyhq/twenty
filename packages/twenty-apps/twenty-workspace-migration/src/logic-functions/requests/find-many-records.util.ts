@@ -3,18 +3,18 @@ import { postGraphql } from "src/logic-functions/requests/graphql-client.util";
 import { capitalize } from "src/logic-functions/utils/capitalize.util";
 import { PAGE_SIZE } from "src/constants/page-size";
 
-export type RecordsPage = {
-  edges: { node: Record<string, unknown> }[];
+export type RecordsPage<TNode extends object = Record<string, unknown>> = {
+  edges: { node: TNode & { id: string } }[];
   pageInfo: { hasNextPage: boolean; endCursor: string | null };
 };
 
-export const findManyRecords = async (
+export const findManyRecords = async <TNode extends object = Record<string, unknown>>(
   client: AxiosInstance,
   namePlural: string,
   selectionSet: string,
   after: string | null,
   pageSize?: number,
-): Promise<RecordsPage> => {
+): Promise<RecordsPage<TNode>> => {
   const afterArg = after !== null ? `, after: ${JSON.stringify(after)}` : '';
   const operationName = `findMany${capitalize(namePlural)}`;
   const query = `query ${operationName} {
@@ -32,7 +32,7 @@ ${selectionSet}
   }
 }`;
 
-  const data = await postGraphql<Record<string, RecordsPage>>(
+  const data = await postGraphql<Record<string, RecordsPage<TNode>>>(
     client,
     '/graphql',
     operationName,

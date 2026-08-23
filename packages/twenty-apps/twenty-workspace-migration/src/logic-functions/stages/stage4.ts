@@ -12,10 +12,12 @@ import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute
 export const stage4 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
   const targetFieldIdBySourceFieldId = migrationState.targetFieldIdBySourceFieldId;
   const targetObjectIdBySourceObjectId = migrationState.targetObjectIdBySourceObjectId;
-  const sourceViews = await executeWithRetry(() => findViews(sourceWorkspace));
-  const targetViews = await executeWithRetryAndCheckpoint(() => findViews(targetWorkspace));
+  const [sourceViews, targetViews] = await Promise.all([
+    executeWithRetry(() => findViews(sourceWorkspace)),
+    executeWithRetryAndCheckpoint(() => findViews(targetWorkspace)),
+  ]);
 
-  if (await migrateViews(targetWorkspace, sourceViews, targetViews, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId)) {
+  if (await migrateViews(targetWorkspace, sourceViews, targetViews, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, migrationState.targetViewIdBySourceViewId)) {
     setStateRef('stage', 5);
     await saveMigrationStateCheckpointAndStop();
   }

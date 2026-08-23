@@ -5,13 +5,13 @@ import { findManyRecords } from "src/logic-functions/requests/find-many-records.
 import { createManyRecords } from "src/logic-functions/requests/create-many-records.util";
 import { ObjectType } from "src/logic-functions/types/find-objects-fields.type";
 import { buildRecordDataToCreate, type DroppedRelationCounts } from "src/logic-functions/utils/build-record-data-to-create.util";
-import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { RecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
 import { logger } from "src/logic-functions/utils/logger.util";
-import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const migrateRecordsForObject = async (
@@ -24,6 +24,8 @@ export const migrateRecordsForObject = async (
   const enumDataKeys = new Set(plan.enumDataKeys);
   const relationForeignKeyNames = new Set(plan.relationForeignKeyNames);
 
+  // An object can hold far more records than one invocation's time budget allows, so the cursor
+  // is persisted after every page and the walk resumes from it on the next invocation.
   let after: string | null = migrationState.objectRecordsToMigrate.get(sourceObject.namePlural) ?? null;
   let migratedRecords = 0;
 
@@ -44,7 +46,7 @@ export const migrateRecordsForObject = async (
       // stopped honouring the id we send would silently produce references to nothing.
       const createdIds = new Set(created.map((record) => record.id));
       for (const node of nodes) {
-        const sourceRecordId = node.id as string;
+        const sourceRecordId = node.id;
         if (createdIds.has(sourceRecordId) === false) {
           throw new Error(`Record ${sourceRecordId} was created under a different id in the target workspace`);
         }
@@ -58,7 +60,7 @@ export const migrateRecordsForObject = async (
       }
     }
 
-    if (!page.pageInfo.hasNextPage) {
+    if (page.pageInfo.hasNextPage === false || page.pageInfo.endCursor === null) {
       setObjectCursor(sourceObject.namePlural, null);
       break;
     }
