@@ -1,0 +1,211 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { validate as uuidValidate, version as uuidVersion } from 'uuid';
+
+import { type Manifest } from 'twenty-shared/application';
+import {
+  FieldMetadataType,
+  type RelationAndMorphRelationFieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+const MIN_UUID_VERSION = 4;
+
+const RELATION_FIELD_TYPES: FieldMetadataType[] = [
+  FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
+];
+
+export type ManifestField =
+  | Manifest['fields'][number]
+  | Manifest['objects'][number]['fields'][number];
+
+type RelationManifestField = Extract<
+  ManifestField,
+  { type: RelationAndMorphRelationFieldMetadataType }
+>;
+
+export const isRelationFieldManifest = (
+  field: ManifestField,
+): field is RelationManifestField => RELATION_FIELD_TYPES.includes(field.type);
+
+const extractDuplicates = (values: string[]): string[] => {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const value of values) {
+    if (seen.has(value)) {
+      duplicates.add(value);
+    } else {
+      seen.add(value);
+    }
+  }
+
+  return Array.from(duplicates);
+};
+
+export const validateTimelineActivityTypes = (
+  manifest: Pick<
+    Manifest,
+    'fields' | 'frontComponents' | 'objects' | 'timelineActivityTypes'
+  >,
+): string[] => {
+  const errors: string[] = [];
+  const duplicateNames = extractDuplicates(
+    manifest.timelineActivityTypes.map(
+      (timelineActivityType) => timelineActivityType.name,
+    ),
+  );
+  const frontComponentUniversalIdentifiers = new Set(
+    manifest.frontComponents.map(
+      (frontComponent) => frontComponent.universalIdentifier,
+    ),
+  );
+
+  for (const duplicateName of duplicateNames) {
+    errors.push(
+      `Timeline activity type name "${duplicateName}" is used more than once. Names must be unique within an application.`,
+    );
+  }
+
+  for (const timelineActivityType of manifest.timelineActivityTypes) {
+    if (
+      isDefined(timelineActivityType.frontComponentUniversalIdentifier) &&
+      !frontComponentUniversalIdentifiers.has(
+        timelineActivityType.frontComponentUniversalIdentifier,
+      )
+    ) {
+      errors.push(
+        `Timeline activity type "${timelineActivityType.name}" references front component "${timelineActivityType.frontComponentUniversalIdentifier}", which is not defined by this application.`,
+      );
+    }
+
+    const emit = timelineActivityType.emit;
+    const replacementUniversalIdentifier =
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier;
+
+    if (!isDefined(emit)) {
+      if (isDefined(replacementUniversalIdentifier)) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" declares replacesTimelineActivityTypeUniversalIdentifier without an automatic emit contract.`,
+        );
+      }
+
+      continue;
+    }
+
+    const through = emit.through;
+    const triggerFieldUniversalIdentifiers =
+      through?.triggerFieldUniversalIdentifiers;
+
+    if (
+      (emit.on === 'linked' || emit.on === 'unlinked') &&
+      !isDefined(through)
+    ) {
+      errors.push(
+        `Timeline activity type "${timelineActivityType.name}" must declare emit.through for a ${emit.on} event.`,
+      );
+    }
+
+    if (isDefined(triggerFieldUniversalIdentifiers)) {
+      if (
+        emit.on !== 'updated' ||
+        triggerFieldUniversalIdentifiers.length === 0 ||
+        new Set(triggerFieldUniversalIdentifiers).size !==
+          triggerFieldUniversalIdentifiers.length
+      ) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" trigger fields must be a non-empty list of unique fields on an updated through event.`,
+        );
+      }
+    }
+
+    const sourceObject = manifest.objects.find(
+      (object) =>
+        object.universalIdentifier === emit.objectUniversalIdentifier,
+    );
+
+    if (!isDefined(sourceObject)) {
+      if (!isDefined(replacementUniversalIdentifier)) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" targets object "${emit.objectUniversalIdentifier}", which is not defined by this application. Types targeting another application's object must declare replacesTimelineActivityTypeUniversalIdentifier.`,
+        );
+      } else if (
+        !uuidValidate(replacementUniversalIdentifier) ||
+        uuidVersion(replacementUniversalIdentifier) < MIN_UUID_VERSION
+      ) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" references an invalid replacement universal identifier "${replacementUniversalIdentifier}".`,
+        );
+      }
+
+      continue;
+    }
+
+    if (isDefined(replacementUniversalIdentifier)) {
+      errors.push(
+        `Timeline activity type "${timelineActivityType.name}" targets an object defined by this application and must not replace another application's type.`,
+      );
+    }
+
+    const sourceFields = [
+      ...sourceObject.fields,
+      ...manifest.fields.filter(
+        (field) =>
+          field.objectUniversalIdentifier === sourceObject.universalIdentifier,
+      ),
+    ];
+
+    if (!isDefined(through)) {
+      continue;
+    }
+
+    const relationField = sourceFields.find(
+      (field) =>
+        field.universalIdentifier ===
+        through.relationFieldUniversalIdentifier,
+    );
+
+    if (!isDefined(relationField)) {
+      errors.push(
+        `Timeline activity type "${timelineActivityType.name}" references relation field "${through.relationFieldUniversalIdentifier}", which is not defined on object "${sourceObject.nameSingular}".`,
+      );
+    } else {
+      const hasSupportedRelationShape =
+        isRelationFieldManifest(relationField) &&
+        (relationField.universalSettings.relationType ===
+          RelationType.MANY_TO_ONE ||
+          (relationField.universalSettings.relationType ===
+            RelationType.ONE_TO_MANY &&
+            isNonEmptyString(
+              relationField.universalSettings
+                .junctionTargetFieldUniversalIdentifier,
+            )));
+
+      if (!hasSupportedRelationShape) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation.`,
+        );
+      }
+    }
+
+    if (isDefined(triggerFieldUniversalIdentifiers)) {
+      const sourceFieldUniversalIdentifiers = new Set(
+        sourceFields.map((field) => field.universalIdentifier),
+      );
+      const missingTriggerFieldUniversalIdentifiers =
+        triggerFieldUniversalIdentifiers.filter(
+          (universalIdentifier) =>
+            !sourceFieldUniversalIdentifiers.has(universalIdentifier),
+        );
+
+      if (missingTriggerFieldUniversalIdentifiers.length > 0) {
+        errors.push(
+          `Timeline activity type "${timelineActivityType.name}" references trigger fields that are not defined on object "${sourceObject.nameSingular}": ${missingTriggerFieldUniversalIdentifiers.join(', ')}.`,
+        );
+      }
+    }
+  }
+
+  return errors;
+};

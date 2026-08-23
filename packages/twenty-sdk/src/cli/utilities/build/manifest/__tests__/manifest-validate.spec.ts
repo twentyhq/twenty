@@ -783,6 +783,93 @@ describe('manifestValidate', () => {
       expect(manifestValidate(manifest).errors).toHaveLength(0);
     });
 
+    it('rejects replacement contracts that cannot be valid locally', () => {
+      const explicitManifest = buildTimelineManifest();
+      const [explicitTimelineActivityType] =
+        explicitManifest.timelineActivityTypes;
+
+      explicitTimelineActivityType.emit = undefined;
+      explicitTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(explicitManifest).errors).toContainEqual(
+        expect.stringContaining(
+          'declares replacesTimelineActivityTypeUniversalIdentifier without an automatic emit contract',
+        ),
+      );
+
+      const localObjectManifest = buildTimelineManifest();
+      localObjectManifest.timelineActivityTypes[0].replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(localObjectManifest).errors).toContainEqual(
+        expect.stringContaining(
+          'must not replace another application\'s type',
+        ),
+      );
+
+      const invalidIdentifierManifest = buildTimelineManifest();
+      const invalidIdentifierTimelineActivityType =
+        invalidIdentifierManifest.timelineActivityTypes[0];
+
+      invalidIdentifierTimelineActivityType.emit!.objectUniversalIdentifier =
+        '0bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+      invalidIdentifierTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        'not-a-uuid';
+
+      expect(
+        manifestValidate(invalidIdentifierManifest).errors,
+      ).toContainEqual(
+        expect.stringContaining('invalid replacement universal identifier'),
+      );
+    });
+
+    it.each([
+      {
+        action: 'updated' as const,
+        triggerFieldUniversalIdentifiers: [],
+      },
+      {
+        action: 'updated' as const,
+        triggerFieldUniversalIdentifiers: [
+          triggerFieldUniversalIdentifier,
+          triggerFieldUniversalIdentifier,
+        ],
+      },
+      {
+        action: 'created' as const,
+        triggerFieldUniversalIdentifiers: [triggerFieldUniversalIdentifier],
+      },
+    ])(
+      'rejects invalid trigger constraints for $action events',
+      ({ action, triggerFieldUniversalIdentifiers }) => {
+        const manifest = buildTimelineManifest();
+        const [timelineActivityType] = manifest.timelineActivityTypes;
+
+        timelineActivityType.emit!.on = action;
+        timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers =
+          triggerFieldUniversalIdentifiers;
+
+        expect(manifestValidate(manifest).errors).toContainEqual(
+          expect.stringContaining(
+            'trigger fields must be a non-empty list of unique fields on an updated through event',
+          ),
+        );
+      },
+    );
+
+    it('requires linked and unlinked emitters to declare a through relation', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.on = 'linked';
+      timelineActivityType.emit!.through = undefined;
+
+      expect(manifestValidate(manifest).errors).toContainEqual(
+        expect.stringContaining('must declare emit.through for a linked event'),
+      );
+    });
+
     it('rejects duplicate names and unsupported through relations', () => {
       const manifest = buildTimelineManifest();
       const [timelineActivityType] = manifest.timelineActivityTypes;
