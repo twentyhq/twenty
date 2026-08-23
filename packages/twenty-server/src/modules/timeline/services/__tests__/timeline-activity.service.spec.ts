@@ -405,6 +405,70 @@ describe('TimelineActivityService', () => {
     },
   );
 
+  it('emits unlinked and linked activities when a junction is repointed', async () => {
+    const targetShape = {
+      kind: 'JUNCTION' as const,
+      junctionObjectMetadataId: 'junction-object-id',
+      junctionObjectNameSingular: 'attachmentTarget',
+      junctionSourceJoinColumnName: 'attachmentId',
+      targetJoinColumns: [
+        {
+          joinColumnName: 'targetPersonId',
+          targetObjectNameSingular: 'person',
+        },
+      ],
+    };
+    const unlinkedRule = buildRule({ action: 'unlinked', targetShape });
+    const linkedRule = buildRule({ action: 'linked', targetShape });
+    const { service, upsertTimelineActivities } = buildService({
+      junctionRules: [unlinkedRule, linkedRule],
+    });
+
+    await upsertEvent({
+      service,
+      action: 'updated',
+      event: buildEvent({
+        before: {
+          id: 'junction-record-id',
+          attachmentId: SOURCE_RECORD_ID,
+          targetPersonId: OLD_TARGET_RECORD_ID,
+          updatedAt: EVENT_DATE,
+        },
+        after: {
+          id: 'junction-record-id',
+          attachmentId: SOURCE_RECORD_ID,
+          targetPersonId: NEW_TARGET_RECORD_ID,
+          updatedAt: EVENT_DATE,
+        },
+        diff: {
+          targetPersonId: {
+            before: OLD_TARGET_RECORD_ID,
+            after: NEW_TARGET_RECORD_ID,
+          },
+        },
+        updatedFields: ['targetPersonId'],
+      }),
+    });
+
+    expect(upsertTimelineActivities).toHaveBeenCalledWith(
+      expect.objectContaining({
+        objectSingularName: 'person',
+        payloads: [
+          expect.objectContaining({
+            timelineActivityTypeId: unlinkedRule.timelineActivityType?.id,
+            recordId: OLD_TARGET_RECORD_ID,
+            linkedRecordId: SOURCE_RECORD_ID,
+          }),
+          expect.objectContaining({
+            timelineActivityTypeId: linkedRule.timelineActivityType?.id,
+            recordId: NEW_TARGET_RECORD_ID,
+            linkedRecordId: SOURCE_RECORD_ID,
+          }),
+        ],
+      }),
+    );
+  });
+
   it('does not treat an unrelated junction update as a new link', async () => {
     const rule = buildRule({
       action: 'linked',
