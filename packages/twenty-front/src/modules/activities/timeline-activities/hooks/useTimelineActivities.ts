@@ -105,7 +105,8 @@ export const useTimelineActivities = (
     objectMetadataItemId: timelineActivityMetadata.id,
   });
 
-  useLinkedRecordsIdentifiers({ timelineActivities, objectMetadataItems });
+  const { result: linkedRecordsByObjectNamePlural } =
+    useLinkedRecordsIdentifiers({ timelineActivities, objectMetadataItems });
 
   const firstQueryLoading =
     loadingTimelineActivities && timelineActivities.length === 0;
@@ -118,5 +119,6 @@ export const useTimelineActivities = (
     firstQueryLoading,
     loadingMore,
     fetchMoreRecords,
+    linkedRecords: Object.values(linkedRecordsByObjectNamePlural).flat(),
   };
 };

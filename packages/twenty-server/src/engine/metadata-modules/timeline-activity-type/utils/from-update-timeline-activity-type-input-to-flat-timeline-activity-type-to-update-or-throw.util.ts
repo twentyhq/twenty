@@ -85,7 +85,7 @@ export const fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpda
         update: updatedEditableProperties,
       }),
       overrides: mergeTranslationsIntoOverrides<TimelineActivityTypeOverrides>({
-        existingOverrides: overrides as TimelineActivityTypeOverrides | null,
+        existingOverrides: overrides,
         translationEntries: translations,
       }),
       updatedAt: new Date().toISOString(),

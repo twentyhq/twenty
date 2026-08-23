@@ -1,30 +1,26 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
 import { useLinkedRecordsIdentifiers } from '@/activities/timeline-activities/hooks/useLinkedRecordsIdentifiers';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-const upsertRecordsInStore = jest.fn();
+const linkedRecordsResult = {
+  notes: [{ id: 'note-id', __typename: 'Note', title: 'Quarterly plan' }],
+};
 
 jest.mock(
   '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords',
   () => ({
     useCombinedFindManyRecords: () => ({
       loading: false,
-      result: {
-        notes: [{ id: 'note-id', __typename: 'Note', title: 'Quarterly plan' }],
-      },
+      result: linkedRecordsResult,
     }),
   }),
 );
 
-jest.mock('@/object-record/record-store/hooks/useUpsertRecordsInStore', () => ({
-  useUpsertRecordsInStore: () => ({ upsertRecordsInStore }),
-}));
-
 describe('useLinkedRecordsIdentifiers', () => {
-  it('hydrates fetched identifiers into the record store used by collapsed rows', async () => {
-    renderHook(() =>
+  it('returns fetched identifiers for collapsed-row store hydration', () => {
+    const { result } = renderHook(() =>
       useLinkedRecordsIdentifiers({
         timelineActivities: [
           {
@@ -44,12 +40,6 @@ describe('useLinkedRecordsIdentifiers', () => {
       }),
     );
 
-    await waitFor(() => {
-      expect(upsertRecordsInStore).toHaveBeenCalledWith({
-        partialRecords: [
-          { id: 'note-id', __typename: 'Note', title: 'Quarterly plan' },
-        ],
-      });
-    });
+    expect(result.current.result).toEqual(linkedRecordsResult);
   });
 });

@@ -86,11 +86,13 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
       ],
     );
 
-    let routingResult: [unknown[], number] | undefined;
-    let junctionResult: [unknown[], number] | undefined;
+    const queryRunner = dataSource.createQueryRunner();
 
     try {
-      routingResult = await dataSource.query<[unknown[], number]>(
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      const routingResult = await dataSource.query<[unknown[], number]>(
         `UPDATE "core"."timelineActivityType" AS timeline_activity_type
        SET "targetRelationFieldUniversalIdentifier" = routing."targetRelationFieldUniversalIdentifier",
            "triggerFieldUniversalIdentifiers" = routing."triggerFieldUniversalIdentifiers"
@@ -103,7 +105,7 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
          AND timeline_activity_type."applicationId" = $2
          AND timeline_activity_type."universalIdentifier" = routing."universalIdentifier"`,
         [workspaceId, twentyStandardFlatApplication.id, ...routingParameters],
-        undefined,
+        queryRunner,
         { shouldBypassPermissionChecks: true },
       );
 
@@ -112,7 +114,7 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
           `(source_field."universalIdentifier" = $${index * 2 + 2}::uuid AND target_field."universalIdentifier" = $${index * 2 + 3}::uuid)`,
       ).join(' OR ');
 
-      junctionResult = await dataSource.query<[unknown[], number]>(
+      const junctionResult = await dataSource.query<[unknown[], number]>(
         `UPDATE "core"."fieldMetadata" AS source_field
        SET "settings" = COALESCE(source_field."settings", '{}'::jsonb) ||
          jsonb_build_object('junctionTargetFieldId', target_field."id")
@@ -132,37 +134,39 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
             ],
           ),
         ],
-        undefined,
+        queryRunner,
         { shouldBypassPermissionChecks: true },
       );
-    } finally {
-      if (isDefined(routingResult)) {
-        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'flatTimelineActivityTypeMaps',
-          'flatFieldMetadataMaps',
-        ]);
+
+      validateStandardMetadataUpdateCount({
+        actualCount: routingResult[1],
+        expectedCount: STANDARD_TIMELINE_ACTIVITY_ROUTINGS_2_34.length,
+        logger: this.logger,
+        metadataLabel: 'standard timeline activity routings',
+        workspaceId,
+      });
+      validateStandardMetadataUpdateCount({
+        actualCount: junctionResult[1],
+        expectedCount: JUNCTION_TARGETS.length,
+        logger: this.logger,
+        metadataLabel: 'standard junction targets',
+        workspaceId,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
       }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
 
-    if (!isDefined(routingResult) || !isDefined(junctionResult)) {
-      throw new Error(
-        `Timeline activity routing did not finish for workspace ${workspaceId}`,
-      );
-    }
-
-    validateStandardMetadataUpdateCount({
-      actualCount: routingResult[1],
-      expectedCount: STANDARD_TIMELINE_ACTIVITY_ROUTINGS_2_34.length,
-      logger: this.logger,
-      metadataLabel: 'standard timeline activity routings',
-      workspaceId,
-    });
-    validateStandardMetadataUpdateCount({
-      actualCount: junctionResult[1],
-      expectedCount: JUNCTION_TARGETS.length,
-      logger: this.logger,
-      metadataLabel: 'standard junction targets',
-      workspaceId,
-    });
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatTimelineActivityTypeMaps',
+      'flatFieldMetadataMaps',
+    ]);
   }
 }
