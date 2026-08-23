@@ -31,7 +31,9 @@ export const SettingsRolePermissionsObjectLevelCreateRecordToggle = ({
   const isDisabled = !isEditable || !objectMetadataItem.isUICreatable;
 
   const handleToggle = (newValue: boolean) => {
-    if (isDisabled) return;
+    if (isDisabled) {
+      return;
+    }
     upsertObjectPermission(
       objectMetadataItem.id,
       'canCreateObjectRecords',
