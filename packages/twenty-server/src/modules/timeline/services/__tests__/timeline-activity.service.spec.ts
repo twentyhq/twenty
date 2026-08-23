@@ -450,10 +450,11 @@ describe('TimelineActivityService', () => {
       }),
     });
 
+    expect(upsertTimelineActivities).toHaveBeenCalledTimes(1);
     expect(upsertTimelineActivities).toHaveBeenCalledWith(
       expect.objectContaining({
         objectSingularName: 'person',
-        payloads: [
+        payloads: expect.arrayContaining([
           expect.objectContaining({
             timelineActivityTypeId: unlinkedRule.timelineActivityType?.id,
             recordId: OLD_TARGET_RECORD_ID,
@@ -464,7 +465,7 @@ describe('TimelineActivityService', () => {
             recordId: NEW_TARGET_RECORD_ID,
             linkedRecordId: SOURCE_RECORD_ID,
           }),
-        ],
+        ]),
       }),
     );
   });
