@@ -141,31 +141,33 @@ describe('TimelineActivityRepository', () => {
       ],
     });
 
-    const lockStatement =
-      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
+    const lockStatement = `SELECT pg_advisory_xact_lock(hashtextextended("lockName", 0))
+   FROM unnest($1::text[]) WITH ORDINALITY AS "locks"("lockName", "ordinality")
+   ORDER BY "ordinality"`;
 
-    expect(executeRawQuery).toHaveBeenNthCalledWith(1, lockStatement, [
-      JSON.stringify([
-        'timeline-activity-merge',
-        WORKSPACE_ID,
-        'person',
-        'record-a',
-        WORKSPACE_MEMBER_ID,
-        TIMELINE_ACTIVITY_TYPE_ID,
-      ]),
-    ]);
-    expect(executeRawQuery).toHaveBeenNthCalledWith(2, lockStatement, [
-      JSON.stringify([
-        'timeline-activity-merge',
-        WORKSPACE_ID,
-        'person',
-        'record-z',
-        WORKSPACE_MEMBER_ID,
-        TIMELINE_ACTIVITY_TYPE_ID,
-      ]),
+    expect(executeRawQuery).toHaveBeenCalledTimes(1);
+    expect(executeRawQuery).toHaveBeenCalledWith(lockStatement, [
+      [
+        JSON.stringify([
+          'timeline-activity-merge',
+          WORKSPACE_ID,
+          'person',
+          'record-a',
+          WORKSPACE_MEMBER_ID,
+          TIMELINE_ACTIVITY_TYPE_ID,
+        ]),
+        JSON.stringify([
+          'timeline-activity-merge',
+          WORKSPACE_ID,
+          'person',
+          'record-z',
+          WORKSPACE_MEMBER_ID,
+          TIMELINE_ACTIVITY_TYPE_ID,
+        ]),
+      ],
     ]);
     expect(
       workspaceRepository.find.mock.invocationCallOrder[0],
-    ).toBeGreaterThan(executeRawQuery.mock.invocationCallOrder[1]);
+    ).toBeGreaterThan(executeRawQuery.mock.invocationCallOrder[0]);
   });
 });

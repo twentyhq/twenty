@@ -24,8 +24,9 @@ type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   objectSingularName: string;
 };
 
-const ACQUIRE_TIMELINE_ACTIVITY_MERGE_LOCK =
-  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
+const ACQUIRE_TIMELINE_ACTIVITY_MERGE_LOCK = `SELECT pg_advisory_xact_lock(hashtextextended("lockName", 0))
+   FROM unnest($1::text[]) WITH ORDINALITY AS "locks"("lockName", "ordinality")
+   ORDER BY "ordinality"`;
 
 @Injectable()
 export class TimelineActivityRepository {
@@ -182,12 +183,10 @@ export class TimelineActivityRepository {
       ),
     ].sort();
 
-    for (const lockName of lockNames) {
-      await transactionScope.executeRawQuery(
-        ACQUIRE_TIMELINE_ACTIVITY_MERGE_LOCK,
-        [lockName],
-      );
-    }
+    await transactionScope.executeRawQuery(
+      ACQUIRE_TIMELINE_ACTIVITY_MERGE_LOCK,
+      [lockNames],
+    );
   }
 
   private async findRecentTimelineActivities({
