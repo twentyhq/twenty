@@ -341,9 +341,10 @@ export class TimelineActivityService {
           ruleAction,
         });
         const target =
-          this.timelineActivityTargetQueryService.resolveTargetFromDirectRelationRecord(
-            { rule, record },
-          );
+          this.timelineActivityTargetQueryService.resolveTargetFromRecord({
+            rule,
+            record,
+          });
 
         if (!isDefined(target)) {
           return [];
@@ -453,9 +454,10 @@ export class TimelineActivityService {
         });
 
         const target =
-          this.timelineActivityTargetQueryService.resolveTargetFromJunctionRecord(
-            { rule, junctionRecord },
-          );
+          this.timelineActivityTargetQueryService.resolveTargetFromRecord({
+            rule,
+            record: junctionRecord,
+          });
 
         const sourceRecordId = junctionRecord?.[junctionSourceJoinColumnName];
 

@@ -88,35 +88,14 @@ export class TimelineActivityTargetQueryService {
     return targetsBySourceRecordId;
   }
 
-  resolveTargetFromJunctionRecord({
-    rule,
-    junctionRecord,
-  }: {
-    rule: TimelineActivityRule;
-    junctionRecord: Record<string, unknown> | undefined;
-  }): ResolvedTimelineActivityTarget | undefined {
-    if (!isDefined(junctionRecord)) {
-      return undefined;
-    }
-
-    if (rule.targetShape.kind !== 'JUNCTION') {
-      return undefined;
-    }
-
-    return readTargetFromRecord(
-      junctionRecord,
-      rule.targetShape.targetJoinColumns,
-    );
-  }
-
-  resolveTargetFromDirectRelationRecord({
+  resolveTargetFromRecord({
     rule,
     record,
   }: {
     rule: TimelineActivityRule;
     record: Record<string, unknown> | undefined;
   }): ResolvedTimelineActivityTarget | undefined {
-    if (!isDefined(record) || rule.targetShape.kind !== 'DIRECT_RELATION') {
+    if (!isDefined(record) || rule.targetShape.kind === 'SELF') {
       return undefined;
     }
 

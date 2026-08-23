@@ -96,21 +96,12 @@ const buildService = ({
     resolveTimelineActivityType,
   });
   const resolveTargetsBySourceRecordId = jest.fn().mockResolvedValue(new Map());
-  const resolveTargetFromDirectRelationRecord = jest.fn(
+  const resolveTargetFromRecord = jest.fn(
     ({ record }: { record?: Record<string, unknown> }) =>
       typeof record?.targetPersonId === 'string'
         ? {
             targetObjectNameSingular: 'person',
             targetRecordId: record.targetPersonId,
-          }
-        : undefined,
-  );
-  const resolveTargetFromJunctionRecord = jest.fn(
-    ({ junctionRecord }: { junctionRecord?: Record<string, unknown> }) =>
-      typeof junctionRecord?.targetPersonId === 'string'
-        ? {
-            targetObjectNameSingular: 'person',
-            targetRecordId: junctionRecord.targetPersonId,
           }
         : undefined,
   );
@@ -137,8 +128,7 @@ const buildService = ({
     { getRulesForEventBatch } as never,
     {
       resolveTargetsBySourceRecordId,
-      resolveTargetFromDirectRelationRecord,
-      resolveTargetFromJunctionRecord,
+      resolveTargetFromRecord,
       findSourceRecordsByRecordId,
     } as never,
     { report } as never,
