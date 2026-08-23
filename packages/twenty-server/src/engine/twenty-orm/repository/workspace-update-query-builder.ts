@@ -166,9 +166,11 @@ export class WorkspaceUpdateQueryBuilder<
 
       const tableName = computeObjectTargetTable(objectMetadata);
 
-      const before = await eventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const before = structuredClone(
+        await eventSelectQueryBuilder.getMany({
+          noFormatting: true,
+        }),
+      );
 
       if (before.length > QUERY_MAX_RECORDS) {
         throw new TwentyORMException(
@@ -196,7 +198,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       const formattedBefore = formatResult<T[]>(
-        before,
+        structuredClone(before),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -250,7 +252,10 @@ export class WorkspaceUpdateQueryBuilder<
       this.applyRowLevelPermissionPredicates();
 
       const valuesSet = this.expressionMap.valuesSet ?? {};
-      const updatedRecords = mergeRecordsWithUpdateValues(before, valuesSet);
+      const updatedRecords = mergeRecordsWithUpdateValues(
+        structuredClone(before),
+        valuesSet,
+      );
 
       this.validateRLSPredicatesForUpdate({
         updatedRecords,
@@ -268,7 +273,7 @@ export class WorkspaceUpdateQueryBuilder<
 
       const formattedAfter = formatResult<T[]>(
         mergeRecordsWithUpdateValues(
-          getUpdateEventRecords(before, after),
+          structuredClone(getUpdateEventRecords(before, after)),
           valuesSet,
         ),
         objectMetadata,
@@ -351,12 +356,14 @@ export class WorkspaceUpdateQueryBuilder<
         this.manyInputs.map((input) => input.criteria),
       );
 
-      const beforeRecords = await eventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const beforeRecords = structuredClone(
+        await eventSelectQueryBuilder.getMany({
+          noFormatting: true,
+        }),
+      );
 
       const formattedBefore = formatResult<T[]>(
-        beforeRecords,
+        structuredClone(beforeRecords),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -443,7 +450,12 @@ export class WorkspaceUpdateQueryBuilder<
 
         const beforeRecord = beforeRecordById.get(input.criteria);
         const updatedRecords = beforeRecord
-          ? [mergeRecordWithUpdateValues(beforeRecord, input.partialEntity)]
+          ? [
+              mergeRecordWithUpdateValues(
+                structuredClone(beforeRecord),
+                input.partialEntity,
+              ),
+            ]
           : [];
 
         this.validateRLSPredicatesForUpdate({
@@ -473,7 +485,7 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedAfter = formatResult<T[]>(
         getUpdateEventRecords(beforeRecords, afterRecords).map((record) =>
           mergeRecordWithUpdateValues(
-            record,
+            structuredClone(record),
             updateValuesByRecordId.get(record.id),
           ),
         ),
