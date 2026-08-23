@@ -43,7 +43,18 @@ describe('TimelineActivityRepository', () => {
       executeInWorkspaceContext: jest.fn(
         async (callback: () => Promise<void>) => callback(),
       ),
-      getRepository: jest.fn().mockResolvedValue(workspaceRepository),
+      runInWorkspaceTransaction: jest.fn(
+        async (
+          callback: (transactionScope: {
+            getRepository: () => typeof workspaceRepository;
+            executeRawQuery: () => Promise<never[]>;
+          }) => Promise<void>,
+        ) =>
+          callback({
+            getRepository: () => workspaceRepository,
+            executeRawQuery: jest.fn().mockResolvedValue([]),
+          }),
+      ),
     } as unknown as GlobalWorkspaceOrmManager;
     const repository = new TimelineActivityRepository(
       globalWorkspaceOrmManager,
@@ -77,5 +88,84 @@ describe('TimelineActivityRepository', () => {
         timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
       },
     );
+  });
+
+  it('locks merge identities in a stable order before reading recent rows', async () => {
+    const executeRawQuery = jest.fn().mockResolvedValue([]);
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue([]),
+      update: jest.fn().mockResolvedValue(undefined),
+      insert: jest.fn().mockResolvedValue(undefined),
+    };
+    const globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(
+        async (callback: () => Promise<void>) => callback(),
+      ),
+      runInWorkspaceTransaction: jest.fn(
+        async (
+          callback: (transactionScope: {
+            getRepository: () => typeof workspaceRepository;
+            executeRawQuery: typeof executeRawQuery;
+          }) => Promise<void>,
+        ) =>
+          callback({
+            getRepository: () => workspaceRepository,
+            executeRawQuery,
+          }),
+      ),
+    } as unknown as GlobalWorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(
+      globalWorkspaceOrmManager,
+    );
+
+    await repository.upsertTimelineActivities({
+      objectSingularName: 'person',
+      workspaceId: WORKSPACE_ID,
+      payloads: [
+        {
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {},
+          recordId: 'record-z',
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        },
+        {
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {},
+          recordId: 'record-a',
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        },
+      ],
+    });
+
+    const lockStatement =
+      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
+
+    expect(executeRawQuery).toHaveBeenNthCalledWith(1, lockStatement, [
+      JSON.stringify([
+        'timeline-activity-merge',
+        WORKSPACE_ID,
+        'person',
+        'record-a',
+        WORKSPACE_MEMBER_ID,
+        TIMELINE_ACTIVITY_TYPE_ID,
+      ]),
+    ]);
+    expect(executeRawQuery).toHaveBeenNthCalledWith(2, lockStatement, [
+      JSON.stringify([
+        'timeline-activity-merge',
+        WORKSPACE_ID,
+        'person',
+        'record-z',
+        WORKSPACE_MEMBER_ID,
+        TIMELINE_ACTIVITY_TYPE_ID,
+      ]),
+    ]);
+    expect(
+      workspaceRepository.find.mock.invocationCallOrder[0],
+    ).toBeGreaterThan(executeRawQuery.mock.invocationCallOrder[1]);
   });
 });
