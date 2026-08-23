@@ -14,13 +14,11 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
-  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
-} from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
-import {
   type ManifestField,
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   isRelationFieldManifest,
-  validateTimelineActivityTypes,
-} from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
+} from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import { validateTimelineActivityTypes } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
   RelationType.MANY_TO_ONE,

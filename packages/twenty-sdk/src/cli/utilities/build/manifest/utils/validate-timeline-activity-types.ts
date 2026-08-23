@@ -2,34 +2,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import { type Manifest } from 'twenty-shared/application';
-import {
-  FieldMetadataType,
-  type RelationAndMorphRelationFieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+  isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
-
-const RELATION_FIELD_TYPES: FieldMetadataType[] = [
-  FieldMetadataType.RELATION,
-  FieldMetadataType.MORPH_RELATION,
-];
-
-export type ManifestField =
-  | Manifest['fields'][number]
-  | Manifest['objects'][number]['fields'][number];
-
-type RelationManifestField = Extract<
-  ManifestField,
-  { type: RelationAndMorphRelationFieldMetadataType }
->;
-
-export const isRelationFieldManifest = (
-  field: ManifestField,
-): field is RelationManifestField => RELATION_FIELD_TYPES.includes(field.type);
 
 export const validateTimelineActivityTypes = (
   manifest: Pick<
