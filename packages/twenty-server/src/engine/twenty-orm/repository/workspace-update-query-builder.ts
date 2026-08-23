@@ -38,6 +38,10 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import {
+  mergeRecordsWithUpdateValues,
+  mergeRecordWithUpdateValues,
+} from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
@@ -245,15 +249,7 @@ export class WorkspaceUpdateQueryBuilder<
       this.applyRowLevelPermissionPredicates();
 
       const valuesSet = this.expressionMap.valuesSet ?? {};
-      const updatedRecords: T[] = before.map(
-        (record, index) =>
-          ({
-            ...record,
-            ...(Array.isArray(valuesSet)
-              ? (valuesSet[index] ?? valuesSet[0] ?? {})
-              : valuesSet),
-          }) as T,
-      );
+      const updatedRecords = mergeRecordsWithUpdateValues(before, valuesSet);
 
       this.validateRLSPredicatesForUpdate({
         updatedRecords,
@@ -270,7 +266,7 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedAfter = formatResult<T[]>(
-        this.mergeRecordsWithUpdateValues(after, valuesSet),
+        mergeRecordsWithUpdateValues(after, valuesSet),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -443,12 +439,7 @@ export class WorkspaceUpdateQueryBuilder<
 
         const beforeRecord = beforeRecordById.get(input.criteria);
         const updatedRecords = beforeRecord
-          ? [
-              {
-                ...beforeRecord,
-                ...input.partialEntity,
-              } as T,
-            ]
+          ? [mergeRecordWithUpdateValues(beforeRecord, input.partialEntity)]
           : [];
 
         this.validateRLSPredicatesForUpdate({
@@ -477,7 +468,7 @@ export class WorkspaceUpdateQueryBuilder<
 
       const formattedAfter = formatResult<T[]>(
         afterRecords.map((record) =>
-          this.mergeRecordWithUpdateValues(
+          mergeRecordWithUpdateValues(
             record,
             updateValuesByRecordId.get(record.id),
           ),
@@ -693,35 +684,5 @@ export class WorkspaceUpdateQueryBuilder<
       errorMessage:
         'Updated record does not satisfy row-level security constraints of your current role',
     });
-  }
-
-  private mergeRecordsWithUpdateValues(
-    records: T[],
-    values:
-      | QueryDeepPartialEntity<T>
-      | QueryDeepPartialEntity<T>[]
-      | ObjectLiteral,
-  ): T[] {
-    return records.map((record, index) =>
-      this.mergeRecordWithUpdateValues(
-        record,
-        Array.isArray(values) ? (values[index] ?? values[0]) : values,
-      ),
-    );
-  }
-
-  private mergeRecordWithUpdateValues(
-    record: T,
-    values: QueryDeepPartialEntity<T> | ObjectLiteral | undefined,
-  ): T {
-    if (!isDefined(values)) {
-      return record;
-    }
-
-    const concreteValues = Object.fromEntries(
-      Object.entries(values).filter(([, value]) => typeof value !== 'function'),
-    );
-
-    return { ...record, ...concreteValues };
   }
 }
