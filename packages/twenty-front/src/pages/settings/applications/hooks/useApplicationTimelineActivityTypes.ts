@@ -2,6 +2,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FindManyTimelineActivityTypesDocument,
   ResetTimelineActivityTypeDocument,
@@ -75,17 +76,31 @@ export const useApplicationTimelineActivityTypes = ({
         }),
     });
 
-  const resetTimelineActivityTypeToDefault = (id: string) =>
-    runTimelineActivityTypeMutation({
+  const resetTimelineActivityTypeToDefault = (id: string) => {
+    const timelineActivityType = data?.timelineActivityTypes.find(
+      (candidate) => candidate.id === id,
+    );
+
+    return runTimelineActivityTypeMutation({
       errorMessage: t`Failed to reset the timeline activity type.`,
       id,
       mutation: () =>
         resetTimelineActivityType({
-          awaitRefetchQueries: true,
-          refetchQueries: [FindManyTimelineActivityTypesDocument],
+          optimisticResponse: isDefined(timelineActivityType)
+            ? {
+                resetTimelineActivityType: {
+                  __typename: 'TimelineActivityType',
+                  icon: timelineActivityType.icon,
+                  id,
+                  isActive: true,
+                  label: timelineActivityType.label,
+                },
+              }
+            : undefined,
           variables: { id },
         }),
     });
+  };
 
   return {
     installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
