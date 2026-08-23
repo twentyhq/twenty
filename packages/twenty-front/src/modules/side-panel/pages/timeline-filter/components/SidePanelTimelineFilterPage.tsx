@@ -12,6 +12,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -52,6 +53,7 @@ export const SidePanelTimelineFilterPage = () => {
   const isFiltering = isNonEmptyArray(
     timelineActivityTypeUniversalIdentifiersFilter,
   );
+  const isSearchEmpty = !isNonEmptyString(sidePanelSearch);
   const visibleTimelineActivityTypeUniversalIdentifiers = new Set(
     isFiltering
       ? timelineActivityTypeUniversalIdentifiersFilter
@@ -66,9 +68,7 @@ export const SidePanelTimelineFilterPage = () => {
     ...filteredTimelineActivityTypes.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
-    ...(isFiltering && sidePanelSearch.length === 0
-      ? [SHOW_ALL_ACTIVITY_ITEM_ID]
-      : []),
+    ...(isFiltering && isSearchEmpty ? [SHOW_ALL_ACTIVITY_ITEM_ID] : []),
   ];
 
   const setTimelineActivityTypeVisibility = (
@@ -132,7 +132,7 @@ export const SidePanelTimelineFilterPage = () => {
           );
         })}
       </SidePanelGroup>
-      {isFiltering && sidePanelSearch.length === 0 && (
+      {isFiltering && isSearchEmpty && (
         <SidePanelGroup heading={t`Actions`}>
           <SelectableListItem
             itemId={SHOW_ALL_ACTIVITY_ITEM_ID}
