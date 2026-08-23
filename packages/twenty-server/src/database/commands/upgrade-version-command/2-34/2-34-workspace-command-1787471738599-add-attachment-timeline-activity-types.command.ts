@@ -37,7 +37,7 @@ const ATTACHMENT_TIMELINE_ACTIVITY_TYPES = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.34.0', 1787468798000)
+@RegisteredWorkspaceCommand('2.34.0', 1787471738599)
 @Command({
   name: 'upgrade:2-34:add-attachment-timeline-activity-types',
   description: 'Add attachment link lifecycle events to record timelines',
