@@ -35,6 +35,10 @@ export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-co
 export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 export type { CommandMenuItemManifest } from 'twenty-shared/application';
 
+export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types/define-timeline-activity-type';
+export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
+export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
+
 export {
   pageType,
   isInSidePanel,

@@ -78,12 +78,14 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   colorScheme,
 }: {
   frontComponentId: string;
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -334,6 +336,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    timelineActivityId: timelineActivityId ?? null,
     colorScheme,
     // i18n.locale is a Lingui string; the host is always configured with the
     // APP_LOCALES set, so it is a valid AppLocale.

@@ -8,19 +8,11 @@ import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/uti
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import {
+  buildTimelineActivityMergeKey,
+  buildTimelineActivityMergeKeyCandidates,
+} from 'src/modules/timeline/utils/build-timeline-activity-merge-key.util';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
-
-// An unset author is null on a stored row and undefined on a payload, so both
-// are normalized before they can decide whether two events are the same.
-const buildMergeKey = ({
-  recordId,
-  workspaceMemberId,
-  discriminator,
-}: {
-  recordId: string;
-  workspaceMemberId: string | null | undefined;
-  discriminator: string;
-}): string => `${recordId}|${workspaceMemberId ?? null}|${discriminator}`;
 
 type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   payloads: (Omit<TimelineActivityPayload, 'properties'> & {
@@ -56,7 +48,7 @@ export class TimelineActivityRepository {
         id: string;
         properties: Partial<ObjectRecord>;
         workspaceMemberId: string | undefined;
-        timelineActivityTypeId: string;
+        timelineActivityTypeSnapshot?: TimelineActivityPayload['timelineActivityTypeSnapshot'];
       }[] = [];
 
       const timelineActivityPropertyName =
@@ -70,54 +62,39 @@ export class TimelineActivityRepository {
       >();
 
       for (const timelineActivity of recentTimelineActivities) {
-        const discriminators = [
-          isDefined(timelineActivity.timelineActivityTypeId)
-            ? `type:${timelineActivity.timelineActivityTypeId}`
-            : undefined,
-          isDefined(timelineActivity.name)
-            ? `name:${timelineActivity.name}`
-            : undefined,
-        ].filter(isDefined);
+        const mergeKey = buildTimelineActivityMergeKey({
+          recordId: timelineActivity[timelineActivityPropertyName],
+          workspaceMemberId: timelineActivity.workspaceMemberId,
+          timelineActivityTypeId: timelineActivity.timelineActivityTypeId,
+          timelineActivityTypeSnapshot:
+            timelineActivity.timelineActivityTypeSnapshot,
+        });
 
-        for (const discriminator of discriminators) {
-          const mergeKey = buildMergeKey({
-            recordId: timelineActivity[timelineActivityPropertyName],
-            workspaceMemberId: timelineActivity.workspaceMemberId,
-            discriminator,
-          });
+        const bucket = recentTimelineActivitiesByMergeKey.get(mergeKey);
 
-          const bucket = recentTimelineActivitiesByMergeKey.get(mergeKey);
-
-          if (isDefined(bucket)) {
-            bucket.push(timelineActivity);
-          } else {
-            recentTimelineActivitiesByMergeKey.set(mergeKey, [
-              timelineActivity,
-            ]);
-          }
+        if (isDefined(bucket)) {
+          bucket.push(timelineActivity);
+        } else {
+          recentTimelineActivitiesByMergeKey.set(mergeKey, [timelineActivity]);
         }
       }
 
       for (const payload of payloads) {
-        const typeMergeKey = buildMergeKey({
+        const recentTimelineActivity = buildTimelineActivityMergeKeyCandidates({
           recordId: payload.recordId,
           workspaceMemberId: payload.workspaceMemberId,
-          discriminator: `type:${payload.timelineActivityTypeId}`,
-        });
-        const nameMergeKey = buildMergeKey({
-          recordId: payload.recordId,
-          workspaceMemberId: payload.workspaceMemberId,
-          discriminator: `name:${payload.name}`,
-        });
-
-        const recentTimelineActivity = [
-          ...(recentTimelineActivitiesByMergeKey.get(typeMergeKey) ?? []),
-          ...(recentTimelineActivitiesByMergeKey.get(nameMergeKey) ?? []),
-        ].find(
-          (timelineActivity) =>
-            !isDefined(payload.linkedRecordId) ||
-            timelineActivity.linkedRecordId === payload.linkedRecordId,
-        );
+          timelineActivityTypeId: payload.timelineActivityTypeId,
+          timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
+        })
+          .flatMap(
+            (mergeKey) =>
+              recentTimelineActivitiesByMergeKey.get(mergeKey) ?? [],
+          )
+          .find(
+            (timelineActivity) =>
+              !isDefined(payload.linkedRecordId) ||
+              timelineActivity.linkedRecordId === payload.linkedRecordId,
+          );
 
         if (isDefined(recentTimelineActivity)) {
           mergesToApply.push({
@@ -127,7 +104,12 @@ export class TimelineActivityRepository {
               payload.properties,
             ),
             workspaceMemberId: payload.workspaceMemberId,
-            timelineActivityTypeId: payload.timelineActivityTypeId,
+            ...(!isDefined(
+              recentTimelineActivity.timelineActivityTypeSnapshot,
+            ) && {
+              timelineActivityTypeSnapshot:
+                payload.timelineActivityTypeSnapshot,
+            }),
           });
         } else {
           payloadsToInsert.push(payload);
@@ -178,18 +160,12 @@ export class TimelineActivityRepository {
     // window, so every candidate is fetched: taking a single row would let only
     // one payload of a multi record batch merge.
     return await timelineActivityTypeORMRepository.find({
-      where: [
-        {
-          ...whereConditions,
-          timelineActivityTypeId: In(
-            payloads.map((payload) => payload.timelineActivityTypeId),
-          ),
-        },
-        {
-          ...whereConditions,
-          name: In(payloads.map((payload) => payload.name)),
-        },
-      ],
+      where: {
+        ...whereConditions,
+        timelineActivityTypeId: In(
+          payloads.map((payload) => payload.timelineActivityTypeId),
+        ),
+      },
       order: { createdAt: 'DESC' },
     });
   }
@@ -217,8 +193,9 @@ export class TimelineActivityRepository {
 
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
-        name: payload.name,
+        happensAt: payload.happensAt,
         timelineActivityTypeId: payload.timelineActivityTypeId,
+        timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,
         [timelineActivityPropertyName]: payload.recordId,
@@ -237,7 +214,7 @@ export class TimelineActivityRepository {
       id: string;
       properties: Partial<ObjectRecord>;
       workspaceMemberId: string | undefined;
-      timelineActivityTypeId: string;
+      timelineActivityTypeSnapshot?: TimelineActivityPayload['timelineActivityTypeSnapshot'];
     }[];
     workspaceId: string;
   }) {
@@ -256,11 +233,13 @@ export class TimelineActivityRepository {
 
     await Promise.all(
       merges.map(
-        ({ id, properties, workspaceMemberId, timelineActivityTypeId }) =>
+        ({ id, properties, workspaceMemberId, timelineActivityTypeSnapshot }) =>
           timelineActivityTypeORMRepository.update(id, {
             properties,
             workspaceMemberId,
-            timelineActivityTypeId,
+            ...(isDefined(timelineActivityTypeSnapshot) && {
+              timelineActivityTypeSnapshot,
+            }),
           }),
       ),
     );

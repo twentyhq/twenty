@@ -3187,14 +3187,30 @@ enum MetadataTranslationProvenance {
   INHERITED
 }
 
+type TimelineActivityTypeEmitThrough {
+  relationFieldUniversalIdentifier: UUID!
+  triggerFieldUniversalIdentifiers: [UUID!]
+}
+
+type TimelineActivityTypeEmit {
+  on: String!
+  objectUniversalIdentifier: UUID
+  through: TimelineActivityTypeEmitThrough
+}
+
 type TimelineActivityType {
   id: UUID!
+  universalIdentifier: UUID!
   name: String!
   label: String!
-  action: String
+  emit: TimelineActivityTypeEmit
+  action: String @deprecated(reason: "Use emit.on")
   icon: String
-  renderer: String
-  objectUniversalIdentifier: UUID
+  renderer: String @deprecated(reason: "Use frontComponentUniversalIdentifier")
+  frontComponentUniversalIdentifier: UUID
+  objectUniversalIdentifier: UUID @deprecated(reason: "Use emit.objectUniversalIdentifier")
+  replacesTimelineActivityTypeUniversalIdentifier: UUID
+  isActive: Boolean!
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3418,6 +3434,7 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
+  universalIdentifier: UUIDFilterComparison
   isActive: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isSearchable: BooleanFieldComparison
@@ -3707,6 +3724,8 @@ type Mutation {
   deactivateSkill(id: UUID!): Skill!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
+  updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
+  resetTimelineActivityType(id: UUID!): TimelineActivityType!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
   signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -4909,6 +4928,14 @@ input UpdateSkillInput {
   description: String
   content: String
   isActive: Boolean
+}
+
+input UpdateTimelineActivityTypeInput {
+  id: UUID!
+  label: String
+  icon: String
+  isActive: Boolean
+  translations: [MetadataTranslationOverrideInput!]
 }
 
 input GetAuthorizationUrlForSSOInput {

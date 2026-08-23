@@ -340,10 +340,17 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "label",
       "action",
       "icon",
-      "renderer",
+      "frontComponentUniversalIdentifier",
       "objectUniversalIdentifier",
+      "targetRelationFieldUniversalIdentifier",
+      "triggerFieldUniversalIdentifiers",
+      "replacesTimelineActivityTypeUniversalIdentifier",
+      "isActive",
+      "overrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "view": {
     "propertiesToCompare": [
