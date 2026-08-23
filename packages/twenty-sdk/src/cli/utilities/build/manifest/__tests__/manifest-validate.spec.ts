@@ -656,4 +656,157 @@ describe('manifestValidate', () => {
       expect(result.isValid).toBe(true);
     });
   });
+
+  describe('timeline activity type validation', () => {
+    const sourceObjectUniversalIdentifier =
+      '1a111111-1111-4111-8111-111111111111';
+    const relationFieldUniversalIdentifier =
+      '2a222222-2222-4222-8222-222222222222';
+    const triggerFieldUniversalIdentifier =
+      '3a333333-3333-4333-8333-333333333333';
+    const frontComponentUniversalIdentifier =
+      '4a444444-4444-4444-8444-444444444444';
+
+    const buildTimelineManifest = (): Manifest => ({
+      ...validManifest,
+      objects: [
+        {
+          universalIdentifier: sourceObjectUniversalIdentifier,
+          nameSingular: 'deployment',
+          namePlural: 'deployments',
+          labelSingular: 'Deployment',
+          labelPlural: 'Deployments',
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            triggerFieldUniversalIdentifier,
+          fields: [],
+        },
+      ],
+      fields: [
+        {
+          universalIdentifier: relationFieldUniversalIdentifier,
+          objectUniversalIdentifier: sourceObjectUniversalIdentifier,
+          type: FieldMetadataType.RELATION,
+          name: 'owner',
+          label: 'Owner',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '5a555555-5555-4555-8555-555555555555',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '6a666666-6666-4666-8666-666666666666',
+          universalSettings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'ownerId',
+          },
+        },
+        {
+          universalIdentifier: triggerFieldUniversalIdentifier,
+          objectUniversalIdentifier: sourceObjectUniversalIdentifier,
+          type: FieldMetadataType.TEXT,
+          name: 'status',
+          label: 'Status',
+        },
+      ],
+      frontComponents: [
+        {
+          universalIdentifier: frontComponentUniversalIdentifier,
+          sourceComponentPath: 'src/front-components/deployment.tsx',
+          builtComponentPath: 'dist/front-components/deployment.mjs',
+          builtComponentChecksum: 'checksum',
+          componentName: 'DeploymentTimelineActivity',
+        },
+      ],
+      timelineActivityTypes: [
+        {
+          universalIdentifier: '7a777777-7777-4777-8777-777777777777',
+          name: 'deploymentUpdated',
+          label: 'updated a deployment',
+          emit: {
+            on: 'updated',
+            objectUniversalIdentifier: sourceObjectUniversalIdentifier,
+            through: {
+              relationFieldUniversalIdentifier,
+              triggerFieldUniversalIdentifiers: [
+                triggerFieldUniversalIdentifier,
+              ],
+            },
+          },
+          frontComponentUniversalIdentifier,
+        },
+      ],
+    });
+
+    it('accepts references to source metadata and front components in the application', () => {
+      const result = manifestValidate(buildTimelineManifest());
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('reports references that cannot be resolved inside the application', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.frontComponentUniversalIdentifier =
+        '8a888888-8888-4888-8888-888888888888';
+      timelineActivityType.emit!.through!.relationFieldUniversalIdentifier =
+        '9a999999-9999-4999-8999-999999999999';
+      timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers = [
+        '0aaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      ];
+
+      const result = manifestValidate(manifest);
+
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('references front component'),
+          expect.stringContaining('references relation field'),
+          expect.stringContaining('references trigger fields'),
+        ]),
+      );
+    });
+
+    it('requires external-object emitters to declare the type they replace', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.objectUniversalIdentifier =
+        '0bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+
+      expect(manifestValidate(manifest).errors).toContainEqual(
+        expect.stringContaining(
+          'must declare replacesTimelineActivityTypeUniversalIdentifier',
+        ),
+      );
+
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(manifest).errors).toHaveLength(0);
+    });
+
+    it('rejects duplicate names and unsupported through relations', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      manifest.timelineActivityTypes.push({
+        ...timelineActivityType,
+        universalIdentifier: '0ddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      });
+      manifest.fields[0].universalSettings = {
+        relationType: RelationType.ONE_TO_MANY,
+      } as never;
+
+      const result = manifestValidate(manifest);
+
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining(
+            'Timeline activity type name "deploymentUpdated" is used more than once',
+          ),
+          expect.stringContaining(
+            'must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation',
+          ),
+        ]),
+      );
+    });
+  });
 });
