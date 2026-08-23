@@ -38,7 +38,31 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
     const allFlatViewFieldGroups = get(metadataStoreState, 'viewFieldGroups')
       .current as FlatViewFieldGroup[];
 
-    const flatViewFields = allFlatViewFields.filter((field) => field.isActive);
+    // Build a map from viewId → labelIdentifierFieldMetadataId so that the
+    // label-identifier view field (e.g. the "Name" column on Companies) is
+    // always included in the hydrated state even when its isActive flag is
+    // false.  Without this, deleting & recreating a view would leave the Name
+    // field invisible to the frontend, causing it to send a CREATE request for
+    // a record that already exists in the backend (Issue #24282).
+    const labelIdentifierFieldMetadataIdByViewId = new Map<string, string>();
+    for (const view of flatViews) {
+      const objectMetadataItem = objectMetadataItemsById.get(
+        view.objectMetadataId,
+      );
+      if (objectMetadataItem?.labelIdentifierFieldMetadataId) {
+        labelIdentifierFieldMetadataIdByViewId.set(
+          view.id,
+          objectMetadataItem.labelIdentifierFieldMetadataId,
+        );
+      }
+    }
+
+    const flatViewFields = allFlatViewFields.filter(
+      (field) =>
+        field.isActive ||
+        labelIdentifierFieldMetadataIdByViewId.get(field.viewId) ===
+          field.fieldMetadataId,
+    );
     const flatViewFieldGroups = allFlatViewFieldGroups.filter(
       (group) => group.isActive,
     );
