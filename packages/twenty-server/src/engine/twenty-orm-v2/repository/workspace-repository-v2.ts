@@ -60,6 +60,10 @@ import {
   matchEntitiesForUpsert,
   partitionEntitiesForSave,
 } from 'src/engine/twenty-orm-v2/repository/utils/resolve-save-and-upsert.util';
+import {
+  getUpdateEventColumnsToReturn,
+  mergeReturnedUpdateTimestamps,
+} from 'src/engine/twenty-orm-v2/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -77,38 +81,6 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   restore: [DatabaseEventAction.RESTORED],
   'soft-delete': [DatabaseEventAction.DELETED],
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
-};
-
-const getUpdateEventColumnsToReturn = (
-  columnsToReturn: string[],
-  tableShape: WorkspaceTableShape,
-): string[] =>
-  isDefined(tableShape.columnShapeByColumnName.updatedAt)
-    ? [...new Set([...columnsToReturn, 'id', 'updatedAt'])]
-    : [...new Set([...columnsToReturn, 'id'])];
-
-const mergeReturnedUpdateTimestamps = (
-  eventRecords: ObjectRecord[],
-  returnedRecords: ObjectRecord[],
-): ObjectRecord[] => {
-  const returnedRecordsById = new Map(
-    returnedRecords
-      .filter((record) => isNonEmptyString(record.id))
-      .map((record) => [record.id, record]),
-  );
-
-  return eventRecords.map((eventRecord) => {
-    const returnedRecord = isNonEmptyString(eventRecord.id)
-      ? returnedRecordsById.get(eventRecord.id)
-      : undefined;
-    const returnedUpdatedAt = returnedRecord?.updatedAt;
-
-    if (!isDefined(returnedUpdatedAt)) {
-      return eventRecord;
-    }
-
-    return { ...eventRecord, updatedAt: returnedUpdatedAt };
-  });
 };
 
 type WorkspaceRepositoryV2Options = {
@@ -1274,10 +1246,13 @@ export class WorkspaceRepositoryV2 {
       }
     }
 
-    const setColumns =
-      kind === 'update' && isDefined(dataToWrite)
-        ? this.formatWriteData(dataToWrite)
-        : undefined;
+    let setColumns: Record<string, unknown> | undefined;
+
+    if (kind === 'update' && isDefined(dataToWrite)) {
+      const { id: _id, ...columns } = this.formatWriteData(dataToWrite);
+
+      setColumns = columns;
+    }
 
     this.validateWriteIsPermitted({
       operationType: kind,
