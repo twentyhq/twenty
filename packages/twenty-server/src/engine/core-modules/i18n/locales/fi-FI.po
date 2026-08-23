@@ -1004,6 +1004,12 @@ msgstr "Liitetyn käyttäjän tunnus"
 msgid "At least one relation is required"
 msgstr "Ainakin yksi suhde on pakollinen"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr ""
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -8247,6 +8253,12 @@ msgstr "Poista suosikeista"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "Poista tämä käyttöoikeus kaikista rooleista ennen sen poistamista"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr ""
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10746,10 +10758,10 @@ msgstr "Aikajanatoimintotyyppi viittaa frontend-komponenttiin, joka ei kuulu sen
 msgid "Timeline activity type references an object that does not exist"
 msgstr "Aikajanatoimintotyyppi viittaa objektiin, jota ei ole olemassa."
 
-#. js-lingui-id: PK64+E
+#. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr "Aikajanatoimintotyypin kohdesuhteen on oltava lähdeobjektinsa liitossuhde."
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr ""
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

@@ -1004,6 +1004,12 @@ msgstr "Συσχετισμένο Αναγνωριστικό Χρήστη"
 msgid "At least one relation is required"
 msgstr "Τουλάχιστον μία σχέση είναι απαραίτητη"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr ""
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -8247,6 +8253,12 @@ msgstr "Αφαίρεση από τα αγαπημένα"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "Αφαιρέστε αυτό το δικαίωμα από όλους τους ρόλους πριν το διαγράψετε"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr ""
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10746,10 +10758,10 @@ msgstr "Ο τύπος δραστηριότητας χρονολογίου ανα
 msgid "Timeline activity type references an object that does not exist"
 msgstr "Ο τύπος δραστηριότητας χρονολογίου αναφέρεται σε αντικείμενο που δεν υπάρχει."
 
-#. js-lingui-id: PK64+E
+#. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr "Η σχέση προορισμού του τύπου δραστηριότητας χρονολογίου πρέπει να είναι σχέση σύνδεσης στο αντικείμενο προέλευσής του."
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr ""
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
