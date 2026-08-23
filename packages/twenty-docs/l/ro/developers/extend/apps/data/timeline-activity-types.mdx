@@ -1,0 +1,184 @@
+---
+title: Tipuri de activitate cronologică
+description: Definiți evenimentele de audit automat și evenimentele de aplicație explicite care se execută în calendarele înregistrării.
+icon: clock-rotate-left
+---
+
+Un tip de activitate cronologică definește vocabularul stabil pentru un eveniment afișat într-un calendar al înregistrării. Obiectele standard și obiectele din aplicație utilizează același contract: un tip are o etichetă și o pictogramă, poate declara opțional când este emis, și pot reda opțional prin una dintre [componentele frontale](/l/ro/developers/extend/apps/layout/front-components).
+
+<Note>
+  Tipurile de activitate sunt în beta şi vor apărea în curând în 20 2,34. API-ul
+  poate evolua în timp ce învățăm din cazurile de utilizare a dezvoltatorilor de aplicații.
+</Note>
+
+Creați unul cu caseta de teme:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+Sau definește direct:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## Evenimente automate și explicite
+
+Adăugați `emit` când douăzeci de persoane ar trebui să creeze acest tip automat. `emit.on` suportă `created`, `updated`, `deleted`, `restored`, `linked` şi `unlinked`, în timp ce `emit.objectalIdentifier` identifică obiectul sursă. Doar un singur tip eficient poate gestiona aceeași tastă emit — `on`, obiect și opțional prin intermediul relației — într-un spațiu de lucru.
+
+Fără `emit.through`, evenimentul este scris pe calendarul înregistrărilor sursă. Pentru a o acoperi la înregistrările conexe, setați \`emit.through. elationFieldUniversalIdentifier" fie la o relaţie directă de la un individ la altul, fie la o [relaţie de unu-la-multe joncţiuni ](/l/ro/developers/extend/apps/data/relations#junction-relations) la obiectul sursă. Relaţiile dintre Morph şi fiecare membru al grupului lor, astfel încât o singură declaraţie poate viza mai multe tipuri de obiecte.
+
+Pentru o legătură directă, crearea sau restaurarea înregistrării sursă produce `linked`, ștergându-l produce `unlinked`, și redirecționarea relației produce `unlinked` pe ținta anterioară plus `linked` pe noul țintă. Alte actualizări sursă nu produc evenimente legate de legătură. Acesta este contractul utilizat de ataşamente, a cărui ţintă este o relaţie directă de morfologie.
+
+Pentru o legătură de joncțiune, `universalSettings.junctionTargetFieldUniversalIdentifier` identifică relația de la obiectul de joncțiune la țintă. Crearea sau ştergerea unui rând de joncţiune produce `linked` sau `unlinked`. De asemenea, redirecționarea oricărei părți a unui rând de joncțiune produce un eveniment de legătură; actualizări ale câmpurilor de joncțiune care nu au legătură cu acestea.
+
+Evenimentele `linked` şi `unlinked` necesită `emit.through`, deoarece declanşatorul lor este o schimbare la relaţia directă sau de joncţiune configurată.
+
+De exemplu, acesta este același contract generic utilizat de note, sarcini, mesaje și evenimente calendaristice:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+Un `updated` prin eveniment este emis implicit pentru fiecare actualizare sursă. Setați `emit.through.triggerFieldUniversalIdentifiers` când numai modificările câmpurilor sursă selectate ar trebui să apară în termenele țintă.
+
+Omiteți `emit` pentru un eveniment de domeniu explicit pe care funcția logică îl creează. Astfel se evită realizarea atât a unui rând automat de audit, cât și a unui rând explicit pentru aceeași operațiune.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+Creați evenimente explicite cu [`createTimelineActivity()`](/l/ro/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). Codul aplicației folosește identificatori universali stabili; Douăzeci rezolvă ID-urile de metadate specifice instalației.
+
+## Redare personalizată
+
+Fără o componentă din față, douăzeci face un rând nativ generic de pe eticheta tipului, pictograma și metadatele obiectelor legate. Aceasta funcționează pentru obiecte standard și personalizate fără un dispozitiv de redare specific obiectului.
+
+Pentru detalii personalizate, setați `frontComponentUniversalIdentifier` la o componentă din față deținută de aceeași aplicație:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Rândul nativ rămâne prezentarea prăbuşită. Douăzeci de montați componenta frontală numai după ce utilizatorul se extinde acea linie, evitând un sandbox și un lucrător pentru fiecare eveniment vizibil. În interiorul componentei, apelați `useTimelineActivityId()` din `douăzeci de elemente-sdk/front-component` pentru a citi ID-ul rândului și a prelua orice date de care aveți nevoie prezentarea. Returnează `null` când componenta este randată în afara liniei cronologice.
+
+## Înlocuirea prezentării altei aplicații
+
+O aplicație deține contracte de cronologie automată pentru propriile obiecte. Pentru a personaliza un eveniment pe un obiect deținut de o altă aplicație, declarați tipul existent în mod explicit cu `replacesTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+O suprascriere trebuie să includă `emit`, deoarece înlocuiește un slot automat existent emit mai degrabă decât un tip doar explicit. Tipul de referință trebuie să aparțină aplicației obiectului țintă și să descrie aceeași acțiune și aceeași rută. Eliminarea aplicației suprascriere restaurează tipul de bază; eliminarea tipului de bază dezactivează suprascrierea.
+
+## Suprascrie spațiul de lucru și amuțiri
+
+Administratorii spațiului de lucru pot schimba prezentarea unui tip sau pot bloca evenimentele sale automate și explicite fără a forja aplicația. Folosiți mutația `updateTimelineActivityType` a metadata API cu ID-ul specific instalației:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` şi `icon` sunt stocate ca suprascrieri de spaţiu de lucru, astfel încât actualizările ulterioare ale aplicaţiei nu suprascriu opţiunile administratorului. Setați `isActive` la `false` pentru a opri emisia automată și pentru a respinge noi evenimente explicite de acest tip. Rândurile existente rămân vizibile.
+
+Restabiliți setările implicite, inclusiv starea activă, cu:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## Câmpuri de configurare
+
+| Câmp                                              | Obligatoriu | Descriere                                                                          |
+| ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Da          | UUID stabil pentru tipul de instalații și modernizări                              |
+| `name`                                            | Da          | Nume programatic local                                                             |
+| `label`                                           | Da          | Text orientat către utilizator utilizat de către dispozitivul de redare nativă     |
+| `icon`                                            | Nu          | Douăzeci de nume afișate alături de eveniment                                      |
+| `emit`                                            | Nu          | Declarație de emisii automată; omit pentru tipuri numai explicite                  |
+| `emit.on`                                         | Cu emit     | Acțiuni de audit care fac ca acest tip să fie redactat                             |
+| `emit.objectUniversalIdentifier`                  | Cu emit     | Obiect ale cărui înregistrări emit de acest tip                                    |
+| `emit.through.relationFieldUniversalIdentifier`   | Nu          | Relaţia directă sau de joncţiune utilizată pentru ventilator la termenele aferente |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Nu          | Câmpurile sursă care pot declanșa un `updated` prin eveniment                      |
+| `frontComponentUniversalIdentifier`               | Nu          | Componentă frontală deținută de aplicație montată când rândul este extins          |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Nu          | Tipul de emit existent înlocuit; necesită `emit`                                   |
+
+Douăzeci de instantanee transformă identitatea semantică și prezentarea durabilă atunci când un eveniment este creat. Rândurile istorice păstrează acțiunea originală și semnificația obiectului. În timp ce tipul este instalat, eticheta curentă tradusă, pictograma și componenta frontală redare live; după dezinstalare, instantaneul face rândul să fie lizibil. Rezoluția folosește identificatorul universal, astfel încât prezentarea supraviețuiește și reinstalării aplicației.

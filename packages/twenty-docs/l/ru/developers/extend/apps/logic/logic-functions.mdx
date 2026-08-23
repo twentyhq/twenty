@@ -713,6 +713,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Хуки установки** — обработчики до установки, после установки и при удалении — используют тот же рантайм, но объявляются с помощью собственных функций `define` и не принимают настройки триггеров. См. раздел [Install Hooks](/l/ru/developers/extend/apps/config/install-hooks) для `definePreInstallLogicFunction`, `definePostInstallLogicFunction` и `defineUninstallLogicFunction`.
 </Note>
 
+## Создание действия на временной шкале.
+
+Используйте `createTimelineActivity()` для публикации явного события домена из логической функции. Сначала определите событие как [тип действия на временной шкале](/l/ru/developers/extend/apps/data/timeline-activity-types), затем укажите тип и объекты с помощью их стабильных универсальных идентификаторов:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty преобразует универсальные идентификаторы в идентификаторы метаданных, специфичные для установки, проверяет, что тип действия на временной шкале принадлежит вызывающему приложению, и сохраняет снимок его метаданных представления в новом действии.
+
+Обязательные входные параметры: `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` и `targetRecordId`. Также можно указать `happensAt`, `properties` и `workspaceMemberId`. `happensAt` управляет положением события и отображаемым временем на временной шкале; по умолчанию используется время создания.
+
+Чтобы связать с событием другую запись, укажите вместе `linkedRecordId` и `linkedObjectMetadataUniversalIdentifier`. Кроме того, можно указать `linkedRecordCachedName` в качестве резервного варианта отображения исторического имени:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Роли логической функции требуется разрешение на запись в стандартный объект `timelineActivity`. Не связывайте явные типы событий с `action`; тип, связанный с действием, уже получает автоматические события аудита и в противном случае создаст дублирующиеся строки.
+
 ## Типизированные клиенты API (twenty-client-sdk)
 
 Пакет `twenty-client-sdk` предоставляет два типизированных клиента GraphQL для взаимодействия с API Twenty из ваших логических функций и фронт-компонентов.
