@@ -51,6 +51,27 @@ describe('timeline activity mutation input', () => {
     ]);
   });
 
+  it('removes snapshots while the workspace metadata field is unavailable', () => {
+    expect(
+      stampTimelineActivityTypeSnapshots({
+        records: [
+          {
+            timelineActivityTypeId: TYPE_ID,
+            timelineActivityTypeSnapshot: { label: 'forged' },
+            targetPersonId: '00000000-0000-4000-8000-000000000010',
+          },
+        ],
+        resolvedTimelineActivityTypeById,
+        shouldStampSnapshot: false,
+      }),
+    ).toEqual([
+      {
+        timelineActivityTypeId: TYPE_ID,
+        targetPersonId: '00000000-0000-4000-8000-000000000010',
+      },
+    ]);
+  });
+
   it('rejects missing targets and partial linked records', () => {
     expect(() =>
       assertTimelineActivityCreationInputIsValid({

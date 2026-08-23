@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -53,6 +54,22 @@ export class TimelineActivityTypeCacheService {
     });
 
     return resolveTimelineActivityType;
+  }
+
+  async hasTimelineActivityTypeSnapshotField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatFieldMetadataMaps'] },
+      );
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.timelineActivity.fields.timelineActivityTypeSnapshot
+          .universalIdentifier
+      ],
+    );
   }
 
   async getTimelineActivityTypeByIdOrThrow({

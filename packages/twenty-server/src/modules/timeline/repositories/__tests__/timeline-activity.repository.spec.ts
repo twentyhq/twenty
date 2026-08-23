@@ -23,6 +23,13 @@ describe('TimelineActivityRepository', () => {
     const update = jest.fn().mockResolvedValue(undefined);
     const insert = jest.fn().mockResolvedValue(undefined);
     const workspaceRepository = {
+      internalContext: {
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: {
+            '20202020-e006-493a-9b07-f2a768a204ca': {},
+          },
+        },
+      },
       find: jest.fn().mockResolvedValue([
         {
           id: '20202020-0000-4000-8000-000000000006',
@@ -77,5 +84,46 @@ describe('TimelineActivityRepository', () => {
         timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
       },
     );
+  });
+
+  it('omits the snapshot until the workspace metadata field exists', async () => {
+    const insert = jest.fn().mockResolvedValue(undefined);
+    const globalWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(
+        async (callback: () => Promise<void>) => callback(),
+      ),
+      getRepository: jest.fn().mockResolvedValue({
+        internalContext: {
+          flatFieldMetadataMaps: { byUniversalIdentifier: {} },
+        },
+        find: jest.fn().mockResolvedValue([]),
+        insert,
+        update: jest.fn().mockResolvedValue(undefined),
+      }),
+    } as unknown as GlobalWorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(
+      globalWorkspaceOrmManager,
+    );
+
+    await repository.upsertTimelineActivities({
+      objectSingularName: 'person',
+      workspaceId: WORKSPACE_ID,
+      payloads: [
+        {
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {},
+          recordId: RECORD_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        },
+      ],
+    });
+
+    expect(insert).toHaveBeenCalledWith([
+      expect.not.objectContaining({
+        timelineActivityTypeSnapshot: expect.anything(),
+      }),
+    ]);
   });
 });

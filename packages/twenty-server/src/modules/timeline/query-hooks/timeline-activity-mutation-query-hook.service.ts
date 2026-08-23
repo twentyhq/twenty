@@ -28,8 +28,11 @@ export class TimelineActivityMutationQueryHookService {
   }): Promise<TimelineActivityMutationInput[]> {
     assertTimelineActivityCreationInputIsValid({ records, upsert });
 
-    const resolvedTimelineActivityTypeById = new Map(
-      await Promise.all(
+    const [
+      resolvedTimelineActivityTypes,
+      hasTimelineActivityTypeSnapshotField,
+    ] = await Promise.all([
+      Promise.all(
         [
           ...new Set(
             records
@@ -46,12 +49,20 @@ export class TimelineActivityMutationQueryHookService {
             ] as const,
         ),
       ),
+      this.timelineActivityTypeCacheService.hasTimelineActivityTypeSnapshotField(
+        workspaceId,
+      ),
+    ]);
+
+    const resolvedTimelineActivityTypeById = new Map(
+      resolvedTimelineActivityTypes,
     );
 
     return stampTimelineActivityTypeSnapshots({
       applicationId,
       records,
       resolvedTimelineActivityTypeById,
+      shouldStampSnapshot: hasTimelineActivityTypeSnapshotField,
     });
   }
 }

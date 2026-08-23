@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
@@ -22,6 +23,11 @@ type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   objectSingularName: string;
 };
 
+type InsertTimelineActivitiesArgs =
+  TimelineActivityPayloadWorkspaceIdAndObjectSingularName & {
+    shouldWriteTimelineActivityTypeSnapshot: boolean;
+  };
+
 @Injectable()
 export class TimelineActivityRepository {
   constructor(
@@ -34,6 +40,8 @@ export class TimelineActivityRepository {
     payloads,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const authContext = buildSystemAuthContext(workspaceId);
+    const shouldWriteTimelineActivityTypeSnapshot =
+      await this.hasTimelineActivityTypeSnapshotField(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const recentTimelineActivities = await this.findRecentTimelineActivities({
@@ -104,12 +112,13 @@ export class TimelineActivityRepository {
               payload.properties,
             ),
             workspaceMemberId: payload.workspaceMemberId,
-            ...(!isDefined(
-              recentTimelineActivity.timelineActivityTypeSnapshot,
-            ) && {
-              timelineActivityTypeSnapshot:
-                payload.timelineActivityTypeSnapshot,
-            }),
+            ...(shouldWriteTimelineActivityTypeSnapshot &&
+              !isDefined(
+                recentTimelineActivity.timelineActivityTypeSnapshot,
+              ) && {
+                timelineActivityTypeSnapshot:
+                  payload.timelineActivityTypeSnapshot,
+              }),
           });
         } else {
           payloadsToInsert.push(payload);
@@ -121,6 +130,7 @@ export class TimelineActivityRepository {
         this.insertTimelineActivities({
           objectSingularName,
           payloads: payloadsToInsert,
+          shouldWriteTimelineActivityTypeSnapshot,
           workspaceId,
         }),
       ]);
@@ -174,7 +184,8 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
-  }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
+    shouldWriteTimelineActivityTypeSnapshot,
+  }: InsertTimelineActivitiesArgs) {
     if (payloads.length === 0) {
       return;
     }
@@ -195,7 +206,9 @@ export class TimelineActivityRepository {
       payloads.map((payload) => ({
         happensAt: payload.happensAt,
         timelineActivityTypeId: payload.timelineActivityTypeId,
-        timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
+        ...(shouldWriteTimelineActivityTypeSnapshot && {
+          timelineActivityTypeSnapshot: payload.timelineActivityTypeSnapshot,
+        }),
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,
         [timelineActivityPropertyName]: payload.recordId,
@@ -247,5 +260,24 @@ export class TimelineActivityRepository {
 
   private async getTimelineActivityPropertyName(objectSingularName: string) {
     return `${buildTimelineActivityRelatedMorphFieldMetadataName(objectSingularName)}Id`;
+  }
+
+  private async hasTimelineActivityTypeSnapshotField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const timelineActivityRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'timelineActivity',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    return isDefined(
+      timelineActivityRepository.internalContext.flatFieldMetadataMaps
+        .byUniversalIdentifier[
+        STANDARD_OBJECTS.timelineActivity.fields.timelineActivityTypeSnapshot
+          .universalIdentifier
+      ],
+    );
   }
 }

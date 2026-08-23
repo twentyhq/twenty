@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -80,6 +80,7 @@ export const stampTimelineActivityTypeSnapshots = ({
   now = new Date(),
   records,
   resolvedTimelineActivityTypeById,
+  shouldStampSnapshot = true,
 }: {
   applicationId?: string;
   now?: Date;
@@ -88,6 +89,7 @@ export const stampTimelineActivityTypeSnapshots = ({
     string,
     ResolvedTimelineActivityType
   >;
+  shouldStampSnapshot?: boolean;
 }): TimelineActivityMutationInput[] => {
   if (
     isDefined(applicationId) &&
@@ -118,10 +120,12 @@ export const stampTimelineActivityTypeSnapshots = ({
       );
     }
 
-    const stampedRecord = {
-      ...record,
-      timelineActivityTypeSnapshot: resolvedTimelineActivityType.snapshot,
-    };
+    const stampedRecord = shouldStampSnapshot
+      ? {
+          ...record,
+          timelineActivityTypeSnapshot: resolvedTimelineActivityType.snapshot,
+        }
+      : removePropertiesFromRecord(record, ['timelineActivityTypeSnapshot']);
 
     return isDefined(applicationId)
       ? sanitizeApplicationTimelineActivityInput({
