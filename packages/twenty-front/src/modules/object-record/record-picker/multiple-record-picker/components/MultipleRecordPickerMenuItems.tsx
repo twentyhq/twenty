@@ -11,13 +11,21 @@ import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } 
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCallback } from 'react';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
+import { useCallback, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from 'jotai';
+
+const REMOVE_RELATION_CONFIRMATION_MODAL_ID =
+  'multiple-record-picker-remove-relation-confirmation-modal';
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -81,35 +89,91 @@ export const MultipleRecordPickerMenuItems = ({
 
   const searchHasNoResults = pickableRecordIds.length === 0;
 
+  // --- Confirmation modal state ---
+  const [pendingRemovalItem, setPendingRemovalItem] =
+    useState<RecordPickerPickableMorphItem | null>(null);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const { openModal, closeModal } = useModal();
+
+  const handleItemSelect = useCallback(
+    (morphItem: RecordPickerPickableMorphItem) => {
+      if (morphItem.isSelected) {
+        // INTERCEPT: the user is unchecking (removing) an existing relation
+        setPendingRemovalItem(morphItem);
+        setIsConfirmationModalOpen(true);
+        openModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
+      } else {
+        // PASS THROUGH: the user is establishing a new relation
+        handleChange(morphItem);
+        onChange?.(morphItem);
+      }
+    },
+    [handleChange, onChange, openModal],
+  );
+
+  const handleConfirmRemove = useCallback(() => {
+    if (pendingRemovalItem) {
+      handleChange(pendingRemovalItem);
+      onChange?.(pendingRemovalItem);
+    }
+    setPendingRemovalItem(null);
+    setIsConfirmationModalOpen(false);
+    closeModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
+  }, [handleChange, onChange, closeModal, pendingRemovalItem]);
+
+  const handleCancelRemove = useCallback(() => {
+    setPendingRemovalItem(null);
+    setIsConfirmationModalOpen(false);
+    closeModal(REMOVE_RELATION_CONFIRMATION_MODAL_ID);
+  }, [closeModal]);
+
   return (
-    <DropdownMenuItemsContainer hasMaxHeight>
-      {multipleRecordPickerShouldShowInitialLoading ? (
-        <RecordPickerInitialLoadingEmptyContainer />
-      ) : multipleRecordPickerShouldShowSkeleton ? (
-        <RecordPickerLoadingSkeletonList />
-      ) : searchHasNoResults ? (
-        <RecordPickerNoRecordFoundMenuItem />
-      ) : (
-        <SelectableList
-          selectableListInstanceId={selectableListComponentInstanceId}
-          selectableItemIdArray={pickableRecordIds}
-          focusId={focusId}
-        >
-          {pickableRecordIds.map((recordId) => {
-            return (
-              <MultipleRecordPickerMenuItem
-                key={recordId}
-                recordId={recordId}
-                onChange={(morphItem) => {
-                  handleChange(morphItem);
-                  onChange?.(morphItem);
-                }}
-              />
-            );
-          })}
-          <MultipleRecordPickerFetchMoreLoader />
-        </SelectableList>
-      )}
-    </DropdownMenuItemsContainer>
+    <>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {multipleRecordPickerShouldShowInitialLoading ? (
+          <RecordPickerInitialLoadingEmptyContainer />
+        ) : multipleRecordPickerShouldShowSkeleton ? (
+          <RecordPickerLoadingSkeletonList />
+        ) : searchHasNoResults ? (
+          <RecordPickerNoRecordFoundMenuItem />
+        ) : (
+          <SelectableList
+            selectableListInstanceId={selectableListComponentInstanceId}
+            selectableItemIdArray={pickableRecordIds}
+            focusId={focusId}
+          >
+            {pickableRecordIds.map((recordId) => {
+              return (
+                <MultipleRecordPickerMenuItem
+                  key={recordId}
+                  recordId={recordId}
+                  onChange={handleItemSelect}
+                />
+              );
+            })}
+            <MultipleRecordPickerFetchMoreLoader />
+          </SelectableList>
+        )}
+      </DropdownMenuItemsContainer>
+
+      {isConfirmationModalOpen &&
+        createPortal(
+          <ConfirmationModal
+            modalInstanceId={REMOVE_RELATION_CONFIRMATION_MODAL_ID}
+            title={t`Remove Relation`}
+            subtitle={
+              <Trans>
+                Are you sure you want to remove this relation? For explicit join
+                objects, this may permanently delete associated data.
+              </Trans>
+            }
+            onConfirmClick={handleConfirmRemove}
+            onClose={handleCancelRemove}
+            confirmButtonText={t`Remove`}
+            confirmButtonAccent="danger"
+          />,
+          document.body,
+        )}
+    </>
   );
 };
