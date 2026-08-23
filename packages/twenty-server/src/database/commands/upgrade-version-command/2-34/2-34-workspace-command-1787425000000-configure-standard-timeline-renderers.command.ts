@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { hasTimelineActivityObjectMetadata } from 'src/database/commands/upgrade-version-command/2-34/utils/has-timeline-activity-object-metadata.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -50,6 +51,19 @@ export class ConfigureStandardTimelineRenderersCommand extends ProvisionedWorksp
     if (options.dryRun ?? false) {
       this.logger.log(
         `[DRY RUN] Would configure standard timeline renderers for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    if (!hasTimelineActivityObjectMetadata(flatObjectMetadataMaps)) {
+      this.logger.log(
+        `timelineActivity object does not exist for workspace ${workspaceId}, skipping`,
       );
 
       return;
