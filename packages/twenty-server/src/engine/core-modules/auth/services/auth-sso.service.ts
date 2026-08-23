@@ -28,6 +28,10 @@ export class AuthSsoService {
       return 'isPasswordAuthEnabled';
     }
 
+    if (authProvider === AuthProviderEnum.Oidc) {
+      return null;
+    }
+
     throw new Error(`${authProvider} is not a valid auth provider.`);
   }
 
@@ -41,15 +45,19 @@ export class AuthSsoService {
     ) {
       // Multi-workspace enable mode but on non workspace url.
       // so get the first workspace with the current auth method enable
-      const workspace = await this.workspaceRepository.findOne({
-        where: {
-          [this.getAuthProviderColumnNameByProvider(authProvider)]: true,
-          workspaceUsers: {
-            user: {
-              email,
-            },
+      const providerCol =
+        this.getAuthProviderColumnNameByProvider(authProvider);
+      const whereCondition = {
+        ...(providerCol ? { [providerCol]: true } : {}),
+        workspaceUsers: {
+          user: {
+            email,
           },
         },
+      };
+
+      const workspace = await this.workspaceRepository.findOne({
+        where: whereCondition,
         relations: [
           'workspaceUsers',
           'workspaceUsers.user',

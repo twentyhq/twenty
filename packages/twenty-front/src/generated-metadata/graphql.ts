@@ -442,6 +442,7 @@ export type AuthBypassProviders = {
   google: Scalars['Boolean']['output'];
   microsoft: Scalars['Boolean']['output'];
   password: Scalars['Boolean']['output'];
+  oidc?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type AuthProviders = {
@@ -450,6 +451,8 @@ export type AuthProviders = {
   magicLink: Scalars['Boolean']['output'];
   microsoft: Scalars['Boolean']['output'];
   password: Scalars['Boolean']['output'];
+  oidc?: Maybe<Scalars['Boolean']['output']>;
+  oidcButtonLabel?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoIdentityProvider>;
 };
 

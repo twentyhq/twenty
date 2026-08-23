@@ -42,6 +42,12 @@ export class AuthProvidersDTO {
 
   @Field(() => Boolean)
   microsoft: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  oidc?: boolean;
+
+  @Field(() => String, { nullable: true })
+  oidcButtonLabel?: string;
 }
 
 @ObjectType('AuthBypassProviders')
@@ -54,6 +60,9 @@ export class AuthBypassProvidersDTO {
 
   @Field(() => Boolean)
   microsoft: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  oidc?: boolean;
 }
 
 @ObjectType('PublicWorkspaceData')

@@ -110,6 +110,39 @@ describe('AuthSsoService', () => {
       expect(result).toBeUndefined();
     });
 
+    it('should handle OIDC auth provider when multi-workspace mode is enabled', async () => {
+      const authProvider = AuthProviderEnum.Oidc;
+      const email = 'test@example.com';
+      const mockWorkspace = { id: 'workspace-id-789' } as WorkspaceEntity;
+
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+
+      const result =
+        await authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
+          authProvider,
+          email,
+        });
+
+      expect(result).toEqual(mockWorkspace);
+      expect(workspaceRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          workspaceUsers: {
+            user: {
+              email,
+            },
+          },
+        },
+        relations: [
+          'workspaceUsers',
+          'workspaceUsers.user',
+          'approvedAccessDomains',
+        ],
+      });
+    });
+
     it('should throw an error for an invalid authProvider', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
 

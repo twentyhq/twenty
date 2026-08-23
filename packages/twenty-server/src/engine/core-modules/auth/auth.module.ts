@@ -15,6 +15,7 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { OAuthPropagatorController } from 'src/engine/core-modules/auth/controllers/oauth-propagator.controller';
+import { OidcSocialAuthController } from 'src/engine/core-modules/auth/controllers/oidc-sso-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
@@ -140,6 +141,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
+    OidcSocialAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,

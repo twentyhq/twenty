@@ -292,6 +292,70 @@ export class ConfigVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    description: 'Enable or disable generic OpenID Connect (OIDC) authentication',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AUTH_OIDC_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Client ID for generic OIDC authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CLIENT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: true,
+    description: 'Client secret for generic OIDC authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CLIENT_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Discovery/Issuer URL for generic OIDC authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_ISSUER_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Callback redirect URL for generic OIDC authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @ValidateIf((env) => env.AUTH_OIDC_ENABLED)
+  AUTH_OIDC_CALLBACK_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Scopes for generic OIDC authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_OIDC_SCOPES = 'openid email profile';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OIDC_AUTH,
+    isSensitive: false,
+    description: 'Display label for generic OIDC login button',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_OIDC_BUTTON_LABEL = 'OpenID Connect';
+
   /**
    * @deprecated Use is now GA - record page layouts are always seeded
    */

@@ -2,6 +2,7 @@ import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboar
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
+import { SignInUpWithOidc } from '@/auth/sign-in-up/components/internal/SignInUpWithOidc';
 import { SignInUpWithSSO } from '@/auth/sign-in-up/components/internal/SignInUpWithSSO';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
@@ -44,6 +45,8 @@ export const SignInUpWorkspaceScopeForm = () => {
   return (
     <>
       <StyledOnboardingContentContainer>
+        {providers.oidc && <SignInUpWithOidc action="join-workspace" />}
+
         {providers.google && <SignInUpWithGoogle action="join-workspace" />}
 
         {providers.microsoft && (
@@ -52,7 +55,8 @@ export const SignInUpWorkspaceScopeForm = () => {
 
         {providers.sso.length > 0 && <SignInUpWithSSO />}
 
-        {(providers.google ||
+        {(providers.oidc ||
+          providers.google ||
           providers.microsoft ||
           providers.sso.length > 0) &&
         providers.password ? (

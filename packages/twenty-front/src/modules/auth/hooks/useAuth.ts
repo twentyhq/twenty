@@ -607,6 +607,18 @@ export const useAuth = () => {
     [buildRedirectUrl, redirect],
   );
 
+  const handleOidcLogin = useCallback(
+    (params: {
+      workspacePersonalInviteToken?: string;
+      workspaceInviteHash?: string;
+      billingCheckoutSession?: BillingCheckoutSession;
+      action: string;
+    }) => {
+      redirect(buildRedirectUrl('/auth/openid', params));
+    },
+    [buildRedirectUrl, redirect],
+  );
+
   const handleMicrosoftLogin = useCallback(
     (params: {
       workspacePersonalInviteToken?: string;
@@ -660,6 +672,7 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    signInWithOidc: handleOidcLogin,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
     navigateAfterMultiWorkspaceSignInUp,
   };

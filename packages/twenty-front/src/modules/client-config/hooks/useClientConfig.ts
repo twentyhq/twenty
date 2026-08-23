@@ -175,6 +175,8 @@ export const useClientConfig = (): UseClientConfigResult => {
         google: clientConfig.authProviders.google,
         microsoft: clientConfig.authProviders.microsoft,
         password: clientConfig.authProviders.password,
+        oidc: clientConfig.authProviders.oidc,
+        oidcButtonLabel: clientConfig.authProviders.oidcButtonLabel,
         magicLink: false,
         sso: clientConfig.authProviders.sso,
       });
