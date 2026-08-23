@@ -22,6 +22,7 @@ import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/S
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
+import { SidePanelTimelineFilterPage } from '@/side-panel/pages/timeline-filter/components/SidePanelTimelineFilterPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
 import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
 import { SidePanelWorkflowEditStepType } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStepType';
@@ -51,6 +52,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
     [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
     [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
+    [SidePanelPages.TimelineFilter, <SidePanelTimelineFilterPage />],
     [SidePanelPages.AskAI, <SidePanelAskAiPage />],
     [
       SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
