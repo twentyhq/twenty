@@ -1,6 +1,6 @@
 import { kv } from 'twenty-sdk/logic-function';
 import { MigrationState } from "src/logic-functions/types/migration-state.type";
-import { logger } from "src/logic-functions/utils/logger.util";
+import { getRecentLogs, logger, setRecentLogs } from "src/logic-functions/utils/logger.util";
 import { triggerWorkspaceMigration } from "src/logic-functions/utils/trigger-workspace-migration.util";
 
 const MIGRATION_STATE_KV_KEY = 'migrationState';
@@ -27,6 +27,7 @@ const createInitialMigrationState = (): MigrationState => ({
   migratedSkills: false,
   migratedWebhooks: false,
   migratedRoles: false,
+  estimate: null,
 });
 
 export const migrationState: MigrationState = createInitialMigrationState();
@@ -37,6 +38,9 @@ export const setStateRef = <K extends keyof MigrationState>(key: K, value: Migra
 
 const serializeMigrationState = () => ({
   ...migrationState,
+  // Not part of MigrationState itself - logger.util.ts owns the live buffer so it stays a
+  // self-contained module with no dependency on migration-state.util.ts.
+  logs: getRecentLogs(),
   workspaceMemberIdMap: Object.fromEntries(migrationState.workspaceMemberIdMap),
   migratedRecordIds: [...migrationState.migratedRecordIds],
   targetObjectIdBySourceObjectId: Object.fromEntries(migrationState.targetObjectIdBySourceObjectId),
@@ -57,6 +61,7 @@ type SerializedMigrationState = Omit<
   objectRecordsToMigrate: Record<string, string>;
   targetPageLayoutIdBySourcePageLayoutId: Record<string, string>;
   attachmentTargetFieldNameByObjectName: Record<string, string>;
+  logs: string[];
 };
 
 export const saveMigrationStateCheckpointAndStop = async (): Promise<void> => {
@@ -104,6 +109,9 @@ export const loadMigrationStateCheckpoint = async (): Promise<void> => {
     migrationState.migratedSkills = saved.migratedSkills;
     migrationState.migratedWebhooks = saved.migratedWebhooks;
     migrationState.migratedRoles = saved.migratedRoles;
+    migrationState.estimate = saved.estimate;
+    // Guarded against an older checkpoint saved before logs existed.
+    setRecentLogs(saved.logs ?? []);
   } catch (error) {
     logger.warn(`Failed to load migration state checkpoint: ${error instanceof Error ? error.message : String(error)}`);
   }

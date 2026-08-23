@@ -18,6 +18,13 @@ import { logger } from "src/logic-functions/utils/logger.util";
 const API_CLIENT_TIMEOUT_MS = 60 * 1000;
 
 const handler = async () => {
+  if (process.env.TARGET_WORKSPACE_API_URL === undefined ||
+    process.env.TARGET_WORKSPACE_API_KEY === undefined ||
+    process.env.SOURCE_WORKSPACE_API_URL === undefined ||
+    process.env.SOURCE_WORKSPACE_API_KEY === undefined) {
+    logger.error('Missing variables, add them in Settings > Apps > Installed > Workspace migration > Settings');
+    return;
+  }
   startTimeBudget();
 
   const targetWorkspace = axios.create({

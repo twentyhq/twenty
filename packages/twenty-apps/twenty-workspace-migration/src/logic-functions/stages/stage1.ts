@@ -149,6 +149,7 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   setStateRef('fieldsToCreate', fieldsToCreate);
   setStateRef('fieldsToUpdate', fieldsToUpdate);
   setStateRef('recordMigrationOrder', recordMigrationOrder);
+  setStateRef('estimate', { estimatedMinutes, batchableRecordCount, otherRecordCount });
   setStateRef('stage', 2);
   await saveMigrationStateCheckpointAndStop();
 }

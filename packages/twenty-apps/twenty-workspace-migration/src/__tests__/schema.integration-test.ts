@@ -28,7 +28,7 @@ describe('CoreApiClient', () => {
   it('should support CRUD on standard objects', async () => {
     const client = new CoreApiClient();
 
-    const created = await client.mutation({
+    const created: any = await client.mutation({
       createNote: {
         __args: { data: { title: 'Integration test note' } },
         id: true,

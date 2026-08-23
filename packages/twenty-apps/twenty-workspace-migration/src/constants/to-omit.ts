@@ -4,6 +4,3 @@ export const objectsToOmitFromCounting = ['workflows', 'workflowRuns', 'workflow
 export const objectsToOmitFromRecordMigration = ['workspaceMember', 'dashboard', 'attachment'];
 export const fieldsToOmitFromRecordMigration = ['createdBy', 'updatedBy', 'deletedAt', 'searchVector', 'timelineActivities', 'attachments', 'noteTargets', 'taskTargets'];
 export const sourceAppsToOmit = ['OAUTH_ONLY', 'LOCAL'];
-export const applicationsToOmit = [
-  '' // last contact app
-]; // uuids of applications which data should not be transferred as they're generated automatically

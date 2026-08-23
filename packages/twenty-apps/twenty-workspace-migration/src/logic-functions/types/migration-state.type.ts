@@ -27,4 +27,9 @@ export type MigrationState = {
   migratedSkills: boolean,
   migratedWebhooks: boolean,
   migratedRoles: boolean,
+  estimate: {
+    estimatedMinutes: number;
+    batchableRecordCount: number;
+    otherRecordCount: number;
+  } | null;
 }
