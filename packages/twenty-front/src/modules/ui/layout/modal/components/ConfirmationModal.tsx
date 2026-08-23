@@ -33,6 +33,16 @@ export type ConfirmationModalProps = {
 const StyledCenteredButtonContainer = styled.div`
   box-sizing: border-box;
   margin-top: ${themeCssVariables.spacing[2]};
+
+  > button {
+    height: auto;
+    min-height: 32px;
+    white-space: normal;
+
+    * {
+      white-space: normal;
+    }
+  }
 `;
 
 export const StyledCenteredButton = (
@@ -51,30 +61,6 @@ const StyledCenteredTitle = styled.div`
 const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
-
-const StyledConfirmationButtonContainer = styled.div`
-  box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
-  > button {
-    border-color: ${themeCssVariables.border.color.danger};
-    box-shadow: none;
-    color: ${themeCssVariables.color.red};
-    font-size: ${themeCssVariables.font.size.md};
-    line-height: ${themeCssVariables.text.lineHeight.lg};
-    &:hover {
-      background-color: ${themeCssVariables.color.red3};
-    }
-  }
-`;
-
-export const StyledConfirmationButton = (
-  props: React.ComponentProps<typeof Button>,
-) => (
-  <StyledConfirmationButtonContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <Button {...props} />
-  </StyledConfirmationButtonContainer>
-);
 
 const defaultConfirmButtonText = msg`Confirm`;
 
