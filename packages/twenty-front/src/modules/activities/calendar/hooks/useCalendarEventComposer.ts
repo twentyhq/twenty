@@ -2,6 +2,9 @@ import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissing
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
 import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
+import { getCalendarEventDatesAfterModeChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterModeChange';
+import { getCalendarEventDatesAfterStartChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterStartChange';
+import { hasCalendarEventTargetAssociation } from '@/activities/calendar/utils/hasCalendarEventTargetAssociation';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -61,6 +64,11 @@ export const useCalendarEventComposer = ({
     : [];
   const hasTooManyAttendees =
     sendInvitations && attendeeEmails.length > MAX_EMAIL_RECIPIENTS;
+  const hasTargetAssociation = hasCalendarEventTargetAssociation({
+    attendeeEmails,
+    requiredAttendee: initialValues?.defaultAttendees,
+    sendInvitations,
+  });
   const hasValidDateRange = isFullDay
     ? dates.endsAt.slice(0, 10) > dates.startsAt.slice(0, 10)
     : Date.parse(dates.endsAt) > Date.parse(dates.startsAt);
@@ -71,31 +79,18 @@ export const useCalendarEventComposer = ({
     missingScopes.length === 0 &&
     invalidAttendeeEmails.length === 0 &&
     !hasTooManyAttendees &&
+    hasTargetAssociation &&
     hasValidDateRange &&
     !isCreating;
 
   const handleIsFullDayChange = (nextIsFullDay: boolean) => {
-    if (nextIsFullDay) {
-      const startDate = Temporal.Instant.from(dates.startsAt)
-        .toZonedDateTimeISO(timeZone)
-        .toPlainDate();
-
-      setDates({
-        startsAt: startDate.toString(),
-        endsAt: startDate.add({ days: 1 }).toString(),
-      });
-    } else {
-      const startDate = Temporal.PlainDate.from(dates.startsAt.slice(0, 10));
-      const startsAt = startDate.toZonedDateTime({
+    setDates(
+      getCalendarEventDatesAfterModeChange({
+        dates,
+        isFullDay: nextIsFullDay,
         timeZone,
-        plainTime: Temporal.PlainTime.from('09:00'),
-      });
-
-      setDates({
-        startsAt: startsAt.toInstant().toString(),
-        endsAt: startsAt.add({ hours: 1 }).toInstant().toString(),
-      });
-    }
+      }),
+    );
 
     setIsFullDay(nextIsFullDay);
   };
@@ -105,25 +100,13 @@ export const useCalendarEventComposer = ({
       return;
     }
 
-    if (isFullDay) {
-      setDates((currentDates) => ({
+    setDates((currentDates) =>
+      getCalendarEventDatesAfterStartChange({
+        dates: currentDates,
         startsAt: value,
-        endsAt:
-          currentDates.endsAt > value
-            ? currentDates.endsAt
-            : Temporal.PlainDate.from(value).add({ days: 1 }).toString(),
-      }));
-
-      return;
-    }
-
-    setDates((currentDates) => ({
-      startsAt: value,
-      endsAt:
-        Date.parse(currentDates.endsAt) > Date.parse(value)
-          ? currentDates.endsAt
-          : Temporal.Instant.from(value).add({ hours: 1 }).toString(),
-    }));
+        isFullDay,
+      }),
+    );
   };
 
   const setEndsAt = (value: string | null) => {
@@ -183,6 +166,7 @@ export const useCalendarEventComposer = ({
     handleIsFullDayChange,
     handleStartsAtChange,
     hasTooManyAttendees,
+    hasTargetAssociation,
     hasValidDateRange,
     invalidAttendeeEmails,
     isFullDay,

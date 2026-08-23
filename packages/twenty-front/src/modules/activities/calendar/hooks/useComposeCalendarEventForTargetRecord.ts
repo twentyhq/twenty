@@ -5,6 +5,7 @@ import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnected
 import { useOpenComposeCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenComposeCalendarEventInSidePanel';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -31,6 +32,10 @@ export const useComposeCalendarEventForTargetRecord = () => {
     ) ?? calendarAccounts[0];
 
   const openComposer = () => {
+    if (!isNonEmptyString(defaultTo)) {
+      return;
+    }
+
     if (!isDefined(preferredAccount)) {
       navigateSettings(SettingsPath.NewAccount);
 
@@ -46,6 +51,7 @@ export const useComposeCalendarEventForTargetRecord = () => {
 
   return {
     openComposer,
-    loading: accountsLoading || recipientLoading,
+    disabled:
+      accountsLoading || recipientLoading || !isNonEmptyString(defaultTo),
   };
 };

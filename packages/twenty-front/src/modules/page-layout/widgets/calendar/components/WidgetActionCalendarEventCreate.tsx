@@ -6,7 +6,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const WidgetActionCalendarEventCreate = () => {
-  const { openComposer, loading } = useComposeCalendarEventForTargetRecord();
+  const { openComposer, disabled } = useComposeCalendarEventForTargetRecord();
   const hasCreateCalendarEventPermission = useHasPermissionFlag(
     PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
   );
@@ -20,7 +20,7 @@ export const WidgetActionCalendarEventCreate = () => {
       Icon={IconPlus}
       label={t`Create event`}
       onClick={openComposer}
-      disabled={loading}
+      disabled={disabled}
     />
   );
 };

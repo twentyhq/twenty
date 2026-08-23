@@ -163,6 +163,13 @@ export const CalendarEventComposerFields = ({
           description={t`Creating this event will add the attendees and email them an invitation.`}
         />
       )}
+    {!composerState.hasTargetAssociation && (
+      <Callout
+        variant="warning"
+        title={t`Keep this event related`}
+        description={t`Keep the current record's email in the attendee list and leave invitations on so the event remains visible on this record.`}
+      />
+    )}
     <FormBooleanFieldToggleInput
       label={t`Video conferencing`}
       description={t`Add a meeting link`}
