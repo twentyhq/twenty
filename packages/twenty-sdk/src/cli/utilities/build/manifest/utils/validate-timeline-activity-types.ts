@@ -8,8 +8,10 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-const MIN_UUID_VERSION = 4;
+import {
+  getDuplicateValues,
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+} from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
 
 const RELATION_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.RELATION,
@@ -29,21 +31,6 @@ export const isRelationFieldManifest = (
   field: ManifestField,
 ): field is RelationManifestField => RELATION_FIELD_TYPES.includes(field.type);
 
-const extractDuplicates = (values: string[]): string[] => {
-  const seen = new Set<string>();
-  const duplicates = new Set<string>();
-
-  for (const value of values) {
-    if (seen.has(value)) {
-      duplicates.add(value);
-    } else {
-      seen.add(value);
-    }
-  }
-
-  return Array.from(duplicates);
-};
-
 export const validateTimelineActivityTypes = (
   manifest: Pick<
     Manifest,
@@ -51,7 +38,7 @@ export const validateTimelineActivityTypes = (
   >,
 ): string[] => {
   const errors: string[] = [];
-  const duplicateNames = extractDuplicates(
+  const duplicateNames = getDuplicateValues(
     manifest.timelineActivityTypes.map(
       (timelineActivityType) => timelineActivityType.name,
     ),
@@ -132,7 +119,8 @@ export const validateTimelineActivityTypes = (
         );
       } else if (
         !uuidValidate(replacementUniversalIdentifier) ||
-        uuidVersion(replacementUniversalIdentifier) < MIN_UUID_VERSION
+        uuidVersion(replacementUniversalIdentifier) <
+          MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION
       ) {
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" references an invalid replacement universal identifier "${replacementUniversalIdentifier}".`,

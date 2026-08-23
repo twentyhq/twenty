@@ -880,7 +880,7 @@ describe('manifestValidate', () => {
       });
       manifest.fields[0].universalSettings = {
         relationType: RelationType.ONE_TO_MANY,
-      } as never;
+      };
 
       const result = manifestValidate(manifest);
 

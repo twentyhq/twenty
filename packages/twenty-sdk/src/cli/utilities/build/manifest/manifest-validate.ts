@@ -13,12 +13,14 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  getDuplicateValues,
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+} from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import {
   type ManifestField,
   isRelationFieldManifest,
   validateTimelineActivityTypes,
 } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
-
-const MIN_UUID_VERSION = 4;
 
 const VALID_RELATION_TYPES: string[] = [
   RelationType.MANY_TO_ONE,
@@ -40,21 +42,6 @@ const isGraphWidgetConfiguration = (
     (configurationType) =>
       configurationType === configuration.configurationType,
   );
-
-const extractDuplicates = (values: string[]): string[] => {
-  const seen = new Set<string>();
-  const duplicates = new Set<string>();
-
-  for (const value of values) {
-    if (seen.has(value)) {
-      duplicates.add(value);
-    } else {
-      seen.add(value);
-    }
-  }
-
-  return Array.from(duplicates);
-};
 
 const findUniversalIdentifiers = (obj: object): string[] => {
   const universalIdentifiers: string[] = [];
@@ -190,10 +177,10 @@ const invalidUniversalIdentifierVersions = (
 
     const version = uuidVersion(identifier);
 
-    if (version < MIN_UUID_VERSION) {
+    if (version < MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION) {
       errors.push(
         `Universal identifier "${identifier}" is UUID version ${version}. ` +
-          `Only UUID version ${MIN_UUID_VERSION} or higher is allowed.`,
+          `Only UUID version ${MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION} or higher is allowed.`,
       );
     }
   }
@@ -207,7 +194,7 @@ export const manifestValidate = (manifest: Manifest) => {
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 
-  const duplicates = extractDuplicates(universalIdentifiers);
+  const duplicates = getDuplicateValues(universalIdentifiers);
 
   if (duplicates.length > 0) {
     errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
