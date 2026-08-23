@@ -1,1 +1,0 @@
-export const FIREFLIES_HEALING_WINDOW_DAYS = 7;

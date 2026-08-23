@@ -1,5 +1,0 @@
-export enum MessageChannelPendingGroupEmailsAction {
-  GROUP_EMAILS_DELETION = 'GROUP_EMAILS_DELETION',
-  GROUP_EMAILS_IMPORT = 'GROUP_EMAILS_IMPORT',
-  NONE = 'NONE',
-}

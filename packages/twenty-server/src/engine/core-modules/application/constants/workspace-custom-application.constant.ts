@@ -1,1 +1,0 @@
-export const WORKSPACE_CUSTOM_APPLICATION_NAME = 'Custom';

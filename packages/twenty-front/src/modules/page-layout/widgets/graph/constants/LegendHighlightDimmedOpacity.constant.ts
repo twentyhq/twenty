@@ -1,1 +1,0 @@
-export const LEGEND_HIGHLIGHT_DIMMED_OPACITY = 0.2;

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Manage App"
-  short_description: "Manage and troubleshoot app operations."
-  default_prompt: "Use $manage-app to manage or troubleshoot Twenty app remotes, sync, build, deploy, logs, or CI/CD."

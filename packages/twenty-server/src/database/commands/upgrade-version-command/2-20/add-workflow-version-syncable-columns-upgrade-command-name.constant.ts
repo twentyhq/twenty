@@ -1,2 +1,0 @@
-export const ADD_WORKFLOW_VERSION_SYNCABLE_COLUMNS_UPGRADE_COMMAND_NAME =
-  '2.20.0_AddWorkflowVersionSyncableColumnsFastInstanceCommand_1783603454480';

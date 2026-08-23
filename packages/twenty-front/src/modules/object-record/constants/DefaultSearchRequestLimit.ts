@@ -1,1 +1,0 @@
-export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;

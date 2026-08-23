@@ -1,8 +1,0 @@
-extends: substitution
-message: Consider using '%s' instead of '%s'
-level: warning
-scope: raw
-ignorecase: false
-# swap maps tokens in form of bad: good
-swap:
-  e-commerce: ecommerce

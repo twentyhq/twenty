@@ -1,1 +1,0 @@
-export const QUERY_DEFAULT_LIMIT_RECORDS = 60;

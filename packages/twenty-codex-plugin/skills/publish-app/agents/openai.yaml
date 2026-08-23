@@ -1,4 +1,0 @@
-interface:
-  display_name: "Publish App"
-  short_description: "Prepare Twenty app listing assets."
-  default_prompt: "Use $publish-app to prepare README, marketplace metadata, logos, screenshots, and app listing assets."

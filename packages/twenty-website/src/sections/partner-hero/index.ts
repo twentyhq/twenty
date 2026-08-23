@@ -1,1 +1,0 @@
-export { PartnerHero } from './PartnerHero';

@@ -1,1 +1,0 @@
-export const BAR_CHART_MAXIMUM_NUMBER_OF_BARS = 100;

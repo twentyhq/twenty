@@ -1,1 +1,0 @@
-export const AUTO_SCROLL_EDGE_THRESHOLD_PX = 20;

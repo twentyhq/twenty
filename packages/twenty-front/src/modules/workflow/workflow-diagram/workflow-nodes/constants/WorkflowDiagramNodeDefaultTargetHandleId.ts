@@ -1,1 +1,0 @@
-export const WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID = 'default';

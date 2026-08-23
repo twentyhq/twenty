@@ -1,1 +1,0 @@
-export { PricingSalesfarce } from './PricingSalesfarce';

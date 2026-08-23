@@ -1,1 +1,0 @@
-export const GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX = 120;

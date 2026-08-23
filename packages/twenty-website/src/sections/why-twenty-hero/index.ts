@@ -1,1 +1,0 @@
-export { WhyTwentyHero } from './WhyTwentyHero';
