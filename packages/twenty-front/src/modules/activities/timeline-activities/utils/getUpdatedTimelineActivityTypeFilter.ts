@@ -1,3 +1,5 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 type GetUpdatedTimelineActivityTypeFilterParams = {
   allTimelineActivityTypeUniversalIdentifiers: string[];
   currentFilter: string[];
@@ -12,7 +14,7 @@ export const getUpdatedTimelineActivityTypeFilter = ({
   isVisible,
 }: GetUpdatedTimelineActivityTypeFilterParams) => {
   const visibleTimelineActivityTypeUniversalIdentifiers = new Set(
-    currentFilter.length === 0
+    !isNonEmptyArray(currentFilter)
       ? allTimelineActivityTypeUniversalIdentifiers
       : currentFilter,
   );
@@ -32,7 +34,7 @@ export const getUpdatedTimelineActivityTypeFilter = ({
       visibleTimelineActivityTypeUniversalIdentifiers.has(universalIdentifier),
   );
 
-  if (updatedFilter.length === 0) {
+  if (!isNonEmptyArray(updatedFilter)) {
     return currentFilter;
   }
 
