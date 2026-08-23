@@ -31,7 +31,6 @@ import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-a
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
 import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 
@@ -108,7 +107,6 @@ export class TimelineActivityService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly timelineActivityTargetQueryService: TimelineActivityTargetQueryService,
-    private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
 
   async upsertEvents({
@@ -229,33 +227,20 @@ export class TimelineActivityService {
   private resolveTimelineActivityTypeForRule({
     rule,
     ruleAction,
-    workspaceId,
     resolveTimelineActivityType,
   }: {
     rule: TimelineActivityRule;
     ruleAction: TimelineActivityRuleAction;
-    workspaceId: string;
     resolveTimelineActivityType: TimelineActivityTypeResolver;
   }): ResolvedTimelineActivityType | undefined {
-    const timelineActivityType =
+    return (
       rule.timelineActivityType ??
       resolveTimelineActivityType({
         action: ruleAction,
         objectUniversalIdentifier:
           rule.sourceFlatObjectMetadata.universalIdentifier,
-      });
-
-    if (!isDefined(timelineActivityType)) {
-      this.timelineActivityMetadataDiagnosticsService.report({
-        workspaceId,
-        reason: 'missing-type',
-        action: ruleAction,
-        objectUniversalIdentifier:
-          rule.sourceFlatObjectMetadata.universalIdentifier,
-      });
-    }
-
-    return timelineActivityType;
+      })
+    );
   }
 
   private async buildPayloadsForSourceRule({
@@ -280,7 +265,6 @@ export class TimelineActivityService {
     const timelineActivityType = this.resolveTimelineActivityTypeForRule({
       rule,
       ruleAction,
-      workspaceId,
       resolveTimelineActivityType,
     });
 
@@ -420,7 +404,6 @@ export class TimelineActivityService {
     const timelineActivityType = this.resolveTimelineActivityTypeForRule({
       rule,
       ruleAction,
-      workspaceId,
       resolveTimelineActivityType,
     });
 
