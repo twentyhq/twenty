@@ -39,7 +39,9 @@ export const SettingsApplicationTimelineActivityTypesSubtable = ({
   return (
     <TableSection title={t`Timeline activity types`}>
       {timelineActivityTypes.map((timelineActivityType) => {
-        const Icon = getIcon(timelineActivityType.icon);
+        const Icon = isDefined(timelineActivityType.icon)
+          ? getIcon(timelineActivityType.icon)
+          : undefined;
         const isMutating = mutatingTimelineActivityTypeIds.has(
           timelineActivityType.id,
         );
