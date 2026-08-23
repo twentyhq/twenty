@@ -96,7 +96,7 @@ export const SidePanelTimelineFilterPage = () => {
             timelineActivityType.universalIdentifier,
           );
           const isLastVisibleTimelineActivityType =
-            isFiltering && isVisible && visibleTimelineActivityTypeCount === 1;
+            isVisible && visibleTimelineActivityTypeCount === 1;
 
           return (
             <SelectableListItem
