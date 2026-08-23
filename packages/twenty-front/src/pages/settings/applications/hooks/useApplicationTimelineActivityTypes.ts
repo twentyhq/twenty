@@ -9,16 +9,16 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useApplicationTimelineActivityTypes = ({
-  installedApplication,
+  isInstalledApplication,
 }: {
-  installedApplication: boolean;
+  isInstalledApplication: boolean;
 }) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const [mutatingTimelineActivityTypeIds, setMutatingTimelineActivityTypeIds] =
     useState<ReadonlySet<string>>(new Set());
 
   const { data } = useQuery(FindManyTimelineActivityTypesDocument, {
-    skip: !installedApplication,
+    skip: !isInstalledApplication,
   });
 
   const [updateTimelineActivityType] = useMutation(

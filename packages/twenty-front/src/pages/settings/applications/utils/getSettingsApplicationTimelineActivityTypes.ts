@@ -1,0 +1,41 @@
+import { type TimelineActivityTypeManifest } from 'twenty-shared/application';
+import {
+  type InstalledTimelineActivityType,
+  type SettingsApplicationTimelineActivityType,
+} from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+
+export const getSettingsApplicationTimelineActivityTypes = ({
+  applicationId,
+  isInstalledApplication,
+  installedTimelineActivityTypes,
+  manifestTimelineActivityTypes,
+}: {
+  applicationId: string;
+  isInstalledApplication: boolean;
+  installedTimelineActivityTypes: InstalledTimelineActivityType[];
+  manifestTimelineActivityTypes: TimelineActivityTypeManifest[];
+}): SettingsApplicationTimelineActivityType[] =>
+  isInstalledApplication
+    ? installedTimelineActivityTypes
+        .filter(
+          (timelineActivityType) =>
+            timelineActivityType.applicationId === applicationId,
+        )
+        .map((timelineActivityType) => ({
+          action: timelineActivityType.emit?.on ?? null,
+          icon: timelineActivityType.icon,
+          id: timelineActivityType.id,
+          isActive: timelineActivityType.isActive,
+          isInstalled: true,
+          label: timelineActivityType.label,
+          name: timelineActivityType.name,
+        }))
+    : manifestTimelineActivityTypes.map((timelineActivityType) => ({
+        action: timelineActivityType.emit?.on ?? null,
+        icon: timelineActivityType.icon,
+        id: timelineActivityType.universalIdentifier,
+        isActive: true,
+        isInstalled: false,
+        label: timelineActivityType.label,
+        name: timelineActivityType.name,
+      }));

@@ -20,7 +20,7 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
 import { SettingsApplicationTimelineActivityTypesSubtable } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypesSubtable';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
-import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -73,7 +73,7 @@ export const SettingsApplicationDetailContentTab = ({
     resetTimelineActivityTypeToDefault,
     setTimelineActivityTypeIsActive,
   } = useApplicationTimelineActivityTypes({
-    installedApplication: isInstalledApplication,
+    isInstalledApplication,
   });
 
   const { objectRows, fieldRows } =
@@ -170,7 +170,7 @@ export const SettingsApplicationDetailContentTab = ({
 
   const timelineActivityTypes = getSettingsApplicationTimelineActivityTypes({
     applicationId,
-    installedApplication: isInstalledApplication,
+    isInstalledApplication,
     installedTimelineActivityTypes,
     manifestTimelineActivityTypes: manifestContent?.timelineActivityTypes ?? [],
   });

@@ -1,11 +1,11 @@
-import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
 
 describe('getSettingsApplicationTimelineActivityTypes', () => {
   it('keeps only the installed application activity types', () => {
     expect(
       getSettingsApplicationTimelineActivityTypes({
         applicationId: 'application-1',
-        installedApplication: true,
+        isInstalledApplication: true,
         installedTimelineActivityTypes: [
           {
             applicationId: 'application-1',
@@ -47,7 +47,7 @@ describe('getSettingsApplicationTimelineActivityTypes', () => {
     expect(
       getSettingsApplicationTimelineActivityTypes({
         applicationId: 'application-1',
-        installedApplication: false,
+        isInstalledApplication: false,
         installedTimelineActivityTypes: [],
         manifestTimelineActivityTypes: [
           {
