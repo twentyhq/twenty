@@ -8,7 +8,9 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { gql } from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   type TimelineActivityAction,
   type TimelineActivityTypeSnapshot,
@@ -17,6 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
+  happensAt
   timelineActivityTypeId
   timelineActivityTypeSnapshot
   properties
@@ -31,6 +34,7 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
 
 type TimelineActivityRow = {
   id: string;
+  happensAt: string;
   timelineActivityTypeId: string;
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
   properties: Record<string, unknown> | null;
@@ -80,6 +84,24 @@ const updateRecord = async ({
   );
 
   expect(response.body.errors).toBeUndefined();
+};
+
+const withOrmV2ReadPath = async (callback: () => Promise<void>) => {
+  await updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED,
+    value: true,
+    expectToFail: false,
+  });
+
+  try {
+    await callback();
+  } finally {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+  }
 };
 
 const findTimelineActivities = async (
@@ -303,53 +325,60 @@ describe('timeline activity write path (integration)', () => {
       });
     });
 
-    it('should write an updated entry for a composite field change', async () => {
-      await createRecord({
-        objectMetadataSingularName: 'company',
-        data: {
-          id: COMPOSITE_COMPANY_ID,
-          name: 'Composite Field Timeline',
-        },
-      });
-
-      await updateRecord({
-        objectMetadataSingularName: 'company',
-        recordId: COMPOSITE_COMPANY_ID,
-        data: {
-          address: {
-            addressStreet1: '234 Composite Street',
-            addressStreet2: '',
-            addressCity: 'Paris',
-            addressState: '',
-            addressCountry: '',
-            addressPostcode: '',
-            addressLat: null,
-            addressLng: null,
+    it('should write an updated entry for an ORM v2 composite field change', async () => {
+      await withOrmV2ReadPath(async () => {
+        await createRecord({
+          objectMetadataSingularName: 'company',
+          data: {
+            id: COMPOSITE_COMPANY_ID,
+            name: 'Composite Field Timeline',
           },
-        },
-      });
+        });
 
-      const timelineActivities = await findTimelineActivities({
-        targetCompanyId: { eq: COMPOSITE_COMPANY_ID },
-        timelineActivityTypeId: {
-          eq: timelineActivityTypeIdForOrThrow('updated'),
-        },
-      });
+        const updateStartedAt = Date.now();
 
-      expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].properties).toMatchObject({
-        diff: {
-          address: {
-            before: {
-              addressStreet1: '',
-              addressCity: '',
-            },
-            after: {
+        await updateRecord({
+          objectMetadataSingularName: 'company',
+          recordId: COMPOSITE_COMPANY_ID,
+          data: {
+            address: {
               addressStreet1: '234 Composite Street',
+              addressStreet2: '',
               addressCity: 'Paris',
+              addressState: '',
+              addressCountry: '',
+              addressPostcode: '',
+              addressLat: null,
+              addressLng: null,
             },
           },
-        },
+        });
+
+        const timelineActivities = await findTimelineActivities({
+          targetCompanyId: { eq: COMPOSITE_COMPANY_ID },
+          timelineActivityTypeId: {
+            eq: timelineActivityTypeIdForOrThrow('updated'),
+          },
+        });
+
+        expect(timelineActivities).toHaveLength(1);
+        expect(
+          new Date(timelineActivities[0].happensAt).getTime(),
+        ).toBeGreaterThanOrEqual(updateStartedAt);
+        expect(timelineActivities[0].properties).toMatchObject({
+          diff: {
+            address: {
+              before: {
+                addressStreet1: '',
+                addressCity: '',
+              },
+              after: {
+                addressStreet1: '234 Composite Street',
+                addressCity: 'Paris',
+              },
+            },
+          },
+        });
       });
     });
 

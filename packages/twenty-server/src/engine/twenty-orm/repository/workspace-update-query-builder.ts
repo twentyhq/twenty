@@ -39,6 +39,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import {
+  getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
   mergeRecordWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
@@ -266,7 +267,10 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedAfter = formatResult<T[]>(
-        mergeRecordsWithUpdateValues(after, valuesSet),
+        mergeRecordsWithUpdateValues(
+          getUpdateEventRecords(before, after),
+          valuesSet,
+        ),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -467,7 +471,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       const formattedAfter = formatResult<T[]>(
-        afterRecords.map((record) =>
+        getUpdateEventRecords(beforeRecords, afterRecords).map((record) =>
           mergeRecordWithUpdateValues(
             record,
             updateValuesByRecordId.get(record.id),

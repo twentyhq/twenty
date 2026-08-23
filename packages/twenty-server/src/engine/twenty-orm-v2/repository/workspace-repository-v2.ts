@@ -17,6 +17,10 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import {
+  getUpdateEventRecords,
+  mergeRecordsWithUpdateValues,
+} from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
@@ -73,6 +77,38 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   restore: [DatabaseEventAction.RESTORED],
   'soft-delete': [DatabaseEventAction.DELETED],
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
+};
+
+const getUpdateEventColumnsToReturn = (
+  columnsToReturn: string[],
+  tableShape: WorkspaceTableShape,
+): string[] =>
+  isDefined(tableShape.columnShapeByColumnName.updatedAt)
+    ? [...new Set([...columnsToReturn, 'id', 'updatedAt'])]
+    : [...new Set([...columnsToReturn, 'id'])];
+
+const mergeReturnedUpdateTimestamps = (
+  eventRecords: ObjectRecord[],
+  returnedRecords: ObjectRecord[],
+): ObjectRecord[] => {
+  const returnedRecordsById = new Map(
+    returnedRecords
+      .filter((record) => isNonEmptyString(record.id))
+      .map((record) => [record.id, record]),
+  );
+
+  return eventRecords.map((eventRecord) => {
+    const returnedRecord = isNonEmptyString(eventRecord.id)
+      ? returnedRecordsById.get(eventRecord.id)
+      : undefined;
+    const returnedUpdatedAt = returnedRecord?.updatedAt;
+
+    if (!isDefined(returnedUpdatedAt)) {
+      return eventRecord;
+    }
+
+    return { ...eventRecord, updatedAt: returnedUpdatedAt };
+  });
 };
 
 type WorkspaceRepositoryV2Options = {
@@ -945,6 +981,10 @@ export class WorkspaceRepositoryV2 {
     const recordsBefore: ObjectRecord[] = [];
     const recordsAfter: ObjectRecord[] = [];
     const generatedMaps: ObjectRecord[] = [];
+    const updateEventColumnsToReturn = getUpdateEventColumnsToReturn(
+      columnsToReturn,
+      this.options.tableShape,
+    );
 
     const rawBeforeByInputIndex: ObjectRecord[][] = [];
     const existingRecordsMapById: Record<string, ObjectRecord> = {};
@@ -1018,17 +1058,25 @@ export class WorkspaceRepositoryV2 {
       const result = await selectQueryBuilder
         .update()
         .set(setColumns)
-        .returning(columnsToReturn)
+        .returning(updateEventColumnsToReturn)
         .execute();
 
       generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
 
+      const recordsAfterWrite = await this.buildIdsEventSnapshotQueryBuilder([
+        input.id,
+      ]).getMany<ObjectRecord>({
+        noFormatting: true,
+      });
+
       recordsAfter.push(
-        ...(await this.buildIdsEventSnapshotQueryBuilder([
-          input.id,
-        ]).getMany<ObjectRecord>({
-          noFormatting: true,
-        })),
+        ...mergeReturnedUpdateTimestamps(
+          mergeRecordsWithUpdateValues(
+            getUpdateEventRecords(rawBeforeForInput, recordsAfterWrite),
+            setColumns,
+          ),
+          result.generatedMaps as ObjectRecord[],
+        ),
       );
     }
 
@@ -1249,7 +1297,13 @@ export class WorkspaceRepositoryV2 {
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
-      columnsToReturn,
+      columnsToReturn:
+        kind === 'update'
+          ? getUpdateEventColumnsToReturn(
+              columnsToReturn,
+              this.options.tableShape,
+            )
+          : columnsToReturn,
       setColumns,
     });
 
@@ -1257,12 +1311,23 @@ export class WorkspaceRepositoryV2 {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
 
-    const recordsAfter =
+    const recordsAfterWrite =
       kind === 'delete'
         ? undefined
         : await eventSelectQueryBuilder.getMany<ObjectRecord>({
             noFormatting: true,
           });
+
+    const recordsAfter =
+      kind === 'update' && isDefined(setColumns)
+        ? mergeReturnedUpdateTimestamps(
+            mergeRecordsWithUpdateValues(
+              getUpdateEventRecords(recordsBefore, recordsAfterWrite ?? []),
+              setColumns,
+            ),
+            mutationResult.generatedMaps,
+          )
+        : recordsAfterWrite;
 
     this.emitMutationEvent({ kind, recordsBefore, recordsAfter });
 

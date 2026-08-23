@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -35,5 +36,22 @@ export const mergeRecordsWithUpdateValues = <TRecord extends ObjectLiteral>(
 
   return records.map((record, index) =>
     mergeRecordWithUpdateValues(record, values[index] ?? values[0]),
+  );
+};
+
+export const getUpdateEventRecords = <TRecord extends ObjectLiteral>(
+  recordsBefore: TRecord[],
+  recordsAfter: TRecord[],
+): TRecord[] => {
+  const recordsAfterById = new Map(
+    recordsAfter
+      .filter((record) => isNonEmptyString(record.id))
+      .map((record) => [record.id, record]),
+  );
+
+  return recordsBefore.map((recordBefore, index) =>
+    isNonEmptyString(recordBefore.id)
+      ? (recordsAfterById.get(recordBefore.id) ?? recordBefore)
+      : (recordsAfter[index] ?? recordBefore),
   );
 };
