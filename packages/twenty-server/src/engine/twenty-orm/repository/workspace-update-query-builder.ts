@@ -39,7 +39,6 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import {
-  getConcreteUpdateValues,
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
   mergeRecordWithUpdateValues,
@@ -167,9 +166,11 @@ export class WorkspaceUpdateQueryBuilder<
 
       const tableName = computeObjectTargetTable(objectMetadata);
 
-      const before = await eventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const before = structuredClone(
+        await eventSelectQueryBuilder.getMany({
+          noFormatting: true,
+        }),
+      );
 
       if (before.length > QUERY_MAX_RECORDS) {
         throw new TwentyORMException(
@@ -251,13 +252,7 @@ export class WorkspaceUpdateQueryBuilder<
       this.applyRowLevelPermissionPredicates();
 
       const valuesSet = this.expressionMap.valuesSet ?? {};
-      const eventUpdateValues = Array.isArray(valuesSet)
-        ? valuesSet.map((values) => getConcreteUpdateValues(values))
-        : getConcreteUpdateValues(valuesSet);
-      const updatedRecords = mergeRecordsWithUpdateValues(
-        before,
-        eventUpdateValues,
-      );
+      const updatedRecords = mergeRecordsWithUpdateValues(before, valuesSet);
 
       this.validateRLSPredicatesForUpdate({
         updatedRecords,
@@ -276,30 +271,12 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedAfter = formatResult<T[]>(
         mergeRecordsWithUpdateValues(
           getUpdateEventRecords(before, after),
-          eventUpdateValues,
+          valuesSet,
         ),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
       );
-
-      if (
-        before.some(
-          (record) => record.id === '20202020-7171-4000-8000-000000000003',
-        )
-      ) {
-        // oxlint-disable-next-line no-console
-        console.log(
-          'LEGACY_COMPOSITE_EVENT_DEBUG',
-          JSON.stringify({
-            before,
-            eventUpdateValues,
-            after,
-            formattedBefore,
-            formattedAfter,
-          }),
-        );
-      }
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -376,9 +353,11 @@ export class WorkspaceUpdateQueryBuilder<
         this.manyInputs.map((input) => input.criteria),
       );
 
-      const beforeRecords = await eventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      const beforeRecords = structuredClone(
+        await eventSelectQueryBuilder.getMany({
+          noFormatting: true,
+        }),
+      );
 
       const formattedBefore = formatResult<T[]>(
         beforeRecords,
