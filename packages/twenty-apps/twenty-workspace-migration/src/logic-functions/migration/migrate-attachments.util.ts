@@ -9,6 +9,7 @@ import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
+import { REQUESTS_PER_ATTACHMENT, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 // Copies a source attachment's underlying file into the target workspace's own storage (files
 // are stored workspace-scoped server-side, so reusing the source record's `file.fileId`/path
@@ -52,6 +53,7 @@ file {
       for (const attachment of nodes) {
         const attachmentId = attachment.id as string;
         const name = attachment.name as string;
+        decrementEstimate({ otherRecordCount: REQUESTS_PER_ATTACHMENT });
         const sourceFile = (attachment.file as {
           fileId: string;
           label: string;

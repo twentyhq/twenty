@@ -7,6 +7,7 @@ import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.
 import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { createParentChainQueue } from "src/logic-functions/utils/parent-chain-queue.util";
 import { RecordIdResolution, resolveTargetRecordId } from "src/logic-functions/utils/record-id-resolution.util";
+import { decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const migrateNavigationMenuItems = async (
   targetWorkspace: AxiosInstance,
@@ -86,6 +87,7 @@ export const migrateNavigationMenuItems = async (
     if (itemsToCreate.length > 0) {
       await executeWithRetry(() => createManyMetadataEntities(targetWorkspace, 'createManyNavigationMenuItems', 'inputs', 'CreateNavigationMenuItemInput', itemsToCreate));
       createdCount += itemsToCreate.length;
+      decrementEstimate({ otherRecordCount: 1 });
     }
     for (const item of resolvedInWave) {
       itemQueue.enqueueChildrenOf(item);

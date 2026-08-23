@@ -11,6 +11,7 @@ import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.uti
 import { migrationState } from "src/logic-functions/utils/migration-state.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { RecordIdResolution } from "src/logic-functions/utils/record-id-resolution.util";
+import { REQUESTS_PER_DASHBOARD, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 const findExistingTargetDashboardIds = async (targetWorkspace: AxiosInstance): Promise<Set<string>> => {
   const existingIds = new Set<string>();
@@ -49,6 +50,7 @@ export const migrateDashboards = async (
       const dashboardId = dashboard.id as string;
       const title = dashboard.title as string;
 
+      decrementEstimate({ otherRecordCount: REQUESTS_PER_DASHBOARD });
       // Dashboards keep their source id in the target, so an id already present means this
       // dashboard (and its page layout) was created by an earlier invocation. Re-creating it
       // would mint a second page layout, since createPageLayout always generates a fresh id.

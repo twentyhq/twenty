@@ -13,6 +13,7 @@ import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.u
 import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { createParentChainQueue } from "src/logic-functions/utils/parent-chain-queue.util";
+import { countRoleRequests, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 // A group can reference a parent group, so parents need to be created (or, here, ordered
 // ahead) before their children - same problem as viewFilterGroups in migrate-views.util.ts.
@@ -147,6 +148,7 @@ export const migrateRoles = async (
     }));
     const targetRoleId = created.id;
     createdCount += 1;
+    decrementEstimate({ otherRecordCount: countRoleRequests([role]) });
 
     if (role.permissionFlags.length > 0) {
       await executeWithRetry(() =>

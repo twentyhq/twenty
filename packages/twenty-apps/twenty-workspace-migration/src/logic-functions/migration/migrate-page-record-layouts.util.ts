@@ -8,6 +8,7 @@ import { remapWidgetConfiguration } from "src/logic-functions/utils/remap-widget
 import { logger } from "src/logic-functions/utils/logger.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { REQUESTS_PER_RECORD_PAGE_LAYOUT, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 const createCustomWidget = async (
   targetWorkspace: AxiosInstance,
@@ -161,6 +162,7 @@ export const migrateRecordPageLayouts = async (
   );
 
   for (const sourceLayout of customLayouts) {
+    decrementEstimate({ otherRecordCount: REQUESTS_PER_RECORD_PAGE_LAYOUT });
     const targetObjectMetadataId = sourceLayout.objectMetadataId !== null
       ? targetObjectIdBySourceObjectId.get(sourceLayout.objectMetadataId)
       : undefined;

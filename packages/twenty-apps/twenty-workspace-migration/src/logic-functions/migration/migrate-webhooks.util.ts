@@ -5,6 +5,7 @@ import { logger } from "src/logic-functions/utils/logger.util";
 import { Webhook } from "src/logic-functions/types/webhook.type";
 import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebhooks: Webhook[], targetWebhooks: Webhook[]) => {
   const targetWebhookIds = new Set(targetWebhooks.map((webhook) => webhook.id));
@@ -21,6 +22,7 @@ export const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebh
       description: webhook.description,
     }));
     createdCount += 1;
+    decrementEstimate({ otherRecordCount: 1 });
     if (await stopIfTimeBudgetExceeded()) {
       return false;
     }

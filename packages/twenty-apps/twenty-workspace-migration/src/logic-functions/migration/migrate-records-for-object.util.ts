@@ -12,6 +12,7 @@ import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { setObjectCursor } from "src/logic-functions/utils/set-object-cursor.util";
+import { decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const migrateRecordsForObject = async (
   sourceWorkspace: AxiosInstance,
@@ -50,6 +51,7 @@ export const migrateRecordsForObject = async (
         recordIds.migratedRecordIds.add(sourceRecordId);
       }
       migratedRecords += nodes.length;
+      decrementEstimate({ batchableRecordCount: nodes.length });
 
       for (const [foreignKeyName, count] of droppedRelationCounts) {
         logger.warn(`Dropped "${foreignKeyName}" on ${count} ${sourceObject.nameSingular} record(s) in this page: referenced record not migrated yet`);

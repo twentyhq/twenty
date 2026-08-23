@@ -5,6 +5,7 @@ import { logger } from "src/logic-functions/utils/logger.util";
 import { View } from "src/logic-functions/types/view-entities.type";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { createParentChainQueue } from "src/logic-functions/utils/parent-chain-queue.util";
+import { countViewRequests, decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const migrateViews = async (
   targetWorkspace: AxiosInstance,
@@ -211,6 +212,7 @@ export const migrateViews = async (
       }))));
       createdSubEntities += viewGroupsToCreate.length;
     }
+    decrementEstimate({ otherRecordCount: countViewRequests([view]) });
     if (await stopIfTimeBudgetExceeded()) {
       return false;
     }

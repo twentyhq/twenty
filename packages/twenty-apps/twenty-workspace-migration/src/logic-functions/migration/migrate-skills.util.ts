@@ -5,6 +5,7 @@ import { Skill } from "src/logic-functions/types/skill.type";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
+import { decrementEstimate } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Skill[], targetSkills: Skill[]) => {
   const targetSkillIds = new Set(targetSkills.map((skill) => skill.id));
@@ -23,6 +24,7 @@ export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills
       content: skill.content,
     }));
     createdCount += 1;
+    decrementEstimate({ otherRecordCount: 1 });
     if (await stopIfTimeBudgetExceeded()) {
       return false;
     }

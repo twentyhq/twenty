@@ -7,7 +7,7 @@ import { findWebhooks } from "src/logic-functions/requests/find-webhooks.util";
 import { findRoles } from "src/logic-functions/requests/find-roles.util";
 import { findPageLayouts } from "src/logic-functions/requests/find-page-layouts.util";
 import { PAGE_SIZE } from "src/constants/page-size";
-import { migrationState } from "src/logic-functions/utils/migration-state.util";
+import { migrationState, setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { Role } from "src/logic-functions/types/role.type";
 import { View } from "src/logic-functions/types/view-entities.type";
 import { NavigationMenuItem } from "src/logic-functions/types/navigation-menu-item.type";
@@ -20,11 +20,14 @@ export type MigrationDurationEstimate = {
   estimatedMinutes: number;
 };
 
-const REQUESTS_PER_DASHBOARD = 3; // createPageLayout + updatePageLayoutWithTabsAndWidgets + createManyRecords(1)
-const REQUESTS_PER_RECORD_PAGE_LAYOUT = 2; // createPageLayout + updatePageLayoutWithTabsAndWidgets
-const REQUESTS_PER_ATTACHMENT = 4; // download + createFileUpload + upload PUT + completeFileUpload
+// Exported so the migrators that actually consume this budget in stages 4-8 can bring the
+// live estimate down by exactly what they were charged for, instead of it staying frozen at
+// the stage1 snapshot.
+export const REQUESTS_PER_DASHBOARD = 3; // createPageLayout + updatePageLayoutWithTabsAndWidgets + createManyRecords(1)
+export const REQUESTS_PER_RECORD_PAGE_LAYOUT = 2; // createPageLayout + updatePageLayoutWithTabsAndWidgets
+export const REQUESTS_PER_ATTACHMENT = 4; // download + createFileUpload + upload PUT + completeFileUpload
 
-const countViewRequests = (views: View[]): number =>
+export const countViewRequests = (views: View[]): number =>
   views.reduce(
     (sum, view) =>
       sum
@@ -53,7 +56,7 @@ const countNavigationMenuItemRequests = (items: NavigationMenuItem[]): number =>
   return items.reduce((deepest, item) => Math.max(deepest, getDepth(item)), 0);
 };
 
-const countRoleRequests = (roles: Role[]): number =>
+export const countRoleRequests = (roles: Role[]): number =>
   roles.reduce(
     (sum, role) =>
       sum
@@ -63,6 +66,26 @@ const countRoleRequests = (roles: Role[]): number =>
       + (role.fieldPermissions.length > 0 ? 1 : 0),
     0,
   );
+
+export const computeEstimatedMinutes = (batchableRecordCount: number, otherRecordCount: number): number =>
+  Math.ceil(batchableRecordCount / (PAGE_SIZE * migrationState.maxRequests))
+  + Math.ceil(otherRecordCount / migrationState.maxRequests);
+
+export const decrementEstimate = (consumed: { batchableRecordCount?: number; otherRecordCount?: number }): void => {
+  const current = migrationState.estimate;
+  if (current === null) {
+    return;
+  }
+
+  const batchableRecordCount = Math.max(0, current.batchableRecordCount - (consumed.batchableRecordCount ?? 0));
+  const otherRecordCount = Math.max(0, current.otherRecordCount - (consumed.otherRecordCount ?? 0));
+
+  setStateRef('estimate', {
+    batchableRecordCount,
+    otherRecordCount,
+    estimatedMinutes: computeEstimatedMinutes(batchableRecordCount, otherRecordCount),
+  });
+};
 
 export const estimateMigrationDuration = async (
   sourceWorkspace: AxiosInstance,
@@ -101,12 +124,9 @@ export const estimateMigrationDuration = async (
     + customRecordPageLayoutCount * REQUESTS_PER_RECORD_PAGE_LAYOUT
     + attachmentCount * REQUESTS_PER_ATTACHMENT;
 
-  const batchableMinutes = Math.ceil(batchableRecordCount / (PAGE_SIZE * migrationState.maxRequests));
-  const otherMinutes = Math.ceil(otherRecordCount / migrationState.maxRequests);
-
   return {
     batchableRecordCount,
     otherRecordCount,
-    estimatedMinutes: batchableMinutes + otherMinutes,
+    estimatedMinutes: computeEstimatedMinutes(batchableRecordCount, otherRecordCount),
   };
 };
