@@ -7,17 +7,19 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
-import {
-  buildTimelineActivityTypeResolution,
-  toResolvedTimelineActivityType,
-  type TimelineActivityTypeResolver,
-} from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build-direct-relation-target-shape.util';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 import { buildTimelineActivitySelfRule } from 'src/modules/timeline/utils/build-timeline-activity-self-rule.util';
 import { resolveTimelineActivityTypeRouting } from 'src/modules/timeline/utils/resolve-timeline-activity-type-routing.util';
+import {
+  buildTimelineActivityTypeResolution,
+  toResolvedTimelineActivityType,
+  type ResolvableTimelineActivityType,
+  type TimelineActivityTypeResolver,
+} from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
@@ -26,12 +28,43 @@ type TimelineActivityRulesForEventBatch = {
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
+type TimelineActivityRoutingPlan = {
+  activeTimelineActivityTypes: ResolvableTimelineActivityType[];
+  throughRules: TimelineActivityRule[];
+  eligibleNonAuditedObjectMetadataIds: Set<string>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  resolveTimelineActivityType: TimelineActivityTypeResolver;
+};
+
 @Injectable()
-export class TimelineActivityRuleBuilderService {
+export class TimelineActivityRoutingPlanService {
+  private readonly routingPlanByWorkspaceId = new Map<
+    string,
+    { cacheKey: string; routingPlan: TimelineActivityRoutingPlan }
+  >();
+
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
+
+  async shouldProcessEvent({
+    flatObjectMetadata,
+    workspaceId,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (flatObjectMetadata.isAuditLogged) {
+      return true;
+    }
+
+    const routingPlan = await this.getRoutingPlan(workspaceId);
+
+    return routingPlan.eligibleNonAuditedObjectMetadataIds.has(
+      flatObjectMetadata.id,
+    );
+  }
 
   async getRulesForEventBatch({
     workspaceId,
@@ -40,12 +73,34 @@ export class TimelineActivityRuleBuilderService {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
   }): Promise<TimelineActivityRulesForEventBatch> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatTimelineActivityTypeMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    const routingPlan = await this.getRoutingPlan(workspaceId);
+    const selfRule = buildTimelineActivitySelfRule({
+      flatObjectMetadata,
+      timelineActivityTypes: routingPlan.activeTimelineActivityTypes,
+    });
+
+    return {
+      sourceRules: [
+        ...(isDefined(selfRule) ? [selfRule] : []),
+        ...routingPlan.throughRules.filter(
+          (rule) => rule.sourceFlatObjectMetadata.id === flatObjectMetadata.id,
+        ),
+      ],
+      junctionRules: routingPlan.throughRules.filter(
+        (rule) =>
+          rule.targetShape.kind === 'JUNCTION' &&
+          rule.targetShape.junctionObjectMetadataId === flatObjectMetadata.id,
+      ),
+      flatFieldMetadataMaps: routingPlan.flatFieldMetadataMaps,
+      resolveTimelineActivityType: routingPlan.resolveTimelineActivityType,
+    };
+  }
+
+  private async getRoutingPlan(
+    workspaceId: string,
+  ): Promise<TimelineActivityRoutingPlan> {
+    const { data, hashes } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
         {
           workspaceId,
           flatMapsKeys: [
@@ -55,7 +110,38 @@ export class TimelineActivityRuleBuilderService {
           ],
         },
       );
+    const cacheKey = [
+      hashes.flatObjectMetadataMaps,
+      hashes.flatFieldMetadataMaps,
+      hashes.flatTimelineActivityTypeMaps,
+    ].join('|');
+    const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
 
+    if (cachedRoutingPlan?.cacheKey === cacheKey) {
+      return cachedRoutingPlan.routingPlan;
+    }
+
+    const routingPlan = this.buildRoutingPlan({ workspaceId, ...data });
+
+    this.routingPlanByWorkspaceId.set(workspaceId, {
+      cacheKey,
+      routingPlan,
+    });
+
+    return routingPlan;
+  }
+
+  private buildRoutingPlan({
+    workspaceId,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatTimelineActivityTypeMaps,
+  }: {
+    workspaceId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatTimelineActivityTypeMaps: FlatTimelineActivityTypeMaps;
+  }): TimelineActivityRoutingPlan {
     const {
       effectiveTimelineActivityTypes,
       routingConflicts,
@@ -87,12 +173,11 @@ export class TimelineActivityRuleBuilderService {
     const activeTimelineActivityTypes = effectiveTimelineActivityTypes.filter(
       (timelineActivityType) => timelineActivityType.isActive,
     );
-
     const invalidThroughRules: {
       action: string;
       objectUniversalIdentifier: string | null;
     }[] = [];
-    const declaredThroughRules = activeTimelineActivityTypes
+    const throughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {
         const routing =
           resolveTimelineActivityTypeRouting(timelineActivityType);
@@ -123,6 +208,7 @@ export class TimelineActivityRuleBuilderService {
             objectUniversalIdentifier:
               timelineActivityType.objectUniversalIdentifier,
           });
+
           return undefined;
         }
 
@@ -144,6 +230,7 @@ export class TimelineActivityRuleBuilderService {
             objectUniversalIdentifier:
               timelineActivityType.objectUniversalIdentifier,
           });
+
           return undefined;
         }
 
@@ -173,27 +260,38 @@ export class TimelineActivityRuleBuilderService {
       issues: invalidThroughRules,
     });
 
-    const selfRule = buildTimelineActivitySelfRule({
-      flatObjectMetadata,
-      timelineActivityTypes: activeTimelineActivityTypes,
-    });
-
-    const sourceRules = [
-      ...(isDefined(selfRule) ? [selfRule] : []),
-      ...declaredThroughRules.filter(
-        (rule) => rule.sourceFlatObjectMetadata.id === flatObjectMetadata.id,
-      ),
-    ];
-
-    const junctionRules = declaredThroughRules.filter(
-      (rule) =>
-        rule.targetShape.kind === 'JUNCTION' &&
-        rule.targetShape.junctionObjectMetadataId === flatObjectMetadata.id,
+    const eligibleNonAuditedObjectMetadataIds = new Set(
+      throughRules.flatMap((rule) => [
+        rule.sourceFlatObjectMetadata.id,
+        ...(rule.targetShape.kind === 'JUNCTION'
+          ? [rule.targetShape.junctionObjectMetadataId]
+          : []),
+      ]),
     );
 
+    for (const timelineActivityType of activeTimelineActivityTypes) {
+      if (
+        !isDefined(timelineActivityType.action) ||
+        !isDefined(timelineActivityType.objectUniversalIdentifier) ||
+        isDefined(resolveTimelineActivityTypeRouting(timelineActivityType))
+      ) {
+        continue;
+      }
+
+      const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: timelineActivityType.objectUniversalIdentifier,
+      });
+
+      if (isDefined(flatObjectMetadata)) {
+        eligibleNonAuditedObjectMetadataIds.add(flatObjectMetadata.id);
+      }
+    }
+
     return {
-      sourceRules,
-      junctionRules,
+      activeTimelineActivityTypes,
+      throughRules,
+      eligibleNonAuditedObjectMetadataIds,
       flatFieldMetadataMaps,
       resolveTimelineActivityType,
     };
