@@ -270,7 +270,7 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedAfter = formatResult<T[]>(
-        after,
+        this.mergeRecordsWithUpdateValues(after, valuesSet),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -468,8 +468,20 @@ export class WorkspaceUpdateQueryBuilder<
         noFormatting: true,
       });
 
+      const updateValuesByRecordId = new Map(
+        this.manyInputs.map(({ criteria, partialEntity }) => [
+          criteria,
+          partialEntity,
+        ]),
+      );
+
       const formattedAfter = formatResult<T[]>(
-        afterRecords,
+        afterRecords.map((record) =>
+          this.mergeRecordWithUpdateValues(
+            record,
+            updateValuesByRecordId.get(record.id),
+          ),
+        ),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -681,5 +693,35 @@ export class WorkspaceUpdateQueryBuilder<
       errorMessage:
         'Updated record does not satisfy row-level security constraints of your current role',
     });
+  }
+
+  private mergeRecordsWithUpdateValues(
+    records: T[],
+    values:
+      | QueryDeepPartialEntity<T>
+      | QueryDeepPartialEntity<T>[]
+      | ObjectLiteral,
+  ): T[] {
+    return records.map((record, index) =>
+      this.mergeRecordWithUpdateValues(
+        record,
+        Array.isArray(values) ? (values[index] ?? values[0]) : values,
+      ),
+    );
+  }
+
+  private mergeRecordWithUpdateValues(
+    record: T,
+    values: QueryDeepPartialEntity<T> | ObjectLiteral | undefined,
+  ): T {
+    if (!isDefined(values)) {
+      return record;
+    }
+
+    const concreteValues = Object.fromEntries(
+      Object.entries(values).filter(([, value]) => typeof value !== 'function'),
+    );
+
+    return { ...record, ...concreteValues };
   }
 }

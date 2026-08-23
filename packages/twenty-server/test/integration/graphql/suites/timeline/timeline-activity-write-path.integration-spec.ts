@@ -164,6 +164,7 @@ const ATTACHMENT_UNIVERSAL_IDENTIFIER =
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
+const COMPOSITE_COMPANY_ID = '20202020-7171-4000-8000-000000000003';
 const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
@@ -210,6 +211,7 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
       id,
     })),
     { objectMetadataSingularName: 'company', id: NOTE_COMPANY_ID },
+    { objectMetadataSingularName: 'company', id: COMPOSITE_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: POSITION_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: COMPANY_ID },
   ];
@@ -296,6 +298,56 @@ describe('timeline activity write path (integration)', () => {
           name: {
             before: 'Timeline Write Path',
             after: 'Timeline Write Path Renamed',
+          },
+        },
+      });
+    });
+
+    it('should write an updated entry for a composite field change', async () => {
+      await createRecord({
+        objectMetadataSingularName: 'company',
+        data: {
+          id: COMPOSITE_COMPANY_ID,
+          name: 'Composite Field Timeline',
+        },
+      });
+
+      await updateRecord({
+        objectMetadataSingularName: 'company',
+        recordId: COMPOSITE_COMPANY_ID,
+        data: {
+          address: {
+            addressStreet1: '234 Composite Street',
+            addressStreet2: '',
+            addressCity: 'Paris',
+            addressState: '',
+            addressCountry: '',
+            addressPostcode: '',
+            addressLat: null,
+            addressLng: null,
+          },
+        },
+      });
+
+      const timelineActivities = await findTimelineActivities({
+        targetCompanyId: { eq: COMPOSITE_COMPANY_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
+      });
+
+      expect(timelineActivities).toHaveLength(1);
+      expect(timelineActivities[0].properties).toMatchObject({
+        diff: {
+          address: {
+            before: {
+              addressStreet1: '',
+              addressCity: '',
+            },
+            after: {
+              addressStreet1: '234 Composite Street',
+              addressCity: 'Paris',
+            },
           },
         },
       });
