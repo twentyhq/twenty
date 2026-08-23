@@ -22,7 +22,7 @@ const JUNCTION_TARGETS = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.34.0', 1787411153000)
+@RegisteredWorkspaceCommand('2.34.0', 1787471608317)
 @Command({
   name: 'upgrade:2-34:configure-timeline-activity-routing',
   description:

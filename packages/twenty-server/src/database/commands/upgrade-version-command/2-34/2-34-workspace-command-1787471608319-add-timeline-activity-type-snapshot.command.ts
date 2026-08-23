@@ -19,7 +19,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
 const BACKFILL_BATCH_SIZE = 5000;
-@RegisteredWorkspaceCommand('2.34.0', 1787467579000)
+@RegisteredWorkspaceCommand('2.34.0', 1787471608319)
 @Command({
   name: 'upgrade:2-34:add-timeline-activity-type-snapshot',
   description:

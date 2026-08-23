@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddTimelineActivityRoutingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787411152000-add-timeline-activity-routing';
+import { AddTimelineActivityRoutingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608313-add-timeline-activity-routing';
 
 describe('AddTimelineActivityRoutingFastInstanceCommand', () => {
   const query = jest.fn();

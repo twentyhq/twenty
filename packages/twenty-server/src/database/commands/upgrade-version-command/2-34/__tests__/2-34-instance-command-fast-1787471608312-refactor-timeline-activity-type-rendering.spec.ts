@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { RefactorTimelineActivityTypeRenderingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787401441616-refactor-timeline-activity-type-rendering';
+import { RefactorTimelineActivityTypeRenderingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608312-refactor-timeline-activity-type-rendering';
 
 describe('RefactorTimelineActivityTypeRenderingFastInstanceCommand', () => {
   const query = jest.fn();

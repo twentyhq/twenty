@@ -8,7 +8,7 @@ const BASE_EMIT_SLOT_INDEX_NAME =
 const OVERRIDE_EMIT_SLOT_INDEX_NAME =
   'IDX_TIMELINE_ACTIVITY_TYPE_OVERRIDE_EMIT_SLOT_UNIQUE';
 
-@RegisteredInstanceCommand('2.34.0', 1787442504032)
+@RegisteredInstanceCommand('2.34.0', 1787471608316)
 export class EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand
   implements FastInstanceCommand
 {

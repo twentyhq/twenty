@@ -22,7 +22,7 @@ const STANDARD_TYPES_WITH_RENDERERS = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.34.0', 1787425000000)
+@RegisteredWorkspaceCommand('2.34.0', 1787471608318)
 @Command({
   name: 'upgrade:2-34:configure-standard-timeline-renderers',
   description: 'Attach standard timeline previews through renderer identifiers',

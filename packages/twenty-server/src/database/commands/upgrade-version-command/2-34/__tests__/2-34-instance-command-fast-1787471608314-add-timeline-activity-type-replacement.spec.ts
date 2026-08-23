@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddTimelineActivityTypeReplacementFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787411154000-add-timeline-activity-type-replacement';
+import { AddTimelineActivityTypeReplacementFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608314-add-timeline-activity-type-replacement';
 
 describe('AddTimelineActivityTypeReplacementFastInstanceCommand', () => {
   const query = jest.fn();

@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787442504032-enforce-timeline-activity-type-emit-uniqueness';
+import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608316-enforce-timeline-activity-type-emit-uniqueness';
 
 describe('EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand', () => {
   const query = jest.fn();
