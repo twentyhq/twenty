@@ -38,6 +38,10 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import {
+  mergeRecordsWithUpdateValues,
+  mergeRecordWithUpdateValues,
+} from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
@@ -245,15 +249,7 @@ export class WorkspaceUpdateQueryBuilder<
       this.applyRowLevelPermissionPredicates();
 
       const valuesSet = this.expressionMap.valuesSet ?? {};
-      const updatedRecords: T[] = before.map(
-        (record, index) =>
-          ({
-            ...record,
-            ...(Array.isArray(valuesSet)
-              ? (valuesSet[index] ?? valuesSet[0] ?? {})
-              : valuesSet),
-          }) as T,
-      );
+      const updatedRecords = mergeRecordsWithUpdateValues(before, valuesSet);
 
       this.validateRLSPredicatesForUpdate({
         updatedRecords,
@@ -270,7 +266,7 @@ export class WorkspaceUpdateQueryBuilder<
       });
 
       const formattedAfter = formatResult<T[]>(
-        after,
+        mergeRecordsWithUpdateValues(after, valuesSet),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -443,12 +439,7 @@ export class WorkspaceUpdateQueryBuilder<
 
         const beforeRecord = beforeRecordById.get(input.criteria);
         const updatedRecords = beforeRecord
-          ? [
-              {
-                ...beforeRecord,
-                ...input.partialEntity,
-              } as T,
-            ]
+          ? [mergeRecordWithUpdateValues(beforeRecord, input.partialEntity)]
           : [];
 
         this.validateRLSPredicatesForUpdate({
@@ -468,8 +459,20 @@ export class WorkspaceUpdateQueryBuilder<
         noFormatting: true,
       });
 
+      const updateValuesByRecordId = new Map(
+        this.manyInputs.map(({ criteria, partialEntity }) => [
+          criteria,
+          partialEntity,
+        ]),
+      );
+
       const formattedAfter = formatResult<T[]>(
-        afterRecords,
+        afterRecords.map((record) =>
+          mergeRecordWithUpdateValues(
+            record,
+            updateValuesByRecordId.get(record.id),
+          ),
+        ),
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
