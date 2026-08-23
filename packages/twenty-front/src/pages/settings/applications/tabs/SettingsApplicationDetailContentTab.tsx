@@ -69,7 +69,7 @@ export const SettingsApplicationDetailContentTab = ({
 
   const {
     installedTimelineActivityTypes,
-    mutatingTimelineActivityTypeId,
+    mutatingTimelineActivityTypeIds,
     resetTimelineActivityTypeToDefault,
     setTimelineActivityTypeIsActive,
   } = useApplicationTimelineActivityTypes({
@@ -341,7 +341,7 @@ export const SettingsApplicationDetailContentTab = ({
                 currentWorkspace.workspaceCustomApplication?.id !==
                   applicationId
               }
-              mutatingTimelineActivityTypeId={mutatingTimelineActivityTypeId}
+              mutatingTimelineActivityTypeIds={mutatingTimelineActivityTypeIds}
               onToggle={setTimelineActivityTypeIsActive}
               onReset={resetTimelineActivityTypeToDefault}
             />

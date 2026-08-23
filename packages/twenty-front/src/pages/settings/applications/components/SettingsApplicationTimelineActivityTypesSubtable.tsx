@@ -18,13 +18,13 @@ const GRID_TEMPLATE_COLUMNS = 'minmax(200px, 1fr) 180px 80px 32px';
 
 export const SettingsApplicationTimelineActivityTypesSubtable = ({
   canReset,
-  mutatingTimelineActivityTypeId,
+  mutatingTimelineActivityTypeIds,
   onReset,
   onToggle,
   timelineActivityTypes,
 }: {
   canReset: boolean;
-  mutatingTimelineActivityTypeId: string | null;
+  mutatingTimelineActivityTypeIds: ReadonlySet<string>;
   onReset: (id: string) => void;
   onToggle: (id: string, isActive: boolean) => void;
   timelineActivityTypes: SettingsApplicationTimelineActivityType[];
@@ -40,8 +40,9 @@ export const SettingsApplicationTimelineActivityTypesSubtable = ({
     <TableSection title={t`Timeline activity types`}>
       {timelineActivityTypes.map((timelineActivityType) => {
         const Icon = getIcon(timelineActivityType.icon);
-        const isMutating =
-          mutatingTimelineActivityTypeId === timelineActivityType.id;
+        const isMutating = mutatingTimelineActivityTypeIds.has(
+          timelineActivityType.id,
+        );
 
         return (
           <TableRow

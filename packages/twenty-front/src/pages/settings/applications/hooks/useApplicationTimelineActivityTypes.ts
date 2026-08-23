@@ -14,8 +14,8 @@ export const useApplicationTimelineActivityTypes = ({
   installedApplication: boolean;
 }) => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [mutatingTimelineActivityTypeId, setMutatingTimelineActivityTypeId] =
-    useState<string | null>(null);
+  const [mutatingTimelineActivityTypeIds, setMutatingTimelineActivityTypeIds] =
+    useState<ReadonlySet<string>>(new Set());
 
   const { data } = useQuery(FindManyTimelineActivityTypesDocument, {
     skip: !installedApplication,
@@ -32,7 +32,9 @@ export const useApplicationTimelineActivityTypes = ({
     id: string,
     isActive: boolean,
   ) => {
-    setMutatingTimelineActivityTypeId(id);
+    setMutatingTimelineActivityTypeIds((currentIds) =>
+      new Set(currentIds).add(id),
+    );
 
     try {
       await updateTimelineActivityType({
@@ -50,12 +52,20 @@ export const useApplicationTimelineActivityTypes = ({
         message: t`Failed to update the timeline activity type.`,
       });
     } finally {
-      setMutatingTimelineActivityTypeId(null);
+      setMutatingTimelineActivityTypeIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+
+        nextIds.delete(id);
+
+        return nextIds;
+      });
     }
   };
 
   const resetTimelineActivityTypeToDefault = async (id: string) => {
-    setMutatingTimelineActivityTypeId(id);
+    setMutatingTimelineActivityTypeIds((currentIds) =>
+      new Set(currentIds).add(id),
+    );
 
     try {
       await resetTimelineActivityType({
@@ -66,13 +76,19 @@ export const useApplicationTimelineActivityTypes = ({
         message: t`Failed to reset the timeline activity type.`,
       });
     } finally {
-      setMutatingTimelineActivityTypeId(null);
+      setMutatingTimelineActivityTypeIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+
+        nextIds.delete(id);
+
+        return nextIds;
+      });
     }
   };
 
   return {
     installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
-    mutatingTimelineActivityTypeId,
+    mutatingTimelineActivityTypeIds,
     resetTimelineActivityTypeToDefault,
     setTimelineActivityTypeIsActive,
   };
