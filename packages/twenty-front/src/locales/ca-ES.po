@@ -3411,6 +3411,11 @@ msgstr "caldav.example.com"
 msgid "Calendar"
 msgstr "Calendari"
 
+#. js-lingui-id: l7HQ8A
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
+msgid "Calendar event has no start date"
+msgstr "L'esdeveniment del calendari no té data d'inici"
+
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
@@ -4142,6 +4147,11 @@ msgstr "Programar la teva funció"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Collapse"
 msgstr "Contraure"
+
+#. js-lingui-id: 183A6G
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Collapse details"
+msgstr "Replega els detalls"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -5292,11 +5302,6 @@ msgstr ""
 msgid "Created {objectLabel}"
 msgstr "S'ha creat {objectLabel}"
 
-#. js-lingui-id: 2K/oCx
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "created a related {objectNameSingular}"
-msgstr "ha creat un {objectNameSingular} relacionat"
-
 #. js-lingui-id: NCIYDF
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Created by"
@@ -6394,11 +6399,6 @@ msgstr "Eliminat"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Deleted {objectLabel}"
 msgstr "{objectLabel} eliminats"
-
-#. js-lingui-id: P65ogp
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "deleted a related {objectNameSingular}"
-msgstr "ha suprimit un {objectNameSingular} relacionat"
 
 #. js-lingui-id: oAhMKF
 #: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
@@ -8122,6 +8122,11 @@ msgstr "Ampliar"
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
 msgid "Expand chat"
 msgstr "Amplia el xat"
+
+#. js-lingui-id: xAo8pm
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Expand details"
+msgstr "Desplega els detalls"
 
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -11375,21 +11380,6 @@ msgstr "URL de l'enllaç"
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 msgid "linked a {objectLabel}"
 msgstr "ha enllaçat un {objectLabel}"
-
-#. js-lingui-id: JYFFGu
-#: src/modules/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent.tsx
-msgid "linked a calendar event with {labelIdentifierValue}"
-msgstr "ha enllaçat un esdeveniment del calendari amb {labelIdentifierValue}"
-
-#. js-lingui-id: ZJ5OOX
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "linked a related {objectNameSingular}"
-msgstr "ha enllaçat un {objectNameSingular} relacionat"
-
-#. js-lingui-id: fd8C68
-#: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
-msgid "linked an email with"
-msgstr "ha enllaçat un correu amb"
 
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -16035,11 +16025,6 @@ msgstr "Restaura"
 msgid "Restore {objectLabel}"
 msgstr "Restaurar {objectLabel}"
 
-#. js-lingui-id: RyMA1t
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "restored a related {objectNameSingular}"
-msgstr "ha restaurat un {objectNameSingular} relacionat"
-
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Restrict available models to a curated list"
@@ -18115,7 +18100,6 @@ msgid "Subject and metadata will be shared with your team."
 msgstr "Assignatura i metadades seran compartides amb el teu equip."
 
 #. js-lingui-id: DvSvG9
-#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
 msgid "Subject not shared"
 msgstr "Assumpte no compartit"
@@ -19973,11 +19957,6 @@ msgstr "Espai de treball desconegut"
 msgid "Unlimited"
 msgstr "Il·limitat"
 
-#. js-lingui-id: CfClM4
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "unlinked a related {objectNameSingular}"
-msgstr "ha desvinculat un {objectNameSingular} relacionat"
-
 #. js-lingui-id: WDcQq9
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -20065,8 +20044,6 @@ msgid "Unsupported image format"
 msgstr "Format d'imatge no compatible"
 
 #. js-lingui-id: wja8aL
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-#: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
@@ -20212,6 +20189,7 @@ msgstr "Actualitza la configuració del teu compte. Configureu qualsevol combina
 
 #. js-lingui-id: x4Xp3c
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "updated"
 msgstr "actualitzat"
 
@@ -20234,11 +20212,6 @@ msgstr "Actualitzat (en camps específics)"
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
 msgid "Updated {objectLabel}"
 msgstr "{objectLabel} actualitzat"
-
-#. js-lingui-id: OFU7Sk
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "updated a related {objectNameSingular}"
-msgstr "ha actualitzat un {objectNameSingular} relacionat"
 
 #. js-lingui-id: xuCD/Q
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
