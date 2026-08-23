@@ -132,6 +132,7 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   useApplyNewSelectOptionFromSearchParams({
+    fieldMetadataId: fieldMetadataItem?.id,
     getValues: formConfig.getValues,
     setValue: formConfig.setValue,
   });

@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
-import { type UseFormGetValues, type UseFormSetValue } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 
 type UseApplyNewSelectOptionFromSearchParamsParams = {
-  getValues: UseFormGetValues<SettingsDataModelFieldSelectFormValues>;
-  setValue: UseFormSetValue<SettingsDataModelFieldSelectFormValues>;
+  fieldMetadataId: string | undefined;
+  getValues: (name: 'options') => FieldMetadataItemOption[] | undefined;
+  setValue: (
+    name: 'options',
+    options: FieldMetadataItemOption[],
+    config: { shouldDirty: boolean },
+  ) => void;
 };
 
 // This has to live in the component owning the form: react-hook-form only
@@ -16,6 +20,7 @@ type UseApplyNewSelectOptionFromSearchParamsParams = {
 // option written from the select form below it leaves the form pristine and
 // the Save button disabled.
 export const useApplyNewSelectOptionFromSearchParams = ({
+  fieldMetadataId,
   getValues,
   setValue,
 }: UseApplyNewSelectOptionFromSearchParamsParams) => {
@@ -32,6 +37,8 @@ export const useApplyNewSelectOptionFromSearchParams = ({
 
     const currentOptions = getValues('options');
 
+    // The field only registers once its metadata has resolved, so this waits
+    // for the next field instead of giving up on the first miss.
     if (!isDefined(currentOptions)) {
       return;
     }
@@ -46,5 +53,5 @@ export const useApplyNewSelectOptionFromSearchParams = ({
       ],
       { shouldDirty: true },
     );
-  }, [searchParams, hasAppliedNewOption, getValues, setValue]);
+  }, [searchParams, hasAppliedNewOption, fieldMetadataId, getValues, setValue]);
 };
