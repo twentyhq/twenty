@@ -81,6 +81,8 @@ export const useApplicationTimelineActivityTypes = ({
       id,
       mutation: () =>
         resetTimelineActivityType({
+          awaitRefetchQueries: true,
+          refetchQueries: [FindManyTimelineActivityTypesDocument],
           variables: { id },
         }),
     });
