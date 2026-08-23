@@ -1,0 +1,184 @@
+---
+title: "时间线活动类型们。 "
+description: 定义在记录时间线上呈现的自动审计事件和显式应用事件。
+icon: clock-rotate-left
+---
+
+时间线活动类型定义了在记录时间线上显示的事件所使用的稳定词汇。 标准对象和应用对象使用相同的约定：类型具有标签和图标，可选择声明其发出时间，还可选择通过你的应用的[前端组件](/l/zh/developers/extend/apps/layout/front-components)之一进行呈现。
+
+<Note>
+  时间线活动类型目前处于 Beta 阶段，将很快在 Twenty 2.34 中推出。 该
+  API 可能会随着我们了解应用开发者的使用场景而演进。
+</Note>
+
+使用脚手架工具创建一个：
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+或直接定义：
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## 自动事件和显式事件
+
+当 Twenty 应自动创建此类型时，添加 `emit`。 `emit.on` 支持 `created`、`updated`、`deleted`、`restored`、`linked` 和 `unlinked`，而 `emit.objectUniversalIdentifier` 用于标识源对象。 在一个工作区中，只有一个有效类型可以处理相同的 emit 键——`on`、对象和可选的通过关系。
+
+如果没有 `emit.through`，事件将写入源记录自身的时间线。 要让它发到相关的记录，请设置 `emit.access'. elationFieldUniversalIdentifier` 指向一个直接的多对一个关系或源对象上的[一个对多的交接关系](/l/zh/developers/extend/apps/data/relations#junction-relations)。 变形关系向其摩擦组的每个成员粉碎，因此单一声明可以针对几个对象类型。
+
+就直接关系而言，创建或恢复源记录产生`链接`，删除它产生`unlined`， 并重新指出关系会在前一个目标上产生`unlinked`加上新目标上的`linked`。 其他源更新不会产生链接事件。 这是附加物所使用的合同，其目标是一种直接的停尸关系。
+
+对于联接关系，`universalSettings.crosstionTargetFieldUniversalIdentifier` 可以识别联接对象与目标之间的关系。 创建或删除一个命令行会产生`linked`或`unlinked`。 指明一个联接行的任何一方也会产生一个联接事件；不相关联的联接字段的更新则不会产生联接事件。
+
+`linked`和`unlinked`事件需要`emit.that`, 因为它们的触发是对配置的直接关系或交叉关系的改变。
+
+例如，这是备注、任务、消息和日历事件所使用的同一通用约定：
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+默认情况下，每次源更新都会发出一个 `updated` 通过事件。 当只有选定源字段的更改应显示在目标时间线上时，设置 `emit.through.triggerFieldUniversalIdentifiers`。
+
+对于由你的逻辑函数自行创建的显式领域事件，请省略 `emit`。 这样可避免针对同一操作同时生成自动审计行和显式行。
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+使用 [`createTimelineActivity()`](/l/zh/developers/extend/apps/logic/logic-functions#create-a-timeline-activity) 创建显式事件。 应用代码使用稳定的通用标识符；Twenty 会解析特定于安装的元数据 ID。
+
+## 自定义呈现
+
+如果没有前端组件，Twenty 会根据类型标签、图标和关联对象元数据呈现原生通用行。 这适用于没有对象专用渲染器的标准对象和自定义对象。
+
+如需自定义详细信息，请将 `frontComponentUniversalIdentifier` 设置为由同一应用拥有的前端组件：
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+原生行仍保持为折叠状态下的呈现形式。 Twenty 仅在用户展开该行后才挂载前端组件，从而避免为每个可见事件创建沙盒和工作线程。 在组件内部，从 `twenty-sdk/front-component` 调用 `useTimelineActivityId()` 以读取行 ID，并获取呈现所需的任何数据。 当组件在时间线行外部呈现时，它会返回 `null`。
+
+## 覆盖其他应用的呈现方式
+
+应用拥有其自身对象的自动时间线约定。 要自定义由其他应用拥有的对象上的事件，请使用 `replacesTimelineActivityTypeUniversalIdentifier` 显式声明现有类型：
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+覆盖必须包含 `emit`，因为它替换的是现有的自动发出槽位，而不是仅显式类型。 被引用的类型必须属于目标对象的应用，并描述相同的操作和路由。 移除覆盖应用会恢复基础类型；移除基础类型会禁用覆盖。
+
+## 工作区覆盖和静默
+
+工作区管理员无需分叉应用即可更改类型的呈现方式，或将其自动和显式事件设为静默。 使用元数据 API 的 `updateTimelineActivityType` 变更，并传入特定于安装的类型 ID：
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` 和 `icon` 会存储为工作区覆盖，因此之后的应用更新不会覆盖管理员的选择。 将 `isActive` 设为 `false` 可停止自动发出，并拒绝该类型的新显式事件。 现有行仍然可见。
+
+使用以下方式恢复应用默认值，包括活动状态：
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## 配置字段
+
+| 字段                                                | 必填      | 描述                     |
+| ------------------------------------------------- | ------- | ---------------------- |
+| `universalIdentifier`                             | 是       | 跨安装和升级保持稳定的类型 UUID     |
+| `name`                                            | 是       | 应用本地的编程名称              |
+| `label`                                           | 是       | 由原生渲染器使用的面向用户的操作文本     |
+| `icon`                                            | 否       | 显示在事件旁的 Twenty 图标名称    |
+| `emit`                                            | 否       | 自动发出声明；对于仅显式类型则省略      |
+| `emit.on`                                         | 使用 emit | 导致写入此类型的审计操作           |
+| `emit.objectUniversalIdentifier`                  | 使用 emit | 其记录会发出此类型的对象           |
+| `emit.through.relationFieldUniversalIdentifier`   | 否       | 用于切换到相关时限的直接或交接关系      |
+| `emit.through.triggerFieldUniversalIdentifiers`   | 否       | 可触发 `updated` 通过事件的源字段 |
+| `frontComponentUniversalIdentifier`               | 否       | 当行扩展时挂载应用前台组件          |
+| `replacesTimelineActivityTypeUniversalIdentifier` | 否       | 现有的发射类型已替换；需要 `emit`   |
+
+当创建事件时，二十张快照会出现语义特征和持久演示效果的退缩。 历史行保留其原始动作和对象含义。 此类型已安装，其当前翻译的标签、图标和前面组件正在运行；卸载后，快照回退将保持行可读。 分辨率使用通用标识符，因此在重新安装应用时也可以存活。

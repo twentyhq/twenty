@@ -1,0 +1,184 @@
+---
+title: 타임라인 활동 유형
+description: 레코드 타임라인에 표시되는 자동 감사 이벤트와 명시적 앱 이벤트를 정의합니다.
+icon: clock-rotate-left
+---
+
+타임라인 활동 유형은 레코드의 타임라인에 표시되는 이벤트를 위한 안정적인 어휘를 정의합니다. 표준 객체와 앱 객체는 동일한 계약을 사용합니다. 유형에는 레이블과 아이콘이 있으며, 선택적으로 발생 시점을 선언하고 앱의 [프런트 컴포넌트](/l/ko/developers/extend/apps/layout/front-components) 중 하나를 통해 렌더링할 수 있습니다.
+
+<Note>
+  타임라인 활동 유형은 베타 상태이며 Twenty 2.34에서 곧 제공됩니다. 앱 개발자의 사용 사례를 파악하는 동안
+  API는 변경될 수 있습니다.
+</Note>
+
+스캐폴더로 하나를 생성합니다:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+또는 직접 정의합니다:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## 자동 및 명시적 이벤트
+
+Twenty가 이 유형을 자동으로 생성해야 하는 경우 `emit`을 추가합니다. `emit.on`은 `created`, `updated`, `deleted`, `restored`, `linked`, `unlinked`를 지원하며, `emit.objectUniversalIdentifier`는 소스 객체를 식별합니다. 워크스페이스에서는 하나의 유효 유형만 동일한 emit 키, 즉 `on`, 객체 및 선택적 through 관계를 처리할 수 있습니다.
+
+`emit.through`가 없으면 이벤트는 소스 레코드 자체의 타임라인에 기록됩니다. 연결된 레코드로 확산하려면 `emit.through.relationFieldUniversalIdentifier`를 소스 객체의 직접 다대일 관계 또는 [일대다 정션 관계](/l/ko/developers/extend/apps/data/relations#junction-relations)로 설정하세요. 모프 관계는 모프 그룹의 모든 멤버로 확산되므로 단일 선언으로 여러 객체 유형을 대상으로 지정할 수 있습니다.
+
+직접 관계의 경우 소스 레코드를 생성하거나 복원하면 `linked`가 생성되고, 삭제하면 `unlinked`가 생성되며, 관계의 대상을 변경하면 이전 대상에 `unlinked`와 새 대상에 `linked`가 생성됩니다. 다른 소스 업데이트는 링크 이벤트를 생성하지 않습니다. 이는 대상이 직접 모프 관계인 첨부 파일에서 사용하는 계약입니다.
+
+정션 관계의 경우 `universalSettings.junctionTargetFieldUniversalIdentifier`는 정션 객체에서 대상으로의 관계를 식별합니다. 정션 행을 생성하거나 삭제하면 `linked` 또는 `unlinked`가 생성됩니다. 정션 행의 어느 한쪽 대상이 변경되어도 링크 이벤트가 생성되지만, 관련 없는 정션 필드의 업데이트는 생성되지 않습니다.
+
+`linked` 및 `unlinked` 이벤트는 구성된 직접 또는 정션 관계의 변경이 트리거이므로 `emit.through`가 필요합니다.
+
+예를 들어, 이는 노트, 작업, 메시지, 캘린더 이벤트에서 사용되는 것과 동일한 일반 계약입니다:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+기본적으로 모든 소스 업데이트에 대해 `updated` through 이벤트가 발생합니다. 선택한 소스 필드의 변경 사항만 대상 타임라인에 표시되어야 하는 경우 `emit.through.triggerFieldUniversalIdentifiers`를 설정합니다.
+
+로직 함수가 직접 생성하는 명시적 도메인 이벤트에는 `emit`을 생략합니다. 이렇게 하면 동일한 작업에 대해 자동 감사 행과 명시적 행이 모두 생성되는 것을 방지할 수 있습니다.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+[`createTimelineActivity()`](/l/ko/developers/extend/apps/logic/logic-functions#create-a-timeline-activity)로 명시적 이벤트를 생성합니다. 앱 코드는 안정적인 범용 식별자를 사용하며, Twenty는 설치별 메타데이터 ID를 확인합니다.
+
+## 사용자 지정 렌더링
+
+프런트 컴포넌트가 없으면 Twenty는 유형 레이블, 아이콘 및 연결된 객체 메타데이터를 기반으로 네이티브 일반 행을 렌더링합니다. 이 방식은 객체별 렌더러 없이 표준 및 사용자 지정 객체에 사용할 수 있습니다.
+
+사용자 지정 세부 정보를 위해 `frontComponentUniversalIdentifier`를 동일한 앱이 소유한 프런트 컴포넌트로 설정합니다:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+네이티브 행은 접힌 상태의 표시로 유지됩니다. Twenty는 사용자가 해당 행을 확장한 후에만 프런트 컴포넌트를 마운트하므로, 표시되는 모든 이벤트에 대해 샌드박스와 워커가 생성되는 것을 방지합니다. 컴포넌트 내부에서 `twenty-sdk/front-component`의 `useTimelineActivityId()`를 호출하여 행 ID를 읽고 표시에 필요한 데이터를 가져옵니다. 컴포넌트가 타임라인 행 외부에서 렌더링되면 `null`을 반환합니다.
+
+## 다른 애플리케이션의 표시 재정의
+
+앱은 자체 객체에 대한 자동 타임라인 계약을 소유합니다. 다른 앱이 소유한 객체의 이벤트를 사용자 지정하려면 `replacesTimelineActivityTypeUniversalIdentifier`로 기존 유형을 명시적으로 선언합니다:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+재정의는 명시적 전용 유형이 아닌 기존 자동 emit 슬롯을 대체하므로 `emit`을 포함해야 합니다. 참조된 유형은 대상 객체의 애플리케이션에 속해야 하며 동일한 작업과 경로를 설명해야 합니다. 재정의 앱을 제거하면 기본 유형이 복원되고, 기본 유형을 제거하면 재정의가 비활성화됩니다.
+
+## 워크스페이스 재정의 및 음소거
+
+워크스페이스 관리자는 애플리케이션을 포크하지 않고도 유형의 표시를 변경하거나 자동 및 명시적 이벤트를 음소거할 수 있습니다. 설치별 유형 ID와 함께 메타데이터 API의 `updateTimelineActivityType` 뮤테이션을 사용합니다:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label`과 `icon`은 워크스페이스 재정의로 저장되므로 이후 애플리케이션 업데이트가 관리자의 선택을 덮어쓰지 않습니다. 자동 발생을 중지하고 해당 유형의 새 명시적 이벤트를 거부하려면 `isActive`를 `false`로 설정합니다. 기존 행은 계속 표시됩니다.
+
+활성 상태를 포함한 애플리케이션 기본값을 다음으로 복원합니다:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## 구성 필드
+
+| 필드                                                | 필수      | 설명                                     |
+| ------------------------------------------------- | ------- | -------------------------------------- |
+| `universalIdentifier`                             | 예       | 설치 및 업그레이드 전반에서 유형에 대한 안정적인 UUID       |
+| `name`                                            | 예       | 앱 로컬 프로그래밍 방식 이름                       |
+| `label`                                           | 예       | 네이티브 렌더러에서 사용하는 사용자 대상 작업 텍스트          |
+| `icon`                                            | 아니요     | 이벤트 옆에 표시되는 Twenty 아이콘 이름              |
+| `emit`                                            | 아니요     | 자동 발생 선언; 명시적 전용 유형에서는 생략              |
+| `emit.on`                                         | emit 포함 | 이 유형이 기록되도록 하는 감사 작업                   |
+| `emit.objectUniversalIdentifier`                  | emit 포함 | 레코드가 이 유형을 발생시키는 객체                    |
+| `emit.through.relationFieldUniversalIdentifier`   | 아니요     | 연결된 타임라인으로 확산하는 데 사용되는 직접 또는 정션 관계     |
+| `emit.through.triggerFieldUniversalIdentifiers`   | 아니요     | `updated` through 이벤트를 트리거할 수 있는 소스 필드 |
+| `frontComponentUniversalIdentifier`               | 아니요     | 행이 확장될 때 마운트되는 앱 소유 프런트 컴포넌트.          |
+| `replacesTimelineActivityTypeUniversalIdentifier` | 아니요     | 기존 emit 유형이 대체됨, `emit` 필요             |
+
+Twenty는 이벤트가 생성될 때 의미론적 식별 정보와 지속적인 표시 대체 정보를 스냅샷으로 저장합니다. 기존 행은 원래의 작업 및 객체 의미를 유지합니다. 유형이 설치되어 있는 동안에는 현재 번역된 레이블, 아이콘 및 프런트 컴포넌트가 실시간으로 렌더링되며, 제거 후에는 스냅샷 대체 정보가 행의 가독성을 유지합니다. 확인은 범용 식별자를 사용하므로 앱을 다시 설치한 후에도 표시가 유지됩니다.

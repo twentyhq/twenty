@@ -409,14 +409,15 @@ export default defineFrontComponent({
 
 Hooks disponibles:
 
-| Hook                                          | Devuelve             | Descripción                                                                                     |
-| --------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` o `null`    | El ID del usuario actual                                                                        |
-| `useSelectedRecordIds()`                      | `string[]`           | Todos los ID de los registros seleccionados (array vacío si no hay ninguno seleccionado)        |
-| `useRecordId()`                               | `string` o `null`    | **Obsoleto.** Usa `useSelectedRecordIds()` en su lugar                                          |
-| `useFrontComponentId()`                       | `string`             | El ID de esta instancia del componente                                                          |
-| `useColorScheme()`                            | `'light'` o `'dark'` | La combinación de colores activa de la interfaz de usuario del host (`System` ya está resuelto) |
-| `useFrontComponentExecutionContext(selector)` | varía                | Accede al contexto de ejecución completo con una función selectora                              |
+| Hook                                          | Devuelve             | Descripción                                                                                                 |
+| --------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` o `null`    | El ID del usuario actual                                                                                    |
+| `useSelectedRecordIds()`                      | `string[]`           | Todos los ID de los registros seleccionados (array vacío si no hay ninguno seleccionado)                    |
+| `useRecordId()`                               | `string` o `null`    | **Obsoleto.** Usa `useSelectedRecordIds()` en su lugar                                                      |
+| `useFrontComponentId()`                       | `string`             | El ID de esta instancia del componente                                                                      |
+| `useTimelineActivityId()`                     | `string` o `null`    | El ID de actividad de la línea de tiempo actual al representar una fila personalizada de la línea de tiempo |
+| `useColorScheme()`                            | `'light'` o `'dark'` | La combinación de colores activa de la interfaz de usuario del host (`System` ya está resuelto)             |
+| `useFrontComponentExecutionContext(selector)` | varía                | Accede al contexto de ejecución completo con una función selectora                                          |
 
 ## Variables de aplicación
 

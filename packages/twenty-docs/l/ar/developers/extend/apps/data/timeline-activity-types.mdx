@@ -1,0 +1,184 @@
+---
+title: أنواع أنشطة الجدول الزمنيّية العربية؟
+description: حدّد أحداث التدقيق التلقائية وأحداث التطبيق الصريحة التي تظهر في الجداول الزمنية للسجلات.
+icon: clock-rotate-left
+---
+
+يحدّد نوع نشاط الجدول الزمني مفردات ثابتة لحدث معروض في الجدول الزمني لسجل. تستخدم الكائنات القياسية وكائنات التطبيق العقد نفسه: يحتوي النوع على تسمية وأيقونة، ويمكنه اختياريًا الإعلان عن وقت إصداره، ويمكنه اختياريًا العرض عبر أحد [المكوّنات الأمامية](/l/ar/developers/extend/apps/layout/front-components) لتطبيقك.
+
+<Note>
+  أنواع أنشطة الجدول الزمني في الإصدار التجريبي وستتوفر قريبًا في Twenty 2.34. يمكن أن تتطور
+  API بينما نتعلم من حالات استخدام مطوري التطبيقات.
+</Note>
+
+أنشئ واحدًا باستخدام أداة التوليد:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+أو عرّفه مباشرةً:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## الأحداث التلقائية والصريحة
+
+أضف `emit` عندما ينبغي أن ينشئ Twenty هذا النوع تلقائيًا. يدعم `emit.on` القيم `created` و`updated` و`deleted` و`restored` و`linked` و`unlinked`، بينما يحدد `emit.objectUniversalIdentifier` الكائن المصدر. يمكن لنوع فعّال واحد فقط معالجة مفتاح الإصدار نفسه — `on` والكائن وعلاقة المرور الاختيارية — في مساحة عمل.
+
+من دون `emit.through`، يُكتب الحدث في الجدول الزمني الخاص بالسجل المصدر نفسه. لتغذيته على السجلات ذات الصلة، قم بتعيين `emit.through'. elationFieldUniversalIdentifier` إما إلى علاقة مباشرة متعددة إلى واحدة أو إلى [علاقة تقاطع واحدة إلى كثيرة](/l/ar/developers/extend/apps/data/relations#junction-relations) على الكائن المصدر. وتغذي علاقات مورف كل عضو من أعضاء مجموعتهم الموروفية، بحيث يمكن لإعلان واحد أن يستهدف عدة أنواع من الأجسام.
+
+بالنسبة للعلاقة المباشرة، إنشاء أو استعادة السجل المصدر ينتج 'مرتبط`، حذفه ينتج 'غير مرتبط`، وإعادة توجيه العلاقة ينتج 'غير مرتبط` على الهدف السابق زائدا 'مرتبط` على الهدف الجديد. تحديثات المصدر الأخرى لا تنتج أحداث الرابط. وهذا هو العقد الذي تستخدمه المرفقات، التي يتمثل هدفها في علاقة مباشرة بين الطرفين.
+
+فيما يتعلق بالعلاقة بين الطرفين، يحدد `universalSettings.junctionTargetFieldUniversalIdentifier` العلاقة من جسم التقاطع إلى الهدف. إنشاء أو حذف صف مفترق ينتج "مرتبط" أو "غير مرتبط". كما أن نقل أي من جانبي صف مفترق الحدود يؤدي إلى حدث رابط؛ كما أن التحديثات إلى حقول التقاطع غير ذات الصلة ليست كذلك.
+
+تتطلب الأحداث `المرتبطة` و `غير المرتبطة` `emit.through`، لأن تشغيلها هو تغيير إلى العلاقة المباشرة أو الواجهة التي تم تكوينها.
+
+على سبيل المثال، هذا هو العقد العام نفسه الذي تستخدمه الملاحظات والمهام والرسائل وأحداث التقويم:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+يُصدر حدث مرور `updated` لكل تحديث للمصدر افتراضيًا. عيّن `emit.through.triggerFieldUniversalIdentifiers` عندما يجب أن تظهر تغييرات حقول المصدر المحددة فقط في الجداول الزمنية للهدف.
+
+احذف `emit` لحدث نطاق صريح تنشئه دالة المنطق الخاصة بك بنفسها. يمنع هذا إنشاء صف تدقيق تلقائي وصف صريح معًا للعملية نفسها.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+أنشئ الأحداث الصريحة باستخدام [`createTimelineActivity()`](/l/ar/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). يستخدم رمز التطبيق معرّفات عامة ثابتة؛ ويحوّل Twenty معرّفات بيانات التعريف الخاصة بالتثبيت.
+
+## عرض مخصص
+
+من دون مكوّن أمامي، يعرض Twenty صفًا عامًا أصليًا استنادًا إلى تسمية النوع وأيقونته وبيانات تعريف الكائن المرتبط. يناسب هذا الكائنات القياسية والمخصصة من دون عارض خاص بالكائن.
+
+للحصول على تفاصيل مخصصة، عيّن `frontComponentUniversalIdentifier` إلى مكوّن أمامي يملكه التطبيق نفسه:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+يبقى الصف الأصلي هو العرض المطوي. لا يركّب Twenty المكوّن الأمامي إلا بعد أن يوسّع المستخدم ذلك الصف، متجنبًا بيئة معزولة وعاملًا لكل حدث ظاهر. داخل المكوّن، استدعِ `useTimelineActivityId()` من `twenty-sdk/front-component` لقراءة معرّف الصف وجلب أي بيانات يحتاجها العرض الخاص بك. يعيد `null` عندما يُعرض المكوّن خارج صف جدول زمني.
+
+## تجاوز عرض تطبيق آخر
+
+يمتلك التطبيق عقود الجدول الزمني التلقائية لكائناته الخاصة. لتخصيص حدث على كائن يملكه تطبيق آخر، عرّف النوع الموجود صراحةً باستخدام `replacesTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+يجب أن يتضمن التجاوز `emit`، لأنه يستبدل موضع إصدار تلقائي موجودًا بدلًا من نوع صريح فقط. يجب أن ينتمي النوع المشار إليه إلى تطبيق الكائن الهدف وأن يصف الإجراء والمسار نفسيهما. تؤدي إزالة التطبيق المتجاوز إلى استعادة النوع الأساسي؛ وتؤدي إزالة النوع الأساسي إلى تعطيل التجاوز.
+
+## تجاوزات مساحة العمل والكتم
+
+يمكن لمسؤولي مساحة العمل تغيير عرض نوع أو كتم أحداثه التلقائية والصريحة من دون تشعيب التطبيق. استخدم عملية التحويل `updateTimelineActivityType` الخاصة بـ API بيانات التعريف مع معرّف النوع الخاص بالتثبيت:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+يُخزَّن `label` و`icon` كتجاوزات لمساحة العمل، لذلك لا تستبدل تحديثات التطبيق اللاحقة خيارات المسؤول. عيّن `isActive` إلى `false` لإيقاف الإصدار التلقائي ورفض الأحداث الصريحة الجديدة من ذلك النوع. تبقى الصفوف الحالية مرئية.
+
+استعِد الإعدادات الافتراضية للتطبيق، بما في ذلك الحالة النشطة، باستخدام:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## حقول التكوين
+
+| الحقل                                              | مطلوب   | الوصف                                                                   |
+| -------------------------------------------------- | ------- | ----------------------------------------------------------------------- |
+| `universalIdentifier`                              | نعم     | UUID ثابت للنوع عبر عمليات التثبيت والترقيات                            |
+| `name`                                             | نعم     | اسم برمجي محلي للتطبيق                                                  |
+| `label`                                            | نعم     | نص إجراء موجّه للمستخدم يستخدمه العارض الأصلي                           |
+| `icon`                                             | لا      | اسم أيقونة Twenty المعروض بجانب الحدث                                   |
+| `emit`                                             | لا      | تعريف الإصدار التلقائي؛ احذفه للأنواع الصريحة فقط                       |
+| `emit.on`                                          | مع emit | إجراء تدقيق يؤدي إلى كتابة هذا النوع                                    |
+| `emit.objectUniversalIdentifier`                   | مع emit | الكائن الذي تصدر سجلاته هذا النوع                                       |
+| `emit.through.relationFieldUniversalIdentifier`    | لا      | العلاقة المباشرة أو المباشرة المستخدمة لتأجيج الجداول الزمنية ذات الصلة |
+| `emit.through.triggerFieldUniversalIdentifiers`    | لا      | حقول المصدر التي يمكنها تشغيل حدث مرور `updated`                        |
+| `frontComponentUniversalIdentifier`                | لا      | العنصر الأمامي المملوك للتطبيق مثبت عند توسيع الصف                      |
+| `replaceesTimelineActivityTypeUniversalIdentifier` | لا      | استبدال نوع الانبعاث الحالي؛ يتطلب `الانبعاث`                           |
+
+20 لقطة دلالية وهوية وعشرين وردود عرض متينة عندما يتم إنشاء حدث. صفوف تاريخية تحافظ على عملها الأصلي ومعنى الكائن. في الوقت الذي يتم فيه تثبيت هذا النوع، فإن التسمية الحالية المترجمة، أيقونة ومكوناتها الأمامية تصبح مباشرة؛ وبعد إلغاء التثبيت، تظل اللقطة الاحتياطية مقروءة على الصف. يستخدم الحل المعرف العام، لذلك العرض التقديمي ينجو أيضا من إعادة تثبيت التطبيق.

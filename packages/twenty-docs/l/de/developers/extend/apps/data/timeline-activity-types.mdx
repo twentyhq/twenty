@@ -1,0 +1,184 @@
+---
+title: Aktivitätstypen der Zeitachse
+description: Definieren Sie automatische Audit-Ereignisse und explizite App-Ereignisse, die in Datensatz-Zeitachsen dargestellt werden.
+icon: clock-rotate-left
+---
+
+Ein Zeitachsen-Aktivitätstyp definiert das stabile Vokabular für ein Ereignis, das in der Zeitachse eines Datensatzes angezeigt wird. Standardobjekte und App-Objekte verwenden denselben Vertrag: Ein Typ hat eine Bezeichnung und ein Symbol, kann optional deklarieren, wann er ausgegeben wird, und kann optional über eine der [Front-Komponenten](/l/de/developers/extend/apps/layout/front-components) Ihrer App gerendert werden.
+
+<Note>
+  Zeitachsen-Aktivitätstypen befinden sich in der Beta-Phase und werden bald in Twenty 2.34 verfügbar sein. Die
+  API kann sich weiterentwickeln, während wir aus den Anwendungsfällen von App-Entwicklern lernen.
+</Note>
+
+Erstellen Sie einen mit dem Scaffolder:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+Oder definieren Sie ihn direkt:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## Automatische und explizite Ereignisse
+
+Fügen Sie `emit` hinzu, wenn Twenty diesen Typ automatisch erstellen soll. `emit.on` unterstützt `created`, `updated`, `deleted`, `restored`, `linked` und `unlinked`, während `emit.objectUniversalIdentifier` das Quellobjekt identifiziert. In einem Workspace kann nur ein effektiver Typ denselben Emit-Schlüssel verarbeiten — `on`, Objekt und optionale Through-Beziehung.
+
+Ohne `emit.through` wird das Ereignis auf der eigenen Zeitachse des Quelldatensatzes geschrieben. Um es auf verwandte Datensätze zu fächern, setzen Sie `emit.through. elationFieldUniversalIdentifier` zu einer direkten Beziehung oder einer [one-to-many junction relation](/l/de/developers/extend/apps/data/relations#junction-relations) zum Quellobjekt. Morphe Relations, die an jedes Mitglied ihrer Morph-Gruppe angehängt werden, so dass eine einzige Deklaration mehrere Objekttypen ansprechen kann.
+
+Für eine direkte Beziehung erzeugt das Erstellen oder Wiederherstellen des Quelldatensatzes `linked`, indem es `unlinked` erzeugt, und zeigt die Beziehung erneut an, erzeugt `unlinked` auf das vorherige Ziel plus `linked` auf das neue Ziel. Andere Quell-Aktualisierungen erzeugen keine Link-Ereignisse. Dies ist der Vertrag, der von Anhängen verwendet wird, deren Ziel eine direkte Verwandlung ist.
+
+Für eine Kreuzungsbeziehung identifiziert `universalSettings.junctionTargetFieldUniversalIdentifier` die Beziehung vom Kreuzungsobjekt zum Ziel. Erstellen oder Löschen einer Verbindungszeile erzeugt `linked` oder `unlinked`. Wenn Sie beide Seiten einer Verbindungszeile neu anzeigen, erzeugt dies auch ein Link-Ereignis. Aktualisierungen von nicht zusammenhängenden Knotenfeldern nicht.
+
+`linked` und `unlinked` Ereignisse erfordern `emit.through`, da ihr Trigger eine Änderung der konfigurierten direkten oder Kreuzungsbeziehung ist.
+
+Dieses Beispiel verwendet denselben generischen Vertrag wie Notizen, Aufgaben, Nachrichten und Kalenderereignisse:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+Standardmäßig wird für jede Aktualisierung der Quelle ein `updated`-Through-Ereignis ausgegeben. Setzen Sie `emit.through.triggerFieldUniversalIdentifiers`, wenn nur Änderungen an ausgewählten Quellfeldern auf den Zielzeitachsen erscheinen sollen.
+
+Lassen Sie `emit` für ein explizites Domänenereignis weg, das Ihre Logikfunktion selbst erstellt. Dadurch wird vermieden, dass sowohl eine automatische Audit-Zeile als auch eine explizite Zeile für denselben Vorgang erstellt wird.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+Erstellen Sie explizite Ereignisse mit [`createTimelineActivity()`](/l/de/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). App-Code verwendet stabile universelle Bezeichner; Twenty löst die installationsspezifischen Metadaten-IDs auf.
+
+## Benutzerdefiniertes Rendering
+
+Ohne eine Front-Komponente rendert Twenty eine native generische Zeile anhand der Typbezeichnung, des Symbols und der Metadaten verknüpfter Objekte. Dies funktioniert für Standard- und benutzerdefinierte Objekte ohne objektspezifischen Renderer.
+
+Für benutzerdefinierte Details setzen Sie `frontComponentUniversalIdentifier` auf eine Front-Komponente, die derselben App gehört:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Die native Zeile bleibt die eingeklappte Darstellung. Twenty bindet die Front-Komponente erst ein, nachdem der Benutzer diese Zeile aufklappt, und vermeidet so eine Sandbox und einen Worker für jedes sichtbare Ereignis. Rufen Sie innerhalb der Komponente `useTimelineActivityId()` aus `twenty-sdk/front-component` auf, um die Zeilen-ID zu lesen und alle Daten abzurufen, die Ihre Darstellung benötigt. Sie gibt `null` zurück, wenn die Komponente außerhalb einer Zeitachsen-Zeile gerendert wird.
+
+## Darstellung einer anderen Anwendung überschreiben
+
+Eine App besitzt automatische Zeitachsen-Verträge für ihre eigenen Objekte. Um ein Ereignis für ein Objekt anzupassen, das einer anderen App gehört, deklarieren Sie den vorhandenen Typ explizit mit `replacesTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Eine Überschreibung muss `emit` enthalten, da sie einen vorhandenen automatischen Emit-Slot und keinen rein expliziten Typ ersetzt. Der referenzierte Typ muss zur Anwendung des Zielobjekts gehören und dieselbe Aktion und Route beschreiben. Das Entfernen der überschreibenden App stellt den Basistyp wieder her; das Entfernen des Basistyps deaktiviert die Überschreibung.
+
+## Workspace-Überschreibungen und Stummschaltung
+
+Workspace-Administratoren können die Darstellung eines Typs ändern oder seine automatischen und expliziten Ereignisse stummschalten, ohne die Anwendung abzuspalten. Verwenden Sie die Mutation `updateTimelineActivityType` der Metadaten-API mit der installationsspezifischen Typ-ID:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` und `icon` werden als Workspace-Überschreibungen gespeichert, sodass spätere Anwendungsupdates die Auswahl des Administrators nicht überschreiben. Setzen Sie `isActive` auf `false`, um die automatische Ausgabe zu stoppen und neue explizite Ereignisse dieses Typs abzulehnen. Vorhandene Zeilen bleiben sichtbar.
+
+Stellen Sie die Standardwerte der Anwendung, einschließlich des aktiven Zustands, wieder her mit:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## Konfigurationsfelder
+
+| Feld                                              | Erforderlich | Beschreibung                                                                                      |
+| ------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Ja           | Stabile UUID für den Typ über Installationen und Upgrades hinweg                                  |
+| `name`                                            | Ja           | Programmgesteuerter, App-lokaler Name                                                             |
+| `label`                                           | Ja           | Benutzerseitiger Aktionstext, der vom nativen Renderer verwendet wird                             |
+| `icon`                                            | Nein         | Neben dem Ereignis angezeigter Twenty-Symbolname                                                  |
+| `emit`                                            | Nein         | Deklaration der automatischen Ausgabe; für rein explizite Typen weglassen                         |
+| `emit.on`                                         | Mit emit     | Audit-Aktion, die bewirkt, dass dieser Typ geschrieben wird                                       |
+| `emit.objectUniversalIdentifier`                  | Mit emit     | Objekt, dessen Datensätze diesen Typ ausgeben                                                     |
+| `emit.through.relationFieldUniversalIdentifier`   | Nein         | Direkte oder Anschlussbeziehung, die zum Fächer verwendet wird, um zugehörige Timelines zu nutzen |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Nein         | Quellfelder, die ein `updated`-Through-Ereignis auslösen können                                   |
+| `frontComponentUniversalIdentifier`               | Nein         | App-eigene Frontkomponente eingehängt, wenn die Zeile erweitert wird                              |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Nein         | Existierter Emit-Typ ersetzt; erfordert `emit`                                                    |
+
+Zwanzig Schnappschüsse semantische Identität und dauerhafte Präsentation fallen zurück, wenn ein Ereignis erstellt wird. Historische Zeilen behalten ihre ursprüngliche Aktion und Objektbedeutung. Während der Installation des Typs wird die aktuelle übersetzte Bezeichnung, das Symbol und die vordere Komponente live dargestellt; nach der Deinstallation hält der Snapshot-Fallback den Datensatz lesbar. Die Auflösung verwendet den universellen Identifikator, so dass die Präsentation auch die Neuinstallation der App überlebt.

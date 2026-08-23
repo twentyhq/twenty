@@ -714,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Hook-uri de instalare** — handleri pre-instalare, post-instalare și dezinstalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction`, `definePostInstallLogicFunction` și `defineUninstallLogicFunction`.
 </Note>
 
+## Creați o activitate pe cronologie.
+
+Utilizați `createTimelineActivity()` pentru a publica un eveniment de domeniu explicit dintr-o funcție logică. Definiți mai întâi evenimentul ca [tip de activitate pe cronologie](/l/ro/developers/extend/apps/data/timeline-activity-types), apoi faceți referire la tip și la obiecte prin identificatorii lor universali stabili:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty convertește identificatorii universali în ID-urile metadatelor specifice instalării, validează că tipul de activitate pe cronologie aparține aplicației apelante și captează metadatele sale de prezentare în noua activitate.
+
+Parametrii de intrare obligatorii sunt `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` și `targetRecordId`. De asemenea, puteți furniza `happensAt`, `properties` și `workspaceMemberId`. `happensAt` controlează poziția și ora afișată a evenimentului pe cronologie; în mod implicit, este momentul creării.
+
+Pentru a asocia o altă înregistrare cu evenimentul, furnizați împreună `linkedRecordId` și `linkedObjectMetadataUniversalIdentifier`. În plus, puteți furniza `linkedRecordCachedName` ca alternativă istorică pentru afișare:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Rolul funcției logice trebuie să aibă permisiunea de scriere pentru obiectul standard `timelineActivity`. Păstrați tipurile explicite de evenimente nelegate de o `action`; un tip legat de o acțiune primește deja evenimente de audit automate și, în caz contrar, ar produce rânduri duplicate.
+
 ## Clienți API tipizați (twenty-client-sdk)
 
 Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front.

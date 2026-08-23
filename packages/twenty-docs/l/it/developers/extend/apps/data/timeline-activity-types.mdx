@@ -1,0 +1,184 @@
+---
+title: Tipi Di Attività Timeline
+description: Definire gli eventi di audit automatico e gli eventi espliciti delle app che vengono visualizzati in tempi record.
+icon: clock-rotate-left
+---
+
+Un tipo di attività della timeline definisce il vocabolario stabile per un evento mostrato nella timeline di un record. Oggetti standard e oggetti app utilizzano lo stesso contratto: un tipo ha un'etichetta e un'icona, può opzionalmente dichiarare quando viene emesso, e può opzionalmente renderizzare attraverso uno dei [componenti anteriori](/l/it/developers/extend/apps/layout/front-components).
+
+<Note>
+  I tipi di attività temporali sono in beta e stanno arrivando presto a Twenty 2.34. L'API
+  può evolvere mentre impariamo dai casi d'uso degli sviluppatori di app.
+</Note>
+
+Creane uno con il ponteggio:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+O definirlo direttamente:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## Eventi automatici ed espliciti
+
+Aggiungi `emit` quando Twenty dovrebbe creare questo tipo automaticamente. `emit.on` supporta `created`, `updated`, `deleted`, `restored`, `linked`, e `unlinked`, mentre `emit.objectUniversalIdentifier` identifica l'oggetto sorgente. Solo un tipo efficace può gestire la stessa chiave di emissione — `on`, oggetto e opzionale attraverso la relazione — in uno spazio di lavoro.
+
+Senza `emit.through`, l'evento è scritto sulla timeline del record di origine. Per adattarlo ai record correlati, imposta `emit.through. elationFieldUniversalIdentifier` o a una relazione diretta tra molti o a una [relazione di giunzione uno-a-molto](/l/it/developers/extend/apps/data/relations#junction-relations) sull'oggetto sorgente. Amante delle relazioni morph ad ogni membro del loro gruppo morph, in modo da una singola dichiarazione può colpire diversi tipi di oggetti.
+
+Per una relazione diretta, la creazione o il ripristino del record di origine produce `linked`, eliminando produce `unlinked`, e ripuntando la relazione produce `unlinked` sul target precedente più `linked` sul nuovo obiettivo. Altri aggiornamenti di origine non producono eventi di collegamento. Questo è il contratto utilizzato dagli allegati, il cui obiettivo è una relazione diretta morfologica.
+
+Per una relazione di giunzione, `universalSettings.junctionTargetFieldUniversalIdentifier` identifica la relazione dall'oggetto di giunzione al bersaglio. La creazione o l'eliminazione di una riga di giunzione produce `linked` o `unlinked`. Il riorientamento di entrambi i lati di una riga di giunzione produce anche un evento di collegamento; gli aggiornamenti di campi di giunzione non correlati non.
+
+`linked` e `unlinked` gli eventi richiedono `emit.through`, perché il loro trigger è una modifica al rapporto diretto o di giunzione configurato.
+
+Ad esempio, questo è lo stesso contratto generico utilizzato da note, compiti, messaggi e eventi di calendario:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+Per impostazione predefinita, viene emesso un evento `updated` through per ogni aggiornamento della sorgente. Imposta `emit.through.triggerFieldUniversalIdentifiers` quando solo le modifiche ai campi sorgente selezionati devono apparire nelle timeline di destinazione.
+
+Ometti `emit` per un evento di dominio esplicito creato dalla tua funzione logica. In questo modo si evita di produrre sia una riga di audit automatica sia una riga esplicita per la stessa operazione.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+Crea eventi espliciti con [`createTimelineActivity()`](/l/it/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). Il codice dell'app usa identificatori universali stabili; Twenty risolve gli ID dei metadati specifici dell'installazione.
+
+## Rendering personalizzato
+
+Senza un componente front, Twenty esegue il rendering di una riga generica nativa a partire dall'etichetta del tipo, dall'icona e dai metadati dell'oggetto collegato. Questo funziona per oggetti standard e personalizzati senza un renderer specifico dell'oggetto.
+
+Per dettagli personalizzati, imposta `frontComponentUniversalIdentifier` su un componente front appartenente alla stessa app:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+La riga nativa rimane la presentazione compressa. Twenty monta il componente front solo dopo che l'utente espande quella riga, evitando una sandbox e un worker per ogni evento visibile. All'interno del componente, chiama `useTimelineActivityId()` da `twenty-sdk/front-component` per leggere l'ID della riga e recuperare tutti i dati necessari alla presentazione. Restituisce `null` quando il componente viene sottoposto a rendering al di fuori di una riga della timeline.
+
+## Sovrascrivere la presentazione di un'altra applicazione
+
+Un'app possiede contratti automatici della timeline per i propri oggetti. Per personalizzare un evento su un oggetto posseduto da un'altra app, dichiara esplicitamente il tipo esistente con `replacesTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Una sostituzione deve includere `emit`, perché sostituisce uno slot di emissione automatica esistente anziché un tipo solo esplicito. Il tipo a cui viene fatto riferimento deve appartenere all'applicazione dell'oggetto di destinazione e descrivere la stessa azione e lo stesso percorso. La rimozione dell'app che effettua la sostituzione ripristina il tipo di base; la rimozione del tipo di base disabilita la sostituzione.
+
+## Sostituzioni e disattivazione dell'area di lavoro
+
+Gli amministratori dell'area di lavoro possono modificare la presentazione di un tipo o disattivare i relativi eventi automatici ed espliciti senza effettuare un fork dell'applicazione. Usa la mutazione `updateTimelineActivityType` dell'API dei metadati con l'ID del tipo specifico dell'installazione:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` e `icon` vengono archiviati come sostituzioni dell'area di lavoro, pertanto gli aggiornamenti successivi dell'applicazione non sovrascrivono le scelte dell'amministratore. Imposta `isActive` su `false` per interrompere l'emissione automatica e rifiutare nuovi eventi espliciti di quel tipo. Le righe esistenti rimangono visibili.
+
+Ripristina le impostazioni predefinite dell'applicazione, incluso lo stato attivo, con:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## Campi di configurazione
+
+| Campo                                             | Obbligatorio | Descrizione                                                                     |
+| ------------------------------------------------- | ------------ | ------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Sì           | UUID stabile per il tipo tra installazioni e aggiornamenti                      |
+| `name`                                            | Sì           | Nome programmatico locale dell'app                                              |
+| `label`                                           | Sì           | Testo dell'azione rivolto all'utente usato dal renderer nativo                  |
+| `icon`                                            | No           | Nome dell'icona Twenty visualizzata accanto all'evento                          |
+| `emit`                                            | No           | Dichiarazione di emissione automatica; ometti per i tipi solo espliciti         |
+| `emit.on`                                         | Con emit     | Azione di audit che causa la scrittura di questo tipo                           |
+| `emit.objectUniversalIdentifier`                  | Con emit     | Oggetto i cui record emettono questo tipo                                       |
+| `emit.through.relationFieldUniversalIdentifier`   | No           | Relazione diretta o di giunzione utilizzata per ventilare le timeline correlate |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No           | Campi sorgente che possono attivare un evento `updated` through                 |
+| `frontComponentUniversalIdentifier`               | No           | Componente anteriore di proprietà dell'app montato quando la riga è espansa     |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No           | Tipo di emissione esistente sostituito; richiede `emit`                         |
+
+Venti istantanee identità semantica e fallback durevoli della presentazione quando viene creato un evento. Le righe storiche mantengono la loro azione originale e il significato dell'oggetto. Mentre il tipo è installato, la sua attuale etichetta, icona e componente frontale rendono live; dopo la disinstallazione, lo snapshot fallback mantiene la riga leggibile. La risoluzione utilizza l'identificatore universale, quindi la presentazione sopravvive anche reinstallando l'app.
