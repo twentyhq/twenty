@@ -86,7 +86,7 @@ const updateRecord = async ({
   expect(response.body.errors).toBeUndefined();
 };
 
-const withOrmV2ReadPath = async (
+const withOrmV2ReadPathSetting = async (
   enabled: boolean,
   callback: () => Promise<void>,
 ) => {
@@ -350,7 +350,7 @@ describe('timeline activity write path (integration)', () => {
     ])(
       'should write an updated entry for a $ormName composite field change',
       async ({ companyId, isOrmV2ReadPathEnabled }) => {
-        await withOrmV2ReadPath(isOrmV2ReadPathEnabled, async () => {
+        await withOrmV2ReadPathSetting(isOrmV2ReadPathEnabled, async () => {
           await createRecord({
             objectMetadataSingularName: 'company',
             data: {
