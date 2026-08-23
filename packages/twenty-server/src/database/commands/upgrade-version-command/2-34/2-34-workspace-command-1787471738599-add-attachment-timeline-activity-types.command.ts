@@ -1,4 +1,5 @@
 import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -19,6 +20,7 @@ const ATTACHMENT_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-bd3d-4c60-8dca-571c71d4447a';
 const ATTACHMENT_TARGET_RELATION_FIELD_UNIVERSAL_IDENTIFIER =
   '721ddb1f-468d-535a-9809-cb3429a52e06';
+const ATTACHMENT_TARGET_MORPH_ID = '20202020-f634-435d-ab8d-e1168b375c69';
 
 const ATTACHMENT_TIMELINE_ACTIVITY_TYPES = [
   {
@@ -56,8 +58,13 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatObjectMetadataMaps, flatTimelineActivityTypeMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatTimelineActivityTypeMaps,
+    } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
         'flatObjectMetadataMaps',
         'flatTimelineActivityTypeMaps',
       ]);
@@ -80,6 +87,40 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
     );
 
     if (missingDefinitions.length === 0) {
+      return;
+    }
+
+    const attachmentObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        ATTACHMENT_OBJECT_UNIVERSAL_IDENTIFIER
+      ];
+    const preferredAttachmentTargetRelationFieldMetadata =
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        ATTACHMENT_TARGET_RELATION_FIELD_UNIVERSAL_IDENTIFIER
+      ];
+    const isAttachmentTargetMorphRelation = (
+      fieldMetadata: typeof preferredAttachmentTargetRelationFieldMetadata,
+    ) =>
+      isDefined(fieldMetadata) &&
+      isDefined(attachmentObjectMetadata) &&
+      fieldMetadata.objectMetadataId === attachmentObjectMetadata.id &&
+      fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+      fieldMetadata.morphId === ATTACHMENT_TARGET_MORPH_ID;
+    const attachmentTargetRelationFieldMetadata =
+      isAttachmentTargetMorphRelation(
+        preferredAttachmentTargetRelationFieldMetadata,
+      )
+        ? preferredAttachmentTargetRelationFieldMetadata
+        : Object.values(flatFieldMetadataMaps.byUniversalIdentifier).find(
+            (fieldMetadata) =>
+              isAttachmentTargetMorphRelation(fieldMetadata),
+          );
+
+    if (!isDefined(attachmentTargetRelationFieldMetadata)) {
+      this.logger.warn(
+        `Attachment target morph relation does not exist for workspace ${workspaceId}, skipping attachment timeline activity types`,
+      );
+
       return;
     }
 
@@ -111,7 +152,7 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
         frontComponentUniversalIdentifier: null,
         objectUniversalIdentifier: ATTACHMENT_OBJECT_UNIVERSAL_IDENTIFIER,
         targetRelationFieldUniversalIdentifier:
-          ATTACHMENT_TARGET_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+          attachmentTargetRelationFieldMetadata.universalIdentifier,
         triggerFieldUniversalIdentifiers: null,
         replacesTimelineActivityTypeUniversalIdentifier: null,
         isActive: true,
