@@ -78,7 +78,7 @@ export const WidgetActionTimelineFilter = () => {
       dropdownPlacement="bottom-end"
       onClose={() => setSearchInputValue('')}
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <DropdownMenuSearchInput
             value={searchInputValue}
             onChange={(event) => setSearchInputValue(event.target.value)}
