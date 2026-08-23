@@ -17,7 +17,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
-import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
+import { TimelineActivityRoutingPlanService } from 'src/modules/timeline/services/timeline-activity-routing-plan.service';
 import {
   type ResolvedTimelineActivityType,
   type TimelineActivityTypeResolver,
@@ -102,7 +102,7 @@ export class TimelineActivityService {
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly timelineActivityRuleBuilderService: TimelineActivityRuleBuilderService,
+    private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly timelineActivityTargetQueryService: TimelineActivityTargetQueryService,
     private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
@@ -124,7 +124,7 @@ export class TimelineActivityService {
       junctionRules,
       flatFieldMetadataMaps,
       resolveTimelineActivityType,
-    } = await this.timelineActivityRuleBuilderService.getRulesForEventBatch({
+    } = await this.timelineActivityRoutingPlanService.getRulesForEventBatch({
       workspaceId,
       flatObjectMetadata: objectMetadata,
     });
