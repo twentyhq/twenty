@@ -423,26 +423,24 @@ export class TimelineActivityService {
         },
       );
 
-    return eventsWithJunctionRecord
-      .filter(({ sourceRecordId }) =>
-        sourceRecordsByRecordId.has(sourceRecordId),
-      )
-      .map(({ event, target, sourceRecordId }) =>
-        buildLinkedPayload({
+    // The junction event is the semantic fact; this enrichment read can race
+    // the transaction that created the linked record.
+    return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) =>
+      buildLinkedPayload({
+        rule,
+        timelineActivityType,
+        target,
+        workspaceMemberId: event.workspaceMemberId,
+        linkedRecordId: sourceRecordId,
+        linkedRecordCachedName: resolveLinkedRecordCachedName({
           rule,
-          timelineActivityType,
-          target,
-          workspaceMemberId: event.workspaceMemberId,
-          linkedRecordId: sourceRecordId,
-          linkedRecordCachedName: resolveLinkedRecordCachedName({
-            rule,
-            record: sourceRecordsByRecordId.get(sourceRecordId),
-            flatFieldMetadataMaps,
-          }),
-          happensAt: resolveTimelineActivityHappensAt(event),
-          properties: {},
+          record: sourceRecordsByRecordId.get(sourceRecordId),
+          flatFieldMetadataMaps,
         }),
-      );
+        happensAt: resolveTimelineActivityHappensAt(event),
+        properties: {},
+      }),
+    );
   }
 
   private async enrichEventsWithWorkspaceMemberId({
