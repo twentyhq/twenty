@@ -26,8 +26,11 @@ const TIMELINE_ACTIVITY_TARGET_MORPH_ID =
 
 const TIMELINE_ACTIVITY_OBJECT_UID = 'timeline-activity-object-uid';
 const PERSON_OBJECT_UID = 'person-object-uid';
+const COMPANY_OBJECT_UID = 'company-object-uid';
 const TARGET_PERSON_LEG_UID = 'target-person-leg-uid';
 const PERSON_FORWARD_FIELD_UID = 'person-forward-field-uid';
+const TARGET_COMPANY_LEG_UID = 'target-company-leg-uid';
+const COMPANY_FORWARD_FIELD_UID = 'company-forward-field-uid';
 const PERSON_ID_INDEX_UID = 'person-id-index-uid';
 
 const buildByUniversalIdentifierMap = <
@@ -42,6 +45,21 @@ const buildByUniversalIdentifierMap = <
     ]),
   ),
 });
+
+const timelineActivityObject = {
+  universalIdentifier: TIMELINE_ACTIVITY_OBJECT_UID,
+  nameSingular: 'timelineActivity',
+};
+
+const personObject = {
+  universalIdentifier: PERSON_OBJECT_UID,
+  nameSingular: 'person',
+};
+
+const companyObject = {
+  universalIdentifier: COMPANY_OBJECT_UID,
+  nameSingular: 'company',
+};
 
 const standardTargetPersonLeg = {
   universalIdentifier: TARGET_PERSON_LEG_UID,
@@ -60,11 +78,46 @@ const standardPersonForwardField = {
   relationTargetFieldMetadataUniversalIdentifier: TARGET_PERSON_LEG_UID,
 };
 
+const standardTargetCompanyLeg = {
+  universalIdentifier: TARGET_COMPANY_LEG_UID,
+  name: 'targetCompany',
+  type: FieldMetadataType.MORPH_RELATION,
+  morphId: TIMELINE_ACTIVITY_TARGET_MORPH_ID,
+  objectMetadataUniversalIdentifier: TIMELINE_ACTIVITY_OBJECT_UID,
+  relationTargetFieldMetadataUniversalIdentifier: COMPANY_FORWARD_FIELD_UID,
+};
+
+const standardCompanyForwardField = {
+  universalIdentifier: COMPANY_FORWARD_FIELD_UID,
+  name: 'timelineActivities',
+  type: FieldMetadataType.RELATION,
+  objectMetadataUniversalIdentifier: COMPANY_OBJECT_UID,
+  relationTargetFieldMetadataUniversalIdentifier: TARGET_COMPANY_LEG_UID,
+};
+
 const standardPersonIdIndex = {
   universalIdentifier: PERSON_ID_INDEX_UID,
   universalFlatIndexFieldMetadatas: [
     { fieldMetadataUniversalIdentifier: TARGET_PERSON_LEG_UID },
   ],
+};
+
+const mockStandardMaps = ({
+  fields = [standardTargetPersonLeg, standardPersonForwardField],
+  indexes = [standardPersonIdIndex],
+  objects = [timelineActivityObject, personObject],
+}: {
+  fields?: { universalIdentifier: string }[];
+  indexes?: { universalIdentifier: string }[];
+  objects?: { universalIdentifier: string }[];
+} = {}) => {
+  computeTwentyStandardApplicationAllFlatEntityMapsMock.mockReturnValue({
+    allFlatEntityMaps: {
+      flatFieldMetadataMaps: buildByUniversalIdentifierMap(fields),
+      flatIndexMaps: buildByUniversalIdentifierMap(indexes),
+      flatObjectMetadataMaps: buildByUniversalIdentifierMap(objects),
+    },
+  });
 };
 
 describe('RestoreStandardDefaultRelationFieldsCommand', () => {
@@ -80,15 +133,7 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
       .fn()
       .mockResolvedValue({ status: 'success' });
 
-    computeTwentyStandardApplicationAllFlatEntityMapsMock.mockReturnValue({
-      allFlatEntityMaps: {
-        flatFieldMetadataMaps: buildByUniversalIdentifierMap([
-          standardTargetPersonLeg,
-          standardPersonForwardField,
-        ]),
-        flatIndexMaps: buildByUniversalIdentifierMap([standardPersonIdIndex]),
-      },
-    });
+    mockStandardMaps();
 
     command = new RestoreStandardDefaultRelationFieldsCommand(
       {} as WorkspaceIteratorService,
@@ -120,6 +165,7 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
   const mockWorkspaceCache = ({
     fields = [],
     indexes = [],
+    objects = [timelineActivityObject, personObject],
   }: {
     fields?: {
       universalIdentifier: string;
@@ -127,15 +173,31 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
       objectMetadataUniversalIdentifier: string;
     }[];
     indexes?: { universalIdentifier: string }[];
+    objects?: { universalIdentifier: string }[];
   }) => {
     getOrRecomputeMock.mockResolvedValue({
       flatFieldMetadataMaps: buildByUniversalIdentifierMap(fields),
       flatIndexMaps: buildByUniversalIdentifierMap(indexes),
-      flatObjectMetadataMaps: buildByUniversalIdentifierMap([
-        { universalIdentifier: TIMELINE_ACTIVITY_OBJECT_UID },
-        { universalIdentifier: PERSON_OBJECT_UID },
-      ]),
+      flatObjectMetadataMaps: buildByUniversalIdentifierMap(objects),
     });
+  };
+
+  const getCreatedUniversalIdentifiers = () => {
+    const [payload] =
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls[0];
+
+    return {
+      fields:
+        payload.allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.map(
+          ({ universalIdentifier }: { universalIdentifier: string }) =>
+            universalIdentifier,
+        ),
+      indexes:
+        payload.allFlatEntityOperationByMetadataName.index.flatEntityToCreate.map(
+          ({ universalIdentifier }: { universalIdentifier: string }) =>
+            universalIdentifier,
+        ),
+    };
   };
 
   it('recreates a missing default-relation pair with its index', async () => {
@@ -143,21 +205,10 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
 
     await runOnWorkspace();
 
-    const [payload] =
-      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls[0];
-
-    expect(
-      payload.allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.map(
-        ({ universalIdentifier }: { universalIdentifier: string }) =>
-          universalIdentifier,
-      ),
-    ).toEqual([TARGET_PERSON_LEG_UID, PERSON_FORWARD_FIELD_UID]);
-    expect(
-      payload.allFlatEntityOperationByMetadataName.index.flatEntityToCreate.map(
-        ({ universalIdentifier }: { universalIdentifier: string }) =>
-          universalIdentifier,
-      ),
-    ).toEqual([PERSON_ID_INDEX_UID]);
+    expect(getCreatedUniversalIdentifiers()).toEqual({
+      fields: [TARGET_PERSON_LEG_UID, PERSON_FORWARD_FIELD_UID],
+      indexes: [PERSON_ID_INDEX_UID],
+    });
   });
 
   it('does nothing when the pair already exists', async () => {
@@ -184,7 +235,27 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('skips a field whose name is taken by another field on the same object', async () => {
+  it('creates only the missing member when its pair mate already exists', async () => {
+    mockWorkspaceCache({
+      fields: [
+        {
+          universalIdentifier: TARGET_PERSON_LEG_UID,
+          name: 'targetPerson',
+          objectMetadataUniversalIdentifier: TIMELINE_ACTIVITY_OBJECT_UID,
+        },
+      ],
+      indexes: [{ universalIdentifier: PERSON_ID_INDEX_UID }],
+    });
+
+    await runOnWorkspace();
+
+    expect(getCreatedUniversalIdentifiers()).toEqual({
+      fields: [PERSON_FORWARD_FIELD_UID],
+      indexes: [],
+    });
+  });
+
+  it('skips the whole pair when a member name is taken by a drifted duplicate', async () => {
     mockWorkspaceCache({
       fields: [
         {
@@ -197,18 +268,50 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
 
     await runOnWorkspace();
 
-    const [payload] =
-      validateBuildAndRunLegacyWorkspaceMigrationMock.mock.calls[0];
-    const createdUniversalIdentifiers =
-      payload.allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.map(
-        ({ universalIdentifier }: { universalIdentifier: string }) =>
-          universalIdentifier,
-      );
-
-    expect(createdUniversalIdentifiers).toEqual([PERSON_FORWARD_FIELD_UID]);
     expect(
-      payload.allFlatEntityOperationByMetadataName.index.flatEntityToCreate,
-    ).toEqual([]);
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('skips the whole pair when a member host object is missing', async () => {
+    mockWorkspaceCache({
+      objects: [timelineActivityObject],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('restores an intact pair when another pair is blocked', async () => {
+    mockStandardMaps({
+      fields: [
+        standardTargetPersonLeg,
+        standardPersonForwardField,
+        standardTargetCompanyLeg,
+        standardCompanyForwardField,
+      ],
+      objects: [timelineActivityObject, personObject, companyObject],
+    });
+    mockWorkspaceCache({
+      fields: [
+        {
+          universalIdentifier: 'drifted-duplicate-uid',
+          name: 'targetPerson',
+          objectMetadataUniversalIdentifier: TIMELINE_ACTIVITY_OBJECT_UID,
+        },
+      ],
+      objects: [timelineActivityObject, personObject, companyObject],
+    });
+
+    await runOnWorkspace();
+
+    expect(getCreatedUniversalIdentifiers()).toEqual({
+      fields: [TARGET_COMPANY_LEG_UID, COMPANY_FORWARD_FIELD_UID],
+      indexes: [],
+    });
   });
 
   it('does not run the migration on dry run', async () => {

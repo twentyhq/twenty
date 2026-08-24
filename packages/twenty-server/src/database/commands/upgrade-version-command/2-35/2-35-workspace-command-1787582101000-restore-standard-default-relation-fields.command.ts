@@ -102,61 +102,77 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
           ),
       );
 
-    const pairUniversalIdentifiers = standardDefaultRelationLegs.flatMap(
-      (standardDefaultRelationLeg) =>
-        [
-          standardDefaultRelationLeg.universalIdentifier,
-          standardDefaultRelationLeg.relationTargetFieldMetadataUniversalIdentifier,
-        ].filter(isDefined),
-    );
+    const computeQualifiedFieldName = (flatFieldMetadata: FlatFieldMetadata) => {
+      const hostObjectNameSingular =
+        standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          flatFieldMetadata.objectMetadataUniversalIdentifier
+        ]?.nameSingular ?? flatFieldMetadata.objectMetadataUniversalIdentifier;
+
+      return `${hostObjectNameSingular}.${flatFieldMetadata.name}`;
+    };
 
     const fieldsToCreate: FlatFieldMetadata[] = [];
-    const skippedFieldNames: string[] = [];
+    const skippedPairLabels: string[] = [];
 
-    for (const universalIdentifier of pairUniversalIdentifiers) {
-      const standardFlatFieldMetadata =
-        standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-          universalIdentifier
-        ];
+    for (const standardDefaultRelationLeg of standardDefaultRelationLegs) {
+      const standardForwardFlatFieldMetadata = isDefined(
+        standardDefaultRelationLeg.relationTargetFieldMetadataUniversalIdentifier,
+      )
+        ? standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+            standardDefaultRelationLeg
+              .relationTargetFieldMetadataUniversalIdentifier
+          ]
+        : undefined;
 
-      if (!isDefined(standardFlatFieldMetadata)) {
+      if (!isDefined(standardForwardFlatFieldMetadata)) {
         continue;
       }
 
-      const fieldAlreadyExists = isDefined(
-        existingFlatFieldMetadataMaps.byUniversalIdentifier[
-          universalIdentifier
-        ],
+      const standardPairMembers = [
+        standardDefaultRelationLeg,
+        standardForwardFlatFieldMetadata,
+      ];
+
+      const missingPairMembers = standardPairMembers.filter(
+        (standardFlatFieldMetadata) =>
+          !isDefined(
+            existingFlatFieldMetadataMaps.byUniversalIdentifier[
+              standardFlatFieldMetadata.universalIdentifier
+            ],
+          ),
       );
 
-      if (fieldAlreadyExists) {
+      if (missingPairMembers.length === 0) {
         continue;
       }
 
-      const hostObjectExists = isDefined(
-        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
-          flatEntityMaps: existingFlatObjectMetadataMaps,
-          universalIdentifier:
-            standardFlatFieldMetadata.objectMetadataUniversalIdentifier,
-        }),
+      const pairIsBlocked = missingPairMembers.some(
+        (standardFlatFieldMetadata) => {
+          const hostObjectExists = isDefined(
+            findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+              flatEntityMaps: existingFlatObjectMetadataMaps,
+              universalIdentifier:
+                standardFlatFieldMetadata.objectMetadataUniversalIdentifier,
+            }),
+          );
+
+          const fieldNameIsTaken =
+            takenFieldNamesByObject
+              .get(standardFlatFieldMetadata.objectMetadataUniversalIdentifier)
+              ?.has(standardFlatFieldMetadata.name) === true;
+
+          return !hostObjectExists || fieldNameIsTaken;
+        },
       );
 
-      if (!hostObjectExists) {
-        skippedFieldNames.push(standardFlatFieldMetadata.name);
+      if (pairIsBlocked) {
+        skippedPairLabels.push(
+          standardPairMembers.map(computeQualifiedFieldName).join(' / '),
+        );
         continue;
       }
 
-      const fieldNameIsTaken =
-        takenFieldNamesByObject
-          .get(standardFlatFieldMetadata.objectMetadataUniversalIdentifier)
-          ?.has(standardFlatFieldMetadata.name) === true;
-
-      if (fieldNameIsTaken) {
-        skippedFieldNames.push(standardFlatFieldMetadata.name);
-        continue;
-      }
-
-      fieldsToCreate.push(standardFlatFieldMetadata);
+      fieldsToCreate.push(...missingPairMembers);
     }
 
     const availableFieldUniversalIdentifiers = new Set<string>([
@@ -192,20 +208,24 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
           ),
       );
 
-    if (fieldsToCreate.length === 0) {
-      this.logger.log(
-        `Standard default-relation fields are complete for workspace ${workspaceId}, skipping`,
+    if (skippedPairLabels.length > 0) {
+      this.logger.warn(
+        `Skipped ${skippedPairLabels.length} unrestorable standard default-relation pair(s) for workspace ${workspaceId}: ${skippedPairLabels.join(', ')}`,
       );
+    }
+
+    if (fieldsToCreate.length === 0) {
+      if (skippedPairLabels.length === 0) {
+        this.logger.log(
+          `Standard default-relation fields are complete for workspace ${workspaceId}, skipping`,
+        );
+      }
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Restoring ${fieldsToCreate.length} standard default-relation field(s) and ${indexesToCreate.length} index(es) for workspace ${workspaceId}${
-        skippedFieldNames.length > 0
-          ? ` (skipped: ${skippedFieldNames.join(', ')})`
-          : ''
-      }`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Restoring ${fieldsToCreate.length} standard default-relation field(s) and ${indexesToCreate.length} index(es) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
