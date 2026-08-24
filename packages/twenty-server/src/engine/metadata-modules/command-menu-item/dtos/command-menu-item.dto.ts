@@ -95,7 +95,7 @@ export class CommandMenuItemDTO {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
-  targetObjectMetadataId?: string;
+  navigationTargetObjectMetadataId?: string;
 
   @IsUUID()
   @IsOptional()

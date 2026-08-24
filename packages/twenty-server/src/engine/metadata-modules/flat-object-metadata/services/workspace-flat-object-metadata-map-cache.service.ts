@@ -100,7 +100,11 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
       }),
       this.commandMenuItemRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'targetObjectMetadataId'],
+        select: [
+          'id',
+          'universalIdentifier',
+          'navigationTargetObjectMetadataId',
+        ],
         withDeleted: true,
       }),
     ]);
@@ -141,7 +145,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
         },
         {
           entities: commandMenuItems,
-          foreignKey: 'targetObjectMetadataId',
+          foreignKey: 'navigationTargetObjectMetadataId',
         },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);

@@ -65,8 +65,8 @@ describe('buildNavigationFlatCommandMenuItem', () => {
   it('should set the target object metadata foreign key alongside the payload', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.targetObjectMetadataId).toBe('obj-id-1');
-    expect(result.targetObjectMetadataUniversalIdentifier).toBe(
+    expect(result.navigationTargetObjectMetadataId).toBe('obj-id-1');
+    expect(result.navigationTargetObjectMetadataUniversalIdentifier).toBe(
       'obj-universal-1',
     );
   });

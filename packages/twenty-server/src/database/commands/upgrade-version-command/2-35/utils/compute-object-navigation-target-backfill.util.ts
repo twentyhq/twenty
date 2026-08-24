@@ -31,7 +31,7 @@ export const computeObjectNavigationTargetBackfill = ({
   ).filter(isDefined)) {
     if (
       flatCommandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
-      isDefined(flatCommandMenuItem.targetObjectMetadataId) ||
+      isDefined(flatCommandMenuItem.navigationTargetObjectMetadataId) ||
       !isObjectMetadataCommandMenuItemPayload(flatCommandMenuItem.payload)
     ) {
       continue;
@@ -51,8 +51,8 @@ export const computeObjectNavigationTargetBackfill = ({
 
     backfill.flatCommandMenuItemsToUpdate.push({
       ...flatCommandMenuItem,
-      targetObjectMetadataId: flatObjectMetadata.id,
-      targetObjectMetadataUniversalIdentifier:
+      navigationTargetObjectMetadataId: flatObjectMetadata.id,
+      navigationTargetObjectMetadataUniversalIdentifier:
         flatObjectMetadata.universalIdentifier,
       updatedAt: now,
     });

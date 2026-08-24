@@ -69,8 +69,8 @@ const buildDiscardDraftWorkflowCommandMenuItem = ({
   availabilityObjectMetadataId: 'workflow-object-metadata-id',
   availabilityObjectMetadataUniversalIdentifier:
     DISCARD_DRAFT_WORKFLOW_DEFINITION.availabilityObjectMetadataUniversalIdentifier,
-  targetObjectMetadataId: null,
-  targetObjectMetadataUniversalIdentifier: null,
+  navigationTargetObjectMetadataId: null,
+  navigationTargetObjectMetadataUniversalIdentifier: null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
   isActive: true,

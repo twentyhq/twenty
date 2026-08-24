@@ -103,8 +103,9 @@ export const buildNavigationFlatCommandMenuItem = ({
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: { objectMetadataItemId: objectMetadata.id },
-    targetObjectMetadataId: objectMetadata.id,
-    targetObjectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+    navigationTargetObjectMetadataId: objectMetadata.id,
+    navigationTargetObjectMetadataUniversalIdentifier:
+      objectMetadata.universalIdentifier,
     hotKeys: isDefined(objectMetadata.shortcut)
       ? ['G', objectMetadata.shortcut]
       : null,

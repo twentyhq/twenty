@@ -17,8 +17,8 @@ const buildFlatCommandMenuItem = (
     universalIdentifier: overrides.id,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: { objectMetadataItemId: COMPANY_OBJECT_ID },
-    targetObjectMetadataId: null,
-    targetObjectMetadataUniversalIdentifier: null,
+    navigationTargetObjectMetadataId: null,
+    navigationTargetObjectMetadataUniversalIdentifier: null,
     updatedAt: '2026-01-01T00:00:00.000Z',
     ...overrides,
   }) as FlatCommandMenuItem;
@@ -61,8 +61,8 @@ describe('computeObjectNavigationTargetBackfill', () => {
     expect(backfill.flatCommandMenuItemsToUpdate).toHaveLength(1);
     expect(backfill.flatCommandMenuItemsToUpdate[0]).toMatchObject({
       id: 'command-1',
-      targetObjectMetadataId: COMPANY_OBJECT_ID,
-      targetObjectMetadataUniversalIdentifier:
+      navigationTargetObjectMetadataId: COMPANY_OBJECT_ID,
+      navigationTargetObjectMetadataUniversalIdentifier:
         COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
       updatedAt: NOW,
     });
@@ -73,8 +73,8 @@ describe('computeObjectNavigationTargetBackfill', () => {
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
           id: 'command-1',
-          targetObjectMetadataId: COMPANY_OBJECT_ID,
-          targetObjectMetadataUniversalIdentifier:
+          navigationTargetObjectMetadataId: COMPANY_OBJECT_ID,
+          navigationTargetObjectMetadataUniversalIdentifier:
             COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
         }),
       ]),
@@ -155,8 +155,8 @@ describe('computeObjectNavigationTargetBackfill', () => {
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
           id: 'command-1',
-          targetObjectMetadataId: COMPANY_OBJECT_ID,
-          targetObjectMetadataUniversalIdentifier:
+          navigationTargetObjectMetadataId: COMPANY_OBJECT_ID,
+          navigationTargetObjectMetadataUniversalIdentifier:
             COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
         }),
         buildFlatCommandMenuItem({ id: 'command-2' }),

@@ -13,7 +13,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-35:backfill-command-menu-item-target-object-metadata',
   description:
-    'Derive commandMenuItem.targetObjectMetadataId from the object navigation payload',
+    'Derive commandMenuItem.navigationTargetObjectMetadataId from the object navigation payload',
 })
 export class BackfillCommandMenuItemTargetObjectMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

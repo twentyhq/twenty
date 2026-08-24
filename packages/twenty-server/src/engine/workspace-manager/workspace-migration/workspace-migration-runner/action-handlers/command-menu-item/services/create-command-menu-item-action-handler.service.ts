@@ -36,7 +36,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
       availabilityObjectMetadataId,
       frontComponentId,
       pageLayoutId,
-      targetObjectMetadataId,
+      navigationTargetObjectMetadataId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -63,7 +63,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
         availabilityObjectMetadataId,
         frontComponentId,
         pageLayoutId,
-        targetObjectMetadataId,
+        navigationTargetObjectMetadataId,
         overrides,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),

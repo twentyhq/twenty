@@ -233,7 +233,7 @@ export class ObjectMetadataEntity
 
   @OneToMany(
     () => CommandMenuItemEntity,
-    (commandMenuItem) => commandMenuItem.targetObjectMetadata,
+    (commandMenuItem) => commandMenuItem.navigationTargetObjectMetadata,
   )
   commandMenuItems: Relation<CommandMenuItemEntity[]>;
 }

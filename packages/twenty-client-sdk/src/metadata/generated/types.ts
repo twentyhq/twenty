@@ -367,7 +367,7 @@ export default {
             "availabilityObjectMetadataId": [
                 3
             ],
-            "targetObjectMetadataId": [
+            "navigationTargetObjectMetadataId": [
                 3
             ],
             "pageLayoutId": [

@@ -52,15 +52,15 @@ export type CommandMenuItemOverrides = {
   'pageLayoutId',
   'workspaceId',
 ])
-@Index('IDX_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_ID', [
-  'targetObjectMetadataId',
+@Index('IDX_COMMAND_MENU_ITEM_NAVIGATION_TARGET_OBJECT_METADATA_ID', [
+  'navigationTargetObjectMetadataId',
 ])
-// The NAVIGATION branch stays permissive on targetObjectMetadataId: object
+// The NAVIGATION branch stays permissive on navigationTargetObjectMetadataId: object
 // keyed rows only carry it once the 2-35 backfill has run everywhere, and
 // path based rows never do
 @Check(
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
-  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "targetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "targetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "targetObjectMetadataId" IS NULL)`,
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends OverridableEntity<CommandMenuItemOverrides>
@@ -134,14 +134,14 @@ export class CommandMenuItemEntity
       ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid' })
-  targetObjectMetadataId: string | null;
+  navigationTargetObjectMetadataId: string | null;
 
   @ManyToOne(() => ObjectMetadataEntity, {
     onDelete: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn({ name: 'targetObjectMetadataId' })
-  targetObjectMetadata: Relation<ObjectMetadataEntity> | null;
+  @JoinColumn({ name: 'navigationTargetObjectMetadataId' })
+  navigationTargetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   pageLayoutId: string | null;

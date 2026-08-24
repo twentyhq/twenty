@@ -1243,10 +1243,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
       isOverridable: true,
     },
-    targetObjectMetadataId: {
+    navigationTargetObjectMetadataId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: 'targetObjectMetadataUniversalIdentifier',
+      universalProperty: 'navigationTargetObjectMetadataUniversalIdentifier',
     },
     createdAt: {
       toCompare: false,

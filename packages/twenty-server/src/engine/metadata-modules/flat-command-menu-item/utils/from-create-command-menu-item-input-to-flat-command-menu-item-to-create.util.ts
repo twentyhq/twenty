@@ -34,15 +34,16 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       : null;
 
   // The payload stays the deprecated read surface, the column is the truth
-  const targetObjectMetadataId = isObjectMetadataCommandMenuItemPayload(payload)
-    ? payload.objectMetadataItemId
-    : null;
+  const navigationTargetObjectMetadataId =
+    isObjectMetadataCommandMenuItemPayload(payload)
+      ? payload.objectMetadataItemId
+      : null;
 
   const {
     availabilityObjectMetadataUniversalIdentifier,
     frontComponentUniversalIdentifier,
     pageLayoutUniversalIdentifier,
-    targetObjectMetadataUniversalIdentifier,
+    navigationTargetObjectMetadataUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'commandMenuItem',
     foreignKeyValues: {
@@ -50,7 +51,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
         createCommandMenuItemInput.availabilityObjectMetadataId,
       frontComponentId: createCommandMenuItemInput.frontComponentId,
       pageLayoutId: createCommandMenuItemInput.pageLayoutId,
-      targetObjectMetadataId,
+      navigationTargetObjectMetadataId,
     },
     flatEntityMaps: {
       flatObjectMetadataMaps,
@@ -81,8 +82,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     conditionalAvailabilityExpression:
       createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
     availabilityObjectMetadataUniversalIdentifier,
-    targetObjectMetadataId,
-    targetObjectMetadataUniversalIdentifier,
+    navigationTargetObjectMetadataId,
+    navigationTargetObjectMetadataUniversalIdentifier,
     pageLayoutId: createCommandMenuItemInput.pageLayoutId ?? null,
     pageLayoutUniversalIdentifier,
     workspaceId,
