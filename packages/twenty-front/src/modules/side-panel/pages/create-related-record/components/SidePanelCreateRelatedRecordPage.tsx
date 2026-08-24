@@ -1,4 +1,5 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type RelatedRecordActionBinding } from '@/activities/types/RelatedRecordAction';
 import { useRelatedRecordActions } from '@/activities/hooks/useRelatedRecordActions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -11,26 +12,24 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 type SidePanelCreateRelatedRecordActionListProps = {
-  targetRecord: ActivityTargetableObject;
+  actionBindings: RelatedRecordActionBinding[];
 };
 
-const SidePanelCreateRelatedRecordActionList = ({
-  targetRecord,
+export const SidePanelCreateRelatedRecordActionList = ({
+  actionBindings,
 }: SidePanelCreateRelatedRecordActionListProps) => {
-  const { closeSidePanelMenu } = useSidePanelMenu();
-  const actionBindings = useRelatedRecordActions({
-    targetRecord,
-    onFileUploadComplete: closeSidePanelMenu,
-  }).filter(({ action }) => action.isVisible);
+  const visibleActionBindings = actionBindings.filter(
+    ({ action }) => action.isVisible,
+  );
 
-  const selectableItemIds = actionBindings
+  const selectableItemIds = visibleActionBindings
     .filter(({ action }) => !action.disabled)
     .map(({ action }) => action.id);
 
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Actions`}>
-        {actionBindings.map(({ action, supportElement }) => (
+        {visibleActionBindings.map(({ action, supportElement }) => (
           <SelectableListItem
             key={action.id}
             itemId={action.id}
@@ -52,6 +51,22 @@ const SidePanelCreateRelatedRecordActionList = ({
   );
 };
 
+const SidePanelCreateRelatedRecordActionListContainer = ({
+  targetRecord,
+}: {
+  targetRecord: ActivityTargetableObject;
+}) => {
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const actionBindings = useRelatedRecordActions({
+    targetRecord,
+    onFileUploadComplete: closeSidePanelMenu,
+  });
+
+  return (
+    <SidePanelCreateRelatedRecordActionList actionBindings={actionBindings} />
+  );
+};
+
 export const SidePanelCreateRelatedRecordPage = () => {
   const createRelatedRecordTarget = useAtomComponentStateValue(
     createRelatedRecordTargetComponentState,
@@ -62,7 +77,7 @@ export const SidePanelCreateRelatedRecordPage = () => {
   }
 
   return (
-    <SidePanelCreateRelatedRecordActionList
+    <SidePanelCreateRelatedRecordActionListContainer
       targetRecord={createRelatedRecordTarget}
     />
   );
