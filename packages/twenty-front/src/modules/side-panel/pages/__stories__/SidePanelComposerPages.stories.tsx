@@ -184,6 +184,11 @@ const meta = {
             },
           }),
         ),
+        graphql.query('GetAutoCompleteAddress', () =>
+          HttpResponse.json({
+            data: { getAutoCompleteAddress: [] },
+          }),
+        ),
         graphql.query('FindOnePerson', () =>
           HttpResponse.json({
             data: {
