@@ -434,7 +434,7 @@ msgstr "En webhook med denne konfigurasjonen finnes allerede."
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr ""
+msgstr "En handling for widgetoverskriften ble ikke funnet"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2040,12 +2040,12 @@ msgstr "Fargeskjema"
 #. js-lingui-id: 8nN8qg
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
-msgstr ""
+msgstr "Kommandomenyelementet {commandMenuItemUniversalIdentifier} som det refereres til i widgetoverskriften, tilhører et annet program"
 
 #. js-lingui-id: fmk0Wo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
-msgstr ""
+msgstr "Kommandomenyelementet {commandMenuItemUniversalIdentifier} som det refereres til i widgetoverskriften, ble ikke funnet"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11835,17 +11835,17 @@ msgstr "Widgeten overskrider rutenettbredden"
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr ""
+msgstr "Handlinger i widgetoverskriften må være unike"
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr ""
+msgstr "Handlinger i widgetoverskriften må tilhøre samme applikasjon som widgeten"
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr ""
+msgstr "Referanser til kommando-menyelementer i widgetoverskriften må være unike"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12479,7 +12479,7 @@ msgstr "Du kan ikke tilbakekalle tilgang til administrasjonspanelet fra den sist
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "Du kan ikke sende fra denne adressen."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

@@ -1142,7 +1142,7 @@ msgstr "Aktiv synk"
 #. js-lingui-id: LynXsl
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Activity visibility"
-msgstr ""
+msgstr "Aktivitetssynlighet"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -2846,7 +2846,7 @@ msgstr "vid hel timme"
 #. js-lingui-id: x9ecE4
 #: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
 msgid "Attach file"
-msgstr ""
+msgstr "Bifoga fil"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3971,7 +3971,7 @@ msgstr "Välj var poster öppnas som standard. Vissa objekt kan använda en arbe
 #. js-lingui-id: EcjwmO
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Choose whether this activity type appears in record timelines"
-msgstr ""
+msgstr "Välj om den här aktivitetstypen visas i posts tidslinjer"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4444,7 +4444,7 @@ msgstr "Komponentnamn"
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
-msgstr ""
+msgstr "Skriv e-post"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4495,7 +4495,7 @@ msgstr "Konfiguration av detta kommandomenyalternativ"
 #. js-lingui-id: +rVpsA
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Configuration of this timeline activity type"
-msgstr ""
+msgstr "Konfiguration av denna tidslinjeaktivitetstyp"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5271,7 +5271,7 @@ msgstr "Skapa API-nyckel"
 #. js-lingui-id: 0gp+cZ
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Create calendar event"
-msgstr ""
+msgstr "Skapa kalenderhändelse"
 
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5306,7 +5306,7 @@ msgstr "Skapa ny vy"
 #. js-lingui-id: BKucva
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
 msgid "Create note"
-msgstr ""
+msgstr "Skapa anteckning"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5334,7 +5334,7 @@ msgstr "Skapa post den {0} kl. {1}"
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
 msgid "Create related"
-msgstr ""
+msgstr "Skapa relaterad"
 
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -5355,7 +5355,7 @@ msgstr "Skapa Välj..."
 #. js-lingui-id: Z+6PPA
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
 msgid "Create task"
-msgstr ""
+msgstr "Skapa uppgift"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8609,7 +8609,7 @@ msgstr "Det gick inte att ta bort leverantören"
 #. js-lingui-id: is6uow
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
 msgid "Failed to reset the timeline activity type."
-msgstr ""
+msgstr "Det gick inte att återställa tidslinjeaktivitetstypen."
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -8739,7 +8739,7 @@ msgstr "Det gick inte att uppdatera serveradministratörsåtkomst."
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
 msgid "Failed to update the timeline activity type."
-msgstr ""
+msgstr "Det gick inte att uppdatera tidslinjeaktivitetstypen."
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -14906,7 +14906,7 @@ msgstr "Välj en vy"
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Pick an address to send from or set a workspace member as variable"
-msgstr ""
+msgstr "Välj en adress att skicka från eller ange en medlem i arbetsytan som variabel"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -16233,7 +16233,7 @@ msgstr "Återställ {objectLabel}"
 #. js-lingui-id: ZkHcxG
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Restore the activity type settings defined by the application"
-msgstr ""
+msgstr "Återställ inställningarna för aktivitetstypen som definierats av applikationen"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17680,7 +17680,7 @@ msgstr "Visa endast rader med fel"
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Show this activity type in record timelines"
-msgstr ""
+msgstr "Visa denna aktivitetstyp i posternas tidslinjer"
 
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -19468,13 +19468,13 @@ msgstr "tidslinjeaktivitetstyp"
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Timeline activity type"
-msgstr ""
+msgstr "Tidslinjeaktivitetstyp"
 
 #. js-lingui-id: YZJ+T0
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Timeline activity types"
-msgstr ""
+msgstr "Tidslinjeaktivitetstyper"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx

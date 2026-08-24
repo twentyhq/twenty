@@ -434,7 +434,7 @@ msgstr "Um webhook com essa configuração já existe."
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr ""
+msgstr "Não foi encontrada uma ação de cabeçalho do widget"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2040,12 +2040,12 @@ msgstr "Esquema de Cores"
 #. js-lingui-id: 8nN8qg
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
-msgstr ""
+msgstr "O item de menu de comando {commandMenuItemUniversalIdentifier} referenciado pelo cabeçalho do widget pertence a outro aplicativo"
 
 #. js-lingui-id: fmk0Wo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
-msgstr ""
+msgstr "Não foi encontrado o item de menu de comando {commandMenuItemUniversalIdentifier} referenciado pelo cabeçalho do widget"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11835,17 +11835,17 @@ msgstr "O widget ultrapassa a largura da grade"
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr ""
+msgstr "As ações do cabeçalho do widget devem ser exclusivas"
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr ""
+msgstr "As ações do cabeçalho do widget devem pertencer à mesma aplicação que o widget"
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr ""
+msgstr "As referências dos itens do menu de comandos do cabeçalho do widget devem ser exclusivas"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12479,7 +12479,7 @@ msgstr "Não pode revogar o acesso ao painel de administração do último admin
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "Você não pode enviar deste endereço."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

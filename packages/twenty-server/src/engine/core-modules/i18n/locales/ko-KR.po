@@ -434,7 +434,7 @@ msgstr "이 구성의 웹훅이 이미 존재합니다."
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr ""
+msgstr "위젯 헤더 작업을 찾을 수 없습니다"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2040,12 +2040,12 @@ msgstr "색 구성표"
 #. js-lingui-id: 8nN8qg
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
-msgstr ""
+msgstr "위젯 헤더에서 참조하는 명령 메뉴 항목 {commandMenuItemUniversalIdentifier}은(는) 다른 애플리케이션에 속합니다"
 
 #. js-lingui-id: fmk0Wo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
-msgstr ""
+msgstr "위젯 헤더에서 참조하는 명령 메뉴 항목 {commandMenuItemUniversalIdentifier}을(를) 찾을 수 없습니다"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11835,17 +11835,17 @@ msgstr "위젯이 그리드 너비를 초과합니다"
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr ""
+msgstr "위젯 헤더 작업은 고유해야 합니다"
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr ""
+msgstr "위젯 헤더 작업은 위젯과 동일한 애플리케이션에 속해야 합니다"
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr ""
+msgstr "위젯 헤더 명령 메뉴 항목 참조는 고유해야 합니다"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12479,7 +12479,7 @@ msgstr "마지막 서버 관리자의 관리자 패널 액세스는 취소할 �
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "이 주소에서는 보낼 수 없습니다."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
