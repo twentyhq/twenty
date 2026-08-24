@@ -68,7 +68,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      workspaceDataSource,
       commonQueryParser,
     } = queryRunnerContext;
 
@@ -254,10 +253,9 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         aggregate: args.selectedFieldsResult.aggregate,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
+        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
