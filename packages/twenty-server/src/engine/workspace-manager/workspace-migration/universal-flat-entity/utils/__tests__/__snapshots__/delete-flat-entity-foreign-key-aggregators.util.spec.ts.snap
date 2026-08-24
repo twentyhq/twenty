@@ -45,6 +45,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
 {
   "applicationUniversalIdentifier": "application-universal-identifier",
   "color": null,
+  "commandMenuItemUniversalIdentifiers": [],
   "createdAt": "2024-01-01T00:00:00.000Z",
   "description": "default flat object metadata description",
   "duplicateCriteria": null,
@@ -74,7 +75,6 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "pageLayoutUniversalIdentifiers": [],
   "searchFieldMetadataUniversalIdentifiers": [],
   "shortcut": "shortcut",
-  "targetCommandMenuItemUniversalIdentifiers": [],
   "targetTableName": "",
   "universalIdentifier": "object-universal-identifier",
   "updatedAt": "2024-01-01T00:00:00.000Z",

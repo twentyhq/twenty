@@ -157,7 +157,7 @@ export const mockPersonFlatObjectMetadata = (
   universalIdentifier: objectMetadataId,
   indexMetadataIds: [],
   searchFieldMetadataIds: [],
-  targetCommandMenuItemIds: [],
+  commandMenuItemIds: [],
   objectPermissionIds: [],
   fieldPermissionIds: [],
   fieldIds: mockFieldMetadatas.map((field) => field.id),
@@ -184,7 +184,7 @@ export const mockPersonFlatObjectMetadata = (
   fieldPermissionUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
   searchFieldMetadataUniversalIdentifiers: [],
-  targetCommandMenuItemUniversalIdentifiers: [],
+  commandMenuItemUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,
 });

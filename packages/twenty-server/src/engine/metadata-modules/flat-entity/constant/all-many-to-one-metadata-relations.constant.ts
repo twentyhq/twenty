@@ -82,7 +82,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     targetObjectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'targetObjectMetadataId',
-      inverseOneToManyProperty: 'targetCommandMenuItems',
+      inverseOneToManyProperty: 'commandMenuItems',
       isNullable: true,
       universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
     },

@@ -130,11 +130,11 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       flatEntityForeignKeyAggregator: 'pageLayoutIds',
       universalFlatEntityForeignKeyAggregator: 'pageLayoutUniversalIdentifiers',
     },
-    targetCommandMenuItems: {
+    commandMenuItems: {
       metadataName: 'commandMenuItem',
-      flatEntityForeignKeyAggregator: 'targetCommandMenuItemIds',
+      flatEntityForeignKeyAggregator: 'commandMenuItemIds',
       universalFlatEntityForeignKeyAggregator:
-        'targetCommandMenuItemUniversalIdentifiers',
+        'commandMenuItemUniversalIdentifiers',
     },
   },
   view: {

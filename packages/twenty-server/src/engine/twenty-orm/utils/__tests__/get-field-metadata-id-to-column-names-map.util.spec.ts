@@ -30,7 +30,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     universalIdentifier: 'test-object-id',
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
-    targetCommandMenuItemIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds,
@@ -58,7 +58,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     pageLayoutUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
-    targetCommandMenuItemUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,
   });

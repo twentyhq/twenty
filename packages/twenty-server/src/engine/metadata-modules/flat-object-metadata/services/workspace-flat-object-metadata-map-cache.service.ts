@@ -65,7 +65,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       objectPermissions,
       searchFieldMetadatas,
       pageLayouts,
-      targetCommandMenuItems,
+      commandMenuItems,
     ] = await Promise.all([
       this.objectMetadataRepository.find({
         where: { workspaceId },
@@ -112,7 +112,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       objectPermissionsByObjectId,
       searchFieldMetadatasByObjectId,
       pageLayoutsByObjectId,
-      targetCommandMenuItemsByObjectId,
+      commandMenuItemsByObjectId,
     ] = (
       [
         {
@@ -140,7 +140,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           foreignKey: 'objectMetadataId',
         },
         {
-          entities: targetCommandMenuItems,
+          entities: commandMenuItems,
           foreignKey: 'targetObjectMetadataId',
         },
       ] as const
@@ -165,8 +165,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           searchFieldMetadatas:
             searchFieldMetadatasByObjectId.get(objectMetadataEntity.id) || [],
           pageLayouts: pageLayoutsByObjectId.get(objectMetadataEntity.id) || [],
-          targetCommandMenuItems:
-            targetCommandMenuItemsByObjectId.get(objectMetadataEntity.id) || [],
+          commandMenuItems:
+            commandMenuItemsByObjectId.get(objectMetadataEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,

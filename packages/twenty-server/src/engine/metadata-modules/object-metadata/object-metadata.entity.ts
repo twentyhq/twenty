@@ -235,5 +235,5 @@ export class ObjectMetadataEntity
     () => CommandMenuItemEntity,
     (commandMenuItem) => commandMenuItem.targetObjectMetadata,
   )
-  targetCommandMenuItems: Relation<CommandMenuItemEntity[]>;
+  commandMenuItems: Relation<CommandMenuItemEntity[]>;
 }

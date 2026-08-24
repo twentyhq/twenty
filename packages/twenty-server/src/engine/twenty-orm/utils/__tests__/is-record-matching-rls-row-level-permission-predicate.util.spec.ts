@@ -31,7 +31,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     universalIdentifier: 'test-object-id',
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
-    targetCommandMenuItemIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds,
@@ -59,7 +59,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     pageLayoutUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
-    targetCommandMenuItemUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,
   });
