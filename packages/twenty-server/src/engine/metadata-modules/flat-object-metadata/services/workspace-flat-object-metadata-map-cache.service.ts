@@ -98,6 +98,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       }),
       this.pageLayoutRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        withDeleted: true,
       }),
       this.commandMenuItemRepository.find(workspaceId, {
         select: [
