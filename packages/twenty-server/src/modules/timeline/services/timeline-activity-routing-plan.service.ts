@@ -8,7 +8,6 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
-import { TimelineActivityMetadataDiagnosticsService } from 'src/modules/timeline/services/timeline-activity-metadata-diagnostics.service';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildDirectRelationTargetShape } from 'src/modules/timeline/utils/build-direct-relation-target-shape.util';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
@@ -45,7 +44,6 @@ export class TimelineActivityRoutingPlanService {
 
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly timelineActivityMetadataDiagnosticsService: TimelineActivityMetadataDiagnosticsService,
   ) {}
 
   async shouldProcessEvent({
@@ -121,7 +119,7 @@ export class TimelineActivityRoutingPlanService {
       return cachedRoutingPlan.routingPlan;
     }
 
-    const routingPlan = this.buildRoutingPlan({ workspaceId, ...data });
+    const routingPlan = this.buildRoutingPlan(data);
 
     this.routingPlanByWorkspaceId.set(workspaceId, {
       cacheKey,
@@ -132,51 +130,24 @@ export class TimelineActivityRoutingPlanService {
   }
 
   private buildRoutingPlan({
-    workspaceId,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatTimelineActivityTypeMaps,
   }: {
-    workspaceId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatTimelineActivityTypeMaps: FlatTimelineActivityTypeMaps;
   }): TimelineActivityRoutingPlan {
-    const {
-      effectiveTimelineActivityTypes,
-      routingConflicts,
-      resolverConflicts,
-      invalidContracts,
-      resolveTimelineActivityType,
-    } = buildTimelineActivityTypeResolution({
-      ...flatTimelineActivityTypeMaps,
-      objectMetadataByUniversalIdentifier:
-        flatObjectMetadataMaps.byUniversalIdentifier,
-    });
-
-    this.timelineActivityMetadataDiagnosticsService.reportAll({
-      workspaceId,
-      reason: 'ambiguous-declared-rule',
-      issues: routingConflicts,
-    });
-    this.timelineActivityMetadataDiagnosticsService.reportAll({
-      workspaceId,
-      reason: 'ambiguous-resolver',
-      issues: resolverConflicts,
-    });
-    this.timelineActivityMetadataDiagnosticsService.reportAll({
-      workspaceId,
-      reason: 'invalid-contract',
-      issues: invalidContracts,
-    });
+    const { effectiveTimelineActivityTypes, resolveTimelineActivityType } =
+      buildTimelineActivityTypeResolution({
+        ...flatTimelineActivityTypeMaps,
+        objectMetadataByUniversalIdentifier:
+          flatObjectMetadataMaps.byUniversalIdentifier,
+      });
 
     const activeTimelineActivityTypes = effectiveTimelineActivityTypes.filter(
       (timelineActivityType) => timelineActivityType.isActive,
     );
-    const invalidThroughRules: {
-      action: string;
-      objectUniversalIdentifier: string | null;
-    }[] = [];
     const throughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {
         const routing =
@@ -203,12 +174,6 @@ export class TimelineActivityRoutingPlanService {
           !isDefined(sourceFlatObjectMetadata) ||
           !isDefined(relationFlatFieldMetadata)
         ) {
-          invalidThroughRules.push({
-            action: timelineActivityType.action,
-            objectUniversalIdentifier:
-              timelineActivityType.objectUniversalIdentifier,
-          });
-
           return undefined;
         }
 
@@ -225,12 +190,6 @@ export class TimelineActivityRoutingPlanService {
           });
 
         if (!isDefined(targetShape)) {
-          invalidThroughRules.push({
-            action: timelineActivityType.action,
-            objectUniversalIdentifier:
-              timelineActivityType.objectUniversalIdentifier,
-          });
-
           return undefined;
         }
 
@@ -253,12 +212,6 @@ export class TimelineActivityRoutingPlanService {
         };
       })
       .filter(isDefined);
-
-    this.timelineActivityMetadataDiagnosticsService.reportAll({
-      workspaceId,
-      reason: 'invalid-contract',
-      issues: invalidThroughRules,
-    });
 
     const eligibleNonAuditedObjectMetadataIds = new Set(
       throughRules.flatMap((rule) => [
