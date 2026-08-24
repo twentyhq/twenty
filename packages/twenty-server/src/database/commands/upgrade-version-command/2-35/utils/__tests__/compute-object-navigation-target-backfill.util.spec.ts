@@ -98,7 +98,7 @@ describe('computeObjectNavigationTargetBackfill', () => {
     });
 
     expect(backfill.flatCommandMenuItemsToUpdate).toEqual([]);
-    expect(backfill.orphanedCommandMenuItemIds).toEqual([]);
+    expect(backfill.flatCommandMenuItemsToDelete).toEqual([]);
   });
 
   it('leaves a non navigation command untouched', () => {
@@ -116,7 +116,7 @@ describe('computeObjectNavigationTargetBackfill', () => {
     expect(backfill.flatCommandMenuItemsToUpdate).toEqual([]);
   });
 
-  it('skips a command whose payload points at a missing object', () => {
+  it('deletes a command whose payload points at a missing object', () => {
     const backfill = computeObjectNavigationTargetBackfill({
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
@@ -129,7 +129,9 @@ describe('computeObjectNavigationTargetBackfill', () => {
     });
 
     expect(backfill.flatCommandMenuItemsToUpdate).toEqual([]);
-    expect(backfill.orphanedCommandMenuItemIds).toEqual(['command-1']);
+    expect(backfill.flatCommandMenuItemsToDelete.map(({ id }) => id)).toEqual([
+      'command-1',
+    ]);
   });
 
   it('backfills every command targeting the same object', () => {

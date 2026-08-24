@@ -9,7 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export type ObjectNavigationTargetBackfill = {
   flatCommandMenuItemsToUpdate: FlatCommandMenuItem[];
-  orphanedCommandMenuItemIds: string[];
+  flatCommandMenuItemsToDelete: FlatCommandMenuItem[];
 };
 
 export const computeObjectNavigationTargetBackfill = ({
@@ -23,7 +23,7 @@ export const computeObjectNavigationTargetBackfill = ({
 }): ObjectNavigationTargetBackfill => {
   const backfill: ObjectNavigationTargetBackfill = {
     flatCommandMenuItemsToUpdate: [],
-    orphanedCommandMenuItemIds: [],
+    flatCommandMenuItemsToDelete: [],
   };
 
   for (const flatCommandMenuItem of Object.values(
@@ -42,8 +42,10 @@ export const computeObjectNavigationTargetBackfill = ({
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
+    // The object is gone, so the command can only ever be a no-op in the menu.
+    // The new foreign key is what stops these accumulating from now on
     if (!isDefined(flatObjectMetadata)) {
-      backfill.orphanedCommandMenuItemIds.push(flatCommandMenuItem.id);
+      backfill.flatCommandMenuItemsToDelete.push(flatCommandMenuItem);
       continue;
     }
 

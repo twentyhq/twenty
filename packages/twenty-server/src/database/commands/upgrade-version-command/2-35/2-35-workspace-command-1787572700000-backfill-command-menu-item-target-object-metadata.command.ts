@@ -37,20 +37,23 @@ export class BackfillCommandMenuItemTargetObjectMetadataCommand extends Provisio
         'flatObjectMetadataMaps',
       ]);
 
-    const { flatCommandMenuItemsToUpdate, orphanedCommandMenuItemIds } =
+    const { flatCommandMenuItemsToUpdate, flatCommandMenuItemsToDelete } =
       computeObjectNavigationTargetBackfill({
         flatCommandMenuItemMaps,
         flatObjectMetadataMaps,
         now: new Date().toISOString(),
       });
 
-    if (orphanedCommandMenuItemIds.length > 0) {
+    if (flatCommandMenuItemsToDelete.length > 0) {
       this.logger.warn(
-        `Leaving ${orphanedCommandMenuItemIds.length} navigation command menu item(s) untouched in workspace ${workspaceId}, their payload points at a missing object: ${orphanedCommandMenuItemIds.join(', ')}`,
+        `${isDryRun ? '[DRY RUN] Would delete' : 'Deleting'} ${flatCommandMenuItemsToDelete.length} orphaned navigation command menu item(s) in workspace ${workspaceId}, their payload points at a missing object: ${flatCommandMenuItemsToDelete.map(({ id }) => id).join(', ')}`,
       );
     }
 
-    if (flatCommandMenuItemsToUpdate.length === 0) {
+    if (
+      flatCommandMenuItemsToUpdate.length === 0 &&
+      flatCommandMenuItemsToDelete.length === 0
+    ) {
       this.logger.log(
         `Navigation command menu item targets already backfilled for workspace ${workspaceId}`,
       );
@@ -77,7 +80,7 @@ export class BackfillCommandMenuItemTargetObjectMetadataCommand extends Provisio
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [],
+              flatEntityToDelete: flatCommandMenuItemsToDelete,
               flatEntityToUpdate: flatCommandMenuItemsToUpdate,
             },
           },
@@ -98,7 +101,7 @@ export class BackfillCommandMenuItemTargetObjectMetadataCommand extends Provisio
     }
 
     this.logger.log(
-      `Successfully backfilled ${flatCommandMenuItemsToUpdate.length} navigation command menu item target(s) for workspace ${workspaceId}`,
+      `Successfully backfilled ${flatCommandMenuItemsToUpdate.length} and deleted ${flatCommandMenuItemsToDelete.length} navigation command menu item(s) for workspace ${workspaceId}`,
     );
   }
 }
