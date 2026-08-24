@@ -49711,7 +49711,9 @@ __metadata:
   resolution: "twenty-docs@workspace:packages/twenty-docs"
   dependencies:
     mintlify: "npm:^4.2.594"
+    tsx: "npm:^4.19.3"
     twenty-shared: "workspace:*"
+    vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
 
