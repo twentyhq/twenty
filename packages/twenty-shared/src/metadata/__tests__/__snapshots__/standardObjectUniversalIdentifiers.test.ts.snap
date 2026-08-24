@@ -2650,6 +2650,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "timelineActivityTypeId": {
         "universalIdentifier": "20202020-e5f8-4839-9dcf-781e260624ee",
       },
+      "timelineActivityTypeSnapshot": {
+        "universalIdentifier": "20202020-e006-493a-9b07-f2a768a204ca",
+      },
       "updatedAt": {
         "universalIdentifier": "01b33b31-f011-5b55-942f-5bf3ec56f9b3",
       },

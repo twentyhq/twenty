@@ -1,5 +1,5 @@
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
-import { timelineActivityTypeIdsFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeIdsFilterFamilyState';
+import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -10,7 +10,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
@@ -18,36 +18,41 @@ export const WidgetActionTimelineFilter = () => {
   const { t } = useLingui();
   const targetRecord = useTargetRecord();
   const { getIcon } = useIcons();
-  const { timelineActivityTypeById } = useTimelineActivityTypes();
+  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
 
-  const timelineActivityTypeIdsFilter = useAtomFamilyStateValue(
-    timelineActivityTypeIdsFilterFamilyState,
-    targetRecord.id,
-  );
-  const setTimelineActivityTypeIdsFilter = useSetAtomFamilyState(
-    timelineActivityTypeIdsFilterFamilyState,
-    targetRecord.id,
-  );
+  const timelineActivityTypeUniversalIdentifiersFilter =
+    useAtomFamilyStateValue(
+      timelineActivityTypeUniversalIdentifiersFilterFamilyState,
+      targetRecord.id,
+    );
+  const setTimelineActivityTypeUniversalIdentifiersFilter =
+    useSetAtomFamilyState(
+      timelineActivityTypeUniversalIdentifiersFilterFamilyState,
+      targetRecord.id,
+    );
 
-  // Action-less types rely on a custom renderer and do not map to the built-in
-  // event categories exposed by this filter.
-  const filterableTimelineActivityTypes = [
-    ...timelineActivityTypeById.values(),
-  ].filter((timelineActivityType) => isDefined(timelineActivityType.action));
+  const timelineActivityTypes = [
+    ...timelineActivityTypeMaps.byId.values(),
+  ].filter(({ isActive }) => isActive !== false);
 
-  if (filterableTimelineActivityTypes.length === 0) {
+  if (!isNonEmptyArray(timelineActivityTypes)) {
     return null;
   }
 
   const handleSelectChange = (
-    timelineActivityTypeId: string,
+    timelineActivityTypeUniversalIdentifier: string,
     selected: boolean,
   ) =>
-    setTimelineActivityTypeIdsFilter(
+    setTimelineActivityTypeUniversalIdentifiersFilter(
       selected
-        ? [...timelineActivityTypeIdsFilter, timelineActivityTypeId]
-        : timelineActivityTypeIdsFilter.filter(
-            (selectedId) => selectedId !== timelineActivityTypeId,
+        ? [
+            ...timelineActivityTypeUniversalIdentifiersFilter,
+            timelineActivityTypeUniversalIdentifier,
+          ]
+        : timelineActivityTypeUniversalIdentifiersFilter.filter(
+            (selectedUniversalIdentifier) =>
+              selectedUniversalIdentifier !==
+              timelineActivityTypeUniversalIdentifier,
           ),
     );
 
@@ -64,32 +69,37 @@ export const WidgetActionTimelineFilter = () => {
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer hasMaxHeight>
-            {filterableTimelineActivityTypes.map((timelineActivityType) => (
+            {timelineActivityTypes.map((timelineActivityType) => (
               <MenuItemMultiSelect
-                key={timelineActivityType.id}
+                key={timelineActivityType.universalIdentifier}
                 LeftIcon={
                   isDefined(timelineActivityType.icon)
                     ? getIcon(timelineActivityType.icon)
                     : undefined
                 }
                 text={timelineActivityType.label}
-                selected={timelineActivityTypeIdsFilter.includes(
-                  timelineActivityType.id,
+                selected={timelineActivityTypeUniversalIdentifiersFilter.includes(
+                  timelineActivityType.universalIdentifier,
                 )}
                 onSelectChange={(selected) =>
-                  handleSelectChange(timelineActivityType.id, selected)
+                  handleSelectChange(
+                    timelineActivityType.universalIdentifier,
+                    selected,
+                  )
                 }
               />
             ))}
           </DropdownMenuItemsContainer>
-          {timelineActivityTypeIdsFilter.length > 0 && (
+          {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
                 <MenuItem
                   LeftIcon={IconFilterOff}
                   text={t`Clear filter`}
-                  onClick={() => setTimelineActivityTypeIdsFilter([])}
+                  onClick={() =>
+                    setTimelineActivityTypeUniversalIdentifiersFilter([])
+                  }
                 />
               </DropdownMenuItemsContainer>
             </>

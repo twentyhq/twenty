@@ -409,14 +409,15 @@ export default defineFrontComponent({
 
 Kullanılabilir hook'lar:
 
-| Hook                                          | Döndürür                | Açıklama                                                                          |
-| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` veya `null`    | Geçerli kullanıcının ID'si                                                        |
-| `useSelectedRecordIds()`                      | `string[]`              | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                       |
-| `useRecordId()`                               | `string` veya `null`    | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın        |
-| `useFrontComponentId()`                       | `string`                | Bu bileşen örneğinin ID'si                                                        |
-| `useColorScheme()`                            | `'light'` veya `'dark'` | Ana makine kullanıcı arayüzünün etkin renk şeması (`System` zaten çözümlenmiştir) |
-| `useFrontComponentExecutionContext(selector)` | değişir                 | Bir seçici işlevle tam yürütme bağlamına erişin                                   |
+| Hook                                          | Döndürür                | Açıklama                                                                                |
+| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null`    | Geçerli kullanıcının ID'si                                                              |
+| `useSelectedRecordIds()`                      | `string[]`              | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                             |
+| `useRecordId()`                               | `string` veya `null`    | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın              |
+| `useFrontComponentId()`                       | `string`                | Bu bileşen örneğinin ID'si                                                              |
+| `useTimelineActivityId()`                     | `string` veya `null`    | Özel bir zaman çizelgesi satırı oluşturulurken geçerli zaman çizelgesi etkinlik kimliği |
+| `useColorScheme()`                            | `'light'` veya `'dark'` | Ana makine kullanıcı arayüzünün etkin renk şeması (`System` zaten çözümlenmiştir)       |
+| `useFrontComponentExecutionContext(selector)` | değişir                 | Bir seçici işlevle tam yürütme bağlamına erişin                                         |
 
 ## Uygulama değişkenleri
 

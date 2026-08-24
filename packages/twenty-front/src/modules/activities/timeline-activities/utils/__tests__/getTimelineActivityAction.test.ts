@@ -1,22 +1,26 @@
-import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
 
 const UPDATED_TYPE_ID = '20202020-0000-4000-8000-000000000001';
 
-const timelineActivityTypeById = new Map<string, TimelineActivityType>([
-  [
-    UPDATED_TYPE_ID,
-    {
-      id: UPDATED_TYPE_ID,
-      name: 'recordUpdated',
-      label: 'updated',
-      action: 'updated',
-      icon: null,
-      renderer: null,
-      objectUniversalIdentifier: null,
-    },
-  ],
-]);
+const timelineActivityTypeMaps: TimelineActivityTypeMaps = {
+  byId: new Map([
+    [
+      UPDATED_TYPE_ID,
+      {
+        id: UPDATED_TYPE_ID,
+        universalIdentifier: UPDATED_TYPE_ID,
+        name: 'recordUpdated',
+        label: 'updated',
+        action: 'updated',
+        icon: null,
+        objectUniversalIdentifier: null,
+        frontComponentUniversalIdentifier: null,
+      },
+    ],
+  ]),
+  byUniversalIdentifier: new Map(),
+};
 
 describe('getTimelineActivityAction', () => {
   it('reads the action from the activity type', () => {
@@ -24,33 +28,28 @@ describe('getTimelineActivityAction', () => {
       getTimelineActivityAction(
         {
           timelineActivityTypeId: UPDATED_TYPE_ID,
-          name: 'company.created',
           properties: {},
         },
-        timelineActivityTypeById,
+        timelineActivityTypeMaps,
       ),
     ).toBe('updated');
   });
 
-  it('falls back to the deprecated name for a row written by an old pod', () => {
+  it('returns null when the type does not resolve', () => {
     expect(
       getTimelineActivityAction(
-        {
-          timelineActivityTypeId: null,
-          name: 'company.created',
-          properties: {},
-        },
-        timelineActivityTypeById,
-      ),
-    ).toBe('created');
-  });
-
-  it('returns null when neither representation resolves', () => {
-    expect(
-      getTimelineActivityAction(
-        { timelineActivityTypeId: null, name: null, properties: {} },
-        timelineActivityTypeById,
+        { timelineActivityTypeId: 'missing', properties: {} },
+        timelineActivityTypeMaps,
       ),
     ).toBeNull();
+  });
+
+  it('falls back to the legacy name for a row written during a rolling upgrade', () => {
+    expect(
+      getTimelineActivityAction(
+        { name: 'company.updated', properties: {} },
+        timelineActivityTypeMaps,
+      ),
+    ).toBe('updated');
   });
 });

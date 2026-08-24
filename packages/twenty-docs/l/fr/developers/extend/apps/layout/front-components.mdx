@@ -409,14 +409,15 @@ export default defineFrontComponent({
 
 Hooks disponibles :
 
-| Hook                                          | Renvoie               | Description                                                                            |
-| --------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` ou `null`    | L'ID de l'utilisateur actuel                                                           |
-| `useSelectedRecordIds()`                      | `string[]`            | Tous les ID des enregistrements sélectionnés (tableau vide si aucun n'est sélectionné) |
-| `useRecordId()`                               | `string` ou `null`    | **Obsolète.** Utilisez `useSelectedRecordIds()` à la place                             |
-| `useFrontComponentId()`                       | `string`              | L'ID de cette instance de composant                                                    |
-| `useColorScheme()`                            | `'light'` ou `'dark'` | Schéma de couleur actif de l’interface hôte (`System` est déjà résolu)                 |
-| `useFrontComponentExecutionContext(selector)` | variable              | Accédez au contexte d'exécution complet avec une fonction sélecteur                    |
+| Hook                                          | Renvoie               | Description                                                                                          |
+| --------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` ou `null`    | L'ID de l'utilisateur actuel                                                                         |
+| `useSelectedRecordIds()`                      | `string[]`            | Tous les ID des enregistrements sélectionnés (tableau vide si aucun n'est sélectionné)               |
+| `useRecordId()`                               | `string` ou `null`    | **Obsolète.** Utilisez `useSelectedRecordIds()` à la place                                           |
+| `useFrontComponentId()`                       | `string`              | L'ID de cette instance de composant                                                                  |
+| `useTimelineActivityId()`                     | `string` ou `null`    | L’ID de l’activité actuelle de la chronologie lors du rendu d’une ligne de chronologie personnalisée |
+| `useColorScheme()`                            | `'light'` ou `'dark'` | Schéma de couleur actif de l’interface hôte (`System` est déjà résolu)                               |
+| `useFrontComponentExecutionContext(selector)` | variable              | Accédez au contexte d'exécution complet avec une fonction sélecteur                                  |
 
 ## Variables d'application
 

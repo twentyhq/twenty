@@ -162,7 +162,7 @@ describe('buildJunctionTargetShape', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: 'noteTarget',
       junctionSourceJoinColumnName: 'noteId',
-      junctionTargetJoinColumns: [
+      targetJoinColumns: [
         {
           joinColumnName: 'targetPersonId',
           targetObjectNameSingular: 'person',
@@ -210,7 +210,7 @@ describe('buildJunctionTargetShape', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: 'noteTarget',
       junctionSourceJoinColumnName: 'noteId',
-      junctionTargetJoinColumns: [
+      targetJoinColumns: [
         {
           joinColumnName: 'personId',
           targetObjectNameSingular: 'person',

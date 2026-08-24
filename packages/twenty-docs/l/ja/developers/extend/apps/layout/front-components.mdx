@@ -415,6 +415,7 @@ export default defineFrontComponent({
 | `useSelectedRecordIds()`                      | `string[]`             | 選択されたレコードIDの配列（未選択の場合は空配列）                       |
 | `useRecordId()`                               | `string` または `null`    | **非推奨。** 代わりに `useSelectedRecordIds()` を使用してください |
 | `useFrontComponentId()`                       | `string`               | このコンポーネントインスタンスの ID                              |
+| `useTimelineActivityId()`                     | `string` または `null`    | カスタムタイムライン行をレンダリングする際の現在のタイムラインアクティビティ ID        |
 | `useColorScheme()`                            | `'light'` または `'dark'` | ホスト UI のアクティブなカラースキーム（`System` はすでに解決済み）         |
 | `useFrontComponentExecutionContext(selector)` | 項目により異なる               | セレクター関数で実行コンテキスト全体にアクセス                          |
 

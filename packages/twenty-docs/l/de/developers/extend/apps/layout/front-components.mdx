@@ -409,14 +409,15 @@ export default defineFrontComponent({
 
 Verfügbare Hooks:
 
-| Hook                                          | Gibt zurück             | Beschreibung                                                                |
-| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` oder `null`    | Die ID des aktuellen Benutzers                                              |
-| `useSelectedRecordIds()`                      | `string[]`              | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
-| `useRecordId()`                               | `string` oder `null`    | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
-| `useFrontComponentId()`                       | `string`                | Die ID dieser Komponenteninstanz                                            |
-| `useColorScheme()`                            | `'light'` oder `'dark'` | Das aktive Farbschema der Host-UI (`System` ist bereits aufgelöst)          |
-| `useFrontComponentExecutionContext(selector)` | variiert                | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
+| Hook                                          | Gibt zurück             | Beschreibung                                                                              |
+| --------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` oder `null`    | Die ID des aktuellen Benutzers                                                            |
+| `useSelectedRecordIds()`                      | `string[]`              | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)                |
+| `useRecordId()`                               | `string` oder `null`    | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`                          |
+| `useFrontComponentId()`                       | `string`                | Die ID dieser Komponenteninstanz                                                          |
+| `useTimelineActivityId()`                     | `string` oder `null`    | Die aktuelle Timeline-Aktivitäts-ID beim Rendern einer benutzerdefinierten Timeline-Zeile |
+| `useColorScheme()`                            | `'light'` oder `'dark'` | Das aktive Farbschema der Host-UI (`System` ist bereits aufgelöst)                        |
+| `useFrontComponentExecutionContext(selector)` | variiert                | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion               |
 
 ## Anwendungsvariablen
 
