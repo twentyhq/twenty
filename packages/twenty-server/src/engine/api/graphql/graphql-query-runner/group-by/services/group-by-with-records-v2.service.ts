@@ -74,7 +74,6 @@ export class GroupByWithRecordsV2Service {
 
     const {
       authContext,
-      workspaceDataSource,
       rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -123,7 +122,6 @@ export class GroupByWithRecordsV2Service {
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: selectedFieldsResult.select,
         ...nestedRelationsReadPathOptions,

@@ -8,9 +8,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { gql } from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   type TimelineActivityAction,
   type TimelineActivityTypeSnapshot,
@@ -84,27 +82,6 @@ const updateRecord = async ({
   );
 
   expect(response.body.errors).toBeUndefined();
-};
-
-const withOrmV2ReadPathSetting = async (
-  enabled: boolean,
-  callback: () => Promise<void>,
-) => {
-  await updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED,
-    value: enabled,
-    expectToFail: false,
-  });
-
-  try {
-    await callback();
-  } finally {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  }
 };
 
 const findTimelineActivities = async (
@@ -189,7 +166,6 @@ const ATTACHMENT_UNIVERSAL_IDENTIFIER =
 
 const COMPANY_ID = '20202020-7171-4000-8000-000000000001';
 const POSITION_COMPANY_ID = '20202020-7171-4000-8000-000000000002';
-const LEGACY_COMPOSITE_COMPANY_ID = '20202020-7171-4000-8000-000000000003';
 const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
@@ -237,10 +213,6 @@ const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
       id,
     })),
     { objectMetadataSingularName: 'company', id: NOTE_COMPANY_ID },
-    {
-      objectMetadataSingularName: 'company',
-      id: LEGACY_COMPOSITE_COMPANY_ID,
-    },
     {
       objectMetadataSingularName: 'company',
       id: ORM_V2_COMPOSITE_COMPANY_ID,
@@ -336,76 +308,62 @@ describe('timeline activity write path (integration)', () => {
       });
     });
 
-    it.each([
-      {
-        companyId: LEGACY_COMPOSITE_COMPANY_ID,
-        isOrmV2ReadPathEnabled: false,
-        ormName: 'legacy ORM',
-      },
-      {
-        companyId: ORM_V2_COMPOSITE_COMPANY_ID,
-        isOrmV2ReadPathEnabled: true,
-        ormName: 'ORM v2',
-      },
-    ])(
-      'should write an updated entry for a $ormName composite field change',
-      async ({ companyId, isOrmV2ReadPathEnabled }) => {
-        await withOrmV2ReadPathSetting(isOrmV2ReadPathEnabled, async () => {
-          await createRecord({
-            objectMetadataSingularName: 'company',
-            data: {
-              id: companyId,
-              name: 'Composite Field Timeline',
-            },
-          });
+    it('should write an updated entry for a composite field change', async () => {
+      const companyId = ORM_V2_COMPOSITE_COMPANY_ID;
 
-          const updateStartedAt = Date.now();
+      await createRecord({
+        objectMetadataSingularName: 'company',
+        data: {
+          id: companyId,
+          name: 'Composite Field Timeline',
+        },
+      });
 
-          await updateRecord({
-            objectMetadataSingularName: 'company',
-            recordId: companyId,
-            data: {
-              address: {
-                addressStreet1: '234 Composite Street',
-                addressStreet2: '',
-                addressCity: 'Paris',
-                addressState: '',
-                addressCountry: '',
-                addressPostcode: '',
-                addressLat: null,
-                addressLng: null,
-              },
-            },
-          });
+      const updateStartedAt = Date.now();
 
-          const timelineActivities = await findTimelineActivities({
-            targetCompanyId: { eq: companyId },
-            timelineActivityTypeId: {
-              eq: timelineActivityTypeIdForOrThrow('updated'),
-            },
-          });
+      await updateRecord({
+        objectMetadataSingularName: 'company',
+        recordId: companyId,
+        data: {
+          address: {
+            addressStreet1: '234 Composite Street',
+            addressStreet2: '',
+            addressCity: 'Paris',
+            addressState: '',
+            addressCountry: '',
+            addressPostcode: '',
+            addressLat: null,
+            addressLng: null,
+          },
+        },
+      });
 
-          expect(timelineActivities).toHaveLength(1);
-          expect(
-            new Date(timelineActivities[0].happensAt).getTime(),
-          ).toBeGreaterThanOrEqual(updateStartedAt);
-          expect(timelineActivities[0].properties).toMatchObject({
-            diff: {
-              address: {
-                before: {
-                  addressStreet1: '',
-                  addressCity: '',
-                },
-                after: {
-                  addressStreet1: '234 Composite Street',
-                  addressCity: 'Paris',
-                },
-              },
+      const timelineActivities = await findTimelineActivities({
+        targetCompanyId: { eq: companyId },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow('updated'),
+        },
+      });
+
+      expect(timelineActivities).toHaveLength(1);
+      expect(
+        new Date(timelineActivities[0].happensAt).getTime(),
+      ).toBeGreaterThanOrEqual(updateStartedAt);
+      expect(timelineActivities[0].properties).toMatchObject({
+        diff: {
+          address: {
+            before: {
+              addressStreet1: '',
+              addressCity: '',
             },
-          });
-        });
-      },
-    );
+            after: {
+              addressStreet1: '234 Composite Street',
+              addressCity: 'Paris',
+            },
+          },
+        },
+      });
+    });
 
     it('should merge every record of a multi record batch', async () => {
       for (const [index, id] of BATCH_COMPANY_IDS.entries()) {

@@ -50,7 +50,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatFieldMetadataMaps,
       commonQueryParser,
       authContext,
-      workspaceDataSource,
       rolePermissionConfig,
     } = queryRunnerContext;
 
@@ -167,10 +166,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
+        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
