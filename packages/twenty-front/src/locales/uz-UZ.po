@@ -1160,10 +1160,25 @@ msgstr "{objectLabelSingular} qo‘shish"
 msgid "Add a Group"
 msgstr "Guruh qo‘shish"
 
+#. js-lingui-id: z9ZemB
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a location"
+msgstr "Joylashuv qo‘shish"
+
+#. js-lingui-id: h7aG+Z
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a meeting link"
+msgstr "Uchrashuv havolasini qo‘shish"
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Aloqada bo‘lgan yangi kompaniyani qo‘shing (masalan, nomi, veb-sayti, sohasi). Tafsilotlar: "
+
+#. js-lingui-id: Ad+JsP
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add a person with an email to this company first"
+msgstr "Avval ushbu kompaniyaga elektron pochta manziliga ega shaxsni qo‘shing"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1188,12 +1203,28 @@ msgid "Add a video conferencing link"
 msgstr "Video konferensiya havolasini qo‘shish"
 
 #. js-lingui-id: MPPZ54
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Add account"
 msgstr "Hisob qo‘shish"
+
+#. js-lingui-id: W5wF8J
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to the point of contact first"
+msgstr "Avval aloqa shaxsiga elektron pochta manzilini qo‘shing"
+
+#. js-lingui-id: LVzaHu
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to this person first"
+msgstr "Avval ushbu shaxsga elektron pochta manzilini qo‘shing"
+
+#. js-lingui-id: KD0hdw
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add an event title"
+msgstr "Tadbir sarlavhasini qo‘shing"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1265,6 +1296,11 @@ msgstr "Maxsus endpointlar, xususiy shlyuzlar yoki qo‘shimcha mintaqalar qo‘
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "Maxsus provayder qo‘shish"
+
+#. js-lingui-id: 094J9M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add details for guests"
+msgstr "Mehmonlar uchun tafsilotlarni qo‘shing"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1946,6 +1982,8 @@ msgid "All application registrations across the platform, including orphaned mar
 msgstr "Platformadagi barcha ilova ro‘yxatdan o‘tkazishlari, jumladan egasiz qolgan marketpleys ilovalari"
 
 #. js-lingui-id: 1kLn6M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 #: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -3405,11 +3443,22 @@ msgid "caldav.example.com"
 msgstr "caldav.example.com"
 
 #. js-lingui-id: AjVXBS
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar"
 msgstr "Kalendar"
+
+#. js-lingui-id: x1X5mf
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Calendar access needs approval"
+msgstr "Kalendar ruxsati tasdiqlanishi kerak"
+
+#. js-lingui-id: 6kmXOY
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Calendar event created successfully"
+msgstr "Kalendar hodisasi muvaffaqiyatli yaratildi"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3420,6 +3469,11 @@ msgstr "Taqvim hodisasida boshlanish sanasi yo‘q."
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
 msgstr "Kalendar hodisasi topilmadi"
+
+#. js-lingui-id: rLQVsa
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Calendar events cannot be linked to this record type"
+msgstr "Kalendar hodisalarini bu yozuv turiga bog‘lab bo‘lmaydi"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3806,6 +3860,11 @@ msgstr "ChatGPT"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Chats"
 msgstr "Chatlar"
+
+#. js-lingui-id: JslvtK
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check the event dates"
+msgstr "Tadbir sanalarini tekshiring"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4593,6 +4652,11 @@ msgstr "{appName} ni akkauntingizga ulang"
 msgid "Connect {providerDisplayName}"
 msgstr "{providerDisplayName} ni ulash"
 
+#. js-lingui-id: bFJIPh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect a calendar account"
+msgstr "Kalendar akkauntini ulang"
+
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
@@ -4607,6 +4671,11 @@ msgstr "O‘rnatish havolalari yoki mijoz hujjatlaridan foydalanib qo‘shimcha 
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
 msgstr "Claude yoki Cursor kabi AI yordamchilarini Model Context Protocol orqali ish joyingizga ulang"
+
+#. js-lingui-id: TA7R1S
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
+msgstr "Google, Microsoft yoki CalDAV-ni ulang va tadbir yaratishdan oldin kalendar sinxronizatsiyasini yoqing."
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5158,6 +5227,11 @@ msgstr "Ish jarayonini yarating va uning versiyalarini ko‘rish uchun bu yerga 
 msgid "Create a workspace"
 msgstr "Ish maydoni yaratish"
 
+#. js-lingui-id: dpwEnu
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Create an all-day event"
+msgstr "Kun bo‘yi davom etadigan tadbir yarating"
+
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Create an application"
@@ -5192,6 +5266,12 @@ msgstr "Moslashtirilgan ko‘rinish yaratish"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Create date field"
 msgstr "Sana maydonini yaratish"
+
+#. js-lingui-id: PybJS2
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Create event"
+msgstr "Tadbir yaratish"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -6446,6 +6526,7 @@ msgid "Describe what you want the AI to do..."
 msgstr "AI’dan nima qilinishini xohlayotganingizni tasvirlab bering..."
 
 #. js-lingui-id: Nu4oKW
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6573,6 +6654,7 @@ msgid "Disabled"
 msgstr "O‘chirilgan"
 
 #. js-lingui-id: bzSI52
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
 msgstr "Bekor qilish"
@@ -7196,6 +7278,11 @@ msgstr "E‑pochta buferga nusxalandi"
 msgid "Email Editor"
 msgstr "Email muharriri"
 
+#. js-lingui-id: 6iOHIG
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Email guests an invitation"
+msgstr "Mehmonlarga taklifnomani elektron pochta orqali yuboring"
+
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "Email is required"
@@ -7423,6 +7510,12 @@ msgstr "Yakunlanishi"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "Endpoint URL"
+
+#. js-lingui-id: x/6eQ0
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Ends"
+msgstr "Tugaydi"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8310,6 +8403,12 @@ msgstr "Provayderni qo‘shib bo‘lmadi"
 msgid "Failed to claim ownership."
 msgstr "Egalik huquqini da’vo qilish muvaffaqiyatsiz tugadi."
 
+#. js-lingui-id: kzaVCK
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Failed to create calendar event"
+msgstr "Kalendar hodisasini yaratib bo‘lmadi"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
 msgid "Failed to create record"
@@ -8436,6 +8535,11 @@ msgstr "Yozuvni ko‘chirib bo‘lmadi"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
 msgstr "Kontekstni tahlil qilib boʻlmadi: {contextValue}"
+
+#. js-lingui-id: 8l1diy
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Failed to reconnect calendar account"
+msgstr "Kalendar akkauntini qayta ulab bo‘lmadi"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -9513,6 +9617,12 @@ msgstr "Guruhlangan {objectLabel}"
 msgid "Grouping {objectLabel}"
 msgstr "{objectLabel} ni guruhlash"
 
+#. js-lingui-id: R4r4XO
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Guests"
+msgstr "Mehmonlar"
+
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
@@ -10512,6 +10622,7 @@ msgid "Invalid verification code. Please try again."
 msgstr "Tasdiqlash kodi yaroqsiz. Iltimos, qayta urinib ko‘ring."
 
 #. js-lingui-id: ZR1dJ4
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
 msgstr "Takliflar"
@@ -10799,6 +10910,16 @@ msgstr "Kanban"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban widget"
 msgstr "Kanban vidjeti"
+
+#. js-lingui-id: ZlHUDM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
+msgstr "Mehmonlar ro‘yxatida joriy yozuvni saqlang va taklifnomalarni yoqilgan holda qoldiring, shunda tadbir ushbu yozuvda ko‘rinib turadi."
+
+#. js-lingui-id: WOUOYg
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep this event related"
+msgstr "Bu tadbirni bog‘langan holda saqlang"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -11522,6 +11643,8 @@ msgid "Locale"
 msgstr "Lokal"
 
 #. js-lingui-id: wJijgU
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Location"
 msgstr "Joylashuv"
@@ -12537,6 +12660,11 @@ msgstr "Yangi AI provayderi"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "Yangi tasdiqlangan kirish domeni"
+
+#. js-lingui-id: E69UDm
+#: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
+msgid "New calendar event"
+msgstr "Yangi kalendar hodisasi"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -15390,6 +15518,7 @@ msgid "Recommended Models"
 msgstr "Tavsiya etilgan modellar"
 
 #. js-lingui-id: gcoiFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15407,6 +15536,11 @@ msgstr "Qayta ulang va ko‘rinishni o‘zgartiring"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Reconnect needed"
 msgstr "Qayta ulash kerak"
+
+#. js-lingui-id: GENn17
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Reconnect this account to grant permission to create calendar events."
+msgstr "Kalendar hodisalarini yaratish ruxsatini berish uchun ushbu akkauntni qayta ulang."
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15767,6 +15901,11 @@ msgstr "Qoidani olib tashlash"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Remove rule group"
 msgstr "Qoidalar guruhini olib tashlash"
+
+#. js-lingui-id: jCt40X
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Remove some guests before creating this event."
+msgstr "Bu tadbirni yaratishdan oldin ayrim mehmonlarni olib tashlang."
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -17114,6 +17253,7 @@ msgid "Send emails via connected accounts"
 msgstr "Ulangan akkauntlar orqali elektron xatlar yuborish"
 
 #. js-lingui-id: 6nwEi6
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "Takliflarni yuborish"
@@ -17902,6 +18042,12 @@ msgstr "Tasdiqlash jarayoni boshlandi"
 msgid "Starting {scheduledChangeStartDate}"
 msgstr "{scheduledChangeStartDate} sanasidan boshlab"
 
+#. js-lingui-id: W1KkjZ
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Starts"
+msgstr "Boshlanadi"
+
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Starts at"
@@ -18617,6 +18763,16 @@ msgstr "Bu hisob bilan bog‘langan elektron pochta manzili"
 msgid "The email associated to your account"
 msgstr "Hisobingiz bilan bog‘langan elektron pochta manzili"
 
+#. js-lingui-id: WGfnFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date must be later than the start date."
+msgstr "Tugash sanasi boshlanish sanasidan keyin bo‘lishi kerak."
+
+#. js-lingui-id: ThrGxX
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end time must be after the start time."
+msgstr "Tugash vaqti boshlanish vaqtidan keyin bo‘lishi kerak."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -19168,6 +19324,7 @@ msgid "Time format"
 msgstr "Vaqt formati"
 
 #. js-lingui-id: Mz2JN2
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -19216,6 +19373,8 @@ msgid "title"
 msgstr "sarlavha"
 
 #. js-lingui-id: MHrjPM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -19292,6 +19451,11 @@ msgstr "Pomidor rangi"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Ertaga"
+
+#. js-lingui-id: 1NhzqT
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Too many guests"
+msgstr "Mehmonlar juda ko‘p"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20729,6 +20893,16 @@ msgstr "Faqat tekshirilganlar"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
 msgstr "Video"
+
+#. js-lingui-id: nASH9g
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video call"
+msgstr "Videoqo‘ng‘iroq"
+
+#. js-lingui-id: ugEVJa
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video conferencing"
+msgstr "Video konferensiya"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts

@@ -1160,10 +1160,25 @@ msgstr "Ավելացնել {objectLabelSingular}"
 msgid "Add a Group"
 msgstr "Ավելացնել խումբ"
 
+#. js-lingui-id: z9ZemB
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a location"
+msgstr "Ավելացնել վայր"
+
+#. js-lingui-id: h7aG+Z
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a meeting link"
+msgstr "Ավելացնել հանդիպման հղում"
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Ավելացրու նոր ընկերություն, որի հետ կապի մեջ ենք (օր․՝ անուն, կայք, ոլորտ)։ Մանրամասներ՝ "
+
+#. js-lingui-id: Ad+JsP
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add a person with an email to this company first"
+msgstr "Նախ այս ընկերությանը ավելացրեք էլ. փոստի հասցե ունեցող անձի"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1188,12 +1203,28 @@ msgid "Add a video conferencing link"
 msgstr "Ավելացրեք վիդեո-կոնֆերանսի հղում"
 
 #. js-lingui-id: MPPZ54
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Add account"
 msgstr "Ավելացնել հաշիվ"
+
+#. js-lingui-id: W5wF8J
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to the point of contact first"
+msgstr "Նախ կապի անձին ավելացրեք էլ. փոստի հասցե"
+
+#. js-lingui-id: LVzaHu
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to this person first"
+msgstr "Նախ այս անձին ավելացրեք էլ. փոստի հասցե"
+
+#. js-lingui-id: KD0hdw
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add an event title"
+msgstr "Ավելացնել իրադարձության վերնագիր"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1265,6 +1296,11 @@ msgstr "Ավելացրեք հարմարեցված վերջնակետեր, մաս
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "Ավելացնել հարմարեցված մատակարար"
+
+#. js-lingui-id: 094J9M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add details for guests"
+msgstr "Ավելացնել մանրամասներ հյուրերի համար"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1946,6 +1982,8 @@ msgid "All application registrations across the platform, including orphaned mar
 msgstr "Բոլոր հավելվածների գրանցումները հարթակի մասշտաբով՝ ներառյալ որբացված marketplace հավելվածները"
 
 #. js-lingui-id: 1kLn6M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 #: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -3405,11 +3443,22 @@ msgid "caldav.example.com"
 msgstr "caldav.example.com"
 
 #. js-lingui-id: AjVXBS
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar"
 msgstr "Օրացույց"
+
+#. js-lingui-id: x1X5mf
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Calendar access needs approval"
+msgstr "Օրացույցի հասանելիությունը հաստատման կարիք ունի"
+
+#. js-lingui-id: 6kmXOY
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Calendar event created successfully"
+msgstr "Օրացույցի իրադարձությունը հաջողությամբ ստեղծվեց"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3420,6 +3469,11 @@ msgstr "Օրացույցի իրադարձությունը մեկնարկի ամ�
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
 msgstr "Օրացուցային իրադարձությունը չի գտնվել"
+
+#. js-lingui-id: rLQVsa
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Calendar events cannot be linked to this record type"
+msgstr "Օրացույցի իրադարձությունները չեն կարող կապվել այս գրառման տեսակի հետ"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3806,6 +3860,11 @@ msgstr "ChatGPT"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Chats"
 msgstr "Զրույցներ"
+
+#. js-lingui-id: JslvtK
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check the event dates"
+msgstr "Ստուգեք իրադարձության ամսաթվերը"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4593,6 +4652,11 @@ msgstr "Կապել {appName}-ը ձեր հաշվին"
 msgid "Connect {providerDisplayName}"
 msgstr "Միացնել {providerDisplayName}"
 
+#. js-lingui-id: bFJIPh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect a calendar account"
+msgstr "Միացնել օրացույցի հաշիվ"
+
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
@@ -4607,6 +4671,11 @@ msgstr "Կապակցեք լրացուցիչ MCP հաճախորդներ՝ օգտ�
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
 msgstr "Կապեք Claude-ի կամ Cursor-ի նման AI օգնականներին ձեր workspace-ին Model Context Protocol-ի միջոցով"
+
+#. js-lingui-id: TA7R1S
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
+msgstr "Իրադարձություն ստեղծելուց առաջ միացրեք Google-ը, Microsoft-ը կամ CalDAV-ը և ակտիվացրեք օրացույցի համաժամացումը։"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5158,6 +5227,11 @@ msgstr "Ստեղծեք աշխատանքային հոսք և վերադարձեք
 msgid "Create a workspace"
 msgstr "Ստեղծել աշխատանքային տարածք"
 
+#. js-lingui-id: dpwEnu
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Create an all-day event"
+msgstr "Ստեղծել ամբողջ օրվա իրադարձություն"
+
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Create an application"
@@ -5192,6 +5266,12 @@ msgstr "Ստեղծել անհատական տեսք"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Create date field"
 msgstr "Ստեղծել ամսաթվի դաշտ"
+
+#. js-lingui-id: PybJS2
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Create event"
+msgstr "Ստեղծել իրադարձություն"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -6446,6 +6526,7 @@ msgid "Describe what you want the AI to do..."
 msgstr "Նկարագրեք, թե ինչ եք ուզում, որ AI-ն անի..."
 
 #. js-lingui-id: Nu4oKW
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6573,6 +6654,7 @@ msgid "Disabled"
 msgstr "Անջատված"
 
 #. js-lingui-id: bzSI52
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
 msgstr "Ջնջել սևագիրը"
@@ -7196,6 +7278,11 @@ msgstr "Էլ․ նամակը պատճենվեց սեղմատախտակին"
 msgid "Email Editor"
 msgstr "Էլ․ փոստի խմբագրիչ"
 
+#. js-lingui-id: 6iOHIG
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Email guests an invitation"
+msgstr "Հյուրերին հրավեր ուղարկել էլ. փոստով"
+
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "Email is required"
@@ -7423,6 +7510,12 @@ msgstr "Ավարտվում է"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "Endpoint URL"
+
+#. js-lingui-id: x/6eQ0
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Ends"
+msgstr "Ավարտվում է"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8310,6 +8403,12 @@ msgstr "Չհաջողվեց ավելացնել մատակարարին"
 msgid "Failed to claim ownership."
 msgstr "Չհաջողվեց պահանջ ներկայացնել սեփականության վերաբերյալ։"
 
+#. js-lingui-id: kzaVCK
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Failed to create calendar event"
+msgstr "Չհաջողվեց ստեղծել օրացույցի իրադարձությունը"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
 msgid "Failed to create record"
@@ -8436,6 +8535,11 @@ msgstr "Չհաջողվեց տեղափոխել գրառումը"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
 msgstr "Չհաջողվեց վերծանել համատեքստը՝ {contextValue}"
+
+#. js-lingui-id: 8l1diy
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Failed to reconnect calendar account"
+msgstr "Չհաջողվեց վերամիացնել օրացույցի հաշիվը"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -9513,6 +9617,12 @@ msgstr "Խմբավորված {objectLabel}"
 msgid "Grouping {objectLabel}"
 msgstr "Խմբավորում է {objectLabel}"
 
+#. js-lingui-id: R4r4XO
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Guests"
+msgstr "Հյուրեր"
+
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
@@ -10512,6 +10622,7 @@ msgid "Invalid verification code. Please try again."
 msgstr "Սխալ հաստատման կոդ։ Խնդրում ենք կրկին փորձել։"
 
 #. js-lingui-id: ZR1dJ4
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
 msgstr "Հրավերներ"
@@ -10799,6 +10910,16 @@ msgstr "Kanban"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban widget"
 msgstr "Կանբան վիջեթ"
+
+#. js-lingui-id: ZlHUDM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
+msgstr "Ընթացիկ գրառումը պահեք հյուրերի ցանկում և հրավերները միացված թողեք, որպեսզի իրադարձությունը տեսանելի մնա այս գրառման մեջ։"
+
+#. js-lingui-id: WOUOYg
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep this event related"
+msgstr "Պահել այս իրադարձությունը որպես կապված"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -11522,6 +11643,8 @@ msgid "Locale"
 msgstr "Տարածաշրջանային կարգավորում"
 
 #. js-lingui-id: wJijgU
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Location"
 msgstr "Վայր"
@@ -12537,6 +12660,11 @@ msgstr "Նոր AI մատակարար"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "Նոր հաստատված մուտքի տիրույթ"
+
+#. js-lingui-id: E69UDm
+#: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
+msgid "New calendar event"
+msgstr "Նոր օրացույցի իրադարձություն"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -15390,6 +15518,7 @@ msgid "Recommended Models"
 msgstr "Առաջարկվող մոդելներ"
 
 #. js-lingui-id: gcoiFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15407,6 +15536,11 @@ msgstr "Կրկին միացնել և փոխել տեսանելիությունը
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Reconnect needed"
 msgstr "Պետք է կրկին միացնել"
+
+#. js-lingui-id: GENn17
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Reconnect this account to grant permission to create calendar events."
+msgstr "Վերամիացրեք այս հաշիվը՝ օրացույցի իրադարձություններ ստեղծելու թույլտվություն տրամադրելու համար։"
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15767,6 +15901,11 @@ msgstr "Հեռացնել կանոնը"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Remove rule group"
 msgstr "Հեռացնել կանոնների խումբը"
+
+#. js-lingui-id: jCt40X
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Remove some guests before creating this event."
+msgstr "Այս իրադարձությունը ստեղծելուց առաջ հեռացրեք որոշ հյուրերի։"
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -17114,6 +17253,7 @@ msgid "Send emails via connected accounts"
 msgstr "Ուղարկել էլ. նամակներ միացված հաշիվների միջոցով"
 
 #. js-lingui-id: 6nwEi6
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "Ուղարկել հրավերներ"
@@ -17902,6 +18042,12 @@ msgstr "Վավերացման գործընթացը սկսված է"
 msgid "Starting {scheduledChangeStartDate}"
 msgstr "Սկսած {scheduledChangeStartDate}-ից"
 
+#. js-lingui-id: W1KkjZ
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Starts"
+msgstr "Սկսվում է"
+
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Starts at"
@@ -18617,6 +18763,16 @@ msgstr "Այս հաշվին կապված էլ․ փոստի հասցեն"
 msgid "The email associated to your account"
 msgstr "Ձեր հաշվին կապված էլփոստի հասցեն"
 
+#. js-lingui-id: WGfnFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date must be later than the start date."
+msgstr "Ավարտի ամսաթիվը պետք է լինի սկզբի ամսաթվից հետո։"
+
+#. js-lingui-id: ThrGxX
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end time must be after the start time."
+msgstr "Ավարտի ժամը պետք է լինի սկզբի ժամից հետո։"
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -19168,6 +19324,7 @@ msgid "Time format"
 msgstr "Ժամի ձևաչափ"
 
 #. js-lingui-id: Mz2JN2
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -19216,6 +19373,8 @@ msgid "title"
 msgstr "վերնագիր"
 
 #. js-lingui-id: MHrjPM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -19292,6 +19451,11 @@ msgstr "Լոլիկ"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Վաղը"
+
+#. js-lingui-id: 1NhzqT
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Too many guests"
+msgstr "Չափազանց շատ հյուրեր"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20729,6 +20893,16 @@ msgstr "Միայն ստուգվածները"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
 msgstr "Տեսանյութ"
+
+#. js-lingui-id: nASH9g
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video call"
+msgstr "Տեսազանգ"
+
+#. js-lingui-id: ugEVJa
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video conferencing"
+msgstr "Տեսակոնֆերանս"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts

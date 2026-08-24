@@ -8297,7 +8297,7 @@ msgstr "リクエスト済み"
 #. js-lingui-id: c1RSQl
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Requested file range cannot be served."
-msgstr ""
+msgstr "要求されたファイル範囲を提供できません。"
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts

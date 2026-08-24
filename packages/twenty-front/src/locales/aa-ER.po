@@ -1160,10 +1160,25 @@ msgstr "crwdns65886:0{objectLabelSingular}crwdne65886:0"
 msgid "Add a Group"
 msgstr "crwdns111004:0crwdne111004:0"
 
+#. js-lingui-id: z9ZemB
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a location"
+msgstr "crwdns140601:0crwdne140601:0"
+
+#. js-lingui-id: h7aG+Z
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a meeting link"
+msgstr "crwdns140603:0crwdne140603:0"
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "crwdns108126:0crwdne108126:0"
+
+#. js-lingui-id: Ad+JsP
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add a person with an email to this company first"
+msgstr "crwdns140605:0crwdne140605:0"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1188,12 +1203,28 @@ msgid "Add a video conferencing link"
 msgstr "crwdns132935:0crwdne132935:0"
 
 #. js-lingui-id: MPPZ54
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Add account"
 msgstr "crwdns5005:0crwdne5005:0"
+
+#. js-lingui-id: W5wF8J
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to the point of contact first"
+msgstr "crwdns140607:0crwdne140607:0"
+
+#. js-lingui-id: LVzaHu
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to this person first"
+msgstr "crwdns140609:0crwdne140609:0"
+
+#. js-lingui-id: KD0hdw
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add an event title"
+msgstr "crwdns140611:0crwdne140611:0"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1265,6 +1296,11 @@ msgstr "crwdns111640:0crwdne111640:0"
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "crwdns111642:0crwdne111642:0"
+
+#. js-lingui-id: 094J9M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add details for guests"
+msgstr "crwdns140613:0crwdne140613:0"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1946,6 +1982,8 @@ msgid "All application registrations across the platform, including orphaned mar
 msgstr "crwdns109322:0crwdne109322:0"
 
 #. js-lingui-id: 1kLn6M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 #: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -3405,11 +3443,22 @@ msgid "caldav.example.com"
 msgstr "crwdns6674:0crwdne6674:0"
 
 #. js-lingui-id: AjVXBS
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar"
 msgstr "crwdns159:0crwdne159:0"
+
+#. js-lingui-id: x1X5mf
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Calendar access needs approval"
+msgstr "crwdns140615:0crwdne140615:0"
+
+#. js-lingui-id: 6kmXOY
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Calendar event created successfully"
+msgstr "crwdns140617:0crwdne140617:0"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3420,6 +3469,11 @@ msgstr "crwdns140521:0crwdne140521:0"
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
 msgstr "crwdns65958:0crwdne65958:0"
+
+#. js-lingui-id: rLQVsa
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Calendar events cannot be linked to this record type"
+msgstr "crwdns140619:0crwdne140619:0"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3806,6 +3860,11 @@ msgstr "crwdns133053:0crwdne133053:0"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Chats"
 msgstr "crwdns115952:0crwdne115952:0"
+
+#. js-lingui-id: JslvtK
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check the event dates"
+msgstr "crwdns140621:0crwdne140621:0"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4593,6 +4652,11 @@ msgstr "crwdns125284:0{appName}crwdne125284:0"
 msgid "Connect {providerDisplayName}"
 msgstr "crwdns119852:0{providerDisplayName}crwdne119852:0"
 
+#. js-lingui-id: bFJIPh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect a calendar account"
+msgstr "crwdns140623:0crwdne140623:0"
+
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
@@ -4607,6 +4671,11 @@ msgstr "crwdns133095:0crwdne133095:0"
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
 msgstr "crwdns127707:0crwdne127707:0"
+
+#. js-lingui-id: TA7R1S
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
+msgstr "crwdns140625:0crwdne140625:0"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5158,6 +5227,11 @@ msgstr "crwdns229:0crwdne229:0"
 msgid "Create a workspace"
 msgstr "crwdns6200:0crwdne6200:0"
 
+#. js-lingui-id: dpwEnu
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Create an all-day event"
+msgstr "crwdns140627:0crwdne140627:0"
+
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Create an application"
@@ -5192,6 +5266,12 @@ msgstr "crwdns7252:0crwdne7252:0"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Create date field"
 msgstr "crwdns7738:0crwdne7738:0"
+
+#. js-lingui-id: PybJS2
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Create event"
+msgstr "crwdns140629:0crwdne140629:0"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -6446,6 +6526,7 @@ msgid "Describe what you want the AI to do..."
 msgstr "crwdns6344:0crwdne6344:0"
 
 #. js-lingui-id: Nu4oKW
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6573,6 +6654,7 @@ msgid "Disabled"
 msgstr "crwdns116138:0crwdne116138:0"
 
 #. js-lingui-id: bzSI52
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
 msgstr "crwdns137973:0crwdne137973:0"
@@ -7196,6 +7278,11 @@ msgstr "crwdns6874:0crwdne6874:0"
 msgid "Email Editor"
 msgstr "crwdns7920:0crwdne7920:0"
 
+#. js-lingui-id: 6iOHIG
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Email guests an invitation"
+msgstr "crwdns140631:0crwdne140631:0"
+
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "Email is required"
@@ -7423,6 +7510,12 @@ msgstr "crwdns133231:0crwdne133231:0"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "crwdns335:0crwdne335:0"
+
+#. js-lingui-id: x/6eQ0
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Ends"
+msgstr "crwdns140633:0crwdne140633:0"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8310,6 +8403,12 @@ msgstr "crwdns111720:0crwdne111720:0"
 msgid "Failed to claim ownership."
 msgstr "crwdns133267:0crwdne133267:0"
 
+#. js-lingui-id: kzaVCK
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Failed to create calendar event"
+msgstr "crwdns140635:0crwdne140635:0"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
 msgid "Failed to create record"
@@ -8436,6 +8535,11 @@ msgstr "crwdns134661:0crwdne134661:0"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
 msgstr "crwdns66098:0{contextValue}crwdne66098:0"
+
+#. js-lingui-id: 8l1diy
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Failed to reconnect calendar account"
+msgstr "crwdns140637:0crwdne140637:0"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -9513,6 +9617,12 @@ msgstr "crwdns133347:0{objectLabel}crwdne133347:0"
 msgid "Grouping {objectLabel}"
 msgstr "crwdns133349:0{objectLabel}crwdne133349:0"
 
+#. js-lingui-id: R4r4XO
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Guests"
+msgstr "crwdns140639:0crwdne140639:0"
+
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
@@ -10498,6 +10608,7 @@ msgid "Invalid verification code. Please try again."
 msgstr "crwdns6810:0crwdne6810:0"
 
 #. js-lingui-id: ZR1dJ4
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
 msgstr "crwdns6202:0crwdne6202:0"
@@ -10785,6 +10896,16 @@ msgstr "crwdns5189:0crwdne5189:0"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban widget"
 msgstr "crwdns135035:0crwdne135035:0"
+
+#. js-lingui-id: ZlHUDM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
+msgstr "crwdns140641:0crwdne140641:0"
+
+#. js-lingui-id: WOUOYg
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep this event related"
+msgstr "crwdns140643:0crwdne140643:0"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -11508,6 +11629,8 @@ msgid "Locale"
 msgstr "crwdns108104:0crwdne108104:0"
 
 #. js-lingui-id: wJijgU
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Location"
 msgstr "crwdns133447:0crwdne133447:0"
@@ -12523,6 +12646,11 @@ msgstr "crwdns111756:0crwdne111756:0"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "crwdns4937:0crwdne4937:0"
+
+#. js-lingui-id: E69UDm
+#: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
+msgid "New calendar event"
+msgstr "crwdns140645:0crwdne140645:0"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -15376,6 +15504,7 @@ msgid "Recommended Models"
 msgstr "crwdns111774:0crwdne111774:0"
 
 #. js-lingui-id: gcoiFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15393,6 +15522,11 @@ msgstr "crwdns124978:0crwdne124978:0"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Reconnect needed"
 msgstr "crwdns119526:0crwdne119526:0"
+
+#. js-lingui-id: GENn17
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Reconnect this account to grant permission to create calendar events."
+msgstr "crwdns140647:0crwdne140647:0"
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15753,6 +15887,11 @@ msgstr "crwdns66336:0crwdne66336:0"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Remove rule group"
 msgstr "crwdns66338:0crwdne66338:0"
+
+#. js-lingui-id: jCt40X
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Remove some guests before creating this event."
+msgstr "crwdns140649:0crwdne140649:0"
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -17100,6 +17239,7 @@ msgid "Send emails via connected accounts"
 msgstr "crwdns63876:0crwdne63876:0"
 
 #. js-lingui-id: 6nwEi6
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "crwdns133717:0crwdne133717:0"
@@ -17888,6 +18028,12 @@ msgstr "crwdns8008:0crwdne8008:0"
 msgid "Starting {scheduledChangeStartDate}"
 msgstr "crwdns133751:0{scheduledChangeStartDate}crwdne133751:0"
 
+#. js-lingui-id: W1KkjZ
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Starts"
+msgstr "crwdns140651:0crwdne140651:0"
+
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Starts at"
@@ -18584,6 +18730,16 @@ msgstr "crwdns64824:0crwdne64824:0"
 msgid "The email associated to your account"
 msgstr "crwdns715:0crwdne715:0"
 
+#. js-lingui-id: WGfnFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date must be later than the start date."
+msgstr "crwdns140653:0crwdne140653:0"
+
+#. js-lingui-id: ThrGxX
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end time must be after the start time."
+msgstr "crwdns140655:0crwdne140655:0"
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -19135,6 +19291,7 @@ msgid "Time format"
 msgstr "crwdns739:0crwdne739:0"
 
 #. js-lingui-id: Mz2JN2
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -19183,6 +19340,8 @@ msgid "title"
 msgstr "crwdns63998:0crwdne63998:0"
 
 #. js-lingui-id: MHrjPM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -19259,6 +19418,11 @@ msgstr "crwdns66444:0crwdne66444:0"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "crwdns6050:0crwdne6050:0"
+
+#. js-lingui-id: 1NhzqT
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Too many guests"
+msgstr "crwdns140657:0crwdne140657:0"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20696,6 +20860,16 @@ msgstr "crwdns133921:0crwdne133921:0"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
 msgstr "crwdns111824:0crwdne111824:0"
+
+#. js-lingui-id: nASH9g
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video call"
+msgstr "crwdns140659:0crwdne140659:0"
+
+#. js-lingui-id: ugEVJa
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video conferencing"
+msgstr "crwdns140661:0crwdne140661:0"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts
