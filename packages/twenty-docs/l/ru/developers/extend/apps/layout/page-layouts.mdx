@@ -56,6 +56,7 @@ export default definePageLayout({
 * Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode`: `VERTICAL_LIST` для страниц записей и автономных страниц, `GRID` для панелей мониторинга. Во вкладке `VERTICAL_LIST` один виджет отображается на всю ширину и занимает всю вкладку; при нескольких виджетах они располагаются в виде карточек. Вкладка `GRID` всегда раскладывает свои виджеты в виде карточек на 12‑колоночной сетке, независимо от их количества, так что выбирайте `VERTICAL_LIST`, когда нужно, чтобы один виджет заполнял страницу.
 * Явно задайте `layoutMode`. Если его не указывать, вы получите `VERTICAL_LIST` на `STANDALONE_PAGE` и `GRID` в остальных случаях, что редко бывает нужно на странице записи.
 * Каждый `widget` внутри вкладки может отображать [front component](/l/ru/developers/extend/apps/layout/front-components), список связей или другие встроенные типы виджетов.
+* Виджет `FRONT_COMPONENT` может задавать для `headerCommandMenuItemUniversalIdentifiers` упорядоченный массив универсальных идентификаторов элементов меню команд из того же приложения. Эти действия отображаются как кнопки со значками в заголовке карточки виджета и сохраняют доступность и проверки разрешений на уровне команд. Идентификаторы должны быть уникальными и разрешаться при установке приложения.
 * `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
 
 ### Виджеты полей
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Каждый элемент макета также предоставляет свои `tabs` и их `widgets`, поэтому вы можете ссылаться на любой уровень:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   Также доступен короткий псевдоним `STANDARD_PAGE_LAYOUT`:
