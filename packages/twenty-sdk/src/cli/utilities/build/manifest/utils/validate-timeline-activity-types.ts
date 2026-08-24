@@ -12,8 +12,7 @@ import {
 
 const isValidUniversalIdentifier = (universalIdentifier: string): boolean =>
   uuidValidate(universalIdentifier) &&
-  uuidVersion(universalIdentifier) >=
-    MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION;
+  uuidVersion(universalIdentifier) >= MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION;
 
 export const validateTimelineActivityTypes = (
   manifest: Pick<
@@ -68,6 +67,15 @@ export const validateTimelineActivityTypes = (
     const through = emit.through;
     const triggerFieldUniversalIdentifiers =
       through?.triggerFieldUniversalIdentifiers;
+    const hasValidObjectUniversalIdentifier = isValidUniversalIdentifier(
+      emit.objectUniversalIdentifier,
+    );
+
+    if (!hasValidObjectUniversalIdentifier) {
+      errors.push(
+        `Timeline activity type "${timelineActivityType.name}" references an invalid object universal identifier "${emit.objectUniversalIdentifier}".`,
+      );
+    }
 
     if (
       (emit.on === 'linked' || emit.on === 'unlinked') &&
@@ -91,17 +99,27 @@ export const validateTimelineActivityTypes = (
       }
     }
 
-    const sourceObject = manifest.objects.find(
-      (object) =>
-        object.universalIdentifier === emit.objectUniversalIdentifier,
-    );
+    const sourceObject = hasValidObjectUniversalIdentifier
+      ? manifest.objects.find(
+          (object) =>
+            object.universalIdentifier === emit.objectUniversalIdentifier,
+        )
+      : undefined;
 
     if (!isDefined(sourceObject)) {
-      if (!isDefined(replacementUniversalIdentifier)) {
+      if (
+        hasValidObjectUniversalIdentifier &&
+        !isDefined(replacementUniversalIdentifier)
+      ) {
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" targets object "${emit.objectUniversalIdentifier}", which is not defined by this application. Types targeting another application's object must declare replacesTimelineActivityTypeUniversalIdentifier.`,
         );
-      } else if (!isValidUniversalIdentifier(replacementUniversalIdentifier)) {
+      }
+
+      if (
+        isDefined(replacementUniversalIdentifier) &&
+        !isValidUniversalIdentifier(replacementUniversalIdentifier)
+      ) {
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" references an invalid replacement universal identifier "${replacementUniversalIdentifier}".`,
         );
@@ -109,9 +127,7 @@ export const validateTimelineActivityTypes = (
 
       if (
         isDefined(through) &&
-        !isValidUniversalIdentifier(
-          through.relationFieldUniversalIdentifier,
-        )
+        !isValidUniversalIdentifier(through.relationFieldUniversalIdentifier)
       ) {
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" references an invalid through relation field universal identifier "${through.relationFieldUniversalIdentifier}".`,
@@ -153,8 +169,7 @@ export const validateTimelineActivityTypes = (
 
     const relationField = sourceFields.find(
       (field) =>
-        field.universalIdentifier ===
-        through.relationFieldUniversalIdentifier,
+        field.universalIdentifier === through.relationFieldUniversalIdentifier,
     );
 
     if (!isDefined(relationField)) {
@@ -164,6 +179,7 @@ export const validateTimelineActivityTypes = (
     } else {
       const hasSupportedRelationShape =
         isRelationFieldManifest(relationField) &&
+        isDefined(relationField.universalSettings) &&
         (relationField.universalSettings.relationType ===
           RelationType.MANY_TO_ONE ||
           (relationField.universalSettings.relationType ===
