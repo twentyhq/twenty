@@ -35,18 +35,22 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
   <Card title="Relații" icon="diagram-project" href="/l/ro/developers/extend/apps/data/relations">
     Conexiuni bidirecționale `MANY_TO_ONE` / `ONE_TO_MANY` între obiecte.
   </Card>
+  <Card title="Tipuri de activități ale cronologiei" icon="clock-rotate-left" href="/l/ro/developers/extend/apps/data/timeline-activity-types">
+    Definiți evenimente de audit automate și evenimente explicite ale aplicației pentru cronologiile înregistrărilor.
+  </Card>
 </CardGroup>
 
 ## Entități dintr-o privire
 
-| Entitate    | Scop                                                                                                                                  | Definit cu                              |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| **Obiect**  | Un nou tip de înregistrare personalizat (de ex. PostCard, Invoice) cu propriile sale câmpuri                                          | `defineObject()`                        |
-| **Câmp**    | O coloană pe un obiect. Câmpurile independente pot extinde obiecte pe care nu le-ați creat (de ex. adăugați `loyaltyTier` la Company) | `defineField()`                         |
-| **Relație** | O legătură bidirecțională între două obiecte — ambele părți declarate ca câmpuri                                                      | `defineField()` cu `FieldType.RELATION` |
-| **Indice**  | Un indice de bază de date pentru a accelera o interogare recurentă asupra unuia dintre obiectele tale                                 | `defineIndex()`                         |
+| Entitate                            | Scop                                                                                                                                  | Definit cu                              |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| **Obiect**                          | Un nou tip de înregistrare personalizat (de ex. PostCard, Invoice) cu propriile sale câmpuri                                          | `defineObject()`                        |
+| **Câmp**                            | O coloană pe un obiect. Câmpurile independente pot extinde obiecte pe care nu le-ați creat (de ex. adăugați `loyaltyTier` la Company) | `defineField()`                         |
+| **Relație**                         | O legătură bidirecțională între două obiecte — ambele părți declarate ca câmpuri                                                      | `defineField()` cu `FieldType.RELATION` |
+| **Indice**                          | Un indice de bază de date pentru a accelera o interogare recurentă asupra unuia dintre obiectele tale                                 | `defineIndex()`                         |
+| **Tip de activitate a cronologiei** | Un eveniment automat de audit sau un eveniment explicit de domeniu afișat în cronologiile înregistrărilor.                            | `defineTimelineActivityType()`          |
 
-SDK-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/` și `src/indexes/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
+SDK-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/`, `src/indexes/` și `src/timeline-activity-types/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
 
 ## Indici (opțional)
 

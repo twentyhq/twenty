@@ -4,6 +4,7 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
+import { RecordListUpsertRecordsInStoreEffect } from '@/object-record/record-list/components/RecordListUpsertRecordsInStoreEffect';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
@@ -52,6 +53,7 @@ export const TimelineCard = () => {
     firstQueryLoading,
     loadingMore,
     fetchMoreRecords,
+    linkedRecords,
   } = useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty = timelineActivities.length === 0;
@@ -85,16 +87,19 @@ export const TimelineCard = () => {
   }
 
   return (
-    <StyledMainContainer>
-      <EventList
-        targetableObject={targetRecord}
-        title={t`All`}
-        events={timelineActivities ?? []}
-      />
-      <CustomResolverFetchMoreLoader
-        loading={loadingMore}
-        onLastRowVisible={fetchMoreRecords}
-      />
-    </StyledMainContainer>
+    <>
+      <RecordListUpsertRecordsInStoreEffect records={linkedRecords} />
+      <StyledMainContainer>
+        <EventList
+          targetableObject={targetRecord}
+          title={t`All`}
+          events={timelineActivities ?? []}
+        />
+        <CustomResolverFetchMoreLoader
+          loading={loadingMore}
+          onLastRowVisible={fetchMoreRecords}
+        />
+      </StyledMainContainer>
+    </>
   );
 };

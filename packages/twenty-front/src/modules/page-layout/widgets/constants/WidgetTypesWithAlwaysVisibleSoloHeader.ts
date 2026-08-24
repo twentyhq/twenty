@@ -5,4 +5,5 @@ export const WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER: WidgetType[] = [
   WidgetType.TASKS,
   WidgetType.NOTES,
   WidgetType.FILES,
+  WidgetType.TIMELINE,
 ];

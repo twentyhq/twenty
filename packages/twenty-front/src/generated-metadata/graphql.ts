@@ -2776,6 +2776,7 @@ export type Mutation = {
   resetPageLayoutTabToDefault: PageLayoutTab;
   resetPageLayoutToDefault: PageLayout;
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
+  resetTimelineActivityType: TimelineActivityType;
   retryChatMessage: SendChatMessageResult;
   revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
@@ -2840,6 +2841,7 @@ export type Mutation = {
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSkill: Skill;
+  updateTimelineActivityType: TimelineActivityType;
   updateUnsubscribeTopic: UnsubscribeTopic;
   updateUserEmail: Scalars['Boolean']['output'];
   updateView: View;
@@ -3554,6 +3556,11 @@ export type MutationResetPageLayoutWidgetToDefaultArgs = {
 };
 
 
+export type MutationResetTimelineActivityTypeArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
 export type MutationRetryChatMessageArgs = {
   modelId?: InputMaybe<Scalars['String']['input']>;
   threadId: Scalars['UUID']['input'];
@@ -3889,6 +3896,11 @@ export type MutationUpdateSkillArgs = {
 };
 
 
+export type MutationUpdateTimelineActivityTypeArgs = {
+  input: UpdateTimelineActivityTypeInput;
+};
+
+
 export type MutationUpdateUnsubscribeTopicArgs = {
   input: UpdateUnsubscribeTopicInput;
 };
@@ -4203,6 +4215,7 @@ export type ObjectFilter = {
   isUIEditable?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
+  universalIdentifier?: InputMaybe<UuidFilterComparison>;
 };
 
 export type ObjectIndexMetadatasConnection = {
@@ -5586,16 +5599,37 @@ export type TasksConfiguration = {
 
 export type TimelineActivityType = {
   __typename?: 'TimelineActivityType';
+  /** @deprecated Use emit.on */
   action?: Maybe<Scalars['String']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  emit?: Maybe<TimelineActivityTypeEmit>;
+  frontComponentUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  /** @deprecated Use emit.objectUniversalIdentifier */
   objectUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
+  /** @deprecated Use frontComponentUniversalIdentifier */
   renderer?: Maybe<Scalars['String']['output']>;
+  replacesTimelineActivityTypeUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type TimelineActivityTypeEmit = {
+  __typename?: 'TimelineActivityTypeEmit';
+  objectUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
+  on: Scalars['String']['output'];
+  through?: Maybe<TimelineActivityTypeEmitThrough>;
+};
+
+export type TimelineActivityTypeEmitThrough = {
+  __typename?: 'TimelineActivityTypeEmitThrough';
+  relationFieldUniversalIdentifier: Scalars['UUID']['output'];
+  triggerFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
 };
 
 export type TimelineConfiguration = {
@@ -5958,6 +5992,14 @@ export type UpdateSkillInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateTimelineActivityTypeInput = {
+  icon?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['UUID']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };
 
 export type UpdateUnsubscribeTopicInput = {
@@ -6895,7 +6937,7 @@ export type SendMessageCampaignTestMutation = { __typename?: 'Mutation', sendMes
 export type FindManyTimelineActivityTypesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyTimelineActivityTypesQuery = { __typename?: 'Query', timelineActivityTypes: Array<{ __typename?: 'TimelineActivityType', id: string, name: string, label: string, action?: string | null, icon?: string | null, renderer?: string | null, objectUniversalIdentifier?: string | null }> };
+export type FindManyTimelineActivityTypesQuery = { __typename?: 'Query', timelineActivityTypes: Array<{ __typename?: 'TimelineActivityType', id: string, universalIdentifier: string, name: string, label: string, icon?: string | null, frontComponentUniversalIdentifier?: string | null, isActive: boolean, emit?: { __typename?: 'TimelineActivityTypeEmit', on: string, objectUniversalIdentifier?: string | null } | null }> };
 
 export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -9512,7 +9554,7 @@ export const UnsubscribeTopicsDocument = {"kind":"Document","definitions":[{"kin
 export const SendEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"messageThreadId"}}]}}]}}]} as unknown as DocumentNode<SendEmailMutation, SendEmailMutationVariables>;
 export const SendMessageCampaignDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendMessageCampaign"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendMessageCampaignInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendMessageCampaign"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaignId"}},{"kind":"Field","name":{"kind":"Name","value":"queuedCount"}},{"kind":"Field","name":{"kind":"Name","value":"skipped"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"noEmail"}},{"kind":"Field","name":{"kind":"Name","value":"deduped"}},{"kind":"Field","name":{"kind":"Name","value":"overCap"}}]}}]}}]}}]} as unknown as DocumentNode<SendMessageCampaignMutation, SendMessageCampaignMutationVariables>;
 export const SendMessageCampaignTestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendMessageCampaignTest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendMessageCampaignTestInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendMessageCampaignTest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageId"}}]}}]}}]} as unknown as DocumentNode<SendMessageCampaignTestMutation, SendMessageCampaignTestMutationVariables>;
-export const FindManyTimelineActivityTypesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyTimelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"action"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"renderer"}},{"kind":"Field","name":{"kind":"Name","value":"objectUniversalIdentifier"}}]}}]}}]} as unknown as DocumentNode<FindManyTimelineActivityTypesQuery, FindManyTimelineActivityTypesQueryVariables>;
+export const FindManyTimelineActivityTypesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyTimelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"emit"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"on"}},{"kind":"Field","name":{"kind":"Name","value":"objectUniversalIdentifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"frontComponentUniversalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]} as unknown as DocumentNode<FindManyTimelineActivityTypesQuery, FindManyTimelineActivityTypesQueryVariables>;
 export const ActivateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ActivateSkillMutation, ActivateSkillMutationVariables>;
 export const AnswerAgentChatQuestionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnswerAgentChatQuestion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"answers"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatQuestionAnswerInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fileAttachments"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileAttachmentInput"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"answerAgentChatQuestion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"messageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}}},{"kind":"Argument","name":{"kind":"Name","value":"answers"},"value":{"kind":"Variable","name":{"kind":"Name","value":"answers"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"fileAttachments"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fileAttachments"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageId"}},{"kind":"Field","name":{"kind":"Name","value":"queued"}},{"kind":"Field","name":{"kind":"Name","value":"streamId"}}]}}]}}]} as unknown as DocumentNode<AnswerAgentChatQuestionMutation, AnswerAgentChatQuestionMutationVariables>;
 export const ArchiveChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ArchiveChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"archiveChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<ArchiveChatThreadMutation, ArchiveChatThreadMutationVariables>;

@@ -5,4 +5,5 @@ export const FLAT_TIMELINE_ACTIVITY_TYPE_EDITABLE_PROPERTIES = [
   'label',
   'action',
   'icon',
+  'isActive',
 ] as const satisfies MetadataEntityPropertyName<'timelineActivityType'>[];

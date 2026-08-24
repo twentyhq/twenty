@@ -713,6 +713,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano impostazioni dei trigger. Consulta [Hook di installazione](/l/it/developers/extend/apps/config/install-hooks) per `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction`.
 </Note>
 
+## Crea un'attività della cronologia di eventi.
+
+Usa `createTimelineActivity()` per pubblicare un evento di dominio esplicito da una funzione logica. Definisci prima l'evento come [tipo di attività della cronologia](/l/it/developers/extend/apps/data/timeline-activity-types), quindi fai riferimento al tipo e agli oggetti tramite i relativi identificatori universali stabili:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty risolve gli identificatori universali negli ID dei metadati specifici dell'installazione, verifica che il tipo di attività della cronologia appartenga all'app chiamante e acquisisce un'istantanea dei relativi metadati di presentazione nella nuova attività.
+
+Gli input obbligatori sono `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` e `targetRecordId`. Puoi anche fornire `happensAt`, `properties` e `workspaceMemberId`. `happensAt` controlla la posizione e l'ora visualizzata dell'evento nella cronologia; per impostazione predefinita corrisponde all'ora di creazione.
+
+Per associare un altro record all'evento, fornisci insieme `linkedRecordId` e `linkedObjectMetadataUniversalIdentifier`. Puoi inoltre fornire `linkedRecordCachedName` come alternativa di visualizzazione storica:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Il ruolo della funzione logica deve disporre dell'autorizzazione di scrittura sull'oggetto standard `timelineActivity`. Mantieni i tipi di evento espliciti non associati a un'`action`; un tipo associato a un'azione riceve già eventi di audit automatici e altrimenti produrrebbe righe duplicate.
+
 ## Client API tipizzati (twenty-client-sdk)
 
 Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per interagire con l'API di Twenty dalle tue funzioni logiche e dai componenti front-end.
