@@ -19,6 +19,7 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
     PlaceAutocompleteResult[]
   >([]);
   const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
+  const tokenForPlaceApiRef = useRef<string | null>(null);
   const latestRequestIdRef = useRef(0);
 
   const { getPlaceAutocompleteData } = useGetPlaceApiData();
@@ -42,9 +43,10 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
         return;
       }
 
-      const token = tokenForPlaceApi ?? v4();
+      const token = tokenForPlaceApiRef.current ?? v4();
 
-      if (token !== tokenForPlaceApi) {
+      if (token !== tokenForPlaceApiRef.current) {
+        tokenForPlaceApiRef.current = token;
         setTokenForPlaceApi(token);
       }
 
@@ -93,6 +95,7 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
   }, [closeDropdownAndClearResults, debouncedGetAutocompletePlaceData]);
 
   const resetPlaceAutocomplete = useCallback(() => {
+    tokenForPlaceApiRef.current = null;
     setTokenForPlaceApi(null);
     closePlaceAutocomplete();
   }, [closePlaceAutocomplete]);

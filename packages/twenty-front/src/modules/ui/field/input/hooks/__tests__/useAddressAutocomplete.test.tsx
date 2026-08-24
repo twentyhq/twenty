@@ -272,6 +272,26 @@ describe('useAddressAutocomplete', () => {
     expect(result.current.tokenForPlaceApi).toBeNull();
   });
 
+  it('reuses the session token before state has rerendered', async () => {
+    mockGetPlaceAutocompleteData.mockResolvedValue([
+      { text: '123 Main St', placeId: 'place123' },
+    ]);
+
+    const { result } = renderHook(() => useAddressAutocomplete());
+
+    await act(async () => {
+      await Promise.all([
+        result.current.getAutocompletePlaceData({ address: '123 Main' }),
+        result.current.getAutocompletePlaceData({ address: '123 Main St' }),
+      ]);
+    });
+
+    const firstToken = mockGetPlaceAutocompleteData.mock.calls[0][1];
+    const secondToken = mockGetPlaceAutocompleteData.mock.calls[1][1];
+
+    expect(firstToken).toBe(secondToken);
+  });
+
   it('should handle country code conversion correctly', async () => {
     const mockOnChange = jest.fn();
     const mockPlaceData = {
