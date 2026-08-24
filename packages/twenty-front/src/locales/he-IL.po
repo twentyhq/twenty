@@ -1163,12 +1163,12 @@ msgstr "הוסף קבוצה"
 #. js-lingui-id: z9ZemB
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a location"
-msgstr ""
+msgstr "הוסף מיקום"
 
 #. js-lingui-id: h7aG+Z
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a meeting link"
-msgstr ""
+msgstr "הוסף קישור לפגישה"
 
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -1178,7 +1178,7 @@ msgstr "הוסף חברה חדשה שאנו בקשר איתה (לדוגמה: ש�
 #. js-lingui-id: Ad+JsP
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add a person with an email to this company first"
-msgstr ""
+msgstr "הוסף תחילה אדם עם כתובת אימייל לחברה זו."
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1214,17 +1214,17 @@ msgstr "הוסף חשבון"
 #. js-lingui-id: W5wF8J
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add an email to the point of contact first"
-msgstr ""
+msgstr "הוסף תחילה כתובת אימייל לאיש הקשר."
 
 #. js-lingui-id: LVzaHu
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add an email to this person first"
-msgstr ""
+msgstr "הוסף תחילה כתובת אימייל לאדם זה."
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add an event title"
-msgstr ""
+msgstr "הוסף כותרת אירוע"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1300,7 +1300,7 @@ msgstr "הוסף ספק מותאם אישית"
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
-msgstr ""
+msgstr "הוסף פרטים עבור האורחים"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -3453,12 +3453,12 @@ msgstr "לוח שנה"
 #. js-lingui-id: x1X5mf
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
-msgstr ""
+msgstr "הגישה ליומן דורשת אישור"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Calendar event created successfully"
-msgstr ""
+msgstr "אירוע היומן נוצר בהצלחה"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3473,7 +3473,7 @@ msgstr "אירוע לוח שנה לא נמצא"
 #. js-lingui-id: rLQVsa
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Calendar events cannot be linked to this record type"
-msgstr ""
+msgstr "לא ניתן לקשר אירועי יומן לסוג רשומה זה"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3864,7 +3864,7 @@ msgstr "שיחות"
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
-msgstr ""
+msgstr "בדוק את תאריכי האירוע"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4655,7 +4655,7 @@ msgstr "התחבר אל {providerDisplayName}"
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect a calendar account"
-msgstr ""
+msgstr "חבר חשבון יומן"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -4675,7 +4675,7 @@ msgstr "חבר עוזרי AI כמו Claude או Cursor לסביבת העבודה
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
-msgstr ""
+msgstr "חבר את Google, Microsoft או CalDAV והפעל סנכרון יומן לפני יצירת אירוע."
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5230,7 +5230,7 @@ msgstr "צור מרחב עבודה"
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Create an all-day event"
-msgstr ""
+msgstr "צור אירוע לכל היום"
 
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -5271,7 +5271,7 @@ msgstr "צור שדה תאריך"
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
-msgstr ""
+msgstr "צור אירוע"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -7281,7 +7281,7 @@ msgstr "עורך האימיילים"
 #. js-lingui-id: 6iOHIG
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Email guests an invitation"
-msgstr ""
+msgstr "שלח לאורחים הזמנה באימייל"
 
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -7515,7 +7515,7 @@ msgstr "URL של נקודת קצה"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ends"
-msgstr ""
+msgstr "מסתיים"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8407,7 +8407,7 @@ msgstr "כשל בדרישת הבעלות."
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Failed to create calendar event"
-msgstr ""
+msgstr "יצירת אירוע היומן נכשלה"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -8539,7 +8539,7 @@ msgstr "פענוח ההקשר נכשל: {contextValue}"
 #. js-lingui-id: 8l1diy
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Failed to reconnect calendar account"
-msgstr ""
+msgstr "חיבור מחדש של חשבון היומן נכשל"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -9621,7 +9621,7 @@ msgstr "מקבץ {objectLabel}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Guests"
-msgstr ""
+msgstr "אורחים"
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10932,12 +10932,12 @@ msgstr "וידג'ט קנבן"
 #. js-lingui-id: ZlHUDM
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
-msgstr ""
+msgstr "השאר את הרשומה הנוכחית ברשימת האורחים והשאר את ההזמנות מופעלות, כדי שהאירוע יישאר גלוי ברשומה זו."
 
 #. js-lingui-id: WOUOYg
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep this event related"
-msgstr ""
+msgstr "השאר אירוע זה מקושר"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -12682,7 +12682,7 @@ msgstr "דומיין גישה חדש מאושר"
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
-msgstr ""
+msgstr "אירוע יומן חדש"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -15558,7 +15558,7 @@ msgstr "נדרש חיבור מחדש"
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
-msgstr ""
+msgstr "חבר מחדש חשבון זה כדי להעניק הרשאה ליצירת אירועי יומן."
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15923,7 +15923,7 @@ msgstr "הסר קבוצת כללים"
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
-msgstr ""
+msgstr "הסר כמה אורחים לפני יצירת אירוע זה."
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -18064,7 +18064,7 @@ msgstr "החל מ-{scheduledChangeStartDate}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Starts"
-msgstr ""
+msgstr "מתחיל"
 
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -18806,12 +18806,12 @@ msgstr "\\"
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date must be later than the start date."
-msgstr ""
+msgstr "תאריך הסיום חייב להיות לאחר תאריך ההתחלה."
 
 #. js-lingui-id: ThrGxX
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end time must be after the start time."
-msgstr ""
+msgstr "שעת הסיום חייבת להיות לאחר שעת ההתחלה."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -19496,7 +19496,7 @@ msgstr "מחר"
 #. js-lingui-id: 1NhzqT
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Too many guests"
-msgstr ""
+msgstr "יותר מדי אורחים"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20938,12 +20938,12 @@ msgstr "וידאו"
 #. js-lingui-id: nASH9g
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video call"
-msgstr ""
+msgstr "שיחת וידאו"
 
 #. js-lingui-id: ugEVJa
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video conferencing"
-msgstr ""
+msgstr "שיחות ועידה בווידאו"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts

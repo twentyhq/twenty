@@ -1163,12 +1163,12 @@ msgstr "添加组"
 #. js-lingui-id: z9ZemB
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a location"
-msgstr ""
+msgstr "添加地点"
 
 #. js-lingui-id: h7aG+Z
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a meeting link"
-msgstr ""
+msgstr "添加会议链接"
 
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -1178,7 +1178,7 @@ msgstr "添加一个我们正在联系的新公司 (例如：名称、网站、�
 #. js-lingui-id: Ad+JsP
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add a person with an email to this company first"
-msgstr ""
+msgstr "请先将具有电子邮件地址的人员添加到此公司"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1214,17 +1214,17 @@ msgstr "添加账户"
 #. js-lingui-id: W5wF8J
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add an email to the point of contact first"
-msgstr ""
+msgstr "请先为联系人添加电子邮件地址"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add an email to this person first"
-msgstr ""
+msgstr "请先为此人员添加电子邮件地址"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add an event title"
-msgstr ""
+msgstr "添加事件标题"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1300,7 +1300,7 @@ msgstr "添加自定义提供商"
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
-msgstr ""
+msgstr "添加宾客详细信息"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -3453,12 +3453,12 @@ msgstr "日历"
 #. js-lingui-id: x1X5mf
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
-msgstr ""
+msgstr "日历访问需要获得批准"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Calendar event created successfully"
-msgstr ""
+msgstr "日历事件创建成功"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3473,7 +3473,7 @@ msgstr "未找到日历事件"
 #. js-lingui-id: rLQVsa
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Calendar events cannot be linked to this record type"
-msgstr ""
+msgstr "日历事件无法关联到此记录类型"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3864,7 +3864,7 @@ msgstr "聊天"
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
-msgstr ""
+msgstr "检查事件日期"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4655,7 +4655,7 @@ msgstr "连接 {providerDisplayName}"
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect a calendar account"
-msgstr ""
+msgstr "连接日历账户"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -4675,7 +4675,7 @@ msgstr "通过 Model Context Protocol 将 Claude 或 Cursor 等 AI 助手连接�
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
-msgstr ""
+msgstr "在创建事件之前，请连接 Google、Microsoft 或 CalDAV 并启用日历同步。"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5230,7 +5230,7 @@ msgstr "创建工作区"
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Create an all-day event"
-msgstr ""
+msgstr "创建全天事件"
 
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -5271,7 +5271,7 @@ msgstr "创建日期字段"
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
-msgstr ""
+msgstr "创建事件"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -7281,7 +7281,7 @@ msgstr "邮件编辑器"
 #. js-lingui-id: 6iOHIG
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Email guests an invitation"
-msgstr ""
+msgstr "通过电子邮件向宾客发送邀请"
 
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -7515,7 +7515,7 @@ msgstr "端点 URL"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ends"
-msgstr ""
+msgstr "结束"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8407,7 +8407,7 @@ msgstr "认领所有权失败。"
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Failed to create calendar event"
-msgstr ""
+msgstr "创建日历事件失败"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -8539,7 +8539,7 @@ msgstr "解析上下文失败：{contextValue}"
 #. js-lingui-id: 8l1diy
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Failed to reconnect calendar account"
-msgstr ""
+msgstr "重新连接日历账户失败"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -9621,7 +9621,7 @@ msgstr "正在分组 {objectLabel}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Guests"
-msgstr ""
+msgstr "宾客"
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10909,12 +10909,12 @@ msgstr "看板小部件"
 #. js-lingui-id: ZlHUDM
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
-msgstr ""
+msgstr "将当前记录保留在宾客列表中，并保持邀请功能开启，以便该事件在此记录中仍然可见。"
 
 #. js-lingui-id: WOUOYg
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep this event related"
-msgstr ""
+msgstr "保持此事件关联"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -12659,7 +12659,7 @@ msgstr "新批准访问域"
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
-msgstr ""
+msgstr "新建日历事件"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -15535,7 +15535,7 @@ msgstr "需要重新连接"
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
-msgstr ""
+msgstr "重新连接此账户以授予创建日历事件的权限。"
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15900,7 +15900,7 @@ msgstr "移除规则组"
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
-msgstr ""
+msgstr "请先移除一些宾客，然后再创建此事件。"
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -18041,7 +18041,7 @@ msgstr "自 {scheduledChangeStartDate} 起生效"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Starts"
-msgstr ""
+msgstr "开始"
 
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -18753,12 +18753,12 @@ msgstr "与您的账户关联的电子邮件"
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date must be later than the start date."
-msgstr ""
+msgstr "结束日期必须晚于开始日期。"
 
 #. js-lingui-id: ThrGxX
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end time must be after the start time."
-msgstr ""
+msgstr "结束时间必须晚于开始时间。"
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -19443,7 +19443,7 @@ msgstr "明天"
 #. js-lingui-id: 1NhzqT
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Too many guests"
-msgstr ""
+msgstr "宾客过多"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20885,12 +20885,12 @@ msgstr "视频"
 #. js-lingui-id: nASH9g
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video call"
-msgstr ""
+msgstr "视频通话"
 
 #. js-lingui-id: ugEVJa
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video conferencing"
-msgstr ""
+msgstr "视频会议"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts

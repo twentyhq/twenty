@@ -1163,12 +1163,12 @@ msgstr "Dodaj grupę"
 #. js-lingui-id: z9ZemB
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a location"
-msgstr ""
+msgstr "Dodaj lokalizację"
 
 #. js-lingui-id: h7aG+Z
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a meeting link"
-msgstr ""
+msgstr "Dodaj link do spotkania"
 
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -1178,7 +1178,7 @@ msgstr "Dodaj nową firmę, z którą mamy kontakt (np. nazwa, strona internetow
 #. js-lingui-id: Ad+JsP
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add a person with an email to this company first"
-msgstr ""
+msgstr "Najpierw dodaj do tej firmy osobę z adresem e-mail."
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1214,17 +1214,17 @@ msgstr "Dodaj konto"
 #. js-lingui-id: W5wF8J
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add an email to the point of contact first"
-msgstr ""
+msgstr "Najpierw dodaj adres e-mail do osoby kontaktowej."
 
 #. js-lingui-id: LVzaHu
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Add an email to this person first"
-msgstr ""
+msgstr "Najpierw dodaj adres e-mail do tej osoby."
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add an event title"
-msgstr ""
+msgstr "Dodaj tytuł wydarzenia"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1300,7 +1300,7 @@ msgstr "Dodaj niestandardowego dostawcę"
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
-msgstr ""
+msgstr "Dodaj szczegóły dla gości"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -3453,12 +3453,12 @@ msgstr "Kalendarz"
 #. js-lingui-id: x1X5mf
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
-msgstr ""
+msgstr "Dostęp do kalendarza wymaga zatwierdzenia"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Calendar event created successfully"
-msgstr ""
+msgstr "Wydarzenie kalendarzowe zostało utworzone pomyślnie"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3473,7 +3473,7 @@ msgstr "Nie znaleziono wydarzenia w kalendarzu"
 #. js-lingui-id: rLQVsa
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 msgid "Calendar events cannot be linked to this record type"
-msgstr ""
+msgstr "Wydarzeń kalendarzowych nie można łączyć z tym typem rekordu"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3864,7 +3864,7 @@ msgstr "Czaty"
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
-msgstr ""
+msgstr "Sprawdź daty wydarzenia"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -4655,7 +4655,7 @@ msgstr "Połącz z {providerDisplayName}"
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect a calendar account"
-msgstr ""
+msgstr "Połącz konto kalendarza"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -4675,7 +4675,7 @@ msgstr "Połącz asystentów AI, takich jak Claude lub Cursor, ze swoim obszarem
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
-msgstr ""
+msgstr "Połącz Google, Microsoft lub CalDAV i włącz synchronizację kalendarza przed utworzeniem wydarzenia."
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5230,7 +5230,7 @@ msgstr "Stwórz przestrzeń pracy"
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Create an all-day event"
-msgstr ""
+msgstr "Utwórz wydarzenie całodniowe"
 
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -5271,7 +5271,7 @@ msgstr "Utwórz pole daty"
 #: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
-msgstr ""
+msgstr "Utwórz wydarzenie"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -7281,7 +7281,7 @@ msgstr "Edytor Email"
 #. js-lingui-id: 6iOHIG
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Email guests an invitation"
-msgstr ""
+msgstr "Wyślij gościom zaproszenie e-mailem"
 
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -7515,7 +7515,7 @@ msgstr "URL punktu końcowego"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ends"
-msgstr ""
+msgstr "Kończy się"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8407,7 +8407,7 @@ msgstr "Nie udało się przejąć własności."
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Failed to create calendar event"
-msgstr ""
+msgstr "Nie udało się utworzyć wydarzenia kalendarzowego"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -8539,7 +8539,7 @@ msgstr "Nie udało się przetworzyć kontekstu: {contextValue}"
 #. js-lingui-id: 8l1diy
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Failed to reconnect calendar account"
-msgstr ""
+msgstr "Nie udało się ponownie połączyć konta kalendarza"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -9621,7 +9621,7 @@ msgstr "Grupowanie {objectLabel}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Guests"
-msgstr ""
+msgstr "Goście"
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10932,12 +10932,12 @@ msgstr "Widget Kanban"
 #. js-lingui-id: ZlHUDM
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
-msgstr ""
+msgstr "Pozostaw bieżący rekord na liście gości i nie wyłączaj zaproszeń, aby wydarzenie pozostało widoczne w tym rekordzie."
 
 #. js-lingui-id: WOUOYg
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep this event related"
-msgstr ""
+msgstr "Zachowaj powiązanie tego wydarzenia"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -12682,7 +12682,7 @@ msgstr "Nowa zatwierdzona domena dostępu"
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
-msgstr ""
+msgstr "Nowe wydarzenie kalendarzowe"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -15558,7 +15558,7 @@ msgstr "Wymagane ponowne połączenie"
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
-msgstr ""
+msgstr "Połącz ponownie to konto, aby przyznać uprawnienia do tworzenia wydarzeń kalendarzowych."
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15923,7 +15923,7 @@ msgstr "Usuń grupę reguł"
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
-msgstr ""
+msgstr "Usuń niektórych gości przed utworzeniem tego wydarzenia."
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -18064,7 +18064,7 @@ msgstr "Od {scheduledChangeStartDate}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Starts"
-msgstr ""
+msgstr "Rozpoczyna się"
 
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -18806,12 +18806,12 @@ msgstr "Email powiązany z Twoim kontem"
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date must be later than the start date."
-msgstr ""
+msgstr "Data zakończenia musi być późniejsza niż data rozpoczęcia."
 
 #. js-lingui-id: ThrGxX
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end time must be after the start time."
-msgstr ""
+msgstr "Godzina zakończenia musi być późniejsza niż godzina rozpoczęcia."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -19496,7 +19496,7 @@ msgstr "Jutro"
 #. js-lingui-id: 1NhzqT
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Too many guests"
-msgstr ""
+msgstr "Zbyt wielu gości"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20938,12 +20938,12 @@ msgstr "Wideo"
 #. js-lingui-id: nASH9g
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video call"
-msgstr ""
+msgstr "Połączenie wideo"
 
 #. js-lingui-id: ugEVJa
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video conferencing"
-msgstr ""
+msgstr "Wideokonferencja"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts

@@ -8297,7 +8297,7 @@ msgstr "Ζητήθηκε"
 #. js-lingui-id: c1RSQl
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Requested file range cannot be served."
-msgstr ""
+msgstr "Δεν είναι δυνατή η εξυπηρέτηση του ζητούμενου εύρους αρχείου."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
