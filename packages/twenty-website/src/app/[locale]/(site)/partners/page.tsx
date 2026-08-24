@@ -15,9 +15,11 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
+import { PartnerFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PartnerLeadHero } from '@/sections/partner-hero';
 import {
+  PartnerBecomeStrip,
   PartnerDirectory,
   PartnerServicesExplainer,
 } from '@/sections/partner-lead';
@@ -57,6 +59,8 @@ export default async function PartnersPage({
         </Suspense>
         <PartnerServicesExplainer />
         <MarketplaceBriefPrompt />
+        <PartnerFaq />
+        <PartnerBecomeStrip />
       </main>
     </PartnerApplicationModalRoot>
   );

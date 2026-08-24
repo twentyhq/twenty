@@ -104,6 +104,7 @@ const ROW_GAP_MULTI_AXIS_FILES = new Set([
   'sections/releases-feed/ReleasesFeed.tsx',
   'sections/product-stepper/ProductStepper.tsx',
   'sections/home-stepper/HomeStepper.tsx',
+  'sections/partner-lead/PartnerBecomeStrip.tsx',
   'sections/partner-lead/PartnerServicesExplainer.tsx',
   'sections/testimonials/PartnerTestimonialsCarousel.tsx',
   'sections/testimonials/TestimonialsCarousel.tsx',
