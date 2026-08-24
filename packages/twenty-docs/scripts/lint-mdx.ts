@@ -90,25 +90,36 @@ type Range = {
   end: number;
 };
 
+const FENCE_LINE_PATTERN = /^\s*(`{3,})/;
+
+// A fence closes only on a run at least as long as the one that opened it, so a
+// block opened with ``` is not closed by the first ``` inside a ```` example.
 const getFencedCodeRanges = (text: string): Range[] => {
   const ranges: Range[] = [];
-  let searchStart = 0;
+  const lines = text.split('\n');
 
-  while (true) {
-    const openIndex = text.indexOf('```', searchStart);
+  let lineStart = 0;
+  let openStart: number | null = null;
+  let openLength = 0;
 
-    if (openIndex === -1) {
-      break;
+  for (const line of lines) {
+    const fence = FENCE_LINE_PATTERN.exec(line);
+
+    if (openStart === null) {
+      if (fence) {
+        openStart = lineStart;
+        openLength = fence[1].length;
+      }
+    } else if (
+      fence &&
+      fence[1].length >= openLength &&
+      line.slice(fence[0].length).trim() === ''
+    ) {
+      ranges.push({ start: openStart, end: lineStart + line.length });
+      openStart = null;
     }
 
-    const closeIndex = text.indexOf('```', openIndex + 3);
-
-    if (closeIndex === -1) {
-      break;
-    }
-
-    ranges.push({ start: openIndex, end: closeIndex + 3 });
-    searchStart = closeIndex + 3;
+    lineStart += line.length + 1;
   }
 
   return ranges;

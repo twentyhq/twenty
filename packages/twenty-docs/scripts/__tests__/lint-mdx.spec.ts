@@ -113,4 +113,16 @@ describe('findAngleBracketPlaceholders', () => {
     expect(violations).toHaveLength(1);
     expect(violations[0].name).toBe('api-key');
   });
+
+  it('keeps a four-backtick block that shows a triple-backtick example as code', () => {
+    expect(
+      findAngleBracketPlaceholders('````md\n```\n<token>\n```\n````'),
+    ).toEqual([]);
+  });
+
+  it('closes a block on a longer fence than the one that opened it', () => {
+    expect(findAngleBracketPlaceholders('```ini\nKEY=<value>\n````')).toEqual(
+      [],
+    );
+  });
 });
