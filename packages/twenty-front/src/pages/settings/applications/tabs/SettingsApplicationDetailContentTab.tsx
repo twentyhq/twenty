@@ -1,10 +1,7 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
 import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { Table } from '@/ui/layout/table/components/Table';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
@@ -19,7 +16,6 @@ import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
-import { SettingsApplicationTimelineActivityTypesSubtable } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypesSubtable';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -65,21 +61,12 @@ export const SettingsApplicationDetailContentTab = ({
   applicationInfo,
 }: SettingsApplicationDetailContentTabProps) => {
   const { t } = useLingui();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isInstalledApplication = isDefined(installedApplication);
-  const canResetTimelineActivityTypes = !isWorkspaceCustomApplication(
-    { id: applicationId },
-    currentWorkspace,
-  );
 
-  const {
-    installedTimelineActivityTypes,
-    mutatingTimelineActivityTypeIds,
-    resetTimelineActivityTypeToDefault,
-    setTimelineActivityTypeIsActive,
-  } = useApplicationTimelineActivityTypes({
-    isInstalledApplication,
-  });
+  const { installedTimelineActivityTypes } =
+    useApplicationTimelineActivityTypes({
+      isInstalledApplication,
+    });
 
   const { objectRows, fieldRows } =
     useComputeObjectAndFieldsContentForApplication({
@@ -193,6 +180,24 @@ export const SettingsApplicationDetailContentTab = ({
           normalizedSearch,
         )),
   );
+  const timelineActivityTypeRows: ApplicationContentRow[] =
+    filteredTimelineActivityTypes.length === 0
+      ? []
+      : [
+          {
+            key: 'timeline-activity-types',
+            name: isInstalledApplication
+              ? t`Manage activity types`
+              : t`Activity types`,
+            icon: 'IconTimelineEvent',
+            secondary: t`${timelineActivityTypes.length} types`,
+            link: isInstalledApplication
+              ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypes, {
+                  applicationId,
+                })
+              : undefined,
+          },
+        ];
 
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),
@@ -339,12 +344,11 @@ export const SettingsApplicationDetailContentTab = ({
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />
-            <SettingsApplicationTimelineActivityTypesSubtable
-              timelineActivityTypes={filteredTimelineActivityTypes}
-              canReset={canResetTimelineActivityTypes}
-              mutatingTimelineActivityTypeIds={mutatingTimelineActivityTypeIds}
-              onToggle={setTimelineActivityTypeIsActive}
-              onReset={resetTimelineActivityTypeToDefault}
+            <SettingsApplicationContentSubtable
+              title={t`Timeline activity types`}
+              rows={timelineActivityTypeRows}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>

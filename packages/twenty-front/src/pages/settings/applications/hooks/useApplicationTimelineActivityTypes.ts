@@ -17,7 +17,7 @@ export const useApplicationTimelineActivityTypes = ({
   const [mutatingTimelineActivityTypeIds, setMutatingTimelineActivityTypeIds] =
     useState<ReadonlySet<string>>(new Set());
 
-  const { data } = useQuery(FindManyTimelineActivityTypesDocument, {
+  const { data, loading } = useQuery(FindManyTimelineActivityTypesDocument, {
     skip: !isInstalledApplication,
   });
 
@@ -88,6 +88,7 @@ export const useApplicationTimelineActivityTypes = ({
 
   return {
     installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
+    loading,
     mutatingTimelineActivityTypeIds,
     resetTimelineActivityTypeToDefault,
     setTimelineActivityTypeIsActive,
