@@ -30,7 +30,7 @@ await enqueueJobs([
 ]);
 ```
 
-Each target function receives its `payload` as its handler argument, exactly like any other trigger. Every target must belong to the **same application** as the caller — enqueuing another app's function rejects the whole batch with `Logic function not found`, and no job from the batch is enqueued. A single call accepts up to `10000` jobs.
+Each target function receives its `payload` as its handler argument, exactly like any other trigger. Every target must belong to the **same application** as the caller — enqueuing another app's function rejects the whole batch with `Logic function not found`, and no job from the batch is enqueued. A single call accepts up to `200` jobs.
 
 <Note>
 `enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
