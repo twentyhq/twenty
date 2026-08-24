@@ -5,7 +5,6 @@ import { type Manifest } from 'twenty-shared/application';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -15,7 +14,7 @@ const application = {
   id: APPLICATION_ID,
   universalIdentifier: 'test-app',
   version: '1.2.3',
-} as ApplicationEntity;
+};
 
 const manifest = {
   application: { universalIdentifier: 'test-app' },
@@ -110,7 +109,7 @@ describe('ApplicationManifestApplyService', () => {
     await service.applyManifestToWorkspace({
       workspaceId: WORKSPACE_ID,
       manifest,
-      application: { ...application, version: null } as ApplicationEntity,
+      application: { ...application, version: null },
       forceSdkClientGeneration: false,
     });
 

@@ -30,7 +30,10 @@ export class ApplicationManifestApplyService {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
-    application: ApplicationEntity;
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'version'
+    >;
     // Regenerating on every apply lets function-only upgrades pick up
     // SDK-level changes; dev sync opts out to avoid regenerating on each save.
     forceSdkClientGeneration?: boolean;
