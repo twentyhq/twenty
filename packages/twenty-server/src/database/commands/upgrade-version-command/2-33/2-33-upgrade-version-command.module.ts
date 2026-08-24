@@ -23,8 +23,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     BackfillActivityTargetsJunctionTargetCommand,
-    MigrateCommandMenuItemLabelsToPlaceholdersCommand,
     MarkSearchVectorFieldsSystemCommand,
+    MigrateCommandMenuItemLabelsToPlaceholdersCommand,
     ReplaceTimelineActivityNameWithTypeCommand,
   ],
 })
