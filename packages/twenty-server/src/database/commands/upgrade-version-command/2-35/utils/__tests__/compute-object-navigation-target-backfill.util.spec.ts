@@ -132,7 +132,7 @@ describe('computeObjectNavigationTargetBackfill', () => {
     expect(backfill.orphanedCommandMenuItemIds).toEqual(['command-1']);
   });
 
-  it('backfills only one command per target object', () => {
+  it('backfills every command targeting the same object', () => {
     const backfill = computeObjectNavigationTargetBackfill({
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({ id: 'command-1' }),
@@ -142,13 +142,13 @@ describe('computeObjectNavigationTargetBackfill', () => {
       now: NOW,
     });
 
-    expect(
-      backfill.flatCommandMenuItemsToUpdate.map(({ id }) => id),
-    ).toEqual(['command-1']);
-    expect(backfill.duplicateCommandMenuItemIds).toEqual(['command-2']);
+    expect(backfill.flatCommandMenuItemsToUpdate.map(({ id }) => id)).toEqual([
+      'command-1',
+      'command-2',
+    ]);
   });
 
-  it('leaves a competitor of an already targeted object untouched', () => {
+  it('backfills a command whose target object is already claimed by another one', () => {
     const backfill = computeObjectNavigationTargetBackfill({
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
@@ -163,7 +163,8 @@ describe('computeObjectNavigationTargetBackfill', () => {
       now: NOW,
     });
 
-    expect(backfill.flatCommandMenuItemsToUpdate).toEqual([]);
-    expect(backfill.duplicateCommandMenuItemIds).toEqual(['command-2']);
+    expect(backfill.flatCommandMenuItemsToUpdate.map(({ id }) => id)).toEqual([
+      'command-2',
+    ]);
   });
 });

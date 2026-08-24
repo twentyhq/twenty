@@ -37,25 +37,16 @@ export class BackfillCommandMenuItemTargetObjectMetadataCommand extends Provisio
         'flatObjectMetadataMaps',
       ]);
 
-    const {
-      flatCommandMenuItemsToUpdate,
-      orphanedCommandMenuItemIds,
-      duplicateCommandMenuItemIds,
-    } = computeObjectNavigationTargetBackfill({
-      flatCommandMenuItemMaps,
-      flatObjectMetadataMaps,
-      now: new Date().toISOString(),
-    });
+    const { flatCommandMenuItemsToUpdate, orphanedCommandMenuItemIds } =
+      computeObjectNavigationTargetBackfill({
+        flatCommandMenuItemMaps,
+        flatObjectMetadataMaps,
+        now: new Date().toISOString(),
+      });
 
     if (orphanedCommandMenuItemIds.length > 0) {
       this.logger.warn(
         `Leaving ${orphanedCommandMenuItemIds.length} navigation command menu item(s) untouched in workspace ${workspaceId}, their payload points at a missing object: ${orphanedCommandMenuItemIds.join(', ')}`,
-      );
-    }
-
-    if (duplicateCommandMenuItemIds.length > 0) {
-      this.logger.warn(
-        `Leaving ${duplicateCommandMenuItemIds.length} navigation command menu item(s) untouched in workspace ${workspaceId}, their target object is already claimed by another command: ${duplicateCommandMenuItemIds.join(', ')}`,
       );
     }
 

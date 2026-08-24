@@ -52,16 +52,9 @@ export type CommandMenuItemOverrides = {
   'pageLayoutId',
   'workspaceId',
 ])
-// Only the engine owned navigation command is a singleton per object. Users
-// and apps may add their own commands pointing at the same object
-@Index(
-  'IDX_CMD_MENU_ITEM_SYSTEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE',
-  ['targetObjectMetadataId', 'workspaceId'],
-  {
-    unique: true,
-    where: '"targetObjectMetadataId" IS NOT NULL AND "isSystemSideEffect"',
-  },
-)
+@Index('IDX_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_ID', [
+  'targetObjectMetadataId',
+])
 // The NAVIGATION branch stays permissive on targetObjectMetadataId: object
 // keyed rows only carry it once the 2-35 backfill has run everywhere, and
 // path based rows never do

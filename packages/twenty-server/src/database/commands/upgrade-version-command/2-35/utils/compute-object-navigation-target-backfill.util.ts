@@ -10,7 +10,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export type ObjectNavigationTargetBackfill = {
   flatCommandMenuItemsToUpdate: FlatCommandMenuItem[];
   orphanedCommandMenuItemIds: string[];
-  duplicateCommandMenuItemIds: string[];
 };
 
 export const computeObjectNavigationTargetBackfill = ({
@@ -22,25 +21,14 @@ export const computeObjectNavigationTargetBackfill = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   now: string;
 }): ObjectNavigationTargetBackfill => {
-  const flatCommandMenuItems = Object.values(
-    flatCommandMenuItemMaps.byUniversalIdentifier,
-  ).filter(isDefined);
-
-  // The partial unique index only tolerates one command per target, so an
-  // object already claimed by another row cannot receive a second one
-  const claimedObjectMetadataIds = new Set(
-    flatCommandMenuItems
-      .map(({ targetObjectMetadataId }) => targetObjectMetadataId)
-      .filter(isDefined),
-  );
-
   const backfill: ObjectNavigationTargetBackfill = {
     flatCommandMenuItemsToUpdate: [],
     orphanedCommandMenuItemIds: [],
-    duplicateCommandMenuItemIds: [],
   };
 
-  for (const flatCommandMenuItem of flatCommandMenuItems) {
+  for (const flatCommandMenuItem of Object.values(
+    flatCommandMenuItemMaps.byUniversalIdentifier,
+  ).filter(isDefined)) {
     if (
       flatCommandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
       isDefined(flatCommandMenuItem.targetObjectMetadataId) ||
@@ -58,13 +46,6 @@ export const computeObjectNavigationTargetBackfill = ({
       backfill.orphanedCommandMenuItemIds.push(flatCommandMenuItem.id);
       continue;
     }
-
-    if (claimedObjectMetadataIds.has(flatObjectMetadata.id)) {
-      backfill.duplicateCommandMenuItemIds.push(flatCommandMenuItem.id);
-      continue;
-    }
-
-    claimedObjectMetadataIds.add(flatObjectMetadata.id);
 
     backfill.flatCommandMenuItemsToUpdate.push({
       ...flatCommandMenuItem,
