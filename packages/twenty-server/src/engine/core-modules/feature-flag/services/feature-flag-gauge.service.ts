@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -8,8 +9,11 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 
 const ENABLED_WORKSPACES_METRIC_NAME = 'twenty_feature_flag_enabled_workspaces';
 
+// The rollout gauge counts enabled workspaces across every tenant, so it needs
+// the global repository rather than the workspace-scoped one (there is no
+// workspace context during a metrics scrape).
 @Injectable()
-export class FeatureFlagMetricsService implements OnModuleInit {
+export class FeatureFlagGaugeService implements OnModuleInit {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -24,10 +28,13 @@ export class FeatureFlagMetricsService implements OnModuleInit {
           'Number of workspaces with a given feature flag enabled, labelled by flag_key. Tracks the progress of a feature flag rollout.',
       },
       callback: async () => {
-        const rows = await this.getEnabledWorkspaceCountsByFlag();
+        const enabledWorkspacesByFlag =
+          await this.getEnabledWorkspaceCountsByFlag();
 
-        return rows.map(({ flagKey, enabledWorkspaces }) => ({
-          value: enabledWorkspaces,
+        // Emit a series for every known flag, defaulting to 0, so a flag with
+        // no enabled workspaces reads as zero rollout rather than missing data.
+        return Object.values(FeatureFlagKey).map((flagKey) => ({
+          value: enabledWorkspacesByFlag.get(flagKey) ?? 0,
           attributes: { flag_key: flagKey },
         }));
       },
@@ -36,7 +43,7 @@ export class FeatureFlagMetricsService implements OnModuleInit {
   }
 
   private async getEnabledWorkspaceCountsByFlag(): Promise<
-    Array<{ flagKey: string; enabledWorkspaces: number }>
+    Map<string, number>
   > {
     const rows = await this.dataSource
       .getRepository(FeatureFlagEntity)
@@ -47,9 +54,8 @@ export class FeatureFlagMetricsService implements OnModuleInit {
       .groupBy('featureFlag.key')
       .getRawMany<{ flagKey: string; enabledWorkspaces: string }>();
 
-    return rows.map((row) => ({
-      flagKey: row.flagKey,
-      enabledWorkspaces: Number(row.enabledWorkspaces),
-    }));
+    return new Map(
+      rows.map((row) => [row.flagKey, Number(row.enabledWorkspaces)]),
+    );
   }
 }
