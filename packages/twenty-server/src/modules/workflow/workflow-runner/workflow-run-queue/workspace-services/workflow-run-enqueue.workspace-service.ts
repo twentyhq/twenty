@@ -7,6 +7,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -25,6 +26,7 @@ export class WorkflowRunEnqueueWorkspaceService {
   constructor(
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
@@ -51,12 +53,11 @@ export class WorkflowRunEnqueueWorkspaceService {
 
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workflowRunRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkflowRunWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
+          const workflowRunRepository = this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('workflowRun', {
+              shouldBypassPermissionChecks: true,
+            });
 
           const notStartedRunsCount = isCacheMode
             ? await this.workflowThrottlingWorkspaceService.getNotStartedRunsCountFromCache(

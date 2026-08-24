@@ -7,7 +7,6 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
@@ -41,10 +40,9 @@ export class MessagingDeleteFolderMessagesService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageFolderAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
-            workspaceId,
-            'messageChannelMessageAssociationMessageFolder',
-          );
+          this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('messageChannelMessageAssociationMessageFolder');
 
         const messageChannelMessageAssociationRepository =
           this.workspaceDataSourceV2Service

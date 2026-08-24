@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -14,6 +15,7 @@ export class DashboardSyncService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -65,12 +67,11 @@ export class DashboardSyncService {
     try {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const dashboardRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
+          const dashboardRepository = this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('dashboard', {
+              shouldBypassPermissionChecks: true,
+            });
 
           await dashboardRepository.update({ pageLayoutId }, { updatedAt });
         },

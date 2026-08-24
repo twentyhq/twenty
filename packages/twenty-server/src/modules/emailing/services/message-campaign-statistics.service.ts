@@ -4,7 +4,6 @@ import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emaili
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
 type DeliveryStatusCountRow = {
   deliveryStatus: string | null;
@@ -57,12 +56,11 @@ export class MessageCampaignStatisticsService {
           CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
         ) ?? 0;
 
-      const campaignRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const campaignRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('messageCampaign', {
+          shouldBypassPermissionChecks: true,
+        });
 
       await campaignRepository.update(
         { id: campaignId },

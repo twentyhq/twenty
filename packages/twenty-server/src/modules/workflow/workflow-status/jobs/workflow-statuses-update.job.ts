@@ -12,7 +12,6 @@ import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -72,7 +71,6 @@ export class WorkflowStatusesUpdateJob {
             event.workflowIds.map((workflowId) =>
               this.handleWorkflowVersionCreatedOrDeleted({
                 workflowId,
-                workspaceId: event.workspaceId,
               }),
             ),
           );
@@ -82,7 +80,6 @@ export class WorkflowStatusesUpdateJob {
             event.statusUpdates.map((statusUpdate) =>
               this.handleWorkflowVersionStatusUpdated({
                 statusUpdate,
-                workspaceId: event.workspaceId,
               }),
             ),
           );
@@ -95,17 +92,12 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionCreatedOrDeleted({
     workflowId,
-    workspaceId,
   }: {
     workflowId: string;
-    workspaceId: string;
   }): Promise<void> {
-    const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true },
-      );
+    const workflowRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository('workflow', { shouldBypassPermissionChecks: true });
 
     const workflowVersionRepository = this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: false })
@@ -139,17 +131,12 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionStatusUpdated({
     statusUpdate,
-    workspaceId,
   }: {
     statusUpdate: WorkflowVersionStatusUpdate;
-    workspaceId: string;
   }): Promise<void> {
-    const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true },
-      );
+    const workflowRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository('workflow', { shouldBypassPermissionChecks: true });
 
     const workflowVersionRepository = this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: false })

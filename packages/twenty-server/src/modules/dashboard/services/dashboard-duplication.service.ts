@@ -5,8 +5,9 @@ import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -23,6 +24,7 @@ export class DashboardDuplicationService {
   constructor(
     private readonly pageLayoutDuplicationService: PageLayoutDuplicationService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
@@ -35,16 +37,15 @@ export class DashboardDuplicationService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const dashboardRepository =
-          await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
-            workspaceId,
-            'dashboard',
-            { shouldBypassPermissionChecks: true },
-          );
+        const dashboardRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('dashboard', {
+            shouldBypassPermissionChecks: true,
+          });
 
-        const originalDashboard = await dashboardRepository.findOne({
+        const originalDashboard = (await dashboardRepository.findOne({
           where: { id: dashboardId },
-        });
+        })) as DashboardWorkspaceEntity | null;
 
         if (!isDefined(originalDashboard)) {
           throw new DashboardException(
@@ -104,7 +105,7 @@ export class DashboardDuplicationService {
   private async createDuplicatedDashboard(
     originalDashboard: DashboardWorkspaceEntity,
     newPageLayoutId: string,
-    dashboardRepository: WorkspaceRepository<DashboardWorkspaceEntity>,
+    dashboardRepository: WorkspaceRepositoryV2,
     authContext: WorkspaceAuthContext,
   ): Promise<DashboardWorkspaceEntity> {
     const newTitle = appendCopySuffix(originalDashboard.title ?? '');
@@ -126,9 +127,9 @@ export class DashboardDuplicationService {
 
     const newDashboardId = insertResult.identifiers[0].id;
 
-    const newDashboard = await dashboardRepository.findOne({
+    const newDashboard = (await dashboardRepository.findOne({
       where: { id: newDashboardId },
-    });
+    })) as DashboardWorkspaceEntity | null;
 
     if (!isDefined(newDashboard)) {
       throw new DashboardException(

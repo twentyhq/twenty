@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -14,6 +15,7 @@ import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-tri
 export class AutomatedTriggerWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async addAutomatedTrigger({
@@ -43,10 +45,9 @@ export class AutomatedTriggerWorkspaceService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowAutomatedTriggerRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-          workspaceId,
-          'workflowAutomatedTrigger',
-        );
+        this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowAutomatedTrigger');
 
       await workflowAutomatedTriggerRepository.insert({
         type,
@@ -79,10 +80,9 @@ export class AutomatedTriggerWorkspaceService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowAutomatedTriggerRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-          workspaceId,
-          'workflowAutomatedTrigger',
-        );
+        this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowAutomatedTrigger');
 
       await workflowAutomatedTriggerRepository.delete({ workflowId });
     }, authContext);

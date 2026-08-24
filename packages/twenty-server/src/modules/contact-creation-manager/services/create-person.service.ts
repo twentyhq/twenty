@@ -3,15 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { DeepPartial } from 'typeorm';
 
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class CreatePersonService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   public async createPeople(
@@ -24,14 +26,11 @@ export class CreatePersonService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const personRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            PersonWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+        const personRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('person', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const lastPersonPosition =
           await this.getLastPersonPosition(personRepository);
@@ -41,8 +40,6 @@ export class CreatePersonService {
             ...person,
             position: lastPersonPosition + index,
           })),
-          undefined,
-          ['companyId', 'id'],
         );
 
         return createdPeople.raw;
@@ -63,14 +60,11 @@ export class CreatePersonService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const personRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            PersonWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+        const personRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('person', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const restoredPeople = await personRepository.updateMany(
           people.map(({ personId, companyId }) => ({
@@ -80,8 +74,6 @@ export class CreatePersonService {
               companyId,
             },
           })),
-          undefined,
-          ['companyId', 'id'],
         );
 
         return restoredPeople.raw;
@@ -102,22 +94,17 @@ export class CreatePersonService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const personRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            PersonWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+        const personRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('person', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const enrichedPeople = await personRepository.updateMany(
           peopleToEnrich.map(({ personId, name }) => ({
             criteria: personId,
             partialEntity: { name },
           })),
-          undefined,
-          ['id'],
         );
 
         return enrichedPeople.raw;
@@ -127,7 +114,7 @@ export class CreatePersonService {
   }
 
   private async getLastPersonPosition(
-    personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
+    personRepository: WorkspaceRepositoryV2,
   ): Promise<number> {
     const lastPersonPosition = await personRepository.maximum(
       'position',

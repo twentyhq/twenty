@@ -17,7 +17,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
@@ -83,10 +82,9 @@ export class BlocklistItemDeleteMessagesJob {
         );
 
         const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
-            'messageChannelMessageAssociation',
-          );
+          this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('messageChannelMessageAssociation');
 
         const workspaceMemberRepository = this.workspaceDataSourceV2Service
           .getDataSource({ useReplica: false })

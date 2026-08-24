@@ -30,7 +30,6 @@ import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 
 @Injectable()
@@ -155,10 +154,9 @@ export class CalendarEventsImportService {
             );
           }
           const calendarChannelEventAssociationRepository =
-            await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-              workspaceId,
-              'calendarChannelEventAssociation',
-            );
+            this.workspaceDataSourceV2Service
+              .getDataSource({ useReplica: false })
+              .getRepository('calendarChannelEventAssociation');
 
           await calendarChannelEventAssociationRepository.delete({
             eventExternalId: Any(cancelledEventExternalIds),

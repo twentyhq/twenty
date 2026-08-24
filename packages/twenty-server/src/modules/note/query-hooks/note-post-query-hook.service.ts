@@ -5,14 +5,15 @@ import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 
 @Injectable()
 export class NotePostQueryHookService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async handleNoteTargetsDelete(
@@ -28,11 +29,9 @@ export class NotePostQueryHookService {
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const noteTargetRepository =
-        await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-          workspace.id,
-          'noteTarget',
-        );
+      const noteTargetRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('noteTarget');
 
       await noteTargetRepository.softDelete({
         noteId: In(payload.map((note) => note.id)),
@@ -53,11 +52,9 @@ export class NotePostQueryHookService {
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const noteTargetRepository =
-        await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-          workspace.id,
-          'noteTarget',
-        );
+      const noteTargetRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('noteTarget');
 
       await noteTargetRepository.restore({
         noteId: In(payload.map((note) => note.id)),

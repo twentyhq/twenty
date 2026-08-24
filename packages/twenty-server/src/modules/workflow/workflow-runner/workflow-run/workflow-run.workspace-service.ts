@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -60,12 +60,9 @@ export class WorkflowRunWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
-            'workflowRun',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowRunRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowRun', { shouldBypassPermissionChecks: true });
 
         const workflowVersion =
           await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
@@ -109,7 +106,7 @@ export class WorkflowRunWorkspaceService {
           where: {
             workflowId: workflow.id,
           },
-          order: { createdAt: 'desc' },
+          order: { createdAt: 'DESC' },
         });
 
         const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
@@ -412,12 +409,9 @@ export class WorkflowRunWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-          workspaceId,
-          'workflowRun',
-          { shouldBypassPermissionChecks: true },
-        );
+      const workflowRunRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('workflowRun', { shouldBypassPermissionChecks: true });
 
       const workflowRunToUpdate = await workflowRunRepository.findOneBy({
         id: workflowRunId,
@@ -432,10 +426,7 @@ export class WorkflowRunWorkspaceService {
 
       await workflowRunRepository.update(
         workflowRunToUpdate.id,
-        partialUpdate,
-        undefined,
-        undefined,
-        ['id'],
+        partialUpdate as Partial<ObjectRecord>,
       );
     }, authContext);
   }

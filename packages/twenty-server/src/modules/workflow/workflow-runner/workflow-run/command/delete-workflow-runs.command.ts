@@ -4,9 +4,9 @@ import { LessThan } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @Command({
   name: 'workflow:delete-workflow-runs',
@@ -17,6 +17,7 @@ export class DeleteWorkflowRunsCommand extends ProvisionedWorkspaceCommandRunner
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super(workspaceIteratorService);
@@ -50,12 +51,9 @@ export class DeleteWorkflowRunsCommand extends ProvisionedWorkspaceCommandRunner
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
-            'workflowRun',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowRunRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowRun', { shouldBypassPermissionChecks: true });
 
         const createdAtCondition = {
           createdAt: LessThan(

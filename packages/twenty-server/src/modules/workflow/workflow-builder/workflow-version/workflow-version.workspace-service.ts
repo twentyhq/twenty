@@ -195,12 +195,9 @@ export class WorkflowVersionWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflow', { shouldBypassPermissionChecks: true });
 
         const workflowVersionRepository = this.workspaceDataSourceV2Service
           .getDataSource({ useReplica: false })

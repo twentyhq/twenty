@@ -11,8 +11,9 @@ import { isDefined, normalizeUrlOrigin } from 'twenty-shared/utils';
 import { type DeepPartial, ILike } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
@@ -35,6 +36,7 @@ export class CreateCompanyService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {
     this.httpService = this.secureHttpClientService.getHttpClient({
@@ -56,14 +58,11 @@ export class CreateCompanyService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const companyRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            CompanyWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+        const companyRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('company', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const companiesWithoutTrailingSlash = companies.map((company) => ({
           ...company,
@@ -82,10 +81,10 @@ export class CreateCompanyService {
           },
         }));
 
-        const existingCompanies = await companyRepository.find({
+        const existingCompanies = (await companyRepository.find({
           where: conditions,
           withDeleted: true,
-        });
+        })) as CompanyWorkspaceEntity[];
         const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
         const newCompaniesToCreate = uniqueCompanies.filter(
@@ -119,9 +118,11 @@ export class CreateCompanyService {
           ),
         );
 
-        const createdCompanies = await companyRepository.save(newCompaniesData);
+        const createdCompanies = (await companyRepository.save(
+          newCompaniesData,
+        )) as CompanyWorkspaceEntity[];
 
-        const restoredCompanies = await companyRepository.updateMany(
+        await companyRepository.updateMany(
           companiesToRestore.map((company) => {
             return {
               criteria: company.id,
@@ -130,19 +131,18 @@ export class CreateCompanyService {
               },
             };
           }),
-          undefined,
-          ['domainNamePrimaryLinkUrl', 'id'],
         );
 
-        const formattedRestoredCompanies = restoredCompanies.raw.map(
-          (row: { id: string; domainNamePrimaryLinkUrl: string }) => {
-            return {
-              id: row.id,
-              domainName: {
-                primaryLinkUrl: row.domainNamePrimaryLinkUrl,
-              },
-            };
-          },
+        // The v2 updateMany only returns the id column, so we reconstruct the
+        // restored companies map from companiesToRestore, which already holds
+        // the normalized domain and id.
+        const formattedRestoredCompanies = companiesToRestore.map(
+          (company) => ({
+            id: company.id,
+            domainName: {
+              primaryLinkUrl: 'https://' + company.domainName,
+            },
+          }),
         );
 
         return {
@@ -151,7 +151,12 @@ export class CreateCompanyService {
             ? this.createCompanyMap(createdCompanies)
             : {}),
           ...(formattedRestoredCompanies.length > 0
-            ? this.createCompanyMap(formattedRestoredCompanies)
+            ? this.createCompanyMap(
+                formattedRestoredCompanies as Pick<
+                  CompanyWorkspaceEntity,
+                  'id' | 'domainName'
+                >[],
+              )
             : {}),
         };
       },
@@ -233,7 +238,7 @@ export class CreateCompanyService {
   }
 
   private async getLastCompanyPosition(
-    companyRepository: WorkspaceRepository<CompanyWorkspaceEntity>,
+    companyRepository: WorkspaceRepositoryV2,
   ): Promise<number> {
     const lastCompanyPosition = await companyRepository.maximum(
       'position',
