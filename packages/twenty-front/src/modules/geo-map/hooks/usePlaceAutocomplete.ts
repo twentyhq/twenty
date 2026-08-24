@@ -8,6 +8,12 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
+type GetAutocompletePlaceDataParams = {
+  address: string;
+  country?: string;
+  isFieldCity?: boolean;
+};
+
 export const usePlaceAutocomplete = (dropdownId: string) => {
   const [placeAutocompleteData, setPlaceAutocompleteData] = useState<
     PlaceAutocompleteResult[]
@@ -25,12 +31,12 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
   }, [closeDropdown, dropdownId]);
 
   const debouncedGetAutocompletePlaceData = useDebouncedCallback(
-    async (
-      address: string,
-      country: string | undefined,
-      isFieldCity: boolean | undefined,
-      requestId: number,
-    ) => {
+    async ({
+      address,
+      country,
+      isFieldCity,
+      requestId,
+    }: GetAutocompletePlaceDataParams & { requestId: number }) => {
       if (!isNonEmptyString(address.trim())) {
         closeDropdownAndClearResults();
         return;
@@ -67,15 +73,15 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
   );
 
   const getAutocompletePlaceData = useCallback(
-    (address: string, country?: string, isFieldCity?: boolean) => {
+    ({ address, country, isFieldCity }: GetAutocompletePlaceDataParams) => {
       const requestId = ++latestRequestIdRef.current;
 
-      return debouncedGetAutocompletePlaceData(
+      return debouncedGetAutocompletePlaceData({
         address,
         country,
         isFieldCity,
         requestId,
-      );
+      });
     },
     [debouncedGetAutocompletePlaceData],
   );

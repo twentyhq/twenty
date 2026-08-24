@@ -153,7 +153,11 @@ export const AddressInput = ({
           setTypeOfAddressForAutocomplete(field);
         }
         const isFieldCity = field === 'addressCity';
-        getAutocompletePlaceData(updatedAddressPart, countryCode, isFieldCity);
+        getAutocompletePlaceData({
+          address: updatedAddressPart,
+          country: countryCode,
+          isFieldCity,
+        });
       }
     },
     [

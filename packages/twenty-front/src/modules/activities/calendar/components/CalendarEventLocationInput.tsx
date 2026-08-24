@@ -29,7 +29,7 @@ export const CalendarEventLocationInput = ({
 
   const handleLocationChange = (location: string) => {
     onChange(location);
-    getAutocompletePlaceData(location);
+    getAutocompletePlaceData({ address: location });
   };
 
   const handlePlaceSelection = (placeId: string) => {

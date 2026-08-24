@@ -59,7 +59,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('123 Main');
+      await result.current.getAutocompletePlaceData({ address: '123 Main' });
     });
 
     expect(mockOpenDropdown).toHaveBeenCalled();
@@ -75,7 +75,9 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('nonexistent');
+      await result.current.getAutocompletePlaceData({
+        address: 'nonexistent',
+      });
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -87,7 +89,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('test');
+      await result.current.getAutocompletePlaceData({ address: 'test' });
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -253,7 +255,9 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('123 Main St');
+      await result.current.getAutocompletePlaceData({
+        address: '123 Main St',
+      });
     });
 
     expect(result.current.tokenForPlaceApi).not.toBeNull();
@@ -303,7 +307,11 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('Boston', 'US', true);
+      await result.current.getAutocompletePlaceData({
+        address: 'Boston',
+        country: 'US',
+        isFieldCity: true,
+      });
     });
 
     expect(mockGetPlaceAutocompleteData).toHaveBeenCalledWith(
