@@ -6,7 +6,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 export const useTimelineActivityTypeFilter = (recordId: string) => {
   const { activeTimelineActivityTypes, timelineActivityTypeMaps } =
     useTimelineActivityTypes();
-  const selectedTimelineActivityTypeUniversalIdentifiers =
+  const timelineActivityTypeUniversalIdentifiersFilter =
     useAtomFamilyStateValue(
       timelineActivityTypeUniversalIdentifiersFilterFamilyState,
       recordId,
@@ -20,9 +20,10 @@ export const useTimelineActivityTypeFilter = (recordId: string) => {
           ({ universalIdentifier }) => universalIdentifier,
         ),
         selectedUniversalIdentifiers:
-          selectedTimelineActivityTypeUniversalIdentifiers,
+          timelineActivityTypeUniversalIdentifiersFilter,
       }),
-    selectedTimelineActivityTypeUniversalIdentifiers,
+    selectedTimelineActivityTypeUniversalIdentifiers:
+      timelineActivityTypeUniversalIdentifiersFilter,
     timelineActivityTypeMaps,
   };
 };
