@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 
 import { PartnerApplicationModalRoot } from '@/partner-application';
+import { MarketplaceBriefPrompt } from '@/partners-marketplace/MarketplaceBriefPrompt';
 import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partners-source';
 import { MarketplaceListSkeleton } from '@/partners-marketplace/MarketplaceListSkeleton';
 import { getCommunityStats } from '@/platform/community';
@@ -16,7 +17,10 @@ import {
 } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
 import { PartnerLeadHero } from '@/sections/partner-hero';
-import { PartnerDirectory } from '@/sections/partner-lead';
+import {
+  PartnerDirectory,
+  PartnerServicesExplainer,
+} from '@/sections/partner-lead';
 
 export const generateMetadata = buildRouteMetadata('partners');
 
@@ -51,6 +55,8 @@ export default async function PartnersPage({
         <Suspense fallback={<MarketplaceListSkeleton />}>
           <PartnerDirectory partners={partners} />
         </Suspense>
+        <PartnerServicesExplainer />
+        <MarketplaceBriefPrompt />
       </main>
     </PartnerApplicationModalRoot>
   );
