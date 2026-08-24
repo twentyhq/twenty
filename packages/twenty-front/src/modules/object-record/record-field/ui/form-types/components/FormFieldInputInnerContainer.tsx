@@ -12,12 +12,12 @@ type FormFieldInputInnerContainerProps = {
   readonly?: boolean;
   preventFocusStackUpdate?: boolean;
   formFieldInputInstanceId: string;
-  variant?: 'default' | 'transparent';
+  variant?: FormFieldInputVariant;
 };
 
 const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'> & {
-    $variant: 'default' | 'transparent';
+    $variant: FormFieldInputVariant;
   }
 >`
   align-items: ${({ multiline }) => (multiline ? 'flex-start' : 'center')};
@@ -141,3 +141,4 @@ export const FormFieldInputInnerContainer = forwardRef(
     );
   },
 );
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';

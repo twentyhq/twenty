@@ -9,6 +9,7 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 import { useParseDateInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToJSDate';
 import { useParsePlainDateToDateInputString } from '@/ui/input/components/internal/date/hooks/useParsePlainDateToDateInputString';
 import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMask';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 
 import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
 import { useParseJSDateToIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateInputString';
@@ -16,7 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputContainer = styled.div<{
-  $variant: 'default' | 'transparent';
+  $variant: FormFieldInputVariant;
 }>`
   align-items: center;
   border-bottom: ${({ $variant }) =>
@@ -35,7 +36,7 @@ const StyledInputContainer = styled.div<{
 
 const StyledInput = styled.input<{
   hasError?: boolean;
-  $variant: 'default' | 'transparent';
+  $variant: FormFieldInputVariant;
 }>`
   background: transparent;
   border: none;
@@ -55,7 +56,7 @@ type DatePickerInputProps = {
   onChange?: (date: string | null) => void;
   date: string | null;
   readonly?: boolean;
-  variant?: 'default' | 'transparent';
+  variant?: FormFieldInputVariant;
 };
 
 export const DatePickerInput = ({
