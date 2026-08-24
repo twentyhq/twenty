@@ -1,16 +1,38 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatEntityOperationRecord } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+
+type TimelineActivityTypeTargetRelation = Pick<
+  FlatTimelineActivityType,
+  'targetRelationFieldUniversalIdentifier'
+>;
+
+type TimelineActivityTypeTargetRelationOperations = {
+  flatEntityToCreate: Partial<
+    Record<string, TimelineActivityTypeTargetRelation>
+  >;
+  flatEntityToUpdate: Partial<
+    Record<string, TimelineActivityTypeTargetRelation>
+  >;
+  flatEntityToDelete: Partial<
+    Record<string, TimelineActivityTypeTargetRelation>
+  >;
+};
 
 export const getTimelineActivityTypeTargetRelationApplicationIds = ({
   flatFieldMetadataMaps,
   timelineActivityTypeOperations,
 }: {
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> | undefined;
+  flatFieldMetadataMaps:
+    | {
+        byUniversalIdentifier: Partial<
+          Record<string, Pick<FlatFieldMetadata, 'applicationId'>>
+        >;
+      }
+    | undefined;
   timelineActivityTypeOperations:
-    | FlatEntityOperationRecord<'timelineActivityType'>
+    | TimelineActivityTypeTargetRelationOperations
     | undefined;
 }): string[] => {
   if (

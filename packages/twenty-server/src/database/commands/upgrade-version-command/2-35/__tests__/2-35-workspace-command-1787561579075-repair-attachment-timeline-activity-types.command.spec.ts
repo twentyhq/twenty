@@ -156,10 +156,10 @@ describe('RepairAttachmentTimelineActivityTypesCommand', () => {
     ]);
   });
 
-  it('only creates definitions that are still missing', async () => {
+  it('only creates missing definitions and preserves muted definitions', async () => {
     const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({
       flatTimelineActivityTypes: {
-        [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: {},
+        [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: { isActive: false },
       },
     });
 

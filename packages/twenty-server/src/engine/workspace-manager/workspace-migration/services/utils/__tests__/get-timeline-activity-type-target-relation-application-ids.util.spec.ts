@@ -13,7 +13,7 @@ describe('getTimelineActivityTypeTargetRelationApplicationIds', () => {
             applicationId: CUSTOM_APPLICATION_ID,
           },
         },
-      } as never,
+      },
       timelineActivityTypeOperations: {
         flatEntityToCreate: {
           timelineActivityType: {
@@ -23,7 +23,7 @@ describe('getTimelineActivityTypeTargetRelationApplicationIds', () => {
         },
         flatEntityToUpdate: {},
         flatEntityToDelete: {},
-      } as never,
+      },
     });
 
     expect(applicationIds).toEqual([CUSTOM_APPLICATION_ID]);
@@ -33,7 +33,7 @@ describe('getTimelineActivityTypeTargetRelationApplicationIds', () => {
     const applicationIds = getTimelineActivityTypeTargetRelationApplicationIds({
       flatFieldMetadataMaps: {
         byUniversalIdentifier: {},
-      } as never,
+      },
       timelineActivityTypeOperations: {
         flatEntityToCreate: {
           selfTimelineActivityType: {
@@ -46,7 +46,7 @@ describe('getTimelineActivityTypeTargetRelationApplicationIds', () => {
         },
         flatEntityToUpdate: {},
         flatEntityToDelete: {},
-      } as never,
+      },
     });
 
     expect(applicationIds).toEqual([]);
