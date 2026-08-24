@@ -1,13 +1,15 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type MouseEventHandler, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ROW_MIN_HEIGHT = '40px';
 
-const StyledRow = styled.div`
+const StyledRow = styled.div<{ $clickable: boolean }>`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   min-height: ${ROW_MIN_HEIGHT};
@@ -35,10 +37,16 @@ const StyledContent = styled.div`
   min-width: 0;
 `;
 
+const StyledTrailing = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 type ComposerFieldRowProps = {
   label: string;
   children: ReactNode;
   trailing?: ReactNode;
+  onClick?: MouseEventHandler<HTMLDivElement>;
   // A floor, not a fixed width: mixed-length labels line up without a long
   // translation running underneath its control.
   labelMinWidth?: string;
@@ -51,13 +59,23 @@ export const ComposerFieldRow = ({
   label,
   children,
   trailing,
+  onClick,
   labelMinWidth,
 }: ComposerFieldRowProps) => (
-  <StyledRow role="group" aria-label={label}>
+  <StyledRow
+    role="group"
+    aria-label={label}
+    $clickable={isDefined(onClick)}
+    onClick={onClick}
+  >
     <StyledLabel aria-hidden="true" $minWidth={labelMinWidth}>
       {label}
     </StyledLabel>
     <StyledContent>{children}</StyledContent>
-    {trailing}
+    {isDefined(trailing) && (
+      <StyledTrailing onClick={(event) => event.stopPropagation()}>
+        {trailing}
+      </StyledTrailing>
+    )}
   </StyledRow>
 );

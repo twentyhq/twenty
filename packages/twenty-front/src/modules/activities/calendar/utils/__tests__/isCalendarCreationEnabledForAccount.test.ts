@@ -1,17 +1,18 @@
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const makeAccount = (
-  overrides: Partial<ConnectedAccount> = {},
-): ConnectedAccount =>
+  overrides: Partial<
+    Parameters<typeof isCalendarCreationEnabledForAccount>[0]
+  > = {},
+) =>
   ({
     archivedAt: null,
     provider: ConnectedAccountProvider.GOOGLE,
     calendarChannels: [{ isSyncEnabled: true }],
     connectionParameters: null,
     ...overrides,
-  }) as ConnectedAccount;
+  }) satisfies Parameters<typeof isCalendarCreationEnabledForAccount>[0];
 
 describe('isCalendarCreationEnabledForAccount', () => {
   it('accepts an active supported account with calendar sync enabled', () => {
@@ -26,7 +27,7 @@ describe('isCalendarCreationEnabledForAccount', () => {
     ).toBe(false);
     expect(
       isCalendarCreationEnabledForAccount(
-        makeAccount({ calendarChannels: [{ isSyncEnabled: false }] as never }),
+        makeAccount({ calendarChannels: [{ isSyncEnabled: false }] }),
       ),
     ).toBe(false);
   });
