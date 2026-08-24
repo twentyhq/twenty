@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
   ENQUEUE_JOB_PRIORITY,
-  MAX_JOBS_PER_ENQUEUE,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
@@ -74,13 +73,6 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobsInputDTO;
   }): Promise<EnqueueJobsResult> {
-    if (input.jobs.length > MAX_JOBS_PER_ENQUEUE) {
-      throw new ApplicationException(
-        `Cannot enqueue more than ${MAX_JOBS_PER_ENQUEUE} jobs at once`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
