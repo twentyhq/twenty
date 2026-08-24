@@ -45,6 +45,32 @@ describe('OAuthDiscoveryController', () => {
     controller = module.get(OAuthDiscoveryController);
   });
 
+  describe('getAuthorizationServerMetadata', () => {
+    it('returns authorization server metadata with RFC 9207 iss support advertised for API host', async () => {
+      const request = buildMockRequest('api.example.com');
+
+      const metadata = await controller.getAuthorizationServerMetadata(request);
+
+      expect(metadata).toMatchObject({
+        issuer: 'https://api.example.com',
+        authorization_endpoint: 'https://app.example.com/authorize',
+        authorization_response_iss_parameter_supported: true,
+      });
+    });
+
+    it('returns authorization server metadata with RFC 9207 iss support advertised for workspace host', async () => {
+      const request = buildMockRequest('workspace.twenty.com');
+
+      const metadata = await controller.getAuthorizationServerMetadata(request);
+
+      expect(metadata).toMatchObject({
+        issuer: 'https://workspace.twenty.com',
+        authorization_endpoint: 'https://workspace.twenty.com/authorize',
+        authorization_response_iss_parameter_supported: true,
+      });
+    });
+  });
+
   // RFC 9728 §3.2 requires the `resource` value to match the identifier into
   // which the well-known path suffix was inserted — so the root maps to the
   // origin itself and the /mcp variant maps to <origin>/mcp.

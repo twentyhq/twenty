@@ -73,6 +73,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { cleanServerUrl } from 'src/utils/clean-server-url';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
@@ -640,6 +641,11 @@ export class AuthService {
 
     await this.appTokenRepository.save(token);
 
+    const serverUrl = cleanServerUrl(
+      this.twentyConfigService.get('SERVER_URL'),
+    );
+
+    redirectUriValidation.parsed.searchParams.set('iss', serverUrl);
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
 
     if (authorizeAppInput.state) {
