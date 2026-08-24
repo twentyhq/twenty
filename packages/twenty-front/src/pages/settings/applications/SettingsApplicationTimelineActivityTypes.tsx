@@ -109,6 +109,7 @@ export const SettingsApplicationTimelineActivityTypes = () => {
           <SettingsApplicationTimelineActivityTypesListCard
             timelineActivityTypes={filteredTimelineActivityTypes}
             canReset={
+              applicationId !== '' &&
               !isWorkspaceCustomApplication(
                 { id: applicationId },
                 currentWorkspace,
