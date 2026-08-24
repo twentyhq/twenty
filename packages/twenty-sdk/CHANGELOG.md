@@ -8,22 +8,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
-- **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues a list of jobs in a single call (up to 200 per batch). Each entry takes the same shape as the former `enqueueJob` input (`logicFunctionUniversalIdentifier`, `payload`, `retryLimit`, `delayMs`). The whole batch is validated before anything is enqueued, so an invalid entry rejects the call without enqueuing any job.
+- **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues one run per payload of a single logic function in one call (up to 200 payloads per batch). `retryLimit` and `delayMs` apply to every run in the batch.
 
   ```ts
   import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-  await enqueueJobs(
-    batches.map((batch, batchIndex) => ({
-      logicFunctionUniversalIdentifier: PROCESS_BATCH,
-      payload: { batchIndex },
-    })),
-  );
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier: PROCESS_BATCH,
+    payloads: batches.map((batch, batchIndex) => ({ batchIndex })),
+  });
   ```
 
 ### Deprecated
 
-- **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
+- **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 
 ### Changed
 

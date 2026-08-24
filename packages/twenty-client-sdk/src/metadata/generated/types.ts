@@ -6190,8 +6190,14 @@ export default {
             ]
         },
         "EnqueueJobsResult": {
-            "jobs": [
-                344
+            "enqueued": [
+                8
+            ],
+            "logicFunctionUniversalIdentifier": [
+                1
+            ],
+            "enqueuedJobsCount": [
+                26
             ],
             "__typename": [
                 1
@@ -12502,8 +12508,17 @@ export default {
             ]
         },
         "EnqueueJobsInput": {
-            "jobs": [
-                513
+            "logicFunctionUniversalIdentifier": [
+                1
+            ],
+            "payloads": [
+                9
+            ],
+            "retryLimit": [
+                26
+            ],
+            "delayMs": [
+                26
             ],
             "__typename": [
                 1

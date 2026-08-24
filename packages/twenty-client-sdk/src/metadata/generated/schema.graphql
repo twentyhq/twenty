@@ -3086,7 +3086,9 @@ type EnqueueJobResult {
 }
 
 type EnqueueJobsResult {
-  jobs: [EnqueueJobResult!]!
+  enqueued: Boolean!
+  logicFunctionUniversalIdentifier: String!
+  enqueuedJobsCount: Int!
 }
 
 type AppKeyValue {
@@ -4906,7 +4908,10 @@ input EnqueueJobInput {
 }
 
 input EnqueueJobsInput {
-  jobs: [EnqueueJobInput!]!
+  logicFunctionUniversalIdentifier: String!
+  payloads: [JSON!]!
+  retryLimit: Int
+  delayMs: Int
 }
 
 input FileAttachmentInput {

@@ -21,7 +21,6 @@ import {
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -49,21 +48,22 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobInputDTO;
   }): Promise<EnqueueJobResult> {
-    const { jobs } = await this.enqueueJobs({
-      applicationId,
-      workspaceId,
-      userId,
-      userWorkspaceId,
-      input: { jobs: [input] },
-    });
+    const { enqueued, logicFunctionUniversalIdentifier } =
+      await this.enqueueJobs({
+        applicationId,
+        workspaceId,
+        userId,
+        userWorkspaceId,
+        input: {
+          logicFunctionUniversalIdentifier:
+            input.logicFunctionUniversalIdentifier,
+          payloads: [input.payload ?? {}],
+          retryLimit: input.retryLimit,
+          delayMs: input.delayMs,
+        },
+      });
 
-    if (jobs.length !== 1) {
-      throw new Error(
-        `Expected exactly one enqueued job result, got ${jobs.length}`,
-      );
-    }
-
-    return jobs[0];
+    return { enqueued, logicFunctionUniversalIdentifier };
   }
 
   async enqueueJobs({
@@ -79,79 +79,50 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobsInputDTO;
   }): Promise<EnqueueJobsResult> {
+    const { logicFunctionUniversalIdentifier } = input;
+
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
       ]);
 
-    // Resolve every job before enqueuing any, so an invalid job in the batch
-    // does not leave a partially enqueued batch behind.
-    const jobsToEnqueue = input.jobs.map((job) => {
-      const { logicFunctionUniversalIdentifier } = job;
-
-      const flatLogicFunction = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: flatLogicFunctionMaps,
-        universalIdentifier: logicFunctionUniversalIdentifier,
-      });
-
-      if (
-        !isDefined(flatLogicFunction) ||
-        isDefined(flatLogicFunction.deletedAt) ||
-        flatLogicFunction.applicationId !== applicationId
-      ) {
-        throw new ApplicationException(
-          `Logic function ${logicFunctionUniversalIdentifier} not found in this application`,
-          ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-        );
-      }
-
-      return { job, logicFunctionId: flatLogicFunction.id };
+    const flatLogicFunction = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: logicFunctionUniversalIdentifier,
     });
 
-    // bulkAdd applies one options object to every job, so jobs sharing the
-    // same queue options are batched together and enqueued per group.
-    const jobGroupsByOptions = new Map<
-      string,
-      { options: QueueJobOptions; dataItems: LogicFunctionTriggerJobData[] }
-    >();
-
-    for (const { job, logicFunctionId } of jobsToEnqueue) {
-      const options: QueueJobOptions = {
-        retryLimit: job.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        priority: ENQUEUE_JOB_PRIORITY,
-        ...(isDefined(job.delayMs) ? { delay: job.delayMs } : {}),
-      };
-      const optionsKey = `${options.retryLimit}:${options.delay ?? 0}`;
-
-      const jobGroup = jobGroupsByOptions.get(optionsKey) ?? {
-        options,
-        dataItems: [],
-      };
-
-      jobGroup.dataItems.push({
-        logicFunctionId,
-        workspaceId,
-        payload: job.payload ?? {},
-        ...(isDefined(userId) ? { userId } : {}),
-        ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
-      });
-      jobGroupsByOptions.set(optionsKey, jobGroup);
-    }
-
-    for (const { options, dataItems } of jobGroupsByOptions.values()) {
-      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        dataItems,
-        options,
+    if (
+      !isDefined(flatLogicFunction) ||
+      isDefined(flatLogicFunction.deletedAt) ||
+      flatLogicFunction.applicationId !== applicationId
+    ) {
+      throw new ApplicationException(
+        `Logic function ${logicFunctionUniversalIdentifier} not found in this application`,
+        ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
 
-    return {
-      jobs: jobsToEnqueue.map(({ job }) => ({
-        enqueued: true,
-        logicFunctionUniversalIdentifier: job.logicFunctionUniversalIdentifier,
+    await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+      LogicFunctionTriggerJob.name,
+      input.payloads.map((payload) => ({
+        logicFunctionId: flatLogicFunction.id,
+        workspaceId,
+        payload,
+        ...(isDefined(userId) ? { userId } : {}),
+        ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
       })),
+      {
+        retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        priority: ENQUEUE_JOB_PRIORITY,
+        ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
+      },
+    );
+
+    return {
+      enqueued: true,
+      logicFunctionUniversalIdentifier,
+      enqueuedJobsCount: input.payloads.length,
     };
   }
 }

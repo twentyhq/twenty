@@ -13,10 +13,13 @@ export type EnqueueJobResult = {
   logicFunctionUniversalIdentifier: string;
 };
 
-export type EnqueueJobsInput = {
-  jobs: EnqueueJobInput[];
+export type EnqueueJobsInput = EnqueueJobOptions & {
+  logicFunctionUniversalIdentifier: string;
+  payloads: Record<string, unknown>[];
 };
 
 export type EnqueueJobsResult = {
-  jobs: EnqueueJobResult[];
+  enqueued: boolean;
+  logicFunctionUniversalIdentifier: string;
+  enqueuedJobsCount: number;
 };

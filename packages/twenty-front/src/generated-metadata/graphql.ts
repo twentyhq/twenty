@@ -1711,12 +1711,17 @@ export type EnqueueJobResult = {
 };
 
 export type EnqueueJobsInput = {
-  jobs: Array<EnqueueJobInput>;
+  delayMs?: InputMaybe<Scalars['Int']['input']>;
+  logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  payloads: Array<Scalars['JSON']['input']>;
+  retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type EnqueueJobsResult = {
   __typename?: 'EnqueueJobsResult';
-  jobs: Array<EnqueueJobResult>;
+  enqueued: Scalars['Boolean']['output'];
+  enqueuedJobsCount: Scalars['Int']['output'];
+  logicFunctionUniversalIdentifier: Scalars['String']['output'];
 };
 
 export type EnterpriseLicenseInfoDto = {

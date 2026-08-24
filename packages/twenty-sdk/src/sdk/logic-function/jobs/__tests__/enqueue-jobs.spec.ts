@@ -8,8 +8,7 @@ import {
   type MockInstance,
 } from 'vitest';
 
-const FIRST_UNIVERSAL_IDENTIFIER = '5a2f4d2a-1a1e-4c66-8a54-1f0a2b3c4d5e';
-const SECOND_UNIVERSAL_IDENTIFIER = '7c1b9e3d-2b2f-4d77-9b65-2a1b3c4d5e6f';
+const TARGET_UNIVERSAL_IDENTIFIER = '5a2f4d2a-1a1e-4c66-8a54-1f0a2b3c4d5e';
 
 const importEnqueueJobs = async () => {
   const module = await import('@/sdk/logic-function/jobs/enqueue-jobs');
@@ -23,19 +22,12 @@ const graphqlResponse = (data: unknown) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
-const successResponse = () =>
+const successResponse = (enqueuedJobsCount: number) =>
   graphqlResponse({
     enqueueJobs: {
-      jobs: [
-        {
-          enqueued: true,
-          logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
-        },
-        {
-          enqueued: true,
-          logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
-        },
-      ],
+      enqueued: true,
+      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+      enqueuedJobsCount,
     },
   });
 
@@ -56,33 +48,22 @@ describe('enqueueJobs', () => {
   });
 
   it('calls the enqueueJobs mutation on the metadata API and returns its result', async () => {
-    fetchSpy.mockResolvedValue(successResponse());
+    fetchSpy.mockResolvedValue(successResponse(2));
 
     const enqueueJobs = await importEnqueueJobs();
 
-    const result = await enqueueJobs([
-      {
-        logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
-        payload: { batchIndex: 0 },
-        retryLimit: 3,
-        delayMs: 1000,
-      },
-      {
-        logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
-        payload: { batchIndex: 1 },
-      },
-    ]);
+    const result = await enqueueJobs({
+      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+      payloads: [{ batchIndex: 0 }, { batchIndex: 1 }],
+      retryLimit: 3,
+      delayMs: 1000,
+    });
 
-    expect(result).toEqual([
-      {
-        enqueued: true,
-        logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
-      },
-      {
-        enqueued: true,
-        logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
-      },
-    ]);
+    expect(result).toEqual({
+      enqueued: true,
+      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+      enqueuedJobsCount: 2,
+    });
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -91,34 +72,27 @@ describe('enqueueJobs', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain(
-      'enqueueJobs(input:$v1){jobs{enqueued,logicFunctionUniversalIdentifier}}',
+      'enqueueJobs(input:$v1){enqueued,logicFunctionUniversalIdentifier,enqueuedJobsCount}',
     );
     expect(Object.values(sentBody.variables)).toEqual([
       {
-        jobs: [
-          {
-            logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
-            payload: { batchIndex: 0 },
-            retryLimit: 3,
-            delayMs: 1000,
-          },
-          {
-            logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
-            payload: { batchIndex: 1 },
-          },
-        ],
+        logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+        payloads: [{ batchIndex: 0 }, { batchIndex: 1 }],
+        retryLimit: 3,
+        delayMs: 1000,
       },
     ]);
   });
 
   it('sends the app access token as a bearer credential', async () => {
-    fetchSpy.mockResolvedValue(successResponse());
+    fetchSpy.mockResolvedValue(successResponse(1));
 
     const enqueueJobs = await importEnqueueJobs();
 
-    await enqueueJobs([
-      { logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER },
-    ]);
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+      payloads: [{}],
+    });
 
     const [, requestInit] = fetchSpy.mock.calls[0];
     const headers = new Headers(requestInit?.headers);
@@ -137,9 +111,10 @@ describe('enqueueJobs', () => {
     const enqueueJobs = await importEnqueueJobs();
 
     await expect(
-      enqueueJobs([
-        { logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER },
-      ]),
+      enqueueJobs({
+        logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
+        payloads: [{}],
+      }),
     ).rejects.toThrow(/Logic function not found/);
   });
 });

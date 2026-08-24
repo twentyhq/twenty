@@ -2762,7 +2762,9 @@ export interface EnqueueJobResult {
 }
 
 export interface EnqueueJobsResult {
-    jobs: EnqueueJobResult[]
+    enqueued: Scalars['Boolean']
+    logicFunctionUniversalIdentifier: Scalars['String']
+    enqueuedJobsCount: Scalars['Int']
     __typename: 'EnqueueJobsResult'
 }
 
@@ -6200,7 +6202,9 @@ export interface EnqueueJobResultGenqlSelection{
 }
 
 export interface EnqueueJobsResultGenqlSelection{
-    jobs?: EnqueueJobResultGenqlSelection
+    enqueued?: boolean | number
+    logicFunctionUniversalIdentifier?: boolean | number
+    enqueuedJobsCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7128,7 +7132,7 @@ export interface SetAppKeyValueInput {key: Scalars['String'],value?: (Scalars['J
 
 export interface EnqueueJobInput {logicFunctionUniversalIdentifier: Scalars['String'],payload?: (Scalars['JSON'] | null),retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
 
-export interface EnqueueJobsInput {jobs: EnqueueJobInput[]}
+export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['String'],payloads: Scalars['JSON'][],retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 

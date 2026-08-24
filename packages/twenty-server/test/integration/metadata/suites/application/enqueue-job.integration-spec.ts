@@ -72,10 +72,9 @@ const ENQUEUE_JOB = gql`
 const ENQUEUE_JOBS = gql`
   mutation EnqueueJobs($input: EnqueueJobsInput!) {
     enqueueJobs(input: $input) {
-      jobs {
-        enqueued
-        logicFunctionUniversalIdentifier
-      }
+      enqueued
+      logicFunctionUniversalIdentifier
+      enqueuedJobsCount
     }
   }
 `;
@@ -329,7 +328,7 @@ describe('enqueueJob (e2e)', () => {
     expect(response.body.errors[0].message).toContain('not found');
   });
 
-  it('enqueues a batch of jobs in a single call and the worker runs them all', async () => {
+  it('enqueues a batch of payloads in a single call and the worker runs them all', async () => {
     const markerPaths = [
       join(MARKER_DIRECTORY, 'batch-0.txt'),
       join(MARKER_DIRECTORY, 'batch-1.txt'),
@@ -340,10 +339,8 @@ describe('enqueueJob (e2e)', () => {
         query: ENQUEUE_JOBS,
         variables: {
           input: {
-            jobs: markerPaths.map((markerPath) => ({
-              logicFunctionUniversalIdentifier,
-              payload: { markerPath },
-            })),
+            logicFunctionUniversalIdentifier,
+            payloads: markerPaths.map((markerPath) => ({ markerPath })),
           },
         },
       },
@@ -352,10 +349,9 @@ describe('enqueueJob (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.enqueueJobs).toEqual({
-      jobs: markerPaths.map(() => ({
-        enqueued: true,
-        logicFunctionUniversalIdentifier,
-      })),
+      enqueued: true,
+      logicFunctionUniversalIdentifier,
+      enqueuedJobsCount: markerPaths.length,
     });
 
     await waitForAllJobsToFinish();
@@ -367,16 +363,14 @@ describe('enqueueJob (e2e)', () => {
     });
   });
 
-  it('rejects the whole batch when one job targets an unknown logic function', async () => {
+  it('rejects a batch targeting an unknown logic function', async () => {
     const response = await makeMetadataAPIRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
           input: {
-            jobs: [
-              { logicFunctionUniversalIdentifier },
-              { logicFunctionUniversalIdentifier: uuidv4() },
-            ],
+            logicFunctionUniversalIdentifier: uuidv4(),
+            payloads: [{}],
           },
         },
       },
@@ -391,13 +385,15 @@ describe('enqueueJob (e2e)', () => {
     const response = await makeMetadataAPIRequest(
       {
         query: ENQUEUE_JOBS,
-        variables: { input: { jobs: [] } },
+        variables: {
+          input: { logicFunctionUniversalIdentifier, payloads: [] },
+        },
       },
       customApplicationToken,
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('jobs');
+    expect(response.body.errors[0].message).toContain('payloads');
   });
 
   it('rejects job options outside of their allowed range', async () => {
