@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { MESSAGE_CAMPAIGN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-33/constants/message-campaign-standard-object-universal-identifiers.constant';
-import { type MessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-33/types/message-campaign-standard-universal-identifiers.type';
+import { MESSAGE_CAMPAIGN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-35/constants/message-campaign-standard-object-universal-identifiers.constant';
+import { type MessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-35/types/message-campaign-standard-universal-identifiers.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 

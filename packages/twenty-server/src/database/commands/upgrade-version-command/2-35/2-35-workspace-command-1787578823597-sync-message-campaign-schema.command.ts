@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { FieldMetadataType, MessageCampaignStatus } from 'twenty-shared/types';
-import { MESSAGE_CAMPAIGN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-33/constants/message-campaign-standard-object-universal-identifiers.constant';
+import { MESSAGE_CAMPAIGN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-35/constants/message-campaign-standard-object-universal-identifiers.constant';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -12,7 +12,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
-import { collectMessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-33/utils/collect-message-campaign-standard-universal-identifiers.util';
+import { collectMessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-35/utils/collect-message-campaign-standard-universal-identifiers.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getExistingOrStandardFlatEntityOrThrow, getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
@@ -42,9 +42,13 @@ const HEADER_MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
 const DELIVERY_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.message.fields.deliveryStatus.universalIdentifier;
 
+<<<<<<<< HEAD:packages/twenty-server/src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787200200000-sync-message-campaign-schema.command.ts
 @RegisteredWorkspaceCommand('2.33.0', 1787200200000)
+========
+@RegisteredWorkspaceCommand('2.35.0', 1787578823597)
+>>>>>>>> 27e49ea0ed (Move the campaign schema command to the current version directory):packages/twenty-server/src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787578823597-sync-message-campaign-schema.command.ts
 @Command({
-  name: 'upgrade:2-33:sync-message-campaign-schema',
+  name: 'upgrade:2-35:sync-message-campaign-schema',
   description:
     'Bring existing workspaces to the MessageCampaign schema: standard objects, search, campaign metadata and message delivery metadata',
 })

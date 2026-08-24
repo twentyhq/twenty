@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { collectMessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-33/utils/collect-message-campaign-standard-universal-identifiers.util';
+import { collectMessageCampaignStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-35/utils/collect-message-campaign-standard-universal-identifiers.util';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
