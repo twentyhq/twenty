@@ -66,8 +66,6 @@ export type {
   EnqueueJobInput,
   EnqueueJobOptions,
   EnqueueJobResult,
-  EnqueueJobsInput,
-  EnqueueJobsResult,
 } from 'twenty-shared/application';
 
 export { createTimelineActivity } from '@/sdk/logic-function/timeline/create-timeline-activity';

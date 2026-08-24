@@ -1,17 +1,17 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import {
-  type EnqueueJobsInput,
-  type EnqueueJobsResult,
+  type EnqueueJobInput,
+  type EnqueueJobResult,
 } from 'twenty-shared/application';
 
 export const enqueueJobs = async (
-  input: EnqueueJobsInput,
-): Promise<EnqueueJobsResult> => {
+  jobs: EnqueueJobInput[],
+): Promise<EnqueueJobResult[]> => {
   const client = new MetadataApiClient();
 
   const { enqueueJobs: result } = await client.mutation({
     enqueueJobs: {
-      __args: { input },
+      __args: { input: { jobs } },
       jobs: {
         enqueued: true,
         logicFunctionUniversalIdentifier: true,
@@ -19,5 +19,5 @@ export const enqueueJobs = async (
     },
   });
 
-  return result;
+  return result.jobs;
 };

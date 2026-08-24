@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
   ENQUEUE_JOB_PRIORITY,
+  MAX_JOBS_PER_ENQUEUE,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
@@ -21,6 +22,7 @@ import {
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -72,6 +74,13 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobsInputDTO;
   }): Promise<EnqueueJobsResult> {
+    if (input.jobs.length > MAX_JOBS_PER_ENQUEUE) {
+      throw new ApplicationException(
+        `Cannot enqueue more than ${MAX_JOBS_PER_ENQUEUE} jobs at once`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
@@ -101,22 +110,42 @@ export class ApplicationJobService {
       return { job, logicFunctionId: flatLogicFunction.id };
     });
 
+    // bulkAdd applies one options object to every job, so jobs sharing the
+    // same queue options are batched together and enqueued per group.
+    const jobGroupsByOptions = new Map<
+      string,
+      { options: QueueJobOptions; dataItems: LogicFunctionTriggerJobData[] }
+    >();
+
     for (const { job, logicFunctionId } of jobsToEnqueue) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+      const options: QueueJobOptions = {
+        retryLimit: job.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        priority: ENQUEUE_JOB_PRIORITY,
+        ...(isDefined(job.delayMs) ? { delay: job.delayMs } : {}),
+      };
+      const optionsKey = `${options.retryLimit}:${options.delay ?? 0}`;
+
+      const jobGroup = jobGroupsByOptions.get(optionsKey) ?? {
+        options,
+        dataItems: [],
+      };
+
+      jobGroup.dataItems.push({
+        logicFunctionId,
+        workspaceId,
+        payload: job.payload ?? {},
+        ...(isDefined(userId) ? { userId } : {}),
+        ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      });
+      jobGroupsByOptions.set(optionsKey, jobGroup);
+    }
+
+    for (const { options, dataItems } of jobGroupsByOptions.values()) {
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        {
-          logicFunctionId,
-          workspaceId,
-          payload: job.payload ?? {},
-          ...(isDefined(userId) ? { userId } : {}),
-          ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
-        },
-        {
-          retryLimit: job.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-          priority: ENQUEUE_JOB_PRIORITY,
-          ...(isDefined(job.delayMs) ? { delay: job.delayMs } : {}),
-        },
+        dataItems,
+        options,
       );
     }
 

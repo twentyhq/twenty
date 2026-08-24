@@ -60,33 +60,29 @@ describe('enqueueJobs', () => {
 
     const enqueueJobs = await importEnqueueJobs();
 
-    const result = await enqueueJobs({
-      jobs: [
-        {
-          logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
-          payload: { batchIndex: 0 },
-          retryLimit: 3,
-          delayMs: 1000,
-        },
-        {
-          logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
-          payload: { batchIndex: 1 },
-        },
-      ],
-    });
+    const result = await enqueueJobs([
+      {
+        logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
+        payload: { batchIndex: 0 },
+        retryLimit: 3,
+        delayMs: 1000,
+      },
+      {
+        logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
+        payload: { batchIndex: 1 },
+      },
+    ]);
 
-    expect(result).toEqual({
-      jobs: [
-        {
-          enqueued: true,
-          logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
-        },
-        {
-          enqueued: true,
-          logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
-        },
-      ],
-    });
+    expect(result).toEqual([
+      {
+        enqueued: true,
+        logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER,
+      },
+      {
+        enqueued: true,
+        logicFunctionUniversalIdentifier: SECOND_UNIVERSAL_IDENTIFIER,
+      },
+    ]);
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -120,9 +116,9 @@ describe('enqueueJobs', () => {
 
     const enqueueJobs = await importEnqueueJobs();
 
-    await enqueueJobs({
-      jobs: [{ logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER }],
-    });
+    await enqueueJobs([
+      { logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER },
+    ]);
 
     const [, requestInit] = fetchSpy.mock.calls[0];
     const headers = new Headers(requestInit?.headers);
@@ -141,11 +137,9 @@ describe('enqueueJobs', () => {
     const enqueueJobs = await importEnqueueJobs();
 
     await expect(
-      enqueueJobs({
-        jobs: [
-          { logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER },
-        ],
-      }),
+      enqueueJobs([
+        { logicFunctionUniversalIdentifier: FIRST_UNIVERSAL_IDENTIFIER },
+      ]),
     ).rejects.toThrow(/Logic function not found/);
   });
 });

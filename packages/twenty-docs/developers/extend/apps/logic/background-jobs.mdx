@@ -22,24 +22,22 @@ Import `enqueueJobs` from `twenty-sdk/logic-function` and pass it the list of jo
 ```ts src/logic-functions/sync-all-contacts.ts
 import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-await enqueueJobs({
-  jobs: [
-    {
-      logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-      payload: { page: 1 },
-    },
-  ],
-});
+await enqueueJobs([
+  {
+    logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+    payload: { page: 1 },
+  },
+]);
 ```
 
-Each target function receives its `payload` as its handler argument, exactly like any other trigger. Every target must belong to the **same application** as the caller — enqueuing another app's function rejects the whole batch with `Logic function not found`, and no job from the batch is enqueued. A single call accepts up to `100` jobs.
+Each target function receives its `payload` as its handler argument, exactly like any other trigger. Every target must belong to the **same application** as the caller — enqueuing another app's function rejects the whole batch with `Logic function not found`, and no job from the batch is enqueued. A single call accepts up to `10000` jobs.
 
 <Note>
 `enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
 </Note>
 
 <Note>
-The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `jobs` list instead.
+The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element list instead.
 </Note>
 
 ## Job options
@@ -52,16 +50,14 @@ Each job in the batch carries its own options.
 | `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the run becomes eligible. |
 
 ```ts
-await enqueueJobs({
-  jobs: [
-    {
-      logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-      payload: { page: 1 },
-      retryLimit: 3,
-      delayMs: 60_000,
-    },
-  ],
-});
+await enqueueJobs([
+  {
+    logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+    payload: { page: 1 },
+    retryLimit: 3,
+    delayMs: 60_000,
+  },
+]);
 ```
 
 <Note>
@@ -120,15 +116,13 @@ const handler = async (params: { cursor?: string }) => {
   await importContacts(contacts);
 
   if (nextCursor) {
-    await enqueueJobs({
-      jobs: [
-        {
-          logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-          payload: { cursor: nextCursor },
-          delayMs: 2_000,
-        },
-      ],
-    });
+    await enqueueJobs([
+      {
+        logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+        payload: { cursor: nextCursor },
+        delayMs: 2_000,
+      },
+    ]);
   }
 
   return { imported: contacts.length, done: !nextCursor };
@@ -149,13 +143,13 @@ When the work is naturally per-item, enqueue one job per item in a single call a
 ```ts
 const companies = await listCompaniesToEnrich();
 
-await enqueueJobs({
-  jobs: companies.map((company) => ({
+await enqueueJobs(
+  companies.map((company) => ({
     logicFunctionUniversalIdentifier: ENRICH_COMPANY,
     payload: { companyId: company.id },
     retryLimit: 2,
   })),
-});
+);
 ```
 
 ## Good practice for long-running work
@@ -185,14 +179,12 @@ const handler = async (params: { offset?: number }) => {
   await kv.set('enrich:progress', { offset: offset + companies.length });
 
   if (companies.length === CHUNK_SIZE) {
-    await enqueueJobs({
-      jobs: [
-        {
-          logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-          payload: { offset: offset + CHUNK_SIZE },
-        },
-      ],
-    });
+    await enqueueJobs([
+      {
+        logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+        payload: { offset: offset + CHUNK_SIZE },
+      },
+    ]);
   }
 
   return { processed: companies.length, done: companies.length < CHUNK_SIZE };
