@@ -6780,7 +6780,7 @@ msgid "Download file"
 msgstr "Λήψη αρχείου"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Λήψη αρχείου"
 
@@ -14967,7 +14967,7 @@ msgid "Preview"
 msgstr "Προεπισκόπηση"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "Η προεπισκόπηση δεν είναι διαθέσιμη"
 
@@ -19092,6 +19092,11 @@ msgstr "Αυτό αφαιρεί αμέσως {0} πιστώσεις από αυ�
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "Αυτή η τιμή θα αποθηκευτεί στη βάση δεδομένων."
+
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr ""
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
