@@ -80,7 +80,7 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application,
-      shouldOnlyGenerateSdkClientOnSchemaChange: true,
+      forceSdkClientGeneration: false,
     });
 
     expect(
@@ -98,7 +98,7 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application,
-      shouldOnlyGenerateSdkClientOnSchemaChange: true,
+      forceSdkClientGeneration: false,
     });
 
     expect(
@@ -111,7 +111,7 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application: { ...application, version: null } as ApplicationEntity,
-      shouldOnlyGenerateSdkClientOnSchemaChange: true,
+      forceSdkClientGeneration: false,
     });
 
     expect(

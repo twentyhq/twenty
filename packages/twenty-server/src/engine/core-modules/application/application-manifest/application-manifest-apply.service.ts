@@ -25,18 +25,15 @@ export class ApplicationManifestApplyService {
     manifest,
     applicationRegistrationId,
     application,
-    shouldOnlyGenerateSdkClientOnSchemaChange = false,
+    forceSdkClientGeneration = true,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     application: ApplicationEntity;
-    // Installs and upgrades must always regenerate the SDK client: the
-    // generated client also changes with SDK-level updates (e.g. new native
-    // methods) that a function-only upgrade would otherwise never pick up.
-    // Dev sync applies the manifest on every file save, so it opts into the
-    // schema-change optimization to avoid regenerating on each sync.
-    shouldOnlyGenerateSdkClientOnSchemaChange?: boolean;
+    // Regenerating on every apply lets function-only upgrades pick up
+    // SDK-level changes; dev sync opts out to avoid regenerating on each save.
+    forceSdkClientGeneration?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -53,12 +50,7 @@ export class ApplicationManifestApplyService {
         applicationRegistrationId,
       });
 
-    const shouldGenerateSdkClient =
-      !shouldOnlyGenerateSdkClientOnSchemaChange ||
-      isFirstApply ||
-      hasSchemaMetadataChanged;
-
-    if (shouldGenerateSdkClient) {
+    if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
       await this.sdkClientGenerationService.generateSdkClientForApplication({
         workspaceId,
         applicationId: application.id,
