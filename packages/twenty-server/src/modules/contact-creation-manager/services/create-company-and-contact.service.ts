@@ -115,10 +115,10 @@ export class CreateCompanyAndPersonService {
           emails: uniqueHandles,
         });
 
-        const alreadyCreatedPeople = await queryBuilder
+        const alreadyCreatedPeople = (await queryBuilder
           .orderBy('person.createdAt', 'ASC')
           .withDeleted()
-          .getMany();
+          .getMany()) as unknown as PersonWorkspaceEntity[];
 
         const {
           contactsThatNeedPersonCreate,

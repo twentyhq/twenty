@@ -15,6 +15,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -134,7 +135,7 @@ export class TimelineMessagingService {
             'messageParticipant',
           );
 
-        const threadParticipants = await messageParticipantRepository
+        const threadParticipants = (await messageParticipantRepository
           .createQueryBuilder()
           .select('messageParticipant')
           .addSelect('message.messageThreadId')
@@ -153,7 +154,9 @@ export class TimelineMessagingService {
           })
           .orderBy('message.messageThreadId')
           .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
-          .getMany();
+          .getMany()) as unknown as (MessageParticipantWorkspaceEntity & {
+          message: MessageWorkspaceEntity;
+        })[];
 
         const orderedThreadParticipants = threadParticipants.sort(
           (a, b) =>

@@ -141,9 +141,9 @@ export class MatchParticipantService<
         emails: uniqueParticipantsHandles,
       });
 
-      const people = await queryBuilder
+      const people = (await queryBuilder
         .orderBy('person.createdAt', 'ASC')
-        .getMany();
+        .getMany()) as unknown as PersonWorkspaceEntity[];
 
       const workspaceMembers = await workspaceMemberRepository.find({
         where: {

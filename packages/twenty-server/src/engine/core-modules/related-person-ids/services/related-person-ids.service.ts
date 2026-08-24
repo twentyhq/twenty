@@ -98,9 +98,7 @@ export class RelatedPersonIdsService {
       if (hop.direction === RelationType.MANY_TO_ONE) {
         const records = await repository.find({
           where: { id: In(currentIds) } as FindOptionsWhere<RelationWalkRecord>,
-          select: {
-            [hop.joinColumnName]: true,
-          } as FindOptionsSelect<RelationWalkRecord>,
+          select: [hop.joinColumnName],
         });
 
         currentIds = [
