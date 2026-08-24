@@ -1,4 +1,5 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +10,6 @@ import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
-export type SelectControlVariant = 'default' | 'transparent';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 export const StyledControlContainer = styled.div<{
@@ -18,7 +18,7 @@ export const StyledControlContainer = styled.div<{
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
-  $variant?: SelectControlVariant;
+  $variant?: FormFieldInputVariant;
 }>`
   align-items: center;
   background-color: ${({ $variant }) =>
@@ -93,7 +93,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
-  variant?: SelectControlVariant;
+  variant?: FormFieldInputVariant;
 };
 
 export const SelectControl = ({

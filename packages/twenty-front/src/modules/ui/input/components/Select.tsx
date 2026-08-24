@@ -7,10 +7,8 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
-import {
-  SelectControl,
-  type SelectControlVariant,
-} from '@/ui/input/components/SelectControl';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -59,7 +57,7 @@ export type SelectProps<Value extends SelectValue> = {
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
   isDropdownInModal?: boolean;
-  variant?: SelectControlVariant;
+  variant?: FormFieldInputVariant;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`

@@ -11,6 +11,7 @@ import {
 } from '@/ui/input/components/internal/date/components/DatePicker';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -77,7 +78,7 @@ type FormDateFieldInputProps = {
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
-  variant?: 'default' | 'transparent';
+  variant?: FormFieldInputVariant;
 };
 
 export const FormDateFieldInput = ({
