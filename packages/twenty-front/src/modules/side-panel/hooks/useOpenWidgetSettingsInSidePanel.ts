@@ -56,7 +56,7 @@ export const useOpenWidgetSettingsInSidePanel = (
       widgetId: string;
       widgetType: WidgetType;
     }) => {
-      if (widgetType === WidgetType.IFRAME && isDashboardPageLayout === true) {
+      if (widgetType === WidgetType.IFRAME && isDashboardPageLayout) {
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.DashboardIframeSettings,
           pageTitle: t`Edit iFrame`,
@@ -66,7 +66,7 @@ export const useOpenWidgetSettingsInSidePanel = (
         return;
       }
 
-      if (widgetType === WidgetType.GRAPH && isDashboardPageLayout === true) {
+      if (widgetType === WidgetType.GRAPH && isDashboardPageLayout) {
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.DashboardChartSettings,
           pageTitle: t`Edit Graph`,
@@ -100,10 +100,7 @@ export const useOpenWidgetSettingsInSidePanel = (
         return;
       }
 
-      if (
-        widgetType === WidgetType.RECORD_TABLE &&
-        isDashboardPageLayout === true
-      ) {
+      if (widgetType === WidgetType.RECORD_TABLE && isDashboardPageLayout) {
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.DashboardRecordTableSettings,
           pageTitle: t`Edit Record Table`,
