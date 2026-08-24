@@ -2,8 +2,6 @@
 // is installed or sync on a Twenty instance.
 // Do not edit manually.
 
-// Mirrors TwentyGeneratedClientOptions from generate/twenty-client-template.ts
-// so this pre-generation stub and the post-generation client agree on typecheck.
 type CoreApiClientStubOptions = {
   url?: string;
   headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
