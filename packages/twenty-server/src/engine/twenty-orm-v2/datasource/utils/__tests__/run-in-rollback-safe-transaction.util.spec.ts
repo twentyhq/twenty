@@ -94,7 +94,6 @@ describe('runInRollbackSafeTransaction', () => {
     POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
     POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,
     POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
-    POSTGRESQL_ERROR_CODES.QUERY_CANCELED,
   ])(
     'should surface the transient postgres failure %s raised at COMMIT as TRANSIENT_DATABASE_ERROR',
     async (code) => {

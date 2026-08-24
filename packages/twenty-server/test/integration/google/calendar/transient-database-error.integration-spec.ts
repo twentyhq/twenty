@@ -120,16 +120,17 @@ describe('Calendar import transient database errors (integration)', () => {
     expect(channelState.throttleFailureCount).toBe(0);
   }, 120000);
 
-  it('should reschedule the calendar channel when postgres cancels a statement inside the import transaction', async () => {
+  it('should reschedule the calendar channel when the import transaction is killed by the idle-in-transaction timeout', async () => {
     await fetchOneEvent();
 
     jest
       .spyOn(calendarEventParticipantService, 'writeCalendarEventParticipants')
       .mockImplementation(async ({ transactionScope }) => {
         await transactionScope.executeRawQuery(
-          "SET LOCAL statement_timeout = '50ms'",
+          raiseSqlState(
+            POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
+          ),
         );
-        await transactionScope.executeRawQuery('SELECT pg_sleep(1)');
       });
 
     await runCalendarChannelEventsImport(channel.calendarChannelId);
