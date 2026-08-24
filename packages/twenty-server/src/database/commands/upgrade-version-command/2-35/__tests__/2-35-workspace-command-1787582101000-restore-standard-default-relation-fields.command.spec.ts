@@ -212,6 +212,8 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
   });
 
   it('does nothing when the pair already exists', async () => {
+    const warnSpy = jest.spyOn(command['logger'], 'warn');
+
     mockWorkspaceCache({
       fields: [
         {
@@ -233,9 +235,12 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
     expect(
       validateBuildAndRunLegacyWorkspaceMigrationMock,
     ).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 
-  it('creates only the missing member when its pair mate already exists', async () => {
+  it('skips and warns instead of recreating half of a pair when one member survives', async () => {
+    const warnSpy = jest.spyOn(command['logger'], 'warn');
+
     mockWorkspaceCache({
       fields: [
         {
@@ -249,10 +254,14 @@ describe('RestoreStandardDefaultRelationFieldsCommand', () => {
 
     await runOnWorkspace();
 
-    expect(getCreatedUniversalIdentifiers()).toEqual({
-      fields: [PERSON_FORWARD_FIELD_UID],
-      indexes: [],
-    });
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'timelineActivity.targetPerson / person.timelineActivities',
+      ),
+    );
   });
 
   it('skips the whole pair when a member name is taken by a drifted duplicate', async () => {

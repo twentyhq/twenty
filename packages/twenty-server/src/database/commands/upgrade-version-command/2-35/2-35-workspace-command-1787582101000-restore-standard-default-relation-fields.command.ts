@@ -146,6 +146,9 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
         continue;
       }
 
+      const pairHasSurvivingMember =
+        missingPairMembers.length < standardPairMembers.length;
+
       const pairIsBlocked = missingPairMembers.some(
         (standardFlatFieldMetadata) => {
           const hostObjectExists = isDefined(
@@ -165,7 +168,7 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
         },
       );
 
-      if (pairIsBlocked) {
+      if (pairHasSurvivingMember || pairIsBlocked) {
         skippedPairLabels.push(
           standardPairMembers.map(computeQualifiedFieldName).join(' / '),
         );
