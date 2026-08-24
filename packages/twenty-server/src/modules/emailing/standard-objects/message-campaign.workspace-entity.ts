@@ -14,9 +14,7 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   status: string;
   sentAt: Date | null;
   sentCount: number;
-  attemptedCount: number;
   deliveredCount: number;
-  softBouncedCount: number;
   failedCount: number;
   bouncedCount: number;
   complainedCount: number;

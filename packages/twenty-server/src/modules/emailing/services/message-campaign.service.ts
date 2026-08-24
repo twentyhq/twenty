@@ -6,7 +6,6 @@ import { In, type ObjectLiteral } from 'typeorm';
 import { v4, v5 } from 'uuid';
 
 import {
-  CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   MATERIALIZE_CAMPAIGN_JOB,
@@ -24,6 +23,11 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
+import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/types/campaign-skip-reason.type';
+import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/types/campaign-failure-reason.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
@@ -116,6 +120,8 @@ export class MessageCampaignService {
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.emailQueue)
@@ -357,6 +363,7 @@ export class MessageCampaignService {
 
       if (recipientsToCreate.length > 0) {
         await this.materializeCampaignMessages({
+          workspaceId,
           campaignId,
           messageChannelId,
           fromAddress: campaign.fromAddress?.primaryEmail ?? '',
@@ -405,13 +412,34 @@ export class MessageCampaignService {
         where: { id: messageId },
       });
 
-      if (
-        !isDefined(message) ||
-        (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
-          message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED)
-      ) {
+      if (!isDefined(message)) {
         return;
       }
+
+      const claimToken = v4();
+      const { affected } = await this.campaignDeliveryRepository.update(
+        workspaceId,
+        {
+          id: messageId,
+          state: In([
+            CAMPAIGN_DELIVERY_STATE.QUEUED,
+            CAMPAIGN_DELIVERY_STATE.FAILED,
+          ]),
+        },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.SENDING,
+          claimToken,
+          claimExpiresAt: new Date(
+            Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS,
+          ),
+        },
+      );
+
+      if (affected !== 1) {
+        return;
+      }
+
+      const claimedCriteria = { id: messageId, claimToken };
 
       const campaignRepository = await this.getSystemRepository(
         workspaceId,
@@ -458,9 +486,16 @@ export class MessageCampaignService {
         await this.emailBillingService.hasEmailCredits(workspaceId);
 
       if (!hasEmailCredits) {
-        await messageRepository.update(messageId, {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
-        });
+        await this.campaignDeliveryRepository.update(
+          workspaceId,
+          claimedCriteria,
+          {
+            state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+            skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
+            claimToken: null,
+            claimExpiresAt: null,
+          },
+        );
 
         return;
       }
@@ -488,16 +523,30 @@ export class MessageCampaignService {
           if (
             code === EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED
           ) {
-            await messageRepository.update(messageId, {
-              deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
-            });
+            await this.campaignDeliveryRepository.update(
+              workspaceId,
+              claimedCriteria,
+              {
+                state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+                skipReason: CAMPAIGN_SKIP_REASON.SUPPRESSED,
+                claimToken: null,
+                claimExpiresAt: null,
+              },
+            );
 
             return;
           }
 
-          await messageRepository.update(messageId, {
-            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-          });
+          await this.campaignDeliveryRepository.update(
+            workspaceId,
+            claimedCriteria,
+            {
+              state: CAMPAIGN_DELIVERY_STATE.FAILED,
+              failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
+              claimToken: null,
+              claimExpiresAt: null,
+            },
+          );
           this.logger.warn(
             `Campaign ${campaignId} send failed for ${recipientEmail}: ${
               error instanceof Error ? error.message : String(error)
@@ -517,11 +566,22 @@ export class MessageCampaignService {
         }
 
         await messageRepository.update(messageId, {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
           subject,
           text: compiledContent.plainText,
         });
+
+        await this.campaignDeliveryRepository.update(
+          workspaceId,
+          claimedCriteria,
+          {
+            state: CAMPAIGN_DELIVERY_STATE.SENT,
+            providerMessageId: result.messageId,
+            sentAt: new Date(),
+            claimToken: null,
+            claimExpiresAt: null,
+          },
+        );
 
         await this.emailBillingService.billSentEmails({
           workspaceId,
@@ -546,43 +606,36 @@ export class MessageCampaignService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  async recordDeliveryFailureByProviderMessageId({
+  async recordProviderOutcomeByProviderMessageId({
     workspaceId,
     providerMessageId,
-    deliveryStatus,
+    outcome,
   }: {
     workspaceId: string;
     providerMessageId: string;
-    deliveryStatus: string;
+    outcome: 'BOUNCED' | 'COMPLAINED';
   }): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = await this.getSystemRepository(
-        workspaceId,
-        MessageWorkspaceEntity,
-      );
+    const delivery = await this.campaignDeliveryRepository.findOneBy(
+      workspaceId,
+      { providerMessageId },
+    );
 
-      const message = await messageRepository.findOne({
-        where: { headerMessageId: providerMessageId },
-      });
+    if (!isDefined(delivery)) {
+      return;
+    }
 
-      if (!isDefined(message) || !isDefined(message.messageCampaignId)) {
-        return;
-      }
+    await this.campaignDeliveryRepository.update(
+      workspaceId,
+      { id: delivery.id },
+      outcome === 'COMPLAINED'
+        ? { complainedAt: new Date() }
+        : { bouncedAt: new Date() },
+    );
 
-      if (
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED ||
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED
-      ) {
-        return;
-      }
-
-      await messageRepository.update(message.id, { deliveryStatus });
-
-      await this.scheduleCampaignStatsRefresh({
-        workspaceId,
-        campaignId: message.messageCampaignId,
-      });
-    }, buildSystemAuthContext(workspaceId));
+    await this.scheduleCampaignStatsRefresh({
+      workspaceId,
+      campaignId: delivery.campaignId,
+    });
   }
 
   private async findSendableDraftCampaignOrThrow(
@@ -630,6 +683,7 @@ export class MessageCampaignService {
   }
 
   private async materializeCampaignMessages({
+    workspaceId,
     campaignId,
     messageChannelId,
     fromAddress,
@@ -637,6 +691,7 @@ export class MessageCampaignService {
     bodyTemplate,
     recipients,
   }: {
+    workspaceId: string;
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
@@ -692,7 +747,6 @@ export class MessageCampaignService {
             receivedAt: now,
             messageThreadId: row.threadId,
             messageCampaignId: campaignId,
-            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
           })),
         );
         await associationRepository.insert(
@@ -727,34 +781,57 @@ export class MessageCampaignService {
         );
       },
     );
+
+    // Written after the workspace transaction commits: a delivery row without
+    // its message would be claimable and unsendable, the reverse only costs a
+    // re-run of this idempotent job.
+    await this.campaignDeliveryRepository.upsert(
+      workspaceId,
+      rows.map((row) => ({
+        id: row.messageId,
+        campaignId,
+        messageId: row.messageId,
+        personId: row.recipient.personId,
+        recipientEmail: row.recipient.email,
+        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+      })),
+      { conflictPaths: ['id'], skipUpdateIfNoValuesChanged: true },
+    );
   }
 
   private async finalizeCampaignIfComplete(
     workspaceId: string,
     campaignId: string,
   ): Promise<void> {
-    const messageRepository = await this.getSystemRepository(
+    const unfinishedCount = await this.campaignDeliveryRepository.count(
       workspaceId,
-      MessageWorkspaceEntity,
+      {
+        where: {
+          campaignId,
+          state: In([
+            CAMPAIGN_DELIVERY_STATE.QUEUED,
+            CAMPAIGN_DELIVERY_STATE.SENDING,
+          ]),
+        },
+      },
     );
 
-    const queuedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-      },
-    });
-
-    if (queuedCount > 0) {
+    if (unfinishedCount > 0) {
       return;
     }
 
-    const failedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+    const failedCount = await this.campaignDeliveryRepository.count(
+      workspaceId,
+      {
+        where: {
+          campaignId,
+          state: In([
+            CAMPAIGN_DELIVERY_STATE.FAILED,
+            CAMPAIGN_DELIVERY_STATE.SKIPPED,
+          ]),
+        },
       },
-    });
+    );
 
     const campaignRepository = await this.getSystemRepository(
       workspaceId,

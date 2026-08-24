@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -45,6 +46,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
       EmailingDomainEntity,
       MessageSuppressionEntity,
       UnsubscribeTopicEntity,
+      CampaignDeliveryEntity,
     ]),
   ],
   controllers: [UnsubscribeController],
@@ -64,6 +66,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageSuppressionEntity),
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
+    provideWorkspaceScopedRepository(CampaignDeliveryEntity),
   ],
   exports: [
     EmailingDomainSenderService,

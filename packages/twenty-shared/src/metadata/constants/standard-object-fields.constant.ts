@@ -494,14 +494,8 @@ export const STANDARD_OBJECT_FIELDS = {
     sentCount: {
       universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
     },
-    attemptedCount: {
-      universalIdentifier: '592b8721-98c7-4d87-b065-076b6b1bbdcf',
-    },
     deliveredCount: {
       universalIdentifier: 'f4ee1d33-7379-42fe-ad63-e023449baea6',
-    },
-    softBouncedCount: {
-      universalIdentifier: 'd340597d-997c-47e6-8ec8-212cc883a64a',
     },
     failedCount: {
       universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
@@ -665,9 +659,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     messageCampaign: {
       universalIdentifier: '77cff00b-a0ba-48d6-80de-0d5ccf14e45b',
-    },
-    deliveryStatus: {
-      universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
     },
     isDraft: {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',

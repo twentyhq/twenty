@@ -18,14 +18,14 @@ export class OutboundSuppressionHandlerService {
 
   async handle(event: NormalizedOutboundSuppressionEvent): Promise<void> {
     if (isDefined(event.providerMessageId)) {
-      await this.messageCampaignService.recordDeliveryFailureByProviderMessageId(
+      await this.messageCampaignService.recordProviderOutcomeByProviderMessageId(
         {
           workspaceId: event.workspaceId,
           providerMessageId: event.providerMessageId,
-          deliveryStatus:
+          outcome:
             event.reason === MessageSuppressionReason.COMPLAINT
-              ? CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED
-              : CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+              ? 'COMPLAINED'
+              : 'BOUNCED',
         },
       );
     }

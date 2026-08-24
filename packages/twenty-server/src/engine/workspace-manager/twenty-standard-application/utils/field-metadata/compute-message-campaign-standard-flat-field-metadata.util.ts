@@ -408,26 +408,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
-    attemptedCount: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'attemptedCount',
-        type: FieldMetadataType.NUMBER,
-        label: i18nLabel(
-          msg({ message: `Attempted count`, context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: `Number of emails handed to the email provider`,
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconMailForward',
-        isNullable: false,
-        isUIEditable: false,
-        defaultValue: 0,
-      },
-    }),
     deliveredCount: createStandardFieldFlatMetadata({
       ...base,
       context: {
@@ -443,29 +423,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
           }),
         ),
         icon: 'IconMailCheck',
-        isNullable: false,
-        isUIEditable: false,
-        defaultValue: 0,
-      },
-    }),
-    softBouncedCount: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'softBouncedCount',
-        type: FieldMetadataType.NUMBER,
-        label: i18nLabel(
-          msg({
-            message: `Soft bounced count`,
-            context: 'fieldMetadata.label',
-          }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: `Number of emails that soft bounced`,
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconMailPause',
         isNullable: false,
         isUIEditable: false,
         defaultValue: 0,

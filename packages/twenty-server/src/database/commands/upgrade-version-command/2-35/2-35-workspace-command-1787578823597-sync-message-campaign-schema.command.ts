@@ -34,13 +34,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 const MESSAGE_CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
 const SKIPPED_COUNT_FIELD = MESSAGE_CAMPAIGN.fields.skippedCount;
 const CAMPAIGN_STATUS_FIELD = MESSAGE_CAMPAIGN.fields.status;
-const DELIVERY_STATUS_FIELD = STANDARD_OBJECTS.message.fields.deliveryStatus;
-const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.message.universalIdentifier;
-const HEADER_MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.message.indexes.headerMessageIdIndex.universalIdentifier;
-const DELIVERY_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.message.fields.deliveryStatus.universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.35.0', 1787578823597)
 @Command({
@@ -62,7 +55,6 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
     await this.syncStandardObjects(args);
     await this.makeCampaignSearchable(args);
     await this.syncCampaignMetadata(args);
-    await this.syncDeliveryMetadata(args);
   }
 
   private async syncStandardObjects({
@@ -483,11 +475,6 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
         universalIdentifier: CAMPAIGN_STATUS_FIELD.universalIdentifier,
         expectedValue: MessageCampaignStatus.CANCELED,
       },
-      {
-        label: 'SENDING message deliveryStatus',
-        universalIdentifier: DELIVERY_STATUS_FIELD.universalIdentifier,
-        expectedValue: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING,
-      },
     ];
 
     for (const selectOption of selectOptionsToSync) {
@@ -607,151 +594,5 @@ export class SyncMessageCampaignSchemaCommand extends ProvisionedWorkspaceComman
       options: standardField.options,
       updatedAt: new Date().toISOString(),
     };
-  }
-
-  private async syncDeliveryMetadata({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
-    const { flatObjectMetadataMaps, flatIndexMaps, flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatIndexMaps',
-        'flatFieldMetadataMaps',
-      ]);
-
-    if (
-      !isDefined(
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          MESSAGE_OBJECT_UNIVERSAL_IDENTIFIER
-        ],
-      )
-    ) {
-      this.logger.log(
-        `message object does not exist for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
-    const isHeaderMessageIdIndexed = isDefined(
-      flatIndexMaps.byUniversalIdentifier[
-        HEADER_MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER
-      ],
-    );
-
-    const deliveryStatusField =
-      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-        flatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifier: DELIVERY_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
-      });
-
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
-    const standardFlatIndex =
-      findFlatEntityByUniversalIdentifier<FlatIndexMetadata>({
-        flatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
-        universalIdentifier: HEADER_MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER,
-      });
-
-    if (!isDefined(standardFlatIndex)) {
-      throw new Error(
-        'Standard application is missing the message headerMessageId index',
-      );
-    }
-
-    const standardDeliveryStatusField =
-      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-        flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
-        universalIdentifier: DELIVERY_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
-      });
-
-    if (
-      !isDefined(standardDeliveryStatusField) ||
-      standardDeliveryStatusField.type !== FieldMetadataType.SELECT
-    ) {
-      throw new Error(
-        'Standard application is missing the message deliveryStatus select',
-      );
-    }
-
-    const flatIndexToCreate = isHeaderMessageIdIndexed ? [] : [standardFlatIndex];
-    const flatFieldToUpdate: FlatFieldMetadata[] = [];
-
-    if (
-      isDefined(deliveryStatusField) &&
-      deliveryStatusField.type === FieldMetadataType.SELECT
-    ) {
-      const workspaceOptionValues = new Set(
-        (deliveryStatusField.options ?? []).map((option) => option.value),
-      );
-      const hasEveryOutcome = (
-        standardDeliveryStatusField.options ?? []
-      ).every((option) => workspaceOptionValues.has(option.value));
-
-      if (!hasEveryOutcome) {
-        flatFieldToUpdate.push({
-          ...deliveryStatusField,
-          options: standardDeliveryStatusField.options,
-          updatedAt: new Date().toISOString(),
-        });
-      }
-    }
-
-    if (flatIndexToCreate.length === 0 && flatFieldToUpdate.length === 0) {
-      return;
-    }
-
-    if (isDryRun) {
-      this.logger.log(
-        `[DRY RUN] Would sync message delivery metadata for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            index: {
-              flatEntityToCreate: flatIndexToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatFieldToUpdate,
-            },
-          },
-        },
-      );
-
-    if (result.status === 'fail') {
-      throw new Error(
-        `Failed to sync message delivery metadata for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
-      );
-    }
-
-    this.logger.log(
-      `Synced message delivery metadata for workspace ${workspaceId}`,
-    );
   }
 }
