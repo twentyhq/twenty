@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
 import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
@@ -21,7 +22,6 @@ import {
 import { SettingsApplicationTimelineActivityTypesSubtable } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypesSubtable';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
-import { isTimelineActivityTypeResetAllowed } from '~/pages/settings/applications/utils/isTimelineActivityTypeResetAllowed';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -67,12 +67,10 @@ export const SettingsApplicationDetailContentTab = ({
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isInstalledApplication = isDefined(installedApplication);
-  const workspaceCustomApplicationId =
-    currentWorkspace?.workspaceCustomApplication?.id;
-  const canResetTimelineActivityTypes = isTimelineActivityTypeResetAllowed({
-    applicationId,
-    workspaceCustomApplicationId,
-  });
+  const canResetTimelineActivityTypes = !isWorkspaceCustomApplication(
+    { id: applicationId },
+    currentWorkspace,
+  );
 
   const {
     installedTimelineActivityTypes,

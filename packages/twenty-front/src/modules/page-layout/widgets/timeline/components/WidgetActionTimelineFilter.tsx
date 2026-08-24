@@ -1,5 +1,6 @@
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
+import { removeInactiveTimelineActivityTypeUniversalIdentifiers } from '@/activities/timeline-activities/utils/removeInactiveTimelineActivityTypeUniversalIdentifiers';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -11,7 +12,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
@@ -40,6 +41,28 @@ export const WidgetActionTimelineFilter = () => {
     ({ label }) =>
       normalizeSearchText(label).includes(normalizedSearchInputValue),
   );
+
+  const activeTimelineActivityTypeUniversalIdentifiers = useMemo(
+    () =>
+      activeTimelineActivityTypes.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
+    [activeTimelineActivityTypes],
+  );
+
+  useEffect(() => {
+    setTimelineActivityTypeUniversalIdentifiersFilter(
+      (currentUniversalIdentifiers) =>
+        removeInactiveTimelineActivityTypeUniversalIdentifiers({
+          activeUniversalIdentifiers:
+            activeTimelineActivityTypeUniversalIdentifiers,
+          selectedUniversalIdentifiers: currentUniversalIdentifiers,
+        }),
+    );
+  }, [
+    activeTimelineActivityTypeUniversalIdentifiers,
+    setTimelineActivityTypeUniversalIdentifiersFilter,
+  ]);
 
   if (!isNonEmptyArray(activeTimelineActivityTypes)) {
     return null;

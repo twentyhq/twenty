@@ -14,7 +14,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
 
-const GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) minmax(0, 180px) 80px 32px';
+const GRID_TEMPLATE_COLUMNS = '200px 1fr 160px 32px';
 
 export const SettingsApplicationTimelineActivityTypesSubtable = ({
   canReset,
@@ -49,7 +49,7 @@ export const SettingsApplicationTimelineActivityTypesSubtable = ({
         return (
           <TableRow
             key={timelineActivityType.id}
-            gridTemplateColumns={GRID_TEMPLATE_COLUMNS}
+            gridAutoColumns={GRID_TEMPLATE_COLUMNS}
           >
             <StyledNameTableCell minWidth="0" overflow="hidden">
               {isDefined(Icon) && (
