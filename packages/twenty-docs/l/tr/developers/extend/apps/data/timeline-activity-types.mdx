@@ -1,0 +1,184 @@
+---
+title: Zaman Çizelgesi Aktivite Türleri
+description: Kayıt zaman çizelgelerinde görüntülenen otomatik denetim olaylarını ve açık uygulama olaylarını tanımlayın.
+icon: clock-rotate-left
+---
+
+Bir zaman çizelgesi aktivite türü, bir kaydın zaman çizelgesinde gösterilen olay için kararlı sözlüğü tanımlar. Standart nesneler ve uygulama nesneleri aynı sözleşmeyi kullanır: bir türün etiketi ve simgesi vardır, isteğe bağlı olarak ne zaman yayımlandığını bildirebilir ve uygulamanızın [ön bileşenlerinden](/l/tr/developers/extend/apps/layout/front-components) biri aracılığıyla isteğe bağlı olarak işlenebilir.
+
+<Note>
+  Zaman çizelgesi aktivite türleri beta aşamasındadır ve yakında Twenty 2.34'te kullanıma sunulacaktır. Uygulama geliştiricilerinin kullanım durumlarından öğrendikçe
+  API gelişebilir.
+</Note>
+
+Scaffolder ile bir tane oluşturun:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+Veya doğrudan tanımlayın:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## Otomatik ve açık olaylar
+
+Twenty'nin bu türü otomatik olarak oluşturması gerektiğinde `emit` ekleyin. `emit.on`, `created`, `updated`, `deleted`, `restored`, `linked` ve `unlinked` değerlerini desteklerken `emit.objectUniversalIdentifier` kaynak nesneyi tanımlar. Bir çalışma alanında aynı yayımlama anahtarını —`on`, nesne ve isteğe bağlı through ilişkisi— yalnızca bir etkin tür işleyebilir.
+
+`emit.through` olmadan olay, kaynak kaydın kendi zaman çizelgesine yazılır. Bunu ilişkili kayıtlara yaymak için `emit.through.relationFieldUniversalIdentifier` değerini, kaynak nesnedeki doğrudan çoktan-bire ilişkiye veya [bire-çok birleşim ilişkisine](/l/tr/developers/extend/apps/data/relations#junction-relations) ayarlayın. Morph ilişkileri, morph gruplarının her üyesine yayılır; bu nedenle tek bir bildirim birkaç nesne türünü hedefleyebilir.
+
+Doğrudan bir ilişkide kaynak kaydın oluşturulması veya geri yüklenmesi `linked` üretir, silinmesi `unlinked` üretir ve ilişkinin yeniden hedeflenmesi önceki hedefte `unlinked` ile yeni hedefte `linked` üretir. Diğer kaynak güncellemeleri bağlantı olayı üretmez. Bu, hedefi doğrudan bir morph ilişkisi olan ekler tarafından kullanılan sözleşmedir.
+
+Bir birleşim ilişkisi için `universalSettings.junctionTargetFieldUniversalIdentifier`, birleşim nesnesinden hedefe olan ilişkiyi tanımlar. Bir birleşim satırının oluşturulması veya silinmesi `linked` ya da `unlinked` üretir. Bir birleşim satırının her iki tarafının yeniden hedeflenmesi de bir bağlantı olayı üretir; ilişkisiz birleşim alanlarındaki güncellemeler üretmez.
+
+`linked` ve `unlinked` olayları `emit.through` gerektirir; çünkü tetikleyicileri yapılandırılmış doğrudan veya birleşim ilişkisindeki bir değişikliktir.
+
+Örneğin bu, notlar, görevler, mesajlar ve takvim olayları tarafından kullanılan genel sözleşmenin aynısıdır:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+Varsayılan olarak her kaynak güncellemesi için bir `updated` through olayı yayımlanır. Yalnızca seçili kaynak alanlarındaki değişikliklerin hedef zaman çizelgelerinde görünmesi gerektiğinde `emit.through.triggerFieldUniversalIdentifiers` ayarlayın.
+
+Mantık işlevinizin kendisinin oluşturduğu açık bir etki alanı olayı için `emit` kullanmayın. Bu, aynı işlem için hem otomatik bir denetim satırı hem de açık bir satır oluşturulmasını önler.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+[`createTimelineActivity()`](/l/tr/developers/extend/apps/logic/logic-functions#create-a-timeline-activity) ile açık olaylar oluşturun. Uygulama kodu kararlı evrensel tanımlayıcılar kullanır; Twenty, yüklemeye özgü meta veri kimliklerini çözümler.
+
+## Özel işleme
+
+Bir ön bileşen olmadan Twenty, tür etiketi, simgesi ve bağlantılı nesne meta verilerinden yerel bir genel satır işler. Bu, nesneye özgü bir işleyici olmadan standart ve özel nesneler için çalışır.
+
+Özel ayrıntılar için `frontComponentUniversalIdentifier` değerini aynı uygulamanın sahip olduğu bir ön bileşene ayarlayın:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Yerel satır daraltılmış görünüm olarak kalır. Twenty, ön bileşeni yalnızca kullanıcı o satırı genişlettikten sonra bağlar; böylece görünür her olay için bir korumalı alan ve çalışan kullanılması önlenir. Bileşen içinde, satır kimliğini okumak ve görünümünüzün ihtiyaç duyduğu verileri getirmek için `twenty-sdk/front-component` içinden `useTimelineActivityId()` çağrısı yapın. Bileşen bir zaman çizelgesi satırının dışında işlendiğinde `null` döndürür.
+
+## Başka bir uygulamanın görünümünü geçersiz kılma
+
+Bir uygulama, kendi nesneleri için otomatik zaman çizelgesi sözleşmelerine sahiptir. Başka bir uygulamanın sahip olduğu bir nesnedeki olayı özelleştirmek için mevcut türü `replacesTimelineActivityTypeUniversalIdentifier` ile açıkça bildirin:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Bir geçersiz kılma, yalnızca açık tür yerine mevcut bir otomatik yayımlama yuvasını değiştirdiği için `emit` içermelidir. Başvurulan tür, hedef nesnenin uygulamasına ait olmalı ve aynı eylemi ve rotayı açıklamalıdır. Geçersiz kılan uygulamanın kaldırılması temel türü geri yükler; temel türün kaldırılması geçersiz kılmayı devre dışı bırakır.
+
+## Çalışma alanı geçersiz kılmaları ve sessize alma
+
+Çalışma alanı yöneticileri, uygulamayı çatallamadan bir türün görünümünü değiştirebilir veya otomatik ve açık olaylarını sessize alabilir. Yüklemeye özgü tür kimliğiyle meta veri API'sinin `updateTimelineActivityType` mutasyonunu kullanın:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` ve `icon`, çalışma alanı geçersiz kılmaları olarak depolanır; bu nedenle daha sonraki uygulama güncellemeleri yöneticinin seçimlerinin üzerine yazmaz. Otomatik yayımlamayı durdurmak ve bu türdeki yeni açık olayları reddetmek için `isActive` değerini `false` olarak ayarlayın. Mevcut satırlar görünür kalır.
+
+Etkin durum da dahil olmak üzere uygulama varsayılanlarını şununla geri yükleyin:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## Yapılandırma alanları
+
+| Alan                                              | Zorunlu  | Açıklama                                                                            |
+| ------------------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Evet     | Yüklemeler ve yükseltmeler boyunca tür için kararlı UUID                            |
+| `name`                                            | Evet     | Uygulamaya yerel programatik ad                                                     |
+| `label`                                           | Evet     | Yerel işleyici tarafından kullanılan, kullanıcıya yönelik eylem metni               |
+| `icon`                                            | Hayır    | Olayın yanında görüntülenen Twenty simge adı                                        |
+| `emit`                                            | Hayır    | Otomatik yayımlama bildirimi; yalnızca açık türler için kullanmayın                 |
+| `emit.on`                                         | Emit ile | Bu türün yazılmasına neden olan denetim eylemi                                      |
+| `emit.objectUniversalIdentifier`                  | Emit ile | Kayıtları bu türü yayımlayan nesne                                                  |
+| `emit.through.relationFieldUniversalIdentifier`   | Hayır    | İlişkili zaman çizelgelerine yaymak için kullanılan doğrudan veya birleşim ilişkisi |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Hayır    | Bir `updated` through olayını tetikleyebilen kaynak alanlar                         |
+| `frontComponentUniversalIdentifier`               | Hayır    | Satır genişletildiğinde bağlanan uygulamaya ait ön uç bileşeni.                     |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Hayır    | Mevcut emit türü değiştirildi; `emit` gerektirir                                    |
+
+Twenty, bir olay oluşturulduğunda anlamsal kimliği ve kalıcı sunum geri dönüşlerini anlık görüntüler. Geçmiş satırlar özgün eylem ve nesne anlamlarını korur. Tür yüklüyken, mevcut çevrilmiş etiketi, simgesi ve ön uç bileşeni canlı olarak işlenir; kaldırıldıktan sonra anlık görüntü geri dönüşü satırı okunabilir tutar. Çözümleme evrensel tanımlayıcıyı kullanır, bu nedenle sunum uygulamanın yeniden yüklenmesinden de etkilenmez.

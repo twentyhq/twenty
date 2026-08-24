@@ -714,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Instalační hooky** — předinstalační, poinstalační a odinstalační handlery — sdílejí toto běhové prostředí, ale deklarují se vlastními funkcemi `define` a nepřebírají nastavení spouštěče (triggeru). Viz [Instalační hooky](/l/cs/developers/extend/apps/config/install-hooks) pro `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction`.
 </Note>
 
+## Vytvoření aktivity časové osy.
+
+Pomocí `createTimelineActivity()` publikujte explicitní doménovou událost z logické funkce. Nejprve definujte událost jako [typ aktivity časové osy](/l/cs/developers/extend/apps/data/timeline-activity-types) a poté typ a objekty adresujte pomocí jejich stabilních univerzálních identifikátorů:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty převede univerzální identifikátory na ID metadat specifická pro instalaci, ověří, že typ aktivity časové osy patří volající aplikaci, a uloží snímek metadat prezentace do nové aktivity.
+
+Požadované vstupy jsou `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` a `targetRecordId`. Můžete také zadat `happensAt`, `properties` a `workspaceMemberId`. `happensAt` určuje pozici události a zobrazený čas na časové ose; výchozí hodnotou je čas vytvoření.
+
+Chcete-li k události přidružit jiný záznam, zadejte společně `linkedRecordId` a `linkedObjectMetadataUniversalIdentifier`. Jako záložní možnost historického zobrazení můžete navíc zadat `linkedRecordCachedName`:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Role logické funkce musí mít oprávnění k zápisu do standardního objektu `timelineActivity`. Explicitní typy událostí ponechte nevázané na `action`; typ vázaný na akci již automaticky přijímá události auditu a jinak by vytvářel duplicitní řádky.
+
 ## Typovaní klienti API (twenty-client-sdk)
 
 Balíček `twenty-client-sdk` poskytuje dva typované klienty GraphQL pro práci s Twenty API z vašich logických funkcí a frontendových komponent.

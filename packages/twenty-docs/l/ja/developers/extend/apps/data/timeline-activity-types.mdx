@@ -1,0 +1,184 @@
+---
+title: タイムライン活動タイプ
+description: 自動監査イベントと、レコードタイムラインでレンダリングされる明示的なアプリイベントを定義します。
+icon: clock-rotate-left
+---
+
+タイムラインアクティビティタイプは、レコードのタイムラインに表示されるイベントの安定したボキャブラリーを定義します。 標準オブジェクトとアプリオブジェクトは同じコントラクトを使用します。タイプにはラベルとアイコンがあり、出力時にオプションで宣言できます。 アプリの [front components](/l/ja/developers/extend/apps/layout/front-components) を使ってレンダリングすることもできます。
+
+<Note>
+  タイムラインアクティビティタイプはベータ版で、Twenty 2.34では間もなく公開されます。
+  APIは、アプリ開発者のユースケースから学びながら進化することができます。
+</Note>
+
+足場を使って1つ作成します:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+または直接定義します。
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## 自動および明示的なイベント
+
+`emit` を追加すると、このタイプが自動的に作成されます。 `emit.on`は`created`、`updated`、`deleted`、`restored`、`linked`、`unlinked`、`emit.objectUniversalIdentifier`はソースオブジェクトを識別します。 ワークスペースで同じエミットキー(`on`、オブジェクト、オプション)を扱うことができるのは、有効な型が 1 つだけです。
+
+`emit.through `がなければ、イベントはソースレコードの独自のタイムラインに書き込まれます。 関連するレコードにファンアウトするには、 \`emit.through を設定します。 elationFieldUniversalIdentifier: 直接多対一のリレーション、またはソースオブジェクトの [1対多の接合関係](/l/ja/developers/extend/apps/data/relations#junction-relations) のいずれかへ。 Morphリレーションは彼らのmorphグループのすべてのメンバーにファンアウトするので、1つの宣言はいくつかのオブジェクトタイプをターゲットにすることができます。
+
+直接のリレーションのため、ソースレコードを作成または復元すると、 `linked` が生成され、削除すると `unlinked` が生成されます。 リレーションは前のターゲットに `unlinked` を加え、新しいターゲットに `linked` を加えます。 その他のソースアップデートではリンクイベントは発生しません。 これは添付ファイルが使用する契約で、ターゲットは直接モーフ関係です。
+
+ジャンクションリレーションでは、`universalSettings.junctionTargetFieldUniversalIdentifier` はジャンクションオブジェクトからターゲットへのリレーションを識別します。 ジャンクション行を作成または削除すると、`linked` または `unlinked` が生成されます。 ジャンクション行のいずれかの側を再挿入すると、リンクイベントも生成されます。関連しないジャンクションフィールドへの更新は行われません。
+
+`linked` と `unlinked` イベントは `emit.through `が必要です。トリガーは設定された直接またはジャンクションの関係を変更するためです。
+
+例えば、これはメモ、タスク、メッセージ、カレンダーイベントで使用される一般的なコントラクトと同じです。
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+デフォルトでは、ソースの更新ごとにイベントの `updated` が発行されます。 選択したソースフィールドにのみ変更する場合、ターゲットタイムラインに「emit.through.triggerFieldUniversalIdentifiers」を設定します。
+
+ロジック関数がそれ自身を作成する明示的なドメインイベントに対して「emit」を省略します。 これにより、同じ操作に対して自動監査行と明示的な行の両方を生成することができません。
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+[`createTimelineActivity()`] (/developers/extend/apps/logic/logic-functions#create-a-timeline-activity ) を使用して明示的なイベントを作成します。 アプリコードは安定したユニバーサル識別子を使用します; Twenty はインストール固有のメタデータ ID を解決します。
+
+## カスタムレンダリング
+
+Twenty は、フロントコンポーネントがない場合、タイプラベル、アイコン、およびリンクオブジェクトメタデータからネイティブの一般的な行をレンダリングします。 これはオブジェクト固有のレンダラーを持たない標準オブジェクトおよびカスタムオブジェクトに対して機能します。
+
+カスタムの詳細については、 `frontComponentUniversalIdentifier` を同じアプリが所有するフロントコンポーネントに設定します。
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+ネイティブの行は、折りたたまれたプレゼンテーションのままです。 Twenty は、ユーザーがその行を展開した後にのみフロントコンポーネントをマウントし、すべての表示イベントに対して Sandbox と worker を回避します。 コンポーネント内で、`二十-sdk/front-component` から `useTimelineActivityId()` を呼び出し、行IDを読み込み、プレゼンテーションの必要なデータを取得します。 コンポーネントがタイムライン行の外側にレンダリングされると、 `null` を返します。
+
+## 別のアプリケーションのプレゼンテーションを上書きする
+
+アプリケーションは、独自のオブジェクトの自動タイムライン契約を所有します。 別のアプリが所有するオブジェクトでイベントをカスタマイズするには、既存の型を `replaceTimelineActivityTypeUniversalIdentifier` で明示的に宣言します。
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+explicit-only 型ではなく、既存の自動エミットスロットを置き換えるため、オーバーライドは `emit` を含める必要があります。 参照される型は、ターゲットオブジェクトのアプリケーションに属し、同じアクションとルートを記述する必要があります。 オーバーライドアプリを削除すると、ベースタイプが復元され、ベースタイプが削除されるとオーバーライドは無効になります。
+
+## ワークスペースの上書きとミュート
+
+ワークスペース管理者は、タイプのプレゼンテーションを変更したり、アプリケーションをフォークすることなく、自動および明示的なイベントをミュートすることができます。 インストール固有の型 ID を持つメタデータ API の `updateTimelineActivityType` 変更を使用します。
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label`と`icon`はワークスペースの上書きとして保存されるため、後でアプリケーションの更新は管理者の選択肢を上書きしません。 自動発行を停止し、そのタイプの新しい明示的イベントを拒否するには、`isActive` を `false` に設定します。 既存の行は表示されたままです。
+
+アクティブ状態を含むアプリケーションのデフォルトを復元するには、次を使用します。
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## 設定フィールド
+
+| フィールド                                            | 必須           | 説明                                            |
+| ------------------------------------------------ | ------------ | --------------------------------------------- |
+| `universalIdentifier`                            | はい           | インストールおよびアップグレードをまたいで安定したタイプの UUID            |
+| `name`                                           | はい           | アプリローカルのプログラム名                                |
+| `label`                                          | はい           | ネイティブレンダラーで使用されるユーザー向けアクションテキスト               |
+| `icon`                                           | いいえ          | イベントの横に表示される Twenty アイコン名                     |
+| `emit`                                           | いいえ          | 自動発行の宣言。明示的イベント専用のタイプでは省略します                  |
+| `emit.on`                                        | emit を使用する場合 | このタイプが書き込まれる原因となる監査アクション                      |
+| `emit.objectUniversalIdentifier`                 | emit を使用する場合 | レコードがこのタイプを発行するオブジェクト                         |
+| `emit.through.relationFieldUniversalIdentifier`  | いいえ          | 関連するタイムラインにファンアウトするために使用されるダイレクトまたはジャンクションの関係 |
+| `emit.through.triggerFieldUniversalIdentifiers`  | いいえ          | `updated` 経由イベントをトリガーできるソースフィールド              |
+| `frontComponentUniversalIdentifier`              | いいえ          | 行が展開されたときにマウントされたアプリ所有のフロントコンポーネントです          |
+| `replaceTimelineActivityTypeUniversalIdentifier` | いいえ          | 既存のエミットタイプを置き換えるには、 `emit` が必要です              |
+
+イベントが作成されたときに意味的なアイデンティティと耐久性のあるプレゼンテーションのフォールバックを20枚のスナップショット。 歴史的な行は、元のアクションとオブジェクトの意味を保持します。 タイプがインストールされている間は、現在翻訳されているラベル、アイコン、およびフロントコンポーネントがライブレンダリングされます。アンインストール後、スナップショットのフォールバックは行を読み取ることができます。 解像度は普遍的な識別子を使用するため、プレゼンテーションはアプリの再インストールも残ります。

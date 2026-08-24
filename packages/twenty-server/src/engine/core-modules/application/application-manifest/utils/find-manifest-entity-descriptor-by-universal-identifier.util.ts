@@ -84,6 +84,14 @@ const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
+  timelineActivityType: {
+    entityKind: 'timeline activity type',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.timelineActivityTypes,
+        (timelineActivityType) => timelineActivityType.label,
+      ),
+  },
   view: {
     entityKind: 'view',
     getCandidates: (manifest) =>

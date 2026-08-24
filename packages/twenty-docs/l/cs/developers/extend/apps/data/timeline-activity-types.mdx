@@ -1,0 +1,184 @@
+---
+title: Typy aktivit na časové ose
+description: Definujte automatické události auditu a explicitní události aplikace, které se zobrazují na časových osách záznamů.
+icon: clock-rotate-left
+---
+
+Typ aktivity na časové ose definuje stabilní slovník pro událost zobrazenou na časové ose záznamu. Standardní objekty a objekty aplikace používají stejný kontrakt: typ má popisek a ikonu, může volitelně deklarovat, kdy je vyvolán, a může se volitelně vykreslovat prostřednictvím jedné z [front components](/l/cs/developers/extend/apps/layout/front-components) vaší aplikace.
+
+<Note>
+  Typy aktivit na časové ose jsou ve verzi beta a brzy přijdou ve Twenty 2.34. Rozhraní
+  API se může vyvíjet, zatímco se učíme z případů použití vývojářů aplikací.
+</Note>
+
+Vytvořte jej pomocí scaffolderu:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+Nebo jej definujte přímo:
+
+```ts filename="src/timeline-activity-types/post-card-created.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+  name: 'postCardCreated',
+  label: 'created a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+## Automatické a explicitní události
+
+Přidejte "emitovat", když by mělo dvacet automaticky vytvářet tento typ. `emit.on` podporuje `created`, `updated`, `deleted`, `restored`, `linked`, a `unlinked`, zatímco `emit.objectUniversalIdentifier` identifikuje zdrojový objekt. Pouze jeden efektivní typ dokáže zvládnout stejný emit klíč — `on`, objekt a volitelný prostřednictvím vztahu — v pracovním prostoru.
+
+Bez `emit.through je událost zapsána na vlastní časové ose zdrojového záznamu. Chcete-li ji rozdmýchat se souvisejícími záznamy, nastavte `emit.through . elationFieldUniversalIdentifier\` buď přímé mnoho-jedno-vztahy, nebo [jedno-mnoho-vztažení](/l/cs/developers/extend/apps/data/relations#junction-relations) na zdrojovém objektu. Vztahy s morfem se rozdmýchají každému členu jejich morfské skupiny, takže jediná deklarace se může zaměřit na několik typů objektů.
+
+Pro přímý vztah vytváří vytváření nebo obnovování zdrojového záznamu `linked`, protože jeho smazání produkuje `unlinked`, a opakováním vztahu vznikne `nespojený` na předchozí cíl plus `linked` na nový cíl. Další aktualizace zdroje nevytvářejí události odkazů. Jedná se o smlouvu používanou přílohami, jejichž cílem je přímý morfologický vztah.
+
+Pro vztah mezi dvěma uzly identifikuje vztah od objektu ke křižovatce k cíli. Vytváření nebo smazání křižovatky produkuje `linked` nebo `unlinked`. Repointing either side of the junction row also produkuje událost spojení; aktualizace nespřízněných přechodových polí nikoli.
+
+Události `linked` a `unlinked` vyžadují `emit.through`, protože jejich spouštěč je změnou konfigurované přímé nebo křižovatkové vztahy.
+
+Jedná se například o stejnou obecnou smlouvu používanou poznámkami, úkoly, zprávami a událostmi v kalendáři:
+
+```ts filename="src/timeline-activity-types/post-card-linked.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+import { POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER } from '../fields/post-card-recipients-on-post-card.field';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7502',
+  name: 'postCardLinked',
+  label: 'received a post card',
+  icon: 'IconMail',
+  emit: {
+    on: 'linked',
+    objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+    through: {
+      relationFieldUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  },
+});
+```
+
+"Aktualizováno" prostřednictvím události je ve výchozím nastavení vypnuto pro každou zdrojovou aktualizaci. Nastavte `emit.through.triggerFieldUniversalIdentifiers` pokud se změní pouze na vybraná zdrojová pole, měla by se zobrazit v cílovém časovém horizontu.
+
+Vypni `emit` pro explicitní doménu, kterou tvá logická funkce sama vytváří. Tím se zamezí vytvoření automatického řádku pro audit i výslovného řádku pro tutéž operaci.
+
+```ts filename="src/timeline-activity-types/post-card-sent.ts"
+import { defineTimelineActivityType } from 'twenty-sdk/define';
+
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+});
+```
+
+Vytvořte explicitní události pomocí [`createTimelineActivity()`](/l/cs/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). Kód aplikace používá stabilní univerzální identifikátory. Dvacet vyřeší ID metadat specifických pro instalaci.
+
+## Vlastní vykreslování
+
+Bez přední komponenty vykreslí dvacet nativní generický řádek z popisku typu, ikony a propojených objektů. To funguje pro standardní a vlastní objekty bez vykreslování konkrétního objektu.
+
+Pro vlastní detaily nastavte `frontComponentUniversalIdentifier` na přední komponentu vlastněnou stejnou aplikací:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  name: 'postCardSent',
+  label: 'sent a post card',
+  icon: 'IconSend',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Rodičovská řada zůstává zkrachovalou prezentací. Dvacet připojuje přední díl až poté, co uživatel rozšíří tento řádek, zabraňuje tomu, aby se pískovací box a pracovník pro každou viditelnou událost. Uvnitř komponenty zavolejte `useTimelineActivityId()` z `dvacet sdk/front-component` a přečtěte si ID řádku a načtěte všechna data, která potřebujete. Vrátí `null` pokud je komponenta vykreslena mimo časový řádek.
+
+## Přepsání prezentace jiné aplikace
+
+Aplikace vlastní automatické časové osy pro své vlastní objekty. Chcete-li přizpůsobit událost na objektu vlastněném jinou aplikací, deklarujte existující typ výslovně pomocí `replacesTimelineActivityTypeUniversalIdentifier`:
+
+```ts
+export default defineTimelineActivityType({
+  universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7503',
+  name: 'companyCreatedWithDeploymentContext',
+  label: 'was created from a deployment',
+  emit: {
+    on: 'created',
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  },
+  replacesTimelineActivityTypeUniversalIdentifier:
+    RECORD_CREATED_TIMELINE_ACTIVITY_TYPE_UNIVERSAL_IDENTIFIER,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+});
+```
+
+Přepsání musí obsahovat `emit`, protože nahrazuje existující automatický slot emit namísto typu pouze pro explicitní. Uvedený typ musí patřit k aplikaci cílového objektu a popsat stejnou akci a cestu. Odstranění přepsání aplikace obnoví základní typ; odstranění základního typu zakáže přepsání.
+
+## Pracovní prostor přepíše a ztiší
+
+Správci pracovního prostoru mohou změnit prezentaci typu nebo ztlumit jeho automatické a explicitní události bez vytvoření aplikace. Použijte metadata API mutaci `updateTimelineActivityType` s ID specifického typu instalace:
+
+```graphql
+mutation CustomizeTimelineActivityType(
+  $id: UUID!
+  $label: String
+  $icon: String
+  $isActive: Boolean
+) {
+  updateTimelineActivityType(
+    input: { id: $id, label: $label, icon: $icon, isActive: $isActive }
+  ) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+`label` a `icon` jsou uloženy jako přepisy pracovního prostoru, takže pozdější aktualizace aplikace nepřepisují volby správce. Nastavte `isActive` na `false` pro zastavení automatických emisí a odmítnutí nových explicitních událostí tohoto typu. Stávající řádky zůstávají viditelné.
+
+Obnovit výchozí nastavení aplikace, včetně aktivního stavu:
+
+```graphql
+mutation ResetTimelineActivityType($id: UUID!) {
+  resetTimelineActivityType(id: $id) {
+    id
+    label
+    icon
+    isActive
+  }
+}
+```
+
+## Konfigurační pole
+
+| Pole                                              | Povinné   | Popis                                                                                   |
+| ------------------------------------------------- | --------- | --------------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Ano       | Stabilní UUID pro tento typ zařízení a modernizace                                      |
+| `name`                                            | Ano       | Název aplikace                                                                          |
+| `label`                                           | Ano       | Uživatelsky orientovaný text akce používaný nativním přehrávačem                        |
+| `icon`                                            | Ne        | Dvacet jmen ikony zobrazených vedle události                                            |
+| `emit`                                            | Ne        | Automatické prohlášení o emisích; v případě typů pouze s výslovnou výjimkou             |
+| `emit.on`                                         | S emailem | Auditní opatření, která způsobí, že tento typ bude napsán                               |
+| `emit.objectUniversalIdentifier`                  | S emailem | Objekt, jehož záznamy vypouštějí tento typ                                              |
+| `emit.through.relationFieldUniversalIdentifier`   | Ne        | Vztah k přímému nebo rozvodnému vedení používanému k ventilaci příslušných časových řad |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Ne        | Zdrojová pole, která mohou spustit `aktualizované` prostřednictvím události             |
+| `frontComponentUniversalIdentifier`               | Ne        | Čelní díl vlastněný App připojený při rozšíření řádku                                   |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Ne        | Stávající typ emit nahrazen; vyžaduje `emit`                                            |
+
+Dvacet snímků sémantické identity a trvanlivé prezentace při vytvoření události. Historické řádky zachovávají svou původní akci a význam objektu. Zatímco je tento typ nainstalován, jeho aktuální přeložený popisek, ikona a hlavní komponenty vykreslují živě; po odinstalování udržuje záložní snímek řádek čitelný. Rozlišení používá univerzální identifikátor, takže prezentace také přežívá přeinstalování aplikace.

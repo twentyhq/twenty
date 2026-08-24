@@ -17,7 +17,7 @@ export const CORE_WORKFLOWS_PAGE_SIZE = 60;
 
 export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
   fieldName: 'updatedAt',
-  orderBy: 'DescNullsLast',
+  direction: 'desc',
 };
 
 const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
@@ -38,9 +38,10 @@ export const useCoreWorkflows = () => {
   const orderBy =
     ORDER_BY_FIELD_BY_FIELD_NAME[sortValue.fieldName] ??
     CoreWorkflowOrderByField.UPDATED_AT;
-  const orderByDirection = sortValue.orderBy.startsWith('Asc')
-    ? CoreWorkflowOrderByDirection.ASC
-    : CoreWorkflowOrderByDirection.DESC;
+  const orderByDirection =
+    sortValue.direction === 'asc'
+      ? CoreWorkflowOrderByDirection.ASC
+      : CoreWorkflowOrderByDirection.DESC;
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 

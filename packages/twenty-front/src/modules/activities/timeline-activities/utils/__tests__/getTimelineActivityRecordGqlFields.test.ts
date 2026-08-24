@@ -32,9 +32,9 @@ describe('getTimelineActivityRecordGqlFields', () => {
       properties: true,
       linkedRecordId: true,
       linkedObjectMetadataId: true,
-      linkedRecordCachedName: true,
       workspaceMemberId: true,
       workspaceMember: expect.any(Object),
     });
+    expect(recordGqlFields.linkedRecordCachedName).toBeUndefined();
   });
 });
