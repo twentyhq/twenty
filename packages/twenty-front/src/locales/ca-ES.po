@@ -7219,7 +7219,7 @@ msgstr "Editar registres de tots els objectes"
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
-msgstr ""
+msgstr "Edita la relació"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx

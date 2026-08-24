@@ -1457,6 +1457,7 @@ msgid "Add permission"
 msgstr "Ruxsat qo‘shish"
 
 #. js-lingui-id: AmiJYR
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add relation"
 msgstr "Bog‘lanish qo‘shish"
@@ -7214,6 +7215,11 @@ msgstr "Yozuvlar jadvalini tahrirlash"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Barcha obyektlardagi yozuvlarni tahrirlash"
+
+#. js-lingui-id: 4QhQge
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
+msgid "Edit relation"
+msgstr "Bog‘lanishni tahrirlash"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx

@@ -7219,7 +7219,7 @@ msgstr "编辑所有对象上的记录"
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
-msgstr ""
+msgstr "编辑关系"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx

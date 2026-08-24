@@ -7219,7 +7219,7 @@ msgstr "Bewerk gegevens op alle objecten"
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
-msgstr ""
+msgstr "Relatie bewerken"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx

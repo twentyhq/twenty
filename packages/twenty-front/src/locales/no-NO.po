@@ -7219,7 +7219,7 @@ msgstr "Rediger oppføringer på alle objekter"
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
-msgstr ""
+msgstr "Rediger relasjon"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
