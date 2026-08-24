@@ -7,7 +7,6 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { Loader } from 'twenty-ui/feedback';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
@@ -63,8 +62,6 @@ const StyledLoadingContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
   height: calc(80vh / var(--t-zoom, 1));
   justify-content: center;
   width: 100%;
@@ -214,7 +211,6 @@ export const AttachmentList = ({
                 <Suspense
                   fallback={
                     <StyledLoadingContainer>
-                      <Loader />
                       <StyledLoadingText>
                         {t`Loading document viewer...`}
                       </StyledLoadingText>

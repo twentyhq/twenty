@@ -1,18 +1,18 @@
+import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
+import { VideoPreview } from '@/activities/files/components/VideoPreview';
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import {
   type CsvPreviewData,
   fetchCsvPreview,
 } from '@/activities/files/utils/fetchCsvPreview';
-import { useMediaLoadStatus } from '@/activities/files/hooks/useMediaLoadStatus';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/feedback';
 import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -60,14 +60,6 @@ const StyledDocumentViewerContainer = styled.div`
   }
 `;
 
-const StyledMediaLoadingOverlay = styled.div`
-  align-items: center;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
-`;
-
 const StyledUnavailablePreviewContainer = styled.div`
   align-items: center;
   display: flex;
@@ -79,21 +71,9 @@ const StyledUnavailablePreviewContainer = styled.div`
   text-align: center;
 `;
 
-const StyledMessage = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.lg};
-  max-width: 400px;
-`;
-
 const StyledLightMessage = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledCsvTable = styled.table`
@@ -224,18 +204,11 @@ export const DocumentViewer = ({
     ? documentExtension.toLowerCase().replace('.', '')
     : (extension?.toLowerCase().replace('.', '') ?? '');
   const fileCategory = getFileType(documentName);
-  const isVideo = fileCategory === 'VIDEO';
   const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
   const isMsOfficeFile = MS_OFFICE_EXTENSIONS.includes(fileExtension);
 
   const mimeType = isPreviewable ? MIME_TYPE_MAPPING[fileExtension] : undefined;
-
-  const viewerContainerRef = useRef<HTMLDivElement>(null);
-  const mediaStatus = useMediaLoadStatus({
-    containerRef: viewerContainerRef,
-    isEnabled: isVideo,
-    resetKey: documentUrl,
-  });
+  const isVideo = mimeType?.startsWith('video/') === true;
 
   useEffect(() => {
     if (fileExtension === 'csv') {
@@ -246,12 +219,11 @@ export const DocumentViewer = ({
   if (!isPreviewable) {
     return (
       <StyledDocumentViewerContainer>
-        <StyledUnavailablePreviewContainer>
-          <StyledTitle>
-            <Trans>Preview Not Available</Trans>
-          </StyledTitle>
-          <StyledMessage>
-            {fileCategory === 'ARCHIVE' ? (
+        <UnavailableFilePreview
+          fileName={documentName}
+          fileUrl={documentUrl}
+          message={
+            fileCategory === 'ARCHIVE' ? (
               <Trans>
                 Archive files cannot be previewed. Please download the file to
                 access its contents.
@@ -261,15 +233,21 @@ export const DocumentViewer = ({
                 This file type cannot be previewed. Please download the file to
                 view it.
               </Trans>
-            )}
-          </StyledMessage>
-          <Button
-            Icon={IconDownload}
-            title={t`Download File`}
-            onClick={() => downloadFile(documentUrl, documentName)}
-            variant="secondary"
-          />
-        </StyledUnavailablePreviewContainer>
+            )
+          }
+        />
+      </StyledDocumentViewerContainer>
+    );
+  }
+
+  if (isVideo) {
+    return (
+      <StyledDocumentViewerContainer>
+        <VideoPreview
+          key={documentUrl}
+          videoName={documentName}
+          videoUrl={documentUrl}
+        />
       </StyledDocumentViewerContainer>
     );
   }
@@ -327,37 +305,8 @@ export const DocumentViewer = ({
     );
   }
 
-  if (isVideo && mediaStatus === 'error') {
-    return (
-      <StyledDocumentViewerContainer>
-        <StyledUnavailablePreviewContainer>
-          <StyledTitle>
-            <Trans>Preview Not Available</Trans>
-          </StyledTitle>
-          <StyledMessage>
-            <Trans>
-              This video could not be loaded. Please download the file to view
-              it.
-            </Trans>
-          </StyledMessage>
-          <Button
-            Icon={IconDownload}
-            title={t`Download File`}
-            onClick={() => downloadFile(documentUrl, documentName)}
-            variant="secondary"
-          />
-        </StyledUnavailablePreviewContainer>
-      </StyledDocumentViewerContainer>
-    );
-  }
-
   return (
-    <StyledDocumentViewerContainer ref={viewerContainerRef}>
-      {isVideo && mediaStatus === 'loading' && (
-        <StyledMediaLoadingOverlay>
-          <Loader />
-        </StyledMediaLoadingOverlay>
-      )}
+    <StyledDocumentViewerContainer>
       <DocViewer
         documents={[
           {
