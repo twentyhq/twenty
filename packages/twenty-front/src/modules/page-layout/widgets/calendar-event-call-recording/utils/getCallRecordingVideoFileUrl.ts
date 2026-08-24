@@ -1,9 +1,8 @@
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const getCallRecordingVideoFileUrl = (
   callRecording: Pick<CalendarEventCallRecordingCandidate, 'video'>,
 ): string | undefined =>
-  callRecording.video?.find(
-    (videoFile) => isDefined(videoFile.url) && videoFile.url.length > 0,
-  )?.url;
+  callRecording.video?.find((videoFile) => isNonEmptyString(videoFile.url))
+    ?.url;

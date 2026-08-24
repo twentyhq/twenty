@@ -5,6 +5,7 @@ import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/cale
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState, type ComponentProps } from 'react';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
@@ -165,9 +166,9 @@ const CallRecordingTranscriptBodyStory = (
   args: CallRecordingTranscriptBodyStoryProps,
 ) => (
   <>
+    <WidgetHeaderCountEffect count={isDefined(args.callRecording) ? 1 : 0} />
     <CallRecordingTranscriptHeaderDataEffect
       callRecording={args.callRecording}
-      callRecordingsCount={isDefined(args.callRecording) ? 1 : 0}
     />
     <CallRecordingTranscriptBody {...args} />
   </>

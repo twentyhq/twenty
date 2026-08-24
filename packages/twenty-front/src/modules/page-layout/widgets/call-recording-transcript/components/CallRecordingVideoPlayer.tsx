@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { memo, useState, type Ref } from 'react';
+import { useState } from 'react';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -82,90 +82,91 @@ const StyledPlaybackErrorDescription = styled.span`
 `;
 
 type CallRecordingVideoPlayerProps = {
-  ref?: Ref<HTMLVideoElement>;
   src: string;
   onRetry: () => Promise<unknown>;
 };
 
-export const CallRecordingVideoPlayer = memo(
-  ({ ref, src, onRetry }: CallRecordingVideoPlayerProps) => {
-    const [loadState, setLoadState] = useState<CallRecordingVideoLoadState>(
-      'awaiting-first-frame',
+export const CallRecordingVideoPlayer = ({
+  src,
+  onRetry,
+}: CallRecordingVideoPlayerProps) => {
+  const [loadState, setLoadState] = useState<CallRecordingVideoLoadState>(
+    'awaiting-first-frame',
+  );
+  const [isPlaybackStalled, setIsPlaybackStalled] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  const markFirstFrameReady = () => {
+    setLoadState((previousLoadState) =>
+      previousLoadState === 'awaiting-first-frame'
+        ? 'ready'
+        : previousLoadState,
     );
-    const [isPlaybackStalled, setIsPlaybackStalled] = useState(false);
-    const [isRetrying, setIsRetrying] = useState(false);
+    setIsPlaybackStalled(false);
+  };
 
-    const markFirstFrameReady = () => {
-      setLoadState((previousLoadState) =>
-        previousLoadState === 'awaiting-first-frame'
-          ? 'ready'
-          : previousLoadState,
-      );
-      setIsPlaybackStalled(false);
-    };
+  const handleWaiting = () => setIsPlaybackStalled(true);
 
-    const handleWaiting = () => setIsPlaybackStalled(true);
+  const handlePause = () => setIsPlaybackStalled(false);
 
-    const handlePause = () => setIsPlaybackStalled(false);
+  const handleError = () => setLoadState('errored');
 
-    const handleError = () => setLoadState('errored');
+  const handleRetry = async () => {
+    setIsRetrying(true);
+    setIsPlaybackStalled(false);
 
-    const handleRetry = async () => {
-      setIsRetrying(true);
-      setIsPlaybackStalled(false);
-
-      try {
-        await onRetry();
-        setLoadState('awaiting-first-frame');
-      } finally {
-        setIsRetrying(false);
-      }
-    };
-
-    if (loadState === 'errored') {
-      return (
-        <StyledVideoViewport>
-          <StyledPlaybackErrorState>
-            <StyledPlaybackErrorTitle>{t`Playback failed`}</StyledPlaybackErrorTitle>
-            <StyledPlaybackErrorDescription>
-              {t`The recording could not be loaded.`}
-            </StyledPlaybackErrorDescription>
-            <Button
-              title={t`Retry`}
-              variant="secondary"
-              disabled={isRetrying}
-              isLoading={isRetrying}
-              onClick={handleRetry}
-            />
-          </StyledPlaybackErrorState>
-        </StyledVideoViewport>
-      );
+    try {
+      await onRetry();
+      setLoadState('awaiting-first-frame');
+    } catch {
+      // A failed refetch surfaces through the widget's query error state.
+    } finally {
+      setIsRetrying(false);
     }
+  };
 
+  if (loadState === 'errored') {
     return (
       <StyledVideoViewport>
-        <StyledVideo
-          ref={ref}
-          isFirstFrameReady={loadState === 'ready'}
-          controls
-          playsInline
-          preload="metadata"
-          src={`${src}${FIRST_FRAME_SEEK_FRAGMENT}`}
-          onCanPlay={markFirstFrameReady}
-          onError={handleError}
-          onLoadedData={markFirstFrameReady}
-          onPause={handlePause}
-          onSeeking={markFirstFrameReady}
-          onSeeked={markFirstFrameReady}
-          onTimeUpdate={markFirstFrameReady}
-          onWaiting={handleWaiting}
-        />
-        <StyledBufferingOverlay
-          isVisible={loadState === 'awaiting-first-frame' || isPlaybackStalled}
-        >
-          <CircularProgressBar barWidth={3} size={24} />
-        </StyledBufferingOverlay>
+        <StyledPlaybackErrorState>
+          <StyledPlaybackErrorTitle>{t`Playback failed`}</StyledPlaybackErrorTitle>
+          <StyledPlaybackErrorDescription>
+            {t`The recording could not be loaded.`}
+          </StyledPlaybackErrorDescription>
+          <Button
+            title={t`Retry`}
+            variant="secondary"
+            disabled={isRetrying}
+            isLoading={isRetrying}
+            onClick={handleRetry}
+          />
+        </StyledPlaybackErrorState>
       </StyledVideoViewport>
     );
-  },
-);
+  }
+
+  return (
+    <StyledVideoViewport>
+      <StyledVideo
+        isFirstFrameReady={loadState === 'ready'}
+        controls
+        playsInline
+        preload="metadata"
+        src={`${src}${FIRST_FRAME_SEEK_FRAGMENT}`}
+        onCanPlay={markFirstFrameReady}
+        onError={handleError}
+        onLoadedData={markFirstFrameReady}
+        onPause={handlePause}
+        onSeeking={markFirstFrameReady}
+        onSeeked={markFirstFrameReady}
+        onTimeUpdate={markFirstFrameReady}
+        onWaiting={handleWaiting}
+      />
+      <StyledBufferingOverlay
+        isVisible={loadState === 'awaiting-first-frame' || isPlaybackStalled}
+      >
+        <CircularProgressBar barWidth={3} size={24} />
+      </StyledBufferingOverlay>
+    </StyledVideoViewport>
+  );
+};

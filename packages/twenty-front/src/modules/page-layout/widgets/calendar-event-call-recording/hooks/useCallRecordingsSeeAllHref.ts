@@ -1,5 +1,5 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useCalendarEventTargetRecordId } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventTargetRecordId';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import {
@@ -10,25 +10,22 @@ import {
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 export const useCallRecordingsSeeAllHref = (): string | undefined => {
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const calendarEventId = useCalendarEventTargetRecordId();
 
-  const calendarEventId =
-    targetRecordIdentifier?.targetObjectNameSingular ===
-    CoreObjectNameSingular.CalendarEvent
-      ? targetRecordIdentifier.id
-      : undefined;
-
-  const { objectMetadataItem: callRecordingObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.CallRecording,
-    });
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const callRecordingObjectMetadataItem = objectMetadataItems.find(
+    ({ nameSingular }) => nameSingular === CoreObjectNameSingular.CallRecording,
+  );
 
   const indexViewId = useAtomFamilySelectorValue(
     indexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: callRecordingObjectMetadataItem.id },
+    { objectMetadataItemId: callRecordingObjectMetadataItem?.id ?? '' },
   );
 
-  if (!isDefined(calendarEventId)) {
+  if (
+    !isDefined(calendarEventId) ||
+    !isDefined(callRecordingObjectMetadataItem)
+  ) {
     return undefined;
   }
 

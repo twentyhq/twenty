@@ -17,13 +17,8 @@ export const CallRecordingTranscriptWidgetContent = () => {
 
   return (
     <>
-      <WidgetHeaderCountEffect
-        count={callRecordingsCount > 0 ? callRecordingsCount : undefined}
-      />
-      <CallRecordingTranscriptHeaderDataEffect
-        callRecording={callRecording}
-        callRecordingsCount={callRecordingsCount}
-      />
+      <WidgetHeaderCountEffect count={callRecordingsCount} />
+      <CallRecordingTranscriptHeaderDataEffect callRecording={callRecording} />
       <CallRecordingTranscriptBody
         callRecording={callRecording}
         loading={loading}
