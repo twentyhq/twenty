@@ -842,9 +842,7 @@ describe('manifestValidate', () => {
         '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
 
       expect(manifestValidate(localObjectManifest).errors).toContainEqual(
-        expect.stringContaining(
-          'must not replace another application\'s type',
-        ),
+        expect.stringContaining("must not replace another application's type"),
       );
 
       const invalidIdentifierManifest = buildTimelineManifest();
@@ -856,9 +854,7 @@ describe('manifestValidate', () => {
       invalidIdentifierTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
         'not-a-uuid';
 
-      expect(
-        manifestValidate(invalidIdentifierManifest).errors,
-      ).toContainEqual(
+      expect(manifestValidate(invalidIdentifierManifest).errors).toContainEqual(
         expect.stringContaining('invalid replacement universal identifier'),
       );
     });
