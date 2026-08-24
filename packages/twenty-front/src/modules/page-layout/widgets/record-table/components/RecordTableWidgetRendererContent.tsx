@@ -28,7 +28,7 @@ type RecordTableWidgetRendererContentProps = {
   objectMetadataId: string;
   viewId: string;
   widgetId: string;
-  isWidgetContentEditable?: boolean;
+  isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
   recordLimit?: number;
   instanceIdSuffix?: string;
@@ -39,7 +39,7 @@ export const RecordTableWidgetRendererContent = ({
   objectMetadataId,
   viewId,
   widgetId,
-  isWidgetContentEditable = false,
+  isUIEditable = false,
   isEmptyStateHidden = false,
   recordLimit,
   instanceIdSuffix,
@@ -91,13 +91,11 @@ export const RecordTableWidgetRendererContent = ({
   const renderWidgetForLayout = {
     [ViewType.TABLE]: () => (
       <RecordTableWidget
-        isWidgetContentEditable={isWidgetContentEditable}
+        isUIEditable={isUIEditable}
         isEmptyStateHidden={isEmptyStateHidden}
       />
     ),
-    [ViewType.KANBAN]: () => (
-      <RecordBoardWidget isWidgetContentEditable={isWidgetContentEditable} />
-    ),
+    [ViewType.KANBAN]: () => <RecordBoardWidget isUIEditable={isUIEditable} />,
     [ViewType.LIST]: () => <RecordListWidget />,
     [ViewType.CALENDAR]: () => (
       <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />

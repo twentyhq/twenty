@@ -123,7 +123,7 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
           configurationType: WidgetConfigurationType.FIELD,
           fieldMetadataId,
           fieldDisplayMode: FieldDisplayMode.TABLE,
-          isWidgetContentEditable: false,
+          isUIEditable: false,
         },
         fieldMetadataUniversalIdentifierById: {
           [fieldMetadataId]: fieldMetadataUniversalIdentifier,
@@ -131,7 +131,7 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
       }),
     ).toMatchObject({
       fieldMetadataId: fieldMetadataUniversalIdentifier,
-      isWidgetContentEditable: false,
+      isUIEditable: false,
     });
   });
 
@@ -140,12 +140,12 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
-          isWidgetContentEditable: false,
+          isUIEditable: false,
         },
         fieldMetadataUniversalIdentifierById: {},
       }),
     ).toMatchObject({
-      isWidgetContentEditable: false,
+      isUIEditable: false,
     });
   });
 });

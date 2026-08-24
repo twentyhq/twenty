@@ -37,5 +37,5 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
   @IsBoolean()
-  isWidgetContentEditable?: boolean;
+  isUIEditable?: boolean;
 }

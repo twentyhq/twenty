@@ -117,15 +117,12 @@ export const SidePanelRecordPageFieldSettings = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const isWidgetContentEditable =
-    fieldConfiguration?.isWidgetContentEditable ?? true;
+  const isUIEditable = fieldConfiguration?.isUIEditable ?? true;
 
-  const handleIsWidgetContentEditableChange = (
-    nextIsWidgetContentEditable: boolean,
-  ) => {
+  const handleIsUIEditableChange = (nextIsUIEditable: boolean) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
-        isWidgetContentEditable: nextIsWidgetContentEditable,
+        isUIEditable: nextIsUIEditable,
       },
     });
   };
@@ -289,8 +286,8 @@ export const SidePanelRecordPageFieldSettings = () => {
                   LeftIcon={IconPencil}
                   text={t`Allow editing`}
                   id="field-allow-editing"
-                  toggled={isWidgetContentEditable}
-                  onToggleChange={handleIsWidgetContentEditableChange}
+                  toggled={isUIEditable}
+                  onToggleChange={handleIsUIEditableChange}
                 />
               </SelectableListItem>
             )}
