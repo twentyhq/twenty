@@ -7,6 +7,7 @@ import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate'
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
 import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useGetShiftedDateToCustomTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToCustomTimeZone';
@@ -21,7 +22,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDifferentZonedDateTime } from '~/utils/dates/isDifferentZonedDateTime';
 
 const StyledInputContainer = styled.div<{
-  $variant: 'default' | 'transparent';
+  $variant: FormFieldInputVariant;
 }>`
   align-items: center;
 
@@ -37,7 +38,7 @@ const StyledInputContainer = styled.div<{
 
 const StyledInput = styled.input<{
   hasError?: boolean;
-  $variant: 'default' | 'transparent';
+  $variant: FormFieldInputVariant;
 }>`
   background: transparent;
   border: none;
@@ -57,7 +58,7 @@ type DateTimePickerInputProps = {
   onFocus?: () => void;
   readonly?: boolean;
   timeZone?: string;
-  variant?: 'default' | 'transparent';
+  variant?: FormFieldInputVariant;
 };
 
 export const DateTimePickerInput = ({
