@@ -1,8 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Between, In } from 'typeorm';
+import { In } from 'typeorm';
 
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
+import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/types/campaign-skip-reason.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { v4 } from 'uuid';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
@@ -27,7 +33,7 @@ type MessageRepository = WorkspaceRepository<MessageWorkspaceEntity>;
 type SendContext = {
   campaign: MessageCampaignWorkspaceEntity;
   person: PersonWorkspaceEntity | null;
-  claimedAt: string;
+  claimToken: string;
 };
 
 @Injectable()
@@ -35,6 +41,8 @@ export class MessageCampaignDeliveryService {
   private readonly logger = new Logger(MessageCampaignDeliveryService.name);
 
   constructor(
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
@@ -53,26 +61,15 @@ export class MessageCampaignDeliveryService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const sendContext = await this.loadSendContext({
-        data,
-        messageRepository,
-      });
+      const sendContext = await this.loadSendContext({ data });
 
       if (!isDefined(sendContext)) {
         return;
       }
 
-      try {
-        await this.deliverMessage({ data, messageRepository, sendContext });
-      } catch (error) {
-        await this.releaseClaimAfterUnexpectedFailure({
-          messageRepository,
-          messageId: data.messageId,
-          claimedAt: sendContext.claimedAt,
-        });
-
-        throw error;
-      }
+      // No release on an unexpected throw: the lease expires on its own, so
+      // the crash path and the throw path settle identically.
+      await this.deliverMessage({ data, messageRepository, sendContext });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
         workspaceId,
@@ -83,10 +80,8 @@ export class MessageCampaignDeliveryService {
 
   private async loadSendContext({
     data,
-    messageRepository,
   }: {
     data: SendCampaignEmailJobData;
-    messageRepository: MessageRepository;
   }): Promise<SendContext | null> {
     const { workspaceId, campaignId, messageId, personId } = data;
 
@@ -108,12 +103,12 @@ export class MessageCampaignDeliveryService {
       return null;
     }
 
-    const claimedAt = await this.claimMessageForSending({
-      messageRepository,
+    const claimToken = await this.claimDeliveryForSending({
+      workspaceId,
       messageId,
     });
 
-    if (!isDefined(claimedAt)) {
+    if (!isDefined(claimToken)) {
       return null;
     }
 
@@ -123,10 +118,15 @@ export class MessageCampaignDeliveryService {
     });
 
     if (campaignAfterClaim?.status === MessageCampaignStatus.CANCELED) {
-      await messageRepository.update(
-        this.buildClaimedMessageCriteria({ messageId, claimedAt }),
-        { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
-      );
+      await this.settleClaimedDelivery({
+        workspaceId,
+        messageId,
+        claimToken,
+        update: {
+          state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+          skipReason: CAMPAIGN_SKIP_REASON.CAMPAIGN_CANCELED,
+        },
+      });
 
       return null;
     }
@@ -139,7 +139,7 @@ export class MessageCampaignDeliveryService {
 
     return {
       campaign,
-      claimedAt,
+      claimToken,
       person: await personRepository.findOne({ where: { id: personId } }),
     };
   }
@@ -147,7 +147,7 @@ export class MessageCampaignDeliveryService {
   private async deliverMessage({
     data,
     messageRepository,
-    sendContext: { campaign, person, claimedAt },
+    sendContext: { campaign, person, claimToken },
   }: {
     data: SendCampaignEmailJobData;
     messageRepository: MessageRepository;
@@ -176,18 +176,22 @@ export class MessageCampaignDeliveryService {
       await this.emailBillingService.hasEmailCredits(workspaceId);
 
     if (!hasEmailCredits) {
-      await messageRepository.update(
-        this.buildClaimedMessageCriteria({ messageId, claimedAt }),
-        { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
-      );
+      await this.settleClaimedDelivery({
+        workspaceId,
+        messageId,
+        claimToken,
+        update: {
+          state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+          skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
+        },
+      });
 
       return;
     }
 
     const result = await this.sendOrRecordFailure({
-      messageRepository,
       messageId,
-      claimedAt,
+      claimToken,
       campaignId,
       workspaceId,
       emailingDomainId,
@@ -205,15 +209,22 @@ export class MessageCampaignDeliveryService {
       return;
     }
 
-    const { affected } = await messageRepository.update(
-      this.buildClaimedMessageCriteria({ messageId, claimedAt }),
-      {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
-        headerMessageId: result.messageId,
-        subject,
-        text: plainText,
+    await messageRepository.update(messageId, {
+      headerMessageId: result.messageId,
+      subject,
+      text: plainText,
+    });
+
+    const affected = await this.settleClaimedDelivery({
+      workspaceId,
+      messageId,
+      claimToken,
+      update: {
+        state: CAMPAIGN_DELIVERY_STATE.SENT,
+        providerMessageId: result.messageId,
+        sentAt: new Date(),
       },
-    );
+    });
 
     if (affected !== 1) {
       this.logger.warn(
@@ -261,17 +272,15 @@ export class MessageCampaignDeliveryService {
   }
 
   private async sendOrRecordFailure({
-    messageRepository,
     messageId,
-    claimedAt,
+    claimToken,
     campaignId,
     workspaceId,
     emailingDomainId,
     email,
   }: {
-    messageRepository: MessageRepository;
     messageId: string;
-    claimedAt: string;
+    claimToken: string;
     campaignId: string;
     workspaceId: string;
     emailingDomainId: string;
@@ -285,9 +294,9 @@ export class MessageCampaignDeliveryService {
       );
     } catch (error) {
       await this.recordSendFailure({
-        messageRepository,
+        workspaceId,
         messageId,
-        claimedAt,
+        claimToken,
         campaignId,
         error,
       });
@@ -297,26 +306,29 @@ export class MessageCampaignDeliveryService {
   }
 
   private async recordSendFailure({
-    messageRepository,
+    workspaceId,
     messageId,
-    claimedAt,
+    claimToken,
     campaignId,
     error,
   }: {
-    messageRepository: MessageRepository;
+    workspaceId: string;
     messageId: string;
-    claimedAt: string;
+    claimToken: string;
     campaignId: string;
     error: unknown;
   }): Promise<void> {
-    const { deliveryStatus, shouldRetry } = resolveCampaignSendFailure(error);
+    const { state, skipReason, failureReason, shouldRetry } =
+      resolveCampaignSendFailure(error);
 
-    await messageRepository.update(
-      this.buildClaimedMessageCriteria({ messageId, claimedAt }),
-      { deliveryStatus },
-    );
+    await this.settleClaimedDelivery({
+      workspaceId,
+      messageId,
+      claimToken,
+      update: { state, skipReason, failureReason },
+    });
 
-    if (deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED) {
+    if (state === CAMPAIGN_DELIVERY_STATE.FAILED) {
       this.logger.warn(
         `Campaign ${campaignId} send failed for message ${messageId}: ${
           error instanceof Error ? error.message : String(error)
@@ -329,67 +341,60 @@ export class MessageCampaignDeliveryService {
     }
   }
 
-  private async releaseClaimAfterUnexpectedFailure({
-    messageRepository,
-    messageId,
-    claimedAt,
-  }: {
-    messageRepository: MessageRepository;
-    messageId: string;
-    claimedAt: string;
-  }): Promise<void> {
-    await messageRepository.update(
-      this.buildClaimedMessageCriteria({ messageId, claimedAt }),
-      { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED },
-    );
-  }
-
-  private async claimMessageForSending({
-    messageRepository,
+  private async claimDeliveryForSending({
+    workspaceId,
     messageId,
   }: {
-    messageRepository: MessageRepository;
+    workspaceId: string;
     messageId: string;
   }): Promise<string | null> {
-    const { affected } = await messageRepository.update(
+    const claimToken = v4();
+
+    const { affected } = await this.campaignDeliveryRepository.update(
+      workspaceId,
       {
         id: messageId,
-        deliveryStatus: In([
-          CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-          CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+        state: In([
+          CAMPAIGN_DELIVERY_STATE.QUEUED,
+          CAMPAIGN_DELIVERY_STATE.FAILED,
         ]),
       },
-      { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING },
+      {
+        state: CAMPAIGN_DELIVERY_STATE.SENDING,
+        claimToken,
+        claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
+      },
     );
 
-    if (affected !== 1) {
-      return null;
-    }
-
-    const claimedMessage = await messageRepository.findOne({
-      where: { id: messageId },
-      select: { id: true, updatedAt: true },
-    });
-
-    return claimedMessage?.updatedAt ?? null;
+    return affected === 1 ? claimToken : null;
   }
 
-  private buildClaimedMessageCriteria({
+  private async settleClaimedDelivery({
+    workspaceId,
     messageId,
-    claimedAt,
+    claimToken,
+    update,
   }: {
+    workspaceId: string;
     messageId: string;
-    claimedAt: string;
-  }) {
-    const claimedAtMilliseconds = new Date(claimedAt).getTime();
+    claimToken: string;
+    update: Partial<
+      Pick<
+        CampaignDeliveryEntity,
+        | 'state'
+        | 'skipReason'
+        | 'failureReason'
+        | 'providerMessageId'
+        | 'sentAt'
+      >
+    >;
+  }): Promise<number> {
+    const { affected } = await this.campaignDeliveryRepository.update(
+      workspaceId,
+      { id: messageId, claimToken },
+      { ...update, claimToken: null, claimExpiresAt: null },
+    );
 
-    return {
-      id: messageId,
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING,
-      updatedAt: Between(
-        new Date(claimedAtMilliseconds).toISOString(),
-        new Date(claimedAtMilliseconds + 1).toISOString(),
-      ),
-    };
+    return affected ?? 0;
   }
 }

@@ -2,6 +2,11 @@ import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-do
 import { CAMPAIGN_MATERIALIZATION_CHUNK_SIZE } from 'src/engine/core-modules/emailing-domain/constants/campaign-materialization-chunk-size.constant';
 import { Injectable } from '@nestjs/common';
 
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
 import chunk from 'lodash.chunk';
 import { v4 } from 'uuid';
 
@@ -48,6 +53,8 @@ type MaterializeMessagesArgs = {
 @Injectable()
 export class MessageCampaignMaterializationService {
   constructor(
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     @InjectMessageQueue(MessageQueue.emailQueue)
@@ -85,28 +92,19 @@ export class MessageCampaignMaterializationService {
         recipients,
       });
 
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const existingMessages = await messageRepository.find({
-        where: { messageCampaignId: campaignId },
-        select: { id: true, deliveryStatus: true },
-      });
+      const existingDeliveries = await this.campaignDeliveryRepository.find(
+        workspaceId,
+        { where: { campaignId }, select: { id: true, state: true } },
+      );
       const existingMessageIds = new Set(
-        existingMessages.map((message) => message.id),
+        existingDeliveries.map((delivery) => delivery.id),
       );
       const queuedMessageIds = new Set(
-        existingMessages
+        existingDeliveries
           .filter(
-            (message) =>
-              message.deliveryStatus ===
-              CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+            (delivery) => delivery.state === CAMPAIGN_DELIVERY_STATE.QUEUED,
           )
-          .map((message) => message.id),
+          .map((delivery) => delivery.id),
       );
 
       const recipientsStrandedByAnEarlierAttempt = uniqueRecipients.filter(
@@ -201,6 +199,22 @@ export class MessageCampaignMaterializationService {
           temporaryExternalId: v4(),
         })),
       });
+
+      // Deliveries are written after their messages so a delivery is never
+      // claimable before the message it sends exists. The reverse just costs a
+      // re-run of this idempotent job.
+      await this.campaignDeliveryRepository.upsert(
+        workspaceId,
+        recipientsChunk.map((recipient) => ({
+          id: recipient.messageId,
+          campaignId,
+          messageId: recipient.messageId,
+          personId: recipient.personId,
+          recipientEmail: recipient.email,
+          state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+        })),
+        { conflictPaths: ['id'], skipUpdateIfNoValuesChanged: true },
+      );
     }
 
     for (const recipientsChunk of recipientChunks) {

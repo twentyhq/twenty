@@ -1,72 +1,65 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
-
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MessageCampaignDeliveryFeedbackService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
   ) {}
 
-  async recordDeliveryFailureByProviderMessageId({
+  async recordProviderOutcomeByProviderMessageId({
     workspaceId,
     providerMessageId,
-    deliveryStatus,
+    outcome,
   }: {
     workspaceId: string;
     providerMessageId: string;
-    deliveryStatus: string;
+    outcome: 'DELIVERED' | 'BOUNCED' | 'COMPLAINED';
   }): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+    const delivery = await this.campaignDeliveryRepository.findOneBy(
+      workspaceId,
+      { providerMessageId },
+    );
 
-      const message = await messageRepository.findOne({
-        where: { headerMessageId: providerMessageId },
-      });
+    if (!isDefined(delivery)) {
+      return;
+    }
 
-      if (!isDefined(message) || !isDefined(message.messageCampaignId)) {
-        return;
-      }
+    // Each outcome owns its own column, so a report that arrives late or twice
+    // writes the same value again instead of erasing a different outcome.
+    await this.campaignDeliveryRepository.update(
+      workspaceId,
+      { id: delivery.id },
+      this.buildOutcomeStamp(outcome),
+    );
 
-      const isAlreadyTerminal =
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED ||
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED;
+    await this.messageCampaignLifecycleService.scheduleStatsRefresh({
+      workspaceId,
+      campaignId: delivery.campaignId,
+    });
+  }
 
-      if (isAlreadyTerminal) {
-        return;
-      }
+  private buildOutcomeStamp(
+    outcome: 'DELIVERED' | 'BOUNCED' | 'COMPLAINED',
+  ): Partial<
+    Pick<CampaignDeliveryEntity, 'deliveredAt' | 'bouncedAt' | 'complainedAt'>
+  > {
+    const occurredAt = new Date();
 
-      const { affected } = await messageRepository.update(
-        {
-          id: message.id,
-          deliveryStatus: isDefined(message.deliveryStatus)
-            ? message.deliveryStatus
-            : IsNull(),
-        },
-        { deliveryStatus },
-      );
-
-      if (affected !== 1) {
-        return;
-      }
-
-      await this.messageCampaignLifecycleService.scheduleStatsRefresh({
-        workspaceId,
-        campaignId: message.messageCampaignId,
-      });
-    }, buildSystemAuthContext(workspaceId));
+    switch (outcome) {
+      case 'DELIVERED':
+        return { deliveredAt: occurredAt };
+      case 'BOUNCED':
+        return { bouncedAt: occurredAt };
+      case 'COMPLAINED':
+        return { complainedAt: occurredAt };
+    }
   }
 }

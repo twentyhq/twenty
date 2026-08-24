@@ -1,13 +1,17 @@
-import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
-import { CAMPAIGN_MESSAGE_CLAIM_STALE_THRESHOLD_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-message-claim-stale-threshold-ms.constant';
 import { Injectable } from '@nestjs/common';
 
-import chunk from 'lodash.chunk';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { In, LessThan } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
+import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/types/campaign-failure-reason.type';
+import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/types/campaign-skip-reason.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+import { type FindOptionsWhere, In, LessThan } from 'typeorm';
 
 import {
-  CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   REFRESH_CAMPAIGN_STATS_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
@@ -29,7 +33,6 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { computeCampaignTerminalStatus } from 'src/modules/emailing/utils/compute-campaign-terminal-status.util';
 import { readCampaignMessageCounts } from 'src/modules/emailing/utils/read-campaign-message-counts.util';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -44,6 +47,8 @@ type CampaignStatusTransition = {
 @Injectable()
 export class MessageCampaignLifecycleService {
   constructor(
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
@@ -111,11 +116,16 @@ export class MessageCampaignLifecycleService {
       );
     }
 
-    const canceledMessageCount = await this.settleMessages({
+    const canceledMessageCount = await this.settleDeliveries({
       workspaceId,
-      campaignId,
-      fromStatuses: [CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED],
-      toStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+      criteria: {
+        campaignId,
+        state: CAMPAIGN_DELIVERY_STATE.QUEUED,
+      },
+      update: {
+        state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
+        skipReason: CAMPAIGN_SKIP_REASON.CAMPAIGN_CANCELED,
+      },
     });
 
     await this.scheduleStatsRefresh({ workspaceId, campaignId });
@@ -123,6 +133,9 @@ export class MessageCampaignLifecycleService {
     return { campaignId, canceledMessageCount };
   }
 
+  // Only expired claims are reclaimed. A QUEUED delivery is not stalled, it is
+  // waiting on the queue, and failing it here is what previously let a second
+  // worker re-claim a send the first was still making.
   async failStalledMessages({
     workspaceId,
     campaignId,
@@ -130,82 +143,38 @@ export class MessageCampaignLifecycleService {
     workspaceId: string;
     campaignId: string;
   }): Promise<number> {
-    const staleSince = new Date(
-      Date.now() - CAMPAIGN_MESSAGE_CLAIM_STALE_THRESHOLD_MS,
-    ).toISOString();
-
-    const failedQueuedCount = await this.settleMessages({
+    return this.settleDeliveries({
       workspaceId,
-      campaignId,
-      fromStatuses: [CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED],
-      toStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      unchangedSince: staleSince,
+      criteria: {
+        campaignId,
+        state: CAMPAIGN_DELIVERY_STATE.SENDING,
+        claimExpiresAt: LessThan(new Date()),
+      },
+      update: {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        failureReason: CAMPAIGN_FAILURE_REASON.CLAIM_EXPIRED,
+        claimToken: null,
+        claimExpiresAt: null,
+      },
     });
-
-    const failedAbandonedClaimCount = await this.settleMessages({
-      workspaceId,
-      campaignId,
-      fromStatuses: [CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING],
-      toStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      unchangedSince: staleSince,
-    });
-
-    return failedQueuedCount + failedAbandonedClaimCount;
   }
 
-  private async settleMessages({
+  private async settleDeliveries({
     workspaceId,
-    campaignId,
-    fromStatuses,
-    toStatus,
-    unchangedSince,
+    criteria,
+    update,
   }: {
     workspaceId: string;
-    campaignId: string;
-    fromStatuses: CampaignMessageDeliveryStatus[];
-    toStatus: CampaignMessageDeliveryStatus;
-    unchangedSince?: string;
+    criteria: FindOptionsWhere<CampaignDeliveryEntity>;
+    update: QueryDeepPartialEntity<CampaignDeliveryEntity>;
   }): Promise<number> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const messageRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const settleableCriteria = {
-          messageCampaignId: campaignId,
-          deliveryStatus: In(fromStatuses),
-          ...(isDefined(unchangedSince)
-            ? { updatedAt: LessThan(unchangedSince) }
-            : {}),
-        };
-
-        const settleableMessages = await messageRepository.find({
-          where: settleableCriteria,
-          select: { id: true },
-        });
-
-        const settleableMessageIds = settleableMessages.map(
-          (message) => message.id,
-        );
-        const settledCounts: number[] = [];
-
-        for (const idsChunk of chunk(settleableMessageIds, QUERY_MAX_RECORDS)) {
-          const { affected } = await messageRepository.update(
-            { ...settleableCriteria, id: In(idsChunk) },
-            { deliveryStatus: toStatus },
-          );
-
-          settledCounts.push(affected ?? 0);
-        }
-
-        return settledCounts.reduce((total, count) => total + count, 0);
-      },
-      buildSystemAuthContext(workspaceId),
+    const { affected } = await this.campaignDeliveryRepository.update(
+      workspaceId,
+      criteria,
+      update,
     );
+
+    return affected ?? 0;
   }
 
   async finalizeCampaignIfComplete({
