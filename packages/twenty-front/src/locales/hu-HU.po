@@ -19092,7 +19092,7 @@ msgstr "Ez az érték elmentésre kerül az adatbázisba."
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "A videót nem sikerült betölteni. Töltse le a fájlt a megtekintéséhez."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

@@ -19096,7 +19096,7 @@ msgstr "Αυτή η τιμή θα αποθηκευτεί στη βάση δεδ�
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η φόρτωση αυτού του βίντεο. Παρακαλούμε κάντε λήψη του αρχείου για να το προβάλετε."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
