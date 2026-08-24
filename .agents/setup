@@ -119,6 +119,16 @@ install_dependencies() {
   yarn install --immutable
 }
 
+install_playwright_browser() {
+  cd "$REPOSITORY_ROOT/packages/twenty-e2e-testing"
+  yarn playwright install chromium
+}
+
+build_shared_package() {
+  cd "$REPOSITORY_ROOT"
+  FORCE_COLOR=false NX_DAEMON=false npx nx build twenty-shared --skip-nx-cache
+}
+
 prepare_development_environment() {
   cd "$REPOSITORY_ROOT"
   .agents/resume
@@ -137,6 +147,8 @@ prepare_development_environment() {
     cp -- packages/twenty-front/.env.example packages/twenty-front/.env
   [[ -f packages/twenty-server/.env ]] ||
     cp -- packages/twenty-server/.env.example packages/twenty-server/.env
+  [[ -f packages/twenty-e2e-testing/.env ]] ||
+    cp -- packages/twenty-e2e-testing/.env.example packages/twenty-e2e-testing/.env
 }
 
 cd "$REPOSITORY_ROOT"
@@ -144,6 +156,8 @@ run_step "Install pinned Node.js and Yarn" install_node
 run_step "Install system packages" install_system_packages
 run_step "Configure PostgreSQL for the orb" configure_postgresql
 run_step "Install JavaScript dependencies" install_dependencies
+run_step "Install Playwright Chromium" install_playwright_browser
+run_step "Build twenty-shared" build_shared_package
 run_step "Prepare the development environment" prepare_development_environment
 
 printf '\nOrb setup complete.\n'
