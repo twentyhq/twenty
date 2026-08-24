@@ -280,7 +280,7 @@ export const CalendarEventComposerFields = ({
               <TextArea
                 textAreaId="calendar-event-composer-description"
                 variant="transparent"
-                minRows={3}
+                minRows={1}
                 maxRows={8}
                 value={composerState.description}
                 placeholder={t`Add details for guests`}
