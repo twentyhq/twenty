@@ -12446,6 +12446,11 @@ msgstr "您无法从最后一位管理员那里移除管理员角色。请先分
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "您不能撤销最后一位服务器管理员的管理面板访问权限。"
 
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr ""
+
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
