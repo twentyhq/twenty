@@ -86,12 +86,12 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'monthly',
-    description: msg`Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us.`,
+    description: msg`Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM.`,
     id: 'partners',
     indexed: true,
     path: '/partners',
     priority: 0.7,
-    title: msg`Twenty Partners — Certified Open Source CRM Implementers`,
+    title: msg`Find a Twenty Partner — Certified Open Source CRM Experts`,
   },
   {
     changeFrequency: 'weekly',
