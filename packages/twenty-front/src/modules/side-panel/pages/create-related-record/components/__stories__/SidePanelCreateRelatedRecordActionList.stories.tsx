@@ -59,7 +59,7 @@ export const Default: Story = {
 
     expect(canvas.queryByText('Create note')).not.toBeInTheDocument();
     expect(canvas.getByText('Create calendar event')).toBeVisible();
-    expect(canvas.getByText('Add an email to this record first')).toBeVisible();
+    expect(canvas.getByText(/Add an email to this record first/)).toBeVisible();
 
     await userEvent.click(canvas.getByText('Create calendar event'));
 
