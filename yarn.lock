@@ -31799,6 +31799,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"front-matter@patch:front-matter@npm%3A4.0.2#~/.yarn/patches/front-matter-npm-4.0.2-e1cc0efa69.patch":
+  version: 4.0.2
+  resolution: "front-matter@patch:front-matter@npm%3A4.0.2#~/.yarn/patches/front-matter-npm-4.0.2-e1cc0efa69.patch::version=4.0.2&hash=a71d01"
+  dependencies:
+    js-yaml: "npm:^3.13.1"
+  checksum: 10c0/e4341229cd8afae77fa7466f458b5d869cc247e26c66560ee22830bf14202058c10e0de3709b0bd281495446af885a6ca9369bd1352d794672c278504b5363e5
+  languageName: node
+  linkType: hard
+
 "fs-capacitor@npm:^8.0.0":
   version: 8.0.0
   resolution: "fs-capacitor@npm:8.0.0"
