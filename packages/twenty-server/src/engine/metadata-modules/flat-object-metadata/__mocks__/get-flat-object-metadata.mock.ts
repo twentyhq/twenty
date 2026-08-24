@@ -25,6 +25,7 @@ export const getFlatObjectMetadataMock = (
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds: [],
+    pageLayoutIds: [],
     description: 'default flat object metadata description',
     icon: 'icon',
     writability: MetadataWritability.OPEN,
@@ -60,6 +61,7 @@ export const getFlatObjectMetadataMock = (
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier:
       labelIdentifierFieldMetadataId,
     imageIdentifierFieldMetadataUniversalIdentifier:

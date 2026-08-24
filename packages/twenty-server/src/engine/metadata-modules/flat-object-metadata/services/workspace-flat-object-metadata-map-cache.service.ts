@@ -14,6 +14,7 @@ import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadat
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -43,6 +44,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
     private readonly objectPermissionRepository: WorkspaceScopedRepository<ObjectPermissionEntity>,
     @InjectWorkspaceScopedRepository(SearchFieldMetadataEntity)
     private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutEntity)
+    private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
   ) {
     super();
   }
@@ -58,6 +61,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       views,
       objectPermissions,
       searchFieldMetadatas,
+      pageLayouts,
     ] = await Promise.all([
       this.objectMetadataRepository.find({
         where: { workspaceId },
@@ -88,6 +92,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       this.searchFieldMetadataRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
       }),
+      this.pageLayoutRepository.find(workspaceId, {
+        select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        withDeleted: true,
+      }),
     ]);
 
     const [
@@ -96,6 +104,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       viewsByObjectId,
       objectPermissionsByObjectId,
       searchFieldMetadatasByObjectId,
+      pageLayoutsByObjectId,
     ] = (
       [
         {
@@ -116,6 +125,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
         },
         {
           entities: searchFieldMetadatas,
+          foreignKey: 'objectMetadataId',
+        },
+        {
+          entities: pageLayouts,
           foreignKey: 'objectMetadataId',
         },
       ] as const
@@ -139,6 +152,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
             objectPermissionsByObjectId.get(objectMetadataEntity.id) || [],
           searchFieldMetadatas:
             searchFieldMetadatasByObjectId.get(objectMetadataEntity.id) || [],
+          pageLayouts: pageLayoutsByObjectId.get(objectMetadataEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
