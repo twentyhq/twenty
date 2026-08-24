@@ -11,6 +11,7 @@ on:
     branches: ['main']
     paths:
       - 'packages/twenty-website/**'
+      - '!packages/twenty-website/src/locales/**'
       - '.github/crowdin-website.yml'
       - '.github/workflows/website-i18n-push.yaml'
 

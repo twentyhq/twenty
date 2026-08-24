@@ -2831,13 +2831,48 @@ export interface MetadataTranslation {
 /** Where a resolved metadata label comes from: a workspace-authored translation, a shipped application catalog, or inheritance from the canonical value */
 export type MetadataTranslationProvenance = 'WORKSPACE' | 'SHIPPED' | 'INHERITED'
 
+export interface TimelineActivityTypeEmitThrough {
+    relationFieldUniversalIdentifier: Scalars['UUID']
+    triggerFieldUniversalIdentifiers?: Scalars['UUID'][]
+    __typename: 'TimelineActivityTypeEmitThrough'
+}
+
+export interface TimelineActivityTypeEmit {
+    on: Scalars['String']
+    objectUniversalIdentifier?: Scalars['UUID']
+    through?: TimelineActivityTypeEmitThrough
+    __typename: 'TimelineActivityTypeEmit'
+}
+
+export interface TimelineActivityType {
+    id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    name: Scalars['String']
+    label: Scalars['String']
+    emit?: TimelineActivityTypeEmit
+    /** @deprecated Use emit.on */
+    action?: Scalars['String']
+    icon?: Scalars['String']
+    /** @deprecated Use frontComponentUniversalIdentifier */
+    renderer?: Scalars['String']
+    frontComponentUniversalIdentifier?: Scalars['UUID']
+    /** @deprecated Use emit.objectUniversalIdentifier */
+    objectUniversalIdentifier?: Scalars['UUID']
+    replacesTimelineActivityTypeUniversalIdentifier?: Scalars['UUID']
+    isActive: Scalars['Boolean']
+    applicationId?: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'TimelineActivityType'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2967,6 +3002,7 @@ export interface Query {
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
+    timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
@@ -3184,6 +3220,8 @@ export interface Mutation {
     deactivateSkill: Skill
     evaluateAgentTurn: AgentTurnEvaluation
     runEvaluationInput: AgentTurn
+    updateTimelineActivityType: TimelineActivityType
+    resetTimelineActivityType: TimelineActivityType
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     signIn: AvailableWorkspacesAndAccessTokens
@@ -6210,6 +6248,44 @@ export interface MetadataTranslationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TimelineActivityTypeEmitThroughGenqlSelection{
+    relationFieldUniversalIdentifier?: boolean | number
+    triggerFieldUniversalIdentifiers?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TimelineActivityTypeEmitGenqlSelection{
+    on?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    through?: TimelineActivityTypeEmitThroughGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TimelineActivityTypeGenqlSelection{
+    id?: boolean | number
+    universalIdentifier?: boolean | number
+    name?: boolean | number
+    label?: boolean | number
+    emit?: TimelineActivityTypeEmitGenqlSelection
+    /** @deprecated Use emit.on */
+    action?: boolean | number
+    icon?: boolean | number
+    /** @deprecated Use frontComponentUniversalIdentifier */
+    renderer?: boolean | number
+    frontComponentUniversalIdentifier?: boolean | number
+    /** @deprecated Use emit.objectUniversalIdentifier */
+    objectUniversalIdentifier?: boolean | number
+    replacesTimelineActivityTypeUniversalIdentifier?: boolean | number
+    isActive?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -6360,6 +6436,7 @@ export interface QueryGenqlSelection{
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -6389,7 +6466,7 @@ export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
 
-export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isRemote?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
+export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),universalIdentifier?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isRemote?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
 
 export interface LogicFunctionIdInput {
 /** The id of the function. */
@@ -6608,6 +6685,8 @@ export interface MutationGenqlSelection{
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
+    updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
+    resetTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null), origin: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -7041,6 +7120,8 @@ export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],sel
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+
+export interface UpdateTimelineActivityTypeInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
@@ -9200,6 +9281,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const TimelineActivityTypeEmitThrough_possibleTypes: string[] = ['TimelineActivityTypeEmitThrough']
+    export const isTimelineActivityTypeEmitThrough = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmitThrough => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmitThrough"')
+      return TimelineActivityTypeEmitThrough_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityTypeEmit_possibleTypes: string[] = ['TimelineActivityTypeEmit']
+    export const isTimelineActivityTypeEmit = (obj?: { __typename?: any } | null): obj is TimelineActivityTypeEmit => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityTypeEmit"')
+      return TimelineActivityTypeEmit_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityType_possibleTypes: string[] = ['TimelineActivityType']
+    export const isTimelineActivityType = (obj?: { __typename?: any } | null): obj is TimelineActivityType => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityType"')
+      return TimelineActivityType_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
     export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
@@ -9982,7 +10087,8 @@ export const enumAllMetadataName = {
    webhook: 'webhook' as const,
    applicationVariable: 'applicationVariable' as const,
    connectionProvider: 'connectionProvider' as const,
-   searchFieldMetadata: 'searchFieldMetadata' as const
+   searchFieldMetadata: 'searchFieldMetadata' as const,
+   timelineActivityType: 'timelineActivityType' as const
 }
 
 export const enumEventLogTable = {

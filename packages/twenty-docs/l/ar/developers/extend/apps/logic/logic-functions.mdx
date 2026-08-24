@@ -713,6 +713,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **خطافات التثبيت** — معالجات ما قبل التثبيت وما بعد التثبيت وإلغاء التثبيت — تشترك في وقت التشغيل نفسه، ولكن يُصرَّح عنها بدوال تعريف خاصة بها ولا تأخذ إعدادات المشغّلات. راجع [خطافات التثبيت (Install Hooks)](/l/ar/developers/extend/apps/config/install-hooks) لمعرفة `definePreInstallLogicFunction` و `definePostInstallLogicFunction` و `defineUninstallLogicFunction`.
 </Note>
 
+## إنشاء نشاط في المخطط الزمني
+
+استخدم `createTimelineActivity()` لنشر حدث مجال صريح من دالة منطقية. عرّف الحدث أولاً باعتباره [نوع نشاط في المخطط الزمني](/l/ar/developers/extend/apps/data/timeline-activity-types)، ثم عالج النوع والكائنات باستخدام معرفاتها العامة الثابتة:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+يحوّل Twenty المعرفات العامة إلى معرّفات البيانات الوصفية الخاصة بالتثبيت، ويتحقق من أن نوع نشاط المخطط الزمني ينتمي إلى التطبيق المستدعي، ويلتقط لقطة من بيانات العرض الوصفية الخاصة به في النشاط الجديد.
+
+المدخلات المطلوبة هي `timelineActivityTypeUniversalIdentifier` و`targetObjectUniversalIdentifier` و`targetRecordId`. يمكنك أيضاً توفير `happensAt` و`properties` و`workspaceMemberId`. يتحكم `happensAt` في موضع الحدث ووقته المعروض في المخطط الزمني؛ ويكون افتراضياً وقت الإنشاء.
+
+لربط سجل آخر بالحدث، وفّر `linkedRecordId` و`linkedObjectMetadataUniversalIdentifier` معاً. يمكنك بالإضافة إلى ذلك توفير `linkedRecordCachedName` كخيار احتياطي للعرض التاريخي:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+يحتاج دور الدالة المنطقية إلى إذن كتابة على كائن `timelineActivity` القياسي. أبقِ أنواع الأحداث الصريحة غير مرتبطة بـ`action`؛ إذ إن النوع المرتبط بإجراء يتلقى بالفعل أحداث تدقيق تلقائية، وإلا فسينتج صفوفاً مكررة.
+
 ## عملاء واجهة برمجة تطبيقات مضبوطة الأنواع (`twenty-client-sdk`)
 
 توفر حزمة `twenty-client-sdk` عميلين لـ GraphQL ذوي أنواع ثابتة للتفاعل مع واجهة Twenty البرمجية من وظائفك المنطقية ومكوّنات الواجهة الأمامية.

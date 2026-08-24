@@ -421,11 +421,6 @@ msgstr "{decimals, plural, one {مثال {0} لـ {decimals} منزلة عشري
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "{deletedCount, plural, zero {تم حذف {deletedCount} وظائف بنجاح} one {تم حذف {deletedCount} وظيفة بنجاح} two {تم حذف {deletedCount} وظيفتان بنجاح} few {تم حذف {deletedCount} وظائف بنجاح} many {تم حذف {deletedCount} وظائف بنجاح} other {تم حذف {deletedCount} وظائف بنجاح}}"
 
-#. js-lingui-id: JBSWmp
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "{eventAction} a related {eventObject}"
-msgstr "{eventAction} {eventObject} ذي صلة"
-
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -1165,10 +1160,25 @@ msgstr "أضف {objectLabelSingular}"
 msgid "Add a Group"
 msgstr "إضافة مجموعة"
 
+#. js-lingui-id: z9ZemB
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a location"
+msgstr "إضافة موقع"
+
+#. js-lingui-id: h7aG+Z
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a meeting link"
+msgstr "إضافة رابط الاجتماع"
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "أضِف شركة جديدة نتواصل معها (مثلاً: الاسم، الموقع الإلكتروني، القطاع). التفاصيل: "
+
+#. js-lingui-id: Ad+JsP
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add a person with an email to this company first"
+msgstr "أضف شخصًا لديه بريد إلكتروني إلى هذه الشركة أولًا."
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1193,12 +1203,28 @@ msgid "Add a video conferencing link"
 msgstr "إضافة رابط اجتماع عبر الفيديو"
 
 #. js-lingui-id: MPPZ54
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Add account"
 msgstr "إضافة حساب"
+
+#. js-lingui-id: W5wF8J
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to the point of contact first"
+msgstr "أضف بريدًا إلكترونيًا إلى جهة الاتصال أولًا."
+
+#. js-lingui-id: LVzaHu
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to this person first"
+msgstr "أضف بريدًا إلكترونيًا إلى هذا الشخص أولًا."
+
+#. js-lingui-id: KD0hdw
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add an event title"
+msgstr "أضف عنوانًا للحدث"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1270,6 +1296,11 @@ msgstr "أضف نقاط نهاية مخصصة، وبوابات خاصة، أو �
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "إضافة مزود مخصص"
+
+#. js-lingui-id: 094J9M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add details for guests"
+msgstr "أضف تفاصيل للضيوف"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1951,6 +1982,8 @@ msgid "All application registrations across the platform, including orphaned mar
 msgstr "جميع تسجيلات التطبيقات عبر المنصة، بما في ذلك التطبيقات اليتيمة في سوق التطبيقات"
 
 #. js-lingui-id: 1kLn6M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 #: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -3410,16 +3443,37 @@ msgid "caldav.example.com"
 msgstr "caldav.example.com"
 
 #. js-lingui-id: AjVXBS
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar"
 msgstr "تقويم"
 
+#. js-lingui-id: x1X5mf
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Calendar access needs approval"
+msgstr "يتطلب الوصول إلى التقويم موافقة"
+
+#. js-lingui-id: 6kmXOY
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Calendar event created successfully"
+msgstr "تم إنشاء حدث التقويم بنجاح"
+
+#. js-lingui-id: l7HQ8A
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
+msgid "Calendar event has no start date"
+msgstr "لا يحتوي حدث التقويم على تاريخ بدء"
+
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
 msgstr "حدث التقويم غير موجود"
+
+#. js-lingui-id: rLQVsa
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Calendar events cannot be linked to this record type"
+msgstr "لا يمكن ربط أحداث التقويم بهذا النوع من السجلات"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3807,6 +3861,11 @@ msgstr "ChatGPT"
 msgid "Chats"
 msgstr "الدردشات"
 
+#. js-lingui-id: JslvtK
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check the event dates"
+msgstr "تحقق من تواريخ الحدث"
+
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
@@ -3958,6 +4017,11 @@ msgstr "تتطلّب روابط تثبيت Claude عنوان MCP URL عبر HTTP
 #: src/modules/ui/input/components/internal/date/components/DateTimePicker.tsx
 msgid "Clear"
 msgstr "مسح"
+
+#. js-lingui-id: Q2mGA7
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Clear filter"
+msgstr "مسح عامل التصفية"
 
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -4142,6 +4206,11 @@ msgstr "برمج الوظيفة الخاصة بك"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Collapse"
 msgstr "طي"
+
+#. js-lingui-id: 183A6G
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Collapse details"
+msgstr "طي التفاصيل"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -4583,6 +4652,11 @@ msgstr "ربط {appName} بحسابك"
 msgid "Connect {providerDisplayName}"
 msgstr "ربط {providerDisplayName}"
 
+#. js-lingui-id: bFJIPh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect a calendar account"
+msgstr "ربط حساب تقويم"
+
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
@@ -4597,6 +4671,11 @@ msgstr "اربط عملاء MCP إضافيين باستخدام روابط ال�
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
 msgstr "اربط مساعدي الذكاء الاصطناعي مثل Claude أو Cursor بمساحة العمل الخاصة بك عبر بروتوكول Model Context Protocol"
+
+#. js-lingui-id: TA7R1S
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
+msgstr "اربط Google أو Microsoft أو CalDAV وفعّل مزامنة التقويم قبل إنشاء حدث."
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5148,6 +5227,11 @@ msgstr "أنشئ سير عمل وعُد إلى هنا لرؤية إصدارات�
 msgid "Create a workspace"
 msgstr "إنشاء مساحة العمل"
 
+#. js-lingui-id: dpwEnu
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Create an all-day event"
+msgstr "إنشاء حدث طوال اليوم"
+
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Create an application"
@@ -5182,6 +5266,12 @@ msgstr "إنشاء عرض مخصص"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Create date field"
 msgstr "إنشاء حقل تاريخ"
+
+#. js-lingui-id: PybJS2
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Create event"
+msgstr "إنشاء حدث"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -6436,6 +6526,7 @@ msgid "Describe what you want the AI to do..."
 msgstr "صف ما تريد أن يقوم به الذكاء الاصطناعي..."
 
 #. js-lingui-id: Nu4oKW
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6563,6 +6654,7 @@ msgid "Disabled"
 msgstr "معطل"
 
 #. js-lingui-id: bzSI52
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
 msgstr "تجاهل"
@@ -6770,7 +6862,7 @@ msgid "Download file"
 msgstr "تنزيل الملف"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "تنزيل الملف"
 
@@ -7186,6 +7278,11 @@ msgstr "تم نسخ البريد الإلكتروني إلى الحافظة"
 msgid "Email Editor"
 msgstr "محرر البريد الإلكتروني"
 
+#. js-lingui-id: 6iOHIG
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Email guests an invitation"
+msgstr "إرسال دعوة عبر البريد الإلكتروني إلى الضيوف"
+
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "Email is required"
@@ -7413,6 +7510,12 @@ msgstr "ينتهي"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "عنوان URL للواجهة النهائية"
+
+#. js-lingui-id: x/6eQ0
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Ends"
+msgstr "ينتهي"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8113,6 +8216,11 @@ msgstr "توسيع"
 msgid "Expand chat"
 msgstr "توسيع الدردشة"
 
+#. js-lingui-id: xAo8pm
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Expand details"
+msgstr "توسيع التفاصيل"
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -8295,6 +8403,12 @@ msgstr "فشل في إضافة المزود"
 msgid "Failed to claim ownership."
 msgstr "فشل في المطالبة بالملكية."
 
+#. js-lingui-id: kzaVCK
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Failed to create calendar event"
+msgstr "فشل إنشاء حدث التقويم"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
 msgid "Failed to create record"
@@ -8421,6 +8535,11 @@ msgstr "فشل نقل السجل"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
 msgstr "فشل في تحليل السياق: {contextValue}"
+
+#. js-lingui-id: 8l1diy
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Failed to reconnect calendar account"
+msgstr "فشلت إعادة ربط حساب التقويم"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -8871,6 +8990,11 @@ msgstr "تصفية الدردشات"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
 msgstr "خيارات قواعد مجموعة التصفية"
+
+#. js-lingui-id: 0i36a3
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Filter timeline"
+msgstr "تصفية الجدول الزمني"
 
 #. js-lingui-id: j/O9Sh
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9493,6 +9617,12 @@ msgstr "{objectLabel} مجمَّعة"
 msgid "Grouping {objectLabel}"
 msgstr "جارٍ تجميع {objectLabel}"
 
+#. js-lingui-id: R4r4XO
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Guests"
+msgstr "الضيوف"
+
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
@@ -9700,35 +9830,53 @@ msgstr "خط فاصل أفقي"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid "Host your workspace's customizations and overrides.\n\n"
+msgid ""
+"Host your workspace's customizations and overrides.\n"
+"\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
+"\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n"
+"\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
-"#### Build your own app\n\n"
-"Scaffold a new app in one command:\n\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n"
+"\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Scaffold a new app in one command:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
+"```\n"
+"\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr "استضِف تخصيصات وتجاوزات مساحة العمل لديك.\n\n"
+msgstr ""
+"استضِف تخصيصات وتجاوزات مساحة العمل لديك.\n"
+"\n"
 "#### ما الذي يتضمنه\n"
-"يتم تجميع كل إضافة تنشئها فوق التطبيق القياسي ضمن مخصص. ويحتفظ بتغييرات المخطط، وتغييرات الواجهة، والمنطق الخاص بمساحة العمل في مكان واحد.\n\n"
+"يتم تجميع كل إضافة تنشئها فوق التطبيق القياسي ضمن مخصص. ويحتفظ بتغييرات المخطط، وتغييرات الواجهة، والمنطق الخاص بمساحة العمل في مكان واحد.\n"
+"\n"
 "- كائنات وحقول مخصصة لنموذج البيانات الخاص بك\n"
 "- العروض، وعناصر التنقل، ومخططات السجلات التي تشكّل أسلوب عمل فريقك\n"
-"- دوال المنطق، ومكوّنات الواجهة الأمامية، والوكلاء الذين يقومون بأتمتة مساحة العمل أو توسيعها\n\n"
+"- دوال المنطق، ومكوّنات الواجهة الأمامية، والوكلاء الذين يقومون بأتمتة مساحة العمل أو توسيعها\n"
+"\n"
 "#### لماذا يوجد\n"
-"استخدم هذا التطبيق للتخصيصات الخاصة بمساحة العمل التي ينبغي أن تبقى محليّة ضمن هذه المساحة.\n\n"
-"إذا كنت تهيّئ مساحة عمل واحدة لنشاط تجاري واحد، فاحتفظ بها هنا. أمّا إذا كنت تبني تطبيقًا تجاريًا قابلًا لإعادة الاستخدام وله نموذج بيانات وواجهة مستخدم وأتمتة خاصة به، ويتعيّن إصداره ومشاركته أو تثبيته عبر مساحات عمل متعددة، فأنشئ تطبيقًا مخصصًا مستقلًا بدلًا من ذلك.\n\n"
-"#### أنشئ تطبيقك الخاص\n\n"
-"ولّد هيكل تطبيق جديد بأمر واحد:\n\n"
+"استخدم هذا التطبيق للتخصيصات الخاصة بمساحة العمل التي ينبغي أن تبقى محليّة ضمن هذه المساحة.\n"
+"\n"
+"إذا كنت تهيّئ مساحة عمل واحدة لنشاط تجاري واحد، فاحتفظ بها هنا. أمّا إذا كنت تبني تطبيقًا تجاريًا قابلًا لإعادة الاستخدام وله نموذج بيانات وواجهة مستخدم وأتمتة خاصة به، ويتعيّن إصداره ومشاركته أو تثبيته عبر مساحات عمل متعددة، فأنشئ تطبيقًا مخصصًا مستقلًا بدلًا من ذلك.\n"
+"\n"
+"#### أنشئ تطبيقك الخاص\n"
+"\n"
+"ولّد هيكل تطبيق جديد بأمر واحد:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
+"```\n"
+"\n"
 "اطّلع على [دليل البدء](https://twenty.com/developers/extend/apps/getting-started) للاطلاع على الشرح الكامل، وعلى [بناء التطبيقات](https://twenty.com/developers/extend/apps/building) لواجهات برمجة التطبيقات `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: yY8wAv
@@ -10492,6 +10640,7 @@ msgid "Invalid verification code. Please try again."
 msgstr "رمز التحقق غير صالح. الرجاء المحاولة مرة أخرى."
 
 #. js-lingui-id: ZR1dJ4
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
 msgstr "الدعوات"
@@ -10779,6 +10928,16 @@ msgstr "كانبان"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban widget"
 msgstr "عنصر واجهة كانبان"
+
+#. js-lingui-id: ZlHUDM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
+msgstr "أبقِ السجل الحالي في قائمة الضيوف واترك الدعوات مفعّلة حتى يظل الحدث مرئيًا في هذا السجل."
+
+#. js-lingui-id: WOUOYg
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep this event related"
+msgstr "أبقِ هذا الحدث مرتبطًا"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -11343,16 +11502,6 @@ msgstr "عنوان URL للرابط"
 msgid "linked a {objectLabel}"
 msgstr "ربط {objectLabel}"
 
-#. js-lingui-id: JYFFGu
-#: src/modules/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent.tsx
-msgid "linked a calendar event with {labelIdentifierValue}"
-msgstr "ربط حدث تقويم بـ {labelIdentifierValue}"
-
-#. js-lingui-id: fd8C68
-#: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
-msgid "linked an email with"
-msgstr "ربط رسالة بريد إلكتروني بـ"
-
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -11512,6 +11661,8 @@ msgid "Locale"
 msgstr "اللغة والمنطقة"
 
 #. js-lingui-id: wJijgU
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Location"
 msgstr "الموقع"
@@ -12528,6 +12679,11 @@ msgstr "مزود ذكاء اصطناعي جديد"
 msgid "New Approved Access Domain"
 msgstr "نطاق وصول معتمد جديد"
 
+#. js-lingui-id: E69UDm
+#: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
+msgid "New calendar event"
+msgstr "حدث تقويم جديد"
+
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
@@ -12788,6 +12944,11 @@ msgstr "لا وصول"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "No active subscription."
 msgstr "لا يوجد اشتراك نشط."
+
+#. js-lingui-id: LM+N3q
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No activity matches the selected types."
+msgstr "لا يوجد نشاط يطابق الأنواع المحددة."
 
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -13166,6 +13327,11 @@ msgstr "لم يتم تسجيل أي سجلات لهذه الخطوة."
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No logs yet"
 msgstr "لا توجد سجلات بعد"
+
+#. js-lingui-id: WqPs8R
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No matching activity"
+msgstr "لا يوجد نشاط مطابق"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -14929,7 +15095,7 @@ msgid "Preview"
 msgstr "معاينة"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "المعاينة غير متاحة"
 
@@ -15370,6 +15536,7 @@ msgid "Recommended Models"
 msgstr "النماذج الموصى بها"
 
 #. js-lingui-id: gcoiFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15387,6 +15554,11 @@ msgstr "إعادة الاتصال وتغيير مستوى الظهور"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Reconnect needed"
 msgstr "يلزم إعادة الاتصال"
+
+#. js-lingui-id: GENn17
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Reconnect this account to grant permission to create calendar events."
+msgstr "أعِد ربط هذا الحساب لمنح إذن إنشاء أحداث التقويم."
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15747,6 +15919,11 @@ msgstr "إزالة القاعدة"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Remove rule group"
 msgstr "إزالة مجموعة القواعد"
+
+#. js-lingui-id: jCt40X
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Remove some guests before creating this event."
+msgstr "أزل بعض الضيوف قبل إنشاء هذا الحدث."
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -17094,6 +17271,7 @@ msgid "Send emails via connected accounts"
 msgstr "إرسال رسائل البريد الإلكتروني عبر الحسابات المتصلة"
 
 #. js-lingui-id: 6nwEi6
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "إرسال الدعوات"
@@ -17882,6 +18060,12 @@ msgstr "تم بدء عملية التحقق"
 msgid "Starting {scheduledChangeStartDate}"
 msgstr "اعتبارًا من {scheduledChangeStartDate}"
 
+#. js-lingui-id: W1KkjZ
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Starts"
+msgstr "يبدأ"
+
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Starts at"
@@ -18062,7 +18246,6 @@ msgid "Subject and metadata will be shared with your team."
 msgstr "سيتم مشاركة الموضوع والبيانات الوصفية مع فريقك."
 
 #. js-lingui-id: DvSvG9
-#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
 msgid "Subject not shared"
 msgstr "الموضوع غير مشترك"
@@ -18512,45 +18695,67 @@ msgstr "منطقة AWS الخاصة بـ Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid "The base data model every Twenty workspace runs on.\n\n"
-"#### What \"foundation\" means\n\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
+msgid ""
+"The base data model every Twenty workspace runs on.\n"
+"\n"
+"#### What \"foundation\" means\n"
+"\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+"\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
-"#### Build your own app\n\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
+"- **Workflows & Dashboards**: automation and reporting\n"
+"\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
-"Then inside the folder:\n\n"
+"```\n"
+"\n"
+"Then inside the folder:\n"
+"\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n\n"
+"```\n"
+"\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr "نموذج البيانات الأساسي الذي تعمل عليه كل مساحة عمل في Twenty.\n\n"
-"#### معنى \"الأساس\"\n\n"
-"كل مساحة عمل في Twenty تبدأ بهذه المجموعة من العناصر. تحدّد شكل CRM الخاص بك، بما في ذلك العلاقات والنشاط والتقارير. كل شيء آخر — بما في ذلك تطبيقات السوق ووكلاء الذكاء الاصطناعي والعناصر المخصصة — يندمج معها.\n\n"
+msgstr ""
+"نموذج البيانات الأساسي الذي تعمل عليه كل مساحة عمل في Twenty.\n"
+"\n"
+"#### معنى \"الأساس\"\n"
+"\n"
+"كل مساحة عمل في Twenty تبدأ بهذه المجموعة من العناصر. تحدّد شكل CRM الخاص بك، بما في ذلك العلاقات والنشاط والتقارير. كل شيء آخر — بما في ذلك تطبيقات السوق ووكلاء الذكاء الاصطناعي والعناصر المخصصة — يندمج معها.\n"
+"\n"
 "#### العناصر المتضمنة\n"
 "- **الأشخاص والشركات**: سجلات جهات الاتصال والحسابات\n"
 "- **الفرص**: خط مبيعاتك\n"
 "- **الملاحظات والمهام**: النشاط والمتابعات\n"
-"- **سير العمل ولوحات القيادة**: الأتمتة والتقارير\n\n"
-"أزل هذا التطبيق وباقي Twenty لن يكون له ما يبنى عليه.\n\n"
-"#### ابنِ تطبيقك الخاص\n\n"
-"وسّع Twenty بعناصرك وحقولك ودوال المنطق أو مهارات الذكاء الاصطناعي الخاصة بك. أنشئ هيكل تطبيق جديد بأمر واحد:\n\n"
+"- **سير العمل ولوحات القيادة**: الأتمتة والتقارير\n"
+"\n"
+"أزل هذا التطبيق وباقي Twenty لن يكون له ما يبنى عليه.\n"
+"\n"
+"#### ابنِ تطبيقك الخاص\n"
+"\n"
+"وسّع Twenty بعناصرك وحقولك ودوال المنطق أو مهارات الذكاء الاصطناعي الخاصة بك. أنشئ هيكل تطبيق جديد بأمر واحد:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
-"ثم داخل المجلد:\n\n"
+"```\n"
+"\n"
+"ثم داخل المجلد:\n"
+"\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n\n"
+"```\n"
+"\n"
 "راجع [دليل البدء](https://twenty.com/developers/extend/apps/getting-started) للشرح الكامل، و[بناء التطبيقات](https://twenty.com/developers/extend/apps/building) لواجهات `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: VsxjzF
@@ -18597,6 +18802,16 @@ msgstr "البريد الإلكتروني المرتبط بهذا الحساب"
 #: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "البريد الإلكتروني المرتبط بحسابك"
+
+#. js-lingui-id: WGfnFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date must be later than the start date."
+msgstr "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء."
+
+#. js-lingui-id: ThrGxX
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end time must be after the start time."
+msgstr "يجب أن يكون وقت الانتهاء بعد وقت البدء."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -18803,7 +19018,8 @@ msgstr "لا يمكن التراجع عن هذا الإجراء. سيتم إزا
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف حسابك بالكامل بشكل دائم."
 
@@ -19029,6 +19245,11 @@ msgstr "سيتم استرجاع {0} رصيدًا من مساحة العمل هذ
 msgid "This value will be saved to the database."
 msgstr "سيتم حفظ هذه القيمة في قاعدة البيانات."
 
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr "تعذر تحميل هذا الفيديو. يرجى تنزيل الملف لعرضه."
+
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
 #. placeholder {1}: nonReadableViewFieldInfo.objectLabel
@@ -19144,6 +19365,7 @@ msgid "Time format"
 msgstr "تنسيق الوقت"
 
 #. js-lingui-id: Mz2JN2
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -19154,6 +19376,11 @@ msgstr "المنطقة الزمنية"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "الجدول الزمني"
+
+#. js-lingui-id: HUJOEf
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "timeline activity type"
+msgstr "نوع نشاط الجدول الزمني"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -19187,6 +19414,8 @@ msgid "title"
 msgstr "العنوان"
 
 #. js-lingui-id: MHrjPM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -19263,6 +19492,11 @@ msgstr "طماطمي"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "غدًا"
+
+#. js-lingui-id: 1NhzqT
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Too many guests"
+msgstr "عدد الضيوف كبير جدًا"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -19979,8 +20213,6 @@ msgid "Unsupported image format"
 msgstr "صيغة صورة غير مدعومة"
 
 #. js-lingui-id: wja8aL
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-#: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
@@ -20125,6 +20357,7 @@ msgid "Update your account's configuration. Configure any combination of IMAP, S
 msgstr "قم بتحديث تكوين حسابك. قم بتكوين أي مجموعة من IMAP و SMTP و CalDAV حسب الحاجة."
 
 #. js-lingui-id: x4Xp3c
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "updated"
 msgstr "تم التحديث"
@@ -20701,6 +20934,16 @@ msgstr "المعتمدة فقط"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
 msgstr "فيديو"
+
+#. js-lingui-id: nASH9g
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video call"
+msgstr "مكالمة فيديو"
+
+#. js-lingui-id: ugEVJa
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video conferencing"
+msgstr "مؤتمرات الفيديو"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts
@@ -21745,9 +21988,11 @@ msgstr "أنت على وشك تغيير النطاق الفرعي لمساحة �
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
+msgid ""
+"You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr "لقد وصلت إلى حد الاستخدام الخاص بك. \n"
+msgstr ""
+"لقد وصلت إلى حد الاستخدام الخاص بك. \n"
 "تواصل مع فريق الدعم لدينا للترقية."
 
 #. js-lingui-id: NTyvVW
@@ -21755,9 +22000,11 @@ msgstr "لقد وصلت إلى حد الاستخدام الخاص بك. \n"
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
+msgid ""
+"You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr "لقد وصلت إلى حد الاستخدام الخاص بك.\n"
+msgstr ""
+"لقد وصلت إلى حد الاستخدام الخاص بك.\n"
 "قم بالترقية إلى {0} من الأرصدة مقابل ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

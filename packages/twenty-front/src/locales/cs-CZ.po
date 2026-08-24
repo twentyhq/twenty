@@ -421,11 +421,6 @@ msgstr "{decimals, plural, one {Např. {0} pro {decimals} desetinné místo} few
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "{deletedCount, plural, one {Úspěšně smazána {deletedCount} úloha} few {Úspěšně smazány {deletedCount} úlohy} many {Úspěšně smazáno {deletedCount} úloh} other {Úspěšně smazáno {deletedCount} úloh}}"
 
-#. js-lingui-id: JBSWmp
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-msgid "{eventAction} a related {eventObject}"
-msgstr "{eventAction} související {eventObject}"
-
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -1165,10 +1160,25 @@ msgstr "Přidat {objectLabelSingular}"
 msgid "Add a Group"
 msgstr "Přidat skupinu"
 
+#. js-lingui-id: z9ZemB
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a location"
+msgstr "Přidat místo"
+
+#. js-lingui-id: h7aG+Z
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add a meeting link"
+msgstr "Přidat odkaz na schůzku"
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Přidejte novou společnost, se kterou jsme v kontaktu (např. název, web, odvětví). Podrobnosti: "
+
+#. js-lingui-id: Ad+JsP
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add a person with an email to this company first"
+msgstr "Nejdříve k této společnosti přidejte osobu s e-mailovou adresou."
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1193,12 +1203,28 @@ msgid "Add a video conferencing link"
 msgstr "Přidat odkaz na videokonferenci"
 
 #. js-lingui-id: MPPZ54
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 msgid "Add account"
 msgstr "Přidat účet"
+
+#. js-lingui-id: W5wF8J
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to the point of contact first"
+msgstr "Nejdříve přidejte e-mailovou adresu ke kontaktní osobě."
+
+#. js-lingui-id: LVzaHu
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Add an email to this person first"
+msgstr "Nejdříve této osobě přidejte e-mailovou adresu."
+
+#. js-lingui-id: KD0hdw
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add an event title"
+msgstr "Přidat název události"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1270,6 +1296,11 @@ msgstr "Přidejte vlastní koncové body, privátní brány nebo další regiony
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "Přidat vlastního poskytovatele"
+
+#. js-lingui-id: 094J9M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Add details for guests"
+msgstr "Přidat podrobnosti pro hosty"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1951,6 +1982,8 @@ msgid "All application registrations across the platform, including orphaned mar
 msgstr "Všechny registrace aplikací napříč platformou, včetně osiřelých aplikací z Marketplace"
 
 #. js-lingui-id: 1kLn6M
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 #: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -3410,16 +3443,37 @@ msgid "caldav.example.com"
 msgstr "caldav.example.com"
 
 #. js-lingui-id: AjVXBS
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 msgid "Calendar"
 msgstr "Kalendář"
 
+#. js-lingui-id: x1X5mf
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Calendar access needs approval"
+msgstr "Přístup ke kalendáři vyžaduje schválení"
+
+#. js-lingui-id: 6kmXOY
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Calendar event created successfully"
+msgstr "Událost v kalendáři byla úspěšně vytvořena"
+
+#. js-lingui-id: l7HQ8A
+#: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
+msgid "Calendar event has no start date"
+msgstr "Událost kalendáře nemá datum začátku"
+
 #. js-lingui-id: xG4khu
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Calendar event not found"
 msgstr "Událost kalendáře nenalezena"
+
+#. js-lingui-id: rLQVsa
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+msgid "Calendar events cannot be linked to this record type"
+msgstr "Události kalendáře nelze propojit s tímto typem záznamu"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3807,6 +3861,11 @@ msgstr "ChatGPT"
 msgid "Chats"
 msgstr "Chaty"
 
+#. js-lingui-id: JslvtK
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check the event dates"
+msgstr "Zkontrolujte data události"
+
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
@@ -3958,6 +4017,11 @@ msgstr "Instalační odkazy pro Claude vyžadují HTTPS MCP URL."
 #: src/modules/ui/input/components/internal/date/components/DateTimePicker.tsx
 msgid "Clear"
 msgstr "Vymazat"
+
+#. js-lingui-id: Q2mGA7
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Clear filter"
+msgstr "Vymazat filtr"
 
 #. js-lingui-id: u8JHrO
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
@@ -4142,6 +4206,11 @@ msgstr "Naprogramujte svou funkci"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Collapse"
 msgstr "Sbalit"
+
+#. js-lingui-id: 183A6G
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Collapse details"
+msgstr "Skrýt detaily"
 
 #. js-lingui-id: 086gvz
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
@@ -4583,6 +4652,11 @@ msgstr "Připojit {appName} k vašemu účtu"
 msgid "Connect {providerDisplayName}"
 msgstr "Připojit {providerDisplayName}"
 
+#. js-lingui-id: bFJIPh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect a calendar account"
+msgstr "Připojit účet kalendáře"
+
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
 msgid "Connect a new account to your workspace"
@@ -4597,6 +4671,11 @@ msgstr "Propojte další MCP klienty pomocí instalačních odkazů nebo dokumen
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
 msgstr "Připojte asistenty AI jako Claude nebo Cursor ke svému pracovnímu prostoru prostřednictvím protokolu Model Context Protocol."
+
+#. js-lingui-id: TA7R1S
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
+msgstr "Připojte Google, Microsoft nebo CalDAV a před vytvořením události povolte synchronizaci kalendáře."
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5148,6 +5227,11 @@ msgstr "Vytvořte workflow a vraťte se zde pro zobrazení jeho verzí"
 msgid "Create a workspace"
 msgstr "Vytvořte pracovní prostor"
 
+#. js-lingui-id: dpwEnu
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Create an all-day event"
+msgstr "Vytvořit celodenní událost"
+
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Create an application"
@@ -5182,6 +5266,12 @@ msgstr "Vytvořit vlastní zobrazení"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 msgid "Create date field"
 msgstr "Vytvořit pole s datem"
+
+#. js-lingui-id: PybJS2
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Create event"
+msgstr "Vytvořit událost"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -6436,6 +6526,7 @@ msgid "Describe what you want the AI to do..."
 msgstr "Popište, co chcete, aby AI dělalo..."
 
 #. js-lingui-id: Nu4oKW
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6563,6 +6654,7 @@ msgid "Disabled"
 msgstr "Neaktivní"
 
 #. js-lingui-id: bzSI52
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
 msgstr "Zahodit"
@@ -6770,7 +6862,7 @@ msgid "Download file"
 msgstr "Stáhnout soubor"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Stáhnout soubor"
 
@@ -7186,6 +7278,11 @@ msgstr "Email zkopírován do schránky"
 msgid "Email Editor"
 msgstr "Editor e-mailu"
 
+#. js-lingui-id: 6iOHIG
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Email guests an invitation"
+msgstr "Poslat hostům pozvánku e-mailem"
+
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "Email is required"
@@ -7413,6 +7510,12 @@ msgstr "Končí"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "URL koncového bodu"
+
+#. js-lingui-id: x/6eQ0
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Ends"
+msgstr "Končí"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8113,6 +8216,11 @@ msgstr "Rozbalit"
 msgid "Expand chat"
 msgstr "Rozbalit chat"
 
+#. js-lingui-id: xAo8pm
+#: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
+msgid "Expand details"
+msgstr "Zobrazit detaily"
+
 #. js-lingui-id: /QYKta
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem.tsx
 msgid "Expand folder"
@@ -8295,6 +8403,12 @@ msgstr "Nepodařilo se přidat poskytovatele"
 msgid "Failed to claim ownership."
 msgstr "Vlastnictví se nepodařilo nárokovat."
 
+#. js-lingui-id: kzaVCK
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+#: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+msgid "Failed to create calendar event"
+msgstr "Nepodařilo se vytvořit událost v kalendáři"
+
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
 msgid "Failed to create record"
@@ -8421,6 +8535,11 @@ msgstr "Záznam se nepodařilo přesunout"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
 msgstr "Nepodařilo se zpracovat kontext: {contextValue}"
+
+#. js-lingui-id: 8l1diy
+#: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
+msgid "Failed to reconnect calendar account"
+msgstr "Nepodařilo se znovu připojit účet kalendáře"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -8871,6 +8990,11 @@ msgstr "Filtrovat chaty"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
 msgstr "Možnosti pravidel skupiny filtru"
+
+#. js-lingui-id: 0i36a3
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+msgid "Filter timeline"
+msgstr "Filtrovat časovou osu"
 
 #. js-lingui-id: j/O9Sh
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
@@ -9493,6 +9617,12 @@ msgstr "Seskupeno {objectLabel}"
 msgid "Grouping {objectLabel}"
 msgstr "Seskupování {objectLabel}"
 
+#. js-lingui-id: R4r4XO
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Guests"
+msgstr "Hosté"
+
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
@@ -9700,35 +9830,53 @@ msgstr "Vodorovná oddělovací čára"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid "Host your workspace's customizations and overrides.\n\n"
+msgid ""
+"Host your workspace's customizations and overrides.\n"
+"\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
+"\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n"
+"\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
-"#### Build your own app\n\n"
-"Scaffold a new app in one command:\n\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n"
+"\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Scaffold a new app in one command:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
+"```\n"
+"\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr "Hostujte přizpůsobení a přepisy svého pracovního prostoru.\n\n"
+msgstr ""
+"Hostujte přizpůsobení a přepisy svého pracovního prostoru.\n"
+"\n"
 "#### Co obsahuje\n"
-"Každé rozšíření, které vytvoříte nad standardní aplikací, je seskupeno pod aplikací Custom. Uchovává změny schématu, změny rozhraní a logiku specifickou pro pracovní prostor na jednom místě.\n\n"
+"Každé rozšíření, které vytvoříte nad standardní aplikací, je seskupeno pod aplikací Custom. Uchovává změny schématu, změny rozhraní a logiku specifickou pro pracovní prostor na jednom místě.\n"
+"\n"
 "- Vlastní objekty a pole pro váš datový model\n"
 "- Zobrazení, navigační položky a rozvržení záznamů, která formují způsob práce vašeho týmu\n"
-"- Logické funkce, frontendové komponenty a agenti, kteří automatizují nebo rozšiřují pracovní prostor\n\n"
+"- Logické funkce, frontendové komponenty a agenti, kteří automatizují nebo rozšiřují pracovní prostor\n"
+"\n"
 "#### Proč existuje\n"
-"Tuto aplikaci použijte pro přizpůsobení specifická pro pracovní prostor, která mají zůstat lokálně v tomto pracovním prostoru.\n\n"
-"Pokud upravujete jeden pracovní prostor pro jednu firmu, ponechte to zde. Pokud vytváříte znovupoužitelnou obchodní aplikaci s vlastním datovým modelem, UI a automatizací, kterou je třeba verzovat, sdílet nebo instalovat napříč pracovními prostory, vytvořte místo toho samostatnou aplikaci.\n\n"
-"#### Vytvořte si vlastní aplikaci\n\n"
-"Vytvořte kostru nové aplikace jediným příkazem:\n\n"
+"Tuto aplikaci použijte pro přizpůsobení specifická pro pracovní prostor, která mají zůstat lokálně v tomto pracovním prostoru.\n"
+"\n"
+"Pokud upravujete jeden pracovní prostor pro jednu firmu, ponechte to zde. Pokud vytváříte znovupoužitelnou obchodní aplikaci s vlastním datovým modelem, UI a automatizací, kterou je třeba verzovat, sdílet nebo instalovat napříč pracovními prostory, vytvořte místo toho samostatnou aplikaci.\n"
+"\n"
+"#### Vytvořte si vlastní aplikaci\n"
+"\n"
+"Vytvořte kostru nové aplikace jediným příkazem:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
+"```\n"
+"\n"
 "Podívejte se na [průvodce Začínáme](https://twenty.com/developers/extend/apps/getting-started) pro kompletní návod a na [Vytváření aplikací](https://twenty.com/developers/extend/apps/building) pro rozhraní API `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: yY8wAv
@@ -10492,6 +10640,7 @@ msgid "Invalid verification code. Please try again."
 msgstr "Neplatný ověřovací kód. Prosím, zkuste to znovu."
 
 #. js-lingui-id: ZR1dJ4
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
 msgid "Invitations"
 msgstr "Pozvánky"
@@ -10779,6 +10928,16 @@ msgstr "Kanban"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban widget"
 msgstr "Kanbanový widget"
+
+#. js-lingui-id: ZlHUDM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
+msgstr "Ponechte aktuální záznam v seznamu hostů a nechte pozvánky zapnuté, aby událost zůstala u tohoto záznamu viditelná."
+
+#. js-lingui-id: WOUOYg
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Keep this event related"
+msgstr "Zachovat propojení této události"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -11343,16 +11502,6 @@ msgstr "URL odkazu"
 msgid "linked a {objectLabel}"
 msgstr "propojil(a) {objectLabel}"
 
-#. js-lingui-id: JYFFGu
-#: src/modules/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent.tsx
-msgid "linked a calendar event with {labelIdentifierValue}"
-msgstr "propojil(a) událost kalendáře s {labelIdentifierValue}"
-
-#. js-lingui-id: fd8C68
-#: src/modules/activities/timeline-activities/rows/message/components/EventRowMessage.tsx
-msgid "linked an email with"
-msgstr "propojil(a) e-mail s"
-
 #. js-lingui-id: 82kQhK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -11512,6 +11661,8 @@ msgid "Locale"
 msgstr "Místní nastavení"
 
 #. js-lingui-id: wJijgU
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Location"
 msgstr "Místo"
@@ -12528,6 +12679,11 @@ msgstr "Nový poskytovatel AI"
 msgid "New Approved Access Domain"
 msgstr "Nová schválená přístupová doména"
 
+#. js-lingui-id: E69UDm
+#: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
+msgid "New calendar event"
+msgstr "Nová událost v kalendáři"
+
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
@@ -12788,6 +12944,11 @@ msgstr "Žádný přístup"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "No active subscription."
 msgstr "Žádné aktivní předplatné."
+
+#. js-lingui-id: LM+N3q
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No activity matches the selected types."
+msgstr "Žádná aktivita neodpovídá vybraným typům."
 
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -13166,6 +13327,11 @@ msgstr "Pro tento krok nebyly zaznamenány žádné záznamy."
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No logs yet"
 msgstr ""
+
+#. js-lingui-id: WqPs8R
+#: src/modules/activities/timeline-activities/components/EventList.tsx
+msgid "No matching activity"
+msgstr "Žádná odpovídající aktivita"
 
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
@@ -14929,7 +15095,7 @@ msgid "Preview"
 msgstr "Náhled"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "Náhled není k dispozici"
 
@@ -15370,6 +15536,7 @@ msgid "Recommended Models"
 msgstr "Doporučené modely"
 
 #. js-lingui-id: gcoiFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15387,6 +15554,11 @@ msgstr "Znovu se připojit a změnit viditelnost"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Reconnect needed"
 msgstr "Je vyžadováno opětovné připojení"
+
+#. js-lingui-id: GENn17
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Reconnect this account to grant permission to create calendar events."
+msgstr "Znovu připojte tento účet, abyste povolili vytváření událostí kalendáře."
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15747,6 +15919,11 @@ msgstr "Odstranit pravidlo"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Remove rule group"
 msgstr "Odstranit skupinu pravidel"
+
+#. js-lingui-id: jCt40X
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Remove some guests before creating this event."
+msgstr "Před vytvořením této události odeberte některé hosty."
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -17094,6 +17271,7 @@ msgid "Send emails via connected accounts"
 msgstr "Odesílat e-maily prostřednictvím připojených účtů"
 
 #. js-lingui-id: 6nwEi6
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Send invitations"
 msgstr "Odeslat pozvánky"
@@ -17882,6 +18060,12 @@ msgstr "Zahájen proces ověřování"
 msgid "Starting {scheduledChangeStartDate}"
 msgstr "Od {scheduledChangeStartDate}"
 
+#. js-lingui-id: W1KkjZ
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Starts"
+msgstr "Začíná"
+
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Starts at"
@@ -18062,7 +18246,6 @@ msgid "Subject and metadata will be shared with your team."
 msgstr "Předmět a metadata budou sdíleny s vaším týmem."
 
 #. js-lingui-id: DvSvG9
-#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
 msgid "Subject not shared"
 msgstr "Předmět nesdílen"
@@ -18512,45 +18695,67 @@ msgstr "Region AWS pro Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid "The base data model every Twenty workspace runs on.\n\n"
-"#### What \"foundation\" means\n\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
+msgid ""
+"The base data model every Twenty workspace runs on.\n"
+"\n"
+"#### What \"foundation\" means\n"
+"\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+"\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
-"#### Build your own app\n\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
+"- **Workflows & Dashboards**: automation and reporting\n"
+"\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
-"Then inside the folder:\n\n"
+"```\n"
+"\n"
+"Then inside the folder:\n"
+"\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n\n"
+"```\n"
+"\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr "Základní datový model, na kterém běží každý pracovní prostor Twenty.\n\n"
-"#### Co znamená \"základ\"\n\n"
-"Každý pracovní prostor Twenty začíná touto sadou objektů. Ty definují podobu vašeho CRM včetně vztahů, aktivit a reportování. Vše ostatní, včetně aplikací z marketplace, agentů AI a vlastních objektů, se do nich zapojuje.\n\n"
+msgstr ""
+"Základní datový model, na kterém běží každý pracovní prostor Twenty.\n"
+"\n"
+"#### Co znamená \"základ\"\n"
+"\n"
+"Každý pracovní prostor Twenty začíná touto sadou objektů. Ty definují podobu vašeho CRM včetně vztahů, aktivit a reportování. Vše ostatní, včetně aplikací z marketplace, agentů AI a vlastních objektů, se do nich zapojuje.\n"
+"\n"
 "#### Zahrnuté objekty\n"
 "- **Lidé a společnosti**: záznamy kontaktů a účtů\n"
 "- **Příležitosti**: vaše prodejní pipeline\n"
 "- **Poznámky a úkoly**: aktivity a navazující kroky\n"
-"- **Pracovní postupy a řídicí panely**: automatizace a reportování\n\n"
-"Když tuto aplikaci odstraníte, zbytku Twenty nezůstane nic, na co by se mohl napojit.\n\n"
-"#### Vytvořte si vlastní aplikaci\n\n"
-"Rozšiřte Twenty vlastními objekty, poli, logickými funkcemi nebo dovednostmi AI. Vytvořte kostru nové aplikace jediným příkazem:\n\n"
+"- **Pracovní postupy a řídicí panely**: automatizace a reportování\n"
+"\n"
+"Když tuto aplikaci odstraníte, zbytku Twenty nezůstane nic, na co by se mohl napojit.\n"
+"\n"
+"#### Vytvořte si vlastní aplikaci\n"
+"\n"
+"Rozšiřte Twenty vlastními objekty, poli, logickými funkcemi nebo dovednostmi AI. Vytvořte kostru nové aplikace jediným příkazem:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
-"Poté uvnitř složky:\n\n"
+"```\n"
+"\n"
+"Poté uvnitř složky:\n"
+"\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n\n"
+"```\n"
+"\n"
 "Podívejte se na [průvodce Začínáme](https://twenty.com/developers/extend/apps/getting-started) pro kompletní návod a na [Vytváření aplikací](https://twenty.com/developers/extend/apps/building) pro rozhraní API `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: VsxjzF
@@ -18597,6 +18802,16 @@ msgstr ""
 #: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Email spojený s vaším účtem"
+
+#. js-lingui-id: WGfnFh
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date must be later than the start date."
+msgstr "Datum ukončení musí být později než datum zahájení."
+
+#. js-lingui-id: ThrGxX
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end time must be after the start time."
+msgstr "Čas ukončení musí být po čase zahájení."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -18803,7 +19018,8 @@ msgstr "Tuto akci nelze vrátit zpět. Tento člen bude odstraněn a odebrán z 
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Tato akce je nevratná. Tímto bude váš účet trvale smazán."
 
@@ -19029,6 +19245,11 @@ msgstr "To okamžitě odebere z tohoto pracovního prostoru {0} kreditů. Zruše
 msgid "This value will be saved to the database."
 msgstr "Tato hodnota bude uložena do databáze."
 
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr "Toto video se nepodařilo načíst. Pro zobrazení si soubor stáhněte."
+
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
 #. placeholder {1}: nonReadableViewFieldInfo.objectLabel
@@ -19144,6 +19365,7 @@ msgid "Time format"
 msgstr "Formát času"
 
 #. js-lingui-id: Mz2JN2
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -19154,6 +19376,11 @@ msgstr "Časové pásmo"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "Časová osa"
+
+#. js-lingui-id: HUJOEf
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "timeline activity type"
+msgstr "typ aktivity na časové ose"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -19187,6 +19414,8 @@ msgid "title"
 msgstr "název"
 
 #. js-lingui-id: MHrjPM
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -19263,6 +19492,11 @@ msgstr "Rajčatová"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Zítra"
+
+#. js-lingui-id: 1NhzqT
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Too many guests"
+msgstr "Příliš mnoho hostů"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -19979,8 +20213,6 @@ msgid "Unsupported image format"
 msgstr "Nepodporovaný formát obrázku"
 
 #. js-lingui-id: wja8aL
-#: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
-#: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
@@ -20125,6 +20357,7 @@ msgid "Update your account's configuration. Configure any combination of IMAP, S
 msgstr "Aktualizujte konfiguraci vašeho účtu. Nastavte libovolnou kombinaci IMAP, SMTP a CalDAV podle potřeby."
 
 #. js-lingui-id: x4Xp3c
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "updated"
 msgstr "aktualizováno"
@@ -20701,6 +20934,16 @@ msgstr "Pouze prověřené"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
 msgstr "Video"
+
+#. js-lingui-id: nASH9g
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video call"
+msgstr "Videohovor"
+
+#. js-lingui-id: ugEVJa
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Video conferencing"
+msgstr "Videokonference"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts
@@ -21745,9 +21988,11 @@ msgstr "Chystáte se změnit subdoménu své pracovní oblasti. Tato akce odhlá
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
+msgid ""
+"You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr "Dosáhli jste svého limitu využití. \n"
+msgstr ""
+"Dosáhli jste svého limitu využití. \n"
 "Kontaktujte náš tým podpory kvůli navýšení plánu."
 
 #. js-lingui-id: NTyvVW
@@ -21755,9 +22000,11 @@ msgstr "Dosáhli jste svého limitu využití. \n"
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
+msgid ""
+"You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr "Dosáhli jste svého limitu využití. \n"
+msgstr ""
+"Dosáhli jste svého limitu využití. \n"
 "Přejděte na {0} kreditů za ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

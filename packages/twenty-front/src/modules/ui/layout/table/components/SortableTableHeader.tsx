@@ -44,23 +44,15 @@ export const SortableTableHeader = ({
 
   const isSortOnThisField = sortValue?.fieldName === fieldName;
 
-  const sortDirection = isSortOnThisField ? sortValue.orderBy : null;
+  const isAsc = isSortOnThisField && sortValue.direction === 'asc';
+  const isDesc = isSortOnThisField && sortValue.direction === 'desc';
 
-  const isAsc =
-    sortDirection === 'AscNullsLast' || sortDirection === 'AscNullsFirst';
-  const isDesc =
-    sortDirection === 'DescNullsLast' || sortDirection === 'DescNullsFirst';
-
-  const isSortActive = isAsc || isDesc;
+  const isSortActive = isSortOnThisField;
 
   const handleClick = () => {
     setSortedFieldByTable({
       fieldName,
-      orderBy: isSortOnThisField
-        ? sortValue.orderBy === 'AscNullsLast'
-          ? 'DescNullsLast'
-          : 'AscNullsLast'
-        : 'DescNullsLast',
+      direction: isDesc ? 'asc' : 'desc',
     });
   };
 

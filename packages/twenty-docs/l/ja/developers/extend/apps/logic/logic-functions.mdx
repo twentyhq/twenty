@@ -714,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **インストールフック** — pre-install、post-install、uninstall の各ハンドラー — はこのランタイムを共有しますが、それぞれ独自の define 関数で宣言され、トリガー設定は受け取りません。 `definePreInstallLogicFunction`、`definePostInstallLogicFunction`、`defineUninstallLogicFunction` については、[インストールフック](/l/ja/developers/extend/apps/config/install-hooks) を参照してください。
 </Note>
 
+## タイムラインアクティビティを作成する
+
+`createTimelineActivity()` を使用して、ロジック関数から明示的なドメインイベントを公開します。 まずイベントを[タイムラインアクティビティタイプ](/l/ja/developers/extend/apps/data/timeline-activity-types)として定義し、次に安定したユニバーサル識別子でタイプとオブジェクトを指定します:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty はユニバーサル識別子をインストール固有のメタデータ ID に解決し、タイムラインアクティビティタイプが呼び出し元のアプリに属していることを検証して、新しいアクティビティにその表示メタデータのスナップショットを保存します。
+
+必須の入力は `timelineActivityTypeUniversalIdentifier`、`targetObjectUniversalIdentifier`、および `targetRecordId` です。 `happensAt`、`properties`、および `workspaceMemberId` も指定できます。 `happensAt` はタイムライン内のイベントの位置と表示時刻を制御します。デフォルトは作成時刻です。
+
+別のレコードをイベントに関連付けるには、`linkedRecordId` と `linkedObjectMetadataUniversalIdentifier` を一緒に指定します。 履歴表示用のフォールバックとして、`linkedRecordCachedName` を追加で指定することもできます:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+ロジック関数のロールには、標準の `timelineActivity` オブジェクトに対する書き込み権限が必要です。 明示的なイベントタイプは `action` にバインドしないでください。アクションにバインドされたタイプはすでに自動監査イベントを受け取るため、そうしない場合は重複した行が生成されます。
+
 ## 型付き API クライアント（`twenty-client-sdk`）
 
 `twenty-client-sdk` パッケージは、ロジック関数やフロントコンポーネントから Twenty API とやり取りするための、型付き GraphQL クライアントを 2 つ提供します。

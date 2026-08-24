@@ -84,6 +84,29 @@ export default defineField({
 **순환 임포트:** 두 관계 필드는 서로의 `universalIdentifier`를 참조합니다. 순환 임포트 문제를 피하려면, 각 파일에서 필드 ID를 명명된 상수로 export하고 다른 파일에서 import하세요. 빌드 시스템은 컴파일 시점에 이를 해결합니다.
 </Note>
 
+## 중간 관계들
+
+중간 객체는 하나의 소스 레코드를 하나 이상의 대상 레코드에 연결합니다. 예를 들어, `PostCardRecipient`는 `postCard` 관계와 `recipient` 관계를 모두 포함할 수 있습니다. 소스 객체의 `ONE_TO_MANY` 필드에서 `junctionTargetFieldUniversalIdentifier`를 대상 객체를 가리키는 중간 객체의 관계 필드로 설정합니다:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID`는 중간 객체의 `MANY_TO_ONE` 또는 morph 관계를 식별해야 합니다. [타임라인 활동 팬아웃](/l/ko/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events)과 같은 기능이 중간 객체를 순회할 때 어떤 관련 레코드가 대상인지 Twenty에 알려 줍니다.
+
 ## 표준 객체와의 관계 설정
 
 내장 Twenty 객체(Person, Company 등)와 관계를 만들려면 `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`를 사용하세요:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## 관계 필드 속성
 
-| 속성                                                | 필수               | 설명                                                                    |
-| ------------------------------------------------- | ---------------- | --------------------------------------------------------------------- |
-| `type`                                            | 예                | `FieldType.RELATION`이어야 함                                             |
-| `relationTargetObjectMetadataUniversalIdentifier` | 예                | 대상 객체의 `universalIdentifier`                                          |
-| `relationTargetFieldMetadataUniversalIdentifier`  | 예                | 대상 객체의 일치하는 필드의 `universalIdentifier`                                 |
-| `universalSettings.relationType`                  | 예                | `RelationType.MANY_TO_ONE` 또는 `RelationType.ONE_TO_MANY`              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE에만 해당 | 참조된 레코드가 삭제될 때의 동작: `CASCADE`, `SET_NULL`, `RESTRICT`, 또는 `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE에만 해당 | 외래 키에 대한 데이터베이스 컬럼 이름(예: `postCardId`)                                |
+| 속성                                                         | 필수                  | 설명                                                                    |
+| ---------------------------------------------------------- | ------------------- | --------------------------------------------------------------------- |
+| `type`                                                     | 예                   | `FieldType.RELATION`이어야 함                                             |
+| `relationTargetObjectMetadataUniversalIdentifier`          | 예                   | 대상 객체의 `universalIdentifier`                                          |
+| `relationTargetFieldMetadataUniversalIdentifier`           | 예                   | 대상 객체의 일치하는 필드의 `universalIdentifier`                                 |
+| `universalSettings.relationType`                           | 예                   | `RelationType.MANY_TO_ONE` 또는 `RelationType.ONE_TO_MANY`              |
+| `universalSettings.onDelete`                               | MANY_TO_ONE에만 해당    | 참조된 레코드가 삭제될 때의 동작: `CASCADE`, `SET_NULL`, `RESTRICT`, 또는 `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | MANY_TO_ONE에만 해당    | 외래 키에 대한 데이터베이스 컬럼 이름(예: `postCardId`)                                |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | 중간 `ONE_TO_MANY` 전용 | 팬아웃 대상을 가리키는 중간 객체의 관계 필드                                             |
 
 ## 인라인 관계 필드
 

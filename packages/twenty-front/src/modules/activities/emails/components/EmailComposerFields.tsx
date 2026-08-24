@@ -7,8 +7,10 @@ import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { ComposerHeader } from '@/activities/components/ComposerHeader';
+import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
-import { EmailComposerFieldRow } from '@/activities/emails/components/EmailComposerFieldRow';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
@@ -23,7 +25,6 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { Select } from '@/ui/input/components/Select';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
@@ -35,14 +36,6 @@ const StyledFieldsContainer = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
-  width: 100%;
-`;
-
-const StyledHeaderRows = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  display: flex;
-  flex-direction: column;
   width: 100%;
 `;
 
@@ -61,22 +54,6 @@ const StyledCcBccToggle = styled.button`
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.color.blue};
     outline-offset: 2px;
-  }
-`;
-
-const StyledSubjectInput = styled.input`
-  background: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  outline: none;
-  padding: 0;
-  width: 100%;
-
-  &::placeholder {
-    ${FORM_FIELD_PLACEHOLDER_STYLES}
   }
 `;
 
@@ -223,9 +200,9 @@ export const EmailComposerFields = ({
           onDragMove={handlers.onDragMove}
           onDragEnd={handlers.onDragEnd}
         >
-          <StyledHeaderRows>
+          <ComposerHeader>
             {hasMultipleSenders && (
-              <EmailComposerFieldRow label={t`From`}>
+              <ComposerFieldRow label={t`From`}>
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
@@ -233,9 +210,9 @@ export const EmailComposerFields = ({
                   options={senderOptions}
                   onChange={handleSenderChange}
                 />
-              </EmailComposerFieldRow>
+              </ComposerFieldRow>
             )}
-            <EmailComposerFieldRow
+            <ComposerFieldRow
               label={t`To`}
               trailing={
                 !areCcBccFieldsVisible && (
@@ -257,10 +234,10 @@ export const EmailComposerFields = ({
                 excludedSuggestionKeys={allRecipientKeys}
                 contextRecord={contextRecord}
               />
-            </EmailComposerFieldRow>
+            </ComposerFieldRow>
             {areCcBccFieldsVisible && (
               <>
-                <EmailComposerFieldRow label={t`Cc`}>
+                <ComposerFieldRow label={t`Cc`}>
                   <EmailRecipientsFieldInput
                     fieldId="cc"
                     draggedSourceIndices={getDraggedIndicesForField('cc')}
@@ -271,8 +248,8 @@ export const EmailComposerFields = ({
                     excludedSuggestionKeys={allRecipientKeys}
                     contextRecord={contextRecord}
                   />
-                </EmailComposerFieldRow>
-                <EmailComposerFieldRow label={t`Bcc`}>
+                </ComposerFieldRow>
+                <ComposerFieldRow label={t`Bcc`}>
                   <EmailRecipientsFieldInput
                     fieldId="bcc"
                     draggedSourceIndices={getDraggedIndicesForField('bcc')}
@@ -283,11 +260,11 @@ export const EmailComposerFields = ({
                     excludedSuggestionKeys={allRecipientKeys}
                     contextRecord={contextRecord}
                   />
-                </EmailComposerFieldRow>
+                </ComposerFieldRow>
               </>
             )}
-            <EmailComposerFieldRow label={t`Subject`}>
-              <StyledSubjectInput
+            <ComposerFieldRow label={t`Subject`}>
+              <StyledComposerTextInput
                 type="text"
                 aria-label={t`Subject`}
                 defaultValue={composerState.initialSubject}
@@ -295,8 +272,8 @@ export const EmailComposerFields = ({
                   composerState.setSubject(event.target.value)
                 }
               />
-            </EmailComposerFieldRow>
-          </StyledHeaderRows>
+            </ComposerFieldRow>
+          </ComposerHeader>
         </DragDropProvider>
       </DragDropItemDndContext.Provider>
       {composerState.exceedsRecipientLimit && (

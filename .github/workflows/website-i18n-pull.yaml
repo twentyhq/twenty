@@ -87,6 +87,9 @@ jobs:
       - name: Fix file permissions
         run: sudo chown -R runner:docker .
 
+      - name: Normalize downloaded catalogs to lingui format
+        run: npx nx run twenty-website:lingui:extract
+
       - name: Compile website translations
         id: compile_translations
         run: |
