@@ -15,7 +15,8 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-import { type FileRangeResponse } from 'src/engine/core-modules/file/types/file-range-response.type';
+import { FileRangeNotSatisfiableException } from 'src/engine/core-modules/file/file.exception';
+import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -50,7 +51,7 @@ export class FileService {
     applicationId: string;
     filepath: string;
     fileFolder: FileFolder;
-  }): Promise<FileRangeResponse | null> {
+  }): Promise<FileResponse | null> {
     const application = await this.applicationRepository.findOne({
       where: {
         id: applicationId,
@@ -153,7 +154,7 @@ export class FileService {
     workspaceId: string;
     fileFolder: FileFolder;
     rangeHeader?: string;
-  }): Promise<FileRangeResponse | null> {
+  }): Promise<FileResponse | null> {
     const file = await this.fileRepository.findOne(params.workspaceId, {
       where: {
         id: params.fileId,
@@ -208,7 +209,7 @@ export class FileService {
     mimeType: string;
     fileSizeInBytes?: number;
     rangeHeader?: string;
-  }): Promise<FileRangeResponse | null> {
+  }): Promise<FileResponse | null> {
     const resourceIdentifier = {
       resourcePath,
       fileFolder,
@@ -244,7 +245,7 @@ export class FileService {
         });
 
         if (resolvedByteRange.type === 'unsatisfiable') {
-          return { type: 'unsatisfiable-range', fileSizeInBytes };
+          throw new FileRangeNotSatisfiableException(fileSizeInBytes);
         }
 
         if (resolvedByteRange.type === 'partial') {
@@ -254,11 +255,10 @@ export class FileService {
           });
 
           return {
-            type: 'partial-stream',
+            type: 'stream',
             stream,
             mimeType,
-            byteRange: resolvedByteRange.byteRange,
-            fileSizeInBytes,
+            contentRange: { ...resolvedByteRange.byteRange, fileSizeInBytes },
           };
         }
       }

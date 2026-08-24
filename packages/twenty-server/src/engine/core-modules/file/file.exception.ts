@@ -13,6 +13,7 @@ export const FileExceptionCode = appendCommonExceptionCode({
   FILE_NOT_FOUND: 'FILE_NOT_FOUND',
   INVALID_FILE_FOLDER: 'INVALID_FILE_FOLDER',
   TEMPORARY_FILE_NOT_ALLOWED: 'TEMPORARY_FILE_NOT_ALLOWED',
+  RANGE_NOT_SATISFIABLE: 'RANGE_NOT_SATISFIABLE',
 } as const);
 
 const getFileExceptionUserFriendlyMessage = (
@@ -27,6 +28,8 @@ const getFileExceptionUserFriendlyMessage = (
       return msg`Invalid file folder.`;
     case FileExceptionCode.TEMPORARY_FILE_NOT_ALLOWED:
       return msg`Temporary file cannot be downloaded.`;
+    case FileExceptionCode.RANGE_NOT_SATISFIABLE:
+      return msg`Requested file range cannot be served.`;
     case FileExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:
@@ -46,5 +49,14 @@ export class FileException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ?? getFileExceptionUserFriendlyMessage(code),
     });
+  }
+}
+
+export class FileRangeNotSatisfiableException extends FileException {
+  constructor(public readonly fileSizeInBytes: number) {
+    super(
+      'Requested range not satisfiable',
+      FileExceptionCode.RANGE_NOT_SATISFIABLE,
+    );
   }
 }

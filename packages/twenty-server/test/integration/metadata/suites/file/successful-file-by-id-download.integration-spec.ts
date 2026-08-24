@@ -132,6 +132,5 @@ describe('File-by-id controller download should succeed', () => {
     expect(response.headers['content-range']).toBe(
       `bytes */${ONE_BY_ONE_TRANSPARENT_PNG.length}`,
     );
-    expect(response.text).toBe('');
   }, 30000);
 });

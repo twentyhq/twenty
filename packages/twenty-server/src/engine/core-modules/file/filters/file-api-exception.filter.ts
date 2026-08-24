@@ -10,6 +10,7 @@ import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-h
 import {
   FileException,
   FileExceptionCode,
+  FileRangeNotSatisfiableException,
 } from 'src/engine/core-modules/file/file.exception';
 
 @Catch(FileException)
@@ -34,6 +35,19 @@ export class FileApiExceptionFilter implements ExceptionFilter {
           exception,
           response,
           404,
+        );
+      case FileExceptionCode.RANGE_NOT_SATISFIABLE:
+        if (exception instanceof FileRangeNotSatisfiableException) {
+          response.setHeader(
+            'Content-Range',
+            `bytes */${exception.fileSizeInBytes}`,
+          );
+        }
+
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          416,
         );
       case FileExceptionCode.INTERNAL_SERVER_ERROR:
       default:

@@ -15,6 +15,7 @@ import { type Readable } from 'stream';
 
 import { Request, Response } from 'express';
 import { ApiPath, FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FileStorageException,
@@ -170,15 +171,6 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
-    // Public assets are requested without a Range header, so range variants
-    // can only mean a server bug.
-    if (fileResponse.type !== 'stream') {
-      throw new FileException(
-        'Error retrieving file',
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
     setFileResponseHeaders(res, fileResponse.mimeType, FileFolder.PublicAsset);
 
     try {
@@ -215,6 +207,10 @@ export class FileController {
         rangeHeader: req.headers.range,
       })
       .catch((error) => {
+        if (error instanceof FileException) {
+          throw error;
+        }
+
         this.logger.error(
           'getFilePresignedUrlOrStreamById failed unexpectedly',
           {
@@ -239,23 +235,16 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
-    if (fileResponse.type === 'unsatisfiable-range') {
-      res.status(416);
-      res.setHeader('Content-Range', `bytes */${fileResponse.fileSizeInBytes}`);
-
-      return res.end();
-    }
-
     setFileResponseHeaders(res, fileResponse.mimeType, fileFolder);
     res.setHeader('Accept-Ranges', 'bytes');
 
-    if (fileResponse.type === 'partial-stream') {
-      const { startByte, endByte } = fileResponse.byteRange;
+    if (isDefined(fileResponse.contentRange)) {
+      const { startByte, endByte, fileSizeInBytes } = fileResponse.contentRange;
 
       res.status(206);
       res.setHeader(
         'Content-Range',
-        `bytes ${startByte}-${endByte}/${fileResponse.fileSizeInBytes}`,
+        `bytes ${startByte}-${endByte}/${fileSizeInBytes}`,
       );
       res.setHeader('Content-Length', String(endByte - startByte + 1));
     }

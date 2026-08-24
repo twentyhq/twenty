@@ -18,6 +18,7 @@ import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/s
 import {
   FileException,
   FileExceptionCode,
+  FileRangeNotSatisfiableException,
 } from 'src/engine/core-modules/file/file.exception';
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
@@ -185,11 +186,14 @@ describe('FileController', () => {
       jest
         .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
         .mockResolvedValue({
-          type: 'partial-stream',
+          type: 'stream',
           stream: mockStream,
           mimeType: 'video/mp4',
-          byteRange: { startByte: 100, endByte: 199 },
-          fileSizeInBytes: 1_000,
+          contentRange: {
+            startByte: 100,
+            endByte: 199,
+            fileSizeInBytes: 1_000,
+          },
         });
 
       const mockRequest = createMockFileRequest('bytes=100-199');
@@ -220,32 +224,27 @@ describe('FileController', () => {
       expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
 
-    it('should return an unsatisfiable response without opening a stream', async () => {
+    it('should propagate range errors unchanged for the exception filter to map', async () => {
+      const rangeError = new FileRangeNotSatisfiableException(1_000);
+
       jest
         .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
-        .mockResolvedValue({
-          type: 'unsatisfiable-range',
-          fileSizeInBytes: 1_000,
-        });
+        .mockRejectedValue(rangeError);
 
       const mockRequest = createMockFileRequest('bytes=1000-');
       const mockResponse = createMockResponse() as any;
 
       mockPipeline.mockClear();
 
-      await controller.getFileById(
-        mockResponse,
-        mockRequest,
-        FileFolder.FilesField,
-        'file-123',
-      );
+      await expect(
+        controller.getFileById(
+          mockResponse,
+          mockRequest,
+          FileFolder.FilesField,
+          'file-123',
+        ),
+      ).rejects.toBe(rangeError);
 
-      expect(mockResponse.status).toHaveBeenCalledWith(416);
-      expect(mockResponse.setHeader).toHaveBeenCalledWith(
-        'Content-Range',
-        'bytes */1000',
-      );
-      expect(mockResponse.end).toHaveBeenCalledTimes(1);
       expect(mockPipeline).not.toHaveBeenCalled();
     });
 
