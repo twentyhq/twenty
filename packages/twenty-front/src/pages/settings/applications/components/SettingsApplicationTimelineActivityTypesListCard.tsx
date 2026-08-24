@@ -50,6 +50,7 @@ export const SettingsApplicationTimelineActivityTypesListCard = ({
               aria-label={t`Active ${timelineActivityType.label}`}
               value={timelineActivityType.isActive}
               toggleSize="small"
+              centered
               disabled={isMutating}
               onChange={(isActive) =>
                 onToggle(timelineActivityType.id, isActive)
