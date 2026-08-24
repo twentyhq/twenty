@@ -105,7 +105,7 @@ describe('slackSetUserLinkHandler', () => {
   });
 
   it('should fail with a structured result when the write errors', async () => {
-    createSlackUserLinkMock.mockRejectedValue(new Error('write refused'));
+    createSlackUserLinkMock.mockRejectedValueOnce(new Error('write refused'));
 
     const result = await slackSetUserLinkHandler(INPUT);
 
