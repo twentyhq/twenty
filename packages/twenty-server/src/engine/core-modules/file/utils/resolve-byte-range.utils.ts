@@ -19,7 +19,7 @@ export const resolveByteRange = ({
 
   const rangeHeaderMatch = rangeHeader.match(SINGLE_BYTE_RANGE_HEADER_PATTERN);
 
-  if (rangeHeaderMatch === null) {
+  if (!isDefined(rangeHeaderMatch)) {
     return { type: 'full' };
   }
 
