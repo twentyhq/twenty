@@ -64,6 +64,9 @@ describe('ApplicationManifestApplyService', () => {
 
     expect(
       sdkClientGenerationService.generateSdkClientForApplication,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      sdkClientGenerationService.generateSdkClientForApplication,
     ).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       applicationId: APPLICATION_ID,
