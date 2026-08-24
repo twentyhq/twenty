@@ -121,9 +121,14 @@ const getWidgetContent = (canvasElement: HTMLElement) => {
 export const RecordPageIframe: Story = {
   play: async ({ canvasElement }) => {
     const content = getWidgetContent(canvasElement);
+    const rootFontSizeInPixels = Number.parseFloat(
+      getComputedStyle(content.ownerDocument.documentElement).fontSize,
+    );
 
     await waitFor(() =>
-      expect(getComputedStyle(content).minHeight).toBe('640px'),
+      expect(getComputedStyle(content).minHeight).toBe(
+        `${40 * rootFontSizeInPixels}px`,
+      ),
     );
   },
 };
