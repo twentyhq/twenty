@@ -150,7 +150,7 @@ describe('computeObjectNavigationTargetBackfill', () => {
     ]);
   });
 
-  it('backfills a command whose target object is already claimed by another one', () => {
+  it('backfills a command pointing at an object another command already targets', () => {
     const backfill = computeObjectNavigationTargetBackfill({
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
