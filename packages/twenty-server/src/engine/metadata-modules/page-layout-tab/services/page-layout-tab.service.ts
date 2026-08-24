@@ -16,6 +16,7 @@ import {
 } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-update-page-layout-tab-input-to-flat-page-layout-tab-to-update-or-throw.util';
 import { reconstructFlatPageLayoutTabWithWidgets } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/reconstruct-flat-page-layout-tab-with-widgets.util';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
+import { groupFlatPageLayoutWidgetsByResolvedPageLayoutTabId } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/group-flat-page-layout-widgets-by-resolved-page-layout-tab-id.util';
 import { FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
@@ -63,6 +64,11 @@ export class PageLayoutTabService {
       return [];
     }
 
+    const widgetsByPageLayoutTabId =
+      groupFlatPageLayoutWidgetsByResolvedPageLayoutTabId(
+        flatPageLayoutWidgetMaps,
+      );
+
     return findManyFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatPageLayoutTabMaps,
       flatEntityIds: flatPageLayout.tabIds,
@@ -77,6 +83,7 @@ export class PageLayoutTabService {
           reconstructFlatPageLayoutTabWithWidgets({
             tab,
             flatPageLayoutWidgetMaps,
+            widgetsByPageLayoutTabId,
           }),
         ),
       );
