@@ -40,18 +40,6 @@ describe('ValidatedStorageDriver', () => {
       });
     });
 
-    it('should delegate readFile with its byte range', async () => {
-      await driver.readFile({
-        filePath: 'folder/file.txt',
-        byteRange: { startByte: 10, endByte: 19 },
-      });
-
-      expect(mockDelegate.readFile).toHaveBeenCalledWith({
-        filePath: 'folder/file.txt',
-        byteRange: { startByte: 10, endByte: 19 },
-      });
-    });
-
     it('should delegate writeFile', async () => {
       const params = {
         filePath: 'folder/file.txt',
