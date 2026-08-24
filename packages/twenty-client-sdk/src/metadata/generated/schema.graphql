@@ -1219,6 +1219,7 @@ type CalendarConfiguration {
 type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
+  headerCommandMenuItemUniversalIdentifiers: [UUID!]
 }
 
 type EmailsConfiguration {

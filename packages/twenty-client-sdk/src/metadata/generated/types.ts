@@ -2380,6 +2380,9 @@ export default {
             "frontComponentId": [
                 3
             ],
+            "headerCommandMenuItemUniversalIdentifiers": [
+                3
+            ],
             "__typename": [
                 1
             ]
