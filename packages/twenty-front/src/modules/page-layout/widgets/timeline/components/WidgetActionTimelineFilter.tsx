@@ -1,6 +1,6 @@
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
-import { removeInactiveTimelineActivityTypeUniversalIdentifiers } from '@/activities/timeline-activities/utils/removeInactiveTimelineActivityTypeUniversalIdentifiers';
+import { getActiveTimelineActivityTypeUniversalIdentifiersFilter } from '@/activities/timeline-activities/utils/getActiveTimelineActivityTypeUniversalIdentifiersFilter';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -43,13 +43,13 @@ export const WidgetActionTimelineFilter = () => {
   );
 
   const effectiveTimelineActivityTypeUniversalIdentifiersFilter =
-    removeInactiveTimelineActivityTypeUniversalIdentifiers({
+    getActiveTimelineActivityTypeUniversalIdentifiersFilter({
       activeUniversalIdentifiers: activeTimelineActivityTypes.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
       selectedUniversalIdentifiers:
         timelineActivityTypeUniversalIdentifiersFilter,
-    });
+    }) ?? [];
 
   if (!isNonEmptyArray(activeTimelineActivityTypes)) {
     return null;
@@ -116,9 +116,7 @@ export const WidgetActionTimelineFilter = () => {
               <MenuItem disabled text={t`No results`} accent="placeholder" />
             )}
           </DropdownMenuItemsContainer>
-          {isNonEmptyArray(
-            effectiveTimelineActivityTypeUniversalIdentifiersFilter,
-          ) && (
+          {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>

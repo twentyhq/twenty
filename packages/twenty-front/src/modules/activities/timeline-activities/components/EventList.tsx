@@ -6,8 +6,8 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
+import { getActiveTimelineActivityTypeUniversalIdentifiersFilter } from '@/activities/timeline-activities/utils/getActiveTimelineActivityTypeUniversalIdentifiersFilter';
 import { keepTimelineActivitiesOfSelectedTypes } from '@/activities/timeline-activities/utils/keepTimelineActivitiesOfSelectedTypes';
-import { removeInactiveTimelineActivityTypeUniversalIdentifiers } from '@/activities/timeline-activities/utils/removeInactiveTimelineActivityTypeUniversalIdentifiers';
 import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -60,7 +60,7 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
     );
 
   const effectiveTimelineActivityTypeUniversalIdentifiersFilter =
-    removeInactiveTimelineActivityTypeUniversalIdentifiers({
+    getActiveTimelineActivityTypeUniversalIdentifiersFilter({
       activeUniversalIdentifiers: activeTimelineActivityTypes.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
