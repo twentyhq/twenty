@@ -19,7 +19,9 @@ export const slackSetUserLinkHandler = async ({
   slackTeamId: requestedSlackTeamId,
   name,
 }: SlackSetUserLinkInput): Promise<SlackToolResult> => {
-  if (!(await currentUserHasWorkspaceMembersPermission())) {
+  const isAllowed = await currentUserHasWorkspaceMembersPermission();
+
+  if (!isAllowed) {
     return {
       success: false,
       message: 'Not allowed',
@@ -72,6 +74,7 @@ export const slackSetUserLinkHandler = async ({
       await updateSlackUserLink(client, {
         id: existingLink.id,
         workspaceMemberId,
+        name,
         source: SLACK_USER_LINK_SOURCE.MANUAL,
       });
     } else {

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -8,8 +9,14 @@ export const updateSlackUserLink = async (
   {
     id,
     workspaceMemberId,
+    name,
     source,
-  }: { id: string; workspaceMemberId: string; source?: SlackUserLinkSource },
+  }: {
+    id: string;
+    workspaceMemberId: string;
+    name?: string;
+    source?: SlackUserLinkSource;
+  },
 ): Promise<void> => {
   await client.mutation({
     updateSlackUserLink: {
@@ -17,6 +24,7 @@ export const updateSlackUserLink = async (
         id,
         data: {
           workspaceMemberId,
+          ...(isNonEmptyString(name) ? { name } : {}),
           ...(isDefined(source) ? { source } : {}),
         },
       },

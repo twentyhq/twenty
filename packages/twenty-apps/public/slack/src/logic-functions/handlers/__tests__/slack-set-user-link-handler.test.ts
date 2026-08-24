@@ -147,12 +147,13 @@ describe('slackSetUserLinkHandler', () => {
       source: 'AUTO',
     });
 
-    const result = await slackSetUserLinkHandler(INPUT);
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
     expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
       workspaceMemberId: INPUT.workspaceMemberId,
+      name: 'Ada',
       source: 'MANUAL',
     });
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
