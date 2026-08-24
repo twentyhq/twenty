@@ -62,7 +62,7 @@ export const createListWorkflowsTool = (
             .skip(parameters.offset);
 
           const workflows =
-            (await queryBuilder.getMany()) as unknown as WorkflowWorkspaceEntity[];
+            await queryBuilder.getMany<WorkflowWorkspaceEntity>();
           const totalCount = await queryBuilder.getCount();
 
           return {

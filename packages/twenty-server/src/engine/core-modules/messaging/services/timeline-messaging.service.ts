@@ -135,7 +135,7 @@ export class TimelineMessagingService {
             'messageParticipant',
           );
 
-        const threadParticipants = (await messageParticipantRepository
+        const threadParticipants = await messageParticipantRepository
           .createQueryBuilder()
           .select('messageParticipant')
           .addSelect('message.messageThreadId')
@@ -154,9 +154,11 @@ export class TimelineMessagingService {
           })
           .orderBy('message.messageThreadId')
           .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
-          .getMany()) as unknown as (MessageParticipantWorkspaceEntity & {
-          message: MessageWorkspaceEntity;
-        })[];
+          .getMany<
+            MessageParticipantWorkspaceEntity & {
+              message: MessageWorkspaceEntity;
+            }
+          >();
 
         const orderedThreadParticipants = threadParticipants.sort(
           (a, b) =>

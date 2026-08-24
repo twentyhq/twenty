@@ -210,8 +210,6 @@ export class NormalizeCompositeFieldDefaultsCommand extends ProvisionedWorkspace
          SET "${columnName}" = NULL
          WHERE "${columnName}"::text IN ('', '""')`,
         undefined,
-        undefined,
-        
       );
 
       this.logger.log(
