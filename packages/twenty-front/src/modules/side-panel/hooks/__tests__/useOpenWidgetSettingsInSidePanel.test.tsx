@@ -167,4 +167,35 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
     });
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   });
+
+  it.each([WidgetType.IFRAME, WidgetType.GRAPH, WidgetType.RECORD_TABLE])(
+    'opens generic widget settings for a %s widget on a record page',
+    (widgetType) => {
+      const store = createStore();
+      const widget = {
+        ...makeWidget('widget', 1),
+        type: widgetType,
+      };
+
+      store.set(
+        getDraftAtom(),
+        makeDraft([makeTab('tab-1', [makeWidget('fields-widget', 0), widget])]),
+      );
+
+      const { result } = renderOpenWidgetSettingsHook(store);
+
+      act(() => {
+        result.current.openWidgetSettingsInSidePanel({
+          widgetId: widget.id,
+          widgetType: widget.type,
+        });
+      });
+
+      expect(store.get(getEditingWidgetIdAtom())).toBe(widget.id);
+      expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+        sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+        resetNavigationStack: true,
+      });
+    },
+  );
 });

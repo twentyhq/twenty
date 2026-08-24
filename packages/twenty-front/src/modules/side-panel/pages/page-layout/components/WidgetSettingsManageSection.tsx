@@ -3,15 +3,13 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { getReplaceWidgetSidePanelPage } from '@/side-panel/pages/page-layout/utils/getReplaceWidgetSidePanelPage';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -44,11 +42,6 @@ export const WidgetSettingsManageSection = ({
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const pageLayoutDraft = useAtomComponentStateValue(
-    pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
-
   const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
@@ -61,7 +54,7 @@ export const WidgetSettingsManageSection = ({
   const { resetPageLayoutWidgetToDefault } =
     useResetPageLayoutWidgetToDefault(pageLayoutId);
 
-  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
+  const { openReplaceWidgetPicker } = useOpenReplaceWidgetPicker(pageLayoutId);
 
   const { openModal } = useModal();
 
@@ -87,12 +80,6 @@ export const WidgetSettingsManageSection = ({
 
   const handleConfirmReset = () => {
     resetPageLayoutWidgetToDefault(pageLayoutEditingWidgetId);
-  };
-
-  const handleReplaceWidget = () => {
-    navigatePageLayoutSidePanel({
-      sidePanelPage: getReplaceWidgetSidePanelPage(pageLayoutDraft.type),
-    });
   };
 
   const handleDeleteWidget = () => {
@@ -146,14 +133,14 @@ export const WidgetSettingsManageSection = ({
         )}
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
-          onEnter={handleReplaceWidget}
+          onEnter={openReplaceWidgetPicker}
         >
           <CommandMenuItem
             id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
             Icon={IconSwitchHorizontal}
             label={t`Replace widget`}
             hasSubMenu
-            onClick={handleReplaceWidget}
+            onClick={openReplaceWidgetPicker}
           />
         </SelectableListItem>
         <SelectableListItem
