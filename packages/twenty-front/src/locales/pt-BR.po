@@ -6780,7 +6780,7 @@ msgid "Download file"
 msgstr "Baixar arquivo"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Baixar arquivo"
 
@@ -14967,7 +14967,7 @@ msgid "Preview"
 msgstr "Prévia"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "Visualização indisponível"
 
@@ -19088,6 +19088,11 @@ msgstr "Isso retira imediatamente {0} créditos deste workspace. A revogação n
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "Esse valor será salvo no banco de dados."
+
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr "Não foi possível carregar este vídeo. Faça o download do arquivo para visualizá-lo."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
