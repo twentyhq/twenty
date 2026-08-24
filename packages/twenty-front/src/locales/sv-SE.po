@@ -6780,7 +6780,7 @@ msgid "Download file"
 msgstr "Ladda ner fil"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Ladda ner fil"
 
@@ -14969,7 +14969,7 @@ msgid "Preview"
 msgstr "Förhandsgranskning"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "Förhandsgranskning är inte tillgänglig"
 
@@ -19096,6 +19096,11 @@ msgstr "Detta tar omedelbart tillbaka {0} krediter från den här arbetsytan. Å
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "Detta värde kommer att sparas i databasen."
+
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr ""
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
