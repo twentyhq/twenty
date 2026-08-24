@@ -1008,7 +1008,7 @@ msgstr "נדרש לפחות קשר אחד"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attached a file"
-msgstr ""
+msgstr "צירף קובץ"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8257,7 +8257,7 @@ msgstr "הסר הרשאה זו מכל התפקידים לפני מחיקתה"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "removed an attachment"
-msgstr ""
+msgstr "הסיר קובץ מצורף"
 
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10761,7 +10761,7 @@ msgstr "סוג פעילות ציר זמן מפנה לאובייקט שאינו �
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
-msgstr ""
+msgstr "קשר היעד של סוג פעילות ציר הזמן חייב להיות קשר ישיר או קשר צומת באובייקט המקור שלו"
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
