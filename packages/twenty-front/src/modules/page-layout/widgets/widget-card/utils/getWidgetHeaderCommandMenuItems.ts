@@ -1,15 +1,22 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
-export const getWidgetHeaderCommandMenuItems = ({
+type WidgetHeaderCommandMenuItem = Pick<
+  CommandMenuItemFieldsFragment,
+  'applicationId' | 'id' | 'universalIdentifier'
+>;
+
+export const getWidgetHeaderCommandMenuItems = <
+  TCommandMenuItem extends WidgetHeaderCommandMenuItem,
+>({
   commandMenuItems,
   commandMenuItemUniversalIdentifiers,
   applicationId,
 }: {
-  commandMenuItems: CommandMenuItemFieldsFragment[];
+  commandMenuItems: TCommandMenuItem[];
   commandMenuItemUniversalIdentifiers: string[];
   applicationId: string;
-}): CommandMenuItemFieldsFragment[] => {
+}): TCommandMenuItem[] => {
   const commandMenuItemsByUniversalIdentifier = new Map(
     commandMenuItems
       .filter(({ universalIdentifier }) => isDefined(universalIdentifier))

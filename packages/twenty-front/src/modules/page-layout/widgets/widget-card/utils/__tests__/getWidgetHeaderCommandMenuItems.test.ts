@@ -1,5 +1,4 @@
 import { getWidgetHeaderCommandMenuItems } from '@/page-layout/widgets/widget-card/utils/getWidgetHeaderCommandMenuItems';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 const makeCommandMenuItem = ({
   id,
@@ -9,12 +8,11 @@ const makeCommandMenuItem = ({
   id: string;
   universalIdentifier: string | null;
   applicationId?: string;
-}) =>
-  ({
-    id,
-    universalIdentifier,
-    applicationId,
-  }) as CommandMenuItemFieldsFragment;
+}) => ({
+  id,
+  universalIdentifier,
+  applicationId,
+});
 
 describe('getWidgetHeaderCommandMenuItems', () => {
   it('resolves command menu items in declaration order', () => {
