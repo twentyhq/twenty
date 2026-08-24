@@ -74,6 +74,9 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
       resolvedObjectMetadataUniversalIdentifier,
+    // Navigation commands exist for every object, custom ones included, so they
+    // are minted per object by buildNavigationFlatCommandMenuItem rather than
+    // declared here. No standard definition carries an object payload
     targetObjectMetadataId: null,
     targetObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,
