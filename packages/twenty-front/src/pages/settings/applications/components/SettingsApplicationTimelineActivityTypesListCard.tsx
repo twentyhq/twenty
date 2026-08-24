@@ -1,5 +1,6 @@
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Toggle } from 'twenty-ui/input';
 import { SettingsApplicationTimelineActivityTypeRowDropdown } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypeRowDropdown';
@@ -29,9 +30,9 @@ export const SettingsApplicationTimelineActivityTypesListCard = ({
       items={timelineActivityTypes}
       getItemLabel={(timelineActivityType) => timelineActivityType.label}
       getItemDescription={(timelineActivityType) =>
-        timelineActivityType.action === null
-          ? timelineActivityType.name
-          : `${timelineActivityType.name} · ${timelineActivityType.action}`
+        isDefined(timelineActivityType.action)
+          ? `${timelineActivityType.name} · ${timelineActivityType.action}`
+          : timelineActivityType.name
       }
       isLoading={isLoading}
       rounded

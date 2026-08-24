@@ -6,7 +6,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -18,6 +22,7 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
+import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -166,38 +171,30 @@ export const SettingsApplicationDetailContentTab = ({
     installedTimelineActivityTypes,
     manifestTimelineActivityTypes: manifestContent?.timelineActivityTypes ?? [],
   });
-  const filteredTimelineActivityTypes = timelineActivityTypes.filter(
-    (timelineActivityType) =>
-      normalizedSearch === '' ||
-      normalizeSearchText(timelineActivityType.label).includes(
-        normalizedSearch,
-      ) ||
-      normalizeSearchText(timelineActivityType.name).includes(
-        normalizedSearch,
-      ) ||
-      (isDefined(timelineActivityType.action) &&
-        normalizeSearchText(timelineActivityType.action).includes(
-          normalizedSearch,
-        )),
-  );
-  const timelineActivityTypeRows: ApplicationContentRow[] =
-    filteredTimelineActivityTypes.length === 0
-      ? []
-      : [
-          {
-            key: 'timeline-activity-types',
-            name: isInstalledApplication
-              ? t`Manage activity types`
-              : t`Activity types`,
-            icon: 'IconTimelineEvent',
-            secondary: t`${timelineActivityTypes.length} types`,
-            link: isInstalledApplication
-              ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypes, {
-                  applicationId,
-                })
-              : undefined,
-          },
-        ];
+  const filteredTimelineActivityTypes =
+    filterSettingsApplicationTimelineActivityTypes({
+      timelineActivityTypes,
+      searchTerm,
+    });
+  const timelineActivityTypeRows: ApplicationContentRow[] = isNonEmptyArray(
+    filteredTimelineActivityTypes,
+  )
+    ? [
+        {
+          key: 'timeline-activity-types',
+          name: isInstalledApplication
+            ? t`Manage activity types`
+            : t`Activity types`,
+          icon: 'IconTimelineEvent',
+          secondary: t`${timelineActivityTypes.length} types`,
+          link: isInstalledApplication
+            ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypes, {
+                applicationId,
+              })
+            : undefined,
+        },
+      ]
+    : [];
 
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),

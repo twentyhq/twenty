@@ -12,7 +12,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
@@ -42,27 +42,14 @@ export const WidgetActionTimelineFilter = () => {
       normalizeSearchText(label).includes(normalizedSearchInputValue),
   );
 
-  const activeTimelineActivityTypeUniversalIdentifiers = useMemo(
-    () =>
-      activeTimelineActivityTypes.map(
+  const effectiveTimelineActivityTypeUniversalIdentifiersFilter =
+    removeInactiveTimelineActivityTypeUniversalIdentifiers({
+      activeUniversalIdentifiers: activeTimelineActivityTypes.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
-    [activeTimelineActivityTypes],
-  );
-
-  useEffect(() => {
-    setTimelineActivityTypeUniversalIdentifiersFilter(
-      (currentUniversalIdentifiers) =>
-        removeInactiveTimelineActivityTypeUniversalIdentifiers({
-          activeUniversalIdentifiers:
-            activeTimelineActivityTypeUniversalIdentifiers,
-          selectedUniversalIdentifiers: currentUniversalIdentifiers,
-        }),
-    );
-  }, [
-    activeTimelineActivityTypeUniversalIdentifiers,
-    setTimelineActivityTypeUniversalIdentifiersFilter,
-  ]);
+      selectedUniversalIdentifiers:
+        timelineActivityTypeUniversalIdentifiersFilter,
+    });
 
   if (!isNonEmptyArray(activeTimelineActivityTypes)) {
     return null;
@@ -75,10 +62,10 @@ export const WidgetActionTimelineFilter = () => {
     setTimelineActivityTypeUniversalIdentifiersFilter(
       selected
         ? [
-            ...timelineActivityTypeUniversalIdentifiersFilter,
+            ...effectiveTimelineActivityTypeUniversalIdentifiersFilter,
             timelineActivityTypeUniversalIdentifier,
           ]
-        : timelineActivityTypeUniversalIdentifiersFilter.filter(
+        : effectiveTimelineActivityTypeUniversalIdentifiersFilter.filter(
             (selectedUniversalIdentifier) =>
               selectedUniversalIdentifier !==
               timelineActivityTypeUniversalIdentifier,
@@ -114,7 +101,7 @@ export const WidgetActionTimelineFilter = () => {
                       : undefined
                   }
                   text={timelineActivityType.label}
-                  selected={timelineActivityTypeUniversalIdentifiersFilter.includes(
+                  selected={effectiveTimelineActivityTypeUniversalIdentifiersFilter.includes(
                     timelineActivityType.universalIdentifier,
                   )}
                   onSelectChange={(selected) =>
@@ -129,7 +116,9 @@ export const WidgetActionTimelineFilter = () => {
               <MenuItem disabled text={t`No results`} accent="placeholder" />
             )}
           </DropdownMenuItemsContainer>
-          {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
+          {isNonEmptyArray(
+            effectiveTimelineActivityTypeUniversalIdentifiersFilter,
+          ) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>

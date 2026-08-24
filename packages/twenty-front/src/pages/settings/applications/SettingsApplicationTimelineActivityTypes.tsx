@@ -17,7 +17,7 @@ import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationTimelineActivityTypesListCard } from '~/pages/settings/applications/components/SettingsApplicationTimelineActivityTypesListCard';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
 
 export const SettingsApplicationTimelineActivityTypes = () => {
   const { t } = useLingui();
@@ -50,21 +50,11 @@ export const SettingsApplicationTimelineActivityTypes = () => {
     installedTimelineActivityTypes,
     manifestTimelineActivityTypes: [],
   });
-  const normalizedSearch = normalizeSearchText(searchTerm);
-  const filteredTimelineActivityTypes = timelineActivityTypes.filter(
-    (timelineActivityType) =>
-      normalizedSearch === '' ||
-      normalizeSearchText(timelineActivityType.label).includes(
-        normalizedSearch,
-      ) ||
-      normalizeSearchText(timelineActivityType.name).includes(
-        normalizedSearch,
-      ) ||
-      (isDefined(timelineActivityType.action) &&
-        normalizeSearchText(timelineActivityType.action).includes(
-          normalizedSearch,
-        )),
-  );
+  const filteredTimelineActivityTypes =
+    filterSettingsApplicationTimelineActivityTypes({
+      timelineActivityTypes,
+      searchTerm,
+    });
 
   const applicationContentHref = getSettingsPath(
     SettingsPath.ApplicationDetail,

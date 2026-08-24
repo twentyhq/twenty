@@ -130,6 +130,10 @@ An override must include `emit`, because it replaces an existing automatic emit 
 
 ## Workspace overrides and muting
 
+Workspace administrators can toggle installed activity types and restore their
+application defaults from **Settings → Applications → [App] → Timeline activity
+types**. Label and icon overrides remain available through the metadata API.
+
 Workspace administrators can change a type's presentation or mute its automatic and explicit events without forking the application. Use the metadata API's `updateTimelineActivityType` mutation with the installation-specific type ID:
 
 ```graphql

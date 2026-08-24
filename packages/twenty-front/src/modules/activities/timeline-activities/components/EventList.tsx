@@ -7,6 +7,7 @@ import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
 import { keepTimelineActivitiesOfSelectedTypes } from '@/activities/timeline-activities/utils/keepTimelineActivitiesOfSelectedTypes';
+import { removeInactiveTimelineActivityTypeUniversalIdentifiers } from '@/activities/timeline-activities/utils/removeInactiveTimelineActivityTypeUniversalIdentifiers';
 import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -49,7 +50,8 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
+  const { activeTimelineActivityTypes, timelineActivityTypeMaps } =
+    useTimelineActivityTypes();
 
   const timelineActivityTypeUniversalIdentifiersFilter =
     useAtomFamilyStateValue(
@@ -57,10 +59,19 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
       targetableObject.id,
     );
 
+  const effectiveTimelineActivityTypeUniversalIdentifiersFilter =
+    removeInactiveTimelineActivityTypeUniversalIdentifiers({
+      activeUniversalIdentifiers: activeTimelineActivityTypes.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
+      selectedUniversalIdentifiers:
+        timelineActivityTypeUniversalIdentifiersFilter,
+    });
+
   const filteredEvents = filterOutInvalidTimelineActivities(
     keepTimelineActivitiesOfSelectedTypes(
       events,
-      timelineActivityTypeUniversalIdentifiersFilter,
+      effectiveTimelineActivityTypeUniversalIdentifiersFilter,
       timelineActivityTypeMaps,
     ),
     targetableObject.targetObjectNameSingular,
