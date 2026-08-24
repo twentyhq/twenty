@@ -1008,7 +1008,7 @@ msgstr "Minst en relation krävs"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attached a file"
-msgstr ""
+msgstr "bifogade en fil"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8259,7 +8259,7 @@ msgstr "Ta bort denna behörighet från alla roller innan du tar bort den"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "removed an attachment"
-msgstr ""
+msgstr "tog bort en bilaga"
 
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10767,7 +10767,7 @@ msgstr "Tidslinjeaktivitetstypen refererar till ett objekt som inte finns."
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
-msgstr ""
+msgstr "Målrelationen för tidslinjeaktivitetstypen måste vara en direkt relation eller en kopplingsrelation på dess källobjekt"
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts

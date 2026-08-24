@@ -170,7 +170,7 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | Field                                             | Required  | Description                                                      |
 | ------------------------------------------------- | --------- | ---------------------------------------------------------------- |
 | `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades       |
-| `name`                                            | Yes       | App-local programmatic name                                      |
+| `name`                                            | Yes       | App-local programmatic name; must be unique within the app        |
 | `label`                                           | Yes       | User-facing action text used by the native renderer              |
 | `icon`                                            | No        | Twenty icon name displayed beside the event                      |
 | `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types     |

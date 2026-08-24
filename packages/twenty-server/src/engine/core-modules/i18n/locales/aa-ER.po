@@ -1004,6 +1004,12 @@ msgstr "crwdns138453:0crwdne138453:0"
 msgid "At least one relation is required"
 msgstr "crwdns127521:0crwdne127521:0"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr "crwdns140595:0crwdne140595:0"
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -8247,6 +8253,12 @@ msgstr "crwdns139383:0crwdne139383:0"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "crwdns125374:0crwdne125374:0"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr "crwdns140597:0crwdne140597:0"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10746,10 +10758,10 @@ msgstr "crwdns140563:0crwdne140563:0"
 msgid "Timeline activity type references an object that does not exist"
 msgstr "crwdns140565:0crwdne140565:0"
 
-#. js-lingui-id: PK64+E
+#. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
-msgid "Timeline activity type target relation must be a junction relation on its source object"
-msgstr "crwdns140567:0crwdne140567:0"
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr "crwdns140599:0crwdne140599:0"
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
