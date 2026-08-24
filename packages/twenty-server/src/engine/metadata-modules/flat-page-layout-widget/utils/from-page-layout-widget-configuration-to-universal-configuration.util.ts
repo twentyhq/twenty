@@ -342,7 +342,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         configurationType,
         viewId,
         nestedRelationFieldMetadataId,
-        isWidgetContentEditable,
+        isUIEditable,
       } = configuration;
 
       const fieldMetadataUniversalIdentifier =
@@ -390,9 +390,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
                 nestedRelationFieldMetadataUniversalIdentifier,
             }
           : {}),
-        ...(isDefined(isWidgetContentEditable)
-          ? { isWidgetContentEditable }
-          : {}),
+        ...(isDefined(isUIEditable) ? { isUIEditable } : {}),
       };
     }
 

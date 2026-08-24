@@ -7,13 +7,13 @@ import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/rec
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 
-export const RecordTableWidgetContentEditableEffect = ({
+export const RecordTableWidgetUIEditableEffect = ({
   recordTableId,
-  isWidgetContentEditable = false,
+  isUIEditable = false,
   isEmptyStateHidden = false,
 }: {
   recordTableId: string;
-  isWidgetContentEditable?: boolean;
+  isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
 }) => {
   const store = useStore();
@@ -23,7 +23,7 @@ export const RecordTableWidgetContentEditableEffect = ({
       isRecordTableColumnHeadersReadOnlyComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      !isWidgetContentEditable,
+      !isUIEditable,
     );
 
     store.set(
@@ -44,14 +44,14 @@ export const RecordTableWidgetContentEditableEffect = ({
       isRecordTableColumnResizableComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      isWidgetContentEditable,
+      isUIEditable,
     );
 
     store.set(
       isRecordTableCellsNonEditableComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      !isWidgetContentEditable,
+      !isUIEditable,
     );
 
     store.set(
@@ -60,7 +60,7 @@ export const RecordTableWidgetContentEditableEffect = ({
       }),
       isEmptyStateHidden,
     );
-  }, [store, recordTableId, isWidgetContentEditable, isEmptyStateHidden]);
+  }, [store, recordTableId, isUIEditable, isEmptyStateHidden]);
 
   return null;
 };
