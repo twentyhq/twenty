@@ -59,7 +59,6 @@ export default async function PartnerProfilePage({
           [
             { name: 'Home', path: '/' },
             { name: 'Partners', path: '/partners' },
-            { name: 'Marketplace', path: '/partners/list' },
             { name: partner.name, path: `/partners/profile/${partner.slug}` },
           ],
           locale,

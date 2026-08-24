@@ -16,7 +16,6 @@ export type WebsiteRouteId =
   | 'partnersApply'
   | 'partnersBecome'
   | 'partnersBrief'
-  | 'partnersList'
   | 'pricing'
   | 'privacyPolicy'
   | 'product'

@@ -28,8 +28,8 @@ const Filters = styled.div`
   margin-top: ${spacing(10)};
 `;
 
-// Mirrors the old marketplace list's own spacing so the grid sits exactly as it
-// did on /partners/list; the brief band it bundled is rendered by the page.
+// Mirrors the old standalone marketplace list page's own spacing so the grid
+// sits exactly as it did there; the brief band it bundled is rendered by the page.
 const Results = styled.div`
   margin-top: ${spacing(6)};
 `;
