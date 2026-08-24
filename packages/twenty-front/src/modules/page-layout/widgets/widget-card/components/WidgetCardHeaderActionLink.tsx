@@ -20,8 +20,9 @@ const StyledActionLink = styled(Link)`
     background: ${themeCssVariables.background.transparent.light};
   }
 
-  &:focus {
-    outline: 1px solid ${themeCssVariables.color.blue};
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
   }
 
   &:active {

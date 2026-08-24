@@ -3,13 +3,17 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/calendar-event-call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState, type ComponentProps } from 'react';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseCallRecordingTranscriptEntries,
+} from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutType,
@@ -158,21 +162,34 @@ const unplayableRecordedCallRecording: CalendarEventCallRecordingCandidate = {
   ],
 };
 
-type CallRecordingTranscriptBodyStoryProps = ComponentProps<
-  typeof CallRecordingTranscriptBody
+type CallRecordingTranscriptBodyStoryProps = Omit<
+  ComponentProps<typeof CallRecordingTranscriptBody>,
+  'transcriptEntries' | 'videoFileUrl'
 >;
 
 const CallRecordingTranscriptBodyStory = (
   args: CallRecordingTranscriptBodyStoryProps,
-) => (
-  <>
-    <WidgetHeaderCountEffect count={isDefined(args.callRecording) ? 1 : 0} />
-    <CallRecordingTranscriptHeaderDataEffect
-      callRecording={args.callRecording}
-    />
-    <CallRecordingTranscriptBody {...args} />
-  </>
-);
+) => {
+  const transcriptEntries = parseCallRecordingTranscriptEntries(
+    args.callRecording?.transcript,
+  );
+  const videoFileUrl = getCallRecordingVideoFileUrl(args.callRecording);
+
+  return (
+    <>
+      <WidgetHeaderCountEffect count={isDefined(args.callRecording) ? 1 : 0} />
+      <CallRecordingTranscriptHeaderDataEffect
+        transcriptEntries={transcriptEntries}
+        videoFileUrl={videoFileUrl}
+      />
+      <CallRecordingTranscriptBody
+        {...args}
+        transcriptEntries={transcriptEntries}
+        videoFileUrl={videoFileUrl}
+      />
+    </>
+  );
+};
 
 const PlaybackErrorRecoveryStory = (
   args: CallRecordingTranscriptBodyStoryProps,
@@ -193,9 +210,9 @@ const PlaybackErrorRecoveryStory = (
   );
 };
 
-const meta: Meta<typeof CallRecordingTranscriptBody> = {
+const meta: Meta<typeof CallRecordingTranscriptBodyStory> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingTranscriptBody',
-  component: CallRecordingTranscriptBody,
+  component: CallRecordingTranscriptBodyStory,
   decorators: [
     getCallRecordingWidgetStoryDecorator({
       pageLayout: pageLayoutWithTranscriptWidget,
@@ -209,14 +226,14 @@ const meta: Meta<typeof CallRecordingTranscriptBody> = {
   parameters: {
     layout: 'centered',
   },
-  render: (args) => <CallRecordingTranscriptBodyStory {...args} />,
+  render: CallRecordingTranscriptBodyStory,
   args: {
     refetchCallRecording: async () => {},
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof CallRecordingTranscriptBody>;
+type Story = StoryObj<typeof CallRecordingTranscriptBodyStory>;
 
 export const Ready: Story = {
   args: {
@@ -292,7 +309,7 @@ export const PlaybackError: Story = {
     restriction: undefined,
     refetchCallRecording: fn(async () => {}),
   },
-  render: (args) => <PlaybackErrorRecoveryStory {...args} />,
+  render: PlaybackErrorRecoveryStory,
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 

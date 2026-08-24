@@ -2,7 +2,7 @@ import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const getCallRecordingVideoFileUrl = (
-  callRecording: Pick<CalendarEventCallRecordingCandidate, 'video'>,
+  callRecording: Pick<CalendarEventCallRecordingCandidate, 'video'> | undefined,
 ): string | undefined =>
-  callRecording.video?.find((videoFile) => isNonEmptyString(videoFile.url))
+  callRecording?.video?.find((videoFile) => isNonEmptyString(videoFile.url))
     ?.url;

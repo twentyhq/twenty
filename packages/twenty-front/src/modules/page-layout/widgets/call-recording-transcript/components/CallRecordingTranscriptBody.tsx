@@ -1,7 +1,6 @@
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent';
 import { CallRecordingVideoPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
@@ -10,10 +9,8 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  isDefined,
-  parseCallRecordingTranscriptEntries,
-} from 'twenty-shared/utils';
+import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordingLayout = styled.div`
@@ -34,6 +31,8 @@ const StyledTranscriptScrollContainer = styled.div`
 
 type CallRecordingTranscriptBodyProps = {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
+  transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
+  videoFileUrl: string | undefined;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
@@ -42,6 +41,8 @@ type CallRecordingTranscriptBodyProps = {
 
 export const CallRecordingTranscriptBody = ({
   callRecording,
+  transcriptEntries,
+  videoFileUrl,
   loading,
   error,
   restriction,
@@ -70,12 +71,6 @@ export const CallRecordingTranscriptBody = ({
       />
     );
   }
-
-  const transcriptEntries = parseCallRecordingTranscriptEntries(
-    callRecording.transcript,
-  );
-
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecording);
 
   if (!isDefined(videoFileUrl)) {
     return (

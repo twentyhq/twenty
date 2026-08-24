@@ -5,15 +5,13 @@ import { CircularProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const DEFAULT_VIDEO_ASPECT_RATIO = '16 / 9';
-
 // Forces Safari to decode the first frame under preload="metadata".
 const FIRST_FRAME_SEEK_FRAGMENT = '#t=0.001';
 
 type CallRecordingVideoLoadState = 'awaiting-first-frame' | 'ready' | 'errored';
 
 const StyledVideoViewport = styled.div`
-  aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
+  aspect-ratio: 16 / 9;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.sm};
   overflow: hidden;
@@ -48,11 +46,11 @@ const StyledBufferingOverlay = styled.div<{ isVisible: boolean }>`
   pointer-events: none;
   position: absolute;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease
-    ${({ isVisible }) =>
-      isVisible
-        ? `calc(${themeCssVariables.animation.duration.normal} * 1s)`
-        : '0s'};
+    ease;
+  transition-delay: ${({ isVisible }) =>
+    isVisible
+      ? `calc(${themeCssVariables.animation.duration.normal} * 1s)`
+      : '0s'};
 
   @media (prefers-reduced-motion: reduce) {
     transition-duration: 0ms;

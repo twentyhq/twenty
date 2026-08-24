@@ -54,6 +54,24 @@ const REQUIRED_FIELD_NAMES_BY_QUERY_SCOPE: Record<
   'call-recording-transcript': ['status', 'transcript', 'createdAt'],
 };
 
+const getCallRecordingRecordFields = ({
+  queryScope,
+  isVideoFieldRestricted,
+}: {
+  queryScope: CalendarEventCallRecordingQueryScope;
+  isVideoFieldRestricted: boolean;
+}): RecordGqlOperationGqlRecordFields => {
+  if (queryScope === 'call-recording-summary') {
+    return CALL_RECORDING_SUMMARY_RECORD_FIELDS;
+  }
+
+  if (isVideoFieldRestricted) {
+    return CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS;
+  }
+
+  return CALL_RECORDING_TRANSCRIPT_WITH_VIDEO_RECORD_FIELDS;
+};
+
 export const useCalendarEventCallRecording = ({
   queryScope,
 }: {
@@ -86,7 +104,7 @@ export const useCalendarEventCallRecording = ({
   ]
     .map((requiredFieldName) =>
       callRecordingObjectMetadataItem.fields.find(
-        (field) => field.name === requiredFieldName,
+        (fieldMetadataItem) => fieldMetadataItem.name === requiredFieldName,
       ),
     )
     .filter(isDefined);
@@ -117,19 +135,17 @@ export const useCalendarEventCallRecording = ({
   const shouldSkipQuery = !isDefined(calendarEventId) || isDefined(restriction);
 
   const videoFieldMetadataItem = callRecordingObjectMetadataItem.fields.find(
-    (field) => field.name === 'video',
+    (fieldMetadataItem) => fieldMetadataItem.name === 'video',
   );
 
   const isVideoFieldRestricted =
     isDefined(videoFieldMetadataItem) &&
     isCallRecordingFieldRestricted(videoFieldMetadataItem);
 
-  const callRecordingRecordFields =
-    queryScope === 'call-recording-summary'
-      ? CALL_RECORDING_SUMMARY_RECORD_FIELDS
-      : isVideoFieldRestricted
-        ? CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS
-        : CALL_RECORDING_TRANSCRIPT_WITH_VIDEO_RECORD_FIELDS;
+  const callRecordingRecordFields = getCallRecordingRecordFields({
+    queryScope,
+    isVideoFieldRestricted,
+  });
 
   const callRecordingFilter = useMemo(
     () =>

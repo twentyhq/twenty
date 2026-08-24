@@ -1,22 +1,19 @@
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { callRecordingTranscriptHeaderDataComponentFamilyState } from '@/page-layout/widgets/call-recording-transcript/states/callRecordingTranscriptHeaderDataComponentFamilyState';
 import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useEffect } from 'react';
-import {
-  isDefined,
-  isNonEmptyArray,
-  parseCallRecordingTranscriptEntries,
-} from 'twenty-shared/utils';
+import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 type CallRecordingTranscriptHeaderDataEffectProps = {
-  callRecording: CalendarEventCallRecordingCandidate | undefined;
+  transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
+  videoFileUrl: string | undefined;
 };
 
 export const CallRecordingTranscriptHeaderDataEffect = ({
-  callRecording,
+  transcriptEntries,
+  videoFileUrl,
 }: CallRecordingTranscriptHeaderDataEffectProps) => {
   const widget = useCurrentWidget();
   const setCallRecordingTranscriptHeaderData = useSetAtomComponentFamilyState(
@@ -24,16 +21,8 @@ export const CallRecordingTranscriptHeaderDataEffect = ({
     widget.id,
   );
 
-  const transcriptEntries = parseCallRecordingTranscriptEntries(
-    callRecording?.transcript,
-  );
-
   const transcriptPlainText = isNonEmptyArray(transcriptEntries)
     ? buildCallRecordingTranscriptPlainText(transcriptEntries)
-    : undefined;
-
-  const videoFileUrl = isDefined(callRecording)
-    ? getCallRecordingVideoFileUrl(callRecording)
     : undefined;
 
   useEffect(() => {
