@@ -38,9 +38,6 @@ export const slackSetUserLinkHandler = async ({
     };
   }
 
-  // A Slack Connect user's messages carry their own team ID, not the
-  // installed workspace's, so the link must be stored under the team ID
-  // resolution will look up with.
   const slackTeamId = isNonEmptyString(requestedSlackTeamId)
     ? requestedSlackTeamId
     : await getInstalledSlackTeamId(slackClientResult.client);
@@ -53,8 +50,6 @@ export const slackSetUserLinkHandler = async ({
     };
   }
 
-  // Slack user link records are APPLICATION-writable, so the write needs the
-  // application's own access, not the triggering person's.
   const client = new CoreApiClient({ runAs: 'application' });
 
   let existingLink: SlackUserLink | undefined;
