@@ -1,9 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { GetMatchedButton } from '@/client-brief';
 import { mediaUp, spacing } from '@/tokens';
-import { Button } from '@/ui';
 
 import { BrowseDirectoryButton } from './BrowseDirectoryButton';
 
@@ -20,11 +19,9 @@ const Row = styled.div`
 `;
 
 export function LeadHeroCtas() {
-  const i18n = getServerI18n();
-
   return (
     <Row>
-      <Button href="/partners/brief" label={i18n._(msg`Get matched`)} />
+      <GetMatchedButton label={msg`Get matched`} />
       <BrowseDirectoryButton />
     </Row>
   );

@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 
+import { ClientBriefModalRoot } from '@/client-brief';
 import { PartnerApplicationModalRoot } from '@/partner-application';
 import { MarketplaceBriefPrompt } from '@/partners-marketplace/MarketplaceBriefPrompt';
 import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partners-source';
@@ -42,26 +43,28 @@ export default async function PartnersPage({
 
   return (
     <PartnerApplicationModalRoot>
-      <JsonLd
-        data={buildBreadcrumbListJsonLd(
-          [
-            { name: 'Home', path: '/' },
-            { name: 'Partners', path: '/partners' },
-          ],
-          locale,
-        )}
-      />
-      <Menu communityStats={communityStats} />
-      <main>
-        <PartnerLeadHero />
-        <Suspense fallback={<MarketplaceListSkeleton />}>
-          <PartnerDirectory partners={partners} />
-        </Suspense>
-        <PartnerServicesExplainer />
-        <MarketplaceBriefPrompt />
-        <PartnerFaq />
-        <PartnerBecomeStrip />
-      </main>
+      <ClientBriefModalRoot>
+        <JsonLd
+          data={buildBreadcrumbListJsonLd(
+            [
+              { name: 'Home', path: '/' },
+              { name: 'Partners', path: '/partners' },
+            ],
+            locale,
+          )}
+        />
+        <Menu communityStats={communityStats} />
+        <main>
+          <PartnerLeadHero />
+          <Suspense fallback={<MarketplaceListSkeleton />}>
+            <PartnerDirectory partners={partners} />
+          </Suspense>
+          <PartnerServicesExplainer />
+          <MarketplaceBriefPrompt />
+          <PartnerFaq />
+          <PartnerBecomeStrip />
+        </main>
+      </ClientBriefModalRoot>
     </PartnerApplicationModalRoot>
   );
 }
