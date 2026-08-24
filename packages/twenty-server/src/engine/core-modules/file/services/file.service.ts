@@ -8,10 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  FileStorageService,
-  type ResourceIdentifier,
-} from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -19,7 +16,6 @@ import {
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { type FileRangeResponse } from 'src/engine/core-modules/file/types/file-range-response.type';
-import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -54,7 +50,7 @@ export class FileService {
     applicationId: string;
     filepath: string;
     fileFolder: FileFolder;
-  }): Promise<FileResponse | null> {
+  }): Promise<FileRangeResponse | null> {
     const application = await this.applicationRepository.findOne({
       where: {
         id: applicationId,
@@ -185,7 +181,7 @@ export class FileService {
       return null;
     }
 
-    return this.getFilePresignedUrlOrRangeStream({
+    return this.getFilePresignedUrlOrStream({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: params.fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
@@ -202,51 +198,6 @@ export class FileService {
     applicationUniversalIdentifier,
     workspaceId,
     mimeType,
-  }: {
-    resourcePath: string;
-    fileFolder: FileFolder;
-    applicationUniversalIdentifier: string;
-    workspaceId: string;
-    mimeType: string;
-  }): Promise<FileResponse | null> {
-    const resourceIdentifier: ResourceIdentifier = {
-      resourcePath,
-      fileFolder,
-      applicationUniversalIdentifier,
-      workspaceId,
-    };
-
-    const presignedUrl = await this.getFilePresignedUrl({
-      resourceIdentifier,
-      mimeType,
-    });
-
-    if (isDefined(presignedUrl)) {
-      return { type: 'redirect', presignedUrl };
-    }
-
-    try {
-      const stream = await this.fileStorageService.readFile(resourceIdentifier);
-
-      return { type: 'stream', stream, mimeType };
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return null;
-      }
-
-      throw error;
-    }
-  }
-
-  private async getFilePresignedUrlOrRangeStream({
-    resourcePath,
-    fileFolder,
-    applicationUniversalIdentifier,
-    workspaceId,
-    mimeType,
     fileSizeInBytes,
     rangeHeader,
   }: {
@@ -255,19 +206,25 @@ export class FileService {
     applicationUniversalIdentifier: string;
     workspaceId: string;
     mimeType: string;
-    fileSizeInBytes: number;
+    fileSizeInBytes?: number;
     rangeHeader?: string;
   }): Promise<FileRangeResponse | null> {
-    const resourceIdentifier: ResourceIdentifier = {
+    const resourceIdentifier = {
       resourcePath,
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,
     };
 
-    const presignedUrl = await this.getFilePresignedUrl({
-      resourceIdentifier,
-      mimeType,
+    const presignedUrl = await this.fileStorageService.getPresignedUrl({
+      ...resourceIdentifier,
+      expiresInSeconds: this.twentyConfigService.get(
+        'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
+      ),
+      responseContentType: mimeType,
+      responseContentDisposition: getContentDisposition(mimeType),
+      responseCacheControl:
+        fileFolderConfigs[fileFolder].cacheControl ?? undefined,
     });
 
     if (isDefined(presignedUrl)) {
@@ -277,30 +234,33 @@ export class FileService {
     }
 
     // No presign support (local storage, or S3 without presign enabled):
-    // fall back to range-aware streaming through the server.
-    const resolvedByteRange = resolveByteRange({
-      rangeHeader,
-      fileSizeInBytes,
-    });
-
-    if (resolvedByteRange.type === 'unsatisfiable') {
-      return { type: 'unsatisfiable-range', fileSizeInBytes };
-    }
-
+    // fall back to streaming through the server, range-aware when the caller
+    // provides the file size.
     try {
-      if (resolvedByteRange.type === 'partial') {
-        const stream = await this.fileStorageService.readFile({
-          ...resourceIdentifier,
-          byteRange: resolvedByteRange.byteRange,
+      if (isDefined(fileSizeInBytes)) {
+        const resolvedByteRange = resolveByteRange({
+          rangeHeader,
+          fileSizeInBytes,
         });
 
-        return {
-          type: 'partial-stream',
-          stream,
-          mimeType,
-          byteRange: resolvedByteRange.byteRange,
-          fileSizeInBytes,
-        };
+        if (resolvedByteRange.type === 'unsatisfiable') {
+          return { type: 'unsatisfiable-range', fileSizeInBytes };
+        }
+
+        if (resolvedByteRange.type === 'partial') {
+          const stream = await this.fileStorageService.readFile({
+            ...resourceIdentifier,
+            byteRange: resolvedByteRange.byteRange,
+          });
+
+          return {
+            type: 'partial-stream',
+            stream,
+            mimeType,
+            byteRange: resolvedByteRange.byteRange,
+            fileSizeInBytes,
+          };
+        }
       }
 
       const stream = await this.fileStorageService.readFile(resourceIdentifier);
@@ -316,26 +276,6 @@ export class FileService {
 
       throw error;
     }
-  }
-
-  private getFilePresignedUrl({
-    resourceIdentifier,
-    mimeType,
-  }: {
-    resourceIdentifier: ResourceIdentifier;
-    mimeType: string;
-  }): Promise<string | null> {
-    return this.fileStorageService.getPresignedUrl({
-      ...resourceIdentifier,
-      expiresInSeconds: this.twentyConfigService.get(
-        'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
-      ),
-      responseContentType: mimeType,
-      responseContentDisposition: getContentDisposition(mimeType),
-      responseCacheControl:
-        fileFolderConfigs[resourceIdentifier.fileFolder].cacheControl ??
-        undefined,
-    });
   }
 
   async getFileContentById({

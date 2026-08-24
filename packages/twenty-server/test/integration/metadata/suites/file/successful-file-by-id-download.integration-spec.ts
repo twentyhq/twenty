@@ -30,11 +30,11 @@ describe('File-by-id controller download should succeed', () => {
     const response = await request(global.app.getHttpServer())
       .get(extractPathAndQueryFromUrl(signedUrl))
       .buffer(true)
-      .parse((responseStream, callback) => {
+      .parse((res, callback) => {
         const chunks: Buffer[] = [];
 
-        responseStream.on('data', (chunk) => chunks.push(chunk));
-        responseStream.on('end', () => callback(null, Buffer.concat(chunks)));
+        res.on('data', (chunk) => chunks.push(chunk));
+        res.on('end', () => callback(null, Buffer.concat(chunks)));
       });
 
     jest.useFakeTimers();
@@ -56,11 +56,11 @@ describe('File-by-id controller download should succeed', () => {
       .get(extractPathAndQueryFromUrl(signedUrl))
       .set('Range', 'bytes=0-9')
       .buffer(true)
-      .parse((responseStream, callback) => {
+      .parse((res, callback) => {
         const chunks: Buffer[] = [];
 
-        responseStream.on('data', (chunk) => chunks.push(chunk));
-        responseStream.on('end', () => callback(null, Buffer.concat(chunks)));
+        res.on('data', (chunk) => chunks.push(chunk));
+        res.on('end', () => callback(null, Buffer.concat(chunks)));
       });
 
     jest.useFakeTimers();

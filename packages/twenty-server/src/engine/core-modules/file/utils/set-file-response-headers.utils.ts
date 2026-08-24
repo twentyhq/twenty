@@ -7,7 +7,7 @@ import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 
 export const setFileResponseHeaders = (
-  res: Pick<Response, 'setHeader'>,
+  res: Response,
   mimeType: string,
   fileFolder?: FileFolder,
 ) => {

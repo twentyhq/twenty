@@ -37,15 +37,8 @@ import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-f
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-type FileByIdRequest = Pick<Request, 'headers'> & {
-  workspaceId: string;
-};
-
-type FileByIdResponse = NodeJS.WritableStream &
-  Pick<
-    Response,
-    'destroy' | 'end' | 'headersSent' | 'redirect' | 'setHeader' | 'status'
-  >;
+// workspaceId is bound onto the request by FileByIdGuard.
+type FileByIdRequest = Request & { workspaceId: string };
 
 @Controller()
 @UseFilters(FileApiExceptionFilter)
@@ -177,6 +170,8 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
+    // Public assets are requested without a Range header, so range variants
+    // can only mean a server bug.
     if (fileResponse.type !== 'stream') {
       throw new FileException(
         'Error retrieving file',
@@ -205,7 +200,7 @@ export class FileController {
   @Get(`${ApiPath.File}/:fileFolder/:id`)
   @UseGuards(FileByIdGuard, NoPermissionGuard)
   async getFileById(
-    @Res() res: FileByIdResponse,
+    @Res() res: Response,
     @Req() req: FileByIdRequest,
     @Param('fileFolder') fileFolder: SupportedFileFolder,
     @Param('id') fileId: string,

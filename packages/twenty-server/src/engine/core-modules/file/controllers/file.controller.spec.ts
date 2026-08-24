@@ -1,7 +1,7 @@
 import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { PassThrough, Readable } from 'stream';
+import { Readable } from 'stream';
 import { pipeline } from 'node:stream/promises';
 
 import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
@@ -47,15 +47,8 @@ const createMockResponse = ({
   destroy: jest.fn(),
 });
 
-const createMockFileResponse = ({
-  headersSent = false,
-}: { headersSent?: boolean } = {}) =>
-  Object.assign(new PassThrough(), createMockResponse({ headersSent }));
-
-const createMockFileRequest = (range?: string) => ({
-  workspaceId: 'workspace-id',
-  headers: { range },
-});
+const createMockFileRequest = (range?: string) =>
+  ({ workspaceId: 'workspace-id', headers: { range } }) as any;
 
 const mockPipeline = jest.mocked(pipeline);
 
@@ -125,7 +118,7 @@ describe('FileController', () => {
         });
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
         mockResponse,
@@ -158,7 +151,7 @@ describe('FileController', () => {
         });
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
         mockResponse,
@@ -200,7 +193,7 @@ describe('FileController', () => {
         });
 
       const mockRequest = createMockFileRequest('bytes=100-199');
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
         mockResponse,
@@ -236,7 +229,7 @@ describe('FileController', () => {
         });
 
       const mockRequest = createMockFileRequest('bytes=1000-');
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       mockPipeline.mockClear();
 
@@ -268,7 +261,7 @@ describe('FileController', () => {
         });
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
         mockResponse,
@@ -293,7 +286,7 @@ describe('FileController', () => {
         .mockResolvedValue(null);
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       await expect(
         controller.getFileById(
@@ -320,7 +313,7 @@ describe('FileController', () => {
         .mockRejectedValue(underlyingError);
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse();
+      const mockResponse = createMockResponse() as any;
 
       const promise = controller.getFileById(
         mockResponse,
@@ -357,7 +350,7 @@ describe('FileController', () => {
       mockPipeline.mockRejectedValue(new Error('source backend exploded'));
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse({ headersSent: false });
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
 
       await expect(
         controller.getFileById(
@@ -390,7 +383,7 @@ describe('FileController', () => {
       mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
 
       const mockRequest = createMockFileRequest();
-      const mockResponse = createMockFileResponse({ headersSent: true });
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
 
       // No throw expected — once headers are out, the controller cannot honestly
       // switch to a 500 response, so it tears the socket down instead.
