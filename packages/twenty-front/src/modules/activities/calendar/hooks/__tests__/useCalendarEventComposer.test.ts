@@ -93,4 +93,40 @@ describe('useCalendarEventComposer', () => {
 
     expect(onCreated).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps the location controlled and submits the selected value', async () => {
+    mockCreateCalendarEvent.mockResolvedValue(true);
+
+    const { result } = renderHook(() =>
+      useCalendarEventComposer({
+        initialValues: {
+          connectedAccountId: 'account-id',
+          contextRecord: {
+            objectNameSingular: 'person',
+            recordId: 'person-id',
+          },
+          defaultAttendees: 'person@example.com',
+          timeZone: 'UTC',
+        },
+        onCreated: jest.fn(),
+      }),
+    );
+
+    act(() => {
+      result.current.setTitle('Planning session');
+      result.current.setLocation('48 Rue de Courcelles, Paris, France');
+    });
+
+    expect(result.current.location).toBe('48 Rue de Courcelles, Paris, France');
+
+    await act(async () => {
+      await result.current.handleCreate();
+    });
+
+    expect(mockCreateCalendarEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        location: '48 Rue de Courcelles, Paris, France',
+      }),
+    );
+  });
 });

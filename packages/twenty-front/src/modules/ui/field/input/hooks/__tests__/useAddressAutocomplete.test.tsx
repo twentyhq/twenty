@@ -58,7 +58,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('123 Main', 'token123');
+      await result.current.getAutocompletePlaceData('123 Main');
     });
 
     expect(mockOpenDropdown).toHaveBeenCalled();
@@ -74,7 +74,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('nonexistent', 'token123');
+      await result.current.getAutocompletePlaceData('nonexistent');
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('test', 'token123');
+      await result.current.getAutocompletePlaceData('test');
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -245,14 +245,17 @@ describe('useAddressAutocomplete', () => {
   it('should set token to null after autofilling', async () => {
     const mockOnChange = jest.fn();
     mockGetPlaceDetailsData.mockResolvedValue({});
+    mockGetPlaceAutocompleteData.mockResolvedValue([
+      { text: '123 Main St', placeId: 'place123' },
+    ]);
 
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
-    act(() => {
-      result.current.setTokenForPlaceApi('initial-token');
+    await act(async () => {
+      await result.current.getAutocompletePlaceData('123 Main St');
     });
 
-    expect(result.current.tokenForPlaceApi).toBe('initial-token');
+    expect(result.current.tokenForPlaceApi).not.toBeNull();
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails(
@@ -299,17 +302,12 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData(
-        'Boston',
-        'token123',
-        'US',
-        true,
-      );
+      await result.current.getAutocompletePlaceData('Boston', 'US', true);
     });
 
     expect(mockGetPlaceAutocompleteData).toHaveBeenCalledWith(
       'Boston',
-      'token123',
+      expect.any(String),
       'US',
       true,
     );
