@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  type ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -52,6 +56,9 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -102,6 +109,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
   protected readonly throttlerService: ThrottlerService;
+  @Inject()
+  protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
@@ -525,6 +534,22 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
+    const isApiRateLimitV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
+        authContext.workspace.id,
+      );
+
+    if (isApiRateLimitV2Enabled) {
+      await this.usageLimitSpeedService.consumeOrThrow({
+        resourceType: UsageResourceType.API,
+        authContext,
+        operationType: UsageOperationType.API_REQUEST,
+      });
+
+      return;
+    }
+
     await this.throttleApiKeyQueryExecution(authContext);
     await this.throttleApplicationQueryExecution(authContext);
   }
