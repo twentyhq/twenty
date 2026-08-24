@@ -1,10 +1,10 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { isWorkspaceObjectNotFoundError } from 'src/database/commands/command-runners/utils/is-workspace-object-not-found-error.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -43,7 +43,7 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
     }
 
     try {
-      // Resolve the workspace workflowVersion object; EntityMetadataNotFoundError
+      // Resolve the workspace workflowVersion object; an object-not-found error
       // means it was never provisioned, so there is nothing to repair and the
       // orphan query below would fail to resolve its schema table. Skip cleanly
       // like the sibling backfill commands rather than aborting the upgrade.
@@ -61,7 +61,7 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
         buildSystemAuthContext(workspaceId),
       );
     } catch (error) {
-      if (error instanceof EntityMetadataNotFoundError) {
+      if (isWorkspaceObjectNotFoundError(error)) {
         return;
       }
 

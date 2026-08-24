@@ -1,5 +1,9 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
-import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
+
+import {
+  TwentyOrmV2Exception,
+  TwentyOrmV2ExceptionCode,
+} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairOrphanCoreWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785600000000-repair-orphan-core-workflow-versions.command';
@@ -50,9 +54,12 @@ const setup = ({
   } as unknown as QueryRunner;
 
   const count = objectMissing
-    ? jest
-        .fn()
-        .mockRejectedValue(new EntityMetadataNotFoundError('workflowVersion'))
+    ? jest.fn().mockRejectedValue(
+        new TwentyOrmV2Exception(
+          'Object "workflowVersion" does not exist in this workspace',
+          TwentyOrmV2ExceptionCode.UNKNOWN_OBJECT,
+        ),
+      )
     : jest.fn().mockResolvedValue(0);
 
   const dataSource = {
