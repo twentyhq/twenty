@@ -164,22 +164,12 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       auth: oAuth2Client,
     });
 
-    const { data: gmailData } = await gmailClient.users.getProfile({
-      userId: 'me',
-    });
-
-    const profileEmail = gmailData.emailAddress;
-
-    if (!isNonEmptyString(profileEmail)) {
-      throw new Error('Gmail profile did not return an email address');
-    }
-
     const fromEmail = isNonEmptyString(sendMessageInput.fromHandle)
       ? getConnectedAccountSendableHandleOrThrow({
           connectedAccount,
           requestedFromHandle: sendMessageInput.fromHandle,
         })
-      : profileEmail;
+      : connectedAccount.handle;
 
     const { data: peopleData } = await peopleClient.people.get({
       resourceName: 'people/me',
