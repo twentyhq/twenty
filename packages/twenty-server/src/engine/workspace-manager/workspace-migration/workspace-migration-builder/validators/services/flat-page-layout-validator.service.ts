@@ -34,12 +34,10 @@ export class FlatPageLayoutValidatorService {
       type: 'create',
     });
 
-    const { objectMetadataUniversalIdentifier } = flatPageLayout;
-
     // Workspace-level layouts are not attached to any object
-    if (isDefined(objectMetadataUniversalIdentifier)) {
+    if (isDefined(flatPageLayout.objectMetadataUniversalIdentifier)) {
       const optimisticFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: objectMetadataUniversalIdentifier,
+        universalIdentifier: flatPageLayout.objectMetadataUniversalIdentifier,
         flatEntityMaps: flatObjectMetadataMaps,
       });
 
