@@ -2,6 +2,22 @@ import { type TimelineActivityTypeManifest } from 'twenty-shared/application';
 import { type InstalledTimelineActivityType } from '~/pages/settings/applications/types/installedTimelineActivityType';
 import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
 
+const getSettingsApplicationTimelineActivityTypeCommonFields = (
+  timelineActivityType:
+    | InstalledTimelineActivityType
+    | TimelineActivityTypeManifest,
+): Omit<SettingsApplicationTimelineActivityType, 'id' | 'isActive'> => ({
+  action: timelineActivityType.emit?.on ?? null,
+  frontComponentUniversalIdentifier:
+    timelineActivityType.frontComponentUniversalIdentifier,
+  icon: timelineActivityType.icon,
+  label: timelineActivityType.label,
+  name: timelineActivityType.name,
+  objectUniversalIdentifier:
+    timelineActivityType.emit?.objectUniversalIdentifier,
+  universalIdentifier: timelineActivityType.universalIdentifier,
+});
+
 export const getSettingsApplicationTimelineActivityTypes = ({
   applicationId,
   isInstalledApplication,
@@ -20,31 +36,19 @@ export const getSettingsApplicationTimelineActivityTypes = ({
           timelineActivityType.applicationId === applicationId,
       )
       .map((timelineActivityType) => ({
-        action: timelineActivityType.emit?.on ?? null,
-        frontComponentUniversalIdentifier:
-          timelineActivityType.frontComponentUniversalIdentifier,
-        icon: timelineActivityType.icon,
+        ...getSettingsApplicationTimelineActivityTypeCommonFields(
+          timelineActivityType,
+        ),
         id: timelineActivityType.id,
         isActive: timelineActivityType.isActive,
-        label: timelineActivityType.label,
-        name: timelineActivityType.name,
-        objectUniversalIdentifier:
-          timelineActivityType.emit?.objectUniversalIdentifier,
-        universalIdentifier: timelineActivityType.universalIdentifier,
       }));
   }
 
   return manifestTimelineActivityTypes.map((timelineActivityType) => ({
-    action: timelineActivityType.emit?.on ?? null,
-    frontComponentUniversalIdentifier:
-      timelineActivityType.frontComponentUniversalIdentifier,
-    icon: timelineActivityType.icon,
+    ...getSettingsApplicationTimelineActivityTypeCommonFields(
+      timelineActivityType,
+    ),
     id: timelineActivityType.universalIdentifier,
     isActive: true,
-    label: timelineActivityType.label,
-    name: timelineActivityType.name,
-    objectUniversalIdentifier:
-      timelineActivityType.emit?.objectUniversalIdentifier,
-    universalIdentifier: timelineActivityType.universalIdentifier,
   }));
 };
