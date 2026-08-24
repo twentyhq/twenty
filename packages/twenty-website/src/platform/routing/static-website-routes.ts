@@ -114,6 +114,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Become a Twenty Partner — Apply`,
   },
   {
+    changeFrequency: 'monthly',
+    description: msg`Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it.`,
+    id: 'partnersBecome',
+    indexed: true,
+    path: '/partners/become',
+    priority: 0.6,
+    title: msg`Become a Twenty Partner — Join the Open Source CRM Ecosystem`,
+  },
+  {
     changeFrequency: 'yearly',
     description: msg`Submit a project brief and get matched with a certified Twenty partner for migration, customisation, and CRM implementation.`,
     id: 'partnersBrief',

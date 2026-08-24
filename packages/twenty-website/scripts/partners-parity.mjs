@@ -21,7 +21,7 @@ const browser = await launchBrowser();
 // rhythm and show overflow, so the two read as one continuous frame across the
 // seam. If a future refactor of the `:has(+ [data-connect-up])` rule breaks
 // this, the corner markers re-clip and the frame splits.
-const partners = await openPage(browser, `${NEW_BASE}/partners`, {
+const partners = await openPage(browser, `${NEW_BASE}/partners/become`, {
   viewport: { width: 1440, height: 1400 },
   settleMs: 500,
 });
@@ -146,8 +146,8 @@ assert(
   `${signoff.becomeTag} href=${signoff.becomeHref}`,
 );
 assert(
-  'signoff find-a-partner links to the marketplace',
-  signoff.findHref.endsWith('/partners/list'),
+  'signoff find-a-partner links to the lead page',
+  signoff.findHref.endsWith('/partners'),
   signoff.findHref,
 );
 assert(

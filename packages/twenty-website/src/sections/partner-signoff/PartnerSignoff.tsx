@@ -16,7 +16,7 @@ export function PartnerSignoff() {
       scheme="light"
     >
       <BecomePartnerButton label={msg`Become a partner`} variant="outlined" />
-      <Button href="/partners/list" label={i18n._(msg`Find a partner`)} />
+      <Button href="/partners" label={i18n._(msg`Find a partner`)} />
     </Signoff>
   );
 }

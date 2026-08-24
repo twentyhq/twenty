@@ -87,7 +87,7 @@ export function PartnerHero() {
         <CtaRow>
           <BecomePartnerButton label={msg`Become a partner`} />
           <Button
-            href="/partners/list"
+            href="/partners"
             label={i18n._(msg`Find a partner`)}
             variant="outlined"
           />
