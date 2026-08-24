@@ -6,9 +6,15 @@ import { t } from '@lingui/core/macro';
 import { IconMail } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-export const useComposeEmailRelatedRecordAction = (
-  targetRecord: ActivityTargetableObject,
-): RelatedRecordActionBinding => {
+type UseComposeEmailRelatedRecordActionParams = {
+  targetRecord: ActivityTargetableObject;
+  isPermissionGated?: boolean;
+};
+
+export const useComposeEmailRelatedRecordAction = ({
+  targetRecord,
+  isPermissionGated = true,
+}: UseComposeEmailRelatedRecordActionParams): RelatedRecordActionBinding => {
   const { openComposer, loading } =
     useComposeEmailForTargetRecord(targetRecord);
   const canComposeEmail = useHasPermissionFlag(
@@ -20,7 +26,7 @@ export const useComposeEmailRelatedRecordAction = (
       id: 'compose-email',
       label: t`Compose email`,
       Icon: IconMail,
-      isVisible: canComposeEmail,
+      isVisible: !isPermissionGated || canComposeEmail,
       disabled: loading,
       execute: openComposer,
     },

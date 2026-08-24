@@ -27,7 +27,7 @@ export const useRelatedRecordActions = ({
     targetRecord,
     onUploadComplete: onFileUploadComplete,
   });
-  const emailAction = useComposeEmailRelatedRecordAction(targetRecord);
+  const emailAction = useComposeEmailRelatedRecordAction({ targetRecord });
   const calendarEventAction =
     useComposeCalendarEventRelatedRecordAction(targetRecord);
 
