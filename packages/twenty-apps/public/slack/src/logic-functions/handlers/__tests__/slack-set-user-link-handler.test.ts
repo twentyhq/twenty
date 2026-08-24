@@ -104,6 +104,19 @@ describe('slackSetUserLinkHandler', () => {
     expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
   });
 
+  it('should store the link under the requested team for Slack Connect users', async () => {
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: 'T9876543210',
+    });
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ slackTeamId: 'T9876543210' }),
+    );
+  });
+
   it('should create a manual link when none exists', async () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 

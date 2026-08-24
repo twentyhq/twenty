@@ -16,6 +16,7 @@ import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 export const slackSetUserLinkHandler = async ({
   slackUserId,
   workspaceMemberId,
+  slackTeamId: requestedSlackTeamId,
   name,
 }: SlackSetUserLinkInput): Promise<SlackToolResult> => {
   if (!(await currentUserHasWorkspaceMembersPermission())) {
@@ -37,7 +38,12 @@ export const slackSetUserLinkHandler = async ({
     };
   }
 
-  const slackTeamId = await getInstalledSlackTeamId(slackClientResult.client);
+  // A Slack Connect user's messages carry their own team ID, not the
+  // installed workspace's, so the link must be stored under the team ID
+  // resolution will look up with.
+  const slackTeamId = isNonEmptyString(requestedSlackTeamId)
+    ? requestedSlackTeamId
+    : await getInstalledSlackTeamId(slackClientResult.client);
 
   if (!isNonEmptyString(slackTeamId)) {
     return {

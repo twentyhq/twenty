@@ -14,6 +14,12 @@ export const slackSetUserLinkInputSchema: InputJsonSchema = {
       description:
         'Workspace member whose permissions the assistant borrows when this Slack user talks to it.',
     },
+    slackTeamId: {
+      type: 'string',
+      label: 'Slack team ID',
+      description:
+        'Slack workspace the account belongs to. Defaults to the installed Slack workspace; set it when linking a Slack Connect user whose messages carry another team ID.',
+    },
     name: {
       type: 'string',
       label: 'Display name',
