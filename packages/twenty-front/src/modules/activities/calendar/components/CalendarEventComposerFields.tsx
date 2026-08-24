@@ -151,10 +151,14 @@ export const CalendarEventComposerFields = ({
             <ComposerFieldRow
               label={t`All day`}
               labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
+              onClick={() =>
+                composerState.handleIsFullDayChange(!composerState.isFullDay)
+              }
               trailing={
                 <Toggle
                   aria-label={t`All day`}
                   toggleSize="small"
+                  centered
                   value={composerState.isFullDay}
                   onChange={composerState.handleIsFullDayChange}
                 />
@@ -232,10 +236,14 @@ export const CalendarEventComposerFields = ({
             <ComposerFieldRow
               label={t`Invitations`}
               labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
+              onClick={() =>
+                composerState.setSendInvitations(!composerState.sendInvitations)
+              }
               trailing={
                 <Toggle
                   aria-label={t`Send invitations`}
                   toggleSize="small"
+                  centered
                   value={composerState.sendInvitations}
                   onChange={composerState.setSendInvitations}
                 />
@@ -248,10 +256,14 @@ export const CalendarEventComposerFields = ({
             <ComposerFieldRow
               label={t`Video call`}
               labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
+              onClick={() =>
+                composerState.setAddConferencing(!composerState.addConferencing)
+              }
               trailing={
                 <Toggle
                   aria-label={t`Video conferencing`}
                   toggleSize="small"
+                  centered
                   value={composerState.addConferencing}
                   onChange={composerState.setAddConferencing}
                 />
