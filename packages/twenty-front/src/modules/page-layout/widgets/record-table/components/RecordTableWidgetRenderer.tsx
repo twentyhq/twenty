@@ -1,6 +1,7 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
+import { getRecordTableWidgetIsUIEditable } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetIsUIEditable';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -28,10 +29,7 @@ export const RecordTableWidgetRenderer = ({
       ? (configuration.recordLimit as number | undefined)
       : undefined;
 
-  const isUIEditable =
-    isRecordTableConfiguration && 'isUIEditable' in configuration
-      ? (configuration.isUIEditable ?? false)
-      : false;
+  const isUIEditable = getRecordTableWidgetIsUIEditable(configuration);
 
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
     return null;

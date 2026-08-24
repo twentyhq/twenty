@@ -6,6 +6,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import { getRecordTableWidgetIsUIEditable } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetIsUIEditable';
 import {
   getRecordTableWidgetLayoutViewType,
   isRecordTableWidgetContentEditingSupported,
@@ -92,12 +93,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
-  const isUIEditable =
-    isRecordTableConfiguration &&
-    isDefined(configuration) &&
-    'isUIEditable' in configuration
-      ? (configuration.isUIEditable ?? false)
-      : false;
+  const isUIEditable = getRecordTableWidgetIsUIEditable(configuration);
 
   const {
     sourceDescription,
