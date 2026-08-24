@@ -92,18 +92,6 @@ export const computeStandardMessageCampaignViewFields = (
         size: 100,
       },
     }),
-    allMessageCampaignsAttemptedCount: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'messageCampaign',
-      context: {
-        viewName: 'allMessageCampaigns',
-        viewFieldName: 'attemptedCount',
-        fieldName: 'attemptedCount',
-        position: 7,
-        isVisible: true,
-        size: 100,
-      },
-    }),
     allMessageCampaignsDeliveredCount: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',
@@ -112,18 +100,6 @@ export const computeStandardMessageCampaignViewFields = (
         viewFieldName: 'deliveredCount',
         fieldName: 'deliveredCount',
         position: 8,
-        isVisible: true,
-        size: 100,
-      },
-    }),
-    allMessageCampaignsSoftBouncedCount: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'messageCampaign',
-      context: {
-        viewName: 'allMessageCampaigns',
-        viewFieldName: 'softBouncedCount',
-        fieldName: 'softBouncedCount',
-        position: 9,
         isVisible: true,
         size: 100,
       },
@@ -229,20 +205,6 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldGroupName: 'stats',
         },
       }),
-    messageCampaignRecordPageFieldsAttemptedCount:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'messageCampaign',
-        context: {
-          viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'attemptedCount',
-          fieldName: 'attemptedCount',
-          position: 3,
-          isVisible: true,
-          size: 100,
-          viewFieldGroupName: 'stats',
-        },
-      }),
     messageCampaignRecordPageFieldsDeliveredCount:
       createStandardViewFieldFlatMetadata({
         ...args,
@@ -252,20 +214,6 @@ export const computeStandardMessageCampaignViewFields = (
           viewFieldName: 'deliveredCount',
           fieldName: 'deliveredCount',
           position: 4,
-          isVisible: true,
-          size: 100,
-          viewFieldGroupName: 'stats',
-        },
-      }),
-    messageCampaignRecordPageFieldsSoftBouncedCount:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'messageCampaign',
-        context: {
-          viewName: 'messageCampaignRecordPageFields',
-          viewFieldName: 'softBouncedCount',
-          fieldName: 'softBouncedCount',
-          position: 5,
           isVisible: true,
           size: 100,
           viewFieldGroupName: 'stats',

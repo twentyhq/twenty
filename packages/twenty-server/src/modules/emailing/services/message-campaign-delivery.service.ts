@@ -189,12 +189,6 @@ export class MessageCampaignDeliveryService {
         },
       });
 
-      await this.skipClaimedMessage({
-        messageRepository,
-        messageId,
-        claimedAt,
-      });
-
       return;
     }
 
