@@ -53,13 +53,17 @@ const SidePanelCreateRelatedRecordActionList = ({
 };
 
 export const SidePanelCreateRelatedRecordPage = () => {
-  const targetRecord = useAtomComponentStateValue(
+  const createRelatedRecordTarget = useAtomComponentStateValue(
     createRelatedRecordTargetComponentState,
   );
 
-  if (!isDefined(targetRecord)) {
+  if (!isDefined(createRelatedRecordTarget)) {
     return null;
   }
 
-  return <SidePanelCreateRelatedRecordActionList targetRecord={targetRecord} />;
+  return (
+    <SidePanelCreateRelatedRecordActionList
+      targetRecord={createRelatedRecordTarget}
+    />
+  );
 };
