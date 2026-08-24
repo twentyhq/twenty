@@ -7,6 +7,8 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
@@ -26,6 +28,7 @@ export class BackfillWorkflowVersionCoreLinksCommand extends ProvisionedWorkspac
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -46,13 +49,20 @@ export class BackfillWorkflowVersionCoreLinksCommand extends ProvisionedWorkspac
     let workspaceWorkflowVersions: WorkflowVersionWorkspaceEntity[];
 
     try {
-      const workflowVersionRepository =
-        dataSource.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      workspaceWorkflowVersions =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workflowVersionRepository =
+              await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+                workspaceId,
+                'workflowVersion',
+                { shouldBypassPermissionChecks: true },
+              );
 
-      workspaceWorkflowVersions = await workflowVersionRepository.find();
+            return workflowVersionRepository.find();
+          },
+          buildSystemAuthContext(workspaceId),
+        );
     } catch (error) {
       if (error instanceof EntityMetadataNotFoundError) {
         this.logger.log(

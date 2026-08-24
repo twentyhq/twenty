@@ -194,7 +194,7 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
         backfillQuery.sql,
         backfillQuery.parameters,
         undefined,
-        { shouldBypassPermissionChecks: true },
+        
       );
 
       lastBatchRowCount = result?.[1] ?? 0;
@@ -224,7 +224,7 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
           backfillQuery.sql,
           backfillQuery.parameters,
           undefined,
-          { shouldBypassPermissionChecks: true },
+          
         );
 
       lastBatchRowCount = updatedRowCount;

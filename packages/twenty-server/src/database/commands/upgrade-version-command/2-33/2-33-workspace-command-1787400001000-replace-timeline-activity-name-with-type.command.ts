@@ -237,7 +237,7 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
         backfillQuery.sql,
         backfillQuery.parameters,
         undefined,
-        { shouldBypassPermissionChecks: true },
+        
       );
 
       lastBatchRowCount = result?.[1] ?? 0;

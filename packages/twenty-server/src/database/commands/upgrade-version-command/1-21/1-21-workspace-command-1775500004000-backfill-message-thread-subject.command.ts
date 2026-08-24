@@ -72,7 +72,7 @@ export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCom
          AND mt."subject" IS NULL`,
       undefined,
       undefined,
-      { shouldBypassPermissionChecks: true },
+      
     );
 
     this.logger.log(
