@@ -3,7 +3,8 @@ import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useRef, useState } from 'react';
+import { atom, useAtomValue, useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
@@ -14,13 +15,23 @@ type GetAutocompletePlaceDataParams = {
   isFieldCity?: boolean;
 };
 
+type PlaceAutocompleteSession = {
+  tokenForPlaceApi: string | null;
+  latestRequestId: number;
+};
+
 export const usePlaceAutocomplete = (dropdownId: string) => {
   const [placeAutocompleteData, setPlaceAutocompleteData] = useState<
     PlaceAutocompleteResult[]
   >([]);
-  const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
-  const tokenForPlaceApiRef = useRef<string | null>(null);
-  const latestRequestIdRef = useRef(0);
+  const [placeAutocompleteSessionAtom] = useState(() =>
+    atom<PlaceAutocompleteSession>({
+      tokenForPlaceApi: null,
+      latestRequestId: 0,
+    }),
+  );
+  const placeAutocompleteSession = useAtomValue(placeAutocompleteSessionAtom);
+  const store = useStore();
 
   const { getPlaceAutocompleteData } = useGetPlaceApiData();
   const { openDropdown } = useOpenDropdown();
@@ -43,11 +54,14 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
         return;
       }
 
-      const token = tokenForPlaceApiRef.current ?? v4();
+      const currentSession = store.get(placeAutocompleteSessionAtom);
+      const token = currentSession.tokenForPlaceApi ?? v4();
 
-      if (token !== tokenForPlaceApiRef.current) {
-        tokenForPlaceApiRef.current = token;
-        setTokenForPlaceApi(token);
+      if (token !== currentSession.tokenForPlaceApi) {
+        store.set(placeAutocompleteSessionAtom, {
+          ...currentSession,
+          tokenForPlaceApi: token,
+        });
       }
 
       const autocompleteData = await getPlaceAutocompleteData(
@@ -57,7 +71,9 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
         isFieldCity,
       );
 
-      if (requestId !== latestRequestIdRef.current) {
+      if (
+        requestId !== store.get(placeAutocompleteSessionAtom).latestRequestId
+      ) {
         return;
       }
 
@@ -76,7 +92,13 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
 
   const getAutocompletePlaceData = useCallback(
     ({ address, country, isFieldCity }: GetAutocompletePlaceDataParams) => {
-      const requestId = ++latestRequestIdRef.current;
+      const currentSession = store.get(placeAutocompleteSessionAtom);
+      const requestId = currentSession.latestRequestId + 1;
+
+      store.set(placeAutocompleteSessionAtom, {
+        ...currentSession,
+        latestRequestId: requestId,
+      });
 
       return debouncedGetAutocompletePlaceData({
         address,
@@ -85,24 +107,34 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
         requestId,
       });
     },
-    [debouncedGetAutocompletePlaceData],
+    [debouncedGetAutocompletePlaceData, placeAutocompleteSessionAtom, store],
   );
 
   const closePlaceAutocomplete = useCallback(() => {
-    latestRequestIdRef.current += 1;
+    store.set(placeAutocompleteSessionAtom, (currentSession) => ({
+      ...currentSession,
+      latestRequestId: currentSession.latestRequestId + 1,
+    }));
     debouncedGetAutocompletePlaceData.cancel();
     closeDropdownAndClearResults();
-  }, [closeDropdownAndClearResults, debouncedGetAutocompletePlaceData]);
+  }, [
+    closeDropdownAndClearResults,
+    debouncedGetAutocompletePlaceData,
+    placeAutocompleteSessionAtom,
+    store,
+  ]);
 
   const resetPlaceAutocomplete = useCallback(() => {
-    tokenForPlaceApiRef.current = null;
-    setTokenForPlaceApi(null);
+    store.set(placeAutocompleteSessionAtom, (currentSession) => ({
+      ...currentSession,
+      tokenForPlaceApi: null,
+    }));
     closePlaceAutocomplete();
-  }, [closePlaceAutocomplete]);
+  }, [closePlaceAutocomplete, placeAutocompleteSessionAtom, store]);
 
   return {
     placeAutocompleteData,
-    tokenForPlaceApi,
+    tokenForPlaceApi: placeAutocompleteSession.tokenForPlaceApi,
     getAutocompletePlaceData,
     closePlaceAutocomplete,
     resetPlaceAutocomplete,
