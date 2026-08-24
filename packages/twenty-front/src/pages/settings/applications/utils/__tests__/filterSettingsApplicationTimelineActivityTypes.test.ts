@@ -9,6 +9,7 @@ const timelineActivityTypes: SettingsApplicationTimelineActivityType[] = [
     isActive: true,
     label: 'Attached a file',
     name: 'attachmentLinked',
+    universalIdentifier: 'attachment-linked-universal-identifier',
   },
   {
     action: 'unlinked',
@@ -17,6 +18,7 @@ const timelineActivityTypes: SettingsApplicationTimelineActivityType[] = [
     isActive: false,
     label: 'Removed an attachment',
     name: 'attachmentUnlinked',
+    universalIdentifier: 'attachment-unlinked-universal-identifier',
   },
 ];
 

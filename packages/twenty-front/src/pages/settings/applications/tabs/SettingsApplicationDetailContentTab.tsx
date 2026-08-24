@@ -6,11 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -175,25 +171,21 @@ export const SettingsApplicationDetailContentTab = ({
       timelineActivityTypes,
       searchTerm,
     });
-  const timelineActivityTypeRows: ApplicationContentRow[] = isNonEmptyArray(
-    filteredTimelineActivityTypes,
-  )
-    ? [
-        {
-          key: 'timeline-activity-types',
-          name: isInstalledApplication
-            ? t`Manage activity types`
-            : t`Activity types`,
-          icon: 'IconTimelineEvent',
-          secondary: t`${filteredTimelineActivityTypes.length} types`,
-          link: isInstalledApplication
-            ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypes, {
-                applicationId,
-              })
-            : undefined,
-        },
-      ]
-    : [];
+  const timelineActivityTypeRows: ApplicationContentRow[] =
+    filteredTimelineActivityTypes.map((timelineActivityType) => ({
+      key: timelineActivityType.id,
+      name: timelineActivityType.label,
+      icon: timelineActivityType.icon ?? undefined,
+      secondary: isDefined(timelineActivityType.action)
+        ? `${timelineActivityType.name} · ${timelineActivityType.action}`
+        : timelineActivityType.name,
+      link: isInstalledApplication
+        ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypeDetail, {
+            applicationId,
+            timelineActivityTypeId: timelineActivityType.id,
+          })
+        : undefined,
+    }));
 
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),
@@ -223,7 +215,7 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.skills.length > 0 ||
     filtered.roles.length > 0 ||
     filtered.connectionProviders.length > 0 ||
-    filteredTimelineActivityTypes.length > 0;
+    timelineActivityTypeRows.length > 0;
 
   if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
     return null;

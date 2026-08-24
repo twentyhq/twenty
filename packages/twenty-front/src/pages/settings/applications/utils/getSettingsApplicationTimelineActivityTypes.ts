@@ -21,20 +21,30 @@ export const getSettingsApplicationTimelineActivityTypes = ({
       )
       .map((timelineActivityType) => ({
         action: timelineActivityType.emit?.on ?? null,
+        frontComponentUniversalIdentifier:
+          timelineActivityType.frontComponentUniversalIdentifier,
         icon: timelineActivityType.icon,
         id: timelineActivityType.id,
         isActive: timelineActivityType.isActive,
         label: timelineActivityType.label,
         name: timelineActivityType.name,
+        objectUniversalIdentifier:
+          timelineActivityType.emit?.objectUniversalIdentifier,
+        universalIdentifier: timelineActivityType.universalIdentifier,
       }));
   }
 
   return manifestTimelineActivityTypes.map((timelineActivityType) => ({
     action: timelineActivityType.emit?.on ?? null,
+    frontComponentUniversalIdentifier:
+      timelineActivityType.frontComponentUniversalIdentifier,
     icon: timelineActivityType.icon,
     id: timelineActivityType.universalIdentifier,
     isActive: true,
     label: timelineActivityType.label,
     name: timelineActivityType.name,
+    objectUniversalIdentifier:
+      timelineActivityType.emit?.objectUniversalIdentifier,
+    universalIdentifier: timelineActivityType.universalIdentifier,
   }));
 };

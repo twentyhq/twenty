@@ -33,11 +33,14 @@ describe('getSettingsApplicationTimelineActivityTypes', () => {
     ).toEqual([
       {
         action: 'created',
+        frontComponentUniversalIdentifier: undefined,
         icon: 'IconPlus',
         id: 'type-1',
         isActive: false,
         label: 'Was created',
         name: 'record.created',
+        objectUniversalIdentifier: 'object-1',
+        universalIdentifier: 'universal-type-1',
       },
     ]);
   });
@@ -63,11 +66,14 @@ describe('getSettingsApplicationTimelineActivityTypes', () => {
     ).toEqual([
       {
         action: 'created',
+        frontComponentUniversalIdentifier: undefined,
         icon: undefined,
         id: 'universal-type-1',
         isActive: true,
         label: 'Launched a rocket',
         name: 'rocket.launched',
+        objectUniversalIdentifier: 'object-1',
+        universalIdentifier: 'universal-type-1',
       },
     ]);
   });

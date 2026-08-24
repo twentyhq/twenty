@@ -302,10 +302,10 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   ),
 );
 
-const SettingsApplicationTimelineActivityTypes = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationTimelineActivityTypes').then(
+const SettingsApplicationTimelineActivityTypeDetail = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail').then(
     (module) => ({
-      default: module.SettingsApplicationTimelineActivityTypes,
+      default: module.SettingsApplicationTimelineActivityTypeDetail,
     }),
   ),
 );
@@ -1010,8 +1010,8 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationCommandMenuItemDetail />}
         />
         <Route
-          path={SettingsPath.ApplicationTimelineActivityTypes}
-          element={<SettingsApplicationTimelineActivityTypes />}
+          path={SettingsPath.ApplicationTimelineActivityTypeDetail}
+          element={<SettingsApplicationTimelineActivityTypeDetail />}
         />
         <Route
           path={SettingsPath.ApplicationViewDetail}
