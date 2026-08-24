@@ -9,11 +9,13 @@ export const createSlackUserLink = async (
     slackUserId,
     workspaceMemberId,
     name,
+    source = SLACK_USER_LINK_SOURCE.AUTO,
   }: {
     slackTeamId: string;
     slackUserId: string;
     workspaceMemberId: string;
     name: string;
+    source?: string;
   },
 ): Promise<void> => {
   await client.mutation({
@@ -24,7 +26,7 @@ export const createSlackUserLink = async (
           slackUserId,
           workspaceMemberId,
           name,
-          source: SLACK_USER_LINK_SOURCE.AUTO,
+          source,
         },
       },
       id: true,
