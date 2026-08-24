@@ -20,24 +20,32 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDifferentZonedDateTime } from '~/utils/dates/isDifferentZonedDateTime';
 
-const StyledInputContainer = styled.div`
+const StyledInputContainer = styled.div<{
+  $variant: 'default' | 'transparent';
+}>`
   align-items: center;
 
   border-top-left-radius: ${themeCssVariables.border.radius.md};
   border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
-  height: ${themeCssVariables.spacing[8]};
+  height: ${({ $variant }) =>
+    $variant === 'transparent' ? '24px' : themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
-const StyledInput = styled.input<{ hasError?: boolean }>`
+const StyledInput = styled.input<{
+  hasError?: boolean;
+  $variant: 'default' | 'transparent';
+}>`
   background: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: 500;
+  font-weight: ${({ $variant }) =>
+    $variant === 'transparent' ? themeCssVariables.font.weight.regular : 500};
   outline: none;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-left: ${({ $variant }) =>
+    $variant === 'transparent' ? '0' : themeCssVariables.spacing[2]};
   width: 140px;
 `;
 
@@ -47,6 +55,7 @@ type DateTimePickerInputProps = {
   onFocus?: () => void;
   readonly?: boolean;
   timeZone?: string;
+  variant?: 'default' | 'transparent';
 };
 
 export const DateTimePickerInput = ({
@@ -55,6 +64,7 @@ export const DateTimePickerInput = ({
   onFocus,
   readonly,
   timeZone,
+  variant = 'default',
 }: DateTimePickerInputProps) => {
   const [internalDate, setInternalDate] = useState(date);
 
@@ -168,8 +178,9 @@ export const DateTimePickerInput = ({
     internalDate?.toInstant() ?? Temporal.Now.instant();
 
   return (
-    <StyledInputContainer>
+    <StyledInputContainer $variant={variant}>
       <StyledInput
+        $variant={variant}
         disabled={shouldDisplayReadOnly}
         type="text"
         ref={ref as any}

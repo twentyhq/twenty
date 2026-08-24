@@ -15,17 +15,26 @@ import { useParseJSDateToIMaskDateInputString } from '@/ui/input/components/inte
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledInputContainer = styled.div`
+const StyledInputContainer = styled.div<{
+  $variant: 'default' | 'transparent';
+}>`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-bottom: ${({ $variant }) =>
+    $variant === 'transparent'
+      ? 'none'
+      : `1px solid ${themeCssVariables.border.color.light}`};
   border-top-left-radius: ${themeCssVariables.border.radius.md};
   border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
-  height: ${themeCssVariables.spacing[8]};
+  height: ${({ $variant }) =>
+    $variant === 'transparent' ? '24px' : themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
-const StyledInput = styled.input<{ hasError?: boolean }>`
+const StyledInput = styled.input<{
+  hasError?: boolean;
+  $variant: 'default' | 'transparent';
+}>`
   background: transparent;
   border: none;
   color: ${({ hasError }) =>
@@ -33,9 +42,10 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
       ? themeCssVariables.color.red
       : themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: 500;
+  font-weight: ${({ $variant }) =>
+    $variant === 'transparent' ? themeCssVariables.font.weight.regular : 500};
   outline: none;
-  padding: 4px 8px 4px 8px;
+  padding: ${({ $variant }) => ($variant === 'transparent' ? '0' : '4px 8px')};
   width: 100%;
 `;
 
@@ -43,12 +53,14 @@ type DatePickerInputProps = {
   onChange?: (date: string | null) => void;
   date: string | null;
   readonly?: boolean;
+  variant?: 'default' | 'transparent';
 };
 
 export const DatePickerInput = ({
   date,
   onChange,
   readonly = false,
+  variant = 'default',
 }: DatePickerInputProps) => {
   const { dateFormat } = useDateTimeFormat();
 
@@ -111,8 +123,9 @@ export const DatePickerInput = ({
   }, [date, internalDate, parsePlainDateToDateInputString, setValue]);
 
   return (
-    <StyledInputContainer>
+    <StyledInputContainer $variant={variant}>
       <StyledInput
+        $variant={variant}
         type="text"
         disabled={readonly}
         ref={ref as any}

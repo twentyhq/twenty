@@ -72,6 +72,7 @@ type FormDateTimeFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   timeZone?: string;
+  variant?: 'default' | 'transparent';
 };
 
 export const FormDateTimeFieldInput = ({
@@ -81,6 +82,7 @@ export const FormDateTimeFieldInput = ({
   VariablePicker,
   readonly,
   timeZone,
+  variant = 'default',
 }: FormDateTimeFieldInputProps) => {
   const instanceId = useId();
 
@@ -267,6 +269,7 @@ export const FormDateTimeFieldInput = ({
             ref={refs.setReference}
             formFieldInputInstanceId={instanceId}
             hasRightElement={isDefined(VariablePicker) && !readonly}
+            variant={variant}
           >
             {draftValue.type === 'static' ? (
               <StyledDateInputTextContainer
@@ -279,6 +282,7 @@ export const FormDateTimeFieldInput = ({
                   onFocus={handleOpenPicker}
                   readonly={readonly}
                   timeZone={timeZone}
+                  variant={variant}
                 />
               </StyledDateInputTextContainer>
             ) : (

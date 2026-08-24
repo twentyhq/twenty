@@ -9,6 +9,7 @@ import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
+export type SelectControlVariant = 'default' | 'transparent';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 export const StyledControlContainer = styled.div<{
@@ -17,20 +18,39 @@ export const StyledControlContainer = styled.div<{
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
+  $variant?: SelectControlVariant;
 }>`
   align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.md};
-  border-bottom-right-radius: ${({ hasRightElement }) =>
-    hasRightElement ? '0' : themeCssVariables.border.radius.md};
-  border-right: ${({ hasRightElement }) =>
-    hasRightElement
+  background-color: ${({ $variant }) =>
+    $variant === 'transparent'
+      ? 'transparent'
+      : themeCssVariables.background.transparent.lighter};
+  border: ${({ $variant }) =>
+    $variant === 'transparent'
       ? 'none'
       : `1px solid ${themeCssVariables.border.color.medium}`};
-  border-top-left-radius: ${themeCssVariables.border.radius.md};
-  border-top-right-radius: ${({ hasRightElement }) =>
-    hasRightElement ? '0' : themeCssVariables.border.radius.md};
+  border-bottom-left-radius: ${({ $variant }) =>
+    $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
+  border-bottom-right-radius: ${({ hasRightElement, $variant }) =>
+    $variant === 'transparent'
+      ? '0'
+      : hasRightElement
+        ? '0'
+        : themeCssVariables.border.radius.md};
+  border-right: ${({ hasRightElement, $variant }) =>
+    $variant === 'transparent'
+      ? 'none'
+      : hasRightElement
+        ? 'none'
+        : `1px solid ${themeCssVariables.border.color.medium}`};
+  border-top-left-radius: ${({ $variant }) =>
+    $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
+  border-top-right-radius: ${({ hasRightElement, $variant }) =>
+    $variant === 'transparent'
+      ? '0'
+      : hasRightElement
+        ? '0'
+        : themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ disabled, textAccent }) =>
     disabled
@@ -44,13 +64,16 @@ export const StyledControlContainer = styled.div<{
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: ${({ hasIcon }) =>
     hasIcon ? 'auto 1fr auto' : '1fr auto'};
-  height: ${({ selectSizeVariant }) =>
-    selectSizeVariant === 'small'
-      ? themeCssVariables.spacing[6]
-      : themeCssVariables.spacing[8]};
+  height: ${({ selectSizeVariant, $variant }) =>
+    $variant === 'transparent'
+      ? '24px'
+      : selectSizeVariant === 'small'
+        ? themeCssVariables.spacing[6]
+        : themeCssVariables.spacing[8]};
 
   max-width: 100%;
-  padding: 0 ${themeCssVariables.spacing[2]};
+  padding: ${({ $variant }) =>
+    $variant === 'transparent' ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   text-align: left;
 `;
 
@@ -70,6 +93,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
+  variant?: SelectControlVariant;
 };
 
 export const SelectControl = ({
@@ -78,6 +102,7 @@ export const SelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
+  variant = 'default',
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
   return (
@@ -87,6 +112,7 @@ export const SelectControl = ({
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
+      $variant={variant}
       title={selectedOption.fullLabel}
     >
       {isDefined(selectedOption?.Icon) ? (

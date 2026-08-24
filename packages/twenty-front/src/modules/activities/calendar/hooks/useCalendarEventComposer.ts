@@ -189,6 +189,7 @@ export const useCalendarEventComposer = ({
     canCreate,
     connectedAccountId,
     dates,
+    description,
     handleCreate,
     handleIsFullDayChange,
     handleStartsAtChange,

@@ -77,6 +77,7 @@ type FormDateFieldInputProps = {
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  variant?: 'default' | 'transparent';
 };
 
 export const FormDateFieldInput = ({
@@ -85,6 +86,7 @@ export const FormDateFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
+  variant = 'default',
 }: FormDateFieldInputProps) => {
   const instanceId = useId();
 
@@ -272,6 +274,7 @@ export const FormDateFieldInput = ({
             ref={refs.setReference}
             formFieldInputInstanceId={instanceId}
             hasRightElement={isDefined(VariablePicker) && !readonly}
+            variant={variant}
           >
             {draftValue.type === 'static' ? (
               <StyledDateInputTextContainer
@@ -282,6 +285,7 @@ export const FormDateFieldInput = ({
                   date={plainDateValue}
                   onChange={handleInputChange}
                   readonly={readonly}
+                  variant={variant}
                 />
               </StyledDateInputTextContainer>
             ) : (
