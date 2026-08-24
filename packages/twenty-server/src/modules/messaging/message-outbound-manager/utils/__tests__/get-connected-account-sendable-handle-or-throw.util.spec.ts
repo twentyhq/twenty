@@ -1,27 +1,14 @@
-import { resolveOutboundFromHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-from-handle-or-throw.util';
+import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 
 const connectedAccount = {
   handle: 'primary@holdco.com',
   handleAliases: ['Sales@company.com', 'support@company.com'],
 };
 
-describe('resolveOutboundFromHandleOrThrow', () => {
-  it('should return undefined when no sender is requested, letting the caller keep its default', () => {
-    expect(
-      resolveOutboundFromHandleOrThrow({
-        connectedAccount,
-        requestedFromHandle: '',
-      }),
-    ).toBeUndefined();
-
-    expect(
-      resolveOutboundFromHandleOrThrow({ connectedAccount }),
-    ).toBeUndefined();
-  });
-
+describe('getConnectedAccountSendableHandleOrThrow', () => {
   it('should accept the connected account handle itself', () => {
     expect(
-      resolveOutboundFromHandleOrThrow({
+      getConnectedAccountSendableHandleOrThrow({
         connectedAccount,
         requestedFromHandle: 'primary@holdco.com',
       }),
@@ -30,7 +17,7 @@ describe('resolveOutboundFromHandleOrThrow', () => {
 
   it('should accept a verified alias and return it as the provider spells it', () => {
     expect(
-      resolveOutboundFromHandleOrThrow({
+      getConnectedAccountSendableHandleOrThrow({
         connectedAccount,
         requestedFromHandle: '  sales@COMPANY.com ',
       }),
@@ -39,7 +26,7 @@ describe('resolveOutboundFromHandleOrThrow', () => {
 
   it('should reject an address the account has not verified', () => {
     expect(() =>
-      resolveOutboundFromHandleOrThrow({
+      getConnectedAccountSendableHandleOrThrow({
         connectedAccount,
         requestedFromHandle: 'ceo@competitor.com',
       }),
@@ -48,7 +35,7 @@ describe('resolveOutboundFromHandleOrThrow', () => {
 
   it('should reject any alias when the account has none', () => {
     expect(() =>
-      resolveOutboundFromHandleOrThrow({
+      getConnectedAccountSendableHandleOrThrow({
         connectedAccount: { handle: 'primary@holdco.com', handleAliases: null },
         requestedFromHandle: 'sales@company.com',
       }),

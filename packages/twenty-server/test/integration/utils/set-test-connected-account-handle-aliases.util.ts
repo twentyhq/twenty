@@ -2,10 +2,13 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-export const setConnectedAccountHandleAliases = async (
-  connectedAccountId: string,
-  handleAliases: string[],
-): Promise<void> => {
+export const setTestConnectedAccountHandleAliases = async ({
+  connectedAccountId,
+  handleAliases,
+}: {
+  connectedAccountId: string;
+  handleAliases: string[];
+}): Promise<void> => {
   await getCoreRepository<ConnectedAccountEntity>(
     ConnectedAccountEntity,
   ).update({ id: connectedAccountId }, { handleAliases });

@@ -6,7 +6,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
-import { setConnectedAccountHandleAliases } from 'test/integration/utils/set-connected-account-handle-aliases.util';
+import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
 
 const HANDLE = 'microsoft-draft-email-action@apple.dev';
 const ALIAS = 'microsoft-draft-email-action-alias@apple.dev';
@@ -26,7 +26,10 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
       provider: ConnectedAccountProvider.MICROSOFT,
       handle: HANDLE,
     });
-    await setConnectedAccountHandleAliases(channel.connectedAccountId, [ALIAS]);
+    await setTestConnectedAccountHandleAliases({
+      connectedAccountId: channel.connectedAccountId,
+      handleAliases: [ALIAS],
+    });
   }, 60000);
 
   afterAll(async () => {

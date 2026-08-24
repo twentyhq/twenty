@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -8,24 +7,20 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 
-export const resolveOutboundFromHandleOrThrow = ({
+export const getConnectedAccountSendableHandleOrThrow = ({
   connectedAccount,
   requestedFromHandle,
 }: {
   connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>;
-  requestedFromHandle?: string;
-}): string | undefined => {
-  if (!isNonEmptyString(requestedFromHandle)) {
-    return undefined;
-  }
-
+  requestedFromHandle: string;
+}): string => {
   const normalizedRequestedFromHandle = requestedFromHandle
     .trim()
     .toLowerCase();
 
   const matchedFromHandle = getSendableEmailHandles(connectedAccount).find(
-    (allowedFromHandle) =>
-      allowedFromHandle.trim().toLowerCase() === normalizedRequestedFromHandle,
+    (sendableHandle) =>
+      sendableHandle.trim().toLowerCase() === normalizedRequestedFromHandle,
   );
 
   if (!isDefined(matchedFromHandle)) {

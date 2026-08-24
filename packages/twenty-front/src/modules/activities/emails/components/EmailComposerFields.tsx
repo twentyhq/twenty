@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -19,9 +19,9 @@ import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/type
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
-import { formatConnectedAccountSenderValue } from '@/accounts/utils/formatConnectedAccountSenderValue';
-import { parseConnectedAccountSenderValue } from '@/accounts/utils/parseConnectedAccountSenderValue';
+import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { Select } from '@/ui/input/components/Select';
@@ -137,29 +137,41 @@ export const EmailComposerFields = ({
   const { theme } = useContext(ThemeContext);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
-    myConnectedAccounts: {
-      id: string;
-      handle: string;
-      handleAliases: string[] | null;
-    }[];
+    myConnectedAccounts: Pick<
+      ConnectedAccount,
+      'id' | 'handle' | 'handleAliases' | 'provider' | 'connectionParameters'
+    >[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
 
-  const connectedAccounts = accountsData?.myConnectedAccounts ?? [];
+  const sendableAccounts = (accountsData?.myConnectedAccounts ?? []).filter(
+    canConnectedAccountSendEmail,
+  );
 
-  const senderOptions = buildConnectedAccountSenderOptions(connectedAccounts);
+  const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
 
   const hasMultipleSenders = senderOptions.length > 1;
 
-  const selectedAccount = connectedAccounts.find(
+  const selectedAccount = sendableAccounts.find(
     (account) => account.id === composerState.connectedAccountId,
   );
 
-  const selectedSenderValue = isDefined(selectedAccount)
-    ? formatConnectedAccountSenderValue({
-        connectedAccountId: selectedAccount.id,
-        handle: composerState.fromHandle ?? selectedAccount.handle,
-      })
-    : undefined;
+  const selectedSenderValue =
+    composerState.fromHandle ?? selectedAccount?.handle;
+
+  const handleSenderChange = (handle: string) => {
+    const senderAccount = sendableAccounts.find((account) =>
+      getSendableEmailHandles(account).includes(handle),
+    );
+
+    if (!isDefined(senderAccount)) {
+      return;
+    }
+
+    composerState.setSender({
+      connectedAccountId: senderAccount.id,
+      fromHandle: handle,
+    });
+  };
 
   const allRecipientKeys = [
     ...composerState.to,
@@ -219,11 +231,7 @@ export const EmailComposerFields = ({
                   fullWidth
                   value={selectedSenderValue}
                   options={senderOptions}
-                  onChange={(value) =>
-                    composerState.setSender(
-                      parseConnectedAccountSenderValue(value),
-                    )
-                  }
+                  onChange={handleSenderChange}
                 />
               </EmailComposerFieldRow>
             )}

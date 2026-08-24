@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const getSendableEmailHandles = ({
-  handle,
-  handleAliases,
-}: {
+export const getSendableEmailHandles = (connectedAccount: {
   handle: string;
   handleAliases?: string[] | null;
-}): string[] => [handle, ...(handleAliases ?? [])].filter(isNonEmptyString);
+}): string[] =>
+  [connectedAccount.handle, ...(connectedAccount.handleAliases ?? [])].filter(
+    isNonEmptyString,
+  );

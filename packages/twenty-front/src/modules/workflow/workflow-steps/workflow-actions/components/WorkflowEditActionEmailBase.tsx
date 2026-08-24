@@ -1,8 +1,7 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
-import { formatConnectedAccountSenderValue } from '@/accounts/utils/formatConnectedAccountSenderValue';
+import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
-import { parseConnectedAccountSenderValue } from '@/accounts/utils/parseConnectedAccountSenderValue';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
@@ -32,7 +31,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -110,22 +109,6 @@ export const WorkflowEditActionEmailBase = ({
     });
   };
 
-  const handleSenderChange = (senderValue: string | null) => {
-    if (!isNonEmptyString(senderValue)) {
-      handleFieldsChange({ connectedAccountId: '', fromHandle: '' });
-
-      return;
-    }
-
-    if (isStandaloneVariableString(senderValue)) {
-      handleFieldsChange({ connectedAccountId: senderValue, fromHandle: '' });
-
-      return;
-    }
-
-    handleFieldsChange(parseConnectedAccountSenderValue(senderValue));
-  };
-
   const apolloCoreClient = useApolloCoreClient();
 
   const navigate = useNavigateSettings();
@@ -180,31 +163,49 @@ export const WorkflowEditActionEmailBase = ({
         }
       : null;
 
-  const sendableAccounts = myAccounts.filter(
-    (account) =>
-      account.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
-      isDefined(account.connectionParameters?.SMTP),
-  );
-
-  const senderOptions = buildConnectedAccountSenderOptions([
-    ...sendableAccounts,
+  const sendableAccounts = [
+    ...myAccounts.filter(canConnectedAccountSendEmail),
     ...(isDefined(otherAccount) ? [otherAccount] : []),
-  ]);
+  ];
+
+  const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
 
   const configuredAccount = ownAccount ?? otherAccount;
 
-  const configuredAccountSenderValue = isDefined(configuredAccount)
-    ? formatConnectedAccountSenderValue({
-        connectedAccountId: configuredAccount.id,
-        handle: isNonEmptyString(formData.fromHandle)
-          ? formData.fromHandle
-          : configuredAccount.handle,
-      })
-    : undefined;
+  const configuredSenderHandle = isNonEmptyString(formData.fromHandle)
+    ? formData.fromHandle
+    : configuredAccount?.handle;
 
   const selectedSenderValue = isSenderVariable
     ? configuredAccountId
-    : configuredAccountSenderValue;
+    : configuredSenderHandle;
+
+  const handleSenderChange = (senderValue: string | null) => {
+    if (!isNonEmptyString(senderValue)) {
+      handleFieldsChange({ connectedAccountId: '', fromHandle: '' });
+
+      return;
+    }
+
+    if (isStandaloneVariableString(senderValue)) {
+      handleFieldsChange({ connectedAccountId: senderValue, fromHandle: '' });
+
+      return;
+    }
+
+    const senderAccount = sendableAccounts.find((account) =>
+      getSendableEmailHandles(account).includes(senderValue),
+    );
+
+    if (!isDefined(senderAccount)) {
+      return;
+    }
+
+    handleFieldsChange({
+      connectedAccountId: senderAccount.id,
+      fromHandle: senderValue,
+    });
+  };
 
   useEffect(() => {
     return () => {
