@@ -130,7 +130,15 @@ export const useCalendarEventComposer = ({
 
   const setEndsAt = (value: string | null) => {
     if (isDefined(value)) {
-      setDates((currentDates) => ({ ...currentDates, endsAt: value }));
+      setDates((currentDates) => ({
+        ...currentDates,
+        endsAt:
+          isFullDay && value.slice(0, 10) <= currentDates.startsAt.slice(0, 10)
+            ? Temporal.PlainDate.from(currentDates.startsAt.slice(0, 10))
+                .add({ days: 1 })
+                .toString()
+            : value,
+      }));
     }
   };
 
