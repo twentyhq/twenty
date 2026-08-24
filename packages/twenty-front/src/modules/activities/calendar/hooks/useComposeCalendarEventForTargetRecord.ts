@@ -44,6 +44,10 @@ export const useComposeCalendarEventForTargetRecord = () => {
 
     openComposeCalendarEventInSidePanel({
       connectedAccountId: preferredAccount.id,
+      contextRecord: {
+        objectNameSingular: targetRecord.targetObjectNameSingular,
+        recordId: targetRecord.id,
+      },
       defaultAttendees: defaultTo,
       timeZone: userTimezone,
     });

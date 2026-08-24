@@ -6,11 +6,15 @@ import { getCalendarEventDatesAfterModeChange } from '@/activities/calendar/util
 import { getCalendarEventDatesAfterStartChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterStartChange';
 import { hasCalendarEventTargetAssociation } from '@/activities/calendar/utils/hasCalendarEventTargetAssociation';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
+import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
+import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
+import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
-import { emailSchema, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { Temporal } from 'temporal-polyfill';
 
@@ -32,8 +36,8 @@ export const useCalendarEventComposer = ({
   const [location, setLocation] = useState('');
   const [timeZone, setTimeZone] = useState(initialValues?.timeZone ?? 'UTC');
   const [isFullDay, setIsFullDay] = useState(false);
-  const [attendees, setAttendees] = useState(
-    initialValues?.defaultAttendees ?? '',
+  const [attendees, setAttendees] = useState<EmailRecipient[]>(() =>
+    parseEmailRecipients(initialValues?.defaultAttendees ?? ''),
   );
   const [sendInvitations, setSendInvitations] = useState(true);
   const [addConferencing, setAddConferencing] = useState(false);
@@ -55,12 +59,9 @@ export const useCalendarEventComposer = ({
     ? getMissingCreateCalendarEventScopes(selectedAccount)
     : [];
 
-  const attendeeEmails = attendees
-    .split(',')
-    .map((email) => email.trim())
-    .filter(isNonEmptyString);
+  const attendeeEmails = attendees.map(({ address }) => address);
   const invalidAttendeeEmails = sendInvitations
-    ? attendeeEmails.filter((email) => !emailSchema.safeParse(email).success)
+    ? attendeeEmails.filter((email) => !isValidEmailRecipientAddress(email))
     : [];
   const hasTooManyAttendees =
     sendInvitations && attendeeEmails.length > MAX_EMAIL_RECIPIENTS;
@@ -129,7 +130,7 @@ export const useCalendarEventComposer = ({
       endsAt: dates.endsAt,
       isFullDay,
       timeZone,
-      attendees,
+      attendees: serializeEmailRecipients(attendees),
       sendInvitations,
       addConferencing,
     });
@@ -158,6 +159,7 @@ export const useCalendarEventComposer = ({
     accountOptions,
     accountsLoading,
     addConferencing,
+    attendees,
     attendeeEmails,
     canCreate,
     connectedAccountId,

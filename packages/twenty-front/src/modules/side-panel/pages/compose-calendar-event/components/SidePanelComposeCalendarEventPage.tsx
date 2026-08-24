@@ -9,7 +9,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
@@ -83,14 +82,12 @@ export const SidePanelComposeCalendarEventPage = () => {
 
   return (
     <StyledContainer>
-      <WorkflowStepBody>
-        <CalendarEventComposerFields
-          composerState={composerState}
-          defaultAttendees={composeCalendarEventInitialValues.defaultAttendees}
-          onAddAccount={handleAddAccount}
-          onReauthorize={handleReauthorize}
-        />
-      </WorkflowStepBody>
+      <CalendarEventComposerFields
+        composerState={composerState}
+        contextRecord={composeCalendarEventInitialValues.contextRecord}
+        onAddAccount={handleAddAccount}
+        onReauthorize={handleReauthorize}
+      />
       <SidePanelFooter
         actions={[
           <IconButton
