@@ -255,7 +255,6 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: false,
         IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
         IS_NATIVE_CALL_RECORDING_TABS_ENABLED: false,
-        IS_ORM_V2_READ_PATH_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
@@ -270,7 +269,7 @@ describe('WorkspaceEntityManager', () => {
           softDelete: jest.fn(),
         })),
       } as any,
-    } as WorkspaceInternalContext;
+    } as unknown as WorkspaceInternalContext;
 
     mockDataSource = {
       featureFlagMap: {

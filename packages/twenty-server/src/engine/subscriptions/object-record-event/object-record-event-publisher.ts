@@ -313,9 +313,6 @@ export class ObjectRecordEventPublisher {
       intersectionOf: roleIds,
     };
 
-    const globalWorkspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica();
-
     const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
       depth: 1,
       flatObjectMetadata: objectMetadata,
@@ -343,7 +340,6 @@ export class ObjectRecordEventPublisher {
       authContext: streamData.authContext as unknown as WorkspaceAuthContext,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
       rolePermissionConfig,
-      workspaceDataSource: globalWorkspaceDataSource,
       relations: selectedFieldsResult.relations as Record<
         string,
         FindOptionsRelations<ObjectLiteral>

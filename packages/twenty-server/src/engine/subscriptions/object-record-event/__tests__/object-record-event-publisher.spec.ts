@@ -1565,10 +1565,6 @@ describe('ObjectRecordEventPublisher', () => {
         });
 
         expect(
-          mockGlobalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica,
-        ).toHaveBeenCalled();
-
-        expect(
           mockProcessNestedRelationsHelper.processNestedRelations,
         ).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -1577,9 +1573,6 @@ describe('ObjectRecordEventPublisher', () => {
             authContext: expect.objectContaining({
               userWorkspaceId,
               userId: 'test-user-id',
-            }),
-            workspaceDataSource: expect.objectContaining({
-              getRepository: expect.any(Function),
             }),
             rolePermissionConfig: expect.objectContaining({
               intersectionOf: [roleId],
