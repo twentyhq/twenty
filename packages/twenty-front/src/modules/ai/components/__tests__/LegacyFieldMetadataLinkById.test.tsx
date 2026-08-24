@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { FieldMetadataLink } from '@/ai/components/FieldMetadataLink';
+import { LegacyFieldMetadataLinkById } from '@/ai/components/LegacyFieldMetadataLinkById';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { type Store } from 'jotai/vanilla/store';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -27,7 +27,7 @@ const setPermissionFlags = (
   });
 };
 
-const renderFieldMetadataLink = ({
+const renderLegacyFieldMetadataLinkById = ({
   fieldMetadataItemId,
   displayName,
   permissionFlags,
@@ -44,21 +44,18 @@ const renderFieldMetadataLink = ({
 
   return render(
     <MemoryRouter>
-      <FieldMetadataLink
-        reference={{
-          kind: 'legacyFieldById',
-          fieldMetadataItemId,
-          displayName,
-        }}
+      <LegacyFieldMetadataLinkById
+        fieldMetadataItemId={fieldMetadataItemId}
+        displayName={displayName}
       />
     </MemoryRouter>,
     { wrapper: Wrapper },
   );
 };
 
-describe('FieldMetadataLink', () => {
+describe('LegacyFieldMetadataLinkById', () => {
   it('should link a field to its settings page', () => {
-    renderFieldMetadataLink({
+    renderLegacyFieldMetadataLinkById({
       fieldMetadataItemId: nameFieldMetadataItem.id,
       displayName: 'Name',
       permissionFlags: [PermissionFlagType.DATA_MODEL],
@@ -71,7 +68,7 @@ describe('FieldMetadataLink', () => {
   });
 
   it('should render a chip without a link when the user cannot access the data model', () => {
-    renderFieldMetadataLink({
+    renderLegacyFieldMetadataLinkById({
       fieldMetadataItemId: nameFieldMetadataItem.id,
       displayName: 'Name',
       permissionFlags: [],
@@ -82,7 +79,7 @@ describe('FieldMetadataLink', () => {
   });
 
   it('should render plain text for an unknown field id', () => {
-    renderFieldMetadataLink({
+    renderLegacyFieldMetadataLinkById({
       fieldMetadataItemId: '33333333-3333-3333-3333-333333333333',
       displayName: 'Partner type',
       permissionFlags: [PermissionFlagType.DATA_MODEL],

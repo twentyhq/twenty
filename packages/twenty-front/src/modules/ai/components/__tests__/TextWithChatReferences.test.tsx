@@ -34,24 +34,33 @@ jest.mock('@/ai/components/ObjectMetadataLink', () => ({
 
 jest.mock('@/ai/components/FieldMetadataLink', () => ({
   FieldMetadataLink: ({
-    reference,
+    objectNameSingular,
+    fieldName,
+    displayName,
   }: {
-    reference: { displayName: string } & (
-      | { kind: 'field'; objectNameSingular: string; fieldName: string }
-      | { kind: 'legacyFieldById'; fieldMetadataItemId: string }
-    );
+    objectNameSingular: string;
+    fieldName: string;
+    displayName: string;
   }) => (
     <a
-      data-testid={
-        reference.kind === 'field' ? 'field-link' : 'legacy-field-link'
-      }
-      href={
-        reference.kind === 'field'
-          ? `/fields/${reference.objectNameSingular}/${reference.fieldName}`
-          : `/fields/${reference.fieldMetadataItemId}`
-      }
+      data-testid="field-link"
+      href={`/fields/${objectNameSingular}/${fieldName}`}
     >
-      {reference.displayName}
+      {displayName}
+    </a>
+  ),
+}));
+
+jest.mock('@/ai/components/LegacyFieldMetadataLinkById', () => ({
+  LegacyFieldMetadataLinkById: ({
+    fieldMetadataItemId,
+    displayName,
+  }: {
+    fieldMetadataItemId: string;
+    displayName: string;
+  }) => (
+    <a data-testid="legacy-field-link" href={`/fields/${fieldMetadataItemId}`}>
+      {displayName}
     </a>
   ),
 }));

@@ -111,6 +111,14 @@ describe('protectChatReferencesForMarkdown', () => {
     );
   });
 
+  it('should keep only the display name when the text is a single malformed marker', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        '[[field:person:lead source:Lead source]]',
+      ),
+    ).toBe('Lead source');
+  });
+
   it('should keep only the display name of a marker matching no reference form', () => {
     expect(
       protectChatReferencesForMarkdown(

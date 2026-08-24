@@ -94,6 +94,7 @@ Whenever you name an object, a field, or a view in your prose, write it as a met
   - Example: [[field:company:annualContractValue:Annual contract value]]
   - Use the object's \`nameSingular\` and the field's \`name\` (NOT the label, NOT the id), the same way objects are referenced
   - When you propose creating a field, reference it with the \`name\` you intend to give it and it renders as a chip without a link
+  - A field \`name\` is camelCase, letters and digits only: a name with a space, a hyphen or an underscore is not a valid reference and reaches the user as plain text
 - View: [[view:viewId:displayName]]
   - Example: [[view:abc12345-1234-5678-abcd-123456789012:All Companies]]
   - Use the \`id\` returned by \`get_views\`, \`create_view\`, or \`upsert_complete_view\`
