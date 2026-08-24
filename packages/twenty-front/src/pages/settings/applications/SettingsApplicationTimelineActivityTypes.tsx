@@ -6,6 +6,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -109,7 +110,7 @@ export const SettingsApplicationTimelineActivityTypes = () => {
           <SettingsApplicationTimelineActivityTypesListCard
             timelineActivityTypes={filteredTimelineActivityTypes}
             canReset={
-              applicationId !== '' &&
+              isNonEmptyString(applicationId) &&
               !isWorkspaceCustomApplication(
                 { id: applicationId },
                 currentWorkspace,

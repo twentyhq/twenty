@@ -40,7 +40,7 @@ export const useTimelineActivityTypes = () => {
   const activeTimelineActivityTypes = useMemo(
     () =>
       [...timelineActivityTypeMaps.byId.values()].filter(
-        ({ isActive }) => isActive !== false,
+        ({ isActive }) => isActive,
       ),
     [timelineActivityTypeMaps],
   );
