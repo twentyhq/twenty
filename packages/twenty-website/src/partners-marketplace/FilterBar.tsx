@@ -122,9 +122,11 @@ export function FilterBar({
         <ResultCount aria-live="polite">
           {hasAnyFilter
             ? i18n._(msg`Showing ${visibleCount} of ${totalCount} partners`)
-            : i18n._(
-                msg`${totalCount} certified partners ready to take on your project`,
-              )}
+            : totalCount === 0
+              ? i18n._(msg`No partners to show right now`)
+              : i18n._(
+                  msg`${totalCount} certified partners ready to take on your project`,
+                )}
         </ResultCount>
         {hasAnyFilter && (
           <Button

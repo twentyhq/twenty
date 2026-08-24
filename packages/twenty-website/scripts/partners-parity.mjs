@@ -104,9 +104,9 @@ assert(
 
 // The closing sign-off: a tall centred panel whose heading carries both faces
 // (serif + sans accent). "Become a partner" is the application-modal trigger (a
-// button, no href); "Find a partner" links to the (Wave-B) marketplace, the
-// same dangle the hero already carries. The body is measure-constrained so it
-// breaks across two lines rather than running the panel width.
+// button, no href); "Find a partner" points at the lead page. The body is
+// measure-constrained so it breaks across two lines rather than running the
+// panel width.
 const signoff = await partners.evaluate(() => {
   const heading = [...document.querySelectorAll('h2')].find((node) =>
     /Ready to grow/.test(node.textContent ?? ''),
@@ -230,8 +230,13 @@ async function heroH1(path) {
 }
 
 assert(
+  'partners/become hero h1',
+  (await heroH1('/partners/become')).includes('our partner'),
+  'missing',
+);
+assert(
   'partners hero h1',
-  (await heroH1('/partners')).includes('our partner'),
+  (await heroH1('/partners')).includes('48 hours'),
   'missing',
 );
 assert(

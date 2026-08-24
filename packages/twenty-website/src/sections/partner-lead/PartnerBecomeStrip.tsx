@@ -3,7 +3,16 @@ import { styled } from '@linaria/react';
 
 import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+import {
+  color,
+  fontFamily,
+  mediaUp,
+  radius,
+  semanticColor,
+  spacing,
+  typeRampDeclarations,
+} from '@/tokens';
 import { Body, Heading, SectionShell } from '@/ui';
 
 const BecomeRow = styled.div`
@@ -31,6 +40,19 @@ const BecomeCopy = styled.div`
   }
 `;
 
+const LearnMoreLink = styled(LocalizedLink)`
+  color: ${semanticColor.inkMuted};
+  display: inline-block;
+  font-family: ${fontFamily('sans')};
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  ${typeRampDeclarations('bodySm')}
+
+  &:hover {
+    color: ${semanticColor.ink};
+  }
+`;
+
 export function PartnerBecomeStrip() {
   const i18n = getServerI18n();
 
@@ -46,6 +68,9 @@ export function PartnerBecomeStrip() {
               msg`Agencies and freelancers can apply to join the certified directory.`,
             )}
           </Body>
+          <LearnMoreLink href="/partners/become">
+            {i18n._(msg`Learn more about the partner program`)}
+          </LearnMoreLink>
         </BecomeCopy>
         <BecomePartnerButton label={msg`Become a partner`} variant="outlined" />
       </BecomeRow>
