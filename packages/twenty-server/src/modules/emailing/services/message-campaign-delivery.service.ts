@@ -15,6 +15,7 @@ import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CampaignSendingReputationService } from 'src/modules/emailing/services/campaign-sending-reputation.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
@@ -48,6 +49,7 @@ export class MessageCampaignDeliveryService {
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
+    private readonly campaignSendingReputationService: CampaignSendingReputationService,
   ) {}
 
   async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
@@ -185,6 +187,12 @@ export class MessageCampaignDeliveryService {
           state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
           skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
         },
+      });
+
+      await this.skipClaimedMessage({
+        messageRepository,
+        messageId,
+        claimedAt,
       });
 
       return;

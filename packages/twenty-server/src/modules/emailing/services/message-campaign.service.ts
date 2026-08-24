@@ -1,5 +1,8 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
+import { MESSAGE_CAMPAIGN_TEST_SEND_MAX_REQUESTS } from 'src/modules/emailing/constants/message-campaign-test-send-max-requests.constant';
+import { MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_MS } from 'src/modules/emailing/constants/message-campaign-test-send-window-ms.constant';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -60,6 +63,7 @@ export class MessageCampaignService {
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly campaignSendingReputationService: CampaignSendingReputationService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   async send({
@@ -184,6 +188,10 @@ export class MessageCampaignService {
     fromAddress: string;
     unsubscribeTopicId?: string;
   }): Promise<EmailingDomainSendEmailResult> {
+    await this.campaignSendingReputationService.assertWorkspaceCanKeepSendingOrThrow(
+      { workspaceId },
+    );
+
     const emailingDomain = await this.findSendReadyEmailingDomainOrThrow({
       workspaceId,
       fromAddress,
@@ -199,6 +207,13 @@ export class MessageCampaignService {
       bodyTemplate: html,
       variables,
     });
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `message-campaign-test-send:throttler:${workspaceId}`,
+      1,
+      MESSAGE_CAMPAIGN_TEST_SEND_MAX_REQUESTS,
+      MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_MS,
+    );
 
     return this.emailingDomainSenderService.sendEmail(
       workspaceId,

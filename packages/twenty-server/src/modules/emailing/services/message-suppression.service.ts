@@ -294,10 +294,19 @@ export class MessageSuppressionService {
       optOuts.map((suppression) => suppression.unsubscribeTopicId),
     );
 
+    const globalOptOut = await this.suppressionRepository.findOneBy(
+      workspaceId,
+      {
+        emailAddress: normalizedEmailAddress,
+        reason: MessageSuppressionReason.UNSUBSCRIBE,
+        unsubscribeTopicId: IsNull(),
+      },
+    );
+
     return visibleTopics.map((topic) => ({
       unsubscribeTopicId: topic.id,
       topicName: topic.name,
-      optedOut: optedOutTopicIds.has(topic.id),
+      optedOut: isDefined(globalOptOut) || optedOutTopicIds.has(topic.id),
     }));
   }
 
@@ -306,6 +315,12 @@ export class MessageSuppressionService {
     emailAddress,
     keptTopicIds,
   }: SetTopicOptOutsArgs): Promise<void> {
+    await this.liftGlobalOptOutContradictedByKeptTopics({
+      workspaceId,
+      emailAddress,
+      keptTopicIds,
+    });
+
     const topicStates = await this.getTopicOptOutState({
       workspaceId,
       emailAddress,
@@ -320,7 +335,7 @@ export class MessageSuppressionService {
       }
 
       if (shouldReceive) {
-        await this.liftTopicOptOut(
+        await this.liftOptOut(
           workspaceId,
           emailAddress,
           topicState.unsubscribeTopicId,
@@ -337,16 +352,30 @@ export class MessageSuppressionService {
     }
   }
 
-  private async liftTopicOptOut(
+  private async liftGlobalOptOutContradictedByKeptTopics({
+    workspaceId,
+    emailAddress,
+    keptTopicIds,
+  }: SetTopicOptOutsArgs): Promise<void> {
+    if (!isNonEmptyArray(keptTopicIds)) {
+      return;
+    }
+
+    await this.liftOptOut(workspaceId, emailAddress, null);
+  }
+
+  private async liftOptOut(
     workspaceId: string,
     emailAddress: string,
-    unsubscribeTopicId: string,
+    unsubscribeTopicId: string | null,
   ): Promise<void> {
     const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
     await this.suppressionRepository.delete(workspaceId, {
       emailAddress: normalizedEmailAddress,
-      unsubscribeTopicId,
+      unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
+        ? unsubscribeTopicId
+        : IsNull(),
       reason: MessageSuppressionReason.UNSUBSCRIBE,
     });
   }

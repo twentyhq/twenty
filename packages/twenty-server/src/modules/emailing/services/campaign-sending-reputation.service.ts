@@ -1,6 +1,12 @@
 import { CAMPAIGN_SENDING_REPUTATION_WINDOW_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-sending-reputation-window-ms.constant';
+import { CAMPAIGN_SENDING_REPUTATION_CACHE_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-sending-reputation-cache-ttl-ms.constant';
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
@@ -22,6 +28,8 @@ type CampaignCountTotalsRow = {
 export class CampaignSendingReputationService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   private async getWorkspaceSendingReputation({
@@ -66,6 +74,32 @@ export class CampaignSendingReputationService {
       bouncedCount: Number(totals?.bouncedCount ?? 0),
       complainedCount: Number(totals?.complainedCount ?? 0),
     });
+  }
+
+  async isSendingBlocked({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<boolean> {
+    const cacheKey = `campaign-sending-blocked:${workspaceId}`;
+
+    const cachedVerdict = await this.cacheStorageService.get<boolean>(cacheKey);
+
+    if (isDefined(cachedVerdict)) {
+      return cachedVerdict;
+    }
+
+    const { isSendingBlocked } = await this.getWorkspaceSendingReputation({
+      workspaceId,
+    });
+
+    await this.cacheStorageService.set(
+      cacheKey,
+      isSendingBlocked,
+      CAMPAIGN_SENDING_REPUTATION_CACHE_TTL_MS,
+    );
+
+    return isSendingBlocked;
   }
 
   async assertWorkspaceCanKeepSendingOrThrow({

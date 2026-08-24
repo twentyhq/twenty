@@ -7,7 +7,7 @@ import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-doma
 import { type CampaignProviderOutcome } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
+import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 type CampaignDeliveryOutcomeUpdate = Partial<
@@ -22,7 +22,7 @@ export class MessageCampaignDeliveryFeedbackService {
   constructor(
     @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
-    private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
+    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
   async recordProviderOutcomeByProviderMessageId({
@@ -55,7 +55,7 @@ export class MessageCampaignDeliveryFeedbackService {
       update,
     );
 
-    await this.messageCampaignLifecycleService.scheduleStatsRefresh({
+    await this.messageCampaignStatisticsService.scheduleRefresh({
       workspaceId,
       campaignId: delivery.campaignId,
     });
