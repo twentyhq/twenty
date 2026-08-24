@@ -5,8 +5,8 @@ export type CalendarEventCallRecordingCandidate = {
   __typename: 'CallRecording';
   id: string;
   status: CallRecordingStatus;
-  transcript: unknown;
-  summary: { markdown: string | null } | null | undefined;
-  video: FieldFilesValue[] | null | undefined;
+  transcript?: unknown;
+  summary?: { markdown: string | null } | null;
+  video?: FieldFilesValue[] | null;
   createdAt: string | null | undefined;
 };

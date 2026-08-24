@@ -8,6 +8,7 @@ import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recordin
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { delay, http } from 'msw';
 import { useState, type ComponentProps } from 'react';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import {
@@ -26,6 +27,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const TRANSCRIPT_WIDGET_ID = 'transcript-widget';
 const CALL_RECORDING_TAB_ID = 'call-recording-tab';
+const VIDEO_URL = '/storybook/call-recording.mp4';
 
 const transcriptWidget: PageLayoutWidget = {
   __typename: 'PageLayoutWidget',
@@ -145,7 +147,7 @@ const recordedCallRecording: CalendarEventCallRecordingCandidate = {
       fileId: 'video-file-id',
       label: 'recording.mp4',
       extension: 'mp4',
-      url: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+      url: VIDEO_URL,
     },
   ],
 };
@@ -170,14 +172,27 @@ type CallRecordingTranscriptBodyStoryProps = Omit<
 const CallRecordingTranscriptBodyStory = (
   args: CallRecordingTranscriptBodyStoryProps,
 ) => {
+  const canExposeCallRecordingHeaderData =
+    !args.loading && !isDefined(args.error) && !isDefined(args.restriction);
+
+  const callRecordingForHeader = canExposeCallRecordingHeaderData
+    ? args.callRecording
+    : undefined;
+
   const transcriptEntries = parseCallRecordingTranscriptEntries(
-    args.callRecording?.transcript,
+    callRecordingForHeader?.transcript,
   );
-  const videoFileUrl = getCallRecordingVideoFileUrl(args.callRecording);
+  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
 
   return (
     <>
-      <WidgetHeaderCountEffect count={isDefined(args.callRecording) ? 1 : 0} />
+      <WidgetHeaderCountEffect
+        count={
+          canExposeCallRecordingHeaderData && isDefined(args.callRecording)
+            ? 1
+            : 0
+        }
+      />
       <CallRecordingTranscriptHeaderDataEffect
         transcriptEntries={transcriptEntries}
         videoFileUrl={videoFileUrl}
@@ -225,6 +240,7 @@ const meta: Meta<typeof CallRecordingTranscriptBodyStory> = {
   ],
   parameters: {
     layout: 'centered',
+    msw: { handlers: [http.get(VIDEO_URL, () => delay('infinite'))] },
   },
   render: CallRecordingTranscriptBodyStory,
   args: {
@@ -284,9 +300,7 @@ export const WithVideo: Story = {
 
     await userEvent.click(copyVideoLinkButton);
 
-    expect(writeText).toHaveBeenLastCalledWith(
-      'https://media.w3.org/2010/05/sintel/trailer.mp4',
-    );
+    expect(writeText).toHaveBeenLastCalledWith(VIDEO_URL);
 
     writeText.mockRestore();
 
@@ -321,7 +335,7 @@ export const PlaybackError: Story = {
     await waitFor(() =>
       expect(canvasElement.querySelector('video')).toHaveAttribute(
         'src',
-        'https://media.w3.org/2010/05/sintel/trailer.mp4#t=0.001',
+        `${VIDEO_URL}#t=0.001`,
       ),
     );
   },
@@ -401,7 +415,7 @@ export const NoRecording: Story = {
 
 export const Forbidden: Story = {
   args: {
-    callRecording: undefined,
+    callRecording: recordedCallRecording,
     loading: false,
     error: undefined,
     restriction: { type: 'field', fieldNames: ['Transcript'] },
@@ -410,6 +424,17 @@ export const Forbidden: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Not shared');
+    expect(
+      canvas.queryByRole('button', { name: 'Copy transcript' }),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Copy video download link' }),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('link', {
+        name: 'See all call recordings linked to this calendar event',
+      }),
+    ).not.toBeInTheDocument();
   },
 };
 

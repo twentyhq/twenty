@@ -4,7 +4,10 @@ import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recordin
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useMemo } from 'react';
-import { parseCallRecordingTranscriptEntries } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseCallRecordingTranscriptEntries,
+} from 'twenty-shared/utils';
 
 export const CallRecordingTranscriptWidgetContent = () => {
   const {
@@ -18,16 +21,26 @@ export const CallRecordingTranscriptWidgetContent = () => {
     queryScope: 'call-recording-transcript',
   });
 
+  const canExposeCallRecordingHeaderData =
+    !loading && !isDefined(error) && !isDefined(restriction);
+
+  const callRecordingForHeader = canExposeCallRecordingHeaderData
+    ? callRecording
+    : undefined;
+
   const transcriptEntries = useMemo(
-    () => parseCallRecordingTranscriptEntries(callRecording?.transcript),
-    [callRecording?.transcript],
+    () =>
+      parseCallRecordingTranscriptEntries(callRecordingForHeader?.transcript),
+    [callRecordingForHeader?.transcript],
   );
 
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecording);
+  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
 
   return (
     <>
-      <WidgetHeaderCountEffect count={callRecordingsCount} />
+      <WidgetHeaderCountEffect
+        count={canExposeCallRecordingHeaderData ? callRecordingsCount : 0}
+      />
       <CallRecordingTranscriptHeaderDataEffect
         transcriptEntries={transcriptEntries}
         videoFileUrl={videoFileUrl}
