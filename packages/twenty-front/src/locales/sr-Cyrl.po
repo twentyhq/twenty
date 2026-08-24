@@ -1142,7 +1142,7 @@ msgstr "Активна синхронизација"
 #. js-lingui-id: LynXsl
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Activity visibility"
-msgstr ""
+msgstr "Видљивост активности"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -2846,7 +2846,7 @@ msgstr "у врху сата"
 #. js-lingui-id: x9ecE4
 #: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
 msgid "Attach file"
-msgstr ""
+msgstr "Приложи датотеку"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3971,7 +3971,7 @@ msgstr "Изаберите где се записи подразумевано �
 #. js-lingui-id: EcjwmO
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Choose whether this activity type appears in record timelines"
-msgstr ""
+msgstr "Изаберите да ли се ова врста активности приказује на временским линијама записа"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4444,7 +4444,7 @@ msgstr "Назив компоненте"
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
-msgstr ""
+msgstr "Састави имејл"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4495,7 +4495,7 @@ msgstr "Конфигурација ове ставке менија команд
 #. js-lingui-id: +rVpsA
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Configuration of this timeline activity type"
-msgstr ""
+msgstr "Конфигурација овог типа активности на временској линији"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5271,7 +5271,7 @@ msgstr "Креирај API кључ"
 #. js-lingui-id: 0gp+cZ
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Create calendar event"
-msgstr ""
+msgstr "Креирај догађај у календару"
 
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5306,7 +5306,7 @@ msgstr "Креирај нови приказ"
 #. js-lingui-id: BKucva
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
 msgid "Create note"
-msgstr ""
+msgstr "Креирај белешку"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5334,7 +5334,7 @@ msgstr "Креирај запис дана {0} у {1}"
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
 msgid "Create related"
-msgstr ""
+msgstr "Креирај повезани запис"
 
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -5355,7 +5355,7 @@ msgstr "Креирај селект..."
 #. js-lingui-id: Z+6PPA
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
 msgid "Create task"
-msgstr ""
+msgstr "Креирај задатак"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8609,7 +8609,7 @@ msgstr "Није успело уклањање провајдера"
 #. js-lingui-id: is6uow
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
 msgid "Failed to reset the timeline activity type."
-msgstr ""
+msgstr "Није успело враћање типа активности на временској линији на почетне вредности."
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -8739,7 +8739,7 @@ msgstr "Није успело ажурирање приступа админис
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
 msgid "Failed to update the timeline activity type."
-msgstr ""
+msgstr "Није успело ажурирање типа активности на временској линији."
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -14904,7 +14904,7 @@ msgstr "Изаберите приказ"
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Pick an address to send from or set a workspace member as variable"
-msgstr ""
+msgstr "Изаберите адресу са које желите да шаљете или подесите члана радног простора као променљиву"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -16231,7 +16231,7 @@ msgstr "Врати {objectLabel}"
 #. js-lingui-id: ZkHcxG
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Restore the activity type settings defined by the application"
-msgstr ""
+msgstr "Вратите поставке типа активности које је дефинисала апликација"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17676,7 +17676,7 @@ msgstr "Прикажи само редове са грешкама"
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Show this activity type in record timelines"
-msgstr ""
+msgstr "Прикажите овај тип активности на временским линијама записа"
 
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -19460,13 +19460,13 @@ msgstr "тип активности на временској линији"
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Timeline activity type"
-msgstr ""
+msgstr "Тип активности на временској линији"
 
 #. js-lingui-id: YZJ+T0
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Timeline activity types"
-msgstr ""
+msgstr "Типови активности на временској линији"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx

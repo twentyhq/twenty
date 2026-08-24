@@ -1142,7 +1142,7 @@ msgstr "Ενεργός συγχρονισμός"
 #. js-lingui-id: LynXsl
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Activity visibility"
-msgstr ""
+msgstr "Ορατότητα δραστηριότητας"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -2846,7 +2846,7 @@ msgstr "στην αρχή της ώρας"
 #. js-lingui-id: x9ecE4
 #: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
 msgid "Attach file"
-msgstr ""
+msgstr "Επισύναψη αρχείου"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3971,7 +3971,7 @@ msgstr "Επιλέξτε πού θα ανοίγουν από προεπιλογ�
 #. js-lingui-id: EcjwmO
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Choose whether this activity type appears in record timelines"
-msgstr ""
+msgstr "Επιλέξτε αν αυτός ο τύπος δραστηριότητας εμφανίζεται στα χρονολόγια εγγραφών"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4444,7 +4444,7 @@ msgstr "Όνομα στοιχείου"
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
-msgstr ""
+msgstr "Σύνταξη email"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4495,7 +4495,7 @@ msgstr "Διαμόρφωση αυτού του στοιχείου μενού ε�
 #. js-lingui-id: +rVpsA
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Configuration of this timeline activity type"
-msgstr ""
+msgstr "Διαμόρφωση αυτού του τύπου δραστηριότητας χρονοδιαγράμματος"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5271,7 +5271,7 @@ msgstr "Δημιουργήστε μια κλειδί API"
 #. js-lingui-id: 0gp+cZ
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Create calendar event"
-msgstr ""
+msgstr "Δημιουργία συμβάντος ημερολογίου"
 
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5306,7 +5306,7 @@ msgstr "Δημιουργία νέας προβολής"
 #. js-lingui-id: BKucva
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
 msgid "Create note"
-msgstr ""
+msgstr "Δημιουργία σημείωσης"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5334,7 +5334,7 @@ msgstr "Δημιουργία εγγραφής την {0} στις {1}"
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
 msgid "Create related"
-msgstr ""
+msgstr "Δημιουργία σχετικής εγγραφής"
 
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -5355,7 +5355,7 @@ msgstr "Δημιουργήστε επιλογή..."
 #. js-lingui-id: Z+6PPA
 #: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
 msgid "Create task"
-msgstr ""
+msgstr "Δημιουργία εργασίας"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8609,7 +8609,7 @@ msgstr "Αποτυχία αφαίρεσης παρόχου"
 #. js-lingui-id: is6uow
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
 msgid "Failed to reset the timeline activity type."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η επαναφορά του τύπου δραστηριότητας χρονοδιαγράμματος."
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -8739,7 +8739,7 @@ msgstr "Αποτυχία ενημέρωσης της πρόσβασης διαχ
 #. js-lingui-id: 6TG/SY
 #: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
 msgid "Failed to update the timeline activity type."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η ενημέρωση του τύπου δραστηριότητας χρονοδιαγράμματος."
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -14904,7 +14904,7 @@ msgstr "Επιλέξτε μια προβολή"
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Pick an address to send from or set a workspace member as variable"
-msgstr ""
+msgstr "Επιλέξτε μια διεύθυνση αποστολής ή ορίστε μέλος του χώρου εργασίας ως μεταβλητή"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -16231,7 +16231,7 @@ msgstr "Επαναφορά {objectLabel}"
 #. js-lingui-id: ZkHcxG
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Restore the activity type settings defined by the application"
-msgstr ""
+msgstr "Επαναφορά των ρυθμίσεων τύπου δραστηριότητας που ορίζονται από την εφαρμογή"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17678,7 +17678,7 @@ msgstr "Εμφάνιση μόνο γραμμών με λάθη"
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Show this activity type in record timelines"
-msgstr ""
+msgstr "Εμφάνιση αυτού του τύπου δραστηριότητας στα χρονοδιαγράμματα εγγραφών"
 
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -19464,13 +19464,13 @@ msgstr "τύπος δραστηριότητας χρονοδιαγράμματο
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Timeline activity type"
-msgstr ""
+msgstr "Τύπος δραστηριότητας χρονοδιαγράμματος"
 
 #. js-lingui-id: YZJ+T0
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Timeline activity types"
-msgstr ""
+msgstr "Τύποι δραστηριοτήτων χρονοδιαγράμματος"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx

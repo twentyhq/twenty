@@ -434,7 +434,7 @@ msgstr "Tämän määrityksen mukainen webhook on jo olemassa."
 #. js-lingui-id: I0rHKG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
-msgstr ""
+msgstr "Widgetin otsikkotoimintoa ei löytynyt"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2040,12 +2040,12 @@ msgstr "Värimaailma"
 #. js-lingui-id: 8nN8qg
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
-msgstr ""
+msgstr "Widgetin otsikon viittaama komentovalikon kohde {commandMenuItemUniversalIdentifier} kuuluu toiseen sovellukseen"
 
 #. js-lingui-id: fmk0Wo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
-msgstr ""
+msgstr "Widgetin otsikon viittaamaa komentovalikon kohdetta {commandMenuItemUniversalIdentifier} ei löytynyt"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11835,17 +11835,17 @@ msgstr "Widget ulottuu ruudukon leveyden yli"
 #. js-lingui-id: GE0fWY
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must be unique"
-msgstr ""
+msgstr "Pienoisohjelman otsaketoimintojen on oltava yksilöllisiä."
 
 #. js-lingui-id: djzz9p
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header actions must belong to the same application as the widget"
-msgstr ""
+msgstr "Pienoisohjelman otsaketoimintojen on kuuluttava samaan sovellukseen kuin pienoisohjelma."
 
 #. js-lingui-id: pjpuGA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
-msgstr ""
+msgstr "Pienoisohjelman otsakkeen komentovalikkokohteiden viittausten on oltava yksilöllisiä."
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12479,7 +12479,7 @@ msgstr "Et voi peruuttaa ylläpitopaneelin käyttöoikeutta viimeiseltä palveli
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "Et voi lähettää tästä osoitteesta."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
