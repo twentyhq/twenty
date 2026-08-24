@@ -3,9 +3,8 @@ import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
@@ -22,6 +21,9 @@ import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/type
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
+import { canConnectedAccountSendEmail } from '@/accounts/utils/canConnectedAccountSendEmail';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
@@ -112,16 +114,41 @@ export const EmailComposerFields = ({
   const { theme } = useContext(ThemeContext);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
-    myConnectedAccounts: { id: string; handle: string }[];
+    myConnectedAccounts: Pick<
+      ConnectedAccount,
+      'id' | 'handle' | 'handleAliases' | 'provider' | 'connectionParameters'
+    >[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
 
-  const accountOptions: SelectOption<string>[] =
-    accountsData?.myConnectedAccounts?.map((account) => ({
-      label: account.handle,
-      value: account.id,
-    })) ?? [];
+  const sendableAccounts = (accountsData?.myConnectedAccounts ?? []).filter(
+    canConnectedAccountSendEmail,
+  );
 
-  const hasMultipleAccounts = accountOptions.length > 1;
+  const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
+
+  const hasMultipleSenders = senderOptions.length > 1;
+
+  const selectedAccount = sendableAccounts.find(
+    (account) => account.id === composerState.connectedAccountId,
+  );
+
+  const selectedSenderValue =
+    composerState.fromHandle ?? selectedAccount?.handle;
+
+  const handleSenderChange = (handle: string) => {
+    const senderAccount = sendableAccounts.find((account) =>
+      getSendableEmailHandles(account).includes(handle),
+    );
+
+    if (!isDefined(senderAccount)) {
+      return;
+    }
+
+    composerState.setSender({
+      connectedAccountId: senderAccount.id,
+      fromHandle: handle,
+    });
+  };
 
   const allRecipientKeys = [
     ...composerState.to,
@@ -174,16 +201,14 @@ export const EmailComposerFields = ({
           onDragEnd={handlers.onDragEnd}
         >
           <ComposerHeader>
-            {hasMultipleAccounts && (
+            {hasMultipleSenders && (
               <ComposerFieldRow label={t`From`}>
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
-                  value={composerState.connectedAccountId}
-                  options={accountOptions}
-                  onChange={(value) =>
-                    composerState.setConnectedAccountId(value)
-                  }
+                  value={selectedSenderValue}
+                  options={senderOptions}
+                  onChange={handleSenderChange}
                 />
               </ComposerFieldRow>
             )}
