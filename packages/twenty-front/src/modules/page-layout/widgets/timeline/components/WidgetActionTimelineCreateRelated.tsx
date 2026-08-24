@@ -1,4 +1,4 @@
-import { useHasAnyRelatedRecordAction } from '@/activities/hooks/useHasAnyRelatedRecordAction';
+import { useRelatedRecordActions } from '@/activities/hooks/useRelatedRecordActions';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useOpenCreateRelatedRecordInSidePanel } from '@/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -7,7 +7,9 @@ import { IconPlus } from 'twenty-ui/icon';
 
 export const WidgetActionTimelineCreateRelated = () => {
   const targetRecord = useTargetRecord();
-  const hasAnyRelatedRecordAction = useHasAnyRelatedRecordAction(targetRecord);
+  const hasAnyRelatedRecordAction = useRelatedRecordActions({
+    targetRecord,
+  }).some(({ action }) => action.isVisible);
   const { openCreateRelatedRecordInSidePanel } =
     useOpenCreateRelatedRecordInSidePanel();
 

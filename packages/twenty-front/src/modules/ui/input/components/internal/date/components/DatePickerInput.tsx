@@ -27,7 +27,9 @@ const StyledInputContainer = styled.div<{
   border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   height: ${({ $variant }) =>
-    $variant === 'transparent' ? '24px' : themeCssVariables.spacing[8]};
+    $variant === 'transparent'
+      ? themeCssVariables.spacing[6]
+      : themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
