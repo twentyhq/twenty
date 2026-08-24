@@ -44,11 +44,11 @@ export class OutboundDeliveryEventProcessorService {
       return;
     }
 
-    await this.messageCampaignDeliveryFeedbackService.recordDeliveryStatusByProviderMessageId(
+    await this.messageCampaignDeliveryFeedbackService.recordProviderOutcomeByProviderMessageId(
       {
         workspaceId: event.workspaceId,
         providerMessageId: event.providerMessageId,
-        deliveryStatus: event.deliveryStatus,
+        outcome: event.deliveryStatus,
       },
     );
   }

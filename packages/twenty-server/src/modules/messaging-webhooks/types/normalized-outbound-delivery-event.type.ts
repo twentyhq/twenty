@@ -1,9 +1,9 @@
 import { type MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
-import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
+import { type CampaignProviderOutcome } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
 
 export type NormalizedOutboundDeliveryEvent = {
   workspaceId: string;
-  deliveryStatus: CampaignMessageDeliveryStatus;
+  deliveryStatus: CampaignProviderOutcome;
   suppression: {
     reason:
       | MessageSuppressionReason.BOUNCE
