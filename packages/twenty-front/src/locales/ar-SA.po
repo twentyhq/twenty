@@ -19092,7 +19092,7 @@ msgstr "سيتم حفظ هذه القيمة في قاعدة البيانات."
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "تعذر تحميل هذا الفيديو. يرجى تنزيل الملف لعرضه."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

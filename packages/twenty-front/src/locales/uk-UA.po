@@ -19094,7 +19094,7 @@ msgstr "Це значення буде збережено в базі даних
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "Не вдалося завантажити це відео. Завантажте файл, щоб переглянути його."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

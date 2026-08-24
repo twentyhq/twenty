@@ -19092,7 +19092,7 @@ msgstr "Tämä arvo tallennetaan tietokantaan."
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "Tätä videota ei voitu ladata. Lataa tiedosto, jotta voit tarkastella sitä."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

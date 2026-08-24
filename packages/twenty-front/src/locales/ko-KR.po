@@ -19092,7 +19092,7 @@ msgstr "이 값이 데이터베이스에 저장됩니다."
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "이 동영상을 불러올 수 없습니다. 보려면 파일을 다운로드하세요."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

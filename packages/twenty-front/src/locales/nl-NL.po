@@ -19094,7 +19094,7 @@ msgstr "Deze waarde zal in de database worden opgeslagen."
 #. js-lingui-id: BKB7SR
 #: src/modules/activities/files/components/VideoPreview.tsx
 msgid "This video could not be loaded. Please download the file to view it."
-msgstr ""
+msgstr "Deze video kan niet worden geladen. Download het bestand om het te bekijken."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
