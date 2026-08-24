@@ -6780,7 +6780,7 @@ msgid "Download file"
 msgstr "Преузми датотеку"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Преузми датотеку"
 
@@ -14967,7 +14967,7 @@ msgid "Preview"
 msgstr "Преглед"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr ""
 
@@ -19088,6 +19088,11 @@ msgstr "Ово одмах одузима {0} кредита са овог рад
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "Ова вредност ће бити сачувана у бази података."
+
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr ""
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

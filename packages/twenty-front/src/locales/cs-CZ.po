@@ -6780,7 +6780,7 @@ msgid "Download file"
 msgstr "Stáhnout soubor"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Stáhnout soubor"
 
@@ -14967,7 +14967,7 @@ msgid "Preview"
 msgstr "Náhled"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "Náhled není k dispozici"
 
@@ -19088,6 +19088,11 @@ msgstr "To okamžitě odebere z tohoto pracovního prostoru {0} kreditů. Zruše
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "Tato hodnota bude uložena do databáze."
+
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr ""
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
