@@ -26,7 +26,7 @@ export class AddCommandMenuItemTargetObjectMetadataFastInstanceCommand
       `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "${ENGINE_KEY_COHERENCE_CHECK_NAME}" CHECK (${ENGINE_KEY_COHERENCE_CHECK})`,
     );
     await queryRunner.query(
-      'CREATE UNIQUE INDEX "IDX_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE" ON "core"."commandMenuItem" ("targetObjectMetadataId", "workspaceId") WHERE "targetObjectMetadataId" IS NOT NULL',
+      'CREATE UNIQUE INDEX "IDX_CMD_MENU_ITEM_SYSTEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE" ON "core"."commandMenuItem" ("targetObjectMetadataId", "workspaceId") WHERE "targetObjectMetadataId" IS NOT NULL AND "isSystemSideEffect"',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "FK_c480a1703181e5f396f223512d2" FOREIGN KEY ("targetObjectMetadataId") REFERENCES "core"."objectMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
@@ -38,7 +38,7 @@ export class AddCommandMenuItemTargetObjectMetadataFastInstanceCommand
       'ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "FK_c480a1703181e5f396f223512d2"',
     );
     await queryRunner.query(
-      'DROP INDEX "core"."IDX_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE"',
+      'DROP INDEX "core"."IDX_CMD_MENU_ITEM_SYSTEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE"',
     );
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT IF EXISTS "${ENGINE_KEY_COHERENCE_CHECK_NAME}"`,

@@ -13,9 +13,11 @@ const NEW_COMMAND_UNIVERSAL_IDENTIFIER = '44444444-4444-4444-8444-444444444444';
 const buildFlatCommandMenuItem = ({
   universalIdentifier,
   targetObjectMetadataUniversalIdentifier,
+  isSystemSideEffect = true,
 }: {
   universalIdentifier: string;
   targetObjectMetadataUniversalIdentifier: string | null;
+  isSystemSideEffect?: boolean;
 }) => ({
   universalIdentifier,
   label: 'Go to Companies',
@@ -24,19 +26,23 @@ const buildFlatCommandMenuItem = ({
   frontComponentUniversalIdentifier: null,
   payload: { objectMetadataItemId: 'company-object-id' },
   targetObjectMetadataUniversalIdentifier,
+  isSystemSideEffect,
 });
 
 const buildCreationArgs = ({
   targetObjectMetadataUniversalIdentifier,
+  isSystemSideEffect = true,
   existingCommandMenuItems = [],
 }: {
   targetObjectMetadataUniversalIdentifier: string | null;
+  isSystemSideEffect?: boolean;
   existingCommandMenuItems?: ReturnType<typeof buildFlatCommandMenuItem>[];
 }) =>
   ({
     flatEntityToValidate: buildFlatCommandMenuItem({
       universalIdentifier: NEW_COMMAND_UNIVERSAL_IDENTIFIER,
       targetObjectMetadataUniversalIdentifier,
+      isSystemSideEffect,
     }),
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: {
@@ -55,7 +61,7 @@ const buildCreationArgs = ({
 describe('FlatCommandMenuItemValidatorService', () => {
   const service = new FlatCommandMenuItemValidatorService();
 
-  it('rejects a second navigation command targeting an already claimed object', () => {
+  it('rejects a second engine owned navigation command targeting an already claimed object', () => {
     const result = service.validateFlatCommandMenuItemCreation(
       buildCreationArgs({
         targetObjectMetadataUniversalIdentifier:
@@ -73,9 +79,29 @@ describe('FlatCommandMenuItemValidatorService', () => {
     expect(result.errors).toEqual([
       expect.objectContaining({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: 'A navigation command menu item already targets this object',
+        message:
+          'An engine owned navigation command menu item already targets this object',
       }),
     ]);
+  });
+
+  it('accepts an authored navigation command alongside the engine owned one', () => {
+    const result = service.validateFlatCommandMenuItemCreation(
+      buildCreationArgs({
+        targetObjectMetadataUniversalIdentifier:
+          COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: false,
+        existingCommandMenuItems: [
+          buildFlatCommandMenuItem({
+            universalIdentifier: EXISTING_COMMAND_UNIVERSAL_IDENTIFIER,
+            targetObjectMetadataUniversalIdentifier:
+              COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+          }),
+        ],
+      }),
+    );
+
+    expect(result.errors).toEqual([]);
   });
 
   it('accepts a navigation command targeting a free object', () => {

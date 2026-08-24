@@ -61,6 +61,7 @@ export class FlatCommandMenuItemValidatorService {
     this.validateTargetObjectMetadataIsNotAlreadyClaimed({
       targetObjectMetadataUniversalIdentifier:
         flatCommandMenuItem.targetObjectMetadataUniversalIdentifier,
+      isSystemSideEffect: flatCommandMenuItem.isSystemSideEffect,
       universalIdentifier: flatCommandMenuItem.universalIdentifier,
       optimisticFlatCommandMenuItemMaps,
       validationResult,
@@ -164,21 +165,27 @@ export class FlatCommandMenuItemValidatorService {
     return validationResult;
   }
 
-  // Mirrors IDX_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE so a
-  // competing navigation command surfaces as a validation error rather than a
-  // raw unique violation
+  // Mirrors IDX_CMD_MENU_ITEM_SYSTEM_TARGET_OBJECT_METADATA_WS_ID_UNIQUE so a
+  // competing engine owned navigation command surfaces as a validation error
+  // rather than a raw unique violation. Only engine owned commands are a
+  // singleton per object, anyone may add their own alongside them
   private validateTargetObjectMetadataIsNotAlreadyClaimed({
     targetObjectMetadataUniversalIdentifier,
+    isSystemSideEffect,
     universalIdentifier,
     optimisticFlatCommandMenuItemMaps,
     validationResult,
   }: {
     targetObjectMetadataUniversalIdentifier: string | null;
+    isSystemSideEffect: boolean;
     universalIdentifier: string;
     optimisticFlatCommandMenuItemMaps: MetadataUniversalFlatEntityMaps<'commandMenuItem'>;
     validationResult: FailedFlatEntityValidation<'commandMenuItem', 'create'>;
   }): void {
-    if (!isDefined(targetObjectMetadataUniversalIdentifier)) {
+    if (
+      !isDefined(targetObjectMetadataUniversalIdentifier) ||
+      !isSystemSideEffect
+    ) {
       return;
     }
 
@@ -187,6 +194,7 @@ export class FlatCommandMenuItemValidatorService {
     ).find(
       (existingCommandMenuItem) =>
         isDefined(existingCommandMenuItem) &&
+        existingCommandMenuItem.isSystemSideEffect &&
         existingCommandMenuItem.universalIdentifier !== universalIdentifier &&
         existingCommandMenuItem.targetObjectMetadataUniversalIdentifier ===
           targetObjectMetadataUniversalIdentifier,
@@ -195,7 +203,7 @@ export class FlatCommandMenuItemValidatorService {
     if (isDefined(competingCommandMenuItem)) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`A navigation command menu item already targets this object`,
+        message: t`An engine owned navigation command menu item already targets this object`,
         userFriendlyMessage: msg`This object already has a navigation command`,
       });
     }
