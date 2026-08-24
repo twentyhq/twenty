@@ -3,6 +3,7 @@ import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type GetTimelineCalendarEventsFromObjectRecordQuery,
   type GetTimelineCalendarEventsFromObjectRecordQueryVariables,
@@ -18,7 +19,7 @@ export const useCalendarEventTargetRelatedPersonIds = (
     GetTimelineCalendarEventsFromObjectRecordQueryVariables
   >(getTimelineCalendarEventsFromObjectRecord, {
     client: apolloCoreClient,
-    skip: !contextRecord,
+    skip: !isDefined(contextRecord),
     variables: {
       objectNameSingular: contextRecord?.objectNameSingular ?? '',
       recordId: contextRecord?.recordId ?? '',

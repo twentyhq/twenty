@@ -185,6 +185,7 @@ export const CalendarEventComposerFields = ({
                   labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
                 >
                   <FormDateFieldInput
+                    key={composerState.dates.endsAt}
                     variant="transparent"
                     defaultValue={composerState.dates.endsAt}
                     onChange={composerState.setEndsAt}
@@ -210,7 +211,7 @@ export const CalendarEventComposerFields = ({
                   labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
                 >
                   <FormDateTimeFieldInput
-                    key={`ends-at-${composerState.timeZone}`}
+                    key={`ends-at-${composerState.dates.endsAt}-${composerState.timeZone}`}
                     variant="transparent"
                     defaultValue={composerState.dates.endsAt}
                     onChange={composerState.setEndsAt}
