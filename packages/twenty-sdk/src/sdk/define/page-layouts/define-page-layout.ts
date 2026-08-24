@@ -1,9 +1,7 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
-
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const definePageLayout: DefineEntity<PageLayoutConfig> = (config) => {
   const errors: string[] = [];
@@ -49,7 +47,7 @@ export const definePageLayout: DefineEntity<PageLayoutConfig> = (config) => {
               widget.configuration.headerCommandMenuItemUniversalIdentifiers;
 
             for (const universalIdentifier of headerCommandMenuItemUniversalIdentifiers) {
-              if (!UUID_PATTERN.test(universalIdentifier)) {
+              if (!isValidPostgresUuid(universalIdentifier)) {
                 errors.push(
                   `PageLayoutWidget header command menu item universalIdentifier "${universalIdentifier}" must be a UUID`,
                 );
