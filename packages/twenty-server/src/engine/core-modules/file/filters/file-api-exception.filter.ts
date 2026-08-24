@@ -5,10 +5,9 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
-
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { isDefined } from 'twenty-shared/utils';
 
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
   FileException,
   FileExceptionCode,

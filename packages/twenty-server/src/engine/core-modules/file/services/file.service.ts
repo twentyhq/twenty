@@ -237,9 +237,6 @@ export class FileService {
       return { type: 'redirect', presignedUrl };
     }
 
-    // No presign support (local storage, or S3 without presign enabled):
-    // fall back to streaming through the server, range-aware when the caller
-    // provides the file size.
     try {
       if (isDefined(fileSizeInBytes)) {
         const resolvedByteRange = resolveByteRange({
