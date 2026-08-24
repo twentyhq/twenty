@@ -12,3 +12,11 @@ export type EnqueueJobResult = {
   enqueued: boolean;
   logicFunctionUniversalIdentifier: string;
 };
+
+export type EnqueueJobsInput = {
+  jobs: EnqueueJobInput[];
+};
+
+export type EnqueueJobsResult = {
+  jobs: EnqueueJobResult[];
+};

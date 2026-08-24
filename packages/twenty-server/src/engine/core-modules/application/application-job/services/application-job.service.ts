@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type EnqueueJobResult } from 'twenty-shared/application';
+import {
+  type EnqueueJobResult,
+  type EnqueueJobsResult,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -8,6 +11,7 @@ import {
   ENQUEUE_JOB_PRIORITY,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
+import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -44,46 +48,83 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobInputDTO;
   }): Promise<EnqueueJobResult> {
-    const { logicFunctionUniversalIdentifier } = input;
+    const { jobs } = await this.enqueueJobs({
+      applicationId,
+      workspaceId,
+      userId,
+      userWorkspaceId,
+      input: { jobs: [input] },
+    });
 
+    return jobs[0];
+  }
+
+  async enqueueJobs({
+    applicationId,
+    workspaceId,
+    userId,
+    userWorkspaceId,
+    input,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    userId: string | null;
+    userWorkspaceId: string | null;
+    input: EnqueueJobsInputDTO;
+  }): Promise<EnqueueJobsResult> {
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
       ]);
 
-    const flatLogicFunction = findFlatEntityByUniversalIdentifier({
-      flatEntityMaps: flatLogicFunctionMaps,
-      universalIdentifier: logicFunctionUniversalIdentifier,
+    // Resolve every job before enqueuing any, so an invalid job in the batch
+    // does not leave a partially enqueued batch behind.
+    const jobsToEnqueue = input.jobs.map((job) => {
+      const { logicFunctionUniversalIdentifier } = job;
+
+      const flatLogicFunction = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatLogicFunctionMaps,
+        universalIdentifier: logicFunctionUniversalIdentifier,
+      });
+
+      if (
+        !isDefined(flatLogicFunction) ||
+        isDefined(flatLogicFunction.deletedAt) ||
+        flatLogicFunction.applicationId !== applicationId
+      ) {
+        throw new ApplicationException(
+          `Logic function ${logicFunctionUniversalIdentifier} not found in this application`,
+          ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      return { job, logicFunctionId: flatLogicFunction.id };
     });
 
-    if (
-      !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt) ||
-      flatLogicFunction.applicationId !== applicationId
-    ) {
-      throw new ApplicationException(
-        `Logic function ${logicFunctionUniversalIdentifier} not found in this application`,
-        ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    for (const { job, logicFunctionId } of jobsToEnqueue) {
+      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        {
+          logicFunctionId,
+          workspaceId,
+          payload: job.payload ?? {},
+          ...(isDefined(userId) ? { userId } : {}),
+          ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+        },
+        {
+          retryLimit: job.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          priority: ENQUEUE_JOB_PRIORITY,
+          ...(isDefined(job.delayMs) ? { delay: job.delayMs } : {}),
+        },
       );
     }
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-      LogicFunctionTriggerJob.name,
-      {
-        logicFunctionId: flatLogicFunction.id,
-        workspaceId,
-        payload: input.payload ?? {},
-        ...(isDefined(userId) ? { userId } : {}),
-        ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
-      },
-      {
-        retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        priority: ENQUEUE_JOB_PRIORITY,
-        ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
-      },
-    );
-
-    return { enqueued: true, logicFunctionUniversalIdentifier };
+    return {
+      jobs: jobsToEnqueue.map(({ job }) => ({
+        enqueued: true,
+        logicFunctionUniversalIdentifier: job.logicFunctionUniversalIdentifier,
+      })),
+    };
   }
 }

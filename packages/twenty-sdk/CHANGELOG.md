@@ -6,6 +6,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues a list of jobs in a single call (up to 100 per batch). Each entry takes the same shape as the former `enqueueJob` input (`logicFunctionUniversalIdentifier`, `payload`, `retryLimit`, `delayMs`). The whole batch is validated before anything is enqueued, so an invalid entry rejects the call without enqueuing any job.
+
+  ```ts
+  import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+  await enqueueJobs({
+    jobs: batches.map((batch, batchIndex) => ({
+      logicFunctionUniversalIdentifier: PROCESS_BATCH,
+      payload: { batchIndex },
+    })),
+  });
+  ```
+
+### Deprecated
+
+- **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `jobs` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
+
 ### Changed
 
 - **`twenty-client-sdk` should now be a dev dependency too.** Although app code imports it (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), Twenty provides it at runtime — logic functions get it from a generated SDK layer and front components resolve it from server-served modules — so the installed copy is only needed for typechecking and the deploy-time build. Newly scaffolded apps now place it under `devDependencies`. Moving it is recommended (not required: the server already strips it from the deployed runtime), and keeps the installed app leaner:

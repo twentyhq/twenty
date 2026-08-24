@@ -1710,6 +1710,15 @@ export type EnqueueJobResult = {
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
 };
 
+export type EnqueueJobsInput = {
+  jobs: Array<EnqueueJobInput>;
+};
+
+export type EnqueueJobsResult = {
+  __typename?: 'EnqueueJobsResult';
+  jobs: Array<EnqueueJobResult>;
+};
+
 export type EnterpriseLicenseInfoDto = {
   __typename?: 'EnterpriseLicenseInfoDTO';
   expiresAt?: Maybe<Scalars['DateTime']['output']>;
@@ -2743,7 +2752,9 @@ export type Mutation = {
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
   endSubscriptionTrialPeriod: BillingEndTrialPeriod;
+  /** @deprecated Use enqueueJobs instead. */
   enqueueJob: EnqueueJobResult;
+  enqueueJobs: EnqueueJobsResult;
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult;
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
@@ -3417,6 +3428,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 
 export type MutationEnqueueJobArgs = {
   input: EnqueueJobInput;
+};
+
+
+export type MutationEnqueueJobsArgs = {
+  input: EnqueueJobsInput;
 };
 
 

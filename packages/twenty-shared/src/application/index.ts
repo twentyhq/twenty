@@ -96,6 +96,8 @@ export type {
   EnqueueJobOptions,
   EnqueueJobInput,
   EnqueueJobResult,
+  EnqueueJobsInput,
+  EnqueueJobsResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
