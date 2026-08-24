@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+NODE_VERSION="$(tr -d '[:space:]' < "$REPOSITORY_ROOT/.nvmrc")"
+NODE_ARCHITECTURE=""
+
+case "$(uname -m)" in
+  x86_64) NODE_ARCHITECTURE="x64" ;;
+  aarch64) NODE_ARCHITECTURE="arm64" ;;
+  *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+
+NODE_ARCHIVE="node-v${NODE_VERSION}-linux-${NODE_ARCHITECTURE}"
+NODE_INSTALLATION="$HOME/.local/share/$NODE_ARCHIVE"
+NODE_LINK="$HOME/.local/share/twenty-node"
+
+run_step() {
+  local label="$1"
+  shift
+  local started_at=$SECONDS
+
+  printf '\n==> %s\n' "$label"
+  "$@"
+  printf '<== %s (%ss)\n' "$label" "$((SECONDS - started_at))"
+}
+
+install_node() {
+  if [[ ! -x "$NODE_INSTALLATION/bin/node" ]] ||
+    [[ "$($NODE_INSTALLATION/bin/node --version 2>/dev/null)" != "v$NODE_VERSION" ]]; then
+    local temporary_directory
+    temporary_directory="$(mktemp -d)"
+
+    curl --fail --location --silent --show-error \
+      "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_ARCHIVE}.tar.xz" \
+      --output "$temporary_directory/${NODE_ARCHIVE}.tar.xz"
+    curl --fail --location --silent --show-error \
+      "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt" \
+      --output "$temporary_directory/SHASUMS256.txt"
+
+    (
+      cd "$temporary_directory"
+      grep " ${NODE_ARCHIVE}.tar.xz$" SHASUMS256.txt | sha256sum --check --strict
+    )
+
+    mkdir -p "$HOME/.local/share"
+    rm -rf "$NODE_INSTALLATION"
+    tar -xJf "$temporary_directory/${NODE_ARCHIVE}.tar.xz" -C "$HOME/.local/share"
+    rm -rf "$temporary_directory"
+  fi
+
+  ln -sfn "$NODE_INSTALLATION" "$NODE_LINK"
+
+  local profile_marker="# Twenty pinned Node.js"
+  if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
+    cat >> "$HOME/.bash_profile" <<'EOF'
+
+# Twenty pinned Node.js
+case ":$PATH:" in
+  *":$HOME/.local/share/twenty-node/bin:"*) ;;
+  *) export PATH="$HOME/.local/share/twenty-node/bin:$PATH" ;;
+esac
+EOF
+  fi
+
+  export PATH="$NODE_LINK/bin:$PATH"
+  corepack enable
+  corepack install --global "yarn@$(node -p "require('$REPOSITORY_ROOT/package.json').packageManager.split('@')[1]")"
+
+  [[ "$(node --version)" == "v$NODE_VERSION" ]]
+}
+
+install_system_packages() {
+  local packages=(build-essential postgresql-16 redis-server)
+  local missing_packages=()
+  local package
+
+  for package in "${packages[@]}"; do
+    if ! dpkg-query --show --showformat='${Status}' "$package" 2>/dev/null | grep -Fq 'install ok installed'; then
+      missing_packages+=("$package")
+    fi
+  done
+
+  if [[ ${#missing_packages[@]} -eq 0 ]]; then
+    echo "System packages are already installed"
+    return
+  fi
+
+  if [[ " ${missing_packages[*]} " == *" postgresql-16 "* ]] &&
+    [[ ! -f /etc/apt/sources.list.d/pgdg.list ]]; then
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl --fail --location --silent --show-error \
+      https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      --output /etc/apt/keyrings/postgresql.asc
+    echo "deb [signed-by=/etc/apt/keyrings/postgresql.asc] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" |
+      sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+  fi
+
+  sudo apt-get update
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "${missing_packages[@]}"
+}
+
+configure_postgresql() {
+  local configuration_file="/etc/postgresql/16/main/conf.d/amp-orb.conf"
+  local configuration
+  configuration=$'fsync = off\nsynchronous_commit = off\nfull_page_writes = off'
+
+  if [[ "$(sudo cat "$configuration_file" 2>/dev/null || true)" != "$configuration" ]]; then
+    printf '%s\n' "$configuration" | sudo tee "$configuration_file" >/dev/null
+
+    if pg_lsclusters --no-header 2>/dev/null | grep -Eq '^16[[:space:]]+main[[:space:]].*online'; then
+      sudo pg_ctlcluster 16 main restart
+    fi
+  fi
+}
+
+install_dependencies() {
+  cd "$REPOSITORY_ROOT"
+  yarn install --immutable
+}
+
+prepare_development_environment() {
+  cd "$REPOSITORY_ROOT"
+  .agents/resume
+
+  sudo -u postgres psql --quiet --command="ALTER USER postgres PASSWORD 'postgres';"
+
+  local database
+  for database in default test; do
+    if ! sudo -u postgres psql --tuples-only --no-align \
+      --command="SELECT 1 FROM pg_database WHERE datname = '$database'" | grep -Fqx 1; then
+      sudo -u postgres createdb "$database"
+    fi
+  done
+
+  [[ -f packages/twenty-front/.env ]] ||
+    cp -- packages/twenty-front/.env.example packages/twenty-front/.env
+  [[ -f packages/twenty-server/.env ]] ||
+    cp -- packages/twenty-server/.env.example packages/twenty-server/.env
+}
+
+cd "$REPOSITORY_ROOT"
+run_step "Install pinned Node.js and Yarn" install_node
+run_step "Install system packages" install_system_packages
+run_step "Configure PostgreSQL for the orb" configure_postgresql
+run_step "Install JavaScript dependencies" install_dependencies
+run_step "Prepare the development environment" prepare_development_environment
+
+printf '\nOrb setup complete.\n'

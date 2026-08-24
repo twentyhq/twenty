@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v pg_ctlcluster >/dev/null || ! command -v redis-cli >/dev/null; then
+  echo "PostgreSQL or Redis is missing; run .agents/setup first" >&2
+  exit 1
+fi
+
+if ! pg_isready -h localhost -p 5432 -U postgres -q; then
+  sudo pg_ctlcluster 16 main start
+fi
+
+if ! redis-cli -h localhost -p 6379 ping 2>/dev/null | grep -Fqx PONG; then
+  sudo service redis-server start >/dev/null
+fi
+
+pg_isready -h localhost -p 5432 -U postgres -q
+redis-cli -h localhost -p 6379 ping | grep -Fqx PONG
+
+echo "PostgreSQL and Redis are ready"
