@@ -206,6 +206,7 @@ export const useCalendarEventComposer = ({
     hasValidDateRange,
     invalidAttendeeEmails,
     isFullDay,
+    location,
     missingScopes,
     selectedAccount,
     sendInvitations,
