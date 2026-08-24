@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import { Temporal } from 'temporal-polyfill';
 
 import { useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 
@@ -92,5 +93,37 @@ describe('useCalendarEventComposer', () => {
     });
 
     expect(onCreated).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps an all-day event at least one day long', () => {
+    const { result } = renderHook(() =>
+      useCalendarEventComposer({
+        initialValues: {
+          connectedAccountId: 'account-id',
+          contextRecord: {
+            objectNameSingular: 'person',
+            recordId: 'person-id',
+          },
+          defaultAttendees: '',
+          timeZone: 'UTC',
+        },
+        onCreated: jest.fn(),
+      }),
+    );
+
+    act(() => {
+      result.current.handleIsFullDayChange(true);
+    });
+
+    const startsAt = result.current.dates.startsAt;
+
+    act(() => {
+      result.current.setEndsAt(startsAt);
+    });
+
+    expect(result.current.dates.endsAt).toBe(
+      Temporal.PlainDate.from(startsAt).add({ days: 1 }).toString(),
+    );
+    expect(result.current.hasValidDateRange).toBe(true);
   });
 });
