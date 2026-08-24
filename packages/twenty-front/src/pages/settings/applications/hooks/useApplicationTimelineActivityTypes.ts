@@ -56,7 +56,13 @@ export const useApplicationTimelineActivityTypes = ({
     }
   };
 
-  const setTimelineActivityTypeIsActive = (id: string, isActive: boolean) =>
+  const setTimelineActivityTypeIsActive = ({
+    id,
+    isActive,
+  }: {
+    id: string;
+    isActive: boolean;
+  }) =>
     runTimelineActivityTypeMutation({
       errorMessage: t`Failed to update the timeline activity type.`,
       id,

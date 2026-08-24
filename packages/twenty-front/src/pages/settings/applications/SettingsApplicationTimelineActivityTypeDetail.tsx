@@ -90,7 +90,10 @@ export const SettingsApplicationTimelineActivityTypeDetail = () => {
             canReset={canReset}
             disabled={isMutating}
             onIsActiveChange={(isActive) =>
-              setTimelineActivityTypeIsActive(timelineActivityType.id, isActive)
+              setTimelineActivityTypeIsActive({
+                id: timelineActivityType.id,
+                isActive,
+              })
             }
             onReset={() =>
               resetTimelineActivityTypeToDefault(timelineActivityType.id)
