@@ -58,10 +58,10 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
       const token = currentSession.tokenForPlaceApi ?? v4();
 
       if (token !== currentSession.tokenForPlaceApi) {
-        store.set(placeAutocompleteSessionAtom, {
-          ...currentSession,
-          tokenForPlaceApi: token,
-        });
+        store.set(placeAutocompleteSessionAtom, (latestSession) => ({
+          ...latestSession,
+          tokenForPlaceApi: latestSession.tokenForPlaceApi ?? token,
+        }));
       }
 
       const autocompleteData = await getPlaceAutocompleteData(
