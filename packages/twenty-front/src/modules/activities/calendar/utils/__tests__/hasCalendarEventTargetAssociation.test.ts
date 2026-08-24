@@ -4,7 +4,8 @@ describe('hasCalendarEventTargetAssociation', () => {
   it('requires invitations to preserve the provider participant', () => {
     expect(
       hasCalendarEventTargetAssociation({
-        attendeeEmails: ['person@example.com'],
+        attendees: [{ address: 'person@example.com' }],
+        relatedPersonIds: [],
         requiredAttendee: 'person@example.com',
         sendInvitations: false,
       }),
@@ -14,7 +15,8 @@ describe('hasCalendarEventTargetAssociation', () => {
   it('requires the current record email in the attendee list', () => {
     expect(
       hasCalendarEventTargetAssociation({
-        attendeeEmails: ['someone-else@example.com'],
+        attendees: [{ address: 'someone-else@example.com' }],
+        relatedPersonIds: [],
         requiredAttendee: 'person@example.com',
         sendInvitations: true,
       }),
@@ -24,10 +26,43 @@ describe('hasCalendarEventTargetAssociation', () => {
   it('matches the current record email case-insensitively', () => {
     expect(
       hasCalendarEventTargetAssociation({
-        attendeeEmails: ['Person@Example.com'],
+        attendees: [{ address: 'Person@Example.com' }],
+        relatedPersonIds: [],
         requiredAttendee: 'person@example.com',
         sendInvitations: true,
       }),
     ).toBe(true);
+  });
+
+  it('accepts another person related to the timeline record', () => {
+    expect(
+      hasCalendarEventTargetAssociation({
+        attendees: [
+          {
+            address: 'another-employee@example.com',
+            personId: 'related-person-id',
+          },
+        ],
+        relatedPersonIds: ['related-person-id'],
+        requiredAttendee: 'first-employee@example.com',
+        sendInvitations: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('rejects a person unrelated to the timeline record', () => {
+    expect(
+      hasCalendarEventTargetAssociation({
+        attendees: [
+          {
+            address: 'someone-else@example.com',
+            personId: 'unrelated-person-id',
+          },
+        ],
+        relatedPersonIds: ['related-person-id'],
+        requiredAttendee: 'first-employee@example.com',
+        sendInvitations: true,
+      }),
+    ).toBe(false);
   });
 });

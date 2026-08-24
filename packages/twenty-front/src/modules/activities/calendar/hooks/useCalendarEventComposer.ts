@@ -1,4 +1,5 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
+import { useCalendarEventTargetRelatedPersonIds } from '@/activities/calendar/hooks/useCalendarEventTargetRelatedPersonIds';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
 import { isCalendarEventComposerCreatingState } from '@/activities/calendar/states/isCalendarEventComposerCreatingState';
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
@@ -44,7 +45,12 @@ export const useCalendarEventComposer = ({
   const [timeZone, setTimeZone] = useState(initialValues?.timeZone ?? 'UTC');
   const [isFullDay, setIsFullDay] = useState(false);
   const [attendees, setAttendees] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialValues?.defaultAttendees ?? ''),
+    parseEmailRecipients(initialValues?.defaultAttendees ?? '').map(
+      (attendee) => ({
+        ...attendee,
+        personId: initialValues?.defaultAttendeePersonId,
+      }),
+    ),
   );
   const [sendInvitations, setSendInvitations] = useState(true);
   const [addConferencing, setAddConferencing] = useState(false);
@@ -56,6 +62,9 @@ export const useCalendarEventComposer = ({
   );
 
   const calendarAccounts = accounts.filter(isCalendarCreationEnabledForAccount);
+  const relatedPersonIds = useCalendarEventTargetRelatedPersonIds(
+    initialValues?.contextRecord,
+  );
   const accountOptions: SelectOption<string>[] = calendarAccounts.map(
     (account) => ({ label: account.handle, value: account.id }),
   );
@@ -73,7 +82,8 @@ export const useCalendarEventComposer = ({
   const hasTooManyAttendees =
     sendInvitations && attendeeEmails.length > MAX_EMAIL_RECIPIENTS;
   const hasTargetAssociation = hasCalendarEventTargetAssociation({
-    attendeeEmails,
+    attendees,
+    relatedPersonIds,
     requiredAttendee: initialValues?.defaultAttendees,
     sendInvitations,
   });

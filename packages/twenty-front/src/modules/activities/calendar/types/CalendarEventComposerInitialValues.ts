@@ -4,5 +4,6 @@ export type CalendarEventComposerInitialValues = {
   connectedAccountId: string;
   contextRecord: EmailComposerContextRecord;
   defaultAttendees: string;
+  defaultAttendeePersonId?: string;
   timeZone: string;
 };

@@ -18,11 +18,14 @@ export const useComposeCalendarEventForTargetRecord = () => {
   const { openComposeCalendarEventInSidePanel } =
     useOpenComposeCalendarEventInSidePanel();
 
-  const { defaultTo, loading: recipientLoading } =
-    useResolveDefaultEmailRecipient({
-      objectNameSingular: targetRecord.targetObjectNameSingular,
-      recordId: targetRecord.id,
-    });
+  const {
+    defaultRecipientPersonId,
+    defaultTo,
+    loading: recipientLoading,
+  } = useResolveDefaultEmailRecipient({
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+    recordId: targetRecord.id,
+  });
 
   const calendarAccounts = accounts.filter(isCalendarCreationEnabledForAccount);
 
@@ -49,6 +52,7 @@ export const useComposeCalendarEventForTargetRecord = () => {
         recordId: targetRecord.id,
       },
       defaultAttendees: defaultTo,
+      defaultAttendeePersonId: defaultRecipientPersonId,
       timeZone: userTimezone,
     });
   };

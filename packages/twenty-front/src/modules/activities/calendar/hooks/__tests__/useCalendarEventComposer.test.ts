@@ -34,6 +34,13 @@ jest.mock('@/accounts/utils/hasMissingCreateCalendarEventScopes', () => ({
   getMissingCreateCalendarEventScopes: () => [],
 }));
 
+jest.mock(
+  '@/activities/calendar/hooks/useCalendarEventTargetRelatedPersonIds',
+  () => ({
+    useCalendarEventTargetRelatedPersonIds: () => ['person-id'],
+  }),
+);
+
 describe('useCalendarEventComposer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
