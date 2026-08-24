@@ -1710,6 +1710,20 @@ export type EnqueueJobResult = {
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
 };
 
+export type EnqueueJobsInput = {
+  delayMs?: InputMaybe<Scalars['Int']['input']>;
+  logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  payloads: Array<Scalars['JSON']['input']>;
+  retryLimit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type EnqueueJobsResult = {
+  __typename?: 'EnqueueJobsResult';
+  enqueued: Scalars['Boolean']['output'];
+  enqueuedJobsCount: Scalars['Int']['output'];
+  logicFunctionUniversalIdentifier: Scalars['String']['output'];
+};
+
 export type EnterpriseLicenseInfoDto = {
   __typename?: 'EnterpriseLicenseInfoDTO';
   expiresAt?: Maybe<Scalars['DateTime']['output']>;
@@ -2743,7 +2757,9 @@ export type Mutation = {
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
   endSubscriptionTrialPeriod: BillingEndTrialPeriod;
+  /** @deprecated Use enqueueJobs instead. */
   enqueueJob: EnqueueJobResult;
+  enqueueJobs: EnqueueJobsResult;
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult;
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
@@ -3417,6 +3433,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 
 export type MutationEnqueueJobArgs = {
   input: EnqueueJobInput;
+};
+
+
+export type MutationEnqueueJobsArgs = {
+  input: EnqueueJobsInput;
 };
 
 

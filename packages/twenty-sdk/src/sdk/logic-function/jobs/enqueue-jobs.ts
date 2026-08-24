@@ -1,22 +1,20 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import {
-  type EnqueueJobInput,
-  type EnqueueJobResult,
+  type EnqueueJobsInput,
+  type EnqueueJobsResult,
 } from 'twenty-shared/application';
 
-/**
- * @deprecated Use `enqueueJobs` instead.
- */
-export const enqueueJob = async (
-  input: EnqueueJobInput,
-): Promise<EnqueueJobResult> => {
+export const enqueueJobs = async (
+  input: EnqueueJobsInput,
+): Promise<EnqueueJobsResult> => {
   const client = new MetadataApiClient();
 
-  const { enqueueJob: result } = await client.mutation({
-    enqueueJob: {
+  const { enqueueJobs: result } = await client.mutation({
+    enqueueJobs: {
       __args: { input },
       enqueued: true,
       logicFunctionUniversalIdentifier: true,
+      enqueuedJobsCount: true,
     },
   });
 
