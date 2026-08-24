@@ -57,6 +57,12 @@ export class ApplicationJobService {
       input: { jobs: [input] },
     });
 
+    if (jobs.length !== 1) {
+      throw new Error(
+        `Expected exactly one enqueued job result, got ${jobs.length}`,
+      );
+    }
+
     return jobs[0];
   }
 
