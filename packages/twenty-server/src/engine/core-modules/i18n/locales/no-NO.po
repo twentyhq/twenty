@@ -431,6 +431,11 @@ msgstr "Det oppstod en feil i visningssorteringen."
 msgid "A webhook with this configuration already exists."
 msgstr "En webhook med denne konfigurasjonen finnes allerede."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr ""
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "Utførelse av kodesteg mislyktes."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Fargeskjema"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr ""
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr ""
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11816,6 +11831,21 @@ msgstr "Widgeten overskrider rutenetthøyden"
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "Widgeten overskrider rutenettbredden"
+
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr ""
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr ""
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr ""
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
