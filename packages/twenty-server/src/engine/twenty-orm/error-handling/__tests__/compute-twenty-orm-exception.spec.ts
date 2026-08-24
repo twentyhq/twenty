@@ -3,6 +3,7 @@ import { QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
+import { isQueryCanceledError } from 'src/engine/api/graphql/workspace-query-runner/utils/is-query-canceled-error.util';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
@@ -181,6 +182,16 @@ describe('computeTwentyORMException', () => {
     });
   });
 
+  it('should keep a QUERY_CANCELED recognisable so callers that set their own statement timeout can still detect it', async () => {
+    const error = buildQueryFailedError(POSTGRESQL_ERROR_CODES.QUERY_CANCELED);
+
+    const thrown = await computeTwentyORMException(error).catch(
+      (caught: unknown) => caught,
+    );
+
+    expect(isQueryCanceledError(thrown)).toBe(true);
+  });
+
   it('should return a TRANSIENT_DATABASE_ERROR exception when the transaction is killed by the idle-in-transaction timeout', async () => {
     const error = buildQueryFailedError(
       POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
@@ -212,7 +223,6 @@ describe('computeTwentyORMException', () => {
     POSTGRESQL_ERROR_CODES.SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION,
     POSTGRESQL_ERROR_CODES.SERIALIZATION_FAILURE,
     POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
-    POSTGRESQL_ERROR_CODES.QUERY_CANCELED,
     POSTGRESQL_ERROR_CODES.ADMIN_SHUTDOWN,
   ])(
     'should return a TRANSIENT_DATABASE_ERROR exception when the transaction fails with the transient code %s',
