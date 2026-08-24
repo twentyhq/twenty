@@ -7,10 +7,11 @@ import {
 import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   FileException,
   FileExceptionCode,
-  FileRangeNotSatisfiableException,
 } from 'src/engine/core-modules/file/file.exception';
 
 @Catch(FileException)
@@ -37,7 +38,7 @@ export class FileApiExceptionFilter implements ExceptionFilter {
           404,
         );
       case FileExceptionCode.RANGE_NOT_SATISFIABLE:
-        if (exception instanceof FileRangeNotSatisfiableException) {
+        if (isDefined(exception.fileSizeInBytes)) {
           response.setHeader(
             'Content-Range',
             `bytes */${exception.fileSizeInBytes}`,

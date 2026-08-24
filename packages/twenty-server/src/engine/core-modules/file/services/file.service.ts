@@ -15,7 +15,10 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-import { FileRangeNotSatisfiableException } from 'src/engine/core-modules/file/file.exception';
+import {
+  FileException,
+  FileExceptionCode,
+} from 'src/engine/core-modules/file/file.exception';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
@@ -245,7 +248,11 @@ export class FileService {
         });
 
         if (resolvedByteRange.type === 'unsatisfiable') {
-          throw new FileRangeNotSatisfiableException(fileSizeInBytes);
+          throw new FileException(
+            'Requested range not satisfiable',
+            FileExceptionCode.RANGE_NOT_SATISFIABLE,
+            { fileSizeInBytes },
+          );
         }
 
         if (resolvedByteRange.type === 'partial') {

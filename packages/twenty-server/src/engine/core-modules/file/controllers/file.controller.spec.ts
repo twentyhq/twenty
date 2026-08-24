@@ -18,7 +18,6 @@ import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/s
 import {
   FileException,
   FileExceptionCode,
-  FileRangeNotSatisfiableException,
 } from 'src/engine/core-modules/file/file.exception';
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
@@ -225,7 +224,11 @@ describe('FileController', () => {
     });
 
     it('should propagate range errors unchanged for the exception filter to map', async () => {
-      const rangeError = new FileRangeNotSatisfiableException(1_000);
+      const rangeError = new FileException(
+        'Requested range not satisfiable',
+        FileExceptionCode.RANGE_NOT_SATISFIABLE,
+        { fileSizeInBytes: 1_000 },
+      );
 
       jest
         .spyOn(fileService, 'getFilePresignedUrlOrStreamById')

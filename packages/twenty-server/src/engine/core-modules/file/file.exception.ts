@@ -40,23 +40,23 @@ const getFileExceptionUserFriendlyMessage = (
 export class FileException extends CustomException<
   keyof typeof FileExceptionCode
 > {
+  fileSizeInBytes?: number;
+
   constructor(
     message: string,
     code: keyof typeof FileExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    {
+      userFriendlyMessage,
+      fileSizeInBytes,
+    }: {
+      userFriendlyMessage?: MessageDescriptor;
+      fileSizeInBytes?: number;
+    } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getFileExceptionUserFriendlyMessage(code),
     });
-  }
-}
-
-export class FileRangeNotSatisfiableException extends FileException {
-  constructor(public readonly fileSizeInBytes: number) {
-    super(
-      'Requested range not satisfiable',
-      FileExceptionCode.RANGE_NOT_SATISFIABLE,
-    );
+    this.fileSizeInBytes = fileSizeInBytes;
   }
 }
