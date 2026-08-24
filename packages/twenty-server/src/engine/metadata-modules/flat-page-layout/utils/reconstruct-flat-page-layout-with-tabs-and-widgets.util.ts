@@ -5,8 +5,8 @@ import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-pag
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { groupFlatPageLayoutWidgetsByResolvedPageLayoutTabId } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/group-flat-page-layout-widgets-by-resolved-page-layout-tab-id.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 
 export type FlatPageLayoutTabWithWidgets = FlatPageLayoutTab & {
   widgets: FlatPageLayoutWidget[];
@@ -14,33 +14,6 @@ export type FlatPageLayoutTabWithWidgets = FlatPageLayoutTab & {
 
 export type FlatPageLayoutWithTabsAndWidgets = FlatPageLayout & {
   tabs: FlatPageLayoutTabWithWidgets[];
-};
-
-// A widget can be moved to another tab through an override, so it cannot be
-// resolved from the tab widgetIds aggregator, which is built on the raw column
-export const groupFlatPageLayoutWidgetsByResolvedPageLayoutTabId = (
-  flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps,
-): Map<string, FlatPageLayoutWidget[]> => {
-  const widgetsByPageLayoutTabId = new Map<string, FlatPageLayoutWidget[]>();
-
-  for (const widget of Object.values(
-    flatPageLayoutWidgetMaps.byUniversalIdentifier,
-  )) {
-    if (!isDefined(widget) || isDefined(widget.deletedAt)) {
-      continue;
-    }
-
-    const pageLayoutTabId = resolveOverridableEntityProperty(
-      widget,
-      'pageLayoutTabId',
-    );
-    const existingWidgets = widgetsByPageLayoutTabId.get(pageLayoutTabId) ?? [];
-
-    existingWidgets.push(widget);
-    widgetsByPageLayoutTabId.set(pageLayoutTabId, existingWidgets);
-  }
-
-  return widgetsByPageLayoutTabId;
 };
 
 export const reconstructFlatPageLayoutWithTabsAndWidgets = ({

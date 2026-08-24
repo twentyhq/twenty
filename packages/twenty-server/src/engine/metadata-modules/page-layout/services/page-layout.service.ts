@@ -20,10 +20,8 @@ import {
   fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow,
   type UpdatePageLayoutInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout/utils/from-update-page-layout-input-to-flat-page-layout-to-update-or-throw.util';
-import {
-  groupFlatPageLayoutWidgetsByResolvedPageLayoutTabId,
-  reconstructFlatPageLayoutWithTabsAndWidgets,
-} from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
+import { groupFlatPageLayoutWidgetsByResolvedPageLayoutTabId } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/group-flat-page-layout-widgets-by-resolved-page-layout-tab-id.util';
+import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
