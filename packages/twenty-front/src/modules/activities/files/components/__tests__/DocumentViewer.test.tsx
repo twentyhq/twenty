@@ -91,7 +91,9 @@ describe('DocumentViewer', () => {
 
       expect(container.querySelector('video')).not.toBeInTheDocument();
       expect(screen.getByText('Preview Not Available')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Download/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -105,7 +107,9 @@ describe('DocumentViewer', () => {
       );
 
       expect(screen.getByText('Preview Not Available')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Download/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Download/i }),
+      ).toBeInTheDocument();
     });
   });
 });
