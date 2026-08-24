@@ -37,7 +37,9 @@ export const SettingsApplicationTimelineActivityTypesListCard = ({
       isLoading={isLoading}
       rounded
       RowIconFn={(timelineActivityType) =>
-        getIcon(timelineActivityType.icon, 'IconTimelineEvent')
+        isDefined(timelineActivityType.icon)
+          ? getIcon(timelineActivityType.icon, 'IconTimelineEvent')
+          : undefined
       }
       RowRightComponent={({ item: timelineActivityType }) => {
         const isMutating = mutatingTimelineActivityTypeIds.has(
