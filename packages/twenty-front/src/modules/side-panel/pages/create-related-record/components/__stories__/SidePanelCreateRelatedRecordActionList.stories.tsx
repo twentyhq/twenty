@@ -3,6 +3,7 @@ import { SidePanelCreateRelatedRecordActionList } from '@/side-panel/pages/creat
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconCalendarEvent, IconCheckbox, IconNotes } from 'twenty-ui/icon';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const createTask = fn();
 
@@ -45,6 +46,7 @@ const meta: Meta<typeof SidePanelCreateRelatedRecordActionList> = {
     'Modules/SidePanel/CreateRelatedRecord/SidePanelCreateRelatedRecordActionList',
   component: SidePanelCreateRelatedRecordActionList,
   args: { actionBindings },
+  decorators: [MemoryRouterDecorator],
 };
 
 export default meta;
