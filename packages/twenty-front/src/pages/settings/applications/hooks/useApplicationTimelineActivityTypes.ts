@@ -8,6 +8,21 @@ import {
   UpdateTimelineActivityTypeIsActiveDocument,
 } from '~/generated-metadata/graphql';
 
+export const useInstalledTimelineActivityTypes = ({
+  isInstalledApplication,
+}: {
+  isInstalledApplication: boolean;
+}) => {
+  const { data, loading } = useQuery(FindManyTimelineActivityTypesDocument, {
+    skip: !isInstalledApplication,
+  });
+
+  return {
+    installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
+    loading,
+  };
+};
+
 export const useApplicationTimelineActivityTypes = ({
   isInstalledApplication,
 }: {
@@ -16,10 +31,8 @@ export const useApplicationTimelineActivityTypes = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const [mutatingTimelineActivityTypeIds, setMutatingTimelineActivityTypeIds] =
     useState<ReadonlySet<string>>(new Set());
-
-  const { data, loading } = useQuery(FindManyTimelineActivityTypesDocument, {
-    skip: !isInstalledApplication,
-  });
+  const { installedTimelineActivityTypes, loading } =
+    useInstalledTimelineActivityTypes({ isInstalledApplication });
 
   const [updateTimelineActivityType] = useMutation(
     UpdateTimelineActivityTypeIsActiveDocument,
@@ -87,7 +100,7 @@ export const useApplicationTimelineActivityTypes = ({
   };
 
   return {
-    installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
+    installedTimelineActivityTypes,
     loading,
     mutatingTimelineActivityTypeIds,
     resetTimelineActivityTypeToDefault,

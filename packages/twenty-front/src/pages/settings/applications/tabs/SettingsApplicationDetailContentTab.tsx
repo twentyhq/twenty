@@ -20,7 +20,7 @@ import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
-import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
+import { useInstalledTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
 import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -68,10 +68,9 @@ export const SettingsApplicationDetailContentTab = ({
   const { t } = useLingui();
   const isInstalledApplication = isDefined(installedApplication);
 
-  const { installedTimelineActivityTypes } =
-    useApplicationTimelineActivityTypes({
-      isInstalledApplication,
-    });
+  const { installedTimelineActivityTypes } = useInstalledTimelineActivityTypes({
+    isInstalledApplication,
+  });
 
   const { objectRows, fieldRows } =
     useComputeObjectAndFieldsContentForApplication({
