@@ -241,6 +241,8 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
         workflowVersionId: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
+        targetObjectMetadataId: null,
+        targetObjectMetadataUniversalIdentifier: null,
         pageLayoutId: null,
         pageLayoutUniversalIdentifier: null,
         isActive: true,

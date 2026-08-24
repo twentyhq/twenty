@@ -71,6 +71,10 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     conditionalAvailabilityExpression:
       createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
     availabilityObjectMetadataUniversalIdentifier,
+    // Engine-owned: only the navigation side effect and its backfill set the
+    // target column, the payload stays the authoring surface for now
+    targetObjectMetadataId: null,
+    targetObjectMetadataUniversalIdentifier: null,
     pageLayoutId: createCommandMenuItemInput.pageLayoutId ?? null,
     pageLayoutUniversalIdentifier,
     workspaceId,

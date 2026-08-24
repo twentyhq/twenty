@@ -106,5 +106,11 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     pageLayoutUniversalIdentifiers: objectMetadataEntity.pageLayouts.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    targetCommandMenuItemIds:
+      objectMetadataEntity.targetCommandMenuItems?.map(({ id }) => id) ?? [],
+    targetCommandMenuItemUniversalIdentifiers:
+      objectMetadataEntity.targetCommandMenuItems?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
   };
 };

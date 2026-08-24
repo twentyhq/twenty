@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -46,6 +47,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
     private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(PageLayoutEntity)
     private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
+    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
+    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
   ) {
     super();
   }
@@ -62,6 +65,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       objectPermissions,
       searchFieldMetadatas,
       pageLayouts,
+      targetCommandMenuItems,
     ] = await Promise.all([
       this.objectMetadataRepository.find({
         where: { workspaceId },
@@ -94,6 +98,9 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       }),
       this.pageLayoutRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
+      }),
+      this.commandMenuItemRepository.find(workspaceId, {
+        select: ['id', 'universalIdentifier', 'targetObjectMetadataId'],
         withDeleted: true,
       }),
     ]);
@@ -105,6 +112,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       objectPermissionsByObjectId,
       searchFieldMetadatasByObjectId,
       pageLayoutsByObjectId,
+      targetCommandMenuItemsByObjectId,
     ] = (
       [
         {
@@ -131,6 +139,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           entities: pageLayouts,
           foreignKey: 'objectMetadataId',
         },
+        {
+          entities: targetCommandMenuItems,
+          foreignKey: 'targetObjectMetadataId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -153,6 +165,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           searchFieldMetadatas:
             searchFieldMetadatasByObjectId.get(objectMetadataEntity.id) || [],
           pageLayouts: pageLayoutsByObjectId.get(objectMetadataEntity.id) || [],
+          targetCommandMenuItems:
+            targetCommandMenuItemsByObjectId.get(objectMetadataEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,

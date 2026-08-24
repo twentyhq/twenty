@@ -79,6 +79,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'availabilityObjectMetadataUniversalIdentifier',
     },
+    targetObjectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'targetObjectMetadataId',
+      inverseOneToManyProperty: 'targetCommandMenuItems',
+      isNullable: true,
+      universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
+    },
     frontComponent: {
       metadataName: 'frontComponent',
       foreignKey: 'frontComponentId',

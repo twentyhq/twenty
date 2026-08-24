@@ -117,6 +117,7 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     viewIds: [],
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    targetCommandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     pageLayoutIds: [],

@@ -87,6 +87,8 @@ export const prefillFrontComponentCommandMenuItems = async ({
         conditionalAvailabilityExpression: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
+        targetObjectMetadataId: null,
+        targetObjectMetadataUniversalIdentifier: null,
         payload: null,
         hotKeys: null,
         pageLayoutId: definition.pageLayoutId ?? null,
