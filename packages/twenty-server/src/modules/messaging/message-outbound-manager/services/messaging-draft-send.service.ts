@@ -7,9 +7,9 @@ import { In, Repository } from 'typeorm';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
@@ -19,6 +19,7 @@ import { type SendMessageResult } from 'src/modules/messaging/message-outbound-m
 export class MessagingDraftSendService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly messageOutboundService: MessagingMessageOutboundService,
     private readonly messageCleanerService: MessagingMessageCleanerService,
     @InjectRepository(MessageChannelEntity)
@@ -67,10 +68,9 @@ export class MessagingDraftSendService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
-            'messageChannelMessageAssociation',
-          );
+          this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('messageChannelMessageAssociation');
 
         const association =
           await messageChannelMessageAssociationRepository.findOne({
@@ -136,10 +136,9 @@ export class MessagingDraftSendService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const messageChannelMessageAssociationRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-              workspaceId,
-              'messageChannelMessageAssociation',
-            );
+            this.workspaceDataSourceV2Service
+              .getDataSource({ useReplica: false })
+              .getRepository('messageChannelMessageAssociation');
 
           return messageChannelMessageAssociationRepository.find({
             where: {

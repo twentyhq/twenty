@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { type TimelineActivityRuleTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-rule-target-join-column.type';
@@ -30,17 +30,15 @@ const readTargetFromRecord = (
 @Injectable()
 export class TimelineActivityTargetQueryService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async resolveTargetsBySourceRecordId({
     rule,
     sourceRecordIds,
-    workspaceId,
   }: {
     rule: TimelineActivityRule;
     sourceRecordIds: string[];
-    workspaceId: string;
   }): Promise<Map<string, ResolvedTimelineActivityTarget[]>> {
     const targetsBySourceRecordId = new Map<
       string,
@@ -54,12 +52,11 @@ export class TimelineActivityTargetQueryService {
     const { junctionObjectNameSingular, junctionSourceJoinColumnName } =
       rule.targetShape;
 
-    const junctionRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        junctionObjectNameSingular,
-        { shouldBypassPermissionChecks: true },
-      );
+    const junctionRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository(junctionObjectNameSingular, {
+        shouldBypassPermissionChecks: true,
+      });
 
     const junctionRows = await junctionRepository.find({
       where: { [junctionSourceJoinColumnName]: In(sourceRecordIds) },
@@ -105,11 +102,9 @@ export class TimelineActivityTargetQueryService {
   async findSourceRecordsByRecordId({
     rule,
     recordIds,
-    workspaceId,
   }: {
     rule: TimelineActivityRule;
     recordIds: string[];
-    workspaceId: string;
   }): Promise<Map<string, Record<string, unknown>>> {
     const sourceRecordsByRecordId = new Map<string, Record<string, unknown>>();
 
@@ -117,11 +112,11 @@ export class TimelineActivityTargetQueryService {
       return sourceRecordsByRecordId;
     }
 
-    const repository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      rule.sourceFlatObjectMetadata.nameSingular,
-      { shouldBypassPermissionChecks: true },
-    );
+    const repository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository(rule.sourceFlatObjectMetadata.nameSingular, {
+        shouldBypassPermissionChecks: true,
+      });
 
     const records = await repository.find({ where: { id: In(recordIds) } });
 

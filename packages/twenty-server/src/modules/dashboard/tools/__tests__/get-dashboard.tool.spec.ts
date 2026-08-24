@@ -108,8 +108,12 @@ describe('get_dashboard tool', () => {
         executeInWorkspaceContext: jest
           .fn()
           .mockImplementation(async (fn) => fn()),
-        getRepository: jest.fn().mockResolvedValue({
-          findOne: jest.fn().mockResolvedValue(dashboard),
+      },
+      workspaceDataSourceV2Service: {
+        getDataSource: jest.fn().mockReturnValue({
+          getRepository: jest.fn().mockReturnValue({
+            findOne: jest.fn().mockResolvedValue(dashboard),
+          }),
         }),
       },
       flatEntityMapsCacheService: {
@@ -124,6 +128,7 @@ describe('get_dashboard tool', () => {
         DashboardToolDependencies,
         | 'pageLayoutService'
         | 'globalWorkspaceOrmManager'
+        | 'workspaceDataSourceV2Service'
         | 'flatEntityMapsCacheService'
       >,
       {

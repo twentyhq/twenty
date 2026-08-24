@@ -12,6 +12,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -30,7 +31,6 @@ import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/time
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
 import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 
@@ -38,7 +38,6 @@ type BuildPayloadsForRuleArgs = {
   rule: TimelineActivityRule;
   events: ObjectRecordBaseEvent[];
   action: DatabaseEventAction;
-  workspaceId: string;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -105,6 +104,7 @@ export class TimelineActivityService {
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly timelineActivityTargetQueryService: TimelineActivityTargetQueryService,
   ) {}
@@ -148,7 +148,6 @@ export class TimelineActivityService {
           // objects mostly, never pay the workspace member query.
           const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
             events: eventsWithoutPositionDiff,
-            workspaceId,
           });
 
           return Promise.all([
@@ -157,7 +156,6 @@ export class TimelineActivityService {
                 rule,
                 events: enrichedEvents,
                 action,
-                workspaceId,
                 flatFieldMetadataMaps,
                 resolveTimelineActivityType,
               }),
@@ -167,7 +165,6 @@ export class TimelineActivityService {
                 rule,
                 events: enrichedEvents,
                 action,
-                workspaceId,
                 flatFieldMetadataMaps,
                 resolveTimelineActivityType,
               }),
@@ -247,7 +244,6 @@ export class TimelineActivityService {
     rule,
     events,
     action,
-    workspaceId,
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
@@ -358,7 +354,6 @@ export class TimelineActivityService {
         {
           rule,
           sourceRecordIds: matchingEvents.map((event) => event.recordId),
-          workspaceId,
         },
       );
 
@@ -386,7 +381,6 @@ export class TimelineActivityService {
     rule,
     events,
     action,
-    workspaceId,
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
@@ -463,7 +457,6 @@ export class TimelineActivityService {
           recordIds: eventsWithJunctionRecord.map(
             ({ sourceRecordId }) => sourceRecordId,
           ),
-          workspaceId,
         },
       );
 
@@ -489,10 +482,8 @@ export class TimelineActivityService {
 
   private async enrichEventsWithWorkspaceMemberId({
     events,
-    workspaceId,
   }: {
     events: ObjectRecordBaseEvent[];
-    workspaceId: string;
   }): Promise<ObjectRecordBaseEvent[]> {
     const userIds = events.map((event) => event.userId).filter(isDefined);
 
@@ -500,14 +491,11 @@ export class TimelineActivityService {
       return events;
     }
 
-    const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        WorkspaceMemberWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const workspaceMemberRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository('workspaceMember', {
+        shouldBypassPermissionChecks: true,
+      });
 
     const workspaceMembers = await workspaceMemberRepository.findBy({
       userId: In(userIds),

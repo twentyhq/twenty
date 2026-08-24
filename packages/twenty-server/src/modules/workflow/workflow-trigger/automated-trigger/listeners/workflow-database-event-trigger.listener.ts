@@ -25,15 +25,13 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import {
-  AutomatedTriggerType,
-  type WorkflowAutomatedTriggerWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
@@ -67,6 +65,7 @@ export class WorkflowDatabaseEventTriggerListener {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -308,12 +307,11 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            relatedObjectMetadataNameSingular,
-            { shouldBypassPermissionChecks: true },
-          );
+        const relatedObjectRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository(relatedObjectMetadataNameSingular, {
+            shouldBypassPermissionChecks: true,
+          });
 
         const relatedRecords = await relatedObjectRepository.find({
           where: { id: In(joinRecordIds) },
@@ -413,13 +411,13 @@ export class WorkflowDatabaseEventTriggerListener {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            automatedTriggerTableName,
-            { shouldBypassPermissionChecks: true },
-          );
+          this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository(automatedTriggerTableName, {
+              shouldBypassPermissionChecks: true,
+            });
 
-        return workflowAutomatedTriggerRepository.find({
+        return (await workflowAutomatedTriggerRepository.find({
           where: {
             type: AutomatedTriggerType.DATABASE_EVENT,
             settings: Raw(
@@ -428,7 +426,7 @@ export class WorkflowDatabaseEventTriggerListener {
               { eventName: databaseEventName },
             ),
           },
-        });
+        })) as unknown as DatabaseEventTriggerListener[];
       },
       buildSystemAuthContext(workspaceId),
     );

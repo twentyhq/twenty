@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -8,6 +9,7 @@ import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects
 export class BlocklistRepository {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   public async getById(
@@ -18,18 +20,15 @@ export class BlocklistRepository {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const blockListRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            BlocklistWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+        const blockListRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('blocklist', {
+            shouldBypassPermissionChecks: true,
+          });
 
         return blockListRepository.findOneBy({
           id,
-        });
+        }) as Promise<BlocklistWorkspaceEntity | null>;
       },
       authContext,
     );
@@ -43,17 +42,15 @@ export class BlocklistRepository {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const blockListRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            BlocklistWorkspaceEntity,
-          );
+        const blockListRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('blocklist');
 
         return blockListRepository.find({
           where: {
             workspaceMemberId,
           },
-        });
+        }) as Promise<BlocklistWorkspaceEntity[]>;
       },
       authContext,
     );

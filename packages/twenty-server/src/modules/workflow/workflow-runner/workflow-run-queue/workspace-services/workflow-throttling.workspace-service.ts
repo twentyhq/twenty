@@ -5,9 +5,9 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { NOT_STARTED_RUNS_FIND_OPTIONS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/not-started-runs-find-options';
 
 @Injectable()
@@ -16,6 +16,7 @@ export class WorkflowThrottlingWorkspaceService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorage: CacheStorageService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -77,12 +78,11 @@ export class WorkflowThrottlingWorkspaceService {
     const currentlyNotStartedWorkflowRunCount =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workflowRunRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkflowRunWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
+          const workflowRunRepository = this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('workflowRun', {
+              shouldBypassPermissionChecks: true,
+            });
 
           return workflowRunRepository.count({
             where: NOT_STARTED_RUNS_FIND_OPTIONS,
@@ -108,12 +108,9 @@ export class WorkflowThrottlingWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkflowRunWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowRunRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowRun', { shouldBypassPermissionChecks: true });
 
         return workflowRunRepository.count({
           where: NOT_STARTED_RUNS_FIND_OPTIONS,

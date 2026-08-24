@@ -10,6 +10,7 @@ import { IsNull, type Repository } from 'typeorm';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -32,6 +33,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     loggerName: string,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {
@@ -133,16 +135,13 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     workspaceMemberId: string,
     workspaceId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity | null> {
-    const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const workspaceMemberRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository('workspaceMember', { shouldBypassPermissionChecks: true });
 
     return workspaceMemberRepository.findOne({
       where: { id: workspaceMemberId },
-    });
+    }) as Promise<WorkspaceMemberWorkspaceEntity | null>;
   }
 
   private async findFirstConnectedAccountIdByWorkspaceMember(

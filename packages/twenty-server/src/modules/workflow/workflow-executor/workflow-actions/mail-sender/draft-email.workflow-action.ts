@@ -7,6 +7,7 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   WorkflowStepExecutorException,
@@ -24,6 +25,7 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
     private readonly draftEmailTool: DraftEmailTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     @InjectRepository(ConnectedAccountEntity)
     connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -33,6 +35,7 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
       DraftEmailWorkflowAction.name,
       workflowRunStepLogService,
       globalWorkspaceOrmManager,
+      workspaceDataSourceV2Service,
       connectedAccountRepository,
       userWorkspaceRepository,
     );

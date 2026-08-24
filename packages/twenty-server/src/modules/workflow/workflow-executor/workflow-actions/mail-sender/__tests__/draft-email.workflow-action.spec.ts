@@ -5,6 +5,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -67,9 +68,16 @@ describe('DraftEmailWorkflowAction', () => {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: jest.fn((callback) => callback()),
-            getRepository: jest
-              .fn()
-              .mockResolvedValue(workspaceMemberRepository),
+          },
+        },
+        {
+          provide: WorkspaceDataSourceV2Service,
+          useValue: {
+            getDataSource: jest.fn().mockReturnValue({
+              getRepository: jest
+                .fn()
+                .mockReturnValue(workspaceMemberRepository),
+            }),
           },
         },
         {

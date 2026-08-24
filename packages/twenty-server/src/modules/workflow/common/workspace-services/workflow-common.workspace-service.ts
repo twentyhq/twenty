@@ -20,6 +20,7 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -56,6 +57,7 @@ export class WorkflowCommonWorkspaceService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commandMenuItemService: CommandMenuItemService,
@@ -81,18 +83,17 @@ export class WorkflowCommonWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowVersionRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          });
 
-        const workflowVersion = await workflowVersionRepository.findOne({
+        const workflowVersion = (await workflowVersionRepository.findOne({
           where: {
             id: workflowVersionId,
           },
-        });
+        })) as WorkflowVersionWorkspaceEntity | null;
 
         const validWorkflowVersion =
           await this.getValidWorkflowVersionOrFail(workflowVersion);
@@ -166,16 +167,13 @@ export class WorkflowCommonWorkspaceService {
     const workflows =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workflowRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              workspaceId,
-              'workflow',
-              { shouldBypassPermissionChecks: true },
-            );
+          const workflowRepository = this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('workflow', { shouldBypassPermissionChecks: true });
 
-          return workflowRepository.find({
+          return (await workflowRepository.find({
             where: { id: In(workflowIds) },
-          });
+          })) as WorkflowWorkspaceEntity[];
         },
         authContext,
       );

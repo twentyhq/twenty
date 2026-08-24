@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 type DeliveryStatusCountRow = {
   deliveryStatus: string | null;
@@ -15,6 +15,7 @@ type DeliveryStatusCountRow = {
 export class MessageCampaignStatisticsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async refreshCampaignCounts({
@@ -25,12 +26,9 @@ export class MessageCampaignStatisticsService {
     campaignId: string;
   }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const messageRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('message');
 
       const deliveryStatusCountRows = await messageRepository
         .createQueryBuilder('message')

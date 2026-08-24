@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -77,6 +78,14 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: globalWorkspaceOrmManager,
+        },
+        {
+          provide: WorkspaceDataSourceV2Service,
+          useValue: {
+            getDataSource: jest.fn().mockReturnValue({
+              getRepository: jest.fn().mockReturnValue(mockRepository),
+            }),
+          },
         },
         {
           provide: MessageQueueService,

@@ -33,6 +33,7 @@ import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logi
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -42,7 +43,6 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
@@ -75,6 +75,7 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly agentService: AgentService,
@@ -766,12 +767,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 .filter((field) => field.type === FieldMetadataType.RELATION)
                 .map((field) => field.name);
 
-              const repository =
-                await this.globalWorkspaceOrmManager.getRepository(
-                  workspaceId,
-                  field.settings.objectName,
-                  { shouldBypassPermissionChecks: true },
-                );
+              const repository = this.workspaceDataSourceV2Service
+                .getDataSource({ useReplica: false })
+                .getRepository(field.settings.objectName, {
+                  shouldBypassPermissionChecks: true,
+                });
 
               const record = await repository.findOne({
                 // @ts-expect-error legacy noImplicitAny
@@ -929,12 +929,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowVersionRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const workflowVersion = await workflowVersionRepository.findOne({
           where: {
@@ -1006,12 +1005,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowVersionRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const workflowVersion = await workflowVersionRepository.findOne({
           where: {

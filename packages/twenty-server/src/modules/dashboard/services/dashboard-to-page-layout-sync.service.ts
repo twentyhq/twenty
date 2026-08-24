@@ -6,14 +6,15 @@ import { In } from 'typeorm';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import type { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
 export class DashboardToPageLayoutSyncService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutTabService: PageLayoutTabService,
   ) {}
@@ -53,12 +54,9 @@ export class DashboardToPageLayoutSyncService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const dashboardRepository =
-        await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
-          workspaceId,
-          'dashboard',
-          { shouldBypassPermissionChecks: true },
-        );
+      const dashboardRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('dashboard');
 
       const dashboards = await dashboardRepository.find({
         where: {

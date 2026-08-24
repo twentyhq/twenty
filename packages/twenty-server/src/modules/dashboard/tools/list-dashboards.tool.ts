@@ -17,7 +17,10 @@ const listDashboardsSchema = z.object({
 });
 
 export const createListDashboardsTool = (
-  deps: Pick<DashboardToolDependencies, 'globalWorkspaceOrmManager'>,
+  deps: Pick<
+    DashboardToolDependencies,
+    'globalWorkspaceOrmManager' | 'workspaceDataSourceV2Service'
+  >,
   context: DashboardToolContext,
 ) => ({
   name: 'list_dashboards' as const,
@@ -31,11 +34,9 @@ export const createListDashboardsTool = (
       const dashboards =
         await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
-            const repo = await deps.globalWorkspaceOrmManager.getRepository(
-              context.workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
+            const repo = deps.workspaceDataSourceV2Service
+              .getDataSource({ useReplica: false })
+              .getRepository('dashboard');
 
             return repo.find({ take: limit, order: { position: 'ASC' } });
           },

@@ -22,6 +22,7 @@ export const createGetDashboardTool = (
     DashboardToolDependencies,
     | 'pageLayoutService'
     | 'globalWorkspaceOrmManager'
+    | 'workspaceDataSourceV2Service'
     | 'flatEntityMapsCacheService'
   >,
   context: DashboardToolContext,
@@ -73,11 +74,9 @@ export const createGetDashboardTool = (
       const dashboard =
         await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
-            const repo = await deps.globalWorkspaceOrmManager.getRepository(
-              context.workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
+            const repo = deps.workspaceDataSourceV2Service
+              .getDataSource({ useReplica: false })
+              .getRepository('dashboard');
 
             return repo.findOne({ where: { id: parameters.dashboardId } });
           },

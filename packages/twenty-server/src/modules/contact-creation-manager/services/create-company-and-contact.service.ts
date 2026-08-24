@@ -21,6 +21,7 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -49,6 +50,7 @@ export class CreateCompanyAndPersonService {
     private readonly createPersonService: CreatePersonService,
     private readonly createCompaniesService: CreateCompanyService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -80,14 +82,14 @@ export class CreateCompanyAndPersonService {
             },
           );
 
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkspaceMemberWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+        const workspaceMemberRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workspaceMember', {
+            shouldBypassPermissionChecks: true,
+          });
 
-        const workspaceMembers = await workspaceMemberRepository.find();
+        const workspaceMembers =
+          (await workspaceMemberRepository.find()) as WorkspaceMemberWorkspaceEntity[];
 
         const workspace = await this.workspaceRepository.findOne({
           where: { id: workspaceId },
@@ -208,16 +210,15 @@ export class CreateCompanyAndPersonService {
     const accountOwner =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkspaceMemberWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
+          const workspaceMemberRepository = this.workspaceDataSourceV2Service
+            .getDataSource({ useReplica: false })
+            .getRepository('workspaceMember', {
+              shouldBypassPermissionChecks: true,
+            });
 
           return workspaceMemberRepository.findOne({
             where: { userId: userWorkspace.userId },
-          });
+          }) as Promise<WorkspaceMemberWorkspaceEntity | null>;
         },
         authContext,
       );

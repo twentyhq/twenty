@@ -8,6 +8,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
@@ -28,6 +29,7 @@ export class DashboardToolWorkspaceService {
     pageLayoutTabService: PageLayoutTabService,
     pageLayoutWidgetService: PageLayoutWidgetService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     recordPositionService: RecordPositionService,
     applicationService: ApplicationService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -37,6 +39,7 @@ export class DashboardToolWorkspaceService {
       pageLayoutTabService,
       pageLayoutWidgetService,
       globalWorkspaceOrmManager,
+      workspaceDataSourceV2Service,
       recordPositionService,
       applicationService,
       flatEntityMapsCacheService,

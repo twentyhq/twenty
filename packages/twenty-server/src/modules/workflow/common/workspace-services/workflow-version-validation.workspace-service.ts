@@ -10,6 +10,7 @@ import {
   type UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -28,6 +29,7 @@ export class WorkflowVersionValidationWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async validateWorkflowVersionForCreateOne(
@@ -50,12 +52,11 @@ export class WorkflowVersionValidationWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      const workflowVersionRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('workflowVersion', {
+          shouldBypassPermissionChecks: true,
+        });
 
       const workflowAlreadyHasDraftVersion =
         await workflowVersionRepository.exists({
@@ -133,12 +134,11 @@ export class WorkflowVersionValidationWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      const workflowVersionRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('workflowVersion', {
+          shouldBypassPermissionChecks: true,
+        });
 
       const otherWorkflowVersionsExist = await workflowVersionRepository.exists(
         {

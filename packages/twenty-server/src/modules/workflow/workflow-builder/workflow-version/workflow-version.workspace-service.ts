@@ -13,6 +13,7 @@ import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -39,6 +40,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 export class WorkflowVersionWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
@@ -60,19 +62,18 @@ export class WorkflowVersionWorkspaceService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowVersionRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          });
 
-        const workflowVersionToCopy = await workflowVersionRepository.findOne({
+        const workflowVersionToCopy = (await workflowVersionRepository.findOne({
           where: {
             id: workflowVersionIdToCopy,
             workflowId,
           },
-        });
+        })) as WorkflowVersionWorkspaceEntity | null;
 
         if (!isDefined(workflowVersionToCopy)) {
           throw new WorkflowVersionStepException(
@@ -97,12 +98,12 @@ export class WorkflowVersionWorkspaceService {
           newWorkflowVersionSteps.push(duplicatedStep);
         }
 
-        const existingDraftVersion = await workflowVersionRepository.findOne({
+        const existingDraftVersion = (await workflowVersionRepository.findOne({
           where: {
             workflowId,
             status: WorkflowVersionStatus.DRAFT,
           },
-        });
+        })) as WorkflowVersionWorkspaceEntity | null;
 
         if (isDefined(existingDraftVersion)) {
           assertWorkflowVersionIsDraft(existingDraftVersion);
@@ -201,12 +202,11 @@ export class WorkflowVersionWorkspaceService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowVersionRepository = this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: false })
+          .getRepository('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const sourceWorkflow = await workflowRepository.findOne({
           where: {
@@ -221,12 +221,12 @@ export class WorkflowVersionWorkspaceService {
           );
         }
 
-        const sourceVersion = await workflowVersionRepository.findOne({
+        const sourceVersion = (await workflowVersionRepository.findOne({
           where: {
             id: workflowVersionIdToCopy,
             workflowId: workflowIdToDuplicate,
           },
-        });
+        })) as WorkflowVersionWorkspaceEntity | null;
 
         if (!isDefined(sourceVersion)) {
           throw new WorkflowVersionStepException(
@@ -378,18 +378,17 @@ export class WorkflowVersionWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      const workflowVersionRepository = this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository('workflowVersion', {
+          shouldBypassPermissionChecks: true,
+        });
 
-      const workflowVersion = await workflowVersionRepository.findOneOrFail({
+      const workflowVersion = (await workflowVersionRepository.findOneOrFail({
         where: {
           id: workflowVersionId,
         },
-      });
+      })) as WorkflowVersionWorkspaceEntity;
 
       assertWorkflowVersionIsDraft(workflowVersion);
 

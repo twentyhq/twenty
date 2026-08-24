@@ -7,13 +7,11 @@ import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/ut
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  WorkflowVersionStatus,
-  type WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 export enum WorkflowVersionEventType {
@@ -59,6 +57,7 @@ export class WorkflowStatusesUpdateJob {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
@@ -108,12 +107,9 @@ export class WorkflowStatusesUpdateJob {
         { shouldBypassPermissionChecks: true },
       );
 
-    const workflowVersionRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+    const workflowVersionRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository('workflowVersion', { shouldBypassPermissionChecks: true });
 
     const newWorkflowStatuses = await this.getWorkflowStatuses({
       workflowId,
@@ -155,12 +151,9 @@ export class WorkflowStatusesUpdateJob {
         { shouldBypassPermissionChecks: true },
       );
 
-    const workflowVersionRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+    const workflowVersionRepository = this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository('workflowVersion', { shouldBypassPermissionChecks: true });
 
     const workflow = await workflowRepository.findOneOrFail({
       where: {
@@ -192,7 +185,7 @@ export class WorkflowStatusesUpdateJob {
     workflowVersionRepository,
   }: {
     workflowId: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2;
   }) {
     const workflowVersions = await workflowVersionRepository.find({
       where: {
