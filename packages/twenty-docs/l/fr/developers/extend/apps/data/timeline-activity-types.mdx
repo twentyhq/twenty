@@ -167,18 +167,18 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Champs de configuration
 
-| Champ                                             | Obligatoire   | Description                                                                        |
-| ------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Oui           | UUID stable pour le type d'installations et de mises à jour                        |
-| `name`                                            | Oui           | Nom du programme App-local                                                         |
-| `label`                                           | Oui           | Texte d'action utilisé par le moteur de rendu natif                                |
-| `icon`                                            | Non           | Vingt icônes affichées à côté de l'événement                                       |
-| `émettre`                                         | Non           | Déclaration d'émission automatique ; omet pour les types explicites                |
-| `emit.on`                                         | Avec émission | Action d'audit qui permet d'écrire ce type                                         |
-| `emit.objectUniversalIdentifier`                  | Avec émission | Objet dont les enregistrements émettent ce type                                    |
-| `emit.through.relationFieldUniversalIdentifier`   | Non           | Relation directe ou de jonction utilisée pour alimenter les fils connexes          |
-| `emit.through.triggerFieldUniversalIdentifiers`   | Non           | Champs source qui peuvent déclencher une `mise à jour` à travers l'événement       |
-| `frontComponentUniversalIdentifier`               | Non           | Composant frontal appartenant à une application monté lorsque la ligne est étendue |
-| `replacesTimelineActivityTypeUniversalIdentifier` | Non           | Type d'émission existant remplacé; nécessite `emit`                                |
+| Champ                                             | Obligatoire   | Description                                                                          |
+| ------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------ |
+| `universalIdentifier`                             | Oui           | UUID stable pour le type d'installations et de mises à jour                          |
+| `name`                                            | Oui           | Nom programmatique local à l'application ; doit être unique au sein de l'application |
+| `label`                                           | Oui           | Texte d'action utilisé par le moteur de rendu natif                                  |
+| `icon`                                            | Non           | Vingt icônes affichées à côté de l'événement                                         |
+| `émettre`                                         | Non           | Déclaration d'émission automatique ; omet pour les types explicites                  |
+| `emit.on`                                         | Avec émission | Action d'audit qui permet d'écrire ce type                                           |
+| `emit.objectUniversalIdentifier`                  | Avec émission | Objet dont les enregistrements émettent ce type                                      |
+| `emit.through.relationFieldUniversalIdentifier`   | Non           | Relation directe ou de jonction utilisée pour alimenter les fils connexes            |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Non           | Champs source qui peuvent déclencher une `mise à jour` à travers l'événement         |
+| `frontComponentUniversalIdentifier`               | Non           | Composant frontal appartenant à une application monté lorsque la ligne est étendue   |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Non           | Type d'émission existant remplacé; nécessite `emit`                                  |
 
 Vingt instantanés instantanés d'identité sémantique et présentation durable se replient quand un événement est créé. Les lignes historiques conservent leur action originale et leur signification d'objet. Pendant que le type est installé, son étiquette traduite en cours, son icône et son composant frontal sont rendus en direct. Après désinstallation, la clé de secours de l'instantané conserve la ligne lisible. La résolution utilise l'identifiant universel, donc la présentation survit également à la réinstallation de l'application.

@@ -167,18 +167,18 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Campos de configuración
 
-| Campo                                             | Obligatorio | Descripción                                                                       |
-| ------------------------------------------------- | ----------- | --------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Sí          | UUID estable para el tipo entre instalaciones y actualizaciones                   |
-| `name`                                            | Sí          | Nombre programático local de la aplicación                                        |
-| `label`                                           | Sí          | Texto de acción de cara al usuario usado por el renderizador nativo               |
-| `icon`                                            | No          | Veinte nombre de icono mostrado al lado del evento                                |
-| `emit`                                            | No          | Declaración de emisión automática; omisión de tipos sólo explícitos               |
-| `emit.on`                                         | Con emisión | Acción de auditoría que hace que este tipo se escriba                             |
-| `emit.objectUniversalIdentifier`                  | Con emisión | Objeto cuyos registros emiten este tipo                                           |
-| `emit.through.relationFieldUniversalIdentifier`   | No          | Relación directa o de unión usada para reavivar las líneas de tiempo relacionadas |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No          | Campos de origen que pueden desencadenar un evento 'actualizado'                  |
-| `frontComponentUniversalIdentifier`               | No          | Componente frontal propiedad de la aplicación montado cuando la fila es expandida |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No          | Tipo de emisión existente reemplazado; requiere `emit`                            |
+| Campo                                             | Obligatorio | Descripción                                                                        |
+| ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Sí          | UUID estable para el tipo entre instalaciones y actualizaciones                    |
+| `name`                                            | Sí          | Nombre programático local de la aplicación; debe ser único dentro de la aplicación |
+| `label`                                           | Sí          | Texto de acción de cara al usuario usado por el renderizador nativo                |
+| `icon`                                            | No          | Veinte nombre de icono mostrado al lado del evento                                 |
+| `emit`                                            | No          | Declaración de emisión automática; omisión de tipos sólo explícitos                |
+| `emit.on`                                         | Con emisión | Acción de auditoría que hace que este tipo se escriba                              |
+| `emit.objectUniversalIdentifier`                  | Con emisión | Objeto cuyos registros emiten este tipo                                            |
+| `emit.through.relationFieldUniversalIdentifier`   | No          | Relación directa o de unión usada para reavivar las líneas de tiempo relacionadas  |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No          | Campos de origen que pueden desencadenar un evento 'actualizado'                   |
+| `frontComponentUniversalIdentifier`               | No          | Componente frontal propiedad de la aplicación montado cuando la fila es expandida  |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No          | Tipo de emisión existente reemplazado; requiere `emit`                             |
 
 Veinte instantáneas capturan identidad semántica y presentaciones duraderas cuando se crea un evento. Las filas históricas mantienen su acción original y su objeto significado. Mientras el tipo está instalado, su actual etiqueta traducida, icono y componente frontal renderizan en vivo; después de desinstalar, la instantánea mantiene el registro legible. La resolución utiliza el identificador universal, así que la presentación también sobrevive a reinstalar la aplicación.

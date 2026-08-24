@@ -170,7 +170,7 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | Campo                                             | Obbligatorio | Descrizione                                                                     |
 | ------------------------------------------------- | ------------ | ------------------------------------------------------------------------------- |
 | `universalIdentifier`                             | Sì           | UUID stabile per il tipo tra installazioni e aggiornamenti                      |
-| `name`                                            | Sì           | Nome programmatico locale dell'app                                              |
+| `name`                                            | Sì           | Nome programmatico locale dell'app; deve essere univoco all'interno dell'app    |
 | `label`                                           | Sì           | Testo dell'azione rivolto all'utente usato dal renderer nativo                  |
 | `icon`                                            | No           | Nome dell'icona Twenty visualizzata accanto all'evento                          |
 | `emit`                                            | No           | Dichiarazione di emissione automatica; ometti per i tipi solo espliciti         |
