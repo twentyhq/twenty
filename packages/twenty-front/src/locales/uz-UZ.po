@@ -6780,7 +6780,7 @@ msgid "Download file"
 msgstr "Faylni yuklab olish"
 
 #. js-lingui-id: IFNYKF
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Download File"
 msgstr "Faylni yuklab olish"
 
@@ -14949,7 +14949,7 @@ msgid "Preview"
 msgstr "Oldindan ko‘rish"
 
 #. js-lingui-id: Fe5cbB
-#: src/modules/activities/files/components/DocumentViewer.tsx
+#: src/modules/activities/files/components/UnavailableFilePreview.tsx
 msgid "Preview Not Available"
 msgstr "Oldindan ko‘rish mavjud emas"
 
@@ -19047,6 +19047,11 @@ msgstr "Bu darhol ushbu ish maydonidan {0} kreditni qaytarib oladi. Bekor qilish
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "Bu qiymat ma’lumotlar bazasiga saqlanadi."
+
+#. js-lingui-id: BKB7SR
+#: src/modules/activities/files/components/VideoPreview.tsx
+msgid "This video could not be loaded. Please download the file to view it."
+msgstr "Bu videoni yuklab bo‘lmadi. Uni ko‘rish uchun faylni yuklab oling."
 
 #. js-lingui-id: esVnxk
 #. placeholder {0}: nonReadableViewFieldInfo.fieldLabel

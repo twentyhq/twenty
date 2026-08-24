@@ -1008,7 +1008,7 @@ msgstr "少なくとも1つの関連が必要です"
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "attached a file"
-msgstr ""
+msgstr "ファイルを添付しました"
 
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8257,7 +8257,7 @@ msgstr "削除する前に、この権限をすべてのロールから削除し
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
 msgid "removed an attachment"
-msgstr ""
+msgstr "添付ファイルを削除しました"
 
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10761,7 +10761,7 @@ msgstr "タイムラインアクティビティタイプは、存在しないオ
 #. js-lingui-id: Y9ZQls
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
-msgstr ""
+msgstr "タイムラインアクティビティタイプのターゲットリレーションは、そのソースオブジェクトの直接リレーションまたは中間リレーションである必要があります"
 
 #. js-lingui-id: ShcC6H
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
