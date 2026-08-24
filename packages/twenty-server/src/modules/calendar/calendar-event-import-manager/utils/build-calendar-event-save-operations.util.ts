@@ -1,8 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
+import { type CalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-operations.type';
 import { type CalendarEventSavePlan } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-plan.type';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
 
 export const buildCalendarEventSaveOperations = ({
   fetchedCalendarEvents,
@@ -13,26 +16,31 @@ export const buildCalendarEventSaveOperations = ({
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   calendarChannelId: string;
 }): CalendarEventSavePlan => {
-  const associationByEventExternalId = new Map(
+  const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [
       association.eventExternalId,
       association,
     ]),
   );
 
-  const plan: CalendarEventSavePlan = {
-    saveOperations: {
-      calendarEventsToInsert: [],
-      calendarEventsToUpdate: [],
-      associationsToInsert: [],
-      associationsToUpdate: [],
-    },
-    participantsOfNewEvents: [],
-    participantsOfExistingEvents: [],
+  const saveOperations: CalendarEventSaveOperations = {
+    calendarEventsToInsert: [],
+    calendarEventsToUpdate: [],
+    associationsToInsert: [],
+    associationsToUpdate: [],
   };
+  const participantsOfNewEvents: FetchedParticipantWithCalendarEventId[] = [];
+  const participantsOfExistingEvents: FetchedParticipantWithCalendarEventId[] =
+    [];
 
   for (const fetchedCalendarEvent of fetchedCalendarEvents) {
-    const calendarEventFields = {
+    const {
+      id: eventExternalId,
+      participants,
+      recurringEventExternalId = '',
+    } = fetchedCalendarEvent;
+
+    const calendarEvent = {
       iCalUid: fetchedCalendarEvent.iCalUid,
       title: fetchedCalendarEvent.title,
       description: fetchedCalendarEvent.description,
@@ -51,57 +59,53 @@ export const buildCalendarEventSaveOperations = ({
       externalUpdatedAt: fetchedCalendarEvent.externalUpdatedAt,
     };
 
-    const recurringEventExternalId =
-      fetchedCalendarEvent.recurringEventExternalId ?? '';
+    const existingAssociation =
+      existingAssociationByEventExternalId.get(eventExternalId);
 
-    const existingAssociation = associationByEventExternalId.get(
-      fetchedCalendarEvent.id,
-    );
+    if (isDefined(existingAssociation)) {
+      const { calendarEventId } = existingAssociation;
 
-    if (existingAssociation) {
-      const calendarEventId = existingAssociation.calendarEventId;
-
-      plan.saveOperations.calendarEventsToUpdate.push({
+      saveOperations.calendarEventsToUpdate.push({
         criteria: calendarEventId,
-        partialEntity: calendarEventFields,
+        partialEntity: calendarEvent,
       });
-
-      plan.saveOperations.associationsToUpdate.push({
+      saveOperations.associationsToUpdate.push({
         criteria: existingAssociation.id,
         partialEntity: { recurringEventExternalId },
       });
-
-      for (const participant of fetchedCalendarEvent.participants) {
-        plan.participantsOfExistingEvents.push({
+      participantsOfExistingEvents.push(
+        ...participants.map((participant) => ({
           ...participant,
           calendarEventId,
-        });
-      }
+        })),
+      );
 
       continue;
     }
 
     const calendarEventId = uuid();
 
-    plan.saveOperations.calendarEventsToInsert.push({
+    saveOperations.calendarEventsToInsert.push({
       id: calendarEventId,
-      ...calendarEventFields,
+      ...calendarEvent,
     });
-
-    plan.saveOperations.associationsToInsert.push({
+    saveOperations.associationsToInsert.push({
       calendarEventId,
-      eventExternalId: fetchedCalendarEvent.id,
+      eventExternalId,
       calendarChannelId,
       recurringEventExternalId,
     });
-
-    for (const participant of fetchedCalendarEvent.participants) {
-      plan.participantsOfNewEvents.push({
+    participantsOfNewEvents.push(
+      ...participants.map((participant) => ({
         ...participant,
         calendarEventId,
-      });
-    }
+      })),
+    );
   }
 
-  return plan;
+  return {
+    saveOperations,
+    participantsOfNewEvents,
+    participantsOfExistingEvents,
+  };
 };

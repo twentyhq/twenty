@@ -69,8 +69,10 @@ export class CalendarSaveEventsService {
 
           const participantOperations =
             buildCalendarEventParticipantSaveOperations({
-              participantsOfNewEvents,
-              participantsOfExistingEvents,
+              fetchedParticipants: [
+                ...participantsOfNewEvents,
+                ...participantsOfExistingEvents,
+              ],
               existingParticipants,
             });
 

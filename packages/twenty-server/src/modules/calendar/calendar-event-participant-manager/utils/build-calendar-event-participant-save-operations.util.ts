@@ -1,10 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuid } from 'uuid';
 
 import { type CalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/types/calendar-event-participant-save-operations.type';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
 
-const getParticipantKey = ({
+const buildParticipantKey = ({
   calendarEventId,
   handle,
 }: {
@@ -13,12 +14,10 @@ const getParticipantKey = ({
 }): string => `${calendarEventId}:${handle}`;
 
 export const buildCalendarEventParticipantSaveOperations = ({
-  participantsOfNewEvents,
-  participantsOfExistingEvents,
+  fetchedParticipants,
   existingParticipants,
 }: {
-  participantsOfNewEvents: FetchedParticipantWithCalendarEventId[];
-  participantsOfExistingEvents: FetchedParticipantWithCalendarEventId[];
+  fetchedParticipants: FetchedParticipantWithCalendarEventId[];
   existingParticipants: CalendarEventParticipantWorkspaceEntity[];
 }): CalendarEventParticipantSaveOperations => {
   const existingParticipantByKey = new Map<
@@ -27,47 +26,51 @@ export const buildCalendarEventParticipantSaveOperations = ({
   >();
 
   for (const existingParticipant of existingParticipants) {
-    const key = getParticipantKey(existingParticipant);
+    const participantKey = buildParticipantKey(existingParticipant);
 
-    if (!existingParticipantByKey.has(key)) {
-      existingParticipantByKey.set(key, existingParticipant);
+    if (existingParticipantByKey.has(participantKey)) {
+      continue;
     }
+
+    existingParticipantByKey.set(participantKey, existingParticipant);
   }
 
-  const fetchedParticipantKeys = new Set(
-    participantsOfExistingEvents.map(getParticipantKey),
-  );
-
   const operations: CalendarEventParticipantSaveOperations = {
-    participantsToInsert: participantsOfNewEvents.map((participant) => ({
-      ...participant,
-      id: uuid(),
-    })),
+    participantsToInsert: [],
     participantsToUpdate: [],
     participantIdsToDelete: [],
   };
 
-  for (const participant of participantsOfExistingEvents) {
+  for (const fetchedParticipant of fetchedParticipants) {
     const existingParticipant = existingParticipantByKey.get(
-      getParticipantKey(participant),
+      buildParticipantKey(fetchedParticipant),
     );
 
-    if (existingParticipant) {
-      operations.participantsToUpdate.push({
-        criteria: existingParticipant.id,
-        partialEntity: participant,
+    if (!isDefined(existingParticipant)) {
+      operations.participantsToInsert.push({
+        ...fetchedParticipant,
+        id: uuid(),
       });
 
       continue;
     }
 
-    operations.participantsToInsert.push({ ...participant, id: uuid() });
+    operations.participantsToUpdate.push({
+      criteria: existingParticipant.id,
+      partialEntity: fetchedParticipant,
+    });
   }
 
+  const fetchedParticipantKeys = new Set(
+    fetchedParticipants.map(buildParticipantKey),
+  );
+
   for (const existingParticipant of existingParticipants) {
-    if (!fetchedParticipantKeys.has(getParticipantKey(existingParticipant))) {
-      operations.participantIdsToDelete.push(existingParticipant.id);
+    if (fetchedParticipantKeys.has(buildParticipantKey(existingParticipant))) {
+      continue;
     }
+
+    operations.participantIdsToDelete.push(existingParticipant.id);
   }
 
   return operations;
