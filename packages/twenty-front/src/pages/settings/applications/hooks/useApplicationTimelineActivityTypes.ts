@@ -1,27 +1,12 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
-  FindManyTimelineActivityTypesDocument,
   ResetTimelineActivityTypeDocument,
   UpdateTimelineActivityTypeIsActiveDocument,
 } from '~/generated-metadata/graphql';
-
-export const useInstalledTimelineActivityTypes = ({
-  isInstalledApplication,
-}: {
-  isInstalledApplication: boolean;
-}) => {
-  const { data, loading } = useQuery(FindManyTimelineActivityTypesDocument, {
-    skip: !isInstalledApplication,
-  });
-
-  return {
-    installedTimelineActivityTypes: data?.timelineActivityTypes ?? [],
-    loading,
-  };
-};
+import { useInstalledTimelineActivityTypes } from '~/pages/settings/applications/hooks/useInstalledTimelineActivityTypes';
 
 export const useApplicationTimelineActivityTypes = ({
   isInstalledApplication,

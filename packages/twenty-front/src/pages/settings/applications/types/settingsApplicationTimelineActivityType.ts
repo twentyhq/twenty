@@ -3,7 +3,6 @@ export type SettingsApplicationTimelineActivityType = {
   icon?: string | null;
   id: string;
   isActive: boolean;
-  isInstalled: boolean;
   label: string;
   name: string;
 };

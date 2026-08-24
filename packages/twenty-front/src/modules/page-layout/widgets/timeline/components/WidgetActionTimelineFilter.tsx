@@ -1,6 +1,5 @@
-import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
+import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
-import { getActiveTimelineActivityTypeUniversalIdentifiersFilter } from '@/activities/timeline-activities/utils/getActiveTimelineActivityTypeUniversalIdentifiersFilter';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -9,7 +8,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -22,14 +20,15 @@ export const WidgetActionTimelineFilter = () => {
   const { t } = useLingui();
   const targetRecord = useTargetRecord();
   const { getIcon } = useIcons();
-  const { activeTimelineActivityTypes } = useTimelineActivityTypes();
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  const timelineActivityTypeUniversalIdentifiersFilter =
-    useAtomFamilyStateValue(
-      timelineActivityTypeUniversalIdentifiersFilterFamilyState,
-      targetRecord.id,
-    );
+  const {
+    activeTimelineActivityTypes,
+    effectiveTimelineActivityTypeUniversalIdentifiersFilter:
+      nullableEffectiveTimelineActivityTypeUniversalIdentifiersFilter,
+    selectedTimelineActivityTypeUniversalIdentifiers:
+      timelineActivityTypeUniversalIdentifiersFilter,
+  } = useTimelineActivityTypeFilter(targetRecord.id);
   const setTimelineActivityTypeUniversalIdentifiersFilter =
     useSetAtomFamilyState(
       timelineActivityTypeUniversalIdentifiersFilterFamilyState,
@@ -43,13 +42,7 @@ export const WidgetActionTimelineFilter = () => {
   );
 
   const effectiveTimelineActivityTypeUniversalIdentifiersFilter =
-    getActiveTimelineActivityTypeUniversalIdentifiersFilter({
-      activeUniversalIdentifiers: activeTimelineActivityTypes.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-      selectedUniversalIdentifiers:
-        timelineActivityTypeUniversalIdentifiersFilter,
-    }) ?? [];
+    nullableEffectiveTimelineActivityTypeUniversalIdentifiersFilter ?? [];
 
   if (!isNonEmptyArray(activeTimelineActivityTypes)) {
     return null;

@@ -24,7 +24,6 @@ export const getSettingsApplicationTimelineActivityTypes = ({
         icon: timelineActivityType.icon,
         id: timelineActivityType.id,
         isActive: timelineActivityType.isActive,
-        isInstalled: true,
         label: timelineActivityType.label,
         name: timelineActivityType.name,
       }));
@@ -35,7 +34,6 @@ export const getSettingsApplicationTimelineActivityTypes = ({
     icon: timelineActivityType.icon,
     id: timelineActivityType.universalIdentifier,
     isActive: true,
-    isInstalled: false,
     label: timelineActivityType.label,
     name: timelineActivityType.name,
   }));
