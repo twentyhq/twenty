@@ -384,7 +384,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     objectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'objectMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'pageLayouts',
       isNullable: true,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
     },
