@@ -66,7 +66,7 @@ export const StyledControlContainer = styled.div<{
     hasIcon ? 'auto 1fr auto' : '1fr auto'};
   height: ${({ selectSizeVariant, $variant }) =>
     $variant === 'transparent'
-      ? '24px'
+      ? themeCssVariables.spacing[6]
       : selectSizeVariant === 'small'
         ? themeCssVariables.spacing[6]
         : themeCssVariables.spacing[8]};
