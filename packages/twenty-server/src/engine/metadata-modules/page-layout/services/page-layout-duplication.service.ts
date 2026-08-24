@@ -9,7 +9,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -238,11 +237,13 @@ export class PageLayoutDuplicationService {
       widgetsByTabId.set(widget.pageLayoutTabId, existingWidgets);
     }
 
-    const tabs = findManyFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatPageLayoutTabMaps,
-      flatEntityIds: originalFlatLayout.tabIds,
-    })
-      .filter((tab) => !isDefined(tab.deletedAt))
+    const tabs = Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
+      .filter(
+        (tab): tab is FlatPageLayoutTab =>
+          isDefined(tab) &&
+          tab.pageLayoutId === originalFlatLayout.id &&
+          !isDefined(tab.deletedAt),
+      )
       .sort((tabA, tabB) => (tabA.position ?? 0) - (tabB.position ?? 0));
 
     return tabs.map((tab) => ({
