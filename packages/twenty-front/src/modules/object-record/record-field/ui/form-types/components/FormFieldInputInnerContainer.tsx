@@ -1,3 +1,4 @@
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -141,4 +142,3 @@ export const FormFieldInputInnerContainer = forwardRef(
     );
   },
 );
-import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
