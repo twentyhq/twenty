@@ -1,5 +1,6 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
+import { isCalendarEventComposerCreatingState } from '@/activities/calendar/states/isCalendarEventComposerCreatingState';
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
 import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
 import { getCalendarEventDatesAfterModeChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterModeChange';
@@ -11,7 +12,9 @@ import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/uti
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,6 +30,10 @@ export const useCalendarEventComposer = ({
 }) => {
   const { accounts, loading: accountsLoading } = useMyConnectedAccounts();
   const { createCalendarEvent, loading: isCreating } = useCreateCalendarEvent();
+  const store = useStore();
+  const isCalendarEventComposerCreating = useAtomStateValue(
+    isCalendarEventComposerCreatingState,
+  );
 
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialValues?.connectedAccountId ?? '',
@@ -82,7 +89,8 @@ export const useCalendarEventComposer = ({
     !hasTooManyAttendees &&
     hasTargetAssociation &&
     hasValidDateRange &&
-    !isCreating;
+    !isCreating &&
+    !isCalendarEventComposerCreating;
 
   const handleIsFullDayChange = (nextIsFullDay: boolean) => {
     setDates(
@@ -117,26 +125,32 @@ export const useCalendarEventComposer = ({
   };
 
   const handleCreate = useCallback(async () => {
-    if (!canCreate) {
+    if (!canCreate || store.get(isCalendarEventComposerCreatingState.atom)) {
       return;
     }
 
-    const success = await createCalendarEvent({
-      connectedAccountId,
-      title: title.trim(),
-      description: description.trim() || undefined,
-      location: location.trim() || undefined,
-      startsAt: dates.startsAt,
-      endsAt: dates.endsAt,
-      isFullDay,
-      timeZone,
-      attendees: serializeEmailRecipients(attendees),
-      sendInvitations,
-      addConferencing,
-    });
+    store.set(isCalendarEventComposerCreatingState.atom, true);
 
-    if (success) {
-      onCreated();
+    try {
+      const success = await createCalendarEvent({
+        connectedAccountId,
+        title: title.trim(),
+        description: description.trim() || undefined,
+        location: location.trim() || undefined,
+        startsAt: dates.startsAt,
+        endsAt: dates.endsAt,
+        isFullDay,
+        timeZone,
+        attendees: serializeEmailRecipients(attendees),
+        sendInvitations,
+        addConferencing,
+      });
+
+      if (success) {
+        onCreated();
+      }
+    } finally {
+      store.set(isCalendarEventComposerCreatingState.atom, false);
     }
   }, [
     addConferencing,
@@ -151,6 +165,7 @@ export const useCalendarEventComposer = ({
     location,
     onCreated,
     sendInvitations,
+    store,
     timeZone,
     title,
   ]);
