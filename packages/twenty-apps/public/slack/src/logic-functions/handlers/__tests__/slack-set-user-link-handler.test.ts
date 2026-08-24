@@ -113,6 +113,25 @@ describe('slackSetUserLinkHandler', () => {
     expect(result.error).toBe('write refused');
   });
 
+  it('should not require a Slack connection when a team id is provided', async () => {
+    getSlackClientMock.mockResolvedValue({
+      success: false,
+      error: 'Slack is not connected.',
+    });
+
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: 'T9876543210',
+    });
+
+    expect(result.success).toBe(true);
+    expect(getSlackClientMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ slackTeamId: 'T9876543210' }),
+    );
+  });
+
   it('should store the link under the requested team for Slack Connect users', async () => {
     const result = await slackSetUserLinkHandler({
       ...INPUT,

@@ -30,19 +30,21 @@ export const slackSetUserLinkHandler = async ({
     };
   }
 
-  const slackClientResult = await getSlackClient();
+  let slackTeamId = requestedSlackTeamId;
 
-  if (!slackClientResult.success) {
-    return {
-      success: false,
-      message: 'Slack is not connected',
-      error: slackClientResult.error,
-    };
+  if (!isNonEmptyString(slackTeamId)) {
+    const slackClientResult = await getSlackClient();
+
+    if (!slackClientResult.success) {
+      return {
+        success: false,
+        message: 'Slack is not connected',
+        error: slackClientResult.error,
+      };
+    }
+
+    slackTeamId = await getInstalledSlackTeamId(slackClientResult.client);
   }
-
-  const slackTeamId = isNonEmptyString(requestedSlackTeamId)
-    ? requestedSlackTeamId
-    : await getInstalledSlackTeamId(slackClientResult.client);
 
   if (!isNonEmptyString(slackTeamId)) {
     return {
