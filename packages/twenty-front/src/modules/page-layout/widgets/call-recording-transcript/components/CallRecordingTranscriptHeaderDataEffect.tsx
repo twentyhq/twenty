@@ -28,10 +28,9 @@ export const CallRecordingTranscriptHeaderDataEffect = ({
     callRecording?.transcript,
   );
 
-  const transcriptPlainText =
-    isDefined(transcriptEntries) && isNonEmptyArray(transcriptEntries)
-      ? buildCallRecordingTranscriptPlainText(transcriptEntries)
-      : undefined;
+  const transcriptPlainText = isNonEmptyArray(transcriptEntries)
+    ? buildCallRecordingTranscriptPlainText(transcriptEntries)
+    : undefined;
 
   const videoFileUrl = isDefined(callRecording)
     ? getCallRecordingVideoFileUrl(callRecording)
