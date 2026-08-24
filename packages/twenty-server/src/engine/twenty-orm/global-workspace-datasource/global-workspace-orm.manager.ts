@@ -7,8 +7,6 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
-import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import {
@@ -24,7 +22,6 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class GlobalWorkspaceOrmManager {
   constructor(
-    private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
@@ -56,14 +53,6 @@ export class GlobalWorkspaceOrmManager {
         objectMetadataName,
         permissionOptions,
       ) as unknown as WorkspaceRepositoryV2<T>;
-  }
-
-  async getGlobalWorkspaceDataSource(): Promise<GlobalWorkspaceDataSource> {
-    return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
-  }
-
-  async getGlobalWorkspaceDataSourceReplica(): Promise<GlobalWorkspaceDataSource> {
-    return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSourceReplica();
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(

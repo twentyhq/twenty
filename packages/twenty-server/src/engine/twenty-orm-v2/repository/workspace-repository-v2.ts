@@ -221,15 +221,11 @@ export class WorkspaceRepositoryV2<
     return records as unknown as TEntity[];
   }
 
-  async findBy(
-    where: ObjectWhereLike | ObjectWhereLike[],
-  ): Promise<TEntity[]> {
+  async findBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<TEntity[]> {
     return this.find({ where });
   }
 
-  async findAndCount(
-    options?: FindOptionsV2,
-  ): Promise<[TEntity[], number]> {
+  async findAndCount(options?: FindOptionsV2): Promise<[TEntity[], number]> {
     const records = await this.find(options);
     const totalCount = await this.count(options);
 

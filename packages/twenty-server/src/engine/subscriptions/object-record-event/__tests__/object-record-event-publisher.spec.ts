@@ -94,7 +94,6 @@ describe('ObjectRecordEventPublisher', () => {
     >
   >;
 
-
   const workspaceId = COMPANY_FLAT_OBJECT_MOCK.workspaceId;
   const streamChannelId = 'test-stream-channel-id';
   const userWorkspaceId = 'test-user-workspace-id';
