@@ -9,7 +9,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     display: flex;
     padding: ${themeCssVariables.spacing[1]};
