@@ -6,6 +6,7 @@ import { IconCalendarEvent, IconCheckbox, IconNotes } from 'twenty-ui/icon';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const createTask = fn();
+const createCalendarEvent = fn();
 
 const actionBindings: RelatedRecordActionBinding[] = [
   {
@@ -36,7 +37,7 @@ const actionBindings: RelatedRecordActionBinding[] = [
       isVisible: true,
       disabled: true,
       disabledReason: 'Add an email to this record first',
-      execute: fn(),
+      execute: createCalendarEvent,
     },
   },
 ];
@@ -57,11 +58,14 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(canvas.queryByText('Create note')).not.toBeInTheDocument();
-    expect(
-      canvas.getByRole('button', { name: /Create calendar event/ }),
-    ).toBeDisabled();
+    expect(canvas.getByText('Create calendar event')).toBeVisible();
+    expect(canvas.getByText('Add an email to this record first')).toBeVisible();
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Create task' }));
+    await userEvent.click(canvas.getByText('Create calendar event'));
+
+    expect(createCalendarEvent).not.toHaveBeenCalled();
+
+    await userEvent.click(canvas.getByText('Create task'));
 
     expect(createTask).toHaveBeenCalledTimes(1);
   },
