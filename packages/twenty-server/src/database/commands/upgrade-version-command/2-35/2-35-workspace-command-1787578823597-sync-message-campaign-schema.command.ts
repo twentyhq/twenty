@@ -42,11 +42,7 @@ const HEADER_MESSAGE_ID_INDEX_UNIVERSAL_IDENTIFIER =
 const DELIVERY_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.message.fields.deliveryStatus.universalIdentifier;
 
-<<<<<<<< HEAD:packages/twenty-server/src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787200200000-sync-message-campaign-schema.command.ts
-@RegisteredWorkspaceCommand('2.33.0', 1787200200000)
-========
 @RegisteredWorkspaceCommand('2.35.0', 1787578823597)
->>>>>>>> 27e49ea0ed (Move the campaign schema command to the current version directory):packages/twenty-server/src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787578823597-sync-message-campaign-schema.command.ts
 @Command({
   name: 'upgrade:2-35:sync-message-campaign-schema',
   description:
