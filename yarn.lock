@@ -48342,7 +48342,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^7.4.3, tar@npm:^7.5.16, tar@npm:^7.5.4, tar@npm:^7.5.9":
+"tar@npm:7.5.21, tar@npm:^7.4.3, tar@npm:^7.5.4, tar@npm:^7.5.9":
   version: 7.5.21
   resolution: "tar@npm:7.5.21"
   dependencies:
