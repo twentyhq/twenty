@@ -186,7 +186,7 @@ export const SettingsApplicationDetailContentTab = ({
             ? t`Manage activity types`
             : t`Activity types`,
           icon: 'IconTimelineEvent',
-          secondary: t`${timelineActivityTypes.length} types`,
+          secondary: t`${filteredTimelineActivityTypes.length} types`,
           link: isInstalledApplication
             ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypes, {
                 applicationId,
