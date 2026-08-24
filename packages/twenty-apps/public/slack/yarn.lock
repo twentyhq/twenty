@@ -1054,8 +1054,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    twenty-client-sdk: "npm:^2.33.0"
-    twenty-sdk: "npm:^2.33.0"
+    twenty-client-sdk: "npm:^2.35.0"
+    twenty-sdk: "npm:^2.35.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
@@ -3320,22 +3320,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.33.0, twenty-client-sdk@npm:^2.33.0":
-  version: 2.33.0
-  resolution: "twenty-client-sdk@npm:2.33.0"
+"twenty-client-sdk@npm:2.35.0, twenty-client-sdk@npm:^2.35.0":
+  version: 2.35.0
+  resolution: "twenty-client-sdk@npm:2.35.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/9887883d8aeff8c7cc068f511e02597ea348082837f65892f9eecbaea29db00324e81f705918bbbc269a38bed17e23f52bcf5efadac7f0d2679b8eac2505c1e3
+  checksum: 10c0/2ce66e4647c6c6f4b4897896858f8abab3dd8aa6112b8c5c6387082ce484b6a2fb9b90060526601b13329c207ae530d25a6ba80197868a8653156505e0736f5d
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:^2.33.0":
-  version: 2.33.0
-  resolution: "twenty-sdk@npm:2.33.0"
+"twenty-sdk@npm:^2.35.0":
+  version: 2.35.0
+  resolution: "twenty-sdk@npm:2.35.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3354,12 +3354,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.35.3"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.33.0"
+    twenty-client-sdk: "npm:2.35.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/169ee92a10e8a967b7fafa9963f7f528575331c987c59beca4eb30f673d4fcd997d94dd07c403332bb6e9ebfe04e6972389c404e67b4b24a776d97778bf5d168
+  checksum: 10c0/4cb27d3b449b2fbe692516cc29b2689232e4f40de1181132ea3d9743a1fc1c9284204ddf50632fc737d06748ff9c6903630124c02382b4f61eec120beaa9f9d5
   languageName: node
   linkType: hard
 

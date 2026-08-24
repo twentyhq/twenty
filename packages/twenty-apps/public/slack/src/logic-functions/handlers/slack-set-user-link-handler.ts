@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
@@ -8,7 +9,6 @@ import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-
 import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-user-link-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
-import { createApplicationCoreApiClient } from 'src/logic-functions/utils/create-application-core-api-client';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -55,7 +55,7 @@ export const slackSetUserLinkHandler = async ({
 
   // Slack user link records are APPLICATION-writable, so the write needs the
   // application's own access, not the triggering person's.
-  const client = createApplicationCoreApiClient();
+  const client = new CoreApiClient({ runAs: 'application' });
 
   let existingLink: SlackUserLink | undefined;
 
