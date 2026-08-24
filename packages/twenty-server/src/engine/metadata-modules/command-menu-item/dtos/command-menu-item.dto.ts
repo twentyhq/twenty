@@ -95,6 +95,11 @@ export class CommandMenuItemDTO {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  targetObjectMetadataId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string;
 
   @HideField()

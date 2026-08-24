@@ -116,6 +116,7 @@ type CommandMenuItem {
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
+  targetObjectMetadataId: UUID
   pageLayoutId: UUID
   universalIdentifier: UUID
   applicationId: UUID
@@ -212,7 +213,7 @@ type PathCommandMenuItemPayload {
 }
 
 type ObjectMetadataCommandMenuItemPayload {
-  objectMetadataItemId: UUID!
+  objectMetadataItemId: UUID! @deprecated(reason: "Use CommandMenuItem.targetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility.")
 }
 
 type LogicFunction {

@@ -29,6 +29,8 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
       undefined,
     availabilityObjectMetadataId:
       effectiveFlatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
+    targetObjectMetadataId:
+      effectiveFlatCommandMenuItem.targetObjectMetadataId ?? undefined,
     pageLayoutId: effectiveFlatCommandMenuItem.pageLayoutId ?? undefined,
     workspaceId: effectiveFlatCommandMenuItem.workspaceId,
     applicationId: effectiveFlatCommandMenuItem.applicationId ?? undefined,
