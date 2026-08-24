@@ -83,7 +83,9 @@ type SidePanelComposerStoryProps = {
   composer: 'calendar-event' | 'email';
 };
 
-const SidePanelComposerStory = ({ composer }: SidePanelComposerStoryProps) => {
+const useInitializeSidePanelComposerStory = ({
+  composer,
+}: SidePanelComposerStoryProps) => {
   const store = useStore();
   const [isReady, setIsReady] = useState(false);
 
@@ -129,6 +131,12 @@ const SidePanelComposerStory = ({ composer }: SidePanelComposerStoryProps) => {
 
     setIsReady(true);
   }, [composer, store]);
+
+  return { isReady };
+};
+
+const SidePanelComposerStory = ({ composer }: SidePanelComposerStoryProps) => {
+  const { isReady } = useInitializeSidePanelComposerStory({ composer });
 
   return (
     <SidePanelPageComponentInstanceContext.Provider
