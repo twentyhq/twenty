@@ -10,7 +10,8 @@ jest.mock('../useCountryUtils');
 jest.mock('@/ui/layout/dropdown/hooks/useOpenDropdown');
 jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown');
 jest.mock('use-debounce', () => ({
-  useDebouncedCallback: (fn: (...args: any[]) => any) => fn,
+  useDebouncedCallback: (fn: (...args: any[]) => any) =>
+    Object.assign(fn, { cancel: () => undefined }),
 }));
 
 const mockGetPlaceAutocompleteData = jest.fn();

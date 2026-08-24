@@ -3,7 +3,7 @@ import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
@@ -13,25 +13,26 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
     PlaceAutocompleteResult[]
   >([]);
   const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
+  const latestRequestIdRef = useRef(0);
 
   const { getPlaceAutocompleteData } = useGetPlaceApiData();
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const closePlaceAutocomplete = useCallback(() => {
+  const closeDropdownAndClearResults = useCallback(() => {
     closeDropdown(dropdownId);
     setPlaceAutocompleteData([]);
   }, [closeDropdown, dropdownId]);
 
-  const resetPlaceAutocomplete = useCallback(() => {
-    setTokenForPlaceApi(null);
-    closePlaceAutocomplete();
-  }, [closePlaceAutocomplete]);
-
-  const getAutocompletePlaceData = useDebouncedCallback(
-    async (address: string, country?: string, isFieldCity?: boolean) => {
+  const debouncedGetAutocompletePlaceData = useDebouncedCallback(
+    async (
+      address: string,
+      country: string | undefined,
+      isFieldCity: boolean | undefined,
+      requestId: number,
+    ) => {
       if (!isNonEmptyString(address.trim())) {
-        closePlaceAutocomplete();
+        closeDropdownAndClearResults();
         return;
       }
 
@@ -48,8 +49,12 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
         isFieldCity,
       );
 
+      if (requestId !== latestRequestIdRef.current) {
+        return;
+      }
+
       if (!isNonEmptyArray(autocompleteData)) {
-        closePlaceAutocomplete();
+        closeDropdownAndClearResults();
         return;
       }
 
@@ -60,6 +65,31 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
     },
     300,
   );
+
+  const getAutocompletePlaceData = useCallback(
+    (address: string, country?: string, isFieldCity?: boolean) => {
+      const requestId = ++latestRequestIdRef.current;
+
+      return debouncedGetAutocompletePlaceData(
+        address,
+        country,
+        isFieldCity,
+        requestId,
+      );
+    },
+    [debouncedGetAutocompletePlaceData],
+  );
+
+  const closePlaceAutocomplete = useCallback(() => {
+    latestRequestIdRef.current += 1;
+    debouncedGetAutocompletePlaceData.cancel();
+    closeDropdownAndClearResults();
+  }, [closeDropdownAndClearResults, debouncedGetAutocompletePlaceData]);
+
+  const resetPlaceAutocomplete = useCallback(() => {
+    setTokenForPlaceApi(null);
+    closePlaceAutocomplete();
+  }, [closePlaceAutocomplete]);
 
   return {
     placeAutocompleteData,
