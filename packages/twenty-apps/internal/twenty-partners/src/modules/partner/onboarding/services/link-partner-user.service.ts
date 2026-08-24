@@ -50,7 +50,8 @@ export async function linkPartnerUser(
   const companyId = detail.partner?.companyId;
   const companyWrites: Promise<unknown>[] = [];
   if (companyId) {
-    const companyOwner = (await getCompanyPartnerUser(client, companyId)).company?.partnerUserId;
+    const companyOwner = (await getCompanyPartnerUser(client, companyId)).companies?.edges?.[0]
+      ?.node?.partnerUserId;
     if (!companyOwner || companyOwner === memberId) {
       companyWrites.push(updateCompanyPartnerUser(client, companyId, memberId));
     }
@@ -74,7 +75,8 @@ export async function linkPartnerUser(
   // race (two members whose emails resolve to the same partner, created at once). This is NOT
   // atomic — the API has no conditional update — so a simultaneous claim can still interleave;
   // it only shrinks the window. Known limitation, consistent with the rest of the app.
-  const claimant = (await getPartnerOwner(client, partnerId)).partner?.partnerUserId;
+  const claimant = (await getPartnerOwner(client, partnerId)).partners?.edges?.[0]?.node
+    ?.partnerUserId;
   if (claimant && claimant !== memberId) {
     return { linked: false, reason: 'partner_already_linked_other' };
   }

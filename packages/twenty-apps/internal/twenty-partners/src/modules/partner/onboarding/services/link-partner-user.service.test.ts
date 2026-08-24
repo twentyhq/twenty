@@ -9,16 +9,28 @@ describe('linkPartnerUser', () => {
   const client = { query, mutation } as unknown as CoreApiClient;
 
   // Route each read by the shape of its selection: the cascade query asks for `applications`,
-  // getCompanyPartnerUser for `company`, getPartnerOwner for `partner` only.
+  // getCompanyPartnerUser for `companies`, getPartnerOwner for `partners` only.
   const routeQueries = (opts: {
     cascade: Record<string, unknown>;
     companyOwner?: string | null;
     ownerRecheck?: string | null;
+    companyMissing?: boolean;
+    ownerMissing?: boolean;
   }) => {
     query.mockImplementation((q: Record<string, unknown>) => {
       if ('applications' in q) return Promise.resolve(opts.cascade);
-      if ('company' in q) return Promise.resolve({ company: { id: 'company-1', partnerUserId: opts.companyOwner ?? null } });
-      if ('partner' in q) return Promise.resolve({ partner: { id: 'partner-1', partnerUserId: opts.ownerRecheck ?? null } });
+      if ('companies' in q)
+        return Promise.resolve({
+          companies: opts.companyMissing
+            ? { edges: [] }
+            : { edges: [{ node: { id: 'company-1', partnerUserId: opts.companyOwner ?? null } }] },
+        });
+      if ('partners' in q)
+        return Promise.resolve({
+          partners: opts.ownerMissing
+            ? { edges: [] }
+            : { edges: [{ node: { id: 'partner-1', partnerUserId: opts.ownerRecheck ?? null } }] },
+        });
       return Promise.resolve({});
     });
   };
@@ -166,5 +178,23 @@ describe('linkPartnerUser', () => {
     mutation.mockRejectedValueOnce(new Error('boom')); // person stamp fails, before the partner is ever touched
     await expect(linkPartnerUser(client, { partnerId: 'partner-1', memberId: 'member-1' })).rejects.toThrow(/cascade write/);
     expect(mutation).not.toHaveBeenCalledWith(expect.objectContaining({ updatePartner: expect.anything() }));
+  });
+  it('links without throwing when the company and partner rows are absent', async () => {
+    routeQueries({
+      companyMissing: true,
+      ownerMissing: true,
+      cascade: {
+        partner: { id: 'partner-1', companyId: 'company-1', partnerUserId: null, persons: { edges: [] } },
+        applications: { edges: [] },
+        partnerLinks: { edges: [] },
+        partnerServices: { edges: [] },
+        partnerContents: { edges: [] },
+      },
+    });
+
+    const result = await linkPartnerUser(client, { partnerId: 'partner-1', memberId: 'member-1' });
+
+    expect(result).toEqual({ linked: true, partnerId: 'partner-1' });
+    expect(mutation).toHaveBeenCalledWith(expect.objectContaining({ updatePartner: expect.anything() }));
   });
 });

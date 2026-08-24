@@ -32,7 +32,7 @@ export async function resolveCandidacy(
     if (after.partnerUserId) return {};
 
     const ownerRes = await getPartnerOwner(client, after.partnerId);
-    const partnerUserId = ownerRes.partner?.partnerUserId;
+    const partnerUserId = ownerRes.partners?.edges?.[0]?.node?.partnerUserId;
     if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
 
     await updateApplication(client, applicationId, { partnerUserId });

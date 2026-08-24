@@ -22,8 +22,9 @@ export const handler = async (
   if (!id) return {};
   const client = new CoreApiClient();
   const result = await findApplicationWithRelations(client, id);
+  const application = result.applications?.edges?.[0]?.node;
 
-  const name = buildApplicationName(result.application?.partner?.name, result.application?.opportunity?.name);
+  const name = buildApplicationName(application?.partner?.name, application?.opportunity?.name);
 
   await updateApplication(client, id, { name });
   return { labelled: name };
