@@ -23,6 +23,7 @@ describe('isPageLayoutSidePanelPage', () => {
   const nonPageLayoutPages: SidePanelPages[] = [
     SidePanelPages.ViewRecord,
     SidePanelPages.AskAI,
+    SidePanelPages.ComposeCalendarEvent,
     SidePanelPages.ComposeEmail,
     SidePanelPages.SearchRecords,
     SidePanelPages.ViewFrontComponent,
