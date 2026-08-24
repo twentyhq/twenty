@@ -1,0 +1,1 @@
+export { PartnerDirectory } from './PartnerDirectory';

@@ -1,4 +1,8 @@
+import { Suspense } from 'react';
+
 import { PartnerApplicationModalRoot } from '@/partner-application';
+import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partners-source';
+import { MarketplaceListSkeleton } from '@/partners-marketplace/MarketplaceListSkeleton';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -12,17 +16,21 @@ import {
 } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
 import { PartnerLeadHero } from '@/sections/partner-hero';
+import { PartnerDirectory } from '@/sections/partner-lead';
 
 export const generateMetadata = buildRouteMetadata('partners');
+
+export const dynamic = 'force-dynamic';
 
 export default async function PartnersPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
 }) {
-  const [, communityStats] = await Promise.all([
+  const [, communityStats, partners] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
+    getMarketplacePartners(),
   ]);
   const locale = resolveLocaleParam((await params).locale);
 
@@ -40,6 +48,9 @@ export default async function PartnersPage({
       <Menu communityStats={communityStats} />
       <main>
         <PartnerLeadHero />
+        <Suspense fallback={<MarketplaceListSkeleton />}>
+          <PartnerDirectory partners={partners} />
+        </Suspense>
       </main>
     </PartnerApplicationModalRoot>
   );
