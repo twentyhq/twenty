@@ -55,10 +55,10 @@ export const WidgetActionTimelineFilter = () => {
     setTimelineActivityTypeUniversalIdentifiersFilter(
       selected
         ? [
-            ...effectiveTimelineActivityTypeUniversalIdentifiersFilter,
+            ...timelineActivityTypeUniversalIdentifiersFilter,
             timelineActivityTypeUniversalIdentifier,
           ]
-        : effectiveTimelineActivityTypeUniversalIdentifiersFilter.filter(
+        : timelineActivityTypeUniversalIdentifiersFilter.filter(
             (selectedUniversalIdentifier) =>
               selectedUniversalIdentifier !==
               timelineActivityTypeUniversalIdentifier,
