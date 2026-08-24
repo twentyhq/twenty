@@ -56,6 +56,7 @@ export default definePageLayout({
 * Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode`: `VERTICAL_LIST` para páginas de registros y páginas independientes, `GRID` para paneles. En una pestaña `VERTICAL_LIST`, un solo widget se muestra a todo lo ancho y ocupa toda la pestaña; con varios widgets, se apilan como tarjetas. Una pestaña `GRID` siempre distribuye sus widgets como tarjetas en una cuadrícula de 12 columnas, sea cual sea su número, así que elige `VERTICAL_LIST` cuando quieras que un widget llene la página.
 * Establece `layoutMode` explícitamente. Omitirlo te da `VERTICAL_LIST` en una `STANDALONE_PAGE` y `GRID` en todos los demás casos, lo cual rara vez es lo que quieres en una página de registro.
 * Cada `widget` dentro de una pestaña puede renderizar un [componente de frontend](/l/es/developers/extend/apps/layout/front-components), una lista de relaciones u otros tipos de widget integrados.
+* Un widget `FRONT_COMPONENT` puede establecer `headerCommandMenuItemUniversalIdentifiers` en una matriz ordenada de identificadores universales de elementos de menú de comandos de la misma aplicación. Estas acciones aparecen como botones de icono en el encabezado de la tarjeta del widget y conservan sus comprobaciones de disponibilidad y permisos a nivel de comando. Los identificadores deben ser únicos y deben resolverse cuando se instala la aplicación.
 * `position` en las pestañas controla su orden. Usa valores más altos (p. ej., 50) para colocar pestañas personalizadas después de las integradas.
 
 ### Widgets de campos
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Cada entrada de diseño también expone sus `tabs` y sus `widgets`, para que puedas hacer referencia a cualquier nivel:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   También hay disponible un alias corto `STANDARD_PAGE_LAYOUT`:

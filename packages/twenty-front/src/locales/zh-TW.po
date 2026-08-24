@@ -995,7 +995,6 @@ msgstr "透過您偏好的 MCP 用戶端（例如 Claude、Codex 或 Cursor）�
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1065,6 +1064,7 @@ msgstr "按一下時的動作"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -1117,6 +1117,7 @@ msgstr "啟用中..."
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -1137,6 +1138,11 @@ msgstr "使用中的安裝"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Active Sync"
 msgstr "ActiveSync"
+
+#. js-lingui-id: LynXsl
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Activity visibility"
+msgstr "活動可見性"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1163,12 +1169,12 @@ msgstr "新增群組"
 #. js-lingui-id: z9ZemB
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a location"
-msgstr ""
+msgstr "新增地點"
 
 #. js-lingui-id: h7aG+Z
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a meeting link"
-msgstr ""
+msgstr "新增會議連結"
 
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -1176,9 +1182,9 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr "新增我們正在聯繫的一家公司（例如：名稱、網站、產業）。詳細資料： "
 
 #. js-lingui-id: Ad+JsP
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr ""
+msgstr "請先為此公司新增有電子郵件地址的人員"
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1212,19 +1218,19 @@ msgid "Add account"
 msgstr "新增帳戶"
 
 #. js-lingui-id: W5wF8J
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr ""
+msgstr "請先為聯絡人新增電子郵件地址"
 
 #. js-lingui-id: LVzaHu
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr ""
+msgstr "請先為此人員新增電子郵件地址"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add an event title"
-msgstr ""
+msgstr "新增活動標題"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1300,7 +1306,7 @@ msgstr "新增自訂供應商"
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
-msgstr ""
+msgstr "新增來賓詳細資料"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1315,7 +1321,6 @@ msgstr "添加字段"
 
 #. js-lingui-id: T7RGT6
 #: src/modules/activities/files/components/FilesCardContent.tsx
-#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "添加文件"
 
@@ -2525,6 +2530,7 @@ msgstr "應用程式變數"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -2836,6 +2842,11 @@ msgstr "在第 {remainingValues} 與 {0} 分鐘時"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at the top of the hour"
 msgstr "在整點"
+
+#. js-lingui-id: x9ecE4
+#: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
+msgid "Attach file"
+msgstr "附加檔案"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3453,12 +3464,12 @@ msgstr "日曆"
 #. js-lingui-id: x1X5mf
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
-msgstr ""
+msgstr "日曆存取權需要核准"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Calendar event created successfully"
-msgstr ""
+msgstr "日曆活動建立成功"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3471,9 +3482,9 @@ msgid "Calendar event not found"
 msgstr "找不到行事曆事件"
 
 #. js-lingui-id: rLQVsa
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Calendar events cannot be linked to this record type"
-msgstr ""
+msgstr "日曆活動無法連結至此記錄類型"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3864,7 +3875,7 @@ msgstr "聊天"
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
-msgstr ""
+msgstr "請檢查活動日期"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -3956,6 +3967,11 @@ msgstr "選擇按一下電子郵件地址時的動作"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Choose where records open by default. Some objects may use a workspace setting"
 msgstr "選擇記錄預設開啟的位置。某些物件可能會使用工作區設定"
+
+#. js-lingui-id: EcjwmO
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Choose whether this activity type appears in record timelines"
+msgstr "選擇是否在記錄時間軸中顯示此活動類型"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4425,10 +4441,10 @@ msgstr "完成的工作保存 {completedDuration}，失敗的工作保存 {faile
 msgid "Component name"
 msgstr "元件名稱"
 
-#. js-lingui-id: QOhkyl
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
-msgid "Compose"
-msgstr "撰寫"
+#. js-lingui-id: rYRNgS
+#: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
+msgid "Compose email"
+msgstr "撰寫電子郵件"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4475,6 +4491,11 @@ msgstr "配置"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Configuration of this command menu item"
 msgstr "此指令選單項目的設定"
+
+#. js-lingui-id: +rVpsA
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Configuration of this timeline activity type"
+msgstr "此時間軸活動類型的設定"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -4655,7 +4676,7 @@ msgstr "連接 {providerDisplayName}"
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect a calendar account"
-msgstr ""
+msgstr "連結日曆帳戶"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -4675,7 +4696,7 @@ msgstr "透過 Model Context Protocol，將 Claude 或 Cursor 等 AI 助理連�
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
-msgstr ""
+msgstr "請先連結 Google、Microsoft 或 CalDAV 並啟用日曆同步，然後再建立活動。"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5230,7 +5251,7 @@ msgstr "建立工作區"
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Create an all-day event"
-msgstr ""
+msgstr "建立全天活動"
 
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -5246,6 +5267,11 @@ msgstr "創建和配置 AI 代理"
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Create API key"
 msgstr "創建 API 密鑰"
+
+#. js-lingui-id: 0gp+cZ
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
+msgid "Create calendar event"
+msgstr "建立日曆事件"
 
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5268,15 +5294,19 @@ msgid "Create date field"
 msgstr "創建日期字段"
 
 #. js-lingui-id: PybJS2
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
-msgstr ""
+msgstr "建立活動"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create new view"
 msgstr "建立新檢視"
+
+#. js-lingui-id: BKucva
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create note"
+msgstr "創建筆記"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5300,6 +5330,12 @@ msgstr "創建記錄"
 msgid "Create record on {0} at {1}"
 msgstr "在 {0} 的 {1} 創建記錄"
 
+#. js-lingui-id: fRYkDa
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
+#: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
+msgid "Create related"
+msgstr "創建相關記錄"
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5315,6 +5351,11 @@ msgstr "創建選擇字段"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Create Select..."
 msgstr "創建選擇……"
+
+#. js-lingui-id: Z+6PPA
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create task"
+msgstr "創建任務"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -6594,6 +6635,7 @@ msgstr "各工作區的詳細資訊"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Details"
 msgstr "詳細資訊"
@@ -7281,7 +7323,7 @@ msgstr "電子郵件編輯器"
 #. js-lingui-id: 6iOHIG
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Email guests an invitation"
-msgstr ""
+msgstr "透過電子郵件向來賓傳送邀請"
 
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -7515,7 +7557,7 @@ msgstr "端點 URL"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ends"
-msgstr ""
+msgstr "結束"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8045,6 +8087,7 @@ msgstr ""
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Event"
 msgstr "事件"
 
@@ -8407,7 +8450,7 @@ msgstr "宣告所有權失敗。"
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Failed to create calendar event"
-msgstr ""
+msgstr "建立日曆活動失敗"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -8539,7 +8582,7 @@ msgstr "解析上下文失敗：{contextValue}"
 #. js-lingui-id: 8l1diy
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Failed to reconnect calendar account"
-msgstr ""
+msgstr "重新連結日曆帳戶失敗"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -8562,6 +8605,11 @@ msgstr "移除圖片失敗"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to remove provider"
 msgstr "移除供應商失敗"
+
+#. js-lingui-id: is6uow
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to reset the timeline activity type."
+msgstr "重設時間軸活動類型失敗。"
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -8687,6 +8735,11 @@ msgstr "更新寄件者名稱失敗。"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Failed to update server administrator access."
 msgstr "更新伺服器管理員存取權失敗。"
+
+#. js-lingui-id: 6TG/SY
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to update the timeline activity type."
+msgstr "更新時間軸活動類型失敗。"
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9220,6 +9273,8 @@ msgstr "法語"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
 msgstr "寄件者"
 
@@ -9238,6 +9293,7 @@ msgstr "前端元件"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Front component"
 msgstr "前端元件"
 
@@ -9621,7 +9677,7 @@ msgstr "正在分組 {objectLabel}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Guests"
-msgstr ""
+msgstr "來賓"
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10909,12 +10965,12 @@ msgstr "看板小工具"
 #. js-lingui-id: ZlHUDM
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
-msgstr ""
+msgstr "將目前記錄保留在來賓清單中，並保持啟用邀請功能，以便活動持續顯示於此記錄上。"
 
 #. js-lingui-id: WOUOYg
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep this event related"
-msgstr ""
+msgstr "保持此活動關聯"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -10966,6 +11022,7 @@ msgstr "韓語"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "標籤"
 
@@ -12504,6 +12561,7 @@ msgstr "N/A"
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -12659,7 +12717,7 @@ msgstr "新增已批准的訪問域"
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
-msgstr ""
+msgstr "新增日曆活動"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -12763,7 +12821,6 @@ msgstr "新增模型"
 
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCardContent.tsx
-#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "新筆記"
 
@@ -12813,7 +12870,6 @@ msgstr "新分頁"
 
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
-#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "新任務"
 
@@ -13465,6 +13521,7 @@ msgstr "沒有回應主體"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/views/components/ViewFieldsSearchDropdownSection.tsx
@@ -13770,6 +13827,9 @@ msgstr "未錄音"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Not set"
 msgstr "未設定"
@@ -13904,6 +13964,7 @@ msgstr "對象"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -14812,15 +14873,15 @@ msgstr "電話號碼已複製到剪貼板"
 msgid "Pick a {objectLabel} record"
 msgstr "選擇一個{objectLabel}記錄"
 
-#. js-lingui-id: 1Mj027
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Pick a connected account or set a workspace member as variable"
-msgstr "選取已連線的帳戶，或將某位工作區成員設為變數"
-
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
 msgstr "選擇檢視"
+
+#. js-lingui-id: rV71K7
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Pick an address to send from or set a workspace member as variable"
+msgstr "選取要用來寄送的地址，或將某位工作區成員設為變數"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15220,6 +15281,7 @@ msgstr "屬性"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Property"
 msgstr "屬性"
@@ -15535,7 +15597,7 @@ msgstr "需要重新連接"
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
-msgstr ""
+msgstr "重新連結此帳戶以授予建立日曆活動的權限。"
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15900,7 +15962,7 @@ msgstr "移除規則群組"
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
-msgstr ""
+msgstr "請先移除部分來賓，再建立此活動。"
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -16038,6 +16100,7 @@ msgstr "重新發送電子郵件"
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset"
 msgstr "重設"
 
@@ -16070,6 +16133,7 @@ msgstr "重設記錄頁面版面配置"
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset to default"
 msgstr "重置為默認"
 
@@ -16140,6 +16204,11 @@ msgstr "還原"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "恢復 {objectLabel}"
+
+#. js-lingui-id: ZkHcxG
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Restore the activity type settings defined by the application"
+msgstr "還原由應用程式定義的活動類型設定"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17581,6 +17650,11 @@ msgstr "顯示更多"
 msgid "Show only rows with errors"
 msgstr "僅顯示有錯誤的行"
 
+#. js-lingui-id: P1iyUf
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Show this activity type in record timelines"
+msgstr "在記錄時間軸中顯示此活動類型"
+
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu (⌘K)."
@@ -18041,7 +18115,7 @@ msgstr "自 {scheduledChangeStartDate} 起生效"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Starts"
-msgstr ""
+msgstr "開始"
 
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -18753,12 +18827,12 @@ msgstr "與您的帳戶關聯的電子郵件"
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date must be later than the start date."
-msgstr ""
+msgstr "結束日期必須晚於開始日期。"
 
 #. js-lingui-id: ThrGxX
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end time must be after the start time."
-msgstr ""
+msgstr "結束時間必須晚於開始時間。"
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -19329,6 +19403,18 @@ msgstr "時間軸"
 msgid "timeline activity type"
 msgstr "時間軸活動類型"
 
+#. js-lingui-id: soVdWA
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Timeline activity type"
+msgstr "時間軸活動類型"
+
+#. js-lingui-id: YZJ+T0
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Timeline activity types"
+msgstr "時間軸活動類型"
+
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Timeout"
@@ -19443,7 +19529,7 @@ msgstr "明天"
 #. js-lingui-id: 1NhzqT
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Too many guests"
-msgstr ""
+msgstr "來賓過多"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -19979,6 +20065,7 @@ msgstr "通用識別碼"
 #. js-lingui-id: sd9apq
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Universal identifier"
@@ -20775,6 +20862,7 @@ msgstr "已成功重新整理有效性權杖"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Value"
@@ -20885,12 +20973,12 @@ msgstr "影片"
 #. js-lingui-id: nASH9g
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video call"
-msgstr ""
+msgstr "視訊通話"
 
 #. js-lingui-id: ugEVJa
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video conferencing"
-msgstr ""
+msgstr "視訊會議"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts
@@ -21577,6 +21665,7 @@ msgstr "Workflow"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx

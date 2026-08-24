@@ -5,7 +5,10 @@ import { type MswHandler } from 'test/integration/utils/http-mock.util';
 export const MICROSOFT_TOKEN_URL =
   'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
-export const microsoftAuthHandlers = (handle: string): MswHandler[] => [
+export const microsoftAuthHandlers = (
+  handle: string,
+  aliases: string[] = [],
+): MswHandler[] => [
   http.post(MICROSOFT_TOKEN_URL, () =>
     HttpResponse.json({
       token_type: 'Bearer',
@@ -24,6 +27,10 @@ export const microsoftAuthHandlers = (handle: string): MswHandler[] => [
       surname: 'Austen',
       mail: handle,
       userPrincipalName: handle,
+      proxyAddresses: [
+        `SMTP:${handle}`,
+        ...aliases.map((alias) => `smtp:${alias}`),
+      ],
     }),
   ),
 ];

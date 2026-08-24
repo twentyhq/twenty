@@ -431,6 +431,11 @@ msgstr "A apărut o eroare la sortarea vizualizării."
 msgid "A webhook with this configuration already exists."
 msgstr "Un webhook cu această configurație există deja."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Nu a fost găsită o acțiune în antetul widgetului."
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "Execuția pasului de cod a eșuat."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Schema culorilor"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Elementul de meniu de comandă {commandMenuItemUniversalIdentifier} la care face referire antetul widgetului aparține unei alte aplicații"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Elementul de meniu de comandă {commandMenuItemUniversalIdentifier} la care face referire antetul widgetului nu a fost găsit"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7048,8 @@ msgstr "Eticheta obiectului este prea scurtă"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8310,11 @@ msgstr "Stare cerere"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Solicitat"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Intervalul de fișier solicitat nu poate fi servit."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -11810,6 +11832,21 @@ msgstr "Widgetul depășește înălțimea grilei"
 msgid "Widget extends beyond grid width"
 msgstr "Widgetul depășește lățimea grilei"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Acțiunile din antetul widgetului trebuie să fie unice"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Acțiunile din antetul widgetului trebuie să aparțină aceleiași aplicații ca widgetul"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Referințele elementelor din meniul de comenzi din antetul widgetului trebuie să fie unice"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12438,6 +12475,11 @@ msgstr "Nu puteți elimina rolul de administrator de la ultimul administrator. V
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Nu puteți revoca accesul la panoul de administrare de la ultimul administrator de server."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Nu puteți trimite de la această adresă."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

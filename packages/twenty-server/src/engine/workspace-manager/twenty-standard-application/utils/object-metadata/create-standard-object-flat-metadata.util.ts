@@ -115,6 +115,7 @@ export const createStandardObjectFlatMetadata = <
     objectPermissionIds: [],
     fieldPermissionIds: [],
     viewIds: [],
+    pageLayoutIds: [],
     createdAt: now,
     updatedAt: now,
     id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
@@ -126,6 +127,7 @@ export const createStandardObjectFlatMetadata = <
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
   };

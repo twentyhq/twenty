@@ -431,6 +431,11 @@ msgstr "Näkymän lajittelussa tapahtui virhe."
 msgid "A webhook with this configuration already exists."
 msgstr "Tämän määrityksen mukainen webhook on jo olemassa."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Widgetin otsikkotoimintoa ei löytynyt"
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "Koodivaiheen suoritus epäonnistui."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Värimaailma"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Widgetin otsikon viittaama komentovalikon kohde {commandMenuItemUniversalIdentifier} kuuluu toiseen sovellukseen"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Widgetin otsikon viittaamaa komentovalikon kohdetta {commandMenuItemUniversalIdentifier} ei löytynyt"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7048,8 @@ msgstr "Kohteen tunniste on liian lyhyt"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8310,11 @@ msgstr "Pyynnön tila"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Pyydetty"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Pyydettyä tiedostoaluetta ei voida palvella."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -11810,6 +11832,21 @@ msgstr "Widget ulottuu ruudukon korkeuden yli"
 msgid "Widget extends beyond grid width"
 msgstr "Widget ulottuu ruudukon leveyden yli"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Pienoisohjelman otsaketoimintojen on oltava yksilöllisiä."
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Pienoisohjelman otsaketoimintojen on kuuluttava samaan sovellukseen kuin pienoisohjelma."
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Pienoisohjelman otsakkeen komentovalikkokohteiden viittausten on oltava yksilöllisiä."
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12438,6 +12475,11 @@ msgstr "Et voi poistaa viimeiseltä ylläpitäjältä admin-roolia. Määritä e
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Et voi peruuttaa ylläpitopaneelin käyttöoikeutta viimeiseltä palvelinylläpitäjältä."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Et voi lähettää tästä osoitteesta."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

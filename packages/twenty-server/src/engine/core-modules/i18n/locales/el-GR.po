@@ -431,6 +431,11 @@ msgstr "Παρουσιάστηκε σφάλμα ταξινόμησης προβ�
 msgid "A webhook with this configuration already exists."
 msgstr "Υπάρχει ήδη webhook με αυτήν τη διαμόρφωση."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Δεν βρέθηκε ενέργεια κεφαλίδας γραφικού στοιχείου"
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "Η εκτέλεση βήματος κώδικα απέτυχε."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Χρωματικό θέμα"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Το στοιχείο μενού εντολών {commandMenuItemUniversalIdentifier} στο οποίο αναφέρεται η κεφαλίδα του γραφικού στοιχείου ανήκει σε άλλη εφαρμογή"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Δεν βρέθηκε το στοιχείο μενού εντολών {commandMenuItemUniversalIdentifier} στο οποίο αναφέρεται η κεφαλίδα του γραφικού στοιχείου"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7048,8 @@ msgstr "Η ετικέτα αντικειμένου είναι πολύ μικρ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8310,11 @@ msgstr "Κατάσταση αιτήματος"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Ζητήθηκε"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Δεν είναι δυνατή η εξυπηρέτηση του ζητούμενου εύρους αρχείου."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -11810,6 +11832,21 @@ msgstr "Το widget εκτείνεται πέρα από το ύψος του π
 msgid "Widget extends beyond grid width"
 msgstr "Το widget εκτείνεται πέρα από το πλάτος του πλέγματος"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Οι ενέργειες κεφαλίδας του widget πρέπει να είναι μοναδικές"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Οι ενέργειες κεφαλίδας του widget πρέπει να ανήκουν στην ίδια εφαρμογή με το widget"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Οι αναφορές στοιχείων μενού εντολών κεφαλίδας του widget πρέπει να είναι μοναδικές"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12438,6 +12475,11 @@ msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο δια
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Δεν μπορείτε να ανακαλέσετε την πρόσβαση στον πίνακα διαχείρισης από τον τελευταίο διαχειριστή διακομιστή."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Δεν μπορείτε να στείλετε από αυτήν τη διεύθυνση."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

@@ -886,6 +886,7 @@ export interface CalendarConfiguration {
 export interface FrontComponentConfiguration {
     configurationType: WidgetConfigurationType
     frontComponentId: Scalars['UUID']
+    headerCommandMenuItemUniversalIdentifiers?: Scalars['UUID'][]
     __typename: 'FrontComponentConfiguration'
 }
 
@@ -1405,7 +1406,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' | 'IS_ORM_V2_READ_PATH_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2761,6 +2762,13 @@ export interface EnqueueJobResult {
     __typename: 'EnqueueJobResult'
 }
 
+export interface EnqueueJobsResult {
+    enqueued: Scalars['Boolean']
+    logicFunctionUniversalIdentifier: Scalars['String']
+    enqueuedJobsCount: Scalars['Int']
+    __typename: 'EnqueueJobsResult'
+}
+
 export interface AppKeyValue {
     key: Scalars['String']
     value?: Scalars['JSON']
@@ -3201,7 +3209,9 @@ export interface Mutation {
     updateCalendarChannel: CalendarChannel
     setAppKeyValue: AppKeyValue
     deleteAppKeyValue: Scalars['Boolean']
+    /** @deprecated Use enqueueJobs instead. */
     enqueueJob: EnqueueJobResult
+    enqueueJobs: EnqueueJobsResult
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     retryChatMessage: SendChatMessageResult
@@ -4199,6 +4209,7 @@ export interface CalendarConfigurationGenqlSelection{
 export interface FrontComponentConfigurationGenqlSelection{
     configurationType?: boolean | number
     frontComponentId?: boolean | number
+    headerCommandMenuItemUniversalIdentifiers?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6192,6 +6203,14 @@ export interface EnqueueJobResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface EnqueueJobsResultGenqlSelection{
+    enqueued?: boolean | number
+    logicFunctionUniversalIdentifier?: boolean | number
+    enqueuedJobsCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AppKeyValueGenqlSelection{
     key?: boolean | number
     value?: boolean | number
@@ -6666,7 +6685,9 @@ export interface MutationGenqlSelection{
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
     deleteAppKeyValue?: { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} }
+    /** @deprecated Use enqueueJobs instead. */
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
+    enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
@@ -7113,6 +7134,8 @@ export interface SetAppKeyValueInput {key: Scalars['String'],value?: (Scalars['J
 
 export interface EnqueueJobInput {logicFunctionUniversalIdentifier: Scalars['String'],payload?: (Scalars['JSON'] | null),retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
 
+export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['String'],payloads: Scalars['JSON'][],retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
+
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 
 export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],selectedOptionIndices: Scalars['Int'][],freeText?: (Scalars['String'] | null)}
@@ -7139,7 +7162,7 @@ export interface EditSsoInput {id: Scalars['UUID'],status: SSOIdentityProviderSt
 
 export interface CreateCalendarEventInput {connectedAccountId: Scalars['String'],title: Scalars['String'],description?: (Scalars['String'] | null),location?: (Scalars['String'] | null),startsAt: Scalars['String'],endsAt: Scalars['String'],isFullDay?: (Scalars['Boolean'] | null),timeZone?: (Scalars['String'] | null),attendees?: (Scalars['String'] | null),sendInvitations?: (Scalars['Boolean'] | null),addConferencing?: (Scalars['Boolean'] | null)}
 
-export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scalars['String'],cc?: (Scalars['String'] | null),bcc?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],inReplyTo?: (Scalars['String'] | null),draftMessageId?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null)}
+export interface SendEmailInput {connectedAccountId: Scalars['String'],fromHandle?: (Scalars['String'] | null),to: Scalars['String'],cc?: (Scalars['String'] | null),bcc?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],inReplyTo?: (Scalars['String'] | null),draftMessageId?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null)}
 
 export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['String']}
 
@@ -9249,6 +9272,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const EnqueueJobsResult_possibleTypes: string[] = ['EnqueueJobsResult']
+    export const isEnqueueJobsResult = (obj?: { __typename?: any } | null): obj is EnqueueJobsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobsResult"')
+      return EnqueueJobsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AppKeyValue_possibleTypes: string[] = ['AppKeyValue']
     export const isAppKeyValue = (obj?: { __typename?: any } | null): obj is AppKeyValue => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
@@ -9835,8 +9866,7 @@ export const enumFeatureFlagKey = {
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const,
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
-   IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const,
-   IS_ORM_V2_READ_PATH_ENABLED: 'IS_ORM_V2_READ_PATH_ENABLED' as const
+   IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

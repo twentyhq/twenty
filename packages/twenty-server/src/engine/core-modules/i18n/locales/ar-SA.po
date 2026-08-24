@@ -431,6 +431,11 @@ msgstr "حدث خطأ في ترتيب العرض."
 msgid "A webhook with this configuration already exists."
 msgstr "يوجد خطاف ويب بهذا التكوين بالفعل."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "لم يتم العثور على إجراء رأس عنصر واجهة المستخدم"
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "فشل تنفيذ خطوة الشيفرة."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "نظام الألوان"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "ينتمي عنصر قائمة الأوامر {commandMenuItemUniversalIdentifier} المشار إليه بواسطة رأس عنصر واجهة المستخدم إلى تطبيق آخر"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "لم يتم العثور على عنصر قائمة الأوامر {commandMenuItemUniversalIdentifier} المشار إليه بواسطة رأس عنصر واجهة المستخدم"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7048,8 @@ msgstr "التسمية قصيرة جدًا"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8310,11 @@ msgstr "حالة الطلب"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "تم طلبه"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "لا يمكن تقديم النطاق المطلوب من الملف."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -11810,6 +11832,21 @@ msgstr "الأداة تتجاوز ارتفاع الشبكة"
 msgid "Widget extends beyond grid width"
 msgstr "الأداة تتجاوز عرض الشبكة"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "يجب أن تكون إجراءات رأس الأداة فريدة"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "يجب أن تنتمي إجراءات رأس الأداة إلى التطبيق نفسه الذي تنتمي إليه الأداة"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "يجب أن تكون مراجع عناصر قائمة أوامر رأس الأداة فريدة"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12438,6 +12475,11 @@ msgstr "لا يمكنك إزالة دور المسؤول من المسؤول ا�
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "لا يمكنك إلغاء صلاحية الوصول إلى لوحة الإدارة من آخر مسؤول خادم."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "لا يمكنك الإرسال من هذا العنوان."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

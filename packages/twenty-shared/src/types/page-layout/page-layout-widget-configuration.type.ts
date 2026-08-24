@@ -133,6 +133,7 @@ export type IframeConfiguration = {
 export type FrontComponentConfiguration = {
   configurationType: 'FRONT_COMPONENT';
   frontComponentId: SerializedRelation;
+  headerCommandMenuItemUniversalIdentifiers?: string[];
 };
 
 export type TimelineConfiguration = {

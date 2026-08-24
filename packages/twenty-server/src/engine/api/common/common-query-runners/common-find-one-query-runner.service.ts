@@ -42,7 +42,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     const {
       authContext,
       rolePermissionConfig,
-      workspaceDataSource,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -104,10 +103,9 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
+        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 

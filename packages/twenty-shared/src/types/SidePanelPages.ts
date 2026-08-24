@@ -28,6 +28,7 @@ export enum SidePanelPages {
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
   ComposeCalendarEvent = 'compose-calendar-event',
+  CreateRelatedRecord = 'create-related-record',
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
   SettingsMetadataTranslations = 'settings-metadata-translations',

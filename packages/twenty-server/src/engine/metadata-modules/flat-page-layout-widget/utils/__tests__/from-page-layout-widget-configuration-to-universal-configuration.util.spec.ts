@@ -50,6 +50,31 @@ const getUniversalRecordFilters = (
 };
 
 describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
+  it('should preserve front component widget header command menu item references', () => {
+    const headerCommandMenuItemUniversalIdentifiers = [
+      '30303030-3333-4333-8333-000000000003',
+    ];
+
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+          frontComponentId: '11111111-4444-4444-8444-000000000004',
+          headerCommandMenuItemUniversalIdentifiers,
+        },
+        fieldMetadataUniversalIdentifierById: {},
+        frontComponentUniversalIdentifierById: {
+          '11111111-4444-4444-8444-000000000004':
+            '20202020-4444-4444-8444-000000000004',
+        },
+      }),
+    ).toEqual({
+      configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+      frontComponentUniversalIdentifier: '20202020-4444-4444-8444-000000000004',
+      headerCommandMenuItemUniversalIdentifiers,
+    });
+  });
+
   it('should convert the relation target field id of a relation-traversal chart filter to its universal identifier', () => {
     const recordFilters = getUniversalRecordFilters([
       {

@@ -995,7 +995,6 @@ msgstr "Αποκτήστε πρόσβαση στα δεδομένα του χώ�
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1065,6 +1064,7 @@ msgstr "Ενέργεια κατά το κλικ"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -1117,6 +1117,7 @@ msgstr "Ενεργοποίηση..."
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -1137,6 +1138,11 @@ msgstr "Ενεργές εγκαταστάσεις"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Active Sync"
 msgstr "Ενεργός συγχρονισμός"
+
+#. js-lingui-id: LynXsl
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Activity visibility"
+msgstr "Ορατότητα δραστηριότητας"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1163,12 +1169,12 @@ msgstr "Προσθήκη ομάδας"
 #. js-lingui-id: z9ZemB
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a location"
-msgstr ""
+msgstr "Προσθήκη τοποθεσίας"
 
 #. js-lingui-id: h7aG+Z
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add a meeting link"
-msgstr ""
+msgstr "Προσθήκη συνδέσμου συνάντησης"
 
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -1176,9 +1182,9 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr "Προσθέστε μια νέα εταιρεία με την οποία είμαστε σε επικοινωνία (π.χ. όνομα, ιστότοπος, κλάδος). Λεπτομέρειες: "
 
 #. js-lingui-id: Ad+JsP
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr ""
+msgstr "Προσθέστε πρώτα ένα άτομο με διεύθυνση email σε αυτή την εταιρεία."
 
 #. js-lingui-id: nGv1DN
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -1212,19 +1218,19 @@ msgid "Add account"
 msgstr "Προσθήκη λογαριασμού"
 
 #. js-lingui-id: W5wF8J
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr ""
+msgstr "Προσθέστε πρώτα ένα email στο σημείο επαφής."
 
 #. js-lingui-id: LVzaHu
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr ""
+msgstr "Προσθέστε πρώτα ένα email σε αυτό το άτομο."
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add an event title"
-msgstr ""
+msgstr "Προσθέστε τίτλο συμβάντος"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -1300,7 +1306,7 @@ msgstr "Προσθήκη Προσαρμοσμένου Παρόχου"
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
-msgstr ""
+msgstr "Προσθέστε λεπτομέρειες για τους καλεσμένους"
 
 #. js-lingui-id: WT0Ie4
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
@@ -1315,7 +1321,6 @@ msgstr "Προσθήκη Πεδίου"
 
 #. js-lingui-id: T7RGT6
 #: src/modules/activities/files/components/FilesCardContent.tsx
-#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Προσθήκη αρχείου"
 
@@ -2525,6 +2530,7 @@ msgstr "μεταβλητή εφαρμογής"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -2836,6 +2842,11 @@ msgstr "στις {remainingValues} και {0}"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at the top of the hour"
 msgstr "στην αρχή της ώρας"
+
+#. js-lingui-id: x9ecE4
+#: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
+msgid "Attach file"
+msgstr "Επισύναψη αρχείου"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3453,12 +3464,12 @@ msgstr "Ημερολόγιο"
 #. js-lingui-id: x1X5mf
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Calendar access needs approval"
-msgstr ""
+msgstr "Η πρόσβαση στο ημερολόγιο χρειάζεται έγκριση"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Calendar event created successfully"
-msgstr ""
+msgstr "Το συμβάν ημερολογίου δημιουργήθηκε με επιτυχία"
 
 #. js-lingui-id: l7HQ8A
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -3471,9 +3482,9 @@ msgid "Calendar event not found"
 msgstr "Το συμβάν ημερολογίου δεν βρέθηκε"
 
 #. js-lingui-id: rLQVsa
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Calendar events cannot be linked to this record type"
-msgstr ""
+msgstr "Τα συμβάντα ημερολογίου δεν μπορούν να συνδεθούν με αυτόν τον τύπο εγγραφής"
 
 #. js-lingui-id: wLtx+m
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -3864,7 +3875,7 @@ msgstr "Συνομιλίες"
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
-msgstr ""
+msgstr "Ελέγξτε τις ημερομηνίες του συμβάντος"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
@@ -3956,6 +3967,11 @@ msgstr "Επιλέξτε τι συμβαίνει όταν κάνετε κλικ 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Choose where records open by default. Some objects may use a workspace setting"
 msgstr "Επιλέξτε πού θα ανοίγουν από προεπιλογή οι εγγραφές. Ορισμένα αντικείμενα ενδέχεται να χρησιμοποιούν μια ρύθμιση χώρου εργασίας"
+
+#. js-lingui-id: EcjwmO
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Choose whether this activity type appears in record timelines"
+msgstr "Επιλέξτε αν αυτός ο τύπος δραστηριότητας εμφανίζεται στα χρονολόγια εγγραφών"
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4425,10 +4441,10 @@ msgstr "Οι ολοκληρωμένες εργασίες διατηρούντα�
 msgid "Component name"
 msgstr "Όνομα στοιχείου"
 
-#. js-lingui-id: QOhkyl
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
-msgid "Compose"
-msgstr "Σύνταξη"
+#. js-lingui-id: rYRNgS
+#: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
+msgid "Compose email"
+msgstr "Σύνταξη email"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4475,6 +4491,11 @@ msgstr "Διαμόρφωση"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Configuration of this command menu item"
 msgstr "Διαμόρφωση αυτού του στοιχείου μενού εντολών"
+
+#. js-lingui-id: +rVpsA
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Configuration of this timeline activity type"
+msgstr "Διαμόρφωση αυτού του τύπου δραστηριότητας χρονοδιαγράμματος"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -4655,7 +4676,7 @@ msgstr "Σύνδεση με {providerDisplayName}"
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect a calendar account"
-msgstr ""
+msgstr "Συνδέστε έναν λογαριασμό ημερολογίου"
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -4675,7 +4696,7 @@ msgstr "Συνδέστε βοηθούς ΤΝ όπως το Claude ή το Cursor
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
-msgstr ""
+msgstr "Συνδέστε Google, Microsoft ή CalDAV και ενεργοποιήστε τον συγχρονισμό ημερολογίου πριν δημιουργήσετε ένα συμβάν."
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -5230,7 +5251,7 @@ msgstr "Δημιουργία Χώρου Εργασίας"
 #. js-lingui-id: dpwEnu
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Create an all-day event"
-msgstr ""
+msgstr "Δημιουργήστε ένα ολοήμερο συμβάν"
 
 #. js-lingui-id: /WlFSf
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -5246,6 +5267,11 @@ msgstr "Δημιουργία και διαμόρφωση πρακτόρων AI"
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Create API key"
 msgstr "Δημιουργήστε μια κλειδί API"
+
+#. js-lingui-id: 0gp+cZ
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
+msgid "Create calendar event"
+msgstr "Δημιουργία συμβάντος ημερολογίου"
 
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5268,15 +5294,19 @@ msgid "Create date field"
 msgstr "Δημιουργία πεδίου ημερομηνίας"
 
 #. js-lingui-id: PybJS2
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
-msgstr ""
+msgstr "Δημιουργία συμβάντος"
 
 #. js-lingui-id: vY2Gfm
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create new view"
 msgstr "Δημιουργία νέας προβολής"
+
+#. js-lingui-id: BKucva
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create note"
+msgstr "Δημιουργία σημείωσης"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5300,6 +5330,12 @@ msgstr "Δημιουργία εγγραφής"
 msgid "Create record on {0} at {1}"
 msgstr "Δημιουργία εγγραφής την {0} στις {1}"
 
+#. js-lingui-id: fRYkDa
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
+#: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
+msgid "Create related"
+msgstr "Δημιουργία σχετικής εγγραφής"
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5315,6 +5351,11 @@ msgstr "Δημιουργία πεδίου επιλογής"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Create Select..."
 msgstr "Δημιουργήστε επιλογή..."
+
+#. js-lingui-id: Z+6PPA
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create task"
+msgstr "Δημιουργία εργασίας"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -6594,6 +6635,7 @@ msgstr "Λεπτομέρειες ανά χώρο εργασίας"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Details"
 msgstr "Λεπτομέρειες"
@@ -7281,7 +7323,7 @@ msgstr "Επεξεργαστής Email"
 #. js-lingui-id: 6iOHIG
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Email guests an invitation"
-msgstr ""
+msgstr "Στείλτε στους καλεσμένους μια πρόσκληση μέσω email"
 
 #. js-lingui-id: ZsZeV2
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -7515,7 +7557,7 @@ msgstr "URL τελικού σημείου"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ends"
-msgstr ""
+msgstr "Λήγει"
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -8045,6 +8087,7 @@ msgstr ""
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Event"
 msgstr "Συμβάν"
 
@@ -8407,7 +8450,7 @@ msgstr "Αποτυχία διεκδίκησης κυριότητας."
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
 msgid "Failed to create calendar event"
-msgstr ""
+msgstr "Απέτυχε η δημιουργία του συμβάντος ημερολογίου"
 
 #. js-lingui-id: +xlTfK
 #: src/modules/object-record/record-list/components/RecordListAddNew.tsx
@@ -8539,7 +8582,7 @@ msgstr "Αποτυχία ανάλυσης πλαισίου: {contextValue}"
 #. js-lingui-id: 8l1diy
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Failed to reconnect calendar account"
-msgstr ""
+msgstr "Απέτυχε η επανασύνδεση του λογαριασμού ημερολογίου"
 
 #. js-lingui-id: 3m7+J/
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -8562,6 +8605,11 @@ msgstr "Αποτυχία αφαίρεσης εικόνας"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to remove provider"
 msgstr "Αποτυχία αφαίρεσης παρόχου"
+
+#. js-lingui-id: is6uow
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to reset the timeline activity type."
+msgstr "Δεν ήταν δυνατή η επαναφορά του τύπου δραστηριότητας χρονοδιαγράμματος."
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -8687,6 +8735,11 @@ msgstr "Αποτυχία ενημέρωσης ονόματος αποστολέ�
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Failed to update server administrator access."
 msgstr "Αποτυχία ενημέρωσης της πρόσβασης διαχειριστή διακομιστή."
+
+#. js-lingui-id: 6TG/SY
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to update the timeline activity type."
+msgstr "Δεν ήταν δυνατή η ενημέρωση του τύπου δραστηριότητας χρονοδιαγράμματος."
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9220,6 +9273,8 @@ msgstr "Γαλλικά"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
 msgstr "Από"
 
@@ -9238,6 +9293,7 @@ msgstr "στοιχείο διεπαφής χρήστη"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Front component"
 msgstr "Στοιχείο διεπαφής χρήστη"
 
@@ -9621,7 +9677,7 @@ msgstr "Γίνεται ομαδοποίηση {objectLabel}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Guests"
-msgstr ""
+msgstr "Καλεσμένοι"
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10932,12 +10988,12 @@ msgstr "Widget Kanban"
 #. js-lingui-id: ZlHUDM
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep the current record in the guest list and leave invitations on so the event remains visible on this record."
-msgstr ""
+msgstr "Διατηρήστε την τρέχουσα εγγραφή στη λίστα καλεσμένων και αφήστε ενεργοποιημένες τις προσκλήσεις, ώστε το συμβάν να παραμένει ορατό σε αυτή την εγγραφή."
 
 #. js-lingui-id: WOUOYg
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Keep this event related"
-msgstr ""
+msgstr "Διατηρήστε αυτό το συμβάν συσχετισμένο"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -10989,6 +11045,7 @@ msgstr "Κορεατικά"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "Ετικέτα"
 
@@ -12527,6 +12584,7 @@ msgstr "N/A"
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -12682,7 +12740,7 @@ msgstr "Νέος Εγκεκριμένος Τομέας Πρόσβασης"
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
-msgstr ""
+msgstr "Νέο συμβάν ημερολογίου"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
@@ -12786,7 +12844,6 @@ msgstr "Νέο μοντέλο"
 
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCardContent.tsx
-#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Νέα σημείωση"
 
@@ -12836,7 +12893,6 @@ msgstr "Νέα καρτέλα"
 
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
-#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Νέα εργασία"
 
@@ -13488,6 +13544,7 @@ msgstr "Χωρίς σώμα απόκρισης"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/views/components/ViewFieldsSearchDropdownSection.tsx
@@ -13793,6 +13850,9 @@ msgstr "Δεν καταγράφηκε"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Not set"
 msgstr "Δεν έχει οριστεί"
@@ -13927,6 +13987,7 @@ msgstr "αντικείμενο"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -14835,15 +14896,15 @@ msgstr "Ο αριθμός τηλεφώνου αντιγράφηκε στο πρ�
 msgid "Pick a {objectLabel} record"
 msgstr "Επιλέξτε μια καταγραφή {objectLabel}"
 
-#. js-lingui-id: 1Mj027
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Pick a connected account or set a workspace member as variable"
-msgstr "Επιλέξτε έναν συνδεδεμένο λογαριασμό ή ορίστε μέλος του χώρου εργασίας ως μεταβλητή"
-
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
 msgstr "Επιλέξτε μια προβολή"
+
+#. js-lingui-id: rV71K7
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Pick an address to send from or set a workspace member as variable"
+msgstr "Επιλέξτε μια διεύθυνση αποστολής ή ορίστε μέλος του χώρου εργασίας ως μεταβλητή"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -15243,6 +15304,7 @@ msgstr "Ιδιότητες"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Property"
 msgstr "Ιδιότητα"
@@ -15558,7 +15620,7 @@ msgstr "Απαιτείται επανασύνδεση"
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
-msgstr ""
+msgstr "Επανασυνδέστε αυτόν τον λογαριασμό για να χορηγήσετε άδεια δημιουργίας συμβάντων ημερολογίου."
 
 #. js-lingui-id: hVS0gK
 #: src/modules/activities/timeline-activities/rows/generic/components/EventRowGenericLinked.tsx
@@ -15923,7 +15985,7 @@ msgstr "Αφαίρεση ομάδας κανόνων"
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
-msgstr ""
+msgstr "Αφαιρέστε μερικούς καλεσμένους πριν δημιουργήσετε αυτό το συμβάν."
 
 #. js-lingui-id: NRCCKG
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
@@ -16061,6 +16123,7 @@ msgstr "Επαναποστολή email"
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset"
 msgstr "Επαναφορά"
 
@@ -16093,6 +16156,7 @@ msgstr "Επαναφορά διάταξης σελίδας εγγραφής"
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset to default"
 msgstr "Επαναφορά στις Προεπιλογές"
 
@@ -16163,6 +16227,11 @@ msgstr "Επαναφορά"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "Επαναφορά {objectLabel}"
+
+#. js-lingui-id: ZkHcxG
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Restore the activity type settings defined by the application"
+msgstr "Επαναφορά των ρυθμίσεων τύπου δραστηριότητας που ορίζονται από την εφαρμογή"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17606,6 +17675,11 @@ msgstr "Εμφάνιση περισσότερων"
 msgid "Show only rows with errors"
 msgstr "Εμφάνιση μόνο γραμμών με λάθη"
 
+#. js-lingui-id: P1iyUf
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Show this activity type in record timelines"
+msgstr "Εμφάνιση αυτού του τύπου δραστηριότητας στα χρονοδιαγράμματα εγγραφών"
+
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu (⌘K)."
@@ -18066,7 +18140,7 @@ msgstr "Έναρξη {scheduledChangeStartDate}"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Starts"
-msgstr ""
+msgstr "Ξεκινά"
 
 #. js-lingui-id: ETsH83
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -18808,12 +18882,12 @@ msgstr "Το email που συνδέεται με τον λογαριασμό σ
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date must be later than the start date."
-msgstr ""
+msgstr "Η ημερομηνία λήξης πρέπει να είναι μετά την ημερομηνία έναρξης."
 
 #. js-lingui-id: ThrGxX
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end time must be after the start time."
-msgstr ""
+msgstr "Η ώρα λήξης πρέπει να είναι μετά την ώρα έναρξης."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -19386,6 +19460,18 @@ msgstr "Χρονολόγιο"
 msgid "timeline activity type"
 msgstr "τύπος δραστηριότητας χρονοδιαγράμματος"
 
+#. js-lingui-id: soVdWA
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Timeline activity type"
+msgstr "Τύπος δραστηριότητας χρονοδιαγράμματος"
+
+#. js-lingui-id: YZJ+T0
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Timeline activity types"
+msgstr "Τύποι δραστηριοτήτων χρονοδιαγράμματος"
+
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Timeout"
@@ -19500,7 +19586,7 @@ msgstr "Αύριο"
 #. js-lingui-id: 1NhzqT
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Too many guests"
-msgstr ""
+msgstr "Πάρα πολλοί καλεσμένοι"
 
 #. js-lingui-id: x+3/CM
 #. placeholder {0}: composerState.recipientCount
@@ -20036,6 +20122,7 @@ msgstr "Καθολικό αναγνωριστικό"
 #. js-lingui-id: sd9apq
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Universal identifier"
@@ -20832,6 +20919,7 @@ msgstr "Το διακριτικό εγκυρότητας ανανεώθηκε μ
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Value"
@@ -20942,12 +21030,12 @@ msgstr "Βίντεο"
 #. js-lingui-id: nASH9g
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video call"
-msgstr ""
+msgstr "Βιντεοκλήση"
 
 #. js-lingui-id: ugEVJa
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Video conferencing"
-msgstr ""
+msgstr "Τηλεδιάσκεψη"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts
@@ -21634,6 +21722,7 @@ msgstr "Ροές Εργασίας"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
