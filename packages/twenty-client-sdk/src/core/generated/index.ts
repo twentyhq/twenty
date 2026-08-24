@@ -2,14 +2,16 @@
 // is installed or sync on a Twenty instance.
 // Do not edit manually.
 
-// Types only the options the stub can faithfully mirror; other generated
-// client options pass through untyped so pre- and post-generation
-// typechecking cannot disagree on them.
+// Mirrors TwentyGeneratedClientOptions from generate/twenty-client-template.ts
+// so this pre-generation stub and the post-generation client agree on typecheck.
 type CoreApiClientStubOptions = {
   url?: string;
   headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
+  fetcher?: (operation: unknown) => Promise<unknown>;
+  fetch?: typeof globalThis.fetch;
+  batch?: unknown;
   runAs?: 'user' | 'application';
-} & Record<string, unknown>;
+};
 
 export class CoreApiClient {
   query: any;
