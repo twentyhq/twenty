@@ -1,5 +1,7 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { SettingsPath } from 'twenty-shared/types';
@@ -8,44 +10,71 @@ import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+const UNRESOLVED_FIELD_METADATA_ICON = 'IconTag';
+
 type FieldMetadataLinkProps = {
-  fieldMetadataItemId: string;
-  displayName: string;
+  reference: Extract<
+    ChatReferenceIdentity,
+    { kind: 'field' | 'legacyFieldById' }
+  > & { displayName: string };
 };
 
-export const FieldMetadataLink = ({
-  fieldMetadataItemId,
-  displayName,
-}: FieldMetadataLinkProps) => {
+export const FieldMetadataLink = ({ reference }: FieldMetadataLinkProps) => {
+  const { displayName } = reference;
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const { foundFieldMetadataItem, foundObjectMetadataItem } =
-    useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
-      fieldMetadataItemId,
-    });
+  const {
+    foundFieldMetadataItem: fieldMetadataItemFoundById,
+    foundObjectMetadataItem: objectMetadataItemFoundById,
+  } = useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
+    fieldMetadataItemId:
+      reference.kind === 'legacyFieldById' ? reference.fieldMetadataItemId : '',
+  });
+
+  const objectMetadataItemFoundByName = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName:
+        reference.kind === 'field' ? reference.objectNameSingular : '',
+      objectNameType: 'singular',
+    },
+  );
 
   const hasDataModelPermission = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
   );
 
-  if (
-    !isDefined(foundFieldMetadataItem) ||
-    !isDefined(foundObjectMetadataItem)
-  ) {
+  const objectMetadataItem =
+    reference.kind === 'field'
+      ? objectMetadataItemFoundByName
+      : objectMetadataItemFoundById;
+
+  const fieldMetadataItem =
+    reference.kind === 'field'
+      ? objectMetadataItemFoundByName?.fields.find(
+          (field) => field.name === reference.fieldName,
+        )
+      : fieldMetadataItemFoundById;
+
+  if (reference.kind === 'legacyFieldById' && !isDefined(fieldMetadataItem)) {
     return <span>{displayName}</span>;
   }
 
-  const Icon = getIcon(foundFieldMetadataItem.icon);
+  const Icon = getIcon(
+    fieldMetadataItem?.icon ?? UNRESOLVED_FIELD_METADATA_ICON,
+  );
 
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
       to={
+        isDefined(objectMetadataItem) &&
+        isDefined(fieldMetadataItem) &&
         hasDataModelPermission
           ? getSettingsPath(SettingsPath.ObjectFieldEdit, {
-              objectNamePlural: foundObjectMetadataItem.namePlural,
-              fieldName: foundFieldMetadataItem.name,
+              objectNamePlural: objectMetadataItem.namePlural,
+              fieldName: fieldMetadataItem.name,
             })
           : undefined
       }

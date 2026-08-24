@@ -45,8 +45,11 @@ const renderFieldMetadataLink = ({
   return render(
     <MemoryRouter>
       <FieldMetadataLink
-        fieldMetadataItemId={fieldMetadataItemId}
-        displayName={displayName}
+        reference={{
+          kind: 'legacyFieldById',
+          fieldMetadataItemId,
+          displayName,
+        }}
       />
     </MemoryRouter>,
     { wrapper: Wrapper },

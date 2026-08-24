@@ -62,14 +62,27 @@ describe('findChatReferences', () => {
     ]);
   });
 
-  it('should find a field reference instead of reading it as a record', () => {
+  it('should find a field reference addressed by object and field name', () => {
+    expect(findChatReferences('The [[field:person:role:Role]] field')).toEqual([
+      {
+        kind: 'field',
+        fullMatch: '[[field:person:role:Role]]',
+        index: 4,
+        objectNameSingular: 'person',
+        fieldName: 'role',
+        displayName: 'Role',
+      },
+    ]);
+  });
+
+  it('should read a field reference addressed by id as the legacy kind', () => {
     expect(
       findChatReferences(
         'The [[field:33333333-3333-3333-3333-333333333333:Stage]] field',
       ),
     ).toEqual([
       {
-        kind: 'field',
+        kind: 'legacyFieldById',
         fullMatch: '[[field:33333333-3333-3333-3333-333333333333:Stage]]',
         index: 4,
         fieldMetadataItemId: '33333333-3333-3333-3333-333333333333',
@@ -147,7 +160,7 @@ describe('findChatReferences', () => {
       'view',
       'object',
       'record',
-      'field',
+      'legacyFieldById',
     ]);
     expect(references.map((reference) => reference.displayName)).toEqual([
       'Pipeline',

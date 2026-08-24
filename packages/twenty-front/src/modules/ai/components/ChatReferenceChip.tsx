@@ -27,12 +27,8 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
         />
       );
     case 'field':
-      return (
-        <FieldMetadataLink
-          fieldMetadataItemId={reference.fieldMetadataItemId}
-          displayName={reference.displayName}
-        />
-      );
+    case 'legacyFieldById':
+      return <FieldMetadataLink reference={reference} />;
     case 'view':
       return (
         <ViewLink

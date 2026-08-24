@@ -7,8 +7,11 @@ export const getChatReferenceMatchFromRegexMatch = (
   const {
     objectNameSingular,
     objectLabel,
-    fieldMetadataItemId,
+    fieldObjectNameSingular,
+    fieldName,
     fieldLabel,
+    legacyFieldMetadataItemId,
+    legacyFieldLabel,
     viewId,
     viewLabel,
     recordObjectNameSingular,
@@ -27,12 +30,22 @@ export const getChatReferenceMatchFromRegexMatch = (
     };
   }
 
-  if (isDefined(fieldMetadataItemId)) {
+  if (isDefined(fieldObjectNameSingular)) {
     return {
       ...position,
       kind: 'field',
-      fieldMetadataItemId,
+      objectNameSingular: fieldObjectNameSingular,
+      fieldName,
       displayName: fieldLabel,
+    };
+  }
+
+  if (isDefined(legacyFieldMetadataItemId)) {
+    return {
+      ...position,
+      kind: 'legacyFieldById',
+      fieldMetadataItemId: legacyFieldMetadataItemId,
+      displayName: legacyFieldLabel,
     };
   }
 
