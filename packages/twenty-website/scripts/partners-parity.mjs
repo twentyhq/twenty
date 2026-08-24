@@ -255,4 +255,45 @@ assert(
   'missing',
 );
 
+// The lead page's directory zone is an anchor target two files depend on: the
+// hero CTA jumps to it and a partner profile's back link returns to it.
+const leadPage = await openPage(browser, `${NEW_BASE}/partners`, {
+  viewport: { width: 1440, height: 1000 },
+  settleMs: 500,
+});
+const directoryAnchor = await leadPage.evaluate(() => {
+  const zone = document.getElementById('partner-directory');
+  const cta = document.querySelector('main a[href="#partner-directory"]');
+  return { hasCta: cta !== null, hasZone: zone !== null };
+});
+await leadPage.close();
+
+assert(
+  'partners directory anchor target',
+  directoryAnchor.hasZone,
+  `#partner-directory present=${directoryAnchor.hasZone}`,
+);
+assert(
+  'partners hero links to the directory anchor',
+  directoryAnchor.hasCta,
+  `anchor cta present=${directoryAnchor.hasCta}`,
+);
+
+// /partners/list folded into the lead page; both the bare and the
+// locale-prefixed URL were in the sitemap, so both must keep their 308.
+const legacyListPaths = ['/partners/list', '/fr/partners/list'];
+const legacyListResponses = await Promise.all(
+  legacyListPaths.map((path) =>
+    fetch(`${NEW_BASE}${path}`, { redirect: 'manual' }),
+  ),
+);
+legacyListResponses.forEach((response, index) => {
+  const location = response.headers.get('location') ?? '';
+  assert(
+    `${legacyListPaths[index]} redirects to the lead page`,
+    response.status === 308 && location.endsWith('/partners'),
+    `${response.status} -> ${location}`,
+  );
+});
+
 await finish(browser);

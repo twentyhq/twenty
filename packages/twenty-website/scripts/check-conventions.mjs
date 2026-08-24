@@ -225,6 +225,7 @@ function walk(directory) {
       (relativePath.startsWith('sections' + path.sep) ||
         relativePath.startsWith('case-studies' + path.sep) ||
         relativePath.startsWith('app-preview' + path.sep) ||
+        relativePath.startsWith('client-brief' + path.sep) ||
         relativePath.startsWith('contact-cal' + path.sep) ||
         relativePath.startsWith('partner-application' + path.sep) ||
         relativePath.startsWith('partners-marketplace' + path.sep) ||

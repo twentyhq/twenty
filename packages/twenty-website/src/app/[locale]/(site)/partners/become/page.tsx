@@ -45,10 +45,10 @@ export default async function BecomePartnerPage({
       />
       <Menu communityStats={communityStats} />
       <main>
+        <PartnerHero />
         {/* TrustedBy + CaseStudyPromo form one continuous frame: the promo
             `connectsUp` into the band, so this adjacency is load-bearing —
             don't separate or reorder them. */}
-        <PartnerHero />
         <TrustedBy />
         <CaseStudyPromo />
         <PartnerTestimonials />

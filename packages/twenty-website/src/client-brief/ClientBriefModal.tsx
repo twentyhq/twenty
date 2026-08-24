@@ -49,7 +49,7 @@ export function ClientBriefModal({
   return (
     <Modal ariaLabel={i18n._(msg`Get matched`)} onClose={onClose} open={open}>
       <WizardScope data-scheme="dark">
-        <ClientBriefWizard />
+        <ClientBriefWizard onSuccess={onClose} />
       </WizardScope>
     </Modal>
   );

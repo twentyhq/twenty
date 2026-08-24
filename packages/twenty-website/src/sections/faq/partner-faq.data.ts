@@ -25,6 +25,6 @@ export const PARTNER_FAQ_QUESTIONS: readonly FaqQuestion[] = [
   },
   {
     question: msg`How do I become a partner?`,
-    answer: msg`Apply through the become-a-partner application below.`,
+    answer: msg`Apply through the Twenty partner program page at twenty.com/partners/become.`,
   },
 ];

@@ -1,6 +1,6 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
+import { msg, plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
@@ -92,6 +92,15 @@ export function FilterBar({
     })),
   ];
 
+  const resultCountLabel = hasAnyFilter
+    ? msg`Showing ${visibleCount} of ${totalCount} partners`
+    : totalCount === 0
+      ? msg`No partners to show right now`
+      : msg`${plural(totalCount, {
+          one: '# certified partner ready to take on your project',
+          other: '# certified partners ready to take on your project',
+        })}`;
+
   return (
     <BarRoot aria-label={i18n._(msg`Filter partners`)} role="search">
       <DropdownRow>
@@ -119,15 +128,7 @@ export function FilterBar({
       </DropdownRow>
       {hasAnyFilter && <ActiveFilterPills pills={pills} />}
       <Footer>
-        <ResultCount aria-live="polite">
-          {hasAnyFilter
-            ? i18n._(msg`Showing ${visibleCount} of ${totalCount} partners`)
-            : totalCount === 0
-              ? i18n._(msg`No partners to show right now`)
-              : i18n._(
-                  msg`${totalCount} certified partners ready to take on your project`,
-                )}
-        </ResultCount>
+        <ResultCount aria-live="polite">{i18n._(resultCountLabel)}</ResultCount>
         {hasAnyFilter && (
           <Button
             label={i18n._(msg`Clear filters`)}
