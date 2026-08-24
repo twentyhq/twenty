@@ -111,6 +111,7 @@ export const SettingsApplicationTimelineActivityTypes = () => {
             timelineActivityTypes={filteredTimelineActivityTypes}
             canReset={
               isNonEmptyString(applicationId) &&
+              isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
               !isWorkspaceCustomApplication(
                 { id: applicationId },
                 currentWorkspace,
