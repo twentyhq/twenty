@@ -79,7 +79,12 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     isActive: true,
-    isSystemSideEffect: false,
+    // Standard action commands are engine-authored singletons: the flag
+    // excludes them from manifest deletion inference and lets the validator
+    // reject an app manifest squatting one of their universal identifiers.
+    // Retiring one therefore needs an explicit deletion migration: dropping it
+    // from STANDARD_COMMAND_MENU_ITEMS alone leaves the row behind.
+    isSystemSideEffect: true,
     overrides: null,
     universalOverrides: null,
     createdAt: now,

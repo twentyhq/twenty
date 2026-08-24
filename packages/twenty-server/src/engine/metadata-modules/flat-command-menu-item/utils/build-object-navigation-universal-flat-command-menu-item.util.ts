@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -6,14 +7,10 @@ import {
   FeatureFlagKey,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v5 } from 'uuid';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-
-export const NAVIGATION_COMMAND_UUID_NAMESPACE =
-  'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 // The stored label is the source message; the target object's label stays a
 // placeholder filled at read time for the reader's locale.
@@ -55,12 +52,9 @@ export const buildNavigationConditionalAvailabilityExpression = ({
     : targetObjectReadPermissionExpression;
 };
 
-export const buildNavigationFlatCommandMenuItem = ({
+export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
   objectMetadata,
-  commandMenuItemId,
-  applicationId,
   applicationUniversalIdentifier,
-  workspaceId,
   position,
   now,
 }: {
@@ -70,17 +64,14 @@ export const buildNavigationFlatCommandMenuItem = ({
     nameSingular: string;
     shortcut: string | null;
   };
-  commandMenuItemId: string;
-  applicationId: string;
   applicationUniversalIdentifier: string;
-  workspaceId: string;
   position: number;
   now: string;
-}): FlatCommandMenuItem => {
-  const universalIdentifier = v5(
-    objectMetadata.universalIdentifier,
-    NAVIGATION_COMMAND_UUID_NAMESPACE,
-  );
+}): UniversalFlatCommandMenuItem => {
+  const universalIdentifier = getNavigationCommandUniversalIdentifier({
+    applicationUniversalIdentifier,
+    objectUniversalIdentifier: objectMetadata.universalIdentifier,
+  });
 
   const conditionalAvailabilityExpression =
     buildNavigationConditionalAvailabilityExpression({
@@ -89,11 +80,8 @@ export const buildNavigationFlatCommandMenuItem = ({
     });
 
   return {
-    id: commandMenuItemId,
     universalIdentifier,
-    applicationId,
     applicationUniversalIdentifier,
-    workspaceId,
     label: NAVIGATION_INTERPOLATED_LABEL,
     shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
     icon: NAVIGATION_INTERPOLATED_ICON,
@@ -101,24 +89,19 @@ export const buildNavigationFlatCommandMenuItem = ({
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression,
-    frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: { objectMetadataItemId: objectMetadata.id },
-    navigationTargetObjectMetadataId: objectMetadata.id,
     navigationTargetObjectMetadataUniversalIdentifier:
       objectMetadata.universalIdentifier,
     hotKeys: isDefined(objectMetadata.shortcut)
       ? ['G', objectMetadata.shortcut]
       : null,
     workflowVersionId: null,
-    availabilityObjectMetadataId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
-    pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     isActive: true,
     isSystemSideEffect: true,
-    overrides: null,
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,
