@@ -5,7 +5,7 @@ import { WidgetHeaderCommandMenuItems } from '@/page-layout/widgets/widget-card/
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -36,8 +36,9 @@ export const WidgetCardHeaderActionsRenderer = () => {
       widget.configuration,
       'FrontComponentConfiguration',
     ) &&
-    isDefined(widget.configuration.headerCommandMenuItemUniversalIdentifiers) &&
-    widget.configuration.headerCommandMenuItemUniversalIdentifiers.length > 0
+    isNonEmptyArray(
+      widget.configuration.headerCommandMenuItemUniversalIdentifiers,
+    )
   ) {
     return (
       <StyledActionsContainer>
