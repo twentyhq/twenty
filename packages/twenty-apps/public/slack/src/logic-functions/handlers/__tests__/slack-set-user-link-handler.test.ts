@@ -104,6 +104,15 @@ describe('slackSetUserLinkHandler', () => {
     expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
   });
 
+  it('should fail with a structured result when the write errors', async () => {
+    createSlackUserLinkMock.mockRejectedValue(new Error('write refused'));
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('write refused');
+  });
+
   it('should store the link under the requested team for Slack Connect users', async () => {
     const result = await slackSetUserLinkHandler({
       ...INPUT,

@@ -72,20 +72,28 @@ export const slackSetUserLinkHandler = async ({
     };
   }
 
-  if (isDefined(existingLink)) {
-    await updateSlackUserLink(client, {
-      id: existingLink.id,
-      workspaceMemberId,
-      source: SLACK_USER_LINK_SOURCE.MANUAL,
-    });
-  } else {
-    await createSlackUserLink(client, {
-      slackTeamId,
-      slackUserId,
-      workspaceMemberId,
-      name: name ?? slackUserId,
-      source: SLACK_USER_LINK_SOURCE.MANUAL,
-    });
+  try {
+    if (isDefined(existingLink)) {
+      await updateSlackUserLink(client, {
+        id: existingLink.id,
+        workspaceMemberId,
+        source: SLACK_USER_LINK_SOURCE.MANUAL,
+      });
+    } else {
+      await createSlackUserLink(client, {
+        slackTeamId,
+        slackUserId,
+        workspaceMemberId,
+        name: name ?? slackUserId,
+        source: SLACK_USER_LINK_SOURCE.MANUAL,
+      });
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Could not save the link',
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 
   return {
