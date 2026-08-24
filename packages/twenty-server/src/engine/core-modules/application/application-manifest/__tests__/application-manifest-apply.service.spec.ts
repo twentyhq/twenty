@@ -59,6 +59,7 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application,
+      forceSdkClientGeneration: true,
     });
 
     expect(
@@ -79,7 +80,6 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application,
-      forceSdkClientGeneration: false,
     });
 
     expect(
@@ -97,7 +97,6 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application,
-      forceSdkClientGeneration: false,
     });
 
     expect(
@@ -110,7 +109,6 @@ describe('ApplicationManifestApplyService', () => {
       workspaceId: WORKSPACE_ID,
       manifest,
       application: { ...application, version: null },
-      forceSdkClientGeneration: false,
     });
 
     expect(

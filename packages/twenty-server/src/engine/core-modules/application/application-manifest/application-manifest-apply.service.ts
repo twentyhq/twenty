@@ -25,7 +25,7 @@ export class ApplicationManifestApplyService {
     manifest,
     applicationRegistrationId,
     application,
-    forceSdkClientGeneration = true,
+    forceSdkClientGeneration = false,
   }: {
     workspaceId: string;
     manifest: Manifest;
@@ -34,8 +34,9 @@ export class ApplicationManifestApplyService {
       ApplicationEntity,
       'id' | 'universalIdentifier' | 'version'
     >;
-    // Regenerating on every apply lets function-only upgrades pick up
-    // SDK-level changes; dev sync opts out to avoid regenerating on each save.
+    // Installs and upgrades force regeneration so function-only upgrades pick
+    // up SDK-level changes; dev sync relies on first-apply/schema-change to
+    // avoid regenerating on every save.
     forceSdkClientGeneration?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;

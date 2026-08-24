@@ -237,7 +237,6 @@ export class ApplicationDevelopmentService {
         manifest,
         applicationRegistrationId,
         application,
-        forceSdkClientGeneration: false,
       });
 
     await this.syncRegistrationMetadata(
