@@ -809,6 +809,19 @@ describe('manifestValidate', () => {
       );
     });
 
+    it('rejects an invalid emit object universal identifier', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.objectUniversalIdentifier = 'POST_CARD_TYPO';
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(manifest).errors).toContainEqual(
+        expect.stringContaining('invalid object universal identifier'),
+      );
+    });
+
     it('rejects replacement contracts that cannot be valid locally', () => {
       const explicitManifest = buildTimelineManifest();
       const [explicitTimelineActivityType] =
@@ -915,6 +928,21 @@ describe('manifestValidate', () => {
           expect.stringContaining(
             'Timeline activity type name "deploymentUpdated" is used more than once',
           ),
+          expect.stringContaining(
+            'must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation',
+          ),
+        ]),
+      );
+    });
+
+    it('reports a relation with missing universal settings without crashing', () => {
+      const manifest = buildTimelineManifest();
+
+      manifest.fields[0].universalSettings = undefined as never;
+
+      expect(manifestValidate(manifest).errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('is missing relationType'),
           expect.stringContaining(
             'must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation',
           ),

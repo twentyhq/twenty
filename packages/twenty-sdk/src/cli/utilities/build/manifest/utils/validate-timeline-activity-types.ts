@@ -68,6 +68,15 @@ export const validateTimelineActivityTypes = (
     const through = emit.through;
     const triggerFieldUniversalIdentifiers =
       through?.triggerFieldUniversalIdentifiers;
+    const hasValidObjectUniversalIdentifier = isValidUniversalIdentifier(
+      emit.objectUniversalIdentifier,
+    );
+
+    if (!hasValidObjectUniversalIdentifier) {
+      errors.push(
+        `Timeline activity type "${timelineActivityType.name}" references an invalid object universal identifier "${emit.objectUniversalIdentifier}".`,
+      );
+    }
 
     if (
       (emit.on === 'linked' || emit.on === 'unlinked') &&
@@ -91,13 +100,18 @@ export const validateTimelineActivityTypes = (
       }
     }
 
-    const sourceObject = manifest.objects.find(
-      (object) =>
-        object.universalIdentifier === emit.objectUniversalIdentifier,
-    );
+    const sourceObject = hasValidObjectUniversalIdentifier
+      ? manifest.objects.find(
+          (object) =>
+            object.universalIdentifier === emit.objectUniversalIdentifier,
+        )
+      : undefined;
 
     if (!isDefined(sourceObject)) {
-      if (!isDefined(replacementUniversalIdentifier)) {
+      if (
+        hasValidObjectUniversalIdentifier &&
+        !isDefined(replacementUniversalIdentifier)
+      ) {
         errors.push(
           `Timeline activity type "${timelineActivityType.name}" targets object "${emit.objectUniversalIdentifier}", which is not defined by this application. Types targeting another application's object must declare replacesTimelineActivityTypeUniversalIdentifier.`,
         );
@@ -162,15 +176,14 @@ export const validateTimelineActivityTypes = (
         `Timeline activity type "${timelineActivityType.name}" references relation field "${through.relationFieldUniversalIdentifier}", which is not defined on object "${sourceObject.nameSingular}".`,
       );
     } else {
+      const relationSettings = relationField.universalSettings;
       const hasSupportedRelationShape =
         isRelationFieldManifest(relationField) &&
-        (relationField.universalSettings.relationType ===
-          RelationType.MANY_TO_ONE ||
-          (relationField.universalSettings.relationType ===
-            RelationType.ONE_TO_MANY &&
+        isDefined(relationSettings) &&
+        (relationSettings.relationType === RelationType.MANY_TO_ONE ||
+          (relationSettings.relationType === RelationType.ONE_TO_MANY &&
             isNonEmptyString(
-              relationField.universalSettings
-                .junctionTargetFieldUniversalIdentifier,
+              relationSettings.junctionTargetFieldUniversalIdentifier,
             )));
 
       if (!hasSupportedRelationShape) {
