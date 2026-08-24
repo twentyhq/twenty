@@ -12446,6 +12446,11 @@ msgstr "Jy kan nie die administrateurrol van die laaste administrateur verwyder 
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Jy kan nie adminpaneel-toegang van die laaste bedieneradministrateur herroep nie."
 
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr ""
+
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "You cannot set field permissions on system objects as they are managed by the platform."
