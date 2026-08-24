@@ -90,7 +90,6 @@ describe('findAngleBracketPlaceholders', () => {
       'second-id',
     ]);
   });
-  // A running parity counter would treat every later match as inline code.
   it('is not blinded by an unpaired backtick earlier in the file', () => {
     const violations = findAngleBracketPlaceholders(
       'a stray ` backtick\n\nthen use <workspace-id> here',

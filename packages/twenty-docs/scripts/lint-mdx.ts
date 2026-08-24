@@ -4,19 +4,11 @@ import path from 'path';
 // Crowdin parses `<foo>` in prose as a tag rather than literal text, so an angle
 // bracket placeholder is either dropped or mangled in every translated page.
 // Curly braces `{foo}` survive the round trip.
-//
-// Usage:
-//   tsx packages/twenty-docs/scripts/lint-mdx.ts
 
 const DOCS_ROOT = path.resolve(__dirname, '..');
 
-// `l/` holds the Crowdin pull output. A violation there is a symptom of a
-// violation in the English source, and is not editable by hand.
 const IGNORED_DIRECTORIES = ['node_modules', 'l', 'images', 'scripts'];
 
-// The placeholder pattern only matches a lowercase name of two or more
-// characters, so single-letter elements and capitalised components cannot
-// reach this list.
 const HTML_ELEMENTS = [
   'abbr',
   'article',
@@ -187,8 +179,6 @@ export const findAngleBracketPlaceholders = (text: string): MdxViolation[] => {
     const name = match[1];
     const position = match.index;
 
-    // Directly after a scheme there is no markup, so even a real element name
-    // is standing in for a host.
     const isUrlPlaceholder = URL_PREFIX_PATTERN.test(text.slice(0, position));
 
     if (HTML_ELEMENTS.includes(name) && !isUrlPlaceholder) {
