@@ -45,12 +45,17 @@ export class FeatureFlagGaugeService implements OnModuleInit {
   private async getEnabledWorkspaceCountsByFlag(): Promise<
     Map<string, number>
   > {
+    // Join workspace and filter deletedAt: the workspace relation cascades on
+    // hard delete only, and featureFlag has no deletedAt, so a soft-deleted
+    // workspace would otherwise keep counting toward the rollout forever.
     const rows = await this.dataSource
       .getRepository(FeatureFlagEntity)
       .createQueryBuilder('featureFlag')
       .select('featureFlag.key', 'flagKey')
       .addSelect('COUNT(*)', 'enabledWorkspaces')
+      .innerJoin('featureFlag.workspace', 'workspace')
       .where('featureFlag.value = :value', { value: true })
+      .andWhere('workspace.deletedAt IS NULL')
       .groupBy('featureFlag.key')
       .getRawMany<{ flagKey: string; enabledWorkspaces: string }>();
 
