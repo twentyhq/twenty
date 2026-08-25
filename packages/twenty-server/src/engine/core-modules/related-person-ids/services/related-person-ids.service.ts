@@ -8,7 +8,7 @@ import {
   findRelationPathsToPerson,
   type RelationPathToPerson,
 } from 'src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -19,7 +19,7 @@ type RelationWalkRecord = { id: string } & Record<string, unknown>;
 @Injectable()
 export class RelatedPersonIdsService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -52,23 +52,20 @@ export class RelatedPersonIdsService {
       return [];
     }
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const personIds = new Set<string>();
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const personIds = new Set<string>();
 
-        for (const relationPath of relationPaths) {
-          const personIdsForPath = await this.walkRelationPath({
-            recordId,
-            relationPath,
-          });
+      for (const relationPath of relationPaths) {
+        const personIdsForPath = await this.walkRelationPath({
+          recordId,
+          relationPath,
+        });
 
-          personIdsForPath.forEach((personId) => personIds.add(personId));
-        }
+        personIdsForPath.forEach((personId) => personIds.add(personId));
+      }
 
-        return [...personIds];
-      },
-      buildSystemAuthContext(workspaceId),
-    );
+      return [...personIds];
+    }, buildSystemAuthContext(workspaceId));
   }
 
   private async walkRelationPath({
@@ -86,7 +83,7 @@ export class RelatedPersonIdsService {
       }
 
       const repository =
-        await this.globalWorkspaceOrmManager.getRepository<RelationWalkRecord>(
+        this.workspaceOrmManager.getRepository<RelationWalkRecord>(
           hop.queryObjectNameSingular,
           { shouldBypassPermissionChecks: true },
         );

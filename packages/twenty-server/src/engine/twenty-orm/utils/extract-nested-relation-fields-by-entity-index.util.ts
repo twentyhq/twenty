@@ -10,8 +10,8 @@ import {
   type RelationDisconnectQueryFieldsByEntityIndex,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 const hasRelationConnect = (value: unknown): value is ConnectObject => {
@@ -100,9 +100,9 @@ export const extractNestedRelationFieldsByEntityIndex = (
       const hasDisconnect = hasRelationDisconnect(value);
 
       if (hasConnect && hasDisconnect) {
-        throw new TwentyORMException(
+        throw new TwentyOrmException(
           `Cannot have both connect and disconnect for the same field on ${entity.key}.`,
-          TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
+          TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED,
         );
       }
 

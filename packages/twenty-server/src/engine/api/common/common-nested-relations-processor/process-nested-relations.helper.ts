@@ -31,10 +31,9 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceDataSourceV2 } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2';
-import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const EMPTY_RELATION_SENTINEL_RECORD_ID =
@@ -60,20 +59,13 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
 
 @Injectable()
 export class ProcessNestedRelationsHelper {
-  constructor(
-    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<void> {
-    const dataSource = this.workspaceDataSourceV2Service.getDataSource({
-      useReplica: args.useReplica ?? false,
-    });
-
     await this.processNestedRelationsWithLimiter(
       args,
-      dataSource,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
   }
@@ -95,7 +87,6 @@ export class ProcessNestedRelationsHelper {
       rolePermissionConfig,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
-    dataSource: WorkspaceDataSourceV2,
     relationQueryLimiter: ConcurrencyLimiter,
   ): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -112,7 +103,6 @@ export class ProcessNestedRelationsHelper {
           limit,
           authContext,
           useReplica,
-          dataSource,
           rolePermissionConfig,
           relationQueryLimiter,
           selectedFields:
@@ -137,7 +127,6 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     useReplica,
-    dataSource,
     rolePermissionConfig,
     relationQueryLimiter,
     selectedFields,
@@ -154,7 +143,6 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
-    dataSource: WorkspaceDataSourceV2;
     rolePermissionConfig?: RolePermissionConfig;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
@@ -204,9 +192,10 @@ export class ProcessNestedRelationsHelper {
         fieldMaps,
       });
 
-    const targetObjectRepository = dataSource.getRepository(
+    const targetObjectRepository = this.workspaceOrmManager.getRepository(
       targetObjectMetadata.nameSingular,
       rolePermissionConfig,
+      { useReplica },
     );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
@@ -318,7 +307,6 @@ export class ProcessNestedRelationsHelper {
           rolePermissionConfig,
           selectedFields,
         },
-        dataSource,
         relationQueryLimiter,
       );
     }
@@ -388,8 +376,8 @@ export class ProcessNestedRelationsHelper {
     sourceFieldName,
     targetObjectNameSingular,
   }: {
-    referenceQueryBuilder: WorkspaceSelectQueryBuilderV2;
-    targetObjectRepository: WorkspaceRepositoryV2;
+    referenceQueryBuilder: WorkspaceSelectQueryBuilder;
+    targetObjectRepository: WorkspaceRepository;
     column: string;
     // oxlint-disable-next-line typescript/no-explicit-any
     ids: any[];
@@ -485,7 +473,7 @@ export class ProcessNestedRelationsHelper {
     ids,
     perParentLimit,
   }: {
-    targetObjectRepository: WorkspaceRepositoryV2;
+    targetObjectRepository: WorkspaceRepository;
     targetObjectNameSingular: string;
     column: string;
     ids: string[];

@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/fireflies",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Fireflies call-transcript connector for Twenty",
   "license": "MIT",
   "engines": {

@@ -61,6 +61,7 @@ import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
@@ -496,12 +497,24 @@ export class AdminPanelResolver {
     searchTerm?: string,
     @Args('isPreInstalledOnly', { type: () => Boolean, nullable: true })
     isPreInstalledOnly?: boolean,
+    @Args('sourceTypes', {
+      type: () => [ApplicationRegistrationSourceType],
+      nullable: true,
+    })
+    sourceTypes?: ApplicationRegistrationSourceType[],
+    @Args('isListed', { type: () => Boolean, nullable: true })
+    isListed?: boolean,
+    @Args('isConfigured', { type: () => Boolean, nullable: true })
+    isConfigured?: boolean,
   ): Promise<PaginatedApplicationRegistrationsDTO> {
     return this.applicationRegistrationService.findAll({
       limit,
       offset,
       searchTerm,
       isPreInstalledOnly,
+      sourceTypes,
+      isListed,
+      isConfigured,
     });
   }
 

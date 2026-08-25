@@ -1982,10 +1982,10 @@ msgstr "Alla åtgärder åtkomst"
 msgid "All App Registrations"
 msgstr "Alla appregistreringar"
 
-#. js-lingui-id: ZrLLkh
+#. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-msgid "All application registrations across the platform, including orphaned marketplace apps"
-msgstr "Alla appregistreringar över hela plattformen, inklusive föräldralösa appar på marknadsplatsen"
+msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
+msgstr "Alla appregistreringar på hela plattformen, inklusive föräldralösa appar på marknadsplatsen ({totalCount} matchande)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4602,6 +4602,8 @@ msgstr "Konfigurera dina e-post- och kalenderinställningar."
 #. js-lingui-id: M1co/O
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Configured"
 msgstr "Konfigurerad"
 
@@ -5014,12 +5016,12 @@ msgstr "Kopiera till urklipp"
 #. js-lingui-id: rG2gDo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy transcript"
-msgstr ""
+msgstr "Kopiera transkription"
 
 #. js-lingui-id: afZp3R
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy video download link"
-msgstr ""
+msgstr "Kopiera nedladdningslänk för video"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10986,6 +10988,12 @@ msgstr "Ansluter"
 msgid "JSON"
 msgstr ""
 
+#. js-lingui-id: KTaki5
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
+msgid "Jump to current"
+msgstr "Hoppa till aktuell"
+
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -11598,6 +11606,8 @@ msgid "List widget"
 msgstr "Listwidget"
 
 #. js-lingui-id: Ap948/
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "Listad"
@@ -13851,6 +13861,11 @@ msgstr "Inte tillgänglig i standardvyn"
 msgid "Not available on Default View"
 msgstr "Inte tillgänglig i standardvyn"
 
+#. js-lingui-id: SDND4q
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Not configured"
+msgstr "Inte konfigurerad"
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -13865,6 +13880,11 @@ msgstr "Hittades inte"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow.tsx
 msgid "Not included"
 msgstr "Inte inkluderad"
+
+#. js-lingui-id: i/2ImT
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Not listed"
+msgstr "Inte listad"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -15027,7 +15047,7 @@ msgstr "Planer"
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
-msgstr ""
+msgstr "Uppspelningen misslyckades"
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -17067,7 +17087,7 @@ msgstr "Visa alla {relationLabelPlural} som är länkade till den här posten"
 #. js-lingui-id: OhVSE4
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "See all call recordings linked to this calendar event"
-msgstr ""
+msgstr "Se alla samtalsinspelningar som är kopplade till den här kalenderhändelsen"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -17114,6 +17134,11 @@ msgstr "Visa din datastruktur som ett interaktivt diagram"
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Seeded"
 msgstr "Fördefinierad"
+
+#. js-lingui-id: 5iyrla
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
+msgid "Seek recording to {formattedStartTimestamp}"
+msgstr "Sök i inspelningen till {formattedStartTimestamp}"
 
 #. js-lingui-id: rG3WVm
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
@@ -18057,6 +18082,7 @@ msgstr "Sorteringar"
 #. js-lingui-id: wdxz7K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -18990,7 +19016,7 @@ msgstr "PDF:en är försignerad av Twenty och ingås med din juridiska enhet och
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "The recording could not be loaded."
-msgstr ""
+msgstr "Inspelningen kunde inte läsas in."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19742,10 +19768,15 @@ msgstr "Total tid"
 msgid "Track AI consumption across your workspace."
 msgstr "Spåra AI-förbrukning i din arbetsyta."
 
+#. js-lingui-id: DDziIo
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
+msgid "Transcript"
+msgstr "Transkription"
+
 #. js-lingui-id: hfpzKV
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Transcript copied to clipboard"
-msgstr ""
+msgstr "Transkriptionen har kopierats till urklipp"
 
 #. js-lingui-id: U2CSqa
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
