@@ -67,9 +67,6 @@ function(options?: ClientOptions): Client {
       }
     
 // MetadataApiClient (auto-injected by twenty-client-sdk)
-// Must stay type-only: this line survives injection into the generated source,
-// which ships standalone and cannot resolve this path, but esbuild elides
-// import type without resolving it. See generate-core-client and client-wrapper.
 import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
 // Ambient type stubs for the genql-generated code this template gets

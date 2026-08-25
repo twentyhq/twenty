@@ -1,3 +1,4 @@
+import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import { describe, expect, it } from 'vitest';
 
 import { CoreApiClient } from '../../core/generated/index';
@@ -6,25 +7,11 @@ import { type TwentyGeneratedClientOptions } from '../twenty-client-template';
 type StubOptions = NonNullable<ConstructorParameters<typeof CoreApiClient>[0]>;
 type GeneratedOptions = NonNullable<TwentyGeneratedClientOptions>;
 
-type Equal<TLeft, TRight> =
-  (<T>() => T extends TLeft ? 1 : 2) extends <T>() => T extends TRight ? 1 : 2
-    ? true
-    : false;
-
-type Assert<TCondition extends true> = TCondition;
-type AssertAssignable<TExpected, TActual extends TExpected> = TActual;
-
-type _OptionNamesMatch = Assert<
-  Equal<keyof StubOptions, keyof GeneratedOptions>
+type _StubHasEveryGeneratedOption = Expect<
+  HasAllProperties<StubOptions, GeneratedOptions>
 >;
-
-type _StubAcceptsEveryGeneratedOption = AssertAssignable<
-  StubOptions,
-  GeneratedOptions
->;
-type _GeneratedAcceptsEveryStubOption = AssertAssignable<
-  GeneratedOptions,
-  StubOptions
+type _GeneratedHasEveryStubOption = Expect<
+  HasAllProperties<GeneratedOptions, StubOptions>
 >;
 
 describe('CoreApiClient stub', () => {
