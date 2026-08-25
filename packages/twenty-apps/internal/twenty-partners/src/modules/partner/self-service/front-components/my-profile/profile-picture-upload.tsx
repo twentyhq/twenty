@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AppPath, enqueueSnackbar, navigate } from 'twenty-sdk/front-component';
 
-import { COLORS, FONT } from './form-fields';
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 
 const avatarStyle = {
   width: 72,

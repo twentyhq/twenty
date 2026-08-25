@@ -4,7 +4,7 @@ export function findPartnerByMember(client: CoreApiClient, memberId: string) {
   return client.query({
     partners: {
       __args: { filter: { partnerUserId: { eq: memberId } }, first: 1 },
-      edges: { node: { id: true } },
+      edges: { node: { id: true, name: true } },
     },
   });
 }
