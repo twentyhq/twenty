@@ -3,6 +3,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RelationOnDeleteAction } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -12,7 +13,10 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -21,6 +25,9 @@ const SCOPE_FIELD_UNIVERSAL_IDENTIFIER =
   BLOCKLIST.fields.scope.universalIdentifier;
 const WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
   BLOCKLIST.fields.workspaceMember.universalIdentifier;
+const BLOCKLIST_OBJECT_NAME_SINGULAR = 'blocklist';
+const WORKSPACE_MEMBER_TABLE_NAME = 'workspaceMember';
+const WORKSPACE_MEMBER_COLUMN_NAME = 'workspaceMemberId';
 
 @RegisteredWorkspaceCommand('2.35.0', 1787673741006)
 @Command({
@@ -33,6 +40,7 @@ export class AddBlocklistScopeFieldCommand extends ProvisionedWorkspaceCommandRu
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
@@ -41,6 +49,7 @@ export class AddBlocklistScopeFieldCommand extends ProvisionedWorkspaceCommandRu
   override async runOnWorkspace({
     workspaceId,
     options,
+    dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
@@ -133,25 +142,12 @@ export class AddBlocklistScopeFieldCommand extends ProvisionedWorkspaceCommandRu
     }
 
     const flatFieldMetadataToCreate: FlatFieldMetadata[] = [];
-    const flatFieldMetadataToUpdate: FlatFieldMetadata[] = [];
 
     if (isScopeFieldMissing) {
       flatFieldMetadataToCreate.push({
         ...standardScopeField,
         viewFieldIds: [],
         viewFieldUniversalIdentifiers: [],
-      });
-    }
-
-    if (isWorkspaceMemberRelationOutdated) {
-      flatFieldMetadataToUpdate.push({
-        ...workspaceMemberField,
-        isNullable: true,
-        settings: {
-          ...workspaceMemberRelationSettings,
-          onDelete: RelationOnDeleteAction.CASCADE,
-        },
-        updatedAt: new Date().toISOString(),
       });
     }
 
@@ -166,7 +162,7 @@ export class AddBlocklistScopeFieldCommand extends ProvisionedWorkspaceCommandRu
             fieldMetadata: {
               flatEntityToCreate: flatFieldMetadataToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatFieldMetadataToUpdate,
+              flatEntityToUpdate: [],
             },
           },
         },
@@ -182,8 +178,109 @@ export class AddBlocklistScopeFieldCommand extends ProvisionedWorkspaceCommandRu
       );
     }
 
+    if (isWorkspaceMemberRelationOutdated) {
+      if (!isDefined(dataSource)) {
+        throw new Error(
+          `No data source available to make the blocklist workspaceMember relation optional for workspace ${workspaceId}`,
+        );
+      }
+
+      await this.makeWorkspaceMemberRelationOptional({
+        dataSource,
+        workspaceId,
+        fieldMetadataId: workspaceMemberField.id,
+      });
+    }
+
     this.logger.log(
       `Applied the blocklist workspace-scope migration for workspace ${workspaceId}`,
     );
+  }
+
+  private async makeWorkspaceMemberRelationOptional({
+    dataSource,
+    workspaceId,
+    fieldMetadataId,
+  }: {
+    dataSource: DataSource;
+    workspaceId: string;
+    fieldMetadataId: string;
+  }): Promise<void> {
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const tableName = computeTableName(BLOCKLIST_OBJECT_NAME_SINGULAR, false);
+    const queryRunner = dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      await queryRunner.startTransaction();
+
+      await this.workspaceSchemaManagerService.columnManager.alterColumnNullable(
+        {
+          queryRunner,
+          schemaName,
+          tableName,
+          columnName: WORKSPACE_MEMBER_COLUMN_NAME,
+          isNullable: true,
+        },
+      );
+
+      const foreignKeyName =
+        await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
+          {
+            queryRunner,
+            schemaName,
+            tableName,
+            columnName: WORKSPACE_MEMBER_COLUMN_NAME,
+          },
+        );
+
+      if (isDefined(foreignKeyName)) {
+        await this.workspaceSchemaManagerService.foreignKeyManager.dropForeignKey(
+          { queryRunner, schemaName, tableName, foreignKeyName },
+        );
+      }
+
+      await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
+        {
+          queryRunner,
+          schemaName,
+          foreignKey: {
+            tableName,
+            columnName: WORKSPACE_MEMBER_COLUMN_NAME,
+            referencedTableName: WORKSPACE_MEMBER_TABLE_NAME,
+            referencedColumnName: 'id',
+            onDelete: RelationOnDeleteAction.CASCADE,
+          },
+        },
+      );
+
+      await queryRunner.query(
+        `UPDATE "core"."fieldMetadata"
+            SET "isNullable" = true,
+                "settings" = jsonb_set(
+                  COALESCE("settings", '{}'::jsonb),
+                  '{onDelete}',
+                  to_jsonb($1::text)
+                ),
+                "updatedAt" = now()
+          WHERE "id" = $2
+            AND "workspaceId" = $3`,
+        [RelationOnDeleteAction.CASCADE, fieldMetadataId, workspaceId],
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+    ]);
   }
 }
