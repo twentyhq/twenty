@@ -1,5 +1,7 @@
+import { type ArraySortDirection } from 'twenty-shared/types';
+
 export const sortByProperty =
-  <T, K extends keyof T>(propertyName: K, sortBy: 'asc' | 'desc' = 'asc') =>
+  <T, K extends keyof T>(propertyName: K, sortBy: ArraySortDirection = 'asc') =>
   (objectA: T, objectB: T) => {
     const a = sortBy === 'asc' ? objectA : objectB;
     const b = sortBy === 'asc' ? objectB : objectA;

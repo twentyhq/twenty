@@ -20,7 +20,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
@@ -338,7 +338,6 @@ export class NavigateAppTool implements Tool {
         async () => {
           const repository =
             await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
-              workspaceId,
               objectNameSingular,
               { shouldBypassPermissionChecks: true },
             );

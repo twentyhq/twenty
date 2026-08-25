@@ -17,7 +17,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -64,7 +64,6 @@ export class WorkspaceInvitationResolver {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -104,7 +103,6 @@ export class WorkspaceInvitationResolver {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -118,11 +116,11 @@ export class WorkspaceInvitationResolver {
         authContext,
       );
 
-    return await this.workspaceInvitationService.sendInvitations(
-      sendInviteLinkInput.emails,
+    return await this.workspaceInvitationService.sendInvitations({
+      emails: sendInviteLinkInput.emails,
       workspace,
-      workspaceMember,
-      sendInviteLinkInput.roleId ?? undefined,
-    );
+      sender: workspaceMember,
+      roleId: sendInviteLinkInput.roleId ?? undefined,
+    });
   }
 }

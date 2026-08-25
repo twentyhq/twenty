@@ -15,7 +15,7 @@ import {
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/services/gmail-get-all-folders.service';
@@ -62,6 +62,7 @@ export class SyncMessageFoldersService {
     const discoveredFolders = await this.discoverAllFolders(
       messageChannel.connectedAccount,
       messageChannel,
+      messageChannel.messageFolders,
     );
 
     const { messageFolders: existingFolders, id: messageChannelId } =
@@ -87,6 +88,7 @@ export class SyncMessageFoldersService {
       | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
+    existingFolders: MessageFolder[],
   ): Promise<DiscoveredMessageFolder[]> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -103,6 +105,7 @@ export class SyncMessageFoldersService {
         return this.imapGetAllFoldersService.getAllMessageFolders(
           connectedAccount,
           messageChannel,
+          existingFolders,
         );
       default:
         throw new Error(

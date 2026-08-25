@@ -15,8 +15,10 @@ type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   authorFullName: string;
   labelIdentifierValue: string;
-  event: TimelineActivity;
-  createdAt?: string;
+  eventTypeLabel?: string;
+  event: Pick<TimelineActivity, 'id' | 'properties'>;
+  happensAt?: string;
+  hasRenderer?: boolean;
 };
 
 const StyledRowContainer = styled.div`
@@ -43,19 +45,33 @@ const StyledEventRowMainObjectUpdatedContainer = styled.div`
 export const EventRowMainObjectUpdated = ({
   authorFullName,
   labelIdentifierValue,
+  eventTypeLabel,
   event,
   mainObjectMetadataItem,
-  createdAt,
+  happensAt,
+  hasRenderer,
 }: EventRowMainObjectUpdatedProps) => {
   const { t } = useLingui();
-  const diff: Record<string, { before: any; after: any }> =
-    event.properties?.diff;
+  const diff = event.properties.diff ?? {};
 
   const [isOpen, setIsOpen] = useState(true);
 
   const diffEntries = Object.entries(diff);
   if (diffEntries.length === 0) {
-    throw new Error('Cannot render update description without changes');
+    return (
+      <StyledEventRowMainObjectUpdatedContainer>
+        <StyledRowContainer>
+          <StyledRow>
+            <EventRowItem>{authorFullName}</EventRowItem>
+            <EventRowItem variant="action">
+              {eventTypeLabel ?? t`updated`}
+            </EventRowItem>
+            <EventRowItem>{labelIdentifierValue}</EventRowItem>
+          </StyledRow>
+          <EventRowDate happensAt={happensAt} />
+        </StyledRowContainer>
+      </StyledEventRowMainObjectUpdatedContainer>
+    );
   }
 
   const fieldCount = diffEntries.length;
@@ -66,7 +82,9 @@ export const EventRowMainObjectUpdated = ({
       <StyledRowContainer>
         <StyledRow>
           <EventRowItem>{authorFullName}</EventRowItem>
-          {t`updated`}
+          <EventRowItem variant="action">
+            {eventTypeLabel ?? t`updated`}
+          </EventRowItem>
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer
               mainObjectMetadataItem={mainObjectMetadataItem}
@@ -78,13 +96,15 @@ export const EventRowMainObjectUpdated = ({
           {diffEntries.length > 1 && (
             <>
               <span>{t`${fieldCount} fields on ${recordLabel}`}</span>
-              <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+              {!hasRenderer && (
+                <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
+              )}
             </>
           )}
         </StyledRow>
-        <EventRowDate createdAt={createdAt} />
+        <EventRowDate happensAt={happensAt} />
       </StyledRowContainer>
-      {diffEntries.length > 1 && (
+      {diffEntries.length > 1 && !hasRenderer && (
         <EventCard isOpen={isOpen}>
           {diffEntries.map(([diffKey, diffValue]) => (
             <EventFieldDiffContainer

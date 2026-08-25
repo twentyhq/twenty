@@ -4,7 +4,7 @@ import { isNumber } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { sanitizeNumber } from 'src/engine/utils/sanitize-number.utli';
 
@@ -165,7 +165,6 @@ export class RecordPositionService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
           objectMetadata.nameSingular,
           {
             shouldBypassPermissionChecks: true,
@@ -192,7 +191,6 @@ export class RecordPositionService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
         objectMetadata.nameSingular,
         {
           shouldBypassPermissionChecks: true,
@@ -215,7 +213,6 @@ export class RecordPositionService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             objectMetadata.nameSingular,
             {
               shouldBypassPermissionChecks: true,
@@ -240,7 +237,6 @@ export class RecordPositionService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             objectMetadata.nameSingular,
             {
               shouldBypassPermissionChecks: true,

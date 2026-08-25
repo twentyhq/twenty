@@ -1,7 +1,6 @@
 import { MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -28,11 +27,13 @@ const isWritePermittedByWritability = ({
   }
 
   if (writability === MetadataWritability.APPLICATION) {
+    // Only APPLICATION_ACCESS tokens ever carry an application, so reading it
+    // off a user-bound context cannot let an ordinary session through.
     return (
       isDefined(authContext) &&
-      isApplicationAuthContext(authContext) &&
       isDefined(owningApplicationId) &&
-      authContext.application.id === owningApplicationId
+      (authContext.type === 'application' || authContext.type === 'user') &&
+      authContext.application?.id === owningApplicationId
     );
   }
 

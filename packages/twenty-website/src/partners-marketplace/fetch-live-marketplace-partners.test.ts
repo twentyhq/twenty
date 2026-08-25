@@ -31,6 +31,11 @@ describe('fetchLiveMarketplacePartners', () => {
           skills: null,
           city: null,
           country: null,
+          partnerTier: 'ADVANCED',
+          serviceCount: 2,
+          approvedCaseStudyCount: 3,
+          approvedCaseStudyWithCoverCount: 2,
+          rotationKey: 'weekly-key',
         },
       ],
     });
@@ -59,8 +64,77 @@ describe('fetchLiveMarketplacePartners', () => {
         services: [],
         portfolio: [],
         clients: [],
+        partnerTier: 'ADVANCED',
+        serviceCount: 2,
+        approvedCaseStudyCount: 3,
+        approvedCaseStudyWithCoverCount: 2,
+        rotationKey: 'weekly-key',
       },
     ]);
+  });
+
+  const rankablePartner = {
+    name: 'Acme',
+    slug: 'acme',
+    introduction: 'Hi',
+    languagesSpoken: ['ENGLISH'],
+    partnerScope: ['ADVISORY'],
+    region: ['US'],
+    calendarLink: null,
+    hourlyRate: null,
+    projectBudgetMin: null,
+    linkedin: null,
+    website: null,
+    profilePicture: null,
+    skills: null,
+    city: null,
+    country: null,
+    partnerTier: 'ADVANCED',
+    serviceCount: 2,
+    approvedCaseStudyCount: 3,
+    approvedCaseStudyWithCoverCount: 2,
+    rotationKey: 'weekly-key',
+  };
+
+  it.each([
+    ['rotationKey', { rotationKey: '' }],
+    ['serviceCount', { serviceCount: undefined }],
+    ['approvedCaseStudyCount', { approvedCaseStudyCount: null }],
+    [
+      'approvedCaseStudyWithCoverCount',
+      { approvedCaseStudyWithCoverCount: -1 },
+    ],
+  ])(
+    'degrades to [] and names the offending partner when the payload breaks the ranking contract on %s',
+    async (field, override) => {
+      const errorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      mockedFetch.mockResolvedValue({
+        ok: true,
+        partners: [{ ...rankablePartner, ...override }],
+      });
+
+      expect(await fetchLiveMarketplacePartners()).toEqual([]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        '[partners-marketplace] ranking contract broken:',
+        expect.objectContaining({
+          message: expect.stringMatching(new RegExp(`${field}.*acme`)),
+        }),
+      );
+      errorSpy.mockRestore();
+    },
+  );
+
+  it('reads an unknown partner tier as unranked', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [{ ...rankablePartner, partnerTier: 'EXPERT' }],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.partnerTier).toBeNull();
   });
 
   it('degrades to [] when the fetch throws', async () => {

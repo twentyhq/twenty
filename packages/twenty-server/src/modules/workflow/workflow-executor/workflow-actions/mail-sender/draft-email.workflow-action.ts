@@ -7,7 +7,7 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,

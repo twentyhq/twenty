@@ -12,7 +12,7 @@ import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/t
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -53,7 +53,6 @@ export class TimelineMessagingService {
       async () => {
         const messageThreadRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
-            workspaceId,
             'messageThread',
           );
 
@@ -130,7 +129,6 @@ export class TimelineMessagingService {
       async () => {
         const messageParticipantRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-            workspaceId,
             'messageParticipant',
           );
 
@@ -153,7 +151,7 @@ export class TimelineMessagingService {
           })
           .orderBy('message.messageThreadId')
           .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
-          .getMany();
+          .getMany<MessageParticipantWorkspaceEntity>();
 
         const orderedThreadParticipants = threadParticipants.sort(
           (a, b) =>
@@ -244,7 +242,6 @@ export class TimelineMessagingService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -273,7 +270,6 @@ export class TimelineMessagingService {
 
         const messageThreadRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
-            workspaceId,
             'messageThread',
           );
 

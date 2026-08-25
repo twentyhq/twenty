@@ -7,7 +7,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowRunStatus,
@@ -53,7 +53,6 @@ export class WorkflowRunEnqueueWorkspaceService {
         async () => {
           const workflowRunRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               WorkflowRunWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );

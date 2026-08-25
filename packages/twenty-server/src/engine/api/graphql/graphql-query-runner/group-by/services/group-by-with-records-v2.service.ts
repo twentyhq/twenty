@@ -29,8 +29,8 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 
 @Injectable()
 export class GroupByWithRecordsV2Service {
@@ -74,7 +74,6 @@ export class GroupByWithRecordsV2Service {
 
     const {
       authContext,
-      workspaceDataSource,
       rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -123,7 +122,6 @@ export class GroupByWithRecordsV2Service {
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: selectedFieldsResult.select,
         ...nestedRelationsReadPathOptions,

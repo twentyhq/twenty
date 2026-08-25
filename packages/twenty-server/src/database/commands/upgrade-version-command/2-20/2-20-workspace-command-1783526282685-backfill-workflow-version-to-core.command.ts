@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
+import { isWorkspaceObjectNotFoundError } from 'src/database/commands/upgrade-version-command/utils/is-workspace-object-not-found-error.util';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -7,7 +7,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @RegisteredWorkspaceCommand('2.20.0', 1783526282685)
@@ -36,9 +36,7 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
             const workflowVersionRepository =
-              await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-                workspaceId,
-                'workflowVersion',
+              await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
                 { shouldBypassPermissionChecks: true },
               );
 
@@ -47,7 +45,7 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
           buildSystemAuthContext(workspaceId),
         );
     } catch (error) {
-      if (error instanceof EntityMetadataNotFoundError) {
+      if (isWorkspaceObjectNotFoundError(error)) {
         this.logger.log(
           `workflowVersion object does not exist for workspace ${workspaceId}, skipping`,
         );

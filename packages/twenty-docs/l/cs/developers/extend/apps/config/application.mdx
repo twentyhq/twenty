@@ -97,7 +97,7 @@ Totéž platí pro frontendové komponenty, které čtou hodnoty pomocí `getApp
 
 Role deklarovaná pomocí [`defineApplicationRole()`](/l/cs/developers/extend/apps/config/roles) určuje, k čemu mají přístup logické funkce a front-endové komponenty aplikace:
 
-* Běhový token vložený jako `TWENTY_APP_ACCESS_TOKEN` je odvozen z této role.
+* Běhové tokeny vložené do vašich logických funkcí jsou odvozeny z této role. Volání jednající jako osoba je dále omezeno tím, co tato osoba může dělat, takže nikdy nemůže překročit ani jedno z těchto oprávnění. Vizte [Čí přístup volání používá](/l/cs/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Typovaný klient API je omezen na oprávnění udělená této roli.
 * Dodržujte princip nejmenších oprávnění: deklarujte pouze ta oprávnění, která vaše funkce potřebují.
 

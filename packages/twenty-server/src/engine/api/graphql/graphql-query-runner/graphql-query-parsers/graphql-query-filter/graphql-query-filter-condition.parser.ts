@@ -8,7 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export class GraphqlQueryFilterConditionParser {
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
@@ -28,10 +28,10 @@ export class GraphqlQueryFilterConditionParser {
   }
 
   public parse(
-    queryBuilder: RecordQueryBuilder,
+    queryBuilder: WorkspaceSelectQueryBuilderV2,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
-  ): RecordQueryBuilder {
+  ): WorkspaceSelectQueryBuilderV2 {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
     }
@@ -52,7 +52,7 @@ export class GraphqlQueryFilterConditionParser {
 
   public applyFilterEntriesToWhereBrackets(
     innerQueryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: RecordQueryBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilderV2,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
   ): void {

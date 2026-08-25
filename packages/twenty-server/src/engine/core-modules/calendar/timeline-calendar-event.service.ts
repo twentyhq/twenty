@@ -14,7 +14,7 @@ import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
@@ -54,10 +54,18 @@ export class TimelineCalendarEventService {
       async () => {
         const offset = (page - 1) * pageSize;
 
+        // Runs under a system auth context, which resolves no role, so without
+        // this the participant relations (person, workspaceMember) are read with
+        // empty permissions and denied for everyone. Channel-level redaction of
+        // title and description below is what gates the caller's access.
+        // TODO run under the caller's role via resolveRolePermissionConfig instead
+        // of bypassing, once roles that cannot read person degrade to a redacted
+        // timeline rather than a denied one
+        // https://github.com/twentyhq/core-team-issues/issues/2777
         const calendarEventRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
-            workspaceId,
             'calendarEvent',
+            { shouldBypassPermissionChecks: true },
           );
 
         const totalNumberOfCalendarEvents = await calendarEventRepository.count(
@@ -112,7 +120,6 @@ export class TimelineCalendarEventService {
 
         const callRecordingRepository =
           await this.globalWorkspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
-            workspaceId,
             'callRecording',
           );
 
@@ -174,7 +181,6 @@ export class TimelineCalendarEventService {
         // Resolve current user's userWorkspaceId (workspaceMember → userId → userWorkspace)
         const workspaceMemberRepo =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

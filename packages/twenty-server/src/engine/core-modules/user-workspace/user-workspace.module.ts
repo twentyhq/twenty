@@ -20,7 +20,6 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
@@ -36,7 +35,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     ApprovedAccessDomainModule,
     WorkspaceInvitationModule,
     WorkspaceDomainsModule,
-    TwentyORMModule,
     UserRoleModule,
     FileModule,
     TokenModule,

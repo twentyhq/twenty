@@ -5,7 +5,7 @@ import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
@@ -30,7 +30,6 @@ export class TaskPostQueryHookService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const taskTargetRepository =
         await this.globalWorkspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
-          workspace.id,
           'taskTarget',
         );
 
@@ -55,7 +54,6 @@ export class TaskPostQueryHookService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const taskTargetRepository =
         await this.globalWorkspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
-          workspace.id,
           'taskTarget',
         );
 

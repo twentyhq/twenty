@@ -29,11 +29,13 @@ export abstract class CustomException<
     code: ExceptionCode,
     {
       userFriendlyMessage,
+      statusCode,
     }: { userFriendlyMessage: MessageDescriptor; statusCode?: number },
   ) {
     super(message);
     this.code = code;
     this.userFriendlyMessage = userFriendlyMessage;
+    this.statusCode = statusCode;
   }
 }
 

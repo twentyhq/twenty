@@ -25,7 +25,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -310,7 +310,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
         const relatedObjectRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             relatedObjectMetadataNameSingular,
             { shouldBypassPermissionChecks: true },
           );
@@ -414,7 +413,6 @@ export class WorkflowDatabaseEventTriggerListener {
       async () => {
         const workflowAutomatedTriggerRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
             automatedTriggerTableName,
             { shouldBypassPermissionChecks: true },
           );

@@ -18,7 +18,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
@@ -386,7 +386,6 @@ export class MessageChannelSyncStatusService {
 
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
       );

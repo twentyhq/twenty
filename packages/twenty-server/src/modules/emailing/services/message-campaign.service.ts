@@ -40,7 +40,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -131,20 +131,16 @@ export class MessageCampaignService {
   ) {}
 
   private getRoleScopedRepository<T extends ObjectLiteral>(
-    workspaceId: string,
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+    return this.globalWorkspaceOrmManager.getRepository(entity, {
       unionOf: [roleId],
     });
   }
 
-  private getSystemRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    entity: Type<T>,
-  ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+  private getSystemRepository<T extends ObjectLiteral>(entity: Type<T>) {
+    return this.globalWorkspaceOrmManager.getRepository(entity, {
       shouldBypassPermissionChecks: true,
     });
   }
@@ -184,7 +180,6 @@ export class MessageCampaignService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const rawRecipients = await this.resolveRecipientsFromList(
-            workspaceId,
             listId,
             roleId,
           );
@@ -195,7 +190,6 @@ export class MessageCampaignService {
           );
 
           const campaignRepository = await this.getRoleScopedRepository(
-            workspaceId,
             MessageCampaignWorkspaceEntity,
             roleId,
           );
@@ -311,7 +305,6 @@ export class MessageCampaignService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository = await this.getSystemRepository(
-        workspaceId,
         MessageCampaignWorkspaceEntity,
       );
 
@@ -339,7 +332,6 @@ export class MessageCampaignService {
       const allRecipients = [...recipientsByMessageId.values()];
 
       const messageRepository = await this.getSystemRepository(
-        workspaceId,
         MessageWorkspaceEntity,
       );
 
@@ -397,7 +389,6 @@ export class MessageCampaignService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository = await this.getSystemRepository(
-        workspaceId,
         MessageWorkspaceEntity,
       );
 
@@ -414,7 +405,6 @@ export class MessageCampaignService {
       }
 
       const campaignRepository = await this.getSystemRepository(
-        workspaceId,
         MessageCampaignWorkspaceEntity,
       );
 
@@ -427,7 +417,6 @@ export class MessageCampaignService {
       }
 
       const personRepository = await this.getSystemRepository(
-        workspaceId,
         PersonWorkspaceEntity,
       );
 
@@ -529,7 +518,6 @@ export class MessageCampaignService {
         });
 
         const associationRepository = await this.getSystemRepository(
-          workspaceId,
           MessageChannelMessageAssociationWorkspaceEntity,
         );
 
@@ -557,7 +545,6 @@ export class MessageCampaignService {
   }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository = await this.getSystemRepository(
-        workspaceId,
         MessageWorkspaceEntity,
       );
 
@@ -591,7 +578,6 @@ export class MessageCampaignService {
     roleId: string,
   ): Promise<SendableDraftCampaign> {
     const campaignRepository = await this.getRoleScopedRepository(
-      workspaceId,
       MessageCampaignWorkspaceEntity,
       roleId,
     );
@@ -734,7 +720,6 @@ export class MessageCampaignService {
     campaignId: string,
   ): Promise<void> {
     const messageRepository = await this.getSystemRepository(
-      workspaceId,
       MessageWorkspaceEntity,
     );
 
@@ -757,7 +742,6 @@ export class MessageCampaignService {
     });
 
     const campaignRepository = await this.getSystemRepository(
-      workspaceId,
       MessageCampaignWorkspaceEntity,
     );
 
@@ -820,7 +804,6 @@ export class MessageCampaignService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const rawRecipients = await this.resolveRecipientsFromList(
-          workspaceId,
           listId,
           roleId,
         );
@@ -875,12 +858,10 @@ export class MessageCampaignService {
   }
 
   private async resolveRecipientsFromList(
-    workspaceId: string,
     listId: string,
     roleId: string,
   ): Promise<RawCampaignRecipient[]> {
     const listMemberRepository = await this.getRoleScopedRepository(
-      workspaceId,
       MessageListMemberWorkspaceEntity,
       roleId,
     );
@@ -890,14 +871,12 @@ export class MessageCampaignService {
     });
 
     return this.loadRecipientsByPersonIds(
-      workspaceId,
       members.map((member) => member.personId),
       roleId,
     );
   }
 
   private async loadRecipientsByPersonIds(
-    workspaceId: string,
     personIds: string[],
     roleId: string,
   ): Promise<RawCampaignRecipient[]> {
@@ -906,7 +885,6 @@ export class MessageCampaignService {
     }
 
     const personRepository = await this.getRoleScopedRepository(
-      workspaceId,
       PersonWorkspaceEntity,
       roleId,
     );

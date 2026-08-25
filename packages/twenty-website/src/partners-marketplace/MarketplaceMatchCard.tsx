@@ -5,8 +5,8 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
-import { type ReactNode } from 'react';
 
+import { GetMatchedButton } from '@/client-brief';
 import { BREAKPOINT_PX, color, mediaUp, spacing } from '@/tokens';
 import { Body, Eyebrow, Heading } from '@/ui';
 
@@ -84,13 +84,7 @@ const CtaWrapper = styled.div`
   margin-top: auto;
 `;
 
-export function MarketplaceMatchCard({
-  briefAction,
-  index = 0,
-}: {
-  briefAction: ReactNode;
-  index?: number;
-}) {
+export function MarketplaceMatchCard({ index = 0 }: { index?: number }) {
   const { i18n } = useLingui();
   const style: PartnerCardIndexStyle = { '--partner-card-index': index };
 
@@ -110,7 +104,7 @@ export function MarketplaceMatchCard({
       <Content>
         <Copy>
           <Eyebrow>{i18n._(msg`Partner matching`)}</Eyebrow>
-          <Heading as="h2" size="sm" weight="light">
+          <Heading as="h3" size="sm" weight="light">
             {i18n._(msg`Let us *match* you`)}
           </Heading>
           <Body muted size="sm">
@@ -119,7 +113,9 @@ export function MarketplaceMatchCard({
             )}
           </Body>
         </Copy>
-        <CtaWrapper>{briefAction}</CtaWrapper>
+        <CtaWrapper>
+          <GetMatchedButton label={msg`Get matched`} variant="filled" />
+        </CtaWrapper>
       </Content>
     </CardArticle>
   );

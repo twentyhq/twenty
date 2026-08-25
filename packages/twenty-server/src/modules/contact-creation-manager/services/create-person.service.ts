@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { DeepPartial } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -26,11 +26,8 @@ export class CreatePersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
+            { shouldBypassPermissionChecks: true },
           );
 
         const lastPersonPosition =
@@ -41,8 +38,6 @@ export class CreatePersonService {
             ...person,
             position: lastPersonPosition + index,
           })),
-          undefined,
-          ['companyId', 'id'],
         );
 
         return createdPeople.raw;
@@ -65,7 +60,6 @@ export class CreatePersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -80,8 +74,6 @@ export class CreatePersonService {
               companyId,
             },
           })),
-          undefined,
-          ['companyId', 'id'],
         );
 
         return restoredPeople.raw;
@@ -104,7 +96,6 @@ export class CreatePersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -116,8 +107,6 @@ export class CreatePersonService {
             criteria: personId,
             partialEntity: { name },
           })),
-          undefined,
-          ['id'],
         );
 
         return enrichedPeople.raw;
@@ -127,7 +116,7 @@ export class CreatePersonService {
   }
 
   private async getLastPersonPosition(
-    personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
+    personRepository: WorkspaceRepositoryV2<PersonWorkspaceEntity>,
   ): Promise<number> {
     const lastPersonPosition = await personRepository.maximum(
       'position',

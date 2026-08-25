@@ -6,3 +6,5 @@ export const ENQUEUE_JOB_PRIORITY = 10;
 
 export const ENQUEUE_JOB_MIN_DELAY_MS = 0;
 export const ENQUEUE_JOB_MAX_DELAY_MS = 7 * 24 * 60 * 60 * 1000;
+
+export const MAX_JOBS_PER_ENQUEUE = 200;

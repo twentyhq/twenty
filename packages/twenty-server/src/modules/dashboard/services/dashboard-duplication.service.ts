@@ -5,8 +5,8 @@ import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -37,7 +37,6 @@ export class DashboardDuplicationService {
       async () => {
         const dashboardRepository =
           await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
-            workspaceId,
             'dashboard',
             { shouldBypassPermissionChecks: true },
           );
@@ -104,7 +103,7 @@ export class DashboardDuplicationService {
   private async createDuplicatedDashboard(
     originalDashboard: DashboardWorkspaceEntity,
     newPageLayoutId: string,
-    dashboardRepository: WorkspaceRepository<DashboardWorkspaceEntity>,
+    dashboardRepository: WorkspaceRepositoryV2<DashboardWorkspaceEntity>,
     authContext: WorkspaceAuthContext,
   ): Promise<DashboardWorkspaceEntity> {
     const newTitle = appendCopySuffix(originalDashboard.title ?? '');

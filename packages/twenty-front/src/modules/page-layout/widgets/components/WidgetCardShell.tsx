@@ -1,3 +1,5 @@
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
@@ -5,6 +7,8 @@ import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetCo
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
+import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
+import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -13,7 +17,11 @@ import { type MouseEvent, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -28,14 +36,9 @@ type WidgetCardShellProps = {
   isEditing: boolean;
   isDragging: boolean;
   isResizing: boolean;
-  isLastWidget: boolean;
   showHeader: boolean;
   hasAccess: boolean;
   restriction: WidgetAccessDenialInfo;
-  isInVerticalListTab: boolean;
-  isMobile: boolean;
-  isReorderEnabled: boolean;
-  isDeletingWidgetEnabled: boolean;
   onClick?: () => void;
   onRemove: (e?: MouseEvent) => void;
   onMouseEnter?: () => void;
@@ -49,28 +52,32 @@ export const WidgetCardShell = ({
   isEditing,
   isDragging,
   isResizing,
-  isLastWidget,
   showHeader,
   hasAccess,
   restriction,
-  isInVerticalListTab,
-  isMobile,
-  isReorderEnabled,
-  isDeletingWidgetEnabled,
   onClick,
   onRemove,
   onMouseEnter,
   onMouseLeave,
 }: WidgetCardShellProps) => {
   const { theme } = useContext(ThemeContext);
+  const { layoutMode } = usePageLayoutContentContext();
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+
+  const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
+  const isFixedHeightIframe =
+    currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
+    isVerticalList &&
+    widget.type === WidgetType.IFRAME;
+  const contentPadding = isWidgetCardFlushInViewMode({
+    isEditable,
+    variant,
+  })
+    ? getWidgetContentPadding(widget.type)
+    : 'default';
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;
-
-  // A widget stacked in the main tab area gets a bounded slot with its own
-  // scroll, so no single widget swallows the tab. Solo widgets own the tab,
-  // and pinned/side-column stacks keep their flowing column behavior.
-  const hasBoundedHeight = variant === 'record-page' && isInVerticalListTab;
 
   return (
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
@@ -82,7 +89,6 @@ export const WidgetCardShell = ({
         isEditing={isEditing}
         isDragging={isDragging}
         isResizing={isResizing}
-        isLastWidget={isLastWidget}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         data-widget-id={widget.id}
@@ -91,13 +97,12 @@ export const WidgetCardShell = ({
       >
         {showHeader && (
           <WidgetCardHeader
+            className="widget-card-header"
             widgetId={widget.id}
             variant={variant}
             isInEditMode={isEditable}
             hasAccess={hasAccess}
             isResizing={isResizing}
-            isReorderEnabled={isReorderEnabled}
-            isDeletingWidgetEnabled={isDeletingWidgetEnabled}
             title={widget.title}
             onRemove={onRemove}
             forbiddenDisplay={
@@ -115,10 +120,9 @@ export const WidgetCardShell = ({
           variant={variant}
           hasHeader={showHeader}
           isEditable={isEditable}
-          isInVerticalListTab={isInVerticalListTab}
-          isMobile={isMobile}
           hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
-          hasBoundedHeight={hasBoundedHeight}
+          isFixedHeight={isFixedHeightIframe}
+          contentPadding={contentPadding}
         >
           {hasAccess ? (
             <ErrorBoundary

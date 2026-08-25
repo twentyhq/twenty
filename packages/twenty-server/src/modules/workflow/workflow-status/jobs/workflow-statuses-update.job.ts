@@ -3,20 +3,18 @@ import { Logger, Scope } from '@nestjs/common';
 import isEqual from 'lodash.isequal';
 import { In } from 'typeorm';
 
+import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowStatus,
-  type WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -75,7 +73,6 @@ export class WorkflowStatusesUpdateJob {
             event.workflowIds.map((workflowId) =>
               this.handleWorkflowVersionCreatedOrDeleted({
                 workflowId,
-                workspaceId: event.workspaceId,
               }),
             ),
           );
@@ -85,7 +82,6 @@ export class WorkflowStatusesUpdateJob {
             event.statusUpdates.map((statusUpdate) =>
               this.handleWorkflowVersionStatusUpdated({
                 statusUpdate,
-                workspaceId: event.workspaceId,
               }),
             ),
           );
@@ -98,21 +94,17 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionCreatedOrDeleted({
     workflowId,
-    workspaceId,
   }: {
     workflowId: string;
-    workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -145,21 +137,17 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionStatusUpdated({
     statusUpdate,
-    workspaceId,
   }: {
     statusUpdate: WorkflowVersionStatusUpdate;
-    workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -194,10 +182,8 @@ export class WorkflowStatusesUpdateJob {
     workflowVersionRepository,
   }: {
     workflowId: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
   }) {
-    const statuses: WorkflowStatus[] = [];
-
     const workflowVersions = await workflowVersionRepository.find({
       where: {
         workflowId,
@@ -209,30 +195,16 @@ export class WorkflowStatusesUpdateJob {
       },
     });
 
-    const hasDraftVersion = workflowVersions.some(
-      (version) => version.status === WorkflowVersionStatus.DRAFT,
-    );
-
-    if (hasDraftVersion) {
-      statuses.push(WorkflowStatus.DRAFT);
-    }
-
-    const hasActiveVersion = workflowVersions.some(
-      (version) => version.status === WorkflowVersionStatus.ACTIVE,
-    );
-
-    if (hasActiveVersion) {
-      statuses.push(WorkflowStatus.ACTIVE);
-    }
-
-    const hasDeactivatedVersion = workflowVersions.some(
-      (version) => version.status === WorkflowVersionStatus.DEACTIVATED,
-    );
-
-    if (!hasActiveVersion && hasDeactivatedVersion) {
-      statuses.push(WorkflowStatus.DEACTIVATED);
-    }
-
-    return statuses;
+    return computeCoreWorkflowStatuses({
+      hasDraftVersion: workflowVersions.some(
+        (version) => version.status === WorkflowVersionStatus.DRAFT,
+      ),
+      hasActiveVersion: workflowVersions.some(
+        (version) => version.status === WorkflowVersionStatus.ACTIVE,
+      ),
+      hasDeactivatedVersion: workflowVersions.some(
+        (version) => version.status === WorkflowVersionStatus.DEACTIVATED,
+      ),
+    });
   }
 }

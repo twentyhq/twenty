@@ -3,14 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowRunStatus,
@@ -60,7 +59,6 @@ export class WorkflowRunWorkspaceService {
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
             'workflowRun',
             { shouldBypassPermissionChecks: true },
           );
@@ -72,11 +70,9 @@ export class WorkflowRunWorkspaceService {
           });
 
         const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
+          await this.globalWorkspaceOrmManager.getRepository('workflow', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const workflow = await workflowRepository.findOne({
           where: {
@@ -110,7 +106,7 @@ export class WorkflowRunWorkspaceService {
           where: {
             workflowId: workflow.id,
           },
-          order: { createdAt: 'desc' },
+          order: { createdAt: 'DESC' },
         });
 
         const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
@@ -369,7 +365,6 @@ export class WorkflowRunWorkspaceService {
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
             'workflowRun',
             { shouldBypassPermissionChecks: true },
           );
@@ -411,14 +406,13 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     workspaceId: string;
-    partialUpdate: QueryDeepPartialEntity<WorkflowRunWorkspaceEntity>;
+    partialUpdate: Partial<WorkflowRunWorkspaceEntity>;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-          workspaceId,
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
@@ -434,13 +428,7 @@ export class WorkflowRunWorkspaceService {
         );
       }
 
-      await workflowRunRepository.update(
-        workflowRunToUpdate.id,
-        partialUpdate,
-        undefined,
-        undefined,
-        ['id'],
-      );
+      await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
     }, authContext);
   }
 

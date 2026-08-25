@@ -283,6 +283,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 Tanımlayıcı, manifest'inizdeki resolver'ın `universalIdentifier` değeridir. Bu URL’yi sağlayıcıya kaydedin.
 
+**Bir doğrulama `GET` isteğine yanıt verme.** Bazı sağlayıcılar, daha sonra olayları `POST` edecekleri aynı URL'ye bir sorgu içeren `GET` isteği göndererek, teslimat yapmadan önce bir uç noktayı doğrular — Meta'nın WhatsApp Cloud API'si bunlardan biridir. Bir sunucu rotası, aksini belirtmediğiniz sürece yalnızca `POST` isteklerine yanıt verir; bu nedenle her iki yöntemi de bildirin:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Sorgu `event.queryStringParameters` içinde gelir ve bir `Response` döndürmek, onu aynı istekte sağlayıcıya geri iletir. Bir dize gövdesi `text/plain` olarak gönderilir; bu sağlayıcıların beklediği de budur:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods`, varsayılan ayara ekleme yapmak yerine onun yerini alır; bu nedenle tek başına `['GET']`, rotanın `POST` isteğini reddetmesine neden olur. Yalnızca `GET` ve `POST` desteklenir. Sağlayıcı ikinci HTTP yöntemine ihtiyaç duymadığı sürece bunu ayarlanmamış bırakın: `GET` bildiren bir rotanın resolver'ı, istek göndermeden `GET` gönderen tarayıcılar ve bağlantı önizleme araçları da dahil olmak üzere, kimliği doğrulanmamış herhangi bir çağıran tarafından çalıştırılır. Platformun yöntemi olmayan her şeye, resolver hiç çalışmadan `405` yanıtı verilir.
+
 <Note>
 **Uygulama, sahip çalışma alanında sahiplenilip kurulmalıdır.** Çözücü **sahip çalışma alanında** (uygulama kaydına sahip olan çalışma alanı) çalıştığı için, bir sunucu rota tetikleyicisi yalnızca uygulama *sahiplenildikten* — yani bir sahip çalışma alanına sahiptir — **ve** o uygulama **sahip çalışma alanına kurulduğunda** çalışır. Her ikisi de doğru olana kadar çözücünün çalışacağı bir yer yoktur, bu yüzden rota çalıştırılamaz. Bu nedenle, `serverRouteTriggerSettings` mantık işlevini sunan bir uygulama, sahip çalışma alanında sahiplenilip kurulana kadar pazaryerinde listelenemez.
 </Note>
@@ -425,6 +447,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### Yürütme bağlamı
+
+Her işleyici, onu neyin tetiklediğinden bağımsız olarak çalıştırmanın kendisini açıklayan ikinci bir bağımsız değişken alır. İlk bağımsız değişken tetikleyiciye göre biçim değiştirirken, bu değişmez:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Alan                | Tür              | Açıklama                                                                                            |
+| ------------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | Çalıştırmanın ait olduğu çalışma alanı.                                                             |
+| `userWorkspaceId`   | `string \| null` | Çalıştırmayı tetikleyen kişi, bu çalışma alanındaki üyeliği olarak.                                 |
+| `workspaceMemberId` | `string \| null` | Kayıtları bağladığınız çalışma alanı üyesi kaydı olarak aynı kişi.                                  |
+| `retryCount`        | `number`         | İlk denemede `0`. [Arka plan işleri](/l/tr/developers/extend/apps/logic/background-jobs) bölümüne bakın. |
+| `maxRetries`        | `number`         | Uygulama tarafından istenen yeniden denemelerin üst sınırı.                                         |
+
+Kimse çalıştırmayı tetiklemediğinde `userWorkspaceId` ve `workspaceMemberId` `null` olur: cron zamanlamalarının, yükleme kancalarının ve kimliği doğrulanmamış webhook'ların arkasında kişi yoktur. Kişinin çalışma alanı üyesi kaydı olmadığında veya bu kayıt silindiğinde de `null` olurlar.
+
+<Note>
+**Bağlam, çalıştırmayı kimin tetiklediğini söyler.** Çalıştırmanın ne *yapabileceği* aşağıda ayrı bir bildirimdir.
+</Note>
+
+#### Bir çağrının hangi erişimi kullandığı
+
+Her istemci — `CoreApiClient`, `MetadataApiClient` ve `RestApiClient` — çalıştırmayı tetikleyen kişi olarak davranır: kişinin rolü uygulamanızın rolüyle kesiştirilir; dolayısıyla çağrı hiçbir zaman ikinizden birinin yapabileceğinden fazlasını yapamaz. Bu varsayılandır ve bir kişinin kendi izinlerini aşmak için uygulamanızı asla kullanamayacağı anlamına gelir.
+
+Çalıştırmayı kimse tetiklemediğinde adına davranılacak bir kişi yoktur; bu nedenle aynı istemci uygulamanızın kendi erişimine geri döner: cron zamanlamaları, yükleme kancaları ve kimliği doğrulanmamış webhook'lar özel işlem gerektirmez.
+
+Bazı çağrılar, çalıştırmanın arkasında bir kişi *olsa bile* haklı olarak uygulamanın kendi erişimine ihtiyaç duyar — uygulamanızın yapılandırma kayıtlarını okumak veya o kişinin kendisinin yapamayacağı işleri gerçekleştirmek gibi. Bunlar için ikinci bir istemci oluşturun:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Her ikisini de modül kapsamında bir kez oluşturun; ardından her çağrı noktası, çağırdığı istemciyle hangi erişimi kullandığını belirtir. `RestApiClient` aynı seçeneği alır:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**Kimsenin tetiklemediği bir çalıştırma uygulamanız olarak davranır.** Cron zamanlamalarının, yükleme kancalarının ve kimliği doğrulanmamış webhook'ların arkasında kişi yoktur; bu nedenle varsayılan istemci uygulamanızın kendi erişimine geri döner ve çalışmaya devam eder. `runAs: 'application'`, yalnızca bir kişinin *tetiklediği* çalıştırmada bu erişimi istediğinizde gereklidir.
+
+Örneğin bir kaydı atfetmek için, bir işlev arkasında birinin olup olmamasına bağlı olarak farklı davranıyorsa `context.workspaceMemberId` değerini kontrol edin.
+</Note>
+
+Uygulamanızın kendi kaynaklarına erişen SDK yardımcıları her zaman kendi erişimini kullanır ve `runAs` değerini yok sayar: [anahtar-değer deposu](/l/tr/developers/extend/apps/logic/key-value-store), [bağlantılar](/l/tr/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` ve kredi ücretlendirmesi.
 
 #### Bir işlevi bir yapay zekâ aracı veya iş akışı eylemi olarak kullanıma sunma
 
@@ -620,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Yükleme kancaları** — ön yükleme, yükleme sonrası ve kaldırma işleyicileri — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction`, `definePostInstallLogicFunction` ve `defineUninstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 </Note>
 
+## Bir zaman çizelgesi etkinliği oluşturun.
+
+Bir mantık işlevinden açık bir alan olayı yayımlamak için `createTimelineActivity()` kullanın. Önce olayı bir [zaman çizelgesi etkinliği türü](/l/tr/developers/extend/apps/data/timeline-activity-types) olarak tanımlayın, ardından türü ve nesneleri kararlı evrensel tanımlayıcılarıyla belirtin:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty, evrensel tanımlayıcıları kuruluma özgü meta veri kimliklerine çözümler, zaman çizelgesi etkinliği türünün çağıran uygulamaya ait olduğunu doğrular ve sunum meta verilerini yeni etkinlikte anlık görüntü olarak kaydeder.
+
+Gerekli girdiler `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` ve `targetRecordId` öğeleridir. Ayrıca `happensAt`, `properties` ve `workspaceMemberId` sağlayabilirsiniz. `happensAt`, olayın zaman çizelgesindeki konumunu ve görüntülenen zamanını denetler; varsayılan olarak oluşturulma zamanıdır.
+
+Başka bir kaydı olayla ilişkilendirmek için `linkedRecordId` ve `linkedObjectMetadataUniversalIdentifier` öğelerini birlikte sağlayın. Geçmişe yönelik bir görüntüleme yedeği olarak ayrıca `linkedRecordCachedName` sağlayabilirsiniz:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Mantık işlevinin rolü, standart `timelineActivity` nesnesi için yazma iznine ihtiyaç duyar. Açık olay türlerini bir `action` öğesine bağlı tutmayın; bir eyleme bağlı tür zaten otomatik denetim olayları alır ve aksi takdirde yinelenen satırlar üretir.
+
 ## Tipli API istemcileri (twenty-client-sdk)
 
 `twenty-client-sdk` paketi, mantık fonksiyonlarınızdan ve ön uç bileşenlerinizden Twenty API ile etkileşim kurmak için tip tanımlı iki GraphQL istemcisi sağlar.
@@ -701,7 +834,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri">
 
-`MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir (oluşturma gerektirmez). Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
+`MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir (oluşturma gerektirmez). Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri için `/metadata` uç noktasını sorgular. `CoreApiClient` ile aynı `runAs` seçeneğini alır — [Bir çağrının hangi erişimi kullandığı](#whose-access-a-call-uses) bölümüne bakın.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -769,7 +902,8 @@ console.log(uploadedFile);
   Kodunuz Twenty üzerinde çalıştığında (mantık işlevleri veya ön uç bileşenleri), platform kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
   * `TWENTY_API_URL` — Twenty API'nin temel URL'si
-  * `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan işlev rolü kapsamında kısa ömürlü bir anahtar
+  * `TWENTY_APP_ACCESS_TOKEN` — Varsayılan erişim için kısa ömürlü anahtar: çalıştırmanın arkasında biri olduğunda kişinin rolü uygulamanızın rolüyle kesiştirilir, kimse olmadığında uygulamanızın kendi rolü kullanılır. Kişi, bir mantık işlevinde çalıştırmayı tetikleyen kişi; bir ön bileşende ise sayfaya bakan kişidir.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Yalnızca uygulamanızın kendi rolü kapsamında olan kısa ömürlü anahtar. Yalnızca mantık işlevlerinde, her zaman oraya eklenir ve `runAs: 'application'` tarafından kullanılır.
 
-  Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `defineApplicationRole()` ile bildirilen role (veya `application-config.ts` içindeki `defaultRoleUniversalIdentifier` üzerinden referans verilen role) göre belirlenir.
+  Bunları istemcilere geçirmeniz **gerekmez** — bunları `process.env` üzerinden otomatik olarak okurlar ve [Bir çağrının hangi erişimi kullandığı](#whose-access-a-call-uses) bölümü aralarından seçim yapmayı açıklar. Uygulamanızın kendi izinleri, `defineApplicationRole()` ile bildirilen role (veya `application-config.ts` içindeki `defaultRoleUniversalIdentifier` üzerinden referans verilen role) göre belirlenir; kişi olarak davranan bir çalıştırma ne bu rolü ne de kişinin rolünü aşabilir.
 </Note>

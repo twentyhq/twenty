@@ -45,7 +45,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -108,7 +108,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -141,7 +140,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -228,7 +226,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -255,7 +252,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -347,7 +343,6 @@ export class UserService {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -415,7 +410,6 @@ export class UserService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

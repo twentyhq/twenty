@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 
@@ -20,7 +20,6 @@ export class BlocklistRepository {
       async () => {
         const blockListRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             BlocklistWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -45,7 +44,6 @@ export class BlocklistRepository {
       async () => {
         const blockListRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             BlocklistWorkspaceEntity,
           );
 

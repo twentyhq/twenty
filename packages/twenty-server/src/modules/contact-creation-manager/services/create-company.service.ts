@@ -11,8 +11,8 @@ import { isDefined, normalizeUrlOrigin } from 'twenty-shared/utils';
 import { type DeepPartial, ILike } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
@@ -58,7 +58,6 @@ export class CreateCompanyService {
       async () => {
         const companyRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             CompanyWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -130,8 +129,6 @@ export class CreateCompanyService {
               },
             };
           }),
-          undefined,
-          ['domainNamePrimaryLinkUrl', 'id'],
         );
 
         const formattedRestoredCompanies = restoredCompanies.raw.map(
@@ -233,7 +230,7 @@ export class CreateCompanyService {
   }
 
   private async getLastCompanyPosition(
-    companyRepository: WorkspaceRepository<CompanyWorkspaceEntity>,
+    companyRepository: WorkspaceRepositoryV2<CompanyWorkspaceEntity>,
   ): Promise<number> {
     const lastCompanyPosition = await companyRepository.maximum(
       'position',

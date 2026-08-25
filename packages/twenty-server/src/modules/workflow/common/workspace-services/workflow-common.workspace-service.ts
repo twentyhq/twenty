@@ -20,8 +20,8 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowCommonException,
@@ -83,7 +83,6 @@ export class WorkflowCommonWorkspaceService {
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
             'workflowVersion',
             { shouldBypassPermissionChecks: true },
           );
@@ -168,7 +167,6 @@ export class WorkflowCommonWorkspaceService {
         async () => {
           const workflowRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              workspaceId,
               'workflow',
               { shouldBypassPermissionChecks: true },
             );
@@ -321,21 +319,18 @@ export class WorkflowCommonWorkspaceService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowRunRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-          workspaceId,
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowAutomatedTriggerRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-          workspaceId,
           'workflowAutomatedTrigger',
           { shouldBypassPermissionChecks: true },
         );
@@ -405,7 +400,7 @@ export class WorkflowCommonWorkspaceService {
     workspaceId,
     operation,
   }: {
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
     workspaceId: string;
     workflowId: string;
     operation: 'restore' | 'delete' | 'destroy';
@@ -497,7 +492,7 @@ export class WorkflowCommonWorkspaceService {
     workspaceId,
     operation,
   }: {
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
     workflowId: string;
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';

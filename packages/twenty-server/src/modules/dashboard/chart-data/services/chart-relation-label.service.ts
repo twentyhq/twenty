@@ -8,7 +8,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -25,7 +25,6 @@ type ResolveRelationLabelsParams = {
   rawResults: GroupByRawResult[];
   primaryAxis: ChartRelationLabelAxisInput;
   secondaryAxis?: ChartRelationLabelAxisInput;
-  workspaceId: string;
   authContext: WorkspaceAuthContext;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -43,7 +42,6 @@ export class ChartRelationLabelService {
     rawResults,
     primaryAxis,
     secondaryAxis,
-    workspaceId,
     authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -76,7 +74,6 @@ export class ChartRelationLabelService {
 
     const rawLabelsByTargetObjectId = await this.fetchRawLabelsPerTargetObject({
       resolvableAxes,
-      workspaceId,
       authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -110,13 +107,11 @@ export class ChartRelationLabelService {
 
   private async fetchRawLabelsPerTargetObject({
     resolvableAxes,
-    workspaceId,
     authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     resolvableAxes: ResolvableChartRelationAxis[];
-    workspaceId: string;
     authContext: WorkspaceAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -161,7 +156,6 @@ export class ChartRelationLabelService {
             targetFlatObjectMetadata,
             labelIdentifierColumnNames,
             recordIds: [...recordIds],
-            workspaceId,
             authContext,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -186,7 +180,6 @@ export class ChartRelationLabelService {
     targetFlatObjectMetadata,
     labelIdentifierColumnNames,
     recordIds,
-    workspaceId,
     authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -194,7 +187,6 @@ export class ChartRelationLabelService {
     targetFlatObjectMetadata: FlatObjectMetadata;
     labelIdentifierColumnNames: string[];
     recordIds: string[];
-    workspaceId: string;
     authContext: WorkspaceAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -214,7 +206,6 @@ export class ChartRelationLabelService {
           }
 
           const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             targetFlatObjectMetadata.nameSingular,
             rolePermissionConfig,
           );

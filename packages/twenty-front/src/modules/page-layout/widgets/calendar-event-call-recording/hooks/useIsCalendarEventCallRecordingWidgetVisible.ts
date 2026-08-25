@@ -1,19 +1,18 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useCalendarEventTargetRecordId } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventTargetRecordId';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useIsCalendarEventCallRecordingWidgetVisible = (): boolean => {
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const calendarEventTargetRecordId = useCalendarEventTargetRecordId();
 
   const hasCallRecordingObjectMetadata = objectMetadataItems.some(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === CoreObjectNameSingular.CallRecording,
   );
 
-  const isCalendarEventTarget =
-    targetRecordIdentifier?.targetObjectNameSingular ===
-    CoreObjectNameSingular.CalendarEvent;
-
-  return hasCallRecordingObjectMetadata && isCalendarEventTarget;
+  return (
+    hasCallRecordingObjectMetadata && isDefined(calendarEventTargetRecordId)
+  );
 };

@@ -11,9 +11,9 @@ import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -104,7 +104,6 @@ export class WorkflowTriggerWorkspaceService {
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
             'workflowVersion',
             { shouldBypassPermissionChecks: true },
           );
@@ -122,7 +121,6 @@ export class WorkflowTriggerWorkspaceService {
 
         const workflowRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            workspaceId,
             'workflow',
             { shouldBypassPermissionChecks: true },
           );
@@ -213,7 +211,6 @@ export class WorkflowTriggerWorkspaceService {
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
             'workflowVersion',
             { shouldBypassPermissionChecks: true },
           );
@@ -269,7 +266,7 @@ export class WorkflowTriggerWorkspaceService {
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>,
     workspaceId: string,
   ) {
     const previousPublishedVersionId = workflow.lastPublishedVersionId;
@@ -371,7 +368,7 @@ export class WorkflowTriggerWorkspaceService {
 
   private async performDeactivationSteps(
     workflowVersionId: string,
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>,
     workspaceId: string,
   ) {
     const workflowVersionNullable = await workflowVersionRepository.findOne({

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, type FindOptionsSelect, type FindOptionsWhere } from 'typeorm';
+import { In, type FindOptionsWhere } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import {
   findRelationPathsToPerson,
   type RelationPathToPerson,
 } from 'src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -58,7 +58,6 @@ export class RelatedPersonIdsService {
 
         for (const relationPath of relationPaths) {
           const personIdsForPath = await this.walkRelationPath({
-            workspaceId,
             recordId,
             relationPath,
           });
@@ -73,11 +72,9 @@ export class RelatedPersonIdsService {
   }
 
   private async walkRelationPath({
-    workspaceId,
     recordId,
     relationPath,
   }: {
-    workspaceId: string;
     recordId: string;
     relationPath: RelationPathToPerson;
   }): Promise<string[]> {
@@ -90,7 +87,6 @@ export class RelatedPersonIdsService {
 
       const repository =
         await this.globalWorkspaceOrmManager.getRepository<RelationWalkRecord>(
-          workspaceId,
           hop.queryObjectNameSingular,
           { shouldBypassPermissionChecks: true },
         );
@@ -98,9 +94,7 @@ export class RelatedPersonIdsService {
       if (hop.direction === RelationType.MANY_TO_ONE) {
         const records = await repository.find({
           where: { id: In(currentIds) } as FindOptionsWhere<RelationWalkRecord>,
-          select: {
-            [hop.joinColumnName]: true,
-          } as FindOptionsSelect<RelationWalkRecord>,
+          select: [hop.joinColumnName],
         });
 
         currentIds = [

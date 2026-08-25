@@ -11,8 +11,8 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
-import { isTwentyOrmV2UserInputError } from 'src/engine/twenty-orm-v2/utils/twenty-orm-v2-to-user-input-error.util';
+import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { isTwentyOrmV2UserInputError } from 'src/engine/twenty-orm/utils/twenty-orm-v2-to-user-input-error.util';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;

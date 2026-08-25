@@ -6,7 +6,7 @@ import { In, LessThan } from 'typeorm';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TRASH_CLEANUP_BATCH_SIZE } from 'src/engine/trash-cleanup/constants/trash-cleanup-batch-size.constant';
 import { TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE } from 'src/engine/trash-cleanup/constants/trash-cleanup-max-records-per-workspace.constant';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type TrashCleanupInput = {
@@ -104,7 +104,6 @@ export class TrashCleanupService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
           objectName,
           { shouldBypassPermissionChecks: true },
         );
@@ -122,7 +121,6 @@ export class TrashCleanupService {
             },
             order: { deletedAt: 'ASC' },
             take,
-            loadEagerRelations: false,
           });
 
           if (recordsToDelete.length === 0) {

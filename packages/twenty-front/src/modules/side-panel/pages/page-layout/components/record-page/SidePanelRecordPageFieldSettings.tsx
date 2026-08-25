@@ -60,7 +60,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
-  const { placementSelectableItemIds } =
+  const { placementSelectableItemIds, widgetSettingsPlacement } =
     useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
 
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -260,7 +260,18 @@ export const SidePanelRecordPageFieldSettings = () => {
             )}
           </SidePanelGroup>
           <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
-          <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
+          <WidgetSettingsPlacementSection
+            pageLayoutId={pageLayoutId}
+            isPlacementSectionVisible={
+              widgetSettingsPlacement.isPlacementSectionVisible
+            }
+            pageLayoutEditingWidgetId={
+              widgetSettingsPlacement.pageLayoutEditingWidgetId
+            }
+            showAddWidgetBelow={widgetSettingsPlacement.showAddWidgetBelow}
+            showMoveDown={widgetSettingsPlacement.showMoveDown}
+            showMoveUp={widgetSettingsPlacement.showMoveUp}
+          />
         </SidePanelList>
       </StyledSidePanelContainer>
     </StyledContainer>
