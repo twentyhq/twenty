@@ -44,6 +44,7 @@ import { OPPORTUNITY_USE_CASE_FIELD_ID } from 'src/modules/opportunity/fields/op
 import { PARTNER_COMPANY_FIELD_ID } from 'src/modules/partner/fields/partner-company.field';
 import { PARTNER_LINK_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-link-partner.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/partner-on-opportunity.field';
+import { PARTNER_PRE_REVIEW_VERDICT_FIELD_ID } from 'src/modules/partner/pre-review/fields/partner-pre-review-verdict.field';
 import { PARTNER_SERVICE_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-service-partner.field';
 import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportunity/fields/partner-user-on-opportunity.field';
 import { PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner-content.field';
@@ -315,6 +316,13 @@ export default defineRole({
       // Partner Tier — read-locked too: admin-only on the record page, hidden from partners.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+    {
+      // Pre-review Verdict — internal grading, must never reach the applicant.
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: PARTNER_PRE_REVIEW_VERDICT_FIELD_ID,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
