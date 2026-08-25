@@ -44,7 +44,6 @@ export const createGetWorkflowCurrentVersionTool = (
         async () => {
           const workflowRepository =
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              context.workspaceId,
               'workflow',
               context.rolePermissionConfig,
             );
@@ -62,7 +61,6 @@ export const createGetWorkflowCurrentVersionTool = (
 
           const workflowVersionRepository =
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-              context.workspaceId,
               'workflowVersion',
               context.rolePermissionConfig,
             );

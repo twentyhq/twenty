@@ -51,7 +51,6 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );

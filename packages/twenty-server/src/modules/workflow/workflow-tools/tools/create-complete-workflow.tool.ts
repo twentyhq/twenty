@@ -224,7 +224,6 @@ const createWorkflow = async ({
   return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
     const workflowRepository =
       await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
         'workflow',
         context.rolePermissionConfig,
       );
@@ -313,7 +312,6 @@ const updateWorkflowStatus = async ({
   await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
     const workflowRepository =
       await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
         'workflow',
         context.rolePermissionConfig,
       );

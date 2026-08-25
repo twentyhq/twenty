@@ -36,11 +36,9 @@ export class TimelineActivityTargetQueryService {
   async resolveTargetsBySourceRecordId({
     rule,
     sourceRecordIds,
-    workspaceId,
   }: {
     rule: TimelineActivityRule;
     sourceRecordIds: string[];
-    workspaceId: string;
   }): Promise<Map<string, ResolvedTimelineActivityTarget[]>> {
     const targetsBySourceRecordId = new Map<
       string,
@@ -56,7 +54,6 @@ export class TimelineActivityTargetQueryService {
 
     const junctionRepository =
       await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
         junctionObjectNameSingular,
         { shouldBypassPermissionChecks: true },
       );
@@ -105,11 +102,9 @@ export class TimelineActivityTargetQueryService {
   async findSourceRecordsByRecordId({
     rule,
     recordIds,
-    workspaceId,
   }: {
     rule: TimelineActivityRule;
     recordIds: string[];
-    workspaceId: string;
   }): Promise<Map<string, Record<string, unknown>>> {
     const sourceRecordsByRecordId = new Map<string, Record<string, unknown>>();
 
@@ -118,7 +113,6 @@ export class TimelineActivityTargetQueryService {
     }
 
     const repository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
       rule.sourceFlatObjectMetadata.nameSingular,
       { shouldBypassPermissionChecks: true },
     );

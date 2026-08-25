@@ -42,7 +42,6 @@ export const createDeleteWorkflowTool = (
           async () => {
             const workflowRepository =
               await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-                workspaceId,
                 'workflow',
                 context.rolePermissionConfig,
               );

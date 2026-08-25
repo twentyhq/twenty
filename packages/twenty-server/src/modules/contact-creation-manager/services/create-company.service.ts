@@ -58,7 +58,6 @@ export class CreateCompanyService {
       async () => {
         const companyRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             CompanyWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,

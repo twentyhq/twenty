@@ -135,7 +135,7 @@ export class MessageCampaignService {
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+    return this.globalWorkspaceOrmManager.getRepository(entity, {
       unionOf: [roleId],
     });
   }
@@ -144,7 +144,7 @@ export class MessageCampaignService {
     workspaceId: string,
     entity: Type<T>,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+    return this.globalWorkspaceOrmManager.getRepository(entity, {
       shouldBypassPermissionChecks: true,
     });
   }

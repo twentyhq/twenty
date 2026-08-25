@@ -54,7 +54,7 @@ export class MessageCampaignDraftService {
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+    return this.globalWorkspaceOrmManager.getRepository(entity, {
       unionOf: [roleId],
     });
   }

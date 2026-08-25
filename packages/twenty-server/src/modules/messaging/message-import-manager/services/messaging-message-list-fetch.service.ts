@@ -149,7 +149,6 @@ export class MessagingMessageListFetchService {
 
           const messageChannelMessageAssociationRepository =
             await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-              workspaceId,
               'messageChannelMessageAssociation',
             );
 
@@ -210,7 +209,6 @@ export class MessagingMessageListFetchService {
             ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
                 freshMessageChannel,
                 messageExternalIds,
-                workspaceId,
               )
             : [];
 
@@ -344,11 +342,9 @@ export class MessagingMessageListFetchService {
   private async computeFullSyncMessageChannelMessageAssociationsToDelete(
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     messageExternalIds: string[],
-    workspaceId: string,
   ) {
     const messageChannelMessageAssociationRepository =
       await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        workspaceId,
         'messageChannelMessageAssociation',
       );
 

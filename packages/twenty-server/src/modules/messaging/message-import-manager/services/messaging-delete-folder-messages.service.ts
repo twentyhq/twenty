@@ -41,13 +41,11 @@ export class MessagingDeleteFolderMessagesService {
       async () => {
         const messageFolderAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
-            workspaceId,
             'messageChannelMessageAssociationMessageFolder',
           );
 
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
             'messageChannelMessageAssociation',
           );
 
