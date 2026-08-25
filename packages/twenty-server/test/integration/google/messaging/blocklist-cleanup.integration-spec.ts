@@ -179,6 +179,7 @@ describe('Blocklist cleanup (integration)', () => {
 
     await resetMessageChannelSyncState(channel.channelId);
     await runMessageChannelSync(channel.channelId);
+    await waitForAllJobsToFinish();
 
     expect(
       await findImportedMessageSubjects([
@@ -208,6 +209,7 @@ describe('Blocklist cleanup (integration)', () => {
 
     await runCalendarChannelListFetch(channel.calendarChannelId);
     await runCalendarChannelEventsImport(channel.calendarChannelId);
+    await waitForAllJobsToFinish();
 
     expect(
       await findImportedCalendarEventTitles([
