@@ -3,7 +3,7 @@ import { type CallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/wi
 import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { memo, type Ref } from 'react';
+import { type Ref } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
@@ -42,21 +42,18 @@ const StyledEntryHeader = styled.div`
 `;
 
 const StyledTimestamp = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-variant-numeric: tabular-nums;
-`;
-
-const StyledTimestampButton = styled.button`
   background: transparent;
   border: 0;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.xs};
   font-variant-numeric: tabular-nums;
   padding: 0;
+
+  &:is(button) {
+    cursor: pointer;
+  }
 
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.border.color.blue};
@@ -80,89 +77,89 @@ const StyledText = styled.p<{ isUpcoming: boolean }>`
 type CallRecordingTranscriptEntryListItemProps = {
   entry: CallRecordingParsedTranscriptEntry;
   playbackPhase?: CallRecordingTranscriptEntryPlaybackPhase;
-  videoElement?: HTMLVideoElement | null;
+  videoElement?: HTMLVideoElement;
   entryElementRef?: Ref<HTMLLIElement>;
   onSelect?: (entryStartSeconds: number) => void;
 };
 
-export const CallRecordingTranscriptEntryListItem = memo(
-  ({
-    entry,
-    playbackPhase,
-    videoElement,
-    entryElementRef,
-    onSelect,
-  }: CallRecordingTranscriptEntryListItemProps) => {
-    const speakerName = entry.speakerName ?? t`Unknown speaker`;
-    const entryStartSeconds = entry.startSeconds;
-    const isSelectable = isDefined(entryStartSeconds) && isDefined(onSelect);
-    const isActive = playbackPhase === 'speaking';
-    const hasPlaybackControls = isDefined(playbackPhase) || isDefined(onSelect);
-    const hasSpokenWordHighlight =
-      isActive && isDefined(videoElement) && isNonEmptyArray(entry.words);
+export const CallRecordingTranscriptEntryListItem = ({
+  entry,
+  playbackPhase,
+  videoElement,
+  entryElementRef,
+  onSelect,
+}: CallRecordingTranscriptEntryListItemProps) => {
+  const speakerName = entry.speakerName ?? t`Unknown speaker`;
+  const entryStartSeconds = entry.startSeconds;
+  const isSelectable = isDefined(entryStartSeconds) && isDefined(onSelect);
+  const isActive = playbackPhase === 'speaking';
+  const hasPlaybackControls = isDefined(playbackPhase) || isDefined(onSelect);
+  const hasSpokenWordHighlight =
+    isActive && isDefined(videoElement) && isNonEmptyArray(entry.words);
+  const formattedStartTimestamp = isDefined(entryStartSeconds)
+    ? formatCallRecordingTranscriptTimestamp(entryStartSeconds)
+    : undefined;
 
-    const handleEntryClick = () => {
-      if (!isDefined(entryStartSeconds) || !isDefined(onSelect)) {
-        return;
-      }
+  const handleEntryClick = () => {
+    if (!isDefined(entryStartSeconds) || !isDefined(onSelect)) {
+      return;
+    }
 
-      // A click that ends a text selection must not seek away from it.
-      const selection = window.getSelection();
-      if (isDefined(selection) && !selection.isCollapsed) {
-        return;
-      }
+    // A click that ends a text selection must not seek away from it.
+    const selection = window.getSelection();
+    if (isDefined(selection) && !selection.isCollapsed) {
+      return;
+    }
 
-      onSelect(entryStartSeconds);
-    };
+    onSelect(entryStartSeconds);
+  };
 
-    return (
-      <StyledEntry
-        ref={entryElementRef}
-        aria-current={isActive ? 'true' : undefined}
-        hasPlaybackControls={hasPlaybackControls}
-        isActive={isActive}
-        isSelectable={isSelectable}
-        onClick={isSelectable ? handleEntryClick : undefined}
-      >
-        <StyledEntryHeader>
-          <Chip
-            clickable={false}
-            label={speakerName}
-            variant={ChipVariant.Transparent}
-            leftComponent={
-              <Avatar
-                placeholder={speakerName}
-                placeholderColorSeed={speakerName}
-                size="sm"
-                type="rounded"
-              />
-            }
-          />
-          {isDefined(entry.startSeconds) &&
-            (isSelectable ? (
-              <StyledTimestampButton
-                aria-label={t`Seek recording to ${formatCallRecordingTranscriptTimestamp(entry.startSeconds)}`}
-                type="button"
-              >
-                {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
-              </StyledTimestampButton>
-            ) : (
-              <StyledTimestamp>
-                {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
-              </StyledTimestamp>
-            ))}
-        </StyledEntryHeader>
-        <StyledText isUpcoming={playbackPhase === 'upcoming'}>
-          {hasSpokenWordHighlight ? (
-            <CallRecordingTranscriptEntryWords
-              words={entry.words}
-              videoElement={videoElement}
+  return (
+    <StyledEntry
+      ref={entryElementRef}
+      aria-current={isActive ? 'true' : undefined}
+      hasPlaybackControls={hasPlaybackControls}
+      isActive={isActive}
+      isSelectable={isSelectable}
+      onClick={isSelectable ? handleEntryClick : undefined}
+    >
+      <StyledEntryHeader>
+        <Chip
+          clickable={false}
+          label={speakerName}
+          variant={ChipVariant.Transparent}
+          leftComponent={
+            <Avatar
+              placeholder={speakerName}
+              placeholderColorSeed={speakerName}
+              size="sm"
+              type="rounded"
             />
-          ) : (
-            entry.text
-          )}
-        </StyledText>
-      </StyledEntry>
-    );
-  },
-);
+          }
+        />
+        {isDefined(formattedStartTimestamp) && (
+          <StyledTimestamp
+            as={isSelectable ? 'button' : undefined}
+            aria-label={
+              isSelectable
+                ? t`Seek recording to ${formattedStartTimestamp}`
+                : undefined
+            }
+          >
+            {formattedStartTimestamp}
+          </StyledTimestamp>
+        )}
+      </StyledEntryHeader>
+      <StyledText isUpcoming={playbackPhase === 'upcoming'}>
+        {hasSpokenWordHighlight ? (
+          <CallRecordingTranscriptEntryWords
+            words={entry.words}
+            videoElement={videoElement}
+          />
+        ) : (
+          entry.text
+        )}
+      </StyledText>
+    </StyledEntry>
+  );
+};

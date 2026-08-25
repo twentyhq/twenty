@@ -39,7 +39,6 @@ export const watchCallRecordingTranscriptPlayback = ({
   let lastNotifiedActiveIndex: number | undefined;
   let lastNotifiedLastStartedIndex: number | undefined;
   let boundaryTimeoutId: ReturnType<typeof setTimeout> | undefined;
-  let isPlaybackBuffering = false;
   let bufferingStartTimeSeconds: number | undefined;
 
   const clearBoundaryTimeout = () => {
@@ -90,7 +89,7 @@ export const watchCallRecordingTranscriptPlayback = ({
     if (
       videoElement.paused ||
       videoElement.seeking ||
-      isPlaybackBuffering ||
+      isDefined(bufferingStartTimeSeconds) ||
       !isDefined(nextBoundarySeconds)
     ) {
       return;
@@ -108,24 +107,20 @@ export const watchCallRecordingTranscriptPlayback = ({
   };
 
   const suspendPlaybackSynchronization = () => {
-    isPlaybackBuffering = true;
     bufferingStartTimeSeconds = videoElement.currentTime;
     clearBoundaryTimeout();
   };
 
   const resumePlaybackSynchronization = () => {
-    isPlaybackBuffering = false;
     bufferingStartTimeSeconds = undefined;
     syncPlaybackPosition();
   };
 
   const synchronizeOnTimeUpdate = () => {
     if (
-      isPlaybackBuffering &&
       isDefined(bufferingStartTimeSeconds) &&
       videoElement.currentTime > bufferingStartTimeSeconds
     ) {
-      isPlaybackBuffering = false;
       bufferingStartTimeSeconds = undefined;
     }
 

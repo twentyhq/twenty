@@ -1,24 +1,26 @@
 import { type CallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptEntryPlaybackPhase';
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getCallRecordingTranscriptEntryPlaybackPhase = ({
-  activeEntryIndex,
   entryIndex,
-  lastStartedEntryIndex,
+  playbackPosition,
 }: {
-  activeEntryIndex: number | undefined;
   entryIndex: number;
-  lastStartedEntryIndex: number | undefined;
+  playbackPosition: CallRecordingTranscriptPlaybackPosition | undefined;
 }): CallRecordingTranscriptEntryPlaybackPhase | undefined => {
-  if (!isDefined(lastStartedEntryIndex) || lastStartedEntryIndex === -1) {
+  if (
+    !isDefined(playbackPosition) ||
+    playbackPosition.lastStartedIndex === -1
+  ) {
     return undefined;
   }
 
-  if (entryIndex === activeEntryIndex) {
+  if (entryIndex === playbackPosition.activeIndex) {
     return 'speaking';
   }
 
-  if (entryIndex <= lastStartedEntryIndex) {
+  if (entryIndex <= playbackPosition.lastStartedIndex) {
     return 'spoken';
   }
 

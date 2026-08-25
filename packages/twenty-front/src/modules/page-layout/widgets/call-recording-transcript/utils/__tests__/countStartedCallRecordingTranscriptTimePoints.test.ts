@@ -16,6 +16,15 @@ describe('countStartedCallRecordingTranscriptTimePoints', () => {
     ).toBe(0);
   });
 
+  it('should count a point as started within the seek tolerance before its start', () => {
+    expect(
+      countStartedCallRecordingTranscriptTimePoints({
+        timePoints: TIME_POINTS,
+        currentTimeSeconds: 0.995,
+      }),
+    ).toBe(1);
+  });
+
   it('should count a point as started at its exact start time', () => {
     expect(
       countStartedCallRecordingTranscriptTimePoints({

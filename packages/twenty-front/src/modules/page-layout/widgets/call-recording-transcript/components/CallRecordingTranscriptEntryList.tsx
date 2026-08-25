@@ -1,15 +1,10 @@
 import { CallRecordingTranscriptEntryListItem } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem';
-import { CallRecordingTranscriptFollowScrollEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptFollowScrollEffect';
+import { useCallRecordingTranscriptFollowScroll } from '@/page-layout/widgets/call-recording-transcript/hooks/useCallRecordingTranscriptFollowScroll';
+import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { getCallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptEntryPlaybackPhase';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  useCallback,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type PointerEvent,
-} from 'react';
+import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -58,31 +53,28 @@ const MANUAL_SCROLL_KEYS = [
 
 type CallRecordingTranscriptEntryListProps = {
   entries: CallRecordingParsedTranscriptEntry[];
-  activeEntryIndex?: number;
-  lastStartedEntryIndex?: number;
-  videoElement?: HTMLVideoElement | null;
-  onEntrySelect?: (entryStartSeconds: number) => void;
+  playback?: CallRecordingTranscriptPlayback;
 };
 
 export const CallRecordingTranscriptEntryList = ({
   entries,
-  activeEntryIndex,
-  lastStartedEntryIndex,
-  videoElement,
-  onEntrySelect,
+  playback,
 }: CallRecordingTranscriptEntryListProps) => {
   const scrollContainerElementRef = useRef<HTMLDivElement>(null);
   const activeEntryElementRef = useRef<HTMLLIElement>(null);
   const [isFollowingPlayback, setIsFollowingPlayback] = useState(true);
 
-  // Stable so the memoized list items keep their onSelect reference.
-  const selectTranscriptEntry = useCallback(
-    (entryStartSeconds: number) => {
-      setIsFollowingPlayback(true);
-      onEntrySelect?.(entryStartSeconds);
-    },
-    [onEntrySelect],
-  );
+  useCallRecordingTranscriptFollowScroll({
+    activeEntryElementRef,
+    isFollowingPlayback,
+    scrollContainerElementRef,
+    videoElement: playback?.videoElement,
+  });
+
+  const selectTranscriptEntry = (entryStartSeconds: number) => {
+    setIsFollowingPlayback(true);
+    playback?.onSeek(entryStartSeconds);
+  };
 
   const stopFollowingPlayback = () => {
     setIsFollowingPlayback(false);
@@ -104,16 +96,10 @@ export const CallRecordingTranscriptEntryList = ({
     }
   };
 
-  const hasPlayback = isDefined(lastStartedEntryIndex);
+  const hasPlayback = isDefined(playback);
 
   return (
     <StyledTranscriptContainer>
-      <CallRecordingTranscriptFollowScrollEffect
-        activeEntryElementRef={activeEntryElementRef}
-        isFollowingPlayback={isFollowingPlayback}
-        scrollContainerElementRef={scrollContainerElementRef}
-        videoElement={videoElement}
-      />
       <StyledTranscriptScrollContainer
         ref={scrollContainerElementRef}
         aria-label={t`Transcript`}
@@ -127,9 +113,8 @@ export const CallRecordingTranscriptEntryList = ({
         <StyledEntryList hasPlaybackControls={hasPlayback}>
           {entries.map((entry, entryIndex) => {
             const playbackPhase = getCallRecordingTranscriptEntryPlaybackPhase({
-              activeEntryIndex,
               entryIndex,
-              lastStartedEntryIndex,
+              playbackPosition: playback?.position,
             });
             const isActive = playbackPhase === 'speaking';
 
@@ -139,8 +124,8 @@ export const CallRecordingTranscriptEntryList = ({
                 entry={entry}
                 entryElementRef={isActive ? activeEntryElementRef : undefined}
                 playbackPhase={playbackPhase}
-                videoElement={videoElement}
-                onSelect={onEntrySelect ? selectTranscriptEntry : undefined}
+                videoElement={playback?.videoElement}
+                onSelect={hasPlayback ? selectTranscriptEntry : undefined}
               />
             );
           })}

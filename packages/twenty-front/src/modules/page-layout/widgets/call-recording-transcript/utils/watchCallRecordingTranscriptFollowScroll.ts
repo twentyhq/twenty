@@ -13,17 +13,20 @@ type FollowScrollTargetElement = {
   getBoundingClientRect: () => Pick<DOMRect, 'bottom' | 'top'>;
 };
 
+type FollowScrollActiveEntryElement = FollowScrollTargetElement & {
+  querySelector: (selector: string) => FollowScrollTargetElement | null;
+};
+
 type FollowScrollContainerElement = FollowScrollTargetElement & {
   clientHeight: number;
   scrollTop: number;
-  querySelector: (selector: string) => FollowScrollTargetElement | null;
   scrollTo: (options: ScrollToOptions) => void;
 };
 
 type WatchCallRecordingTranscriptFollowScrollParams = {
   videoElement: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>;
   scrollContainerElement: FollowScrollContainerElement;
-  getActiveEntryElement: () => FollowScrollTargetElement | null;
+  getActiveEntryElement: () => FollowScrollActiveEntryElement | null;
 };
 
 export const watchCallRecordingTranscriptFollowScroll = ({
@@ -34,9 +37,10 @@ export const watchCallRecordingTranscriptFollowScroll = ({
   let animationFrameId: number | undefined;
 
   const followPlaybackPosition = () => {
+    const activeEntryElement = getActiveEntryElement();
     const followTargetElement =
-      scrollContainerElement.querySelector(CURRENT_SPOKEN_WORD_SELECTOR) ??
-      getActiveEntryElement();
+      activeEntryElement?.querySelector(CURRENT_SPOKEN_WORD_SELECTOR) ??
+      activeEntryElement;
 
     if (!isDefined(followTargetElement)) {
       return;

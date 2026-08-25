@@ -553,7 +553,7 @@ export const WithVideoInteractions: Story = {
 
     await waitFor(() => {
       expect(canvasElement.querySelector('video')).toBe(videoElement);
-      expect(videoElement.currentTime).toBeCloseTo(6.01);
+      expect(videoElement.currentTime).toBeCloseTo(6);
       expect(
         canvasElement.querySelector('[aria-current="true"]'),
       ).toHaveTextContent(
