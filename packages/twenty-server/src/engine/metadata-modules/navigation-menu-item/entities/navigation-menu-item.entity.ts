@@ -19,6 +19,7 @@ import {
   NavigationMenuItemType,
   NavigationSystemPage,
 } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
@@ -107,6 +108,10 @@ export class NavigationMenuItemEntity
   link: string | null;
 
   @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.35.0_AddSystemNavigationMenuItemTypeFastInstanceCommand_1787664271000',
+  })
   systemPage: NavigationSystemPage | null;
 
   @Column({ nullable: true, type: 'text' })

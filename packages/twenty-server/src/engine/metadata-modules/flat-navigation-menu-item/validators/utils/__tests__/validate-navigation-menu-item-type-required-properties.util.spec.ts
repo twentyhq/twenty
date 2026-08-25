@@ -1,4 +1,7 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  NavigationMenuItemType,
+  NavigationSystemPage,
+} from 'twenty-shared/types';
 
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
@@ -114,6 +117,10 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
+    {
+      type: NavigationMenuItemType.SYSTEM,
+      overrides: { systemPage: NavigationSystemPage.WORKFLOWS },
+    },
   ])(
     'should not report any error when $type type properties are valid',
     ({ type, overrides }) => {
@@ -125,6 +132,23 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       });
 
       expect(errors).toEqual([]);
+    },
+  );
+
+  it.each([
+    { label: 'missing', systemPage: null },
+    { label: 'unknown', systemPage: 'NOT_A_PAGE' },
+  ])(
+    'should return an error when systemPage is $label for SYSTEM type',
+    ({ systemPage }) => {
+      const errors = validateNavigationMenuItemTypeRequiredProperties({
+        flatNavigationMenuItem: buildFlatNavigationMenuItem({
+          type: NavigationMenuItemType.SYSTEM,
+          systemPage: systemPage as never,
+        }),
+      });
+
+      expect(errors).toHaveLength(1);
     },
   );
 

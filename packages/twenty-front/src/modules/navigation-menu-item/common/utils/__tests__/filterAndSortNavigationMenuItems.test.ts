@@ -1,4 +1,7 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  NavigationMenuItemType,
+  NavigationSystemPage,
+} from 'twenty-shared/types';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -273,6 +276,33 @@ describe('filterAndSortNavigationMenuItems', () => {
       [inactiveObjectMetadataItem],
     );
     expect(result).toEqual([]);
+  });
+
+  it('should keep SYSTEM items with a systemPage and drop those without', () => {
+    const result = filterAndSortNavigationMenuItems(
+      [
+        {
+          id: 'sys-1',
+          type: NavigationMenuItemType.SYSTEM,
+          systemPage: NavigationSystemPage.WORKFLOWS,
+          position: 0,
+          createdAt: '',
+          updatedAt: '',
+        },
+        {
+          id: 'sys-2',
+          type: NavigationMenuItemType.SYSTEM,
+          systemPage: null,
+          position: 1,
+          createdAt: '',
+          updatedAt: '',
+        },
+      ],
+      [],
+      [],
+    );
+
+    expect(result.map((item) => item.id)).toEqual(['sys-1']);
   });
 
   it('should keep folder items', () => {

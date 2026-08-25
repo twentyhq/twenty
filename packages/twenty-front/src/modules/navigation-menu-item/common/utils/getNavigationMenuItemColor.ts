@@ -28,7 +28,10 @@ export const getNavigationMenuItemColor = (
     return DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
   }
 
-  if (navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT) {
+  if (
+    navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT ||
+    navigationMenuItem.type === NavigationMenuItemType.SYSTEM
+  ) {
     return isNonEmptyString(navigationMenuItem.color)
       ? (navigationMenuItem.color as ThemeColor)
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_PAGE_LAYOUT;

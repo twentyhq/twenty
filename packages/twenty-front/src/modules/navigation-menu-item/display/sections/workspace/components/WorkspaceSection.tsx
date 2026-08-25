@@ -166,6 +166,12 @@ export const WorkspaceSection = () => {
           pageIcon: getIcon(item.icon),
         });
         break;
+      case NavigationMenuItemType.SYSTEM:
+        openNavigationMenuItemInSidePanel({
+          pageTitle: item.name ?? t`Edit item`,
+          pageIcon: getIcon(item.icon),
+        });
+        break;
       default:
         openViewOrRecordEditPanelAndNavigate(item, objectMetadataItem);
     }

@@ -1,6 +1,12 @@
+import { msg } from '@lingui/core/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  NavigationMenuItemException,
+  NavigationMenuItemExceptionCode,
+} from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -26,6 +32,16 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatPageLayoutMaps'
   >): FlatNavigationMenuItem => {
+    if (createNavigationMenuItemInput.type === NavigationMenuItemType.SYSTEM) {
+      throw new NavigationMenuItemException(
+        'SYSTEM navigation menu items cannot be created through the API; they are seeded or shipped by applications',
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        {
+          userFriendlyMessage: msg`System navigation items cannot be created manually`,
+        },
+      );
+    }
+
     const id = createNavigationMenuItemInput.id ?? uuidv4();
     const now = new Date().toISOString();
 

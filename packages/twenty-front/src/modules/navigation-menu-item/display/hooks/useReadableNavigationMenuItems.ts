@@ -7,10 +7,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { NavigationSystemPage } from 'twenty-shared/types';
 import {
   FeatureFlagKey,
+  PermissionFlagType,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
