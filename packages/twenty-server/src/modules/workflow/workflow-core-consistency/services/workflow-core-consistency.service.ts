@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
@@ -26,22 +28,30 @@ export class WorkflowCoreConsistencyService {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async runConsistencyCheck(): Promise<void> {
-    const workspaces: Array<{ workspaceId: string; databaseSchema: string }> =
-      await this.coreDataSource.query(
-        `SELECT id AS "workspaceId", "databaseSchema"
-         FROM core."workspace"
-         WHERE "activationStatus" IN ('ACTIVE', 'SUSPENDED')
-           AND "deletedAt" IS NULL
-           AND "databaseSchema" IS NOT NULL`,
-      );
+    const workspaces = await this.workspaceRepository.find({
+      select: ['id', 'databaseSchema'],
+      where: {
+        activationStatus: In([
+          WorkspaceActivationStatus.ACTIVE,
+          WorkspaceActivationStatus.SUSPENDED,
+        ]),
+        databaseSchema: Not(IsNull()),
+      },
+    });
 
-    for (const { workspaceId, databaseSchema } of workspaces) {
+    for (const { id: workspaceId, databaseSchema } of workspaces) {
+      if (!isDefined(databaseSchema)) {
+        continue;
+      }
+
       try {
         await this.checkWorkspace(workspaceId, databaseSchema);
       } catch (error) {
