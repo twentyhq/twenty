@@ -82,7 +82,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
 
-    const updatedRecord = await this.executeMergeWithinTransactionV2({
+    const updatedRecord = await this.executeMergeWithinTransaction({
       args,
       queryRunnerContext,
       idsToDelete,
@@ -332,7 +332,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return relationFields;
   }
 
-  private async executeMergeWithinTransactionV2({
+  private async executeMergeWithinTransaction({
     args,
     queryRunnerContext,
     idsToDelete,
@@ -403,7 +403,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           columnsToReturn,
         });
 
-        const [resolvedMergedData] = await this.resolveNestedRelationsForOrmV2({
+        const [resolvedMergedData] = await this.resolveNestedRelations({
           records: [mergedData],
           queryRunnerContext,
           writeRepository: objectRepository,

@@ -60,7 +60,7 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
   !(value instanceof FindOperator) &&
   !(value instanceof Date);
 
-export type QueryBuilderV2Context = {
+export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
@@ -76,7 +76,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly tableShape: WorkspaceTableShape;
   readonly objectRecordsPermissions: ObjectsPermissions;
 
-  private readonly context: QueryBuilderV2Context;
+  private readonly context: QueryBuilderContext;
   private readonly whereClauses: WhereClause[] = [];
   private readonly joinClauses: JoinClause[] = [];
   private readonly existsFilterClauses: ExistsFilterClause[] = [];
@@ -93,7 +93,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
 
-  constructor(alias: string, context: QueryBuilderV2Context) {
+  constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
     this.tableShape = context.tableShape;
     this.objectRecordsPermissions = context.objectRecordsPermissions;
@@ -964,7 +964,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
     Object.assign(parameters, nestedBuilder.parameters);
 
-    const token = `__ormV2ExistsFilter_${existsFilterSequence++}__`;
+    const token = `__ormExistsFilter_${existsFilterSequence++}__`;
 
     this.existsFilterClauses.push(
       {
@@ -1021,7 +1021,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     }
 
     const nextParameter = (parameterValue: unknown): string => {
-      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
+      const parameterName = `ormObjectWhere_${objectWhereParameterSequence++}`;
 
       parameters[parameterName] = parameterValue;
 
