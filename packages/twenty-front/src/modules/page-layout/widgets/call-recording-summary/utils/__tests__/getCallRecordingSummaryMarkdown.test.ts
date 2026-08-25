@@ -18,7 +18,9 @@ describe('getCallRecordingSummaryMarkdown', () => {
   it('returns the trimmed summary markdown', () => {
     expect(
       getCallRecordingSummaryMarkdown(
-        makeCallRecording({ markdown: '\n## Recap\n\nWe agreed on pricing.\n' }),
+        makeCallRecording({
+          markdown: '\n## Recap\n\nWe agreed on pricing.\n',
+        }),
       ),
     ).toBe('## Recap\n\nWe agreed on pricing.');
   });

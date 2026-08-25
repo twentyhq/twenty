@@ -6,13 +6,8 @@ import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/Widget
 import { isDefined } from 'twenty-shared/utils';
 
 export const CallRecordingSummaryWidgetContent = () => {
-  const {
-    callRecording,
-    callRecordingsCount,
-    loading,
-    error,
-    restriction,
-  } = useCalendarEventCallRecording({ queryScope: 'call-recording-summary' });
+  const { callRecording, callRecordingsCount, loading, error, restriction } =
+    useCalendarEventCallRecording({ queryScope: 'call-recording-summary' });
 
   const canExposeCallRecordingHeaderData =
     !loading && !isDefined(error) && !isDefined(restriction);

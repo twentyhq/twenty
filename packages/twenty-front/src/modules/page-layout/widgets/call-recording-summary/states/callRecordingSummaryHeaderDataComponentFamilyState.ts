@@ -6,8 +6,10 @@ export type CallRecordingSummaryHeaderData = {
 };
 
 export const callRecordingSummaryHeaderDataComponentFamilyState =
-  createAtomComponentFamilyState<CallRecordingSummaryHeaderData | null, string>({
-    key: 'callRecordingSummaryHeaderDataComponentFamilyState',
-    defaultValue: null,
-    componentInstanceContext: PageLayoutComponentInstanceContext,
-  });
+  createAtomComponentFamilyState<CallRecordingSummaryHeaderData | null, string>(
+    {
+      key: 'callRecordingSummaryHeaderDataComponentFamilyState',
+      defaultValue: null,
+      componentInstanceContext: PageLayoutComponentInstanceContext,
+    },
+  );
