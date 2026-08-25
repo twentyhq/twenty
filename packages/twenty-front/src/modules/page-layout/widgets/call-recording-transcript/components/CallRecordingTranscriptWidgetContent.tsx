@@ -38,11 +38,13 @@ export const CallRecordingTranscriptWidgetContent = () => {
 
   const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
 
+  const calendarEventHeaderCount = canExposeCallRecordingHeaderData
+    ? callRecordingsCount
+    : 0;
+
   const headerCount =
     callRecordingWidgetTarget?.targetKind === 'calendarEvent'
-      ? canExposeCallRecordingHeaderData
-        ? callRecordingsCount
-        : 0
+      ? calendarEventHeaderCount
       : undefined;
 
   return (
