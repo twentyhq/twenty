@@ -69,13 +69,12 @@ export const useCreateActivityInDB = ({
         throw new Error('Activity target relation metadata is missing');
       }
 
-      const { junctionObjectMetadata, junctionField } =
-        morphJunctionConfig;
+      const { junctionObjectMetadata, junctionField } = morphJunctionConfig;
 
       const activityTargetsToCreate =
-        (activityToCreate[
-          junctionField.name as keyof ActivityForEditor
-        ] as ActivityTarget[] | undefined) ?? [];
+        (activityToCreate[junctionField.name as keyof ActivityForEditor] as
+          | ActivityTarget[]
+          | undefined) ?? [];
 
       if (isNonEmptyArray(activityTargetsToCreate)) {
         await createManyActivityTargets({

@@ -34,8 +34,7 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
     throw new Error('Cannot resolve activity relation on junction object');
   }
 
-  const { junctionField, junctionObjectMetadata, sourceField } =
-    junctionConfig;
+  const { junctionField, junctionObjectMetadata, sourceField } = junctionConfig;
 
   const activityFieldKeys = generateDepthRecordGqlFieldsFromObject({
     objectMetadataItems,

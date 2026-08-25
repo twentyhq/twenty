@@ -44,14 +44,15 @@ export const useActivityTargetsForTargetableObjects = ({
       objectMetadataItems,
     });
 
-  const morphJunctionConfig = useObjectMorphJunctionConfig({ objectNameSingular });
+  const morphJunctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular,
+  });
 
   if (!isDefined(morphJunctionConfig)) {
     throw new Error('Activity target junction metadata is missing');
   }
 
-  const { junctionObjectMetadata, sourceField } =
-    morphJunctionConfig;
+  const { junctionObjectMetadata, sourceField } = morphJunctionConfig;
 
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,
@@ -74,8 +75,7 @@ export const useActivityTargetsForTargetableObjects = ({
       FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
-    onCompleted: (records) =>
-      onCompleted?.(records, sourceField.name),
+    onCompleted: (records) => onCompleted?.(records, sourceField.name),
     orderBy: activityTargetsOrderByVariables,
     limit,
   });

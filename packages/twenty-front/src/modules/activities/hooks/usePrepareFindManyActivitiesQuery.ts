@@ -76,11 +76,8 @@ export const usePrepareFindManyActivitiesQuery = ({
       throw new Error('Activity target junction metadata is invalid');
     }
 
-    const {
-      junctionObjectMetadata,
-      sourceField,
-      sourceJoinColumnName,
-    } = morphJunctionConfig;
+    const { junctionObjectMetadata, sourceField, sourceJoinColumnName } =
+      morphJunctionConfig;
 
     const junctionFieldName = targetableObjectMetadataItem.fields.find(
       (field) =>
@@ -102,9 +99,8 @@ export const usePrepareFindManyActivitiesQuery = ({
               // The join column is written by every mutation, whereas the nested activity is
               // only there when a query asked for it.
               activityTarget[sourceJoinColumnName] ??
-              (activityTarget[sourceField.name] as
-                | ObjectRecord
-                | undefined)?.id,
+              (activityTarget[sourceField.name] as ObjectRecord | undefined)
+                ?.id,
           )
           .filter(isDefined),
       ),
