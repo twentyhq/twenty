@@ -95,7 +95,7 @@ describe('WorkspaceSelectQueryBuilder where', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     expect(() =>
-      queryBuilder.andWhere('"person"."id" = :ormV2Limit', { ormV2Limit: 1 }),
+      queryBuilder.andWhere('"person"."id" = :ormLimit', { ormLimit: 1 }),
     ).toThrow(TwentyOrmV2Exception);
   });
 

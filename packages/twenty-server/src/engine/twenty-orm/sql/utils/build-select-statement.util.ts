@@ -502,8 +502,8 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     .join(', ')}`;
 };
 
-export const LIMIT_PARAMETER_NAME = 'ormV2Limit';
-export const OFFSET_PARAMETER_NAME = 'ormV2Offset';
+export const LIMIT_PARAMETER_NAME = 'ormLimit';
+export const OFFSET_PARAMETER_NAME = 'ormOffset';
 
 export const RESERVED_PARAMETER_NAMES: string[] = [
   LIMIT_PARAMETER_NAME,

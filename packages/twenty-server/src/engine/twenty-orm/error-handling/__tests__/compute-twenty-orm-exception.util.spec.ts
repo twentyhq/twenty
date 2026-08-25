@@ -1,6 +1,6 @@
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
-import { computeTwentyOrmV2Exception } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
+import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -9,11 +9,11 @@ import {
 const buildPostgresError = (message: string, code: string): Error =>
   Object.assign(new Error(message), { code });
 
-describe('computeTwentyOrmV2Exception', () => {
+describe('computeTwentyOrmException', () => {
   it('should map the pg client query timeout to QUERY_READ_TIMEOUT when the error carries no code', () => {
     const error = new Error('Query read timeout');
 
-    const result = computeTwentyOrmV2Exception(error);
+    const result = computeTwentyOrmException(error);
 
     expect(result).toBeInstanceOf(TwentyOrmV2Exception);
     expect((result as TwentyOrmV2Exception).code).toBe(
@@ -28,7 +28,7 @@ describe('computeTwentyOrmV2Exception', () => {
       POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
     );
 
-    const result = computeTwentyOrmV2Exception(error);
+    const result = computeTwentyOrmException(error);
 
     expect(result).toBeInstanceOf(TwentyOrmV2Exception);
     expect((result as TwentyOrmV2Exception).code).toBe(
@@ -42,7 +42,7 @@ describe('computeTwentyOrmV2Exception', () => {
       POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION,
     );
 
-    const result = computeTwentyOrmV2Exception(error);
+    const result = computeTwentyOrmException(error);
 
     expect(result).toBeInstanceOf(TwentyOrmV2Exception);
     expect((result as TwentyOrmV2Exception).code).toBe(
@@ -58,7 +58,7 @@ describe('computeTwentyOrmV2Exception', () => {
     POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION,
     POSTGRESQL_ERROR_CODES.RESTRICT_VIOLATION,
   ])('should map the constraint violation %s to INVALID_INPUT', (code) => {
-    const result = computeTwentyOrmV2Exception(
+    const result = computeTwentyOrmException(
       buildPostgresError('constraint violation', code),
     );
 
@@ -74,7 +74,7 @@ describe('computeTwentyOrmV2Exception', () => {
       POSTGRESQL_ERROR_CODES.READ_ONLY_SQL_TRANSACTION,
     );
 
-    const result = computeTwentyOrmV2Exception(error);
+    const result = computeTwentyOrmException(error);
 
     expect(result).toBeInstanceOf(PostgresException);
     expect((result as PostgresException).code).toBe(
@@ -86,13 +86,13 @@ describe('computeTwentyOrmV2Exception', () => {
   it('should return an unrecognised driver error untouched', () => {
     const error = new Error('Connection terminated unexpectedly');
 
-    expect(computeTwentyOrmV2Exception(error)).toBe(error);
+    expect(computeTwentyOrmException(error)).toBe(error);
   });
 
   it('should return an error carrying an unknown code untouched', () => {
     const error = buildPostgresError('some driver failure', 'NOT_A_PG_CODE');
 
-    expect(computeTwentyOrmV2Exception(error)).toBe(error);
+    expect(computeTwentyOrmException(error)).toBe(error);
   });
 
   it('should leave an exception the query builder already computed untouched', () => {
@@ -101,11 +101,11 @@ describe('computeTwentyOrmV2Exception', () => {
       TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
     );
 
-    expect(computeTwentyOrmV2Exception(error)).toBe(error);
+    expect(computeTwentyOrmException(error)).toBe(error);
   });
 
   it('should wrap a non-Error throw rather than reading message off it', () => {
-    const result = computeTwentyOrmV2Exception('connection lost');
+    const result = computeTwentyOrmException('connection lost');
 
     expect(result).toBeInstanceOf(Error);
     expect(result.message).toBe('connection lost');
@@ -117,7 +117,7 @@ describe('computeTwentyOrmV2Exception', () => {
       POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
     );
 
-    const result = computeTwentyOrmV2Exception(error);
+    const result = computeTwentyOrmException(error);
 
     expect((result as Error & { cause?: Error }).cause).toBe(error);
   });

@@ -117,7 +117,7 @@ through v2.
 
 group-by "with records" is the one path that is not a transparent swap: it wraps a
 builder subquery in a table-less `FROM (subquery)` JSON_AGG query, which the
-table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the inner
+table-shape builder cannot represent. `GroupByWithRecordsService` builds the inner
 subquery with the v2 builder and runs the composed outer query through
 `repository.executeRaw`.
 
@@ -132,7 +132,7 @@ the TypeORM surface the mutation runners already call.
 
 `deleteMany`, `destroyMany`, `restoreMany` and `updateMany` (and their `...One` delegates)
 route to this path through the shared `runFilteredMutation` on the base runner. Each
-builds the filtered v2 select builder with `buildMutationQueryBuilderV2` (which rewrites a
+builds the filtered v2 select builder with `buildMutationQueryBuilder` (which rewrites a
 relation-traversal filter into an `id IN (subquery)` predicate, RLS inside the subquery)
 and hands it to `WorkspaceRepository.runMutation`, which owns the choreography the v1
 mutation builders own: apply the row-level predicate, validate the write with the matching
@@ -145,7 +145,7 @@ pins the primary and counts `orm-v2/write-path-used`.
 Update flattens its input with the shared `formatData` (composite fields to columns) and
 validates the field-level write permission over the resulting column set. Relation
 `{connect}` / `{disconnect}` input is resolved to plain join-column values before the write
-by `resolveNestedRelationsForOrmV2` on the base runner, which runs the unchanged v1
+by `resolveNestedRelations` on the base runner, which runs the unchanged v1
 `RelationNestedQueries` (its lookup select stays on v1) and then drops the relation
 field-name keys it leaves behind so only columns reach the v2 statement. Files-field input
 is synced through the same v1 `FilesFieldSync` the write query builders use: the repository
@@ -194,7 +194,7 @@ columns a given row omits so Postgres column defaults apply), validate the inser
 permission over the inserted columns, and emit `CREATED` then `UPSERTED` from an
 all-columns re-select of the inserted ids — matching the v1 insert builder. Relation
 `{connect}` / `{disconnect}` input is resolved to join columns by
-`resolveNestedRelationsForOrmV2` before the write, and files-field input is synced through
+`resolveNestedRelations` before the write, and files-field input is synced through
 `FilesFieldSync` inside `runInsert`, exactly as on the update path.
 
 ## Transactions and merge
@@ -204,12 +204,12 @@ all-columns re-select of the inserted ids — matching the v1 insert builder. Re
 `getRepository` returns repositories bound to that client through a `ClientQueryExecutor`,
 so every statement and event snapshot inside runs on the one connection.
 
-`mergeMany` always routes through it: `executeMergeWithinTransactionV2`
+`mergeMany` always routes through it: `executeMergeWithinTransaction`
 re-points the losing records' foreign keys to the survivor across each related object,
 hard-deletes the losers, and updates the survivor with the merged data — each step a
 `runMutation` on a transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/
 `UPSERTED` events fire as v1. Before the survivor update the merged data goes through
-`resolveNestedRelationsForOrmV2`, the same relation resolution the other write paths use, so
+`resolveNestedRelations`, the same relation resolution the other write paths use, so
 a relation set by name resolves to its join column instead of forcing v1. In practice the
 merged data only ever carries columns and join columns: the write path selects columns
 (`buildColumnsToSelect` maps relations to their join columns) and loads relations by name
@@ -225,7 +225,7 @@ matched ones. The insert half routes through `runInsert`; the update half throug
 `runBatchUpdate`, which runs each per-id update as its own statement but emits one batch
 `UPDATED` + `UPSERTED` over the collected before/after images, matching v1's `updateMany`.
 Both halves resolve relation `{connect}` / `{disconnect}` input to join columns through
-`resolveNestedRelationsForOrmV2` first, just like the plain create and update paths. The
+`resolveNestedRelations` first, just like the plain create and update paths. The
 read-then-split and conflict-target derivation are unchanged.
 
 ## Coverage

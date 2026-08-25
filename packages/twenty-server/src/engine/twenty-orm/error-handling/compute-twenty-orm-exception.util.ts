@@ -32,7 +32,7 @@ const withCause = <TError extends Error>(
   cause: Error,
 ): TError => Object.assign(exception, { cause });
 
-export const computeTwentyOrmV2Exception = (error: unknown): Error => {
+export const computeTwentyOrmException = (error: unknown): Error => {
   if (!(error instanceof Error)) {
     return new Error(String(error));
   }

@@ -30,7 +30,7 @@ const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
   Map<string, WorkspaceTableShape>
 >();
 
-export type WorkspaceTransactionScopeV2 = {
+export type WorkspaceDataSourceTransactionScope = {
   getRepository: (
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
@@ -76,7 +76,7 @@ export class WorkspaceDataSource {
   }
 
   async transaction<T>(
-    work: (transactionScope: WorkspaceTransactionScopeV2) => Promise<T>,
+    work: (transactionScope: WorkspaceDataSourceTransactionScope) => Promise<T>,
   ): Promise<T> {
     return this.runInClientTransaction((executor) =>
       work({

@@ -33,7 +33,7 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-bu
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 
 @Injectable()
-export class GroupByWithRecordsV2Service {
+export class GroupByWithRecordsService {
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()

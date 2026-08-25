@@ -45,8 +45,8 @@ import {
   applyFindOptionsToQueryBuilder,
   normalizeFindOptionsRelations,
   splitFindOptionsOrder,
-  type FindOptionsRelationsV2,
-  type FindOptionsV2,
+  type WorkspaceFindOptionsRelations,
+  type WorkspaceFindOptions,
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import {
   applyMutationCriteriaToQueryBuilder,
@@ -89,7 +89,7 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
 };
 
-type WorkspaceRepositoryV2Options = {
+type WorkspaceRepositoryOptions = {
   tableShape: WorkspaceTableShape;
   flatObjectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
@@ -117,11 +117,11 @@ type WorkspaceRepositoryV2Options = {
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
-  private readonly options: WorkspaceRepositoryV2Options;
+  private readonly options: WorkspaceRepositoryOptions;
 
   private _filesFieldSync?: FilesFieldSync;
 
-  constructor(options: WorkspaceRepositoryV2Options) {
+  constructor(options: WorkspaceRepositoryOptions) {
     this.options = options;
     this.objectRecordsPermissions = options.objectRecordsPermissions;
   }
@@ -200,7 +200,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.options.internalContext;
   }
 
-  async find(options?: FindOptionsV2): Promise<TEntity[]> {
+  async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {
     const records = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
@@ -223,7 +223,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.find({ where });
   }
 
-  async findAndCount(options?: FindOptionsV2): Promise<[TEntity[], number]> {
+  async findAndCount(
+    options?: WorkspaceFindOptions,
+  ): Promise<[TEntity[], number]> {
     const records = await this.find(options);
     const totalCount = await this.count(options);
 
@@ -236,7 +238,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.findAndCount({ where });
   }
 
-  async findOne(options?: FindOptionsV2): Promise<TEntity | null> {
+  async findOne(options?: WorkspaceFindOptions): Promise<TEntity | null> {
     if (!isDefined(options?.where)) {
       throw new TwentyOrmV2Exception(
         'findOne requires a "where" condition',
@@ -268,7 +270,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.findOne({ where });
   }
 
-  async findOneOrFail(options?: FindOptionsV2): Promise<TEntity> {
+  async findOneOrFail(options?: WorkspaceFindOptions): Promise<TEntity> {
     const record = await this.findOne(options);
 
     if (!isDefined(record)) {
@@ -287,7 +289,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.findOneOrFail({ where });
   }
 
-  async count(options?: FindOptionsV2): Promise<number> {
+  async count(options?: WorkspaceFindOptions): Promise<number> {
     return applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
@@ -298,7 +300,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.count({ where });
   }
 
-  async exists(options?: FindOptionsV2): Promise<boolean> {
+  async exists(options?: WorkspaceFindOptions): Promise<boolean> {
     const queryBuilder = applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       {
@@ -380,7 +382,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private async loadRelations(
     records: ObjectRecord[],
-    relations: FindOptionsRelationsV2,
+    relations: WorkspaceFindOptionsRelations,
     withDeleted: boolean,
     orderByRelationFieldName: Record<string, OrderByConditionLike> = {},
   ): Promise<void> {
@@ -446,7 +448,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     fieldName: string;
     joinColumnName?: string;
     targetRepository: WorkspaceRepository;
-    nestedRelations?: FindOptionsRelationsV2;
+    nestedRelations?: WorkspaceFindOptionsRelations;
   }): Promise<void> {
     if (!isDefined(joinColumnName)) {
       throw new TwentyOrmV2Exception(
@@ -487,7 +489,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     fieldName: string;
     relationShape: WorkspaceRelationShape;
     targetRepository: WorkspaceRepository;
-    nestedRelations?: FindOptionsRelationsV2;
+    nestedRelations?: WorkspaceFindOptionsRelations;
     withDeleted: boolean;
     order?: OrderByConditionLike;
   }): Promise<void> {

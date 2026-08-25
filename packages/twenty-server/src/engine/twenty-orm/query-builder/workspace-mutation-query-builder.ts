@@ -24,13 +24,13 @@ let mutationSetParameterSequence = 0;
 const UPDATED_AT_COLUMN_NAME = 'updatedAt';
 const DELETED_AT_COLUMN_NAME = 'deletedAt';
 
-export type MutationQueryBuilderV2Context = {
+export type MutationQueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   formatResult: <T>(records: unknown) => T;
 };
 
-export type MutationResultV2 = {
+export type MutationResult = {
   // oxlint-disable-next-line typescript/no-explicit-any
   generatedMaps: any[];
 };
@@ -39,7 +39,7 @@ export class WorkspaceMutationQueryBuilder {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
 
-  private readonly context: MutationQueryBuilderV2Context;
+  private readonly context: MutationQueryBuilderContext;
   private readonly kind: MutationKind;
   private readonly whereClauses: WhereClause[];
   private parameters: Record<string, unknown>;
@@ -55,7 +55,7 @@ export class WorkspaceMutationQueryBuilder {
   }: {
     alias: string;
     kind: MutationKind;
-    context: MutationQueryBuilderV2Context;
+    context: MutationQueryBuilderContext;
     whereClauses: WhereClause[];
     parameters: Record<string, unknown>;
   }) {
@@ -90,7 +90,7 @@ export class WorkspaceMutationQueryBuilder {
     return this.buildStatement().sql;
   }
 
-  async execute(): Promise<MutationResultV2> {
+  async execute(): Promise<MutationResult> {
     const { sql, parameters } = this.buildStatement();
     const compiled = compileNamedParameters(sql, parameters);
     const rows = await this.context.executor.execute(compiled);
