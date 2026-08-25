@@ -59,7 +59,6 @@ export class WorkflowRunWorkspaceService {
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
             'workflowRun',
             { shouldBypassPermissionChecks: true },
           );
@@ -71,11 +70,9 @@ export class WorkflowRunWorkspaceService {
           });
 
         const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
+          await this.globalWorkspaceOrmManager.getRepository('workflow', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const workflow = await workflowRepository.findOne({
           where: {
@@ -368,7 +365,6 @@ export class WorkflowRunWorkspaceService {
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
             'workflowRun',
             { shouldBypassPermissionChecks: true },
           );
@@ -417,7 +413,6 @@ export class WorkflowRunWorkspaceService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-          workspaceId,
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );

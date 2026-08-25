@@ -27,7 +27,6 @@ export class MessageCampaignStatisticsService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
         await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
           MessageWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );
@@ -61,7 +60,6 @@ export class MessageCampaignStatisticsService {
 
       const campaignRepository =
         await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
           MessageCampaignWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );

@@ -30,7 +30,6 @@ export class UpdateSubscriptionQuantityJob {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          data.workspaceId,
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

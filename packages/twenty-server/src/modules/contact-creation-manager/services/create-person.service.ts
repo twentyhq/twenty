@@ -26,11 +26,8 @@ export class CreatePersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
+            { shouldBypassPermissionChecks: true },
           );
 
         const lastPersonPosition =
@@ -63,7 +60,6 @@ export class CreatePersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -100,7 +96,6 @@ export class CreatePersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,

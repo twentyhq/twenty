@@ -105,7 +105,6 @@ export class BlocklistValidationService {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               WorkspaceMemberWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );
@@ -191,7 +190,6 @@ export class BlocklistValidationService {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               WorkspaceMemberWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );

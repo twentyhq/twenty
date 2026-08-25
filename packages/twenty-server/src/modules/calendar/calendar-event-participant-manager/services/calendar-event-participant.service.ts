@@ -177,7 +177,6 @@ export class CalendarEventParticipantService {
           participants: savedParticipants,
           objectMetadataName: 'calendarEventParticipant',
           matchWith: 'workspaceMemberAndPerson',
-          workspaceId,
           transactionScope,
         });
       },

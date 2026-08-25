@@ -58,7 +58,6 @@ export class RelatedPersonIdsService {
 
         for (const relationPath of relationPaths) {
           const personIdsForPath = await this.walkRelationPath({
-            workspaceId,
             recordId,
             relationPath,
           });
@@ -73,11 +72,9 @@ export class RelatedPersonIdsService {
   }
 
   private async walkRelationPath({
-    workspaceId,
     recordId,
     relationPath,
   }: {
-    workspaceId: string;
     recordId: string;
     relationPath: RelationPathToPerson;
   }): Promise<string[]> {
@@ -90,7 +87,6 @@ export class RelatedPersonIdsService {
 
       const repository =
         await this.globalWorkspaceOrmManager.getRepository<RelationWalkRecord>(
-          workspaceId,
           hop.queryObjectNameSingular,
           { shouldBypassPermissionChecks: true },
         );

@@ -38,7 +38,6 @@ export class UpdateWorkspaceMemberEmailJob {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspace.id,
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

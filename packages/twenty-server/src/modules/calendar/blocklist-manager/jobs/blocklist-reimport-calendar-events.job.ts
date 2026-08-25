@@ -45,7 +45,6 @@ export class BlocklistReimportCalendarEventsJob {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

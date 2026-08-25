@@ -227,7 +227,6 @@ export class UserRoleService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -278,7 +277,6 @@ export class UserRoleService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

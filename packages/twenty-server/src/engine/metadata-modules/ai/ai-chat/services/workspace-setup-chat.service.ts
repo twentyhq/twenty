@@ -272,7 +272,6 @@ export class WorkspaceSetupChatService {
           async () => {
             const workspaceMemberRepository =
               await this.globalWorkspaceOrmManager.getRepository(
-                workspaceId,
                 'workspaceMember',
                 { shouldBypassPermissionChecks: true },
               );

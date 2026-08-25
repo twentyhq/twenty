@@ -162,7 +162,6 @@ export class UserWorkspaceService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );
@@ -489,7 +488,6 @@ export class UserWorkspaceService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

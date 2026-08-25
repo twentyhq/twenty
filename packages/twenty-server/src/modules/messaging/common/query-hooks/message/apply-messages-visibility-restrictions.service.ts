@@ -39,7 +39,6 @@ export class ApplyMessagesVisibilityRestrictionsService {
       async () => {
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
             'messageChannelMessageAssociation',
           );
 
@@ -72,7 +71,6 @@ export class ApplyMessagesVisibilityRestrictionsService {
 
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

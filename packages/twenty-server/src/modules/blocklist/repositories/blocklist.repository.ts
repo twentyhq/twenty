@@ -20,7 +20,6 @@ export class BlocklistRepository {
       async () => {
         const blockListRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             BlocklistWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -45,7 +44,6 @@ export class BlocklistRepository {
       async () => {
         const blockListRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             BlocklistWorkspaceEntity,
           );
 

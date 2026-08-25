@@ -95,7 +95,6 @@ export class CalendarEventsImportService {
 
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -156,7 +155,6 @@ export class CalendarEventsImportService {
           }
           const calendarChannelEventAssociationRepository =
             await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-              workspaceId,
               'calendarChannelEventAssociation',
             );
 

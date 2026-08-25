@@ -79,7 +79,6 @@ export class WorkflowThrottlingWorkspaceService {
         async () => {
           const workflowRunRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               WorkflowRunWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );
@@ -110,7 +109,6 @@ export class WorkflowThrottlingWorkspaceService {
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             WorkflowRunWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );

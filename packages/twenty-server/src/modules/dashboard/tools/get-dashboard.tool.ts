@@ -74,7 +74,6 @@ export const createGetDashboardTool = (
         await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
             const repo = await deps.globalWorkspaceOrmManager.getRepository(
-              context.workspaceId,
               'dashboard',
               { shouldBypassPermissionChecks: true },
             );
