@@ -431,6 +431,11 @@ msgstr "Bir görünüm sıralama hatası oluştu."
 msgid "A webhook with this configuration already exists."
 msgstr "Bu yapılandırmaya sahip bir webhook zaten mevcut."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Bir widget üst bilgisi eylemi bulunamadı"
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "Kod adımı yürütmesi başarısız oldu."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Renk Şeması"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Widget üst bilgisinin başvurduğu {commandMenuItemUniversalIdentifier} komut menüsü öğesi başka bir uygulamaya ait"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Widget üst bilgisinin başvurduğu {commandMenuItemUniversalIdentifier} komut menüsü öğesi bulunamadı"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11817,6 +11832,21 @@ msgstr "Widget ızgara yüksekliğini aşıyor"
 msgid "Widget extends beyond grid width"
 msgstr "Widget ızgara genişliğini aşıyor"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Bileşen üstbilgi eylemleri benzersiz olmalıdır"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Bileşen üstbilgi eylemleri, bileşenle aynı uygulamaya ait olmalıdır"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Bileşen üstbilgi komut menüsü öğesi başvuruları benzersiz olmalıdır"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12449,7 +12479,7 @@ msgstr "Son sunucu yöneticisinden yönetim paneli erişimini geri alamazsınız
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "Bu adresten gönderim yapamazsınız."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

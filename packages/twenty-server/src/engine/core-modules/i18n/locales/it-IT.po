@@ -431,6 +431,11 @@ msgstr "Si è verificato un errore nell'ordinamento della vista."
 msgid "A webhook with this configuration already exists."
 msgstr "Esiste già un webhook con questa configurazione."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Azione dell'intestazione del widget non trovata"
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "Esecuzione del passaggio di codice fallita."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Schema di colori"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "La voce del menu dei comandi {commandMenuItemUniversalIdentifier} a cui fa riferimento l'intestazione del widget appartiene a un'altra applicazione"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "La voce del menu dei comandi {commandMenuItemUniversalIdentifier} a cui fa riferimento l'intestazione del widget non è stata trovata"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11817,6 +11832,21 @@ msgstr "Il widget supera l'altezza della griglia"
 msgid "Widget extends beyond grid width"
 msgstr "Il widget supera la larghezza della griglia"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Le azioni dell'intestazione del widget devono essere univoche"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Le azioni dell'intestazione del widget devono appartenere alla stessa applicazione del widget"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "I riferimenti agli elementi del menu dei comandi dell'intestazione del widget devono essere univoci"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12449,7 +12479,7 @@ msgstr "Non puoi revocare l'accesso al pannello di amministrazione all'ultimo am
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "Non puoi inviare messaggi da questo indirizzo."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

@@ -37,5 +37,13 @@ export const useTimelineActivityTypes = () => {
     };
   }, [data?.timelineActivityTypes]);
 
-  return { timelineActivityTypeMaps };
+  const activeTimelineActivityTypes = useMemo(
+    () =>
+      [...timelineActivityTypeMaps.byId.values()].filter(
+        ({ isActive }) => isActive,
+      ),
+    [timelineActivityTypeMaps],
+  );
+
+  return { timelineActivityTypeMaps, activeTimelineActivityTypes };
 };

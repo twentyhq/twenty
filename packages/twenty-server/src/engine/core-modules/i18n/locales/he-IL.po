@@ -431,6 +431,11 @@ msgstr "אירעה שגיאה במיון תצוגה."
 msgid "A webhook with this configuration already exists."
 msgstr "Webhook עם תצורה זו כבר קיים."
 
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "פעולת כותרת של וידג'ט לא נמצאה"
+
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -2031,6 +2036,16 @@ msgstr "הרצת שלב קוד נכשלה."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "ערכת צבעים"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "פריט תפריט הפקודות {commandMenuItemUniversalIdentifier} שאליו מפנה כותרת הווידג'ט שייך ליישום אחר"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "פריט תפריט הפקודות {commandMenuItemUniversalIdentifier} שאליו מפנה כותרת הווידג'ט לא נמצא"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -11817,6 +11832,21 @@ msgstr "הווידג'ט חורג מגובה הרשת"
 msgid "Widget extends beyond grid width"
 msgstr "הווידג'ט חורג מרוחב הרשת"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "פעולות כותרת הווידג'ט חייבות להיות ייחודיות"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "פעולות כותרת הווידג'ט חייבות להשתייך לאותו יישום כמו הווידג'ט"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "הפניות לפריטי תפריט פקודות בכותרת הווידג'ט חייבות להיות ייחודיות"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12449,7 +12479,7 @@ msgstr "אינך יכול לבטל גישת לוח הניהול ממנהל הש�
 #. js-lingui-id: y2sD5W
 #: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
 msgid "You cannot send from this address."
-msgstr ""
+msgstr "אין אפשרות לשלוח מכתובת זו."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
