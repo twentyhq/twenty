@@ -16,9 +16,9 @@ export const getWidgetCardVariant = ({
 
   switch (pageLayoutType) {
     case PageLayoutType.DASHBOARD:
-    case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.STANDALONE_PAGE:
       return 'framed';
+    case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.RECORD_INDEX:
     case null:
       return 'flush';
