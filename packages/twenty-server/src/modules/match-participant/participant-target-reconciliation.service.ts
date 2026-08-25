@@ -157,10 +157,14 @@ export class ParticipantTargetReconciliationService {
           'messageParticipant',
           transactionScope,
         );
-      const participants = await participantRepository.find({
-        where: { messageId: In([...messageThreadIdByMessageId.keys()]) },
-        select: { messageId: true, personId: true },
-      });
+      const messageIds = [...messageThreadIdByMessageId.keys()];
+      const participants =
+        messageIds.length === 0
+          ? []
+          : await participantRepository.find({
+              where: { messageId: In(messageIds) },
+              select: { messageId: true, personId: true },
+            });
 
       await this.reconcileTargets({
         parentIds: messageThreadIdChunk,
@@ -353,7 +357,9 @@ export class ParticipantTargetReconciliationService {
     );
   }
 
-  private groupParticipantPersonIds<Participant>({
+  private groupParticipantPersonIds<
+    Participant extends { personId: string | null },
+  >({
     participants,
     getParentId,
   }: {
@@ -364,7 +370,7 @@ export class ParticipantTargetReconciliationService {
 
     for (const participant of participants) {
       const parentId = getParentId(participant);
-      const personId = (participant as { personId: string | null }).personId;
+      const personId = participant.personId;
 
       if (!isDefined(parentId) || !isDefined(personId)) {
         continue;
