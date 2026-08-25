@@ -21,6 +21,7 @@ import {
   type CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
+import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 
 type FetchedCalendarEventParticipantWithCalendarEventId =
   FetchedCalendarEventParticipant & {
@@ -37,6 +38,7 @@ export class CalendarEventParticipantService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
+    private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -48,6 +50,7 @@ export class CalendarEventParticipantService {
     calendarChannel,
     connectedAccount,
     workspaceId,
+    calendarEventIds,
   }: {
     participantsToCreate: FetchedCalendarEventParticipantWithCalendarEventId[];
     participantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventId[];
@@ -55,6 +58,7 @@ export class CalendarEventParticipantService {
     calendarChannel: CalendarChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
+    calendarEventIds: string[];
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -179,6 +183,13 @@ export class CalendarEventParticipantService {
           matchWith: 'workspaceMemberAndPerson',
           transactionScope,
         });
+
+        await this.participantTargetReconciliationService.reconcileCalendarEventTargets(
+          {
+            calendarEventIds,
+            transactionScope,
+          },
+        );
       },
       authContext,
       { lite: true },

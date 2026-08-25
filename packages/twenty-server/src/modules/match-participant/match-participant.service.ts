@@ -8,6 +8,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -61,7 +62,10 @@ export class MatchParticipantService<
     | CalendarEventParticipantWorkspaceEntity
     | MessageParticipantWorkspaceEntity,
 > {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
+  ) {}
 
   private async getParticipantRepository({
     objectMetadataName,
@@ -196,6 +200,14 @@ export class MatchParticipantService<
         })),
       );
     }
+
+    await this.participantTargetReconciliationService.reconcileParticipantTargets(
+      {
+        participants,
+        objectMetadataName,
+        transactionScope,
+      },
+    );
   }
 
   public async matchParticipantsForWorkspaceMembers({
