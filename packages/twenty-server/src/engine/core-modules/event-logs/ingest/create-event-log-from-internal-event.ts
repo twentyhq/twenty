@@ -1,6 +1,9 @@
+import { Logger } from '@nestjs/common';
+
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isTransientClickHouseNetworkError } from 'src/database/clickhouse/utils/is-transient-clickhouse-network-error.util';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 import {
@@ -11,10 +14,19 @@ import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-delete';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-updated';
 import { OBJECT_RECORD_UPSERTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-upserted';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+
+const MAX_TRANSIENT_ERROR_RETRIES = 1;
+
+export type CreateEventLogFromInternalEventData =
+  WorkspaceEventBatch<ObjectRecordEvent> & {
+    transientErrorRetryCount?: number;
+  };
 
 const OBJECT_EVENT_BY_SUFFIX = {
   '.created': OBJECT_RECORD_CREATED_EVENT,
@@ -25,12 +37,16 @@ const OBJECT_EVENT_BY_SUFFIX = {
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateEventLogFromInternalEvent {
+  private readonly logger = new Logger(CreateEventLogFromInternalEvent.name);
+
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
+    @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @Process(CreateEventLogFromInternalEvent.name)
-  async handle(batch: WorkspaceEventBatch<ObjectRecordEvent>): Promise<void> {
+  async handle(batch: CreateEventLogFromInternalEventData): Promise<void> {
     if (!this.workspaceEventSinkService.isEnabled()) {
       return;
     }
@@ -41,7 +57,40 @@ export class CreateEventLogFromInternalEvent {
       return;
     }
 
-    await this.workspaceEventSinkService.ingest(envelopes);
+    try {
+      await this.workspaceEventSinkService.ingest(envelopes);
+    } catch (error) {
+      if (!isTransientClickHouseNetworkError(error)) {
+        throw error;
+      }
+
+      await this.handleTransientError(batch, envelopes.length, error);
+    }
+  }
+
+  private async handleTransientError(
+    batch: CreateEventLogFromInternalEventData,
+    envelopeCount: number,
+    error: Error,
+  ): Promise<void> {
+    const transientErrorRetryCount = batch.transientErrorRetryCount ?? 0;
+
+    if (transientErrorRetryCount >= MAX_TRANSIENT_ERROR_RETRIES) {
+      this.logger.warn(
+        `Dropping ${envelopeCount} event log envelope(s) for workspace ${batch.workspaceId} after ${transientErrorRetryCount + 1} transient ClickHouse network errors: ${error.message}`,
+      );
+
+      return;
+    }
+
+    this.logger.warn(
+      `Requeuing ${envelopeCount} event log envelope(s) for workspace ${batch.workspaceId} after a transient ClickHouse network error: ${error.message}`,
+    );
+
+    await this.messageQueueService.add<CreateEventLogFromInternalEventData>(
+      CreateEventLogFromInternalEvent.name,
+      { ...batch, transientErrorRetryCount: transientErrorRetryCount + 1 },
+    );
   }
 
   private toEnvelopes(
