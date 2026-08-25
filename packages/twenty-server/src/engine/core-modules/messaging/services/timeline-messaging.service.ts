@@ -5,14 +5,16 @@ import {
   MessageChannelVisibility,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type TargetFieldName } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
+import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -37,7 +39,7 @@ export class TimelineMessagingService {
     workspaceId: string,
     offset: number,
     pageSize: number,
-    targetFilter?: { fieldName: TargetFieldName; recordId: string },
+    targetFilter?: TargetFilter,
   ): Promise<{
     messageThreads: Omit<
       TimelineThreadDTO,
@@ -71,31 +73,32 @@ export class TimelineMessagingService {
         .offset(offset)
         .limit(pageSize);
 
-      if (targetFilter) {
-        totalQueryBuilder
-          .innerJoin('messageThread.messageThreadTargets', 'messageThreadTargets')
-          .where(
-            `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
-            { targetRecordId: targetFilter.recordId },
-          );
-        threadIdsQueryBuilder
-          .innerJoin('messageThread.messageThreadTargets', 'messageThreadTargets')
-          .where(
-            `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
-            { targetRecordId: targetFilter.recordId },
-          );
-      } else {
-        totalQueryBuilder
+      const applyRecordFilter = (
+        queryBuilder: WorkspaceSelectQueryBuilder,
+      ): void => {
+        if (isDefined(targetFilter)) {
+          queryBuilder
+            .innerJoin(
+              'messageThread.messageThreadTargets',
+              'messageThreadTargets',
+            )
+            .where(
+              `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
+              { targetRecordId: targetFilter.recordId },
+            );
+
+          return;
+        }
+
+        queryBuilder
           .innerJoin('messages.messageParticipants', 'messageParticipants')
           .where('messageParticipants.personId IN(:...personIds)', {
             personIds,
           });
-        threadIdsQueryBuilder
-          .innerJoin('messages.messageParticipants', 'messageParticipants')
-          .where('messageParticipants.personId IN (:...personIds)', {
-            personIds,
-          });
-      }
+      };
+
+      applyRecordFilter(totalQueryBuilder);
+      applyRecordFilter(threadIdsQueryBuilder);
 
       const totalNumberOfThreads = await totalQueryBuilder.getCount();
       const threadIdsQuery = await threadIdsQueryBuilder.getRawMany();

@@ -13,7 +13,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import {
   getTargetFieldNameForObjectRecord,
-  type TargetFieldName,
+  type TargetFilter,
 } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -52,7 +52,7 @@ export class TimelineCalendarEventService {
     workspaceId: string;
     page: number;
     pageSize: number;
-    targetFilter?: { fieldName: TargetFieldName; recordId: string };
+    targetFilter?: TargetFilter;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -358,7 +358,7 @@ export class TimelineCalendarEventService {
     const targetFieldName =
       getTargetFieldNameForObjectRecord(objectNameSingular);
 
-    if (targetFieldName === null && personIds.length === 0) {
+    if (!isDefined(targetFieldName) && personIds.length === 0) {
       return {
         totalNumberOfCalendarEvents: 0,
         timelineCalendarEvents: [],
@@ -372,7 +372,7 @@ export class TimelineCalendarEventService {
       workspaceId,
       page,
       pageSize,
-      ...(targetFieldName !== null && {
+      ...(isDefined(targetFieldName) && {
         targetFilter: { fieldName: targetFieldName, recordId },
       }),
     });

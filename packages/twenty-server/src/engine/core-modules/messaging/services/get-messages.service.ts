@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
@@ -7,7 +9,7 @@ import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-th
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import {
   getTargetFieldNameForObjectRecord,
-  type TargetFieldName,
+  type TargetFilter,
 } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 
 @Injectable()
@@ -23,7 +25,7 @@ export class GetMessagesService {
     workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-    targetFilter?: { fieldName: TargetFieldName; recordId: string },
+    targetFilter?: TargetFilter,
   ): Promise<TimelineThreadsWithTotalDTO> {
     const offset = (page - 1) * pageSize;
 
@@ -88,7 +90,7 @@ export class GetMessagesService {
     const targetFieldName =
       getTargetFieldNameForObjectRecord(objectNameSingular);
 
-    if (targetFieldName === null && personIds.length === 0) {
+    if (!isDefined(targetFieldName) && personIds.length === 0) {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
@@ -102,7 +104,7 @@ export class GetMessagesService {
       workspaceId,
       page,
       pageSize,
-      targetFieldName !== null
+      isDefined(targetFieldName)
         ? { fieldName: targetFieldName, recordId }
         : undefined,
     );

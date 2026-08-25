@@ -5,6 +5,11 @@ export type TargetFieldName =
   | 'targetCompanyId'
   | 'targetOpportunityId';
 
+export type TargetFilter = {
+  fieldName: TargetFieldName;
+  recordId: string;
+};
+
 export const getTargetFieldNameForObjectRecord = (
   objectNameSingular: string,
 ): TargetFieldName | null => {
