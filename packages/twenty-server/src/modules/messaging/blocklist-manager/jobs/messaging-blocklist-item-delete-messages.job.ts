@@ -2,18 +2,8 @@ import { Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
-import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  And,
-  Any,
-  type FindOptionsSelect,
-  ILike,
-  In,
-  Not,
-  Or,
-  Repository,
-} from 'typeorm';
+import { And, Any, ILike, In, Not, Or, Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -26,6 +16,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { partitionBlocklistHandlesByScope } from 'src/modules/blocklist/utils/partition-blocklist-handles-by-scope.util';
+import { BLOCKLISTED_PARTICIPANT_ROLES } from 'src/modules/messaging/blocklist-manager/constants/blocklisted-participant-roles.constant';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
@@ -34,20 +25,6 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
   ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
 >;
-
-const MESSAGE_CHANNEL_BLOCKLIST_SELECT: FindOptionsSelect<MessageChannelEntity> =
-  {
-    id: true,
-    handle: true,
-    connectedAccount: {
-      handleAliases: true,
-    },
-  };
-
-const BLOCKLISTED_PARTICIPANT_ROLES = [
-  MessageParticipantRole.FROM,
-  MessageParticipantRole.TO,
-] as const;
 
 @Processor({
   queueName: MessageQueue.messagingQueue,
@@ -122,7 +99,13 @@ export class BlocklistItemDeleteMessagesJob {
     workspaceId: string,
   ): Promise<MessageChannelEntity[]> {
     return this.messageChannelRepository.find({
-      select: MESSAGE_CHANNEL_BLOCKLIST_SELECT,
+      select: {
+        id: true,
+        handle: true,
+        connectedAccount: {
+          handleAliases: true,
+        },
+      },
       where: { workspaceId },
       relations: { connectedAccount: true },
     });
@@ -166,7 +149,13 @@ export class BlocklistItemDeleteMessagesJob {
     }
 
     return this.messageChannelRepository.find({
-      select: MESSAGE_CHANNEL_BLOCKLIST_SELECT,
+      select: {
+        id: true,
+        handle: true,
+        connectedAccount: {
+          handleAliases: true,
+        },
+      },
       where: {
         connectedAccountId: In(
           connectedAccounts.map((connectedAccount) => connectedAccount.id),
