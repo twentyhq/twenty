@@ -41,7 +41,7 @@ export const createListWorkflowsTool = (
       return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRepository =
-            await deps.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            deps.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
               'workflow',
               context.rolePermissionConfig,
             );

@@ -2,7 +2,7 @@ import { Any, Equal } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
@@ -64,7 +64,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     expect(text).toContain('OR');
     expect(text).toContain('EXISTS (');
-    expect(text).not.toContain('__ormV2ExistsFilter');
+    expect(text).not.toContain('__ormExistsFilter');
   });
 
   it('should nest a relation filter reached through another relation', () => {
@@ -80,7 +80,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
     expect(text).toContain(
       '"person_people_filter"."personId" = "person_people_filter_person_filter"."id"',
     );
-    expect(text).not.toContain('__ormV2ExistsFilter');
+    expect(text).not.toContain('__ormExistsFilter');
   });
 
   it('should drop the soft-delete predicate inside the subquery when deleted rows are included', () => {
@@ -121,9 +121,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
       .where({ people: { name: Equal('Twenty') } });
 
     expect(
-      queryBuilder.expressionMap.joinAttributes.map(
-        (joinAttribute) => joinAttribute.alias.name,
-      ),
+      queryBuilder.getJoinAliases().map((joinAlias) => joinAlias.name),
     ).toContain('person_people_filter');
     expect(
       queryBuilder.getJoinedTableShape('person_people_filter')?.nameSingular,
@@ -181,7 +179,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     expect(() =>
       queryBuilder.where({ orphans: { name: Equal('Twenty') } }),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 
   it('should carry relation filters into a builder that copies the where clauses', () => {
@@ -199,7 +197,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
     const text = snapshotQueryBuilder.getQuery();
 
     expect(text).toContain('EXISTS (');
-    expect(text).not.toContain('__ormV2ExistsFilter');
+    expect(text).not.toContain('__ormExistsFilter');
   });
 
   it('should reject a relation filter on a mutation', () => {
@@ -207,6 +205,6 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     queryBuilder.where({ people: { name: Equal('Twenty') } });
 
-    expect(() => queryBuilder.delete()).toThrow(TwentyOrmV2Exception);
+    expect(() => queryBuilder.delete()).toThrow(TwentyOrmException);
   });
 });

@@ -11,9 +11,9 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
@@ -83,9 +83,9 @@ export const buildWorkspaceTableShape = ({
       );
 
       if (!isDefined(compositeType)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Composite type "${flatFieldMetadata.type}" has no definition, so the columns for field "${flatFieldMetadata.name}" cannot be derived`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+          TwentyOrmExceptionCode.UNKNOWN_COLUMN,
         );
       }
 

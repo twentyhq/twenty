@@ -338,7 +338,7 @@ export class WorkflowVersionCoreSyncService {
     const coreWorkflowVersionIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowVersionRepository =
-          await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
             'workflowVersion',
             { shouldBypassPermissionChecks: true },
           );
@@ -362,7 +362,7 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
@@ -393,7 +393,7 @@ export class WorkflowVersionCoreSyncService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );

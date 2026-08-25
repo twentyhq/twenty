@@ -4,19 +4,19 @@ import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-ru
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 
-type BuildMutationQueryBuilderV2Args = {
+type BuildMutationQueryBuilderArgs = {
   repository: WorkspaceRepository;
   alias: string;
   filter: Partial<ObjectRecordFilter>;
   commonQueryParser: GraphqlQueryParser;
 };
 
-export const buildMutationQueryBuilderV2 = ({
+export const buildMutationQueryBuilder = ({
   repository,
   alias,
   filter,
   commonQueryParser,
-}: BuildMutationQueryBuilderV2Args): {
+}: BuildMutationQueryBuilderArgs): {
   selectQueryBuilder: WorkspaceSelectQueryBuilder;
   rowLevelPermissionsApplied: boolean;
 } => {
@@ -24,8 +24,7 @@ export const buildMutationQueryBuilderV2 = ({
 
   commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
 
-  const hasRelationTraversal =
-    filteredQueryBuilder.expressionMap.joinAttributes.length > 0;
+  const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
 
   if (!hasRelationTraversal) {
     return {

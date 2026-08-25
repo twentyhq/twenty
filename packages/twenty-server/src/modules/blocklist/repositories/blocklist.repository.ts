@@ -22,7 +22,7 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const blockListRepository = await this.workspaceOrmManager.getRepository(
+      const blockListRepository = this.workspaceOrmManager.getRepository(
         BlocklistWorkspaceEntity,
         {
           shouldBypassPermissionChecks: true,
@@ -93,7 +93,7 @@ export class BlocklistRepository {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const blockListRepository = await this.workspaceOrmManager.getRepository(
+      const blockListRepository = this.workspaceOrmManager.getRepository(
         BlocklistWorkspaceEntity,
       );
 

@@ -31,9 +31,9 @@ import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildInsertStatement,
@@ -45,8 +45,8 @@ import {
   applyFindOptionsToQueryBuilder,
   normalizeFindOptionsRelations,
   splitFindOptionsOrder,
-  type FindOptionsRelationsV2,
-  type FindOptionsV2,
+  type WorkspaceFindOptionsRelations,
+  type WorkspaceFindOptions,
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import {
   applyMutationCriteriaToQueryBuilder,
@@ -89,7 +89,7 @@ const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
 };
 
-type WorkspaceRepositoryV2Options = {
+type WorkspaceRepositoryOptions = {
   tableShape: WorkspaceTableShape;
   flatObjectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
@@ -117,11 +117,11 @@ type WorkspaceRepositoryV2Options = {
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
-  private readonly options: WorkspaceRepositoryV2Options;
+  private readonly options: WorkspaceRepositoryOptions;
 
   private _filesFieldSync?: FilesFieldSync;
 
-  constructor(options: WorkspaceRepositoryV2Options) {
+  constructor(options: WorkspaceRepositoryOptions) {
     this.options = options;
     this.objectRecordsPermissions = options.objectRecordsPermissions;
   }
@@ -200,7 +200,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.options.internalContext;
   }
 
-  async find(options?: FindOptionsV2): Promise<TEntity[]> {
+  async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {
     const records = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
@@ -223,7 +223,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.find({ where });
   }
 
-  async findAndCount(options?: FindOptionsV2): Promise<[TEntity[], number]> {
+  async findAndCount(
+    options?: WorkspaceFindOptions,
+  ): Promise<[TEntity[], number]> {
     const records = await this.find(options);
     const totalCount = await this.count(options);
 
@@ -236,11 +238,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.findAndCount({ where });
   }
 
-  async findOne(options?: FindOptionsV2): Promise<TEntity | null> {
+  async findOne(options?: WorkspaceFindOptions): Promise<TEntity | null> {
     if (!isDefined(options?.where)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'findOne requires a "where" condition',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -268,13 +270,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.findOne({ where });
   }
 
-  async findOneOrFail(options?: FindOptionsV2): Promise<TEntity> {
+  async findOneOrFail(options?: WorkspaceFindOptions): Promise<TEntity> {
     const record = await this.findOne(options);
 
     if (!isDefined(record)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `No "${this.options.tableShape.nameSingular}" record matches the given criteria`,
-        TwentyOrmV2ExceptionCode.ENTITY_NOT_FOUND,
+        TwentyOrmExceptionCode.ENTITY_NOT_FOUND,
       );
     }
 
@@ -287,7 +289,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.findOneOrFail({ where });
   }
 
-  async count(options?: FindOptionsV2): Promise<number> {
+  async count(options?: WorkspaceFindOptions): Promise<number> {
     return applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
@@ -298,7 +300,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return this.count({ where });
   }
 
-  async exists(options?: FindOptionsV2): Promise<boolean> {
+  async exists(options?: WorkspaceFindOptions): Promise<boolean> {
     const queryBuilder = applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       {
@@ -352,9 +354,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       !isDefined(this.options.tableShape.columnShapeByColumnName[columnName])
     ) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
 
@@ -380,7 +382,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private async loadRelations(
     records: ObjectRecord[],
-    relations: FindOptionsRelationsV2,
+    relations: WorkspaceFindOptionsRelations,
     withDeleted: boolean,
     orderByRelationFieldName: Record<string, OrderByConditionLike> = {},
   ): Promise<void> {
@@ -397,9 +399,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.options.tableShape.relationShapeByFieldName[fieldName];
 
       if (!isDefined(relationShape)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Relation "${fieldName}" does not exist on "${this.options.tableShape.nameSingular}"`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+          TwentyOrmExceptionCode.UNKNOWN_RELATION,
         );
       }
 
@@ -427,9 +429,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           order: orderByRelationFieldName[fieldName],
         });
       } else {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Loading "${relationShape.relationType}" relations through find is not supported yet`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
         );
       }
     }
@@ -446,12 +448,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     fieldName: string;
     joinColumnName?: string;
     targetRepository: WorkspaceRepository;
-    nestedRelations?: FindOptionsRelationsV2;
+    nestedRelations?: WorkspaceFindOptionsRelations;
   }): Promise<void> {
     if (!isDefined(joinColumnName)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Relation "${fieldName}" has no join column to resolve`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -487,7 +489,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     fieldName: string;
     relationShape: WorkspaceRelationShape;
     targetRepository: WorkspaceRepository;
-    nestedRelations?: FindOptionsRelationsV2;
+    nestedRelations?: WorkspaceFindOptionsRelations;
     withDeleted: boolean;
     order?: OrderByConditionLike;
   }): Promise<void> {
@@ -529,9 +531,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
 
     if (!isDefined(inverseRelationShape?.joinColumnName)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Could not resolve the inverse foreign key for a to-many relation on "${this.options.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -583,10 +585,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     inputs: { criteria: string; partialEntity: Partial<ObjectRecord> }[],
   ): Promise<UpdateResult> {
     if (inputs.length > QUERY_MAX_RECORDS) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
-        TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
-        msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        {
+          userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
       );
     }
 
@@ -779,9 +783,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : conflictPathsOrOptions.conflictPaths;
 
     if (conflictPaths.length === 0) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'upsert requires at least one conflict path',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -856,9 +860,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           typeof value === 'object' &&
           value !== null
         ) {
-          throw new TwentyOrmV2Exception(
+          throw new TwentyOrmException(
             `Writing nested relation "${key}" through the ORM v2 repository is not supported yet`,
-            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+            TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
           );
         }
       }
@@ -1089,9 +1093,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             this.options.tableShape.columnShapeByColumnName[columnName],
           )
         ) {
-          throw new TwentyOrmV2Exception(
+          throw new TwentyOrmException(
             `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
-            TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+            TwentyOrmExceptionCode.UNKNOWN_COLUMN,
           );
         }
         columnNameSet.add(columnName);
@@ -1110,7 +1114,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           return { kind: 'default' };
         }
 
-        const parameterName = `ormV2Insert_${parameterSequence++}`;
+        const parameterName = `ormInsert_${parameterSequence++}`;
 
         parameters[parameterName] = serializeJsonbWriteValue(
           this.options.tableShape.columnShapeByColumnName[columnName],
@@ -1218,10 +1222,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           });
 
     if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
-        TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
-        msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        {
+          userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
       );
     }
 
@@ -1483,10 +1489,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatObjectMetadata: this.options.flatObjectMetadata,
     });
 
-    for (const joinAttribute of queryBuilder.expressionMap.joinAttributes) {
-      const joinedTableShape = queryBuilder.getJoinedTableShape(
-        joinAttribute.alias.name,
-      );
+    for (const joinAlias of queryBuilder.getJoinAliases()) {
+      const joinedTableShape = queryBuilder.getJoinedTableShape(joinAlias.name);
 
       if (!isDefined(joinedTableShape)) {
         continue;
@@ -1494,7 +1498,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       this.applyRowLevelPermissionPredicateForAlias({
         queryBuilder,
-        alias: joinAttribute.alias.name,
+        alias: joinAlias.name,
         flatObjectMetadata: this.options.flatObjectMetadataByObjectMetadataId(
           joinedTableShape.objectMetadataId,
         ),

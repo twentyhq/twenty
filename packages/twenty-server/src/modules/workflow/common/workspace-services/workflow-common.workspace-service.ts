@@ -81,7 +81,7 @@ export class WorkflowCommonWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
@@ -162,7 +162,7 @@ export class WorkflowCommonWorkspaceService {
     const workflows = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowRepository =
-          await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
             'workflow',
             { shouldBypassPermissionChecks: true },
           );
@@ -314,19 +314,19 @@ export class WorkflowCommonWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowRunRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowAutomatedTriggerRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
           { shouldBypassPermissionChecks: true },
         );

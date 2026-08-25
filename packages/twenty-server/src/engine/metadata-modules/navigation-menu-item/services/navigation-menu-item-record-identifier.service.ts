@@ -79,7 +79,7 @@ export class NavigationMenuItemRecordIdentifierService {
           return null;
         }
 
-        const repository = await this.workspaceOrmManager.getRepository(
+        const repository = this.workspaceOrmManager.getRepository(
           objectMetadata.nameSingular,
           rolePermissionConfig,
         );
