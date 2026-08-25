@@ -1,5 +1,5 @@
 import { type CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
-import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
 import { isDefined } from 'twenty-shared/utils';
 

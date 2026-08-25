@@ -1,10 +1,4 @@
-export const CAMPAIGN_SKIP_REASON = {
-  SUPPRESSED: 'SUPPRESSED',
-  OUT_OF_CREDITS: 'OUT_OF_CREDITS',
-  CAMPAIGN_CANCELED: 'CAMPAIGN_CANCELED',
-  REPUTATION_BLOCKED: 'REPUTATION_BLOCKED',
-  NO_EMAIL_ADDRESS: 'NO_EMAIL_ADDRESS',
-} as const;
+import { type CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
 
 export type CampaignSkipReason =
   (typeof CAMPAIGN_SKIP_REASON)[keyof typeof CAMPAIGN_SKIP_REASON];
