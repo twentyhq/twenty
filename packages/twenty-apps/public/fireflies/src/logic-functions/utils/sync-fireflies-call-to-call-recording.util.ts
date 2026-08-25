@@ -47,13 +47,13 @@ const buildTimestampFields = (
 };
 
 export const syncFirefliesCallToCallRecording = async ({
-  apiKey,
+  accessToken,
   coreApiClient,
   transcriptId,
   field,
   callRecordingFieldState,
 }: {
-  apiKey: string;
+  accessToken: string;
   coreApiClient: CoreApiClient;
   transcriptId: string;
   field: FirefliesSyncableField;
@@ -88,8 +88,8 @@ export const syncFirefliesCallToCallRecording = async ({
 
   const fetchResult =
     field === 'transcript'
-      ? await fetchFirefliesTranscript({ apiKey, transcriptId })
-      : await fetchFirefliesSummary({ apiKey, transcriptId });
+      ? await fetchFirefliesTranscript({ accessToken, transcriptId })
+      : await fetchFirefliesSummary({ accessToken, transcriptId });
 
   if (!fetchResult.ok) {
     return {

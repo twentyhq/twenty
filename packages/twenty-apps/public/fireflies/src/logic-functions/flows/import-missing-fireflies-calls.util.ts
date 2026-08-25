@@ -8,14 +8,14 @@ import { type ImportMissingFirefliesCallsResult } from 'src/logic-functions/type
 import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fireflies-meeting';
 
 type ImportMissingFirefliesCallsParams = {
-  apiKey: string;
+  accessToken: string;
   coreApiClient: CoreApiClient;
   transcriptIds: string[];
   sleep?: (milliseconds: number) => Promise<void>;
 };
 
 export const importMissingFirefliesCalls = async ({
-  apiKey,
+  accessToken,
   coreApiClient,
   transcriptIds,
   sleep = sleepForMilliseconds,
@@ -29,7 +29,7 @@ export const importMissingFirefliesCalls = async ({
   });
 
   return syncFirefliesTranscriptBatch({
-    apiKey,
+    accessToken,
     coreApiClient,
     transcriptIds: uniqueTranscriptIds,
     callRecordingFieldStates,

@@ -9,7 +9,7 @@ export default defineLogicFunction({
     FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-backfill-batch',
   description:
-    'Imports one enqueued batch of Fireflies calls into CallRecording records by transcript id.',
+    'Imports one connection-bound batch of Fireflies calls into CallRecording records by transcript id.',
   timeoutSeconds: FIREFLIES_BACKFILL_TIMEOUT_SECONDS,
   handler: firefliesBackfillBatchHandler,
 });

@@ -4,7 +4,7 @@ import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-record
 import {
   answerTwentyQueries,
   buildGraphqlResponse,
-  FIREFLIES_API_KEY,
+  FIREFLIES_ACCESS_TOKEN,
   FIREFLIES_BACKFILL_FROM_DATE,
   setUpImportMissingFirefliesCallsTest,
   skipSleep,
@@ -49,7 +49,7 @@ describe('importMissingFirefliesCalls retries', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-newer', 'call-older'],
       sleep: skipSleep,
@@ -110,7 +110,7 @@ describe('importMissingFirefliesCalls retries', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-1', 'call-2'],
       sleep: skipSleep,
@@ -143,7 +143,7 @@ describe('importMissingFirefliesCalls retries', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-with-server-error'],
       sleep: skipSleep,

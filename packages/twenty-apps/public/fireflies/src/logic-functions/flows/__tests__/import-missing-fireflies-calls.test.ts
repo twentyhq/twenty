@@ -4,7 +4,7 @@ import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-record
 import {
   answerTwentyQueries,
   buildGraphqlResponse,
-  FIREFLIES_API_KEY,
+  FIREFLIES_ACCESS_TOKEN,
   serveFirefliesApi,
   setUpImportMissingFirefliesCallsTest,
   skipSleep,
@@ -42,7 +42,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-1', 'call-2'],
       sleep: skipSleep,
@@ -68,7 +68,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-1', 'call-1'],
       sleep: skipSleep,
@@ -90,7 +90,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
     const { CoreApiClient } = await import('twenty-client-sdk/core');
 
     await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-with-pending-summary'],
       sleep: skipSleep,
@@ -122,7 +122,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: ['call-1', 'call-2'],
       sleep: skipSleep,
@@ -185,7 +185,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: [callId],
       sleep: skipSleep,
@@ -253,7 +253,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
     const { CoreApiClient } = await import('twenty-client-sdk/core');
 
     await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: [callId],
       sleep: skipSleep,
@@ -310,7 +310,7 @@ describe('importMissingFirefliesCalls synchronization', () => {
     const { CoreApiClient } = await import('twenty-client-sdk/core');
 
     await importMissingFirefliesCalls({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       coreApiClient: new CoreApiClient(),
       transcriptIds: [callId],
       sleep: skipSleep,

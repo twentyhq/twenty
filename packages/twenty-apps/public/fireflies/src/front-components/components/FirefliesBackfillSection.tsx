@@ -38,13 +38,7 @@ const StyledHint = styled.div`
   margin-top: ${() => themeCssVariables.spacing[2]};
 `;
 
-type FirefliesBackfillSectionProps = {
-  isApiKeyConfigured: boolean;
-};
-
-export const FirefliesBackfillSection = ({
-  isApiKeyConfigured,
-}: FirefliesBackfillSectionProps) => {
+export const FirefliesBackfillSection = () => {
   const [daysDraftValue, setDaysDraftValue] = useState(
     String(DEFAULT_FIREFLIES_BACKFILL_DAYS),
   );
@@ -53,9 +47,7 @@ export const FirefliesBackfillSection = ({
 
   const parsedDays = parseBackfillDays(daysDraftValue);
   const isStartDisabled =
-    !isApiKeyConfigured ||
-    isUndefined(parsedDays) ||
-    isRequestingFirefliesBackfill;
+    isUndefined(parsedDays) || isRequestingFirefliesBackfill;
 
   const handleStartClick = async () => {
     if (isUndefined(parsedDays)) {
@@ -72,7 +64,7 @@ export const FirefliesBackfillSection = ({
     <Section>
       <H2Title
         title="Import call history"
-        description="Imports past Fireflies calls as call recordings. Already-imported calls are skipped."
+        description="Imports past calls from every connected Fireflies account. Already-imported calls are skipped."
       />
       <StyledRow>
         <StyledDaysInputContainer>
@@ -93,10 +85,7 @@ export const FirefliesBackfillSection = ({
           onClick={handleStartClick}
         />
       </StyledRow>
-      {!isApiKeyConfigured && (
-        <StyledHint>Set the Fireflies API key first.</StyledHint>
-      )}
-      {isApiKeyConfigured && isUndefined(parsedDays) && (
+      {isUndefined(parsedDays) && (
         <StyledHint>
           Enter a whole number of days between 1 and{' '}
           {FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}.

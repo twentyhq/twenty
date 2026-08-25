@@ -1,4 +1,5 @@
 import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType.type';
+import { type OAuthProviderTokenEndpointAuthMethod } from '@/application/oauthProviderTokenEndpointAuthMethod.type';
 
 // Resolved form of `OAuthConnectionProviderConfig` as stored in the
 // `connectionProvider.oauthConfig` JSONB column — manifest defaults are
@@ -11,6 +12,7 @@ export type StoredOAuthConnectionProviderConfig = {
   clientIdVariable: string;
   clientSecretVariable: string;
   authorizationParams: Record<string, string> | null;
+  tokenEndpointAuthMethod: OAuthProviderTokenEndpointAuthMethod;
   tokenRequestContentType: OAuthProviderTokenRequestContentType;
   usePkce: boolean;
 };

@@ -37,7 +37,7 @@ describe('syncFirefliesCallToCallRecording', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await syncFirefliesCallToCallRecording({
-      apiKey: 'fireflies-api-key',
+      accessToken: 'fireflies-access-token',
       coreApiClient: new CoreApiClient(),
       transcriptId: 'already-populated-call',
       field: 'summary',
@@ -67,7 +67,7 @@ describe('syncFirefliesCallToCallRecording', () => {
 
     const { CoreApiClient } = await import('twenty-client-sdk/core');
     const result = await syncFirefliesCallToCallRecording({
-      apiKey: 'fireflies-api-key',
+      accessToken: 'fireflies-access-token',
       coreApiClient: new CoreApiClient(),
       transcriptId: 'call-without-summary',
       field: 'summary',
@@ -85,7 +85,7 @@ describe('syncFirefliesCallToCallRecording', () => {
   });
 
   it('completes the recording when the opposite field arrives after its state snapshot', async () => {
-    const transcriptId = 'concurrent-webhook-call';
+    const transcriptId = 'concurrent-sync-call';
     const callRecordingId =
       computeCallRecordingIdForFirefliesMeeting(transcriptId);
 
@@ -106,7 +106,7 @@ describe('syncFirefliesCallToCallRecording', () => {
         buildGraphqlResponse({
           transcript: {
             id: transcriptId,
-            title: 'Concurrent webhook call',
+            title: 'Concurrent sync call',
             date: Date.parse('2026-06-02T10:00:00.000Z'),
             duration: 30,
             meeting_link: null,
@@ -125,7 +125,7 @@ describe('syncFirefliesCallToCallRecording', () => {
     const { CoreApiClient } = await import('twenty-client-sdk/core');
 
     await syncFirefliesCallToCallRecording({
-      apiKey: 'fireflies-api-key',
+      accessToken: 'fireflies-access-token',
       coreApiClient: new CoreApiClient(),
       transcriptId,
       field: 'summary',

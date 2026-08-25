@@ -15,7 +15,7 @@ import { syncFirefliesCallToCallRecording } from 'src/logic-functions/utils/sync
 type FirefliesCallSyncOutcome = 'imported' | 'errored' | 'skipped';
 
 type SyncMissingFirefliesCallRecordingFieldsParams = {
-  apiKey: string;
+  accessToken: string;
   coreApiClient: CoreApiClient;
   transcriptId: string;
   firefliesCallRecordingFields: FirefliesSyncableField[];
@@ -24,7 +24,7 @@ type SyncMissingFirefliesCallRecordingFieldsParams = {
 };
 
 type SyncFirefliesTranscriptBatchParams = {
-  apiKey: string;
+  accessToken: string;
   coreApiClient: CoreApiClient;
   transcriptIds: string[];
   callRecordingFieldStates: Map<string, CallRecordingFieldState>;
@@ -111,7 +111,7 @@ const buildCurrentCallRecordingFieldState = ({
 };
 
 const syncMissingFirefliesCallRecordingFields = async ({
-  apiKey,
+  accessToken,
   coreApiClient,
   transcriptId,
   firefliesCallRecordingFields,
@@ -128,7 +128,7 @@ const syncMissingFirefliesCallRecordingFields = async ({
       firefliesFieldSyncResults,
     });
     const firefliesFieldSyncResult = await syncFirefliesCallToCallRecording({
-      apiKey,
+      accessToken,
       coreApiClient,
       transcriptId,
       field: firefliesCallRecordingField,
@@ -166,7 +166,7 @@ const countFirefliesCallSyncOutcomes = (
 });
 
 export const syncFirefliesTranscriptBatch = async ({
-  apiKey,
+  accessToken,
   coreApiClient,
   transcriptIds,
   callRecordingFieldStates,
@@ -190,7 +190,7 @@ export const syncFirefliesTranscriptBatch = async ({
 
     const firefliesCallSyncOutcome =
       await syncMissingFirefliesCallRecordingFields({
-        apiKey,
+        accessToken,
         coreApiClient,
         transcriptId,
         firefliesCallRecordingFields,

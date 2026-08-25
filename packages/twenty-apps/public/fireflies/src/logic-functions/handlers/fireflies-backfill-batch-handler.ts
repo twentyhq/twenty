@@ -1,10 +1,10 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { getConnection } from 'twenty-sdk/logic-function';
 
 import { FIREFLIES_BACKFILL_BATCH_SIZE } from 'src/logic-functions/constants/fireflies-backfill-batch-size.constant';
 import { importMissingFirefliesCalls } from 'src/logic-functions/flows/import-missing-fireflies-calls.util';
 import { firefliesBackfillBatchPayloadSchema } from 'src/logic-functions/schemas/fireflies-backfill-batch-payload.schema';
 import { type ImportMissingFirefliesCallsResult } from 'src/logic-functions/types/import-missing-fireflies-calls-result.type';
-import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
 
 export const firefliesBackfillBatchHandler = async (
   payload: unknown,
@@ -18,14 +18,10 @@ export const firefliesBackfillBatchHandler = async (
     );
   }
 
-  const apiKeyResult = getFirefliesApiKey();
-
-  if (!apiKeyResult.success) {
-    throw new Error(apiKeyResult.error);
-  }
+  const connection = await getConnection(payloadParseResult.data.connectionId);
 
   const importMissingFirefliesCallsResult = await importMissingFirefliesCalls({
-    apiKey: apiKeyResult.apiKey,
+    accessToken: connection.accessToken,
     coreApiClient: new CoreApiClient(),
     transcriptIds: payloadParseResult.data.transcriptIds,
   });

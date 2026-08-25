@@ -42,7 +42,7 @@ type FirefliesGraphqlEnvelope<TData> = {
 };
 
 type FirefliesApiRequestParams = {
-  apiKey: string;
+  accessToken: string;
   query: string;
   variables?: Record<string, unknown>;
 };
@@ -80,7 +80,7 @@ const performFirefliesApiRequestWithRetries = async <TData>({
 };
 
 const performFirefliesApiRequest = async <TData = unknown>({
-  apiKey,
+  accessToken,
   query,
   variables,
 }: FirefliesApiRequestParams): Promise<FirefliesApiResult<TData>> => {
@@ -90,7 +90,7 @@ const performFirefliesApiRequest = async <TData = unknown>({
     response = await fetch(FIREFLIES_API_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables }),

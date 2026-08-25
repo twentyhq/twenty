@@ -47,6 +47,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         clientIdVariable: 'LINEAR_CLIENT_ID',
         clientSecretVariable: 'LINEAR_CLIENT_SECRET',
         authorizationParams: null,
+        tokenEndpointAuthMethod: 'client_secret_post',
         tokenRequestContentType: 'json',
         usePkce: true,
       },
@@ -109,6 +110,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
             clientIdVariable: 'LINEAR_CLIENT_ID',
             clientSecretVariable: 'LINEAR_CLIENT_SECRET',
             authorizationParams: { prompt: 'consent' },
+            tokenEndpointAuthMethod: 'client_secret_basic',
             tokenRequestContentType: 'form-urlencoded',
             usePkce: false,
           },
@@ -120,6 +122,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
     expect(result.oauthConfig).toMatchObject({
       revokeEndpoint: 'https://api.linear.app/oauth/revoke',
       authorizationParams: { prompt: 'consent' },
+      tokenEndpointAuthMethod: 'client_secret_basic',
       tokenRequestContentType: 'form-urlencoded',
       usePkce: false,
     });
@@ -134,6 +137,9 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.oauthConfig?.tokenRequestContentType).toBe('json');
+    expect(result.oauthConfig?.tokenEndpointAuthMethod).toBe(
+      'client_secret_post',
+    );
     expect(result.oauthConfig?.usePkce).toBe(true);
   });
 });

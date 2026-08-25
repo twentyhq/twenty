@@ -2,12 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type RoutePayload } from 'twenty-sdk/define';
 
 import { FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/flows/__tests__/import-missing-fireflies-calls.test-support';
 import firefliesBackfillLogicFunction from 'src/logic-functions/fireflies-backfill';
 
-const enqueueJobMock = vi.hoisted(() => vi.fn());
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+const listConnectionsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  enqueueJob: enqueueJobMock,
+  enqueueJobs: enqueueJobsMock,
+  listConnections: listConnectionsMock,
 }));
 
 const buildRoutePayload = (body: object | null): RoutePayload<unknown> => ({
@@ -24,8 +27,11 @@ const buildRoutePayload = (body: object | null): RoutePayload<unknown> => ({
 describe('firefliesBackfillLogicFunction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubEnv('FIREFLIES_API_KEY', 'fireflies-api-key');
-    enqueueJobMock.mockResolvedValue({ enqueued: true });
+    listConnectionsMock.mockResolvedValue([
+      { id: 'connection-1' },
+      { id: 'connection-2' },
+    ]);
+    enqueueJobsMock.mockResolvedValue({ enqueued: true });
   });
 
   afterEach(() => {
@@ -49,39 +55,45 @@ describe('firefliesBackfillLogicFunction', () => {
   it('rejects an empty route body', async () => {
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload(null),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({
       outcome: 'invalid-request',
       error: 'Fireflies backfill requires a days window between 1 and 3650',
     });
-    expect(enqueueJobMock).not.toHaveBeenCalled();
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
-  it('returns not-configured without enqueueing when the API key is missing', async () => {
-    vi.stubEnv('FIREFLIES_API_KEY', '');
+  it('returns not-configured without enqueueing when no connection exists', async () => {
+    listConnectionsMock.mockResolvedValue([]);
 
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload({ days: 30 }),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({
       outcome: 'not-configured',
       error: expect.stringContaining('Fireflies is not configured'),
     });
-    expect(enqueueJobMock).not.toHaveBeenCalled();
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it('enqueues discovery instead of listing transcripts in the route', async () => {
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload({ days: 30 }),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
-    expect(result).toEqual({ outcome: 'started' });
-    expect(enqueueJobMock).toHaveBeenCalledWith({
+    expect(result).toEqual({ outcome: 'started', connectionCount: 2 });
+    expect(enqueueJobsMock).toHaveBeenCalledWith({
       logicFunctionUniversalIdentifier:
         FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payload: { days: 30 },
+      payloads: [
+        { connectionId: 'connection-1', days: 30 },
+        { connectionId: 'connection-2', days: 30 },
+      ],
     });
   });
 });

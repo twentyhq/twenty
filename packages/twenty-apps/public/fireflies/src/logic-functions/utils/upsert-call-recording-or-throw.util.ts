@@ -8,16 +8,12 @@ type UpsertCallRecordingOrThrowResult = {
   created: boolean;
 };
 
-// twenty-client-sdk 2.31 mistypes the JSON scalar as an object, rejecting the
-// transcript array. Drop this cast once the app is on a fixed SDK.
 const toCallRecordingInputFields = ({
   transcript,
   ...scalarFields
 }: CallRecordingSyncFields) => ({
   ...scalarFields,
-  ...(isDefined(transcript)
-    ? { transcript: transcript as unknown as Record<string, unknown> }
-    : {}),
+  ...(isDefined(transcript) ? { transcript } : {}),
 });
 
 const doesCallRecordingExist = async ({

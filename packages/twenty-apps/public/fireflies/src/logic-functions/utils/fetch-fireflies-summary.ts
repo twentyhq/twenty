@@ -33,14 +33,14 @@ type FirefliesSummaryResponse = {
 };
 
 export const fetchFirefliesSummary = async ({
-  apiKey,
+  accessToken,
   transcriptId,
 }: {
-  apiKey: string;
+  accessToken: string;
   transcriptId: string;
 }): Promise<FirefliesApiResult<FirefliesTranscript>> => {
   const result = await firefliesApiRequest<FirefliesSummaryResponse>({
-    apiKey,
+    accessToken,
     query: SUMMARY_QUERY,
     variables: { transcriptId },
   });

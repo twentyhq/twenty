@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { listConnections } from 'twenty-sdk/logic-function';
 
 import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status.constant';
 import { findCallRecordingFieldStatesOrThrow } from 'src/logic-functions/data/find-call-recording-field-states-or-throw.util';
@@ -8,7 +9,7 @@ import {
   type FirefliesSyncCallFieldOutcome,
   type FirefliesSyncCallResult,
 } from 'src/logic-functions/types/fireflies-sync-call-result.type';
-import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
+import { findFirefliesConnectionForTranscript } from 'src/logic-functions/utils/find-fireflies-connection-for-transcript';
 import { type FirefliesSyncableField } from 'src/logic-functions/types/fireflies-syncable-field.type';
 import { type SyncFirefliesCallResult } from 'src/logic-functions/types/sync-fireflies-call-result.type';
 import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fireflies-meeting';
@@ -39,12 +40,28 @@ export const firefliesSyncCallHandler = async (
     );
   }
 
-  const apiKeyResult = getFirefliesApiKey();
+  const connections = await listConnections({
+    providerName: 'fireflies',
+    visibility: 'workspace',
+  });
 
-  if (!apiKeyResult.success) {
+  if (connections.length === 0) {
     return buildFailure(
       'Fireflies is not configured',
-      apiKeyResult.error,
+      'Add at least one workspace-shared Fireflies connection.',
+      transcriptId,
+    );
+  }
+
+  const connectionResult = await findFirefliesConnectionForTranscript({
+    connections,
+    transcriptId,
+  });
+
+  if (!connectionResult.success) {
+    return buildFailure(
+      'Failed to find Fireflies call',
+      connectionResult.error,
       transcriptId,
     );
   }
@@ -85,7 +102,7 @@ export const firefliesSyncCallHandler = async (
 
     results.push(
       await syncFirefliesCallToCallRecording({
-        apiKey: apiKeyResult.apiKey,
+        accessToken: connectionResult.connection.accessToken,
         coreApiClient,
         transcriptId,
         field,

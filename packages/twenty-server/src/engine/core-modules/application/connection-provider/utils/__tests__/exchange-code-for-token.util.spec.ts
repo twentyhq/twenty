@@ -15,6 +15,7 @@ const buildResponse = (
 const baseExchangeArgs = {
   tokenEndpoint: 'https://example.com/token',
   contentType: 'form-urlencoded' as const,
+  tokenEndpointAuthMethod: 'client_secret_post' as const,
   clientId: 'cid',
   clientSecret: 'csec',
   code: 'c',
@@ -91,6 +92,34 @@ describe('exchangeCodeForToken', () => {
     });
   });
 
+  it('uses HTTP Basic authentication when configured', async () => {
+    const fetchFn = jest.fn(async () =>
+      buildResponse({ access_token: 'fireflies_access' }),
+    );
+
+    await exchangeCodeForToken({
+      ...baseExchangeArgs,
+      tokenEndpointAuthMethod: 'client_secret_basic',
+      clientId: 'client:id',
+      clientSecret: 'secret value+',
+      fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+    });
+
+    const init = (
+      fetchFn.mock.calls[0] as unknown as [
+        string,
+        { headers: Record<string, string>; body: string },
+      ]
+    )[1];
+    const params = new URLSearchParams(init.body);
+
+    expect(init.headers.Authorization).toBe(
+      'Basic Y2xpZW50JTNBaWQ6c2VjcmV0K3ZhbHVlJTJC',
+    );
+    expect(params.has('client_id')).toBe(false);
+    expect(params.has('client_secret')).toBe(false);
+  });
+
   it('throws on non-2xx response', async () => {
     const fetchFn = jest.fn(async () =>
       buildResponse({ error: 'invalid_grant' }, { ok: false, status: 400 }),
@@ -120,6 +149,7 @@ describe('exchangeRefreshTokenForToken', () => {
   const baseRefreshArgs = {
     tokenEndpoint: 'https://example.com/token',
     contentType: 'form-urlencoded' as const,
+    tokenEndpointAuthMethod: 'client_secret_post' as const,
     clientId: 'cid',
     clientSecret: 'csec',
     refreshToken: 'old_refresh',
@@ -165,5 +195,29 @@ describe('exchangeRefreshTokenForToken', () => {
     });
 
     expect(result.refreshToken).toBeNull();
+  });
+
+  it('uses HTTP Basic authentication when refreshing', async () => {
+    const fetchFn = jest.fn(async () =>
+      buildResponse({ access_token: 'new_access' }),
+    );
+
+    await exchangeRefreshTokenForToken({
+      ...baseRefreshArgs,
+      tokenEndpointAuthMethod: 'client_secret_basic',
+      fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+    });
+
+    const init = (
+      fetchFn.mock.calls[0] as unknown as [
+        string,
+        { headers: Record<string, string>; body: string },
+      ]
+    )[1];
+    const params = new URLSearchParams(init.body);
+
+    expect(init.headers.Authorization).toBe('Basic Y2lkOmNzZWM=');
+    expect(params.has('client_id')).toBe(false);
+    expect(params.has('client_secret')).toBe(false);
   });
 });

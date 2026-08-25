@@ -30,6 +30,7 @@ describe('enqueueFirefliesBackfillBatches', () => {
 
   it('enqueues one staggered job per batch', async () => {
     await enqueueFirefliesBackfillBatches({
+      connectionId: 'connection-1',
       transcriptIdBatches: [
         ['call-1', 'call-2'],
         ['call-3'],
@@ -41,28 +42,31 @@ describe('enqueueFirefliesBackfillBatches', () => {
     expect(enqueueJobMock).toHaveBeenNthCalledWith(1, {
       logicFunctionUniversalIdentifier:
         FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payload: { transcriptIds: ['call-1', 'call-2'] },
+      payload: {
+        connectionId: 'connection-1',
+        transcriptIds: ['call-1', 'call-2'],
+      },
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
       delayMs: 0,
     });
     expect(enqueueJobMock).toHaveBeenNthCalledWith(2, {
       logicFunctionUniversalIdentifier:
         FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payload: { transcriptIds: ['call-3'] },
+      payload: { connectionId: 'connection-1', transcriptIds: ['call-3'] },
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
       delayMs: FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
     });
     expect(enqueueJobMock).toHaveBeenNthCalledWith(3, {
       logicFunctionUniversalIdentifier:
         FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payload: { transcriptIds: ['call-4'] },
+      payload: { connectionId: 'connection-1', transcriptIds: ['call-4'] },
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
       delayMs: 2 * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
     });
     expect(enqueueJobMock).toHaveBeenNthCalledWith(4, {
       logicFunctionUniversalIdentifier:
         FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payload: { transcriptIds: ['call-5'] },
+      payload: { connectionId: 'connection-1', transcriptIds: ['call-5'] },
       retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
       delayMs: 2 * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,
     });
@@ -81,6 +85,7 @@ describe('enqueueFirefliesBackfillBatches', () => {
 
     await expect(
       enqueueFirefliesBackfillBatches({
+        connectionId: 'connection-1',
         transcriptIdBatches: [['call-1'], ['call-2'], ['call-3']],
       }),
     ).rejects.toMatchObject({

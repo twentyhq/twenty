@@ -20,7 +20,7 @@ export default defineLogicFunction({
   universalIdentifier: FIREFLIES_LIST_CALLS_BY_PARTICIPANT_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-list-calls-by-participant',
   description:
-    'List Fireflies calls that include a given participant email. Returns each call\'s ID, title, date, duration, participants, host, Fireflies transcript URL, and original meeting link. Use this to answer "what calls have we had with this contact?" — for example as the first step of a workflow triggered when a Person record is created.',
+    "List calls across every connected Fireflies account that include a given participant email. Returns each call's ID, title, date, duration, participants, host, Fireflies transcript URL, and original meeting link.",
   timeoutSeconds: 30,
   toolTriggerSettings: {
     inputSchema: firefliesListCallsByParticipantInputSchema,

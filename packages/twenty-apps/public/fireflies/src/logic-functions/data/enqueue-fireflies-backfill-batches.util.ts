@@ -6,8 +6,10 @@ import { FIREFLIES_BACKFILL_MAX_BATCH_DELAY_MILLISECONDS } from 'src/logic-funct
 import { FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS } from 'src/logic-functions/constants/fireflies-backfill-batch-stagger-milliseconds.constant';
 
 export const enqueueFirefliesBackfillBatches = async ({
+  connectionId,
   transcriptIdBatches,
 }: {
+  connectionId: string;
   transcriptIdBatches: string[][];
 }): Promise<void> => {
   for (const [batchIndex, transcriptIds] of transcriptIdBatches.entries()) {
@@ -15,7 +17,7 @@ export const enqueueFirefliesBackfillBatches = async ({
       await enqueueJob({
         logicFunctionUniversalIdentifier:
           FIREFLIES_BACKFILL_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-        payload: { transcriptIds },
+        payload: { connectionId, transcriptIds },
         retryLimit: FIREFLIES_BACKFILL_BATCH_RETRY_LIMIT,
         delayMs: Math.min(
           batchIndex * FIREFLIES_BACKFILL_BATCH_STAGGER_MILLISECONDS,

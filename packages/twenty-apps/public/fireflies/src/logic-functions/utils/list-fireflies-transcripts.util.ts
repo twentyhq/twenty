@@ -45,7 +45,7 @@ type TranscriptsResponse = {
 type FirefliesKeywordScope = 'title' | 'sentences' | 'all';
 
 type ListFirefliesTranscriptsArgs = {
-  apiKey: string;
+  accessToken: string;
   keyword?: string;
   keywordScope?: FirefliesKeywordScope;
   participants?: string[];
@@ -71,7 +71,7 @@ const toCallSummary = (
 });
 
 export const listFirefliesTranscripts = async ({
-  apiKey,
+  accessToken,
   keyword,
   keywordScope,
   participants,
@@ -83,7 +83,7 @@ export const listFirefliesTranscripts = async ({
   FirefliesApiResult<FirefliesCallSummary[]>
 > => {
   const result = await firefliesApiRequest<TranscriptsResponse>({
-    apiKey,
+    accessToken,
     query: TRANSCRIPTS_QUERY,
     variables: {
       keyword,

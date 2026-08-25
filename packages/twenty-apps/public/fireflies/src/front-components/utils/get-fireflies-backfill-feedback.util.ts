@@ -15,7 +15,7 @@ const BACKFILL_FEEDBACK_BY_OUTCOME: Record<string, FirefliesBackfillFeedback> =
     },
     [FIREFLIES_BACKFILL_OUTCOME.NOT_CONFIGURED]: {
       variant: 'error',
-      message: 'Set the Fireflies API key first.',
+      message: 'Add a workspace-shared Fireflies connection first.',
     },
   };
 

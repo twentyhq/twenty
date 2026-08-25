@@ -170,6 +170,8 @@ export class ConnectionProviderOAuthFlowService {
         redirectUri: callbackUrl,
         codeVerifier: statePayload.codeVerifier,
         contentType: provider.oauthConfig.tokenRequestContentType,
+        tokenEndpointAuthMethod:
+          provider.oauthConfig.tokenEndpointAuthMethod ?? 'client_secret_post',
       });
     } catch (error) {
       this.logger.error(

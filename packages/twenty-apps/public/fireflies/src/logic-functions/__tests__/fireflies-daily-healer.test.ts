@@ -1,27 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import firefliesDailyHealerLogicFunction from 'src/logic-functions/fireflies-daily-healer';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/flows/__tests__/import-missing-fireflies-calls.test-support';
 
-const fetchMock = vi.fn();
-const enqueueJobMock = vi.hoisted(() => vi.fn());
-
-vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: class {},
-}));
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+const listConnectionsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  enqueueJob: enqueueJobMock,
+  enqueueJobs: enqueueJobsMock,
+  listConnections: listConnectionsMock,
 }));
 
 describe('firefliesDailyHealerLogicFunction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('FIREFLIES_API_KEY', 'fireflies-api-key');
-    fetchMock.mockImplementation(
-      async () => new Response('invalid request', { status: 400 }),
-    );
-    enqueueJobMock.mockResolvedValue({ enqueued: true });
+    listConnectionsMock.mockResolvedValue([
+      { id: 'connection-1' },
+      { id: 'connection-2' },
+    ]);
+    enqueueJobsMock.mockResolvedValue({ enqueued: true });
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
   });
 
@@ -43,27 +41,38 @@ describe('firefliesDailyHealerLogicFunction', () => {
     );
   });
 
-  it('lists a fixed seven-day healing window', async () => {
-    fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ data: { transcripts: [] } }), {
-        status: 200,
-      }),
+  it('starts a fixed seven-day healing job for every connection', async () => {
+    const result = await firefliesDailyHealerLogicFunction.config.handler(
+      undefined,
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
-    const result = await firefliesDailyHealerLogicFunction.config.handler();
-
-    const [, request] = fetchMock.mock.calls[0];
-    const { variables } = JSON.parse(String((request as RequestInit).body)) as {
-      variables: { fromDate: string; toDate: string; skip: number };
-    };
-
-    expect(Date.parse(variables.toDate) - Date.parse(variables.fromDate)).toBe(
-      7 * 24 * 60 * 60 * 1_000,
-    );
-    expect(variables.skip).toBe(0);
+    expect(result).toEqual({ outcome: 'started', connectionCount: 2 });
+    expect(enqueueJobsMock).toHaveBeenCalledWith({
+      logicFunctionUniversalIdentifier:
+        FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payloads: [
+        { connectionId: 'connection-1', days: 7 },
+        { connectionId: 'connection-2', days: 7 },
+      ],
+    });
     expect(console.log).toHaveBeenCalledWith(
-      '[fireflies] Daily healing discovery finished',
+      '[fireflies] Daily healing discovery started',
       result,
     );
+  });
+
+  it('skips healing when no connection exists', async () => {
+    listConnectionsMock.mockResolvedValue([]);
+
+    const result = await firefliesDailyHealerLogicFunction.config.handler(
+      undefined,
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
+
+    expect(result).toEqual(
+      expect.objectContaining({ outcome: 'not-configured' }),
+    );
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 });

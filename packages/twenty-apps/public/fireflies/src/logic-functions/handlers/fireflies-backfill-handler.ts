@@ -1,25 +1,21 @@
+import { getConnection } from 'twenty-sdk/logic-function';
+
 import { FIREFLIES_BACKFILL_OUTCOME } from 'src/constants/fireflies-backfill-outcome.constant';
 import { FIREFLIES_BACKFILL_BATCH_SIZE } from 'src/logic-functions/constants/fireflies-backfill-batch-size.constant';
 import { enqueueFirefliesBackfillBatches } from 'src/logic-functions/data/enqueue-fireflies-backfill-batches.util';
 import { type FirefliesBackfillResult } from 'src/logic-functions/types/fireflies-backfill-result.type';
 import { buildFirefliesBackfillWindow } from 'src/logic-functions/utils/build-fireflies-backfill-window.util';
-import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
 import { listFirefliesTranscriptIds } from 'src/logic-functions/utils/list-fireflies-transcript-ids.util';
 import { chunkIntoBatches } from 'src/utils/chunk-into-batches.util';
 
 export const firefliesBackfillHandler = async ({
+  connectionId,
   windowDays,
 }: {
+  connectionId: string;
   windowDays: number;
 }): Promise<FirefliesBackfillResult> => {
-  const apiKeyResult = getFirefliesApiKey();
-
-  if (!apiKeyResult.success) {
-    return {
-      outcome: FIREFLIES_BACKFILL_OUTCOME.NOT_CONFIGURED,
-      error: apiKeyResult.error,
-    };
-  }
+  const connection = await getConnection(connectionId);
 
   const { fromDate, toDate } = buildFirefliesBackfillWindow({
     windowDays,
@@ -27,7 +23,7 @@ export const firefliesBackfillHandler = async ({
   });
 
   const listFirefliesTranscriptIdsResult = await listFirefliesTranscriptIds({
-    apiKey: apiKeyResult.apiKey,
+    accessToken: connection.accessToken,
     fromDate,
     toDate,
   });
@@ -42,7 +38,7 @@ export const firefliesBackfillHandler = async ({
     listFirefliesTranscriptIdsResult.transcriptIds,
     FIREFLIES_BACKFILL_BATCH_SIZE,
   );
-  await enqueueFirefliesBackfillBatches({ transcriptIdBatches });
+  await enqueueFirefliesBackfillBatches({ connectionId, transcriptIdBatches });
 
   return {
     outcome: FIREFLIES_BACKFILL_OUTCOME.COMPLETED,

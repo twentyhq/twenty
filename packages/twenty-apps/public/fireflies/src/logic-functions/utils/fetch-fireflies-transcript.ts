@@ -32,14 +32,14 @@ type FirefliesTranscriptResponse = {
 };
 
 export const fetchFirefliesTranscript = async ({
-  apiKey,
+  accessToken,
   transcriptId,
 }: {
-  apiKey: string;
+  accessToken: string;
   transcriptId: string;
 }): Promise<FirefliesApiResult<FirefliesTranscript>> => {
   const result = await firefliesApiRequest<FirefliesTranscriptResponse>({
-    apiKey,
+    accessToken,
     query: TRANSCRIPT_QUERY,
     variables: { transcriptId },
   });

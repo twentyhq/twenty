@@ -9,7 +9,7 @@ export default defineLogicFunction({
   universalIdentifier: FIREFLIES_SYNC_CALL_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-sync-call',
   description:
-    'Sync a single Fireflies call into a CallRecording record on demand: fetches both transcript and AI summary from Fireflies and upserts them onto one CallRecording linked to the matching CalendarEvent. Same matching rules as the webhook (Fireflies calendar_id / cal_id ↔ Twenty eventExternalId or iCalUid). Useful for backfilling history, recovering from a missed webhook, or syncing on a workflow trigger instead of waiting for Fireflies to push.',
+    'Sync a single Fireflies call into a CallRecording record on demand: searches the connected Fireflies accounts for the transcript, fetches its transcript and AI summary, and upserts them onto one CallRecording linked to the matching CalendarEvent.',
   timeoutSeconds: 60,
   toolTriggerSettings: {
     inputSchema: firefliesSyncCallInputSchema,

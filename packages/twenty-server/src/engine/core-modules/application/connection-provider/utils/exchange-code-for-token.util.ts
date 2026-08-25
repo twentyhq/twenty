@@ -1,4 +1,7 @@
-import { type OAuthProviderTokenRequestContentType } from 'twenty-shared/application';
+import {
+  type OAuthProviderTokenEndpointAuthMethod,
+  type OAuthProviderTokenRequestContentType,
+} from 'twenty-shared/application';
 
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { postOAuthTokenRequest } from 'src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util';
@@ -9,6 +12,7 @@ export const exchangeCodeForToken = (args: {
   fetchFn: FetchFn;
   tokenEndpoint: string;
   contentType: OAuthProviderTokenRequestContentType;
+  tokenEndpointAuthMethod: OAuthProviderTokenEndpointAuthMethod;
   clientId: string;
   clientSecret: string;
   code: string;
@@ -19,8 +23,6 @@ export const exchangeCodeForToken = (args: {
     grant_type: 'authorization_code',
     code: args.code,
     redirect_uri: args.redirectUri,
-    client_id: args.clientId,
-    client_secret: args.clientSecret,
   };
 
   if (args.codeVerifier) {
@@ -31,6 +33,9 @@ export const exchangeCodeForToken = (args: {
     fetchFn: args.fetchFn,
     tokenEndpoint: args.tokenEndpoint,
     contentType: args.contentType,
+    tokenEndpointAuthMethod: args.tokenEndpointAuthMethod,
+    clientId: args.clientId,
+    clientSecret: args.clientSecret,
     params,
   });
 };

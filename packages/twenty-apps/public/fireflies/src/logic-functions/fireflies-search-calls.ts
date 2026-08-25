@@ -20,7 +20,7 @@ export default defineLogicFunction({
   universalIdentifier: FIREFLIES_SEARCH_CALLS_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-search-calls',
   description:
-    'Search Fireflies calls by keyword. Matches the keyword against both meeting titles and the words spoken during meetings (full transcript content). Returns each match\'s ID, title, date, duration, participants, host, Fireflies transcript URL, and meeting link. Use this for AI-chat questions like "find any call where we discussed pricing".',
+    'Search calls across every connected Fireflies account by keyword. Matches against meeting titles and spoken words, deduplicates shared calls, and returns the newest matches.',
   timeoutSeconds: 30,
   toolTriggerSettings: {
     inputSchema: firefliesSearchCallsInputSchema,

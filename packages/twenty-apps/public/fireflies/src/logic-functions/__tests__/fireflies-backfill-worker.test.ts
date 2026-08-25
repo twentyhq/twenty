@@ -2,22 +2,28 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   buildListedTranscript,
+  LOGIC_FUNCTION_EXECUTION_CONTEXT,
   serveFirefliesApi,
 } from 'src/logic-functions/flows/__tests__/import-missing-fireflies-calls.test-support';
 import firefliesBackfillWorkerLogicFunction from 'src/logic-functions/fireflies-backfill-worker';
 
 const fetchMock = vi.fn();
 const enqueueJobMock = vi.hoisted(() => vi.fn());
+const getConnectionMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/logic-function', () => ({
   enqueueJob: enqueueJobMock,
+  getConnection: getConnectionMock,
 }));
 
 describe('firefliesBackfillWorkerLogicFunction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubGlobal('fetch', fetchMock);
-    vi.stubEnv('FIREFLIES_API_KEY', 'fireflies-api-key');
+    getConnectionMock.mockResolvedValue({
+      id: 'connection-1',
+      accessToken: 'fireflies-access-token',
+    });
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
     fetchMock.mockImplementation(
       async () => new Response('invalid request', { status: 400 }),
@@ -48,8 +54,11 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
 
   it('rejects an invalid worker payload', async () => {
     await expect(
-      firefliesBackfillWorkerLogicFunction.config.handler({ days: 0 }),
-    ).rejects.toThrow('requires a valid days window');
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { connectionId: 'connection-1', days: 0 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
+    ).rejects.toThrow('requires a connection id and valid days window');
   });
 
   it('lists the requested window and enqueues every transcript batch', async () => {
@@ -62,9 +71,10 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
 
     serveFirefliesApi([transcripts], fetchMock);
 
-    const result = await firefliesBackfillWorkerLogicFunction.config.handler({
-      days: 30,
-    });
+    const result = await firefliesBackfillWorkerLogicFunction.config.handler(
+      { connectionId: 'connection-1', days: 30 },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -75,6 +85,10 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
       }),
     );
     expect(enqueueJobMock).toHaveBeenCalledTimes(2);
+    expect(getConnectionMock).toHaveBeenCalledWith('connection-1');
+    expect(enqueueJobMock.mock.calls[0][0].payload.connectionId).toBe(
+      'connection-1',
+    );
     expect(enqueueJobMock.mock.calls[0][0].payload.transcriptIds).toHaveLength(
       20,
     );
@@ -106,7 +120,10 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
       .mockRejectedValueOnce(new Error('Network failed'));
 
     await expect(
-      firefliesBackfillWorkerLogicFunction.config.handler({ days: 30 }),
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { connectionId: 'connection-1', days: 30 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow(
       'Fireflies backfill enqueued 1 of 2 batches before enqueue failed: Network failed',
     );
@@ -115,22 +132,23 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
 
   it('fails discovery when Fireflies listing fails', async () => {
     await expect(
-      firefliesBackfillWorkerLogicFunction.config.handler({ days: 30 }),
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { connectionId: 'connection-1', days: 30 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('Fireflies backfill listing failed');
     expect(enqueueJobMock).not.toHaveBeenCalled();
   });
 
-  it('skips discovery when the Fireflies api key is missing', async () => {
-    vi.stubEnv('FIREFLIES_API_KEY', '');
+  it('fails only the worker bound to a connection that cannot load', async () => {
+    getConnectionMock.mockRejectedValue(new Error('reconnect required'));
 
-    const result = await firefliesBackfillWorkerLogicFunction.config.handler({
-      days: 30,
-    });
-
-    expect(result).toEqual(
-      expect.objectContaining({ outcome: 'not-configured' }),
-    );
+    await expect(
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { connectionId: 'connection-1', days: 30 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
+    ).rejects.toThrow('reconnect required');
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalled();
   });
 });

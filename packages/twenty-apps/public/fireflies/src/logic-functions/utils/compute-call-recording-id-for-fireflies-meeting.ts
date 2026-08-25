@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-// Same Fireflies meeting → same id, so all webhooks and syncs converge on one row.
+// Same Fireflies meeting → same id, so overlapping connected accounts converge on one row.
 export const computeCallRecordingIdForFirefliesMeeting = (
   firefliesMeetingId: string,
 ): string => {

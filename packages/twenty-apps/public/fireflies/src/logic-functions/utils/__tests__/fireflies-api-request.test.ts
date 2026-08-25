@@ -34,7 +34,7 @@ describe('firefliesApiRequest', () => {
       );
 
       const result = await firefliesApiRequest({
-        apiKey: 'api-key',
+        accessToken: 'access-token',
         query: 'query Test { user { user_id } }',
       });
 
@@ -60,7 +60,7 @@ describe('firefliesApiRequest', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await firefliesApiRequest({
-      apiKey: 'api-key',
+      accessToken: 'access-token',
       query: 'query Test { user { user_id } }',
     });
 
@@ -78,7 +78,7 @@ describe('firefliesApiRequest', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await firefliesApiRequest({
-      apiKey: 'api-key',
+      accessToken: 'access-token',
       query: 'query Test { user { user_id } }',
     });
 
@@ -95,7 +95,7 @@ describe('firefliesApiRequest', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     const resultPromise = firefliesApiRequest({
-      apiKey: 'api-key',
+      accessToken: 'access-token',
       query: 'query Test { user { user_id } }',
     });
 

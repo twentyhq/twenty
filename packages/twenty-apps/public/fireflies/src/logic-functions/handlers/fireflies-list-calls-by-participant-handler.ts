@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { listConnections } from 'twenty-sdk/logic-function';
 
 import { type FirefliesCallListResult } from 'src/logic-functions/types/fireflies-call-list-result.type';
 import { type FirefliesListCallsByParticipantInput } from 'src/logic-functions/types/fireflies-list-calls-by-participant-input.type';
-import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
-import { listFirefliesTranscripts } from 'src/logic-functions/utils/list-fireflies-transcripts.util';
+import { listFirefliesTranscriptsAcrossConnections } from 'src/logic-functions/utils/list-fireflies-transcripts-across-connections.util';
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
@@ -29,34 +29,40 @@ export const firefliesListCallsByParticipantHandler = async (
     };
   }
 
-  const apiKeyResult = getFirefliesApiKey();
+  const connections = await listConnections({
+    providerName: 'fireflies',
+    visibility: 'workspace',
+  });
 
-  if (!apiKeyResult.success) {
+  if (connections.length === 0) {
     return {
       success: false,
       message: 'Fireflies is not configured',
-      error: apiKeyResult.error,
+      error: 'Add at least one workspace-shared Fireflies connection.',
     };
   }
 
-  const result = await listFirefliesTranscripts({
-    apiKey: apiKeyResult.apiKey,
+  const result = await listFirefliesTranscriptsAcrossConnections({
+    connections,
     participants: [participantEmail],
     limit: clampLimit(parameters.limit),
   });
 
-  if (!result.ok) {
+  if (result.successfulConnectionCount === 0) {
     return {
       success: false,
       message: 'Failed to list Fireflies calls',
-      error: result.errorMessage,
+      error: result.connectionErrors.join(' | '),
     };
   }
 
   return {
     success: true,
-    message: `Found ${result.data.length} Fireflies call(s) with ${participantEmail}.`,
-    calls: result.data,
-    count: result.data.length,
+    message: `Found ${result.calls.length} Fireflies call(s) with ${participantEmail} across ${result.successfulConnectionCount} connected account(s).`,
+    calls: result.calls,
+    count: result.calls.length,
+    ...(result.connectionErrors.length > 0
+      ? { error: result.connectionErrors.join(' | ') }
+      : {}),
   };
 };

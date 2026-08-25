@@ -1,5 +1,5 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs, listConnections } from 'twenty-sdk/logic-function';
 
 import {
   FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -10,7 +10,6 @@ import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/constants/fireflies-back
 import { FIREFLIES_BACKFILL_OUTCOME } from 'src/constants/fireflies-backfill-outcome.constant';
 import { FIREFLIES_BACKFILL_TIMEOUT_SECONDS } from 'src/logic-functions/constants/fireflies-backfill-timeout-seconds.constant';
 import { firefliesBackfillRequestBodySchema } from 'src/logic-functions/schemas/fireflies-backfill-request-body.schema';
-import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
 
 const firefliesBackfillRequestHandler = async (
   payload: RoutePayload<unknown>,
@@ -26,29 +25,39 @@ const firefliesBackfillRequestHandler = async (
     };
   }
 
-  const apiKeyResult = getFirefliesApiKey();
+  const connections = await listConnections({
+    providerName: 'fireflies',
+    visibility: 'workspace',
+  });
 
-  if (!apiKeyResult.success) {
+  if (connections.length === 0) {
     return {
       outcome: FIREFLIES_BACKFILL_OUTCOME.NOT_CONFIGURED,
-      error: apiKeyResult.error,
+      error:
+        'Fireflies is not configured. Add at least one workspace-shared Fireflies connection.',
     };
   }
 
-  await enqueueJob({
+  await enqueueJobs({
     logicFunctionUniversalIdentifier:
       FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-    payload: { days: requestBodyParseResult.data.days },
+    payloads: connections.map((connection) => ({
+      connectionId: connection.id,
+      days: requestBodyParseResult.data.days,
+    })),
   });
 
-  return { outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED };
+  return {
+    outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED,
+    connectionCount: connections.length,
+  };
 };
 
 export default defineLogicFunction({
   universalIdentifier: FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-backfill',
   description:
-    'Enqueues a background worker that discovers and imports missing Fireflies calls for the requested days window.',
+    'Starts one background history-discovery worker per connected Fireflies account for the requested days window.',
   timeoutSeconds: FIREFLIES_BACKFILL_TIMEOUT_SECONDS,
   handler: firefliesBackfillRequestHandler,
   httpRouteTriggerSettings: {

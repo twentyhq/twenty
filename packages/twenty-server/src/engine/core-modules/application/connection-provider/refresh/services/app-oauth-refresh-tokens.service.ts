@@ -48,6 +48,8 @@ export class AppOAuthRefreshAccessTokenService {
         clientSecret,
         refreshToken,
         contentType: provider.oauthConfig.tokenRequestContentType,
+        tokenEndpointAuthMethod:
+          provider.oauthConfig.tokenEndpointAuthMethod ?? 'client_secret_post',
       });
 
       return {

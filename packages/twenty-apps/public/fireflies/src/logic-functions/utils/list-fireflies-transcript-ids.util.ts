@@ -4,11 +4,11 @@ import { type ListFirefliesTranscriptIdsResult } from 'src/logic-functions/types
 import { listFirefliesTranscripts } from 'src/logic-functions/utils/list-fireflies-transcripts.util';
 
 export const listFirefliesTranscriptIds = async ({
-  apiKey,
+  accessToken,
   fromDate,
   toDate,
 }: {
-  apiKey: string;
+  accessToken: string;
   fromDate: string;
   toDate: string;
 }): Promise<ListFirefliesTranscriptIdsResult> => {
@@ -21,7 +21,7 @@ export const listFirefliesTranscriptIds = async ({
     pageIndex++
   ) {
     const listFirefliesTranscriptsResult = await listFirefliesTranscripts({
-      apiKey,
+      accessToken,
       fromDate,
       toDate,
       limit: FIREFLIES_BACKFILL_PAGE_SIZE,

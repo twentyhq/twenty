@@ -29,6 +29,9 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
               connectionProviderManifest.oauth.clientSecretVariable,
             authorizationParams:
               connectionProviderManifest.oauth.authorizationParams ?? null,
+            tokenEndpointAuthMethod:
+              connectionProviderManifest.oauth.tokenEndpointAuthMethod ??
+              'client_secret_post',
             tokenRequestContentType:
               connectionProviderManifest.oauth.tokenRequestContentType ??
               'json',

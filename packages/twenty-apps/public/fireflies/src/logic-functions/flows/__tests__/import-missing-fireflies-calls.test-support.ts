@@ -1,6 +1,16 @@
 import { type Mock, vi } from 'vitest';
 
-export const FIREFLIES_API_KEY = 'fireflies-api-key';
+import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+export const FIREFLIES_ACCESS_TOKEN = 'fireflies-access-token';
+
+export const LOGIC_FUNCTION_EXECUTION_CONTEXT = {
+  retryCount: 0,
+  maxRetries: 0,
+  workspaceId: '20202020-2020-4020-8020-202020202020',
+  userWorkspaceId: null,
+  workspaceMemberId: null,
+} satisfies LogicFunctionExecutionContext;
 export const FIREFLIES_BACKFILL_FROM_DATE = '2026-05-01T00:00:00.000Z';
 export const FIREFLIES_BACKFILL_TO_DATE = '2026-07-30T00:00:00.000Z';
 

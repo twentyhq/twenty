@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   answerTwentyQueries,
+  LOGIC_FUNCTION_EXECUTION_CONTEXT,
   serveFirefliesApi,
   setUpImportMissingFirefliesCallsTest,
 } from 'src/logic-functions/flows/__tests__/import-missing-fireflies-calls.test-support';
@@ -11,12 +12,17 @@ import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/u
 
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
+const getConnectionMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     query = queryMock;
     mutation = mutationMock;
   },
+}));
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  getConnection: getConnectionMock,
 }));
 
 const fetchMock = vi.fn();
@@ -28,7 +34,10 @@ describe('firefliesBackfillBatchLogicFunction', () => {
       queryMock,
       mutationMock,
     });
-    vi.stubEnv('FIREFLIES_API_KEY', 'fireflies-api-key');
+    getConnectionMock.mockResolvedValue({
+      id: 'connection-1',
+      accessToken: 'fireflies-access-token',
+    });
   });
 
   afterEach(() => {
@@ -57,9 +66,10 @@ describe('firefliesBackfillBatchLogicFunction', () => {
     serveFirefliesApi([], fetchMock);
     vi.useFakeTimers();
 
-    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler({
-      transcriptIds: ['call-1', 'call-2'],
-    });
+    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler(
+      { connectionId: 'connection-1', transcriptIds: ['call-1', 'call-2'] },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     await vi.runAllTimersAsync();
 
@@ -93,9 +103,10 @@ describe('firefliesBackfillBatchLogicFunction', () => {
       ],
     });
 
-    const result = await firefliesBackfillBatchLogicFunction.config.handler({
-      transcriptIds: ['call-1'],
-    });
+    const result = await firefliesBackfillBatchLogicFunction.config.handler(
+      { connectionId: 'connection-1', transcriptIds: ['call-1'] },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     expect(result).toEqual(
       expect.objectContaining({ status: 'completed', skippedCallCount: 1 }),
@@ -118,9 +129,10 @@ describe('firefliesBackfillBatchLogicFunction', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler({
-      transcriptIds: ['call-1'],
-    });
+    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler(
+      { connectionId: 'connection-1', transcriptIds: ['call-1'] },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
     const resultExpectation = expect(resultPromise).rejects.toThrow(
       'transient Fireflies API error',
     );
@@ -140,28 +152,36 @@ describe('firefliesBackfillBatchLogicFunction', () => {
 
   it('throws on an invalid job payload', async () => {
     await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({ transcriptIds: [] }),
+      firefliesBackfillBatchLogicFunction.config.handler(
+        { connectionId: 'connection-1', transcriptIds: [] },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('requires 1 to 20 non-empty transcript ids');
   });
 
   it('throws when a job payload exceeds the configured batch size', async () => {
     await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({
-        transcriptIds: Array.from(
-          { length: FIREFLIES_BACKFILL_BATCH_SIZE + 1 },
-          (_, transcriptIndex) => `call-${transcriptIndex}`,
-        ),
-      }),
+      firefliesBackfillBatchLogicFunction.config.handler(
+        {
+          connectionId: 'connection-1',
+          transcriptIds: Array.from(
+            { length: FIREFLIES_BACKFILL_BATCH_SIZE + 1 },
+            (_, transcriptIndex) => `call-${transcriptIndex}`,
+          ),
+        },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('requires 1 to 20 non-empty transcript ids');
   });
 
-  it('throws when the Fireflies api key is missing', async () => {
-    vi.stubEnv('FIREFLIES_API_KEY', '');
+  it('fails only the batch bound to a connection that cannot load', async () => {
+    getConnectionMock.mockRejectedValue(new Error('reconnect required'));
 
     await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({
-        transcriptIds: ['call-1'],
-      }),
-    ).rejects.toThrow('Fireflies is not configured');
+      firefliesBackfillBatchLogicFunction.config.handler(
+        { connectionId: 'connection-1', transcriptIds: ['call-1'] },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
+    ).rejects.toThrow('reconnect required');
   });
 });

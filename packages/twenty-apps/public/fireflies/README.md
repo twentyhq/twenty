@@ -9,18 +9,16 @@ from the AI chat or workflow builder.
 ## What this app does
 
 1. Fireflies records and transcribes your Zoom / Meet / Teams / phone call.
-2. When the transcript is ready, Fireflies fires a `meeting.transcribed`
-   webhook; once Fireflies finishes its AI summary, it fires a separate
-   `meeting.summarized` webhook.
-3. For each event, this app fetches the relevant data via the Fireflies
-   GraphQL API.
+2. A daily healing job discovers recent calls from every workspace-shared
+   Fireflies connection. Admins can also start a longer history backfill.
+3. For each discovered call, this app fetches the transcript and summary via
+   the Fireflies GraphQL API.
 4. It upserts a `CallRecording` record (one per Fireflies call) with the
    diarized transcript and the AI summary, linked to the matching
    `CalendarEvent` when one is found.
 
-Alongside the webhook, three [Workflow tools](#workflow-tools) let you
-trigger Fireflies actions from the AI chat or as steps inside a workflow,
-without waiting for Fireflies to push.
+Three [Workflow tools](#workflow-tools) also let you trigger Fireflies actions
+from the AI chat or as steps inside a workflow.
 
 ### How a transcript is matched to a CalendarEvent
 
@@ -47,9 +45,8 @@ event. This avoids silently linking transcripts to the wrong event.
 
 The app writes to the standard **CallRecording** object (no new schema):
 
-- One CallRecording per Fireflies call, with a deterministic id — the
-  `meeting.transcribed` webhook, the `meeting.summarized` webhook, and manual
-  syncs all converge on the same record.
+- One CallRecording per Fireflies call, with a deterministic id, so calls
+  visible through multiple connected accounts converge on the same record.
 - **Transcript** — the diarized transcript (speaker names and sentence-level
   timestamps) stored in the CallRecording `transcript` field.
 - **Summary** — the Fireflies AI summary (overview, action items, topics,
@@ -61,17 +58,17 @@ Plus three workflow tools — see [Workflow tools](#workflow-tools) below.
 
 ## Workflow tools
 
-Once the API key is configured, three tools become available in the workflow
-builder and the AI chat — covering the cases the webhook can't:
+Once Fireflies is connected, three tools become available in the workflow
+builder and the AI chat:
 
 - **Sync Fireflies Call** — *"sync the Fireflies call `01HXYZ...` into a
   CallRecording now"*. As a workflow step: provide `transcriptId`. Runs the
-  same pipeline as the webhook (fetch transcript + AI summary, find matching
-  CalendarEvent, upsert the CallRecording) on demand. Use cases:
+  same import pipeline (fetch transcript + AI summary, find matching
+  CalendarEvent, upsert the CallRecording) on demand. It searches every
+  connected Fireflies account for the requested transcript. Use cases:
   **backfilling** historical calls that happened before the app was
-  installed; **recovering** from a missed webhook (e.g. the calendar event
-  hadn't synced yet when Fireflies pushed); or triggering a sync from a
-  workflow instead of waiting for Fireflies. Output includes
+  installed; **recovering** a call after its calendar event syncs; or
+  triggering a sync from a workflow. Output includes
   `callRecordingId`, `calendarEventId`, `updatedFields`, and a per-field
   outcome breakdown so partial successes are visible.
 - **List Fireflies Calls By Participant** — *"show me my last 5 calls with
@@ -95,12 +92,13 @@ CallRecording, pass the `id` from a list result into **Sync Fireflies Call**.
 
 1. Open **Settings → Applications** in your Twenty workspace.
 2. Find **Fireflies** in the available apps and click **Install**.
-3. Follow [Self-hosting setup](#self-hosting-setup-admin-only) below to wire
-   up the API key and webhook (admin-only, one-time).
+3. Open the app's **Connections** tab, click **Add connection**, choose
+   **Workspace shared**, and complete the Fireflies authorization flow.
+4. Repeat step 3 for every Fireflies account whose meetings should sync.
 
-> **Heads up:** if you see *"Fireflies is not configured"* on the first
-> webhook, your Twenty admin needs to follow the
-> [Self-hosting setup](#self-hosting-setup-admin-only) section.
+> **Heads up:** if you see *"Fireflies is not configured"*, add at least one
+> workspace-shared connection. Personal connections are not used by background
+> synchronization.
 
 ## Upgrading from 0.1.x
 
@@ -127,10 +125,12 @@ What this connector intentionally does **not** support in v1:
   longer skipped — the CallRecording is created — but it stays unlinked
   until the calendar event syncs; re-running **Sync Fireflies Call** after
   the calendar sync fills the link.
-- **Per-user Fireflies accounts.** All transcripts come through one
-  workspace-shared API key (set by the admin). Per-user OAuth-style
-  connections require extending Twenty's connection provider system and are
-  planned once we have evidence that workspace-shared is too coarse.
+- **Personal Fireflies connections for background sync.** Background and
+  manual synchronization use every workspace-shared OAuth connection.
+  Personal connections are not included.
+- **Real-time webhook delivery.** This version uses scheduled healing,
+  history backfill, and workflow tools. Per-connection OAuth webhook
+  registration will be added when Fireflies exposes it.
 - **Editing transcripts or summaries in Twenty.** The CallRecording fields
   are writable but the next Fireflies sync overwrites any manual edits —
   treat them as read-only.
@@ -139,13 +139,11 @@ What this connector intentionally does **not** support in v1:
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Webhook returns `Fireflies is not configured` | `FIREFLIES_API_KEY` not set | Admin: paste the API key in **Settings → Applications → Fireflies → Settings** |
-| Webhook returns `Invalid webhook signature` | `FIREFLIES_WEBHOOK_SECRET` mismatch between Fireflies and Twenty | Re-copy the signing secret from the Fireflies webhook configuration and paste it into the Twenty app settings |
+| Fireflies reports `Fireflies is not configured` | No workspace-shared Fireflies OAuth connection exists | Open **Settings → Applications → Fireflies → Connections**, click **Add connection**, and choose **Workspace shared** |
 | CallRecording is created but has no linked CalendarEvent | The meeting was never on a synced calendar in Twenty, or the workspace has no Google/Outlook/CalDAV calendar connection set up | Connect the relevant calendar provider in **Settings → Accounts** so the calendar event lands in Twenty with `eventExternalId` and `iCalUid` populated, then re-run **Sync Fireflies Call** for that transcript. Manually-created CalendarEvents are intentionally not matched in v1 |
 | Transcript appears empty | Fireflies returned no sentences (call too short, audio failed) | Check the call in the Fireflies dashboard; nothing this app can do |
-| Summary appears empty | Fireflies hasn't summarized the call yet, or the call was too short to summarize | Fireflies sends `meeting.summarized` separately from `meeting.transcribed` (typically a minute or two later); ensure that event is subscribed to in your Webhooks V2 config |
-| Summary is populated but Transcript isn't (or vice versa) | Only one of the two Fireflies events is subscribed to | Subscribe to both `meeting.transcribed` and `meeting.summarized` in your Fireflies Webhooks V2 configuration |
-| Fireflies API errors with `401` | API key wrong, rotated, or revoked | Generate a new key in Fireflies → Integrations → Fireflies API → Regenerate, then update `FIREFLIES_API_KEY` |
+| Summary appears empty | Fireflies hasn't summarized the call yet, or the call was too short to summarize | Re-run **Sync Fireflies Call** after Fireflies finishes processing the summary |
+| Fireflies API errors with `401` | The OAuth connection expired or was revoked | Reconnect Fireflies from the app's **Connections** tab |
 | **Sync Fireflies Call** reports `No CallRecording was written` | Fireflies returned no transcript sentences and no summary for the call, or the per-field outcomes show transient Fireflies API failures | Check the `fieldOutcomes` array in the result — `skipped` means Fireflies had no content for that field; `error` means Fireflies-side failure (retry, or inspect the error message) |
 | **List / Search** tools return `count: 0` for a contact you've definitely talked to | Email mismatch — Fireflies stores the address as the participant joined the meeting with, which may differ from the contact's primary address in Twenty (aliases, plus-addressing, work vs. personal) | Try the contact's other known email addresses; cross-check the `participants` list on a known matching call |
 
@@ -156,47 +154,26 @@ What this connector intentionally does **not** support in v1:
 This section is for Twenty server admins. If you're on Twenty Cloud, skip
 this — the credentials may already be configured.
 
-### 1. Generate a Fireflies API key
+### 1. Register a Fireflies OAuth app
 
-1. Visit https://app.fireflies.ai and sign in.
-2. Go to **Integrations → Fireflies API**.
-3. Click **Generate API key** and copy the value (it's only shown once).
+1. Ask Fireflies to register a confidential OAuth client for your Twenty
+   deployment.
+2. Set the redirect URI to `<SERVER_URL>/auth/apps/callback` (for local
+   development: `http://localhost:3000/auth/apps/callback`).
+3. Enable the authorization-code and refresh-token grants with the
+   `openid`, `meetings.read.user`, and `offline_access` scopes.
+4. Copy the generated **Client ID** and **Client Secret**.
 
-### 2. Configure a Webhooks V2 endpoint in Fireflies
+### 2. Wire the OAuth credentials into Twenty
 
-This integration targets [Fireflies Webhooks V2](https://docs.fireflies.ai/graphql-api/webhooks-v2)
-(snake_case payload, granular event subscriptions). The legacy V1 webhook
-format (`meetingId` / `eventType: "Transcription completed"`) is **not**
-supported.
+1. In **Settings → Applications**, find **Fireflies**, open it, and go to
+   the **Application registration** tab (admin-only).
+2. Paste the Fireflies **Client ID** into `FIREFLIES_CLIENT_ID` and the
+   **Client Secret** into `FIREFLIES_CLIENT_SECRET`.
+3. In the app's **Connections** tab, click **Add connection**, choose
+   **Workspace shared**, and authorize the Fireflies account used for sync.
 
-1. Open the Webhooks V2 page: https://app.fireflies.ai/integrations/api/webhook
-2. Set the **Webhook URL** to your Twenty deployment's webhook endpoint:
-   `https://<your-twenty-domain>/webhook/fireflies`. Twenty resolves the
-   target workspace from the request's `Host` header, so the URL must match
-   the workspace's public domain — `localhost` is not valid in the
-   Fireflies UI. For local development, expose your dev server with a
-   tunnel like `ngrok http 3000` and paste the HTTPS forwarding URL here,
-   or skip the Fireflies UI entirely and POST a signed payload directly to
-   your local endpoint.
-3. Set a **Signing Secret** (a long random string — generate one with
-   `openssl rand -hex 32`). Save it; you'll paste it into Twenty next.
-4. Under **Events**, subscribe to **both**:
-   - **`meeting.transcribed`** — fires when the transcript is ready and
-     writes it to the CallRecording's **Transcript** field.
-   - **`meeting.summarized`** — fires once Fireflies finishes its AI summary
-     and writes it to the CallRecording's **Summary** field.
-   Subscribing to only one is fine if you don't want the other field
-   populated; the app dispatches per event.
-5. **Save** the configuration.
-
-### 3. Wire the credentials into Twenty
-
-1. In Twenty: **Settings → Applications → Fireflies → Settings tab**.
-2. Paste the Fireflies API key into the `FIREFLIES_API_KEY` row.
-3. Paste the signing secret into the `FIREFLIES_WEBHOOK_SECRET` row.
-
-After saving, the next time Fireflies finishes processing a recording, a
-CallRecording with the transcript will appear (linked to the matching
-CalendarEvent) within a few seconds; the summary follows once Fireflies
-finishes the AI summarization step (typically a minute or two later —
-Fireflies sends two separate webhooks).
+Workspace users can now add one or more Fireflies accounts from the
+**Connections** tab. The daily healer imports recent calls from every healthy
+workspace-shared connection; use **Import call history** in the app settings
+for a longer window.

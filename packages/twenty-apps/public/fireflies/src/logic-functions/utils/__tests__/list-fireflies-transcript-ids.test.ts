@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   buildListedTranscript,
-  FIREFLIES_API_KEY,
+  FIREFLIES_ACCESS_TOKEN,
   FIREFLIES_BACKFILL_FROM_DATE,
   FIREFLIES_BACKFILL_TO_DATE,
   getListRequestVariables,
@@ -47,7 +47,7 @@ describe('listFirefliesTranscriptIds', () => {
     serveFirefliesApi([buildFullPage(0), shortPage], fetchMock);
 
     const result = await listFirefliesTranscriptIds({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       fromDate: FIREFLIES_BACKFILL_FROM_DATE,
       toDate: FIREFLIES_BACKFILL_TO_DATE,
     });
@@ -66,7 +66,7 @@ describe('listFirefliesTranscriptIds', () => {
     serveFirefliesApi([[]], fetchMock);
 
     const result = await listFirefliesTranscriptIds({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       fromDate: FIREFLIES_BACKFILL_FROM_DATE,
       toDate: FIREFLIES_BACKFILL_TO_DATE,
     });
@@ -81,7 +81,7 @@ describe('listFirefliesTranscriptIds', () => {
     );
 
     const result = await listFirefliesTranscriptIds({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       fromDate: FIREFLIES_BACKFILL_FROM_DATE,
       toDate: FIREFLIES_BACKFILL_TO_DATE,
     });
@@ -93,7 +93,7 @@ describe('listFirefliesTranscriptIds', () => {
     serveFirefliesApi([buildFullPage(0), buildFullPage(1)], fetchMock);
 
     const result = await listFirefliesTranscriptIds({
-      apiKey: FIREFLIES_API_KEY,
+      accessToken: FIREFLIES_ACCESS_TOKEN,
       fromDate: FIREFLIES_BACKFILL_FROM_DATE,
       toDate: FIREFLIES_BACKFILL_TO_DATE,
     });
