@@ -2,7 +2,6 @@ import { Command } from 'nest-commander';
 
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { FieldMetadataType, MessageCampaignStatus } from 'twenty-shared/types';
 import { MESSAGE_CAMPAIGN_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-35/constants/message-campaign-standard-object-universal-identifiers.constant';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';

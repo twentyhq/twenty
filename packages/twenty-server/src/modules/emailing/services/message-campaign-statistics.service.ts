@@ -1,21 +1,42 @@
 import { Injectable } from '@nestjs/common';
 
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
+import { computeCampaignCounts } from 'src/engine/core-modules/emailing-domain/utils/compute-campaign-counts.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-
-type DeliveryStatusCountRow = {
-  deliveryStatus: string | null;
-  count: string;
-};
 
 @Injectable()
 export class MessageCampaignStatisticsService {
   constructor(
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
+
+  async countDeliveriesByState({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<CampaignCounts> {
+    const deliveries = await this.campaignDeliveryRepository.find(workspaceId, {
+      where: { campaignId },
+      select: {
+        id: true,
+        state: true,
+        deliveredAt: true,
+        bouncedAt: true,
+        complainedAt: true,
+      },
+    });
+
+    return computeCampaignCounts({ deliveries });
+  }
 
   async refreshCampaignCounts({
     workspaceId,
@@ -24,41 +45,12 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
+    const counts = await this.countDeliveriesByState({
+      workspaceId,
+      campaignId,
+    });
+
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const deliveryStatusCountRows = await messageRepository
-        .createQueryBuilder('message')
-        .select('message.deliveryStatus', 'deliveryStatus')
-        .addSelect('COUNT(*)', 'count')
-        .where('message.messageCampaignId = :campaignId', { campaignId })
-        .groupBy('message.deliveryStatus')
-        .getRawMany<DeliveryStatusCountRow>();
-
-      const countByDeliveryStatus = new Map(
-        deliveryStatusCountRows.map((row) => [
-          row.deliveryStatus,
-          Number(row.count),
-        ]),
-      );
-
-      const sentCount =
-        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT) ?? 0;
-      const failedCount =
-        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED) ?? 0;
-      const bouncedCount =
-        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED) ??
-        0;
-      const complainedCount =
-        countByDeliveryStatus.get(
-          CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
-        ) ?? 0;
-
       const campaignRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
@@ -68,7 +60,14 @@ export class MessageCampaignStatisticsService {
 
       await campaignRepository.update(
         { id: campaignId },
-        { sentCount, failedCount, bouncedCount, complainedCount },
+        {
+          sentCount: counts.sentCount,
+          deliveredCount: counts.deliveredCount,
+          failedCount: counts.failedCount,
+          skippedCount: counts.skippedCount,
+          bouncedCount: counts.bouncedCount,
+          complainedCount: counts.complainedCount,
+        },
       );
     }, buildSystemAuthContext(workspaceId));
   }

@@ -429,9 +429,7 @@ export class MessageCampaignService {
         {
           state: CAMPAIGN_DELIVERY_STATE.SENDING,
           claimToken,
-          claimExpiresAt: new Date(
-            Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS,
-          ),
+          claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
         },
       );
 
