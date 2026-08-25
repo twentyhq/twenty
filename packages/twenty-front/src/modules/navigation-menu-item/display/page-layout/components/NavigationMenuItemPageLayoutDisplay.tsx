@@ -5,6 +5,8 @@ import { useIcons } from 'twenty-ui/icon';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
+import { getSystemNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/system/utils/getSystemNavigationMenuItemComputedLink';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -26,7 +28,10 @@ export const NavigationMenuItemPageLayoutDisplay = ({
   const location = useLocation();
 
   const label = item.name ?? '';
-  const computedLink = getPageLayoutNavigationMenuItemComputedLink(item);
+  const computedLink =
+    item.type === NavigationMenuItemType.SYSTEM
+      ? getSystemNavigationMenuItemComputedLink(item)
+      : getPageLayoutNavigationMenuItemComputedLink(item);
   const pageLayoutColor = getNavigationMenuItemColor(item);
 
   const Icon = isDefined(item.icon) ? getIcon(item.icon) : undefined;

@@ -76,6 +76,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     ),
     icon: 'IconSettingsAutomation',
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    // -1 keeps it first without renumbering the existing folder items
     position: -1,
   },
   workflowsFolderAllWorkflows: {

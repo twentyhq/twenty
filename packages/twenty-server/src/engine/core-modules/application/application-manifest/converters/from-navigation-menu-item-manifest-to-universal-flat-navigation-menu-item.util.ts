@@ -1,4 +1,8 @@
-import { type NavigationSystemPage } from 'twenty-shared/types';
+import {
+  NavigationMenuItemType,
+  NavigationSystemPage,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItemManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
@@ -25,9 +29,13 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
       systemPage:
-        (navigationMenuItemManifest.systemPage as
-          | NavigationSystemPage
-          | undefined) ?? null,
+        navigationMenuItemManifest.type === NavigationMenuItemType.SYSTEM &&
+        isDefined(navigationMenuItemManifest.systemPage) &&
+        Object.values(NavigationSystemPage).includes(
+          navigationMenuItemManifest.systemPage as NavigationSystemPage,
+        )
+          ? (navigationMenuItemManifest.systemPage as NavigationSystemPage)
+          : null,
       folderUniversalIdentifier:
         navigationMenuItemManifest.folderUniversalIdentifier ?? null,
       targetObjectMetadataUniversalIdentifier:
