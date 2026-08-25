@@ -367,9 +367,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceService
-      .getDataSource({ useReplica: false })
-      .transaction(async (transactionScope) => {
+    return this.workspaceOrmManager.runInWorkspaceTransaction(
+      async (transactionScope) => {
         for (const relationField of this.getRelationFieldsPointingToCurrentObject(
           queryRunnerContext,
         )) {
@@ -428,7 +427,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         }
 
         return updatedRecords[0];
-      });
+      },
+    );
   }
 
   private async processNestedRelations({

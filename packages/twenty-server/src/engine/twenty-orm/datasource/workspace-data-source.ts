@@ -12,6 +12,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
@@ -29,17 +30,6 @@ const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
   object,
   Map<string, WorkspaceTableShape>
 >();
-
-export type WorkspaceDataSourceTransactionScope = {
-  getRepository: (
-    nameSingular: string,
-    rolePermissionConfig?: RolePermissionConfig,
-  ) => WorkspaceRepository;
-  executeRawQuery: (
-    sql: string,
-    parameters?: unknown[],
-  ) => Promise<Record<string, unknown>[]>;
-};
 
 export class WorkspaceDataSource {
   private readonly pool: Pool;
@@ -76,12 +66,15 @@ export class WorkspaceDataSource {
   }
 
   async transaction<T>(
-    work: (transactionScope: WorkspaceDataSourceTransactionScope) => Promise<T>,
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
   ): Promise<T> {
     return this.runInClientTransaction((executor) =>
       work({
-        getRepository: (nameSingular, rolePermissionConfig) =>
-          this.buildRepository({
+        getRepository: <T extends ObjectLiteral = ObjectRecord>(
+          nameSingular: string,
+          rolePermissionConfig?: RolePermissionConfig,
+        ) =>
+          this.buildRepository<T>({
             nameSingular,
             rolePermissionConfig,
             executor,

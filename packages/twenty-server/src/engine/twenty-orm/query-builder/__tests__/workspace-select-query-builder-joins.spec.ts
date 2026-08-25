@@ -64,11 +64,8 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoin('person.people', 'people');
 
-    expect(queryBuilder.expressionMap.joinAttributes).toEqual([
-      {
-        alias: { name: 'people' },
-        relation: { isOneToMany: true, isManyToMany: false },
-      },
+    expect(queryBuilder.getJoinAliases()).toEqual([
+      { name: 'people', isToMany: true },
     ]);
     expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmException);
   });
