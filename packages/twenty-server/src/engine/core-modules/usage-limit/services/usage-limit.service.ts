@@ -28,49 +28,34 @@ export class UsageLimitService {
   }): Promise<UsageLimitEntity> {
     validateUsageLimitAgainstDefinition(input);
 
+    const scope = {
+      resourceType: input.resourceType,
+      operationType: input.operationType,
+      spenderType: input.spenderType,
+      spenderId: input.spenderId ?? '',
+      limitKind: input.limitKind,
+      windowSeconds: input.windowSeconds,
+    };
+
     await this.usageLimitRepository.upsert(
       workspaceId,
       {
         workspaceId,
-        resourceType: input.resourceType,
-        operationType: input.operationType,
-        spenderType: input.spenderType,
-        spenderId: input.spenderId ?? '',
-        limitKind: input.limitKind,
-        windowSeconds: input.windowSeconds,
-        limitType: 'absolute',
+        ...scope,
+        limitValueType: 'absolute',
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },
-      {
-        conflictPaths: [
-          'workspaceId',
-          'resourceType',
-          'operationType',
-          'spenderType',
-          'spenderId',
-          'limitKind',
-          'windowSeconds',
-        ],
-      },
+      { conflictPaths: ['workspaceId', ...Object.keys(scope)] },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimitRules',
     ]);
 
-    const [usageLimit] = await this.usageLimitRepository.find(workspaceId, {
-      where: {
-        resourceType: input.resourceType,
-        operationType: input.operationType,
-        spenderType: input.spenderType,
-        spenderId: input.spenderId ?? '',
-        limitKind: input.limitKind,
-        windowSeconds: input.windowSeconds,
-      },
+    return this.usageLimitRepository.findOneOrFail(workspaceId, {
+      where: scope,
     });
-
-    return usageLimit;
   }
 
   async delete({

@@ -21,6 +21,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
   ],
-  exports: [UsageLimitRulesCacheService, TypeOrmModule],
+  exports: [UsageLimitRulesCacheService],
 })
 export class UsageLimitModule {}

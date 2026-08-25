@@ -1735,17 +1735,38 @@ type SendInvitations {
 
 type UsageLimit {
   id: UUID!
-  resourceType: String!
-  operationType: String!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
   spenderType: String!
   spenderId: String!
   limitKind: String!
-  windowSeconds: Float!
-  limitType: String!
-  limitValue: Float!
-  burstValue: Float
+  windowSeconds: Int!
+  limitValueType: String!
+  limitValue: Int!
+  burstValue: Int
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+}
+
+enum UsageOperationType {
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
 }
 
 type FeatureFlag {
@@ -3547,17 +3568,6 @@ input UsageAnalyticsInput {
   operationTypes: [UsageOperationType!]
 }
 
-enum UsageOperationType {
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-}
-
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
@@ -3873,14 +3883,14 @@ enum FileFolder {
 scalar Upload
 
 input UpsertUsageLimitInput {
-  resourceType: String!
-  operationType: String!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
   spenderType: String!
   spenderId: String
   limitKind: String!
-  windowSeconds: Float! = 0
-  limitValue: Float!
-  burstValue: Float
+  windowSeconds: Int! = 0
+  limitValue: Int!
+  burstValue: Int
 }
 
 input CreateViewFilterGroupInput {

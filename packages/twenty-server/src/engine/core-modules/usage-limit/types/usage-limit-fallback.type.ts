@@ -1,5 +1,5 @@
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/enums/spender-type.type';
+import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 
 export type UsageLimitFallback = {
   spenderType: SpenderType;

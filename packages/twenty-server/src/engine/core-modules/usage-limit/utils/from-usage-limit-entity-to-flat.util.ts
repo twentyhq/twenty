@@ -11,7 +11,7 @@ export const fromUsageLimitEntityToFlat = (
   spenderId: usageLimit.spenderId,
   limitKind: usageLimit.limitKind,
   windowSeconds: usageLimit.windowSeconds,
-  limitType: usageLimit.limitType,
+  limitValueType: usageLimit.limitValueType,
   limitValue: usageLimit.limitValue,
   burstValue: usageLimit.burstValue,
 });

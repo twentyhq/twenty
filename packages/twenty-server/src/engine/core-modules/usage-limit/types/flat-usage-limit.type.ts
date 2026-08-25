@@ -1,8 +1,8 @@
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type LimitKind } from 'src/engine/core-modules/usage-limit/enums/limit-kind.type';
-import { type LimitValueType } from 'src/engine/core-modules/usage-limit/enums/limit-value-type.type';
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/enums/spender-type.type';
+import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
+import { type LimitValueType } from 'src/engine/core-modules/usage-limit/types/limit-value-type.type';
+import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 
 export type FlatUsageLimit = {
   id: string;
@@ -12,7 +12,7 @@ export type FlatUsageLimit = {
   spenderId: string;
   limitKind: LimitKind;
   windowSeconds: number;
-  limitType: LimitValueType;
+  limitValueType: LimitValueType;
   limitValue: number;
   burstValue: number | null;
 };

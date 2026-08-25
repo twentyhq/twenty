@@ -6249,14 +6249,14 @@ export type UpsertRowLevelPermissionPredicatesResult = {
 };
 
 export type UpsertUsageLimitInput = {
-  burstValue?: InputMaybe<Scalars['Float']['input']>;
+  burstValue?: InputMaybe<Scalars['Int']['input']>;
   limitKind: Scalars['String']['input'];
-  limitValue: Scalars['Float']['input'];
-  operationType: Scalars['String']['input'];
-  resourceType: Scalars['String']['input'];
+  limitValue: Scalars['Int']['input'];
+  operationType: UsageOperationType;
+  resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
-  windowSeconds?: Scalars['Float']['input'];
+  windowSeconds?: Scalars['Int']['input'];
 };
 
 export type UpsertViewWidgetInput = {
@@ -6351,18 +6351,18 @@ export type UsageBreakdownItem = {
 
 export type UsageLimit = {
   __typename?: 'UsageLimit';
-  burstValue?: Maybe<Scalars['Float']['output']>;
+  burstValue?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
-  limitType: Scalars['String']['output'];
-  limitValue: Scalars['Float']['output'];
-  operationType: Scalars['String']['output'];
-  resourceType: Scalars['String']['output'];
+  limitValue: Scalars['Int']['output'];
+  limitValueType: Scalars['String']['output'];
+  operationType: UsageOperationType;
+  resourceType: UsageResourceType;
   spenderId: Scalars['String']['output'];
   spenderType: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  windowSeconds: Scalars['Float']['output'];
+  windowSeconds: Scalars['Int']['output'];
 };
 
 export enum UsageOperationType {
@@ -6374,6 +6374,16 @@ export enum UsageOperationType {
   EMAIL_SEND = 'EMAIL_SEND',
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
+}
+
+export enum UsageResourceType {
+  AI = 'AI',
+  API = 'API',
+  APP = 'APP',
+  EMAIL = 'EMAIL',
+  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  STORAGE = 'STORAGE',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export type UsageTimeSeries = {

@@ -1,4 +1,4 @@
-import { type LimitKind } from 'src/engine/core-modules/usage-limit/enums/limit-kind.type';
+import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type UsageLimitDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
