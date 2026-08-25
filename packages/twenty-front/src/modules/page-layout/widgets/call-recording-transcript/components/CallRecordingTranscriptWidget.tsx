@@ -1,10 +1,10 @@
-import { CallRecordingWidgetUnavailableDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay';
-import { useIsCalendarEventCallRecordingWidgetVisible } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useIsCalendarEventCallRecordingWidgetVisible';
+import { CallRecordingWidgetUnavailableDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay';
+import { useIsCallRecordingWidgetVisible } from '@/page-layout/widgets/call-recording/hooks/useIsCallRecordingWidgetVisible';
 import { CallRecordingTranscriptWidgetContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptWidgetContent';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 
 export const CallRecordingTranscriptWidget = () => {
-  const isWidgetVisible = useIsCalendarEventCallRecordingWidgetVisible();
+  const isWidgetVisible = useIsCallRecordingWidgetVisible();
 
   if (!isWidgetVisible) {
     return (

@@ -1,10 +1,10 @@
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const makeCallRecording = (
-  video: CalendarEventCallRecordingCandidate['video'],
-): CalendarEventCallRecordingCandidate => ({
+  video: WidgetCallRecordingCandidate['video'],
+): WidgetCallRecordingCandidate => ({
   __typename: 'CallRecording',
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,

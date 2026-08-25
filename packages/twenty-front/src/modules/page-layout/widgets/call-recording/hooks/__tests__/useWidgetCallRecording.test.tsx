@@ -1,4 +1,4 @@
-import { useCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventCallRecording';
+import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
 import { act, renderHook } from '@testing-library/react';
 import { CallRecordingStatus } from '~/generated/graphql';
 
@@ -93,7 +93,7 @@ const readyCallRecording = {
   createdAt: '2026-08-07T09:55:00.000Z',
 };
 
-describe('useCalendarEventCallRecording', () => {
+describe('useWidgetCallRecording', () => {
   beforeEach(() => {
     mockUseFindManyRecords.mockClear();
     mockUseListenToEventsForQuery.mockClear();
@@ -116,7 +116,7 @@ describe('useCalendarEventCallRecording', () => {
 
   it('queries transcript fields for the current calendar event in arrival order', () => {
     renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -138,9 +138,47 @@ describe('useCalendarEventCallRecording', () => {
     );
   });
 
+  it('queries the target record itself on a call recording record page', () => {
+    mockLayoutRenderingContext.targetRecordIdentifier = {
+      id: 'call-recording-id',
+      targetObjectNameSingular: 'callRecording',
+    };
+
+    renderHook(() =>
+      useWidgetCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(mockUseFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({
+        objectNameSingular: 'callRecording',
+        filter: { id: { eq: 'call-recording-id' } },
+        skip: false,
+      }),
+    );
+  });
+
+  it('scopes the SSE query id to the call recording target record', () => {
+    mockLayoutRenderingContext.targetRecordIdentifier = {
+      id: 'call-recording-id',
+      targetObjectNameSingular: 'callRecording',
+    };
+
+    renderHook(() =>
+      useWidgetCallRecording({ queryScope: 'call-recording-summary' }),
+    );
+
+    expect(mockUseListenToEventsForQuery).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryId: 'call-recording-summary-call-recording-id',
+      }),
+    );
+  });
+
   it('scopes the SSE query id per widget', () => {
     renderHook(() =>
-      useCalendarEventCallRecording({ queryScope: 'call-recording-summary' }),
+      useWidgetCallRecording({ queryScope: 'call-recording-summary' }),
     );
 
     expect(mockUseListenToEventsForQuery).toHaveBeenCalledWith(
@@ -150,7 +188,7 @@ describe('useCalendarEventCallRecording', () => {
     );
 
     renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -164,7 +202,7 @@ describe('useCalendarEventCallRecording', () => {
 
   it('refetches after the SSE client reconnects', async () => {
     renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -181,14 +219,14 @@ describe('useCalendarEventCallRecording', () => {
     expect(findManyRecordsResult.refetch).toHaveBeenCalledTimes(1);
   });
 
-  it('skips the query outside a calendar event record page', () => {
+  it('skips the query outside a calendar event or call recording record page', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'person-id',
       targetObjectNameSingular: 'person',
     };
 
     const { result } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -203,7 +241,7 @@ describe('useCalendarEventCallRecording', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = undefined;
 
     const { result } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -221,7 +259,7 @@ describe('useCalendarEventCallRecording', () => {
     };
 
     const { result } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -242,7 +280,7 @@ describe('useCalendarEventCallRecording', () => {
     };
 
     const { result: summaryResult } = renderHook(() =>
-      useCalendarEventCallRecording({ queryScope: 'call-recording-summary' }),
+      useWidgetCallRecording({ queryScope: 'call-recording-summary' }),
     );
 
     expect(summaryResult.current.restriction).toEqual({
@@ -251,7 +289,7 @@ describe('useCalendarEventCallRecording', () => {
     });
 
     const { result: transcriptResult } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -267,7 +305,7 @@ describe('useCalendarEventCallRecording', () => {
     };
 
     const { result: transcriptResult } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -292,7 +330,7 @@ describe('useCalendarEventCallRecording', () => {
     findManyRecordsResult.totalCount = 75;
 
     const { result } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -304,7 +342,7 @@ describe('useCalendarEventCallRecording', () => {
     findManyRecordsResult.loading = true;
 
     const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -325,7 +363,7 @@ describe('useCalendarEventCallRecording', () => {
     findManyRecordsResult.error = queryError;
 
     const { result } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );
@@ -343,7 +381,7 @@ describe('useCalendarEventCallRecording', () => {
     ];
 
     const { result, rerender } = renderHook(() =>
-      useCalendarEventCallRecording({
+      useWidgetCallRecording({
         queryScope: 'call-recording-transcript',
       }),
     );

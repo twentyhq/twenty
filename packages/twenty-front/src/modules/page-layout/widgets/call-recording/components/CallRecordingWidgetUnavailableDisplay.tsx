@@ -1,4 +1,4 @@
-import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { t } from '@lingui/core/macro';
 
 export const CallRecordingWidgetUnavailableDisplay = () => (

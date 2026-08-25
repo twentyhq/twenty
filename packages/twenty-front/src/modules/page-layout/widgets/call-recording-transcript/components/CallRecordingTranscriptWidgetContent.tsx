@@ -1,5 +1,6 @@
-import { useCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventCallRecording';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
+import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
+import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
+import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
@@ -10,6 +11,7 @@ import {
 } from 'twenty-shared/utils';
 
 export const CallRecordingTranscriptWidgetContent = () => {
+  const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
   const {
     callRecording,
     callRecordingsCount,
@@ -17,7 +19,7 @@ export const CallRecordingTranscriptWidgetContent = () => {
     error,
     restriction,
     refetch,
-  } = useCalendarEventCallRecording({
+  } = useWidgetCallRecording({
     queryScope: 'call-recording-transcript',
   });
 
@@ -36,11 +38,18 @@ export const CallRecordingTranscriptWidgetContent = () => {
 
   const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
 
+  // The count answers how many recordings the calendar event has; a call
+  // recording record page always shows its own single recording.
+  const headerCount =
+    callRecordingWidgetTarget?.targetKind === 'calendarEvent'
+      ? canExposeCallRecordingHeaderData
+        ? callRecordingsCount
+        : 0
+      : undefined;
+
   return (
     <>
-      <WidgetHeaderCountEffect
-        count={canExposeCallRecordingHeaderData ? callRecordingsCount : 0}
-      />
+      <WidgetHeaderCountEffect count={headerCount} />
       <CallRecordingTranscriptHeaderDataEffect
         transcriptEntries={transcriptEntries}
         videoFileUrl={videoFileUrl}

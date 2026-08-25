@@ -1,18 +1,16 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useCalendarEventTargetRecordId } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventTargetRecordId';
+import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useIsCalendarEventCallRecordingWidgetVisible = (): boolean => {
+export const useIsCallRecordingWidgetVisible = (): boolean => {
   const { objectMetadataItems } = useObjectMetadataItems();
-  const calendarEventTargetRecordId = useCalendarEventTargetRecordId();
+  const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
 
   const hasCallRecordingObjectMetadata = objectMetadataItems.some(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === CoreObjectNameSingular.CallRecording,
   );
 
-  return (
-    hasCallRecordingObjectMetadata && isDefined(calendarEventTargetRecordId)
-  );
+  return hasCallRecordingObjectMetadata && isDefined(callRecordingWidgetTarget);
 };
