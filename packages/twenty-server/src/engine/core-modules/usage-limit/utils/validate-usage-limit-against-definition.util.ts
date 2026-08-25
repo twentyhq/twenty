@@ -22,6 +22,13 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
+  if (!definition.allowedOperationTypes.includes(input.operationType)) {
+    throw new UsageLimitException(
+      `${input.resourceType} ${input.limitKind} limits cannot target the ${input.operationType} operation`,
+      UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+    );
+  }
+
   if (!definition.allowedSpenderTypes.includes(input.spenderType)) {
     throw new UsageLimitException(
       `${input.resourceType} ${input.limitKind} limits cannot be scoped to ${input.spenderType}`,

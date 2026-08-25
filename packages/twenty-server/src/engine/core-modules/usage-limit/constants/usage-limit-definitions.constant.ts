@@ -1,5 +1,6 @@
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type UsageLimitDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 export const USAGE_LIMIT_DEFINITIONS: Record<
@@ -8,6 +9,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
 > = {
   [UsageResourceType.API]: {
     speed: {
+      allowedOperationTypes: [UsageOperationType.API_REQUEST],
       allowedSpenderTypes: ['workspace', 'apiKey', 'application'],
       fallbacks: [
         {

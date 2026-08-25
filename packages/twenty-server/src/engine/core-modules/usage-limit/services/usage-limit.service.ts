@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -65,7 +67,13 @@ export class UsageLimitService {
     workspaceId: string;
     usageLimitId: string;
   }): Promise<boolean> {
-    await this.usageLimitRepository.delete(workspaceId, { id: usageLimitId });
+    const { affected } = await this.usageLimitRepository.delete(workspaceId, {
+      id: usageLimitId,
+    });
+
+    if (!isDefined(affected) || affected === 0) {
+      return false;
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimitRules',

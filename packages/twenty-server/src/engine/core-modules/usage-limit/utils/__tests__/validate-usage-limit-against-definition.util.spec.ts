@@ -34,6 +34,19 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
+  it('rejects an operation the resource does not meter', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedRule,
+        operationType: UsageOperationType.EMAIL_SEND,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
   it('refuses to rate-limit a human, because the definition does not allow that scope', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({

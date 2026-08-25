@@ -1742,8 +1742,8 @@ type UsageLimit {
   limitKind: String!
   windowSeconds: Int!
   limitValueType: String!
-  limitValue: Int!
-  burstValue: Int
+  limitValue: BigInt!
+  burstValue: BigInt
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1768,6 +1768,11 @@ enum UsageOperationType {
   EMAIL_SEND
   API_REQUEST
 }
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
 
 type FeatureFlag {
   key: FeatureFlagKey!
@@ -3889,8 +3894,8 @@ input UpsertUsageLimitInput {
   spenderId: String
   limitKind: String!
   windowSeconds: Int! = 0
-  limitValue: Int!
-  burstValue: Int
+  limitValue: BigInt!
+  burstValue: BigInt
 }
 
 input CreateViewFilterGroupInput {

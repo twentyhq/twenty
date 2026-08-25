@@ -9,6 +9,7 @@ export type Scalars = {
     Int: number,
     ConnectionCursor: any,
     JSONObject: any,
+    BigInt: any,
     ID: string,
     Upload: File,
 }
@@ -1411,8 +1412,8 @@ export interface UsageLimit {
     limitKind: Scalars['String']
     windowSeconds: Scalars['Int']
     limitValueType: Scalars['String']
-    limitValue: Scalars['Int']
-    burstValue?: Scalars['Int']
+    limitValue: Scalars['BigInt']
+    burstValue?: Scalars['BigInt']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'UsageLimit'
@@ -6823,7 +6824,7 @@ update: UpdateNavigationMenuItemInput}
 
 export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],windowSeconds: Scalars['Int'],limitValue: Scalars['Int'],burstValue?: (Scalars['Int'] | null)}
+export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],windowSeconds: Scalars['Int'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 

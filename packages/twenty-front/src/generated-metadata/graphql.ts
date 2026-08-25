@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  BigInt: { input: any; output: any; }
   ConnectionCursor: { input: any; output: any; }
   DateTime: { input: string; output: string; }
   JSON: { input: any; output: any; }
@@ -6249,9 +6250,9 @@ export type UpsertRowLevelPermissionPredicatesResult = {
 };
 
 export type UpsertUsageLimitInput = {
-  burstValue?: InputMaybe<Scalars['Int']['input']>;
+  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
   limitKind: Scalars['String']['input'];
-  limitValue: Scalars['Int']['input'];
+  limitValue: Scalars['BigInt']['input'];
   operationType: UsageOperationType;
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
@@ -6351,11 +6352,11 @@ export type UsageBreakdownItem = {
 
 export type UsageLimit = {
   __typename?: 'UsageLimit';
-  burstValue?: Maybe<Scalars['Int']['output']>;
+  burstValue?: Maybe<Scalars['BigInt']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
-  limitValue: Scalars['Int']['output'];
+  limitValue: Scalars['BigInt']['output'];
   limitValueType: Scalars['String']['output'];
   operationType: UsageOperationType;
   resourceType: UsageResourceType;

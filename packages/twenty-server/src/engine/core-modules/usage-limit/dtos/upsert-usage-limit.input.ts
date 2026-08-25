@@ -1,5 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
+import { GraphQLBigInt } from 'graphql-scalars';
+
 import {
   IsEnum,
   IsIn,
@@ -44,12 +46,12 @@ export class UpsertUsageLimitInput {
   @Min(0)
   windowSeconds: number;
 
-  @Field(() => Int)
+  @Field(() => GraphQLBigInt)
   @IsInt()
   @Min(1)
   limitValue: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => GraphQLBigInt, { nullable: true })
   @IsInt()
   @Min(1)
   @IsOptional()

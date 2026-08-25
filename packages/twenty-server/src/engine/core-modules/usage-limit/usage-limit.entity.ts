@@ -1,5 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { GraphQLBigInt } from 'graphql-scalars';
+
 import {
   Column,
   CreateDateColumn,
@@ -62,11 +64,11 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', default: 'absolute' })
   limitValueType: LimitValueType;
 
-  @Field(() => Int)
+  @Field(() => GraphQLBigInt)
   @Column({ type: 'bigint', transformer: nullableBigintColumnTransformer })
   limitValue: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => GraphQLBigInt, { nullable: true })
   @Column({
     type: 'bigint',
     nullable: true,
