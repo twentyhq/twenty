@@ -42,14 +42,45 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       commandMenuItems,
     ] = await Promise.all([
       recomputeContext.findAll(ObjectMetadataEntity),
-      recomputeContext.findAll(ApplicationEntity),
-      recomputeContext.findAll(FieldMetadataEntity),
-      recomputeContext.findAll(IndexMetadataEntity),
-      recomputeContext.findAll(ViewEntity),
-      recomputeContext.findAll(ObjectPermissionEntity),
-      recomputeContext.findAll(SearchFieldMetadataEntity),
-      recomputeContext.findAll(PageLayoutEntity),
-      recomputeContext.findAll(CommandMenuItemEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+        'objectMetadataId',
+      ]),
+      recomputeContext.findAll(IndexMetadataEntity, [
+        'id',
+        'universalIdentifier',
+        'objectMetadataId',
+      ]),
+      recomputeContext.findAll(ViewEntity, [
+        'id',
+        'universalIdentifier',
+        'objectMetadataId',
+      ]),
+      recomputeContext.findAll(ObjectPermissionEntity, [
+        'id',
+        'universalIdentifier',
+        'objectMetadataId',
+      ]),
+      recomputeContext.findAll(SearchFieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+        'objectMetadataId',
+      ]),
+      recomputeContext.findAll(PageLayoutEntity, [
+        'id',
+        'universalIdentifier',
+        'objectMetadataId',
+      ]),
+      recomputeContext.findAll(CommandMenuItemEntity, [
+        'id',
+        'universalIdentifier',
+        'navigationTargetObjectMetadataId',
+      ]),
     ]);
 
     const [

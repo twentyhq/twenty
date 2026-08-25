@@ -63,15 +63,53 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       searchFieldMetadatas,
     ] = await Promise.all([
       recomputeContext.findAll(FieldMetadataEntity),
-      recomputeContext.findAll(IndexMetadataEntity),
-      recomputeContext.findAll(IndexFieldMetadataEntity),
-      recomputeContext.findAll(ObjectMetadataEntity),
-      recomputeContext.findAll(ApplicationEntity),
-      recomputeContext.findAll(ViewFieldEntity),
-      recomputeContext.findAll(ViewFilterEntity),
-      recomputeContext.findAll(ViewSortEntity),
-      recomputeContext.findAll(ViewEntity),
-      recomputeContext.findAll(SearchFieldMetadataEntity),
+      recomputeContext.findAll(IndexMetadataEntity, [
+        'id',
+        'isUnique',
+        'isSystemSideEffect',
+      ]),
+      recomputeContext.findAll(IndexFieldMetadataEntity, [
+        'id',
+        'indexMetadataId',
+        'fieldMetadataId',
+        'subFieldName',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ViewFieldEntity, [
+        'id',
+        'universalIdentifier',
+        'fieldMetadataId',
+      ]),
+      recomputeContext.findAll(ViewFilterEntity, [
+        'id',
+        'universalIdentifier',
+        'fieldMetadataId',
+      ]),
+      recomputeContext.findAll(ViewSortEntity, [
+        'id',
+        'universalIdentifier',
+        'fieldMetadataId',
+      ]),
+      recomputeContext.findAll(ViewEntity, [
+        'id',
+        'universalIdentifier',
+        'kanbanAggregateOperationFieldMetadataId',
+        'calendarFieldMetadataId',
+        'calendarEndFieldMetadataId',
+        'mainGroupByFieldMetadataId',
+      ]),
+      recomputeContext.findAll(SearchFieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+        'fieldMetadataId',
+      ]),
     ]);
 
     const [

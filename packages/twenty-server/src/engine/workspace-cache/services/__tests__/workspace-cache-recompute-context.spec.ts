@@ -5,6 +5,7 @@ import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/servi
 class FirstTestEntity {
   id: string;
   workspaceId: string;
+  name: string;
 }
 
 class SecondTestEntity {
@@ -92,5 +93,63 @@ describe('WorkspaceCacheRecomputeContext', () => {
     ]);
     expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
     expect(findMocksByEntity.get(SecondTestEntity)).toHaveBeenCalledTimes(1);
+  });
+
+  it('dispatches a single query with the union of declared column sets', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await Promise.all([
+      recomputeContext.findAll(FirstTestEntity, ['id']),
+      recomputeContext.findAll(FirstTestEntity, ['id', 'name']),
+    ]);
+
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].select).toHaveLength(2);
+    expect(findMock.mock.calls[0][0].select).toEqual(
+      expect.arrayContaining(['id', 'name']),
+    );
+  });
+
+  it('drops the column selection once any caller needs full rows', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await Promise.all([
+      recomputeContext.findAll(FirstTestEntity, ['id']),
+      recomputeContext.findAll(FirstTestEntity),
+    ]);
+
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].select).toBeUndefined();
+  });
+
+  it('serves a late request from the dispatched fetch when its columns are covered', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    const firstRows = await recomputeContext.findAll(FirstTestEntity, [
+      'id',
+      'name',
+    ]);
+    const lateRows = await recomputeContext.findAll(FirstTestEntity, ['id']);
+
+    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
+    expect(lateRows).toBe(firstRows);
+  });
+
+  it('runs a standalone query for a late request needing uncovered columns', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await recomputeContext.findAll(FirstTestEntity, ['id']);
+    await recomputeContext.findAll(FirstTestEntity, ['id', 'name']);
+
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(2);
+    expect(findMock.mock.calls[1][0].select).toEqual(
+      expect.arrayContaining(['id', 'name']),
+    );
   });
 });
