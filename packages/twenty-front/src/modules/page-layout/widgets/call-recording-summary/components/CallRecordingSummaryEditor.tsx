@@ -1,0 +1,53 @@
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useIsCallRecordingSummaryEditable } from '@/page-layout/widgets/call-recording-summary/hooks/useIsCallRecordingSummaryEditable';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { styled } from '@linaria/react';
+import { lazy, Suspense } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+const RichTextFieldEditor = lazy(() =>
+  import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
+    (module) => ({ default: module.RichTextFieldEditor }),
+  ),
+);
+
+const StyledEditorContainer = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+`;
+
+type CallRecordingSummaryEditorProps = {
+  callRecordingId: string;
+};
+
+export const CallRecordingSummaryEditor = ({
+  callRecordingId,
+}: CallRecordingSummaryEditorProps) => {
+  const recordStore = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    callRecordingId,
+  );
+
+  const isSummaryEditable = useIsCallRecordingSummaryEditable({
+    callRecordingId,
+  });
+
+  if (!isDefined(recordStore)) {
+    return <WidgetSkeletonLoader />;
+  }
+
+  return (
+    <StyledEditorContainer>
+      <Suspense fallback={<WidgetSkeletonLoader />}>
+        <RichTextFieldEditor
+          recordId={callRecordingId}
+          objectNameSingular={CoreObjectNameSingular.CallRecording}
+          fieldName="summary"
+          isEditable={isSummaryEditable}
+        />
+      </Suspense>
+    </StyledEditorContainer>
+  );
+};

@@ -2,6 +2,8 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { CallRecordingSummaryEditor } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryEditor';
+import { useIsCallRecordingSummaryEditable } from '@/page-layout/widgets/call-recording-summary/hooks/useIsCallRecordingSummaryEditable';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { isCallRecordingSummaryFailed } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryFailed';
 import { isCallRecordingSummaryPending } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryPending';
@@ -40,6 +42,10 @@ export const CallRecordingSummaryBody = ({
 }: CallRecordingSummaryBodyProps) => {
   const widget = useCurrentWidget();
 
+  const isSummaryEditable = useIsCallRecordingSummaryEditable({
+    callRecordingId: callRecording?.id ?? '',
+  });
+
   if (isDefined(restriction)) {
     return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
   }
@@ -64,12 +70,30 @@ export const CallRecordingSummaryBody = ({
 
   const summaryMarkdown = getCallRecordingSummaryMarkdown(callRecording);
 
-  if (isDefined(summaryMarkdown)) {
+  const renderSummary = () => {
+    if (isSummaryEditable) {
+      return <CallRecordingSummaryEditor callRecordingId={callRecording.id} />;
+    }
+
+    if (isDefined(summaryMarkdown)) {
+      return (
+        <StyledSummaryContainer>
+          <LazyMarkdownRenderer text={summaryMarkdown} />
+        </StyledSummaryContainer>
+      );
+    }
+
     return (
-      <StyledSummaryContainer>
-        <LazyMarkdownRenderer text={summaryMarkdown} />
-      </StyledSummaryContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="noMatchRecord"
+        title={t`No Summary`}
+        subTitle={t`No summary has been generated for this call recording yet.`}
+      />
     );
+  };
+
+  if (isDefined(summaryMarkdown)) {
+    return renderSummary();
   }
 
   if (isCallRecordingSummaryPending(callRecording)) {
@@ -92,11 +116,5 @@ export const CallRecordingSummaryBody = ({
     );
   }
 
-  return (
-    <CallRecordingWidgetEmptyStateDisplay
-      animatedPlaceholderType="noMatchRecord"
-      title={t`No Summary`}
-      subTitle={t`No summary has been generated for this call recording yet.`}
-    />
-  );
+  return renderSummary();
 };

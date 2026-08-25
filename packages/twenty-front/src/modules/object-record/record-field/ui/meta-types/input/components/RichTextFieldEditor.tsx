@@ -36,6 +36,9 @@ type RichTextFieldEditorProps = {
   recordId: string;
   objectNameSingular: string;
   fieldName: string;
+  // Surfaces that own editability themselves, the way the dashboard editor
+  // does; without it the generic record field rules decide.
+  isEditable?: boolean;
   onPersistBody?: (blocknote: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -48,6 +51,7 @@ export const RichTextFieldEditor = ({
   recordId,
   objectNameSingular,
   fieldName,
+  isEditable,
   onPersistBody,
   onFocus: onFocusOverride,
   onBlur: onBlurOverride,
@@ -68,11 +72,15 @@ export const RichTextFieldEditor = ({
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
+  const isRecordFieldReadOnlyByMetadata = useIsRecordFieldReadOnly({
     recordId,
     objectMetadataId: objectMetadataItem.id,
     fieldMetadataId: fieldMetadataItem?.id ?? '',
   });
+
+  const isRecordFieldReadOnly = isDefined(isEditable)
+    ? !isEditable
+    : isRecordFieldReadOnlyByMetadata;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -84,6 +92,17 @@ export const RichTextFieldEditor = ({
     nameSingular: objectNameSingular,
   });
 
+  const { objectMetadataItem: attachmentObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Attachment,
+    });
+
+  // Attachment only targets the objects it holds a target relation for, so on
+  // any other object the filter below would query a field that does not exist.
+  const canRecordHoldAttachments = attachmentObjectMetadataItem.fields.some(
+    (field) => field.name === attachmentTargetFieldIdName,
+  );
+
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
@@ -91,6 +110,7 @@ export const RichTextFieldEditor = ({
         eq: recordId,
       },
     },
+    skip: !canRecordHoldAttachments,
   });
 
   const { syncAttachments } = useAttachmentSync(attachments);
@@ -132,7 +152,9 @@ export const RichTextFieldEditor = ({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
-    uploadFile: handleEditorBuiltInUploadFile,
+    uploadFile: canRecordHoldAttachments
+      ? handleEditorBuiltInUploadFile
+      : undefined,
     placeholders: {
       default: t`Type '/' for commands, '@' for mentions`,
     },
