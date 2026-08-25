@@ -8,6 +8,7 @@ import { BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER }
 import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/start-post-install-backfills-logic-function-universal-identifier';
 import { SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/sweep-upcoming-calendar-events-logic-function-universal-identifier';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
 // An app is allowed a single post-install hook, so the two backfills share it:
 // a fresh install seeds the scheduling window, an upgrade relies on the scheduled sweep and backfills summaries.
@@ -16,33 +17,32 @@ type StartPostInstallBackfillsResult = {
   summaryBackfillOutcome: 'skipped-initial-install' | 'backfill-enqueued';
 };
 
-// An enqueue failure throws so the async install hook retries the kickoff.
+// The async install hook is redelivered only for retryable failures.
 export const startPostInstallBackfillsHandler = async ({
   previousVersion,
 }: InstallPayload): Promise<StartPostInstallBackfillsResult> => {
-  if (isUndefined(previousVersion)) {
+  const isFreshInstall = isUndefined(previousVersion);
+
+  try {
     await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier:
-        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      logicFunctionUniversalIdentifier: isFreshInstall
+        ? SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+        : BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payloads: [{}],
     });
-
-    return {
-      calendarEventSweepOutcome: 'sweep-enqueued',
-      summaryBackfillOutcome: 'skipped-initial-install',
-    };
+  } catch (error) {
+    throw buildRetryableStepFailure('post-install backfill kickoff', error);
   }
 
-  await enqueueLogicFunctionJobs({
-    logicFunctionUniversalIdentifier:
-      BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-    payloads: [{}],
-  });
-
-  return {
-    calendarEventSweepOutcome: 'skipped-upgrade',
-    summaryBackfillOutcome: 'backfill-enqueued',
-  };
+  return isFreshInstall
+    ? {
+        calendarEventSweepOutcome: 'sweep-enqueued',
+        summaryBackfillOutcome: 'skipped-initial-install',
+      }
+    : {
+        calendarEventSweepOutcome: 'skipped-upgrade',
+        summaryBackfillOutcome: 'backfill-enqueued',
+      };
 };
 
 export default definePostInstallLogicFunction({

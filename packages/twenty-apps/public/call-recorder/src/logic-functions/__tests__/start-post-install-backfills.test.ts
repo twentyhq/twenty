@@ -9,7 +9,8 @@ import postInstallLogicFunction, {
 
 const enqueueJobsMock = vi.hoisted(() => vi.fn());
 
-vi.mock('twenty-sdk/logic-function', () => ({
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   enqueueJobs: enqueueJobsMock,
 }));
 
@@ -74,7 +75,10 @@ describe('start-post-install-backfills', () => {
 
     await expect(
       startPostInstallBackfillsHandler({ newVersion: '1.9.0' }),
-    ).rejects.toThrow('Network failed');
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining('Network failed'),
+    });
     expect(enqueuedLogicFunctionUniversalIdentifiers()).not.toContain(
       BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     );
@@ -88,7 +92,10 @@ describe('start-post-install-backfills', () => {
         previousVersion: '1.8.0',
         newVersion: '1.9.0',
       }),
-    ).rejects.toThrow('Network failed');
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining('Network failed'),
+    });
     expect(enqueuedLogicFunctionUniversalIdentifiers()).not.toContain(
       SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     );

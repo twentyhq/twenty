@@ -16,7 +16,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
-vi.mock('twenty-sdk/logic-function', () => ({
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   enqueueJobs: enqueueJobsMock,
 }));
 
@@ -106,5 +107,14 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
 
     expect(result).toEqual({ outcome: 'nothing-to-reconcile' });
     expect(enqueueJobsMock).not.toHaveBeenCalled();
+  });
+
+  it('marks sweep failures as retryable so the platform redelivers the job', async () => {
+    queryMock.mockRejectedValue(new Error('Service unavailable'));
+
+    await expect(sweepUpcomingCalendarEventsHandler()).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining('Service unavailable'),
+    });
   });
 });

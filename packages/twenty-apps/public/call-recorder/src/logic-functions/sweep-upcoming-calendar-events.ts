@@ -7,6 +7,7 @@ import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-fun
 import { UPCOMING_CALENDAR_EVENTS_SWEEP_CRON_PATTERN } from 'src/logic-functions/constants/upcoming-calendar-events-sweep-cron-pattern';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 
 type SweepUpcomingCalendarEventsResult =
@@ -19,35 +20,42 @@ type SweepUpcomingCalendarEventsResult =
 
 export const sweepUpcomingCalendarEventsHandler =
   async (): Promise<SweepUpcomingCalendarEventsResult> => {
-    const client = new CoreApiClient();
+    try {
+      const client = new CoreApiClient();
 
-    const calendarEventIds = await fetchUpcomingCalendarEventIds(
-      client,
-      new Date(),
-    );
+      const calendarEventIds = await fetchUpcomingCalendarEventIds(
+        client,
+        new Date(),
+      );
 
-    if (calendarEventIds.length === 0) {
-      return { outcome: 'nothing-to-reconcile' };
+      if (calendarEventIds.length === 0) {
+        return { outcome: 'nothing-to-reconcile' };
+      }
+
+      const calendarEventIdBatches = getBatches(
+        calendarEventIds,
+        UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
+      );
+
+      await enqueueLogicFunctionJobs({
+        logicFunctionUniversalIdentifier:
+          RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        payloads: calendarEventIdBatches.map((batchCalendarEventIds) => ({
+          calendarEventIds: batchCalendarEventIds,
+        })),
+      });
+
+      return {
+        outcome: 'batches-enqueued',
+        calendarEventCount: calendarEventIds.length,
+        batchCount: calendarEventIdBatches.length,
+      };
+    } catch (error) {
+      throw buildRetryableStepFailure(
+        'upcoming calendar events sweep',
+        error,
+      );
     }
-
-    const calendarEventIdBatches = getBatches(
-      calendarEventIds,
-      UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
-    );
-
-    await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier:
-        RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: calendarEventIdBatches.map((batchCalendarEventIds) => ({
-        calendarEventIds: batchCalendarEventIds,
-      })),
-    });
-
-    return {
-      outcome: 'batches-enqueued',
-      calendarEventCount: calendarEventIds.length,
-      batchCount: calendarEventIdBatches.length,
-    };
   };
 
 export default defineLogicFunction({
