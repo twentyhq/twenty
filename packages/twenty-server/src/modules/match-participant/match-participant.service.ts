@@ -238,19 +238,15 @@ export class MatchParticipantService<
         },
       });
 
-      const tobeRematchedParticipants = participants.map((participant) => {
-        return {
-          ...participant,
-          workspaceMemberId: null,
-        };
-      });
+      const rematchedParticipants = participants.map((participant) => ({
+        ...participant,
+        workspaceMemberId: null,
+      })) as ParticipantWorkspaceEntity[];
 
       await this.matchParticipants({
         matchWith: 'workspaceMemberOnly',
-        participants: tobeRematchedParticipants as ParticipantWorkspaceEntity[],
-        sourceRecordIds: this.getSourceRecordIds(
-          tobeRematchedParticipants as ParticipantWorkspaceEntity[],
-        ),
+        participants: rematchedParticipants,
+        sourceRecordIds: this.getSourceRecordIds(rematchedParticipants),
         objectMetadataName,
       });
     }, authContext);
