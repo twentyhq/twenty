@@ -13,7 +13,7 @@ import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/global-workspace-datasource/workspace-orm-entity-metadatas-cache.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -35,13 +35,13 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     TwentyConfigModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
-    TwentyORMV2Module,
   ],
   providers: [
     GlobalWorkspaceOrmManager,
+    WorkspaceDataSourceV2Service,
     WorkspaceORMEntityMetadatasCacheService,
     provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
-  exports: [GlobalWorkspaceOrmManager],
+  exports: [GlobalWorkspaceOrmManager, WorkspaceDataSourceV2Service],
 })
 export class GlobalWorkspaceDataSourceModule {}
