@@ -3,25 +3,13 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';
 
-import { Button, type ButtonVariant } from '@/ui';
+import { Button } from '@/ui';
 
 import { useClientBriefModal } from './use-client-brief-modal';
 
-export function GetMatchedButton({
-  label,
-  variant,
-}: {
-  label: MessageDescriptor;
-  variant?: ButtonVariant;
-}) {
+export function GetMatchedButton({ label }: { label: MessageDescriptor }) {
   const { i18n } = useLingui();
   const { openClientBriefModal } = useClientBriefModal();
 
-  return (
-    <Button
-      label={i18n._(label)}
-      onClick={openClientBriefModal}
-      variant={variant}
-    />
-  );
+  return <Button label={i18n._(label)} onClick={openClientBriefModal} />;
 }

@@ -29,15 +29,23 @@ export const generateMetadata = buildRouteMetadata('partners');
 
 export const dynamic = 'force-dynamic';
 
+// Awaiting the partners API at page level would gate the hero, the explainer
+// and the FAQ on a call only the directory needs, and would resolve it before
+// the boundary below ever renders — leaving MarketplaceListSkeleton dead.
+async function PartnerDirectoryZone() {
+  const partners = await getMarketplacePartners();
+
+  return <PartnerDirectory partners={partners} />;
+}
+
 export default async function PartnersPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
 }) {
-  const [, communityStats, partners] = await Promise.all([
+  const [, communityStats] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
-    getMarketplacePartners(),
   ]);
   const locale = resolveLocaleParam((await params).locale);
 
@@ -57,7 +65,7 @@ export default async function PartnersPage({
         <main>
           <PartnerLeadHero />
           <Suspense fallback={<MarketplaceListSkeleton />}>
-            <PartnerDirectory partners={partners} />
+            <PartnerDirectoryZone />
           </Suspense>
           <PartnerServicesExplainer />
           <MarketplaceBriefPrompt />
