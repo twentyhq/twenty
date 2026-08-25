@@ -1,4 +1,5 @@
 import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
+import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION } from '@/page-layout/widgets/call-recording-transcript/constants/InitialCallRecordingTranscriptPlaybackPosition';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
@@ -36,9 +37,10 @@ export const CallRecordingTranscriptEntryWords = ({
       {words.map((word, wordIndex) => (
         <StyledWord
           key={wordIndex}
-          data-current-spoken-word={
-            wordIndex === wordPlaybackPosition.activeIndex ? 'true' : undefined
-          }
+          {...{
+            [CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE]:
+              wordIndex === wordPlaybackPosition.activeIndex || undefined,
+          }}
           isSpoken={wordIndex <= wordPlaybackPosition.lastStartedIndex}
         >
           {wordIndex > 0 ? ' ' : ''}

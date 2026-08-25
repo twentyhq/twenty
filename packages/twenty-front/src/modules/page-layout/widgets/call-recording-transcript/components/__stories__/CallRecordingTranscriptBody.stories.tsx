@@ -6,6 +6,7 @@ import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
+import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState, type ComponentProps } from 'react';
@@ -521,7 +522,9 @@ export const WithVideoInteractions: Story = {
     await waitFor(() => {
       const activeEntry = canvasElement.querySelector('[aria-current="true"]');
       const currentSpokenWordRectangle = canvasElement
-        .querySelector('[data-current-spoken-word="true"]')
+        .querySelector(
+          `[${CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE}]`,
+        )
         ?.getBoundingClientRect();
       const transcriptRegionRectangle =
         transcriptRegion.getBoundingClientRect();
