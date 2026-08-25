@@ -26,26 +26,29 @@ export class WorkspaceOrmManager {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
+    repositoryOptions?: { useReplica?: boolean },
   ): WorkspaceRepository<T>;
 
-  getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
+    repositoryOptions?: { useReplica?: boolean },
   ): WorkspaceRepository<T>;
 
-  getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
+    repositoryOptions?: { useReplica?: boolean },
   ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
       workspaceEntityOrObjectMetadataName,
     );
 
     return this.workspaceDataSourceService
-      .getDataSource({ useReplica: false })
+      .getDataSource({ useReplica: repositoryOptions?.useReplica ?? false })
       .getRepository<T>(objectMetadataName, permissionOptions);
   }
 
@@ -66,20 +69,7 @@ export class WorkspaceOrmManager {
   ): Promise<T> {
     return this.workspaceDataSourceService
       .getDataSource({ useReplica: false })
-      .transaction((transactionScope) =>
-        work({
-          getRepository: <T extends ObjectLiteral = ObjectRecord>(
-            objectMetadataName: string,
-            rolePermissionConfig?: RolePermissionConfig,
-          ): WorkspaceRepository<T> =>
-            transactionScope.getRepository(
-              objectMetadataName,
-              rolePermissionConfig,
-            ) as unknown as WorkspaceRepository<T>,
-          executeRawQuery: (sql, parameters) =>
-            transactionScope.executeRawQuery(sql, parameters),
-        }),
-      );
+      .transaction(work);
   }
 
   async executeInWorkspaceContext<T>(

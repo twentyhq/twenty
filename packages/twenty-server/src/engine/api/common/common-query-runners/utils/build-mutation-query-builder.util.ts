@@ -24,8 +24,7 @@ export const buildMutationQueryBuilder = ({
 
   commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
 
-  const hasRelationTraversal =
-    filteredQueryBuilder.expressionMap.joinAttributes.length > 0;
+  const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
 
   if (!hasRelationTraversal) {
     return {

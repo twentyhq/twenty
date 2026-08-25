@@ -63,14 +63,10 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import {
-  type ConnectQueryRunner,
-  RelationNestedQueries,
-} from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -112,8 +108,6 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly metricsService: MetricsService;
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
-  @Inject()
-  protected readonly workspaceDataSourceService: WorkspaceDataSourceService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -351,12 +345,11 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const repository = this.workspaceDataSourceService
-      .getDataSource({ useReplica: this.isReadOnly })
-      .getRepository<ObjectLiteral>(
-        queryRunnerContext.flatObjectMetadata.nameSingular,
-        rolePermissionConfig,
-      );
+    const repository = this.workspaceOrmManager.getRepository<ObjectLiteral>(
+      queryRunnerContext.flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+      { useReplica: this.isReadOnly },
+    );
 
     return {
       ...queryRunnerContext,
@@ -383,9 +376,11 @@ export abstract class CommonBaseQueryRunnerService<
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceService
-      .getDataSource({ useReplica: this.isReadOnly })
-      .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
+    return this.workspaceOrmManager.getRepository(
+      flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+      { useReplica: this.isReadOnly },
+    );
   }
 
   // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
@@ -402,9 +397,10 @@ export abstract class CommonBaseQueryRunnerService<
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceService
-      .getDataSource({ useReplica: false })
-      .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
+    return this.workspaceOrmManager.getRepository(
+      flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+    );
   }
 
   protected async runFilteredMutation({
@@ -476,6 +472,8 @@ export abstract class CommonBaseQueryRunnerService<
 
     const relationNestedQueries = new RelationNestedQueries(
       writeRepository.getInternalContext(),
+      this.workspaceOrmManager,
+      rolePermissionConfig,
     );
 
     const relationNestedConfig =
@@ -485,35 +483,10 @@ export abstract class CommonBaseQueryRunnerService<
       return records;
     }
 
-    const workspaceDataSource = this.workspaceDataSourceService.getDataSource({
-      useReplica: false,
-    });
-
-    const connectQueryRunner: ConnectQueryRunner = async ({
-      connectQueryConfig,
-      clause,
-      parameters,
-    }) => {
-      const targetObjectName = connectQueryConfig.targetObjectName;
-      const targetQueryBuilder = workspaceDataSource
-        .getRepository(targetObjectName, rolePermissionConfig)
-        .createQueryBuilder(targetObjectName);
-
-      targetQueryBuilder.select([]);
-      targetQueryBuilder.addSelect(`"${targetObjectName}"."id"`, 'id');
-
-      for (const [field] of connectQueryConfig.recordToConnectConditions[0]) {
-        targetQueryBuilder.addSelect(`"${targetObjectName}"."${field}"`, field);
-      }
-
-      return targetQueryBuilder.where(clause, parameters).getRawMany();
-    };
-
     const resolvedRecords =
       await relationNestedQueries.processRelationNestedQueries({
         entities: records,
         relationNestedConfig,
-        connectQueryRunner,
       });
 
     const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
