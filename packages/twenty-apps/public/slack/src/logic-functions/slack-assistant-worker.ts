@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 import {
   type DatabaseEventPayload,
   defineLogicFunction,
@@ -10,6 +11,8 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
+import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -25,7 +28,9 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
+import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -119,6 +124,37 @@ export const slackAssistantWorkerHandler = async (
         id: record.id,
         workspaceMemberId: runAsWorkspaceMemberId,
       }).catch(() => undefined);
+    }
+
+    const accessMode = await getSlackAccessMode();
+
+    if (accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS) {
+      const linkedWorkspaceMemberId = isDefined(slackClient)
+        ? await resolveSlackRunAsWorkspaceMemberId({
+            client,
+            slackClient,
+            identity: requesterIdentity,
+          }).catch(() => undefined)
+        : undefined;
+
+      if (!isNonEmptyString(linkedWorkspaceMemberId)) {
+        await slackPostMessageHandler({
+          slackChannelId,
+          messageText: SLACK_ACCESS_DENIED_TEXT,
+          parentMessageTimestamp,
+          messageFormat: 'markdown',
+          unfurlLinks: false,
+          unfurlMedia: false,
+        });
+
+        await updateSlackAssistantRequest(client, {
+          id: record.id,
+          status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+          responseText: SLACK_ACCESS_DENIED_TEXT,
+        });
+
+        return { done: true, declined: true };
+      }
     }
 
     const agentResult = await runSlackAssistantAgentWithStatus({

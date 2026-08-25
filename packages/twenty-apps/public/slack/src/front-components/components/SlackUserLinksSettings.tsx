@@ -6,6 +6,7 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
@@ -54,6 +55,7 @@ export const SlackUserLinksSettings = () => {
           description="Only members with the workspace members permission can create or change Slack user links. You can review the existing links below."
         />
       )}
+      <SlackAccessModeSection canManage={canManage} />
       {canManage && <SlackUserLinkForm onLinkSaved={refetchSlackUserLinks} />}
       <Section>
         <H2Title
