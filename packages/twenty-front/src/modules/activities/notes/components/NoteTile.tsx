@@ -106,30 +106,29 @@ export const NoteTile = ({
         <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
-      {isDefined(activityTargetFieldName) &&
-        isDefined(componentInstanceId) && (
-          <StyledFooter>
-            <FieldContextProvider
-              objectNameSingular={CoreObjectNameSingular.Note}
-              objectRecordId={note.id}
-              fieldMetadataName={activityTargetFieldName}
-              fieldPosition={0}
-              isDisplayModeFixHeight
+      {isDefined(activityTargetFieldName) && isDefined(componentInstanceId) && (
+        <StyledFooter>
+          <FieldContextProvider
+            objectNameSingular={CoreObjectNameSingular.Note}
+            objectRecordId={note.id}
+            fieldMetadataName={activityTargetFieldName}
+            fieldPosition={0}
+            isDisplayModeFixHeight
+          >
+            <RecordFieldsScopeContextProvider
+              value={{
+                scopeInstanceId: note.id,
+              }}
             >
-              <RecordFieldsScopeContextProvider
-                value={{
-                  scopeInstanceId: note.id,
-                }}
+              <RecordFieldComponentInstanceContext.Provider
+                value={{ instanceId: componentInstanceId }}
               >
-                <RecordFieldComponentInstanceContext.Provider
-                  value={{ instanceId: componentInstanceId }}
-                >
-                  <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-                </RecordFieldComponentInstanceContext.Provider>
-              </RecordFieldsScopeContextProvider>
-            </FieldContextProvider>
-          </StyledFooter>
-        )}
+                <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+              </RecordFieldComponentInstanceContext.Provider>
+            </RecordFieldsScopeContextProvider>
+          </FieldContextProvider>
+        </StyledFooter>
+      )}
     </StyledCard>
   );
 };

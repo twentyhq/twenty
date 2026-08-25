@@ -1,8 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { getRelatedRecordFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordFromJunction';
-import {
-  computeRelationGqlFieldJoinColumnName,
-  isNonEmptyString,
-} from 'twenty-shared/utils';
+import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 
 export const getRelatedRecordIdFromJunction = ({
   junctionRecord,

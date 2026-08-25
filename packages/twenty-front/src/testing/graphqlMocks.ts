@@ -26,7 +26,6 @@ import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/gen
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
-import { type Task } from '@/activities/types/Task';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
 import {
   getConnectionTypename,
@@ -35,6 +34,7 @@ import {
 } from 'twenty-shared/utils';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { getRecordArrayField } from '@/object-record/utils/getRecordArrayField';
 import { mockedApiKeys } from '~/testing/mock-data/generated/metadata/api-keys/mock-api-keys-data';
 import { mockedMinimalMetadata } from '~/testing/mock-data/generated/metadata/minimal/mock-minimal-metadata';
 import { mockedNavigationMenuItems } from '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data';
@@ -53,7 +53,7 @@ const duplicateCompanyMock = {
 };
 
 const flatTaskRecords = mockedTaskRecords.map((record) =>
-  getRecordFromRecordNode<Task>({ recordNode: record }),
+  getRecordFromRecordNode({ recordNode: record }),
 );
 
 // Wraps raw server-fetched records (which already have correct field shapes)
@@ -446,8 +446,8 @@ export const graphqlMocks = {
       });
     }),
     graphql.query('FindManyTaskTargets', () => {
-      const taskTargetNodes = flatTaskRecords.flatMap(
-        (task) => task.taskTargets ?? [],
+      const taskTargetNodes = flatTaskRecords.flatMap((task) =>
+        getRecordArrayField(task, 'taskTargets'),
       );
 
       return HttpResponse.json({
