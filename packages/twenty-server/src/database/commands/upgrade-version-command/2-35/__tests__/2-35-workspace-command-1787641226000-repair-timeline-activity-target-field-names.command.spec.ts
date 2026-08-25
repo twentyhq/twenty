@@ -15,35 +15,21 @@ const TARGET_FIELD_ID = '00000000-0000-4000-8000-000000000005';
 const TARGET_FIELD_UNIVERSAL_IDENTIFIER =
   '00000000-0000-4000-8000-000000000006';
 const APPLICATION_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000007';
+const TARGET_INDEX_ID = '00000000-0000-4000-8000-000000000008';
+const TARGET_INDEX_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-000000000009';
 
 const buildCommand = ({
   targetObjectNameSingular = 'phoneNumber2',
   targetFieldName = 'targetPhoneNumber',
   targetJoinColumnName = 'targetPhoneNumberId',
-  targetMorphId = STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId
-    .morphId,
   migrationResult = { status: 'success' },
 }: {
   targetObjectNameSingular?: string;
   targetFieldName?: string;
   targetJoinColumnName?: string;
-  targetMorphId?: string;
   migrationResult?: { status: 'success' | 'fail' };
 } = {}) => {
-  const targetFieldMetadata = {
-    id: TARGET_FIELD_ID,
-    universalIdentifier: TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
-    relationTargetObjectMetadataId: TARGET_OBJECT_ID,
-    type: FieldMetadataType.MORPH_RELATION,
-    morphId: targetMorphId,
-    name: targetFieldName,
-    universalSettings: {
-      relationType: RelationType.MANY_TO_ONE,
-      joinColumnName: targetJoinColumnName,
-    },
-  };
   const validateBuildAndRunLegacyWorkspaceMigration = jest
     .fn()
     .mockResolvedValue(migrationResult);
@@ -57,7 +43,11 @@ const buildCommand = ({
               id: TIMELINE_ACTIVITY_OBJECT_ID,
               universalIdentifier:
                 STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+              nameSingular: 'timelineActivity',
+              namePlural: 'timelineActivities',
+              isCustom: false,
               fieldIds: [TARGET_FIELD_ID],
+              indexMetadataIds: [TARGET_INDEX_ID],
             },
             [TARGET_OBJECT_UNIVERSAL_IDENTIFIER]: {
               id: TARGET_OBJECT_ID,
@@ -74,10 +64,60 @@ const buildCommand = ({
         },
         flatFieldMetadataMaps: {
           byUniversalIdentifier: {
-            [TARGET_FIELD_UNIVERSAL_IDENTIFIER]: targetFieldMetadata,
+            [TARGET_FIELD_UNIVERSAL_IDENTIFIER]: {
+              id: TARGET_FIELD_ID,
+              universalIdentifier: TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+              applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+              objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+              relationTargetObjectMetadataId: TARGET_OBJECT_ID,
+              type: FieldMetadataType.MORPH_RELATION,
+              morphId:
+                STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId
+                  .morphId,
+              name: targetFieldName,
+              label: 'PhoneNumber',
+              isUnique: false,
+              isSystemSideEffect: true,
+              universalSettings: {
+                relationType: RelationType.MANY_TO_ONE,
+                joinColumnName: targetJoinColumnName,
+              },
+            },
           },
           universalIdentifierById: {
             [TARGET_FIELD_ID]: TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+          },
+          universalIdentifiersByApplicationId: {},
+        },
+        flatIndexMaps: {
+          byUniversalIdentifier: {
+            [TARGET_INDEX_UNIVERSAL_IDENTIFIER]: {
+              id: TARGET_INDEX_ID,
+              universalIdentifier: TARGET_INDEX_UNIVERSAL_IDENTIFIER,
+              applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+              objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+              name: 'IDX_STALE_TARGET_PHONE_NUMBER_ID',
+              isUnique: false,
+              indexWhereClause: null,
+              flatIndexFieldMetadatas: [
+                {
+                  fieldMetadataId: TARGET_FIELD_ID,
+                  order: 0,
+                  subFieldName: null,
+                },
+              ],
+              universalFlatIndexFieldMetadatas: [
+                {
+                  fieldMetadataUniversalIdentifier:
+                    TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+                  order: 0,
+                  subFieldName: null,
+                },
+              ],
+            },
+          },
+          universalIdentifierById: {
+            [TARGET_INDEX_ID]: TARGET_INDEX_UNIVERSAL_IDENTIFIER,
           },
           universalIdentifiersByApplicationId: {},
         },
@@ -103,7 +143,7 @@ const runCommand = (
   });
 
 describe('RepairTimelineActivityTargetFieldNamesCommand', () => {
-  it('renames a stale target field and its join column from current object metadata', async () => {
+  it('submits the renamed field and its recomputed index under the owning application', async () => {
     const { command, validateBuildAndRunLegacyWorkspaceMigration } =
       buildCommand();
 
@@ -122,9 +162,22 @@ describe('RepairTimelineActivityTargetFieldNamesCommand', () => {
               expect.objectContaining({
                 universalIdentifier: TARGET_FIELD_UNIVERSAL_IDENTIFIER,
                 name: 'targetPhoneNumber2',
+                label: 'PhoneNumber2',
                 universalSettings: expect.objectContaining({
                   joinColumnName: 'targetPhoneNumber2Id',
                 }),
+              }),
+            ],
+          },
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [
+              expect.objectContaining({
+                universalIdentifier: TARGET_INDEX_UNIVERSAL_IDENTIFIER,
+                name: expect.not.stringMatching(
+                  /^IDX_STALE_TARGET_PHONE_NUMBER_ID$/,
+                ),
               }),
             ],
           },
@@ -145,14 +198,19 @@ describe('RepairTimelineActivityTargetFieldNamesCommand', () => {
     expect(validateBuildAndRunLegacyWorkspaceMigration).not.toHaveBeenCalled();
   });
 
-  it('ignores morph fields outside the timeline target morph', async () => {
+  it('warns and runs no migration when a repair is not safe to apply', async () => {
     const { command, validateBuildAndRunLegacyWorkspaceMigration } =
       buildCommand({
-        targetMorphId: '00000000-0000-4000-8000-000000000008',
+        targetFieldName: 'targetPhoneNumber2',
+        targetJoinColumnName: 'targetPhoneNumberId',
       });
+    const warnSpy = jest.spyOn(command['logger'], 'warn');
 
     await runCommand(command);
 
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Skipped 1 unrepairable'),
+    );
     expect(validateBuildAndRunLegacyWorkspaceMigration).not.toHaveBeenCalled();
   });
 
