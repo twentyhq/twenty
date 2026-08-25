@@ -6289,7 +6289,7 @@ msgstr "видалити"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -9346,10 +9346,10 @@ msgstr "На всю сторінку"
 msgid "full server access"
 msgstr "повний доступ до сервера"
 
-#. js-lingui-id: Ld0Tt4
+#. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "Full tab widget"
-msgstr "Віджет повної вкладки"
+msgid "Full-height Widget"
+msgstr ""
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11855,7 +11855,7 @@ msgstr "Зробити приватним"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "Керувати"
@@ -12455,7 +12455,7 @@ msgstr "Перемістити вниз"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move left"
 msgstr "Перемістити вліво"
 
@@ -12463,7 +12463,7 @@ msgstr "Перемістити вліво"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move right"
 msgstr "Перемістити вправо"
 
@@ -13238,7 +13238,7 @@ msgstr "Немає поля дати"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "Немає конфігурації за замовчуванням для цієї вкладки"
 
@@ -14947,7 +14947,7 @@ msgid "Pie Chart"
 msgstr "Кругова діаграма"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "Закріпити вкладку"
 
@@ -14970,7 +14970,7 @@ msgid "Placeholder"
 msgstr "Покажчик"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "Розміщення"
@@ -16126,7 +16126,7 @@ msgstr "Повторно надіслати лист"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -16158,8 +16158,8 @@ msgstr "Скинути макет сторінки запису"
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -19352,7 +19352,7 @@ msgstr "Цього тижня"
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "Це скасує всі зміни, внесені на вкладці та в її віджетах. Режим редагування буде скасовано, і сторінку буде оновлено. Цю дію неможливо скасувати."
 
@@ -21205,7 +21205,7 @@ msgid "Visibility"
 msgstr "Видимість"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "Обмеження видимості"
 
@@ -21607,9 +21607,15 @@ msgid "widget"
 msgstr "віджет"
 
 #. js-lingui-id: AHXN2z
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Widget"
 msgstr "Віджет"
+
+#. js-lingui-id: v1P7Gm
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Widget Settings"
+msgstr ""
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx

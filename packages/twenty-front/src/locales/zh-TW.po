@@ -6289,7 +6289,7 @@ msgstr "刪除"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -9346,10 +9346,10 @@ msgstr "完整頁面"
 msgid "full server access"
 msgstr "完整伺服器存取權"
 
-#. js-lingui-id: Ld0Tt4
+#. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "Full tab widget"
-msgstr "完整分頁小工具"
+msgid "Full-height Widget"
+msgstr ""
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11832,7 +11832,7 @@ msgstr "設為私有"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "管理"
@@ -12432,7 +12432,7 @@ msgstr "下移"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move left"
 msgstr "向左移動"
 
@@ -12440,7 +12440,7 @@ msgstr "向左移動"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move right"
 msgstr "向右移動"
 
@@ -13215,7 +13215,7 @@ msgstr "無日期字段"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "此索引標籤沒有可用的預設設定"
 
@@ -14924,7 +14924,7 @@ msgid "Pie Chart"
 msgstr "餅圖"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "釘選分頁"
 
@@ -14947,7 +14947,7 @@ msgid "Placeholder"
 msgstr "預留位置文字"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "放置位置"
@@ -16103,7 +16103,7 @@ msgstr "重新發送電子郵件"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -16135,8 +16135,8 @@ msgstr "重設記錄頁面版面配置"
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -19297,7 +19297,7 @@ msgstr "本週"
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "這將捨棄在該分頁及其小工具上所做的所有變更。將結束編輯模式，並重新整理頁面。此動作無法復原。"
 
@@ -21150,7 +21150,7 @@ msgid "Visibility"
 msgstr "可見性"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "可見性限制"
 
@@ -21552,9 +21552,15 @@ msgid "widget"
 msgstr "小工具"
 
 #. js-lingui-id: AHXN2z
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Widget"
 msgstr "小工具"
+
+#. js-lingui-id: v1P7Gm
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Widget Settings"
+msgstr ""
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx

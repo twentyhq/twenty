@@ -6289,7 +6289,7 @@ msgstr "eliminar"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -9346,10 +9346,10 @@ msgstr "Página completa"
 msgid "full server access"
 msgstr "acceso completo al servidor"
 
-#. js-lingui-id: Ld0Tt4
+#. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "Full tab widget"
-msgstr "Widget de pestaña completa"
+msgid "Full-height Widget"
+msgstr ""
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11855,7 +11855,7 @@ msgstr "Hacer privado"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "Administrar"
@@ -12455,7 +12455,7 @@ msgstr "Mover hacia abajo"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move left"
 msgstr "Mover a la izquierda"
 
@@ -12463,7 +12463,7 @@ msgstr "Mover a la izquierda"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move right"
 msgstr "Mover a la derecha"
 
@@ -13238,7 +13238,7 @@ msgstr "Sin campo de fecha"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "No hay una configuración predeterminada disponible para esta pestaña"
 
@@ -14947,7 +14947,7 @@ msgid "Pie Chart"
 msgstr "Gráfico de pastel"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "Fijar pestaña"
 
@@ -14970,7 +14970,7 @@ msgid "Placeholder"
 msgstr "Marcador de posición"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "Ubicación"
@@ -16126,7 +16126,7 @@ msgstr "Reenviar correo electrónico"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -16158,8 +16158,8 @@ msgstr "Restablecer el diseño de la página de registro"
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -19352,7 +19352,7 @@ msgstr "Esta semana"
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "Esto cancelará todas las modificaciones realizadas en la pestaña y sus widgets. El modo de edición se cancelará y la página se actualizará. Esta acción no se puede deshacer."
 
@@ -21205,7 +21205,7 @@ msgid "Visibility"
 msgstr "Visibilidad"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "Restricción de visibilidad"
 
@@ -21607,9 +21607,15 @@ msgid "widget"
 msgstr "widget"
 
 #. js-lingui-id: AHXN2z
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Widget"
 msgstr "Widget"
+
+#. js-lingui-id: v1P7Gm
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Widget Settings"
+msgstr ""
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx

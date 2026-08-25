@@ -6289,7 +6289,7 @@ msgstr "διαγραφή"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -9346,10 +9346,10 @@ msgstr "Πλήρης σελίδα"
 msgid "full server access"
 msgstr "πλήρης πρόσβαση στον διακομιστή"
 
-#. js-lingui-id: Ld0Tt4
+#. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "Full tab widget"
-msgstr "Widget πλήρους καρτέλας"
+msgid "Full-height Widget"
+msgstr ""
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11855,7 +11855,7 @@ msgstr "Κάντε το ιδιωτικό"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "Διαχείριση"
@@ -12455,7 +12455,7 @@ msgstr "Μετακίνηση προς τα κάτω"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move left"
 msgstr "Μετακίνηση αριστερά"
 
@@ -12463,7 +12463,7 @@ msgstr "Μετακίνηση αριστερά"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move right"
 msgstr "Μετακίνηση δεξιά"
 
@@ -13238,7 +13238,7 @@ msgstr "Χωρίς πεδίο Ημερομηνίας"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "Δεν υπάρχει διαθέσιμη προεπιλεγμένη διαμόρφωση για αυτήν την καρτέλα"
 
@@ -14947,7 +14947,7 @@ msgid "Pie Chart"
 msgstr "Διάγραμμα πίτας"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "Καρφίτσωμα καρτέλας"
 
@@ -14970,7 +14970,7 @@ msgid "Placeholder"
 msgstr "Κείμενο κράτησης θέσης"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "Τοποθέτηση"
@@ -16126,7 +16126,7 @@ msgstr "Επαναποστολή email"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -16158,8 +16158,8 @@ msgstr "Επαναφορά διάταξης σελίδας εγγραφής"
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -19354,7 +19354,7 @@ msgstr "Αυτή την εβδομάδα"
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "Αυτό θα ακυρώσει όλες τις τροποποιήσεις που έγιναν στην καρτέλα και στα γραφικά στοιχεία της. Η λειτουργία επεξεργασίας θα ακυρωθεί και η σελίδα θα ανανεωθεί. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί."
 
@@ -21207,7 +21207,7 @@ msgid "Visibility"
 msgstr "Ορατότητα"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "Περιορισμός ορατότητας"
 
@@ -21609,9 +21609,15 @@ msgid "widget"
 msgstr "widget"
 
 #. js-lingui-id: AHXN2z
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Widget"
 msgstr "Γραφικό στοιχείο"
+
+#. js-lingui-id: v1P7Gm
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Widget Settings"
+msgstr ""
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
