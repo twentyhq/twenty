@@ -1,6 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -21,7 +20,7 @@ describe('target metadata collision renames', () => {
     } as FlatObjectMetadata;
     const flatObjectMetadataMaps = {
       byUniversalIdentifier: { 'custom-object': collidingObject },
-    } as unknown as FlatEntityMaps<FlatObjectMetadata>;
+    };
 
     expect(
       buildTargetObjectCollisionRenameUpdates({
@@ -34,6 +33,30 @@ describe('target metadata collision renames', () => {
         namePlural: 'calendarEventTargetsOld',
         labelSingular: 'Calendar Event Target (Old)',
         updatedAt: NOW,
+      }),
+    ]);
+  });
+
+  it('bases both renamed names on the custom object during a partial collision', () => {
+    const collidingObject = {
+      universalIdentifier: 'custom-object',
+      nameSingular: 'calendarEventTarget',
+      namePlural: 'customerInteractions',
+      labelSingular: 'Customer interaction',
+      labelPlural: 'Customer interactions',
+    } as FlatObjectMetadata;
+
+    expect(
+      buildTargetObjectCollisionRenameUpdates({
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: { 'custom-object': collidingObject },
+        },
+        now: NOW,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        nameSingular: 'calendarEventTargetOld',
+        namePlural: 'customerInteractionsOld',
       }),
     ]);
   });
@@ -58,7 +81,7 @@ describe('target metadata collision renames', () => {
         'custom-field': collidingField,
         'unrelated-field': unrelatedField,
       },
-    } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+    };
 
     expect(
       buildTargetFieldCollisionRenameUpdates({
@@ -86,7 +109,7 @@ describe('target metadata collision renames', () => {
     } as FlatFieldMetadata;
     const flatFieldMetadataMaps = {
       byUniversalIdentifier: { standard: standardField },
-    } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+    };
 
     expect(
       buildTargetFieldCollisionRenameUpdates({

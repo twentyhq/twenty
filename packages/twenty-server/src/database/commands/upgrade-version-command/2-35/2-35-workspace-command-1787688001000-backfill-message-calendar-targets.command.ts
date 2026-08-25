@@ -1,4 +1,5 @@
 import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -27,7 +28,7 @@ export class BackfillMessageCalendarTargetsCommand extends ProvisionedWorkspaceC
     options,
     dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
-    if (!dataSource) {
+    if (!isDefined(dataSource)) {
       throw new Error('A data source is required to backfill target records');
     }
 

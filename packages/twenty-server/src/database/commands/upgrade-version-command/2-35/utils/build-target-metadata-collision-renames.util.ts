@@ -22,6 +22,18 @@ const TARGET_OBJECT_DEFINITIONS = [
   },
 ] as const;
 
+const TARGET_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>(
+  TARGET_OBJECT_DEFINITIONS.map(
+    ({ universalIdentifier }) => universalIdentifier,
+  ),
+);
+const TARGET_OBJECT_NAMES = new Set<string>(
+  TARGET_OBJECT_DEFINITIONS.flatMap(({ nameSingular, namePlural }) => [
+    nameSingular,
+    namePlural,
+  ]),
+);
+
 const TARGET_RELATION_FIELD_DEFINITIONS = [
   {
     objectUniversalIdentifier:
@@ -86,7 +98,10 @@ export const buildTargetObjectCollisionRenameUpdates = ({
   flatObjectMetadataMaps,
   now,
 }: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
   now: string;
 }): FlatObjectMetadata[] => {
   const allObjects = Object.values(
@@ -99,46 +114,41 @@ export const buildTargetObjectCollisionRenameUpdates = ({
     ]),
   );
 
-  return TARGET_OBJECT_DEFINITIONS.flatMap((definition) =>
-    allObjects
-      .filter(
-        (objectMetadata) =>
-          objectMetadata.universalIdentifier !==
-            definition.universalIdentifier &&
-          [objectMetadata.nameSingular, objectMetadata.namePlural].some(
-            (name) =>
-              name === definition.nameSingular ||
-              name === definition.namePlural,
-          ),
-      )
-      .map((objectMetadata) => {
-        const nameSingular = findAvailableName({
-          baseName: definition.nameSingular,
-          takenNames,
-        });
-        const namePlural = findAvailableName({
-          baseName: definition.namePlural,
-          takenNames,
-        });
-
-        return {
-          ...objectMetadata,
-          nameSingular,
-          namePlural,
-          labelSingular: `${objectMetadata.labelSingular} (Old)`,
-          labelPlural: `${objectMetadata.labelPlural} (Old)`,
-          isLabelSyncedWithName: false,
-          updatedAt: now,
-        };
+  return allObjects
+    .filter(
+      (objectMetadata) =>
+        !TARGET_OBJECT_UNIVERSAL_IDENTIFIERS.has(
+          objectMetadata.universalIdentifier,
+        ) &&
+        [objectMetadata.nameSingular, objectMetadata.namePlural].some((name) =>
+          TARGET_OBJECT_NAMES.has(name),
+        ),
+    )
+    .map((objectMetadata) => ({
+      ...objectMetadata,
+      nameSingular: findAvailableName({
+        baseName: objectMetadata.nameSingular,
+        takenNames,
       }),
-  );
+      namePlural: findAvailableName({
+        baseName: objectMetadata.namePlural,
+        takenNames,
+      }),
+      labelSingular: `${objectMetadata.labelSingular} (Old)`,
+      labelPlural: `${objectMetadata.labelPlural} (Old)`,
+      isLabelSyncedWithName: false,
+      updatedAt: now,
+    }));
 };
 
 export const buildTargetFieldCollisionRenameUpdates = ({
   flatFieldMetadataMaps,
   now,
 }: {
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
   now: string;
 }): FlatFieldMetadata[] => {
   const allFields = Object.values(
