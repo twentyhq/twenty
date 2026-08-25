@@ -159,6 +159,38 @@ describe('useWidgetCallRecording', () => {
     );
   });
 
+  it('follows the record page into a soft-deleted recording, but not a calendar event', () => {
+    mockLayoutRenderingContext.targetRecordIdentifier = {
+      id: 'call-recording-id',
+      targetObjectNameSingular: 'callRecording',
+    };
+
+    renderHook(() =>
+      useWidgetCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(mockUseFindManyRecords).toHaveBeenLastCalledWith(
+      expect.objectContaining({ withSoftDeleted: true }),
+    );
+
+    mockLayoutRenderingContext.targetRecordIdentifier = {
+      id: 'calendar-event-id',
+      targetObjectNameSingular: 'calendarEvent',
+    };
+
+    renderHook(() =>
+      useWidgetCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(mockUseFindManyRecords).toHaveBeenLastCalledWith(
+      expect.objectContaining({ withSoftDeleted: false }),
+    );
+  });
+
   it('scopes the SSE query id to the call recording target record', () => {
     mockLayoutRenderingContext.targetRecordIdentifier = {
       id: 'call-recording-id',
