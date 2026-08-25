@@ -188,12 +188,11 @@ export class MessageQueueExplorer implements OnModuleInit {
     queueName: MessageQueue,
   ) {
     queue.work(async (job) => {
-      const jobData = job.data as { workspaceId?: string } | undefined;
       const stallMonitorToken =
         this.eventLoopStallMonitorService.registerJobStart({
           queueName,
           jobName: job.name,
-          workspaceId: jobData?.workspaceId,
+          workspaceId: job.data?.workspaceId,
         });
 
       try {
