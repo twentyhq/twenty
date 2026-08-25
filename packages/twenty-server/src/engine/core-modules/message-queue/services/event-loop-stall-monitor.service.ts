@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 
 const TICK_INTERVAL_MS = 500;
-const STALL_THRESHOLD_MS = 2_000;
+const STALL_THRESHOLD_MS = 5_000;
 
 type RunningJob = {
   queueName: string;
