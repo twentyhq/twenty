@@ -14,6 +14,10 @@ export const handler = async (
   const after = payload.properties.after;
   if (!after?.id) return {};
 
+  // Form-only: the installed app stamps createdBy.source = 'APPLICATION'.
+  // Seed/import authenticate via API key (API); the UI is MANUAL — both skipped.
+  if (after.createdBy?.source !== 'APPLICATION') return {};
+
   return preReviewPartner(new CoreApiClient(), after.id);
 };
 
