@@ -15,7 +15,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { FILES_FIELD_COPYABLE_SOURCE_FOLDERS } from 'src/engine/core-modules/file/files-field/constants/files-field-copyable-source-folders.constant';
 import {
   FilesFieldException,
   FilesFieldExceptionCode,
@@ -132,7 +131,7 @@ export class FilesFieldService {
       throw new FilesFieldException(
         `File ${fileId} not found`,
         FilesFieldExceptionCode.BAD_REQUEST,
-        { userFriendlyMessage: msg`File ${fileId} not found` },
+        { userFriendlyMessage: msg`File not found.` },
       );
     }
 
@@ -141,21 +140,17 @@ export class FilesFieldService {
         `File ${fileId} upload has not been completed`,
         FilesFieldExceptionCode.BAD_REQUEST,
         {
-          userFriendlyMessage: msg`File ${fileId} upload has not been completed. Please retry the upload.`,
+          userFriendlyMessage: msg`The file upload has not been completed. Please retry the upload.`,
         },
       );
     }
 
-    const sourceFolder = FILES_FIELD_COPYABLE_SOURCE_FOLDERS.find((folder) =>
-      sourceFile.path.startsWith(`${folder}/`),
-    );
-
-    if (!isDefined(sourceFolder)) {
+    if (!sourceFile.path.startsWith(`${FileFolder.AgentChat}/`)) {
       throw new FilesFieldException(
         `File ${fileId} cannot be copied into a files field`,
         FilesFieldExceptionCode.BAD_REQUEST,
         {
-          userFriendlyMessage: msg`File ${fileId} cannot be attached to a record.`,
+          userFriendlyMessage: msg`This file cannot be attached to a record.`,
         },
       );
     }
@@ -183,7 +178,7 @@ export class FilesFieldService {
       from: {
         workspaceId,
         applicationUniversalIdentifier: sourceApplication.universalIdentifier,
-        fileFolder: sourceFolder,
+        fileFolder: FileFolder.AgentChat,
         resourcePath: removeFileFolderFromFileEntityPath(sourceFile.path),
       },
       to: {
