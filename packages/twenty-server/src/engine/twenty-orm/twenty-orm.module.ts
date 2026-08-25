@@ -10,7 +10,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/workspace-orm-entity-metadatas-cache.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
@@ -37,11 +37,11 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     WorkspaceCacheModule,
   ],
   providers: [
-    GlobalWorkspaceOrmManager,
+    WorkspaceOrmManager,
     WorkspaceDataSourceService,
     WorkspaceORMEntityMetadatasCacheService,
     provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
-  exports: [GlobalWorkspaceOrmManager, WorkspaceDataSourceService],
+  exports: [WorkspaceOrmManager, WorkspaceDataSourceService],
 })
-export class GlobalWorkspaceDataSourceModule {}
+export class TwentyOrmModule {}

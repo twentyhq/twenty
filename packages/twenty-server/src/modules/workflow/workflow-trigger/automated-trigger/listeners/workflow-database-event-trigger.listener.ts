@@ -25,7 +25,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -66,7 +66,7 @@ export class WorkflowDatabaseEventTriggerListener {
   );
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -269,7 +269,7 @@ export class WorkflowDatabaseEventTriggerListener {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const { fieldIdByJoinColumnName } = buildFieldMapsFromFlatObjectMetadata(
         flatFieldMetadataMaps,
         flatObjectMetadata,
@@ -309,7 +309,7 @@ export class WorkflowDatabaseEventTriggerListener {
         }
 
         const relatedObjectRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
+          await this.workspaceOrmManager.getRepository(
             relatedObjectMetadataNameSingular,
             { shouldBypassPermissionChecks: true },
           );
@@ -409,27 +409,24 @@ export class WorkflowDatabaseEventTriggerListener {
 
     const automatedTriggerTableName = 'workflowAutomatedTrigger';
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            automatedTriggerTableName,
-            { shouldBypassPermissionChecks: true },
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowAutomatedTriggerRepository =
+        await this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+          automatedTriggerTableName,
+          { shouldBypassPermissionChecks: true },
+        );
 
-        return workflowAutomatedTriggerRepository.find({
-          where: {
-            type: AutomatedTriggerType.DATABASE_EVENT,
-            settings: Raw(
-              () =>
-                `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
-              { eventName: databaseEventName },
-            ),
-          },
-        });
-      },
-      buildSystemAuthContext(workspaceId),
-    );
+      return workflowAutomatedTriggerRepository.find({
+        where: {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          settings: Raw(
+            () =>
+              `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
+            { eventName: databaseEventName },
+          ),
+        },
+      });
+    }, buildSystemAuthContext(workspaceId));
   }
 
   private shouldTriggerJob({

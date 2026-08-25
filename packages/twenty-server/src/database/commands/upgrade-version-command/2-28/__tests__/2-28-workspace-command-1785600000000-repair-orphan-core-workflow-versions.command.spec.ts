@@ -7,7 +7,7 @@ import {
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairOrphanCoreWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785600000000-repair-orphan-core-workflow-versions.command';
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -66,16 +66,16 @@ const setup = ({
     createQueryRunner: () => queryRunner,
   } as unknown as DataSource;
 
-  const globalWorkspaceOrmManager = {
+  const workspaceOrmManager = {
     executeInWorkspaceContext: (fn: () => Promise<unknown>) => fn(),
     getRepository: () => ({ count }),
-  } as unknown as GlobalWorkspaceOrmManager;
+  } as unknown as WorkspaceOrmManager;
 
   const recompute = jest.fn();
   const command = new RepairOrphanCoreWorkflowVersionsCommand(
     {} as WorkspaceIteratorService,
     { invalidateAndRecompute: recompute } as unknown as WorkspaceCacheService,
-    globalWorkspaceOrmManager,
+    workspaceOrmManager,
   );
 
   const run = (dryRun = false) =>

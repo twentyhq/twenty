@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -13,7 +13,7 @@ import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/w
 
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
-  let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
+  let workspaceOrmManager: jest.Mocked<WorkspaceOrmManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
@@ -51,7 +51,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     }) as FlatObjectMetadata;
 
   beforeEach(async () => {
-    globalWorkspaceOrmManager = {
+    workspaceOrmManager = {
       getRepository: jest.fn().mockResolvedValue(mockRepository),
       executeInWorkspaceContext: jest
         .fn()
@@ -75,8 +75,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       providers: [
         WorkflowDatabaseEventTriggerListener,
         {
-          provide: GlobalWorkspaceOrmManager,
-          useValue: globalWorkspaceOrmManager,
+          provide: WorkspaceOrmManager,
+          useValue: workspaceOrmManager,
         },
         {
           provide: MessageQueueService,

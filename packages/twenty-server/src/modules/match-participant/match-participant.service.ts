@@ -4,7 +4,7 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -61,9 +61,7 @@ export class MatchParticipantService<
     | CalendarEventParticipantWorkspaceEntity
     | MessageParticipantWorkspaceEntity,
 > {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   private async getParticipantRepository({
     objectMetadataName,
@@ -76,7 +74,7 @@ export class MatchParticipantService<
         );
       }
 
-      return await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+      return await this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
         objectMetadataName,
       );
     }
@@ -87,7 +85,7 @@ export class MatchParticipantService<
       );
     }
 
-    return await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+    return await this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
       objectMetadataName,
     );
   }
@@ -103,7 +101,7 @@ export class MatchParticipantService<
     }
 
     const personRepository =
-      await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>(
         'person',
         { shouldBypassPermissionChecks: true },
       );
@@ -114,7 +112,7 @@ export class MatchParticipantService<
     });
 
     const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
       );
@@ -208,7 +206,7 @@ export class MatchParticipantService<
   }: MatchParticipantsForWorkspaceMembersArgs) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const participantRepository = await this.getParticipantRepository({
         objectMetadataName,
       });
@@ -241,7 +239,7 @@ export class MatchParticipantService<
   }: MatchParticipantsForPeopleArgs) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const participantRepository = await this.getParticipantRepository({
         objectMetadataName,
       });
