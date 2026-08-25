@@ -18,7 +18,6 @@ export const ON_WORKSPACE_MEMBER_CREATED_FN_UNIVERSAL_IDENTIFIER = '30c0857b-acd
 export const INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER = 'fcf39b0c-0547-415e-806d-b238131ad7cc';
 
 // Roles (Task 2)
-export const TWENTY_PARTNER_OPS_ROLE_UNIVERSAL_IDENTIFIER = '3340ca65-863d-4cdc-95c9-8abdec13d0f6';
 export const PARTNER_ROLE_UNIVERSAL_IDENTIFIER = 'c3c1dc2e-1a08-4de5-abb7-2139b3d99343';
 
 // Opportunity pipeline views + nav (simplified to partner presence; UIDs reused
