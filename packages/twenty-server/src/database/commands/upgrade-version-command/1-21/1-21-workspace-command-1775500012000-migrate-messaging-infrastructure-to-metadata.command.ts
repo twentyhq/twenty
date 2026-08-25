@@ -15,7 +15,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type LegacyConnectedAccountWorkspaceEntity = {
@@ -43,7 +43,7 @@ type LegacyConnectedAccountWorkspaceEntity = {
 })
 export class MigrateMessagingInfrastructureToMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
-    private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
+    private readonly twentyORMGlobalManager: WorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(MessageChannelEntity)

@@ -20,7 +20,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
-export class GlobalWorkspaceOrmManager {
+export class WorkspaceOrmManager {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
