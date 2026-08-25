@@ -10,10 +10,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import chunk from 'lodash.chunk';
 import { v4 } from 'uuid';
 
-import {
-  CAMPAIGN_MESSAGE_DELIVERY_STATUS,
-  SEND_CAMPAIGN_EMAIL_JOB,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { SEND_CAMPAIGN_EMAIL_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -294,7 +291,6 @@ export class MessageCampaignMaterializationService {
               receivedAt: now,
               messageThreadId: row.threadId,
               messageCampaignId: campaignId,
-              deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
             })),
           );
 

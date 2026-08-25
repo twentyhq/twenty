@@ -32,7 +32,6 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { computeCampaignTerminalStatus } from 'src/modules/emailing/utils/compute-campaign-terminal-status.util';
-import { readCampaignMessageCounts } from 'src/modules/emailing/utils/read-campaign-message-counts.util';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -184,14 +183,13 @@ export class MessageCampaignLifecycleService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const countByDeliveryStatus =
-      await this.messageCampaignStatisticsService.countMessagesByDeliveryStatus(
-        { workspaceId, campaignId },
-      );
+    const counts =
+      await this.messageCampaignStatisticsService.countDeliveriesByState({
+        workspaceId,
+        campaignId,
+      });
 
-    const terminalStatus = computeCampaignTerminalStatus(
-      readCampaignMessageCounts(countByDeliveryStatus),
-    );
+    const terminalStatus = computeCampaignTerminalStatus(counts);
 
     if (!isDefined(terminalStatus)) {
       return;

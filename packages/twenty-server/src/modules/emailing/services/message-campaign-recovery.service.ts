@@ -116,12 +116,13 @@ export class MessageCampaignRecoveryService {
       return;
     }
 
-    const countByDeliveryStatus =
-      await this.messageCampaignStatisticsService.countMessagesByDeliveryStatus(
-        { workspaceId, campaignId },
-      );
+    const counts =
+      await this.messageCampaignStatisticsService.countDeliveriesByState({
+        workspaceId,
+        campaignId,
+      });
 
-    if (countByDeliveryStatus.size > 0) {
+    if (counts.totalCount > 0) {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const failedCount =
