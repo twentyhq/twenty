@@ -263,14 +263,13 @@ export class WorkspaceInvitationService {
       );
     }
 
-    await this.appTokenRepository.delete(appToken.id);
-
     return this.sendInvitations(
       [appToken.context.email],
       workspace,
       sender,
       appToken.context.roleId,
       appToken.type === AppTokenType.OnboardingInvitationToken,
+      appToken.id,
     );
   }
 
@@ -280,6 +279,7 @@ export class WorkspaceInvitationService {
     sender: WorkspaceMemberWorkspaceEntity,
     roleId?: string,
     isOnboardingInviteRewardOverride?: boolean,
+    appTokenIdToInvalidate?: string,
   ): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
@@ -312,6 +312,12 @@ export class WorkspaceInvitationService {
     }
 
     await this.throttleInvitationSending(workspace.id, emails);
+
+    // Invalidate the previous invitation only after every pre-creation gate has
+    // passed, so a throttled or rejected resend keeps the original invitation.
+    if (isDefined(appTokenIdToInvalidate)) {
+      await this.appTokenRepository.delete(appTokenIdToInvalidate);
+    }
 
     const invitationResults = await Promise.allSettled(
       emails.map(async (email) => {
