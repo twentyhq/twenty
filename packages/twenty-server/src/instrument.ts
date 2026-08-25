@@ -50,6 +50,13 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     value: process.env.SENTRY_TRACES_SAMPLE_RATE,
     fallback: 0.1,
   });
+  // Continuous profiling covers event-loop stalls that happen outside sampled
+  // transactions; transaction-based profiling cannot see them.
+  const profileSessionSampleRate = parseSampleRate({
+    value: process.env.SENTRY_PROFILE_SESSION_SAMPLE_RATE,
+    fallback: 0,
+  });
+  const isContinuousProfilingEnabled = profileSessionSampleRate > 0;
 
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
@@ -87,10 +94,17 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     tracesSampleRate,
     tracesSampler: ({ name, inheritOrSampleWith }) =>
       name.startsWith('ai.') ? 1 : inheritOrSampleWith(tracesSampleRate),
-    profilesSampleRate: parseSampleRate({
-      value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
-      fallback: 0.01,
-    }),
+    ...(isContinuousProfilingEnabled
+      ? {
+          profileSessionSampleRate,
+          profileLifecycle: 'manual' as const,
+        }
+      : {
+          profilesSampleRate: parseSampleRate({
+            value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
+            fallback: 0.01,
+          }),
+        }),
     maxValueLength: 8192,
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
@@ -118,6 +132,10 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       return span;
     },
   });
+
+  if (isContinuousProfilingEnabled) {
+    Sentry.profiler.startProfiler();
+  }
 }
 
 const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
