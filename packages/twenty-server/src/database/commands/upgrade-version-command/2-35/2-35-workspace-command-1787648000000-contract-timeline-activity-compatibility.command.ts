@@ -249,8 +249,6 @@ LEFT JOIN "core"."timelineActivityType" timeline_activity_type
   ON timeline_activity_type."id" = timeline_activity."timelineActivityTypeId"
   AND timeline_activity_type."workspaceId" = $1`,
       [workspaceId],
-      undefined,
-      { shouldBypassPermissionChecks: true },
     );
 
     return {
@@ -281,8 +279,6 @@ WHERE timeline_activity."timelineActivityTypeId" IS NOT NULL
       AND timeline_activity_type."workspaceId" = $1
   )`,
       [workspaceId],
-      undefined,
-      { shouldBypassPermissionChecks: true },
     );
   }
 
@@ -315,8 +311,6 @@ WHERE timeline_activity."timelineActivityTypeId" IS NOT NULL
       const result = await dataSource.query(
         backfillQuery.sql,
         backfillQuery.parameters,
-        undefined,
-        { shouldBypassPermissionChecks: true },
       );
 
       lastBatchRowCount = result?.[1] ?? 0;
@@ -344,8 +338,6 @@ WHERE timeline_activity."timelineActivityTypeId" IS NOT NULL
         await dataSource.query<[Array<{ id: string }>, number]>(
           backfillQuery.sql,
           backfillQuery.parameters,
-          undefined,
-          { shouldBypassPermissionChecks: true },
         );
 
       lastBatchRowCount = updatedRowCount;
