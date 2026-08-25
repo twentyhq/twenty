@@ -69,9 +69,15 @@ export class ApiKeyResolver {
     }
   }
 
-  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
-  // and API keys must not escalate into a long-lived credential.
-  @UseGuards(RequireAccessTokenGuard)
+  // API_KEYS_AND_WEBHOOKS (class guard) gates managing API keys. Creating one
+  // also assigns it a role, so it additionally requires ROLES, the permission
+  // that governs role assignment, so a key can't be granted a role its creator
+  // is not allowed to grant. RequireAccessTokenGuard keeps derived PLAYGROUND
+  // tokens and API keys from escalating into a long-lived credential.
+  @UseGuards(
+    RequireAccessTokenGuard,
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
+  )
   @Mutation(() => ApiKeyEntity)
   async createApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -113,7 +119,13 @@ export class ApiKeyResolver {
     return this.apiKeyService.revoke(input.id, workspace.id);
   }
 
-  @UseGuards(RequireAccessTokenGuard)
+  // Requires ROLES on top of API_KEYS_AND_WEBHOOKS: binding a role to an API
+  // key must require the role-assignment permission to prevent privilege
+  // escalation.
+  @UseGuards(
+    RequireAccessTokenGuard,
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
+  )
   @Mutation(() => Boolean)
   async assignRoleToApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
