@@ -1733,6 +1733,21 @@ type SendInvitations {
   result: [WorkspaceInvitation!]!
 }
 
+type UsageLimit {
+  id: UUID!
+  resourceType: String!
+  operationType: String!
+  spenderType: String!
+  spenderId: String!
+  limitKind: String!
+  windowSeconds: Float!
+  limitType: String!
+  limitValue: Float!
+  burstValue: Float
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -3297,6 +3312,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
+  usageLimits: [UsageLimit!]!
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
   getViewFilters(viewId: String): [ViewFilter!]!
@@ -3539,6 +3555,7 @@ enum UsageOperationType {
   WEB_SEARCH
   CALL_RECORDING
   EMAIL_SEND
+  API_REQUEST
 }
 
 type Mutation {
@@ -3562,6 +3579,8 @@ type Mutation {
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
   uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
+  upsertUsageLimit(input: UpsertUsageLimitInput!): UsageLimit!
+  deleteUsageLimit(usageLimitId: UUID!): Boolean!
   createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
   updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
   deleteViewFilterGroup(id: String!): Boolean!
@@ -3852,6 +3871,17 @@ enum FileFolder {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input UpsertUsageLimitInput {
+  resourceType: String!
+  operationType: String!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  windowSeconds: Float! = 0
+  limitValue: Float!
+  burstValue: Float
+}
 
 input CreateViewFilterGroupInput {
   id: UUID
