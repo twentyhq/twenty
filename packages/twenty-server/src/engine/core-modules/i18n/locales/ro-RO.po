@@ -6677,12 +6677,12 @@ msgstr "Tipul elementului de meniu de navigare este necesar"
 #. js-lingui-id: sq8J4x
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Navigation target object metadata not found"
-msgstr ""
+msgstr "Metadatele obiectului țintă de navigare nu au fost găsite"
 
 #. js-lingui-id: 4/QAvg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Navigation target object not found"
-msgstr ""
+msgstr "Obiectul țintă de navigare nu a fost găsit"
 
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts

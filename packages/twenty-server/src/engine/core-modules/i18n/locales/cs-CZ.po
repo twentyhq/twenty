@@ -6677,12 +6677,12 @@ msgstr "Typ položky navigační nabídky je vyžadován"
 #. js-lingui-id: sq8J4x
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Navigation target object metadata not found"
-msgstr ""
+msgstr "Metadata objektu cíle navigace nebyla nalezena"
 
 #. js-lingui-id: 4/QAvg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Navigation target object not found"
-msgstr ""
+msgstr "Cílový objekt navigace nebyl nalezen"
 
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
