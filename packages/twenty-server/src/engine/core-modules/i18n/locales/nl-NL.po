@@ -3500,18 +3500,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Evenement-ID"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Evenementnaam"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Evenementnaam"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
