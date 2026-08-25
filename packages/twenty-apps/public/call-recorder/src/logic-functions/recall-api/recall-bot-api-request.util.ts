@@ -2,12 +2,14 @@ import { isUndefined } from '@sniptt/guards';
 
 import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/constants/recall-api-max-in-process-retry-wait-ms';
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
+import { RECALL_API_MAX_RETRY_AFTER_MS } from 'src/logic-functions/constants/recall-api-max-retry-after-ms';
 import { type RecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
-import { parseRecallRetryAfterMs } from 'src/logic-functions/recall-api/parse-recall-retry-after.util';
 import {
   isRetryableRecallApiStatus,
   resolveRecallApiRetryDelayMs,
 } from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
+import { parseRetryAfterMs } from 'src/logic-functions/utils/parse-retry-after-ms.util';
+import { sleep } from 'src/logic-functions/utils/sleep.util';
 
 type RecallBotApiRequestArgs = {
   config: RecallApiConfig;
@@ -130,9 +132,10 @@ const performRecallBotApiRequestAttempt = async <TData>({
   if (!response.ok) {
     return {
       isRetryable: isRetryableRecallApiStatus(response.status),
-      retryAfterMs: parseRecallRetryAfterMs(
+      retryAfterMs: parseRetryAfterMs(
         response.headers?.get('retry-after') ?? null,
         Date.now(),
+        RECALL_API_MAX_RETRY_AFTER_MS,
       ),
       result: {
         ok: false,
@@ -164,11 +167,6 @@ const performRecallBotApiRequestAttempt = async <TData>({
     };
   }
 };
-
-const sleep = (delayMs: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, delayMs);
-  });
 
 const buildRecallApiAuthorizationHeader = (apiKey: string): string => {
   const trimmedApiKey = apiKey.trim();

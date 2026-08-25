@@ -1,8 +1,7 @@
-import { RECALL_API_MAX_RETRY_AFTER_MS } from 'src/logic-functions/constants/recall-api-max-retry-after-ms';
-
-export const parseRecallRetryAfterMs = (
+export const parseRetryAfterMs = (
   retryAfterHeader: string | null,
   nowMs: number,
+  maxRetryAfterMs: number,
 ): number | undefined => {
   if (retryAfterHeader === null) {
     return undefined;
@@ -15,7 +14,7 @@ export const parseRecallRetryAfterMs = (
   }
 
   if (/^\d+$/.test(trimmedRetryAfterHeader)) {
-    return capRecallRetryAfterMs(Number(trimmedRetryAfterHeader) * 1000);
+    return Math.min(Number(trimmedRetryAfterHeader) * 1000, maxRetryAfterMs);
   }
 
   // Malformed numeric forms (1.5, 1e2, 0x10) would be misread as dates by Date.parse.
@@ -29,8 +28,5 @@ export const parseRecallRetryAfterMs = (
     return undefined;
   }
 
-  return capRecallRetryAfterMs(Math.max(0, retryAfterDateMs - nowMs));
+  return Math.min(Math.max(0, retryAfterDateMs - nowMs), maxRetryAfterMs);
 };
-
-const capRecallRetryAfterMs = (retryAfterMs: number): number =>
-  Math.min(retryAfterMs, RECALL_API_MAX_RETRY_AFTER_MS);

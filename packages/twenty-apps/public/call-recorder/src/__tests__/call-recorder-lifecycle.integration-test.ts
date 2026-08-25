@@ -106,9 +106,9 @@ const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
 // ---------------------------------------------------------------------------
-// Recall API fake, installed as a fetch interceptor. Twenty API traffic is
-// never intercepted: the shared client is built before the interceptor and
-// unknown URLs fall through to the real fetch.
+// Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
+// through to the real fetch, except the metadata enqueueJobs mutation, which is
+// captured here so fanned-out jobs do not run inside the test.
 // ---------------------------------------------------------------------------
 
 type FakeRecallBot = {

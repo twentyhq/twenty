@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 import { MAX_PAYLOADS_PER_ENQUEUE_JOBS_CALL } from 'src/logic-functions/constants/max-payloads-per-enqueue-jobs-call';
-import { enqueueJobsInChunks } from 'src/logic-functions/data/enqueue-jobs-in-chunks.util';
+import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 
 const enqueueJobsMock = vi.hoisted(() => vi.fn());
 
@@ -12,7 +12,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 
 const TARGET_UNIVERSAL_IDENTIFIER = '5a2f4d2a-1a1e-4c66-8a54-1f0a2b3c4d5e';
 
-describe('enqueueJobsInChunks', () => {
+describe('enqueueLogicFunctionJobs', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     enqueueJobsMock.mockImplementation(async ({ payloads }) => ({
@@ -22,7 +22,7 @@ describe('enqueueJobsInChunks', () => {
   });
 
   it('enqueues a small payload list in a single call', async () => {
-    await enqueueJobsInChunks({
+    await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       payloads: [{ batchIndex: 0 }, { batchIndex: 1 }],
     });
@@ -40,7 +40,7 @@ describe('enqueueJobsInChunks', () => {
       (_, payloadIndex) => ({ payloadIndex }),
     );
 
-    await enqueueJobsInChunks({
+    await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       payloads,
     });
@@ -65,7 +65,7 @@ describe('enqueueJobsInChunks', () => {
       .mockRejectedValueOnce(new Error('Network failed'));
 
     await expect(
-      enqueueJobsInChunks({
+      enqueueLogicFunctionJobs({
         logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
         payloads,
       }),

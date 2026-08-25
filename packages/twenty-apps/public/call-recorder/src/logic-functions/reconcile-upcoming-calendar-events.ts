@@ -1,11 +1,12 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/reconcile-upcoming-calendar-events-logic-function-universal-identifier';
 import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import { countReconciliationActions } from 'src/logic-functions/domain/count-reconciliation-actions.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { type CallRecorderReconciliationActionCounts } from 'src/logic-functions/types/call-recorder-reconciliation-action-counts.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { toIdList } from 'src/logic-functions/utils/to-id-list.util';
 
 type ReconcileUpcomingCalendarEventsResult =
@@ -19,10 +20,7 @@ type ReconcileUpcomingCalendarEventsResult =
 export const reconcileUpcomingCalendarEventsHandler = async (
   payload: unknown,
 ): Promise<ReconcileUpcomingCalendarEventsResult> => {
-  const calendarEventIds = toIdList(
-    (payload as { calendarEventIds?: unknown } | null | undefined)
-      ?.calendarEventIds,
-  );
+  const calendarEventIds = toIdList(asRecord(payload)?.calendarEventIds);
 
   if (calendarEventIds.length === 0) {
     return { outcome: 'nothing-selected' };
@@ -41,10 +39,9 @@ export const reconcileUpcomingCalendarEventsHandler = async (
       actionCounts: countReconciliationActions(reconciliationResults),
     };
   } catch (error) {
-    throw new RetryableLogicFunctionError(
-      `[call-recorder] upcoming calendar event batch reconciliation failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
+    throw buildRetryableStepFailure(
+      'upcoming calendar event batch reconciliation',
+      error,
     );
   }
 };

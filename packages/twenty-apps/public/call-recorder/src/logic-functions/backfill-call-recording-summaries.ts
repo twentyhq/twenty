@@ -1,9 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/backfill-call-recording-summaries-logic-function-universal-identifier';
 import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import { enqueueCallRecordingSummariesBackfill } from 'src/logic-functions/flows/enqueue-call-recording-summaries-backfill.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
 
 type BackfillCallRecordingSummariesResult =
@@ -33,10 +33,9 @@ export const backfillCallRecordingSummariesHandler =
 
       return { outcome: 'batches-enqueued', callRecordingCount, batchCount };
     } catch (error) {
-      throw new RetryableLogicFunctionError(
-        `[call-recorder] call recording summaries backfill failed: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+      throw buildRetryableStepFailure(
+        'call recording summaries backfill',
+        error,
       );
     }
   };

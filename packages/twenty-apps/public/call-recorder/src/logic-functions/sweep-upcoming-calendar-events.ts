@@ -5,9 +5,9 @@ import { SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } fr
 import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-functions/constants/upcoming-calendar-event-reconciliation-batch-size';
 import { UPCOMING_CALENDAR_EVENTS_SWEEP_CRON_PATTERN } from 'src/logic-functions/constants/upcoming-calendar-events-sweep-cron-pattern';
 import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
-import { enqueueJobsInChunks } from 'src/logic-functions/data/enqueue-jobs-in-chunks.util';
+import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
-import { getIdBatches } from 'src/logic-functions/utils/get-id-batches.util';
+import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 
 type SweepUpcomingCalendarEventsResult =
   | { outcome: 'nothing-to-reconcile' }
@@ -30,12 +30,12 @@ export const sweepUpcomingCalendarEventsHandler =
       return { outcome: 'nothing-to-reconcile' };
     }
 
-    const calendarEventIdBatches = getIdBatches(
+    const calendarEventIdBatches = getBatches(
       calendarEventIds,
       UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
     );
 
-    await enqueueJobsInChunks({
+    await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier:
         RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payloads: calendarEventIdBatches.map((batchCalendarEventIds) => ({

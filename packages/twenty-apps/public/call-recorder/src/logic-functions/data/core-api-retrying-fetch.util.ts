@@ -1,3 +1,6 @@
+import { parseRetryAfterMs } from 'src/logic-functions/utils/parse-retry-after-ms.util';
+import { sleep } from 'src/logic-functions/utils/sleep.util';
+
 const MAX_ATTEMPTS = 5;
 const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -5,37 +8,9 @@ const MAX_JITTER_MS = 1_000;
 
 const RETRYABLE_HTTP_STATUSES = new Set([429, 502, 503, 504]);
 
-const sleep = (durationMs: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, durationMs));
-
 const isAbortError = (error: unknown): boolean =>
   error instanceof Error &&
   (error.name === 'AbortError' || error.name === 'TimeoutError');
-
-const parseRetryAfterMs = (response: Response): number | undefined => {
-  const retryAfterHeader = response.headers.get('retry-after');
-
-  if (retryAfterHeader === null) {
-    return undefined;
-  }
-
-  const retryAfterSeconds = Number(retryAfterHeader.trim());
-
-  if (Number.isFinite(retryAfterSeconds)) {
-    return Math.min(Math.max(0, retryAfterSeconds * 1_000), MAX_RETRY_DELAY_MS);
-  }
-
-  const retryAfterDateMs = Date.parse(retryAfterHeader);
-
-  if (Number.isNaN(retryAfterDateMs)) {
-    return undefined;
-  }
-
-  return Math.min(
-    Math.max(0, retryAfterDateMs - Date.now()),
-    MAX_RETRY_DELAY_MS,
-  );
-};
 
 // Enqueued batches run in parallel, so core API calls must absorb rate limiting themselves.
 export const createCoreApiRetryingFetch =
@@ -66,9 +41,17 @@ export const createCoreApiRetryingFetch =
         MAX_RETRY_DELAY_MS,
       );
       const retryAfterMs =
-        response === undefined ? 0 : (parseRetryAfterMs(response) ?? 0);
+        response === undefined
+          ? 0
+          : (parseRetryAfterMs(
+              response.headers.get('retry-after'),
+              Date.now(),
+              MAX_RETRY_DELAY_MS,
+            ) ?? 0);
 
       await response?.body?.cancel().catch(() => undefined);
-      await sleep(Math.max(backoffMs, retryAfterMs) + Math.random() * MAX_JITTER_MS);
+      await sleep(
+        Math.max(backoffMs, retryAfterMs) + Math.random() * MAX_JITTER_MS,
+      );
     }
   };

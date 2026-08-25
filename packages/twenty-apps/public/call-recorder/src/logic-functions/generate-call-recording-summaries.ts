@@ -14,13 +14,10 @@ type GenerateCallRecordingSummariesRouteBody = {
   calendarEventIds?: string[];
 };
 
-const hasOwnProperty = <T extends object>(
-  object: T | null | undefined,
+const hasOwnProperty = (
+  body: GenerateCallRecordingSummariesRouteBody | null | undefined,
   propertyName: keyof GenerateCallRecordingSummariesRouteBody,
-): boolean =>
-  object === undefined || object === null
-    ? false
-    : Object.prototype.hasOwnProperty.call(object, propertyName);
+): boolean => Object.prototype.hasOwnProperty.call(body ?? {}, propertyName);
 
 export const generateCallRecordingSummariesHandler = async (
   payload: RoutePayload<GenerateCallRecordingSummariesRouteBody>,
