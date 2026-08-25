@@ -10429,11 +10429,6 @@ msgstr "הרשאת האובייקט הזו כבר מוגדרת עבור התפק
 msgid "This operation is not allowed."
 msgstr "פעולה זו אינה מותרת."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "הפעולה הזו אינה מותרת. אנא נסה גישה אחרת או פנה לתמיכה אם אתה צריך עזרה."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
