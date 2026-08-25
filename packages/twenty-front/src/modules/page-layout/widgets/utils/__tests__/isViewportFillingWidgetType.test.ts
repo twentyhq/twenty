@@ -14,7 +14,7 @@ const expectedIsViewportFillingByWidgetType = {
   [WidgetType.FRONT_COMPONENT]: false,
   [WidgetType.GRAPH]: false,
   [WidgetType.IFRAME]: false,
-  [WidgetType.MESSAGE_CAMPAIGN_BODY]: true,
+  [WidgetType.MESSAGE_CAMPAIGN_BODY]: false,
   [WidgetType.MESSAGE_CAMPAIGN_DETAILS]: false,
   [WidgetType.NOTES]: true,
   [WidgetType.RECORD_TABLE]: false,
