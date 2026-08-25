@@ -18,10 +18,8 @@ import { CustomError } from 'twenty-shared/utils';
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
 
 interface RequestAndParams {
@@ -98,13 +96,7 @@ export class HttpExceptionHandlerService {
 
     if (
       exception instanceof TwentyOrmException &&
-      [
-        TwentyOrmExceptionCode.INVALID_INPUT,
-        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
-        TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
-        TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED,
-        TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND,
-      ].includes(exception.code)
+      isTwentyOrmUserInputError(exception)
     ) {
       exception = new BadRequestException(exception.message);
       statusCode = 400;
