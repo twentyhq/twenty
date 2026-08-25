@@ -103,10 +103,11 @@ assert(
 );
 
 // The closing sign-off: a tall centred panel whose heading carries both faces
-// (serif + sans accent). "Become a partner" is the application-modal trigger (a
-// button, no href); "Find a partner" points at the lead page. The body is
-// measure-constrained so it breaks across two lines rather than running the
-// panel width.
+// (serif + sans accent). The page recruits partners only, so the panel carries
+// exactly ONE cta — "Become a partner", the application-modal trigger (a
+// button, no href). A second, buyer-facing cta here is the regression this
+// guards. The body is measure-constrained so it breaks across lines rather
+// than running the panel width.
 const signoff = await partners.evaluate(() => {
   const heading = [...document.querySelectorAll('h2')].find((node) =>
     /Ready to grow/.test(node.textContent ?? ''),
@@ -116,17 +117,14 @@ const signoff = await partners.evaluate(() => {
   const become = ctas.find((node) =>
     /Become a partner/i.test(node.textContent ?? ''),
   );
-  const find = ctas.find((node) =>
-    /Find a partner/i.test(node.textContent ?? ''),
-  );
   const body = [...(section?.querySelectorAll('p') ?? [])].find((node) =>
-    /partner ecosystem/.test(node.textContent ?? ''),
+    /certify real builders/.test(node.textContent ?? ''),
   );
   return {
     headingText: (heading?.textContent ?? '').replace(/\s+/g, ' ').trim(),
     becomeTag: become?.tagName.toLowerCase() ?? '',
     becomeHref: become?.getAttribute('href') ?? null,
-    findHref: find?.getAttribute('href') ?? '',
+    ctaCount: ctas.length,
     bodyWidth: body ? Math.round(body.getBoundingClientRect().width) : 0,
     sectionHeight: section
       ? Math.round(section.getBoundingClientRect().height)
@@ -146,9 +144,9 @@ assert(
   `${signoff.becomeTag} href=${signoff.becomeHref}`,
 );
 assert(
-  'signoff find-a-partner links to the lead page',
-  signoff.findHref.endsWith('/partners'),
-  signoff.findHref,
+  'signoff carries exactly one cta',
+  signoff.ctaCount === 1,
+  `${signoff.ctaCount} ctas`,
 );
 assert(
   'signoff body is measure-constrained',
