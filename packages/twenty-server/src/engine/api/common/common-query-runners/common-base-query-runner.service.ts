@@ -486,11 +486,9 @@ export abstract class CommonBaseQueryRunnerService<
       return records;
     }
 
-    const workspaceDataSource = this.workspaceDataSourceService.getDataSource(
-      {
-        useReplica: false,
-      },
-    );
+    const workspaceDataSource = this.workspaceDataSourceService.getDataSource({
+      useReplica: false,
+    });
 
     const connectQueryRunner: ConnectQueryRunner = async ({
       connectQueryConfig,

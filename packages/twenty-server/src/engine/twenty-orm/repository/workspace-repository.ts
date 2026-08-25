@@ -114,9 +114,7 @@ type WorkspaceRepositoryV2Options = {
   ) => Promise<T>;
 };
 
-export class WorkspaceRepository<
-  TEntity extends ObjectLiteral = ObjectRecord,
-> {
+export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
   private readonly options: WorkspaceRepositoryV2Options;

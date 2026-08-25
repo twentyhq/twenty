@@ -83,11 +83,7 @@ export class WorkspaceDataSourceService
     }
   }
 
-  getDataSource({
-    useReplica,
-  }: {
-    useReplica: boolean;
-  }): WorkspaceDataSource {
+  getDataSource({ useReplica }: { useReplica: boolean }): WorkspaceDataSource {
     const pool = useReplica
       ? (this.replicaPool ?? this.primaryPool)
       : this.primaryPool;
