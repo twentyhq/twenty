@@ -13,32 +13,29 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewFieldMaps', { packingPonderation: 32 })
 export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvider<FlatViewFieldMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ViewFieldEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewFieldGroupEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatViewFieldMaps> {
-    const [viewFields, applications, fieldMetadatas, views, viewFieldGroups] =
-      await Promise.all([
-        recomputeContext.findAll(ViewFieldEntity),
-        recomputeContext.findAll(ApplicationEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-        recomputeContext.findAll(FieldMetadataEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-        recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
-        recomputeContext.findAll(ViewFieldGroupEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-      ]);
+  ): FlatViewFieldMaps {
+    const viewFields = recomputeContext.getRows(ViewFieldEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
+    const views = recomputeContext.getRows(ViewEntity);
+    const viewFieldGroups = recomputeContext.getRows(ViewFieldGroupEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

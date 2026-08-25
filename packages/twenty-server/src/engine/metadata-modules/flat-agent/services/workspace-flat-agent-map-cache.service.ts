@@ -10,22 +10,23 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatAgentMaps', { packingPonderation: 1 })
 export class WorkspaceFlatAgentMapCacheService extends WorkspaceCacheProvider<FlatAgentMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(AgentEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatAgentMaps> {
-    const [agents, applications] = await Promise.all([
-      recomputeContext.findAll(AgentEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-    ]);
+  ): FlatAgentMaps {
+    const agents = recomputeContext.getRows(AgentEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

@@ -13,37 +13,29 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatCommandMenuItemMaps', { packingPonderation: 4 })
 export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheProvider<FlatCommandMenuItemMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(CommandMenuItemEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FrontComponentEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(PageLayoutEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatCommandMenuItemMaps> {
-    const [
-      commandMenuItems,
-      applications,
-      objectMetadatas,
-      frontComponents,
-      pageLayouts,
-    ] = await Promise.all([
-      recomputeContext.findAll(CommandMenuItemEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(FrontComponentEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(PageLayoutEntity, ['id', 'universalIdentifier']),
-    ]);
+  ): FlatCommandMenuItemMaps {
+    const commandMenuItems = recomputeContext.getRows(CommandMenuItemEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const frontComponents = recomputeContext.getRows(FrontComponentEntity);
+    const pageLayouts = recomputeContext.getRows(PageLayoutEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

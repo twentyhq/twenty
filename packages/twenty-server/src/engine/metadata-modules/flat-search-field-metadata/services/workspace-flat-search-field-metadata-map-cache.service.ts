@@ -16,38 +16,35 @@ import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-fi
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatSearchFieldMetadataMaps', { packingPonderation: 1 })
 export class WorkspaceFlatSearchFieldMetadataMapCacheService extends WorkspaceCacheProvider<FlatSearchFieldMetadataMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(SearchFieldMetadataEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, [
+      'id',
+      'universalIdentifier',
+      'name',
+      'type',
+      'objectMetadataId',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatSearchFieldMetadataMaps> {
-    const [
-      existingSearchFieldMetadatas,
-      applications,
-      objectMetadatas,
-      fieldMetadatas,
-    ] = await Promise.all([
-      recomputeContext.findAll(SearchFieldMetadataEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(FieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-        'name',
-        'type',
-        'objectMetadataId',
-      ]),
-    ]);
+  ): FlatSearchFieldMetadataMaps {
+    const existingSearchFieldMetadatas = recomputeContext.getRows(
+      SearchFieldMetadataEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

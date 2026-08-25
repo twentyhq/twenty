@@ -12,23 +12,27 @@ import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webh
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatWebhookMaps', { packingPonderation: 1 })
 export class WorkspaceFlatWebhookMapCacheService extends WorkspaceCacheProvider<FlatWebhookMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(WebhookEntity),
+    entityFetchRequirement(ApplicationEntity, [
+      'id',
+      'universalIdentifier',
+      'deletedAt',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatWebhookMaps> {
-    const [allWebhooks, applications] = await Promise.all([
-      recomputeContext.findAll(WebhookEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-        'deletedAt',
-      ]),
-    ]);
+  ): FlatWebhookMaps {
+    const allWebhooks = recomputeContext.getRows(WebhookEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
 
     // the previous fetches filtered soft-deleted rows in SQL
     const webhooks = allWebhooks.filter(

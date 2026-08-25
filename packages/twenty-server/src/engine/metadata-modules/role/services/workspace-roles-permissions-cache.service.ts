@@ -24,6 +24,7 @@ import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modu
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
@@ -37,34 +38,41 @@ const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
 @Injectable()
 @WorkspaceCache('rolesPermissions', { packingPonderation: 2 })
 export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<ObjectsPermissionsByRoleId> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(RoleEntity),
+    entityFetchRequirement(ObjectPermissionEntity),
+    entityFetchRequirement(RolePermissionFlagEntity),
+    entityFetchRequirement(PermissionFlagEntity),
+    entityFetchRequirement(FieldPermissionEntity),
+    entityFetchRequirement(RowLevelPermissionPredicateEntity),
+    entityFetchRequirement(RowLevelPermissionPredicateGroupEntity),
+    entityFetchRequirement(ObjectMetadataEntity, [
+      'id',
+      'isSystem',
+      'universalIdentifier',
+      'labelIdentifierFieldMetadataId',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<ObjectsPermissionsByRoleId> {
-    const [
-      roles,
-      objectPermissions,
-      rolePermissionFlagRows,
-      permissionFlags,
-      fieldPermissions,
-      rowLevelPermissionPredicateRows,
-      rowLevelPermissionPredicateGroupRows,
-      workspaceObjectMetadataCollection,
-    ] = await Promise.all([
-      recomputeContext.findAll(RoleEntity),
-      recomputeContext.findAll(ObjectPermissionEntity),
-      recomputeContext.findAll(RolePermissionFlagEntity),
-      recomputeContext.findAll(PermissionFlagEntity),
-      recomputeContext.findAll(FieldPermissionEntity),
-      recomputeContext.findAll(RowLevelPermissionPredicateEntity),
-      recomputeContext.findAll(RowLevelPermissionPredicateGroupEntity),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'isSystem',
-        'universalIdentifier',
-        'labelIdentifierFieldMetadataId',
-      ]),
-    ]);
+  ): ObjectsPermissionsByRoleId {
+    const roles = recomputeContext.getRows(RoleEntity);
+    const objectPermissions = recomputeContext.getRows(ObjectPermissionEntity);
+    const rolePermissionFlagRows = recomputeContext.getRows(
+      RolePermissionFlagEntity,
+    );
+    const permissionFlags = recomputeContext.getRows(PermissionFlagEntity);
+    const fieldPermissions = recomputeContext.getRows(FieldPermissionEntity);
+    const rowLevelPermissionPredicateRows = recomputeContext.getRows(
+      RowLevelPermissionPredicateEntity,
+    );
+    const rowLevelPermissionPredicateGroupRows = recomputeContext.getRows(
+      RowLevelPermissionPredicateGroupEntity,
+    );
+    const workspaceObjectMetadataCollection =
+      recomputeContext.getRows(ObjectMetadataEntity);
 
     // the recompute context cannot load relations: rebuild the permissionFlag
     // relation in memory (undefined when the FK is absent, so the legacy

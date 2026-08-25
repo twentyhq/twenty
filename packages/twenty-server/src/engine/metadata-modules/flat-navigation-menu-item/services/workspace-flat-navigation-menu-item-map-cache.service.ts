@@ -14,33 +14,30 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 @Injectable()
 @WorkspaceCache('flatNavigationMenuItemMaps', { packingPonderation: 1 })
 export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCacheProvider<FlatNavigationMenuItemMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(NavigationMenuItemEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(PageLayoutEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatNavigationMenuItemMaps> {
-    const [
-      navigationMenuItems,
-      applications,
-      objectMetadatas,
-      views,
-      pageLayouts,
-    ] = await Promise.all([
-      recomputeContext.findAll(NavigationMenuItemEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
-      recomputeContext.findAll(PageLayoutEntity, ['id', 'universalIdentifier']),
-    ]);
+  ): FlatNavigationMenuItemMaps {
+    const navigationMenuItems = recomputeContext.getRows(
+      NavigationMenuItemEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const views = recomputeContext.getRows(ViewEntity);
+    const pageLayouts = recomputeContext.getRows(PageLayoutEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

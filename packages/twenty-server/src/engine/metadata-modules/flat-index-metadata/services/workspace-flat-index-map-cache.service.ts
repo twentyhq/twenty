@@ -16,6 +16,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -23,33 +24,29 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatIndexMetadata>
 > {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(IndexMetadataEntity),
+    entityFetchRequirement(IndexFieldMetadataEntity),
+    entityFetchRequirement(ApplicationEntity, [
+      'id',
+      'universalIdentifier',
+      'deletedAt',
+    ]),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatEntityMaps<FlatIndexMetadata>> {
-    const [
-      indexes,
-      indexFieldMetadatas,
-      applications,
-      objectMetadatas,
-      fieldMetadatas,
-    ] = await Promise.all([
-      recomputeContext.findAll(IndexMetadataEntity),
-      recomputeContext.findAll(IndexFieldMetadataEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-        'deletedAt',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(FieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-    ]);
+  ): FlatEntityMaps<FlatIndexMetadata> {
+    const indexes = recomputeContext.getRows(IndexMetadataEntity);
+    const indexFieldMetadatas = recomputeContext.getRows(
+      IndexFieldMetadataEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
 
     const indexFieldMetadatasByIndexMetadataId = new Map<
       string,

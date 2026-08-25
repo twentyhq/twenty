@@ -11,28 +11,29 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatRolePermissionFlagMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCacheProvider<FlatRolePermissionFlagMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(RolePermissionFlagEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(RoleEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(PermissionFlagEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatRolePermissionFlagMaps> {
-    const [rolePermissionFlags, applications, roles, permissionFlags] =
-      await Promise.all([
-        recomputeContext.findAll(RolePermissionFlagEntity),
-        recomputeContext.findAll(ApplicationEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-        recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
-        recomputeContext.findAll(PermissionFlagEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-      ]);
+  ): FlatRolePermissionFlagMaps {
+    const rolePermissionFlags = recomputeContext.getRows(
+      RolePermissionFlagEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const roles = recomputeContext.getRows(RoleEntity);
+    const permissionFlags = recomputeContext.getRows(PermissionFlagEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

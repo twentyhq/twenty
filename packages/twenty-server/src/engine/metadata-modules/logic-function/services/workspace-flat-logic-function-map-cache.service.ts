@@ -13,6 +13,7 @@ import { fromLogicFunctionEntityToFlatLogicFunction } from 'src/engine/metadata-
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -20,18 +21,21 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatLogicFunctionMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatLogicFunction>
 > {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(LogicFunctionEntity),
+    entityFetchRequirement(ApplicationEntity, [
+      'id',
+      'universalIdentifier',
+      'deletedAt',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatEntityMaps<FlatLogicFunction>> {
-    const [logicFunctions, applications] = await Promise.all([
-      recomputeContext.findAll(LogicFunctionEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-        'deletedAt',
-      ]),
-    ]);
+  ): FlatEntityMaps<FlatLogicFunction> {
+    const logicFunctions = recomputeContext.getRows(LogicFunctionEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(

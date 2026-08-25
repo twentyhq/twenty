@@ -30,8 +30,8 @@ type EntityFetchState = {
 // per entity, full rows once any provider needs them, always withDeleted) and
 // executed as one query per entity before computeForCache runs. Resolving
 // again with covered requirements is a no-op; uncovered ones (a later batch
-// sharing this context, or a transitional findAll) dispatch a new generation
-// with the widened union. Generations are additive: every awaiter records the
+// sharing this context) dispatch a new generation with the widened union.
+// Generations are additive: every awaiter records the
 // settled rows within its own continuation, so after awaiting a resolution
 // the rows covering it are always readable through getRows, whatever other
 // generations are still in flight. Reading an undeclared entity throws.
@@ -47,23 +47,6 @@ export class WorkspaceCacheRecomputeContext {
     requirements: EntityFetchRequirement[],
   ): Promise<void> {
     await this.resolveToRowsByEntityName(requirements);
-  }
-
-  // Transitional API for providers not yet migrated to declared
-  // fetchRequirements: resolves the requirement on demand through the same
-  // plan machinery, then returns the rows of the generation it awaited.
-  async findAll<TEntity extends WorkspaceScopedRow>(
-    entityTarget: EntityTarget<TEntity>,
-    columns?: readonly (keyof TEntity & string)[],
-  ): Promise<TEntity[]> {
-    const rowsByEntityName = await this.resolveToRowsByEntityName([
-      {
-        entityTarget: entityTarget as EntityTarget<WorkspaceScopedRow>,
-        columns,
-      },
-    ]);
-
-    return rowsByEntityName.get(this.getEntityName(entityTarget)) as TEntity[];
   }
 
   getRows<TEntity extends WorkspaceScopedRow>(

@@ -8,15 +8,20 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 @Injectable()
 @WorkspaceCache('userWorkspaceRoleMap', { packingPonderation: 1 })
 export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCacheProvider<UserWorkspaceRoleMap> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(RoleTargetEntity),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<UserWorkspaceRoleMap> {
-    const roleTargets = await recomputeContext.findAll(RoleTargetEntity);
+  ): UserWorkspaceRoleMap {
+    const roleTargets = recomputeContext.getRows(RoleTargetEntity);
 
     // the recompute context only filters on workspaceId: the previous
     // userWorkspaceId IS NOT NULL condition moved in memory

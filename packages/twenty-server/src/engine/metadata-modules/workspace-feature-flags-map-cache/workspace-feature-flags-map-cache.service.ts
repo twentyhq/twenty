@@ -6,16 +6,20 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 @Injectable()
 @WorkspaceCache('featureFlagsMap', { packingPonderation: 1 })
 export class WorkspaceFeatureFlagsMapCacheService extends WorkspaceCacheProvider<FeatureFlagMap> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(FeatureFlagEntity),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FeatureFlagMap> {
-    const workspaceFeatureFlags =
-      await recomputeContext.findAll(FeatureFlagEntity);
+  ): FeatureFlagMap {
+    const workspaceFeatureFlags = recomputeContext.getRows(FeatureFlagEntity);
 
     return workspaceFeatureFlags.reduce((result, currentFeatureFlag) => {
       result[currentFeatureFlag.key] = currentFeatureFlag.value;

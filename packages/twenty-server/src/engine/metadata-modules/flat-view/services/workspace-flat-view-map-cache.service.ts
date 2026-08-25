@@ -18,72 +18,64 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewMaps', { packingPonderation: 8 })
 export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<FlatViewMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ViewEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewFieldEntity, [
+      'id',
+      'universalIdentifier',
+      'viewId',
+    ]),
+    entityFetchRequirement(ViewFilterEntity, [
+      'id',
+      'universalIdentifier',
+      'viewId',
+    ]),
+    entityFetchRequirement(ViewGroupEntity, [
+      'id',
+      'universalIdentifier',
+      'viewId',
+    ]),
+    entityFetchRequirement(ViewFilterGroupEntity, [
+      'id',
+      'universalIdentifier',
+      'viewId',
+    ]),
+    entityFetchRequirement(ViewSortEntity, [
+      'id',
+      'universalIdentifier',
+      'viewId',
+    ]),
+    entityFetchRequirement(ViewFieldGroupEntity, [
+      'id',
+      'universalIdentifier',
+      'viewId',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatViewMaps> {
-    const [
-      views,
-      applications,
-      objectMetadatas,
-      fieldMetadatas,
-      viewFields,
-      viewFilters,
-      viewGroups,
-      viewFilterGroups,
-      viewSorts,
-      viewFieldGroups,
-    ] = await Promise.all([
-      recomputeContext.findAll(ViewEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(FieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ViewFieldEntity, [
-        'id',
-        'universalIdentifier',
-        'viewId',
-      ]),
-      recomputeContext.findAll(ViewFilterEntity, [
-        'id',
-        'universalIdentifier',
-        'viewId',
-      ]),
-      recomputeContext.findAll(ViewGroupEntity, [
-        'id',
-        'universalIdentifier',
-        'viewId',
-      ]),
-      recomputeContext.findAll(ViewFilterGroupEntity, [
-        'id',
-        'universalIdentifier',
-        'viewId',
-      ]),
-      recomputeContext.findAll(ViewSortEntity, [
-        'id',
-        'universalIdentifier',
-        'viewId',
-      ]),
-      recomputeContext.findAll(ViewFieldGroupEntity, [
-        'id',
-        'universalIdentifier',
-        'viewId',
-      ]),
-    ]);
+  ): FlatViewMaps {
+    const views = recomputeContext.getRows(ViewEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
+    const viewFields = recomputeContext.getRows(ViewFieldEntity);
+    const viewFilters = recomputeContext.getRows(ViewFilterEntity);
+    const viewGroups = recomputeContext.getRows(ViewGroupEntity);
+    const viewFilterGroups = recomputeContext.getRows(ViewFilterGroupEntity);
+    const viewSorts = recomputeContext.getRows(ViewSortEntity);
+    const viewFieldGroups = recomputeContext.getRows(ViewFieldGroupEntity);
 
     const [
       viewFieldsByViewId,

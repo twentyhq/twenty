@@ -12,23 +12,29 @@ import { fromApplicationVariableEntityToFlatApplicationVariable } from 'src/engi
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatApplicationVariableMaps', { packingPonderation: 1 })
 export class WorkspaceFlatApplicationVariableMapCacheService extends WorkspaceCacheProvider<FlatApplicationVariableMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ApplicationVariableEntity),
+    entityFetchRequirement(ApplicationEntity, [
+      'id',
+      'universalIdentifier',
+      'deletedAt',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatApplicationVariableMaps> {
-    const [applicationVariables, applications] = await Promise.all([
-      recomputeContext.findAll(ApplicationVariableEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-        'deletedAt',
-      ]),
-    ]);
+  ): FlatApplicationVariableMaps {
+    const applicationVariables = recomputeContext.getRows(
+      ApplicationVariableEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(

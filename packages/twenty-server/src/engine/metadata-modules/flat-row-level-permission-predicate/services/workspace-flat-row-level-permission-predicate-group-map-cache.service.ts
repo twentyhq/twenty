@@ -15,6 +15,7 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -23,33 +24,31 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
   packingPonderation: 1,
 })
 export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extends WorkspaceCacheProvider<FlatRowLevelPermissionPredicateGroupMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(RowLevelPermissionPredicateGroupEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(RoleEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(RowLevelPermissionPredicateEntity, [
+      'id',
+      'universalIdentifier',
+      'rowLevelPermissionPredicateGroupId',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatRowLevelPermissionPredicateGroupMaps> {
-    const [
-      rowLevelPermissionPredicateGroups,
-      applications,
-      objectMetadatas,
-      roles,
-      rowLevelPermissionPredicates,
-    ] = await Promise.all([
-      recomputeContext.findAll(RowLevelPermissionPredicateGroupEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
-      recomputeContext.findAll(RowLevelPermissionPredicateEntity, [
-        'id',
-        'universalIdentifier',
-        'rowLevelPermissionPredicateGroupId',
-      ]),
-    ]);
+  ): FlatRowLevelPermissionPredicateGroupMaps {
+    const rowLevelPermissionPredicateGroups = recomputeContext.getRows(
+      RowLevelPermissionPredicateGroupEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const roles = recomputeContext.getRows(RoleEntity);
+    const rowLevelPermissionPredicates = recomputeContext.getRows(
+      RowLevelPermissionPredicateEntity,
+    );
 
     const [
       childRowLevelPermissionPredicateGroupsByParentId,

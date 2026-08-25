@@ -153,49 +153,31 @@ describe('WorkspaceCacheRecomputeContext', () => {
     expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
   });
 
-  it('serves transitional findAll callers through the same plan machinery', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
-
-    const [firstRows, secondRows] = await Promise.all([
-      recomputeContext.findAll(FirstTestEntity, ['id']),
-      recomputeContext.findAll(FirstTestEntity, ['id']),
-    ]);
-    const coveredLaterRows = await recomputeContext.findAll(FirstTestEntity, [
-      'id',
-    ]);
-
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
-    expect(secondRows).toBe(firstRows);
-    expect(coveredLaterRows).toBe(firstRows);
-
-    await recomputeContext.findAll(FirstTestEntity, ['name']);
-
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
-
-    expect(findMock).toHaveBeenCalledTimes(2);
-    expect(findMock.mock.calls[1][0].select).toEqual(
-      expect.arrayContaining(['id', 'name']),
-    );
-  });
-
   it('keeps previously resolved rows readable while a widening refetch is in flight', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+    const initialRows = [{ id: 'first-generation', workspaceId: WORKSPACE_ID }];
+    const widenedRows = [
+      { id: 'first-generation', name: 'widened', workspaceId: WORKSPACE_ID },
+    ];
+
+    findMock
+      .mockResolvedValueOnce(initialRows)
+      .mockResolvedValueOnce(widenedRows);
 
     await recomputeContext.resolveFetchRequirements([
       entityFetchRequirement(FirstTestEntity, ['id']),
     ]);
-    const initialRows = recomputeContext.getRows(FirstTestEntity);
 
-    const wideningPromise = recomputeContext.findAll(FirstTestEntity, [
-      'id',
-      'name',
+    const wideningPromise = recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id', 'name']),
     ]);
 
     expect(recomputeContext.getRows(FirstTestEntity)).toBe(initialRows);
 
-    const widenedRows = await wideningPromise;
+    await wideningPromise;
 
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(2);
+    expect(findMock).toHaveBeenCalledTimes(2);
     expect(recomputeContext.getRows(FirstTestEntity)).toBe(widenedRows);
   });
 

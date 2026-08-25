@@ -12,23 +12,29 @@ import { fromConnectionProviderEntityToFlatConnectionProvider } from 'src/engine
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatConnectionProviderMaps', { packingPonderation: 1 })
 export class WorkspaceFlatConnectionProviderMapCacheService extends WorkspaceCacheProvider<FlatConnectionProviderMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ConnectionProviderEntity),
+    entityFetchRequirement(ApplicationEntity, [
+      'id',
+      'universalIdentifier',
+      'deletedAt',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatConnectionProviderMaps> {
-    const [connectionProviders, applications] = await Promise.all([
-      recomputeContext.findAll(ConnectionProviderEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-        'deletedAt',
-      ]),
-    ]);
+  ): FlatConnectionProviderMaps {
+    const connectionProviders = recomputeContext.getRows(
+      ConnectionProviderEntity,
+    );
+    const applications = recomputeContext.getRows(ApplicationEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(

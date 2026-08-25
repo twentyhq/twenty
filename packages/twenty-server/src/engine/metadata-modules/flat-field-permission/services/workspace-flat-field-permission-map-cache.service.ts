@@ -12,37 +12,29 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatFieldPermissionMaps', { packingPonderation: 1 })
 export class WorkspaceFlatFieldPermissionMapCacheService extends WorkspaceCacheProvider<FlatFieldPermissionMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(FieldPermissionEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(RoleEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatFieldPermissionMaps> {
-    const [
-      fieldPermissions,
-      applications,
-      roles,
-      objectMetadatas,
-      fieldMetadatas,
-    ] = await Promise.all([
-      recomputeContext.findAll(FieldPermissionEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(FieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-    ]);
+  ): FlatFieldPermissionMaps {
+    const fieldPermissions = recomputeContext.getRows(FieldPermissionEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const roles = recomputeContext.getRows(RoleEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

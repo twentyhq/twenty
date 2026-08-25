@@ -12,24 +12,27 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatRoleTargetMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvider<FlatRoleTargetMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(RoleTargetEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(RoleEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(AgentEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatRoleTargetMaps> {
-    const [roleTargets, applications, roles, agents] = await Promise.all([
-      recomputeContext.findAll(RoleTargetEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
-      recomputeContext.findAll(AgentEntity, ['id', 'universalIdentifier']),
-    ]);
+  ): FlatRoleTargetMaps {
+    const roleTargets = recomputeContext.getRows(RoleTargetEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const roles = recomputeContext.getRows(RoleEntity);
+    const agents = recomputeContext.getRows(AgentEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

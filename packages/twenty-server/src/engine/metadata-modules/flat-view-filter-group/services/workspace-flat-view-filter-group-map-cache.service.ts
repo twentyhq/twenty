@@ -12,30 +12,32 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewFilterGroupMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewFilterGroupMapCacheService extends WorkspaceCacheProvider<FlatViewFilterGroupMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ViewFilterGroupEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewFilterEntity, [
+      'id',
+      'universalIdentifier',
+      'viewFilterGroupId',
+    ]),
+    entityFetchRequirement(ViewEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatViewFilterGroupMaps> {
-    const [viewFilterGroups, applications, viewFilters, views] =
-      await Promise.all([
-        recomputeContext.findAll(ViewFilterGroupEntity),
-        recomputeContext.findAll(ApplicationEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-        recomputeContext.findAll(ViewFilterEntity, [
-          'id',
-          'universalIdentifier',
-          'viewFilterGroupId',
-        ]),
-        recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
-      ]);
+  ): FlatViewFilterGroupMaps {
+    const viewFilterGroups = recomputeContext.getRows(ViewFilterGroupEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const viewFilters = recomputeContext.getRows(ViewFilterEntity);
+    const views = recomputeContext.getRows(ViewEntity);
 
     const [viewFiltersByViewFilterGroupId, childViewFilterGroupsByParentId] = (
       [

@@ -10,22 +10,23 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatFrontComponentMaps', { packingPonderation: 1 })
 export class WorkspaceFlatFrontComponentMapCacheService extends WorkspaceCacheProvider<FlatFrontComponentMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(FrontComponentEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatFrontComponentMaps> {
-    const [frontComponents, applications] = await Promise.all([
-      recomputeContext.findAll(FrontComponentEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-    ]);
+  ): FlatFrontComponentMaps {
+    const frontComponents = recomputeContext.getRows(FrontComponentEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

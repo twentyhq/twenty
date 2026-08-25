@@ -12,33 +12,32 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatPageLayoutMaps', { packingPonderation: 1 })
 export class WorkspaceFlatPageLayoutMapCacheService extends WorkspaceCacheProvider<FlatPageLayoutMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(PageLayoutEntity),
+    entityFetchRequirement(PageLayoutTabEntity, [
+      'id',
+      'universalIdentifier',
+      'pageLayoutId',
+    ]),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatPageLayoutMaps> {
-    const [pageLayouts, pageLayoutTabs, applications, objectMetadatas] =
-      await Promise.all([
-        recomputeContext.findAll(PageLayoutEntity),
-        recomputeContext.findAll(PageLayoutTabEntity, [
-          'id',
-          'universalIdentifier',
-          'pageLayoutId',
-        ]),
-        recomputeContext.findAll(ApplicationEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-        recomputeContext.findAll(ObjectMetadataEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-      ]);
+  ): FlatPageLayoutMaps {
+    const pageLayouts = recomputeContext.getRows(PageLayoutEntity);
+    const pageLayoutTabs = recomputeContext.getRows(PageLayoutTabEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
 
     const [pageLayoutTabsByPageLayoutId] = (
       [

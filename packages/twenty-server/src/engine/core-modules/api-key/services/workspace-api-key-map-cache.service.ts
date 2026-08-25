@@ -7,17 +7,20 @@ import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/fr
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 @Injectable()
 @WorkspaceCache('apiKeyMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   Record<string, FlatApiKey>
 > {
-  async computeForCache(
+  override readonly fetchRequirements = [entityFetchRequirement(ApiKeyEntity)];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<Record<string, FlatApiKey>> {
-    const apiKeys = await recomputeContext.findAll(ApiKeyEntity);
+  ): Record<string, FlatApiKey> {
+    const apiKeys = recomputeContext.getRows(ApiKeyEntity);
 
     return apiKeys.reduce(
       (map, apiKey) => {

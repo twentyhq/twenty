@@ -17,6 +17,7 @@ import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/r
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -25,56 +26,59 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatRole>
 > {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(RoleEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(RoleTargetEntity, [
+      'id',
+      'universalIdentifier',
+      'roleId',
+    ]),
+    entityFetchRequirement(ObjectPermissionEntity, [
+      'id',
+      'universalIdentifier',
+      'roleId',
+    ]),
+    entityFetchRequirement(RolePermissionFlagEntity, [
+      'id',
+      'universalIdentifier',
+      'roleId',
+    ]),
+    entityFetchRequirement(FieldPermissionEntity, [
+      'id',
+      'universalIdentifier',
+      'roleId',
+    ]),
+    entityFetchRequirement(RowLevelPermissionPredicateEntity, [
+      'id',
+      'universalIdentifier',
+      'roleId',
+    ]),
+    entityFetchRequirement(RowLevelPermissionPredicateGroupEntity, [
+      'id',
+      'universalIdentifier',
+      'roleId',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatEntityMaps<FlatRole>> {
-    const [
-      roles,
-      applications,
-      roleTargets,
-      objectPermissions,
-      rolePermissionFlags,
-      fieldPermissions,
-      rowLevelPermissionPredicates,
-      rowLevelPermissionPredicateGroups,
-    ] = await Promise.all([
-      recomputeContext.findAll(RoleEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(RoleTargetEntity, [
-        'id',
-        'universalIdentifier',
-        'roleId',
-      ]),
-      recomputeContext.findAll(ObjectPermissionEntity, [
-        'id',
-        'universalIdentifier',
-        'roleId',
-      ]),
-      recomputeContext.findAll(RolePermissionFlagEntity, [
-        'id',
-        'universalIdentifier',
-        'roleId',
-      ]),
-      recomputeContext.findAll(FieldPermissionEntity, [
-        'id',
-        'universalIdentifier',
-        'roleId',
-      ]),
-      recomputeContext.findAll(RowLevelPermissionPredicateEntity, [
-        'id',
-        'universalIdentifier',
-        'roleId',
-      ]),
-      recomputeContext.findAll(RowLevelPermissionPredicateGroupEntity, [
-        'id',
-        'universalIdentifier',
-        'roleId',
-      ]),
-    ]);
+  ): FlatEntityMaps<FlatRole> {
+    const roles = recomputeContext.getRows(RoleEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const roleTargets = recomputeContext.getRows(RoleTargetEntity);
+    const objectPermissions = recomputeContext.getRows(ObjectPermissionEntity);
+    const rolePermissionFlags = recomputeContext.getRows(
+      RolePermissionFlagEntity,
+    );
+    const fieldPermissions = recomputeContext.getRows(FieldPermissionEntity);
+    const rowLevelPermissionPredicates = recomputeContext.getRows(
+      RowLevelPermissionPredicateEntity,
+    );
+    const rowLevelPermissionPredicateGroups = recomputeContext.getRows(
+      RowLevelPermissionPredicateGroupEntity,
+    );
 
     const [
       roleTargetsByRoleId,

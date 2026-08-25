@@ -7,16 +7,20 @@ import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/ty
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 @Injectable()
 @WorkspaceCache('flatApplicationMaps', { packingPonderation: 1 })
 export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvider<FlatApplicationCacheMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ApplicationEntity),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatApplicationCacheMaps> {
-    const applicationEntities =
-      await recomputeContext.findAll(ApplicationEntity);
+  ): FlatApplicationCacheMaps {
+    const applicationEntities = recomputeContext.getRows(ApplicationEntity);
 
     const flatApplicationMaps: FlatApplicationCacheMaps = {
       byId: {},

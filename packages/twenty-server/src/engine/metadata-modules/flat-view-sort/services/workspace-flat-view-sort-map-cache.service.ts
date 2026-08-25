@@ -13,27 +13,26 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 @Injectable()
 @WorkspaceCache('flatViewSortMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewSortMapCacheService extends WorkspaceCacheProvider<FlatViewSortMaps> {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ViewSortEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatViewSortMaps> {
-    const [existingViewSorts, applications, views, fieldMetadatas] =
-      await Promise.all([
-        recomputeContext.findAll(ViewSortEntity),
-        recomputeContext.findAll(ApplicationEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-        recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
-        recomputeContext.findAll(FieldMetadataEntity, [
-          'id',
-          'universalIdentifier',
-        ]),
-      ]);
+  ): FlatViewSortMaps {
+    const existingViewSorts = recomputeContext.getRows(ViewSortEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const views = recomputeContext.getRows(ViewEntity);
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
