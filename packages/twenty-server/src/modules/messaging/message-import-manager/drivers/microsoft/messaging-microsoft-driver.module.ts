@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -13,6 +12,7 @@ import { MicrosoftMessagesImportErrorHandler } from 'src/modules/messaging/messa
 import { MicrosoftNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-network-error-handler.service';
 
 import { MicrosoftGetMessageListService } from './services/microsoft-get-message-list.service';
+import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
@@ -21,9 +21,9 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     FeatureFlagModule,
     OAuth2ClientManagerModule,
     WorkspaceDataSourceModule,
-    ObjectMetadataRepositoryModule,
   ],
   providers: [
+    BlocklistRepository,
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
     MicrosoftFetchByBatchService,
