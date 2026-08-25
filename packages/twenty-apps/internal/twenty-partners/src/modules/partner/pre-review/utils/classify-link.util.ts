@@ -40,11 +40,11 @@ const VIDEO_HOSTS: { host: string; classification: LinkClassification }[] = [
   { host: 'vidyard.com', classification: 'video-other' },
 ];
 
-const TWENTY_APP_SHELL_MARKERS = [
-  '<title>Twenty',
-  'twenty-front',
-  '__twentyServerUrl',
-];
+// The title must BE "Twenty", not merely start with it — a substring check
+// makes "Twentytree Consulting" look like an instance.
+const TWENTY_APP_SHELL_TITLE_PATTERN = /<title>\s*Twenty\s*(<|[|·—-])/;
+
+const TWENTY_APP_SHELL_MARKERS = ['twenty-front', '__twentyServerUrl'];
 
 const parseHostname = (url: string): string | null => {
   try {
@@ -79,7 +79,8 @@ const isHardFetchFailure = (outcome: LinkFetchOutcome): boolean => {
 
 const hasTwentyAppShell = (html: string | null): boolean =>
   html !== null &&
-  TWENTY_APP_SHELL_MARKERS.some((marker) => html.includes(marker));
+  (TWENTY_APP_SHELL_TITLE_PATTERN.test(html) ||
+    TWENTY_APP_SHELL_MARKERS.some((marker) => html.includes(marker)));
 
 export const classifyLink = ({
   url,

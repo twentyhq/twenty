@@ -37,6 +37,30 @@ describe('classifyLink', () => {
     ).toBe('twenty-instance');
   });
 
+  it('does not mistake a company whose name starts with Twenty for an instance', () => {
+    expect(
+      classifyLink({
+        url: 'https://twentytree.com',
+        outcome: ok('<title>Twentytree Consulting</title>'),
+      }),
+    ).toBe('site');
+  });
+
+  it('still detects the app shell from its build markers', () => {
+    expect(
+      classifyLink({
+        url: 'https://crm.acme.com',
+        outcome: ok('<script src="/twenty-front/main.js"></script>'),
+      }),
+    ).toBe('twenty-instance');
+    expect(
+      classifyLink({
+        url: 'https://crm.acme.com',
+        outcome: ok('window.__twentyServerUrl = "https://api.acme.com"'),
+      }),
+    ).toBe('twenty-instance');
+  });
+
   it('classifies an ordinary marketing site', () => {
     expect(
       classifyLink({

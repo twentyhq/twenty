@@ -89,8 +89,26 @@ const readFlag = (name: string): string | undefined =>
     .slice(1)
     .join('=');
 
-const hasFlag = (name: string): boolean =>
-  process.argv.includes(`--${name}`);
+// `--dry-run=true` must not silently become a real write, so the `=...` form
+// counts as the flag being set.
+export const hasBooleanFlag = (argv: string[], name: string): boolean =>
+  argv.some(
+    (argument) => argument === `--${name}` || argument.startsWith(`--${name}=`),
+  );
+
+// A typo like `--limit=1O` used to become NaN, and `graded >= NaN` is always
+// false — the whole backlog got graded instead of one row.
+export const parseLimit = (value: string | undefined): number => {
+  if (value === undefined) return Infinity;
+
+  const limit = Number(value);
+
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new Error(`--limit must be a positive integer, got "${value}"`);
+  }
+
+  return limit;
+};
 
 type BacklogNode = {
   id: string;
@@ -192,9 +210,8 @@ async function main() {
   process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = apiKey;
   process.env.TWENTY_APP_ACCESS_TOKEN = apiKey;
 
-  const isDryRun = hasFlag('dry-run');
-  const limitFlag = readFlag('limit');
-  const limit = limitFlag === undefined ? Infinity : Number(limitFlag);
+  const isDryRun = hasBooleanFlag(process.argv, 'dry-run');
+  const limit = parseLimit(readFlag('limit'));
   const tallyPath = readFlag('tally');
 
   const tallyAnswers: TallyAnswer[] =

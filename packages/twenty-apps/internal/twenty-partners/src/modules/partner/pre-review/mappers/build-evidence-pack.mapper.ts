@@ -15,8 +15,29 @@ const formatList = (values: string[] | null): string | null =>
 const line = (label: string, value: string | null): string[] =>
   isNonEmptyString(value) ? [`${label}: ${value}`] : [];
 
+const UNTRUSTED_FENCE_START = '<<<UNTRUSTED SOURCE CONTENT>>>';
+const UNTRUSTED_FENCE_END = '<<<END UNTRUSTED SOURCE CONTENT>>>';
+const FENCE_MARKER_PATTERN = /<<<(?:END )?UNTRUSTED SOURCE CONTENT>>>/g;
+
+// Fetched page text can forge any heading the pack itself uses, so it goes
+// between fences the model is told to distrust — and it may not close them.
+const untrustedLine = (label: string, value: string | null): string[] =>
+  isNonEmptyString(value)
+    ? [
+        `${label}:`,
+        UNTRUSTED_FENCE_START,
+        value.replace(FENCE_MARKER_PATTERN, ''),
+        UNTRUSTED_FENCE_END,
+      ]
+    : [];
+
+const mentionsTwenty = (value: string | null): boolean =>
+  isNonEmptyString(value) && value.toLowerCase().includes('twenty');
+
 // A live Twenty instance counts wherever it was pasted — an applicant who put
 // their instance URL in the website field still gave machine-checkable proof.
+// A readable site or repository proves nothing on its own: it only counts when
+// what was read actually names Twenty.
 const isVerifiableProof = (source: EvidenceSource): boolean => {
   if (source.failureReason !== null) return false;
 
@@ -25,7 +46,7 @@ const isVerifiableProof = (source: EvidenceSource): boolean => {
       return true;
     case 'github':
     case 'site':
-      return isNonEmptyString(source.excerpt);
+      return mentionsTwenty(source.excerpt);
     case 'video-youtube':
       return isNonEmptyString(source.captionExcerpt);
     default:
@@ -85,11 +106,11 @@ const buildSourceSection = (source: EvidenceSource): string[] => [
   `URL: ${source.url}`,
   `Classification: ${source.classification}`,
   ...line('Fetch failed', source.failureReason),
-  ...line('Video title', source.videoTitle),
-  ...line('Video description', source.videoDescription),
-  ...line('Video thumbnail URL', source.videoThumbnailUrl),
-  ...line('Video captions', source.captionExcerpt),
-  ...line('Excerpt', source.excerpt),
+  ...untrustedLine('Video title', source.videoTitle),
+  ...untrustedLine('Video description', source.videoDescription),
+  ...untrustedLine('Video thumbnail URL', source.videoThumbnailUrl),
+  ...untrustedLine('Video captions', source.captionExcerpt),
+  ...untrustedLine('Excerpt', source.excerpt),
 ];
 
 export const buildEvidencePack = ({

@@ -6,11 +6,78 @@ import {
 import { type PublicWebPage } from 'src/modules/partner/pre-review/connector/public-web/types';
 import { extractCaptionText } from 'src/modules/partner/pre-review/utils/extract-caption-text.util';
 import { extractYoutubeCaptionTrackUrl } from 'src/modules/partner/pre-review/utils/extract-youtube-caption-track-url.util';
+import { isHttpUrl } from 'src/modules/shared/utils/http-url.util';
+
+const BLOCKED_ERROR_MESSAGE = 'blocked: private address';
+
+const BLOCKED_HOSTNAME_SUFFIXES = ['.internal', '.local', '.localhost'];
+
+const IPV4_PATTERN = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+
+// 0/8, 10/8, 127/8, 169.254/16, 172.16/12 and 192.168/16 all reach the machine
+// that runs the fetch or its neighbours on the private network.
+const isPrivateIpv4 = (hostname: string): boolean => {
+  const match = IPV4_PATTERN.exec(hostname);
+  if (match === null) return false;
+
+  const first = Number(match[1]);
+  const second = Number(match[2]);
+
+  return (
+    first === 0 ||
+    first === 10 ||
+    first === 127 ||
+    (first === 169 && second === 254) ||
+    (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 168)
+  );
+};
+
+// URL keeps the brackets around an IPv6 literal; fc00::/7 is unique-local and
+// fe80::/10 is link-local.
+const isPrivateIpv6 = (hostname: string): boolean => {
+  const address = hostname.replace(/^\[|\]$/g, '').toLowerCase();
+
+  if (address === '::1' || address === '::') return true;
+
+  return /^(f[cd]|fe[89ab])/.test(address);
+};
+
+const isBlockedHostname = (hostname: string): boolean => {
+  const host = hostname.toLowerCase();
+
+  if (host === 'localhost') return true;
+  if (BLOCKED_HOSTNAME_SUFFIXES.some((suffix) => host.endsWith(suffix))) {
+    return true;
+  }
+
+  return isPrivateIpv4(host) || isPrivateIpv6(host);
+};
+
+// The applicant chooses these URLs, so a fetch is an SSRF primitive unless the
+// scheme and the host are both checked — before the request and again on the
+// URL the redirect chain actually landed on.
+const isBlockedTarget = (url: string): boolean => {
+  if (!isHttpUrl(url)) return true;
+
+  return isBlockedHostname(new URL(url).hostname);
+};
+
+const blockedPage = (url: string): PublicWebPage => ({
+  url,
+  finalUrl: null,
+  status: null,
+  isTimeout: false,
+  html: null,
+  errorMessage: BLOCKED_ERROR_MESSAGE,
+});
 
 export const fetchPublicWebPage = async (
   url: string,
   timeoutMs: number = PUBLIC_WEB_FETCH_TIMEOUT_MS,
 ): Promise<PublicWebPage> => {
+  if (isBlockedTarget(url)) return blockedPage(url);
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -24,6 +91,10 @@ export const fetchPublicWebPage = async (
       },
       signal: controller.signal,
     });
+
+    if (response.url.length > 0 && isBlockedTarget(response.url)) {
+      return blockedPage(url);
+    }
 
     const body = await response.text();
 
