@@ -1,9 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 
@@ -14,20 +13,32 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-export const buildMessageThreadStandardFlatFieldMetadatas = ({
-  now,
-  objectName,
-  workspaceId,
-  standardObjectMetadataRelatedEntityIds,
-  dependencyFlatEntityMaps,
-  twentyStandardApplicationId,
-}: Omit<
-  CreateStandardFieldArgs<'messageThread', FieldMetadataType>,
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+
+type StandardTargetObjectName = 'calendarEventTarget' | 'messageThreadTarget';
+
+type BuildStandardTargetFieldsArgs<T extends StandardTargetObjectName> = Omit<
+  CreateStandardFieldArgs<T, FieldMetadataType>,
   'context'
->): Record<AllStandardObjectFieldName<'messageThread'>, FlatFieldMetadata> => ({
+> & {
+  inverseTargetFieldName: 'calendarEventTargets' | 'messageThreadTargets';
+  morphId: string;
+};
+
+export const buildStandardTargetFlatFieldMetadatas = <
+  T extends StandardTargetObjectName,
+>({
+  objectName,
+  inverseTargetFieldName,
+  morphId,
+  ...args
+}: BuildStandardTargetFieldsArgs<T>): Record<
+  Exclude<AllStandardObjectFieldName<'calendarEventTarget'>, 'calendarEvent'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
@@ -41,14 +52,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isUIEditable: false,
       defaultValue: 'uuid',
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   createdAt: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
@@ -65,14 +72,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   updatedAt: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
@@ -92,14 +95,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   deletedAt: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
@@ -118,14 +117,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isUIEditable: false,
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   createdBy: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
@@ -148,14 +143,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
         workspaceMemberId: null,
       },
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   updatedBy: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
@@ -178,14 +169,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
         workspaceMemberId: null,
       },
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   position: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
@@ -194,7 +181,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       ),
       description: i18nLabel(
         msg({
-          message: `Message Thread record position`,
+          message: `Target record position`,
           context: 'fieldMetadata.description',
         }),
       ),
@@ -203,14 +190,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isNullable: false,
       defaultValue: 0,
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
   searchVector: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
@@ -227,123 +210,139 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
-  subject: createStandardFieldFlatMetadata({
+  isAutomaticallyAssigned: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
-      fieldName: 'subject',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Subject`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Subject`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconMessage',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  messages: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messages',
-      label: i18nLabel(
-        msg({ message: `Messages`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Messages from the thread.`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconMessage',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'message',
-      targetFieldName: 'messageThread',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageChannelMessageAssociations',
+      fieldName: 'isAutomaticallyAssigned',
+      type: FieldMetadataType.BOOLEAN,
       label: i18nLabel(
         msg({
-          message: `Message Channel Association`,
+          message: `Automatically assigned`,
           context: 'fieldMetadata.label',
         }),
       ),
       description: i18nLabel(
         msg({
-          message: `Messages from the channel.`,
+          message: `Whether current participant rules justify this target`,
           context: 'fieldMetadata.description',
         }),
       ),
-      icon: 'IconMessage',
-      isNullable: true,
+      icon: 'IconRobot',
+      isSystem: true,
+      isNullable: false,
       isUIEditable: false,
-      targetObjectName: 'messageChannelMessageAssociation',
-      targetFieldName: 'messageThread',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
+      defaultValue: false,
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
   }),
-  messageThreadTargets: createStandardRelationFieldFlatMetadata({
+  isManuallyAssigned: createStandardFieldFlatMetadata({
+    ...args,
     objectName,
-    workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageThreadTargets',
+      fieldName: 'isManuallyAssigned',
+      type: FieldMetadataType.BOOLEAN,
       label: i18nLabel(
-        msg({ message: `Relations`, context: 'fieldMetadata.label' }),
+        msg({ message: `Manually assigned`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `Message thread targets`,
+          message: `Whether a user explicitly assigned this target`,
           context: 'fieldMetadata.description',
         }),
       ),
-      icon: 'IconArrowUpRight',
-      isNullable: true,
-      targetObjectName: 'messageThreadTarget',
-      targetFieldName: 'messageThread',
-      settings: { relationType: RelationType.ONE_TO_MANY },
-      junctionTargetFieldUniversalIdentifier:
-        STANDARD_OBJECTS.messageThreadTarget.fields.targetPerson
-          .universalIdentifier,
+      icon: 'IconUserCheck',
+      isSystem: true,
+      isNullable: false,
+      isUIEditable: false,
+      defaultValue: true,
     },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
+  }),
+  targetPerson: createStandardRelationFieldFlatMetadata({
+    ...args,
+    objectName,
+    context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId,
+      fieldName: 'targetPerson',
+      label: i18nLabel(
+        msg({ message: `Person`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Target record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconUser',
+      isNullable: true,
+      isUIEditable: false,
+      isSystemSideEffect: true,
+      targetObjectName: 'person',
+      targetFieldName: inverseTargetFieldName,
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'targetPersonId',
+      },
+    },
+  }),
+  targetCompany: createStandardRelationFieldFlatMetadata({
+    ...args,
+    objectName,
+    context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId,
+      fieldName: 'targetCompany',
+      label: i18nLabel(
+        msg({ message: `Company`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Target record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconBuildingSkyscraper',
+      isNullable: true,
+      isUIEditable: false,
+      isSystemSideEffect: true,
+      targetObjectName: 'company',
+      targetFieldName: inverseTargetFieldName,
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'targetCompanyId',
+      },
+    },
+  }),
+  targetOpportunity: createStandardRelationFieldFlatMetadata({
+    ...args,
+    objectName,
+    context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId,
+      fieldName: 'targetOpportunity',
+      label: i18nLabel(
+        msg({ message: `Opportunity`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Target record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconTargetArrow',
+      isNullable: true,
+      isUIEditable: false,
+      isSystemSideEffect: true,
+      targetObjectName: 'opportunity',
+      targetFieldName: inverseTargetFieldName,
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'targetOpportunityId',
+      },
+    },
   }),
 });

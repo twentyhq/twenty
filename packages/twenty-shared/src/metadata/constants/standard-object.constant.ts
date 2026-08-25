@@ -239,6 +239,29 @@ export const STANDARD_OBJECTS = {
       }),
     },
   },
+  calendarEventTarget: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+    fields: STANDARD_OBJECT_FIELDS.calendarEventTarget,
+    morphIds: {
+      targetMorphId: { morphId: '676e9f68-7b5c-41e6-b46d-2fb9527b7051' },
+    },
+    indexes: {
+      calendarEventIdIndex: {
+        universalIdentifier: 'ce1c180c-0236-4673-ad1d-359dddf59f93',
+      },
+      calendarEventPersonUniqueIndex: {
+        universalIdentifier: '15b9e394-d451-4186-aaf0-612f6be1ea91',
+      },
+      calendarEventCompanyUniqueIndex: {
+        universalIdentifier: '3fa22398-6e7d-47a5-95eb-4971f9d62135',
+      },
+      calendarEventOpportunityUniqueIndex: {
+        universalIdentifier: 'c8183b17-5dfe-4e02-8d9d-aef8e54ef07d',
+      },
+    },
+    views: {},
+  },
   callRecording: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording,
     fields: STANDARD_OBJECT_FIELDS.callRecording,
@@ -600,6 +623,29 @@ export const STANDARD_OBJECTS = {
         viewFieldNames: ['subject', 'messages', 'updatedAt', 'createdAt'],
       }),
     },
+  },
+  messageThreadTarget: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+    fields: STANDARD_OBJECT_FIELDS.messageThreadTarget,
+    morphIds: {
+      targetMorphId: { morphId: 'e85e853d-c26e-41b3-bec0-7afc4bdbc2f7' },
+    },
+    indexes: {
+      messageThreadIdIndex: {
+        universalIdentifier: '222fdd8b-0863-4f2a-816a-29745537b6b6',
+      },
+      messageThreadPersonUniqueIndex: {
+        universalIdentifier: '087f97cb-8c3c-4ea1-9556-933acde6c83b',
+      },
+      messageThreadCompanyUniqueIndex: {
+        universalIdentifier: '30d4f1af-8b6f-4685-802f-8a7cf29f318b',
+      },
+      messageThreadOpportunityUniqueIndex: {
+        universalIdentifier: '1dc0e37e-afb1-4e90-90b4-052374126a6a',
+      },
+    },
+    views: {},
   },
   message: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
