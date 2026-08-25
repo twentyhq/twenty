@@ -44,26 +44,39 @@ On an **Application** record, command menu → **Run workflow → Mark as Winner
 
 ## 2. Daily digest
 
-Nudges validated partners once a day when new briefs appear. The mail is a nudge, not a
-catalogue: partners already see every open brief in the **Open Briefs** view, so the mail
-says how many briefs are new and points at the partner workspace. No brief details, no
-per-partner matching.
+Nudges validated partners once a day when new briefs appear: count + link, no brief
+details. Zero new briefs → no email. Hand-built per workspace — workflows are workspace
+metadata and do not travel with the app.
 
-**Cron role.** A cron workflow runs under the application role, not a user's, so it can
-read every partner.
+Validated structure (local, 2026-08-25):
 
-### Build (Settings → Workflows)
+1. Trigger — **Cron, daily 07:00**. (A test build may use a manual trigger; switch to
+   cron before relying on it.)
+2. **Find Records** `Search new opp` — Opportunity, `Creation date` is relative
+   `PAST_1_DAY` and `isListed` is true. Raise the record limit well above the editor
+   default of 1.
+3. **Find Records** `Search Partners` — Partner, `Validation Stage` is `VALIDATED`.
+   Raise the record limit as well.
+4. **Iterator** over the partners from step 3. Inside the loop:
+   - **Find Records** `Search people partner` — Person whose `Partner → Id` is
+     `{{currentItem.id}}`. The workflow engine loads no relations, so this extra search
+     is what resolves the partner's contact email.
+   - **If/Else** — continue only when the person search returned an email.
+   - **Send Email** — from the workspace's connected mailbox, to the found person email.
+     Subject and body carry the count from step 2 and the prod marketplace link.
+5. Publish and confirm the version shows ACTIVE.
 
-1. **+ New workflow** → name **Daily Digest**.
-2. Open the trigger (**Cron trigger**). Set the pattern to **DAYS**, once a day.
-3. Add a **Find Records** step on **Opportunity**: `isListed` is true and created in the
-   last day.
-4. Add a **Stop** step that stops the run when the count from step 3 is zero. Send nothing
-   on an empty day.
-5. Add a **Find Records** step on **Partner**: `validationStage` is `VALIDATED`.
-6. Add an **Iterator** step over the partners from step 5, then a **Send Email** action
-   inside it, sent from a mailbox connected to the workspace.
-7. **Publish** the workflow version.
+Prod prerequisites: a connected mailbox (Settings → Accounts) and app ≥ 1.8.0 applied.
+
+### Local email testing (never prod)
+
+Run smtp4dev:
+`docker run --rm -d --name smtp4dev -p 8090:80 -p 2525:25 -p 1143:143 rnwood/smtp4dev`.
+Set `OUTBOUND_HTTP_SAFE_MODE_ENABLED` to false (Settings → Admin Panel → Config
+Variables) — safe mode blocks private hosts for IMAP/SMTP on purpose. Connect an
+IMAP/SMTP account with host `host.docker.internal` (SMTP 2525, IMAP 1143, no TLS, any
+credentials). Mails land at http://localhost:8090. `EMAIL_DRIVER` env vars are the
+system mailer, not this — leave them alone.
 
 ---
 
@@ -72,7 +85,7 @@ read every partner.
 | Step | Mark as Winner | Daily Digest |
 | --- | --- | --- |
 | Trigger | Manual, single **Application** | Cron, daily |
-| Action | Update linked **Opportunity** | Send Email per partner |
+| Action | Update linked **Opportunity** | Send Email per partner via person lookup |
 | Published label | **Mark as Winner** (on application) | **Daily Digest** |
 | Who runs it | Admin / Partner Ops | Application role |
 
