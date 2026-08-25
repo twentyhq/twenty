@@ -13,7 +13,7 @@ import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/workspace-orm-entity-metadatas-cache.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -38,10 +38,10 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
   ],
   providers: [
     GlobalWorkspaceOrmManager,
-    WorkspaceDataSourceV2Service,
+    WorkspaceDataSourceService,
     WorkspaceORMEntityMetadatasCacheService,
     provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
-  exports: [GlobalWorkspaceOrmManager, WorkspaceDataSourceV2Service],
+  exports: [GlobalWorkspaceOrmManager, WorkspaceDataSourceService],
 })
 export class GlobalWorkspaceDataSourceModule {}

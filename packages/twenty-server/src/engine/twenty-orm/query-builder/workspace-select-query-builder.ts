@@ -8,7 +8,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
-import { type QueryExecutorV2 } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   type ExpressionMapLike,
   type FindOptionsLike,
@@ -20,7 +20,7 @@ import {
   isObjectWhereLike,
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
-import { WorkspaceMutationQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
+import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
@@ -62,16 +62,16 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
 
 export type QueryBuilderV2Context = {
   tableShape: WorkspaceTableShape;
-  executor: QueryExecutorV2;
+  executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
-  onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilderV2) => void;
+  onBeforeExecute: (queryBuilder: WorkspaceSelectQueryBuilder) => void;
   formatResult: <T>(records: unknown) => T;
 };
 
-export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
+export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
   readonly objectRecordsPermissions: ObjectsPermissions;
@@ -119,8 +119,8 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     };
   }
 
-  clone(): WorkspaceSelectQueryBuilderV2 {
-    const cloned = new WorkspaceSelectQueryBuilderV2(this.alias, this.context);
+  clone(): WorkspaceSelectQueryBuilder {
+    const cloned = new WorkspaceSelectQueryBuilder(this.alias, this.context);
 
     cloned.whereClauses.push(...this.whereClauses);
     cloned.existsFilterClauses.push(
@@ -167,7 +167,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.appendWhere('and', condition, parameters);
   }
 
-  copyWhereFrom(source: WorkspaceSelectQueryBuilderV2): this {
+  copyWhereFrom(source: WorkspaceSelectQueryBuilder): this {
     this.whereClauses.push(...source.whereClauses);
     this.existsFilterClauses.push(
       ...source.existsFilterClauses.map((existsFilterClause) => ({
@@ -731,25 +731,25 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.getReferencedColumnNamesByAlias()[this.alias] ?? [];
   }
 
-  update(): WorkspaceMutationQueryBuilderV2 {
+  update(): WorkspaceMutationQueryBuilder {
     return this.toMutationQueryBuilder('update');
   }
 
-  delete(): WorkspaceMutationQueryBuilderV2 {
+  delete(): WorkspaceMutationQueryBuilder {
     return this.toMutationQueryBuilder('delete');
   }
 
-  softDelete(): WorkspaceMutationQueryBuilderV2 {
+  softDelete(): WorkspaceMutationQueryBuilder {
     return this.toMutationQueryBuilder('soft-delete');
   }
 
-  restore(): WorkspaceMutationQueryBuilderV2 {
+  restore(): WorkspaceMutationQueryBuilder {
     return this.toMutationQueryBuilder('restore');
   }
 
   private toMutationQueryBuilder(
     kind: MutationKind,
-  ): WorkspaceMutationQueryBuilderV2 {
+  ): WorkspaceMutationQueryBuilder {
     if (this.joinClauses.length > 0) {
       throw new TwentyOrmV2Exception(
         `A mutation cannot carry a relation join; rewrite the filter as an "id IN (subquery)" predicate first`,
@@ -766,7 +766,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       );
     }
 
-    return new WorkspaceMutationQueryBuilderV2({
+    return new WorkspaceMutationQueryBuilder({
       alias: this.alias,
       kind,
       context: {
@@ -789,7 +789,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     }
 
     if (isWhereFactoryLike(condition)) {
-      const nestedBuilder = new WorkspaceSelectQueryBuilderV2(
+      const nestedBuilder = new WorkspaceSelectQueryBuilder(
         this.alias,
         this.context,
       );
@@ -955,7 +955,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       );
     }
 
-    const nestedBuilder = new WorkspaceSelectQueryBuilderV2(alias, {
+    const nestedBuilder = new WorkspaceSelectQueryBuilder(alias, {
       ...this.context,
       tableShape: targetTableShape,
     });

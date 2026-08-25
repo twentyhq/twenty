@@ -17,7 +17,7 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { WorkspaceDataSourceV2 } from 'src/engine/twenty-orm/datasource/workspace-data-source';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -38,10 +38,10 @@ const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
 };
 
 @Injectable()
-export class WorkspaceDataSourceV2Service
+export class WorkspaceDataSourceService
   implements OnModuleInit, OnApplicationShutdown
 {
-  private readonly logger = new Logger(WorkspaceDataSourceV2Service.name);
+  private readonly logger = new Logger(WorkspaceDataSourceService.name);
   private primaryPool: Pool | null = null;
   private replicaPool: Pool | null = null;
 
@@ -83,25 +83,21 @@ export class WorkspaceDataSourceV2Service
     }
   }
 
-  getDataSource({
-    useReplica,
-  }: {
-    useReplica: boolean;
-  }): WorkspaceDataSourceV2 {
+  getDataSource({ useReplica }: { useReplica: boolean }): WorkspaceDataSource {
     const pool = useReplica
       ? (this.replicaPool ?? this.primaryPool)
       : this.primaryPool;
 
     if (!isDefined(pool)) {
       throw new TwentyOrmV2Exception(
-        'WorkspaceDataSourceV2Service has not been initialized. Make sure the module has been initialized.',
+        'WorkspaceDataSourceService has not been initialized. Make sure the module has been initialized.',
         TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
 
     const workspaceContext = getWorkspaceContext();
 
-    return new WorkspaceDataSourceV2({
+    return new WorkspaceDataSource({
       pool,
       internalContext: this.buildInternalContext(workspaceContext),
       authContext: workspaceContext.authContext,

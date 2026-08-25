@@ -13,7 +13,7 @@ import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/com
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -266,7 +266,7 @@ export class WorkflowTriggerWorkspaceService {
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
-    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     workspaceId: string,
   ) {
     const previousPublishedVersionId = workflow.lastPublishedVersionId;
@@ -368,7 +368,7 @@ export class WorkflowTriggerWorkspaceService {
 
   private async performDeactivationSteps(
     workflowVersionId: string,
-    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>,
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     workspaceId: string,
   ) {
     const workflowVersionNullable = await workflowVersionRepository.findOne({

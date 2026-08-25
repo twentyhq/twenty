@@ -52,7 +52,7 @@ import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -214,7 +214,7 @@ export class SearchService {
     filter,
     after,
   }: {
-    entityManager: WorkspaceRepositoryV2<Entity>;
+    entityManager: WorkspaceRepository<Entity>;
     rolePermissionConfig?: RolePermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -267,7 +267,7 @@ export class SearchService {
     filter,
     after,
   }: {
-    entityManager: WorkspaceRepositoryV2<Entity>;
+    entityManager: WorkspaceRepository<Entity>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchTerms: string;
@@ -382,7 +382,7 @@ export class SearchService {
     limit,
     filter,
   }: {
-    entityManager: WorkspaceRepositoryV2<Entity>;
+    entityManager: WorkspaceRepository<Entity>;
     rolePermissionConfig?: RolePermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;

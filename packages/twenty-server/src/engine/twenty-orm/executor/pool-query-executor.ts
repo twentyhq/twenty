@@ -2,9 +2,9 @@ import { type Pool } from 'pg';
 
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { computeTwentyOrmV2Exception } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
-import { type QueryExecutorV2 } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 
-export class PoolQueryExecutor implements QueryExecutorV2 {
+export class PoolQueryExecutor implements QueryExecutor {
   private readonly pool: Pool;
 
   constructor({ pool }: { pool: Pool }) {

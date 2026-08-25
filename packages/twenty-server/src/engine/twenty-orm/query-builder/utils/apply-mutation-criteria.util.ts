@@ -4,7 +4,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type ObjectWhereLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 
 export type MutationCriteria =
@@ -19,9 +19,9 @@ const isPlainObject = (value: unknown): value is ObjectWhereLike =>
   Object.getPrototypeOf(value) === Object.prototype;
 
 export const applyMutationCriteriaToQueryBuilder = (
-  queryBuilder: WorkspaceSelectQueryBuilderV2,
+  queryBuilder: WorkspaceSelectQueryBuilder,
   criteria: MutationCriteria,
-): WorkspaceSelectQueryBuilderV2 => {
+): WorkspaceSelectQueryBuilder => {
   if (typeof criteria === 'string') {
     if (criteria.length === 0) {
       throw new TwentyOrmV2Exception(

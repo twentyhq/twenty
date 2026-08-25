@@ -367,7 +367,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceV2Service
+    return this.workspaceDataSourceService
       .getDataSource({ useReplica: false })
       .transaction(async (transactionScope) => {
         for (const relationField of this.getRelationFieldsPointingToCurrentObject(

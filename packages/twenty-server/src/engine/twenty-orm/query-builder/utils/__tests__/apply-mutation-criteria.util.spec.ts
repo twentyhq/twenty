@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
 import { applyMutationCriteriaToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-mutation-criteria.util';
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const buildColumn = (columnName: string) => ({
@@ -28,7 +28,7 @@ const personTableShape: WorkspaceTableShape = {
 };
 
 const buildQueryBuilder = () =>
-  new WorkspaceSelectQueryBuilderV2('person', {
+  new WorkspaceSelectQueryBuilder('person', {
     tableShape: personTableShape,
     executor: { execute: async () => [] },
     objectRecordsPermissions: {},

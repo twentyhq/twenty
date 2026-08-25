@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -92,7 +92,7 @@ export const buildQueryBuilder = ({
 } = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
-  const queryBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+  const queryBuilder = new WorkspaceSelectQueryBuilder('person', {
     tableShape,
     executor: {
       execute: async (statement) => {

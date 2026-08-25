@@ -6,7 +6,7 @@ import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-or
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
-describe('WorkspaceSelectQueryBuilderV2 relation-keyed where', () => {
+describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
   it('should filter a to-many relation with a correlated EXISTS instead of a join', () => {
     const { queryBuilder } = buildQueryBuilder();
 

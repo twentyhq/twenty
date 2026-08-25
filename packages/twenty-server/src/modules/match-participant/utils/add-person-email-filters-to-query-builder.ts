@@ -1,7 +1,7 @@
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export interface AddPersonEmailFiltersToQueryBuilderOptions {
-  queryBuilder: WorkspaceSelectQueryBuilderV2;
+  queryBuilder: WorkspaceSelectQueryBuilder;
   emails: string[];
   excludePersonIds?: string[];
 }
@@ -11,7 +11,7 @@ export function addPersonEmailFiltersToQueryBuilder({
   queryBuilder,
   emails,
   excludePersonIds = [],
-}: AddPersonEmailFiltersToQueryBuilderOptions): WorkspaceSelectQueryBuilderV2 {
+}: AddPersonEmailFiltersToQueryBuilderOptions): WorkspaceSelectQueryBuilder {
   const normalizedEmails = emails.map((email) => email.toLowerCase());
 
   queryBuilder = queryBuilder

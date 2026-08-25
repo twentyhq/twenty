@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
@@ -74,7 +74,7 @@ const buildBuilders = ({
 }: { rows?: Record<string, unknown>[] } = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
-  const selectQueryBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+  const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
     tableShape: personTableShape,
     executor: {
       execute: async (statement) => {
@@ -92,7 +92,7 @@ const buildBuilders = ({
   return { selectQueryBuilder, executedStatements };
 };
 
-describe('WorkspaceMutationQueryBuilderV2', () => {
+describe('WorkspaceMutationQueryBuilder', () => {
   it('should build a soft delete that stamps deletedAt and updatedAt', () => {
     const { selectQueryBuilder } = buildBuilders();
 
@@ -221,7 +221,7 @@ describe('WorkspaceMutationQueryBuilderV2', () => {
       hasDeletedAtColumn: false,
     };
 
-    const selectQueryBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+    const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
       tableShape: shapeWithoutDeletedAt,
       executor: { execute: async () => [] },
       objectRecordsPermissions: {},
@@ -279,7 +279,7 @@ describe('WorkspaceMutationQueryBuilderV2', () => {
       columnNames: ['id', 'deletedAt'],
     };
 
-    const selectQueryBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+    const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
       tableShape: shapeWithoutUpdatedAt,
       executor: { execute: async () => [] },
       objectRecordsPermissions: {},

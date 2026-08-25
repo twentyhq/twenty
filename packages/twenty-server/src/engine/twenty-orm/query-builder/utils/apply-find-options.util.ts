@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import {
   type FindOptionsSelectLike,
   type ObjectWhereLike,
@@ -60,7 +60,7 @@ const normalizeSelect = (select: FindOptionsSelectV2): FindOptionsSelectLike =>
     : select;
 
 const applyWhere = (
-  queryBuilder: WorkspaceSelectQueryBuilderV2,
+  queryBuilder: WorkspaceSelectQueryBuilder,
   where: ObjectWhereLike | ObjectWhereLike[],
 ): void => {
   if (!Array.isArray(where)) {
@@ -132,7 +132,7 @@ const toDedupOrder = (order: OrderByConditionLike): ToManyDedupOrder[] =>
   }));
 
 const applyRelationOrderEntry = (
-  queryBuilder: WorkspaceSelectQueryBuilderV2,
+  queryBuilder: WorkspaceSelectQueryBuilder,
   relationFieldName: string,
   relationOrder: OrderByConditionLike,
 ): void => {
@@ -161,7 +161,7 @@ const applyRelationOrderEntry = (
 };
 
 const applyOrder = (
-  queryBuilder: WorkspaceSelectQueryBuilderV2,
+  queryBuilder: WorkspaceSelectQueryBuilder,
   order: FindOptionsOrderV2,
 ): void => {
   for (const [key, value] of Object.entries(order)) {
@@ -185,9 +185,9 @@ const toOrderByArguments = (
     : [key, value.order ?? 'ASC', value.nulls];
 
 export const applyFindOptionsToQueryBuilder = (
-  queryBuilder: WorkspaceSelectQueryBuilderV2,
+  queryBuilder: WorkspaceSelectQueryBuilder,
   options?: FindOptionsV2,
-): WorkspaceSelectQueryBuilderV2 => {
+): WorkspaceSelectQueryBuilder => {
   if (!isDefined(options)) {
     return queryBuilder;
   }

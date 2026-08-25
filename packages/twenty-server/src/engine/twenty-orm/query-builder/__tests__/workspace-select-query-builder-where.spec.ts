@@ -3,7 +3,7 @@ import { And, Equal, In, LessThan, Not } from 'typeorm';
 import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
-describe('WorkspaceSelectQueryBuilderV2 where', () => {
+describe('WorkspaceSelectQueryBuilder where', () => {
   it('should nest a bracketed condition built by the shared parsers', () => {
     const { queryBuilder } = buildQueryBuilder();
 

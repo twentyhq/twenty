@@ -4,7 +4,7 @@ import {
   buildQueryBuilder,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
-describe('WorkspaceSelectQueryBuilderV2 joined hydration', () => {
+describe('WorkspaceSelectQueryBuilder joined hydration', () => {
   it('should project every joined column for a leftJoinAndSelect', () => {
     const { queryBuilder } = buildQueryBuilder();
 
