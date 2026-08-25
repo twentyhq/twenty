@@ -4,7 +4,7 @@ import {
 } from 'test/utils/create-where-expression-recorder.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -57,7 +57,7 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
 
 const outerQueryBuilder = {
   objectRecordsPermissions: {},
-} as unknown as WorkspaceSelectQueryBuilderV2;
+} as unknown as WorkspaceSelectQueryBuilder;
 
 const recordFilterEntries = (filter: Record<string, unknown>) => {
   const recorder = createWhereExpressionRecorder();

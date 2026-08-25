@@ -7,7 +7,7 @@ const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 
 const buildDeps = (findResult: unknown[]) => ({
-  globalWorkspaceOrmManager: {
+  workspaceOrmManager: {
     executeInWorkspaceContext: jest.fn().mockImplementation(async (fn) => fn()),
     getRepository: jest.fn().mockResolvedValue({
       find: jest.fn().mockResolvedValue(findResult),
@@ -26,16 +26,13 @@ describe('list_workflow_runs tool', () => {
     const context = buildContext();
 
     const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
     await tool.execute({});
 
-    expect(deps.globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+    expect(deps.workspaceOrmManager.getRepository).toHaveBeenCalledWith(
       'workflowRun',
       context.rolePermissionConfig,
     );
@@ -69,10 +66,7 @@ describe('list_workflow_runs tool', () => {
     const context = buildContext();
 
     const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
@@ -92,7 +86,7 @@ describe('list_workflow_runs tool', () => {
   it('should apply filters when provided', async () => {
     const findMock = jest.fn().mockResolvedValue([]);
     const deps = {
-      globalWorkspaceOrmManager: {
+      workspaceOrmManager: {
         executeInWorkspaceContext: jest
           .fn()
           .mockImplementation(async (fn) => fn()),
@@ -102,10 +96,7 @@ describe('list_workflow_runs tool', () => {
     const context = buildContext();
 
     const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 

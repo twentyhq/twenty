@@ -14,7 +14,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isDomain } from 'src/engine/utils/is-domain';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
@@ -35,7 +35,7 @@ export class BlocklistValidationService {
   constructor(
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   public async validateBlocklistForCreateMany(
@@ -101,20 +101,17 @@ export class BlocklistValidationService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const currentWorkspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              WorkspaceMemberWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          await this.workspaceOrmManager.getRepository(
+            WorkspaceMemberWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOneByOrFail({
-            userId,
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOneByOrFail({
+          userId,
+        });
+      }, authContext);
 
     if (
       payload.data.some(
@@ -186,20 +183,17 @@ export class BlocklistValidationService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const currentWorkspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              WorkspaceMemberWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          await this.workspaceOrmManager.getRepository(
+            WorkspaceMemberWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOneByOrFail({
-            userId,
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOneByOrFail({
+          userId,
+        });
+      }, authContext);
 
     const currentBlocklist =
       await this.blocklistRepository.getByWorkspaceMemberId(

@@ -10442,7 +10442,7 @@ msgid "This operation is not allowed."
 msgstr "Esta operação não é permitida."
 
 #. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
+#: src/engine/workspace-datasource/workspace-schema.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 msgstr "Esta operação não é permitida. Por favor, tente um método diferente ou entre em contato com o suporte se precisar de assistência."
 
