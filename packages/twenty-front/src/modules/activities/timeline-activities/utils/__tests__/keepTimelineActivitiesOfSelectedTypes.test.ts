@@ -22,16 +22,21 @@ const timelineActivityTypeMaps: TimelineActivityTypeMaps = {
     [UPDATED_TYPE_ID, buildTimelineActivityType(UPDATED_TYPE_ID)],
     [LINKED_TYPE_ID, buildTimelineActivityType(LINKED_TYPE_ID)],
   ]),
-  byUniversalIdentifier: new Map(),
+  byUniversalIdentifier: new Map([
+    [UPDATED_TYPE_ID, buildTimelineActivityType(UPDATED_TYPE_ID)],
+    [LINKED_TYPE_ID, buildTimelineActivityType(LINKED_TYPE_ID)],
+  ]),
 };
 
 const updatedActivity = {
   timelineActivityTypeId: UPDATED_TYPE_ID,
+  timelineActivityTypeSnapshot: buildTimelineActivityType(UPDATED_TYPE_ID),
   properties: {},
 } satisfies FilterableTimelineActivity;
 
 const linkedActivity = {
   timelineActivityTypeId: LINKED_TYPE_ID,
+  timelineActivityTypeSnapshot: buildTimelineActivityType(LINKED_TYPE_ID),
   properties: {},
 } satisfies FilterableTimelineActivity;
 

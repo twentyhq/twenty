@@ -19,7 +19,7 @@ const TIMELINE_ACTIVITY_TYPE_SNAPSHOT: TimelineActivityTypeSnapshot = {
 };
 
 describe('TimelineActivityRepository', () => {
-  it('merges and stamps a recent row written without a snapshot', async () => {
+  it('merges a recent row with the same frozen type semantics', async () => {
     const update = jest.fn().mockResolvedValue(undefined);
     const insert = jest.fn().mockResolvedValue(undefined);
     const workspaceRepository = {
@@ -29,7 +29,7 @@ describe('TimelineActivityRepository', () => {
           targetPersonId: RECORD_ID,
           workspaceMemberId: WORKSPACE_MEMBER_ID,
           timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
-          timelineActivityTypeSnapshot: null,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
           linkedRecordId: null,
           properties: {
             diff: { name: { before: 'Before', after: 'First' } },
@@ -85,7 +85,6 @@ describe('TimelineActivityRepository', () => {
           diff: { name: { before: 'Before', after: 'Second' } },
         },
         workspaceMemberId: WORKSPACE_MEMBER_ID,
-        timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
       },
     );
   });

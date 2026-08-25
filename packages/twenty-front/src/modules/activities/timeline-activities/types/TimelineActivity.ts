@@ -13,9 +13,8 @@ export type TimelineActivity = {
   properties: Record<string, unknown> & {
     diff?: Record<string, { before: unknown; after: unknown }>;
   };
-  name: string | null;
-  timelineActivityTypeId: string | null;
-  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
+  timelineActivityTypeId: string;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;
   __typename: 'TimelineActivity';

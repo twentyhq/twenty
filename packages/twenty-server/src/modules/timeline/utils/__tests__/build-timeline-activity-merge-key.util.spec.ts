@@ -1,9 +1,6 @@
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
-import {
-  buildTimelineActivityMergeKey,
-  buildTimelineActivityMergeKeyCandidates,
-} from 'src/modules/timeline/utils/build-timeline-activity-merge-key.util';
+import { buildTimelineActivityMergeKey } from 'src/modules/timeline/utils/build-timeline-activity-merge-key.util';
 
 const buildSnapshot = (
   overrides: Partial<TimelineActivityTypeSnapshot> = {},
@@ -74,22 +71,5 @@ describe('buildTimelineActivityMergeKey', () => {
         timelineActivityTypeSnapshot: buildSnapshot(),
       }),
     );
-  });
-
-  it('falls back to the pre-snapshot identity during rolling upgrades', () => {
-    const args = {
-      recordId: '20202020-0000-4000-8000-000000000004',
-      workspaceMemberId: '20202020-0000-4000-8000-000000000003',
-      timelineActivityTypeId: '20202020-0000-4000-8000-000000000001',
-      timelineActivityTypeSnapshot: buildSnapshot(),
-    };
-
-    expect(buildTimelineActivityMergeKeyCandidates(args)).toEqual([
-      buildTimelineActivityMergeKey(args),
-      buildTimelineActivityMergeKey({
-        ...args,
-        timelineActivityTypeSnapshot: null,
-      }),
-    ]);
   });
 });
