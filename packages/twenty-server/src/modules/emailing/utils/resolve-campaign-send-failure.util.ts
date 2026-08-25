@@ -2,18 +2,12 @@ import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
-import {
-  CAMPAIGN_DELIVERY_STATE,
-  type CampaignDeliveryState,
-} from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
-import {
-  CAMPAIGN_FAILURE_REASON,
-  type CampaignFailureReason,
-} from 'src/engine/core-modules/emailing-domain/types/campaign-failure-reason.type';
-import {
-  CAMPAIGN_SKIP_REASON,
-  type CampaignSkipReason,
-} from 'src/engine/core-modules/emailing-domain/types/campaign-skip-reason.type';
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
+import { type CampaignDeliveryState } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-state.type';
+import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
+import { type CampaignFailureReason } from 'src/engine/core-modules/emailing-domain/types/campaign-failure-reason.type';
+import { CAMPAIGN_SKIP_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-skip-reason.constant';
+import { type CampaignSkipReason } from 'src/engine/core-modules/emailing-domain/types/campaign-skip-reason.type';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 type CampaignSendFailure = {
