@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { FieldMetadataLink } from '@/ai/components/FieldMetadataLink';
+import { DeprecatedFieldMetadataLinkById } from '@/ai/components/DeprecatedFieldMetadataLinkById';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { type Store } from 'jotai/vanilla/store';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -27,7 +27,7 @@ const setPermissionFlags = (
   });
 };
 
-const renderFieldMetadataLink = ({
+const renderDeprecatedFieldMetadataLinkById = ({
   fieldMetadataItemId,
   displayName,
   permissionFlags,
@@ -44,7 +44,7 @@ const renderFieldMetadataLink = ({
 
   return render(
     <MemoryRouter>
-      <FieldMetadataLink
+      <DeprecatedFieldMetadataLinkById
         fieldMetadataItemId={fieldMetadataItemId}
         displayName={displayName}
       />
@@ -53,9 +53,9 @@ const renderFieldMetadataLink = ({
   );
 };
 
-describe('FieldMetadataLink', () => {
+describe('DeprecatedFieldMetadataLinkById', () => {
   it('should link a field to its settings page', () => {
-    renderFieldMetadataLink({
+    renderDeprecatedFieldMetadataLinkById({
       fieldMetadataItemId: nameFieldMetadataItem.id,
       displayName: 'Name',
       permissionFlags: [PermissionFlagType.DATA_MODEL],
@@ -68,7 +68,7 @@ describe('FieldMetadataLink', () => {
   });
 
   it('should render a chip without a link when the user cannot access the data model', () => {
-    renderFieldMetadataLink({
+    renderDeprecatedFieldMetadataLinkById({
       fieldMetadataItemId: nameFieldMetadataItem.id,
       displayName: 'Name',
       permissionFlags: [],
@@ -79,7 +79,7 @@ describe('FieldMetadataLink', () => {
   });
 
   it('should render plain text for an unknown field id', () => {
-    renderFieldMetadataLink({
+    renderDeprecatedFieldMetadataLinkById({
       fieldMetadataItemId: '33333333-3333-3333-3333-333333333333',
       displayName: 'Partner type',
       permissionFlags: [PermissionFlagType.DATA_MODEL],
