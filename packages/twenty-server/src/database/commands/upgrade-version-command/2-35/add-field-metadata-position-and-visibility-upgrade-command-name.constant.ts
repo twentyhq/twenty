@@ -1,0 +1,2 @@
+export const ADD_FIELD_METADATA_POSITION_AND_VISIBILITY_UPGRADE_COMMAND_NAME =
+  '2.35.0_AddPositionAndVisibilityToFieldMetadataFastInstanceCommand_1787670825000';

@@ -157,6 +157,7 @@ import { TimelineActivityTypeOverridableEntityFastInstanceCommand } from 'src/da
 import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608316-enforce-timeline-activity-type-emit-uniqueness';
 import { AddCommandMenuItemTargetObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787573269955-add-command-menu-item-target-object-metadata';
 import { DropTimelineActivityTypeRendererFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787648000001-drop-timeline-activity-type-renderer';
+import { AddPositionAndVisibilityToFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787670825000-add-position-and-visibility-to-field-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -316,4 +317,5 @@ export const INSTANCE_COMMANDS = [
   EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand,
   AddCommandMenuItemTargetObjectMetadataFastInstanceCommand,
   DropTimelineActivityTypeRendererFastInstanceCommand,
+  AddPositionAndVisibilityToFieldMetadataFastInstanceCommand,
 ];

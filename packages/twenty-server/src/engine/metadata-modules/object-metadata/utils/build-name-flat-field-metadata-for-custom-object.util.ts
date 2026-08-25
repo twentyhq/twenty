@@ -38,6 +38,8 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     isSystemSideEffect: false,
     isUIEditable: true,
     writability: MetadataWritability.OPEN,
+    position: 0,
+    isVisibleByDefault: true,
     defaultValue: null,
     createdAt: now,
     updatedAt: now,

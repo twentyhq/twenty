@@ -94,6 +94,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
     writability: fieldManifest.writability ?? MetadataWritability.OPEN,
+    position: null,
+    isVisibleByDefault: true,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isLabelSyncedWithName: false,
