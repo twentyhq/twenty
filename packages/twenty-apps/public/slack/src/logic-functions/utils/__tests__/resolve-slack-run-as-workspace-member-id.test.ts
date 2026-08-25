@@ -10,11 +10,19 @@ const {
   findWorkspaceMemberIdByEmailMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
+  coreApiClientMock,
+  applicationClient,
 } = vi.hoisted(() => ({
   findSlackUserLinkMock: vi.fn(),
   findWorkspaceMemberIdByEmailMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
+  coreApiClientMock: vi.fn(),
+  applicationClient: {},
+}));
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: coreApiClientMock,
 }));
 
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
@@ -65,6 +73,9 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue(undefined);
     updateSlackUserLinkMock.mockResolvedValue(undefined);
+    coreApiClientMock.mockImplementation(function () {
+      return applicationClient;
+    });
     authTestMock.mockResolvedValue({ team_id: 'T0INSTALLED' });
   });
 
@@ -148,7 +159,8 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         identity: IDENTITY,
       }),
     ).toBe('member-1');
-    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(client, {
+    expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(applicationClient, {
       id: 'link-1',
       workspaceMemberId: 'member-1',
     });
@@ -202,7 +214,8 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         identity: IDENTITY,
       }),
     ).toBe('member-1');
-    expect(createSlackUserLinkMock).toHaveBeenCalledWith(client, {
+    expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(applicationClient, {
       slackTeamId: 'T0INSTALLED',
       slackUserId: 'U0123456789',
       workspaceMemberId: 'member-1',
