@@ -35,7 +35,7 @@ import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
@@ -73,7 +73,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const readRepository = this.getReadRepository(queryRunnerContext);
 
-    const queryBuilder: ReadRecordQueryBuilder =
+    const queryBuilder: WorkspaceSelectQueryBuilderV2 =
       readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
     const aggregateQueryBuilder = queryBuilder.clone();
@@ -186,8 +186,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       );
     }
 
-    if (isDefined(args.offset)) {
-      queryBuilder.offset(args.offset);
+    const { offset } = args;
+
+    if (offset !== undefined) {
+      queryBuilder.offset(offset);
     }
     queryBuilder.limit(limit + 1);
 

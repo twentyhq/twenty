@@ -1,7 +1,11 @@
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  type ObjectsPermissionsByRoleId,
+} from 'twenty-shared/types';
+import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -60,15 +64,15 @@ export class WorkspaceDataSourceV2 {
     this.objectPermissionsByRoleId = objectPermissionsByRoleId;
   }
 
-  getRepository(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
-  ): WorkspaceRepositoryV2 {
+  ): WorkspaceRepositoryV2<T> {
     return this.buildRepository({
       nameSingular,
       rolePermissionConfig,
       executor: new PoolQueryExecutor({ pool: this.pool }),
-    });
+    }) as unknown as WorkspaceRepositoryV2<T>;
   }
 
   async transaction<T>(

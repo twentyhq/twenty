@@ -353,10 +353,10 @@ export abstract class CommonBaseQueryRunnerService<
 
     const repository = this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: this.isReadOnly })
-      .getRepository(
+      .getRepository<ObjectLiteral>(
         queryRunnerContext.flatObjectMetadata.nameSingular,
         rolePermissionConfig,
-      ) as unknown as WorkspaceRepositoryV2<ObjectLiteral>;
+      );
 
     return {
       ...queryRunnerContext,

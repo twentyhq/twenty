@@ -110,7 +110,7 @@ Wired into `CommonFindManyQueryRunnerService`, `CommonFindOneQueryRunnerService`
 runners keep `repository`.
 
 Nested relation loading also routes through v2 under the flag:
-`ProcessNestedRelationsOrmV2Helper` loads relations and relation aggregates on v2
+`ProcessNestedRelationsHelper` loads relations and relation aggregates on v2
 repositories, and composes the per-parent-limit `CROSS JOIN LATERAL` as raw SQL run
 through `repository.executeRaw`. The shared `ProcessNestedRelationsHelper` flag-branches
 to it, so a flagged read now reads root rows and their relations through v2.

@@ -29,7 +29,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -61,7 +61,7 @@ export class GraphqlQueryFilterFieldParser {
 
   public parse(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: RecordQueryBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilderV2,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -144,7 +144,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseRelationSubFilter(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: RecordQueryBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilderV2,
     parentAlias: string,
     fieldMetadata: FlatFieldMetadata,
     filterValue: Partial<ObjectRecordFilter>,
