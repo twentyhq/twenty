@@ -3,7 +3,8 @@ import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calen
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { CallRecordingTranscriptContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent';
 import { CallRecordingVideoPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer';
-import { useCallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/hooks/useCallRecordingTranscriptPlaybackPosition';
+import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
@@ -45,10 +46,11 @@ export const CallRecordingTranscriptBody = ({
     null,
   );
 
-  const entryPlaybackPosition = useCallRecordingTranscriptPlaybackPosition({
-    videoElement,
-    timedItems: transcriptEntries,
-  });
+  const [entryPlaybackPosition, setEntryPlaybackPosition] =
+    useState<CallRecordingTranscriptPlaybackPosition>({
+      activeIndex: -1,
+      lastStartedIndex: -1,
+    });
 
   if (isDefined(restriction)) {
     return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
@@ -93,6 +95,11 @@ export const CallRecordingTranscriptBody = ({
 
   return (
     <StyledRecordingLayout>
+      <CallRecordingTranscriptPlaybackEffect
+        videoElement={videoElement}
+        timedItems={transcriptEntries}
+        onPlaybackPositionChange={setEntryPlaybackPosition}
+      />
       <CallRecordingVideoPlayer
         key={videoFileUrl}
         ref={setVideoElement}

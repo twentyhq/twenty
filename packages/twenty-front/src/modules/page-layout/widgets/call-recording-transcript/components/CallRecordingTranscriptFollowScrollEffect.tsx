@@ -2,17 +2,19 @@ import { watchCallRecordingTranscriptFollowScroll } from '@/page-layout/widgets/
 import { useEffect, type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCallRecordingTranscriptFollowScroll = ({
+type CallRecordingTranscriptFollowScrollEffectProps = {
+  activeEntryElementRef: RefObject<HTMLLIElement | null>;
+  isFollowingPlayback: boolean;
+  scrollContainerElementRef: RefObject<HTMLDivElement | null>;
+  videoElement?: HTMLVideoElement;
+};
+
+export const CallRecordingTranscriptFollowScrollEffect = ({
   activeEntryElementRef,
   isFollowingPlayback,
   scrollContainerElementRef,
   videoElement,
-}: {
-  activeEntryElementRef: RefObject<HTMLLIElement | null>;
-  isFollowingPlayback: boolean;
-  scrollContainerElementRef: RefObject<HTMLDivElement | null>;
-  videoElement: HTMLVideoElement | undefined;
-}) => {
+}: CallRecordingTranscriptFollowScrollEffectProps) => {
   useEffect(() => {
     const scrollContainerElement = scrollContainerElementRef.current;
 
@@ -35,4 +37,6 @@ export const useCallRecordingTranscriptFollowScroll = ({
     scrollContainerElementRef,
     videoElement,
   ]);
+
+  return null;
 };

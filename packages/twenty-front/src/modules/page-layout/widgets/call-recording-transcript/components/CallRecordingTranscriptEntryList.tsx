@@ -1,5 +1,5 @@
 import { CallRecordingTranscriptEntryListItem } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem';
-import { useCallRecordingTranscriptFollowScroll } from '@/page-layout/widgets/call-recording-transcript/hooks/useCallRecordingTranscriptFollowScroll';
+import { CallRecordingTranscriptFollowScrollEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptFollowScrollEffect';
 import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { getCallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptEntryPlaybackPhase';
 import { styled } from '@linaria/react';
@@ -64,13 +64,6 @@ export const CallRecordingTranscriptEntryList = ({
   const activeEntryElementRef = useRef<HTMLLIElement>(null);
   const [isFollowingPlayback, setIsFollowingPlayback] = useState(true);
 
-  useCallRecordingTranscriptFollowScroll({
-    activeEntryElementRef,
-    isFollowingPlayback,
-    scrollContainerElementRef,
-    videoElement: playback?.videoElement,
-  });
-
   const selectTranscriptEntry = (entryStartSeconds: number) => {
     setIsFollowingPlayback(true);
     playback?.onSeek(entryStartSeconds);
@@ -100,6 +93,12 @@ export const CallRecordingTranscriptEntryList = ({
 
   return (
     <StyledTranscriptContainer>
+      <CallRecordingTranscriptFollowScrollEffect
+        activeEntryElementRef={activeEntryElementRef}
+        isFollowingPlayback={isFollowingPlayback}
+        scrollContainerElementRef={scrollContainerElementRef}
+        videoElement={playback?.videoElement}
+      />
       <StyledTranscriptScrollContainer
         ref={scrollContainerElementRef}
         aria-label={t`Transcript`}

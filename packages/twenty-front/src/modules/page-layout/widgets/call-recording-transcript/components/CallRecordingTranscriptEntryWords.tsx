@@ -1,5 +1,7 @@
-import { useCallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/hooks/useCallRecordingTranscriptPlaybackPosition';
+import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { type CallRecordingParsedTranscriptWord } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -20,13 +22,19 @@ export const CallRecordingTranscriptEntryWords = ({
   words,
   videoElement,
 }: CallRecordingTranscriptEntryWordsProps) => {
-  const wordPlaybackPosition = useCallRecordingTranscriptPlaybackPosition({
-    videoElement,
-    timedItems: words,
-  });
+  const [wordPlaybackPosition, setWordPlaybackPosition] =
+    useState<CallRecordingTranscriptPlaybackPosition>({
+      activeIndex: -1,
+      lastStartedIndex: -1,
+    });
 
   return (
     <>
+      <CallRecordingTranscriptPlaybackEffect
+        videoElement={videoElement}
+        timedItems={words}
+        onPlaybackPositionChange={setWordPlaybackPosition}
+      />
       {words.map((word, wordIndex) => (
         <StyledWord
           key={wordIndex}

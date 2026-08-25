@@ -1,11 +1,9 @@
 import { type CallRecordingTranscriptTimePoint } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptTimePoint';
+import { type CallRecordingTranscriptTimedItem } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptTimedItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildCallRecordingTranscriptTimePoints = (
-  timedItems: {
-    startSeconds: number | undefined;
-    endSeconds?: number;
-  }[],
+  timedItems: CallRecordingTranscriptTimedItem[],
 ): CallRecordingTranscriptTimePoint[] =>
   timedItems
     .flatMap((timedItem, index) =>

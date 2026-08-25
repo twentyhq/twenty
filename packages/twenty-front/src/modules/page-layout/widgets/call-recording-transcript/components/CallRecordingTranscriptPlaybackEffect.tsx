@@ -1,24 +1,23 @@
 import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
+import { type CallRecordingTranscriptTimedItem } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptTimedItem';
 import { buildCallRecordingTranscriptTimePoints } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptTimePoints';
 import { watchCallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/utils/watchCallRecordingTranscriptPlayback';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-export const useCallRecordingTranscriptPlaybackPosition = ({
+type CallRecordingTranscriptPlaybackEffectProps = {
+  videoElement: HTMLVideoElement | null;
+  timedItems: CallRecordingTranscriptTimedItem[] | undefined;
+  onPlaybackPositionChange: (
+    playbackPosition: CallRecordingTranscriptPlaybackPosition,
+  ) => void;
+};
+
+export const CallRecordingTranscriptPlaybackEffect = ({
   videoElement,
   timedItems,
-}: {
-  videoElement: HTMLVideoElement | null;
-  timedItems:
-    | { startSeconds: number | undefined; endSeconds?: number }[]
-    | undefined;
-}): CallRecordingTranscriptPlaybackPosition => {
-  const [playbackPosition, setPlaybackPosition] =
-    useState<CallRecordingTranscriptPlaybackPosition>({
-      activeIndex: -1,
-      lastStartedIndex: -1,
-    });
-
+  onPlaybackPositionChange,
+}: CallRecordingTranscriptPlaybackEffectProps) => {
   const timePoints = useMemo(
     () =>
       isDefined(timedItems)
@@ -35,9 +34,9 @@ export const useCallRecordingTranscriptPlaybackPosition = ({
     return watchCallRecordingTranscriptPlayback({
       videoElement,
       timePoints,
-      onPlaybackPositionChange: setPlaybackPosition,
+      onPlaybackPositionChange,
     });
-  }, [videoElement, timePoints]);
+  }, [videoElement, timePoints, onPlaybackPositionChange]);
 
-  return playbackPosition;
+  return null;
 };
