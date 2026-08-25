@@ -5,6 +5,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconMail } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
@@ -21,7 +22,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const handleSyncInternalEmailsChange = (value: boolean) => {
-    if (!currentWorkspace) {
+    if (!isDefined(currentWorkspace)) {
       return;
     }
 
