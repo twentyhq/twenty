@@ -31,7 +31,7 @@ const StyledEntryList = styled.ul<{ hasPlaybackControls: boolean }>`
   padding: ${({ hasPlaybackControls }) =>
     hasPlaybackControls
       ? `${themeCssVariables.spacing[4]} 0 ${themeCssVariables.spacing[10]}`
-      : themeCssVariables.spacing[6]};
+      : '0'};
 `;
 
 const StyledResumeFollowButton = styled.div`
