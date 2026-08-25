@@ -73,7 +73,6 @@ export class CreateCompanyAndPersonService {
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             PersonWorkspaceEntity,
             {
               shouldBypassPermissionChecks: true,
@@ -82,7 +81,6 @@ export class CreateCompanyAndPersonService {
 
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
@@ -210,7 +208,6 @@ export class CreateCompanyAndPersonService {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               WorkspaceMemberWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );

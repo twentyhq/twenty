@@ -108,7 +108,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -141,7 +140,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -228,7 +226,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -255,7 +252,6 @@ export class UserService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -347,7 +343,6 @@ export class UserService {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -415,7 +410,6 @@ export class UserService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

@@ -50,11 +50,10 @@ export class MessageCampaignDraftService {
   ) {}
 
   private getRoleScopedRepository<T extends ObjectLiteral>(
-    workspaceId: string,
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+    return this.globalWorkspaceOrmManager.getRepository(entity, {
       unionOf: [roleId],
     });
   }
@@ -97,7 +96,6 @@ export class MessageCampaignDraftService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const campaignRepository = await this.getRoleScopedRepository(
-          workspaceId,
           MessageCampaignWorkspaceEntity,
           roleId,
         );

@@ -27,19 +27,16 @@ export class GlobalWorkspaceOrmManager {
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceId: string,
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepositoryV2<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceId: string,
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepositoryV2<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    _workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepositoryV2<T>> {
@@ -49,10 +46,7 @@ export class GlobalWorkspaceOrmManager {
 
     return this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: false })
-      .getRepository(
-        objectMetadataName,
-        permissionOptions,
-      ) as unknown as WorkspaceRepositoryV2<T>;
+      .getRepository<T>(objectMetadataName, permissionOptions);
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(

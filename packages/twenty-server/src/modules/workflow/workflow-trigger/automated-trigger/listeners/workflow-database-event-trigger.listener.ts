@@ -310,7 +310,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
         const relatedObjectRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             relatedObjectMetadataNameSingular,
             { shouldBypassPermissionChecks: true },
           );
@@ -414,7 +413,6 @@ export class WorkflowDatabaseEventTriggerListener {
       async () => {
         const workflowAutomatedTriggerRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
             automatedTriggerTableName,
             { shouldBypassPermissionChecks: true },
           );

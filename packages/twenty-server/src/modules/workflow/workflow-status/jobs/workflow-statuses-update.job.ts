@@ -73,7 +73,6 @@ export class WorkflowStatusesUpdateJob {
             event.workflowIds.map((workflowId) =>
               this.handleWorkflowVersionCreatedOrDeleted({
                 workflowId,
-                workspaceId: event.workspaceId,
               }),
             ),
           );
@@ -83,7 +82,6 @@ export class WorkflowStatusesUpdateJob {
             event.statusUpdates.map((statusUpdate) =>
               this.handleWorkflowVersionStatusUpdated({
                 statusUpdate,
-                workspaceId: event.workspaceId,
               }),
             ),
           );
@@ -96,21 +94,17 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionCreatedOrDeleted({
     workflowId,
-    workspaceId,
   }: {
     workflowId: string;
-    workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -143,21 +137,17 @@ export class WorkflowStatusesUpdateJob {
 
   private async handleWorkflowVersionStatusUpdated({
     statusUpdate,
-    workspaceId,
   }: {
     statusUpdate: WorkflowVersionStatusUpdate;
-    workspaceId: string;
   }): Promise<void> {
     const workflowRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );

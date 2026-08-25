@@ -69,7 +69,6 @@ export class ViewQueryParamsService {
     });
 
     const timeZone = await this.getWorkspaceMemberTimezoneIfAvailable(
-      workspaceId,
       currentWorkspaceMemberId,
     );
 
@@ -144,7 +143,6 @@ export class ViewQueryParamsService {
   }
 
   private async getWorkspaceMemberTimezoneIfAvailable(
-    workspaceId: string,
     currentWorkspaceMemberId?: string,
   ): Promise<string> {
     if (!isDefined(currentWorkspaceMemberId)) {
@@ -154,7 +152,6 @@ export class ViewQueryParamsService {
     try {
       const workspaceMemberRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

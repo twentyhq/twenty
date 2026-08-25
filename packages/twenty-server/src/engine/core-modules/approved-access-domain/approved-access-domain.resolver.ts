@@ -51,7 +51,6 @@ export class ApprovedAccessDomainResolver {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              currentWorkspace.id,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );

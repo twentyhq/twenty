@@ -136,7 +136,6 @@ export class WorkflowCoreSyncService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-          workspaceId,
           'workflow',
           { shouldBypassPermissionChecks: true },
         );

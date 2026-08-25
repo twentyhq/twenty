@@ -25,7 +25,6 @@ type ResolveRelationLabelsParams = {
   rawResults: GroupByRawResult[];
   primaryAxis: ChartRelationLabelAxisInput;
   secondaryAxis?: ChartRelationLabelAxisInput;
-  workspaceId: string;
   authContext: WorkspaceAuthContext;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -43,7 +42,6 @@ export class ChartRelationLabelService {
     rawResults,
     primaryAxis,
     secondaryAxis,
-    workspaceId,
     authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -76,7 +74,6 @@ export class ChartRelationLabelService {
 
     const rawLabelsByTargetObjectId = await this.fetchRawLabelsPerTargetObject({
       resolvableAxes,
-      workspaceId,
       authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -110,13 +107,11 @@ export class ChartRelationLabelService {
 
   private async fetchRawLabelsPerTargetObject({
     resolvableAxes,
-    workspaceId,
     authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     resolvableAxes: ResolvableChartRelationAxis[];
-    workspaceId: string;
     authContext: WorkspaceAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -161,7 +156,6 @@ export class ChartRelationLabelService {
             targetFlatObjectMetadata,
             labelIdentifierColumnNames,
             recordIds: [...recordIds],
-            workspaceId,
             authContext,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -186,7 +180,6 @@ export class ChartRelationLabelService {
     targetFlatObjectMetadata,
     labelIdentifierColumnNames,
     recordIds,
-    workspaceId,
     authContext,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -194,7 +187,6 @@ export class ChartRelationLabelService {
     targetFlatObjectMetadata: FlatObjectMetadata;
     labelIdentifierColumnNames: string[];
     recordIds: string[];
-    workspaceId: string;
     authContext: WorkspaceAuthContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -214,7 +206,6 @@ export class ChartRelationLabelService {
           }
 
           const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             targetFlatObjectMetadata.nameSingular,
             rolePermissionConfig,
           );

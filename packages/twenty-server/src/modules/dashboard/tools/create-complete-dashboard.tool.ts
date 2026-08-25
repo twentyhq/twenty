@@ -242,11 +242,9 @@ const createDashboardRecord = async (
 
   return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
     const dashboardRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
-        'dashboard',
-        { shouldBypassPermissionChecks: true },
-      );
+      await deps.globalWorkspaceOrmManager.getRepository('dashboard', {
+        shouldBypassPermissionChecks: true,
+      });
 
     const position = await deps.recordPositionService.buildRecordPosition({
       value: 'first',

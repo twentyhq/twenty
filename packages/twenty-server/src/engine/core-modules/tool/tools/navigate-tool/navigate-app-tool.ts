@@ -338,7 +338,6 @@ export class NavigateAppTool implements Tool {
         async () => {
           const repository =
             await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
-              workspaceId,
               objectNameSingular,
               { shouldBypassPermissionChecks: true },
             );

@@ -37,7 +37,6 @@ export class DashboardDuplicationService {
       async () => {
         const dashboardRepository =
           await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
-            workspaceId,
             'dashboard',
             { shouldBypassPermissionChecks: true },
           );

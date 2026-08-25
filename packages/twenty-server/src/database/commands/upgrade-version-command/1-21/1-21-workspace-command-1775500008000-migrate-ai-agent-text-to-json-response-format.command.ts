@@ -162,9 +162,7 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWo
     agentIds: string[],
   ): Promise<void> {
     const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
+      await this.twentyORMGlobalManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
 

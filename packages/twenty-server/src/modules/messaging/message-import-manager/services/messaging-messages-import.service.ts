@@ -156,7 +156,6 @@ export class MessagingMessagesImportService {
 
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );

@@ -52,7 +52,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
         await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
           WorkflowRunWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );
@@ -284,7 +283,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       async () => {
         const workflowRunRepository =
           await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             WorkflowRunWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );

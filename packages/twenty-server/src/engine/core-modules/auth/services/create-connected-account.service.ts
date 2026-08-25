@@ -61,7 +61,6 @@ export class CreateConnectedAccountService {
 
       const workspaceMemberRepo =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
           'workspaceMember',
           rolePermissionConfig ?? undefined,
         );

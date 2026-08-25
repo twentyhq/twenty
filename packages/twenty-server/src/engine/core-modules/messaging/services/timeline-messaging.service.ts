@@ -53,7 +53,6 @@ export class TimelineMessagingService {
       async () => {
         const messageThreadRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
-            workspaceId,
             'messageThread',
           );
 
@@ -130,7 +129,6 @@ export class TimelineMessagingService {
       async () => {
         const messageParticipantRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-            workspaceId,
             'messageParticipant',
           );
 
@@ -244,7 +242,6 @@ export class TimelineMessagingService {
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );
@@ -273,7 +270,6 @@ export class TimelineMessagingService {
 
         const messageThreadRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
-            workspaceId,
             'messageThread',
           );
 

@@ -87,11 +87,9 @@ export class SearchService {
     limit,
     filter,
     after,
-    workspaceId,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    workspaceId: string;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -122,7 +120,6 @@ export class SearchService {
 
               const repository =
                 await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
-                  workspaceId,
                   flatObjectMetadata.nameSingular,
                   rolePermissionConfig,
                 );

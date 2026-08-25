@@ -30,7 +30,6 @@ export class NotePostQueryHookService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const noteTargetRepository =
         await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-          workspace.id,
           'noteTarget',
         );
 
@@ -55,7 +54,6 @@ export class NotePostQueryHookService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const noteTargetRepository =
         await this.globalWorkspaceOrmManager.getRepository<NoteTargetWorkspaceEntity>(
-          workspace.id,
           'noteTarget',
         );
 

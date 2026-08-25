@@ -38,7 +38,6 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
       async () => {
         const calendarChannelEventAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-            workspaceId,
             'calendarChannelEventAssociation',
           );
 

@@ -68,7 +68,6 @@ export class AgentActorContextService {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
