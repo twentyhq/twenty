@@ -2,25 +2,26 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
 @Injectable()
 @WorkspaceCache('flatApplicationMaps', { packingPonderation: 1 })
 export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvider<FlatApplicationCacheMaps> {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(ApplicationEntity),
-  ];
+  override readonly fetchRequirements = {
+    application: true,
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatApplicationCacheMaps {
-    const applicationEntities = recomputeContext.getRows(ApplicationEntity);
+    const { application: applicationEntities } = recomputeContext.getRowsByName(
+      this.fetchRequirements,
+    );
 
     const flatApplicationMaps: FlatApplicationCacheMaps = {
       byId: {},

@@ -304,15 +304,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       workspaceId,
     );
 
-    await recomputeContext.resolveFetchRequirements(
-      this.collectFetchRequirements(cacheKeyNames),
+    await recomputeContext.resolveFetchShapes(
+      this.collectFetchShapes(cacheKeyNames),
     );
 
     return recomputeContext;
   }
 
-  private collectFetchRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
-    return cacheKeyNames.flatMap(
+  private collectFetchShapes(cacheKeyNames: WorkspaceCacheKeyName[]) {
+    return cacheKeyNames.map(
       (keyName) => this.getProviderOrThrow(keyName).fetchRequirements,
     );
   }
@@ -553,8 +553,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     // No-op for keys a shared context already covers; fetches the plan of the
     // remaining ones in one round before any provider runs.
-    await recomputeContext.resolveFetchRequirements(
-      this.collectFetchRequirements(cacheKeyNames),
+    await recomputeContext.resolveFetchShapes(
+      this.collectFetchShapes(cacheKeyNames),
     );
 
     const computePromises = cacheKeyNames.map(async (keyName) => {

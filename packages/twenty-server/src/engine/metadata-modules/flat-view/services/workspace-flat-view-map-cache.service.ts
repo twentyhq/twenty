@@ -2,80 +2,48 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/utils/from-view-entity-to-flat-view.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewMaps', { packingPonderation: 8 })
 export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<FlatViewMaps> {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(ViewEntity),
-    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(ViewFieldEntity, [
-      'id',
-      'universalIdentifier',
-      'viewId',
-    ]),
-    entityFetchRequirement(ViewFilterEntity, [
-      'id',
-      'universalIdentifier',
-      'viewId',
-    ]),
-    entityFetchRequirement(ViewGroupEntity, [
-      'id',
-      'universalIdentifier',
-      'viewId',
-    ]),
-    entityFetchRequirement(ViewFilterGroupEntity, [
-      'id',
-      'universalIdentifier',
-      'viewId',
-    ]),
-    entityFetchRequirement(ViewSortEntity, [
-      'id',
-      'universalIdentifier',
-      'viewId',
-    ]),
-    entityFetchRequirement(ViewFieldGroupEntity, [
-      'id',
-      'universalIdentifier',
-      'viewId',
-    ]),
-  ];
+  override readonly fetchRequirements = {
+    view: true,
+    application: ['id', 'universalIdentifier'],
+    objectMetadata: ['id', 'universalIdentifier'],
+    fieldMetadata: ['id', 'universalIdentifier'],
+    viewField: ['id', 'universalIdentifier', 'viewId'],
+    viewFilter: ['id', 'universalIdentifier', 'viewId'],
+    viewGroup: ['id', 'universalIdentifier', 'viewId'],
+    viewFilterGroup: ['id', 'universalIdentifier', 'viewId'],
+    viewSort: ['id', 'universalIdentifier', 'viewId'],
+    viewFieldGroup: ['id', 'universalIdentifier', 'viewId'],
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatViewMaps {
-    const views = recomputeContext.getRows(ViewEntity);
-    const applications = recomputeContext.getRows(ApplicationEntity);
-    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
-    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
-    const viewFields = recomputeContext.getRows(ViewFieldEntity);
-    const viewFilters = recomputeContext.getRows(ViewFilterEntity);
-    const viewGroups = recomputeContext.getRows(ViewGroupEntity);
-    const viewFilterGroups = recomputeContext.getRows(ViewFilterGroupEntity);
-    const viewSorts = recomputeContext.getRows(ViewSortEntity);
-    const viewFieldGroups = recomputeContext.getRows(ViewFieldGroupEntity);
+    const {
+      view: views,
+      application: applications,
+      objectMetadata: objectMetadatas,
+      fieldMetadata: fieldMetadatas,
+      viewField: viewFields,
+      viewFilter: viewFilters,
+      viewGroup: viewGroups,
+      viewFilterGroup: viewFilterGroups,
+      viewSort: viewSorts,
+      viewFieldGroup: viewFieldGroups,
+    } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     const [
       viewFieldsByViewId,

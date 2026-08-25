@@ -2,40 +2,37 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-entity-to-flat-view-field.util';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewFieldMaps', { packingPonderation: 32 })
 export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvider<FlatViewFieldMaps> {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(ViewFieldEntity),
-    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(ViewEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(ViewFieldGroupEntity, ['id', 'universalIdentifier']),
-  ];
+  override readonly fetchRequirements = {
+    viewField: true,
+    application: ['id', 'universalIdentifier'],
+    fieldMetadata: ['id', 'universalIdentifier'],
+    view: ['id', 'universalIdentifier'],
+    viewFieldGroup: ['id', 'universalIdentifier'],
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatViewFieldMaps {
-    const viewFields = recomputeContext.getRows(ViewFieldEntity);
-    const applications = recomputeContext.getRows(ApplicationEntity);
-    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
-    const views = recomputeContext.getRows(ViewEntity);
-    const viewFieldGroups = recomputeContext.getRows(ViewFieldGroupEntity);
+    const {
+      viewField: viewFields,
+      application: applications,
+      fieldMetadata: fieldMetadatas,
+      view: views,
+      viewFieldGroup: viewFieldGroups,
+    } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

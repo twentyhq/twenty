@@ -1,18 +1,8 @@
 import { type DataSource, type EntityTarget } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
-
-class FirstTestEntity {
-  id: string;
-  workspaceId: string;
-  name: string;
-}
-
-class SecondTestEntity {
-  id: string;
-  workspaceId: string;
-}
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
@@ -20,27 +10,24 @@ describe('WorkspaceCacheRecomputeContext', () => {
   const setup = () => {
     const findMocksByEntity = new Map<EntityTarget<object>, jest.Mock>([
       [
-        FirstTestEntity,
+        ObjectMetadataEntity,
         jest
           .fn()
-          .mockResolvedValue([{ id: 'first-row', workspaceId: WORKSPACE_ID }]),
+          .mockResolvedValue([{ id: 'object-row', workspaceId: WORKSPACE_ID }]),
       ],
       [
-        SecondTestEntity,
-        jest
-          .fn()
-          .mockResolvedValue([{ id: 'second-row', workspaceId: WORKSPACE_ID }]),
+        ApplicationEntity,
+        jest.fn().mockResolvedValue([
+          {
+            id: 'application-row',
+            workspaceId: WORKSPACE_ID,
+          },
+        ]),
       ],
     ]);
 
     const dataSource = {
       getRepository: jest.fn((entityTarget: EntityTarget<object>) => ({
-        metadata: {
-          name:
-            entityTarget === FirstTestEntity
-              ? 'FirstTestEntity'
-              : 'SecondTestEntity',
-        },
         find: findMocksByEntity.get(entityTarget),
       })),
     } as unknown as DataSource;
@@ -57,47 +44,47 @@ describe('WorkspaceCacheRecomputeContext', () => {
   it('fetches all workspace rows including soft-deleted ones', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity),
-    ]);
+    await recomputeContext.resolveFetchShapes([{ objectMetadata: true }]);
 
-    expect(recomputeContext.getRows(FirstTestEntity)).toEqual([
-      { id: 'first-row', workspaceId: WORKSPACE_ID },
-    ]);
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledWith({
+    expect(
+      recomputeContext.getRowsByName({ objectMetadata: true }).objectMetadata,
+    ).toEqual([{ id: 'object-row', workspaceId: WORKSPACE_ID }]);
+    expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledWith({
       where: { workspaceId: WORKSPACE_ID },
       withDeleted: true,
     });
   });
 
-  it('merges requirements into one query per entity with the union of declared columns', async () => {
+  it('merges shapes into one query per entity with the union of declared columns', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id']),
-      entityFetchRequirement(FirstTestEntity, ['id', 'name']),
-      entityFetchRequirement(SecondTestEntity, ['id']),
+    await recomputeContext.resolveFetchShapes([
+      { objectMetadata: ['id'] },
+      {
+        objectMetadata: ['id', 'nameSingular'],
+        application: ['id', 'universalIdentifier'],
+      },
     ]);
 
-    const firstFindMock = findMocksByEntity.get(FirstTestEntity)!;
+    const objectFindMock = findMocksByEntity.get(ObjectMetadataEntity)!;
 
-    expect(firstFindMock).toHaveBeenCalledTimes(1);
-    expect(firstFindMock.mock.calls[0][0].select).toHaveLength(2);
-    expect(firstFindMock.mock.calls[0][0].select).toEqual(
-      expect.arrayContaining(['id', 'name']),
+    expect(objectFindMock).toHaveBeenCalledTimes(1);
+    expect(objectFindMock.mock.calls[0][0].select).toHaveLength(2);
+    expect(objectFindMock.mock.calls[0][0].select).toEqual(
+      expect.arrayContaining(['id', 'nameSingular']),
     );
-    expect(findMocksByEntity.get(SecondTestEntity)).toHaveBeenCalledTimes(1);
+    expect(findMocksByEntity.get(ApplicationEntity)).toHaveBeenCalledTimes(1);
   });
 
-  it('drops the column selection once any requirement needs full rows', async () => {
+  it('drops the column selection once any shape needs full rows', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id']),
-      entityFetchRequirement(FirstTestEntity),
+    await recomputeContext.resolveFetchShapes([
+      { objectMetadata: ['id'] },
+      { objectMetadata: true },
     ]);
 
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
 
     expect(findMock).toHaveBeenCalledTimes(1);
     expect(findMock.mock.calls[0][0].select).toBeUndefined();
@@ -106,35 +93,37 @@ describe('WorkspaceCacheRecomputeContext', () => {
   it('treats an already-covered later resolution as a no-op', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id', 'name']),
+    await recomputeContext.resolveFetchShapes([
+      { objectMetadata: ['id', 'nameSingular'] },
     ]);
-    const firstRows = recomputeContext.getRows(FirstTestEntity);
+    const firstRows = recomputeContext.getRowsByName({
+      objectMetadata: ['id'],
+    }).objectMetadata;
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id']),
-    ]);
+    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
 
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
-    expect(recomputeContext.getRows(FirstTestEntity)).toBe(firstRows);
+    expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(
+      recomputeContext.getRowsByName({ objectMetadata: ['id'] }).objectMetadata,
+    ).toBe(firstRows);
   });
 
   it('refetches with the widened union when a later resolution is not covered', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id']),
-    ]);
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['name']),
+    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
+    await recomputeContext.resolveFetchShapes([
+      { objectMetadata: ['nameSingular'] },
     ]);
 
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
 
     expect(findMock).toHaveBeenCalledTimes(2);
     expect(findMock.mock.calls[1][0].select).toHaveLength(2);
     expect(findMock.mock.calls[1][0].select).toEqual(
-      expect.arrayContaining(['id', 'name']),
+      expect.arrayContaining(['id', 'nameSingular']),
     );
   });
 
@@ -142,54 +131,56 @@ describe('WorkspaceCacheRecomputeContext', () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
     await Promise.all([
-      recomputeContext.resolveFetchRequirements([
-        entityFetchRequirement(FirstTestEntity, ['id']),
-      ]),
-      recomputeContext.resolveFetchRequirements([
-        entityFetchRequirement(FirstTestEntity, ['id']),
-      ]),
+      recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]),
+      recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]),
     ]);
 
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
+    expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledTimes(
+      1,
+    );
   });
 
   it('keeps previously resolved rows readable while a widening refetch is in flight', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
     const initialRows = [{ id: 'first-generation', workspaceId: WORKSPACE_ID }];
     const widenedRows = [
-      { id: 'first-generation', name: 'widened', workspaceId: WORKSPACE_ID },
+      {
+        id: 'first-generation',
+        nameSingular: 'widened',
+        workspaceId: WORKSPACE_ID,
+      },
     ];
 
     findMock
       .mockResolvedValueOnce(initialRows)
       .mockResolvedValueOnce(widenedRows);
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id']),
+    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
+
+    const wideningPromise = recomputeContext.resolveFetchShapes([
+      { objectMetadata: ['id', 'nameSingular'] },
     ]);
 
-    const wideningPromise = recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity, ['id', 'name']),
-    ]);
-
-    expect(recomputeContext.getRows(FirstTestEntity)).toBe(initialRows);
+    expect(
+      recomputeContext.getRowsByName({ objectMetadata: ['id'] }).objectMetadata,
+    ).toBe(initialRows);
 
     await wideningPromise;
 
     expect(findMock).toHaveBeenCalledTimes(2);
-    expect(recomputeContext.getRows(FirstTestEntity)).toBe(widenedRows);
+    expect(
+      recomputeContext.getRowsByName({ objectMetadata: ['id'] }).objectMetadata,
+    ).toBe(widenedRows);
   });
 
-  it('throws when reading an entity no requirement declared', async () => {
+  it('throws when reading an entity name no shape declared', async () => {
     const { recomputeContext } = setup();
 
-    await recomputeContext.resolveFetchRequirements([
-      entityFetchRequirement(FirstTestEntity),
-    ]);
+    await recomputeContext.resolveFetchShapes([{ objectMetadata: true }]);
 
-    expect(() => recomputeContext.getRows(SecondTestEntity)).toThrow(
-      /SecondTestEntity.*fetchRequirements/,
-    );
+    expect(() =>
+      recomputeContext.getRowsByName({ application: ['id'] }),
+    ).toThrow(/application.*fetchRequirements/);
   });
 });

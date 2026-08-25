@@ -2,22 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
-import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -26,59 +18,31 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatRole>
 > {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(RoleEntity),
-    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(RoleTargetEntity, [
-      'id',
-      'universalIdentifier',
-      'roleId',
-    ]),
-    entityFetchRequirement(ObjectPermissionEntity, [
-      'id',
-      'universalIdentifier',
-      'roleId',
-    ]),
-    entityFetchRequirement(RolePermissionFlagEntity, [
-      'id',
-      'universalIdentifier',
-      'roleId',
-    ]),
-    entityFetchRequirement(FieldPermissionEntity, [
-      'id',
-      'universalIdentifier',
-      'roleId',
-    ]),
-    entityFetchRequirement(RowLevelPermissionPredicateEntity, [
-      'id',
-      'universalIdentifier',
-      'roleId',
-    ]),
-    entityFetchRequirement(RowLevelPermissionPredicateGroupEntity, [
-      'id',
-      'universalIdentifier',
-      'roleId',
-    ]),
-  ];
+  override readonly fetchRequirements = {
+    role: true,
+    application: ['id', 'universalIdentifier'],
+    roleTarget: ['id', 'universalIdentifier', 'roleId'],
+    objectPermission: ['id', 'universalIdentifier', 'roleId'],
+    rolePermissionFlag: ['id', 'universalIdentifier', 'roleId'],
+    fieldPermission: ['id', 'universalIdentifier', 'roleId'],
+    rowLevelPermissionPredicate: ['id', 'universalIdentifier', 'roleId'],
+    rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier', 'roleId'],
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatRole> {
-    const roles = recomputeContext.getRows(RoleEntity);
-    const applications = recomputeContext.getRows(ApplicationEntity);
-    const roleTargets = recomputeContext.getRows(RoleTargetEntity);
-    const objectPermissions = recomputeContext.getRows(ObjectPermissionEntity);
-    const rolePermissionFlags = recomputeContext.getRows(
-      RolePermissionFlagEntity,
-    );
-    const fieldPermissions = recomputeContext.getRows(FieldPermissionEntity);
-    const rowLevelPermissionPredicates = recomputeContext.getRows(
-      RowLevelPermissionPredicateEntity,
-    );
-    const rowLevelPermissionPredicateGroups = recomputeContext.getRows(
-      RowLevelPermissionPredicateGroupEntity,
-    );
+    const {
+      role: roles,
+      application: applications,
+      roleTarget: roleTargets,
+      objectPermission: objectPermissions,
+      rolePermissionFlag: rolePermissionFlags,
+      fieldPermission: fieldPermissions,
+      rowLevelPermissionPredicate: rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
+    } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     const [
       roleTargetsByRoleId,

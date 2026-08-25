@@ -4,8 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -13,21 +11,16 @@ import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/f
 import { compactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/compact-flat-field-metadata-maps.util';
 import { expandFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/expand-flat-field-metadata-maps.util';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
-import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import {
+  type CacheEntityFetchShape,
+  type CacheFetchableEntity,
+} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
-import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
@@ -35,50 +28,30 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   FlatEntityMaps<FlatFieldMetadata>,
   CompactFlatFieldMetadataMaps
 > {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(FieldMetadataEntity),
-    entityFetchRequirement(IndexMetadataEntity, [
-      'id',
-      'isUnique',
-      'isSystemSideEffect',
-    ]),
-    entityFetchRequirement(IndexFieldMetadataEntity, [
+  override readonly fetchRequirements = {
+    fieldMetadata: true,
+    index: ['id', 'isUnique', 'isSystemSideEffect'],
+    indexFieldMetadata: [
       'id',
       'indexMetadataId',
       'fieldMetadataId',
       'subFieldName',
-    ]),
-    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(ViewFieldEntity, [
-      'id',
-      'universalIdentifier',
-      'fieldMetadataId',
-    ]),
-    entityFetchRequirement(ViewFilterEntity, [
-      'id',
-      'universalIdentifier',
-      'fieldMetadataId',
-    ]),
-    entityFetchRequirement(ViewSortEntity, [
-      'id',
-      'universalIdentifier',
-      'fieldMetadataId',
-    ]),
-    entityFetchRequirement(ViewEntity, [
+    ],
+    objectMetadata: ['id', 'universalIdentifier'],
+    application: ['id', 'universalIdentifier'],
+    viewField: ['id', 'universalIdentifier', 'fieldMetadataId'],
+    viewFilter: ['id', 'universalIdentifier', 'fieldMetadataId'],
+    viewSort: ['id', 'universalIdentifier', 'fieldMetadataId'],
+    view: [
       'id',
       'universalIdentifier',
       'kanbanAggregateOperationFieldMetadataId',
       'calendarFieldMetadataId',
       'calendarEndFieldMetadataId',
       'mainGroupByFieldMetadataId',
-    ]),
-    entityFetchRequirement(SearchFieldMetadataEntity, [
-      'id',
-      'universalIdentifier',
-      'fieldMetadataId',
-    ]),
-  ];
+    ],
+    searchFieldMetadata: ['id', 'universalIdentifier', 'fieldMetadataId'],
+  } as const satisfies CacheEntityFetchShape;
 
   override compactForStorage(
     data: FlatEntityMaps<FlatFieldMetadata>,
@@ -96,20 +69,18 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatFieldMetadata> {
-    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
-    const indexMetadatas = recomputeContext.getRows(IndexMetadataEntity);
-    const indexFieldMetadatas = recomputeContext.getRows(
-      IndexFieldMetadataEntity,
-    );
-    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
-    const applications = recomputeContext.getRows(ApplicationEntity);
-    const viewFields = recomputeContext.getRows(ViewFieldEntity);
-    const viewFilters = recomputeContext.getRows(ViewFilterEntity);
-    const viewSorts = recomputeContext.getRows(ViewSortEntity);
-    const views = recomputeContext.getRows(ViewEntity);
-    const searchFieldMetadatas = recomputeContext.getRows(
-      SearchFieldMetadataEntity,
-    );
+    const {
+      fieldMetadata: fieldMetadatas,
+      index: indexMetadatas,
+      indexFieldMetadata: indexFieldMetadatas,
+      objectMetadata: objectMetadatas,
+      application: applications,
+      viewField: viewFields,
+      viewFilter: viewFilters,
+      viewSort: viewSorts,
+      view: views,
+      searchFieldMetadata: searchFieldMetadatas,
+    } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     const [
       viewFieldsByFieldId,
@@ -166,7 +137,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
 
     const indexFieldMetadatasByIndexMetadataId = new Map<
       string,
-      IndexFieldMetadataEntity[]
+      CacheFetchableEntity<'indexFieldMetadata'>[]
     >();
 
     for (const indexFieldMetadata of indexFieldMetadatas) {

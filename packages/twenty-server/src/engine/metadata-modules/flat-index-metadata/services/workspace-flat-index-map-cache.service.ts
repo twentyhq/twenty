@@ -4,19 +4,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
-import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import {
+  type CacheEntityFetchShape,
+  type CacheFetchableEntity,
+} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -24,33 +22,29 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatIndexMetadata>
 > {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(IndexMetadataEntity),
-    entityFetchRequirement(IndexFieldMetadataEntity),
-    entityFetchRequirement(ApplicationEntity, [
-      'id',
-      'universalIdentifier',
-      'deletedAt',
-    ]),
-    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
-    entityFetchRequirement(FieldMetadataEntity, ['id', 'universalIdentifier']),
-  ];
+  override readonly fetchRequirements = {
+    index: true,
+    indexFieldMetadata: true,
+    application: ['id', 'universalIdentifier', 'deletedAt'],
+    objectMetadata: ['id', 'universalIdentifier'],
+    fieldMetadata: ['id', 'universalIdentifier'],
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatIndexMetadata> {
-    const indexes = recomputeContext.getRows(IndexMetadataEntity);
-    const indexFieldMetadatas = recomputeContext.getRows(
-      IndexFieldMetadataEntity,
-    );
-    const applications = recomputeContext.getRows(ApplicationEntity);
-    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
-    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
+    const {
+      index: indexes,
+      indexFieldMetadata: indexFieldMetadatas,
+      application: applications,
+      objectMetadata: objectMetadatas,
+      fieldMetadata: fieldMetadatas,
+    } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     const indexFieldMetadatasByIndexMetadataId = new Map<
       string,
-      IndexFieldMetadataEntity[]
+      CacheFetchableEntity<'indexFieldMetadata'>[]
     >();
 
     for (const indexFieldMetadata of indexFieldMetadatas) {

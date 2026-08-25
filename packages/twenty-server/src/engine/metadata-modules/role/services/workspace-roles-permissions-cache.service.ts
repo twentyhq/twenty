@@ -14,17 +14,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
@@ -38,41 +32,36 @@ const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
 @Injectable()
 @WorkspaceCache('rolesPermissions', { packingPonderation: 2 })
 export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<ObjectsPermissionsByRoleId> {
-  override readonly fetchRequirements = [
-    entityFetchRequirement(RoleEntity),
-    entityFetchRequirement(ObjectPermissionEntity),
-    entityFetchRequirement(RolePermissionFlagEntity),
-    entityFetchRequirement(PermissionFlagEntity),
-    entityFetchRequirement(FieldPermissionEntity),
-    entityFetchRequirement(RowLevelPermissionPredicateEntity),
-    entityFetchRequirement(RowLevelPermissionPredicateGroupEntity),
-    entityFetchRequirement(ObjectMetadataEntity, [
+  override readonly fetchRequirements = {
+    role: true,
+    objectPermission: true,
+    rolePermissionFlag: true,
+    permissionFlag: true,
+    fieldPermission: true,
+    rowLevelPermissionPredicate: true,
+    rowLevelPermissionPredicateGroup: true,
+    objectMetadata: [
       'id',
       'isSystem',
       'universalIdentifier',
       'labelIdentifierFieldMetadataId',
-    ]),
-  ];
+    ],
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): ObjectsPermissionsByRoleId {
-    const roles = recomputeContext.getRows(RoleEntity);
-    const objectPermissions = recomputeContext.getRows(ObjectPermissionEntity);
-    const rolePermissionFlagRows = recomputeContext.getRows(
-      RolePermissionFlagEntity,
-    );
-    const permissionFlags = recomputeContext.getRows(PermissionFlagEntity);
-    const fieldPermissions = recomputeContext.getRows(FieldPermissionEntity);
-    const rowLevelPermissionPredicateRows = recomputeContext.getRows(
-      RowLevelPermissionPredicateEntity,
-    );
-    const rowLevelPermissionPredicateGroupRows = recomputeContext.getRows(
-      RowLevelPermissionPredicateGroupEntity,
-    );
-    const workspaceObjectMetadataCollection =
-      recomputeContext.getRows(ObjectMetadataEntity);
+    const {
+      role: roles,
+      objectPermission: objectPermissions,
+      rolePermissionFlag: rolePermissionFlagRows,
+      permissionFlag: permissionFlags,
+      fieldPermission: fieldPermissions,
+      rowLevelPermissionPredicate: rowLevelPermissionPredicateRows,
+      rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroupRows,
+      objectMetadata: workspaceObjectMetadataCollection,
+    } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     // the recompute context cannot load relations: rebuild the permissionFlag
     // relation in memory (undefined when the FK is absent, so the legacy

@@ -1,122 +1,106 @@
 import {
   type DataSource,
-  type EntityTarget,
   type FindManyOptions,
+  type ObjectLiteral,
 } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { CACHE_FETCHABLE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/cache-fetchable-entity-by-name.constant';
 import {
-  type EntityFetchRequirement,
-  type WorkspaceScopedRow,
-} from 'src/engine/workspace-cache/types/entity-fetch-requirement.type';
+  type CacheEntityFetchShape,
+  type CacheEntityFetchShapeRows,
+  type CacheFetchableEntityName,
+} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
 type EntityFetchGeneration = {
   id: number;
-  // null once any requirement asked for full rows
+  // null once any shape asked for full rows
   columns: ReadonlySet<string> | null;
-  rowsPromise: Promise<WorkspaceScopedRow[]>;
+  rowsPromise: Promise<ObjectLiteral[]>;
 };
 
 type EntityFetchState = {
-  entityTarget: EntityTarget<WorkspaceScopedRow>;
   latestGeneration: EntityFetchGeneration;
   settledGenerationId: number;
-  settledRows?: WorkspaceScopedRow[];
+  settledRows?: ObjectLiteral[];
 };
 
-// Scoped to a single recompute batch: the providers' declared fetch
-// requirements are merged into one deterministic plan (union of column sets
-// per entity, full rows once any provider needs them, always withDeleted) and
+// Scoped to a single recompute batch: the providers' declared fetch shapes
+// are merged into one deterministic plan (union of column sets per entity
+// name, full rows once any provider needs them, always withDeleted) and
 // executed as one query per entity before computeForCache runs. Resolving
-// again with covered requirements is a no-op; uncovered ones (a later batch
-// sharing this context) dispatch a new generation with the widened union.
-// Generations are additive: every awaiter records the
-// settled rows within its own continuation, so after awaiting a resolution
-// the rows covering it are always readable through getRows, whatever other
-// generations are still in flight. Reading an undeclared entity throws.
+// again with covered shapes is a no-op; uncovered ones (a later batch sharing
+// this context) dispatch a new generation with the widened union. Generations
+// are additive: every awaiter records the settled rows within its own
+// continuation, so after awaiting a resolution the rows covering it are
+// always readable through getRowsByName, whatever other generations are still
+// in flight. Reading an undeclared entity name throws.
 export class WorkspaceCacheRecomputeContext {
-  private readonly fetchStateByEntityName = new Map<string, EntityFetchState>();
+  private readonly fetchStateByEntityName = new Map<
+    CacheFetchableEntityName,
+    EntityFetchState
+  >();
 
   constructor(
     private readonly coreDataSource: DataSource,
     private readonly workspaceId: string,
   ) {}
 
-  async resolveFetchRequirements(
-    requirements: EntityFetchRequirement[],
-  ): Promise<void> {
-    await this.resolveToRowsByEntityName(requirements);
-  }
-
-  getRows<TEntity extends WorkspaceScopedRow>(
-    entityTarget: EntityTarget<TEntity>,
-  ): TEntity[] {
-    const entityName = this.getEntityName(entityTarget);
-    const fetchState = this.fetchStateByEntityName.get(entityName);
-
-    if (!isDefined(fetchState) || !isDefined(fetchState.settledRows)) {
-      throw new Error(
-        `Rows for entity "${entityName}" were not resolved in this recompute batch: declare it in the provider's fetchRequirements`,
-      );
-    }
-
-    return fetchState.settledRows as TEntity[];
-  }
-
-  private async resolveToRowsByEntityName(
-    requirements: EntityFetchRequirement[],
-  ): Promise<Map<string, WorkspaceScopedRow[]>> {
-    const plannedByEntityName = new Map<
-      string,
-      {
-        entityTarget: EntityTarget<WorkspaceScopedRow>;
-        columns: Set<string> | null;
-      }
+  async resolveFetchShapes(shapes: CacheEntityFetchShape[]): Promise<void> {
+    const plannedColumnsByEntityName = new Map<
+      CacheFetchableEntityName,
+      Set<string> | null
     >();
 
-    for (const { entityTarget, columns } of requirements) {
-      const entityName = this.getEntityName(entityTarget);
-      const planned = plannedByEntityName.get(entityName);
+    for (const shape of shapes) {
+      for (const [entityName, columns] of Object.entries(shape) as [
+        CacheFetchableEntityName,
+        readonly string[] | true | undefined,
+      ][]) {
+        if (!isDefined(columns)) {
+          continue;
+        }
 
-      if (!isDefined(planned)) {
-        plannedByEntityName.set(entityName, {
-          entityTarget,
-          columns: isDefined(columns) ? new Set(columns) : null,
-        });
-        continue;
-      }
+        const planned = plannedColumnsByEntityName.get(entityName);
 
-      if (!isDefined(columns)) {
-        planned.columns = null;
-      } else if (planned.columns !== null) {
+        if (columns === true) {
+          plannedColumnsByEntityName.set(entityName, null);
+          continue;
+        }
+
+        if (planned === null) {
+          continue;
+        }
+
+        if (!isDefined(planned)) {
+          plannedColumnsByEntityName.set(entityName, new Set(columns));
+          continue;
+        }
+
         for (const column of columns) {
-          planned.columns.add(column);
+          planned.add(column);
         }
       }
     }
 
     const generationsToAwait: {
-      entityName: string;
       fetchState: EntityFetchState;
       generation: EntityFetchGeneration;
     }[] = [];
 
-    for (const [entityName, planned] of plannedByEntityName) {
+    for (const [entityName, plannedColumns] of plannedColumnsByEntityName) {
       const fetchState = this.fetchStateByEntityName.get(entityName);
       const latestColumns = fetchState?.latestGeneration.columns;
 
       const isCoveredByLatestGeneration =
         isDefined(fetchState) &&
         (latestColumns === null ||
-          (planned.columns !== null &&
-            [...planned.columns].every((column) =>
-              latestColumns!.has(column),
-            )));
+          (plannedColumns !== null &&
+            [...plannedColumns].every((column) => latestColumns!.has(column))));
 
       if (isCoveredByLatestGeneration) {
         generationsToAwait.push({
-          entityName,
           fetchState,
           generation: fetchState.latestGeneration,
         });
@@ -126,42 +110,35 @@ export class WorkspaceCacheRecomputeContext {
       let mergedColumns: Set<string> | null;
 
       if (!isDefined(fetchState)) {
-        mergedColumns = planned.columns;
-      } else if (planned.columns === null || latestColumns === null) {
+        mergedColumns = plannedColumns;
+      } else if (plannedColumns === null || latestColumns === null) {
         mergedColumns = null;
       } else {
-        mergedColumns = new Set([...latestColumns!, ...planned.columns]);
+        mergedColumns = new Set([...latestColumns!, ...plannedColumns]);
       }
 
       const generation: EntityFetchGeneration = {
         id: isDefined(fetchState) ? fetchState.latestGeneration.id + 1 : 1,
         columns: mergedColumns,
-        rowsPromise: this.runFetch(planned.entityTarget, mergedColumns),
+        rowsPromise: this.runFetch(entityName, mergedColumns),
       };
 
       if (isDefined(fetchState)) {
         fetchState.latestGeneration = generation;
-        generationsToAwait.push({ entityName, fetchState, generation });
+        generationsToAwait.push({ fetchState, generation });
       } else {
         const newFetchState: EntityFetchState = {
-          entityTarget: planned.entityTarget,
           latestGeneration: generation,
           settledGenerationId: 0,
         };
 
         this.fetchStateByEntityName.set(entityName, newFetchState);
-        generationsToAwait.push({
-          entityName,
-          fetchState: newFetchState,
-          generation,
-        });
+        generationsToAwait.push({ fetchState: newFetchState, generation });
       }
     }
 
-    const rowsByEntityName = new Map<string, WorkspaceScopedRow[]>();
-
     await Promise.all(
-      generationsToAwait.map(async ({ entityName, fetchState, generation }) => {
+      generationsToAwait.map(async ({ fetchState, generation }) => {
         const rows = await generation.rowsPromise;
 
         // A newer generation always fetches a superset of columns, so only
@@ -170,25 +147,43 @@ export class WorkspaceCacheRecomputeContext {
           fetchState.settledGenerationId = generation.id;
           fetchState.settledRows = rows;
         }
-
-        rowsByEntityName.set(entityName, rows);
       }),
     );
-
-    return rowsByEntityName;
   }
 
-  private getEntityName(
-    entityTarget: EntityTarget<WorkspaceScopedRow>,
-  ): string {
-    return this.coreDataSource.getRepository(entityTarget).metadata.name;
+  getRowsByName<TShape extends CacheEntityFetchShape>(
+    shape: TShape,
+  ): CacheEntityFetchShapeRows<TShape> {
+    const rowsByEntityName: Partial<
+      Record<CacheFetchableEntityName, ObjectLiteral[]>
+    > = {};
+
+    for (const entityName of Object.keys(shape) as CacheFetchableEntityName[]) {
+      rowsByEntityName[entityName] = this.getRowsForEntityName(entityName);
+    }
+
+    return rowsByEntityName as CacheEntityFetchShapeRows<TShape>;
+  }
+
+  private getRowsForEntityName(
+    entityName: CacheFetchableEntityName,
+  ): ObjectLiteral[] {
+    const fetchState = this.fetchStateByEntityName.get(entityName);
+
+    if (!isDefined(fetchState) || !isDefined(fetchState.settledRows)) {
+      throw new Error(
+        `Rows for entity "${entityName}" were not resolved in this recompute batch: declare it in the provider's fetchRequirements`,
+      );
+    }
+
+    return fetchState.settledRows;
   }
 
   private runFetch(
-    entityTarget: EntityTarget<WorkspaceScopedRow>,
+    entityName: CacheFetchableEntityName,
     columns: ReadonlySet<string> | null,
-  ): Promise<WorkspaceScopedRow[]> {
-    const findOptions: FindManyOptions<WorkspaceScopedRow> = {
+  ): Promise<ObjectLiteral[]> {
+    const findOptions: FindManyOptions<ObjectLiteral> = {
       where: {
         workspaceId: this.workspaceId,
       },
@@ -196,11 +191,11 @@ export class WorkspaceCacheRecomputeContext {
     };
 
     if (columns !== null) {
-      findOptions.select = [
-        ...columns,
-      ] as FindManyOptions<WorkspaceScopedRow>['select'];
+      findOptions.select = [...columns];
     }
 
-    return this.coreDataSource.getRepository(entityTarget).find(findOptions);
+    return this.coreDataSource
+      .getRepository<ObjectLiteral>(CACHE_FETCHABLE_ENTITY_BY_NAME[entityName])
+      .find(findOptions);
   }
 }

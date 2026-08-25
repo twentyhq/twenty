@@ -4,23 +4,26 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
 @Injectable()
 @WorkspaceCache('apiKeyMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   Record<string, FlatApiKey>
 > {
-  override readonly fetchRequirements = [entityFetchRequirement(ApiKeyEntity)];
+  override readonly fetchRequirements = {
+    apiKey: true,
+  } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): Record<string, FlatApiKey> {
-    const apiKeys = recomputeContext.getRows(ApiKeyEntity);
+    const { apiKey: apiKeys } = recomputeContext.getRowsByName(
+      this.fetchRequirements,
+    );
 
     return apiKeys.reduce(
       (map, apiKey) => {
