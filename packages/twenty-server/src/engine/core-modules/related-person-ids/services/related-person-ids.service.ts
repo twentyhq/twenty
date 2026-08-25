@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, type FindOptionsSelect, type FindOptionsWhere } from 'typeorm';
+import { In, type FindOptionsWhere } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import {
@@ -98,9 +98,7 @@ export class RelatedPersonIdsService {
       if (hop.direction === RelationType.MANY_TO_ONE) {
         const records = await repository.find({
           where: { id: In(currentIds) } as FindOptionsWhere<RelationWalkRecord>,
-          select: {
-            [hop.joinColumnName]: true,
-          } as FindOptionsSelect<RelationWalkRecord>,
+          select: [hop.joinColumnName],
         });
 
         currentIds = [

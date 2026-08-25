@@ -67,7 +67,6 @@ import {
   RelationNestedQueries,
 } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
@@ -357,7 +356,7 @@ export abstract class CommonBaseQueryRunnerService<
       .getRepository(
         queryRunnerContext.flatObjectMetadata.nameSingular,
         rolePermissionConfig,
-      ) as unknown as WorkspaceRepository<ObjectLiteral>;
+      ) as unknown as WorkspaceRepositoryV2<ObjectLiteral>;
 
     return {
       ...queryRunnerContext,

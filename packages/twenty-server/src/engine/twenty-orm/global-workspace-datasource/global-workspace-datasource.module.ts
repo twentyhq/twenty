@@ -10,13 +10,8 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
-import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
-import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/global-workspace-datasource/workspace-orm-entity-metadatas-cache.service';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -40,18 +35,13 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     TwentyConfigModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
-    TwentyORMModule,
     TwentyORMV2Module,
   ],
   providers: [
-    GlobalWorkspaceDataSourceService,
     GlobalWorkspaceOrmManager,
-    EntitySchemaFactory,
-    EntitySchemaColumnFactory,
-    EntitySchemaRelationFactory,
     WorkspaceORMEntityMetadatasCacheService,
     provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
-  exports: [GlobalWorkspaceDataSourceService, GlobalWorkspaceOrmManager],
+  exports: [GlobalWorkspaceOrmManager],
 })
 export class GlobalWorkspaceDataSourceModule {}

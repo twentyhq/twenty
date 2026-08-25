@@ -293,7 +293,6 @@ msgstr "Falta un camp obligatori."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Falta un camp obligatori. Proporciona tots els valors requerits i torna-ho a provar."
 
@@ -6675,6 +6674,16 @@ msgstr "Element del menú de navegació no trobat."
 msgid "Navigation menu item type is required"
 msgstr "El tipus d'element del menú de navegació és obligatori"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Metadades de l'objecte de destinació de navegació no trobades"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Objecte de destinació de navegació no trobat"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "No hi ha cap pas d'incorporació anterior al qual tornar."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Aquests camps no es poden actualitzar abans que l'espai de treball estigui activat: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "El valor de {fieldLabel} ja està en ús. Si us plau, verifica les teves dades i torna a intentar-ho."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "Aquesta operació no és compatible."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Aquesta operació fa referència a un registre que no existeix o que no es pot modificar a causa de relacions existents."
 
@@ -10481,7 +10484,6 @@ msgstr "Aquest registre ja existeix. Si us plau, verifica les teves dades i torn
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Aquest registre no es pot suprimir perquè encara hi fan referència altres registres."
 
@@ -12441,7 +12443,6 @@ msgstr "Només pots actualitzar un sol registre amb el camp de fitxers alhora."
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

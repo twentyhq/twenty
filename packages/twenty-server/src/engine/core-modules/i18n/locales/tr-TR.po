@@ -293,7 +293,6 @@ msgstr "Zorunlu bir alan eksik."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Gerekli bir alan eksik. Lütfen tüm gerekli değerleri sağlayın ve tekrar deneyin."
 
@@ -6675,6 +6674,16 @@ msgstr "Gezinme menüsü öğesi bulunamadı."
 msgid "Navigation menu item type is required"
 msgstr "Gezinme menüsü öğesi türü gerekli"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Gezinme hedef nesne metadatası bulunamadı"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Gezinme hedef nesnesi bulunamadı"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "Geri dönebileceğiniz önceki bir başlangıç adımı yok."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Çalışma alanı etkinleştirilmeden önce şu alanlar güncellenemez: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Bu {fieldLabel} değeri zaten kullanımda. Lütfen verilerinizi kontrol edin ve tekrar deneyin."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "Bu işlem desteklenmiyor."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Bu işlem, var olmayan veya mevcut ilişkiler nedeniyle değiştirilemeyen bir kayda referans veriyor."
 
@@ -10481,7 +10484,6 @@ msgstr "Bu kayıt zaten mevcut. Lütfen verilerinizi kontrol edin ve tekrar dene
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Bu kayıt, diğer kayıtlar tarafından hâlâ referans verildiği için silinemez."
 
@@ -12441,7 +12443,6 @@ msgstr "Bir seferde yalnızca dosyalar alanına sahip tek bir kaydı güncelleye
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

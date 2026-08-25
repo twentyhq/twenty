@@ -3,7 +3,7 @@ import { WidgetActionTimelineFilter } from '@/page-layout/widgets/timeline/compo
 
 export const WidgetActionTimeline = () => (
   <>
-    <WidgetActionTimelineCreateRelated />
     <WidgetActionTimelineFilter />
+    <WidgetActionTimelineCreateRelated />
   </>
 );

@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -609,7 +610,7 @@ const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
   return relationValue;
 };
 
-export const mapRowToEntity = <T extends Record<string, unknown>>(
+export const mapRowToEntity = <T extends ObjectLiteral>(
   row: Record<string, unknown>,
   columnNameByResultAlias: Record<string, string>,
 ): T => {

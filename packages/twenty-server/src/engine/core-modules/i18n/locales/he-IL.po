@@ -293,7 +293,6 @@ msgstr "שדה חובה חסר."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "שדה נדרש חסר. אנא ספק את כל הערכים הנדרשים ונסה שוב."
 
@@ -6675,6 +6674,16 @@ msgstr "פריט בתפריט הניווט לא נמצא."
 msgid "Navigation menu item type is required"
 msgstr "סוג פריט בתפריט הניווט נדרש"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "מטא-נתונים של אובייקט היעד לניווט לא נמצאו"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "אובייקט היעד לניווט לא נמצא"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "אין שלב הצטרפות קודם שניתן לחזור אליו."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "לא ניתן לעדכן את השדות האלה לפני הפעלת מרחב העבודה: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "ערך {fieldLabel} זה כבר נמצא בשימוש. אנא בדוק את הנתונים שלך ונסה שוב."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "פעולה זו אינה נתמכת."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "פעולה זו מתייחסת לרשומה שאינה קיימת או שלא ניתן לשנותה עקב קשרים קיימים."
 
@@ -10481,7 +10484,6 @@ msgstr "רישום זה כבר קיים. אנא בדוק את הנתונים ש�
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "לא ניתן למחוק רשומה זו כיוון שהיא עדיין מיוחסת על ידי רשומות אחרות."
 
@@ -12441,7 +12443,6 @@ msgstr "ניתן לעדכן רשומה אחת בלבד עם שדה קבצים ב
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

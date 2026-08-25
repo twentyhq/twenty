@@ -7,7 +7,7 @@ import { In, MoreThan, type ObjectLiteral } from 'typeorm';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import {
@@ -194,7 +194,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     payloads,
   }: {
-    timelineActivityRepository: WorkspaceRepository<ObjectLiteral>;
+    timelineActivityRepository: WorkspaceRepositoryV2<ObjectLiteral>;
     objectSingularName: string;
     payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
   }) {
@@ -232,7 +232,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     payloads,
   }: {
-    timelineActivityRepository: WorkspaceRepository<ObjectLiteral>;
+    timelineActivityRepository: WorkspaceRepositoryV2<ObjectLiteral>;
     objectSingularName: string;
     payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
   }) {
@@ -262,7 +262,7 @@ export class TimelineActivityRepository {
     timelineActivityRepository,
     merges,
   }: {
-    timelineActivityRepository: WorkspaceRepository<ObjectLiteral>;
+    timelineActivityRepository: WorkspaceRepositoryV2<ObjectLiteral>;
     merges: {
       id: string;
       properties: Partial<ObjectRecord>;

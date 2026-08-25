@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
@@ -80,6 +81,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       FrontComponentEntity,
       SearchFieldMetadataEntity,
       TimelineActivityTypeEntity,
+      CommandMenuItemEntity,
     ]),
   ],
   providers: [
@@ -124,6 +126,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateEntity),
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity),
     provideWorkspaceScopedRepository(TimelineActivityTypeEntity),
+    provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],
   exports: [
     WorkspaceManyOrAllFlatEntityMapsCacheService,

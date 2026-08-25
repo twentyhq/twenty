@@ -2,27 +2,26 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
+import { type ObjectRecord } from 'twenty-shared/types';
+
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
-import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class GlobalWorkspaceOrmManager {
   constructor(
-    private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
@@ -31,19 +30,19 @@ export class GlobalWorkspaceOrmManager {
     workspaceId: string,
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
+  ): Promise<WorkspaceRepositoryV2<T>>;
 
   async getRepository<T extends ObjectLiteral>(
     workspaceId: string,
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
+  ): Promise<WorkspaceRepositoryV2<T>>;
 
   async getRepository<T extends ObjectLiteral>(
     _workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>> {
+  ): Promise<WorkspaceRepositoryV2<T>> {
     const objectMetadataName = this.resolveObjectMetadataName(
       workspaceEntityOrObjectMetadataName,
     );
@@ -53,15 +52,7 @@ export class GlobalWorkspaceOrmManager {
       .getRepository(
         objectMetadataName,
         permissionOptions,
-      ) as unknown as WorkspaceRepository<T>;
-  }
-
-  async getGlobalWorkspaceDataSource(): Promise<GlobalWorkspaceDataSource> {
-    return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
-  }
-
-  async getGlobalWorkspaceDataSourceReplica(): Promise<GlobalWorkspaceDataSource> {
-    return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSourceReplica();
+      ) as unknown as WorkspaceRepositoryV2<T>;
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(
@@ -83,14 +74,14 @@ export class GlobalWorkspaceOrmManager {
       .getDataSource({ useReplica: false })
       .transaction((transactionScope) =>
         work({
-          getRepository: <Entity extends ObjectLiteral>(
+          getRepository: <T extends ObjectLiteral = ObjectRecord>(
             objectMetadataName: string,
             rolePermissionConfig?: RolePermissionConfig,
-          ): WorkspaceRepository<Entity> =>
+          ): WorkspaceRepositoryV2<T> =>
             transactionScope.getRepository(
               objectMetadataName,
               rolePermissionConfig,
-            ) as unknown as WorkspaceRepository<Entity>,
+            ) as unknown as WorkspaceRepositoryV2<T>,
           executeRawQuery: (sql, parameters) =>
             transactionScope.executeRawQuery(sql, parameters),
         }),
@@ -150,7 +141,6 @@ export class GlobalWorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap,
       permissionsPerRoleId,
-      entityMetadatas: [],
       userWorkspaceRoleMap,
       apiKeyRoleMap,
     };
@@ -192,7 +182,6 @@ export class GlobalWorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       permissionsPerRoleId: {},
-      entityMetadatas: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
     };

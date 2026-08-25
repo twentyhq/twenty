@@ -293,7 +293,6 @@ msgstr "Відсутнє обов'язкове поле."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Не заповнено обов'язкове поле. Укажіть усі обов'язкові значення та спробуйте ще раз."
 
@@ -6675,6 +6674,16 @@ msgstr "Пункт навігаційного меню не знайдено."
 msgid "Navigation menu item type is required"
 msgstr "Потрібно вказати тип пункту навігаційного меню"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Метадані цільового об'єкта навігації не знайдено"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Цільовий об'єкт навігації не знайдено"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "Немає попереднього кроку онбордингу, д�
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Ці поля не можна оновити, доки робочу область не буде активовано: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Значення {fieldLabel} вже використовується. Перевірте свої дані і спробуйте знову."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "Ця операція не підтримується."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ця операція посилається на запис, який не існує або не може бути змінений через наявні зв'язки."
 
@@ -10481,7 +10484,6 @@ msgstr "Цей запис вже існує. Перевірте свої дан�
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Цей запис не можна видалити, оскільки на нього все ще посилаються інші записи."
 
@@ -12441,7 +12443,6 @@ msgstr "Ви можете оновити лише один запис з пол�
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

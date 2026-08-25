@@ -1014,6 +1014,7 @@ export type CommandMenuItem = {
   isActive: Scalars['Boolean']['output'];
   isPinned: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
+  navigationTargetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   pageLayoutId?: Maybe<Scalars['UUID']['output']>;
   payload?: Maybe<CommandMenuItemPayload>;
   position: Scalars['Float']['output'];
@@ -4249,6 +4250,7 @@ export type ObjectIndexMetadatasConnection = {
 
 export type ObjectMetadataCommandMenuItemPayload = {
   __typename?: 'ObjectMetadataCommandMenuItemPayload';
+  /** @deprecated Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility. */
   objectMetadataItemId: Scalars['UUID']['output'];
 };
 

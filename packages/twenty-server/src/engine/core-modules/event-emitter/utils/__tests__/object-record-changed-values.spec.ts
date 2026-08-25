@@ -31,6 +31,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   isSearchable: true,
   indexMetadataIds: [],
   searchFieldMetadataIds: [],
+  commandMenuItemIds: [],
   objectPermissionIds: [],
   fieldPermissionIds: [],
   fieldIds: [],
@@ -58,6 +59,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   pageLayoutUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
   searchFieldMetadataUniversalIdentifiers: [],
+  commandMenuItemUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,
 };

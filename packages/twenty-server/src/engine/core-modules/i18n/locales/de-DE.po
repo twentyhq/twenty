@@ -293,7 +293,6 @@ msgstr "Ein erforderliches Feld fehlt."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Ein erforderliches Feld fehlt. Bitte geben Sie alle erforderlichen Werte ein und versuchen Sie es erneut."
 
@@ -6675,6 +6674,16 @@ msgstr "Navigationsmenüeintrag nicht gefunden."
 msgid "Navigation menu item type is required"
 msgstr "Der Typ des Navigationsmenüeintrags ist erforderlich"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Metadaten des Navigationszielobjekts nicht gefunden"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Navigationszielobjekt nicht gefunden"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "Es gibt keinen vorherigen Onboarding-Schritt, zu dem du zurückgehen kan
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Diese Felder können nicht aktualisiert werden, bevor der Arbeitsbereich aktiviert ist: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Dieser {fieldLabel}-Wert wird bereits verwendet. Bitte überprüfen Sie Ihre Daten und versuchen Sie es erneut."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "Dieser Vorgang wird nicht unterstützt."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Dieser Vorgang verweist auf einen Datensatz, der nicht existiert oder aufgrund bestehender Beziehungen nicht geändert werden kann."
 
@@ -10481,7 +10484,6 @@ msgstr "Dieser Eintrag existiert bereits. Bitte überprüfen Sie Ihre Daten und 
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Dieser Datensatz kann nicht gelöscht werden, da er noch von anderen Datensätzen referenziert wird."
 
@@ -12441,7 +12443,6 @@ msgstr "Sie können gleichzeitig nur einen Datensatz mit dem Dateifeld aktualisi
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "Es können jeweils maximal {QUERY_MAX_RECORDS} Datensätze aktualisiert werden."
 

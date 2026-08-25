@@ -293,7 +293,6 @@ msgstr "Lipsește un câmp necesar."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Lipsește un câmp obligatoriu. Vă rugăm să furnizați toate valorile obligatorii și să încercați din nou."
 
@@ -6675,6 +6674,16 @@ msgstr "Elementul de meniu de navigare nu a fost găsit."
 msgid "Navigation menu item type is required"
 msgstr "Tipul elementului de meniu de navigare este necesar"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Metadatele obiectului țintă de navigare nu au fost găsite"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Obiectul țintă de navigare nu a fost găsit"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "Nu există un pas anterior de onboarding la care să te întorci."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Aceste câmpuri nu pot fi actualizate înainte ca spațiul de lucru să fie activat: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "Această operațiune nu este acceptată."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Această operațiune face referire la o înregistrare care nu există sau nu poate fi modificată din cauza relațiilor existente."
 
@@ -10481,7 +10484,6 @@ msgstr ""
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Această înregistrare nu poate fi ștearsă deoarece este încă referită de alte înregistrări."
 
@@ -12441,7 +12443,6 @@ msgstr "Puteți actualiza câmpul de fișiere pentru o singură înregistrare od
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

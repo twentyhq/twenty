@@ -6,7 +6,13 @@ import {
   type ObjectsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DeleteResult, In, InsertResult, UpdateResult } from 'typeorm';
+import {
+  DeleteResult,
+  In,
+  InsertResult,
+  type ObjectLiteral,
+  UpdateResult,
+} from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -102,11 +108,15 @@ type WorkspaceRepositoryV2Options = {
   ) => WorkspaceRepositoryV2;
   isTransactional: boolean;
   runInNewTransaction: <T>(
-    work: (transactionalRepository: WorkspaceRepositoryV2) => Promise<T>,
+    work: (
+      transactionalRepository: WorkspaceRepositoryV2<ObjectLiteral>,
+    ) => Promise<T>,
   ) => Promise<T>;
 };
 
-export class WorkspaceRepositoryV2 {
+export class WorkspaceRepositoryV2<
+  TEntity extends ObjectLiteral = ObjectRecord,
+> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
   private readonly options: WorkspaceRepositoryV2Options;
@@ -192,7 +202,7 @@ export class WorkspaceRepositoryV2 {
     return this.options.internalContext;
   }
 
-  async find(options?: FindOptionsV2): Promise<ObjectRecord[]> {
+  async find(options?: FindOptionsV2): Promise<TEntity[]> {
     const records = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
@@ -208,18 +218,14 @@ export class WorkspaceRepositoryV2 {
       );
     }
 
-    return records;
+    return records as unknown as TEntity[];
   }
 
-  async findBy(
-    where: ObjectWhereLike | ObjectWhereLike[],
-  ): Promise<ObjectRecord[]> {
+  async findBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<TEntity[]> {
     return this.find({ where });
   }
 
-  async findAndCount(
-    options?: FindOptionsV2,
-  ): Promise<[ObjectRecord[], number]> {
+  async findAndCount(options?: FindOptionsV2): Promise<[TEntity[], number]> {
     const records = await this.find(options);
     const totalCount = await this.count(options);
 
@@ -228,11 +234,11 @@ export class WorkspaceRepositoryV2 {
 
   async findAndCountBy(
     where: ObjectWhereLike | ObjectWhereLike[],
-  ): Promise<[ObjectRecord[], number]> {
+  ): Promise<[TEntity[], number]> {
     return this.findAndCount({ where });
   }
 
-  async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
+  async findOne(options?: FindOptionsV2): Promise<TEntity | null> {
     if (!isDefined(options?.where)) {
       throw new TwentyOrmV2Exception(
         'findOne requires a "where" condition',
@@ -255,16 +261,16 @@ export class WorkspaceRepositoryV2 {
       );
     }
 
-    return record;
+    return record as unknown as TEntity | null;
   }
 
   async findOneBy(
     where: ObjectWhereLike | ObjectWhereLike[],
-  ): Promise<ObjectRecord | null> {
+  ): Promise<TEntity | null> {
     return this.findOne({ where });
   }
 
-  async findOneOrFail(options?: FindOptionsV2): Promise<ObjectRecord> {
+  async findOneOrFail(options?: FindOptionsV2): Promise<TEntity> {
     const record = await this.findOne(options);
 
     if (!isDefined(record)) {
@@ -279,7 +285,7 @@ export class WorkspaceRepositoryV2 {
 
   async findOneByOrFail(
     where: ObjectWhereLike | ObjectWhereLike[],
-  ): Promise<ObjectRecord> {
+  ): Promise<TEntity> {
     return this.findOneOrFail({ where });
   }
 
@@ -661,7 +667,7 @@ export class WorkspaceRepositoryV2 {
   }
 
   private runAtomically<T>(
-    work: (repository: WorkspaceRepositoryV2) => Promise<T>,
+    work: (repository: WorkspaceRepositoryV2<ObjectLiteral>) => Promise<T>,
   ): Promise<T> {
     return this.options.isTransactional
       ? work(this)
@@ -686,7 +692,7 @@ export class WorkspaceRepositoryV2 {
 
   async save(
     entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
-  ): Promise<ObjectRecord[]> {
+  ): Promise<TEntity[]> {
     const entities = Array.isArray(entityOrEntities)
       ? entityOrEntities
       : [entityOrEntities];
@@ -756,7 +762,7 @@ export class WorkspaceRepositoryV2 {
           : undefined;
 
         return isDefined(record) ? [record] : [];
-      });
+      }) as unknown as TEntity[];
     });
   }
 
