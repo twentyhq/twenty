@@ -36,8 +36,6 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    // Empty/partially-provisioned workspaces lack the workflow objects;
-    // fetching the repository for a missing entity throws, so skip them.
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -56,8 +54,6 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     });
   }
 
-  // if-else and filter step conditions live in workflowVersion.steps; the
-  // stored trigger snapshot lives in workflowVersion.trigger.
   private async rewriteWorkflowVersions({
     workspaceId,
     flatObjectMetadataMaps,
@@ -114,8 +110,6 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     }
   }
 
-  // Active database-event triggers are evaluated from workflowAutomatedTrigger
-  // records at fire time, not from the workflowVersion snapshot.
   private async rewriteAutomatedTriggers({
     workspaceId,
     flatObjectMetadataMaps,
@@ -164,10 +158,18 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
       });
     }
 
-    if (updatedCount > 0) {
-      this.logger.log(
-        `${isDryRun ? '[DRY RUN] ' : ''}Rewrote IS_NOT_NULL operands in ${updatedCount} automated trigger(s) for workspace ${workspaceId}`,
-      );
+    if (updatedCount === 0) {
+      return;
     }
+
+    if (!isDryRun) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
+    }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Rewrote IS_NOT_NULL operands in ${updatedCount} automated trigger(s) for workspace ${workspaceId}`,
+    );
   }
 }
