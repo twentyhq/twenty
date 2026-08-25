@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -11,6 +12,7 @@ import { WorkflowCoreConsistencyService } from 'src/modules/workflow/workflow-co
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity]),
+    WorkspaceIteratorModule,
     MetricsModule,
     WorkspaceCacheModule,
   ],

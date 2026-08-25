@@ -2,10 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
-import { DataSource, IsNull, Not, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -31,34 +30,32 @@ export class WorkflowCoreConsistencyService {
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async runConsistencyCheck(): Promise<void> {
-    const workspaces = await this.workspaceRepository.find({
-      select: ['id', 'databaseSchema'],
-      where: {
-        activationStatus: activationStatusIn(
-          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
-        ),
-        databaseSchema: Not(IsNull()),
+    const report = await this.workspaceIteratorService.iterate({
+      callback: async ({ workspaceId }) => {
+        const workspace = await this.workspaceRepository.findOne({
+          select: ['databaseSchema'],
+          where: { id: workspaceId },
+        });
+
+        if (!isDefined(workspace?.databaseSchema)) {
+          return;
+        }
+
+        await this.checkWorkspace(workspaceId, workspace.databaseSchema);
       },
     });
 
-    for (const { id: workspaceId, databaseSchema } of workspaces) {
-      if (!isDefined(databaseSchema)) {
-        continue;
-      }
-
-      try {
-        await this.checkWorkspace(workspaceId, databaseSchema);
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
-        });
-      }
+    for (const { workspaceId, error } of report.fail) {
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
     }
   }
 
