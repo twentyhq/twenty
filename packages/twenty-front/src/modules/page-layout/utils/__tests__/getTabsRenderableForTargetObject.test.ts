@@ -75,7 +75,6 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: undefined,
     });
 
@@ -89,7 +88,6 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: [],
     });
 
@@ -108,14 +106,13 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: [createRelationField('timelineActivities')],
     });
 
     expect(result.map((tab) => tab.id)).toEqual(['tab-4']);
   });
 
-  it('requires call recordings for both native call recording widgets', () => {
+  it('keeps both call recording widgets without a call recordings relation', () => {
     const tabs = [
       createMockTab('summary-tab', [
         createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
@@ -131,25 +128,20 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(
       getTabsRenderableForTargetObject({
         tabs,
-        targetObjectNameSingular: 'calendarEvent',
         targetObjectFields: [],
-      }),
-    ).toEqual([]);
+      }).map((tab) => tab.id),
+    ).toEqual(['summary-tab', 'transcript-tab']);
 
     expect(
       getTabsRenderableForTargetObject({
         tabs,
-        targetObjectNameSingular: 'calendarEvent',
         targetObjectFields: [createRelationField('callRecordings')],
       }).map((tab) => tab.id),
     ).toEqual(['summary-tab', 'transcript-tab']);
   });
 
-  it('keeps call recording widgets on the call recording object without a relation', () => {
+  it('drops call recording widgets when the relation is deactivated', () => {
     const tabs = [
-      createMockTab('summary-tab', [
-        createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
-      ]),
       createMockTab('transcript-tab', [
         createMockWidget(
           'transcript-widget',
@@ -160,14 +152,10 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'callRecording',
-      targetObjectFields: [],
+      targetObjectFields: [createRelationField('callRecordings', false)],
     });
 
-    expect(result.map((tab) => tab.id)).toEqual([
-      'summary-tab',
-      'transcript-tab',
-    ]);
+    expect(result).toHaveLength(0);
   });
 
   it('should drop tabs whose relation field exists but is deactivated', () => {
@@ -177,7 +165,6 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: [createRelationField('taskTargets', false)],
     });
 
@@ -194,7 +181,6 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: [],
     });
 
@@ -208,7 +194,6 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: [createRelationField('messageParticipants', false)],
     });
 
@@ -222,7 +207,6 @@ describe('getTabsRenderableForTargetObject', () => {
 
     const result = getTabsRenderableForTargetObject({
       tabs,
-      targetObjectNameSingular: 'company',
       targetObjectFields: [
         { name: 'taskTargets', isActive: true, type: FieldMetadataType.TEXT },
       ],
