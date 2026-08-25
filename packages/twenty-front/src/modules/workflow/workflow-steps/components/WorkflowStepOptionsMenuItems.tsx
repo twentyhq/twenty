@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { MenuItem, type MenuItemAccent } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowStepOptionsMenuItemsProps = {
   selectedItemId: string | null;
@@ -12,7 +12,6 @@ type WorkflowStepOptionsMenuItemsProps = {
   onChangeNode: () => void;
   onDuplicateNode?: () => void;
   onDeleteNode?: () => void;
-  deleteNodeAccent?: MenuItemAccent;
   children?: ReactNode;
 };
 
@@ -22,7 +21,6 @@ export const WorkflowStepOptionsMenuItems = ({
   onChangeNode,
   onDuplicateNode,
   onDeleteNode,
-  deleteNodeAccent,
   children,
 }: WorkflowStepOptionsMenuItemsProps) => {
   const { t } = useLingui();
@@ -67,7 +65,7 @@ export const WorkflowStepOptionsMenuItems = ({
           <MenuItem
             LeftIcon={IconTrash}
             text={t`Delete node`}
-            accent={deleteNodeAccent}
+            accent="danger"
             focused={
               selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode
             }

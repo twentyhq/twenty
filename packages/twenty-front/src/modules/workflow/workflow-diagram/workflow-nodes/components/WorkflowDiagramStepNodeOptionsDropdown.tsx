@@ -85,7 +85,6 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
             onChangeNode={handleChangeNode}
             onDuplicateNode={handleDuplicateNode}
             onDeleteNode={handleDeleteNode}
-            deleteNodeAccent="danger"
           />
         </OptionsDropdownMenu>
       </ParentClickOutsideIdContext.Provider>

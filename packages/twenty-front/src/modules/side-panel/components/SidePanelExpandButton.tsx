@@ -2,7 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
 import { IconButtonWithTooltip } from 'twenty-ui/input';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import {
+  getOsControlSymbol,
+  getOsShortcutSeparator,
+} from 'twenty-ui/utilities';
 
 import { useSidePanelExpandTarget } from '@/side-panel/hooks/useSidePanelExpandTarget';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -31,7 +34,9 @@ const SidePanelExpandButtonContent = () => {
   }
 
   const tooltipContent = expandTarget.hasExpandShortcut
-    ? `${expandTarget.label} | ${getOsControlSymbol()}⏎`
+    ? `${expandTarget.label} | ${[getOsControlSymbol(), '⏎'].join(
+        getOsShortcutSeparator(),
+      )}`
     : expandTarget.label;
 
   return (

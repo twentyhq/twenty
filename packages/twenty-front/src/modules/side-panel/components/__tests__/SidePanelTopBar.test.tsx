@@ -196,6 +196,26 @@ describe('SidePanelTopBar', () => {
     expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   });
 
+  it('handles Escape before the underlying page hotkeys', () => {
+    const underlyingPageEscapeHandler = jest.fn();
+
+    document.addEventListener('keydown', underlyingPageEscapeHandler);
+
+    try {
+      renderSidePanelCommandMenu();
+
+      fireEvent.keyDown(document.body, {
+        key: 'Escape',
+        code: 'Escape',
+      });
+
+      expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+      expect(underlyingPageEscapeHandler).not.toHaveBeenCalled();
+    } finally {
+      document.removeEventListener('keydown', underlyingPageEscapeHandler);
+    }
+  });
+
   it('does not navigate with Backspace while search has text', () => {
     const { store } = renderSidePanelCommandMenu(
       createSidePanelTopBarStore({

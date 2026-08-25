@@ -12,10 +12,14 @@ export const SidePanelTopBarEscapeHotkeyEffect = ({
   inputRef,
   onEscape,
 }: SidePanelTopBarEscapeHotkeyEffectProps) => {
-  const handleEscape = () => {
+  const handleEscape = (event: KeyboardEvent) => {
     if (document.activeElement === inputRef.current) {
       return;
     }
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
 
     onEscape();
   };
@@ -25,6 +29,12 @@ export const SidePanelTopBarEscapeHotkeyEffect = ({
     callback: handleEscape,
     containsModifier: false,
     dependencies: [handleEscape],
+    options: {
+      eventListenerOptions: {
+        capture: true,
+      },
+      preventDefault: false,
+    },
   });
 
   return null;
