@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,
@@ -157,9 +157,9 @@ export class WorkspaceMutationQueryBuilder {
       this.assertColumnExists(columnName);
 
       if (typeof value === 'function') {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Function-valued updates are not supported on "${columnName}"`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
         );
       }
 
@@ -206,18 +206,18 @@ export class WorkspaceMutationQueryBuilder {
 
   private assertDeletedAtColumnExists(): void {
     if (!this.tableShape.hasDeletedAtColumn) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `"${this.tableShape.nameSingular}" has no "${DELETED_AT_COLUMN_NAME}" column, so it cannot be soft-deleted or restored`,
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
   }
 
   private assertColumnExists(columnName: string): void {
     if (!isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
   }

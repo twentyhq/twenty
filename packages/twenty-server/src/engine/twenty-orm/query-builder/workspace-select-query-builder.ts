@@ -5,9 +5,9 @@ import { FindOperator, type ObjectLiteral } from 'typeorm';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   type ExpressionMapLike,
@@ -197,9 +197,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   setParameters(parameters: Record<string, unknown>): this {
     for (const parameterName of Object.keys(parameters)) {
       if (RESERVED_PARAMETER_NAMES.includes(parameterName)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Parameter name "${parameterName}" is reserved for pagination`,
-          TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+          TwentyOrmExceptionCode.INVALID_PARAMETER,
         );
       }
     }
@@ -372,16 +372,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
     if (!isDefined(relationFieldName)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Join path "${relationPath}" must be of the form "<alias>.<relationField>"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
     if (alias === this.alias) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Join alias "${alias}" collides with the main query alias`,
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -392,9 +392,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     const parentTableShape = this.getTableShapeForAlias(parentAlias);
 
     if (!isDefined(parentTableShape)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Join path "${relationPath}" references "${parentAlias}", which is neither the main alias nor a joined alias`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -402,9 +402,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       parentTableShape.relationShapeByFieldName[relationFieldName];
 
     if (!isDefined(relationShape)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Relation "${relationFieldName}" does not exist on "${parentTableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -469,16 +469,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       const tableShape = this.getTableShapeForAlias(alias);
 
       if (!isDefined(tableShape)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Selection "${expression}" references "${alias}", which is neither the main alias nor a joined alias`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+          TwentyOrmExceptionCode.UNKNOWN_RELATION,
         );
       }
 
       if (!isDefined(tableShape.columnShapeByColumnName[columnName])) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Column "${columnName}" does not exist on "${tableShape.nameSingular}"`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+          TwentyOrmExceptionCode.UNKNOWN_COLUMN,
         );
       }
 
@@ -751,18 +751,18 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     kind: MutationKind,
   ): WorkspaceMutationQueryBuilder {
     if (this.joinClauses.length > 0) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `A mutation cannot carry a relation join; rewrite the filter as an "id IN (subquery)" predicate first`,
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
 
     // Row-level permission predicates are injected on the select path only, so an
     // EXISTS rendered here would filter the related table with no predicate at all.
     if (this.existsFilterClauses.length > 0) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `A mutation cannot carry a relation filter; rewrite the filter as an "id IN (subquery)" predicate first`,
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
 
@@ -894,9 +894,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
               this.tableShape.columnShapeByColumnName[compositeColumnName],
             )
           ) {
-            throw new TwentyOrmV2Exception(
+            throw new TwentyOrmException(
               `Column "${compositeColumnName}" does not exist on "${this.tableShape.nameSingular}"`,
-              TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+              TwentyOrmExceptionCode.UNKNOWN_COLUMN,
             );
           }
 
@@ -913,9 +913,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         continue;
       }
 
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
 
@@ -949,9 +949,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         })?.condition;
 
     if (!isDefined(correlationCondition)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Relation "${relationFieldName}" on "${this.tableShape.nameSingular}" cannot be filtered on because its inverse foreign key could not be resolved`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -1102,9 +1102,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
           return rawSql;
         }
         default:
-          throw new TwentyOrmV2Exception(
+          throw new TwentyOrmException(
             `Object where does not support the "${value.type}" operator on "${columnName}"`,
-            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+            TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
           );
       }
     }

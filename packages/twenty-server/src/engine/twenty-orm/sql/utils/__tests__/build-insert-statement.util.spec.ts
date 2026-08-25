@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildInsertStatement } from 'src/engine/twenty-orm/sql/utils/build-insert-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -94,6 +94,6 @@ describe('buildInsertStatement', () => {
         rows: [],
         returningColumns: ['id'],
       }),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 });

@@ -1,4 +1,4 @@
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import {
   SCHEMA_NAME,
   buildQueryBuilder,
@@ -46,7 +46,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     expect(() => queryBuilder.leftJoin('unknown.company', 'company')).toThrow(
-      TwentyOrmV2Exception,
+      TwentyOrmException,
     );
   });
 
@@ -54,7 +54,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     expect(() => queryBuilder.leftJoin('person.company', 'person')).toThrow(
-      TwentyOrmV2Exception,
+      TwentyOrmException,
     );
   });
 
@@ -70,7 +70,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
         relation: { isOneToMany: true, isManyToMany: false },
       },
     ]);
-    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
+    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmException);
   });
 
   it('should render a deduped to-many join on the inverse foreign key when the caller opts in', () => {
@@ -126,8 +126,8 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoin('person.people', 'people');
 
-    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmV2Exception);
-    await expect(queryBuilder.getOne()).rejects.toThrow(TwentyOrmV2Exception);
+    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmException);
+    await expect(queryBuilder.getOne()).rejects.toThrow(TwentyOrmException);
   });
 
   it('should reject a to-many join with an explicit condition for an entity-hydrating read', async () => {
@@ -140,7 +140,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
       '"people"."personId" = "person"."id"',
     );
 
-    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmV2Exception);
+    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmException);
 
     queryBuilder.select([]);
     queryBuilder.addSelect('person.id', 'id');

@@ -11,9 +11,9 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 const KNOWN_POSTGRES_ERROR_CODES: string[] = Object.values(
@@ -43,10 +43,10 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (error.message.includes(QUERY_READ_TIMEOUT_MESSAGE)) {
     return withCause(
-      new TwentyOrmV2Exception(
+      new TwentyOrmException(
         QUERY_READ_TIMEOUT_MESSAGE,
-        TwentyOrmV2ExceptionCode.QUERY_READ_TIMEOUT,
-        QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
+        TwentyOrmExceptionCode.QUERY_READ_TIMEOUT,
+        { userFriendlyMessage: QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE },
       ),
       error,
     );
@@ -60,10 +60,10 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {
     return withCause(
-      new TwentyOrmV2Exception(
+      new TwentyOrmException(
         DUPLICATE_ENTRY_DETECTED_MESSAGE,
-        TwentyOrmV2ExceptionCode.DUPLICATE_ENTRY_DETECTED,
-        DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
+        TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
+        { userFriendlyMessage: DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE },
       ),
       error,
     );
@@ -71,10 +71,10 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
     return withCause(
-      new TwentyOrmV2Exception(
+      new TwentyOrmException(
         error.message,
-        TwentyOrmV2ExceptionCode.INVALID_INPUT,
-        INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+        TwentyOrmExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: INVALID_INPUT_USER_FRIENDLY_MESSAGE },
       ),
       error,
     );
@@ -85,10 +85,10 @@ export const computeTwentyOrmException = (error: unknown): Error => {
 
   if (isDefined(constraintViolationMessage)) {
     return withCause(
-      new TwentyOrmV2Exception(
+      new TwentyOrmException(
         error.message,
-        TwentyOrmV2ExceptionCode.INVALID_INPUT,
-        constraintViolationMessage,
+        TwentyOrmExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: constraintViolationMessage },
       ),
       error,
     );

@@ -31,9 +31,9 @@ import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildInsertStatement,
@@ -240,9 +240,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   async findOne(options?: WorkspaceFindOptions): Promise<TEntity | null> {
     if (!isDefined(options?.where)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'findOne requires a "where" condition',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -274,9 +274,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const record = await this.findOne(options);
 
     if (!isDefined(record)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `No "${this.options.tableShape.nameSingular}" record matches the given criteria`,
-        TwentyOrmV2ExceptionCode.ENTITY_NOT_FOUND,
+        TwentyOrmExceptionCode.ENTITY_NOT_FOUND,
       );
     }
 
@@ -354,9 +354,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       !isDefined(this.options.tableShape.columnShapeByColumnName[columnName])
     ) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
 
@@ -399,9 +399,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.options.tableShape.relationShapeByFieldName[fieldName];
 
       if (!isDefined(relationShape)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Relation "${fieldName}" does not exist on "${this.options.tableShape.nameSingular}"`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+          TwentyOrmExceptionCode.UNKNOWN_RELATION,
         );
       }
 
@@ -429,9 +429,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           order: orderByRelationFieldName[fieldName],
         });
       } else {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Loading "${relationShape.relationType}" relations through find is not supported yet`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
         );
       }
     }
@@ -451,9 +451,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     nestedRelations?: WorkspaceFindOptionsRelations;
   }): Promise<void> {
     if (!isDefined(joinColumnName)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Relation "${fieldName}" has no join column to resolve`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -531,9 +531,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
 
     if (!isDefined(inverseRelationShape?.joinColumnName)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Could not resolve the inverse foreign key for a to-many relation on "${this.options.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -585,10 +585,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     inputs: { criteria: string; partialEntity: Partial<ObjectRecord> }[],
   ): Promise<UpdateResult> {
     if (inputs.length > QUERY_MAX_RECORDS) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
-        TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
-        msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        {
+          userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
       );
     }
 
@@ -781,9 +783,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : conflictPathsOrOptions.conflictPaths;
 
     if (conflictPaths.length === 0) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'upsert requires at least one conflict path',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -858,9 +860,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           typeof value === 'object' &&
           value !== null
         ) {
-          throw new TwentyOrmV2Exception(
+          throw new TwentyOrmException(
             `Writing nested relation "${key}" through the ORM v2 repository is not supported yet`,
-            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+            TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
           );
         }
       }
@@ -1091,9 +1093,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             this.options.tableShape.columnShapeByColumnName[columnName],
           )
         ) {
-          throw new TwentyOrmV2Exception(
+          throw new TwentyOrmException(
             `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
-            TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+            TwentyOrmExceptionCode.UNKNOWN_COLUMN,
           );
         }
         columnNameSet.add(columnName);
@@ -1220,10 +1222,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           });
 
     if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
-        TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
-        msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        {
+          userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
       );
     }
 

@@ -2,7 +2,7 @@ import { Any, Equal } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
@@ -181,7 +181,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     expect(() =>
       queryBuilder.where({ orphans: { name: Equal('Twenty') } }),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 
   it('should carry relation filters into a builder that copies the where clauses', () => {
@@ -207,6 +207,6 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     queryBuilder.where({ people: { name: Equal('Twenty') } });
 
-    expect(() => queryBuilder.delete()).toThrow(TwentyOrmV2Exception);
+    expect(() => queryBuilder.delete()).toThrow(TwentyOrmException);
   });
 });
