@@ -3768,6 +3768,11 @@ msgstr "更改颜色"
 msgid "Change email"
 msgstr "更改邮箱"
 
+#. js-lingui-id: qTyVHs
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Change node"
+msgstr ""
+
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Change node type"
@@ -4164,7 +4169,7 @@ msgid "Close menu"
 msgstr "关闭菜单"
 
 #. js-lingui-id: saip/v
-#: src/modules/side-panel/components/SidePanelTopBar.tsx
+#: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
 msgstr "关闭侧边栏"
 
@@ -6401,8 +6406,7 @@ msgid "Delete group"
 msgstr "删除组"
 
 #. js-lingui-id: Wk+A9S
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton.tsx
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
 msgstr "删除节点"
 
@@ -6970,7 +6974,7 @@ msgid "Duplicate"
 msgstr ""
 
 #. js-lingui-id: qaE1sk
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Duplicate node"
 msgstr "复制节点"
 
@@ -13752,6 +13756,11 @@ msgstr "未找到符合您搜索条件的工作区。"
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
 msgstr "节点"
+
+#. js-lingui-id: 6cjyK/
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Node options"
+msgstr ""
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
