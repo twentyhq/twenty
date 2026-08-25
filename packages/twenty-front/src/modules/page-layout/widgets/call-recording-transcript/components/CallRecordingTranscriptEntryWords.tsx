@@ -1,4 +1,5 @@
 import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { buildCallRecordingTranscriptTimePoints } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptTimePoints';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
@@ -22,10 +23,11 @@ export const CallRecordingTranscriptEntryWords = ({
   words,
   videoElement,
 }: CallRecordingTranscriptEntryWordsProps) => {
-  const [wordPlaybackPosition, setWordPlaybackPosition] = useState({
-    activeIndex: -1,
-    lastStartedIndex: -1,
-  });
+  const [wordPlaybackPosition, setWordPlaybackPosition] =
+    useState<CallRecordingTranscriptPlaybackPosition>({
+      activeIndex: -1,
+      lastStartedIndex: -1,
+    });
 
   const wordTimePoints = useMemo(
     () => buildCallRecordingTranscriptTimePoints(words),

@@ -8,7 +8,6 @@ import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recordin
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { delay, http } from 'msw';
 import { useState, type ComponentProps } from 'react';
 import {
   expect,
@@ -32,10 +31,11 @@ import {
 import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MOCK_CALL_RECORDING_VIDEO_DATA_URI } from './mockCallRecordingVideo';
 
 const TRANSCRIPT_WIDGET_ID = 'transcript-widget';
 const CALL_RECORDING_TAB_ID = 'call-recording-tab';
-const VIDEO_URL = '/storybook/call-recording.mp4';
+const VIDEO_URL = MOCK_CALL_RECORDING_VIDEO_DATA_URI;
 
 const transcriptWidget: PageLayoutWidget = {
   __typename: 'PageLayoutWidget',
@@ -144,12 +144,25 @@ const makeMockTranscriptEntry = ({
   };
 };
 
-const setVideoCurrentTime = (
-  videoElement: HTMLVideoElement,
-  currentTimeSeconds: number,
-) => {
+const setVideoCurrentTime = ({
+  videoElement,
+  currentTimeSeconds,
+}: {
+  videoElement: HTMLVideoElement;
+  currentTimeSeconds: number;
+}) => {
   videoElement.currentTime = currentTimeSeconds;
   fireEvent.timeUpdate(videoElement);
+};
+
+// Seeking before metadata is loaded would be reverted by the player's
+// first-frame fragment seek once metadata arrives.
+const waitForVideoMetadata = async (videoElement: HTMLVideoElement) => {
+  await waitFor(() =>
+    expect(videoElement.readyState).toBeGreaterThanOrEqual(
+      HTMLMediaElement.HAVE_METADATA,
+    ),
+  );
 };
 
 const rawTranscript = [
@@ -225,8 +238,8 @@ const recordedCallRecording: CalendarEventCallRecordingCandidate = {
   video: [
     {
       fileId: 'video-file-id',
-      label: 'recording.mp4',
-      extension: 'mp4',
+      label: 'recording.webm',
+      extension: 'webm',
       url: VIDEO_URL,
     },
   ],
@@ -320,7 +333,6 @@ const meta: Meta<typeof CallRecordingTranscriptBodyStory> = {
   ],
   parameters: {
     layout: 'centered',
-    msw: { handlers: [http.get(VIDEO_URL, () => delay('infinite'))] },
   },
   render: CallRecordingTranscriptBodyStory,
   args: {
@@ -414,7 +426,9 @@ export const WithVideo: Story = {
       expect.stringContaining('calendar-event-id'),
     );
 
-    setVideoCurrentTime(videoElement, 1.5);
+    await waitForVideoMetadata(videoElement);
+
+    setVideoCurrentTime({ videoElement, currentTimeSeconds: 1.5 });
 
     await waitFor(() =>
       expect(
@@ -422,7 +436,7 @@ export const WithVideo: Story = {
       ).toHaveTextContent("Welcome everyone, let's start"),
     );
 
-    setVideoCurrentTime(videoElement, 5.5);
+    setVideoCurrentTime({ videoElement, currentTimeSeconds: 5.5 });
 
     await waitFor(() =>
       expect(
@@ -480,7 +494,9 @@ export const WithVideoInteractions: Story = {
       throw new Error('Video player was not rendered');
     }
 
-    setVideoCurrentTime(videoElement, 48);
+    await waitForVideoMetadata(videoElement);
+
+    setVideoCurrentTime({ videoElement, currentTimeSeconds: 48 });
 
     await waitFor(() => {
       const activeEntry = canvasElement.querySelector('[aria-current="true"]');
@@ -497,7 +513,7 @@ export const WithVideoInteractions: Story = {
       name: 'Jump to current',
     });
 
-    setVideoCurrentTime(videoElement, 22);
+    setVideoCurrentTime({ videoElement, currentTimeSeconds: 22 });
 
     await waitFor(() => {
       expect(

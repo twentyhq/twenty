@@ -7,14 +7,16 @@ export const buildCallRecordingTranscriptTimePoints = (
     endSeconds?: number;
   }[],
 ): CallRecordingTranscriptTimePoint[] =>
-  timedItems.flatMap((timedItem, index) =>
-    isDefined(timedItem.startSeconds)
-      ? [
-          {
-            startSeconds: timedItem.startSeconds,
-            endSeconds: timedItem.endSeconds,
-            index,
-          },
-        ]
-      : [],
-  );
+  timedItems
+    .flatMap((timedItem, index) =>
+      isDefined(timedItem.startSeconds)
+        ? [
+            {
+              startSeconds: timedItem.startSeconds,
+              endSeconds: timedItem.endSeconds,
+              index,
+            },
+          ]
+        : [],
+    )
+    .toSorted((left, right) => left.startSeconds - right.startSeconds);

@@ -21,10 +21,8 @@ const StyledEntry = styled.li<{
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  outline: none;
   padding: ${({ hasPlaybackControls }) =>
     hasPlaybackControls ? themeCssVariables.spacing[2] : 0};
-  position: relative;
 
   &:hover {
     background: ${({ isActive, isSelectable }) =>
@@ -33,21 +31,6 @@ const StyledEntry = styled.li<{
         : isSelectable
           ? themeCssVariables.background.transparent.lighter
           : 'transparent'};
-  }
-`;
-
-const StyledEntryButton = styled.button`
-  background: transparent;
-  border: 0;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-  inset: 0;
-  position: absolute;
-  z-index: 1;
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.border.color.blue};
-    outline-offset: -2px;
   }
 `;
 
@@ -62,6 +45,23 @@ const StyledTimestamp = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
   font-variant-numeric: tabular-nums;
+`;
+
+const StyledTimestampButton = styled.button`
+  background: transparent;
+  border: 0;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  font-family: inherit;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.border.color.blue};
+    outline-offset: 2px;
+  }
 `;
 
 const StyledText = styled.p<{ isUpcoming: boolean }>`
@@ -101,8 +101,14 @@ export const CallRecordingTranscriptEntryListItem = memo(
     const hasSpokenWordHighlight =
       isActive && isDefined(videoElement) && isNonEmptyArray(entry.words);
 
-    const selectEntry = () => {
+    const handleEntryClick = () => {
       if (!isDefined(entryStartSeconds) || !isDefined(onSelect)) {
+        return;
+      }
+
+      // A click that ends a text selection must not seek away from it.
+      const selection = window.getSelection();
+      if (isDefined(selection) && !selection.isCollapsed) {
         return;
       }
 
@@ -116,14 +122,8 @@ export const CallRecordingTranscriptEntryListItem = memo(
         hasPlaybackControls={hasPlaybackControls}
         isActive={isActive}
         isSelectable={isSelectable}
+        onClick={isSelectable ? handleEntryClick : undefined}
       >
-        {isSelectable && (
-          <StyledEntryButton
-            aria-label={t`Seek recording to ${formatCallRecordingTranscriptTimestamp(entryStartSeconds)}`}
-            type="button"
-            onClick={selectEntry}
-          />
-        )}
         <StyledEntryHeader>
           <Chip
             clickable={false}
@@ -138,11 +138,19 @@ export const CallRecordingTranscriptEntryListItem = memo(
               />
             }
           />
-          {isDefined(entry.startSeconds) && (
-            <StyledTimestamp>
-              {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
-            </StyledTimestamp>
-          )}
+          {isDefined(entry.startSeconds) &&
+            (isSelectable ? (
+              <StyledTimestampButton
+                aria-label={t`Seek recording to ${formatCallRecordingTranscriptTimestamp(entry.startSeconds)}`}
+                type="button"
+              >
+                {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
+              </StyledTimestampButton>
+            ) : (
+              <StyledTimestamp>
+                {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
+              </StyledTimestamp>
+            ))}
         </StyledEntryHeader>
         <StyledText isUpcoming={playbackPhase === 'upcoming'}>
           {hasSpokenWordHighlight ? (

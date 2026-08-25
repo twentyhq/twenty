@@ -4,6 +4,7 @@ import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/
 import { CallRecordingTranscriptContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent';
 import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
 import { CallRecordingVideoPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer';
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { buildCallRecordingTranscriptTimePoints } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptTimePoints';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
@@ -14,7 +15,6 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // Media timebase rounding can land an exact-start seek a hair before the
 // entry; nudging inside it keeps the clicked entry the active one.
@@ -25,10 +25,6 @@ const StyledRecordingLayout = styled.div`
   flex: 1;
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
-`;
-
-const StyledPlayerSection = styled.div`
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[6]} 0;
 `;
 
 const StyledTranscriptScrollContainer = styled.div`
@@ -59,10 +55,11 @@ export const CallRecordingTranscriptBody = ({
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
     null,
   );
-  const [entryPlaybackPosition, setEntryPlaybackPosition] = useState({
-    activeIndex: -1,
-    lastStartedIndex: -1,
-  });
+  const [entryPlaybackPosition, setEntryPlaybackPosition] =
+    useState<CallRecordingTranscriptPlaybackPosition>({
+      activeIndex: -1,
+      lastStartedIndex: -1,
+    });
 
   const entryTimePoints = useMemo(
     () =>
@@ -126,14 +123,12 @@ export const CallRecordingTranscriptBody = ({
         timePoints={entryTimePoints}
         onPlaybackPositionChange={setEntryPlaybackPosition}
       />
-      <StyledPlayerSection>
-        <CallRecordingVideoPlayer
-          key={videoFileUrl}
-          ref={setVideoElement}
-          src={videoFileUrl}
-          onRetry={refetchCallRecording}
-        />
-      </StyledPlayerSection>
+      <CallRecordingVideoPlayer
+        key={videoFileUrl}
+        ref={setVideoElement}
+        src={videoFileUrl}
+        onRetry={refetchCallRecording}
+      />
       {hasTranscriptEntries ? (
         <CallRecordingTranscriptContent
           callRecording={callRecording}

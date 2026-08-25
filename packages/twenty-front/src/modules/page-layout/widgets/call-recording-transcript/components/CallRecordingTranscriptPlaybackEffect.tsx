@@ -1,3 +1,4 @@
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { type CallRecordingTranscriptTimePoint } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptTimePoint';
 import { watchCallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/utils/watchCallRecordingTranscriptPlayback';
 import { useEffect } from 'react';
@@ -6,10 +7,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 type CallRecordingTranscriptPlaybackEffectProps = {
   videoElement: HTMLVideoElement | null;
   timePoints: CallRecordingTranscriptTimePoint[];
-  onPlaybackPositionChange: (playbackPosition: {
-    activeIndex: number;
-    lastStartedIndex: number;
-  }) => void;
+  onPlaybackPositionChange: (
+    playbackPosition: CallRecordingTranscriptPlaybackPosition,
+  ) => void;
 };
 
 export const CallRecordingTranscriptPlaybackEffect = ({

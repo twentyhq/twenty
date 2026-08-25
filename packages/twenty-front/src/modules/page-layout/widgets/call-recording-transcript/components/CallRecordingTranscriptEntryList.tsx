@@ -1,6 +1,6 @@
 import { CallRecordingTranscriptEntryListItem } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem';
 import { CallRecordingTranscriptFollowScrollEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptFollowScrollEffect';
-import { type CallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptEntryPlaybackPhase';
+import { getCallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptEntryPlaybackPhase';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -35,7 +35,7 @@ const StyledEntryList = styled.ul<{ hasPlaybackControls: boolean }>`
   margin: 0;
   padding: ${({ hasPlaybackControls }) =>
     hasPlaybackControls
-      ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[10]}`
+      ? `${themeCssVariables.spacing[4]} 0 ${themeCssVariables.spacing[10]}`
       : themeCssVariables.spacing[6]};
 `;
 
@@ -126,7 +126,7 @@ export const CallRecordingTranscriptEntryList = ({
       >
         <StyledEntryList hasPlaybackControls={hasPlayback}>
           {entries.map((entry, entryIndex) => {
-            const playbackPhase = getEntryPlaybackPhase({
+            const playbackPhase = getCallRecordingTranscriptEntryPlaybackPhase({
               activeEntryIndex,
               entryIndex,
               lastStartedEntryIndex,
@@ -159,28 +159,4 @@ export const CallRecordingTranscriptEntryList = ({
       )}
     </StyledTranscriptContainer>
   );
-};
-
-const getEntryPlaybackPhase = ({
-  activeEntryIndex,
-  entryIndex,
-  lastStartedEntryIndex,
-}: {
-  activeEntryIndex: number | undefined;
-  entryIndex: number;
-  lastStartedEntryIndex: number | undefined;
-}): CallRecordingTranscriptEntryPlaybackPhase | undefined => {
-  if (!isDefined(lastStartedEntryIndex) || lastStartedEntryIndex === -1) {
-    return undefined;
-  }
-
-  if (entryIndex === activeEntryIndex) {
-    return 'speaking';
-  }
-
-  if (entryIndex <= lastStartedEntryIndex) {
-    return 'spoken';
-  }
-
-  return 'upcoming';
 };

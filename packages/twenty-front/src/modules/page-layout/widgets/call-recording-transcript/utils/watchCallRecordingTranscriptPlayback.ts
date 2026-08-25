@@ -1,3 +1,4 @@
+import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
 import { type CallRecordingTranscriptTimePoint } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptTimePoint';
 import { countStartedCallRecordingTranscriptTimePoints } from '@/page-layout/widgets/call-recording-transcript/utils/countStartedCallRecordingTranscriptTimePoints';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,10 +23,9 @@ type WatchCallRecordingTranscriptPlaybackParams = {
       'currentTime' | 'paused' | 'playbackRate' | 'seeking'
     >;
   timePoints: CallRecordingTranscriptTimePoint[];
-  onPlaybackPositionChange: (playbackPosition: {
-    activeIndex: number;
-    lastStartedIndex: number;
-  }) => void;
+  onPlaybackPositionChange: (
+    playbackPosition: CallRecordingTranscriptPlaybackPosition,
+  ) => void;
 };
 
 // timeupdate only fires ~4 times per second, too coarse for word-level sync;

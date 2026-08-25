@@ -34,4 +34,18 @@ describe('buildCallRecordingTranscriptTimePoints', () => {
       buildCallRecordingTranscriptTimePoints([{ startSeconds: undefined }]),
     ).toEqual([]);
   });
+
+  it('should sort out-of-order items by start time keeping original indexes', () => {
+    expect(
+      buildCallRecordingTranscriptTimePoints([
+        { startSeconds: 9 },
+        { startSeconds: 2 },
+        { startSeconds: 5 },
+      ]),
+    ).toEqual([
+      { startSeconds: 2, index: 1 },
+      { startSeconds: 5, index: 2 },
+      { startSeconds: 9, index: 0 },
+    ]);
+  });
 });
