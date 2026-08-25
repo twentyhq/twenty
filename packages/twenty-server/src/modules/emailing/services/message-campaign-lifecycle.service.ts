@@ -120,9 +120,6 @@ export class MessageCampaignLifecycleService {
     return { campaignId, canceledMessageCount };
   }
 
-  // Only expired claims are reclaimed. A QUEUED delivery is not stalled, it is
-  // waiting on the queue, and failing it here is what previously let a second
-  // worker re-claim a send the first was still making.
   async failStalledMessages({
     workspaceId,
     campaignId,

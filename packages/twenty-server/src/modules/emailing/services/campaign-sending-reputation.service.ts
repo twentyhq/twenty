@@ -19,7 +19,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { MessageCampaignStatus } from 'twenty-shared/types';
 
 type CampaignCountTotalsRow = {
-  attemptedCount: string | null;
+  sentCount: string | null;
   bouncedCount: string | null;
   complainedCount: string | null;
 };
@@ -49,7 +49,7 @@ export class CampaignSendingReputationService {
 
           return campaignRepository
             .createQueryBuilder('messageCampaign')
-            .select('SUM(messageCampaign.attemptedCount)', 'attemptedCount')
+            .select('SUM(messageCampaign.sentCount)', 'sentCount')
             .addSelect('SUM(messageCampaign.bouncedCount)', 'bouncedCount')
             .addSelect(
               'SUM(messageCampaign.complainedCount)',
@@ -70,7 +70,7 @@ export class CampaignSendingReputationService {
       );
 
     return evaluateCampaignSendingReputation({
-      attemptedCount: Number(totals?.attemptedCount ?? 0),
+      attemptedCount: Number(totals?.sentCount ?? 0),
       bouncedCount: Number(totals?.bouncedCount ?? 0),
       complainedCount: Number(totals?.complainedCount ?? 0),
     });

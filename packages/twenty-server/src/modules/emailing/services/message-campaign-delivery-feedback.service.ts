@@ -61,8 +61,6 @@ export class MessageCampaignDeliveryFeedbackService {
     });
   }
 
-  // Each outcome owns its own column, so a report that arrives late or twice
-  // rewrites the same value rather than erasing a different outcome.
   private buildOutcomeUpdate(
     outcome: CampaignProviderOutcome,
   ): CampaignDeliveryOutcomeUpdate {
@@ -75,8 +73,6 @@ export class MessageCampaignDeliveryFeedbackService {
         return { bouncedAt: occurredAt };
       case CAMPAIGN_PROVIDER_OUTCOME.COMPLAINED:
         return { complainedAt: occurredAt };
-      // The provider never accepted the message, so these are send failures
-      // rather than delivery outcomes.
       case CAMPAIGN_PROVIDER_OUTCOME.REJECTED:
         return {
           state: CAMPAIGN_DELIVERY_STATE.FAILED,
@@ -87,7 +83,6 @@ export class MessageCampaignDeliveryFeedbackService {
           state: CAMPAIGN_DELIVERY_STATE.FAILED,
           failureReason: CAMPAIGN_FAILURE_REASON.RENDERING_FAILED,
         };
-      // Transient, the provider keeps retrying, so nothing is decided yet.
       case CAMPAIGN_PROVIDER_OUTCOME.SOFT_BOUNCED:
         return {};
       default:

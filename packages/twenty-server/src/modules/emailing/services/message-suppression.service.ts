@@ -147,9 +147,6 @@ export class MessageSuppressionService {
       return;
     }
 
-    // Hard suppressions (delivery failures) are inherently address-level: a
-    // topic-scoped BOUNCE/COMPLAINT row would block nothing (reads filter
-    // per-topic rows to UNSUBSCRIBE) while occupying the (address, topic) slot.
     const effectiveTopicId = HARD_SUPPRESSION_REASONS.includes(reason)
       ? null
       : unsubscribeTopicId;

@@ -7,7 +7,6 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import {} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type ReconcileWorkspaceCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/reconcile-workspace-campaign-stats-job-data.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';

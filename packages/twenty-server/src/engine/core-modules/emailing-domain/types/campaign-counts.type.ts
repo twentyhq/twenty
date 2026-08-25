@@ -1,8 +1,8 @@
 export type CampaignCounts = {
-  attemptedCount: number;
+  totalCount: number;
+  inProgressCount: number;
   sentCount: number;
   deliveredCount: number;
-  softBouncedCount: number;
   failedCount: number;
   skippedCount: number;
   bouncedCount: number;

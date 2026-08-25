@@ -3,7 +3,6 @@ import { CAMPAIGN_STATS_REFRESH_LOCK_TTL_MS } from 'src/engine/core-modules/emai
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { MoreThanOrEqual } from 'typeorm';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 
@@ -16,23 +15,23 @@ import {
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
 import { buildCampaignStatsRefreshLockKey } from 'src/engine/core-modules/emailing-domain/utils/build-campaign-stats-refresh-lock-key.util';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
 import { computeCampaignCounts } from 'src/engine/core-modules/emailing-domain/utils/compute-campaign-counts.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-
-type DeliveryStatusCountRow = {
-  deliveryStatus: string | null;
-  count: string;
-};
 
 @Injectable()
 export class MessageCampaignStatisticsService {
   constructor(
+    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -71,40 +70,25 @@ export class MessageCampaignStatisticsService {
     );
   }
 
-  async countMessagesByDeliveryStatus({
+  async countDeliveriesByState({
     workspaceId,
     campaignId,
   }: {
     workspaceId: string;
     campaignId: string;
-  }): Promise<Map<string, number>> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const messageRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const deliveryStatusCountRows = await messageRepository
-          .createQueryBuilder('message')
-          .select('message.deliveryStatus', 'deliveryStatus')
-          .addSelect('COUNT(*)', 'count')
-          .where('message.messageCampaignId = :campaignId', { campaignId })
-          .groupBy('message.deliveryStatus')
-          .getRawMany<DeliveryStatusCountRow>();
-
-        return new Map(
-          deliveryStatusCountRows.flatMap<[string, number]>((row) =>
-            isNonEmptyString(row.deliveryStatus)
-              ? [[row.deliveryStatus, Number(row.count)]]
-              : [],
-          ),
-        );
+  }): Promise<CampaignCounts> {
+    const deliveries = await this.campaignDeliveryRepository.find(workspaceId, {
+      where: { campaignId },
+      select: {
+        id: true,
+        state: true,
+        deliveredAt: true,
+        bouncedAt: true,
+        complainedAt: true,
       },
-      buildSystemAuthContext(workspaceId),
-    );
+    });
+
+    return computeCampaignCounts({ deliveries });
   }
 
   async refreshCampaignCounts({
@@ -169,18 +153,12 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const countByDeliveryStatus = await this.countMessagesByDeliveryStatus({
+    const counts = await this.countDeliveriesByState({
       workspaceId,
       campaignId,
     });
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const counts = computeCampaignCounts({
-        deliveryStatusCounts: [...countByDeliveryStatus].map(
-          ([deliveryStatus, count]) => ({ deliveryStatus, count }),
-        ),
-      });
-
       const campaignRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
@@ -188,7 +166,17 @@ export class MessageCampaignStatisticsService {
           { shouldBypassPermissionChecks: true },
         );
 
-      await campaignRepository.update({ id: campaignId }, counts);
+      await campaignRepository.update(
+        { id: campaignId },
+        {
+          sentCount: counts.sentCount,
+          deliveredCount: counts.deliveredCount,
+          failedCount: counts.failedCount,
+          skippedCount: counts.skippedCount,
+          bouncedCount: counts.bouncedCount,
+          complainedCount: counts.complainedCount,
+        },
+      );
     }, buildSystemAuthContext(workspaceId));
   }
 }

@@ -203,9 +203,6 @@ export class MessageCampaignMaterializationService {
         })),
       });
 
-      // Deliveries are written after their messages so a delivery is never
-      // claimable before the message it sends exists. The reverse just costs a
-      // re-run of this idempotent job.
       await this.campaignDeliveryRepository.upsert(
         workspaceId,
         recipientsChunk.map((recipient) => ({

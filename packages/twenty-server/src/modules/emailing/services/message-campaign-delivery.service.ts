@@ -69,8 +69,6 @@ export class MessageCampaignDeliveryService {
         return;
       }
 
-      // No release on an unexpected throw: the lease expires on its own, so
-      // the crash path and the throw path settle identically.
       await this.deliverMessage({ data, messageRepository, sendContext });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
