@@ -3,9 +3,6 @@ import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recordi
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// A workspace without call recording and a record with no path to a recording
-// are different absences, and the widget has to say something different about
-// each of them.
 export type CallRecordingWidgetUnavailableReason =
   | 'workspaceWithoutCallRecording'
   | 'recordWithoutCallRecording';

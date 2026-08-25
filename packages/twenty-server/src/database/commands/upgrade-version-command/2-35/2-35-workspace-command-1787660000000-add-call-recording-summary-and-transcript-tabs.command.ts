@@ -36,8 +36,6 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
     .callRecording.widgets.transcript.universalIdentifier;
 
-// Ordered as the standard config positions them, so appended positions keep
-// Summary before Call Recording.
 const APPENDED_TAB_UNIVERSAL_IDENTIFIERS = [
   SUMMARY_TAB_UNIVERSAL_IDENTIFIER,
   CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER,

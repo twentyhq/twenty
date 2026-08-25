@@ -38,8 +38,6 @@ export const CallRecordingTranscriptWidgetContent = () => {
 
   const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
 
-  // The count answers how many recordings the calendar event has; a call
-  // recording record page always shows its own single recording.
   const headerCount =
     callRecordingWidgetTarget?.targetKind === 'calendarEvent'
       ? canExposeCallRecordingHeaderData

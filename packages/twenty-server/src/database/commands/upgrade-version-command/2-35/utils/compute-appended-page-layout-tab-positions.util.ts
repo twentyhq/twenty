@@ -3,8 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { TAB_POSITION_GAP } from 'src/database/commands/upgrade-version-command/2-32/utils/tab-position-gap.constant';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 
-// New standard tabs go after everything the workspace already has, so a
-// workspace that added its own tabs does not end up with colliding positions.
 export const computeAppendedPageLayoutTabPositions = ({
   existingPageLayoutTabs,
   appendedTabCount,

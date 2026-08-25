@@ -171,10 +171,6 @@ export const useWidgetCallRecording = ({
     orderBy: CALL_RECORDING_ORDER_BY,
     recordGqlFields: callRecordingRecordFields,
     limit: CALL_RECORDING_QUERY_LIMIT,
-    // The record page keeps rendering a soft-deleted recording behind its
-    // deleted banner, so the widget has to see the record its own page shows.
-    // A calendar event keeps the default: a deleted recording is not the one
-    // it should surface.
     withSoftDeleted: targetKind === 'callRecording',
     skip: shouldSkipQuery,
   });
