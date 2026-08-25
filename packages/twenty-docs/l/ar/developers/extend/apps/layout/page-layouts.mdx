@@ -56,6 +56,7 @@ export default definePageLayout({
 * يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode`: `VERTICAL_LIST` لصفحات السجلات والصفحات المستقلة، و`GRID` للوحات المعلومات. في علامة تبويب من نوع `VERTICAL_LIST`، يعرض عنصر واجهة واحد ممتدًا حتى الحواف ويملك علامة التبويب بالكامل؛ وعند وجود عدة عناصر واجهة، فإنها تتكدس كبطاقات. تعرض علامة تبويب من نوع `GRID` دائمًا عناصر الواجهة كبطاقات على شبكة من 12 عمودًا مهما كان عددها، لذا اختر `VERTICAL_LIST` عندما تريد لعنصر واجهة واحد أن يملأ الصفحة.
 * عيِّن `layoutMode` بشكل صريح. إغفاله يمنحك `VERTICAL_LIST` على `STANDALONE_PAGE` و`GRID` في كل مكان آخر، وهو أمر نادرًا ما تريده في صفحة سجل.
 * يمكن لكل `widget` داخل لسان أن يعرض [front component](/l/ar/developers/extend/apps/layout/front-components)، أو قائمة علاقات، أو أنواعًا أخرى من عناصر الواجهة (widgets) المدمجة.
+* يمكن لعنصر واجهة `FRONT_COMPONENT` تعيين `headerCommandMenuItemUniversalIdentifiers` إلى مصفوفة مرتبة من المعرّفات العامة لعناصر قائمة الأوامر من التطبيق نفسه. تظهر هذه الإجراءات كأزرار أيقونات في رأس بطاقة عنصر الواجهة وتحافظ على فحوصات الإتاحة والأذونات على مستوى الأمر. يجب أن تكون المعرّفات فريدة ويجب أن تُحل عند تثبيت التطبيق.
 * `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
 
 ### عناصر واجهة الحقول
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   كل إدخال تخطيط يوفّر أيضًا `tabs` الخاصة به و`widgets` التابعة لها، بحيث يمكنك الرجوع إلى أي مستوى:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   يتوفر أيضًا اسم قصير `STANDARD_PAGE_LAYOUT`:

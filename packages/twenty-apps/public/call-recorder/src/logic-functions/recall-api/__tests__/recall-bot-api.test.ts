@@ -6,7 +6,10 @@ import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/crea
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
-import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import {
+  listScheduledRecallBots,
+  listScheduledRecallBotsBeforeRequestCutoff,
+} from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
@@ -329,6 +332,35 @@ describe('recall bot api', () => {
       truncated: true,
     });
     expect(fetchMock).toHaveBeenCalledTimes(10);
+  });
+
+  it('stops starting list page requests at the request cutoff', async () => {
+    const requestStartCutoffEpochMs = NOW.getTime() + 1_000;
+    fetchMock.mockImplementationOnce(async () => {
+      vi.setSystemTime(requestStartCutoffEpochMs);
+
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: 'https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-2',
+          results: [{ id: 'bot-1' }],
+        }),
+      };
+    });
+
+    const scheduledRecallBotsResult =
+      await listScheduledRecallBotsBeforeRequestCutoff({
+        joinAtAfter: '2026-01-01T08:00:00.000Z',
+        requestStartCutoffEpochMs,
+      });
+
+    expect(scheduledRecallBotsResult).toEqual({
+      ok: true,
+      bots: [{ id: 'bot-1', metadata: {}, statusChanges: [], recordings: [] }],
+      truncated: true,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('stops paginating when the next link points outside the configured region', async () => {

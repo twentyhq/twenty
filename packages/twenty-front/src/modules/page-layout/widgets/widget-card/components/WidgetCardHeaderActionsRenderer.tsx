@@ -1,9 +1,11 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE } from '@/page-layout/widgets/constants/WidgetHeaderActionComponentByWidgetType';
 import { useCurrentWidgetOrNull } from '@/page-layout/widgets/hooks/useCurrentWidgetOrNull';
+import { WidgetHeaderCommandMenuItems } from '@/page-layout/widgets/widget-card/components/WidgetHeaderCommandMenuItems';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -27,6 +29,27 @@ export const WidgetCardHeaderActionsRenderer = () => {
   // and edit hides itself through useFieldWidgetActionVisibility.
   if (isPageLayoutInEditMode && widget.type !== WidgetType.FIELD) {
     return null;
+  }
+
+  if (
+    isWidgetConfigurationOfType(
+      widget.configuration,
+      'FrontComponentConfiguration',
+    ) &&
+    isNonEmptyArray(
+      widget.configuration.headerCommandMenuItemUniversalIdentifiers,
+    )
+  ) {
+    return (
+      <StyledActionsContainer>
+        <WidgetHeaderCommandMenuItems
+          applicationId={widget.applicationId}
+          commandMenuItemUniversalIdentifiers={
+            widget.configuration.headerCommandMenuItemUniversalIdentifiers
+          }
+        />
+      </StyledActionsContainer>
+    );
   }
 
   const HeaderActionComponent =

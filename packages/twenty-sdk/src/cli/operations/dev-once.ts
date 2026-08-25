@@ -13,6 +13,7 @@ import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
@@ -202,10 +203,15 @@ const innerAppDevOnce = async (
     };
   }
 
-  const manifest: Manifest = manifestUpdateChecksums({
-    manifest: manifestResult.manifest,
-    builtFileInfos: buildResult.builtFileInfos,
-  });
+  const translations = await compileApplicationTranslations(appPath);
+
+  const manifest: Manifest = {
+    ...manifestUpdateChecksums({
+      manifest: manifestResult.manifest,
+      builtFileInfos: buildResult.builtFileInfos,
+    }),
+    translations,
+  };
 
   await writeManifestToOutput(appPath, manifest);
 

@@ -88,10 +88,16 @@ jobs:
         run: sudo chown -R runner:docker .
 
       # Fix encoding issues (escaped Unicode like \u62db -> 招) and push fixes back to Crowdin
-      - name: Fix translation encoding and sync to Crowdin
-        run: npx ts-node packages/twenty-utils/fix-crowdin-translations.ts
+      - name: Normalize translations in Crowdin
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Normalize downloaded catalogs to lingui format
+        run: |
+          npx nx run twenty-server:lingui:extract
+          npx nx run twenty-emails:lingui:extract
+          npx nx run twenty-front:lingui:extract
 
       - name: Compile translations
         id: compile_translations

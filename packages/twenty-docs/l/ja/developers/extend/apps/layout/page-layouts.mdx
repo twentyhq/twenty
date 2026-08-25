@@ -56,6 +56,7 @@ export default definePageLayout({
 * 各 `tab` は、`title`、`position`、`layoutMode` を持つページのセクションを定義します。レコードページおよびスタンドアロンページには `VERTICAL_LIST`、ダッシュボードには `GRID` を使用します。 `VERTICAL_LIST` タブでは、1 つのウィジェットのみの場合はそのウィジェットがフルブリードでタブ全体に表示され、複数のウィジェットがある場合はカードとして積み重なります。 `GRID` タブでは、ウィジェットの数に関係なく、常に 12 列グリッド上でカードとして配置されます。そのため、1 つのウィジェットにページ全体を使わせたい場合は `VERTICAL_LIST` を選択します。
 * `layoutMode` を明示的に設定します。 `layoutMode` を省略すると、`STANDALONE_PAGE` では `VERTICAL_LIST`、それ以外では `GRID` が適用されますが、これはレコードページで望ましい動作であることはほとんどありません。
 * タブ内の各 `widget` は、[front component](/l/ja/developers/extend/apps/layout/front-components)、リレーションリスト、その他のビルトインウィジェットタイプをレンダリングできます。
+* `FRONT_COMPONENT` ウィジェットでは、同じアプリのコマンドメニュー項目ユニバーサル識別子を順序付き配列として `headerCommandMenuItemUniversalIdentifiers` に設定できます。 これらのアクションはウィジェットカードヘッダーにアイコンボタンとして表示され、コマンドレベルの可用性チェックと権限チェックが維持されます。 識別子は一意である必要があり、アプリのインストール時に解決される必要があります。
 * タブの `position` は表示順を制御します。 組み込みタブの後にカスタムタブを配置するには、より大きな値（例：50）を使用します。
 
 ### フィールド ウィジェット
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   各レイアウトエントリは、その `tabs` とその `widgets` も公開しているため、任意の階層を参照できます:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   短いエイリアス `STANDARD_PAGE_LAYOUT` も利用できます:

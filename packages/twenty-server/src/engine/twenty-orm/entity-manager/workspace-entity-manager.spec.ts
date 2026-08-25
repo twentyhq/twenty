@@ -116,6 +116,7 @@ describe('WorkspaceEntityManager', () => {
       objectPermissionIds: [],
       fieldPermissionIds: [],
       viewIds: [],
+      pageLayoutIds: [],
       universalIdentifier: 'test-entity-id',
       description: null,
       imageIdentifierFieldMetadataId: null,
@@ -136,6 +137,7 @@ describe('WorkspaceEntityManager', () => {
       objectPermissionUniversalIdentifiers: [],
       fieldPermissionUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
+      pageLayoutUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       searchFieldMetadataUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -251,12 +253,10 @@ describe('WorkspaceEntityManager', () => {
         IS_LIST_VIEW_ENABLED: false,
         IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
-        IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
         IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: false,
         IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
         IS_NATIVE_CALL_RECORDING_TABS_ENABLED: false,
-        IS_ORM_V2_READ_PATH_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
@@ -271,7 +271,7 @@ describe('WorkspaceEntityManager', () => {
           softDelete: jest.fn(),
         })),
       } as any,
-    } as WorkspaceInternalContext;
+    } as unknown as WorkspaceInternalContext;
 
     mockDataSource = {
       featureFlagMap: {
