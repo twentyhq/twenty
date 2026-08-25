@@ -1112,7 +1112,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           return { kind: 'default' };
         }
 
-        const parameterName = `ormV2Insert_${parameterSequence++}`;
+        const parameterName = `ormInsert_${parameterSequence++}`;
 
         parameters[parameterName] = serializeJsonbWriteValue(
           this.options.tableShape.columnShapeByColumnName[columnName],

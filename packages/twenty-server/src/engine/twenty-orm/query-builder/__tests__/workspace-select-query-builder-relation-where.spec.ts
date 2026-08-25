@@ -64,7 +64,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     expect(text).toContain('OR');
     expect(text).toContain('EXISTS (');
-    expect(text).not.toContain('__ormV2ExistsFilter');
+    expect(text).not.toContain('__ormExistsFilter');
   });
 
   it('should nest a relation filter reached through another relation', () => {
@@ -80,7 +80,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
     expect(text).toContain(
       '"person_people_filter"."personId" = "person_people_filter_person_filter"."id"',
     );
-    expect(text).not.toContain('__ormV2ExistsFilter');
+    expect(text).not.toContain('__ormExistsFilter');
   });
 
   it('should drop the soft-delete predicate inside the subquery when deleted rows are included', () => {
@@ -199,7 +199,7 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
     const text = snapshotQueryBuilder.getQuery();
 
     expect(text).toContain('EXISTS (');
-    expect(text).not.toContain('__ormV2ExistsFilter');
+    expect(text).not.toContain('__ormExistsFilter');
   });
 
   it('should reject a relation filter on a mutation', () => {

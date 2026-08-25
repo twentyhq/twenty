@@ -964,7 +964,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
     Object.assign(parameters, nestedBuilder.parameters);
 
-    const token = `__ormV2ExistsFilter_${existsFilterSequence++}__`;
+    const token = `__ormExistsFilter_${existsFilterSequence++}__`;
 
     this.existsFilterClauses.push(
       {
@@ -1021,7 +1021,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     }
 
     const nextParameter = (parameterValue: unknown): string => {
-      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
+      const parameterName = `ormObjectWhere_${objectWhereParameterSequence++}`;
 
       parameters[parameterName] = parameterValue;
 

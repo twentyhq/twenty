@@ -200,7 +200,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
     const { selectQueryBuilder } = buildBuilders();
 
     const [, values] = selectQueryBuilder
-      .where('"person"."id" = :ormV2Set_0', { ormV2Set_0: 'id-1' })
+      .where('"person"."id" = :ormSet_0', { ormSet_0: 'id-1' })
       .update()
       .set({ jobTitle: 'Tech Lead' })
       .returning(['id'])

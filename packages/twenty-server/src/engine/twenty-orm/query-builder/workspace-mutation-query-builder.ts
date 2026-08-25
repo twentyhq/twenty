@@ -163,10 +163,10 @@ export class WorkspaceMutationQueryBuilder {
         );
       }
 
-      let parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+      let parameterName = `ormSet_${mutationSetParameterSequence++}`;
 
       while (parameterName in parameters) {
-        parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+        parameterName = `ormSet_${mutationSetParameterSequence++}`;
       }
 
       parameters[parameterName] = serializeJsonbWriteValue(
