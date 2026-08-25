@@ -23,7 +23,9 @@
     "purge": "tsx src/scripts/purge-soft-deleted.ts",
     "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
     "rls:configure": "tsx src/scripts/configure-partner-rls.ts",
-    "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
+    "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts",
+    "backfill:pre-review": "tsx src/scripts/backfill-pre-review.ts",
+    "backfill:pre-review:prod": "ENV_FILE=.env.prod tsx src/scripts/backfill-pre-review.ts"
   },
   "dependencies": {
     "react-markdown": "^10.1.0",
