@@ -6677,12 +6677,12 @@ msgstr "El tipo de elemento del menú de navegación es obligatorio"
 #. js-lingui-id: sq8J4x
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Navigation target object metadata not found"
-msgstr ""
+msgstr "Metadatos del objeto de destino de navegación no encontrados"
 
 #. js-lingui-id: 4/QAvg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Navigation target object not found"
-msgstr ""
+msgstr "Objeto de destino de navegación no encontrado"
 
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts

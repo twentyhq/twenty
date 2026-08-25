@@ -293,7 +293,6 @@ msgstr "Majburiy maydonlardan biri yetishmaydi."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Majburiy maydon kiritilmagan. Iltimos, barcha majburiy qiymatlarni kiriting va qaytadan urinib ko‘ring."
 
@@ -6675,6 +6674,16 @@ msgstr "Navigatsiya menyusi elementi topilmadi."
 msgid "Navigation menu item type is required"
 msgstr "Navigatsiya menyusi elementi turi talab qilinadi"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Navigatsiya maqsadli obyekti metama’lumoti topilmadi"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Navigatsiya maqsadli obyekti topilmadi"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10179,11 +10188,6 @@ msgstr "Ortga qaytish uchun oldingi onboarding bosqichi mavjud emas."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Ish maydoni faollashtirilishidan oldin quyidagi maydonlarni yangilab boʻlmaydi: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Ushbu {fieldLabel} qiymati allaqachon ishlatilmoqda. Iltimos, ma’lumotlaringizni tekshirib, qayta urinib ko‘ring."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10453,6 @@ msgstr "Ushbu operatsiya qo‘llab-quvvatlanmaydi."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ushbu amal mavjud bo‘lmagan yoki mavjud munosabatlar tufayli o‘zgartirib bo‘lmaydigan yozuvga murojaat qiladi."
 
@@ -10481,7 +10484,6 @@ msgstr "Bu yozuv allaqachon mavjud. Iltimos, ma’lumotlaringizni tekshiring va 
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Ushbu yozuvni o‘chirib bo‘lmaydi, chunki u hanuz boshqa yozuvlar tomonidan ishlatilmoqda."
 
@@ -12441,7 +12443,6 @@ msgstr "Bir vaqtning o‘zida faqat bitta yozuvning fayllar maydonini yangilashi
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "Bir vaqtning o‘zida faqat {QUERY_MAX_RECORDS} tagacha yozuvni yangilashingiz mumkin."
 
