@@ -52,7 +52,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
   beforeEach(async () => {
     workspaceOrmManager = {
-      getRepository: jest.fn().mockResolvedValue(mockRepository),
+      getRepository: jest.fn().mockReturnValue(mockRepository),
       executeInWorkspaceContext: jest
         .fn()
         .mockImplementation((fn: () => any, _authContext?: any) => fn()),

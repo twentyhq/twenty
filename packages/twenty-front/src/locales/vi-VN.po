@@ -1985,7 +1985,7 @@ msgstr "Tất cả các đăng ký ứng dụng"
 #. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
-msgstr ""
+msgstr "Tất cả đăng ký ứng dụng trên toàn bộ nền tảng, bao gồm các ứng dụng marketplace mồ côi ({totalCount} trùng khớp)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -13862,7 +13862,7 @@ msgstr "Không có sẵn trên Chế độ Xem Mặc định"
 #. js-lingui-id: SDND4q
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not configured"
-msgstr ""
+msgstr "Chưa được cấu hình"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13882,7 +13882,7 @@ msgstr "Không bao gồm"
 #. js-lingui-id: i/2ImT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
-msgstr ""
+msgstr "Không được liệt kê"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx

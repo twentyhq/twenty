@@ -1489,10 +1489,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatObjectMetadata: this.options.flatObjectMetadata,
     });
 
-    for (const joinAttribute of queryBuilder.expressionMap.joinAttributes) {
-      const joinedTableShape = queryBuilder.getJoinedTableShape(
-        joinAttribute.alias.name,
-      );
+    for (const joinAlias of queryBuilder.getJoinAliases()) {
+      const joinedTableShape = queryBuilder.getJoinedTableShape(joinAlias.name);
 
       if (!isDefined(joinedTableShape)) {
         continue;
@@ -1500,7 +1498,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       this.applyRowLevelPermissionPredicateForAlias({
         queryBuilder,
-        alias: joinAttribute.alias.name,
+        alias: joinAlias.name,
         flatObjectMetadata: this.options.flatObjectMetadataByObjectMetadataId(
           joinedTableShape.objectMetadataId,
         ),

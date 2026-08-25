@@ -42,6 +42,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     WorkspaceORMEntityMetadatasCacheService,
     provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
-  exports: [WorkspaceOrmManager, WorkspaceDataSourceService],
+  exports: [WorkspaceOrmManager],
 })
 export class TwentyOrmModule {}

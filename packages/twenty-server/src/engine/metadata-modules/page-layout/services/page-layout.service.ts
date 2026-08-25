@@ -562,7 +562,7 @@ export class PageLayoutService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const dashboardRepository = await this.workspaceOrmManager.getRepository(
+      const dashboardRepository = this.workspaceOrmManager.getRepository(
         'dashboard',
         {
           shouldBypassPermissionChecks: true,

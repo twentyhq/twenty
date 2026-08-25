@@ -1985,7 +1985,7 @@ msgstr "Све регистрације апликација"
 #. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
-msgstr ""
+msgstr "Све регистрације апликација на платформи, укључујући осиротеле апликације са маркетплејса ({totalCount} подударања)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -13862,7 +13862,7 @@ msgstr "Није доступно у Подразумеваном Преглед
 #. js-lingui-id: SDND4q
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not configured"
-msgstr ""
+msgstr "Није подешено"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13882,7 +13882,7 @@ msgstr "Није укључено"
 #. js-lingui-id: i/2ImT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
-msgstr ""
+msgstr "Није наведено"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx

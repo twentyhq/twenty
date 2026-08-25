@@ -1985,7 +1985,7 @@ msgstr "Tutte le registrazioni delle app"
 #. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
-msgstr ""
+msgstr "Tutte le registrazioni di applicazioni sull'intera piattaforma, incluse le app del marketplace orfane ({totalCount} corrispondenti)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -13862,7 +13862,7 @@ msgstr "Non disponibile nella Vista Predefinita"
 #. js-lingui-id: SDND4q
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not configured"
-msgstr ""
+msgstr "Non configurato"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13882,7 +13882,7 @@ msgstr "Non incluso"
 #. js-lingui-id: i/2ImT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
-msgstr ""
+msgstr "Non elencato"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx

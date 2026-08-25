@@ -484,13 +484,12 @@ export class TimelineActivityService {
       return events;
     }
 
-    const workspaceMemberRepository =
-      await this.workspaceOrmManager.getRepository(
-        WorkspaceMemberWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
+      WorkspaceMemberWorkspaceEntity,
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
 
     const workspaceMembers = await workspaceMemberRepository.findBy({
       userId: In(userIds),
