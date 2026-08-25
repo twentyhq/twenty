@@ -29,8 +29,8 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 
 @Injectable()
 export class GroupByWithRecordsV2Service {
@@ -51,12 +51,12 @@ export class GroupByWithRecordsV2Service {
     offsetForRecords,
     nestedRelationsReadPathOptions,
   }: {
-    queryBuilderWithGroupBy: WorkspaceSelectQueryBuilderV2;
-    queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilderV2;
+    queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder;
+    queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder;
     groupByDefinitions: GroupByDefinition[];
     selectedFieldsResult: CommonSelectedFieldsResult;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
-    readRepository: WorkspaceRepositoryV2;
+    readRepository: WorkspaceRepository;
     orderByForRecords: ObjectRecordOrderBy;
     groupLimit?: number;
     offsetForRecords?: number;
@@ -158,7 +158,7 @@ export class GroupByWithRecordsV2Service {
     flatFieldMetadataMaps,
     offsetForRecords,
   }: {
-    subQueryBuilder: WorkspaceSelectQueryBuilderV2;
+    subQueryBuilder: WorkspaceSelectQueryBuilder;
     columnsToSelect: Record<string, boolean>;
     groupsResult: Array<Record<string, unknown>>;
     groupByDefinitions: GroupByDefinition[];
@@ -245,7 +245,7 @@ export class GroupByWithRecordsV2Service {
   }: {
     groupByDefinitions: GroupByDefinition[];
     orderByForRecords: ObjectRecordOrderBy;
-    subQueryBuilder: WorkspaceSelectQueryBuilderV2;
+    subQueryBuilder: WorkspaceSelectQueryBuilder;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;

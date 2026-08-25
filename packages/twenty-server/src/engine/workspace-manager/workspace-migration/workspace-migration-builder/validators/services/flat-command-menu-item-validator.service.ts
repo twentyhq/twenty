@@ -18,6 +18,9 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 export class FlatCommandMenuItemValidatorService {
   public validateFlatCommandMenuItemCreation({
     flatEntityToValidate: flatCommandMenuItem,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps,
+    },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'create'> {
@@ -53,6 +56,25 @@ export class FlatCommandMenuItemValidatorService {
       payload: flatCommandMenuItem.payload,
       validationResult,
     });
+
+    if (
+      isDefined(
+        flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+      ) &&
+      !isDefined(
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      )
+    ) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Navigation target object metadata not found`,
+        userFriendlyMessage: msg`Navigation target object not found`,
+      });
+    }
 
     return validationResult;
   }

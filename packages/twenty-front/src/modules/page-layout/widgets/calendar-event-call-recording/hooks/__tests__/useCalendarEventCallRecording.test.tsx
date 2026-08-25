@@ -19,6 +19,7 @@ const mockLayoutRenderingContext: {
 
 let findManyRecordsResult: {
   records: Record<string, unknown>[];
+  totalCount: number | undefined;
   loading: boolean;
   error: Error | undefined;
   refetch: jest.Mock;
@@ -38,6 +39,7 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
         { id: 'status-field-id', name: 'status', label: 'Status' },
         { id: 'transcript-field-id', name: 'transcript', label: 'Transcript' },
         { id: 'summary-field-id', name: 'summary', label: 'Summary' },
+        { id: 'video-field-id', name: 'video', label: 'Video' },
         {
           id: 'created-at-field-id',
           name: 'createdAt',
@@ -101,6 +103,7 @@ describe('useCalendarEventCallRecording', () => {
     };
     findManyRecordsResult = {
       records: [],
+      totalCount: 0,
       loading: false,
       error: undefined,
       refetch: jest.fn(),
@@ -111,7 +114,7 @@ describe('useCalendarEventCallRecording', () => {
     };
   });
 
-  it('queries every call recording field for the current calendar event in arrival order', () => {
+  it('queries transcript fields for the current calendar event in arrival order', () => {
     renderHook(() =>
       useCalendarEventCallRecording({
         queryScope: 'call-recording-transcript',
@@ -127,7 +130,7 @@ describe('useCalendarEventCallRecording', () => {
           id: true,
           status: true,
           transcript: true,
-          summary: true,
+          video: true,
           createdAt: true,
         },
         skip: false,
@@ -254,6 +257,47 @@ describe('useCalendarEventCallRecording', () => {
     );
 
     expect(transcriptResult.current.restriction).toBeUndefined();
+  });
+
+  it('keeps transcripts available when the optional video field is restricted', () => {
+    findManyRecordsResult.totalCount = 3;
+    objectPermissionsResult = {
+      canReadObjectRecords: true,
+      restrictedFields: { 'video-field-id': { canRead: false } },
+    };
+
+    const { result: transcriptResult } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(transcriptResult.current.restriction).toBeUndefined();
+    expect(transcriptResult.current.callRecordingsCount).toBe(3);
+    expect(mockUseFindManyRecords).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        recordGqlFields: {
+          id: true,
+          status: true,
+          transcript: true,
+          createdAt: true,
+        },
+        skip: false,
+      }),
+    );
+  });
+
+  it('returns the total call recording count beyond the fetched page', () => {
+    findManyRecordsResult.records = [readyCallRecording];
+    findManyRecordsResult.totalCount = 75;
+
+    const { result } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(result.current.callRecordingsCount).toBe(75);
   });
 
   it('passes loading through and resolves to no recording without records', () => {

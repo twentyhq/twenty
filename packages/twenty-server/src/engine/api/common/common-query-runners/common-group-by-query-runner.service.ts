@@ -54,7 +54,7 @@ import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -305,7 +305,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     args: GroupByQueryArgs;
     appliedFilters: ObjectRecordFilter;
-    queryBuilder: WorkspaceSelectQueryBuilderV2;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
@@ -341,7 +341,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     selectedFieldsResult,
     groupLimit,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilderV2;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     groupByDefinitions: GroupByDefinition[];
     selectedFieldsResult: CommonSelectedFieldsResult;
     groupLimit?: number;
@@ -364,7 +364,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     groupByFields,
     objectAlias,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilderV2;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     groupByFields: GroupByField[];
     objectAlias: string;
   }): void {

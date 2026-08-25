@@ -1,7 +1,7 @@
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 type AddRelationJoinAliasToQueryBuilderArgs = {
-  queryBuilder: RecordQueryBuilder;
+  queryBuilder: WorkspaceSelectQueryBuilder;
   parentAlias: string;
   relationName: string;
 };

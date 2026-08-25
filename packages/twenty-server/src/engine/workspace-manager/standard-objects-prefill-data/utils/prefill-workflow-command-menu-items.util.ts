@@ -68,6 +68,8 @@ export const prefillWorkflowCommandMenuItems = async ({
     conditionalAvailabilityExpression: null,
     availabilityObjectMetadataId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
+    navigationTargetObjectMetadataId: null,
+    navigationTargetObjectMetadataUniversalIdentifier: null,
     payload: null,
     hotKeys: null,
     pageLayoutId: null,

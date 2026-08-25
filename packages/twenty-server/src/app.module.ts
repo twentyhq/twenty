@@ -33,13 +33,12 @@ import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
-import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 import { ModulesModule } from 'src/modules/modules.module';
 
-import { ClickHouseModule } from './database/clickHouse/clickHouse.module';
+import { ClickHouseModule } from './database/clickhouse/clickhouse.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
 
@@ -60,8 +59,7 @@ const MIGRATED_REST_METHODS = [
       imports: [GraphQLConfigModule, MetricsModule, DataloaderModule],
       useClass: GraphQLConfigService,
     }),
-    TwentyORMModule,
-    GlobalWorkspaceDataSourceModule,
+    TwentyOrmModule,
     ClickHouseModule,
     CoreEngineModule,
     ModulesModule,

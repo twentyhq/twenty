@@ -22,6 +22,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilderV2 } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder-v2.util';
+import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -66,13 +67,12 @@ import {
   type ConnectQueryRunner,
   RelationNestedQueries,
 } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
-import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
+import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -95,7 +95,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly orderByWithGroupByArgProcessor: OrderByWithGroupByArgProcessorService;
   @Inject()
-  protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
+  protected readonly workspaceOrmManager: WorkspaceOrmManager;
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
@@ -113,7 +113,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
   @Inject()
-  protected readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service;
+  protected readonly workspaceDataSourceService: WorkspaceDataSourceService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -162,16 +162,15 @@ export abstract class CommonBaseQueryRunnerService<
       queryRunnerContext,
     );
 
-    const results =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.executeQueryAndEnrichResults(
-            processedArgs,
-            queryRunnerContext,
-            commonQueryParser,
-          ),
-        authContext,
-      );
+    const results = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () =>
+        this.executeQueryAndEnrichResults(
+          processedArgs,
+          queryRunnerContext,
+          commonQueryParser,
+        ),
+      authContext,
+    );
 
     return {
       results,
@@ -352,12 +351,12 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const repository = this.workspaceDataSourceV2Service
+    const repository = this.workspaceDataSourceService
       .getDataSource({ useReplica: this.isReadOnly })
-      .getRepository(
+      .getRepository<ObjectLiteral>(
         queryRunnerContext.flatObjectMetadata.nameSingular,
         rolePermissionConfig,
-      ) as unknown as WorkspaceRepository<ObjectLiteral>;
+      );
 
     return {
       ...queryRunnerContext,
@@ -377,14 +376,14 @@ export abstract class CommonBaseQueryRunnerService<
   }: Pick<
     CommonExtendedQueryRunnerContext,
     'rolePermissionConfig' | 'flatObjectMetadata'
-  >): WorkspaceRepositoryV2 {
+  >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2ReadPathUsed,
       amount: 1,
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceV2Service
+    return this.workspaceDataSourceService
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
@@ -396,14 +395,14 @@ export abstract class CommonBaseQueryRunnerService<
   }: Pick<
     CommonExtendedQueryRunnerContext,
     'rolePermissionConfig' | 'flatObjectMetadata'
-  >): WorkspaceRepositoryV2 {
+  >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2WritePathUsed,
       amount: 1,
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceV2Service
+    return this.workspaceDataSourceService
       .getDataSource({ useReplica: false })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
@@ -423,6 +422,14 @@ export abstract class CommonBaseQueryRunnerService<
   }): Promise<ObjectRecord[]> {
     const { flatObjectMetadata, commonQueryParser } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
+
+    if (isRecordFilterEmpty(filter)) {
+      throw new CommonQueryRunnerException(
+        'A non-empty filter is required for a bulk mutation',
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);
 
@@ -461,7 +468,7 @@ export abstract class CommonBaseQueryRunnerService<
   }: {
     records: Partial<ObjectRecord>[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
-    writeRepository: WorkspaceRepositoryV2;
+    writeRepository: WorkspaceRepository;
   }): Promise<Partial<ObjectRecord>[]> {
     const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
       queryRunnerContext;
@@ -478,11 +485,9 @@ export abstract class CommonBaseQueryRunnerService<
       return records;
     }
 
-    const workspaceDataSource = this.workspaceDataSourceV2Service.getDataSource(
-      {
-        useReplica: false,
-      },
-    );
+    const workspaceDataSource = this.workspaceDataSourceService.getDataSource({
+      useReplica: false,
+    });
 
     const connectQueryRunner: ConnectQueryRunner = async ({
       connectQueryConfig,

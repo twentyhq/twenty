@@ -13,7 +13,6 @@ export type TimelineActivity = {
   properties: Record<string, unknown> & {
     diff?: Record<string, { before: unknown; after: unknown }>;
   };
-  name: string | null;
   timelineActivityTypeId: string | null;
   timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
   linkedRecordId: string | null;

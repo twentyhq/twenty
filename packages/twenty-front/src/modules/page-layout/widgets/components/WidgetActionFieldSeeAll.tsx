@@ -2,25 +2,14 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
+import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Link } from 'react-router-dom';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
-
-const StyledLinkContainer = styled.div`
-  display: flex;
-
-  > * {
-    text-decoration: none;
-  }
-`;
 
 type WidgetActionFieldSeeAllProps = {
   widget: PageLayoutWidget;
@@ -81,28 +70,15 @@ export const WidgetActionFieldSeeAll = ({
     filterQueryParams,
   );
 
-  const tooltipId = `widget-see-all-${widget.id}`;
   const relationLabelPlural =
     relationObjectMetadataItem.labelPlural.toLowerCase();
-  const tooltipContent = t`See all ${relationLabelPlural} linked to this record`;
+  const actionLabel = t`See all ${relationLabelPlural} linked to this record`;
 
   return (
-    <>
-      <div id={tooltipId}>
-        <StyledLinkContainer>
-          <Link to={filterLinkHref} data-testid="widget-see-all-link">
-            <LightIconButton Icon={IconArrowUpRight} accent="secondary" />
-          </Link>
-        </StyledLinkContainer>
-      </div>
-      <AppTooltip
-        anchorSelect={`#${tooltipId}`}
-        content={tooltipContent}
-        place={TooltipPosition.Top}
-        delay={TooltipDelay.mediumDelay}
-        offset={5}
-        noArrow
-      />
-    </>
+    <WidgetCardHeaderActionLink
+      Icon={IconArrowUpRight}
+      label={actionLabel}
+      to={filterLinkHref}
+    />
   );
 };

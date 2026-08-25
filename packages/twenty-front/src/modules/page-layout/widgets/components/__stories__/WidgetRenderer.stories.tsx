@@ -1299,7 +1299,9 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const seeAllLink = await canvas.findByTestId('widget-see-all-link');
+    const seeAllLink = await canvas.findByRole('link', {
+      name: /See all .* linked to this record/,
+    });
 
     expect(seeAllLink).toBeVisible();
 

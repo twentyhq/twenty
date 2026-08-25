@@ -367,6 +367,9 @@ export default {
             "availabilityObjectMetadataId": [
                 3
             ],
+            "navigationTargetObjectMetadataId": [
+                3
+            ],
             "pageLayoutId": [
                 3
             ],
@@ -6386,9 +6389,6 @@ export default {
                 1
             ],
             "icon": [
-                1
-            ],
-            "renderer": [
                 1
             ],
             "frontComponentUniversalIdentifier": [

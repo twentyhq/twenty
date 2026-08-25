@@ -2602,9 +2602,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "linkedRecordId": {
         "universalIdentifier": "20202020-2e0e-48c0-b445-ee6c1e61687d",
       },
-      "name": {
-        "universalIdentifier": "20202020-7207-46e8-9dab-849505ae8497",
-      },
       "position": {
         "universalIdentifier": "02c2a94c-f393-5de2-9fe9-71ff4f76980d",
       },

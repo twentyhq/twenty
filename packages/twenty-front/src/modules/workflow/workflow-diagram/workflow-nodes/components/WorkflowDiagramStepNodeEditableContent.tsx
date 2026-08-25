@@ -9,8 +9,8 @@ import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/u
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeIcon';
+import { WorkflowDiagramStepNodeOptionsDropdown } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
-import { WorkflowNodeDeleteButton } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
 import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabel';
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
@@ -46,13 +46,17 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   data,
   selected,
   onClick,
+  onChangeNode,
+  onDuplicateNode,
   onDelete,
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
   selected: boolean;
   onClick?: () => void;
-  onDelete?: () => void;
+  onChangeNode: () => void;
+  onDuplicateNode?: () => void;
+  onDelete: () => void;
 }) => {
   const { i18n } = useLingui();
 
@@ -128,9 +132,10 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
 
-        {id !== EMPTY_NODE_ID && isDefined(onDelete) && (
-          <WorkflowNodeDeleteButton
-            shouldDisplay={isHovered && !isConnectionInProgress}
+        {id !== EMPTY_NODE_ID && selected && (
+          <WorkflowDiagramStepNodeOptionsDropdown
+            onChangeNode={onChangeNode}
+            onDuplicateNode={onDuplicateNode}
             onDelete={onDelete}
           />
         )}
