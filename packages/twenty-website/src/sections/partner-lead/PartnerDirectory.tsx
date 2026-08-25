@@ -1,16 +1,8 @@
-'use client';
-
 import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
+import { type ReactNode } from 'react';
 
-import { MarketplaceEmptyState } from '@/partners-marketplace/EmptyState';
-import { filterPartners } from '@/partners-marketplace/filter-partners';
-import { FilterBar } from '@/partners-marketplace/FilterBar';
-import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
-import { MarketplaceGrid } from '@/partners-marketplace/MarketplaceGrid';
-import { useMarketplaceFilterState } from '@/partners-marketplace/use-marketplace-filter-state';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { PARTNER_DIRECTORY_ANCHOR_ID } from '@/platform/routing/partner-directory-anchor-id';
 import { spacing } from '@/tokens';
 import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
@@ -26,33 +18,15 @@ const ZoneHeader = styled.div`
   }
 `;
 
-const Filters = styled.div`
-  margin-top: ${spacing(10)};
-`;
-
-const Results = styled.div`
-  margin-top: ${spacing(6)};
-`;
-
 type PartnerDirectoryProps = {
-  partners: readonly MarketplacePartner[];
+  children: ReactNode;
 };
 
-export function PartnerDirectory({ partners }: PartnerDirectoryProps) {
-  const { i18n } = useLingui();
-  const {
-    criteria,
-    hasAnyFilter,
-    toggleRegion,
-    toggleLanguage,
-    toggleCategory,
-    clearAll,
-  } = useMarketplaceFilterState();
-
-  const filteredPartners = useMemo(
-    () => filterPartners(partners, criteria),
-    [partners, criteria],
-  );
+// The header stays outside the streamed slot: the anchor is a cross-page
+// contract (the hero jump, the profile back link) and must be in the first
+// paint, not only once the partners API resolves.
+export function PartnerDirectory({ children }: PartnerDirectoryProps) {
+  const i18n = getServerI18n();
 
   return (
     <SectionShell rhythm="section" scheme="light">
@@ -70,24 +44,7 @@ export function PartnerDirectory({ partners }: PartnerDirectoryProps) {
           )}
         </Body>
       </ZoneHeader>
-      <Filters>
-        <FilterBar
-          criteria={criteria}
-          hasAnyFilter={hasAnyFilter}
-          onClearAll={clearAll}
-          onToggleCategory={toggleCategory}
-          onToggleLanguage={toggleLanguage}
-          onToggleRegion={toggleRegion}
-          totalCount={partners.length}
-          visibleCount={filteredPartners.length}
-        />
-      </Filters>
-      <Results>
-        <MarketplaceGrid partners={filteredPartners} />
-        {filteredPartners.length === 0 && partners.length > 0 && (
-          <MarketplaceEmptyState onClearFilters={clearAll} />
-        )}
-      </Results>
+      {children}
     </SectionShell>
   );
 }

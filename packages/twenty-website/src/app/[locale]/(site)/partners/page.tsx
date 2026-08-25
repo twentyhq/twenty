@@ -22,6 +22,7 @@ import { PartnerLeadHero } from '@/sections/partner-hero';
 import {
   PartnerBecomeStrip,
   PartnerDirectory,
+  PartnerDirectoryPanel,
   PartnerServicesExplainer,
 } from '@/sections/partner-lead';
 
@@ -29,13 +30,13 @@ export const generateMetadata = buildRouteMetadata('partners');
 
 export const dynamic = 'force-dynamic';
 
-// Awaiting the partners API at page level would gate the hero, the explainer
-// and the FAQ on a call only the directory needs, and would resolve it before
-// the boundary below ever renders — leaving MarketplaceListSkeleton dead.
+// Kept out of the page-level await: the rest of the page must not wait on a
+// call only the directory needs, and awaiting it there also resolves it before
+// the boundary renders, leaving MarketplaceListSkeleton dead.
 async function PartnerDirectoryZone() {
   const partners = await getMarketplacePartners();
 
-  return <PartnerDirectory partners={partners} />;
+  return <PartnerDirectoryPanel partners={partners} />;
 }
 
 export default async function PartnersPage({
@@ -64,9 +65,11 @@ export default async function PartnersPage({
         <Menu communityStats={communityStats} />
         <main>
           <PartnerLeadHero />
-          <Suspense fallback={<MarketplaceListSkeleton />}>
-            <PartnerDirectoryZone />
-          </Suspense>
+          <PartnerDirectory>
+            <Suspense fallback={<MarketplaceListSkeleton />}>
+              <PartnerDirectoryZone />
+            </Suspense>
+          </PartnerDirectory>
           <PartnerServicesExplainer />
           <MarketplaceBriefPrompt />
           <PartnerFaq />
