@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -40,7 +40,7 @@ const buildTableShape = (columnNames: string[]): WorkspaceTableShape => ({
 });
 
 const buildQueryBuilder = (columnNames = ['id', 'name', 'deletedAt']) =>
-  new WorkspaceSelectQueryBuilderV2('person', {
+  new WorkspaceSelectQueryBuilder('person', {
     tableShape: buildTableShape(columnNames),
     executor: { execute: async () => [] },
     objectRecordsPermissions: {},

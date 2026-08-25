@@ -34,7 +34,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
-import { type QueryExecutorV2 } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildInsertStatement,
   type InsertRowValue,
@@ -70,7 +70,7 @@ import {
   getUpdateEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
@@ -94,7 +94,7 @@ type WorkspaceRepositoryV2Options = {
   flatObjectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
-  executor: QueryExecutorV2;
+  executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   tableShapeByObjectMetadataId: (
@@ -105,16 +105,16 @@ type WorkspaceRepositoryV2Options = {
   ) => FlatObjectMetadata;
   getRepositoryForObjectMetadataId: (
     objectMetadataId: string,
-  ) => WorkspaceRepositoryV2;
+  ) => WorkspaceRepository;
   isTransactional: boolean;
   runInNewTransaction: <T>(
     work: (
-      transactionalRepository: WorkspaceRepositoryV2<ObjectLiteral>,
+      transactionalRepository: WorkspaceRepository<ObjectLiteral>,
     ) => Promise<T>,
   ) => Promise<T>;
 };
 
-export class WorkspaceRepositoryV2<
+export class WorkspaceRepository<
   TEntity extends ObjectLiteral = ObjectRecord,
 > {
   readonly objectRecordsPermissions: ObjectsPermissions;
@@ -143,8 +143,8 @@ export class WorkspaceRepositoryV2<
     return this.options.executor.execute(compiled) as Promise<T[]>;
   }
 
-  createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilderV2 {
-    return new WorkspaceSelectQueryBuilderV2(
+  createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilder {
+    return new WorkspaceSelectQueryBuilder(
       alias ?? this.options.tableShape.nameSingular,
       {
         tableShape: this.options.tableShape,
@@ -157,7 +157,7 @@ export class WorkspaceRepositoryV2<
     );
   }
 
-  private createPermissionBypassingQueryBuilder(): WorkspaceSelectQueryBuilderV2 {
+  private createPermissionBypassingQueryBuilder(): WorkspaceSelectQueryBuilder {
     return this.buildBypassingEventSelectQueryBuilder(
       this.options.tableShape.nameSingular,
     );
@@ -189,7 +189,7 @@ export class WorkspaceRepositoryV2<
   }
 
   applyWriteRowLevelPermissions(
-    queryBuilder: WorkspaceSelectQueryBuilderV2,
+    queryBuilder: WorkspaceSelectQueryBuilder,
   ): void {
     this.applyRowLevelPermissionPredicates(queryBuilder);
   }
@@ -447,7 +447,7 @@ export class WorkspaceRepositoryV2<
     records: ObjectRecord[];
     fieldName: string;
     joinColumnName?: string;
-    targetRepository: WorkspaceRepositoryV2;
+    targetRepository: WorkspaceRepository;
     nestedRelations?: FindOptionsRelationsV2;
   }): Promise<void> {
     if (!isDefined(joinColumnName)) {
@@ -488,7 +488,7 @@ export class WorkspaceRepositoryV2<
     records: ObjectRecord[];
     fieldName: string;
     relationShape: WorkspaceRelationShape;
-    targetRepository: WorkspaceRepositoryV2;
+    targetRepository: WorkspaceRepository;
     nestedRelations?: FindOptionsRelationsV2;
     withDeleted: boolean;
     order?: OrderByConditionLike;
@@ -667,7 +667,7 @@ export class WorkspaceRepositoryV2<
   }
 
   private runAtomically<T>(
-    work: (repository: WorkspaceRepositoryV2<ObjectLiteral>) => Promise<T>,
+    work: (repository: WorkspaceRepository<ObjectLiteral>) => Promise<T>,
   ): Promise<T> {
     return this.options.isTransactional
       ? work(this)
@@ -1167,8 +1167,8 @@ export class WorkspaceRepositoryV2<
 
   private buildBypassingEventSelectQueryBuilder(
     alias: string,
-  ): WorkspaceSelectQueryBuilderV2 {
-    return new WorkspaceSelectQueryBuilderV2(alias, {
+  ): WorkspaceSelectQueryBuilder {
+    return new WorkspaceSelectQueryBuilder(alias, {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
@@ -1180,7 +1180,7 @@ export class WorkspaceRepositoryV2<
 
   private buildIdsEventSnapshotQueryBuilder(
     ids: string[],
-  ): WorkspaceSelectQueryBuilderV2 {
+  ): WorkspaceSelectQueryBuilder {
     return this.buildBypassingEventSelectQueryBuilder(
       this.options.tableShape.nameSingular,
     )
@@ -1195,7 +1195,7 @@ export class WorkspaceRepositoryV2<
     columnsToReturn,
     data,
   }: {
-    selectQueryBuilder: WorkspaceSelectQueryBuilderV2;
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
     columnsToReturn: string[];
@@ -1321,7 +1321,7 @@ export class WorkspaceRepositoryV2<
     columnsToReturn,
     setColumns,
   }: {
-    selectQueryBuilder: WorkspaceSelectQueryBuilderV2;
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
     kind: MutationKind;
     columnsToReturn: string[];
     setColumns?: Record<string, unknown>;
@@ -1345,8 +1345,8 @@ export class WorkspaceRepositoryV2<
   }
 
   private buildEventSnapshotQueryBuilder(
-    source: WorkspaceSelectQueryBuilderV2,
-  ): WorkspaceSelectQueryBuilderV2 {
+    source: WorkspaceSelectQueryBuilder,
+  ): WorkspaceSelectQueryBuilder {
     return this.buildBypassingEventSelectQueryBuilder(source.alias)
       .copyWhereFrom(source)
       .withDeleted();
@@ -1431,13 +1431,13 @@ export class WorkspaceRepositoryV2<
     }
   }
 
-  private onBeforeExecute(queryBuilder: WorkspaceSelectQueryBuilderV2): void {
+  private onBeforeExecute(queryBuilder: WorkspaceSelectQueryBuilder): void {
     this.applyRowLevelPermissionPredicates(queryBuilder);
     this.validateQueryIsPermitted(queryBuilder);
   }
 
   private validateQueryIsPermitted(
-    queryBuilder: WorkspaceSelectQueryBuilderV2,
+    queryBuilder: WorkspaceSelectQueryBuilder,
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -1473,7 +1473,7 @@ export class WorkspaceRepositoryV2<
   }
 
   private applyRowLevelPermissionPredicates(
-    queryBuilder: WorkspaceSelectQueryBuilderV2,
+    queryBuilder: WorkspaceSelectQueryBuilder,
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -1509,7 +1509,7 @@ export class WorkspaceRepositoryV2<
     alias,
     flatObjectMetadata,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilderV2;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     alias: string;
     flatObjectMetadata: FlatObjectMetadata;
   }): void {

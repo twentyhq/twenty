@@ -4,7 +4,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
-import { type QueryExecutorV2 } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,
   mapRowToEntity,
@@ -26,7 +26,7 @@ const DELETED_AT_COLUMN_NAME = 'deletedAt';
 
 export type MutationQueryBuilderV2Context = {
   tableShape: WorkspaceTableShape;
-  executor: QueryExecutorV2;
+  executor: QueryExecutor;
   formatResult: <T>(records: unknown) => T;
 };
 
@@ -35,7 +35,7 @@ export type MutationResultV2 = {
   generatedMaps: any[];
 };
 
-export class WorkspaceMutationQueryBuilderV2 {
+export class WorkspaceMutationQueryBuilder {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
 

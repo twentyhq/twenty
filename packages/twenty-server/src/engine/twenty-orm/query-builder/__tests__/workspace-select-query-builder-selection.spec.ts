@@ -1,4 +1,4 @@
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import {
   SCHEMA_NAME,
   buildColumn,
@@ -9,7 +9,7 @@ import {
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
 
-describe('WorkspaceSelectQueryBuilderV2 selection', () => {
+describe('WorkspaceSelectQueryBuilder selection', () => {
   it('should select the requested columns with alias-prefixed output names', () => {
     const { queryBuilder } = buildQueryBuilder();
 
@@ -239,7 +239,7 @@ describe('WorkspaceSelectQueryBuilderV2 selection', () => {
   });
 
   it('should restore the previous limit when getOne fails', async () => {
-    const failingBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+    const failingBuilder = new WorkspaceSelectQueryBuilder('person', {
       tableShape: personTableShape,
       executor: {
         execute: async () => {

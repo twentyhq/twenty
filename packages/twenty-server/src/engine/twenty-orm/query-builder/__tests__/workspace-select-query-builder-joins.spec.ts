@@ -4,7 +4,7 @@ import {
   buildQueryBuilder,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
-describe('WorkspaceSelectQueryBuilderV2 joins', () => {
+describe('WorkspaceSelectQueryBuilder joins', () => {
   it('should join a to-one relation on its foreign key', () => {
     const { queryBuilder } = buildQueryBuilder();
 

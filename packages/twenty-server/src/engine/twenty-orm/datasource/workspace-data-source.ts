@@ -14,13 +14,13 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
-import { type QueryExecutorV2 } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
 import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
-import { WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
@@ -34,14 +34,14 @@ export type WorkspaceTransactionScopeV2 = {
   getRepository: (
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
-  ) => WorkspaceRepositoryV2;
+  ) => WorkspaceRepository;
   executeRawQuery: (
     sql: string,
     parameters?: unknown[],
   ) => Promise<Record<string, unknown>[]>;
 };
 
-export class WorkspaceDataSourceV2 {
+export class WorkspaceDataSource {
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
@@ -67,7 +67,7 @@ export class WorkspaceDataSourceV2 {
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
-  ): WorkspaceRepositoryV2<T> {
+  ): WorkspaceRepository<T> {
     return this.buildRepository<T>({
       nameSingular,
       rolePermissionConfig,
@@ -94,7 +94,7 @@ export class WorkspaceDataSourceV2 {
   }
 
   private async runInClientTransaction<T>(
-    work: (executor: QueryExecutorV2) => Promise<T>,
+    work: (executor: QueryExecutor) => Promise<T>,
   ): Promise<T> {
     return runInRollbackSafeTransaction({
       pool: this.pool,
@@ -110,9 +110,9 @@ export class WorkspaceDataSourceV2 {
   }: {
     nameSingular: string;
     rolePermissionConfig?: RolePermissionConfig;
-    executor: QueryExecutorV2;
+    executor: QueryExecutor;
     isTransactional?: boolean;
-  }): WorkspaceRepositoryV2<T> {
+  }): WorkspaceRepository<T> {
     const objectMetadataId =
       this.internalContext.objectIdByNameSingular[nameSingular];
 
@@ -141,9 +141,9 @@ export class WorkspaceDataSourceV2 {
   }: {
     objectMetadataId: string;
     rolePermissionConfig?: RolePermissionConfig;
-    executor: QueryExecutorV2;
+    executor: QueryExecutor;
     isTransactional?: boolean;
-  }): WorkspaceRepositoryV2<T> {
+  }): WorkspaceRepository<T> {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
@@ -153,7 +153,7 @@ export class WorkspaceDataSourceV2 {
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       });
 
-    return new WorkspaceRepositoryV2<T>({
+    return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
       flatObjectMetadata,
       internalContext: this.internalContext,

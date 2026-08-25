@@ -3,11 +3,11 @@ import {
   SCHEMA_NAME,
   buildColumn,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
-describe('WorkspaceSelectQueryBuilderV2 timeline messaging parity', () => {
+describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
   const buildShape = (
     objectMetadataId: string,
     nameSingular: string,
@@ -157,7 +157,7 @@ describe('WorkspaceSelectQueryBuilderV2 timeline messaging parity', () => {
   ) => {
     const executedStatements: CompiledStatement[] = [];
 
-    const queryBuilder = new WorkspaceSelectQueryBuilderV2(alias, {
+    const queryBuilder = new WorkspaceSelectQueryBuilder(alias, {
       tableShape,
       executor: {
         execute: async (statement) => {

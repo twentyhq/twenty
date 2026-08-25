@@ -4,7 +4,7 @@ import { type FullNameMetadata } from 'twenty-shared/types';
 import { DeepPartial } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -116,7 +116,7 @@ export class CreatePersonService {
   }
 
   private async getLastPersonPosition(
-    personRepository: WorkspaceRepositoryV2<PersonWorkspaceEntity>,
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
   ): Promise<number> {
     const lastPersonPosition = await personRepository.maximum(
       'position',

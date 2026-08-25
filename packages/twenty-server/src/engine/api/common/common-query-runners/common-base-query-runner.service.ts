@@ -70,8 +70,8 @@ import {
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -113,7 +113,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
   @Inject()
-  protected readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service;
+  protected readonly workspaceDataSourceService: WorkspaceDataSourceService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -352,7 +352,7 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const repository = this.workspaceDataSourceV2Service
+    const repository = this.workspaceDataSourceService
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository<ObjectLiteral>(
         queryRunnerContext.flatObjectMetadata.nameSingular,
@@ -377,14 +377,14 @@ export abstract class CommonBaseQueryRunnerService<
   }: Pick<
     CommonExtendedQueryRunnerContext,
     'rolePermissionConfig' | 'flatObjectMetadata'
-  >): WorkspaceRepositoryV2 {
+  >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2ReadPathUsed,
       amount: 1,
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceV2Service
+    return this.workspaceDataSourceService
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
@@ -396,14 +396,14 @@ export abstract class CommonBaseQueryRunnerService<
   }: Pick<
     CommonExtendedQueryRunnerContext,
     'rolePermissionConfig' | 'flatObjectMetadata'
-  >): WorkspaceRepositoryV2 {
+  >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2WritePathUsed,
       amount: 1,
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceDataSourceV2Service
+    return this.workspaceDataSourceService
       .getDataSource({ useReplica: false })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
@@ -469,7 +469,7 @@ export abstract class CommonBaseQueryRunnerService<
   }: {
     records: Partial<ObjectRecord>[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
-    writeRepository: WorkspaceRepositoryV2;
+    writeRepository: WorkspaceRepository;
   }): Promise<Partial<ObjectRecord>[]> {
     const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
       queryRunnerContext;
@@ -486,7 +486,7 @@ export abstract class CommonBaseQueryRunnerService<
       return records;
     }
 
-    const workspaceDataSource = this.workspaceDataSourceV2Service.getDataSource(
+    const workspaceDataSource = this.workspaceDataSourceService.getDataSource(
       {
         useReplica: false,
       },
