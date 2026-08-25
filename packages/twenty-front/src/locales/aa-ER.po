@@ -1457,6 +1457,7 @@ msgid "Add permission"
 msgstr "crwdns64798:0crwdne64798:0"
 
 #. js-lingui-id: AmiJYR
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add relation"
 msgstr "crwdns105220:0crwdne105220:0"
@@ -7214,6 +7215,11 @@ msgstr "crwdns112158:0crwdne112158:0"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "crwdns5716:0crwdne5716:0"
+
+#. js-lingui-id: 4QhQge
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
+msgid "Edit relation"
+msgstr "crwdns140743:0crwdne140743:0"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
