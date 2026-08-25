@@ -1,6 +1,6 @@
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
-describe('WorkspaceSelectQueryBuilderV2 order, group and distinct', () => {
+describe('WorkspaceSelectQueryBuilder order, group and distinct', () => {
   it('should render order by with direction and nulls handling', () => {
     const { queryBuilder } = buildQueryBuilder();
 

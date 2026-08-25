@@ -7,8 +7,8 @@ import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/ut
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStatus,
@@ -57,15 +57,13 @@ export type WorkflowVersionBatchDelete = {
 export class WorkflowStatusesUpdateJob {
   protected readonly logger = new Logger(WorkflowStatusesUpdateJob.name);
 
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
     const authContext = buildSystemAuthContext(event.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       switch (event.type) {
         case WorkflowVersionEventType.CREATE:
         case WorkflowVersionEventType.DELETE:
@@ -98,13 +96,13 @@ export class WorkflowStatusesUpdateJob {
     workflowId: string;
   }): Promise<void> {
     const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -141,13 +139,13 @@ export class WorkflowStatusesUpdateJob {
     statusUpdate: WorkflowVersionStatusUpdate;
   }): Promise<void> {
     const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -182,7 +180,7 @@ export class WorkflowStatusesUpdateJob {
     workflowVersionRepository,
   }: {
     workflowId: string;
-    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
   }) {
     const workflowVersions = await workflowVersionRepository.find({
       where: {

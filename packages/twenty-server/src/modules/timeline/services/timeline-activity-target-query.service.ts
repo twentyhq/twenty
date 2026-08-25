@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { type TimelineActivityRuleTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-rule-target-join-column.type';
@@ -29,9 +29,7 @@ const readTargetFromRecord = (
 
 @Injectable()
 export class TimelineActivityTargetQueryService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async resolveTargetsBySourceRecordId({
     rule,
@@ -52,11 +50,10 @@ export class TimelineActivityTargetQueryService {
     const { junctionObjectNameSingular, junctionSourceJoinColumnName } =
       rule.targetShape;
 
-    const junctionRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        junctionObjectNameSingular,
-        { shouldBypassPermissionChecks: true },
-      );
+    const junctionRepository = await this.workspaceOrmManager.getRepository(
+      junctionObjectNameSingular,
+      { shouldBypassPermissionChecks: true },
+    );
 
     const junctionRows = await junctionRepository.find({
       where: { [junctionSourceJoinColumnName]: In(sourceRecordIds) },
@@ -112,7 +109,7 @@ export class TimelineActivityTargetQueryService {
       return sourceRecordsByRecordId;
     }
 
-    const repository = await this.globalWorkspaceOrmManager.getRepository(
+    const repository = await this.workspaceOrmManager.getRepository(
       rule.sourceFlatObjectMetadata.nameSingular,
       { shouldBypassPermissionChecks: true },
     );

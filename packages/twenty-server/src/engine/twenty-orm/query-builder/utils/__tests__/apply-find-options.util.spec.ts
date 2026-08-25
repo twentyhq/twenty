@@ -8,7 +8,7 @@ import {
   normalizeFindOptionsRelations,
   splitFindOptionsOrder,
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
-import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const SCHEMA_NAME = 'workspace_test';
@@ -37,7 +37,7 @@ const personTableShape: WorkspaceTableShape = {
 };
 
 const buildQueryBuilder = () =>
-  new WorkspaceSelectQueryBuilderV2('person', {
+  new WorkspaceSelectQueryBuilder('person', {
     tableShape: personTableShape,
     executor: { execute: async () => [] },
     objectRecordsPermissions: {},
@@ -198,7 +198,7 @@ const threadShape: WorkspaceTableShape = {
 };
 
 const buildThreadQueryBuilder = () =>
-  new WorkspaceSelectQueryBuilderV2('thread', {
+  new WorkspaceSelectQueryBuilder('thread', {
     tableShape: threadShape,
     executor: { execute: async () => [] },
     objectRecordsPermissions: {},

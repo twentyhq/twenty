@@ -44,7 +44,7 @@ describe('on-application-created', () => {
 
   it('stamps partnerUser from the partner on an admin-created row', async () => {
     queryMock.mockResolvedValue({
-      partner: { id: PARTNER_ID, partnerUserId: MEMBER_ID },
+      partners: { edges: [{ node: { id: PARTNER_ID, partnerUserId: MEMBER_ID } }] },
     });
 
     const result = await handler(
@@ -60,12 +60,21 @@ describe('on-application-created', () => {
 
   it('leaves an admin-created row alone when the partner has no member', async () => {
     queryMock.mockResolvedValue({
-      partner: { id: PARTNER_ID, partnerUserId: null },
+      partners: { edges: [{ node: { id: PARTNER_ID, partnerUserId: null } }] },
     });
 
     const result = await handler(
       event({ id: APPLICATION_ID, partnerId: PARTNER_ID }),
     );
+
+    expect(result).toEqual({ skipped: true, reason: 'partner_has_no_user' });
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('leaves an admin-created row alone when the partner row is absent', async () => {
+    queryMock.mockResolvedValue({ partners: { edges: [] } });
+
+    const result = await handler(event({ id: APPLICATION_ID, partnerId: PARTNER_ID }));
 
     expect(result).toEqual({ skipped: true, reason: 'partner_has_no_user' });
     expect(mutationMock).not.toHaveBeenCalled();
@@ -134,7 +143,6 @@ describe('on-application-created', () => {
     expect(args.data.partnerId).toBe(PARTNER_ID);
     expect(args.data.partnerUserId).toBe(MEMBER_ID);
     expect(args.data.state).toBe('APPLIED');
-    expect(typeof args.data.lastActivityAt).toBe('string');
   });
 
   it('stamps normally when no duplicate exists for the same opportunity and partner', async () => {

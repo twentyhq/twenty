@@ -38,8 +38,8 @@ per object type rather than thousands, and it can be rebuilt or discarded freely
 |---|---|
 | `sql/` | named-parameter compiler: `:name` / `:...list` to `$1..$n` |
 | `table-shape/` | `WorkspaceTableShape` and its builder from flat field metadata |
-| `query-builder/` | `WorkspaceSelectQueryBuilderV2` and `WorkspaceMutationQueryBuilderV2`, the TypeORM-shaped builders |
-| `repository/` | `WorkspaceRepositoryV2`, permissions and result formatting |
+| `query-builder/` | `WorkspaceSelectQueryBuilder` and `WorkspaceMutationQueryBuilder`, the TypeORM-shaped builders |
+| `repository/` | `WorkspaceRepository`, permissions and result formatting |
 | `datasource/` | pool ownership and per-request data source |
 | `executor/` | statement execution against a `pg` pool |
 
@@ -123,7 +123,7 @@ subquery with the v2 builder and runs the composed outer query through
 
 ## Writes: delete, destroy, restore and (most) update route through v2
 
-`WorkspaceMutationQueryBuilderV2` generates `UPDATE` / `DELETE` / soft-delete / restore
+`WorkspaceMutationQueryBuilder` generates `UPDATE` / `DELETE` / soft-delete / restore
 statements with `RETURNING`, reusing the same primitives as the select builder
 (`quoteColumn`, the shared where renderer, the `mapRowToEntity` decode) plus a `SET`
 generator. The select builder morphs into it: `.update()` / `.delete()` / `.softDelete()`
@@ -134,7 +134,7 @@ the TypeORM surface the mutation runners already call.
 route to this path through the shared `runFilteredMutation` on the base runner. Each
 builds the filtered v2 select builder with `buildMutationQueryBuilderV2` (which rewrites a
 relation-traversal filter into an `id IN (subquery)` predicate, RLS inside the subquery)
-and hands it to `WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1
+and hands it to `WorkspaceRepository.runMutation`, which owns the choreography the v1
 mutation builders own: apply the row-level predicate, validate the write with the matching
 operation type, snapshot the affected rows before and after through a permission-bypassing
 all-columns select, run the statement, and emit the batch event(s) through the shared
@@ -188,7 +188,7 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 ## Writes: create (non-upsert insert) routes through v2
 
 `createMany` (and `createOne`) route their non-upsert insert through
-`WorkspaceRepositoryV2.runInsert`: records flatten through `formatData`, insert with
+`WorkspaceRepository.runInsert`: records flatten through `formatData`, insert with
 `buildInsertStatement` (a multi-row `INSERT ... VALUES ... RETURNING`, `DEFAULT` for the
 columns a given row omits so Postgres column defaults apply), validate the insert
 permission over the inserted columns, and emit `CREATED` then `UPSERTED` from an
@@ -199,7 +199,7 @@ all-columns re-select of the inserted ids — matching the v1 insert builder. Re
 
 ## Transactions and merge
 
-`WorkspaceDataSourceV2.transaction(work)` checks a client out of the pool, wraps `work` in
+`WorkspaceDataSource.transaction(work)` checks a client out of the pool, wraps `work` in
 `BEGIN` / `COMMIT` (rolling back and rethrowing on error), and hands `work` a scope whose
 `getRepository` returns repositories bound to that client through a `ClientQueryExecutor`,
 so every statement and event snapshot inside runs on the one connection.
@@ -235,7 +235,7 @@ update, upsert, delete, and merge — whatever field types it touches (scalars, 
 relation join columns, relation `{connect}` / `{disconnect}`, and files fields). Nothing on
 the write path falls back to v1 on the value of its input.
 
-`WorkspaceSelectQueryBuilderV2.leftJoin` can render a to-many join when the caller passes
+`WorkspaceSelectQueryBuilder.leftJoin` can render a to-many join when the caller passes
 `allowToManyJoin`. It renders as a `DISTINCT ON (foreignKey)` derived table ordered by
 `foreignKey, id`, so each parent keeps exactly one representative child row (its lowest-id
 live child) and the join never multiplies parent rows — record ranking and paging stay

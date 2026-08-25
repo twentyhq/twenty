@@ -4,8 +4,8 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -16,9 +16,7 @@ const ORPHAN_CLEANUP_PAGE_SIZE = 500;
 @Injectable()
 export class MessagingMessageCleanerService {
   private readonly logger = new Logger(MessagingMessageCleanerService.name);
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
     workspaceId,
@@ -31,9 +29,9 @@ export class MessagingMessageCleanerService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageRepository =
               transactionScope.getRepository<MessageWorkspaceEntity>('message');
@@ -132,9 +130,9 @@ export class MessagingMessageCleanerService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageChannelMessageAssociationRepository =
               transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
@@ -172,9 +170,9 @@ export class MessagingMessageCleanerService {
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageThreadRepository =
               transactionScope.getRepository<MessageThreadWorkspaceEntity>(
@@ -234,7 +232,7 @@ export class MessagingMessageCleanerService {
   }
 
   private async findReferencedMessageIds(
-    messageChannelMessageAssociationRepository: WorkspaceRepositoryV2<MessageChannelMessageAssociationWorkspaceEntity>,
+    messageChannelMessageAssociationRepository: WorkspaceRepository<MessageChannelMessageAssociationWorkspaceEntity>,
     messageIds: string[],
   ): Promise<string[]> {
     const associations = await messageChannelMessageAssociationRepository.find({
@@ -246,7 +244,7 @@ export class MessagingMessageCleanerService {
   }
 
   private async findReferencedThreadIds(
-    messageRepository: WorkspaceRepositoryV2<MessageWorkspaceEntity>,
+    messageRepository: WorkspaceRepository<MessageWorkspaceEntity>,
     threadIds: string[],
   ): Promise<string[]> {
     const messages = await messageRepository.find({

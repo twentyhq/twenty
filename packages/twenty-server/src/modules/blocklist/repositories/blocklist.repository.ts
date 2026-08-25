@@ -4,15 +4,13 @@ import { BlocklistScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 
 @Injectable()
 export class BlocklistRepository {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   public async getById({
     id,
@@ -23,23 +21,19 @@ export class BlocklistRepository {
   }): Promise<BlocklistWorkspaceEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const blockListRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            BlocklistWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const blockListRepository = await this.workspaceOrmManager.getRepository(
+        BlocklistWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
-        return blockListRepository.findOne({
-          where: { id },
-          withDeleted: true,
-        });
-      },
-      authContext,
-    );
+      return blockListRepository.findOne({
+        where: { id },
+        withDeleted: true,
+      });
+    }, authContext);
   }
 
   public async getByWorkspaceMemberId({
@@ -98,16 +92,12 @@ export class BlocklistRepository {
   }): Promise<BlocklistWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const blockListRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            BlocklistWorkspaceEntity,
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const blockListRepository = await this.workspaceOrmManager.getRepository(
+        BlocklistWorkspaceEntity,
+      );
 
-        return blockListRepository.find({ where });
-      },
-      authContext,
-    );
+      return blockListRepository.find({ where });
+    }, authContext);
   }
 }
