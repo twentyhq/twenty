@@ -57,9 +57,7 @@ export class OAuthDiscoveryController {
       token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
       revocation_endpoint_auth_methods_supported: ['client_secret_post'],
       introspection_endpoint_auth_methods_supported: ['client_secret_post'],
-      // RFC 9207: advertise `iss` in authorization responses to defend against
-      // OAuth mix-up attacks. Required by OAuth 2.1 security BCP.
-      authorization_response_iss_parameter_supported: true,
+
       ...(cliRegistration
         ? { cli_client_id: cliRegistration.oAuthClientId }
         : {}),
