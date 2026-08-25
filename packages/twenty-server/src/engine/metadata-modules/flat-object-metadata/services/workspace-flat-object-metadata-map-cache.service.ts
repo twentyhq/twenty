@@ -32,7 +32,6 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatObjectMetadata> {
     const {

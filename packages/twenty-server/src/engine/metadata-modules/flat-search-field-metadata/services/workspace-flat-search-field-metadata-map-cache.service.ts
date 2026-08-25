@@ -31,7 +31,6 @@ export class WorkspaceFlatSearchFieldMetadataMapCacheService extends FlatEntityM
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatSearchFieldMetadataMaps {
     const {

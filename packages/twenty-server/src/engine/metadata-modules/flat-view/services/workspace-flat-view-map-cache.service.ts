@@ -28,7 +28,6 @@ export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatViewMaps {
     const {

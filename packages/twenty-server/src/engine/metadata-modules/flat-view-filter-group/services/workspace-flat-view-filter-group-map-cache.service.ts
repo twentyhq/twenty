@@ -22,7 +22,6 @@ export class WorkspaceFlatViewFilterGroupMapCacheService extends FlatEntityMapCa
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatViewFilterGroupMaps {
     const {

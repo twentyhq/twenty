@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { type WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 import { FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -20,7 +21,9 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
     super();
   }
 
-  async computeForCache(workspaceId: string): Promise<FlatWorkspaceMemberMaps> {
+  async computeForCache(
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<FlatWorkspaceMemberMaps> {
     const flatWorkspaceMemberMaps =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
@@ -46,7 +49,7 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
 
           return flatWorkspaceMemberMaps;
         },
-        buildSystemAuthContext(workspaceId),
+        buildSystemAuthContext(recomputeContext.workspaceId),
       );
 
     return flatWorkspaceMemberMaps;

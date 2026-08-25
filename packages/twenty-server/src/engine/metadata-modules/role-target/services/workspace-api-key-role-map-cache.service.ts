@@ -18,7 +18,6 @@ export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): Record<string, string> {
     const { roleTarget: roleTargets } = recomputeContext.getRowsByName(

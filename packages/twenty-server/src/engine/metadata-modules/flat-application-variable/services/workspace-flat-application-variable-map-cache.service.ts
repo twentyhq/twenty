@@ -21,7 +21,6 @@ export class WorkspaceFlatApplicationVariableMapCacheService extends FlatEntityM
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatApplicationVariableMaps {
     const {

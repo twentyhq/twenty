@@ -574,7 +574,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
               'cache.local_data_only': isLocalDataOnly,
             },
           },
-          () => provider.computeForCache(workspaceId, recomputeContext),
+          () => provider.computeForCache(recomputeContext),
         );
 
         if (hashResolution.strategy === 'mint') {

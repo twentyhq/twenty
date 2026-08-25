@@ -24,7 +24,6 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends FlatEntityMapC
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatPageLayoutWidgetMaps {
     const {

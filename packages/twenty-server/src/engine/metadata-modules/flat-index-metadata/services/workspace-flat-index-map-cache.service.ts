@@ -26,7 +26,6 @@ export class WorkspaceFlatIndexMapCacheService extends FlatEntityMapCacheProvide
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatIndexMetadata> {
     const {

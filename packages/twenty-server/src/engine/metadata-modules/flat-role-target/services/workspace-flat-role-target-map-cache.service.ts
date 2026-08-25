@@ -21,7 +21,6 @@ export class WorkspaceFlatRoleTargetMapCacheService extends FlatEntityMapCachePr
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatRoleTargetMaps {
     const {

@@ -19,7 +19,6 @@ export class WorkspaceFlatSkillMapCacheService extends FlatEntityMapCacheProvide
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatSkillMaps {
     const { skill: skills, application: applications } =

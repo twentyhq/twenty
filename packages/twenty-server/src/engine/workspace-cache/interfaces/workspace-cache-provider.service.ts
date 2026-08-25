@@ -22,7 +22,6 @@ export abstract class WorkspaceCacheProvider<
   readonly fetchRequirements: CacheEntityFetchShape = {};
 
   abstract computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<T> | T;
 

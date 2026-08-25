@@ -63,7 +63,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
   }
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatFieldMetadata> {
     const {

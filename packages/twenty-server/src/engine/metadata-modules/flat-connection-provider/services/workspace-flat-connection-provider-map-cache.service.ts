@@ -21,7 +21,6 @@ export class WorkspaceFlatConnectionProviderMapCacheService extends FlatEntityMa
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatConnectionProviderMaps {
     const {

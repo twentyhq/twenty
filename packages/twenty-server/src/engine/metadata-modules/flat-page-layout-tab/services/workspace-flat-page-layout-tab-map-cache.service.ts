@@ -22,7 +22,6 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends FlatEntityMapCach
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatPageLayoutTabMaps {
     const {

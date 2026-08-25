@@ -12,6 +12,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { type WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 @Injectable()
 @WorkspaceCache('workflowAutomatedTriggerMaps', { packingPonderation: 1 })
@@ -24,10 +25,10 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
   }
 
   async computeForCache(
-    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<WorkflowAutomatedTriggerMaps> {
     const activeWorkflowVersions = await this.workflowVersionRepository.find(
-      workspaceId,
+      recomputeContext.workspaceId,
       { where: { status: WorkflowVersionStatus.ACTIVE } },
     );
 

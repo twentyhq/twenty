@@ -49,7 +49,6 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): ObjectsPermissionsByRoleId {
     const {

@@ -21,7 +21,6 @@ export class WorkspaceFlatTimelineActivityTypeMapCacheService extends FlatEntity
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatTimelineActivityTypeMaps {
     const {

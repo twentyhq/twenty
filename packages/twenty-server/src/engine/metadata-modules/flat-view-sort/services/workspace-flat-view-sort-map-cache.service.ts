@@ -21,7 +21,6 @@ export class WorkspaceFlatViewSortMapCacheService extends FlatEntityMapCacheProv
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatViewSortMaps {
     const {

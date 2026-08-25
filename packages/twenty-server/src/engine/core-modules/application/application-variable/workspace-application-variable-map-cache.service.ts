@@ -22,7 +22,6 @@ export class WorkspaceApplicationVariableMapCacheService extends WorkspaceCacheP
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): ApplicationVariableCacheMaps {
     const {

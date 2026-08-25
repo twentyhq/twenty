@@ -18,7 +18,6 @@ export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): Record<string, FlatApiKey> {
     const { apiKey: apiKeys } = recomputeContext.getRowsByName(

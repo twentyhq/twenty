@@ -22,7 +22,6 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends FlatEntityMapCa
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatCommandMenuItemMaps {
     const {

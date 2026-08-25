@@ -20,7 +20,6 @@ export class WorkspaceFlatViewGroupMapCacheService extends FlatEntityMapCachePro
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatViewGroupMaps {
     const {

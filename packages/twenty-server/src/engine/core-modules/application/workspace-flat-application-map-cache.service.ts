@@ -16,7 +16,6 @@ export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvi
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatApplicationCacheMaps {
     const { application: applicationEntities } = recomputeContext.getRowsByName(

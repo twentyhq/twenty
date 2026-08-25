@@ -19,7 +19,6 @@ export class WorkspaceFlatFrontComponentMapCacheService extends FlatEntityMapCac
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatFrontComponentMaps {
     const { frontComponent: frontComponents, application: applications } =

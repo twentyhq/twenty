@@ -15,7 +15,6 @@ export class WorkspaceFeatureFlagsMapCacheService extends WorkspaceCacheProvider
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FeatureFlagMap {
     const { featureFlag: workspaceFeatureFlags } =

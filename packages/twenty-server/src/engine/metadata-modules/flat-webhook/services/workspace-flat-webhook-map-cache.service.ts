@@ -21,7 +21,6 @@ export class WorkspaceFlatWebhookMapCacheService extends FlatEntityMapCacheProvi
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatWebhookMaps {
     const { webhook: allWebhooks, application: applications } =

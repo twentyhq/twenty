@@ -20,7 +20,6 @@ export class WorkspaceFlatObjectPermissionMapCacheService extends FlatEntityMapC
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatObjectPermissionMaps {
     const {

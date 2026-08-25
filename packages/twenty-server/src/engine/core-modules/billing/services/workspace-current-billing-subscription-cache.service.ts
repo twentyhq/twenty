@@ -10,6 +10,7 @@ import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constan
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { type WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 @Injectable()
 @WorkspaceCache('currentBillingSubscription', { packingPonderation: 1 })
@@ -21,11 +22,11 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
   }
 
   async computeForCache(
-    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<CurrentBillingSubscription> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
+        workspaceId: recomputeContext.workspaceId,
       });
 
     if (!isDefined(subscription)) {

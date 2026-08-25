@@ -9,4 +9,6 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 export const KNOWN_FETCH_GAPS = {
   objectMetadata: ['fieldPermission'],
   fieldMetadata: ['fieldPermission'],
-} as const satisfies Partial<Record<AllMetadataName, readonly AllMetadataName[]>>;
+} as const satisfies Partial<
+  Record<AllMetadataName, readonly AllMetadataName[]>
+>;

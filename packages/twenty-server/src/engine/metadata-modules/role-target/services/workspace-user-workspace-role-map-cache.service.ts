@@ -17,7 +17,6 @@ export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCachePro
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): UserWorkspaceRoleMap {
     const { roleTarget: roleTargets } = recomputeContext.getRowsByName(

@@ -44,7 +44,7 @@ export class WorkspaceCacheRecomputeContext {
 
   constructor(
     private readonly coreDataSource: DataSource,
-    private readonly workspaceId: string,
+    readonly workspaceId: string,
   ) {}
 
   async resolveFetchShapes(shapes: CacheEntityFetchShape[]): Promise<void> {

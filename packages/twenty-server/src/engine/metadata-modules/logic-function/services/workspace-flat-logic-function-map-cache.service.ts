@@ -22,7 +22,6 @@ export class WorkspaceFlatLogicFunctionMapCacheService extends FlatEntityMapCach
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatEntityMaps<FlatLogicFunction> {
     const { logicFunction: logicFunctions, application: applications } =

@@ -22,7 +22,6 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends FlatEntityMa
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatNavigationMenuItemMaps {
     const {

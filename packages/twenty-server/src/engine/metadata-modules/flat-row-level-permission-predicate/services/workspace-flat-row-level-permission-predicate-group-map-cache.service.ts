@@ -31,7 +31,6 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatRowLevelPermissionPredicateGroupMaps {
     const {

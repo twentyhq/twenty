@@ -26,7 +26,6 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
   } as const satisfies CacheEntityFetchShape;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatRoleTargetByAgentIdMaps {
     const {

@@ -19,7 +19,6 @@ export class WorkspaceFlatAgentMapCacheService extends FlatEntityMapCacheProvide
   } as const;
 
   computeForCache(
-    workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): FlatAgentMaps {
     const { agent: agents, application: applications } =
