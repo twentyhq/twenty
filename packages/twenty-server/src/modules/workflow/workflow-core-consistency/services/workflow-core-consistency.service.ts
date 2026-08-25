@@ -36,7 +36,9 @@ export class WorkflowCoreConsistencyService {
       await this.coreDataSource.query(
         `SELECT id AS "workspaceId", "databaseSchema"
          FROM core."workspace"
-         WHERE "activationStatus" IN ('ACTIVE', 'SUSPENDED') AND "databaseSchema" IS NOT NULL`,
+         WHERE "activationStatus" IN ('ACTIVE', 'SUSPENDED')
+           AND "deletedAt" IS NULL
+           AND "databaseSchema" IS NOT NULL`,
       );
 
     for (const { workspaceId, databaseSchema } of workspaces) {
