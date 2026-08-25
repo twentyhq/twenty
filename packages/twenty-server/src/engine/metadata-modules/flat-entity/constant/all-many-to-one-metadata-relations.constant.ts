@@ -384,7 +384,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     objectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'objectMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'pageLayouts',
       isNullable: true,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
     },
@@ -542,6 +542,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
   },
   connectionProvider: {
+    workspace: null,
+    application: null,
+  },
+  timelineActivityType: {
     workspace: null,
     application: null,
   },

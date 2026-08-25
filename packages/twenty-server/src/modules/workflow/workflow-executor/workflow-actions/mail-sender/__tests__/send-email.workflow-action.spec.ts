@@ -363,6 +363,46 @@ describe('SendEmailWorkflowAction', () => {
       );
     });
 
+    it('forwards the configured from handle to the email tool', async () => {
+      await action.execute({
+        currentStepId: 'step-1',
+        steps: [
+          buildSendEmailStep({
+            ...emailInput,
+            fromHandle: 'sales@company.com',
+            body: 'hi',
+          }),
+        ],
+        context: {},
+        runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
+      });
+
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ fromHandle: 'sales@company.com' }),
+        expect.any(Object),
+      );
+    });
+
+    it('resolves workflow variables inside the from handle', async () => {
+      await action.execute({
+        currentStepId: 'step-1',
+        steps: [
+          buildSendEmailStep({
+            ...emailInput,
+            fromHandle: '{{trigger.email}}',
+            body: 'hi',
+          }),
+        ],
+        context: { trigger: { email: 'john@example.com' } },
+        runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
+      });
+
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ fromHandle: 'john@example.com' }),
+        expect.any(Object),
+      );
+    });
+
     it('throws when the workspace member has no connected account', async () => {
       workspaceMemberRepository.findOne.mockResolvedValue({ userId: 'user-1' });
       userWorkspaceRepository.findOne.mockResolvedValue({

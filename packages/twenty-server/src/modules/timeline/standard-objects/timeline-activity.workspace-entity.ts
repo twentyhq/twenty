@@ -1,3 +1,5 @@
+import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -17,6 +19,8 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   happensAt: Date;
   name: string | null;
+  timelineActivityTypeId: string | null;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
   properties: JSON | null;
   linkedRecordCachedName: string | null;
   linkedRecordId: string | null;

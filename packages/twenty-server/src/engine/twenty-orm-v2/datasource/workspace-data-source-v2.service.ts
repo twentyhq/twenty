@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { Pool } from 'pg';
+import { Pool, type PoolConfig, types } from 'pg';
 import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,6 +23,19 @@ import {
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+
+// node-postgres parses a `date` column into a JS Date (which serializes with a
+// time component). Workspace DATE fields are date-only, so parse them as the raw
+// 'YYYY-MM-DD' string Postgres returns, matching the v1 TypeORM datasource.
+const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
+  getTypeParser: ((oid: number, format?: unknown) =>
+    oid === types.builtins.DATE
+      ? (value: string) => value
+      : types.getTypeParser(
+          oid,
+          format as never,
+        )) as typeof types.getTypeParser,
+};
 
 @Injectable()
 export class WorkspaceDataSourceV2Service
@@ -126,6 +139,7 @@ export class WorkspaceDataSourceV2Service
   }): Pool {
     const pool = new Pool({
       connectionString,
+      types: DATE_ONLY_POOL_TYPES,
       max: this.twentyConfigService.get('PG_POOL_MAX_CONNECTIONS'),
       idleTimeoutMillis: this.twentyConfigService.get(
         'PG_POOL_IDLE_TIMEOUT_MS',

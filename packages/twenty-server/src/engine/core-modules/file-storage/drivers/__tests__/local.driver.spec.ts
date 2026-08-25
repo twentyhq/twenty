@@ -14,8 +14,9 @@ import { Readable } from 'stream';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-describe('LocalDriver security hardening', () => {
+describe('LocalDriver', () => {
   const cleanupPaths: string[] = [];
 
   const createTempDirectory = async (prefix: string) => {
@@ -32,6 +33,26 @@ describe('LocalDriver security hardening', () => {
         await rm(directoryPath, { recursive: true, force: true });
       }),
     );
+  });
+
+  describe('readFile', () => {
+    it('should read only the requested byte range', async () => {
+      const storagePath = await createTempDirectory('local-driver-storage-');
+      const folderPath = path.join(storagePath, 'workspace', 'app');
+
+      await mkdir(folderPath, { recursive: true });
+      await writeFile(path.join(folderPath, 'file.txt'), '0123456789');
+
+      const driver = new LocalDriver({ storagePath });
+      const stream = await driver.readFile({
+        filePath: 'workspace/app/file.txt',
+        byteRange: { startByte: 2, endByte: 5 },
+      });
+
+      await expect(streamToBuffer(stream)).resolves.toEqual(
+        Buffer.from('2345'),
+      );
+    });
   });
 
   it('should reject writeFile when target is a symlink', async () => {

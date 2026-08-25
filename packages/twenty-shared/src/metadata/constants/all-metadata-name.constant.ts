@@ -30,4 +30,5 @@ export const ALL_METADATA_NAME = {
   applicationVariable: 'applicationVariable',
   connectionProvider: 'connectionProvider',
   searchFieldMetadata: 'searchFieldMetadata',
+  timelineActivityType: 'timelineActivityType',
 } as const;

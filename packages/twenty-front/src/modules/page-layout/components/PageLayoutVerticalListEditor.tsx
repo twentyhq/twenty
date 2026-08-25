@@ -21,6 +21,10 @@ const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
   shouldUseWhiteBackground: boolean;
 }>`
+  --widget-card-content-overflow: visible;
+  --widget-height: auto;
+  --widget-scroll-overflow: visible;
+
   background: ${({ shouldUseWhiteBackground }) =>
     shouldUseWhiteBackground
       ? themeCssVariables.background.primary

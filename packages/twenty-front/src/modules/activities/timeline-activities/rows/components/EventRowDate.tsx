@@ -20,26 +20,26 @@ const StyledEventRowDate = styled.div`
 `;
 
 type EventRowDateProps = {
-  createdAt?: string;
+  happensAt?: string;
 };
 
-export const EventRowDate = ({ createdAt }: EventRowDateProps) => {
+export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
   const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const instanceId = useId();
   const dateElementId = `event-row-date-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
-  if (!isNonEmptyString(createdAt)) {
+  if (!isNonEmptyString(happensAt)) {
     return null;
   }
 
-  const relativeCreatedAt = beautifyPastDateRelativeToNow(
-    createdAt,
+  const relativeHappensAt = beautifyPastDateRelativeToNow(
+    happensAt,
     localeCatalog,
   );
-  const exactCreatedAt = formatDateTimeString({
-    value: createdAt,
+  const exactHappensAt = formatDateTimeString({
+    value: happensAt,
     timeZone,
     dateFormat,
     timeFormat,
@@ -49,11 +49,11 @@ export const EventRowDate = ({ createdAt }: EventRowDateProps) => {
   return (
     <>
       <StyledEventRowDate id={dateElementId} tabIndex={0}>
-        {relativeCreatedAt}
+        {relativeHappensAt}
       </StyledEventRowDate>
       <AppTooltip
         anchorSelect={`#${dateElementId}`}
-        content={exactCreatedAt}
+        content={exactHappensAt}
         delay={TooltipDelay.mediumDelay}
         noArrow
         place="left"

@@ -115,6 +115,7 @@ export class LogicFunctionExecutorService {
     userId,
     userWorkspaceId,
     executionMode,
+    workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
   }: {
     logicFunctionId: string;
@@ -123,6 +124,7 @@ export class LogicFunctionExecutorService {
     userId?: string;
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
+    workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
@@ -143,6 +145,7 @@ export class LogicFunctionExecutorService {
       applicationVariableMaps,
       userId,
       userWorkspaceId,
+      workspaceDeletionRequestTimestamp,
     });
 
     const context = await this.buildExecutionContext({
@@ -376,23 +379,33 @@ export class LogicFunctionExecutorService {
     applicationVariableMaps,
     userId,
     userWorkspaceId,
+    workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
+    workspaceDeletionRequestTimestamp?: string;
   }) {
     // Two tokens so a handler can choose per call which access it acts with,
     // rather than the whole run being locked to one of them.
     const hasTriggeringPerson = isDefined(userId) && isDefined(userWorkspaceId);
 
     const [applicationAccessToken, delegatedAccessToken] = await Promise.all([
-      this.applicationTokenService.generateApplicationAccessToken({
-        workspaceId,
-        applicationId: flatApplication.id,
-      }),
-      hasTriggeringPerson
+      isDefined(workspaceDeletionRequestTimestamp)
+        ? this.applicationTokenService.generateWorkspaceDeletionApplicationAccessToken(
+            {
+              workspaceId,
+              applicationId: flatApplication.id,
+              workspaceDeletionRequestTimestamp,
+            },
+          )
+        : this.applicationTokenService.generateApplicationAccessToken({
+            workspaceId,
+            applicationId: flatApplication.id,
+          }),
+      hasTriggeringPerson && !isDefined(workspaceDeletionRequestTimestamp)
         ? this.applicationTokenService.generateApplicationAccessToken({
             workspaceId,
             applicationId: flatApplication.id,
@@ -444,6 +457,7 @@ export class LogicFunctionExecutorService {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: { subdomain: true },
+      withDeleted: true,
     });
 
     if (!isDefined(workspace)) {

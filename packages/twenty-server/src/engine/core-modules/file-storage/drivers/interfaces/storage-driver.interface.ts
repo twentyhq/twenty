@@ -1,7 +1,12 @@
 import { type Readable } from 'stream';
 
+import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
+
 export interface StorageDriver {
-  readFile(params: { filePath: string }): Promise<Readable>;
+  readFile(params: {
+    filePath: string;
+    byteRange?: ByteRange;
+  }): Promise<Readable>;
   writeFile(params: {
     filePath: string;
     sourceFile: Buffer | Uint8Array | string;

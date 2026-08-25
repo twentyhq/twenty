@@ -1,4 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
@@ -30,12 +31,14 @@ export const RecordTableWidgetRenderer = ({
   }
 
   return (
-    <RecordTableWidgetRendererContent
-      objectMetadataId={widget.objectMetadataId}
-      viewId={viewId}
-      widgetId={widget.id}
-      isEmptyStateHidden
-      recordLimit={recordLimit}
-    />
+    <StyledWidgetTableOutline>
+      <RecordTableWidgetRendererContent
+        objectMetadataId={widget.objectMetadataId}
+        viewId={viewId}
+        widgetId={widget.id}
+        isEmptyStateHidden
+        recordLimit={recordLimit}
+      />
+    </StyledWidgetTableOutline>
   );
 };

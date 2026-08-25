@@ -34,7 +34,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectSystemSideEffectsOnDelete',
     description:
-      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view and the FIELDS_WIDGET record-page view) with their view fields and view field groups, and its engine-owned record-page layout stack (pageLayout, pageLayoutTab, pageLayoutWidget). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields and groups; page layouts have no aggregator on the object, so they are resolved by their objectMetadata reference) and indexes into the flat entity maps. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes and emits nothing for the layout stack, and manifest deletion inference excludes these entities entirely, so without these buckets the layout stack would only ever disappear through raw DB foreign key cascade, behind the engine back. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
+      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view and the FIELDS_WIDGET record-page view) with their view fields and view field groups, and its engine-owned record-page layout stack (pageLayout, pageLayoutTab, pageLayoutWidget). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields and groups, then its page layouts, their tabs and widgets) and indexes into the flat entity maps. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes and emits nothing for the layout stack, and manifest deletion inference excludes these entities entirely, so without these buckets the layout stack would only ever disappear through raw DB foreign key cascade, behind the engine back. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
   },
 ) {
   buildSideEffects({
@@ -342,8 +342,6 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     return viewFieldGroupToDelete;
   }
 
-  // Page layouts have no foreign key aggregator on the object flat entity, so
-  // they are resolved by their objectMetadata reference.
   private computePageLayoutToDelete({
     flatObjectMetadata,
     relatedFlatEntityMaps,
@@ -353,13 +351,14 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
   }): FlatEntityToDelete<'pageLayout'> {
     const pageLayoutToDelete: FlatEntityToDelete<'pageLayout'> = {};
 
-    for (const flatPageLayout of Object.values(
-      relatedFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier,
-    )) {
+    for (const pageLayoutUniversalIdentifier of flatObjectMetadata.pageLayoutUniversalIdentifiers) {
+      const flatPageLayout =
+        relatedFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
+          pageLayoutUniversalIdentifier
+        ];
+
       if (
         !isDefined(flatPageLayout) ||
-        flatPageLayout.objectMetadataUniversalIdentifier !==
-          flatObjectMetadata.universalIdentifier ||
         flatPageLayout.isSystemSideEffect !== true
       ) {
         continue;

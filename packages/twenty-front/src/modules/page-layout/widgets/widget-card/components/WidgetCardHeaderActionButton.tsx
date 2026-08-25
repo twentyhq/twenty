@@ -4,7 +4,9 @@ import { LightIconButton } from 'twenty-ui/input';
 type WidgetCardHeaderActionButtonProps = {
   Icon: IconComponent;
   label: string;
-  onClick: () => void;
+  // Optional so the button can act as a dropdown trigger, where the dropdown
+  // owns the click handling.
+  onClick?: () => void;
   disabled?: boolean;
 };
 

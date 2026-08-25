@@ -45,6 +45,8 @@ const getErrorNameFromStatusCode = (statusCode: number) => {
       return 'MethodNotAllowedException';
     case 409:
       return 'ConflictException';
+    case 416:
+      return 'RequestedRangeNotSatisfiableException';
     case 422:
       return 'UnprocessableEntityException';
     case 500:
