@@ -95,7 +95,7 @@ describe('getTimelineActivityType', () => {
     });
   });
 
-  it('does not resolve a type without the required snapshot', () => {
+  it('reads live metadata for pre-snapshot typed rows', () => {
     expect(
       getTimelineActivityType(
         {
@@ -104,6 +104,6 @@ describe('getTimelineActivityType', () => {
         },
         getMaps([liveTimelineActivityType]),
       ),
-    ).toBeUndefined();
+    ).toBe(liveTimelineActivityType);
   });
 });

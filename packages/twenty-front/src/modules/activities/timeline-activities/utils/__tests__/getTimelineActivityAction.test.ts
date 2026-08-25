@@ -3,20 +3,23 @@ import { getTimelineActivityAction } from '@/activities/timeline-activities/util
 
 const UPDATED_TYPE_ID = '20202020-0000-4000-8000-000000000001';
 
-const updatedType = {
-  id: UPDATED_TYPE_ID,
-  universalIdentifier: UPDATED_TYPE_ID,
-  name: 'recordUpdated',
-  label: 'updated',
-  action: 'updated' as const,
-  icon: null,
-  objectUniversalIdentifier: null,
-  frontComponentUniversalIdentifier: null,
-};
-
 const timelineActivityTypeMaps: TimelineActivityTypeMaps = {
-  byId: new Map([[UPDATED_TYPE_ID, updatedType]]),
-  byUniversalIdentifier: new Map([[UPDATED_TYPE_ID, updatedType]]),
+  byId: new Map([
+    [
+      UPDATED_TYPE_ID,
+      {
+        id: UPDATED_TYPE_ID,
+        universalIdentifier: UPDATED_TYPE_ID,
+        name: 'recordUpdated',
+        label: 'updated',
+        action: 'updated',
+        icon: null,
+        objectUniversalIdentifier: null,
+        frontComponentUniversalIdentifier: null,
+      },
+    ],
+  ]),
+  byUniversalIdentifier: new Map(),
 };
 
 describe('getTimelineActivityAction', () => {
@@ -25,7 +28,6 @@ describe('getTimelineActivityAction', () => {
       getTimelineActivityAction(
         {
           timelineActivityTypeId: UPDATED_TYPE_ID,
-          timelineActivityTypeSnapshot: updatedType,
           properties: {},
         },
         timelineActivityTypeMaps,
@@ -42,9 +44,12 @@ describe('getTimelineActivityAction', () => {
     ).toBeNull();
   });
 
-  it('does not infer an action without a type snapshot', () => {
+  it('falls back to the legacy name for a row written during a rolling upgrade', () => {
     expect(
-      getTimelineActivityAction({ properties: {} }, timelineActivityTypeMaps),
-    ).toBeNull();
+      getTimelineActivityAction(
+        { name: 'company.updated', properties: {} },
+        timelineActivityTypeMaps,
+      ),
+    ).toBe('updated');
   });
 });

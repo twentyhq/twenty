@@ -190,12 +190,7 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
-    // Creation accepts a non-nullable field with no default, so refusing it on
-    // update would leave engine-authored fields no way to ever become required.
-    // The guard stays for user edits, where a default is what keeps inserts
-    // working.
     if (
-      !buildOptions.isSystemBuild &&
       isFieldMetadataTypeWithDefaultValue(flatFieldMetadataToValidate.type) &&
       flatFieldMetadataToValidate.isNullable === false &&
       flatFieldMetadataToValidate.defaultValue === null

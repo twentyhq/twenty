@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -16,7 +15,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
 const LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-7207-46e8-9dab-849505ae8497';
 const BACKFILL_BATCH_SIZE = 5000;
@@ -33,15 +31,11 @@ type TimelineActivityAuditRow = {
   danglingTypeIdCount: string;
 };
 
-type FlatFieldMetadataMaps = Awaited<
-  ReturnType<WorkspaceCacheService['getOrRecompute']>
->['flatFieldMetadataMaps'];
-
 @RegisteredWorkspaceCommand('2.35.0', 1787648000000)
 @Command({
   name: 'upgrade:2-35:contract-timeline-activity-compatibility',
   description:
-    'Backfill timeline activity types, enforce required type metadata, and remove the legacy name field',
+    'Backfill timeline activity types and remove the legacy name field',
 })
 export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -78,21 +72,6 @@ export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWor
       );
     }
 
-    const typeIdField = this.findRequiredField({
-      flatFieldMetadataMaps,
-      universalIdentifier:
-        TIMELINE_ACTIVITY.fields.timelineActivityTypeId.universalIdentifier,
-      fieldName: 'timelineActivityTypeId',
-      workspaceId,
-    });
-    const snapshotField = this.findRequiredField({
-      flatFieldMetadataMaps,
-      universalIdentifier:
-        TIMELINE_ACTIVITY.fields.timelineActivityTypeSnapshot
-          .universalIdentifier,
-      fieldName: 'timelineActivityTypeSnapshot',
-      workspaceId,
-    });
     const legacyNameField =
       findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
         flatEntityMaps: flatFieldMetadataMaps,
@@ -106,36 +85,26 @@ export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWor
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId} timeline activity audit: ${JSON.stringify(initialAudit)}. Would backfill unresolved rows, require type ID and snapshot, and remove legacy name metadata.`,
+        `[DRY RUN] Workspace ${workspaceId} timeline activity audit: ${JSON.stringify(initialAudit)}. Would backfill unresolved rows and remove legacy name metadata.`,
       );
 
       return;
     }
 
-    if (
-      initialAudit.missingTypeIdCount > 0 ||
-      initialAudit.danglingTypeIdCount > 0
-    ) {
+    if (initialAudit.missingTypeIdCount > 0) {
       if (!isDefined(legacyNameField)) {
         throw new Error(
           `Workspace ${workspaceId} has unresolved timeline activity type references but no legacy name field to repair them from: ${JSON.stringify(initialAudit)}`,
         );
       }
 
-      await this.clearDanglingTimelineActivityTypeReferences({
-        workspaceId,
-        dataSource,
-      });
       await this.backfillMissingTimelineActivityTypeIds({
         workspaceId,
         dataSource,
       });
     }
 
-    if (
-      initialAudit.missingSnapshotCount > 0 ||
-      initialAudit.danglingTypeIdCount > 0
-    ) {
+    if (initialAudit.missingSnapshotCount > 0) {
       await this.backfillSnapshots({ workspaceId, dataSource });
     }
 
@@ -144,17 +113,16 @@ export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWor
       dataSource,
     });
 
-    if (Object.values(finalAudit).some((count) => count > 0)) {
+    if (
+      finalAudit.missingTypeIdCount > 0 ||
+      finalAudit.missingSnapshotCount > 0
+    ) {
       throw new Error(
         `Refusing to contract timeline activity compatibility for workspace ${workspaceId}; unresolved rows remain after repair: ${JSON.stringify(finalAudit)}`,
       );
     }
 
-    if (
-      !isDefined(legacyNameField) &&
-      !typeIdField.isNullable &&
-      !snapshotField.isNullable
-    ) {
+    if (!isDefined(legacyNameField)) {
       this.logger.log(
         `Timeline activity compatibility is already contracted for workspace ${workspaceId}`,
       );
@@ -176,17 +144,8 @@ export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWor
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],
-              flatEntityToDelete: isDefined(legacyNameField)
-                ? [legacyNameField]
-                : [],
-              flatEntityToUpdate: [
-                ...(typeIdField.isNullable
-                  ? [{ ...typeIdField, isNullable: false }]
-                  : []),
-                ...(snapshotField.isNullable
-                  ? [{ ...snapshotField, isNullable: false }]
-                  : []),
-              ],
+              flatEntityToDelete: [legacyNameField],
+              flatEntityToUpdate: [],
             },
           },
         },
@@ -201,31 +160,6 @@ export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWor
     this.logger.log(
       `Contracted timeline activity compatibility for workspace ${workspaceId}`,
     );
-  }
-
-  private findRequiredField({
-    flatFieldMetadataMaps,
-    universalIdentifier,
-    fieldName,
-    workspaceId,
-  }: {
-    flatFieldMetadataMaps: FlatFieldMetadataMaps;
-    universalIdentifier: string;
-    fieldName: string;
-    workspaceId: string;
-  }): FlatFieldMetadata {
-    const field = findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier,
-    });
-
-    if (!isDefined(field)) {
-      throw new Error(
-        `Workspace ${workspaceId} is missing timelineActivity.${fieldName}; run the earlier timeline activity upgrade repairs first`,
-      );
-    }
-
-    return field;
   }
 
   private async auditTimelineActivities({
@@ -256,30 +190,6 @@ LEFT JOIN "core"."timelineActivityType" timeline_activity_type
       missingSnapshotCount: Number(audit.missingSnapshotCount),
       danglingTypeIdCount: Number(audit.danglingTypeIdCount),
     };
-  }
-
-  private async clearDanglingTimelineActivityTypeReferences({
-    workspaceId,
-    dataSource,
-  }: {
-    workspaceId: string;
-    dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
-  }): Promise<void> {
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-
-    await dataSource.query(
-      `UPDATE "${schemaName}"."timelineActivity" timeline_activity
-SET "timelineActivityTypeId" = NULL,
-    "timelineActivityTypeSnapshot" = NULL
-WHERE timeline_activity."timelineActivityTypeId" IS NOT NULL
-  AND NOT EXISTS (
-    SELECT 1
-    FROM "core"."timelineActivityType" timeline_activity_type
-    WHERE timeline_activity_type."id" = timeline_activity."timelineActivityTypeId"
-      AND timeline_activity_type."workspaceId" = $1
-  )`,
-      [workspaceId],
-    );
   }
 
   private async backfillMissingTimelineActivityTypeIds({

@@ -18,8 +18,8 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   happensAt: Date;
-  timelineActivityTypeId: string;
-  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
+  timelineActivityTypeId: string | null;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
   properties: JSON | null;
   linkedRecordCachedName: string | null;
   linkedRecordId: string | null;

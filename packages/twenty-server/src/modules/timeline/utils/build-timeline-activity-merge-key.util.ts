@@ -4,7 +4,7 @@ type TimelineActivityMergeKeyArgs = {
   recordId: string;
   workspaceMemberId: string | null | undefined;
   timelineActivityTypeId: string;
-  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot;
+  timelineActivityTypeSnapshot: TimelineActivityTypeSnapshot | null;
 };
 
 export const buildTimelineActivityMergeKey = ({
@@ -17,7 +17,25 @@ export const buildTimelineActivityMergeKey = ({
     recordId,
     workspaceMemberId ?? null,
     timelineActivityTypeId,
-    timelineActivityTypeSnapshot.universalIdentifier,
-    timelineActivityTypeSnapshot.action,
-    timelineActivityTypeSnapshot.objectUniversalIdentifier,
+    timelineActivityTypeSnapshot?.universalIdentifier,
+    timelineActivityTypeSnapshot?.action,
+    timelineActivityTypeSnapshot?.objectUniversalIdentifier,
   ]);
+
+export const buildTimelineActivityMergeKeyCandidates = (
+  args: TimelineActivityMergeKeyArgs,
+): string[] => {
+  const exactKey = buildTimelineActivityMergeKey(args);
+
+  if (args.timelineActivityTypeSnapshot === null) {
+    return [exactKey];
+  }
+
+  return [
+    exactKey,
+    buildTimelineActivityMergeKey({
+      ...args,
+      timelineActivityTypeSnapshot: null,
+    }),
+  ];
+};

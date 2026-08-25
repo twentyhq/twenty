@@ -30,7 +30,6 @@ const buildCommand = ({
     danglingTypeIdCount: '0',
   },
   includeLegacyName = true,
-  fieldsAreNullable = true,
   migrationResult = { status: 'success' },
 }: {
   audit?: {
@@ -39,23 +38,8 @@ const buildCommand = ({
     danglingTypeIdCount: string;
   };
   includeLegacyName?: boolean;
-  fieldsAreNullable?: boolean;
   migrationResult?: { status: 'success' | 'fail' };
 } = {}) => {
-  const typeIdUniversalIdentifier =
-    STANDARD_OBJECTS.timelineActivity.fields.timelineActivityTypeId
-      .universalIdentifier;
-  const snapshotUniversalIdentifier =
-    STANDARD_OBJECTS.timelineActivity.fields.timelineActivityTypeSnapshot
-      .universalIdentifier;
-  const typeIdField = buildField({
-    universalIdentifier: typeIdUniversalIdentifier,
-    isNullable: fieldsAreNullable,
-  });
-  const snapshotField = buildField({
-    universalIdentifier: snapshotUniversalIdentifier,
-    isNullable: fieldsAreNullable,
-  });
   const legacyNameField = buildField({
     universalIdentifier: LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER,
     isNullable: true,
@@ -84,8 +68,6 @@ const buildCommand = ({
         },
         flatFieldMetadataMaps: {
           byUniversalIdentifier: {
-            [typeIdUniversalIdentifier]: typeIdField,
-            [snapshotUniversalIdentifier]: snapshotField,
             ...(includeLegacyName
               ? {
                   [LEGACY_NAME_FIELD_UNIVERSAL_IDENTIFIER]: legacyNameField,
@@ -113,20 +95,16 @@ const buildCommand = ({
     command,
     dataSource: { query },
     query,
-    typeIdField,
-    snapshotField,
     legacyNameField,
     validateBuildAndRunLegacyWorkspaceMigration,
   };
 };
 
 describe('ContractTimelineActivityCompatibilityCommand', () => {
-  it('drops name and makes type fields required only after a clean audit', async () => {
+  it('drops name only after a clean audit', async () => {
     const {
       command,
       dataSource,
-      typeIdField,
-      snapshotField,
       legacyNameField,
       validateBuildAndRunLegacyWorkspaceMigration,
     } = buildCommand();
@@ -148,10 +126,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
           fieldMetadata: {
             flatEntityToCreate: [],
             flatEntityToDelete: [legacyNameField],
-            flatEntityToUpdate: [
-              { ...typeIdField, isNullable: false },
-              { ...snapshotField, isNullable: false },
-            ],
+            flatEntityToUpdate: [],
           },
         },
       }),
@@ -160,7 +135,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
 
   it('is idempotent after the compatibility fields are contracted', async () => {
     const { command, dataSource, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand({ includeLegacyName: false, fieldsAreNullable: false });
+      buildCommand({ includeLegacyName: false });
 
     await command.runOnWorkspace({
       workspaceId: WORKSPACE_ID,
@@ -199,7 +174,7 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
     expect(validateBuildAndRunLegacyWorkspaceMigration).not.toHaveBeenCalled();
   });
 
-  it('repairs unresolved rows before applying the schema contraction', async () => {
+  it('repairs missing rows without rewriting dangling historical references', async () => {
     const {
       command,
       dataSource,
@@ -222,9 +197,83 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
           danglingTypeIdCount: '1',
         },
       ])
-      .mockResolvedValueOnce([[], 1])
       .mockResolvedValueOnce([[], 0])
       .mockResolvedValueOnce([[], 0])
+      .mockResolvedValueOnce([
+        {
+          missingTypeIdCount: '0',
+          missingSnapshotCount: '0',
+          danglingTypeIdCount: '1',
+        },
+      ]);
+
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource: dataSource as never,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+
+    expect(query).toHaveBeenCalledTimes(4);
+    expect(query.mock.calls[1][0]).toContain(
+      'WHERE "timelineActivityTypeId" IS NULL',
+    );
+    expect(query.mock.calls[2][0]).toContain(
+      'WHERE timeline_activity."timelineActivityTypeSnapshot" IS NULL',
+    );
+    expect(
+      query.mock.calls.some(([sql]) =>
+        sql.includes('SET "timelineActivityTypeId" = NULL'),
+      ),
+    ).toBe(false);
+    expect(validateBuildAndRunLegacyWorkspaceMigration).toHaveBeenCalledTimes(
+      1,
+    );
+  });
+
+  it('accepts a historical snapshot whose live type was uninstalled', async () => {
+    const { command, dataSource, validateBuildAndRunLegacyWorkspaceMigration } =
+      buildCommand({
+        includeLegacyName: false,
+        audit: {
+          missingTypeIdCount: '0',
+          missingSnapshotCount: '0',
+          danglingTypeIdCount: '1',
+        },
+      });
+
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource: dataSource as never,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+
+    expect(validateBuildAndRunLegacyWorkspaceMigration).not.toHaveBeenCalled();
+  });
+
+  it('continues the type ID backfill while PostgreSQL reports full batches', async () => {
+    const { command, dataSource, query } = buildCommand({
+      audit: {
+        missingTypeIdCount: '5002',
+        missingSnapshotCount: '0',
+        danglingTypeIdCount: '0',
+      },
+    });
+
+    query
+      .mockReset()
+      .mockResolvedValueOnce([
+        {
+          missingTypeIdCount: '5002',
+          missingSnapshotCount: '0',
+          danglingTypeIdCount: '0',
+        },
+      ])
+      .mockResolvedValueOnce([[], 5000])
+      .mockResolvedValueOnce([[], 2])
       .mockResolvedValueOnce([
         {
           missingTypeIdCount: '0',
@@ -241,18 +290,12 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
       total: 1,
     });
 
-    expect(query).toHaveBeenCalledTimes(5);
+    expect(query).toHaveBeenCalledTimes(4);
     expect(query.mock.calls[1][0]).toContain(
-      'SET "timelineActivityTypeId" = NULL',
+      'WHERE "timelineActivityTypeId" IS NULL',
     );
     expect(query.mock.calls[2][0]).toContain(
       'WHERE "timelineActivityTypeId" IS NULL',
-    );
-    expect(query.mock.calls[3][0]).toContain(
-      'WHERE timeline_activity."timelineActivityTypeSnapshot" IS NULL',
-    );
-    expect(validateBuildAndRunLegacyWorkspaceMigration).toHaveBeenCalledTimes(
-      1,
     );
   });
 

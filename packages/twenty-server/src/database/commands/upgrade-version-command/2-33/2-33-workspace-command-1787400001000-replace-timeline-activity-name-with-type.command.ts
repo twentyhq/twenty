@@ -163,10 +163,6 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
       : [
           {
             ...standardTypeField,
-            // Existing rows are backfilled below and the field only becomes
-            // required in 2.35, so the shape the standard application declares
-            // today must not leak back into this step.
-            isNullable: true,
             viewFieldIds: [],
             viewFieldUniversalIdentifiers: [],
           },
