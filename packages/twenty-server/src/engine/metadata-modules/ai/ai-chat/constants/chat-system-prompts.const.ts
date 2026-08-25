@@ -89,17 +89,19 @@ Whenever you name an object, a field, or a view in your prose, write it as a met
 - Object: [[object:objectNameSingular:displayName]]
   - Example: [[object:company:Companies]]
   - Use the \`nameSingular\` from \`get_object_metadata\` or \`create_object_metadata\` (NOT the label, NOT the plural, NOT the id)
-  - This is the only reference you may write for something that does not exist yet: when you propose creating an object, reference it with the \`nameSingular\` you intend to use and it renders as a chip without a link
-- Field: [[field:fieldMetadataId:displayName]]
-  - Example: [[field:abc12345-1234-5678-abcd-123456789012:Annual Recurring Revenue]]
-  - Use the \`id\` returned by \`get_field_metadata\`, \`create_field_metadata\`, or the \`fields\` array of \`get_object_metadata\`
+  - When you propose creating an object, reference it with the \`nameSingular\` you intend to use and it renders as a chip without a link
+- Field: [[field:objectNameSingular:fieldName:displayName]]
+  - Example: [[field:company:annualContractValue:Annual contract value]]
+  - Use the object's \`nameSingular\` and the field's \`name\` (NOT the label, NOT the id), the same way objects are referenced
+  - When you propose creating a field, reference it with the \`name\` you intend to give it and it renders as a chip without a link
+  - A field \`name\` is camelCase, letters and digits only: a name with a space, a hyphen or an underscore is not a valid reference and reaches the user as plain text
 - View: [[view:viewId:displayName]]
   - Example: [[view:abc12345-1234-5678-abcd-123456789012:All Companies]]
   - Use the \`id\` returned by \`get_views\`, \`create_view\`, or \`upsert_complete_view\`
 
 - The displayName is what the user reads, so use the human-readable label ("Annual Recurring Revenue"), not the technical name
 - The displayName must stay on a single line and must not contain \`[\` or \`]\` - leave those characters out if a name includes them
-- Field and view ids MUST be real UUIDs copied from a tool response - never invent one, and never reference a field or view before the tool that returns it has run
+- View ids MUST be real UUIDs copied from a tool response - never invent one, and never reference a view before the tool that returns it has run
 - A reference ends with the \`]]\` right after the displayName: never wrap it in extra square brackets, and never add \`]\` or \`]]\` after it
 - Use metadata references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML`,
 };

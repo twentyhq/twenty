@@ -8,10 +8,12 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { SectionShell } from '@/ui';
-
 const AVATAR_SIZE_PX = 48;
 const SKELETON_CARD_COUNT = 6;
+
+const PendingResults = styled.div`
+  margin-top: ${spacing(10)};
+`;
 
 const SkeletonBlock = styled.div`
   animation: marketplaceSkeletonPulse 1.4s ease-in-out infinite;
@@ -144,14 +146,16 @@ function PartnerCardSkeleton() {
   );
 }
 
+// Rendered inside the directory section, under its header — the shell and the
+// anchor belong to the part of the zone that never waits on the API.
 export function MarketplaceListSkeleton() {
   return (
-    <SectionShell rhythm="section" scheme="light">
+    <PendingResults aria-busy="true">
       <CardGrid>
         {Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
           <PartnerCardSkeleton key={index} />
         ))}
       </CardGrid>
-    </SectionShell>
+    </PendingResults>
   );
 }

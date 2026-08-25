@@ -1,6 +1,6 @@
 const path = require('node:path');
 
-const { PLUGIN_ROOT, readText } = require('./lib');
+const { PLUGIN_ROOT, listFiles, readText } = require('./lib');
 
 const assertTwentyMcpFormattingContract = (fail) => {
   const skillPath = path.join(PLUGIN_ROOT, 'skills/use-twenty-mcp/SKILL.md');
@@ -110,7 +110,7 @@ const assertFrontComponentGuidance = (fail) => {
     '12 x 12 fill pattern',
     'Full-Page Layout Guidance',
     'black screen',
-    'yarn twenty dev --once',
+    'yarn twenty apply',
   ];
 
   for (const fragment of requiredStandalonePageFragments) {
@@ -122,7 +122,7 @@ const assertFrontComponentGuidance = (fail) => {
   const requiredAppStructureFragments = [
     'yarn twenty dev:typecheck',
     'yarn lint',
-    'yarn twenty dev --once',
+    'yarn twenty apply',
   ];
 
   for (const fragment of requiredAppStructureFragments) {
@@ -206,7 +206,7 @@ const assertCliGuidanceSplit = (fail) => {
     'run lint and typecheck once at the end (not after each individual edit)',
     'yarn twenty dev:typecheck',
     'yarn lint',
-    'yarn twenty dev --once',
+    'yarn twenty apply',
   ];
 
   for (const fragment of requiredAppStructureFragments) {
@@ -220,6 +220,7 @@ const assertCliGuidanceSplit = (fail) => {
     'Use watch mode only',
     'Use watch mode for interactive development',
     'Use one-shot mode for agents',
+    'yarn twenty dev --once',
     'yarn twenty dev --once --verbose',
     'yarn twenty remote:list',
     'Do not run `yarn twenty dev:typecheck`',
@@ -261,10 +262,13 @@ const assertCliGuidanceSplit = (fail) => {
     '# CLI And Sync',
     'yarn twenty dev:typecheck',
     'yarn lint',
-    'yarn twenty dev --once',
-    'Always use one-shot sync to synchronize app changes with the active remote',
+    'yarn twenty plan',
+    'yarn twenty apply',
+    '`yarn twenty plan` is read-only and requires the app to already be installed',
+    'For a first sync, run `yarn twenty apply`',
+    'Use the bounded apply command to synchronize app changes with the active remote',
     'Do not use bare `yarn twenty dev` (watch mode)',
-    'yarn twenty dev --once --verbose',
+    'yarn twenty apply --verbose',
     'yarn twenty remote:list',
     'yarn twenty dev:build',
     'yarn twenty app:publish',
@@ -281,11 +285,37 @@ const assertCliGuidanceSplit = (fail) => {
     'run outside the sandbox',
     'incompatible Node and Yarn',
     'operations/command-execution.md',
+    'yarn twenty dev --once',
   ];
 
   for (const fragment of forbiddenCliFragments) {
     if (cliAndSync.includes(fragment)) {
       fail(`cli-and-sync.md should not warn about the sandbox or reference the removed command-execution.md: ${fragment}`);
+    }
+  }
+
+  const agentFacingDocumentPaths = [
+    path.join(PLUGIN_ROOT, 'AGENTS.md'),
+    ...listFiles(path.join(PLUGIN_ROOT, 'skills')).filter((filePath) =>
+      filePath.endsWith('.md'),
+    ),
+    ...listFiles(path.join(PLUGIN_ROOT, 'references')).filter((filePath) =>
+      filePath.endsWith('.md'),
+    ),
+  ];
+
+  for (const documentPath of agentFacingDocumentPaths) {
+    const contents = readText(documentPath);
+
+    for (const deprecatedFragment of [
+      'yarn twenty dev --once',
+      'one-shot sync',
+    ]) {
+      if (contents.toLowerCase().includes(deprecatedFragment)) {
+        fail(
+          `${path.relative(PLUGIN_ROOT, documentPath)} contains deprecated ${deprecatedFragment} guidance`,
+        );
+      }
     }
   }
 };

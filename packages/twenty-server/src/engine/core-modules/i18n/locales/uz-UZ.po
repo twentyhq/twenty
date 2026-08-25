@@ -293,7 +293,6 @@ msgstr "Majburiy maydonlardan biri yetishmaydi."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Majburiy maydon kiritilmagan. Iltimos, barcha majburiy qiymatlarni kiriting va qaytadan urinib ko‘ring."
 
@@ -339,6 +338,16 @@ msgstr "Vaqtinchalik xato yuz berdi. Iltimos, qayta urinib ko‘ring."
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "Vaqtinchalik tarmoq xatosi yuz berdi."
+
+#. js-lingui-id: WzDeE/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
+msgstr "Boshqa ilovaning obyektini nishonga oluvchi vaqt jadvali faoliyati turi o‘zi qayta belgilayotgan vaqt jadvali faoliyati turini ko‘rsatishi kerak"
+
+#. js-lingui-id: JJamm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type with this name already exists for this application"
+msgstr "Bu ilova uchun ushbu nomga ega vaqt jadvali faoliyati turi allaqachon mavjud"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -420,6 +429,11 @@ msgstr "Ko‘rinish saralash bo‘yicha xato yuz berdi."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Bu konfiguratsiyaga ega webhook allaqachon mavjud."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Vidjet sarlavhasi amali topilmadi"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -665,6 +679,11 @@ msgstr "Bu nomli agent allaqachon mavjud"
 msgid "An agent with this name already exists."
 msgstr "Bu nomga ega agent allaqachon mavjud."
 
+#. js-lingui-id: SC8Bk0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "An application timeline activity emitter must target one of its objects"
+msgstr "Ilovaning vaqt jadvali faoliyati emitenti uning obyektlaridan birini nishonga olishi kerak"
+
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -787,6 +806,11 @@ msgstr "Yillik daromad"
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Ushbu ish maydonidagi boshqa ilova allaqachon shu kalit bilan ruxsat flagini ro‘yxatdan o‘tkazgan."
 
+#. js-lingui-id: 8IMyyd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Another timeline activity type already handles this action, object, and target relation"
+msgstr "Boshqa vaqt jadvali faoliyati turi ushbu amal, obyekt va maqsadli bog‘lanish kombinatsiyasini allaqachon qayta ishlamoqda"
+
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
@@ -812,6 +836,11 @@ msgstr "API kaliti roli topilmadi."
 msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof va nuqta"
+
+#. js-lingui-id: 1WWVFC
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Application cleanup is still in progress. Please try again."
+msgstr "Ilovani tozalash jarayoni hali davom etmoqda. Iltimos, qayta urinib ko‘ring."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -858,6 +887,11 @@ msgstr "Ilova ro‘yxatga olinishi topilmadi."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr "Ilova ro‘yxatga olish o‘zgaruvchisi topilmadi."
+
+#. js-lingui-id: P+wtF/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application uninstall logic function failed."
+msgstr "Ilovani o‘chirish mantiqiy funksiyasini bajarish muvaffaqiyatsiz tugadi."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -974,6 +1008,12 @@ msgstr "Bog‘langan foydalanuvchi ID"
 msgid "At least one relation is required"
 msgstr "Hech bo‘lmaganda bitta munosabat talab qilinadi"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr "fayl biriktirdi"
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1064,6 +1104,12 @@ msgstr "Imkoniyatga bog‘langan ilova qilingan fayllar"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the workflow"
 msgstr "Ish jarayoniga bog‘langan ilova qilingan fayllar"
+
+#. js-lingui-id: mGHuob
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attended a calendar event"
+msgstr "kalendar hodisasida qatnashdi"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1271,6 +1317,11 @@ msgstr "Matn tanasi (body) obyekt bo‘lishi kerak."
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "\"{widgetTitle}\" vidjeti uchun matn tanasi (body) obyekt bo‘lishi kerak."
+
+#. js-lingui-id: rEDXNA
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Boom"
+msgstr "Bum"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -1921,6 +1972,21 @@ msgstr "Chat mavzusi topilmadi."
 msgid "Chat thread title cannot be empty."
 msgstr "Chat mavzusi sarlavhasi bo‘sh bo‘lishi mumkin emas."
 
+#. js-lingui-id: 8kN7d7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose an existing timeline activity type to override"
+msgstr "Qayta belgilash uchun mavjud vaqt jadvali faoliyati turini tanlang"
+
+#. js-lingui-id: dRdO/y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the object that emits this timeline activity type"
+msgstr "Ushbu vaqt jadvali faoliyati turini chiqaradigan obyektni tanlang"
+
+#. js-lingui-id: PDwfT5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the relation used by this timeline activity type"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan bog‘lanishni tanlang"
+
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -1969,6 +2035,16 @@ msgstr "Kod bosqichini bajarish muvaffaqiyatsiz tugadi."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Rang sxemasi"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Vidjet sarlavhasida havola qilingan {commandMenuItemUniversalIdentifier} buyruqlar menyusi elementi boshqa ilovaga tegishli"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Vidjet sarlavhasida havola qilingan {commandMenuItemUniversalIdentifier} buyruqlar menyusi elementi topilmadi"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2598,6 +2674,11 @@ msgstr "Ushbu ish maydoni uchun maxsus (custom) domenlar o‘chirib qo‘yilgan.
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
 msgstr "Maxsus (custom) obyekt uchun yorliq identifikatori maydoni yetishmaydi."
+
+#. js-lingui-id: 7VVv8j
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Custom timeline activity type cannot be reset to default."
+msgstr "Maxsus vaqt jadvali faoliyati turini standart holatga qaytarib bo‘lmaydi."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -3419,18 +3500,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Hodisa ID"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Hodisa nomi"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Hodisa nomi"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3458,6 +3527,13 @@ msgstr "Hodisa ishtirokchilari"
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "Hodisaning ob’ekti"
+
+#. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Event type"
+msgstr "Hodisa turi"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5229,6 +5305,11 @@ msgstr "Noto‘g‘ri maqsad URL kiritildi."
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
 msgstr "Noto‘g‘ri maqsad URL. Iltimos, yaroqli HTTP yoki HTTPS URL kiriting."
 
+#. js-lingui-id: G26J1R
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Invalid timeline activity type input."
+msgstr "Vaqt jadvali faoliyati turi uchun kiritilgan ma’lumot noto‘g‘ri."
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -5792,6 +5873,23 @@ msgstr "Ustunli diagramma (bar chart) uchun joylashuv (layout) talab qilinadi."
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "\"{widgetTitle}\" ustunli diagramma vidjeti uchun joylashuv (layout) talab qilinadi."
+
+#. js-lingui-id: sAG9OB
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related note"
+msgstr "tegishli eslatmani bog‘ladi"
+
+#. js-lingui-id: ecrchg
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related task"
+msgstr "tegishli vazifani bog‘ladi"
+
+#. js-lingui-id: LXKHX6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Linked and unlinked timeline activity emitters require a target relation"
+msgstr "Bog‘langan va bog‘lanmagan vaqt jadvali faoliyati emitentlari maqsadli bog‘lanishni talab qiladi"
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6564,6 +6662,16 @@ msgstr "Navigatsiya menyusi elementi topilmadi."
 msgid "Navigation menu item type is required"
 msgstr "Navigatsiya menyusi elementi turi talab qilinadi"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Navigatsiya maqsadli obyekti metama’lumoti topilmadi"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Navigatsiya maqsadli obyekti topilmadi"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6698,6 +6806,11 @@ msgstr "Normallashtirilgan diarizatsiya qilingan transkript"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr "Ushbu OAuth provayderiga murojaat qilish uchun ruxsat berilmagan."
+
+#. js-lingui-id: KPx1UV
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Not found"
+msgstr "Topilmadi"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -6932,6 +7045,8 @@ msgstr "Obyekt yorlig‘i juda qisqa"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8152,6 +8267,12 @@ msgstr "Sevimlilardan olib tashlash"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "Ushbu ruxsatni o‘chirishdan oldin uni barcha rollardan olib tashlang"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr "biriktirmani olib tashladi"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -8186,6 +8307,11 @@ msgstr "So‘rov holati"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "So‘ralgan"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "So‘ralgan fayl diapazoniga xizmat ko‘rsatib bo‘lmaydi."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -8838,6 +8964,12 @@ msgstr "Yuborilgan vaqti"
 msgctxt "fieldMetadata.label"
 msgid "Sent count"
 msgstr "Yuborilganlar soni"
+
+#. js-lingui-id: ttuub1
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "sent or received an email"
+msgstr "elektron pochta xabarini yubordi yoki qabul qildi"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9720,6 +9852,11 @@ msgstr "Fayl hali yuklab qo‘yilmagan. Tasdiqlashdan oldin uni yuklab qo‘ying
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Fayl bo‘sh yoki ruxsat etilgan maksimal hajmdan oshib ketgan."
 
+#. js-lingui-id: 9TYO3w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The front component used by this timeline activity type is not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan frontend komponenti mavjud emas"
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -9782,6 +9919,11 @@ msgstr "INDEX ko‘rinishini moslashtirish uchun yangilanishi kerak bo‘lgan ob
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
 msgstr "Yozuv sahifasini moslashtirish uchun yangilanishi kerak bo‘lgan obyekt topilmadi"
+
+#. js-lingui-id: QaaKZQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The object used by this timeline activity type is not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan obyekt mavjud emas"
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9889,6 +10031,21 @@ msgstr "Obyekt uchun birlik va ko‘plik nomlari bir xil bo‘lishi mumkin emas"
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
 msgstr "Obuna endi provayderda mavjud emas."
+
+#. js-lingui-id: Eq5YMK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The target relation used by this timeline activity type is not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan maqsadli bog‘lanish mavjud emas"
+
+#. js-lingui-id: PLlXuR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The timeline activity type override is not compatible with this event"
+msgstr "Vaqt jadvali faoliyati turini qayta belgilash ushbu hodisaga mos kelmaydi"
+
+#. js-lingui-id: IT44Du
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The trigger fields used by this timeline activity type are not available"
+msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan trigger maydonlari mavjud emas"
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10018,11 +10175,6 @@ msgstr "Ortga qaytish uchun oldingi onboarding bosqichi mavjud emas."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Ish maydoni faollashtirilishidan oldin quyidagi maydonlarni yangilab boʻlmaydi: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Ushbu {fieldLabel} qiymati allaqachon ishlatilmoqda. Iltimos, ma’lumotlaringizni tekshirib, qayta urinib ko‘ring."
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10278,7 +10430,7 @@ msgid "This operation is not allowed."
 msgstr "Ushbu operatsiyaga ruxsat berilmaydi."
 
 #. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
+#: src/engine/workspace-datasource/workspace-schema.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 msgstr "Bu amalni bajarishga ruxsat berilmagan. Iltimos, boshqa yondashuvni sinab ko‘ring yoki yordam uchun texnik qo‘llab-quvvatlash xizmatiga murojaat qiling."
 
@@ -10289,7 +10441,6 @@ msgstr "Ushbu operatsiya qo‘llab-quvvatlanmaydi."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ushbu amal mavjud bo‘lmagan yoki mavjud munosabatlar tufayli o‘zgartirib bo‘lmaydigan yozuvga murojaat qiladi."
 
@@ -10321,7 +10472,6 @@ msgstr "Bu yozuv allaqachon mavjud. Iltimos, ma’lumotlaringizni tekshiring va 
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Ushbu yozuvni o‘chirib bo‘lmaydi, chunki u hanuz boshqa yozuvlar tomonidan ishlatilmoqda."
 
@@ -10385,6 +10535,11 @@ msgstr "Ushbu subdomen allaqachon band qilingan."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Bu cheklangan manzil endi mavjud emas."
+
+#. js-lingui-id: 0GMgIa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity action is not supported"
+msgstr "Ushbu vaqt jadvali faoliyati amali qo‘llab-quvvatlanmaydi"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10557,6 +10712,80 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "Vaqt jadvali faoliyati yozuvining pozitsiyasi"
 
+#. js-lingui-id: wt+xfK
+#. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
+msgstr "Vaqt jadvali faoliyati turi ayni amal, obyekt va maqsadli bog‘lanish uchun {0} bilan ziddiyatda"
+
+#. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Timeline activity type describing this event"
+msgstr "Ushbu hodisani tavsiflovchi vaqt jadvali faoliyati turi"
+
+#. js-lingui-id: sqmSqj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type label is required"
+msgstr "Vaqt jadvali faoliyati turi yorlig‘i talab qilinadi"
+
+#. js-lingui-id: jxz4n1
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type name already exists."
+msgstr "Vaqt jadvali faoliyati turi nomi allaqachon mavjud."
+
+#. js-lingui-id: 0QdkGz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type name is required"
+msgstr "Vaqt jadvali faoliyati turi nomi talab qilinadi"
+
+#. js-lingui-id: kNsVJi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type not found"
+msgstr "Vaqt jadvali faoliyati turi topilmadi"
+
+#. js-lingui-id: 1+EKCZ
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type not found."
+msgstr "Vaqt jadvali faoliyati turi topilmadi."
+
+#. js-lingui-id: 0VIqW4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
+msgstr "Vaqt jadvali faoliyati turini qayta belgilash maqsadli obyekt ilovasiga tegishli mos turga havola qilishi kerak"
+
+#. js-lingui-id: kfv1kx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references a front component that does not belong to its application"
+msgstr "Vaqt jadvali faoliyati turi o‘z ilovasiga tegishli bo‘lmagan frontend komponentiga havola qiladi"
+
+#. js-lingui-id: f7+vxa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references an object that does not exist"
+msgstr "Vaqt jadvali faoliyati turi mavjud bo‘lmagan obyektga havola qiladi"
+
+#. js-lingui-id: Y9ZQls
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr "Vaqt jadvalidagi faoliyat turi uchun maqsadli bog‘lanish manba obyektida bevosita yoki birlashtiruvchi bog‘lanish bo‘lishi kerak"
+
+#. js-lingui-id: ShcC6H
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
+msgstr "Vaqt jadvali faoliyati turining trigger maydonlari yangilangan bog‘lanish hodisasi manba obyektidagi bo‘sh bo‘lmagan maydonlar bo‘lishi kerak"
+
+#. js-lingui-id: 8VTlb5
+#. placeholder {0}: timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type with name {0} already exists for this application"
+msgstr "Bu ilova uchun {0} nomli vaqt jadvali faoliyati turi allaqachon mavjud"
+
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10721,6 +10950,24 @@ msgstr "Noma’lum operatsiya."
 msgid "Unknown permission required."
 msgstr "Noma’lum ruxsat talab etiladi."
 
+#. js-lingui-id: o/bbIF
+#. placeholder {0}: timelineActivityType.action
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity action {0}"
+msgstr "Noma’lum vaqt jadvali faoliyati amali: {0}"
+
+#. js-lingui-id: spJjXJ
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related note"
+msgstr "tegishli eslatmaning bog‘lanishini olib tashladi"
+
+#. js-lingui-id: IYBfg3
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related task"
+msgstr "tegishli vazifaning bog‘lanishini olib tashladi"
+
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10798,6 +11045,24 @@ msgstr "Yangilanish sanasi va vaqti"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Maydonni yangilash cheklovlari faqat yangilanishi mumkin bo‘lgan obyektlarga tegishli."
+
+#. js-lingui-id: 7YsDpr
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated"
+msgstr "yangilangan"
+
+#. js-lingui-id: Hp+aAn
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related note"
+msgstr "tegishli eslatmani yangiladi"
+
+#. js-lingui-id: FoQjXC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related task"
+msgstr "tegishli vazifani yangiladi"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11422,6 +11687,36 @@ msgstr "Ko‘rinish guruhini yaratish uchun ViewId talab qilinadi."
 msgid "ViewId is required to create a view sort."
 msgstr "Ko‘rinish saralashini yaratish uchun ViewId talab qilinadi."
 
+#. js-lingui-id: vuzFx0
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was created by"
+msgstr "tomonidan yaratilgan"
+
+#. js-lingui-id: edc5Bh
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was deleted by"
+msgstr "tomonidan o‘chirib tashlangan"
+
+#. js-lingui-id: SfnmZe
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was linked by"
+msgstr "tomonidan bog‘langan"
+
+#. js-lingui-id: tKm/LA
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was restored by"
+msgstr "tomonidan tiklangan"
+
+#. js-lingui-id: 0i3MMx
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was unlinked by"
+msgstr "tomonidan bog‘lanishi olib tashlangan"
+
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
@@ -11526,6 +11821,21 @@ msgstr "Vidjet setka (grid) balandligidan tashqariga chiqmoqda."
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "Vidjet setka (grid) kengligidan tashqariga chiqmoqda."
+
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Vidjet sarlavhasi amallari noyob bo‘lishi kerak"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Vidjet sarlavhasi amallari vidjet bilan bir xil ilovaga tegishli bo‘lishi kerak"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Vidjet sarlavhasi buyruqlar menyusi elementi havolalari noyob bo‘lishi kerak"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12119,9 +12429,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Bir vaqtning o‘zida faqat bitta yozuvning fayllar maydonini yangilashingiz mumkin."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "Bir vaqtning o‘zida faqat {QUERY_MAX_RECORDS} tagacha yozuvni yangilashingiz mumkin."
 
@@ -12155,6 +12464,11 @@ msgstr "So‘nggi administratordan admin rolini olib tashlab bo‘lmaydi. Iltimo
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Oxirgi server administratoridan admin panelga kirish huquqini bekor qila olmaysiz."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Bu manzildan jo‘nata olmaysiz."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

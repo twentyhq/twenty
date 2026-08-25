@@ -1,8 +1,14 @@
-import { type MarketplacePartner } from './marketplace-partner';
+import { type RankedMarketplacePartner } from './marketplace-partner';
 
-export const DUMMY_PARTNERS: MarketplacePartner[] = [
+export const DUMMY_PARTNERS: RankedMarketplacePartner[] = [
   {
     slug: 'atelier-sigma',
+    partnerTier: null,
+    serviceCount: 4,
+    approvedCaseStudyCount: 3,
+    approvedCaseStudyWithCoverCount: 2,
+    rotationKey:
+      '60973a6d38f6a1a042b35e2e547656b8170aff362d6e64544907f2317d8ff5ae',
     name: 'Atelier Sigma',
     description: `**Senior CRM partner for venture-backed teams, with Twenty at the core.**
 
@@ -147,6 +153,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'northbeam-studio',
+    partnerTier: null,
+    serviceCount: 1,
+    approvedCaseStudyCount: 1,
+    approvedCaseStudyWithCoverCount: 1,
+    rotationKey:
+      '4a14150fe472b8ae30f13d804960d398aa3983e3188d744d715fde00a430c12b',
     name: 'Northbeam Studio',
     description:
       'RevOps and reporting for B2B SaaS teams that have outgrown spreadsheets and their first CRM. We turn messy pipelines into forecasts leadership actually trusts, redesign stages and scoring around how reps really sell, wire up the dashboards your board keeps asking for, connect the enrichment and outreach tools your growth team already runs, and document every last piece of it so the system keeps working long after we hand it back over. Based in London, working across the UK and EU in English, and yes this sentence is deliberately far too long to prove the card never breaks no matter how much a partner writes.',
@@ -194,6 +206,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: '9-dots-ventures',
+    partnerTier: null,
+    serviceCount: 2,
+    approvedCaseStudyCount: 1,
+    approvedCaseStudyWithCoverCount: 1,
+    rotationKey:
+      '8b2cb1cea581b13a5664a71434b204234674084488298db6ea2ce1f3d327b21b',
     name: '9 Dots Ventures',
     description:
       'Boutique CRM implementer for real-estate workflows and WhatsApp automation, with self-hosted Twenty deployments across APAC.',
@@ -249,6 +267,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'halden-roe',
+    partnerTier: null,
+    serviceCount: 2,
+    approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
+    rotationKey:
+      'ce4f7a4b57e3d8be6da3eef9420c78ae6b83d2b94e635b5ddeb7e972f15b134b',
     name: 'Halden & Roe',
     description:
       'Migrations off legacy CRMs for mid-market teams. German and English, with EU data residency by default.',
@@ -285,6 +309,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'verza-collective',
+    partnerTier: null,
+    serviceCount: 2,
+    approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
+    rotationKey:
+      '8a9b0dd87072f7ad5a3d007b4b15c89d78f5015b7f358c8b5ad0486c75709e0f',
     name: 'Verza Collective',
     description:
       'No-code operations and automations for scaling startups. 150 projects shipped across Europe and LATAM, from first pipeline to full RevOps tooling.',
@@ -327,6 +357,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'kioko-labs',
+    partnerTier: null,
+    serviceCount: 1,
+    approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
+    rotationKey:
+      '438cb0009a662ad2c228caf645925fb2dcbfd55d5d9fa737ca28d87a5dd969b9',
     name: 'Kioko Labs',
     description:
       'Self-hosted Twenty deployments and API work for teams across Africa and the Gulf.',
@@ -358,6 +394,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'tomas-brandt',
+    partnerTier: null,
+    serviceCount: 0,
+    approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
+    rotationKey:
+      '2915f4495ee1d953cfdfbcd168d6a0dc6d6b0c7bd22e06797c21a2e099631533',
     name: 'Tomas Brandt',
     description:
       'Independent Twenty consultant, ex-Salesforce admin. Available for short solutioning engagements.',
@@ -383,6 +425,12 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'benjamin-reynolds',
+    partnerTier: null,
+    serviceCount: 0,
+    approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
+    rotationKey:
+      '1d446fd5709cc17ab3de6771fedc591056498ee55831703cc4d115457b1494df',
     name: 'Benjamin Reynolds',
     description: '',
     calendarLink: '',

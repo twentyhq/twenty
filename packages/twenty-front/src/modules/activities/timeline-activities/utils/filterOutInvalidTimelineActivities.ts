@@ -1,14 +1,18 @@
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
+import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
+import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { parseTimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
-const keepActivityWithReadableDiff = (
-  timelineActivity: TimelineActivity,
+const keepActivityWithReadableDiff = <
+  TTimelineActivity extends FilterableTimelineActivity,
+>(
+  timelineActivity: TTimelineActivity,
   readableFields: FieldMetadataItem[],
-): TimelineActivity | undefined => {
+): TTimelineActivity | undefined => {
   const validDiffEntries = Object.entries(
     timelineActivity.properties?.diff ?? {},
   ).filter(([diffKey]) =>
@@ -28,31 +32,14 @@ const keepActivityWithReadableDiff = (
   };
 };
 
-// Activities created before the linkedObjectMetadataId column was populated
-// encode the linked object in their name, e.g. "linked-note.updated".
-const findLegacyObjectMetadataItemFromName = (
-  timelineActivity: TimelineActivity,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-): EnrichedObjectMetadataItem | undefined => {
-  if (!timelineActivity.name.startsWith('linked-')) {
-    return undefined;
-  }
-
-  const linkedObjectNameSingular = timelineActivity.name
-    .split('.')[0]
-    .replace('linked-', '');
-
-  return objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === linkedObjectNameSingular,
-  );
-};
-
-export const filterOutInvalidTimelineActivities = (
-  timelineActivities: TimelineActivity[],
+export const filterOutInvalidTimelineActivities = <
+  TTimelineActivity extends FilterableTimelineActivity,
+>(
+  timelineActivities: TTimelineActivity[],
   mainObjectSingularName: string,
   objectMetadataItems: EnrichedObjectMetadataItem[],
-): TimelineActivity[] => {
+  timelineActivityTypeMaps: TimelineActivityTypeMaps,
+): TTimelineActivity[] => {
   const mainObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === mainObjectSingularName,
@@ -64,19 +51,17 @@ export const filterOutInvalidTimelineActivities = (
 
   return timelineActivities
     .map((timelineActivity) => {
-      const linkedObjectMetadataItem = isDefined(
-        timelineActivity.linkedObjectMetadataId,
-      )
-        ? objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
-          )
-        : findLegacyObjectMetadataItemFromName(
-            timelineActivity,
-            objectMetadataItems,
-          );
+      const linkedObjectMetadataItem =
+        getTimelineActivityLinkedObjectMetadataItem({
+          timelineActivity,
+          timelineActivityTypeMaps,
+          objectMetadataItems,
+        });
 
-      const action = parseTimelineActivityAction(timelineActivity.name);
+      const action = getTimelineActivityAction(
+        timelineActivity,
+        timelineActivityTypeMaps,
+      );
 
       if (isDefined(linkedObjectMetadataItem)) {
         if (!isDefined(timelineActivity.properties?.diff)) {

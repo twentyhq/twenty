@@ -158,7 +158,7 @@ export const slackSetUserLinkHandler = async (
         slackTeamId,
         slackUserId,
         workspaceMemberId,
-        name: resolvedName ?? slackUserId,
+        name: isNonEmptyString(resolvedName) ? resolvedName : slackUserId,
         source: SLACK_USER_LINK_SOURCE.MANUAL,
       });
     }

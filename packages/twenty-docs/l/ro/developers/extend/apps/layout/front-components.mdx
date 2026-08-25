@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 Pentru a apela rute HTTP ale aplicației sau pentru a citi și scrie înregistrări Twenty dintr-un front component, folosește `RestApiClient` din `twenty-client-sdk/rest`. Trimite căile de forma `/s/...` către URL-ul de bază al funcțiilor spațiului tău de lucru, iar orice altă cale, inclusiv `/rest/...`, către `TWENTY_API_URL`.
 
+Acționează întotdeauna ca persoana care se uită la pagină. `runAs: 'application'` este o opțiune exclusivă pentru funcțiile logice: o componentă nu primește niciodată propriul token al aplicației tale, astfel că solicitarea lui aici generează o eroare. Pune activitatea care necesită propriul acces al aplicației în spatele unei funcții logice și apeleaz-o în schimb pe aceasta.
+
 | Metodă                            | Descriere                                                                     |
 | --------------------------------- | ----------------------------------------------------------------------------- |
 | `get(path, options?)`             | Trimite o cerere `GET`                                                        |
@@ -407,14 +409,15 @@ export default defineFrontComponent({
 
 Hook-uri disponibile:
 
-| Hook                                          | Returnează             | Descriere                                                                                 |
-| --------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` sau `null`    | ID-ul utilizatorului curent                                                               |
-| `useSelectedRecordIds()`                      | `string[]`             | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna)       |
-| `useRecordId()`                               | `string` sau `null`    | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                                 |
-| `useFrontComponentId()`                       | `string`               | ID-ul acestei instanțe de componentă                                                      |
-| `useColorScheme()`                            | `'light'` sau `'dark'` | Schema de culori activă a interfeței de utilizator a gazdei (`System` este deja rezolvat) |
-| `useFrontComponentExecutionContext(selector)` | variază                | Accesați întregul context de execuție cu o funcție selector                               |
+| Hook                                          | Returnează             | Descriere                                                                                  |
+| --------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| `useUserId()`                                 | `string` sau `null`    | ID-ul utilizatorului curent                                                                |
+| `useSelectedRecordIds()`                      | `string[]`             | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna)        |
+| `useRecordId()`                               | `string` sau `null`    | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                                  |
+| `useFrontComponentId()`                       | `string`               | ID-ul acestei instanțe de componentă                                                       |
+| `useTimelineActivityId()`                     | `string` sau `null`    | ID-ul activității curente din cronologie la randarea unui rând personalizat din cronologie |
+| `useColorScheme()`                            | `'light'` sau `'dark'` | Schema de culori activă a interfeței de utilizator a gazdei (`System` este deja rezolvat)  |
+| `useFrontComponentExecutionContext(selector)` | variază                | Accesați întregul context de execuție cu o funcție selector                                |
 
 ## Variabile de aplicație
 
@@ -445,10 +448,10 @@ Variabilele secrete (`isSecret: true`) **nu** sunt expuse componentelor de inter
 
 Următoarele variabile de sistem sunt întotdeauna disponibile prin `process.env`:
 
-| Variabilă                 | Descriere                                                |
-| ------------------------- | -------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                |
-| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs. |
+| Variabilă                 | Descriere                                                                                                                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL-ul de bază al API-ului de bază Twenty                                                                                                                                                         |
+| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul persoanei autentificate intersectat cu cel al aplicației tale, astfel încât o componentă nu poate face niciodată mai mult decât persoana care o privește |
 
 ### `TWENTY_FUNCTIONS_URL`
 

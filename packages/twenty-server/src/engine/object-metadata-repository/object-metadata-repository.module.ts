@@ -8,8 +8,7 @@ import {
 import { capitalize } from 'twenty-shared/utils';
 
 import { metadataToRepositoryMapping } from 'src/engine/object-metadata-repository/metadata-to-repository.mapping';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
@@ -31,16 +30,16 @@ export class ObjectMetadataRepositoryModule {
         provide: `${capitalize(
           convertClassNameToObjectMetadataName(objectMetadata.name),
         )}Repository`,
-        useFactory: (globalWorkspaceOrmManager: GlobalWorkspaceOrmManager) => {
-          return new repositoryClass(globalWorkspaceOrmManager);
+        useFactory: (workspaceOrmManager: WorkspaceOrmManager) => {
+          return new repositoryClass(workspaceOrmManager);
         },
-        inject: [GlobalWorkspaceOrmManager],
+        inject: [WorkspaceOrmManager],
       };
     });
 
     return {
       module: ObjectMetadataRepositoryModule,
-      imports: [WorkspaceDataSourceModule, TwentyORMModule],
+      imports: [WorkspaceDataSourceModule],
       providers: [...providers],
       exports: providers,
     };

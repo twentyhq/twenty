@@ -1,6 +1,6 @@
 import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
@@ -82,8 +82,10 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return undefined;
   }
 
+  const applicationClient = new CoreApiClient({ runAs: 'application' });
+
   if (!isDefined(existingLink)) {
-    await createSlackUserLink(client, {
+    await createSlackUserLink(applicationClient, {
       slackTeamId,
       slackUserId,
       workspaceMemberId,
@@ -94,7 +96,7 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   }
 
   if (existingLink.workspaceMemberId !== workspaceMemberId) {
-    await updateSlackUserLink(client, {
+    await updateSlackUserLink(applicationClient, {
       id: existingLink.id,
       workspaceMemberId,
     }).catch(() => undefined);

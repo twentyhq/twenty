@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type EnqueueJobResult } from 'twenty-shared/application';
+import {
+  type EnqueueJobResult,
+  type EnqueueJobsResult,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -8,6 +11,7 @@ import {
   ENQUEUE_JOB_PRIORITY,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
+import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -44,6 +48,37 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobInputDTO;
   }): Promise<EnqueueJobResult> {
+    const { enqueued, logicFunctionUniversalIdentifier } =
+      await this.enqueueJobs({
+        applicationId,
+        workspaceId,
+        userId,
+        userWorkspaceId,
+        input: {
+          logicFunctionUniversalIdentifier:
+            input.logicFunctionUniversalIdentifier,
+          payloads: [input.payload ?? {}],
+          retryLimit: input.retryLimit,
+          delayMs: input.delayMs,
+        },
+      });
+
+    return { enqueued, logicFunctionUniversalIdentifier };
+  }
+
+  async enqueueJobs({
+    applicationId,
+    workspaceId,
+    userId,
+    userWorkspaceId,
+    input,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    userId: string | null;
+    userWorkspaceId: string | null;
+    input: EnqueueJobsInputDTO;
+  }): Promise<EnqueueJobsResult> {
     const { logicFunctionUniversalIdentifier } = input;
 
     const { flatLogicFunctionMaps } =
@@ -67,15 +102,15 @@ export class ApplicationJobService {
       );
     }
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData>(
+    await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
-      {
+      input.payloads.map((payload) => ({
         logicFunctionId: flatLogicFunction.id,
         workspaceId,
-        payload: input.payload ?? {},
+        payload,
         ...(isDefined(userId) ? { userId } : {}),
         ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
-      },
+      })),
       {
         retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
@@ -84,6 +119,10 @@ export class ApplicationJobService {
       },
     );
 
-    return { enqueued: true, logicFunctionUniversalIdentifier };
+    return {
+      enqueued: true,
+      logicFunctionUniversalIdentifier,
+      enqueuedJobsCount: input.payloads.length,
+    };
   }
 }

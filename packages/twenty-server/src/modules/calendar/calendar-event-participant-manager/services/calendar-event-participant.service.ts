@@ -10,8 +10,8 @@ import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
@@ -35,7 +35,7 @@ type FetchedCalendarEventParticipantWithCalendarEventIdAndExistingId =
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -58,7 +58,7 @@ export class CalendarEventParticipantService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const chunkedParticipantsToUpdate = chunk(participantsToUpdate, 200);
 
@@ -177,7 +177,7 @@ export class CalendarEventParticipantService {
           participants: savedParticipants,
           objectMetadataName: 'calendarEventParticipant',
           matchWith: 'workspaceMemberAndPerson',
-          workspaceId,
+          transactionScope,
         });
       },
       authContext,

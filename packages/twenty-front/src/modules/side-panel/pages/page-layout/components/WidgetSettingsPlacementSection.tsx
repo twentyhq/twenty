@@ -1,20 +1,16 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
-import { useCanMovePageLayoutWidgetDown } from '@/page-layout/hooks/useCanMovePageLayoutWidgetDown';
-import { useCanMovePageLayoutWidgetUp } from '@/page-layout/hooks/useCanMovePageLayoutWidgetUp';
 import { useMovePageLayoutWidgetDown } from '@/page-layout/hooks/useMovePageLayoutWidgetDown';
 import { useMovePageLayoutWidgetUp } from '@/page-layout/hooks/useMovePageLayoutWidgetUp';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { MoveToTabDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/MoveToTabDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { type WidgetSettingsPlacement } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacement';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -26,26 +22,20 @@ import {
   IconRowInsertBottom,
   IconRowInsertTop,
 } from 'twenty-ui/icon';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
-type WidgetSettingsPlacementSectionProps = {
+type WidgetSettingsPlacementSectionProps = WidgetSettingsPlacement & {
   pageLayoutId: string;
 };
 
 export const WidgetSettingsPlacementSection = ({
   pageLayoutId,
+  isPlacementSectionVisible,
+  pageLayoutEditingWidgetId,
+  showAddWidgetBelow,
+  showMoveDown,
+  showMoveUp,
 }: WidgetSettingsPlacementSectionProps) => {
   const { t } = useLingui();
-
-  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
-    pageLayoutEditingWidgetIdComponentState,
-    pageLayoutId,
-  );
-
-  const pageLayoutDraft = useAtomComponentStateValue(
-    pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
 
   const widgetInsertionContextState = useAtomComponentStateCallbackState(
     widgetInsertionContextComponentState,
@@ -57,30 +47,11 @@ export const WidgetSettingsPlacementSection = ({
   const { movePageLayoutWidgetUp } = useMovePageLayoutWidgetUp(pageLayoutId);
   const { movePageLayoutWidgetDown } =
     useMovePageLayoutWidgetDown(pageLayoutId);
-  const { canMovePageLayoutWidgetUp } =
-    useCanMovePageLayoutWidgetUp(pageLayoutId);
-  const { canMovePageLayoutWidgetDown } =
-    useCanMovePageLayoutWidgetDown(pageLayoutId);
-
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  if (!isDefined(pageLayoutEditingWidgetId)) {
+  if (!isPlacementSectionVisible || !isDefined(pageLayoutEditingWidgetId)) {
     return null;
   }
-
-  const currentTab = pageLayoutDraft.tabs.find((tab) =>
-    tab.widgets.some((widget) => widget.id === pageLayoutEditingWidgetId),
-  );
-
-  if (
-    !isDefined(currentTab) ||
-    currentTab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST
-  ) {
-    return null;
-  }
-
-  const showMoveUp = canMovePageLayoutWidgetUp(pageLayoutEditingWidgetId);
-  const showMoveDown = canMovePageLayoutWidgetDown(pageLayoutEditingWidgetId);
 
   const handleMoveUp = () => {
     movePageLayoutWidgetUp(pageLayoutEditingWidgetId);
@@ -167,17 +138,19 @@ export const WidgetSettingsPlacementSection = ({
           onClick={handleAddWidgetAbove}
         />
       </SelectableListItem>
-      <SelectableListItem
-        itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
-        onEnter={handleAddWidgetBelow}
-      >
-        <CommandMenuItem
-          id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
-          Icon={IconRowInsertBottom}
-          label={t`Add widget below`}
-          onClick={handleAddWidgetBelow}
-        />
-      </SelectableListItem>
+      {showAddWidgetBelow && (
+        <SelectableListItem
+          itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
+          onEnter={handleAddWidgetBelow}
+        >
+          <CommandMenuItem
+            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
+            Icon={IconRowInsertBottom}
+            label={t`Add widget below`}
+            onClick={handleAddWidgetBelow}
+          />
+        </SelectableListItem>
+      )}
     </SidePanelGroup>
   );
 };

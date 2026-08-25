@@ -43,6 +43,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "availabilityType",
       "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
+      "navigationTargetObjectMetadataUniversalIdentifier",
       "engineComponentKey",
       "payload",
       "hotKeys",
@@ -333,6 +334,24 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
     ],
     "propertiesToStringify": [],
+  },
+  "timelineActivityType": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "action",
+      "icon",
+      "frontComponentUniversalIdentifier",
+      "objectUniversalIdentifier",
+      "targetRelationFieldUniversalIdentifier",
+      "triggerFieldUniversalIdentifiers",
+      "replacesTimelineActivityTypeUniversalIdentifier",
+      "isActive",
+      "overrides",
+    ],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "view": {
     "propertiesToCompare": [

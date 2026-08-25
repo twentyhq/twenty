@@ -40,6 +40,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:
       commandMenuItemManifest.availabilityObjectUniversalIdentifier ?? null,
+    navigationTargetObjectMetadataUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
     payload: null,
     hotKeys: null,

@@ -15,7 +15,7 @@ type SettingsAccountsToggleSettingCardProps = {
 };
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     cursor: pointer;
     display: flex;

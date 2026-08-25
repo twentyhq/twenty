@@ -24,7 +24,12 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
     ),
-    name: { universalIdentifier: '20202020-7207-46e8-9dab-849505ae8497' },
+    timelineActivityTypeId: {
+      universalIdentifier: '20202020-e5f8-4839-9dcf-781e260624ee',
+    },
+    timelineActivityTypeSnapshot: {
+      universalIdentifier: '20202020-e006-493a-9b07-f2a768a204ca',
+    },
     happensAt: {
       universalIdentifier: '20202020-9526-4993-b339-c4318c4d39f0',
     },
