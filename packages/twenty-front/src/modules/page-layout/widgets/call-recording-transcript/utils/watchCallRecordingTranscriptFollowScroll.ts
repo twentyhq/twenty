@@ -77,9 +77,9 @@ export const watchCallRecordingTranscriptFollowScroll = ({
     animationFrameId = requestAnimationFrame(followPlaybackPosition);
   };
 
-  FOLLOW_SCROLL_SYNC_EVENT_NAMES.forEach((eventName) =>
-    videoElement.addEventListener(eventName, scheduleFollowScroll),
-  );
+  for (const eventName of FOLLOW_SCROLL_SYNC_EVENT_NAMES) {
+    videoElement.addEventListener(eventName, scheduleFollowScroll);
+  }
 
   scheduleFollowScroll();
 
@@ -88,8 +88,8 @@ export const watchCallRecordingTranscriptFollowScroll = ({
       cancelAnimationFrame(animationFrameId);
     }
 
-    FOLLOW_SCROLL_SYNC_EVENT_NAMES.forEach((eventName) =>
-      videoElement.removeEventListener(eventName, scheduleFollowScroll),
-    );
+    for (const eventName of FOLLOW_SCROLL_SYNC_EVENT_NAMES) {
+      videoElement.removeEventListener(eventName, scheduleFollowScroll);
+    }
   };
 };

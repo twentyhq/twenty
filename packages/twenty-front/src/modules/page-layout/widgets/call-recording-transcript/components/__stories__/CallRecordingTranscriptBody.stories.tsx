@@ -144,6 +144,14 @@ const makeMockTranscriptEntry = ({
   };
 };
 
+const setVideoCurrentTime = (
+  videoElement: HTMLVideoElement,
+  currentTimeSeconds: number,
+) => {
+  videoElement.currentTime = currentTimeSeconds;
+  fireEvent.timeUpdate(videoElement);
+};
+
 const rawTranscript = [
   makeMockTranscriptEntry({
     speakerName: 'Ada Lovelace',
@@ -537,14 +545,6 @@ export const WithVideoInteractions: Story = {
       );
     });
   },
-};
-
-const setVideoCurrentTime = (
-  videoElement: HTMLVideoElement,
-  currentTimeSeconds: number,
-) => {
-  videoElement.currentTime = currentTimeSeconds;
-  fireEvent.timeUpdate(videoElement);
 };
 
 export const Loading: Story = {

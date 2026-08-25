@@ -12,9 +12,7 @@ export const buildCallRecordingTranscriptTimePoints = (
       ? [
           {
             startSeconds: timedItem.startSeconds,
-            ...(isDefined(timedItem.endSeconds)
-              ? { endSeconds: timedItem.endSeconds }
-              : {}),
+            endSeconds: timedItem.endSeconds,
             index,
           },
         ]

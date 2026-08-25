@@ -46,6 +46,16 @@ const StyledResumeFollowButton = styled.div`
   transform: translateX(-50%);
 `;
 
+const MANUAL_SCROLL_KEYS = [
+  'ArrowDown',
+  'ArrowUp',
+  'End',
+  'Home',
+  'PageDown',
+  'PageUp',
+  ' ',
+];
+
 type CallRecordingTranscriptEntryListProps = {
   entries: CallRecordingParsedTranscriptEntry[];
   activeEntryIndex?: number;
@@ -65,17 +75,7 @@ export const CallRecordingTranscriptEntryList = ({
   const activeEntryElementRef = useRef<HTMLLIElement>(null);
   const [isFollowingPlayback, setIsFollowingPlayback] = useState(true);
 
-  const setActiveEntryElement = useCallback(
-    (activeEntryElement: HTMLLIElement | null) => {
-      activeEntryElementRef.current = activeEntryElement;
-    },
-    [],
-  );
-
-  const stopFollowingPlayback = useCallback(() => {
-    setIsFollowingPlayback(false);
-  }, []);
-
+  // Stable so the memoized list items keep their onSelect reference.
   const selectTranscriptEntry = useCallback(
     (entryStartSeconds: number) => {
       setIsFollowingPlayback(true);
@@ -84,59 +84,27 @@ export const CallRecordingTranscriptEntryList = ({
     [onEntrySelect],
   );
 
-  const handleScrollContainerPointerDown = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      if (event.target === event.currentTarget) {
-        stopFollowingPlayback();
-      }
-    },
-    [stopFollowingPlayback],
-  );
+  const stopFollowingPlayback = () => {
+    setIsFollowingPlayback(false);
+  };
 
-  const handleScrollContainerKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (
-        [
-          'ArrowDown',
-          'ArrowUp',
-          'End',
-          'Home',
-          'PageDown',
-          'PageUp',
-          ' ',
-        ].includes(event.key)
-      ) {
-        stopFollowingPlayback();
-      }
-    },
-    [stopFollowingPlayback],
-  );
+  const handleScrollContainerPointerDown = (
+    event: PointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.target === event.currentTarget) {
+      stopFollowingPlayback();
+    }
+  };
+
+  const handleScrollContainerKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (MANUAL_SCROLL_KEYS.includes(event.key)) {
+      stopFollowingPlayback();
+    }
+  };
 
   const hasPlayback = isDefined(lastStartedEntryIndex);
-
-  const entryList = (
-    <StyledEntryList hasPlaybackControls={hasPlayback}>
-      {entries.map((entry, entryIndex) => {
-        const playbackPhase = getEntryPlaybackPhase({
-          activeEntryIndex,
-          entryIndex,
-          lastStartedEntryIndex,
-        });
-        const isActive = playbackPhase === 'speaking';
-
-        return (
-          <CallRecordingTranscriptEntryListItem
-            key={entryIndex}
-            entry={entry}
-            entryElementRef={isActive ? setActiveEntryElement : undefined}
-            playbackPhase={playbackPhase}
-            videoElement={videoElement}
-            onSelect={onEntrySelect ? selectTranscriptEntry : undefined}
-          />
-        );
-      })}
-    </StyledEntryList>
-  );
 
   return (
     <StyledTranscriptContainer>
@@ -156,7 +124,27 @@ export const CallRecordingTranscriptEntryList = ({
         onTouchMove={stopFollowingPlayback}
         onWheel={stopFollowingPlayback}
       >
-        {entryList}
+        <StyledEntryList hasPlaybackControls={hasPlayback}>
+          {entries.map((entry, entryIndex) => {
+            const playbackPhase = getEntryPlaybackPhase({
+              activeEntryIndex,
+              entryIndex,
+              lastStartedEntryIndex,
+            });
+            const isActive = playbackPhase === 'speaking';
+
+            return (
+              <CallRecordingTranscriptEntryListItem
+                key={entryIndex}
+                entry={entry}
+                entryElementRef={isActive ? activeEntryElementRef : undefined}
+                playbackPhase={playbackPhase}
+                videoElement={videoElement}
+                onSelect={onEntrySelect ? selectTranscriptEntry : undefined}
+              />
+            );
+          })}
+        </StyledEntryList>
       </StyledTranscriptScrollContainer>
       {hasPlayback && !isFollowingPlayback && (
         <StyledResumeFollowButton>

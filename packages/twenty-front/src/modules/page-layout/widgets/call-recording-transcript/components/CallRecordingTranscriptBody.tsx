@@ -108,7 +108,6 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  const hasTranscriptEntries = isNonEmptyArray(transcriptEntries);
   if (!isDefined(videoFileUrl)) {
     return (
       <CallRecordingTranscriptContent
@@ -117,6 +116,8 @@ export const CallRecordingTranscriptBody = ({
       />
     );
   }
+
+  const hasTranscriptEntries = isNonEmptyArray(transcriptEntries);
 
   return (
     <StyledRecordingLayout>

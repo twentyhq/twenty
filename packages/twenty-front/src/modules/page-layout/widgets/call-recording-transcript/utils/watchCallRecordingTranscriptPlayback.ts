@@ -132,15 +132,15 @@ export const watchCallRecordingTranscriptPlayback = ({
     syncPlaybackPosition();
   };
 
-  PLAYBACK_SYNC_EVENT_NAMES.forEach((eventName) =>
-    videoElement.addEventListener(eventName, syncPlaybackPosition),
-  );
-  PLAYBACK_BUFFERING_EVENT_NAMES.forEach((eventName) =>
-    videoElement.addEventListener(eventName, suspendPlaybackSynchronization),
-  );
-  PLAYBACK_RESUME_EVENT_NAMES.forEach((eventName) =>
-    videoElement.addEventListener(eventName, resumePlaybackSynchronization),
-  );
+  for (const eventName of PLAYBACK_SYNC_EVENT_NAMES) {
+    videoElement.addEventListener(eventName, syncPlaybackPosition);
+  }
+  for (const eventName of PLAYBACK_BUFFERING_EVENT_NAMES) {
+    videoElement.addEventListener(eventName, suspendPlaybackSynchronization);
+  }
+  for (const eventName of PLAYBACK_RESUME_EVENT_NAMES) {
+    videoElement.addEventListener(eventName, resumePlaybackSynchronization);
+  }
   videoElement.addEventListener('timeupdate', synchronizeOnTimeUpdate);
 
   syncPlaybackPosition();
@@ -148,21 +148,21 @@ export const watchCallRecordingTranscriptPlayback = ({
   return () => {
     clearBoundaryTimeout();
 
-    PLAYBACK_SYNC_EVENT_NAMES.forEach((eventName) =>
-      videoElement.removeEventListener(eventName, syncPlaybackPosition),
-    );
-    PLAYBACK_BUFFERING_EVENT_NAMES.forEach((eventName) =>
+    for (const eventName of PLAYBACK_SYNC_EVENT_NAMES) {
+      videoElement.removeEventListener(eventName, syncPlaybackPosition);
+    }
+    for (const eventName of PLAYBACK_BUFFERING_EVENT_NAMES) {
       videoElement.removeEventListener(
         eventName,
         suspendPlaybackSynchronization,
-      ),
-    );
-    PLAYBACK_RESUME_EVENT_NAMES.forEach((eventName) =>
+      );
+    }
+    for (const eventName of PLAYBACK_RESUME_EVENT_NAMES) {
       videoElement.removeEventListener(
         eventName,
         resumePlaybackSynchronization,
-      ),
-    );
+      );
+    }
     videoElement.removeEventListener('timeupdate', synchronizeOnTimeUpdate);
   };
 };
