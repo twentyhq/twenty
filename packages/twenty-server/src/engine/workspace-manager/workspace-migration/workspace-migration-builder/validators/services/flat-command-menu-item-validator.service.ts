@@ -54,6 +54,8 @@ export class FlatCommandMenuItemValidatorService {
       frontComponentUniversalIdentifier:
         flatCommandMenuItem.frontComponentUniversalIdentifier,
       payload: flatCommandMenuItem.payload,
+      navigationTargetObjectMetadataUniversalIdentifier:
+        flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
       validationResult,
     });
 
@@ -162,12 +164,19 @@ export class FlatCommandMenuItemValidatorService {
         ? flatEntityUpdate.payload
         : fromFlatCommandMenuItem.payload;
 
+    const navigationTargetObjectMetadataUniversalIdentifier =
+      flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier !==
+      undefined
+        ? flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier
+        : fromFlatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier;
+
     this.validateEngineComponentKeyCoherence({
       engineComponentKey,
       workflowVersionId: fromFlatCommandMenuItem.workflowVersionId,
       frontComponentUniversalIdentifier:
         fromFlatCommandMenuItem.frontComponentUniversalIdentifier,
       payload,
+      navigationTargetObjectMetadataUniversalIdentifier,
       validationResult,
     });
 
@@ -179,12 +188,14 @@ export class FlatCommandMenuItemValidatorService {
     workflowVersionId,
     frontComponentUniversalIdentifier,
     payload,
+    navigationTargetObjectMetadataUniversalIdentifier,
     validationResult,
   }: {
     engineComponentKey: EngineComponentKey | null;
     workflowVersionId: string | null;
     frontComponentUniversalIdentifier: string | null;
     payload: CommandMenuItemPayload | null;
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',
       'create' | 'update'
@@ -234,7 +245,11 @@ export class FlatCommandMenuItemValidatorService {
         break;
       }
       case EngineComponentKey.NAVIGATION: {
-        this.validateNavigationPayload({ payload, validationResult });
+        this.validateNavigationPayload({
+          payload,
+          navigationTargetObjectMetadataUniversalIdentifier,
+          validationResult,
+        });
 
         if (isNonEmptyString(workflowVersionId)) {
           validationResult.errors.push({
@@ -278,34 +293,33 @@ export class FlatCommandMenuItemValidatorService {
 
   private validateNavigationPayload({
     payload,
+    navigationTargetObjectMetadataUniversalIdentifier,
     validationResult,
   }: {
     payload: CommandMenuItemPayload | null;
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',
       'create' | 'update'
     >;
   }): void {
-    if (!isDefined(payload)) {
-      validationResult.errors.push({
-        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload is required when engineComponentKey is NAVIGATION`,
-        userFriendlyMessage: msg`Payload is required for navigation items`,
-      });
+    if (isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
+      if (isDefined(payload)) {
+        validationResult.errors.push({
+          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+          message: t`payload must not be set when navigationTargetObjectMetadataId is set`,
+          userFriendlyMessage: msg`A navigation item cannot have both a path and a target object`,
+        });
+      }
 
       return;
     }
 
-    const hasPath = 'path' in payload && isNonEmptyString(payload.path);
-    const hasObjectMetadataItemId =
-      'objectMetadataItemId' in payload &&
-      isNonEmptyString(payload.objectMetadataItemId);
-
-    if (!hasPath && !hasObjectMetadataItemId) {
+    if (!isDefined(payload) || !isNonEmptyString(payload.path)) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload must contain either a "path" or "objectMetadataItemId" property`,
-        userFriendlyMessage: msg`Payload must contain either a path or an object metadata item identifier`,
+        message: t`payload.path is required when the navigation item has no navigationTargetObjectMetadataId`,
+        userFriendlyMessage: msg`A navigation item needs either a path or a target object`,
       });
     }
   }

@@ -10,13 +10,4 @@ describe('isPathCommandMenuItemPayload', () => {
 
     expect(isPathCommandMenuItemPayload(payload)).toBe(true);
   });
-
-  it('should return false for an ObjectMetadataCommandMenuItemPayload', () => {
-    const payload: CommandMenuItemPayload = {
-      __typename: 'ObjectMetadataCommandMenuItemPayload',
-      objectMetadataItemId: 'some-uuid',
-    };
-
-    expect(isPathCommandMenuItemPayload(payload)).toBe(false);
-  });
 });

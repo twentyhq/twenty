@@ -32,7 +32,8 @@ const baseCommandMenuItem = {
   position: 1,
   isPinned: false,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-  payload: { objectMetadataItemId: 'obj-id-1' },
+  payload: null,
+  navigationTargetObjectMetadataId: 'obj-id-1',
   workspaceId: 'ws-id-1',
   isActive: true,
   isSystemSideEffect: false,
@@ -152,10 +153,11 @@ describe('interpolateNavigationCommandMenuItemField', () => {
     expect(result).toBe('IconCustom');
   });
 
-  it('should return raw value when payload has no objectMetadataItemId', () => {
+  it('should return raw value when the item has no navigation target', () => {
     const itemWithPathPayload = {
       ...baseCommandMenuItem,
       payload: { path: '/settings/profile' },
+      navigationTargetObjectMetadataId: undefined,
     };
 
     const result = interpolateNavigationCommandMenuItemField({

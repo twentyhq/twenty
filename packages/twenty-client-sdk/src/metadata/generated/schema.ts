@@ -129,17 +129,11 @@ export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIO
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'
 
-export type CommandMenuItemPayload = (PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload) & { __isUnion?: true }
+export type CommandMenuItemPayload = (PathCommandMenuItemPayload) & { __isUnion?: true }
 
 export interface PathCommandMenuItemPayload {
     path: Scalars['String']
     __typename: 'PathCommandMenuItemPayload'
-}
-
-export interface ObjectMetadataCommandMenuItemPayload {
-    /** @deprecated Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility. */
-    objectMetadataItemId: Scalars['UUID']
-    __typename: 'ObjectMetadataCommandMenuItemPayload'
 }
 
 export interface LogicFunction {
@@ -3432,19 +3426,11 @@ export interface CommandMenuItemGenqlSelection{
 
 export interface CommandMenuItemPayloadGenqlSelection{
     on_PathCommandMenuItemPayload?:PathCommandMenuItemPayloadGenqlSelection,
-    on_ObjectMetadataCommandMenuItemPayload?:ObjectMetadataCommandMenuItemPayloadGenqlSelection,
     __typename?: boolean | number
 }
 
 export interface PathCommandMenuItemPayloadGenqlSelection{
     path?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
-    /** @deprecated Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility. */
-    objectMetadataItemId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6996,7 +6982,7 @@ update: UpdateLogicFunctionFromSourceInputUpdates}
 
 export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
 export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
@@ -7260,7 +7246,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const CommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload','ObjectMetadataCommandMenuItemPayload']
+    const CommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload']
     export const isCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is CommandMenuItemPayload => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItemPayload"')
       return CommandMenuItemPayload_possibleTypes.includes(obj.__typename)
@@ -7272,14 +7258,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isPathCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is PathCommandMenuItemPayload => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPathCommandMenuItemPayload"')
       return PathCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectMetadataCommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload']
-    export const isObjectMetadataCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is ObjectMetadataCommandMenuItemPayload => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
-      return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
     
 

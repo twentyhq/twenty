@@ -81,14 +81,12 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       v5('call-recording', NAVIGATION_COMMAND_UUID_NAMESPACE),
     );
     expect(result.flatEntityToCreate[0].position).toBe(0);
-    expect(result.flatEntityToCreate[0].payload).toEqual({
-      objectMetadataItemId: objectMetadata.id,
-    });
+    expect(result.flatEntityToCreate[0].payload).toBeNull();
     expect(result.flatEntityToUpdate).toHaveLength(0);
     expect(result.flatEntityToDelete).toHaveLength(0);
   });
 
-  it('uses the provided object id in the navigation payload', () => {
+  it('creates a payload-less navigation command for a provided object id', () => {
     const objectMetadata = getFlatObjectMetadataMock({
       id: 'existing-call-recording-object-id',
       universalIdentifier: 'call-recording',
@@ -105,9 +103,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       renamedCollisionObjectMetadatas: [],
     });
 
-    expect(result.flatEntityToCreate[0].payload).toEqual({
-      objectMetadataItemId: 'existing-call-recording-object-id',
-    });
+    expect(result.flatEntityToCreate[0].payload).toBeNull();
   });
 
   it('does not create a navigation item for an inactive object', () => {

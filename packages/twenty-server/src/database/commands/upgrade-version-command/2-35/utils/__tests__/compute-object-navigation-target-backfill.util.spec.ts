@@ -10,8 +10,10 @@ const COMPANY_OBJECT_ID = '20202020-0000-0000-0000-00000000c0c0';
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-1111-1111-1111-11111111c0c0';
 
+// The payload is typed on the current shape, the backfill reads the pre 2.35 one
 const buildFlatCommandMenuItem = (
-  overrides: Partial<FlatCommandMenuItem> & Pick<FlatCommandMenuItem, 'id'>,
+  overrides: Partial<Omit<FlatCommandMenuItem, 'payload'>> &
+    Pick<FlatCommandMenuItem, 'id'> & { payload?: unknown },
 ): FlatCommandMenuItem =>
   ({
     universalIdentifier: overrides.id,

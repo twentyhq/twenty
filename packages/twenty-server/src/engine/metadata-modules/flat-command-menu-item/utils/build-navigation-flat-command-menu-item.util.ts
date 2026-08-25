@@ -102,7 +102,7 @@ export const buildNavigationFlatCommandMenuItem = ({
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
-    payload: { objectMetadataItemId: objectMetadata.id },
+    payload: null,
     navigationTargetObjectMetadataId: objectMetadata.id,
     navigationTargetObjectMetadataUniversalIdentifier:
       objectMetadata.universalIdentifier,

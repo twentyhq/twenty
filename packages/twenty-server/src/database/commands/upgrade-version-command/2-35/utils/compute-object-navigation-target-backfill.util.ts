@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
+import { isLegacyObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-legacy-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -32,7 +32,7 @@ export const computeObjectNavigationTargetBackfill = ({
     if (
       flatCommandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
       isDefined(flatCommandMenuItem.navigationTargetObjectMetadataId) ||
-      !isObjectMetadataCommandMenuItemPayload(flatCommandMenuItem.payload)
+      !isLegacyObjectMetadataCommandMenuItemPayload(flatCommandMenuItem.payload)
     ) {
       continue;
     }

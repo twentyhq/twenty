@@ -87,5 +87,10 @@ export class CreateCommandMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  navigationTargetObjectMetadataId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string;
 }

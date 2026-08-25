@@ -399,9 +399,6 @@ export default {
             "on_PathCommandMenuItemPayload": [
                 19
             ],
-            "on_ObjectMetadataCommandMenuItemPayload": [
-                20
-            ],
             "__typename": [
                 1
             ]
@@ -409,14 +406,6 @@ export default {
         "PathCommandMenuItemPayload": {
             "path": [
                 1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ObjectMetadataCommandMenuItemPayload": {
-            "objectMetadataItemId": [
-                3
             ],
             "__typename": [
                 1
@@ -11456,6 +11445,9 @@ export default {
             ],
             "payload": [
                 9
+            ],
+            "navigationTargetObjectMetadataId": [
+                3
             ],
             "pageLayoutId": [
                 3
