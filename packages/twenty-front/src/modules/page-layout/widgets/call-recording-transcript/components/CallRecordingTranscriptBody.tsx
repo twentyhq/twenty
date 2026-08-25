@@ -4,7 +4,7 @@ import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/
 import { CallRecordingTranscriptContent } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent';
 import { CallRecordingVideoPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer';
 import { CallRecordingTranscriptPlaybackEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptPlaybackEffect';
-import { type CallRecordingTranscriptPlaybackPosition } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlaybackPosition';
+import { INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION } from '@/page-layout/widgets/call-recording-transcript/constants/InitialCallRecordingTranscriptPlaybackPosition';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
@@ -46,11 +46,9 @@ export const CallRecordingTranscriptBody = ({
     null,
   );
 
-  const [entryPlaybackPosition, setEntryPlaybackPosition] =
-    useState<CallRecordingTranscriptPlaybackPosition>({
-      activeIndex: -1,
-      lastStartedIndex: -1,
-    });
+  const [entryPlaybackPosition, setEntryPlaybackPosition] = useState(
+    INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION,
+  );
 
   if (isDefined(restriction)) {
     return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
