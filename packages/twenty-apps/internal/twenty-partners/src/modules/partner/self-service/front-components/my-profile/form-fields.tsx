@@ -1,20 +1,8 @@
 import { useState, type ReactNode } from 'react';
 
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
+
 export type SelectOption = { value: string; label: string };
-
-export const COLORS = {
-  bg: '#f7f7f8',
-  surface: '#ffffff',
-  surfaceAlt: '#f4f5f7',
-  fg: '#1c1c1c',
-  muted: '#66646a',
-  border: '#e7e7eb',
-  accent: '#4a38f5',
-  accentSoft: 'rgba(74, 56, 245, 0.1)',
-} as const;
-
-export const FONT =
-  '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif';
 
 const controlBase = {
   width: '100%',
