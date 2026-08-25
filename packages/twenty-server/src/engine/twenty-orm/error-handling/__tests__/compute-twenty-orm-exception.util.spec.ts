@@ -2,9 +2,9 @@ import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-r
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { computeTwentyOrmException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 const buildPostgresError = (message: string, code: string): Error =>
   Object.assign(new Error(message), { code });
@@ -15,9 +15,9 @@ describe('computeTwentyOrmException', () => {
 
     const result = computeTwentyOrmException(error);
 
-    expect(result).toBeInstanceOf(TwentyOrmV2Exception);
-    expect((result as TwentyOrmV2Exception).code).toBe(
-      TwentyOrmV2ExceptionCode.QUERY_READ_TIMEOUT,
+    expect(result).toBeInstanceOf(TwentyOrmException);
+    expect((result as TwentyOrmException).code).toBe(
+      TwentyOrmExceptionCode.QUERY_READ_TIMEOUT,
     );
     expect(result.message).toBe('Query read timeout');
   });
@@ -30,9 +30,9 @@ describe('computeTwentyOrmException', () => {
 
     const result = computeTwentyOrmException(error);
 
-    expect(result).toBeInstanceOf(TwentyOrmV2Exception);
-    expect((result as TwentyOrmV2Exception).code).toBe(
-      TwentyOrmV2ExceptionCode.DUPLICATE_ENTRY_DETECTED,
+    expect(result).toBeInstanceOf(TwentyOrmException);
+    expect((result as TwentyOrmException).code).toBe(
+      TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED,
     );
   });
 
@@ -44,9 +44,9 @@ describe('computeTwentyOrmException', () => {
 
     const result = computeTwentyOrmException(error);
 
-    expect(result).toBeInstanceOf(TwentyOrmV2Exception);
-    expect((result as TwentyOrmV2Exception).code).toBe(
-      TwentyOrmV2ExceptionCode.INVALID_INPUT,
+    expect(result).toBeInstanceOf(TwentyOrmException);
+    expect((result as TwentyOrmException).code).toBe(
+      TwentyOrmExceptionCode.INVALID_INPUT,
     );
     expect(result.message).toBe(
       'invalid input syntax for type uuid: "not-a-uuid"',
@@ -62,9 +62,9 @@ describe('computeTwentyOrmException', () => {
       buildPostgresError('constraint violation', code),
     );
 
-    expect(result).toBeInstanceOf(TwentyOrmV2Exception);
-    expect((result as TwentyOrmV2Exception).code).toBe(
-      TwentyOrmV2ExceptionCode.INVALID_INPUT,
+    expect(result).toBeInstanceOf(TwentyOrmException);
+    expect((result as TwentyOrmException).code).toBe(
+      TwentyOrmExceptionCode.INVALID_INPUT,
     );
   });
 
@@ -96,9 +96,9 @@ describe('computeTwentyOrmException', () => {
   });
 
   it('should leave an exception the query builder already computed untouched', () => {
-    const error = new TwentyOrmV2Exception(
+    const error = new TwentyOrmException(
       'Join path "person.tasks" is to-many',
-      TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+      TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
     );
 
     expect(computeTwentyOrmException(error)).toBe(error);

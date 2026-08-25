@@ -12,8 +12,8 @@ import {
   type RelationDisconnectQueryFieldsByEntityIndex,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatConnectRecordNotFoundErrorMessage } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
@@ -204,9 +204,9 @@ export class RelationNestedQueries {
                 connectQueryConfig.recordToConnectConditionByEntityIndex[index],
               );
 
-            throw new TwentyORMException(
+            throw new TwentyOrmException(
               errorMessage,
-              TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
+              TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND,
               {
                 userFriendlyMessage,
               },

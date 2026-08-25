@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -236,7 +236,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         .softDelete()
         .returning(['id'])
         .getQuery(),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 
   it('should reject setting a column that does not exist', () => {
@@ -249,7 +249,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         .set({ missingColumn: 'x' })
         .returning(['id'])
         .getQuery(),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 
   it('should bump only updatedAt for an update carrying no columns', () => {
@@ -294,7 +294,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
         .update()
         .returning(['id'])
         .getQuery(),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 
   it('should refuse to morph a query that carries a relation join', () => {
@@ -302,6 +302,6 @@ describe('WorkspaceMutationQueryBuilder', () => {
 
     selectQueryBuilder.leftJoin('person.company', 'company');
 
-    expect(() => selectQueryBuilder.softDelete()).toThrow(TwentyOrmV2Exception);
+    expect(() => selectQueryBuilder.softDelete()).toThrow(TwentyOrmException);
   });
 });

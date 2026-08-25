@@ -16,9 +16,9 @@ import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query
 import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -117,9 +117,9 @@ export class WorkspaceDataSource {
       this.internalContext.objectIdByNameSingular[nameSingular];
 
     if (!isDefined(objectMetadataId)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Object "${nameSingular}" does not exist in this workspace`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_OBJECT,
+        TwentyOrmExceptionCode.UNKNOWN_OBJECT,
       );
     }
 

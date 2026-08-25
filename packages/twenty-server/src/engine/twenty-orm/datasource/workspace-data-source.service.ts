@@ -19,9 +19,9 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 // node-postgres parses a `date` column into a JS Date (which serializes with a
@@ -89,9 +89,9 @@ export class WorkspaceDataSourceService
       : this.primaryPool;
 
     if (!isDefined(pool)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'WorkspaceDataSourceService has not been initialized. Make sure the module has been initialized.',
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
 
