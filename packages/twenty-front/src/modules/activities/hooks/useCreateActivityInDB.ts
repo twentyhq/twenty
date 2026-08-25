@@ -14,10 +14,9 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
-import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
-import { capitalize } from 'twenty-shared/utils';
+import { type ActivityTarget } from '@/activities/types/ActivityTarget';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useCreateActivityInDB = ({
   activityObjectNameSingular,
@@ -37,23 +36,32 @@ export const useCreateActivityInDB = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
-    TaskTarget | NoteTarget
-  >({
-    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
-    shouldMatchRootQueryFilter: true,
-  });
-
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const { objectMetadataItem: objectMetadataItemActivityTarget } =
-    useObjectMetadataItem({
-      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
-    });
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
       objectNameSingular: activityObjectNameSingular,
+    });
+
+  const activityTargetJunctionConfig = getActivityTargetJunctionConfig({
+    activityObjectMetadata: objectMetadataItemActivity,
+    objectMetadataItems,
+  });
+  const activityTargetObjectNameSingular =
+    activityTargetJunctionConfig?.junctionObjectMetadata.nameSingular ??
+    activityObjectNameSingular;
+  const activityTargetFieldName =
+    activityTargetJunctionConfig?.activityTargetField.name;
+
+  const { createManyRecords: createManyActivityTargets } =
+    useCreateManyRecords<ActivityTarget>({
+      objectNameSingular: activityTargetObjectNameSingular,
+      shouldMatchRootQueryFilter: true,
+    });
+
+  const { objectMetadataItem: objectMetadataItemActivityTarget } =
+    useObjectMetadataItem({
+      objectNameSingular: activityTargetObjectNameSingular,
     });
 
   const cache = useApolloCoreClient().cache;
@@ -66,8 +74,14 @@ export const useCreateActivityInDB = ({
         updatedAt: new Date().toISOString(),
       });
 
+      if (!isDefined(activityTargetFieldName)) {
+        throw new Error('Activity target relation metadata is missing');
+      }
+
       const activityTargetsToCreate =
-        activityToCreate.noteTargets ?? activityToCreate.taskTargets ?? [];
+        (activityToCreate[
+          activityTargetFieldName as keyof ActivityForEditor
+        ] as ActivityTarget[] | undefined) ?? [];
 
       if (isNonEmptyArray(activityTargetsToCreate)) {
         await createManyActivityTargets({
@@ -91,14 +105,14 @@ export const useCreateActivityInDB = ({
         recordId: createdActivity.id,
         cache,
         fieldModifiers: {
-          activityTargets: () => activityTargetsConnection,
+          [activityTargetFieldName]: () => activityTargetsConnection,
         },
         objectMetadataItem: objectMetadataItemActivity,
       });
 
       store.set(recordStoreFamilyState.atomFamily(createdActivity.id), {
         ...createdActivity,
-        activityTargets: activityTargetsToCreate,
+        [activityTargetFieldName]: activityTargetsToCreate,
       });
     },
     [
@@ -106,6 +120,7 @@ export const useCreateActivityInDB = ({
       cache,
       createManyActivityTargets,
       createOneActivity,
+      activityTargetFieldName,
       objectMetadataItemActivity,
       objectMetadataItemActivityTarget,
       objectMetadataItems,

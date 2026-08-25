@@ -1,9 +1,8 @@
 import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { type Note } from '@/activities/types/Note';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -12,6 +11,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -68,34 +68,49 @@ export const usePrepareFindManyActivitiesQuery = ({
       objectPermissionsByObjectMetadataId,
     });
 
-    const activityTargets: (TaskTarget | NoteTarget)[] =
-      targetableObjectRecord?.taskTargets ??
-      targetableObjectRecord?.noteTargets ??
-      [];
+    const junctionConfig = getActivityTargetJunctionConfig({
+      activityObjectMetadata: objectMetadataItemActivity,
+      objectMetadataItems,
+    });
 
-    const activityTargetIds = [
+    if (!isDefined(junctionConfig?.sourceField)) {
+      throw new Error('Activity target junction metadata is invalid');
+    }
+
+    const activityRelationFieldName = junctionConfig.sourceField.name;
+    const activityTargetObjectMetadataId =
+      junctionConfig.junctionObjectMetadata.id;
+
+    const activityTargetFieldName = targetableObjectMetadataItem.fields.find(
+      (field) =>
+        field.relation?.targetObjectMetadata.id ===
+        activityTargetObjectMetadataId,
+    )?.name;
+
+    const activityTargets =
+      (isDefined(activityTargetFieldName)
+        ? (targetableObjectRecord?.[activityTargetFieldName] as
+            | ActivityTarget[]
+            | undefined)
+        : undefined) ?? [];
+
+    const activityIds = [
       ...new Set(
         activityTargets
-          .map((activityTarget) => activityTarget.id)
+          .map((activityTarget) => {
+            const activity = activityTarget[activityRelationFieldName] as
+              | ObjectRecord
+              | undefined;
+
+            return activity?.id;
+          })
           .filter(isDefined),
       ),
     ];
 
-    const activities: (Task | Note)[] = activityTargetIds
-      .map((activityTargetId) => {
-        const activityTarget = activityTargets.find(
-          (activityTarget) => activityTarget.id === activityTargetId,
-        );
-
-        if (!activityTarget) {
-          return undefined;
-        }
-
-        return getActivityFromCache<Task | Note>(activityTarget.activityId);
-      })
+    const activities: (Task | Note)[] = activityIds
+      .map((activityId) => getActivityFromCache<Task | Note>(activityId))
       .filter(isDefined);
-
-    const activityIds = [...new Set(activities.map((activity) => activity.id))];
 
     const nextFindManyActivitiesQueryFilter = {
       filter: {

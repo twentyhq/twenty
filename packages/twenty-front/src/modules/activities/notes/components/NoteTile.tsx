@@ -1,14 +1,20 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
+import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
@@ -76,10 +82,26 @@ export const NoteTile = ({
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
-  const baseComponentInstanceId = `note-card-${note.id}-targets`;
-  const componentInstanceId = useActivityTargetsComponentInstanceId(
-    baseComponentInstanceId,
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const activityTargetFieldName = getActivityTargetJunctionConfig({
+    activityObjectMetadata: objectMetadataItem,
+    objectMetadataItems,
+  })?.activityTargetField.name;
+
+  if (!isDefined(activityTargetFieldName)) {
+    throw new Error('Note target junction metadata is missing');
+  }
+
+  const instanceIdPrefix =
+    useActivityFieldComponentInstanceId('note-card-targets');
+  const componentInstanceId = getRecordFieldInputInstanceId({
+    recordId: note.id,
+    fieldName: activityTargetFieldName,
+    prefix: instanceIdPrefix,
+  });
 
   return (
     <StyledCard isSingleNote={isSingleNote}>
@@ -98,19 +120,20 @@ export const NoteTile = ({
         <FieldContextProvider
           objectNameSingular={CoreObjectNameSingular.Note}
           objectRecordId={note.id}
-          fieldMetadataName="noteTargets"
+          fieldMetadataName={activityTargetFieldName}
           fieldPosition={0}
+          isDisplayModeFixHeight
         >
           <RecordFieldsScopeContextProvider
             value={{
               scopeInstanceId: note.id,
             }}
           >
-            <ActivityTargetsInlineCell
-              componentInstanceId={componentInstanceId}
-              activityRecordId={note.id}
-              activityObjectNameSingular={CoreObjectNameSingular.Note}
-            />
+            <RecordFieldComponentInstanceContext.Provider
+              value={{ instanceId: componentInstanceId }}
+            >
+              <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+            </RecordFieldComponentInstanceContext.Provider>
           </RecordFieldsScopeContextProvider>
         </FieldContextProvider>
       </StyledFooter>

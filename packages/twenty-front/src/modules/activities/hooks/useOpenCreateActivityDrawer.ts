@@ -8,13 +8,14 @@ import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActi
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type Note } from '@/activities/types/Note';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type Task } from '@/activities/types/Task';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
@@ -29,13 +30,24 @@ export const useOpenCreateActivityDrawer = ({
     objectNameSingular: activityObjectNameSingular,
   });
 
-  const { createOneRecord: createOneActivityTarget } = useCreateOneRecord<
-    TaskTarget | NoteTarget
-  >({
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const activityObjectMetadata = objectMetadataItems.find(
+    (item) => item.nameSingular === activityObjectNameSingular,
+  );
+
+  const activityTargetJunctionConfig = isDefined(activityObjectMetadata)
+    ? getActivityTargetJunctionConfig({
+        activityObjectMetadata,
+        objectMetadataItems,
+      })
+    : null;
+  const activityTargetObjectMetadata =
+    activityTargetJunctionConfig?.junctionObjectMetadata;
+
+  const { createManyRecords: createActivityTargets } = useCreateManyRecords({
     objectNameSingular:
-      activityObjectNameSingular === CoreObjectNameSingular.Task
-        ? CoreObjectNameSingular.TaskTarget
-        : CoreObjectNameSingular.NoteTarget,
+      activityTargetObjectMetadata?.nameSingular ?? activityObjectNameSingular,
     shouldMatchRootQueryFilter: true,
   });
 
@@ -52,8 +64,6 @@ export const useOpenCreateActivityDrawer = ({
   );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const openCreateActivityDrawer = async ({
     targetableObjects,
@@ -75,55 +85,47 @@ export const useOpenCreateActivityDrawer = ({
     });
 
     if (targetableObjects.length > 0) {
-      const activityTargetObjectNameSingular =
-        activityObjectNameSingular === CoreObjectNameSingular.Task
-          ? CoreObjectNameSingular.TaskTarget
-          : CoreObjectNameSingular.NoteTarget;
-
-      const activityTargetObjectMetadata = objectMetadataItems.find(
-        (item) => item.nameSingular === activityTargetObjectNameSingular,
-      );
-
-      const targetObjectMetadataItem = objectMetadataItems.find(
-        (item) =>
-          item.nameSingular === targetableObjects[0].targetObjectNameSingular,
-      );
-
-      const targetFieldInfo = findTargetFieldInfo(
+      const sourceFieldInfo = findTargetFieldInfo(
         activityTargetObjectMetadata?.fields ?? [],
-        targetObjectMetadataItem?.id ?? '',
+        activityObjectMetadata?.id ?? '',
         objectMetadataItems,
       );
+      const sourceJoinColumnName = sourceFieldInfo?.joinColumnName;
 
-      const targetableObjectRelationIdName =
-        targetFieldInfo?.joinColumnName ??
-        `${targetableObjects[0].targetObjectNameSingular}Id`;
+      if (
+        !isDefined(activityTargetObjectMetadata) ||
+        !isDefined(sourceJoinColumnName)
+      ) {
+        throw new Error('Activity target junction metadata is invalid');
+      }
 
-      await createOneActivityTarget({
-        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
-          ? {
-              taskId: activity.id,
-            }
-          : {
-              noteId: activity.id,
-            }),
-        [targetableObjectRelationIdName]: targetableObjects[0].id,
+      const recordsToCreate = targetableObjects.map((targetableObject) => {
+        const targetObjectMetadata = objectMetadataItems.find(
+          (item) =>
+            item.nameSingular === targetableObject.targetObjectNameSingular,
+        );
+        const targetFieldInfo = findTargetFieldInfo(
+          activityTargetObjectMetadata.fields,
+          targetObjectMetadata?.id ?? '',
+          objectMetadataItems,
+        );
+
+        if (!isDefined(targetFieldInfo?.joinColumnName)) {
+          throw new Error(
+            `Activity target junction does not support ${targetableObject.targetObjectNameSingular}`,
+          );
+        }
+
+        return {
+          [sourceJoinColumnName]: activity.id,
+          [targetFieldInfo.joinColumnName]: targetableObject.id,
+        };
       });
 
-      setActivityTargetableEntityArray(targetableObjects);
-    } else {
-      await createOneActivityTarget({
-        ...(activityObjectNameSingular === CoreObjectNameSingular.Task
-          ? {
-              taskId: activity.id,
-            }
-          : {
-              noteId: activity.id,
-            }),
-      });
-
-      setActivityTargetableEntityArray([]);
+      await createActivityTargets({ recordsToCreate, upsert: true });
     }
+
+    setActivityTargetableEntityArray(targetableObjects);
 
     openRecordInSidePanel({
       recordId: activity.id,

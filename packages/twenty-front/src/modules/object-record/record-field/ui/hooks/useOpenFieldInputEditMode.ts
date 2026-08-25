@@ -1,10 +1,3 @@
-import { useOpenActivityTargetCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetCellEditMode';
-import { type Note } from '@/activities/types/Note';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
-import { type Task } from '@/activities/types/Task';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
-import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationFieldInput';
@@ -16,9 +9,7 @@ import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/ui/
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldMetadata,
-  type FieldRelationFromManyValue,
   type FieldRelationMetadata,
-  type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -27,8 +18,6 @@ import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/t
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -45,9 +34,6 @@ export const useOpenFieldInputEditMode = () => {
 
   const { openMorphRelationOneToManyFieldInput } =
     useOpenMorphRelationOneToManyFieldInput();
-
-  const { openActivityTargetCellEditMode } =
-    useOpenActivityTargetCellEditMode();
 
   const { openJunctionRelationFieldInput } =
     useOpenJunctionRelationFieldInput();
@@ -74,13 +60,6 @@ export const useOpenFieldInputEditMode = () => {
       onFileUploadClose?: () => void;
     }) => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
-
-      const currentWorkspace = store.get(currentWorkspaceState.atom);
-
-      const isJunctionRelationsEnabled =
-        currentWorkspace?.featureFlags?.find(
-          (flag) => (flag.key as string) === 'IS_JUNCTION_RELATIONS_ENABLED',
-        )?.value ?? false;
 
       const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
       const fieldHasJunctionConfig = hasJunctionConfig(
@@ -118,46 +97,12 @@ export const useOpenFieldInputEditMode = () => {
         }
       }
 
-      if (isJunctionRelationsEnabled && isOneToMany && fieldHasJunctionConfig) {
+      if (isOneToMany && fieldHasJunctionConfig) {
         openJunctionRelationFieldInput({
           fieldDefinition:
             fieldDefinition as FieldDefinition<FieldRelationMetadata>,
           recordId,
           prefix,
-        });
-        return;
-      }
-
-      // Backward compatibility: hardcoded taskTarget/noteTarget check
-      // TODO: Remove this once taskTarget/noteTarget are migrated to use junction configuration
-      if (
-        isFieldRelationOneToMany(fieldDefinition) &&
-        ['taskTarget', 'noteTarget'].includes(
-          fieldDefinition.metadata.relationObjectMetadataNameSingular,
-        )
-      ) {
-        const fieldValue = store.get(
-          recordStoreFamilySelector.selectorFamily({
-            recordId,
-            fieldName: fieldDefinition.metadata.fieldName,
-          }),
-        ) as FieldRelationValue<FieldRelationFromManyValue>;
-
-        const activity = store.get(recordStoreFamilyState.atomFamily(recordId));
-
-        const activityTargetObjectRecords = getActivityTargetObjectRecords({
-          activityRecord: activity as Task | Note,
-          objectMetadataItems,
-          activityTargets: fieldValue as NoteTarget[] | TaskTarget[],
-        });
-
-        openActivityTargetCellEditMode({
-          recordPickerInstanceId: getRecordFieldInputInstanceId({
-            recordId,
-            fieldName: fieldDefinition.metadata.fieldName,
-            prefix,
-          }),
-          activityTargetObjectRecords,
         });
         return;
       }
@@ -229,7 +174,6 @@ export const useOpenFieldInputEditMode = () => {
       });
     },
     [
-      openActivityTargetCellEditMode,
       openFilesFieldInput,
       openJunctionRelationFieldInput,
       openMorphRelationManyToOneFieldInput,

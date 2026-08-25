@@ -1,16 +1,11 @@
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import {
-  CoreObjectNameSingular,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
+import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
@@ -62,25 +57,31 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const isActivityTargetField =
-          fieldMetadata.name === CoreObjectNamePlural.NoteTarget ||
-          fieldMetadata.name === CoreObjectNamePlural.TaskTarget;
+        const sourceObjectMetadataId = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.fields.some(
+              (objectField) => objectField.id === fieldMetadata.id,
+            ),
+        )?.id;
 
-        if (isActivityTargetField && depth === 1) {
-          const activityTargetObjectNameSingular =
-            fieldMetadata.name === CoreObjectNamePlural.NoteTarget
-              ? CoreObjectNameSingular.Note
-              : CoreObjectNameSingular.Task;
+        const reverseJunctionConfig = getReverseJunctionConfig({
+          junctionObjectMetadataId: targetObjectMetadataItem.id,
+          sourceObjectMetadataId,
+          objectMetadataItems,
+        });
 
-          const activityTargetGqlFields = generateActivityTargetGqlFields({
-            activityObjectNameSingular: activityTargetObjectNameSingular,
-            objectMetadataItems,
-            loadRelations: 'activity',
-          });
-
+        if (isDefined(reverseJunctionConfig) && depth === 1) {
           return {
             ...recordGqlFields,
-            [fieldMetadata.name]: activityTargetGqlFields,
+            [fieldMetadata.name]: {
+              ...buildIdentifierGqlFields(
+                reverseJunctionConfig.junctionObjectMetadata,
+              ),
+              [reverseJunctionConfig.relationFieldName]:
+                buildIdentifierGqlFields(
+                  reverseJunctionConfig.relatedObjectMetadata,
+                ),
+            },
           };
         }
 

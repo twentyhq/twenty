@@ -1,7 +1,9 @@
-import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generateActivityTargetMorphFieldKeys';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type FindActivitiesOperationSignatureFactory = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -20,6 +22,26 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       blocknote: true,
     },
   };
+
+  const activityObjectMetadata = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  );
+
+  const activityTargetJunctionConfig = isDefined(activityObjectMetadata)
+    ? getActivityTargetJunctionConfig({
+        activityObjectMetadata,
+        objectMetadataItems,
+      })
+    : null;
+  const junctionField = activityTargetJunctionConfig?.activityTargetField;
+
+  const junctionGqlFields = isDefined(junctionField)
+    ? generateJunctionRelationGqlFields({
+        fieldMetadataItem: junctionField,
+        objectMetadataItems,
+      })
+    : null;
 
   return {
     objectNameSingular: objectNameSingular,
@@ -55,31 +77,17 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       dueAt: true,
       reminderAt: true,
       type: true,
-      ...(objectNameSingular === CoreObjectNameSingular.Note
+      ...(isDefined(junctionField) && isDefined(junctionGqlFields)
         ? {
-            noteTargets: {
-              id: true,
+            [junctionField.name]: {
               __typename: true,
               createdAt: true,
               updatedAt: true,
               deletedAt: true,
-              note: true,
-              noteId: true,
-              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
+              ...junctionGqlFields,
             },
           }
-        : {
-            taskTargets: {
-              id: true,
-              __typename: true,
-              createdAt: true,
-              updatedAt: true,
-              deletedAt: true,
-              task: true,
-              taskId: true,
-              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
-            },
-          }),
+        : {}),
     },
   };
 };
