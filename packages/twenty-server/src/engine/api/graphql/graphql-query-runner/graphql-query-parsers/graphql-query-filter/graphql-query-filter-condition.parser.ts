@@ -8,7 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export class GraphqlQueryFilterConditionParser {
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;

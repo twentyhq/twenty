@@ -23,7 +23,7 @@ import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/
 import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 const WORKSPACE_SETUP_CHAT_THREAD_TITLE = msg`Workspace setup`;

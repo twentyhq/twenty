@@ -1,6 +1,6 @@
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';

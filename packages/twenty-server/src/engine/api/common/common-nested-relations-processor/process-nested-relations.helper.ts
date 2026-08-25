@@ -31,10 +31,10 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceDataSourceV2 } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2';
-import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { type WorkspaceDataSourceV2 } from 'src/engine/twenty-orm/datasource/workspace-data-source';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const EMPTY_RELATION_SENTINEL_RECORD_ID =

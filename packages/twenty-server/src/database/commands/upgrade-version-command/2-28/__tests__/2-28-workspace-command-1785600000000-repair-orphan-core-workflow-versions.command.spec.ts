@@ -3,11 +3,11 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
+} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairOrphanCoreWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785600000000-repair-orphan-core-workflow-versions.command';
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';

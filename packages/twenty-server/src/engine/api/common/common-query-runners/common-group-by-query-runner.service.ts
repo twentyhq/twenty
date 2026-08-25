@@ -54,7 +54,7 @@ import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
