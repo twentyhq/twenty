@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 16:13\n"
+"PO-Revision-Date: 2026-08-25 10:13\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -76,7 +76,7 @@ msgstr "{labelText} 필터, {0}개 선택됨"
 #. js-lingui-id: WWLSqV
 #: src/partners-marketplace/FilterBar.tsx
 msgid "{totalCount, plural, one {# certified partner ready to take on your project} other {# certified partners ready to take on your project}}"
-msgstr ""
+msgstr "{totalCount, plural, other {프로젝트를 맡을 준비가 된 인증 파트너 #명}}"
 
 #. js-lingui-id: 0Qb9by
 #: src/case-studies/case-study-stories.ts
@@ -981,12 +981,12 @@ msgstr "아프리카"
 #. js-lingui-id: 7X/+39
 #: src/sections/faq/partner-faq.data.ts
 msgid "Agencies and freelancers apply through the Twenty partner program page, which lists the requirements and carries the application form."
-msgstr ""
+msgstr "에이전시와 프리랜서는 요구 사항과 신청서가 있는 Twenty 파트너 프로그램 페이지를 통해 신청합니다."
 
 #. js-lingui-id: CHjiD2
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Agencies and freelancers can apply to join the certified directory."
-msgstr ""
+msgstr "에이전시와 프리랜서는 인증 디렉터리에 등록을 신청할 수 있습니다."
 
 #. js-lingui-id: NmHsVh
 #: src/partner-application/data/partner-team-type-options.ts
@@ -1308,7 +1308,7 @@ msgstr "담당자와 마감일 지정"
 #. js-lingui-id: eo0HU7
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
-msgstr ""
+msgstr "작업 내용을 보여 주는 링크가 포함된, 고객용 또는 내부용으로 제공 완료된 Twenty 구현 사례가 하나 이상 필요합니다. 개인 프리랜서와 에이전시 모두 자격이 있습니다."
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
