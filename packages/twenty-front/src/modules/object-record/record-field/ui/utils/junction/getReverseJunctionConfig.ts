@@ -2,6 +2,7 @@ import {
   getJunctionConfig,
   type JunctionObjectMetadataItem,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,12 +18,9 @@ type GetReverseJunctionConfigArgs = {
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
-const reverseJunctionConfigCache = new WeakMap<
-  JunctionObjectMetadataItem[],
-  Map<string, ReverseJunctionConfig | null>
->();
-
-const resolveReverseJunctionConfig = ({
+// Only the owning side of a junction carries the junction settings, so reaching the owner
+// from one of its targets means looking for the object whose junction field points here.
+export const getReverseJunctionConfig = ({
   junctionObjectMetadataId,
   sourceObjectMetadataId,
   objectMetadataItems,
@@ -57,11 +55,8 @@ const resolveReverseJunctionConfig = ({
 
       const targetsSourceObject = junctionConfig.targetFields.some(
         (targetField) =>
-          targetField.relation?.targetObjectMetadata.id ===
-            sourceObjectMetadataId ||
-          targetField.morphRelations?.some(
-            (morphRelation) =>
-              morphRelation.targetObjectMetadata.id === sourceObjectMetadataId,
+          getTargetObjectMetadataIdsFromField(targetField).includes(
+            sourceObjectMetadataId,
           ),
       );
 
@@ -76,36 +71,4 @@ const resolveReverseJunctionConfig = ({
   }
 
   return null;
-};
-
-export const getReverseJunctionConfig = (
-  args: GetReverseJunctionConfigArgs,
-): ReverseJunctionConfig | null => {
-  const {
-    junctionObjectMetadataId,
-    sourceObjectMetadataId,
-    objectMetadataItems,
-  } = args;
-
-  if (
-    !isDefined(junctionObjectMetadataId) ||
-    !isDefined(sourceObjectMetadataId)
-  ) {
-    return null;
-  }
-
-  const cacheKey = `${junctionObjectMetadataId}:${sourceObjectMetadataId}`;
-  const cachedConfigs = reverseJunctionConfigCache.get(objectMetadataItems);
-
-  if (cachedConfigs?.has(cacheKey)) {
-    return cachedConfigs.get(cacheKey) ?? null;
-  }
-
-  const resolvedConfig = resolveReverseJunctionConfig(args);
-  const configs = cachedConfigs ?? new Map();
-
-  configs.set(cacheKey, resolvedConfig);
-  reverseJunctionConfigCache.set(objectMetadataItems, configs);
-
-  return resolvedConfig;
 };

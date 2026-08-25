@@ -62,6 +62,7 @@ describe('getReverseJunctionConfig', () => {
 
     const result = generateDepthRecordGqlFieldsFromFields({
       objectMetadataItems,
+      sourceObjectMetadataItem: companyMetadata,
       fields: [noteTargetsField],
       depth: 1,
     });

@@ -21,6 +21,8 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
     | 'nameSingular'
     | 'namePlural'
   >[];
+  // Required to resolve the junction records held by the reverse side of a junction
+  sourceObjectMetadataItem?: Pick<EnrichedObjectMetadataItem, 'id'>;
   fields: Pick<
     FieldMetadataItem,
     'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
@@ -31,6 +33,7 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,
+  sourceObjectMetadataItem,
   fields,
   depth,
   shouldOnlyLoadRelationIdentifiers = true,
@@ -57,16 +60,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const sourceObjectMetadataId = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.fields.some(
-              (objectField) => objectField.id === fieldMetadata.id,
-            ),
-        )?.id;
-
         const reverseJunctionConfig = getReverseJunctionConfig({
           junctionObjectMetadataId: targetObjectMetadataItem.id,
-          sourceObjectMetadataId,
+          sourceObjectMetadataId: sourceObjectMetadataItem?.id,
           objectMetadataItems,
         });
 
