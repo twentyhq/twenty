@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 10:13\n"
+"PO-Revision-Date: 2026-08-25 12:14\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1441,12 +1441,12 @@ msgstr "Werden Sie Twenty-Partner — Jetzt bewerben"
 #. js-lingui-id: 8x+SS7
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
-msgstr ""
+msgstr "Werden Sie Twenty-Partner — treten Sie dem Open-Source-CRM-Ökosystem bei"
 
 #. js-lingui-id: r8MUXZ
 #: src/sections/faq/BecomePartnerFaq.tsx
 msgid "Becoming *a Twenty partner*"
-msgstr ""
+msgstr "Twenty-*Partner werden*"
 
 #. js-lingui-id: 83Wi6G
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1567,7 +1567,7 @@ msgstr "Partner durchsuchen"
 #. js-lingui-id: jkVxe+
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Browse the *certified partners*"
-msgstr ""
+msgstr "Die *zertifizierten Partner* durchsuchen"
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -1662,7 +1662,7 @@ msgstr "Burundi 🇧🇮"
 #. js-lingui-id: s61NQg
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Buyers submit a project brief with scope, timeline, and budget. We hand-pick the certified partners who fit and make the introduction within 48 hours."
-msgstr ""
+msgstr "Käufer reichen eine Projektbeschreibung mit Umfang, Zeitplan und Budget ein. Wir wählen passende zertifizierte Partner sorgfältig aus und stellen den Kontakt innerhalb von 48 Stunden her."
 
 #. js-lingui-id: L40Ae7
 #: src/partner-application/partner-application-copy.ts
@@ -1687,7 +1687,7 @@ msgstr "Kamerun 🇨🇲"
 #. js-lingui-id: lhDlM3
 #: src/sections/faq/partner-faq.data.ts
 msgid "Can a partner run my migration?"
-msgstr ""
+msgstr "Kann ein Partner meine Migration durchführen?"
 
 #. js-lingui-id: wCALve
 #: src/sections/faq/faq.data.ts
@@ -1759,7 +1759,7 @@ msgstr "Zentralafrikanische Republik 🇨🇫"
 #. js-lingui-id: n6B8ue
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
-msgstr ""
+msgstr "Zertifizierung sowie ein Verzeichnisprofil, das Ihre Kunden überprüfen können. Die besten Partner erhalten zudem Kundenbriefings, die zu ihrem Leistungsumfang passen."
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -1846,7 +1846,7 @@ msgstr "Übersichtlichere Dashboard-Zahlen"
 #. js-lingui-id: +W4YRD
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
-msgstr ""
+msgstr "Klicken Sie auf „Partner werden“ und füllen Sie die kurze Bewerbung aus: wer Sie sind, was Sie abdecken und ein echtes Twenty-Projekt mit Nachweis. Wir prüfen jede Bewerbung anhand tatsächlich ausgelieferter Arbeit — die Aufnahme erfolgt selektiv."
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2421,7 +2421,7 @@ msgstr "Benutzerdefinierte Objekte"
 #. js-lingui-id: 14p823
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Custom objects, workflows and apps built on the platform."
-msgstr ""
+msgstr "Benutzerdefinierte Objekte, Workflows und Apps, die auf der Plattform entwickelt wurden."
 
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2484,7 +2484,7 @@ msgstr "Anpassung"
 #. js-lingui-id: hiB8fo
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Customization & apps"
-msgstr ""
+msgstr "Anpassungen & Apps"
 
 #. js-lingui-id: 4urq82
 #: src/sections/compare/compare-data.ts
@@ -2633,7 +2633,7 @@ msgstr "Dänemark 🇩🇰"
 #. js-lingui-id: w9Q2vI
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Deploy, upgrade and operate Twenty on your own infrastructure."
-msgstr ""
+msgstr "Stellen Sie Twenty auf Ihrer eigenen Infrastruktur bereit, aktualisieren und betreiben Sie es."
 
 #. js-lingui-id: 59TXqJ
 #: src/partner-application/partner-application-copy.ts
@@ -2699,7 +2699,7 @@ msgstr "Director, W3villa Technologies, Partner"
 #. js-lingui-id: GhgbAN
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Directory"
-msgstr ""
+msgstr "Verzeichnis"
 
 #. js-lingui-id: 30qcNY
 #: src/sections/menu/data/menu.ts
@@ -2741,12 +2741,12 @@ msgstr "Brauche ich einen Entwickler, um Twenty anzupassen?"
 #. js-lingui-id: ISZL/U
 #: src/sections/faq/partner-faq.data.ts
 msgid "Do partners support self-hosting?"
-msgstr ""
+msgstr "Unterstützen Partner Self-Hosting?"
 
 #. js-lingui-id: xSh4Vw
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Does it cost anything?"
-msgstr ""
+msgstr "Kostet es etwas?"
 
 #. js-lingui-id: Zx22Ih
 #: src/sections/faq/faq.data.ts
@@ -3176,7 +3176,7 @@ msgstr "Jedes neue Release von Twenty, dem #1 Open‑Source‑CRM, mit Changelog
 #. js-lingui-id: xt/iek
 #: src/sections/faq/partner-faq.data.ts
 msgid "Every partner is certified by Twenty and reviewed on delivered projects, technical depth, and customer feedback before joining the directory."
-msgstr ""
+msgstr "Jeder Partner wird von Twenty zertifiziert und vor der Aufnahme in das Verzeichnis anhand ausgelieferter Projekte, technischer Tiefe und Kundenfeedback geprüft."
 
 #. js-lingui-id: rkZTD7
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3414,7 +3414,7 @@ msgstr "Nach Multi-Select filtern"
 #. js-lingui-id: V5L7Y4
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Filter by region, language, and specialty, then read a profile and book a call with the partner yourself."
-msgstr ""
+msgstr "Filtern Sie nach Region, Sprache und Spezialisierung, lesen Sie anschließend ein Profil und buchen Sie selbst einen Anruf mit dem Partner."
 
 #. js-lingui-id: bOidm7
 #: src/partners-marketplace/FilterBar.tsx
@@ -3454,7 +3454,7 @@ msgstr "Einen Twenty‑Partner finden"
 #. js-lingui-id: AwJQl7
 #: src/platform/routing/static-website-routes.ts
 msgid "Find a Twenty Partner — Certified Open Source CRM Experts"
-msgstr ""
+msgstr "Einen Twenty-Partner finden — zertifizierte Open-Source-CRM-Experten"
 
 #. js-lingui-id: RiVrPY
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3571,7 +3571,7 @@ msgstr "Gründer, Wintactix"
 #. js-lingui-id: iAVWWq
 #: src/sections/partner-lead/PartnerServicesExplainer.tsx
 msgid "Four kinds of work, delivered by teams that build on Twenty every day."
-msgstr ""
+msgstr "Vier Arten von Leistungen, erbracht von Teams, die jeden Tag mit Twenty arbeiten."
 
 #. js-lingui-id: 671GY5
 #: src/partner-application/data/partner-country-options.ts
@@ -3723,7 +3723,7 @@ msgstr "Deutschland 🇩🇪"
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
-msgstr ""
+msgstr "Lassen Sie sich als Twenty-Partner zertifizieren: ein geprüftes Abzeichen, ein Verzeichnisprofil, das Ihre Kunden einsehen können, und passende Kundenbriefings für die besten Partner."
 
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-hero/PartnerLeadHero.tsx
@@ -3968,27 +3968,27 @@ msgstr "Wie Alternative Partners mit agentischer KI im Implementierungs‑Loop v
 #. js-lingui-id: Xtipai
 #: src/sections/faq/partner-faq.data.ts
 msgid "How are partners vetted?"
-msgstr ""
+msgstr "Wie werden Partner geprüft?"
 
 #. js-lingui-id: rdK0XI
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "How do client briefs reach me?"
-msgstr ""
+msgstr "Wie erreichen mich Kundenbriefings?"
 
 #. js-lingui-id: YEWCmQ
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "How do I apply?"
-msgstr ""
+msgstr "Wie bewerbe ich mich?"
 
 #. js-lingui-id: 8Cnrle
 #: src/sections/faq/partner-faq.data.ts
 msgid "How do I become a partner?"
-msgstr ""
+msgstr "Wie werde ich Partner?"
 
 #. js-lingui-id: eNrG1o
 #: src/sections/faq/partner-faq.data.ts
 msgid "How does matching work?"
-msgstr ""
+msgstr "Wie funktioniert die Vermittlung?"
 
 #. js-lingui-id: +MLOVo
 #: src/case-studies/case-study-stories.ts
@@ -4463,7 +4463,7 @@ msgstr "Schließen Sie sich den Teams an, die sich entschieden haben, ihr CRM zu
 #. js-lingui-id: DqW4G2
 #: src/platform/routing/static-website-routes.ts
 msgid "Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it."
-msgstr ""
+msgstr "Treten Sie dem Twenty-Partner-Ökosystem bei: Implementieren, migrieren und unterstützen Sie das Open-Source-CRM Nr. 1 und bauen Sie Ihr Geschäft mit den Teams aus, die es entwickeln."
 
 #. js-lingui-id: QbxNys
 #: src/partner-application/data/partner-country-options.ts
@@ -4632,7 +4632,7 @@ msgstr "Mehr über {0} erfahren"
 #. js-lingui-id: s7B7gx
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Learn more about the partner program"
-msgstr ""
+msgstr "Mehr über das Partnerprogramm erfahren"
 
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
@@ -4804,7 +4804,7 @@ msgstr "Anmelden"
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
-msgstr ""
+msgstr "Möchten Sie einen Partner beauftragen?"
 
 #. js-lingui-id: 8xX9yd
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -4990,7 +4990,7 @@ msgstr "Middleware separat lizenziert"
 #. js-lingui-id: u6h8ps
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Migration"
-msgstr ""
+msgstr "Migration"
 
 #. js-lingui-id: so04x6
 #: src/case-studies/case-study-stories.ts
@@ -5110,7 +5110,7 @@ msgstr "Verschieben Sie Widgets per Drag-and-Drop zwischen Tabs auf Datensatzsei
 #. js-lingui-id: iTpW7h
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Move your data out of Salesforce, HubSpot or spreadsheets."
-msgstr ""
+msgstr "Übertragen Sie Ihre Daten aus Salesforce, HubSpot oder Tabellenkalkulationen."
 
 #. js-lingui-id: EwJDrS
 #: src/partner-application/data/partner-country-options.ts
@@ -5347,7 +5347,7 @@ msgstr "Keine Partner entsprechen Ihren Filtern"
 #. js-lingui-id: KoCaEV
 #: src/partners-marketplace/FilterBar.tsx
 msgid "No partners to show right now"
-msgstr ""
+msgstr "Derzeit keine Partner verfügbar"
 
 #. js-lingui-id: nDjC8E
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -5362,7 +5362,7 @@ msgstr "No‑Code"
 #. js-lingui-id: rNCZhO
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "No. Applying and being listed are free. You set your own rates and keep what you bill."
-msgstr ""
+msgstr "Nein. Die Bewerbung und der Eintrag sind kostenlos. Sie legen Ihre eigenen Sätze fest und behalten, was Sie in Rechnung stellen."
 
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
@@ -5501,7 +5501,7 @@ msgstr "Auf Twenty"
 #. js-lingui-id: sRJVQ1
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Onboard your team and design your sales process."
-msgstr ""
+msgstr "Arbeiten Sie Ihr Team ein und gestalten Sie Ihren Vertriebsprozess."
 
 #. js-lingui-id: gukxZ5
 #: src/sections/compare/compare-data.ts
@@ -6052,7 +6052,7 @@ msgstr "Katar 🇶🇦"
 #: src/sections/faq/PartnerFaq.tsx
 #: src/sections/faq/BecomePartnerFaq.tsx
 msgid "Questions"
-msgstr ""
+msgstr "Fragen"
 
 #. js-lingui-id: OialmJ
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6072,7 +6072,7 @@ msgstr "Sätze"
 #. js-lingui-id: F4EefJ
 #: src/sections/faq/partner-faq.data.ts
 msgid "Rates vary by partner and scope. Each partner profile lists their published rates, and you can compare before booking a call."
-msgstr ""
+msgstr "Die Preise variieren je nach Partner und Umfang. Jedes Partnerprofil führt die veröffentlichten Preise auf, und Sie können sie vergleichen, bevor Sie einen Anruf buchen."
 
 #. js-lingui-id: zXRspj
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6721,7 +6721,7 @@ msgstr "Selbsthosting bedeutet Kontrolle"
 #. js-lingui-id: L6yOTN
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Self-hosted operations"
-msgstr ""
+msgstr "Self-Hosted-Betrieb"
 
 #. js-lingui-id: WxVgfh
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6812,7 +6812,7 @@ msgstr "Datensätze an Ihr Unternehmen anpassen"
 #. js-lingui-id: 3PvOYS
 #: src/sections/faq/partner-faq.data.ts
 msgid "Share a short brief on your project, timeline, and budget. We hand-pick certified partners who fit and introduce you within 48 hours."
-msgstr ""
+msgstr "Teilen Sie eine kurze Beschreibung Ihres Projekts, Zeitplans und Budgets. Wir wählen passende zertifizierte Partner sorgfältig aus und stellen Ihnen diese innerhalb von 48 Stunden vor."
 
 #. js-lingui-id: vn7QMM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6927,7 +6927,7 @@ msgstr "Für jetzt überspringen"
 #. js-lingui-id: BXjtWS
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr ""
+msgstr "Überspringen Sie die Suche. Beschreiben Sie Ihr Projekt, und wir verbinden Sie mit einem zertifizierten Twenty-Partner, der dazu passt."
 
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
@@ -7374,7 +7374,7 @@ msgstr ""
 #. js-lingui-id: cgFMCg
 #: src/platform/routing/static-website-routes.ts
 msgid "Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM."
-msgstr ""
+msgstr "Teilen Sie uns mit, was Sie benötigen, und wir vermitteln Ihnen innerhalb von 48 Stunden einen zertifizierten Twenty-Partner, oder durchsuchen Sie das Verzeichnis von Agenturen und Beratern, die das Open-Source-CRM migrieren, anpassen und betreiben."
 
 #. js-lingui-id: kjnQvE
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -7384,7 +7384,7 @@ msgstr "Sagen Sie uns, was Sie brauchen, und wir bringen Sie mit einem zertifizi
 #. js-lingui-id: 7CRTri
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Tell us what you need, we match you in *48 hours*"
-msgstr ""
+msgstr "Sagen Sie uns, was Sie benötigen, und wir vermitteln Sie in *48 Stunden*"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx
@@ -7796,7 +7796,7 @@ msgstr "Verfolgen Sie Beziehungen, managen Sie Pipelines und handeln Sie schnell
 #. js-lingui-id: OYcL1T
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Training & RevOps"
-msgstr ""
+msgstr "Schulung & RevOps"
 
 #. js-lingui-id: MtCqjl
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -8390,7 +8390,7 @@ msgstr "W3villa nutzte Twenty als produktionsreifes Framework für das Datenmode
 #. js-lingui-id: +uJeMJ
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Want to *offer* Twenty services?"
-msgstr ""
+msgstr "Möchten Sie Twenty-Dienstleistungen *anbieten*?"
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8400,7 +8400,7 @@ msgstr "Wir freuen uns, das Cloud-Abonnement für alle wieder zu öffnen. Kein W
 #. js-lingui-id: CtEyix
 #: src/sections/partner-signoff/PartnerSignoff.tsx
 msgid "We certify real builders only. Every application is reviewed against a shipped Twenty project — send yours with proof."
-msgstr ""
+msgstr "Wir zertifizieren nur echte Entwickler. Jede Bewerbung wird anhand eines ausgelieferten Twenty-Projekts geprüft — senden Sie uns Ihres mit Nachweis."
 
 #. js-lingui-id: 8CHatv
 #: src/partner-application/partner-application-copy.ts
@@ -8435,7 +8435,7 @@ msgstr "Wir haben unsere Such-Performance deutlich verbessert, sodass sich die S
 #. js-lingui-id: d4cXeX
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "We review your delivered projects, technical depth, and customer feedback before you join the directory. Certified partners carry the badge on their profile."
-msgstr ""
+msgstr "Wir prüfen Ihre ausgelieferten Projekte, technische Tiefe und Kundenfeedback, bevor Sie in das Verzeichnis aufgenommen werden. Zertifizierte Partner tragen das Abzeichen in ihrem Profil."
 
 #. js-lingui-id: l7iJRt
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8496,7 +8496,7 @@ msgstr "Website oder GitHub *"
 #. js-lingui-id: KINqeH
 #: src/sections/partner-lead/PartnerServicesExplainer.tsx
 msgid "What a Twenty partner does"
-msgstr ""
+msgstr "Was ein Twenty-Partner macht"
 
 #. js-lingui-id: Lx0cVD
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -8507,7 +8507,7 @@ msgstr "Was ein Admin ohne Code schreiben erledigen kann."
 #. js-lingui-id: va07TZ
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What are the requirements?"
-msgstr ""
+msgstr "Was sind die Voraussetzungen?"
 
 #. js-lingui-id: Z34FQq
 #: src/case-studies/case-study-stories.ts
@@ -8522,12 +8522,12 @@ msgstr "Was dort extra kostet"
 #. js-lingui-id: iGY4LD
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What do I get as a partner?"
-msgstr ""
+msgstr "Was erhalte ich als Partner?"
 
 #. js-lingui-id: VkIKlY
 #: src/sections/faq/partner-faq.data.ts
 msgid "What do partners charge?"
-msgstr ""
+msgstr "Was berechnen Partner?"
 
 #. js-lingui-id: SMBgOd
 #: src/client-brief/client-brief-copy.ts
@@ -8582,7 +8582,7 @@ msgstr ""
 #. js-lingui-id: MIVJ8U
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What does certification involve?"
-msgstr ""
+msgstr "Was umfasst die Zertifizierung?"
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
@@ -8827,7 +8827,7 @@ msgstr "Workflows, die tatsächlich genutzt werden"
 #. js-lingui-id: k7EuGf
 #: src/sections/faq/PartnerFaq.tsx
 msgid "Working with *a Twenty partner*"
-msgstr ""
+msgstr "Mit *einem Twenty-Partner* arbeiten"
 
 #. js-lingui-id: pmUArF
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -8923,12 +8923,12 @@ msgstr "Ja. Importieren Sie Ihre Daten per CSV oder nutzen Sie unsere API für m
 #. js-lingui-id: xsbHte
 #: src/sections/faq/partner-faq.data.ts
 msgid "Yes. Migration partners move your data out of Salesforce, HubSpot, or spreadsheets, and can own the full cutover for you."
-msgstr ""
+msgstr "Ja. Migrationspartner übertragen Ihre Daten aus Salesforce, HubSpot oder Tabellenkalkulationen und können die vollständige Umstellung für Sie übernehmen."
 
 #. js-lingui-id: DaIKN4
 #: src/sections/faq/partner-faq.data.ts
 msgid "Yes. Some partners specialise in deploying, upgrading, and operating self-hosted Twenty instances on your own infrastructure."
-msgstr ""
+msgstr "Ja. Einige Partner sind auf die Bereitstellung, Aktualisierung und den Betrieb selbst gehosteter Twenty-Instanzen auf Ihrer eigenen Infrastruktur spezialisiert."
 
 #. js-lingui-id: 8m0eN9
 #: src/sections/faq/faq.data.ts
