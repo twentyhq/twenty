@@ -10429,11 +10429,6 @@ msgstr "Această permisiune pe obiect este deja setată pentru rol"
 msgid "This operation is not allowed."
 msgstr "Această operațiune nu este permisă."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr ""
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."

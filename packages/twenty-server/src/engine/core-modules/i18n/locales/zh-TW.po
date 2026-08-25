@@ -10429,11 +10429,6 @@ msgstr "此物件權限已為該角色設定"
 msgid "This operation is not allowed."
 msgstr "不允許此操作。"
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "不允許此操作。請嘗試不同的方法或聯繫支持以獲得幫助。"
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."

@@ -10429,11 +10429,6 @@ msgstr "Esta permissão do objeto já está definida para o papel"
 msgid "This operation is not allowed."
 msgstr "Esta operação não é permitida."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Esta operação não é permitida. Por favor, tente uma abordagem diferente ou entre em contato com o suporte se precisar de ajuda."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."

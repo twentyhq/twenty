@@ -10429,11 +10429,6 @@ msgstr "Quyền của đối tượng này đã được thiết lập cho vai t
 msgid "This operation is not allowed."
 msgstr "Thao tác này không được phép."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Hành động này không được phép. Vui lòng thử các cách khác hoặc liên hệ hỗ trợ nếu bạn cần trợ giúp."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."

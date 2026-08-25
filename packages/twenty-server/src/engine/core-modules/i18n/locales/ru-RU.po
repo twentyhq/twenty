@@ -10429,11 +10429,6 @@ msgstr "Это разрешение объекта уже установлено
 msgid "This operation is not allowed."
 msgstr "Эта операция не разрешена."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Эта операция не допускается. Пожалуйста, попробуйте другой подход или обратитесь в службу поддержки, если вам нужна помощь."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
