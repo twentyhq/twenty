@@ -503,7 +503,6 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconFileText',
       isNullable: true,
-      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

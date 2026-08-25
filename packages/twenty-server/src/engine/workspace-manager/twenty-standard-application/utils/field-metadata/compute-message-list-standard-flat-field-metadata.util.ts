@@ -214,6 +214,7 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       fieldName: 'name',
+      isUIEditable: false,
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
         msg({ message: `Name`, context: 'fieldMetadata.label' }),
@@ -236,6 +237,7 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'members',
+      isUIEditable: false,
       label: i18nLabel(
         msg({ message: `Members`, context: 'fieldMetadata.label' }),
       ),
@@ -297,6 +299,7 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      isUIEditable: false,
       isSystemSideEffect: true,
       label: i18nLabel(
         msg({ message: `Events`, context: 'fieldMetadata.label' }),

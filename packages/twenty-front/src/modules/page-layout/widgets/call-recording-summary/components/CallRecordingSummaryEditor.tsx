@@ -1,5 +1,4 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useIsCallRecordingSummaryEditable } from '@/page-layout/widgets/call-recording-summary/hooks/useIsCallRecordingSummaryEditable';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { StyledCallRecordingSummaryContainer } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryContainer';
@@ -25,10 +24,6 @@ export const CallRecordingSummaryEditor = ({
     callRecordingId,
   );
 
-  const isSummaryEditable = useIsCallRecordingSummaryEditable({
-    callRecordingId,
-  });
-
   if (!isDefined(recordStore)) {
     return <WidgetSkeletonLoader />;
   }
@@ -40,7 +35,6 @@ export const CallRecordingSummaryEditor = ({
           recordId={callRecordingId}
           objectNameSingular={CoreObjectNameSingular.CallRecording}
           fieldName="summary"
-          isEditable={isSummaryEditable}
         />
       </Suspense>
     </StyledCallRecordingSummaryContainer>

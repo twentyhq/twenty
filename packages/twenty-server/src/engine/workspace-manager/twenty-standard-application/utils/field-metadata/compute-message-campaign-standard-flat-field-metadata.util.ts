@@ -214,6 +214,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
       ...base,
       context: {
         fieldName: 'name',
+        isUIEditable: false,
         type: FieldMetadataType.TEXT,
         label: i18nLabel(
           msg({ message: `Name`, context: 'fieldMetadata.label' }),
@@ -514,6 +515,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         type: FieldMetadataType.RELATION,
         morphId: null,
         fieldName: 'timelineActivities',
+        isUIEditable: false,
         isSystemSideEffect: true,
         label: i18nLabel(
           msg({ message: `Events`, context: 'fieldMetadata.label' }),

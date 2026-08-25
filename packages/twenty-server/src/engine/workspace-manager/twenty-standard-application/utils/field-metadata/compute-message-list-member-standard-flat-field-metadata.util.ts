@@ -218,6 +218,7 @@ export const buildMessageListMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'list',
+      isUIEditable: false,
       label: i18nLabel(
         msg({ message: `List`, context: 'fieldMetadata.label' }),
       ),
@@ -249,6 +250,7 @@ export const buildMessageListMemberStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'person',
+      isUIEditable: false,
       label: i18nLabel(
         msg({ message: `Person`, context: 'fieldMetadata.label' }),
       ),

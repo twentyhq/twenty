@@ -36,9 +36,6 @@ type RichTextFieldEditorProps = {
   recordId: string;
   objectNameSingular: string;
   fieldName: string;
-  // Surfaces that own editability themselves, the way the dashboard editor
-  // does; without it the generic record field rules decide.
-  isEditable?: boolean;
   onPersistBody?: (blocknote: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -51,7 +48,6 @@ export const RichTextFieldEditor = ({
   recordId,
   objectNameSingular,
   fieldName,
-  isEditable,
   onPersistBody,
   onFocus: onFocusOverride,
   onBlur: onBlurOverride,
@@ -72,15 +68,11 @@ export const RichTextFieldEditor = ({
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const isRecordFieldReadOnlyByMetadata = useIsRecordFieldReadOnly({
+  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     recordId,
     objectMetadataId: objectMetadataItem.id,
     fieldMetadataId: fieldMetadataItem?.id ?? '',
   });
-
-  const isRecordFieldReadOnly = isDefined(isEditable)
-    ? !isEditable
-    : isRecordFieldReadOnlyByMetadata;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

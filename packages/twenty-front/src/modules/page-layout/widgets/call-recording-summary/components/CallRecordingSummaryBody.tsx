@@ -4,7 +4,8 @@ import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calen
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
 import { StyledCallRecordingSummaryContainer } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryContainer';
 import { CallRecordingSummaryEditor } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryEditor';
-import { useIsCallRecordingSummaryEditable } from '@/page-layout/widgets/call-recording-summary/hooks/useIsCallRecordingSummaryEditable';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { isCallRecordingSummaryFailed } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryFailed';
 import { isCallRecordingSummaryPending } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryPending';
@@ -14,6 +15,7 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 // The markdown renderer spaces blocks for chat bubbles, so its first block and
@@ -42,8 +44,19 @@ export const CallRecordingSummaryBody = ({
 }: CallRecordingSummaryBodyProps) => {
   const widget = useCurrentWidget();
 
-  const isSummaryEditable = useIsCallRecordingSummaryEditable({
-    callRecordingId: callRecording?.id ?? '',
+  const { objectMetadataItem: callRecordingObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.CallRecording,
+    });
+
+  const summaryFieldMetadataItem = callRecordingObjectMetadataItem.fields.find(
+    (fieldMetadataItem) => fieldMetadataItem.name === 'summary',
+  );
+
+  const isSummaryReadOnly = useIsRecordFieldReadOnly({
+    recordId: callRecording?.id ?? '',
+    objectMetadataId: callRecordingObjectMetadataItem.id,
+    fieldMetadataId: summaryFieldMetadataItem?.id ?? '',
   });
 
   if (isDefined(restriction)) {
@@ -71,7 +84,7 @@ export const CallRecordingSummaryBody = ({
   const summaryMarkdown = getCallRecordingSummaryMarkdown(callRecording);
 
   const renderSummary = () => {
-    if (isSummaryEditable) {
+    if (!isSummaryReadOnly) {
       return <CallRecordingSummaryEditor callRecordingId={callRecording.id} />;
     }
 
