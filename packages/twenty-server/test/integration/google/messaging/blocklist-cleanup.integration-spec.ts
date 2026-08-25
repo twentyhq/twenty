@@ -177,7 +177,7 @@ describe('Blocklist cleanup (integration)', () => {
     inbox.push(resyncBlockedMessage, resyncKeptMessage);
     gmail.serveMessageList([resyncBlockedMessage, resyncKeptMessage]);
 
-    await resetMessageChannelSyncState(channel.channelId);
+    await resetMessageChannelSyncState(channel.channelId, '');
     await runMessageChannelSync(channel.channelId);
     await waitForAllJobsToFinish();
 
