@@ -1,11 +1,11 @@
 import { BlocklistScope } from 'twenty-shared/types';
 
-import { partitionBlocklistHandlesByScope } from 'src/modules/blocklist/utils/partition-blocklist-handles-by-scope.util';
+import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
 
-describe('partitionBlocklistHandlesByScope', () => {
+describe('groupBlocklistHandlesByOwner', () => {
   it('groups member-scoped handles under their workspace member', () => {
     const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-      partitionBlocklistHandlesByScope([
+      groupBlocklistHandlesByOwner([
         {
           handle: 'first@twenty.com',
           scope: BlocklistScope.WORKSPACE_MEMBER,
@@ -35,7 +35,7 @@ describe('partitionBlocklistHandlesByScope', () => {
 
   it('collects workspace-scoped handles separately from member-scoped ones', () => {
     const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-      partitionBlocklistHandlesByScope([
+      groupBlocklistHandlesByOwner([
         {
           handle: '@competitor.com',
           scope: BlocklistScope.WORKSPACE,
@@ -56,7 +56,7 @@ describe('partitionBlocklistHandlesByScope', () => {
 
   it('drops a member-scoped handle whose workspace member was removed instead of applying it workspace-wide', () => {
     const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-      partitionBlocklistHandlesByScope([
+      groupBlocklistHandlesByOwner([
         {
           handle: 'orphan@twenty.com',
           scope: BlocklistScope.WORKSPACE_MEMBER,
@@ -70,7 +70,7 @@ describe('partitionBlocklistHandlesByScope', () => {
 
   it('drops entries without a handle', () => {
     const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-      partitionBlocklistHandlesByScope([
+      groupBlocklistHandlesByOwner([
         {
           handle: null,
           scope: BlocklistScope.WORKSPACE,

@@ -15,7 +15,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { partitionBlocklistHandlesByScope } from 'src/modules/blocklist/utils/partition-blocklist-handles-by-scope.util';
+import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -46,7 +46,7 @@ export class BlocklistReimportCalendarEventsJob {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-          partitionBlocklistHandlesByScope(
+          groupBlocklistHandlesByOwner(
             data.events.map((eventPayload) => eventPayload.properties.before),
           );
 
@@ -61,10 +61,12 @@ export class BlocklistReimportCalendarEventsJob {
         }
 
         for (const workspaceMemberId of handlesByWorkspaceMemberId.keys()) {
-          const userWorkspaceId = await this.findUserWorkspaceId({
-            workspaceMemberId,
-            workspaceId,
-          });
+          const userWorkspaceId = await this.findWorkspaceMemberUserWorkspaceId(
+            {
+              workspaceMemberId,
+              workspaceId,
+            },
+          );
 
           if (!isDefined(userWorkspaceId)) {
             continue;
@@ -91,7 +93,7 @@ export class BlocklistReimportCalendarEventsJob {
     );
   }
 
-  private async findUserWorkspaceId({
+  private async findWorkspaceMemberUserWorkspaceId({
     workspaceMemberId,
     workspaceId,
   }: {

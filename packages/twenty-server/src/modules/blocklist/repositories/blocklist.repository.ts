@@ -36,7 +36,7 @@ export class BlocklistRepository {
     }, authContext);
   }
 
-  public async getByWorkspaceMemberId({
+  public async getMemberScopedEntries({
     workspaceMemberId,
     workspaceId,
   }: {
@@ -52,7 +52,7 @@ export class BlocklistRepository {
     });
   }
 
-  public async getWorkspaceScoped(
+  public async getWorkspaceScopedEntries(
     workspaceId: string,
   ): Promise<BlocklistWorkspaceEntity[]> {
     return this.find({
@@ -61,7 +61,7 @@ export class BlocklistRepository {
     });
   }
 
-  public async getApplicableToWorkspaceMember({
+  public async getEntriesApplicableToWorkspaceMember({
     workspaceMemberId,
     workspaceId,
   }: {
@@ -69,7 +69,7 @@ export class BlocklistRepository {
     workspaceId: string;
   }): Promise<BlocklistWorkspaceEntity[]> {
     if (!isDefined(workspaceMemberId)) {
-      return this.getWorkspaceScoped(workspaceId);
+      return this.getWorkspaceScopedEntries(workspaceId);
     }
 
     return this.find({

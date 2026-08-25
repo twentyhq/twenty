@@ -15,7 +15,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { partitionBlocklistHandlesByScope } from 'src/modules/blocklist/utils/partition-blocklist-handles-by-scope.util';
+import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
 import { BLOCKLISTED_PARTICIPANT_ROLES } from 'src/modules/messaging/blocklist-manager/constants/blocklisted-participant-roles.constant';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -66,7 +66,7 @@ export class BlocklistItemDeleteMessagesJob {
         });
 
         const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-          partitionBlocklistHandlesByScope(blocklist);
+          groupBlocklistHandlesByOwner(blocklist);
 
         if (workspaceScopedHandles.length > 0) {
           await this.deleteMessagesForMessageChannels({

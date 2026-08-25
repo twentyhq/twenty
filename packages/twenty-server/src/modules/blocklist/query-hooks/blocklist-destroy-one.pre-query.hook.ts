@@ -17,7 +17,7 @@ export class BlocklistDestroyOnePreQueryHook implements WorkspacePreQueryHookIns
     _objectName: string,
     payload: DestroyOneResolverArgs,
   ): Promise<DestroyOneResolverArgs> {
-    await this.blocklistValidationService.validateBlocklistAccessToRecord({
+    await this.blocklistValidationService.validateBlocklistRecordIsManageable({
       id: payload.id,
       context: buildBlocklistMutationContextOrThrow(authContext),
     });

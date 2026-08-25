@@ -3,17 +3,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 
-type PartitionedBlocklistHandles = {
+type BlocklistHandlesByOwner = {
   workspaceScopedHandles: string[];
   handlesByWorkspaceMemberId: Map<string, string[]>;
 };
 
-export const partitionBlocklistHandlesByScope = (
+export const groupBlocklistHandlesByOwner = (
   blocklist: Pick<
     BlocklistWorkspaceEntity,
     'handle' | 'scope' | 'workspaceMemberId'
   >[],
-): PartitionedBlocklistHandles => {
+): BlocklistHandlesByOwner => {
   const workspaceScopedHandles: string[] = [];
   const handlesByWorkspaceMemberId = new Map<string, string[]>();
 

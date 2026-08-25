@@ -69,7 +69,7 @@ export class BlocklistValidationService {
     payload: CreateManyResolverArgs<Partial<BlocklistItem>>;
     context: BlocklistMutationContext;
   }): Promise<void> {
-    this.validateSchema(payload.data);
+    this.validateHandleFormat(payload.data);
 
     const entries: BlocklistCreateEntry[] = [];
 
@@ -85,7 +85,7 @@ export class BlocklistValidationService {
         await this.assertCanManageExistingRecord({ existingRecord, context });
         this.assertScopeAndOwnerAreUnchanged({ data: item, existingRecord });
       } else {
-        await this.assertCanCreate({ item, context });
+        await this.assertCallerCanCreateEntry({ item, context });
       }
 
       entries.push({ item, existingRecord });
@@ -116,13 +116,13 @@ export class BlocklistValidationService {
       return;
     }
 
-    this.validateSchema([payload.data]);
+    this.validateHandleFormat([payload.data]);
 
     if (payload.data.handle === existingRecord.handle) {
       return;
     }
 
-    const siblingHandles = await this.getHandlesInScope({
+    const siblingHandles = await this.getExistingHandlesForOwner({
       scope: existingRecord.scope,
       workspaceMemberId: resolveUniquenessOwner({ existingRecord, context }),
       context,
@@ -136,7 +136,7 @@ export class BlocklistValidationService {
     });
   }
 
-  public async validateBlocklistAccessToRecord({
+  public async validateBlocklistRecordIsManageable({
     id,
     context,
   }: {
@@ -163,7 +163,7 @@ export class BlocklistValidationService {
       return;
     }
 
-    const liveHandles = await this.getHandlesInScope({
+    const liveHandles = await this.getExistingHandlesForOwner({
       scope: existingRecord.scope,
       workspaceMemberId: resolveUniquenessOwner({ existingRecord, context }),
       context,
@@ -175,7 +175,7 @@ export class BlocklistValidationService {
     });
   }
 
-  private validateSchema(blocklist: Partial<BlocklistItem>[]): void {
+  private validateHandleFormat(blocklist: Partial<BlocklistItem>[]): void {
     for (const { handle } of blocklist) {
       if (!isDefined(handle)) {
         throw new CommonQueryRunnerException(
@@ -197,7 +197,7 @@ export class BlocklistValidationService {
     }
   }
 
-  private async assertCanCreate({
+  private async assertCallerCanCreateEntry({
     item,
     context,
   }: {
@@ -363,7 +363,7 @@ export class BlocklistValidationService {
         );
       }
 
-      const existingHandles = await this.getHandlesInScope({
+      const existingHandles = await this.getExistingHandlesForOwner({
         scope,
         workspaceMemberId,
         context,
@@ -378,7 +378,7 @@ export class BlocklistValidationService {
     }
   }
 
-  private async getHandlesInScope({
+  private async getExistingHandlesForOwner({
     scope,
     workspaceMemberId,
     context,
@@ -389,7 +389,9 @@ export class BlocklistValidationService {
   }): Promise<string[]> {
     if (scope === BlocklistScope.WORKSPACE) {
       const workspaceBlocklist =
-        await this.blocklistRepository.getWorkspaceScoped(context.workspaceId);
+        await this.blocklistRepository.getWorkspaceScopedEntries(
+          context.workspaceId,
+        );
 
       return workspaceBlocklist
         .map((blocklistItem) => blocklistItem.handle)
@@ -397,7 +399,7 @@ export class BlocklistValidationService {
     }
 
     const memberBlocklist =
-      await this.blocklistRepository.getByWorkspaceMemberId({
+      await this.blocklistRepository.getMemberScopedEntries({
         workspaceMemberId,
         workspaceId: context.workspaceId,
       });

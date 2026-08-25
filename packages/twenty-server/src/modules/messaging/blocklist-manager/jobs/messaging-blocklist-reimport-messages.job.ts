@@ -16,7 +16,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { partitionBlocklistHandlesByScope } from 'src/modules/blocklist/utils/partition-blocklist-handles-by-scope.util';
+import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -49,7 +49,7 @@ export class BlocklistReimportMessagesJob {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
-          partitionBlocklistHandlesByScope(
+          groupBlocklistHandlesByOwner(
             data.events.map((eventPayload) => eventPayload.properties.before),
           );
 
@@ -64,10 +64,11 @@ export class BlocklistReimportMessagesJob {
         }
 
         for (const workspaceMemberId of handlesByWorkspaceMemberId.keys()) {
-          const connectedAccountIds = await this.findConnectedAccountIds({
-            workspaceMemberId,
-            workspaceId,
-          });
+          const connectedAccountIds =
+            await this.findWorkspaceMemberConnectedAccountIds({
+              workspaceMemberId,
+              workspaceId,
+            });
 
           if (connectedAccountIds.length === 0) {
             continue;
@@ -94,7 +95,7 @@ export class BlocklistReimportMessagesJob {
     );
   }
 
-  private async findConnectedAccountIds({
+  private async findWorkspaceMemberConnectedAccountIds({
     workspaceMemberId,
     workspaceId,
   }: {
