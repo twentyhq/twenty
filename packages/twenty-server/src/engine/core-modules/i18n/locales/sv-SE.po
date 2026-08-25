@@ -293,7 +293,6 @@ msgstr "Ett obligatoriskt fält saknas."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Ett obligatoriskt fält saknas. Ange alla obligatoriska värden och försök igen."
 
@@ -10185,11 +10184,6 @@ msgstr "Det finns inget föregående onboardingsteg att gå tillbaka till."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Dessa fält kan inte uppdateras förrän arbetsytan har aktiverats: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10455,7 +10449,6 @@ msgstr "Denna åtgärd stöds inte."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Denna åtgärd refererar till en post som inte finns eller inte kan ändras på grund av befintliga relationer."
 
@@ -10487,7 +10480,6 @@ msgstr "Den här posten finns redan. Vänligen kontrollera dina uppgifter och f�
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Denna post kan inte tas bort eftersom den fortfarande refereras av andra poster."
 
@@ -12447,7 +12439,6 @@ msgstr "Du kan bara uppdatera fältet filer för en post i taget."
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

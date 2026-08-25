@@ -1,6 +1,6 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
-import { FindOperator } from 'typeorm';
+import { FindOperator, type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -557,7 +557,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return [compiled.text, compiled.values];
   }
 
-  private materializeEntities<T extends Record<string, unknown>>(
+  private materializeEntities<T extends ObjectLiteral>(
     rows: Record<string, unknown>[],
   ): T[] {
     const columnNameByResultAlias = this.buildColumnNameByResultAlias();
@@ -565,7 +565,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return rows.map((row) => mapRowToEntity<T>(row, columnNameByResultAlias));
   }
 
-  async getMany<T extends Record<string, unknown>>(options?: {
+  async getMany<T extends ObjectLiteral>(options?: {
     noFormatting?: boolean;
   }): Promise<T[]> {
     const entities = this.materializeEntities<T>(await this.executeSelect());
@@ -589,7 +589,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     };
   }
 
-  async getOne<T extends Record<string, unknown>>(options?: {
+  async getOne<T extends ObjectLiteral>(options?: {
     noFormatting?: boolean;
   }): Promise<T | null> {
     const previousLimit = this.limitValue;

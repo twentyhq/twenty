@@ -92,8 +92,6 @@ export class ConfigureStandardTimelineRenderersCommand extends ProvisionedWorksp
          AND timeline_activity_type."applicationId" = $2
          AND timeline_activity_type."universalIdentifier" = renderer."universalIdentifier"`,
       [workspaceId, twentyStandardFlatApplication.id, ...parameters],
-      undefined,
-      { shouldBypassPermissionChecks: true },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

@@ -61,7 +61,9 @@ export const createListWorkflowsTool = (
             .take(parameters.limit)
             .skip(parameters.offset);
 
-          const [workflows, totalCount] = await queryBuilder.getManyAndCount();
+          const workflows =
+            await queryBuilder.getMany<WorkflowWorkspaceEntity>();
+          const totalCount = await queryBuilder.getCount();
 
           return {
             success: true,

@@ -112,6 +112,7 @@ export const createStandardObjectFlatMetadata = <
     fieldIds: [],
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     viewIds: [],
@@ -128,6 +129,7 @@ export const createStandardObjectFlatMetadata = <
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
     pageLayoutUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
   };

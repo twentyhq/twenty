@@ -7,6 +7,8 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 // Full rebuild of the core workflow rows for a workspace once
@@ -24,6 +26,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -44,12 +47,20 @@ export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceComman
     let workspaceWorkflows: WorkflowWorkspaceEntity[];
 
     try {
-      const workflowRepository =
-        dataSource.getRepository<WorkflowWorkspaceEntity>('workflow', {
-          shouldBypassPermissionChecks: true,
-        });
+      workspaceWorkflows =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workflowRepository =
+              await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+                workspaceId,
+                'workflow',
+                { shouldBypassPermissionChecks: true },
+              );
 
-      workspaceWorkflows = await workflowRepository.find();
+            return workflowRepository.find();
+          },
+          buildSystemAuthContext(workspaceId),
+        );
     } catch (error) {
       if (isWorkspaceObjectNotFoundError(error)) {
         this.logger.log(

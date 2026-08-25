@@ -21,7 +21,7 @@ import {
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowCommonException,
@@ -405,7 +405,7 @@ export class WorkflowCommonWorkspaceService {
     workspaceId,
     operation,
   }: {
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
     workspaceId: string;
     workflowId: string;
     operation: 'restore' | 'delete' | 'destroy';
@@ -497,7 +497,7 @@ export class WorkflowCommonWorkspaceService {
     workspaceId,
     operation,
   }: {
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
     workflowId: string;
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';

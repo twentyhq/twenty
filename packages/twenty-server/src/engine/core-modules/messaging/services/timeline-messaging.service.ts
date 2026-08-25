@@ -153,7 +153,7 @@ export class TimelineMessagingService {
           })
           .orderBy('message.messageThreadId')
           .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
-          .getMany();
+          .getMany<MessageParticipantWorkspaceEntity>();
 
         const orderedThreadParticipants = threadParticipants.sort(
           (a, b) =>

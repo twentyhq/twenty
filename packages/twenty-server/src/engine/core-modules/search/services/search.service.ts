@@ -52,7 +52,7 @@ import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -217,7 +217,7 @@ export class SearchService {
     filter,
     after,
   }: {
-    entityManager: WorkspaceRepository<Entity>;
+    entityManager: WorkspaceRepositoryV2<Entity>;
     rolePermissionConfig?: RolePermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -270,7 +270,7 @@ export class SearchService {
     filter,
     after,
   }: {
-    entityManager: WorkspaceRepository<Entity>;
+    entityManager: WorkspaceRepositoryV2<Entity>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchTerms: string;
@@ -373,7 +373,7 @@ export class SearchService {
       .setParameter('searchTerms', searchTerms)
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit + 1) // We take one more to check if hasNextPage is true
-      .getRawMany();
+      .getRawMany<ObjectRecord & { tsRank: number; tsRankCD: number }>();
   }
 
   private async buildIlikeFallbackQuery<Entity extends ObjectLiteral>({
@@ -385,7 +385,7 @@ export class SearchService {
     limit,
     filter,
   }: {
-    entityManager: WorkspaceRepository<Entity>;
+    entityManager: WorkspaceRepositoryV2<Entity>;
     rolePermissionConfig?: RolePermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -475,7 +475,7 @@ export class SearchService {
           const rawResults = await queryBuilder
             .orderBy(`"${flatObjectMetadata.nameSingular}"."id"`, 'ASC')
             .take(limit)
-            .getRawMany();
+            .getRawMany<ObjectRecord>();
 
           return rawResults.map((record) => ({
             ...record,

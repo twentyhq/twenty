@@ -14,7 +14,7 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -276,7 +276,7 @@ export class WorkflowVersionCoreSyncService {
   async writeWorkflowVersionAndMirror(
     workspaceId: string,
     write: (
-      workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+      workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>,
       transactionScope: WorkspaceTransactionScope,
     ) => Promise<string>,
   ): Promise<void> {

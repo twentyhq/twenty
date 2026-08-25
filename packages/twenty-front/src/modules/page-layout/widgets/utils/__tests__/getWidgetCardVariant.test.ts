@@ -5,7 +5,6 @@ describe('getWidgetCardVariant', () => {
   describe('page layout variants', () => {
     it.each([
       ['DASHBOARD', PageLayoutType.DASHBOARD],
-      ['RECORD_PAGE', PageLayoutType.RECORD_PAGE],
       ['STANDALONE_PAGE', PageLayoutType.STANDALONE_PAGE],
     ])("returns 'framed' for %s", (_label, pageLayoutType) => {
       expect(
@@ -17,6 +16,7 @@ describe('getWidgetCardVariant', () => {
     });
 
     it.each([
+      ['RECORD_PAGE', PageLayoutType.RECORD_PAGE],
       ['RECORD_INDEX', PageLayoutType.RECORD_INDEX],
       ['no page layout type', null],
     ])("returns 'flush' for %s", (_label, pageLayoutType) => {

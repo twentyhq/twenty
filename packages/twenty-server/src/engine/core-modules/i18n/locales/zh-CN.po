@@ -293,7 +293,6 @@ msgstr "缺少必填字段。"
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "缺少必填字段。请提供所有必填值，然后重试。"
 
@@ -10179,11 +10178,6 @@ msgstr "没有可返回的上一个入门步骤。"
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "在工作区激活之前，以下字段无法更新：{fieldsList}。"
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "此{fieldLabel}的值已被占用。请检查您的数据并重试。"
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10443,6 @@ msgstr "不支持此操作。"
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "此操作引用了不存在的记录，或由于现有关联关系而无法修改该记录。"
 
@@ -10481,7 +10474,6 @@ msgstr "该记录已存在。请检查您的数据并重试。"
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "无法删除此记录，因为它仍然被其他记录引用。"
 
@@ -12441,7 +12433,6 @@ msgstr "一次只能更新一条包含文件字段的记录。"
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

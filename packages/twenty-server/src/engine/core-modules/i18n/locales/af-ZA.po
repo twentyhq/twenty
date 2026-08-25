@@ -293,7 +293,6 @@ msgstr "’n Vereiste veld ontbreek."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "’n Vereiste veld ontbreek. Verskaf asseblief al die vereiste waardes en probeer weer."
 
@@ -10179,11 +10178,6 @@ msgstr "Daar is geen vorige stap in die inleidingsproses om na terug te gaan nie
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Hierdie velde kan nie bygewerk word voordat die werksruimte geaktiveer is nie: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10443,6 @@ msgstr "Hierdie bewerking word nie ondersteun nie."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Hierdie bewerking verwys na ’n rekord wat nie bestaan nie of nie gewysig kan word nie weens bestaande verwantskappe."
 
@@ -10481,7 +10474,6 @@ msgstr "Hierdie rekord bestaan reeds. Gaan asseblief jou data na en probeer weer
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Hierdie rekord kan nie geskrap word nie omdat ander rekords nog daarna verwys."
 
@@ -12441,7 +12433,6 @@ msgstr "Jy kan slegs een rekord op 'n slag met die lêersveld opdateer."
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

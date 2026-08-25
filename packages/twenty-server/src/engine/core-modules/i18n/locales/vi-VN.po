@@ -293,7 +293,6 @@ msgstr "Thiếu trường bắt buộc."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Thiếu trường bắt buộc. Vui lòng cung cấp tất cả giá trị bắt buộc và thử lại."
 
@@ -10179,11 +10178,6 @@ msgstr "Không có bước thiết lập ban đầu trước đó để quay l�
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Các trường này không thể được cập nhật trước khi workspace được kích hoạt: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10443,6 @@ msgstr "Thao tác này không được hỗ trợ."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Thao tác này tham chiếu đến một bản ghi không tồn tại hoặc không thể sửa đổi do các mối quan hệ hiện có."
 
@@ -10481,7 +10474,6 @@ msgstr "Bản ghi này đã tồn tại. Vui lòng kiểm tra dữ liệu của 
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Không thể xóa bản ghi này vì nó vẫn đang được tham chiếu bởi các bản ghi khác."
 
@@ -12441,7 +12433,6 @@ msgstr "Bạn chỉ có thể cập nhật một bản ghi có trường tệp t
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
