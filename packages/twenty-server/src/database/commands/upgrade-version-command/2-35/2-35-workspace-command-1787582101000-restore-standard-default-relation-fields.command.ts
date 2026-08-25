@@ -17,6 +17,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -27,6 +28,21 @@ const DEFAULT_RELATION_TARGET_MORPH_IDS = new Set<string>(
         .morphId,
   ),
 );
+
+const computeQualifiedFieldName = ({
+  flatFieldMetadata,
+  standardFlatObjectMetadataMaps,
+}: {
+  flatFieldMetadata: FlatFieldMetadata;
+  standardFlatObjectMetadataMaps: TwentyStandardAllFlatEntityMaps['flatObjectMetadataMaps'];
+}) => {
+  const hostObjectNameSingular =
+    standardFlatObjectMetadataMaps.byUniversalIdentifier[
+      flatFieldMetadata.objectMetadataUniversalIdentifier
+    ]?.nameSingular ?? flatFieldMetadata.objectMetadataUniversalIdentifier;
+
+  return `${hostObjectNameSingular}.${flatFieldMetadata.name}`;
+};
 
 @RegisteredWorkspaceCommand('2.35.0', 1787582101000)
 @Command({
@@ -102,15 +118,6 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
           ),
       );
 
-    const computeQualifiedFieldName = (flatFieldMetadata: FlatFieldMetadata) => {
-      const hostObjectNameSingular =
-        standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          flatFieldMetadata.objectMetadataUniversalIdentifier
-        ]?.nameSingular ?? flatFieldMetadata.objectMetadataUniversalIdentifier;
-
-      return `${hostObjectNameSingular}.${flatFieldMetadata.name}`;
-    };
-
     const fieldsToCreate: FlatFieldMetadata[] = [];
     const skippedPairLabels: string[] = [];
 
@@ -170,7 +177,15 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
 
       if (pairHasSurvivingMember || pairIsBlocked) {
         skippedPairLabels.push(
-          standardPairMembers.map(computeQualifiedFieldName).join(' / '),
+          standardPairMembers
+            .map((standardFlatFieldMetadata) =>
+              computeQualifiedFieldName({
+                flatFieldMetadata: standardFlatFieldMetadata,
+                standardFlatObjectMetadataMaps:
+                  standardAllFlatEntityMaps.flatObjectMetadataMaps,
+              }),
+            )
+            .join(' / '),
         );
         continue;
       }
@@ -190,26 +205,35 @@ export class RestoreStandardDefaultRelationFieldsCommand extends ProvisionedWork
       standardAllFlatEntityMaps.flatIndexMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (standardFlatIndexMetadata) =>
-          !isDefined(
-            existingFlatIndexMaps.byUniversalIdentifier[
-              standardFlatIndexMetadata.universalIdentifier
-            ],
-          ) &&
+      .filter((standardFlatIndexMetadata) => {
+        const indexIsMissing = !isDefined(
+          existingFlatIndexMaps.byUniversalIdentifier[
+            standardFlatIndexMetadata.universalIdentifier
+          ],
+        );
+
+        const indexReferencesARestoredField =
           standardFlatIndexMetadata.universalFlatIndexFieldMetadatas.some(
             (universalFlatIndexFieldMetadata) =>
               createdFieldUniversalIdentifiers.has(
                 universalFlatIndexFieldMetadata.fieldMetadataUniversalIdentifier,
               ),
-          ) &&
+          );
+
+        const allIndexFieldsExistOrAreRestored =
           standardFlatIndexMetadata.universalFlatIndexFieldMetadatas.every(
             (universalFlatIndexFieldMetadata) =>
               availableFieldUniversalIdentifiers.has(
                 universalFlatIndexFieldMetadata.fieldMetadataUniversalIdentifier,
               ),
-          ),
-      );
+          );
+
+        return (
+          indexIsMissing &&
+          indexReferencesARestoredField &&
+          allIndexFieldsExistOrAreRestored
+        );
+      });
 
     if (skippedPairLabels.length > 0) {
       this.logger.warn(
