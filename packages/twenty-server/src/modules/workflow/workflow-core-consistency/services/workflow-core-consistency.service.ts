@@ -2,9 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
+import { DataSource, IsNull, Not, Repository } from 'typeorm';
 
+import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -39,10 +40,9 @@ export class WorkflowCoreConsistencyService {
     const workspaces = await this.workspaceRepository.find({
       select: ['id', 'databaseSchema'],
       where: {
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: activationStatusIn(
+          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
+        ),
         databaseSchema: Not(IsNull()),
       },
     });
