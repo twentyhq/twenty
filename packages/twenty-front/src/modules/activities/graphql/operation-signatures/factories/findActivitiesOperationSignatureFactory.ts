@@ -51,13 +51,6 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       __typename: true,
       createdAt: true,
       updatedAt: true,
-      author: {
-        id: true,
-        name: true,
-        __typename: true,
-      },
-      // Deprecated: Use createdBy instead
-      authorId: true,
       createdBy: {
         source: true,
         workspaceMemberId: true,
@@ -69,14 +62,11 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
         name: true,
         __typename: true,
       },
-      comments: true,
       attachments: true,
       ...body,
       title: true,
       status: true,
       dueAt: true,
-      reminderAt: true,
-      type: true,
       ...(isDefined(junctionField) && isDefined(junctionGqlFields)
         ? {
             [junctionField.name]: {
