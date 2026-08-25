@@ -109,17 +109,17 @@ Wired into `CommonFindManyQueryRunnerService`, `CommonFindOneQueryRunnerService`
 `CommonFindDuplicatesQueryRunnerService` and `CommonGroupByQueryRunnerService`. Other
 runners keep `repository`.
 
-Nested relation loading also routes through v2 under the flag:
-`ProcessNestedRelationsOrmV2Helper` loads relations and relation aggregates on v2
+Nested relation loading also routes through v2:
+`ProcessNestedRelationsHelper` loads relations and relation aggregates on v2
 repositories, and composes the per-parent-limit `CROSS JOIN LATERAL` as raw SQL run
-through `repository.executeRaw`. The shared `ProcessNestedRelationsHelper` flag-branches
-to it, so a flagged read now reads root rows and their relations through v2.
+through `repository.executeRaw`, so a read fetches root rows and their relations
+through v2.
 
 group-by "with records" is the one path that is not a transparent swap: it wraps a
 builder subquery in a table-less `FROM (subquery)` JSON_AGG query, which the
 table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the inner
 subquery with the v2 builder and runs the composed outer query through
-`repository.executeRaw`; the runner flag-branches between it and the v1 service.
+`repository.executeRaw`.
 
 ## Writes: delete, destroy, restore and (most) update route through v2
 
@@ -131,7 +131,7 @@ generator. The select builder morphs into it: `.update()` / `.delete()` / `.soft
 the TypeORM surface the mutation runners already call.
 
 `deleteMany`, `destroyMany`, `restoreMany` and `updateMany` (and their `...One` delegates)
-flag-branch to this path through the shared `runFilteredMutation` on the base runner. Each
+route to this path through the shared `runFilteredMutation` on the base runner. Each
 builds the filtered v2 select builder with `buildMutationQueryBuilderV2` (which rewrites a
 relation-traversal filter into an `id IN (subquery)` predicate, RLS inside the subquery)
 and hands it to `WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1
@@ -152,7 +152,7 @@ is synced through the same v1 `FilesFieldSync` the write query builders use: the
 computes the file diff against the before-image, enriches the record, and re-points the
 `File` rows after the statement runs. `FilesFieldSync` only needs the object name and the
 `coreDataSource`, both already on the v2 repository's `internalContext`, so no TypeORM entity
-is built. Nothing on the write path carves back to v1 any more: with the flag on, every
+is built. Nothing on the write path carves back to v1 any more: every
 create / update / upsert / delete / merge runs entirely on v2 regardless of the field types
 it touches.
 
@@ -179,8 +179,8 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
   soft-delete stamps `deletedAt` and `updatedAt`; restore clears `deletedAt` and stamps
   `updatedAt`.
 - Hard delete snapshots its before-image with `getOne`, so a `DESTROYED` event carries at
-  most one record. This matches the v1 delete builder rather than fixing it here; changing
-  it would change flag-off behaviour too and belongs in a separate change to both paths.
+  most one record. This matches what the v1 delete builder used to do rather than fixing it here;
+  changing it belongs in a separate change.
 - A filter that traverses a to-many relation surfaces the same `UNSUPPORTED_OPERATION`
   user-input error the read path already produces (v2 refuses to render a to-many join),
   rather than the row-multiplying join v1 would emit.
@@ -204,7 +204,7 @@ all-columns re-select of the inserted ids — matching the v1 insert builder. Re
 `getRepository` returns repositories bound to that client through a `ClientQueryExecutor`,
 so every statement and event snapshot inside runs on the one connection.
 
-`mergeMany` routes through it with the flag on, always: `executeMergeWithinTransactionV2`
+`mergeMany` always routes through it: `executeMergeWithinTransactionV2`
 re-points the losing records' foreign keys to the survivor across each related object,
 hard-deletes the losers, and updates the survivor with the merged data — each step a
 `runMutation` on a transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/
@@ -230,7 +230,7 @@ read-then-split and conflict-target derivation are unchanged.
 
 ## Coverage
 
-Every write the API layer can reach runs entirely on v2 when the flag is on — create,
+Every write the API layer can reach runs entirely on v2 — create,
 update, upsert, delete, and merge — whatever field types it touches (scalars, composites,
 relation join columns, relation `{connect}` / `{disconnect}`, and files fields). Nothing on
 the write path falls back to v1 on the value of its input.
