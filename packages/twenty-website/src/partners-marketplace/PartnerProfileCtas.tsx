@@ -13,6 +13,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { GetMatchedButton } from '@/client-brief';
 import { Button, ExternalLink } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
@@ -179,9 +180,9 @@ export function PartnerProfileCtas({
           </RailLinks>
         )}
         <PrimaryAction>
-          <Button
-            href={`/partners/brief?partner=${encodeURIComponent(slug)}`}
-            label={i18n._(msg`Submit a brief`)}
+          <GetMatchedButton
+            label={msg`Submit a brief`}
+            partnerSlug={slug}
             variant="outlined"
           />
         </PrimaryAction>
