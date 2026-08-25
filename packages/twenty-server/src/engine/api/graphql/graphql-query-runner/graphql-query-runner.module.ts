@@ -27,9 +27,6 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
     ViewFilterModule,
     ViewFilterGroupModule,
   ],
-  providers: [
-    ProcessNestedRelationsHelper,
-    ProcessAggregateHelper,
-  ],
+  providers: [ProcessNestedRelationsHelper, ProcessAggregateHelper],
 })
 export class GraphqlQueryRunnerModule {}
