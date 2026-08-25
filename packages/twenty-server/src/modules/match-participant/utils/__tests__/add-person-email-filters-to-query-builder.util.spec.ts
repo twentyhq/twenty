@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 type AddPersonEmailFiltersToQueryBuilderTestCase = EachTestingContext<{
   emails: string[];

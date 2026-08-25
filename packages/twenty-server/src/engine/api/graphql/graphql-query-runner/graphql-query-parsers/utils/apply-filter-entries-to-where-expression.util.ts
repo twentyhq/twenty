@@ -1,7 +1,7 @@
 import { Brackets, NotBrackets, type WhereExpressionBuilder } from 'typeorm';
 
 import { type GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 type FilterWalkContext = {
   outerQueryBuilder: WorkspaceSelectQueryBuilderV2;
