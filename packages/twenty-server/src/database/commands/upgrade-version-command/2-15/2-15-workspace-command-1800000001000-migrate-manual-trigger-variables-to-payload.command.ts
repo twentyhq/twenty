@@ -23,7 +23,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly twentyORMGlobalManager: WorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
@@ -57,7 +57,7 @@ export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWo
     }
 
     const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
+      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
 

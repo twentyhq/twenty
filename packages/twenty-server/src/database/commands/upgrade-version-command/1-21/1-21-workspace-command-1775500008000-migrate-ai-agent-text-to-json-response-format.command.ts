@@ -46,7 +46,7 @@ const TEXT_AGENT_DEFAULT_OUTPUT_SCHEMA = {
 export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly twentyORMGlobalManager: WorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -162,7 +162,7 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWo
     agentIds: string[],
   ): Promise<void> {
     const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
+      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
 
