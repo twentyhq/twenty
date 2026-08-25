@@ -1,4 +1,4 @@
-import { type TwentyClientRunAs } from './twenty-client-run-as';
+import { type TwentyClientRunAs } from './twenty-client-run-as.type';
 
 export type TwentyClientOptions = Omit<RequestInit, 'body' | 'headers'> & {
   url?: string;

@@ -6,7 +6,7 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
-import { type TwentyClientRunAs } from '../shared/twenty-client-run-as';
+import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
 export type { TwentyClientRunAs };
 
