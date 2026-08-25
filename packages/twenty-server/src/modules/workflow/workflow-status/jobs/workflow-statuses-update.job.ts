@@ -96,13 +96,13 @@ export class WorkflowStatusesUpdateJob {
     workflowId: string;
   }): Promise<void> {
     const workflowRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+      this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -139,13 +139,13 @@ export class WorkflowStatusesUpdateJob {
     statusUpdate: WorkflowVersionStatusUpdate;
   }): Promise<void> {
     const workflowRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+      this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
         { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );

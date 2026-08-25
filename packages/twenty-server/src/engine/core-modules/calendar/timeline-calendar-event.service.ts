@@ -62,7 +62,7 @@ export class TimelineCalendarEventService {
       // timeline rather than a denied one
       // https://github.com/twentyhq/core-team-issues/issues/2777
       const calendarEventRepository =
-        await this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
           'calendarEvent',
           { shouldBypassPermissionChecks: true },
         );
@@ -116,7 +116,7 @@ export class TimelineCalendarEventService {
       });
 
       const callRecordingRepository =
-        await this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
           'callRecording',
         );
 
@@ -177,7 +177,7 @@ export class TimelineCalendarEventService {
 
       // Resolve current user's userWorkspaceId (workspaceMember → userId → userWorkspace)
       const workspaceMemberRepo =
-        await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

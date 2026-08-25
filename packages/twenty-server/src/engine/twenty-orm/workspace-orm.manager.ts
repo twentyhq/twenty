@@ -26,20 +26,20 @@ export class WorkspaceOrmManager {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  async getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral>(
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
+  ): WorkspaceRepository<T>;
 
-  async getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral>(
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
+  ): WorkspaceRepository<T>;
 
-  async getRepository<T extends ObjectLiteral>(
+  getRepository<T extends ObjectLiteral>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>> {
+  ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
       workspaceEntityOrObjectMetadataName,
     );
