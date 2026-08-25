@@ -18,8 +18,6 @@ import { styled } from '@linaria/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// The markdown renderer spaces blocks for chat bubbles, so its first block and
-// leading heading would sit lower than the editor's first block.
 const StyledReadOnlySummaryContainer = styled(
   StyledCallRecordingSummaryContainer,
 )`

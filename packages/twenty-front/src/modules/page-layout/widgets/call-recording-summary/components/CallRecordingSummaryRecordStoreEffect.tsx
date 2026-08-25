@@ -7,8 +7,6 @@ type CallRecordingSummaryRecordStoreEffectProps = {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
 };
 
-// The summary editor reads its value from the record store, which the widget's
-// own find-many query does not populate.
 export const CallRecordingSummaryRecordStoreEffect = ({
   callRecording,
 }: CallRecordingSummaryRecordStoreEffectProps) => {

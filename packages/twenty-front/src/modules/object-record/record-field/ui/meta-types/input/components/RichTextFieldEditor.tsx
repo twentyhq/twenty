@@ -89,8 +89,6 @@ export const RichTextFieldEditor = ({
       objectNameSingular: CoreObjectNameSingular.Attachment,
     });
 
-  // Attachment only targets the objects it holds a target relation for, so on
-  // any other object the filter below would query a field that does not exist.
   const canRecordHoldAttachments = attachmentObjectMetadataItem.fields.some(
     (field) => field.name === attachmentTargetFieldIdName,
   );

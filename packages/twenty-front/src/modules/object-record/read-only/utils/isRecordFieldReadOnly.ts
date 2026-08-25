@@ -40,8 +40,6 @@ export const isRecordFieldReadOnly = ({
       objectPermissionsByObjectMetadataId,
     });
 
-  // Editability of standard fields, on system objects included, is declared by
-  // isUIEditable in the standard metadata rather than inferred here.
   return (
     isRecordReadOnly ||
     !(fieldMetadataItem.isUIEditable ?? true) ||

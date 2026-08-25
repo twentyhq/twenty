@@ -6,7 +6,6 @@ const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
 const NOW = '2024-01-01T00:00:00.000Z';
 
-// Fields the product deliberately lets people write on system objects.
 const USER_EDITABLE_SYSTEM_OBJECT_FIELDS = ['callRecording.summary'];
 
 describe('System object field UI editability', () => {
@@ -30,8 +29,6 @@ describe('System object field UI editability', () => {
     ]),
   );
 
-  // The UI reads isUIEditable alone, so a field left undeclared on a system
-  // object silently becomes writable in every record surface.
   it('declares isUIEditable: false on every user-facing field of a system object', () => {
     const undeclaredFields = Object.values(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,

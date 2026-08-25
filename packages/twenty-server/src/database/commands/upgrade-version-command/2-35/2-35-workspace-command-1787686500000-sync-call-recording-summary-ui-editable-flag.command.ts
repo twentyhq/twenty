@@ -12,10 +12,6 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
-// The call recording summary became user-editable, and the message list fields
-// that used to rely on the front-end system-object rule now declare
-// isUIEditable explicitly. Existing workspaces keep the flags they were
-// provisioned with, so re-sync standard fields from the definitions.
 @RegisteredWorkspaceCommand('2.35.0', 1787686500000)
 @Command({
   name: 'upgrade:2-35:sync-standard-field-ui-editable-flags',
@@ -96,10 +92,6 @@ export class SyncStandardFieldUiEditableFlagsCommand extends ProvisionedWorkspac
       return;
     }
 
-    // isUIEditable is a UI-affordance flag stored on core.fieldMetadata, so it
-    // needs no workspace-schema migration; writing it straight to the metadata
-    // table also avoids the user-facing mutation guards that reject a trusted
-    // system backfill.
     const fieldIdsToSetEditable = fieldsToUpdate
       .filter((field) => field.isUIEditable)
       .map((field) => field.id);
@@ -136,8 +128,6 @@ export class SyncStandardFieldUiEditableFlagsCommand extends ProvisionedWorkspac
       await queryRunner.release();
     }
 
-    // The raw writes bypass the metadata cache, and the flags are already
-    // persisted, so a cache hiccup must not fail the upgrade.
     try {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatFieldMetadataMaps',
