@@ -4,7 +4,13 @@ import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call
 import { getCallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptEntryPlaybackPhase';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import {
+  useCallback,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -64,8 +70,12 @@ export const CallRecordingTranscriptEntryList = ({
   const activeEntryElementRef = useRef<HTMLLIElement>(null);
   const [isFollowingPlayback, setIsFollowingPlayback] = useState(true);
 
-  const selectTranscriptEntry = (entryStartSeconds: number) => {
+  const resumeFollowingPlayback = useCallback(() => {
     setIsFollowingPlayback(true);
+  }, []);
+
+  const selectTranscriptEntry = (entryStartSeconds: number) => {
+    resumeFollowingPlayback();
     playback?.onSeek(entryStartSeconds);
   };
 
@@ -98,6 +108,7 @@ export const CallRecordingTranscriptEntryList = ({
         isFollowingPlayback={isFollowingPlayback}
         scrollContainerElementRef={scrollContainerElementRef}
         videoElement={playback?.videoElement}
+        onVideoSeeking={resumeFollowingPlayback}
       />
       <StyledTranscriptScrollContainer
         ref={scrollContainerElementRef}
@@ -137,7 +148,7 @@ export const CallRecordingTranscriptEntryList = ({
             size="small"
             title={t`Jump to current`}
             variant="secondary"
-            onClick={() => setIsFollowingPlayback(true)}
+            onClick={resumeFollowingPlayback}
           />
         </StyledResumeFollowButton>
       )}

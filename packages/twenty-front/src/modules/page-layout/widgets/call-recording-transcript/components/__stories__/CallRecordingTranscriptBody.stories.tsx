@@ -509,30 +509,26 @@ export const WithVideoInteractions: Story = {
 
     fireEvent.wheel(transcriptRegion, { deltaY: -100 });
 
-    const jumpToCurrentButton = await canvas.findByRole('button', {
-      name: 'Jump to current',
-    });
+    expect(
+      await canvas.findByRole('button', { name: 'Jump to current' }),
+    ).toBeVisible();
 
-    setVideoCurrentTime({ videoElement, currentTimeSeconds: 22 });
-
-    await waitFor(() => {
-      expect(
-        canvasElement.querySelector('[aria-current="true"]'),
-      ).toHaveTextContent(
-        'Yes, the active entry followed every position change.',
-      );
-      expect(jumpToCurrentButton).toBeVisible();
-    });
-
-    await userEvent.click(jumpToCurrentButton);
+    videoElement.currentTime = 22;
+    fireEvent.seeking(videoElement);
+    fireEvent.seeked(videoElement);
+    fireEvent.timeUpdate(videoElement);
 
     await waitFor(() => {
+      const activeEntry = canvasElement.querySelector('[aria-current="true"]');
       const currentSpokenWordRectangle = canvasElement
         .querySelector('[data-current-spoken-word="true"]')
         ?.getBoundingClientRect();
       const transcriptRegionRectangle =
         transcriptRegion.getBoundingClientRect();
 
+      expect(activeEntry).toHaveTextContent(
+        'Yes, the active entry followed every position change.',
+      );
       expect(
         canvas.queryByRole('button', { name: 'Jump to current' }),
       ).not.toBeInTheDocument();

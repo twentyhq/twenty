@@ -7,6 +7,7 @@ type CallRecordingTranscriptFollowScrollEffectProps = {
   isFollowingPlayback: boolean;
   scrollContainerElementRef: RefObject<HTMLDivElement | null>;
   videoElement?: HTMLVideoElement;
+  onVideoSeeking: () => void;
 };
 
 export const CallRecordingTranscriptFollowScrollEffect = ({
@@ -14,26 +15,34 @@ export const CallRecordingTranscriptFollowScrollEffect = ({
   isFollowingPlayback,
   scrollContainerElementRef,
   videoElement,
+  onVideoSeeking,
 }: CallRecordingTranscriptFollowScrollEffectProps) => {
   useEffect(() => {
     const scrollContainerElement = scrollContainerElementRef.current;
 
-    if (
-      !isFollowingPlayback ||
-      !isDefined(videoElement) ||
-      !isDefined(scrollContainerElement)
-    ) {
+    if (!isDefined(videoElement)) {
       return;
     }
 
-    return watchCallRecordingTranscriptFollowScroll({
-      videoElement,
-      scrollContainerElement,
-      getActiveEntryElement: () => activeEntryElementRef.current,
-    });
+    videoElement.addEventListener('seeking', onVideoSeeking);
+
+    const stopWatchingFollowScroll =
+      isFollowingPlayback && isDefined(scrollContainerElement)
+        ? watchCallRecordingTranscriptFollowScroll({
+            videoElement,
+            scrollContainerElement,
+            getActiveEntryElement: () => activeEntryElementRef.current,
+          })
+        : undefined;
+
+    return () => {
+      videoElement.removeEventListener('seeking', onVideoSeeking);
+      stopWatchingFollowScroll?.();
+    };
   }, [
     activeEntryElementRef,
     isFollowingPlayback,
+    onVideoSeeking,
     scrollContainerElementRef,
     videoElement,
   ]);
