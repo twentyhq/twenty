@@ -107,7 +107,7 @@ export class PrepareUploadedFileTool implements Tool {
 
       return {
         success: true,
-        message: `File prepared for ${objectNameSingular}.${fieldName}. Set ${fieldName} to the fieldValue below.`,
+        message: `File prepared for ${objectNameSingular}.${fieldName}. When creating a record, set ${fieldName} to the fieldValue below. When updating an existing record, append the fieldValue entry to the current value of ${fieldName}: files missing from the new value are detached from the record.`,
         result: {
           fieldValue: [{ fileId: preparedFile.id, label }],
         },
