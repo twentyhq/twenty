@@ -20,33 +20,29 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 describe('findRulesForSpender', () => {
   const spender = { spenderType: 'apiKey' as const, spenderId: 'key-1' };
 
-  it('prefers a rule targeting the exact spender over one targeting every spender of that type', () => {
-    const exact = buildRule({
-      id: 'exact',
-      spenderId: 'key-1',
-      limitValue: 50,
-    });
-    const allOfType = buildRule({ id: 'all', spenderId: '' });
+  it('charges a named spender against its own rule and the shared one', () => {
+    const shared = buildRule({ id: 'shared', spenderId: '' });
+    const own = buildRule({ id: 'own', spenderId: 'key-1', limitValue: 50 });
 
     expect(
       findRulesForSpender({
-        rules: [allOfType, exact],
+        rules: [shared, own],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
-    ).toEqual([exact]);
+    ).toEqual([shared, own]);
   });
 
-  it('falls back to the rule targeting every spender of that type', () => {
-    const allOfType = buildRule({ id: 'all', spenderId: '' });
+  it('charges a spender with no rule of its own against the shared rule', () => {
+    const shared = buildRule({ id: 'shared', spenderId: '' });
 
     expect(
       findRulesForSpender({
-        rules: [allOfType],
+        rules: [shared],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
-    ).toEqual([allOfType]);
+    ).toEqual([shared]);
   });
 
   it('ignores a rule belonging to another spender', () => {
@@ -55,6 +51,22 @@ describe('findRulesForSpender', () => {
     expect(
       findRulesForSpender({
         rules: [otherKey],
+        spender,
+        operationType: UsageOperationType.API_REQUEST,
+      }),
+    ).toEqual([]);
+  });
+
+  it('ignores a rule scoped to another spender type', () => {
+    const application = buildRule({
+      id: 'application',
+      spenderType: 'application',
+      spenderId: '',
+    });
+
+    expect(
+      findRulesForSpender({
+        rules: [application],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
@@ -75,67 +87,10 @@ describe('findRulesForSpender', () => {
       }),
     ).toEqual([]);
   });
-});
-
-describe('findRulesForSpender for application rules', () => {
-  const anyApp = buildRule({
-    id: 'any-app',
-    spenderType: 'application',
-    spenderId: '',
-    limitValue: 500,
-  });
-
-  const spender = {
-    spenderType: 'application' as const,
-    spenderId: 'application-install-1',
-  };
-
-  it('covers an app that has no rule of its own', () => {
-    expect(
-      findRulesForSpender({
-        rules: [anyApp],
-        spender,
-        operationType: UsageOperationType.API_REQUEST,
-      }),
-    ).toEqual([anyApp]);
-  });
-
-  it('lets a rule naming one app raise it above the every-app rule', () => {
-    const trustedApp = buildRule({
-      id: 'trusted',
-      spenderType: 'application',
-      spenderId: 'application-install-1',
-      limitValue: 2000,
-    });
-
-    const resolved = findRulesForSpender({
-      rules: [anyApp, trustedApp],
-      spender,
-      operationType: UsageOperationType.API_REQUEST,
-    });
-
-    expect(resolved).toEqual([trustedApp]);
-  });
-});
-
-describe('findRulesForSpender across windows', () => {
-  const spender = { spenderType: 'apiKey' as const, spenderId: 'key-1' };
 
   it('returns a burst and a sustained rule together', () => {
-    // Both have to become buckets: returning one silently leaves the other unenforced,
-    // and the same spender carrying two windows is what the unique constraint allows.
-    const burst = buildRule({
-      id: 'burst',
-      spenderId: 'key-1',
-      windowSeconds: 1,
-      limitValue: 20,
-    });
-    const sustained = buildRule({
-      id: 'sustained',
-      spenderId: 'key-1',
-      windowSeconds: 60,
-      limitValue: 100,
-    });
+    const burst = buildRule({ id: 'burst', windowSeconds: 1, limitValue: 20 });
+    const sustained = buildRule({ id: 'sustained', windowSeconds: 60 });
 
     expect(
       findRulesForSpender({
@@ -146,32 +101,25 @@ describe('findRulesForSpender across windows', () => {
     ).toEqual([burst, sustained]);
   });
 
-  it('lets a rule naming the spender take over every window of the every-spender rules', () => {
-    const everySpenderBurst = buildRule({
-      id: 'every-burst',
-      spenderId: '',
+  it('keeps every window of the shared rules when the spender has its own rule', () => {
+    const sharedBurst = buildRule({
+      id: 'shared-burst',
       windowSeconds: 1,
       limitValue: 20,
     });
-    const everySpenderSustained = buildRule({
-      id: 'every-sustained',
-      spenderId: '',
-      windowSeconds: 60,
-      limitValue: 100,
-    });
-    const ownSustained = buildRule({
-      id: 'own-sustained',
+    const sharedSustained = buildRule({ id: 'shared-sustained' });
+    const own = buildRule({
+      id: 'own',
       spenderId: 'key-1',
-      windowSeconds: 60,
       limitValue: 5000,
     });
 
     expect(
       findRulesForSpender({
-        rules: [everySpenderBurst, everySpenderSustained, ownSustained],
+        rules: [sharedBurst, sharedSustained, own],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
-    ).toEqual([ownSustained]);
+    ).toEqual([sharedBurst, sharedSustained, own]);
   });
 });

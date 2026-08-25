@@ -2,6 +2,9 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type Spender } from 'src/engine/core-modules/usage-limit/types/spender.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
+// A rule naming the spender and a rule left open to every spender of that type
+// produce two different buckets, so both apply rather than the narrower one
+// replacing the shared one.
 export const findRulesForSpender = ({
   rules,
   spender,
@@ -10,18 +13,10 @@ export const findRulesForSpender = ({
   rules: FlatUsageLimit[];
   spender: Spender;
   operationType: UsageOperationType;
-}): FlatUsageLimit[] => {
-  const forSpenderType = rules.filter(
+}): FlatUsageLimit[] =>
+  rules.filter(
     (rule) =>
       rule.spenderType === spender.spenderType &&
-      rule.operationType === operationType,
+      rule.operationType === operationType &&
+      (rule.spenderId === '' || rule.spenderId === spender.spenderId),
   );
-
-  const forThisSpender = forSpenderType.filter(
-    (rule) => rule.spenderId !== '' && rule.spenderId === spender.spenderId,
-  );
-
-  return forThisSpender.length > 0
-    ? forThisSpender
-    : forSpenderType.filter((rule) => rule.spenderId === '');
-};

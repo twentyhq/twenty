@@ -56,6 +56,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -541,17 +542,41 @@ export abstract class CommonBaseQueryRunnerService<
       );
 
     if (isApiRateLimitV2Enabled) {
-      await this.usageLimitSpeedService.consumeOrThrow({
-        resourceType: UsageResourceType.API,
-        authContext,
-        operationType: UsageOperationType.API_REQUEST,
-      });
+      await this.consumeApiSpeedLimit(authContext);
 
       return;
     }
 
     await this.throttleApiKeyQueryExecution(authContext);
     await this.throttleApplicationQueryExecution(authContext);
+  }
+
+  private async consumeApiSpeedLimit(authContext: WorkspaceAuthContext) {
+    try {
+      await this.usageLimitSpeedService.consumeOrThrow({
+        resourceType: UsageResourceType.API,
+        authContext,
+        operationType: UsageOperationType.API_REQUEST,
+      });
+    } catch (error) {
+      if (
+        error instanceof UsageLimitException &&
+        error.exhaustedScope?.spenderType === 'application' &&
+        isApplicationAuthContext(authContext)
+      ) {
+        await this.metricsService.incrementCounterForEvent({
+          key: MetricsKeys.CommonApiApplicationQueryRateLimited,
+          shouldStoreInCache: false,
+          attributes: {
+            universal_identifier: authContext.application.universalIdentifier,
+            app_name: authContext.application.name,
+            source_type: authContext.application.sourceType,
+          },
+        });
+      }
+
+      throw error;
+    }
   }
 
   private async throttleApplicationQueryExecution(

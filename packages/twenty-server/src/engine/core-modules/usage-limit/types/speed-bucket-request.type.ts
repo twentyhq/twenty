@@ -6,5 +6,5 @@ export type SpeedBucketRequest = {
   refillPerWindow: number;
   windowMs: number;
   spenderType: SpenderType;
-  spenderId: string;
+  spenderId: string | null;
 };

@@ -7,26 +7,20 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-
 import { TRY_CONSUME_TOKEN_BUCKETS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/try-consume-token-buckets-script.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { type SpeedBucketOutcome } from 'src/engine/core-modules/usage-limit/types/speed-bucket-outcome.type';
-
-import { buildSpendersFromAuthContext } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-auth-context.util';
-import { buildSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-speed-bucket-key.util';
-
-import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/constants/spender-type-specificity.constant';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
-import { buildServerSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-server-speed-bucket-key.util';
-import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rules-for-spender.util';
+import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
-import { getApplicationUniversalIdentifier } from 'src/engine/core-modules/usage-limit/utils/get-application-universal-identifier.util';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const ADMITTED: SpeedBucketOutcome = { admitted: true, remainingByBucket: [] };
 
 @Injectable()
 export class UsageLimitSpeedService {
@@ -50,18 +44,10 @@ export class UsageLimitSpeedService {
     operationType: UsageOperationType;
     cost?: number;
   }): Promise<void> {
-    const buckets = await this.buildSpeedBuckets({
+    const outcome = await this.consumeAdmittingOnFailure({
       resourceType,
       authContext,
       operationType,
-    });
-
-    if (buckets.length === 0) {
-      return;
-    }
-
-    const outcome = await this.consumeTokensAdmittingOnFailure({
-      buckets,
       cost,
     });
 
@@ -87,52 +73,78 @@ export class UsageLimitSpeedService {
     );
   }
 
-  private async consumeTokensAdmittingOnFailure({
+  // Resolving the rules touches Redis too, so it belongs inside the guard: a
+  // rate limiter that has lost its counter must not take the API down with it.
+  private async consumeAdmittingOnFailure({
+    resourceType,
+    authContext,
+    operationType,
+    cost,
+  }: {
+    resourceType: UsageResourceType;
+    authContext: WorkspaceAuthContext;
+    operationType: UsageOperationType;
+    cost: number;
+  }): Promise<SpeedBucketOutcome> {
+    try {
+      const buckets = await this.buildBuckets({
+        resourceType,
+        authContext,
+        operationType,
+      });
+
+      if (buckets.length === 0) {
+        return ADMITTED;
+      }
+
+      return await this.consumeTokens({ buckets, cost });
+    } catch (error) {
+      this.logger.error(
+        `Usage limit enforcement degraded: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+
+      return ADMITTED;
+    }
+  }
+
+  private async consumeTokens({
     buckets,
     cost,
   }: {
     buckets: SpeedBucketRequest[];
     cost: number;
   }): Promise<SpeedBucketOutcome> {
-    try {
-      const bucketConfigs = buckets.map((bucket) => ({
-        burst: bucket.burst,
-        refill: bucket.refillPerWindow,
-        windowMs: bucket.windowMs,
-      }));
+    const bucketConfigs = buckets.map((bucket) => ({
+      burst: bucket.burst,
+      refill: bucket.refillPerWindow,
+      windowMs: bucket.windowMs,
+    }));
 
-      const [admitted, failedIndex, retryAfterMs, ...remainingByBucket] =
-        await this.cacheStorage.runScript<number[]>({
-          script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-          keys: buckets.map((bucket) => bucket.key),
-          args: [String(cost), JSON.stringify(bucketConfigs)],
-        });
+    const [admitted, failedIndex, retryAfterMs, ...remainingByBucket] =
+      await this.cacheStorage.runScript<number[]>({
+        script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+        keys: buckets.map((bucket) => bucket.key),
+        args: [String(cost), JSON.stringify(bucketConfigs)],
+      });
 
-      if (admitted === 1) {
-        return { admitted: true, remainingByBucket };
-      }
+    if (admitted === 1) {
+      return { admitted: true, remainingByBucket };
+    }
 
-      const exhausted = buckets[failedIndex - 1];
+    const exhausted = buckets[failedIndex - 1];
 
-      if (!isDefined(exhausted)) {
-        this.logger.warn(
-          `try-consume-token-buckets returned an out-of-range index ${failedIndex}`,
-        );
-
-        return { admitted: true, remainingByBucket: [] };
-      }
-
-      return { admitted: false, exhausted, retryAfterMs };
-    } catch (error) {
-      this.logger.error(
-        `Usage limit enforcement degraded: ${error instanceof Error ? error.message : 'unknown error'}`,
+    if (!isDefined(exhausted)) {
+      this.logger.warn(
+        `try-consume-token-buckets returned an out-of-range index ${failedIndex}`,
       );
 
-      return { admitted: true, remainingByBucket: [] };
+      return ADMITTED;
     }
+
+    return { admitted: false, exhausted, retryAfterMs };
   }
 
-  private async buildSpeedBuckets({
+  private async buildBuckets({
     resourceType,
     authContext,
     operationType,
@@ -149,108 +161,25 @@ export class UsageLimitSpeedService {
     if (!isDefined(definition)) {
       return [];
     }
-    const workspaceId = authContext.workspace.id;
-    const spenders = buildSpendersFromAuthContext(authContext);
 
     const { usageLimitRules } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
+      authContext.workspace.id,
       ['usageLimitRules'],
     );
 
-    const rules = usageLimitRules.byResourceType[resourceType] ?? [];
-    const buckets: SpeedBucketRequest[] = [];
-
-    for (const spender of spenders) {
-      const spenderRules = findRulesForSpender({
-        rules,
-        spender,
-        operationType,
-      });
-
-      if (spenderRules.length > 0) {
-        for (const rule of spenderRules) {
-          buckets.push({
-            key: buildSpeedBucketKey({
-              workspaceId,
-              resourceType,
-              operationType,
-              spenderType: spender.spenderType,
-              spenderId: spender.spenderId,
-              windowSeconds: rule.windowSeconds,
-            }),
-            burst: rule.burstValue ?? rule.limitValue,
-            refillPerWindow: rule.limitValue,
-            windowMs: rule.windowSeconds * 1000,
-            spenderType: spender.spenderType,
-            spenderId: spender.spenderId,
-          });
-        }
-
-        continue;
-      }
-
-      for (const fallback of definition.fallbacks) {
-        if (fallback.spenderType !== spender.spenderType) {
-          continue;
-        }
-
-        const maxTokens = this.twentyConfigService.get(
+    return buildSpeedBuckets({
+      resolvedFallbacks: definition.fallbacks.map((fallback) => ({
+        spenderType: fallback.spenderType,
+        counterScope: fallback.counterScope,
+        maxTokens: this.twentyConfigService.get(
           fallback.maxTokensConfigVariable,
-        ) as number;
-        const windowMs = this.twentyConfigService.get(
-          fallback.windowMsConfigVariable,
-        ) as number;
-
-        const windowSeconds = Math.ceil(windowMs / 1000);
-
-        if (fallback.counterScope === 'crossWorkspace') {
-          const universalIdentifier =
-            getApplicationUniversalIdentifier(authContext);
-
-          if (!isDefined(universalIdentifier)) {
-            continue;
-          }
-
-          buckets.push({
-            key: buildServerSpeedBucketKey({
-              resourceType,
-              operationType,
-              spenderType: spender.spenderType,
-              spenderId: universalIdentifier,
-              windowSeconds,
-            }),
-            burst: maxTokens,
-            refillPerWindow: maxTokens,
-            windowMs,
-            spenderType: spender.spenderType,
-            spenderId: universalIdentifier,
-          });
-
-          continue;
-        }
-
-        buckets.push({
-          key: buildSpeedBucketKey({
-            workspaceId,
-            resourceType,
-            operationType,
-            spenderType: spender.spenderType,
-            spenderId: spender.spenderId,
-            windowSeconds,
-          }),
-          burst: maxTokens,
-          refillPerWindow: maxTokens,
-          windowMs,
-          spenderType: spender.spenderType,
-          spenderId: spender.spenderId,
-        });
-      }
-    }
-
-    return buckets.sort(
-      (a, b) =>
-        SPENDER_TYPE_SPECIFICITY[a.spenderType] -
-        SPENDER_TYPE_SPECIFICITY[b.spenderType],
-    );
+        ),
+        windowMs: this.twentyConfigService.get(fallback.windowMsConfigVariable),
+      })),
+      rules: usageLimitRules.byResourceType[resourceType] ?? [],
+      authContext,
+      resourceType,
+      operationType,
+    });
   }
 }
