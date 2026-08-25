@@ -18,6 +18,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -26,62 +27,61 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatObjectMetadata>
 > {
-  async computeForCache(
+  override readonly fetchRequirements = [
+    entityFetchRequirement(ObjectMetadataEntity),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(FieldMetadataEntity, [
+      'id',
+      'universalIdentifier',
+      'objectMetadataId',
+    ]),
+    entityFetchRequirement(IndexMetadataEntity, [
+      'id',
+      'universalIdentifier',
+      'objectMetadataId',
+    ]),
+    entityFetchRequirement(ViewEntity, [
+      'id',
+      'universalIdentifier',
+      'objectMetadataId',
+    ]),
+    entityFetchRequirement(ObjectPermissionEntity, [
+      'id',
+      'universalIdentifier',
+      'objectMetadataId',
+    ]),
+    entityFetchRequirement(SearchFieldMetadataEntity, [
+      'id',
+      'universalIdentifier',
+      'objectMetadataId',
+    ]),
+    entityFetchRequirement(PageLayoutEntity, [
+      'id',
+      'universalIdentifier',
+      'objectMetadataId',
+    ]),
+    entityFetchRequirement(CommandMenuItemEntity, [
+      'id',
+      'universalIdentifier',
+      'navigationTargetObjectMetadataId',
+    ]),
+  ];
+
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatEntityMaps<FlatObjectMetadata>> {
-    const [
-      objectMetadatas,
-      applications,
-      fields,
-      indexMetadatas,
-      views,
-      objectPermissions,
-      searchFieldMetadatas,
-      pageLayouts,
-      commandMenuItems,
-    ] = await Promise.all([
-      recomputeContext.findAll(ObjectMetadataEntity),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(FieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-        'objectMetadataId',
-      ]),
-      recomputeContext.findAll(IndexMetadataEntity, [
-        'id',
-        'universalIdentifier',
-        'objectMetadataId',
-      ]),
-      recomputeContext.findAll(ViewEntity, [
-        'id',
-        'universalIdentifier',
-        'objectMetadataId',
-      ]),
-      recomputeContext.findAll(ObjectPermissionEntity, [
-        'id',
-        'universalIdentifier',
-        'objectMetadataId',
-      ]),
-      recomputeContext.findAll(SearchFieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-        'objectMetadataId',
-      ]),
-      recomputeContext.findAll(PageLayoutEntity, [
-        'id',
-        'universalIdentifier',
-        'objectMetadataId',
-      ]),
-      recomputeContext.findAll(CommandMenuItemEntity, [
-        'id',
-        'universalIdentifier',
-        'navigationTargetObjectMetadataId',
-      ]),
-    ]);
+  ): FlatEntityMaps<FlatObjectMetadata> {
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const fields = recomputeContext.getRows(FieldMetadataEntity);
+    const indexMetadatas = recomputeContext.getRows(IndexMetadataEntity);
+    const views = recomputeContext.getRows(ViewEntity);
+    const objectPermissions = recomputeContext.getRows(ObjectPermissionEntity);
+    const searchFieldMetadatas = recomputeContext.getRows(
+      SearchFieldMetadataEntity,
+    );
+    const pageLayouts = recomputeContext.getRows(PageLayoutEntity);
+    const commandMenuItems = recomputeContext.getRows(CommandMenuItemEntity);
 
     const [
       fieldsByObjectId,

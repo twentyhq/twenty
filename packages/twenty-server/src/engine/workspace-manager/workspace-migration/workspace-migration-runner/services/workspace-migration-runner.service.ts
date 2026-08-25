@@ -19,8 +19,8 @@ import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/fla
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { type WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import {
   WorkspaceMigrationRunnerException,
@@ -45,28 +45,24 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private getLegacyCacheInvalidationPromises({
-    allFlatEntityMapsKeys,
-    workspaceId,
-    recomputeContext,
-  }: {
-    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
-    workspaceId: string;
-    recomputeContext: WorkspaceCacheRecomputeContext;
-  }): Promise<void>[] {
-    const asyncOperations: Promise<void>[] = [];
+  private getLegacyCacheInvalidation(
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[],
+  ): {
+    shouldIncrementMetadataGraphqlSchemaVersion: boolean;
+    legacyCacheKeyBatches: WorkspaceCacheKeyName[][];
+  } {
     const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
+    const legacyCacheKeyBatches: WorkspaceCacheKeyName[][] = [];
 
     const shouldIncrementMetadataGraphqlSchemaVersion =
       flatMapsKeysSet.has('flatObjectMetadataMaps') ||
       flatMapsKeysSet.has('flatFieldMetadataMaps');
 
     if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      asyncOperations.push(
-        this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        ),
-      );
+      legacyCacheKeyBatches.push([
+        'ORMEntityMetadatas',
+        'graphQLResolverNameMap',
+      ]);
     }
 
     const shouldInvalidateRoleMapCache =
@@ -78,43 +74,24 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatFieldPermissionMaps') ||
       flatMapsKeysSet.has('flatRolePermissionFlagMaps');
 
-    if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      asyncOperations.push(
-        this.workspaceCacheService.invalidateAndRecompute(
-          workspaceId,
-          ['ORMEntityMetadatas', 'graphQLResolverNameMap'],
-          recomputeContext,
-        ),
-      );
-    }
-
     if (shouldInvalidateRoleMapCache || shouldInvalidateRolesPermissionsCache) {
-      asyncOperations.push(
-        this.workspaceCacheService.invalidateAndRecompute(
-          workspaceId,
-          [
-            'rolesPermissions',
-            'userWorkspaceRoleMap',
-            'flatRoleTargetMaps',
-            'apiKeyRoleMap',
-            'flatRoleTargetByAgentIdMaps',
-          ],
-          recomputeContext,
-        ),
-      );
+      legacyCacheKeyBatches.push([
+        'rolesPermissions',
+        'userWorkspaceRoleMap',
+        'flatRoleTargetMaps',
+        'apiKeyRoleMap',
+        'flatRoleTargetByAgentIdMaps',
+      ]);
     }
 
     if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
-      asyncOperations.push(
-        this.workspaceCacheService.invalidateAndRecompute(
-          workspaceId,
-          ['applicationVariableMaps'],
-          recomputeContext,
-        ),
-      );
+      legacyCacheKeyBatches.push(['applicationVariableMaps']);
     }
 
-    return asyncOperations;
+    return {
+      shouldIncrementMetadataGraphqlSchemaVersion,
+      legacyCacheKeyBatches,
+    };
   }
 
   async invalidateCache({
@@ -130,10 +107,18 @@ export class WorkspaceMigrationRunnerService {
     );
 
     // All the invalidations below recompute from the same post-commit state,
-    // so one shared context lets the legacy batches reuse the main batch's
-    // fetches instead of re-querying the tables they have in common.
+    // so one context pre-resolved for the union of the main and legacy key
+    // sets executes a single fetch plan that every batch shares.
+    const {
+      shouldIncrementMetadataGraphqlSchemaVersion,
+      legacyCacheKeyBatches,
+    } = this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
+
     const recomputeContext =
-      this.workspaceCacheService.createRecomputeContext(workspaceId);
+      await this.workspaceCacheService.prepareRecomputeContext(workspaceId, [
+        ...allFlatEntityMapsKeys,
+        ...legacyCacheKeyBatches.flat(),
+      ]);
 
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
@@ -141,13 +126,22 @@ export class WorkspaceMigrationRunnerService {
       recomputeContext,
     });
 
-    const invalidationResults = await Promise.allSettled(
-      this.getLegacyCacheInvalidationPromises({
-        allFlatEntityMapsKeys,
-        workspaceId,
-        recomputeContext,
-      }),
-    );
+    const invalidationResults = await Promise.allSettled([
+      ...(shouldIncrementMetadataGraphqlSchemaVersion
+        ? [
+            this.workspaceMetadataVersionService.incrementMetadataVersion(
+              workspaceId,
+            ),
+          ]
+        : []),
+      ...legacyCacheKeyBatches.map((legacyCacheKeys) =>
+        this.workspaceCacheService.invalidateAndRecompute(
+          workspaceId,
+          legacyCacheKeys,
+          recomputeContext,
+        ),
+      ),
+    ]);
 
     const invalidationFailures = invalidationResults.filter(
       (result) => result.status === 'rejected',

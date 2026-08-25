@@ -1,6 +1,7 @@
 import { type DataSource, type EntityTarget } from 'typeorm';
 
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 
 class FirstTestEntity {
   id: string;
@@ -56,68 +57,44 @@ describe('WorkspaceCacheRecomputeContext', () => {
   it('fetches all workspace rows including soft-deleted ones', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    const rows = await recomputeContext.findAll(FirstTestEntity);
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity),
+    ]);
 
-    expect(rows).toEqual([{ id: 'first-row', workspaceId: WORKSPACE_ID }]);
+    expect(recomputeContext.getRows(FirstTestEntity)).toEqual([
+      { id: 'first-row', workspaceId: WORKSPACE_ID },
+    ]);
     expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledWith({
       where: { workspaceId: WORKSPACE_ID },
       withDeleted: true,
     });
   });
 
-  it('runs a single query per entity across concurrent and sequential callers', async () => {
+  it('merges requirements into one query per entity with the union of declared columns', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    const [firstRows, secondRows] = await Promise.all([
-      recomputeContext.findAll(FirstTestEntity),
-      recomputeContext.findAll(FirstTestEntity),
-    ]);
-    const thirdRows = await recomputeContext.findAll(FirstTestEntity);
-
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
-    expect(secondRows).toBe(firstRows);
-    expect(thirdRows).toBe(firstRows);
-  });
-
-  it('fetches distinct entities independently', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
-
-    const [firstRows, secondRows] = await Promise.all([
-      recomputeContext.findAll(FirstTestEntity),
-      recomputeContext.findAll(SecondTestEntity),
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id']),
+      entityFetchRequirement(FirstTestEntity, ['id', 'name']),
+      entityFetchRequirement(SecondTestEntity, ['id']),
     ]);
 
-    expect(firstRows).toEqual([{ id: 'first-row', workspaceId: WORKSPACE_ID }]);
-    expect(secondRows).toEqual([
-      { id: 'second-row', workspaceId: WORKSPACE_ID },
-    ]);
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
+    const firstFindMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(firstFindMock).toHaveBeenCalledTimes(1);
+    expect(firstFindMock.mock.calls[0][0].select).toHaveLength(2);
+    expect(firstFindMock.mock.calls[0][0].select).toEqual(
+      expect.arrayContaining(['id', 'name']),
+    );
     expect(findMocksByEntity.get(SecondTestEntity)).toHaveBeenCalledTimes(1);
   });
 
-  it('dispatches a single query with the union of declared column sets', async () => {
+  it('drops the column selection once any requirement needs full rows', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    await Promise.all([
-      recomputeContext.findAll(FirstTestEntity, ['id']),
-      recomputeContext.findAll(FirstTestEntity, ['id', 'name']),
-    ]);
-
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
-
-    expect(findMock).toHaveBeenCalledTimes(1);
-    expect(findMock.mock.calls[0][0].select).toHaveLength(2);
-    expect(findMock.mock.calls[0][0].select).toEqual(
-      expect.arrayContaining(['id', 'name']),
-    );
-  });
-
-  it('drops the column selection once any caller needs full rows', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
-
-    await Promise.all([
-      recomputeContext.findAll(FirstTestEntity, ['id']),
-      recomputeContext.findAll(FirstTestEntity),
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id']),
+      entityFetchRequirement(FirstTestEntity),
     ]);
 
     const findMock = findMocksByEntity.get(FirstTestEntity)!;
@@ -126,53 +103,111 @@ describe('WorkspaceCacheRecomputeContext', () => {
     expect(findMock.mock.calls[0][0].select).toBeUndefined();
   });
 
-  it('serves a late request from the dispatched fetch when its columns are covered', async () => {
+  it('treats an already-covered later resolution as a no-op', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
-    const firstRows = await recomputeContext.findAll(FirstTestEntity, [
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id', 'name']),
+    ]);
+    const firstRows = recomputeContext.getRows(FirstTestEntity);
+
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id']),
+    ]);
+
+    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
+    expect(recomputeContext.getRows(FirstTestEntity)).toBe(firstRows);
+  });
+
+  it('refetches with the widened union when a later resolution is not covered', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id']),
+    ]);
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['name']),
+    ]);
+
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(2);
+    expect(findMock.mock.calls[1][0].select).toHaveLength(2);
+    expect(findMock.mock.calls[1][0].select).toEqual(
+      expect.arrayContaining(['id', 'name']),
+    );
+  });
+
+  it('shares one query across concurrent resolutions of the same entity', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await Promise.all([
+      recomputeContext.resolveFetchRequirements([
+        entityFetchRequirement(FirstTestEntity, ['id']),
+      ]),
+      recomputeContext.resolveFetchRequirements([
+        entityFetchRequirement(FirstTestEntity, ['id']),
+      ]),
+    ]);
+
+    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
+  });
+
+  it('serves transitional findAll callers through the same plan machinery', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    const [firstRows, secondRows] = await Promise.all([
+      recomputeContext.findAll(FirstTestEntity, ['id']),
+      recomputeContext.findAll(FirstTestEntity, ['id']),
+    ]);
+    const coveredLaterRows = await recomputeContext.findAll(FirstTestEntity, [
+      'id',
+    ]);
+
+    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
+    expect(secondRows).toBe(firstRows);
+    expect(coveredLaterRows).toBe(firstRows);
+
+    await recomputeContext.findAll(FirstTestEntity, ['name']);
+
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(2);
+    expect(findMock.mock.calls[1][0].select).toEqual(
+      expect.arrayContaining(['id', 'name']),
+    );
+  });
+
+  it('keeps previously resolved rows readable while a widening refetch is in flight', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity, ['id']),
+    ]);
+    const initialRows = recomputeContext.getRows(FirstTestEntity);
+
+    const wideningPromise = recomputeContext.findAll(FirstTestEntity, [
       'id',
       'name',
     ]);
-    const lateRows = await recomputeContext.findAll(FirstTestEntity, ['id']);
 
-    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(1);
-    expect(lateRows).toBe(firstRows);
+    expect(recomputeContext.getRows(FirstTestEntity)).toBe(initialRows);
+
+    const widenedRows = await wideningPromise;
+
+    expect(findMocksByEntity.get(FirstTestEntity)).toHaveBeenCalledTimes(2);
+    expect(recomputeContext.getRows(FirstTestEntity)).toBe(widenedRows);
   });
 
-  it('runs a second query for a late request needing uncovered columns', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+  it('throws when reading an entity no requirement declared', async () => {
+    const { recomputeContext } = setup();
 
-    await recomputeContext.findAll(FirstTestEntity, ['id']);
-    await recomputeContext.findAll(FirstTestEntity, ['id', 'name']);
-
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
-
-    expect(findMock).toHaveBeenCalledTimes(2);
-    expect(findMock.mock.calls[1][0].select).toEqual(
-      expect.arrayContaining(['id', 'name']),
-    );
-  });
-
-  it('coalesces concurrent late uncovered requests into one follow-up query', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
-
-    await recomputeContext.findAll(FirstTestEntity, ['id']);
-
-    const [secondRoundRows, thirdRoundRows] = await Promise.all([
-      recomputeContext.findAll(FirstTestEntity, ['name']),
-      recomputeContext.findAll(FirstTestEntity, ['id', 'name']),
-    ]);
-    const coveredLateRows = await recomputeContext.findAll(FirstTestEntity, [
-      'id',
+    await recomputeContext.resolveFetchRequirements([
+      entityFetchRequirement(FirstTestEntity),
     ]);
 
-    const findMock = findMocksByEntity.get(FirstTestEntity)!;
-
-    expect(findMock).toHaveBeenCalledTimes(2);
-    expect(findMock.mock.calls[1][0].select).toEqual(
-      expect.arrayContaining(['id', 'name']),
+    expect(() => recomputeContext.getRows(SecondTestEntity)).toThrow(
+      /SecondTestEntity.*fetchRequirements/,
     );
-    expect(thirdRoundRows).toBe(secondRoundRows);
-    expect(coveredLateRows).toBe(secondRoundRows);
   });
 });

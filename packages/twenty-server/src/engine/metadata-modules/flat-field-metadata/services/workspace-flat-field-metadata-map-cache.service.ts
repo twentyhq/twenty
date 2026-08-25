@@ -24,6 +24,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { entityFetchRequirement } from 'src/engine/workspace-cache/utils/entity-fetch-requirement.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
@@ -34,6 +35,51 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   FlatEntityMaps<FlatFieldMetadata>,
   CompactFlatFieldMetadataMaps
 > {
+  override readonly fetchRequirements = [
+    entityFetchRequirement(FieldMetadataEntity),
+    entityFetchRequirement(IndexMetadataEntity, [
+      'id',
+      'isUnique',
+      'isSystemSideEffect',
+    ]),
+    entityFetchRequirement(IndexFieldMetadataEntity, [
+      'id',
+      'indexMetadataId',
+      'fieldMetadataId',
+      'subFieldName',
+    ]),
+    entityFetchRequirement(ObjectMetadataEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ApplicationEntity, ['id', 'universalIdentifier']),
+    entityFetchRequirement(ViewFieldEntity, [
+      'id',
+      'universalIdentifier',
+      'fieldMetadataId',
+    ]),
+    entityFetchRequirement(ViewFilterEntity, [
+      'id',
+      'universalIdentifier',
+      'fieldMetadataId',
+    ]),
+    entityFetchRequirement(ViewSortEntity, [
+      'id',
+      'universalIdentifier',
+      'fieldMetadataId',
+    ]),
+    entityFetchRequirement(ViewEntity, [
+      'id',
+      'universalIdentifier',
+      'kanbanAggregateOperationFieldMetadataId',
+      'calendarFieldMetadataId',
+      'calendarEndFieldMetadataId',
+      'mainGroupByFieldMetadataId',
+    ]),
+    entityFetchRequirement(SearchFieldMetadataEntity, [
+      'id',
+      'universalIdentifier',
+      'fieldMetadataId',
+    ]),
+  ];
+
   override compactForStorage(
     data: FlatEntityMaps<FlatFieldMetadata>,
   ): CompactFlatFieldMetadataMaps {
@@ -46,71 +92,24 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     return expandFlatFieldMetadataMaps(compactData);
   }
 
-  async computeForCache(
+  computeForCache(
     workspaceId: string,
     recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<FlatEntityMaps<FlatFieldMetadata>> {
-    const [
-      fieldMetadatas,
-      indexMetadatas,
-      indexFieldMetadatas,
-      objectMetadatas,
-      applications,
-      viewFields,
-      viewFilters,
-      viewSorts,
-      views,
-      searchFieldMetadatas,
-    ] = await Promise.all([
-      recomputeContext.findAll(FieldMetadataEntity),
-      recomputeContext.findAll(IndexMetadataEntity, [
-        'id',
-        'isUnique',
-        'isSystemSideEffect',
-      ]),
-      recomputeContext.findAll(IndexFieldMetadataEntity, [
-        'id',
-        'indexMetadataId',
-        'fieldMetadataId',
-        'subFieldName',
-      ]),
-      recomputeContext.findAll(ObjectMetadataEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ApplicationEntity, [
-        'id',
-        'universalIdentifier',
-      ]),
-      recomputeContext.findAll(ViewFieldEntity, [
-        'id',
-        'universalIdentifier',
-        'fieldMetadataId',
-      ]),
-      recomputeContext.findAll(ViewFilterEntity, [
-        'id',
-        'universalIdentifier',
-        'fieldMetadataId',
-      ]),
-      recomputeContext.findAll(ViewSortEntity, [
-        'id',
-        'universalIdentifier',
-        'fieldMetadataId',
-      ]),
-      recomputeContext.findAll(ViewEntity, [
-        'id',
-        'universalIdentifier',
-        'kanbanAggregateOperationFieldMetadataId',
-        'calendarFieldMetadataId',
-        'calendarEndFieldMetadataId',
-        'mainGroupByFieldMetadataId',
-      ]),
-      recomputeContext.findAll(SearchFieldMetadataEntity, [
-        'id',
-        'universalIdentifier',
-        'fieldMetadataId',
-      ]),
-    ]);
+  ): FlatEntityMaps<FlatFieldMetadata> {
+    const fieldMetadatas = recomputeContext.getRows(FieldMetadataEntity);
+    const indexMetadatas = recomputeContext.getRows(IndexMetadataEntity);
+    const indexFieldMetadatas = recomputeContext.getRows(
+      IndexFieldMetadataEntity,
+    );
+    const objectMetadatas = recomputeContext.getRows(ObjectMetadataEntity);
+    const applications = recomputeContext.getRows(ApplicationEntity);
+    const viewFields = recomputeContext.getRows(ViewFieldEntity);
+    const viewFilters = recomputeContext.getRows(ViewFilterEntity);
+    const viewSorts = recomputeContext.getRows(ViewSortEntity);
+    const views = recomputeContext.getRows(ViewEntity);
+    const searchFieldMetadatas = recomputeContext.getRows(
+      SearchFieldMetadataEntity,
+    );
 
     const [
       viewFieldsByFieldId,

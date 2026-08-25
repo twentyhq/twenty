@@ -293,11 +293,28 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   // For callers issuing several invalidateAndRecompute calls over the same
   // post-commit state (e.g. the migration runner's fan-out): one context
-  // shared across the calls lets later batches reuse earlier batches' fetches.
-  public createRecomputeContext(
+  // pre-resolved for the union of every batch's keys lets all batches share
+  // a single fetch plan.
+  public async prepareRecomputeContext(
     workspaceId: string,
-  ): WorkspaceCacheRecomputeContext {
-    return new WorkspaceCacheRecomputeContext(this.coreDataSource, workspaceId);
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<WorkspaceCacheRecomputeContext> {
+    const recomputeContext = new WorkspaceCacheRecomputeContext(
+      this.coreDataSource,
+      workspaceId,
+    );
+
+    await recomputeContext.resolveFetchRequirements(
+      this.collectFetchRequirements(cacheKeyNames),
+    );
+
+    return recomputeContext;
+  }
+
+  private collectFetchRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
+    return cacheKeyNames.flatMap(
+      (keyName) => this.getProviderOrThrow(keyName).fetchRequirements,
+    );
   }
 
   public async invalidateAndRecompute(
@@ -533,6 +550,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const recomputeContext =
       sharedRecomputeContext ??
       new WorkspaceCacheRecomputeContext(this.coreDataSource, workspaceId);
+
+    // No-op for keys a shared context already covers; fetches the plan of the
+    // remaining ones in one round before any provider runs.
+    await recomputeContext.resolveFetchRequirements(
+      this.collectFetchRequirements(cacheKeyNames),
+    );
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
