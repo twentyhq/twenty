@@ -44,7 +44,24 @@ import { WorkspaceUserWorkspaceRoleMapCacheService } from 'src/engine/metadata-m
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { KNOWN_FETCH_GAPS } from 'src/engine/workspace-cache/constants/known-fetch-gaps.constant';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import {
+  type CacheEntityFetchShape,
+  type WidenedCacheEntityFetchSpec,
+} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { isGroupedCacheEntityFetchSpec } from 'src/engine/workspace-cache/utils/is-grouped-cache-entity-fetch-spec.util';
+
+// groupBy keys widen the fetch at plan time, so they count as fetched columns
+const getEffectiveColumns = (
+  declared: WidenedCacheEntityFetchSpec,
+): readonly string[] | true => {
+  if (!isGroupedCacheEntityFetchSpec(declared)) {
+    return declared;
+  }
+
+  return declared.columns === true
+    ? true
+    : [...declared.columns, ...declared.groupBy];
+};
 
 // The flat map provider owning each metadata name; its declared fetch shape
 // is diffed against what the relation constants predict.
@@ -153,11 +170,10 @@ describe('fetch requirements drift against relation constants', () => {
     for (const [metadataName, provider] of Object.entries(
       FLAT_PROVIDER_BY_METADATA_NAME,
     )) {
-      if (
-        provider.fetchRequirements[
-          metadataName as keyof CacheEntityFetchShape
-        ] !== true
-      ) {
+      const declared =
+        provider.fetchRequirements[metadataName as keyof CacheEntityFetchShape];
+
+      if (!isDefined(declared) || getEffectiveColumns(declared) !== true) {
         violations.push(metadataName);
       }
     }
@@ -209,7 +225,9 @@ describe('fetch requirements drift against relation constants', () => {
           continue;
         }
 
-        if (declared === true) {
+        const effectiveColumns = getEffectiveColumns(declared);
+
+        if (effectiveColumns === true) {
           continue;
         }
 
@@ -225,7 +243,7 @@ describe('fetch requirements drift against relation constants', () => {
         }
 
         for (const requiredColumn of requiredColumns) {
-          if (!(declared as readonly string[]).includes(requiredColumn)) {
+          if (!effectiveColumns.includes(requiredColumn)) {
             violations.push(
               `${sourceMetadataName}.${relationProperty} -> ${childMetadataName}: missing column ${requiredColumn}`,
             );
@@ -270,12 +288,14 @@ describe('fetch requirements drift against relation constants', () => {
           continue;
         }
 
-        if (declared === true) {
+        const effectiveColumns = getEffectiveColumns(declared);
+
+        if (effectiveColumns === true) {
           continue;
         }
 
         for (const requiredColumn of ['id', 'universalIdentifier']) {
-          if (!(declared as readonly string[]).includes(requiredColumn)) {
+          if (!effectiveColumns.includes(requiredColumn)) {
             violations.push(
               `${sourceMetadataName}.${relationProperty} -> ${targetMetadataName}: missing column ${requiredColumn}`,
             );

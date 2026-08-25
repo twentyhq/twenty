@@ -174,6 +174,69 @@ describe('WorkspaceCacheRecomputeContext', () => {
     ).toBe(widenedRows);
   });
 
+  it('widens the fetched columns with the declared groupBy keys', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await recomputeContext.resolveFetchShapes([
+      {
+        objectMetadata: {
+          columns: ['id'],
+          groupBy: ['labelIdentifierFieldMetadataId'],
+        },
+      },
+    ]);
+
+    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].select).toHaveLength(2);
+    expect(findMock.mock.calls[0][0].select).toEqual(
+      expect.arrayContaining(['id', 'labelIdentifierFieldMetadataId']),
+    );
+  });
+
+  it('returns rows and grouped maps for a groupBy declaration, skipping null foreign keys', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+    const rows = [
+      {
+        id: 'object-a',
+        labelIdentifierFieldMetadataId: 'field-1',
+        workspaceId: WORKSPACE_ID,
+      },
+      {
+        id: 'object-b',
+        labelIdentifierFieldMetadataId: 'field-1',
+        workspaceId: WORKSPACE_ID,
+      },
+      {
+        id: 'object-c',
+        labelIdentifierFieldMetadataId: null,
+        workspaceId: WORKSPACE_ID,
+      },
+    ];
+
+    findMocksByEntity.get(ObjectMetadataEntity)!.mockResolvedValue(rows);
+
+    const shape = {
+      objectMetadata: {
+        columns: ['id'],
+        groupBy: ['labelIdentifierFieldMetadataId'],
+      },
+    } as const;
+
+    await recomputeContext.resolveFetchShapes([shape]);
+
+    const { objectMetadata } = recomputeContext.getRowsByName(shape);
+
+    expect(objectMetadata.rows).toBe(rows);
+    expect(
+      objectMetadata.byLabelIdentifierFieldMetadataId.get('field-1'),
+    ).toEqual([rows[0], rows[1]]);
+    expect([...objectMetadata.byLabelIdentifierFieldMetadataId.keys()]).toEqual(
+      ['field-1'],
+    );
+  });
+
   it('throws when reading an entity name no shape declared', async () => {
     const { recomputeContext } = setup();
 

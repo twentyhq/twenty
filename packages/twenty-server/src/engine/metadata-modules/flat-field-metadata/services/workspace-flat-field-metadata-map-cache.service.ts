@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -14,9 +12,7 @@ import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { type CacheFetchableEntity } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -28,26 +24,37 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
   override readonly fetchRequirements = {
     fieldMetadata: true,
     index: ['id', 'isUnique', 'isSystemSideEffect'],
-    indexFieldMetadata: [
-      'id',
-      'indexMetadataId',
-      'fieldMetadataId',
-      'subFieldName',
-    ],
+    indexFieldMetadata: {
+      columns: ['id', 'fieldMetadataId', 'subFieldName'],
+      groupBy: ['indexMetadataId'],
+    },
     objectMetadata: ['id', 'universalIdentifier'],
     application: ['id', 'universalIdentifier'],
-    viewField: ['id', 'universalIdentifier', 'fieldMetadataId'],
-    viewFilter: ['id', 'universalIdentifier', 'fieldMetadataId'],
-    viewSort: ['id', 'universalIdentifier', 'fieldMetadataId'],
-    view: [
-      'id',
-      'universalIdentifier',
-      'kanbanAggregateOperationFieldMetadataId',
-      'calendarFieldMetadataId',
-      'calendarEndFieldMetadataId',
-      'mainGroupByFieldMetadataId',
-    ],
-    searchFieldMetadata: ['id', 'universalIdentifier', 'fieldMetadataId'],
+    viewField: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['fieldMetadataId'],
+    },
+    viewFilter: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['fieldMetadataId'],
+    },
+    viewSort: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['fieldMetadataId'],
+    },
+    view: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: [
+        'kanbanAggregateOperationFieldMetadataId',
+        'calendarFieldMetadataId',
+        'calendarEndFieldMetadataId',
+        'mainGroupByFieldMetadataId',
+      ],
+    },
+    searchFieldMetadata: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['fieldMetadataId'],
+    },
   } as const;
 
   override compactForStorage(
@@ -78,52 +85,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
       searchFieldMetadata: searchFieldMetadatas,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [
-      viewFieldsByFieldId,
-      viewFiltersByFieldId,
-      calendarViewsByFieldId,
-      calendarEndViewsByFieldId,
-      kanbanViewsByFieldId,
-      mainGroupByFieldMetadataViewsByFieldId,
-      viewSortsByFieldId,
-      searchFieldMetadatasByFieldId,
-    ] = (
-      [
-        {
-          entities: viewFields,
-          foreignKey: 'fieldMetadataId',
-        },
-        {
-          entities: viewFilters,
-          foreignKey: 'fieldMetadataId',
-        },
-        {
-          entities: views,
-          foreignKey: 'calendarFieldMetadataId',
-        },
-        {
-          entities: views,
-          foreignKey: 'calendarEndFieldMetadataId',
-        },
-        {
-          entities: views,
-          foreignKey: 'kanbanAggregateOperationFieldMetadataId',
-        },
-        {
-          entities: views,
-          foreignKey: 'mainGroupByFieldMetadataId',
-        },
-        {
-          entities: viewSorts,
-          foreignKey: 'fieldMetadataId',
-        },
-        {
-          entities: searchFieldMetadatas,
-          foreignKey: 'fieldMetadataId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const fieldMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(fieldMetadatas);
     const objectMetadataIdToUniversalIdentifierMap =
@@ -131,32 +92,11 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
-    const indexFieldMetadatasByIndexMetadataId = new Map<
-      string,
-      CacheFetchableEntity<'indexFieldMetadata'>[]
-    >();
-
-    for (const indexFieldMetadata of indexFieldMetadatas) {
-      const existingIndexFieldMetadatas =
-        indexFieldMetadatasByIndexMetadataId.get(
-          indexFieldMetadata.indexMetadataId,
-        );
-
-      if (isDefined(existingIndexFieldMetadatas)) {
-        existingIndexFieldMetadatas.push(indexFieldMetadata);
-      } else {
-        indexFieldMetadatasByIndexMetadataId.set(
-          indexFieldMetadata.indexMetadataId,
-          [indexFieldMetadata],
-        );
-      }
-    }
-
     const uniqueFieldMetadataIds = computeUniqueFieldMetadataIdsFromIndexes(
       indexMetadatas.map((indexMetadata) => ({
         ...indexMetadata,
         indexFieldMetadatas:
-          indexFieldMetadatasByIndexMetadataId.get(indexMetadata.id) ?? [],
+          indexFieldMetadatas.byIndexMetadataId.get(indexMetadata.id) ?? [],
       })),
     );
 
@@ -166,21 +106,28 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
       const flatFieldMetadata = fromFieldMetadataEntityToFlatFieldMetadata({
         entity: {
           ...fieldMetadataEntity,
-          viewFields: viewFieldsByFieldId.get(fieldMetadataEntity.id) || [],
-          viewFilters: viewFiltersByFieldId.get(fieldMetadataEntity.id) || [],
+          viewFields:
+            viewFields.byFieldMetadataId.get(fieldMetadataEntity.id) || [],
+          viewFilters:
+            viewFilters.byFieldMetadataId.get(fieldMetadataEntity.id) || [],
           kanbanAggregateOperationViews:
-            kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
-          calendarViews:
-            calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],
-          calendarEndViews:
-            calendarEndViewsByFieldId.get(fieldMetadataEntity.id) || [],
-          mainGroupByFieldMetadataViews:
-            mainGroupByFieldMetadataViewsByFieldId.get(
+            views.byKanbanAggregateOperationFieldMetadataId.get(
               fieldMetadataEntity.id,
             ) || [],
-          viewSorts: viewSortsByFieldId.get(fieldMetadataEntity.id) || [],
+          calendarViews:
+            views.byCalendarFieldMetadataId.get(fieldMetadataEntity.id) || [],
+          calendarEndViews:
+            views.byCalendarEndFieldMetadataId.get(fieldMetadataEntity.id) ||
+            [],
+          mainGroupByFieldMetadataViews:
+            views.byMainGroupByFieldMetadataId.get(fieldMetadataEntity.id) ||
+            [],
+          viewSorts:
+            viewSorts.byFieldMetadataId.get(fieldMetadataEntity.id) || [],
           searchFieldMetadatas:
-            searchFieldMetadatasByFieldId.get(fieldMetadataEntity.id) || [],
+            searchFieldMetadatas.byFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
         },
         fieldMetadataIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

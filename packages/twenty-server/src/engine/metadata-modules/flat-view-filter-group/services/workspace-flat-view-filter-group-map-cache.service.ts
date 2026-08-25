@@ -8,16 +8,21 @@ import { fromViewFilterGroupEntityToFlatViewFilterGroup } from 'src/engine/metad
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewFilterGroupMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewFilterGroupMapCacheService extends FlatEntityMapCacheProvider<'viewFilterGroup'> {
   override readonly fetchRequirements = {
-    viewFilterGroup: true,
+    viewFilterGroup: {
+      columns: true,
+      groupBy: ['parentViewFilterGroupId'],
+    },
     application: ['id', 'universalIdentifier'],
-    viewFilter: ['id', 'universalIdentifier', 'viewFilterGroupId'],
+    viewFilter: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewFilterGroupId'],
+    },
     view: ['id', 'universalIdentifier'],
   } as const;
 
@@ -31,39 +36,27 @@ export class WorkspaceFlatViewFilterGroupMapCacheService extends FlatEntityMapCa
       view: views,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [viewFiltersByViewFilterGroupId, childViewFilterGroupsByParentId] = (
-      [
-        {
-          entities: viewFilters,
-          foreignKey: 'viewFilterGroupId',
-        },
-        {
-          entities: viewFilterGroups,
-          foreignKey: 'parentViewFilterGroupId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const viewFilterGroupIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(viewFilterGroups);
+      createIdToUniversalIdentifierMap(viewFilterGroups.rows);
     const viewIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(views);
 
     const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
 
-    for (const viewFilterGroupEntity of viewFilterGroups) {
+    for (const viewFilterGroupEntity of viewFilterGroups.rows) {
       const flatViewFilterGroup =
         fromViewFilterGroupEntityToFlatViewFilterGroup({
           entity: {
             ...viewFilterGroupEntity,
             viewFilters:
-              viewFiltersByViewFilterGroupId.get(viewFilterGroupEntity.id) ||
+              viewFilters.byViewFilterGroupId.get(viewFilterGroupEntity.id) ||
               [],
             childViewFilterGroups:
-              childViewFilterGroupsByParentId.get(viewFilterGroupEntity.id) ||
-              [],
+              viewFilterGroups.byParentViewFilterGroupId.get(
+                viewFilterGroupEntity.id,
+              ) || [],
           },
           applicationIdToUniversalIdentifierMap,
           viewFilterGroupIdToUniversalIdentifierMap,

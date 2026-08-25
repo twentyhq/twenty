@@ -10,7 +10,6 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -19,15 +18,17 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 })
 export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extends FlatEntityMapCacheProvider<'rowLevelPermissionPredicateGroup'> {
   override readonly fetchRequirements = {
-    rowLevelPermissionPredicateGroup: true,
+    rowLevelPermissionPredicateGroup: {
+      columns: true,
+      groupBy: ['parentRowLevelPermissionPredicateGroupId'],
+    },
     application: ['id', 'universalIdentifier'],
     objectMetadata: ['id', 'universalIdentifier'],
     role: ['id', 'universalIdentifier'],
-    rowLevelPermissionPredicate: [
-      'id',
-      'universalIdentifier',
-      'rowLevelPermissionPredicateGroupId',
-    ],
+    rowLevelPermissionPredicate: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['rowLevelPermissionPredicateGroupId'],
+    },
   } as const;
 
   computeForCache(
@@ -41,22 +42,6 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [
-      childRowLevelPermissionPredicateGroupsByParentId,
-      rowLevelPermissionPredicatesByGroupId,
-    ] = (
-      [
-        {
-          entities: rowLevelPermissionPredicateGroups,
-          foreignKey: 'parentRowLevelPermissionPredicateGroupId',
-        },
-        {
-          entities: rowLevelPermissionPredicates,
-          foreignKey: 'rowLevelPermissionPredicateGroupId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const objectMetadataIdToUniversalIdentifierMap =
@@ -64,23 +49,23 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
     const rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups);
+      createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups.rows);
 
     const flatRowLevelPermissionPredicateGroupMaps =
       createEmptyFlatEntityMaps();
 
-    for (const rowLevelPermissionPredicateGroupEntity of rowLevelPermissionPredicateGroups) {
+    for (const rowLevelPermissionPredicateGroupEntity of rowLevelPermissionPredicateGroups.rows) {
       const flatRowLevelPermissionPredicateGroup =
         fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionPredicateGroup(
           {
             entity: {
               ...rowLevelPermissionPredicateGroupEntity,
               childRowLevelPermissionPredicateGroups:
-                childRowLevelPermissionPredicateGroupsByParentId.get(
+                rowLevelPermissionPredicateGroups.byParentRowLevelPermissionPredicateGroupId.get(
                   rowLevelPermissionPredicateGroupEntity.id,
                 ) || [],
               rowLevelPermissionPredicates:
-                rowLevelPermissionPredicatesByGroupId.get(
+                rowLevelPermissionPredicates.byRowLevelPermissionPredicateGroupId.get(
                   rowLevelPermissionPredicateGroupEntity.id,
                 ) || [],
             },

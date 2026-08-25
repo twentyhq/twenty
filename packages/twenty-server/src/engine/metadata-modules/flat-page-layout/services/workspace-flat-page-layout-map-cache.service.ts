@@ -8,7 +8,6 @@ import { transformPageLayoutEntityToFlatPageLayout } from 'src/engine/metadata-m
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -16,7 +15,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatPageLayoutMapCacheService extends FlatEntityMapCacheProvider<'pageLayout'> {
   override readonly fetchRequirements = {
     pageLayout: true,
-    pageLayoutTab: ['id', 'universalIdentifier', 'pageLayoutId'],
+    pageLayoutTab: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['pageLayoutId'],
+    },
     application: ['id', 'universalIdentifier'],
     objectMetadata: ['id', 'universalIdentifier'],
   } as const;
@@ -31,21 +33,12 @@ export class WorkspaceFlatPageLayoutMapCacheService extends FlatEntityMapCachePr
       objectMetadata: objectMetadatas,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [pageLayoutTabsByPageLayoutId] = (
-      [
-        {
-          entities: pageLayoutTabs,
-          foreignKey: 'pageLayoutId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
     const pageLayoutTabIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(pageLayoutTabs);
+      createIdToUniversalIdentifierMap(pageLayoutTabs.rows);
 
     const flatPageLayoutMaps = createEmptyFlatEntityMaps();
 
@@ -53,7 +46,7 @@ export class WorkspaceFlatPageLayoutMapCacheService extends FlatEntityMapCachePr
       const flatPageLayout = transformPageLayoutEntityToFlatPageLayout({
         entity: {
           ...pageLayoutEntity,
-          tabs: pageLayoutTabsByPageLayoutId.get(pageLayoutEntity.id) || [],
+          tabs: pageLayoutTabs.byPageLayoutId.get(pageLayoutEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

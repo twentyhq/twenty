@@ -9,7 +9,6 @@ import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -18,12 +17,30 @@ export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider
   override readonly fetchRequirements = {
     role: true,
     application: ['id', 'universalIdentifier'],
-    roleTarget: ['id', 'universalIdentifier', 'roleId'],
-    objectPermission: ['id', 'universalIdentifier', 'roleId'],
-    rolePermissionFlag: ['id', 'universalIdentifier', 'roleId'],
-    fieldPermission: ['id', 'universalIdentifier', 'roleId'],
-    rowLevelPermissionPredicate: ['id', 'universalIdentifier', 'roleId'],
-    rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier', 'roleId'],
+    roleTarget: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['roleId'],
+    },
+    objectPermission: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['roleId'],
+    },
+    rolePermissionFlag: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['roleId'],
+    },
+    fieldPermission: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['roleId'],
+    },
+    rowLevelPermissionPredicate: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['roleId'],
+    },
+    rowLevelPermissionPredicateGroup: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['roleId'],
+    },
   } as const;
 
   computeForCache(
@@ -40,42 +57,6 @@ export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [
-      roleTargetsByRoleId,
-      objectPermissionsByRoleId,
-      rolePermissionFlagsByRoleId,
-      fieldPermissionsByRoleId,
-      rowLevelPermissionPredicatesByRoleId,
-      rowLevelPermissionPredicateGroupsByRoleId,
-    ] = (
-      [
-        {
-          entities: roleTargets,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: objectPermissions,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: rolePermissionFlags,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: fieldPermissions,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: rowLevelPermissionPredicates,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: rowLevelPermissionPredicateGroups,
-          foreignKey: 'roleId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
@@ -85,15 +66,16 @@ export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider
       const flatRole = fromRoleEntityToFlatRole({
         entity: {
           ...roleEntity,
-          roleTargets: roleTargetsByRoleId.get(roleEntity.id) || [],
-          objectPermissions: objectPermissionsByRoleId.get(roleEntity.id) || [],
+          roleTargets: roleTargets.byRoleId.get(roleEntity.id) || [],
+          objectPermissions:
+            objectPermissions.byRoleId.get(roleEntity.id) || [],
           rolePermissionFlags:
-            rolePermissionFlagsByRoleId.get(roleEntity.id) || [],
-          fieldPermissions: fieldPermissionsByRoleId.get(roleEntity.id) || [],
+            rolePermissionFlags.byRoleId.get(roleEntity.id) || [],
+          fieldPermissions: fieldPermissions.byRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicates:
-            rowLevelPermissionPredicatesByRoleId.get(roleEntity.id) || [],
+            rowLevelPermissionPredicates.byRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicateGroups:
-            rowLevelPermissionPredicateGroupsByRoleId.get(roleEntity.id) || [],
+            rowLevelPermissionPredicateGroups.byRoleId.get(roleEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
       });

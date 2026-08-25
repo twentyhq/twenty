@@ -4,14 +4,25 @@ import {
   type ObjectLiteral,
 } from 'typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { CACHE_FETCHABLE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/cache-fetchable-entity-by-name.constant';
 import {
   type CacheEntityFetchShape,
   type CacheEntityFetchShapeRows,
   type CacheFetchableEntityName,
+  type GroupedCacheEntityFetchSpec,
+  type WidenedCacheEntityFetchSpec,
 } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { groupRowsByForeignKey } from 'src/engine/workspace-cache/utils/group-rows-by-foreign-key.util';
+import { isGroupedCacheEntityFetchSpec } from 'src/engine/workspace-cache/utils/is-grouped-cache-entity-fetch-spec.util';
+
+const normalizeFetchSpec = (
+  fetchSpec: WidenedCacheEntityFetchSpec,
+): GroupedCacheEntityFetchSpec =>
+  isGroupedCacheEntityFetchSpec(fetchSpec)
+    ? fetchSpec
+    : { columns: fetchSpec, groupBy: [] };
 
 type EntityFetchGeneration = {
   id: number;
@@ -54,14 +65,15 @@ export class WorkspaceCacheRecomputeContext {
     >();
 
     for (const shape of shapes) {
-      for (const [entityName, columns] of Object.entries(shape) as [
+      for (const [entityName, fetchSpec] of Object.entries(shape) as [
         CacheFetchableEntityName,
-        readonly string[] | true | undefined,
+        WidenedCacheEntityFetchSpec | undefined,
       ][]) {
-        if (!isDefined(columns)) {
+        if (!isDefined(fetchSpec)) {
           continue;
         }
 
+        const { columns, groupBy } = normalizeFetchSpec(fetchSpec);
         const planned = plannedColumnsByEntityName.get(entityName);
 
         if (columns === true) {
@@ -73,12 +85,19 @@ export class WorkspaceCacheRecomputeContext {
           continue;
         }
 
+        // groupBy keys widen the fetch like ordinary columns, so a declared
+        // grouping is always backed by fetched data
+        const columnsWithGroupByKeys = [...columns, ...groupBy];
+
         if (!isDefined(planned)) {
-          plannedColumnsByEntityName.set(entityName, new Set(columns));
+          plannedColumnsByEntityName.set(
+            entityName,
+            new Set(columnsWithGroupByKeys),
+          );
           continue;
         }
 
-        for (const column of columns) {
+        for (const column of columnsWithGroupByKeys) {
           planned.add(column);
         }
       }
@@ -154,12 +173,34 @@ export class WorkspaceCacheRecomputeContext {
   getRowsByName<TShape extends CacheEntityFetchShape>(
     shape: TShape,
   ): CacheEntityFetchShapeRows<TShape> {
-    const rowsByEntityName: Partial<
-      Record<CacheFetchableEntityName, ObjectLiteral[]>
-    > = {};
+    const rowsByEntityName: Partial<Record<CacheFetchableEntityName, unknown>> =
+      {};
 
-    for (const entityName of Object.keys(shape) as CacheFetchableEntityName[]) {
-      rowsByEntityName[entityName] = this.getRowsForEntityName(entityName);
+    for (const [entityName, fetchSpec] of Object.entries(shape) as [
+      CacheFetchableEntityName,
+      WidenedCacheEntityFetchSpec | undefined,
+    ][]) {
+      if (!isDefined(fetchSpec)) {
+        continue;
+      }
+
+      const rows = this.getRowsForEntityName(entityName);
+
+      if (!isGroupedCacheEntityFetchSpec(fetchSpec)) {
+        rowsByEntityName[entityName] = rows;
+        continue;
+      }
+
+      const groupedEntry: Record<string, unknown> = { rows };
+
+      for (const foreignKey of fetchSpec.groupBy) {
+        groupedEntry[`by${capitalize(foreignKey)}`] = groupRowsByForeignKey({
+          rows,
+          foreignKey,
+        });
+      }
+
+      rowsByEntityName[entityName] = groupedEntry;
     }
 
     return rowsByEntityName as CacheEntityFetchShapeRows<TShape>;

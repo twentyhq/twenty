@@ -8,7 +8,6 @@ import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -19,12 +18,30 @@ export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider
     application: ['id', 'universalIdentifier'],
     objectMetadata: ['id', 'universalIdentifier'],
     fieldMetadata: ['id', 'universalIdentifier'],
-    viewField: ['id', 'universalIdentifier', 'viewId'],
-    viewFilter: ['id', 'universalIdentifier', 'viewId'],
-    viewGroup: ['id', 'universalIdentifier', 'viewId'],
-    viewFilterGroup: ['id', 'universalIdentifier', 'viewId'],
-    viewSort: ['id', 'universalIdentifier', 'viewId'],
-    viewFieldGroup: ['id', 'universalIdentifier', 'viewId'],
+    viewField: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewId'],
+    },
+    viewFilter: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewId'],
+    },
+    viewGroup: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewId'],
+    },
+    viewFilterGroup: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewId'],
+    },
+    viewSort: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewId'],
+    },
+    viewFieldGroup: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewId'],
+    },
   } as const;
 
   computeForCache(
@@ -43,42 +60,6 @@ export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider
       viewFieldGroup: viewFieldGroups,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [
-      viewFieldsByViewId,
-      viewFiltersByViewId,
-      viewGroupsByViewId,
-      viewFilterGroupsByViewId,
-      viewSortsByViewId,
-      viewFieldGroupsByViewId,
-    ] = (
-      [
-        {
-          entities: viewFields,
-          foreignKey: 'viewId',
-        },
-        {
-          entities: viewFilters,
-          foreignKey: 'viewId',
-        },
-        {
-          entities: viewGroups,
-          foreignKey: 'viewId',
-        },
-        {
-          entities: viewFilterGroups,
-          foreignKey: 'viewId',
-        },
-        {
-          entities: viewSorts,
-          foreignKey: 'viewId',
-        },
-        {
-          entities: viewFieldGroups,
-          foreignKey: 'viewId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const objectMetadataIdToUniversalIdentifierMap =
@@ -92,12 +73,12 @@ export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider
       const flatView = fromViewEntityToFlatView({
         entity: {
           ...viewEntity,
-          viewFields: viewFieldsByViewId.get(viewEntity.id) || [],
-          viewFilters: viewFiltersByViewId.get(viewEntity.id) || [],
-          viewGroups: viewGroupsByViewId.get(viewEntity.id) || [],
-          viewFilterGroups: viewFilterGroupsByViewId.get(viewEntity.id) || [],
-          viewSorts: viewSortsByViewId.get(viewEntity.id) || [],
-          viewFieldGroups: viewFieldGroupsByViewId.get(viewEntity.id) || [],
+          viewFields: viewFields.byViewId.get(viewEntity.id) || [],
+          viewFilters: viewFilters.byViewId.get(viewEntity.id) || [],
+          viewGroups: viewGroups.byViewId.get(viewEntity.id) || [],
+          viewFilterGroups: viewFilterGroups.byViewId.get(viewEntity.id) || [],
+          viewSorts: viewSorts.byViewId.get(viewEntity.id) || [],
+          viewFieldGroups: viewFieldGroups.byViewId.get(viewEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

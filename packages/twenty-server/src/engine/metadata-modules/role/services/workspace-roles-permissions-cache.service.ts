@@ -19,7 +19,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.workflow.universalIdentifier,
@@ -34,12 +33,12 @@ const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
 export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<ObjectsPermissionsByRoleId> {
   override readonly fetchRequirements = {
     role: true,
-    objectPermission: true,
-    rolePermissionFlag: true,
+    objectPermission: { columns: true, groupBy: ['roleId'] },
+    rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
     permissionFlag: true,
-    fieldPermission: true,
-    rowLevelPermissionPredicate: true,
-    rowLevelPermissionPredicateGroup: true,
+    fieldPermission: { columns: true, groupBy: ['roleId'] },
+    rowLevelPermissionPredicate: { columns: true, groupBy: ['roleId'] },
+    rowLevelPermissionPredicateGroup: { columns: true, groupBy: ['roleId'] },
     objectMetadata: [
       'id',
       'isSystem',
@@ -54,83 +53,56 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     const {
       role: roles,
       objectPermission: objectPermissions,
-      rolePermissionFlag: rolePermissionFlagRows,
+      rolePermissionFlag: rolePermissionFlags,
       permissionFlag: permissionFlags,
       fieldPermission: fieldPermissions,
-      rowLevelPermissionPredicate: rowLevelPermissionPredicateRows,
-      rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroupRows,
+      rowLevelPermissionPredicate: rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    // the recompute context cannot load relations: rebuild the permissionFlag
-    // relation in memory (undefined when the FK is absent, so the legacy
-    // `flag` fallback still applies)
+    // the recompute context cannot load relations: the permissionFlag
+    // relation is rebuilt in memory per role below (undefined when the FK is
+    // absent, so the legacy `flag` fallback still applies)
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
         permissionFlag.id,
         permissionFlag,
       ]),
     );
-    const rolePermissionFlags = rolePermissionFlagRows.map(
-      (rolePermissionFlagRow) =>
-        ({
-          ...rolePermissionFlagRow,
-          permissionFlag: permissionFlagById.get(
-            rolePermissionFlagRow.permissionFlagId,
-          ),
-        }) as RolePermissionFlagEntity,
-    );
-
-    // the recompute context fetches withDeleted: these two tables previously
-    // excluded soft-deleted rows, so filter them out in memory
-    const rowLevelPermissionPredicates = rowLevelPermissionPredicateRows.filter(
-      (rowLevelPermissionPredicate) =>
-        !isDefined(rowLevelPermissionPredicate.deletedAt),
-    );
-    const rowLevelPermissionPredicateGroups =
-      rowLevelPermissionPredicateGroupRows.filter(
-        (rowLevelPermissionPredicateGroup) =>
-          !isDefined(rowLevelPermissionPredicateGroup.deletedAt),
-      );
-
-    const objectPermissionsByRoleId =
-      regroupEntitiesByRelatedEntityId<'objectPermission'>({
-        entities: objectPermissions,
-        foreignKey: 'roleId',
-      });
-    const rolePermissionFlagsByRoleId =
-      regroupEntitiesByRelatedEntityId<'rolePermissionFlag'>({
-        entities: rolePermissionFlags,
-        foreignKey: 'roleId',
-      });
-    const fieldPermissionsByRoleId =
-      regroupEntitiesByRelatedEntityId<'fieldPermission'>({
-        entities: fieldPermissions,
-        foreignKey: 'roleId',
-      });
-    const rowLevelPermissionPredicatesByRoleId =
-      regroupEntitiesByRelatedEntityId<'rowLevelPermissionPredicate'>({
-        entities: rowLevelPermissionPredicates,
-        foreignKey: 'roleId',
-      });
-    const rowLevelPermissionPredicateGroupsByRoleId =
-      regroupEntitiesByRelatedEntityId<'rowLevelPermissionPredicateGroup'>({
-        entities: rowLevelPermissionPredicateGroups,
-        foreignKey: 'roleId',
-      });
 
     const permissionsByRoleId: ObjectsPermissionsByRoleId = {};
 
     for (const role of roles) {
       const roleObjectPermissions =
-        objectPermissionsByRoleId.get(role.id) ?? [];
-      const roleRolePermissionFlags =
-        rolePermissionFlagsByRoleId.get(role.id) ?? [];
-      const roleFieldPermissions = fieldPermissionsByRoleId.get(role.id) ?? [];
-      const roleRowLevelPermissionPredicates =
-        rowLevelPermissionPredicatesByRoleId.get(role.id) ?? [];
-      const roleRowLevelPermissionPredicateGroups =
-        rowLevelPermissionPredicateGroupsByRoleId.get(role.id) ?? [];
+        objectPermissions.byRoleId.get(role.id) ?? [];
+      const roleRolePermissionFlags = (
+        rolePermissionFlags.byRoleId.get(role.id) ?? []
+      ).map(
+        (rolePermissionFlagRow) =>
+          ({
+            ...rolePermissionFlagRow,
+            permissionFlag: permissionFlagById.get(
+              rolePermissionFlagRow.permissionFlagId,
+            ),
+          }) as RolePermissionFlagEntity,
+      );
+      const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
+
+      // the recompute context fetches withDeleted: these two tables previously
+      // excluded soft-deleted rows, so filter them out in memory
+      const roleRowLevelPermissionPredicates = (
+        rowLevelPermissionPredicates.byRoleId.get(role.id) ?? []
+      ).filter(
+        (rowLevelPermissionPredicate) =>
+          !isDefined(rowLevelPermissionPredicate.deletedAt),
+      );
+      const roleRowLevelPermissionPredicateGroups = (
+        rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? []
+      ).filter(
+        (rowLevelPermissionPredicateGroup) =>
+          !isDefined(rowLevelPermissionPredicateGroup.deletedAt),
+      );
 
       const objectRecordsPermissions: ObjectsPermissions = {};
 

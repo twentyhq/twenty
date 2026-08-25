@@ -8,7 +8,6 @@ import { transformPageLayoutTabEntityToFlatPageLayoutTab } from 'src/engine/meta
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -16,7 +15,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatPageLayoutTabMapCacheService extends FlatEntityMapCacheProvider<'pageLayoutTab'> {
   override readonly fetchRequirements = {
     pageLayoutTab: true,
-    pageLayoutWidget: ['id', 'universalIdentifier', 'pageLayoutTabId'],
+    pageLayoutWidget: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['pageLayoutTabId'],
+    },
     application: ['id', 'universalIdentifier'],
     pageLayout: ['id', 'universalIdentifier'],
   } as const;
@@ -31,15 +33,6 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends FlatEntityMapCach
       pageLayout: pageLayouts,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [pageLayoutWidgetsByPageLayoutTabId] = (
-      [
-        {
-          entities: pageLayoutWidgets,
-          foreignKey: 'pageLayoutTabId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const pageLayoutIdToUniversalIdentifierMap =
@@ -53,7 +46,7 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends FlatEntityMapCach
           entity: {
             ...pageLayoutTabEntity,
             widgets:
-              pageLayoutWidgetsByPageLayoutTabId.get(pageLayoutTabEntity.id) ||
+              pageLayoutWidgets.byPageLayoutTabId.get(pageLayoutTabEntity.id) ||
               [],
           },
           applicationIdToUniversalIdentifierMap,

@@ -9,7 +9,6 @@ import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadat
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -18,17 +17,34 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
   override readonly fetchRequirements = {
     objectMetadata: true,
     application: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier', 'objectMetadataId'],
-    index: ['id', 'universalIdentifier', 'objectMetadataId'],
-    view: ['id', 'universalIdentifier', 'objectMetadataId'],
-    objectPermission: ['id', 'universalIdentifier', 'objectMetadataId'],
-    searchFieldMetadata: ['id', 'universalIdentifier', 'objectMetadataId'],
-    pageLayout: ['id', 'universalIdentifier', 'objectMetadataId'],
-    commandMenuItem: [
-      'id',
-      'universalIdentifier',
-      'navigationTargetObjectMetadataId',
-    ],
+    fieldMetadata: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
+    index: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
+    view: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
+    objectPermission: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
+    searchFieldMetadata: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
+    pageLayout: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
+    commandMenuItem: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['navigationTargetObjectMetadataId'],
+    },
   } as const;
 
   computeForCache(
@@ -37,7 +53,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
     const {
       objectMetadata: objectMetadatas,
       application: applications,
-      fieldMetadata: fields,
+      fieldMetadata: fieldMetadatas,
       index: indexMetadatas,
       view: views,
       objectPermission: objectPermissions,
@@ -46,51 +62,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
       commandMenuItem: commandMenuItems,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
-    const [
-      fieldsByObjectId,
-      indexesByObjectId,
-      viewsByObjectId,
-      objectPermissionsByObjectId,
-      searchFieldMetadatasByObjectId,
-      pageLayoutsByObjectId,
-      commandMenuItemsByObjectId,
-    ] = (
-      [
-        {
-          entities: fields,
-          foreignKey: 'objectMetadataId',
-        },
-        {
-          entities: indexMetadatas,
-          foreignKey: 'objectMetadataId',
-        },
-        {
-          entities: views,
-          foreignKey: 'objectMetadataId',
-        },
-        {
-          entities: objectPermissions,
-          foreignKey: 'objectMetadataId',
-        },
-        {
-          entities: searchFieldMetadatas,
-          foreignKey: 'objectMetadataId',
-        },
-        {
-          entities: pageLayouts,
-          foreignKey: 'objectMetadataId',
-        },
-        {
-          entities: commandMenuItems,
-          foreignKey: 'navigationTargetObjectMetadataId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const fieldMetadataIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(fields);
+      createIdToUniversalIdentifierMap(fieldMetadatas.rows);
 
     const flatObjectMetadataMaps = createEmptyFlatEntityMaps();
 
@@ -98,16 +73,26 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
       const flatObjectMetadata = fromObjectMetadataEntityToFlatObjectMetadata({
         entity: {
           ...objectMetadataEntity,
-          fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
-          indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
-          views: viewsByObjectId.get(objectMetadataEntity.id) || [],
+          fields:
+            fieldMetadatas.byObjectMetadataId.get(objectMetadataEntity.id) ||
+            [],
+          indexMetadatas:
+            indexMetadatas.byObjectMetadataId.get(objectMetadataEntity.id) ||
+            [],
+          views: views.byObjectMetadataId.get(objectMetadataEntity.id) || [],
           objectPermissions:
-            objectPermissionsByObjectId.get(objectMetadataEntity.id) || [],
+            objectPermissions.byObjectMetadataId.get(objectMetadataEntity.id) ||
+            [],
           searchFieldMetadatas:
-            searchFieldMetadatasByObjectId.get(objectMetadataEntity.id) || [],
-          pageLayouts: pageLayoutsByObjectId.get(objectMetadataEntity.id) || [],
+            searchFieldMetadatas.byObjectMetadataId.get(
+              objectMetadataEntity.id,
+            ) || [],
+          pageLayouts:
+            pageLayouts.byObjectMetadataId.get(objectMetadataEntity.id) || [],
           commandMenuItems:
-            commandMenuItemsByObjectId.get(objectMetadataEntity.id) || [],
+            commandMenuItems.byNavigationTargetObjectMetadataId.get(
+              objectMetadataEntity.id,
+            ) || [],
         },
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,

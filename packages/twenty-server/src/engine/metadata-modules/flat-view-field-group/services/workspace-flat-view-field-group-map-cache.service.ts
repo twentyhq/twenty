@@ -8,7 +8,6 @@ import { fromViewFieldGroupEntityToFlatViewFieldGroup } from 'src/engine/metadat
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -18,7 +17,10 @@ export class WorkspaceFlatViewFieldGroupMapCacheService extends FlatEntityMapCac
     viewFieldGroup: true,
     application: ['id', 'universalIdentifier'],
     view: ['id', 'universalIdentifier'],
-    viewField: ['id', 'universalIdentifier', 'viewFieldGroupId'],
+    viewField: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['viewFieldGroupId'],
+    },
   } as const;
 
   computeForCache(
@@ -36,12 +38,6 @@ export class WorkspaceFlatViewFieldGroupMapCacheService extends FlatEntityMapCac
     const viewIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(views);
 
-    const viewFieldsByViewFieldGroupId =
-      regroupEntitiesByRelatedEntityId<'viewField'>({
-        entities: viewFields,
-        foreignKey: 'viewFieldGroupId',
-      });
-
     const flatViewFieldGroupMaps = createEmptyFlatEntityMaps();
 
     for (const viewFieldGroupEntity of viewFieldGroups) {
@@ -49,7 +45,7 @@ export class WorkspaceFlatViewFieldGroupMapCacheService extends FlatEntityMapCac
         entity: {
           ...viewFieldGroupEntity,
           viewFields:
-            viewFieldsByViewFieldGroupId.get(viewFieldGroupEntity.id) || [],
+            viewFields.byViewFieldGroupId.get(viewFieldGroupEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         viewIdToUniversalIdentifierMap,

@@ -7,7 +7,6 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -16,7 +15,10 @@ export class WorkspaceFlatPermissionFlagMapCacheService extends FlatEntityMapCac
   override readonly fetchRequirements = {
     permissionFlag: true,
     application: ['id', 'universalIdentifier'],
-    rolePermissionFlag: true,
+    rolePermissionFlag: {
+      columns: true,
+      groupBy: ['permissionFlagId'],
+    },
   } as const;
 
   computeForCache(
@@ -30,11 +32,6 @@ export class WorkspaceFlatPermissionFlagMapCacheService extends FlatEntityMapCac
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
-    const rolePermissionFlagsByPermissionFlagId =
-      regroupEntitiesByRelatedEntityId<'rolePermissionFlag'>({
-        entities: rolePermissionFlags,
-        foreignKey: 'permissionFlagId',
-      });
 
     const flatPermissionFlagMaps = createEmptyFlatEntityMaps();
 
@@ -43,7 +40,7 @@ export class WorkspaceFlatPermissionFlagMapCacheService extends FlatEntityMapCac
         entity: {
           ...definition,
           rolePermissionFlags:
-            rolePermissionFlagsByPermissionFlagId.get(definition.id) ?? [],
+            rolePermissionFlags.byPermissionFlagId.get(definition.id) ?? [],
         },
         applicationIdToUniversalIdentifierMap,
       });

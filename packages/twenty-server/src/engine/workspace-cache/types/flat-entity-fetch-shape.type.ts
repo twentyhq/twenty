@@ -4,6 +4,7 @@ import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-mod
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import { type KNOWN_FETCH_GAPS } from 'src/engine/workspace-cache/constants/known-fetch-gaps.constant';
 import {
+  type CacheEntityFetchSpec,
   type CacheFetchableEntity,
   type CacheFetchableEntityName,
 } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
@@ -37,26 +38,31 @@ type RequiredFetchNames<TMetadataName extends AllMetadataName> =
       KnownGapChildNames<TMetadataName>
     >;
 
-type ColumnsOrFull<TName extends CacheFetchableEntityName> =
-  | readonly (keyof CacheFetchableEntity<TName> & string)[]
-  | true;
-
 // Strict per-metadata-name variant of CacheEntityFetchShape: the own entity
 // (full rows), every one-to-many child, every many-to-one target, and the
 // application identity map are required by the relation constants; adding a
 // relation there makes every provider missing the fetch fail to compile.
 // Column-level requirements stay enforced by the fetch-requirements drift
 // spec, where violations are reported by name.
+// The own entity always needs full rows; groupBy stays allowed for
+// self-referential relations (e.g. viewFilterGroup by parentViewFilterGroupId)
+type OwnEntityFetchSpec<TName extends CacheFetchableEntityName> =
+  | true
+  | {
+      columns: true;
+      groupBy: readonly (keyof CacheFetchableEntity<TName> & string)[];
+    };
+
 export type FlatEntityFetchShape<TMetadataName extends AllMetadataName> = {
-  [TName in TMetadataName]: true;
+  [TName in TMetadataName]: OwnEntityFetchSpec<TName>;
 } & {
   [TName in Exclude<
     RequiredFetchNames<TMetadataName>,
     TMetadataName
-  >]: ColumnsOrFull<TName>;
+  >]: CacheEntityFetchSpec<TName>;
 } & {
   [TName in Exclude<
     CacheFetchableEntityName,
     RequiredFetchNames<TMetadataName>
-  >]?: ColumnsOrFull<TName>;
+  >]?: CacheEntityFetchSpec<TName>;
 };
