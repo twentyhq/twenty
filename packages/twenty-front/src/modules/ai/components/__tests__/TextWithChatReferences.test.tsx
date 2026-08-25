@@ -51,8 +51,8 @@ jest.mock('@/ai/components/FieldMetadataLink', () => ({
   ),
 }));
 
-jest.mock('@/ai/components/LegacyFieldMetadataLinkById', () => ({
-  LegacyFieldMetadataLinkById: ({
+jest.mock('@/ai/components/DeprecatedFieldMetadataLinkById', () => ({
+  DeprecatedFieldMetadataLinkById: ({
     fieldMetadataItemId,
     displayName,
   }: {

@@ -3,15 +3,23 @@ import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMet
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
-type LegacyFieldMetadataLinkByIdProps = {
+type DeprecatedFieldMetadataLinkByIdProps = {
   fieldMetadataItemId: string;
   displayName: string;
 };
 
-export const LegacyFieldMetadataLinkById = ({
+/**
+ * @deprecated Renders field references persisted with the old id-based syntax
+ * (`[[field:<uuid>:<label>]]`). New messages address fields by object and field
+ * name, handled by `FieldMetadataLink`.
+ *
+ * Kept only so already-persisted chat messages keep rendering.
+ * Delete after 2026 september, along with the `legacyFieldById` reference kind.
+ */
+export const DeprecatedFieldMetadataLinkById = ({
   fieldMetadataItemId,
   displayName,
-}: LegacyFieldMetadataLinkByIdProps) => {
+}: DeprecatedFieldMetadataLinkByIdProps) => {
   const { foundFieldMetadataItem, foundObjectMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
       fieldMetadataItemId,

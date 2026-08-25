@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { LegacyFieldMetadataLinkById } from '@/ai/components/LegacyFieldMetadataLinkById';
+import { DeprecatedFieldMetadataLinkById } from '@/ai/components/DeprecatedFieldMetadataLinkById';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { type Store } from 'jotai/vanilla/store';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -27,7 +27,7 @@ const setPermissionFlags = (
   });
 };
 
-const renderLegacyFieldMetadataLinkById = ({
+const renderDeprecatedFieldMetadataLinkById = ({
   fieldMetadataItemId,
   displayName,
   permissionFlags,
@@ -44,7 +44,7 @@ const renderLegacyFieldMetadataLinkById = ({
 
   return render(
     <MemoryRouter>
-      <LegacyFieldMetadataLinkById
+      <DeprecatedFieldMetadataLinkById
         fieldMetadataItemId={fieldMetadataItemId}
         displayName={displayName}
       />
@@ -53,9 +53,9 @@ const renderLegacyFieldMetadataLinkById = ({
   );
 };
 
-describe('LegacyFieldMetadataLinkById', () => {
+describe('DeprecatedFieldMetadataLinkById', () => {
   it('should link a field to its settings page', () => {
-    renderLegacyFieldMetadataLinkById({
+    renderDeprecatedFieldMetadataLinkById({
       fieldMetadataItemId: nameFieldMetadataItem.id,
       displayName: 'Name',
       permissionFlags: [PermissionFlagType.DATA_MODEL],
@@ -68,7 +68,7 @@ describe('LegacyFieldMetadataLinkById', () => {
   });
 
   it('should render a chip without a link when the user cannot access the data model', () => {
-    renderLegacyFieldMetadataLinkById({
+    renderDeprecatedFieldMetadataLinkById({
       fieldMetadataItemId: nameFieldMetadataItem.id,
       displayName: 'Name',
       permissionFlags: [],
@@ -79,7 +79,7 @@ describe('LegacyFieldMetadataLinkById', () => {
   });
 
   it('should render plain text for an unknown field id', () => {
-    renderLegacyFieldMetadataLinkById({
+    renderDeprecatedFieldMetadataLinkById({
       fieldMetadataItemId: '33333333-3333-3333-3333-333333333333',
       displayName: 'Partner type',
       permissionFlags: [PermissionFlagType.DATA_MODEL],
