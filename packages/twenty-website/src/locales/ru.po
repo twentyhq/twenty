@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 16:13\n"
+"PO-Revision-Date: 2026-08-25 10:13\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -76,7 +76,7 @@ msgstr "Фильтр {labelText}, выбрано: {0}"
 #. js-lingui-id: WWLSqV
 #: src/partners-marketplace/FilterBar.tsx
 msgid "{totalCount, plural, one {# certified partner ready to take on your project} other {# certified partners ready to take on your project}}"
-msgstr ""
+msgstr "{totalCount, plural, one {# сертифицированный партнер, готовый взяться за ваш проект} few {# сертифицированных партнера, готовых взяться за ваш проект} many {# сертифицированных партнеров, готовых взяться за ваш проект} other {# сертифицированных партнеров, готовых взяться за ваш проект}}"
 
 #. js-lingui-id: 0Qb9by
 #: src/case-studies/case-study-stories.ts
@@ -983,12 +983,12 @@ msgstr "Африка"
 #. js-lingui-id: 7X/+39
 #: src/sections/faq/partner-faq.data.ts
 msgid "Agencies and freelancers apply through the Twenty partner program page, which lists the requirements and carries the application form."
-msgstr ""
+msgstr "Агентства и фрилансеры подают заявки через страницу партнерской программы Twenty, где указаны требования и размещена форма заявки."
 
 #. js-lingui-id: CHjiD2
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Agencies and freelancers can apply to join the certified directory."
-msgstr ""
+msgstr "Агентства и фрилансеры могут подать заявку на включение в каталог сертифицированных партнеров."
 
 #. js-lingui-id: NmHsVh
 #: src/partner-application/data/partner-team-type-options.ts
@@ -1310,7 +1310,7 @@ msgstr "Назначайте ответственных и сроки"
 #. js-lingui-id: eo0HU7
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
-msgstr ""
+msgstr "Хотя бы один реализованный проект внедрения Twenty — для клиента или внутренний — со ссылкой, демонстрирующей выполненную работу. Подходят как независимые фрилансеры, так и агентства."
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx

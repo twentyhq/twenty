@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 16:13\n"
+"PO-Revision-Date: 2026-08-25 10:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -76,7 +76,7 @@ msgstr "{labelText} 筛选器，已选择 {0} 个"
 #. js-lingui-id: WWLSqV
 #: src/partners-marketplace/FilterBar.tsx
 msgid "{totalCount, plural, one {# certified partner ready to take on your project} other {# certified partners ready to take on your project}}"
-msgstr ""
+msgstr "{totalCount, plural, other {# 名认证合作伙伴已准备好承接您的项目}}"
 
 #. js-lingui-id: 0Qb9by
 #: src/case-studies/case-study-stories.ts
@@ -983,12 +983,12 @@ msgstr "非洲"
 #. js-lingui-id: 7X/+39
 #: src/sections/faq/partner-faq.data.ts
 msgid "Agencies and freelancers apply through the Twenty partner program page, which lists the requirements and carries the application form."
-msgstr ""
+msgstr "代理机构和自由职业者可通过 Twenty 合作伙伴计划页面申请，该页面列出了要求并提供申请表。"
 
 #. js-lingui-id: CHjiD2
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Agencies and freelancers can apply to join the certified directory."
-msgstr ""
+msgstr "代理机构和自由职业者可以申请加入认证名录。"
 
 #. js-lingui-id: NmHsVh
 #: src/partner-application/data/partner-team-type-options.ts
@@ -1310,7 +1310,7 @@ msgstr "分配负责人和截止日期"
 #. js-lingui-id: eo0HU7
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
-msgstr ""
+msgstr "至少有一个已上线的 Twenty 实施项目——客户项目或内部项目均可——并附上展示该项目成果的链接。个人自由职业者和代理机构均符合条件。"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
