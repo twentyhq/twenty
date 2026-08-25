@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -8,16 +8,13 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatObjectMetadataMaps', { packingPonderation: 6 })
-export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<FlatObjectMetadata>
-> {
+export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCacheProvider<'objectMetadata'> {
   override readonly fetchRequirements = {
     objectMetadata: true,
     application: ['id', 'universalIdentifier'],
@@ -32,7 +29,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       'universalIdentifier',
       'navigationTargetObjectMetadataId',
     ],
-  } as const satisfies CacheEntityFetchShape;
+  } as const;
 
   computeForCache(
     workspaceId: string,

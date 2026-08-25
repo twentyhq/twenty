@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -14,18 +14,15 @@ import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import {
-  type CacheEntityFetchShape,
-  type CacheFetchableEntity,
-} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type CacheFetchableEntity } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
-export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<FlatFieldMetadata>,
+export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCacheProvider<
+  'fieldMetadata',
   CompactFlatFieldMetadataMaps
 > {
   override readonly fetchRequirements = {
@@ -51,7 +48,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       'mainGroupByFieldMetadataId',
     ],
     searchFieldMetadata: ['id', 'universalIdentifier', 'fieldMetadataId'],
-  } as const satisfies CacheEntityFetchShape;
+  } as const;
 
   override compactForStorage(
     data: FlatEntityMaps<FlatFieldMetadata>,

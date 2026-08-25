@@ -43,6 +43,7 @@ import { WorkspaceApiKeyRoleMapCacheService } from 'src/engine/metadata-modules/
 import { WorkspaceUserWorkspaceRoleMapCacheService } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
+import { KNOWN_FETCH_GAPS } from 'src/engine/workspace-cache/constants/known-fetch-gaps.constant';
 import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
 // The flat map provider owning each metadata name; its declared fetch shape
@@ -99,20 +100,19 @@ const ADDITIONAL_SHAPE_PROVIDERS = [
   new WorkspaceFlatRoleTargetByAgentIdService(),
 ];
 
-// Documented divergences between the relation constants and what the flat
-// providers actually fetch. Each entry is a pre-existing behavior, not a
-// migration accident: the corresponding aggregator arrays are built empty.
+// Key presence is compile-enforced for flat providers by
+// FlatEntityFetchShape; these runtime checks stay as a safety net and carry
+// the column-level requirements the type deliberately leaves out.
 const KNOWN_MISSING_ONE_TO_MANY_FETCHES: {
   sourceMetadataName: AllMetadataName;
   childMetadataName: AllMetadataName;
-}[] = [
-  // Neither provider has ever fetched field permissions, so the
-  // fieldPermissionIds / fieldPermissionUniversalIdentifiers aggregators on
-  // FlatObjectMetadata and FlatFieldMetadata are built empty. Declaring the
-  // fetch would silently start populating them; do it deliberately.
-  { sourceMetadataName: 'objectMetadata', childMetadataName: 'fieldPermission' },
-  { sourceMetadataName: 'fieldMetadata', childMetadataName: 'fieldPermission' },
-];
+}[] = Object.entries(KNOWN_FETCH_GAPS).flatMap(
+  ([sourceMetadataName, childMetadataNames]) =>
+    childMetadataNames.map((childMetadataName) => ({
+      sourceMetadataName: sourceMetadataName as AllMetadataName,
+      childMetadataName,
+    })),
+);
 
 const findChildForeignKeyColumn = (
   childMetadataName: AllMetadataName,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -8,16 +8,13 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatRoleMaps', { packingPonderation: 1 })
-export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<FlatRole>
-> {
+export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider<'role'> {
   override readonly fetchRequirements = {
     role: true,
     application: ['id', 'universalIdentifier'],
@@ -27,7 +24,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
     fieldPermission: ['id', 'universalIdentifier', 'roleId'],
     rowLevelPermissionPredicate: ['id', 'universalIdentifier', 'roleId'],
     rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier', 'roleId'],
-  } as const satisfies CacheEntityFetchShape;
+  } as const;
 
   computeForCache(
     workspaceId: string,

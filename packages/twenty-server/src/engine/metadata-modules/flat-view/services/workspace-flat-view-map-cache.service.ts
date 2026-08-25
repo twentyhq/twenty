@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/utils/from-view-entity-to-flat-view.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatViewMaps', { packingPonderation: 8 })
-export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<FlatViewMaps> {
+export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider<'view'> {
   override readonly fetchRequirements = {
     view: true,
     application: ['id', 'universalIdentifier'],
@@ -26,7 +25,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
     viewFilterGroup: ['id', 'universalIdentifier', 'viewId'],
     viewSort: ['id', 'universalIdentifier', 'viewId'],
     viewFieldGroup: ['id', 'universalIdentifier', 'viewId'],
-  } as const satisfies CacheEntityFetchShape;
+  } as const;
 
   computeForCache(
     workspaceId: string,
