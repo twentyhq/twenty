@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 import { type QueryFailedError } from 'typeorm';
 
@@ -7,10 +7,6 @@ import { commonQueryRunnerToRestApiExceptionHandler } from 'src/engine/api/commo
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -28,9 +24,6 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
   switch (true) {
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToRestApiExceptionHandler(error);
-    case error instanceof PermissionsException &&
-      error.code === PermissionsExceptionCode.PERMISSION_DENIED:
-      throw new ForbiddenException(error.message);
     case error instanceof RestInputRequestParserException:
       throw new BadRequestException(error.message);
     case error instanceof ThrottlerException:
