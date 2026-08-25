@@ -116,11 +116,11 @@ export class WorkspaceInvitationResolver {
         authContext,
       );
 
-    return await this.workspaceInvitationService.sendInvitations(
-      sendInviteLinkInput.emails,
+    return await this.workspaceInvitationService.sendInvitations({
+      emails: sendInviteLinkInput.emails,
       workspace,
-      workspaceMember,
-      sendInviteLinkInput.roleId ?? undefined,
-    );
+      sender: workspaceMember,
+      roleId: sendInviteLinkInput.roleId ?? undefined,
+    });
   }
 }
