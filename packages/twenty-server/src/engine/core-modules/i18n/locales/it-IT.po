@@ -293,7 +293,6 @@ msgstr "Manca un campo obbligatorio."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Manca un campo obbligatorio. Fornisci tutti i valori obbligatori e riprova."
 
@@ -10179,11 +10178,6 @@ msgstr "Non c'è alcun passaggio di onboarding precedente a cui tornare."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Questi campi non possono essere aggiornati prima che lo spazio di lavoro sia attivato: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10443,6 @@ msgstr "Questa operazione non è supportata."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Questa operazione fa riferimento a un record che non esiste o non può essere modificato a causa di relazioni esistenti."
 
@@ -10481,7 +10474,6 @@ msgstr "Questo record esiste già. Si prega di controllare i dati e riprovare."
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Questo record non può essere eliminato perché è ancora referenziato da altri record."
 
@@ -12441,7 +12433,6 @@ msgstr "È possibile aggiornare un solo record con il campo files alla volta."
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 

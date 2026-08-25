@@ -293,7 +293,6 @@ msgstr "Недостаје обавезно поље."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Недостаје обавезно поље. Унесите све обавезне вредности и покушајте поново."
 
@@ -10179,11 +10178,6 @@ msgstr "Не постоји претходни корак онбординга �
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Ова поља не могу бити ажурирана пре него што се радни простор активира: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Вредност поља {fieldLabel} се већ користи. Молимо проверите ваше податке и покушајте поново."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10449,7 +10443,6 @@ msgstr "Ова операција није подржана."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ова операција референцира запис који не постоји или се не може изменити због постојећих односа."
 
@@ -10481,7 +10474,6 @@ msgstr "Овај запис већ постоји. Молимо проверит
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Овај запис не може да се избрише јер се на њега и даље позивају други записи."
 
@@ -12441,7 +12433,6 @@ msgstr "Можете истовремено да ажурирате само ј�
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
