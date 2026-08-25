@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 type WorkspaceMemberName =
   | {
       firstName?: string | null;
@@ -12,5 +14,5 @@ export const formatWorkspaceMemberName = (
   const firstName = name?.firstName?.trim() ?? '';
   const lastName = name?.lastName?.trim() ?? '';
 
-  return [firstName, lastName].filter((part) => part.length > 0).join(' ');
+  return [firstName, lastName].filter(isNonEmptyString).join(' ');
 };

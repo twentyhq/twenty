@@ -5,7 +5,8 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { formatWorkspaceMemberName } from 'src/front-components/utils/format-workspace-member-name.util';
 
-const SLACK_USER_LINKS_PAGE_SIZE = 100;
+// The REST list endpoint caps a single page at 200; manual links stay well under it.
+const SLACK_USER_LINKS_PAGE_SIZE = 200;
 
 const SLACK_USER_LINKS_ERROR_MESSAGE =
   'Could not load Slack user links. Please try again later.';

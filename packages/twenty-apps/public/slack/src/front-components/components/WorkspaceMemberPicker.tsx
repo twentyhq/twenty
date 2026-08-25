@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -110,7 +111,7 @@ export const WorkspaceMemberPicker = ({
     return (
       <StyledSelectedMember>
         <StyledSelectedMemberLabel>
-          {selectedMember.name.length > 0
+          {isNonEmptyString(selectedMember.name)
             ? selectedMember.name
             : selectedMember.userEmail ?? selectedMember.id}
         </StyledSelectedMemberLabel>
@@ -125,7 +126,7 @@ export const WorkspaceMemberPicker = ({
     );
   }
 
-  const hasSearchTerm = searchTerm.trim().length > 0;
+  const hasSearchTerm = isNonEmptyString(searchTerm.trim());
 
   const handleSelect = (member: WorkspaceMemberOption) => {
     setSearchTerm('');
@@ -150,7 +151,7 @@ export const WorkspaceMemberPicker = ({
               onClick={() => handleSelect(member)}
             >
               <StyledOptionName>
-                {member.name.length > 0 ? member.name : member.id}
+                {isNonEmptyString(member.name) ? member.name : member.id}
               </StyledOptionName>
               {member.userEmail !== null && (
                 <StyledOptionEmail>{member.userEmail}</StyledOptionEmail>

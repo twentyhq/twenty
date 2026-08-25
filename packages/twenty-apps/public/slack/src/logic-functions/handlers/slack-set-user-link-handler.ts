@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
@@ -24,12 +24,28 @@ const isRoutePayload = (
   payload: SlackSetUserLinkPayload,
 ): payload is RoutePayload<SlackSetUserLinkInput> => 'body' in payload;
 
+const readOptionalString = (value: unknown): string | undefined =>
+  isNonEmptyString(value) ? value : undefined;
+
+// The HTTP route body is untrusted, so read each field rather than trusting its declared type.
+const toSlackSetUserLinkInput = (source: unknown): SlackSetUserLinkInput => {
+  const body: Record<string, unknown> = isObject(source)
+    ? (source as Record<string, unknown>)
+    : {};
+
+  return {
+    workspaceMemberId: readOptionalString(body.workspaceMemberId) ?? '',
+    slackUserId: readOptionalString(body.slackUserId),
+    email: readOptionalString(body.email),
+    slackTeamId: readOptionalString(body.slackTeamId),
+    name: readOptionalString(body.name),
+  };
+};
+
 const extractSlackSetUserLinkInput = (
   payload: SlackSetUserLinkPayload,
 ): SlackSetUserLinkInput =>
-  isRoutePayload(payload)
-    ? ((payload.body ?? {}) as SlackSetUserLinkInput)
-    : payload;
+  toSlackSetUserLinkInput(isRoutePayload(payload) ? payload.body : payload);
 
 export const slackSetUserLinkHandler = async (
   payload: SlackSetUserLinkPayload,
