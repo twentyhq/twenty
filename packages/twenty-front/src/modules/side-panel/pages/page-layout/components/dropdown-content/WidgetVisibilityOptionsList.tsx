@@ -1,11 +1,7 @@
-import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/VisibilityOptions';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
-import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
-import { optionIdToExpression } from '@/side-panel/pages/page-layout/utils/optionIdToExpression';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -13,19 +9,15 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-type SoloTabWidgetVisibilityDropdownContentProps = {
-  widgetId: string;
-  currentExpression: string | null | undefined;
-  pageLayoutId: string;
+type WidgetVisibilityOptionsListProps = {
+  currentOptionId: string;
+  onSelectVisibility: (optionId: string) => void;
 };
 
-export const SoloTabWidgetVisibilityDropdownContent = ({
-  widgetId,
-  currentExpression,
-  pageLayoutId,
-}: SoloTabWidgetVisibilityDropdownContentProps) => {
-  const currentOptionId = expressionToOptionId(currentExpression);
-
+export const WidgetVisibilityOptionsList = ({
+  currentOptionId,
+  onSelectVisibility,
+}: WidgetVisibilityOptionsListProps) => {
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -34,17 +26,6 @@ export const SoloTabWidgetVisibilityDropdownContent = ({
     selectedItemIdComponentState,
     dropdownId,
   );
-
-  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleSelectVisibility = (optionId: string) => {
-    updatePageLayoutWidget(widgetId, {
-      conditionalAvailabilityExpression: optionIdToExpression(optionId),
-    });
-    closeDropdown();
-  };
 
   const visibilityLabels = useVisibilityLabels();
 
@@ -59,13 +40,17 @@ export const SoloTabWidgetVisibilityDropdownContent = ({
           <SelectableListItem
             key={option.id}
             itemId={option.id}
-            onEnter={() => handleSelectVisibility(option.id)}
+            onEnter={() => {
+              onSelectVisibility(option.id);
+            }}
           >
             <MenuItemSelect
-              text={visibilityLabels[option.id] ?? option.id}
+              text={visibilityLabels[option.id]}
               selected={currentOptionId === option.id}
               focused={selectedItemId === option.id}
-              onClick={() => handleSelectVisibility(option.id)}
+              onClick={() => {
+                onSelectVisibility(option.id);
+              }}
             />
           </SelectableListItem>
         ))}

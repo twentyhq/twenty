@@ -8,6 +8,7 @@ import {
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
+import { WidgetType } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -60,6 +61,75 @@ describe('useMovePageLayoutWidgetUp', () => {
 
     expect(widgetBPosition).toEqual(expect.objectContaining({ index: 0 }));
     expect(widgetAPosition).toEqual(expect.objectContaining({ index: 1 }));
+  });
+
+  it('should move relative to the fit-content widget above and canonicalize the list', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const widgetB = makeWidget('widget-b', 2);
+
+    store.set(
+      getDraftAtom(),
+      makeDraft([makeTab('tab-1', [widgetA, timelineWidget, widgetB])]),
+    );
+
+    const { result } = renderHook(
+      () => useMovePageLayoutWidgetUp(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.movePageLayoutWidgetUp('widget-b');
+    });
+
+    const draft = store.get(getDraftAtom());
+
+    expect(draft.tabs[0].widgets.map((widget) => widget.id)).toEqual([
+      'widget-b',
+      'widget-a',
+      'timeline-widget',
+    ]);
+    expect(
+      draft.tabs[0].widgets.map((widget) =>
+        widget.position && 'index' in widget.position
+          ? widget.position.index
+          : undefined,
+      ),
+    ).toEqual([0, 1, 2]);
+  });
+
+  it('should not move a viewport-filling widget', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const widgetB = makeWidget('widget-b', 2);
+    const initialDraft = makeDraft([
+      makeTab('tab-1', [widgetA, timelineWidget, widgetB]),
+    ]);
+
+    store.set(getDraftAtom(), initialDraft);
+
+    const { result } = renderHook(
+      () => useMovePageLayoutWidgetUp(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.movePageLayoutWidgetUp('timeline-widget');
+    });
+
+    expect(store.get(getDraftAtom())).toBe(initialDraft);
   });
 
   it('should not change draft when widget is already at the top', () => {

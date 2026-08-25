@@ -6,22 +6,19 @@ import { useResetPageLayoutTabToDefault } from '@/page-layout/hooks/useResetPage
 import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
-import { SoloTabSettingsContent } from '@/side-panel/pages/page-layout/components/SoloTabSettingsContent';
+import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type SidePanelPageLayoutTabSettingsContentProps = {
   pageLayoutId: string;
@@ -103,17 +100,13 @@ export const SidePanelPageLayoutTabSettingsContent = ({
 
   const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
 
-  const isSoloTab =
-    getTabPresentation({
-      widgets: activeWidgets,
-      layoutMode: tab.layoutMode ?? PageLayoutTabLayoutMode.VERTICAL_LIST,
-    }) === 'solo';
+  const isSingleWidgetTab = getIsSingleWidgetTab({ tab });
 
-  if (isSoloTab) {
+  if (isSingleWidgetTab) {
     return (
-      <SoloTabSettingsContent
+      <SingleWidgetTabSettingsContent
         pageLayoutId={pageLayoutId}
-        soloWidget={activeWidgets.at(0)}
+        singleWidget={activeWidgets.at(0)!}
         canSetAsPinned={canSetAsPinned}
         canMoveLeft={canMoveLeft}
         canMoveRight={canMoveRight}
