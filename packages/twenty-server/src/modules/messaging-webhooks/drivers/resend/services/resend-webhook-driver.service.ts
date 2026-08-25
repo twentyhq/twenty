@@ -62,9 +62,9 @@ export class ResendWebhookDriverService {
     event: ResendWebhookEvent;
     dedupeKey: string;
   }): Promise<void> {
-    const outcome = resolveResendOutboundDeliveryOutcome(event);
+    const deliveryOutcome = resolveResendOutboundDeliveryOutcome(event);
 
-    if (!isDefined(outcome)) {
+    if (!isDefined(deliveryOutcome)) {
       return;
     }
 
@@ -83,10 +83,10 @@ export class ResendWebhookDriverService {
 
     await this.outboundDeliveryEventHandlerService.handle({
       workspaceId,
-      deliveryStatus: outcome.deliveryStatus,
-      suppression: outcome.suppression,
+      outcome: deliveryOutcome.outcome,
+      suppression: deliveryOutcome.suppression,
       providerMessageId: event.data?.email_id ?? null,
-      providerEventId: outcome.providerEventId,
+      providerEventId: deliveryOutcome.providerEventId,
       dedupeKey,
     });
   }

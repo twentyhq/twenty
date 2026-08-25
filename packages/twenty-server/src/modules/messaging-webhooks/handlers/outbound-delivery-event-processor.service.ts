@@ -48,7 +48,7 @@ export class OutboundDeliveryEventProcessorService {
       {
         workspaceId: event.workspaceId,
         providerMessageId: event.providerMessageId,
-        outcome: event.deliveryStatus,
+        outcome: event.outcome,
       },
     );
   }

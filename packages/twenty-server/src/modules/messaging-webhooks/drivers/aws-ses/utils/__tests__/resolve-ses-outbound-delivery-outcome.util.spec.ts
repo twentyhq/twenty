@@ -1,4 +1,4 @@
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { type SesOutboundEventPayload } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/ses-outbound-event-payload.type';
 import { resolveSesOutboundDeliveryOutcome } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/resolve-ses-outbound-delivery-outcome.util';
@@ -9,7 +9,7 @@ const resolveOutcome = (eventName: string, payload?: SesOutboundEventPayload) =>
 describe('resolveSesOutboundDeliveryOutcome', () => {
   it('should record a delivery without suppressing anyone', () => {
     expect(resolveOutcome('Email Delivered')).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.DELIVERED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.DELIVERED,
       suppression: null,
       providerEventId: null,
     });
@@ -17,7 +17,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
 
   it('should record a rejection as a send-side failure', () => {
     expect(resolveOutcome('Email Rejected')).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.REJECTED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.REJECTED,
       suppression: null,
       providerEventId: null,
     });
@@ -25,7 +25,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
 
   it('should record a rendering failure as a send-side failure', () => {
     expect(resolveOutcome('Email Rendering Failed')).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.RENDERING_FAILED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.RENDERING_FAILED,
       suppression: null,
       providerEventId: null,
     });
@@ -41,7 +41,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
         },
       }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.BOUNCED,
       suppression: {
         reason: MessageSuppressionReason.BOUNCE,
         emailAddresses: ['dead@example.com'],
@@ -60,7 +60,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
         },
       }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SOFT_BOUNCED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.SOFT_BOUNCED,
       suppression: null,
       providerEventId: 'feedback-id',
     });
@@ -75,7 +75,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
         },
       }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SOFT_BOUNCED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.SOFT_BOUNCED,
       suppression: null,
       providerEventId: null,
     });
@@ -85,7 +85,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
     expect(
       resolveOutcome('Email Bounced', { bounce: { bounceType: 'Permanent' } }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.BOUNCED,
       suppression: null,
       providerEventId: null,
     });
@@ -100,7 +100,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
         },
       }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.COMPLAINED,
       suppression: {
         reason: MessageSuppressionReason.COMPLAINT,
         emailAddresses: ['angry@example.com'],
@@ -111,17 +111,17 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
 
   it('should resolve the raw SES event-publishing event names too', () => {
     expect(resolveOutcome('Delivery')).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.DELIVERED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.DELIVERED,
       suppression: null,
       providerEventId: null,
     });
     expect(resolveOutcome('Reject')).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.REJECTED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.REJECTED,
       suppression: null,
       providerEventId: null,
     });
     expect(resolveOutcome('Rendering Failure')).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.RENDERING_FAILED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.RENDERING_FAILED,
       suppression: null,
       providerEventId: null,
     });
@@ -133,7 +133,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
         },
       }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.BOUNCED,
       suppression: {
         reason: MessageSuppressionReason.BOUNCE,
         emailAddresses: ['dead@example.com'],
@@ -147,7 +147,7 @@ describe('resolveSesOutboundDeliveryOutcome', () => {
         },
       }),
     ).toEqual({
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
+      outcome: CAMPAIGN_PROVIDER_OUTCOME.COMPLAINED,
       suppression: {
         reason: MessageSuppressionReason.COMPLAINT,
         emailAddresses: ['angry@example.com'],

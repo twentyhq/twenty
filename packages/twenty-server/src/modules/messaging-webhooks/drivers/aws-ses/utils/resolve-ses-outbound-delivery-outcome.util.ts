@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { type SesOutboundEventPayload } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/ses-outbound-event-payload.type';
 import { type OutboundDeliveryOutcome } from 'src/modules/messaging-webhooks/types/outbound-delivery-outcome.type';
@@ -20,21 +20,21 @@ export const resolveSesOutboundDeliveryOutcome = ({
     case 'Email Delivered':
     case 'Delivery':
       return {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.DELIVERED,
+        outcome: CAMPAIGN_PROVIDER_OUTCOME.DELIVERED,
         suppression: null,
         providerEventId: null,
       };
     case 'Email Rejected':
     case 'Reject':
       return {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.REJECTED,
+        outcome: CAMPAIGN_PROVIDER_OUTCOME.REJECTED,
         suppression: null,
         providerEventId: null,
       };
     case 'Email Rendering Failed':
     case 'Rendering Failure':
       return {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.RENDERING_FAILED,
+        outcome: CAMPAIGN_PROVIDER_OUTCOME.RENDERING_FAILED,
         suppression: null,
         providerEventId: null,
       };
@@ -48,14 +48,14 @@ export const resolveSesOutboundDeliveryOutcome = ({
 
       if (bounce?.bounceType !== 'Permanent') {
         return {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SOFT_BOUNCED,
+          outcome: CAMPAIGN_PROVIDER_OUTCOME.SOFT_BOUNCED,
           suppression: null,
           providerEventId,
         };
       }
 
       return {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+        outcome: CAMPAIGN_PROVIDER_OUTCOME.BOUNCED,
         suppression: isNonEmptyArray(emailAddresses)
           ? { reason: MessageSuppressionReason.BOUNCE, emailAddresses }
           : null,
@@ -70,7 +70,7 @@ export const resolveSesOutboundDeliveryOutcome = ({
       );
 
       return {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
+        outcome: CAMPAIGN_PROVIDER_OUTCOME.COMPLAINED,
         suppression: isNonEmptyArray(emailAddresses)
           ? { reason: MessageSuppressionReason.COMPLAINT, emailAddresses }
           : null,

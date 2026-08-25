@@ -30,9 +30,12 @@ const classifyOutboundEvent = ({
   payload: SesOutboundEventPayload;
   workspaceId: string | null;
 }): NormalizedSesOutboundEvent => {
-  const outcome = resolveSesOutboundDeliveryOutcome({ eventName, payload });
+  const deliveryOutcome = resolveSesOutboundDeliveryOutcome({
+    eventName,
+    payload,
+  });
 
-  if (isDefined(outcome)) {
+  if (isDefined(deliveryOutcome)) {
     if (!isDefined(workspaceId)) {
       return {
         status: 'UNPROCESSABLE',
@@ -45,10 +48,10 @@ const classifyOutboundEvent = ({
       status: 'DELIVERY',
       delivery: {
         workspaceId,
-        deliveryStatus: outcome.deliveryStatus,
-        suppression: outcome.suppression,
+        outcome: deliveryOutcome.outcome,
+        suppression: deliveryOutcome.suppression,
         providerMessageId: payload.mail?.messageId ?? null,
-        providerEventId: outcome.providerEventId,
+        providerEventId: deliveryOutcome.providerEventId,
       },
     };
   }

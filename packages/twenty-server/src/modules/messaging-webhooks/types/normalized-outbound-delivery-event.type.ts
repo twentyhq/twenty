@@ -3,7 +3,7 @@ import { type CampaignProviderOutcome } from 'src/engine/core-modules/emailing-d
 
 export type NormalizedOutboundDeliveryEvent = {
   workspaceId: string;
-  deliveryStatus: CampaignProviderOutcome;
+  outcome: CampaignProviderOutcome;
   suppression: {
     reason:
       | MessageSuppressionReason.BOUNCE

@@ -2,5 +2,5 @@ import { type NormalizedOutboundDeliveryEvent } from 'src/modules/messaging-webh
 
 export type OutboundDeliveryOutcome = Pick<
   NormalizedOutboundDeliveryEvent,
-  'deliveryStatus' | 'suppression' | 'providerEventId'
+  'outcome' | 'suppression' | 'providerEventId'
 >;
