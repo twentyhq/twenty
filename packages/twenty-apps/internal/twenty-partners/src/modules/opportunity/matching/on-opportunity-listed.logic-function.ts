@@ -19,8 +19,8 @@ export const handler = async (
     return { skipped: true, reason: 'not_a_listing_flip' };
   }
 
-  await notifyListedBrief(after.id);
-  return { notified: true, opportunityId: after.id };
+  const notified = await notifyListedBrief(after.id);
+  return { notified, opportunityId: after.id };
 };
 
 export default defineLogicFunction({

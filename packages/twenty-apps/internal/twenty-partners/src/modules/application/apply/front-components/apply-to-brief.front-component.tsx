@@ -16,12 +16,9 @@ import {
   GENERIC_APPLY_FAILURE_MESSAGE,
   getRefusalMessage,
 } from 'src/modules/application/apply/front-components/apply-to-brief/refusal-message';
+import { type ApplyToBriefResult } from 'src/modules/application/apply/types/apply-to-brief.types';
 import { callAppRoute } from 'src/modules/shared/front-components/call-app-route';
 import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
-
-type ApplyToBriefResult =
-  | { ok: true; applicationId: string }
-  | { ok: false; reason: string };
 
 const pageStyle: CSSProperties = {
   fontFamily: FONT,

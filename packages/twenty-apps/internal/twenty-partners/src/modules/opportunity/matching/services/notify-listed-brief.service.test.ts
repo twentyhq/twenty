@@ -62,26 +62,26 @@ describe('notifyListedBrief', () => {
 
   it('does nothing without a webhook url', async () => {
     vi.stubEnv('DISCORD_WEBHOOK_URL', '');
-    await notifyListedBrief(OPP);
+    await expect(notifyListedBrief(OPP)).resolves.toBe(false);
     expect(queryMock).not.toHaveBeenCalled();
     expect(postWebhookMock).not.toHaveBeenCalled();
   });
 
-  it('returns silently when the opportunity is missing (empty edges)', async () => {
+  it('reports false when the opportunity is missing (empty edges)', async () => {
     queryMock.mockResolvedValue(briefResult(undefined));
-    await expect(notifyListedBrief(OPP)).resolves.toBeUndefined();
+    await expect(notifyListedBrief(OPP)).resolves.toBe(false);
     expect(postWebhookMock).not.toHaveBeenCalled();
   });
 
-  it('swallows a read failure', async () => {
+  it('swallows a read failure and reports false', async () => {
     queryMock.mockRejectedValue(new Error('boom'));
-    await expect(notifyListedBrief(OPP)).resolves.toBeUndefined();
+    await expect(notifyListedBrief(OPP)).resolves.toBe(false);
   });
 
-  it('swallows a webhook failure', async () => {
+  it('swallows a webhook failure and reports false', async () => {
     queryMock.mockResolvedValue(briefResult({ id: OPP, name: 'n', need: 'x' }));
     postWebhookMock.mockRejectedValue(new Error('discord down'));
-    await expect(notifyListedBrief(OPP)).resolves.toBeUndefined();
+    await expect(notifyListedBrief(OPP)).resolves.toBe(false);
   });
 
   it('omits empty fields and falls back to the name as description', async () => {

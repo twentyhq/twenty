@@ -18,13 +18,19 @@ const event = (
 describe('on-opportunity-listed', () => {
   beforeEach(() => {
     notifyMock.mockReset();
-    notifyMock.mockResolvedValue(undefined);
+    notifyMock.mockResolvedValue(true);
   });
 
   it('notifies when isListed flips from false to true', async () => {
     const result = await handler(event({ id: OPP, isListed: false }, { id: OPP, isListed: true }));
     expect(notifyMock).toHaveBeenCalledWith(OPP);
     expect(result).toEqual({ notified: true, opportunityId: OPP });
+  });
+
+  it('reports notified: false when the ping did not go out', async () => {
+    notifyMock.mockResolvedValue(false);
+    const result = await handler(event({ id: OPP, isListed: false }, { id: OPP, isListed: true }));
+    expect(result).toEqual({ notified: false, opportunityId: OPP });
   });
 
   it('stays silent when isListed flips to false', async () => {

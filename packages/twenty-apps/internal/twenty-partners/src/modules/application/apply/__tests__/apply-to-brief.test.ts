@@ -163,8 +163,8 @@ describe('applyToBrief', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it.each([['INTRODUCED'], ['WON'], ['DECLINED'], ['BACKUP']])(
-    'refuses to fill the pitch of a pitchless row already at %s',
+  it.each([['INTRODUCED'], ['WON'], ['DECLINED']])(
+    'refuses to fill the pitch of a pitchless row already decided at %s',
     async (state) => {
       respondWith({
         applications: { edges: [{ node: { id: 'decided-application', pitch: null, state } }] },
@@ -174,6 +174,19 @@ describe('applyToBrief', () => {
 
       expect(result).toEqual({ ok: false, reason: 'BRIEF_NOT_OPEN' });
       expect(mutationMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([['INVITED'], ['APPLIED'], ['BACKUP']])(
+    'fills the pitch of a pitchless row still in the running at %s',
+    async (state) => {
+      respondWith({
+        applications: { edges: [{ node: { id: 'live-application', pitch: null, state } }] },
+      });
+
+      const result = await applyToBrief(event(validBody));
+
+      expect(result).toEqual({ ok: true, applicationId: 'live-application' });
     },
   );
 

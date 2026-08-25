@@ -1,5 +1,3 @@
-import { type PITCHABLE_STATES } from 'src/modules/application/apply/constants/apply-to-brief.constants';
-
 export type ApplyRefusalReason =
   | 'UNAUTHENTICATED'
   | 'NO_PARTNER'
@@ -8,4 +6,7 @@ export type ApplyRefusalReason =
   | 'PITCH_TOO_SHORT'
   | 'ALREADY_APPLIED';
 
-export type PitchableState = (typeof PITCHABLE_STATES)[number];
+// `reason` widens to string because failureResponse answers with a sentence, not a code.
+export type ApplyToBriefResult =
+  | { ok: true; applicationId: string }
+  | { ok: false; reason: ApplyRefusalReason | string };

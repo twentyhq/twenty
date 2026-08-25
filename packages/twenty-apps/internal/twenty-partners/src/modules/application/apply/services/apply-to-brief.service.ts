@@ -7,10 +7,7 @@ import {
 } from 'src/modules/application/apply/constants/apply-to-brief.constants';
 import { createApplication } from 'src/modules/application/apply/graphql/mutations/create-application';
 import { findOpportunityForApply } from 'src/modules/application/apply/graphql/queries/find-opportunity-for-apply';
-import {
-  type ApplyRefusalReason,
-  type PitchableState,
-} from 'src/modules/application/apply/types/apply-to-brief.types';
+import { type ApplyToBriefResult } from 'src/modules/application/apply/types/apply-to-brief.types';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { buildApplicationName } from 'src/modules/application/utils/build-application-name';
@@ -21,10 +18,6 @@ import {
   resolvePartnerFromForwardedToken,
 } from 'src/modules/shared/http/resolve-partner-from-request.service';
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
-
-export type ApplyToBriefResult =
-  | { ok: true; applicationId: string }
-  | { ok: false; reason: ApplyRefusalReason | string };
 
 const applyToBriefSchema = z.object({
   opportunityId: z.string().min(1),
@@ -61,7 +54,7 @@ export const applyToBrief = async (
       // Twenty pushed this brief at the partner. Guard on the state rather than on the
       // brief being listed: the WON/DECLINED cascade fires on Opportunity.partner, which
       // is not coupled to isListed, so a decided row can still sit under a listed brief.
-      if (!PITCHABLE_STATES.includes(existing.state as PitchableState)) {
+      if (!PITCHABLE_STATES.some((state) => state === existing.state)) {
         return errorResponse('BRIEF_NOT_OPEN');
       }
 

@@ -1,10 +1,8 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { APPLY_TO_BRIEF_FUNCTION_ID } from 'src/modules/application/apply/constants/apply-to-brief.constants';
-import {
-  applyToBrief,
-  type ApplyToBriefResult,
-} from 'src/modules/application/apply/services/apply-to-brief.service';
+import { applyToBrief } from 'src/modules/application/apply/services/apply-to-brief.service';
+import { type ApplyToBriefResult } from 'src/modules/application/apply/types/apply-to-brief.types';
 
 export const handler = (event: RoutePayload<unknown>): Promise<ApplyToBriefResult> =>
   applyToBrief(event);

@@ -2,8 +2,6 @@ import { useState, type ReactNode } from 'react';
 
 import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 
-export { COLORS, FONT };
-
 export type SelectOption = { value: string; label: string };
 
 const controlBase = {

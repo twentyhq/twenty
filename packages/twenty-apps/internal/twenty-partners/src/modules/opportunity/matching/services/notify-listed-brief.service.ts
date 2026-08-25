@@ -18,14 +18,14 @@ const truncate = (value: string, max: number): string =>
 const inline = (name: string, value: string | undefined | null): DiscordField[] =>
   isNonEmptyString(value) ? [{ name, value, inline: true }] : [];
 
-export async function notifyListedBrief(opportunityId: string): Promise<void> {
+export async function notifyListedBrief(opportunityId: string): Promise<boolean> {
   const webhookUrl = process.env[DISCORD_WEBHOOK_ENV_VAR];
-  if (!isNonEmptyString(webhookUrl)) return;
+  if (!isNonEmptyString(webhookUrl)) return false;
 
   try {
     const result = await getListedBriefDetails(new CoreApiClient(), opportunityId);
     const brief = result.opportunities?.edges?.[0]?.node;
-    if (!brief) return;
+    if (!brief) return false;
 
     const contact = [brief.pointOfContact?.name?.firstName, brief.pointOfContact?.name?.lastName]
       .filter(isNonEmptyString)
@@ -51,8 +51,9 @@ export async function notifyListedBrief(opportunityId: string): Promise<void> {
       embed.url = `${frontendUrl.replace(/\/+$/, '')}/object/opportunity/${brief.id}`;
     }
 
-    await postWebhook(webhookUrl, { embeds: [embed] }, 'notify-listed-brief');
+    return await postWebhook(webhookUrl, { embeds: [embed] }, 'notify-listed-brief');
   } catch {
     // Best-effort: a read or Discord failure must never fail the trigger.
+    return false;
   }
 }
