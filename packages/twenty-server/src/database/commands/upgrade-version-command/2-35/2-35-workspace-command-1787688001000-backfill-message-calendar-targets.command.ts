@@ -3,15 +3,15 @@ import { Command } from 'nest-commander';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-36/utils/build-message-calendar-target-backfill-queries.util';
+import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-35/utils/build-message-calendar-target-backfill-queries.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const BACKFILL_BATCH_SIZE = 5_000;
 
-@RegisteredWorkspaceCommand('2.36.0', 1787688001000)
+@RegisteredWorkspaceCommand('2.35.0', 1787688001000)
 @Command({
-  name: 'upgrade:2-36:backfill-message-calendar-targets',
+  name: 'upgrade:2-35:backfill-message-calendar-targets',
   description:
     'Backfill message and calendar target junctions without emitting record events',
 })

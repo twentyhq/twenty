@@ -8,7 +8,7 @@ import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/up
 import {
   buildTargetFieldCollisionRenameUpdates,
   buildTargetObjectCollisionRenameUpdates,
-} from 'src/database/commands/upgrade-version-command/2-36/utils/build-target-metadata-collision-renames.util';
+} from 'src/database/commands/upgrade-version-command/2-35/utils/build-target-metadata-collision-renames.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -50,9 +50,9 @@ const TARGET_INDEX_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageThreadTarget.indexes),
 ];
 
-@RegisteredWorkspaceCommand('2.36.0', 1787688000000)
+@RegisteredWorkspaceCommand('2.35.0', 1787688000000)
 @Command({
-  name: 'upgrade:2-36:sync-message-calendar-target-metadata',
+  name: 'upgrade:2-35:sync-message-calendar-target-metadata',
   description:
     'Create messageThreadTarget and calendarEventTarget standard metadata in existing workspaces',
 })
