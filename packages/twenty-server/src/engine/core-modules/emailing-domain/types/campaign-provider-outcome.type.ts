@@ -1,11 +1,4 @@
-export const CAMPAIGN_PROVIDER_OUTCOME = {
-  DELIVERED: 'DELIVERED',
-  SOFT_BOUNCED: 'SOFT_BOUNCED',
-  BOUNCED: 'BOUNCED',
-  COMPLAINED: 'COMPLAINED',
-  REJECTED: 'REJECTED',
-  RENDERING_FAILED: 'RENDERING_FAILED',
-} as const;
+import { type CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/constants/campaign-provider-outcome.constant';
 
 export type CampaignProviderOutcome =
   (typeof CAMPAIGN_PROVIDER_OUTCOME)[keyof typeof CAMPAIGN_PROVIDER_OUTCOME];

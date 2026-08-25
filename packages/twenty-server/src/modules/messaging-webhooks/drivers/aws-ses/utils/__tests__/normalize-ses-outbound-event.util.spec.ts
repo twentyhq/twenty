@@ -1,4 +1,4 @@
-import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
+import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/constants/campaign-provider-outcome.constant';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { normalizeSesOutboundEvent } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/normalize-ses-outbound-event.util';

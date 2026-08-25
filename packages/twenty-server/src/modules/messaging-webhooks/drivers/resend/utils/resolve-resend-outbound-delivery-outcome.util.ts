@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
+import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/constants/campaign-provider-outcome.constant';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { type ResendWebhookEvent } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-event.type';
 import { type OutboundDeliveryOutcome } from 'src/modules/messaging-webhooks/types/outbound-delivery-outcome.type';
