@@ -13,7 +13,8 @@ const StyledActionLink = styled(Link)`
   min-width: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[1]};
   text-decoration: none;
-  transition: background 0.1s ease;
+  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease;
   width: ${themeCssVariables.spacing[6]};
 
   &:hover {
