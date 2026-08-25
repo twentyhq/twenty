@@ -254,6 +254,30 @@ describe('ContractTimelineActivityCompatibilityCommand', () => {
     expect(validateBuildAndRunLegacyWorkspaceMigration).not.toHaveBeenCalled();
   });
 
+  it('does not block contraction on an unrepairable missing historical snapshot', async () => {
+    const { command, dataSource, query } = buildCommand({
+      includeLegacyName: false,
+      audit: {
+        missingTypeIdCount: '0',
+        missingSnapshotCount: '0',
+        danglingTypeIdCount: '1',
+      },
+    });
+
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      dataSource: dataSource as never,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[0][0]).toContain(
+      'OR timeline_activity_type."id" IS NOT NULL',
+    );
+  });
+
   it('continues the type ID backfill while PostgreSQL reports full batches', async () => {
     const { command, dataSource, query } = buildCommand({
       audit: {

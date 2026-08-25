@@ -173,7 +173,13 @@ export class ContractTimelineActivityCompatibilityCommand extends ProvisionedWor
     const [audit] = await dataSource.query<TimelineActivityAuditRow[]>(
       `SELECT
   COUNT(*) FILTER (WHERE timeline_activity."timelineActivityTypeId" IS NULL)::text AS "missingTypeIdCount",
-  COUNT(*) FILTER (WHERE timeline_activity."timelineActivityTypeSnapshot" IS NULL)::text AS "missingSnapshotCount",
+  COUNT(*) FILTER (
+    WHERE timeline_activity."timelineActivityTypeSnapshot" IS NULL
+      AND (
+        timeline_activity."timelineActivityTypeId" IS NULL
+        OR timeline_activity_type."id" IS NOT NULL
+      )
+  )::text AS "missingSnapshotCount",
   COUNT(*) FILTER (
     WHERE timeline_activity."timelineActivityTypeId" IS NOT NULL
       AND timeline_activity_type."id" IS NULL
