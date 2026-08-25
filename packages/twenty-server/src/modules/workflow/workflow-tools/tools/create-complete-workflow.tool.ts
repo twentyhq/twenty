@@ -56,7 +56,7 @@ type CreateCompleteWorkflowToolDeps = Pick<
   | 'workflowVersionService'
   | 'workflowVersionEdgeService'
   | 'workflowTriggerService'
-  | 'globalWorkspaceOrmManager'
+  | 'workspaceOrmManager'
   | 'recordPositionService'
   | 'workflowValidationService'
   | 'workflowVersionCoreSyncService'
@@ -221,12 +221,11 @@ const createWorkflow = async ({
 }): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        'workflow',
-        context.rolePermissionConfig,
-      );
+  return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowRepository = await deps.workspaceOrmManager.getRepository(
+      'workflow',
+      context.rolePermissionConfig,
+    );
 
     const workflowPosition =
       await deps.recordPositionService.buildRecordPosition({
@@ -309,12 +308,11 @@ const updateWorkflowStatus = async ({
 }) => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        'workflow',
-        context.rolePermissionConfig,
-      );
+  await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowRepository = await deps.workspaceOrmManager.getRepository(
+      'workflow',
+      context.rolePermissionConfig,
+    );
 
     await workflowRepository.update(workflowId, {
       statuses: [WorkflowStatus.ACTIVE],

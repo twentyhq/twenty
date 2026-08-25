@@ -14,8 +14,8 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { fetchImageWithTypeFromUrl } from 'src/utils/image';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -35,7 +35,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly filesFieldService: FilesFieldService,
     private readonly secureHttpClientService: SecureHttpClientService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -91,7 +91,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     }
 
     const personRepository =
-      await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>('person',
+      await this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>('person',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -169,7 +169,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     personRepository,
     cursor,
   }: {
-    personRepository: WorkspaceRepositoryV2<PersonWorkspaceEntity>;
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
     cursor: string;
   }): Promise<PersonWorkspaceEntity[]> {
     return personRepository.find({
@@ -191,7 +191,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     avatarUrl: string;
     workspaceId: string;
     fieldMetadataUniversalIdentifier: string;
-    personRepository: WorkspaceRepositoryV2<PersonWorkspaceEntity>;
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
   }): Promise<'migrated' | 'skipped' | 'failed'> {
     const imageData = await this.downloadImage({
       imageUrl: avatarUrl,
@@ -289,7 +289,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     personId: string;
     fileId: string;
     workspaceId: string;
-    personRepository: WorkspaceRepositoryV2<PersonWorkspaceEntity>;
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
   }): Promise<boolean> {
     try {
       const person = await personRepository.findOne({

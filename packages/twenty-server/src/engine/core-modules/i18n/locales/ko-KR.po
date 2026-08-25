@@ -10432,7 +10432,7 @@ msgid "This operation is not allowed."
 msgstr "이 작업은 허용되지 않습니다."
 
 #. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
+#: src/engine/workspace-datasource/workspace-schema.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 msgstr "이 작업은 허용되지 않습니다. 다른 방법을 시도하든지 지원팀에 문의하십시오."
 

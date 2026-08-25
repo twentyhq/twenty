@@ -40,7 +40,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -117,7 +117,7 @@ export class MessageCampaignService {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
@@ -135,7 +135,7 @@ export class MessageCampaignService {
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(entity, {
+    return this.workspaceOrmManager.getRepository(entity, {
       unionOf: [roleId],
     });
   }
@@ -144,7 +144,7 @@ export class MessageCampaignService {
     workspaceId: string,
     entity: Type<T>,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(entity, {
+    return this.workspaceOrmManager.getRepository(entity, {
       shouldBypassPermissionChecks: true,
     });
   }
@@ -160,20 +160,18 @@ export class MessageCampaignService {
     });
 
     const { fromAddress, listId } =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const sendableCampaign = await this.findSendableDraftCampaignOrThrow(
-            workspaceId,
-            campaignId,
-            roleId,
-          );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const sendableCampaign = await this.findSendableDraftCampaignOrThrow(
+          workspaceId,
+          campaignId,
+          roleId,
+        );
 
-          return {
-            fromAddress: sendableCampaign.fromAddress.primaryEmail,
-            listId: sendableCampaign.listId,
-          };
-        },
-      );
+        return {
+          fromAddress: sendableCampaign.fromAddress.primaryEmail,
+          listId: sendableCampaign.listId,
+        };
+      });
 
     const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
       workspaceId,
@@ -181,44 +179,42 @@ export class MessageCampaignService {
     );
 
     const { recipients, skipped } =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const rawRecipients = await this.resolveRecipientsFromList(
-            workspaceId,
-            listId,
-            roleId,
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const rawRecipients = await this.resolveRecipientsFromList(
+          workspaceId,
+          listId,
+          roleId,
+        );
+
+        const normalized = normalizeCampaignRecipients(
+          rawRecipients,
+          MAX_CAMPAIGN_RECIPIENTS,
+        );
+
+        const campaignRepository = await this.getRoleScopedRepository(
+          workspaceId,
+          MessageCampaignWorkspaceEntity,
+          roleId,
+        );
+
+        // Conditional update so two concurrent sends cannot both enqueue
+        const { affected } = await campaignRepository.update(
+          { id: campaignId, status: MessageCampaignStatus.DRAFT },
+          { status: MessageCampaignStatus.SENDING },
+        );
+
+        if (affected !== 1) {
+          throw new EmailingDomainException(
+            `Campaign ${campaignId} is no longer a sendable draft`,
+            EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
           );
+        }
 
-          const normalized = normalizeCampaignRecipients(
-            rawRecipients,
-            MAX_CAMPAIGN_RECIPIENTS,
-          );
-
-          const campaignRepository = await this.getRoleScopedRepository(
-            workspaceId,
-            MessageCampaignWorkspaceEntity,
-            roleId,
-          );
-
-          // Conditional update so two concurrent sends cannot both enqueue
-          const { affected } = await campaignRepository.update(
-            { id: campaignId, status: MessageCampaignStatus.DRAFT },
-            { status: MessageCampaignStatus.SENDING },
-          );
-
-          if (affected !== 1) {
-            throw new EmailingDomainException(
-              `Campaign ${campaignId} is no longer a sendable draft`,
-              EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-            );
-          }
-
-          return {
-            recipients: normalized.recipients,
-            skipped: normalized.skipped,
-          };
-        },
-      );
+        return {
+          recipients: normalized.recipients,
+          skipped: normalized.skipped,
+        };
+      });
 
     const messageChannel =
       await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
@@ -309,7 +305,7 @@ export class MessageCampaignService {
       recipients,
     } = data;
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository = await this.getSystemRepository(
         workspaceId,
         MessageCampaignWorkspaceEntity,
@@ -395,7 +391,7 @@ export class MessageCampaignService {
       emailingDomainId,
     } = data;
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository = await this.getSystemRepository(
         workspaceId,
         MessageWorkspaceEntity,
@@ -555,7 +551,7 @@ export class MessageCampaignService {
     providerMessageId: string;
     deliveryStatus: string;
   }): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository = await this.getSystemRepository(
         workspaceId,
         MessageWorkspaceEntity,
@@ -658,7 +654,7 @@ export class MessageCampaignService {
       temporaryExternalId: v4(),
     }));
 
-    await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+    await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         const messageThreadRepository =
           transactionScope.getRepository<MessageThreadWorkspaceEntity>(
@@ -817,61 +813,59 @@ export class MessageCampaignService {
       userWorkspaceId,
     });
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const rawRecipients = await this.resolveRecipientsFromList(
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const rawRecipients = await this.resolveRecipientsFromList(
+        workspaceId,
+        listId,
+        roleId,
+      );
+      const totalMembers = rawRecipients.length;
+
+      const { recipients, skipped } = normalizeCampaignRecipients(
+        rawRecipients,
+        MAX_CAMPAIGN_RECIPIENTS,
+      );
+
+      const emails = recipients.map((recipient) => recipient.email);
+
+      const globallySuppressed =
+        await this.messageSuppressionService.getSuppressedAddresses(
           workspaceId,
-          listId,
-          roleId,
+          emails,
         );
-        const totalMembers = rawRecipients.length;
-
-        const { recipients, skipped } = normalizeCampaignRecipients(
-          rawRecipients,
-          MAX_CAMPAIGN_RECIPIENTS,
-        );
-
-        const emails = recipients.map((recipient) => recipient.email);
-
-        const globallySuppressed =
-          await this.messageSuppressionService.getSuppressedAddresses(
+      const topicSuppressed = isNonEmptyString(unsubscribeTopicId)
+        ? await this.messageSuppressionService.getTopicSuppressedAddresses(
             workspaceId,
             emails,
-          );
-        const topicSuppressed = isNonEmptyString(unsubscribeTopicId)
-          ? await this.messageSuppressionService.getTopicSuppressedAddresses(
-              workspaceId,
-              emails,
-              unsubscribeTopicId,
-            )
-          : new Set<string>();
+            unsubscribeTopicId,
+          )
+        : new Set<string>();
 
-        let globallyUnsubscribed = 0;
-        let topicUnsubscribed = 0;
-        let sendable = 0;
+      let globallyUnsubscribed = 0;
+      let topicUnsubscribed = 0;
+      let sendable = 0;
 
-        for (const recipient of recipients) {
-          const normalizedEmail = recipient.email.trim().toLowerCase();
+      for (const recipient of recipients) {
+        const normalizedEmail = recipient.email.trim().toLowerCase();
 
-          if (globallySuppressed.has(normalizedEmail)) {
-            globallyUnsubscribed += 1;
-          } else if (topicSuppressed.has(normalizedEmail)) {
-            topicUnsubscribed += 1;
-          } else {
-            sendable += 1;
-          }
+        if (globallySuppressed.has(normalizedEmail)) {
+          globallyUnsubscribed += 1;
+        } else if (topicSuppressed.has(normalizedEmail)) {
+          topicUnsubscribed += 1;
+        } else {
+          sendable += 1;
         }
+      }
 
-        return {
-          totalMembers,
-          withoutEmail: skipped.noEmail,
-          duplicateEmails: skipped.deduped,
-          globallyUnsubscribed,
-          topicUnsubscribed,
-          sendable,
-        };
-      },
-    );
+      return {
+        totalMembers,
+        withoutEmail: skipped.noEmail,
+        duplicateEmails: skipped.deduped,
+        globallyUnsubscribed,
+        topicUnsubscribed,
+        sendable,
+      };
+    });
   }
 
   private async resolveRecipientsFromList(

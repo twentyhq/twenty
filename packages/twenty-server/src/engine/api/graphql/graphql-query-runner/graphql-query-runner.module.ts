@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
-import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
@@ -16,7 +15,6 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 
 @Module({
   imports: [
-    TwentyORMV2Module,
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     PermissionsModule,
@@ -27,9 +25,6 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
     ViewFilterModule,
     ViewFilterGroupModule,
   ],
-  providers: [
-    ProcessNestedRelationsHelper,
-    ProcessAggregateHelper,
-  ],
+  providers: [ProcessNestedRelationsHelper, ProcessAggregateHelper],
 })
 export class GraphqlQueryRunnerModule {}

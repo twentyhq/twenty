@@ -10438,7 +10438,7 @@ msgid "This operation is not allowed."
 msgstr "crwdns65722:0crwdne65722:0"
 
 #. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
+#: src/engine/workspace-datasource/workspace-schema.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 msgstr "crwdns8478:0crwdne8478:0"
 
