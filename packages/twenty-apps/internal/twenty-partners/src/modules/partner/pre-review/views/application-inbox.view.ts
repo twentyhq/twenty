@@ -39,14 +39,14 @@ export default defineView({
     {
       universalIdentifier: '4543ee65-7b44-4454-bd7e-99d8ded89d52',
       fieldMetadataUniversalIdentifier: PARTNER_PRE_REVIEW_VERDICT_FIELD_ID,
-      position: 0,
+      position: 1,
       isVisible: true,
       size: 160,
     },
     {
       universalIdentifier: '38e537d9-8717-461e-a984-371dfd7e16eb',
       fieldMetadataUniversalIdentifier: PARTNER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 1,
+      position: 0,
       isVisible: true,
       size: 220,
     },
