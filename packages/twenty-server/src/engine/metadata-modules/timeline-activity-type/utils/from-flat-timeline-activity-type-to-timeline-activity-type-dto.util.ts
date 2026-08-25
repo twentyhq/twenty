@@ -30,7 +30,6 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
     : null,
   action: flatTimelineActivityType.action,
   icon: resolveOverridableEntityProperty(flatTimelineActivityType, 'icon'),
-  renderer: null,
   frontComponentUniversalIdentifier:
     flatTimelineActivityType.frontComponentUniversalIdentifier,
   objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,

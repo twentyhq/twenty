@@ -2863,8 +2863,6 @@ export interface TimelineActivityType {
     /** @deprecated Use emit.on */
     action?: Scalars['String']
     icon?: Scalars['String']
-    /** @deprecated Use frontComponentUniversalIdentifier */
-    renderer?: Scalars['String']
     frontComponentUniversalIdentifier?: Scalars['UUID']
     /** @deprecated Use emit.objectUniversalIdentifier */
     objectUniversalIdentifier?: Scalars['UUID']
@@ -6295,8 +6293,6 @@ export interface TimelineActivityTypeGenqlSelection{
     /** @deprecated Use emit.on */
     action?: boolean | number
     icon?: boolean | number
-    /** @deprecated Use frontComponentUniversalIdentifier */
-    renderer?: boolean | number
     frontComponentUniversalIdentifier?: boolean | number
     /** @deprecated Use emit.objectUniversalIdentifier */
     objectUniversalIdentifier?: boolean | number

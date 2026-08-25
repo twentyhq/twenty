@@ -5636,8 +5636,6 @@ export type TimelineActivityType = {
   name: Scalars['String']['output'];
   /** @deprecated Use emit.objectUniversalIdentifier */
   objectUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
-  /** @deprecated Use frontComponentUniversalIdentifier */
-  renderer?: Maybe<Scalars['String']['output']>;
   replacesTimelineActivityTypeUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
