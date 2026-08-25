@@ -14,6 +14,7 @@ import {
   IsNull,
   LessThanOrEqual,
   MoreThan,
+  Not,
   Raw,
   Repository,
 } from 'typeorm';
@@ -263,24 +264,32 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.sendInvitations(
-      [appToken.context.email],
+    return this.sendInvitations({
+      emails: [appToken.context.email],
       workspace,
       sender,
-      appToken.context.roleId,
-      appToken.type === AppTokenType.OnboardingInvitationToken,
-      appToken.id,
-    );
+      roleId: appToken.context.roleId,
+      isOnboardingInviteRewardOverride:
+        appToken.type === AppTokenType.OnboardingInvitationToken,
+      appTokenIdToInvalidate: appToken.id,
+    });
   }
 
-  async sendInvitations(
-    emails: string[],
-    workspace: WorkspaceEntity,
-    sender: WorkspaceMemberWorkspaceEntity,
-    roleId?: string,
-    isOnboardingInviteRewardOverride?: boolean,
-    appTokenIdToInvalidate?: string,
-  ): Promise<SendInvitationsDTO> {
+  async sendInvitations({
+    emails,
+    workspace,
+    sender,
+    roleId,
+    isOnboardingInviteRewardOverride,
+    appTokenIdToInvalidate,
+  }: {
+    emails: string[];
+    workspace: WorkspaceEntity;
+    sender: WorkspaceMemberWorkspaceEntity;
+    roleId?: string;
+    isOnboardingInviteRewardOverride?: boolean;
+    appTokenIdToInvalidate?: string;
+  }): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
         success: false,
@@ -305,16 +314,15 @@ export class WorkspaceInvitationService {
         })));
 
     if (isOnboardingInviteReward) {
-      await this.throwIfOnboardingInvitationLimitReached(
-        workspace.id,
-        emails.length,
-      );
+      await this.throwIfOnboardingInvitationLimitReached({
+        workspaceId: workspace.id,
+        requestedCount: emails.length,
+        excludedAppTokenId: appTokenIdToInvalidate,
+      });
     }
 
     await this.throttleInvitationSending(workspace.id, emails);
 
-    // Invalidate the previous invitation only after every pre-creation gate has
-    // passed, so a throttled or rejected resend keeps the original invitation.
     if (isDefined(appTokenIdToInvalidate)) {
       await this.appTokenRepository.delete(appTokenIdToInvalidate);
     }
@@ -477,10 +485,15 @@ export class WorkspaceInvitationService {
     return this.appTokenRepository.save(invitationToken);
   }
 
-  private async throwIfOnboardingInvitationLimitReached(
-    workspaceId: string,
-    requestedCount: number,
-  ) {
+  private async throwIfOnboardingInvitationLimitReached({
+    workspaceId,
+    requestedCount,
+    excludedAppTokenId,
+  }: {
+    workspaceId: string;
+    requestedCount: number;
+    excludedAppTokenId?: string;
+  }) {
     const maxOnboardingInvitations = this.twentyConfigService.get(
       'ONBOARDING_INVITE_TEAM_MAX_INVITES',
     );
@@ -491,6 +504,9 @@ export class WorkspaceInvitationService {
         type: AppTokenType.OnboardingInvitationToken,
         deletedAt: IsNull(),
         expiresAt: MoreThan(new Date()),
+        ...(isDefined(excludedAppTokenId)
+          ? { id: Not(excludedAppTokenId) }
+          : {}),
       },
     });
 
