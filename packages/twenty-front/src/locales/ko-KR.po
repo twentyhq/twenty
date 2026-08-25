@@ -3771,7 +3771,7 @@ msgstr "이메일 변경"
 #. js-lingui-id: qTyVHs
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
 msgid "Change node"
-msgstr ""
+msgstr "노드 변경"
 
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -13783,7 +13783,7 @@ msgstr "노드"
 #. js-lingui-id: 6cjyK/
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
 msgid "Node options"
-msgstr ""
+msgstr "노드 옵션"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts

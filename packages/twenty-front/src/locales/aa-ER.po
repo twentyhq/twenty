@@ -3768,6 +3768,11 @@ msgstr "crwdns7626:0crwdne7626:0"
 msgid "Change email"
 msgstr "crwdns6160:0crwdne6160:0"
 
+#. js-lingui-id: qTyVHs
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Change node"
+msgstr "crwdns140871:0crwdne140871:0"
+
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Change node type"
@@ -4164,7 +4169,7 @@ msgid "Close menu"
 msgstr "crwdns125544:0crwdne125544:0"
 
 #. js-lingui-id: saip/v
-#: src/modules/side-panel/components/SidePanelTopBar.tsx
+#: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
 msgstr "crwdns109272:0crwdne109272:0"
 
@@ -6401,8 +6406,7 @@ msgid "Delete group"
 msgstr "crwdns66010:0crwdne66010:0"
 
 #. js-lingui-id: Wk+A9S
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton.tsx
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
 msgstr "crwdns8716:0crwdne8716:0"
 
@@ -6970,7 +6974,7 @@ msgid "Duplicate"
 msgstr "crwdns64322:0crwdne64322:0"
 
 #. js-lingui-id: qaE1sk
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Duplicate node"
 msgstr "crwdns7774:0crwdne7774:0"
 
@@ -13743,6 +13747,11 @@ msgstr "crwdns115968:0crwdne115968:0"
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
 msgstr "crwdns66260:0crwdne66260:0"
+
+#. js-lingui-id: 6cjyK/
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Node options"
+msgstr "crwdns140873:0crwdne140873:0"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
