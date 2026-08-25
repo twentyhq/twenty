@@ -68,11 +68,11 @@ export class WorkspaceDataSourceV2 {
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
   ): WorkspaceRepositoryV2<T> {
-    return this.buildRepository({
+    return this.buildRepository<T>({
       nameSingular,
       rolePermissionConfig,
       executor: new PoolQueryExecutor({ pool: this.pool }),
-    }) as unknown as WorkspaceRepositoryV2<T>;
+    });
   }
 
   async transaction<T>(
@@ -102,7 +102,7 @@ export class WorkspaceDataSourceV2 {
     });
   }
 
-  private buildRepository({
+  private buildRepository<T extends ObjectLiteral = ObjectRecord>({
     nameSingular,
     rolePermissionConfig,
     executor,
@@ -112,7 +112,7 @@ export class WorkspaceDataSourceV2 {
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutorV2;
     isTransactional?: boolean;
-  }): WorkspaceRepositoryV2 {
+  }): WorkspaceRepositoryV2<T> {
     const objectMetadataId =
       this.internalContext.objectIdByNameSingular[nameSingular];
 
@@ -123,7 +123,7 @@ export class WorkspaceDataSourceV2 {
       );
     }
 
-    return this.buildRepositoryForObjectMetadataId({
+    return this.buildRepositoryForObjectMetadataId<T>({
       objectMetadataId,
       rolePermissionConfig,
       executor,
@@ -131,7 +131,9 @@ export class WorkspaceDataSourceV2 {
     });
   }
 
-  private buildRepositoryForObjectMetadataId({
+  private buildRepositoryForObjectMetadataId<
+    T extends ObjectLiteral = ObjectRecord,
+  >({
     objectMetadataId,
     rolePermissionConfig,
     executor,
@@ -141,7 +143,7 @@ export class WorkspaceDataSourceV2 {
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutorV2;
     isTransactional?: boolean;
-  }): WorkspaceRepositoryV2 {
+  }): WorkspaceRepositoryV2<T> {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
@@ -151,7 +153,7 @@ export class WorkspaceDataSourceV2 {
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       });
 
-    return new WorkspaceRepositoryV2({
+    return new WorkspaceRepositoryV2<T>({
       tableShape: this.getTableShape(objectMetadataId),
       flatObjectMetadata,
       internalContext: this.internalContext,

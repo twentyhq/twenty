@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 
-import { isDefined } from 'class-validator';
 import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
@@ -186,10 +186,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       );
     }
 
-    const { offset } = args;
-
-    if (offset !== undefined) {
-      queryBuilder.offset(offset);
+    if (isDefined(args.offset)) {
+      queryBuilder.offset(args.offset);
     }
     queryBuilder.limit(limit + 1);
 
