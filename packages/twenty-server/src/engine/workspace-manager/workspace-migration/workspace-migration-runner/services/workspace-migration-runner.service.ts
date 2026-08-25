@@ -27,8 +27,12 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
+import { isDeadlockWorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-deadlock-workspace-migration-runner-exception.util';
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+
+const WORKSPACE_MIGRATION_RUN_MAX_ATTEMPTS = 3;
+const WORKSPACE_MIGRATION_RUN_RETRY_DELAY_MS = 200;
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -212,30 +216,55 @@ export class WorkspaceMigrationRunnerService {
     metadataEvents: MetadataEvent[];
     hasSchemaMetadataChanged: boolean;
   }> => {
-    const runStart = performance.now();
+    let attempt = 1;
 
-    try {
-      const result = await this.executeRun(args);
+    while (true) {
+      const runStart = performance.now();
 
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
-        value: performance.now() - runStart,
-        unit: 'ms',
-        attributes: { status: 'success' },
-        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-      });
+      try {
+        const result = await this.executeRun(args);
 
-      return result;
-    } catch (error) {
-      this.metricsService.recordHistogram({
-        key: MetricsKeys.WorkspaceMigrationRunDurationMs,
-        value: performance.now() - runStart,
-        unit: 'ms',
-        attributes: { status: 'fail' },
-        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
-      });
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+          value: performance.now() - runStart,
+          unit: 'ms',
+          attributes: { status: 'success' },
+          bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+        });
 
-      throw error;
+        return result;
+      } catch (error) {
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.WorkspaceMigrationRunDurationMs,
+          value: performance.now() - runStart,
+          unit: 'ms',
+          attributes: { status: 'fail' },
+          bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+        });
+
+        // The full transaction was rolled back, so re-running it from scratch
+        // is safe; the writes we deadlocked against hold their locks until they
+        // commit, so the retry simply queues behind them.
+        if (
+          attempt < WORKSPACE_MIGRATION_RUN_MAX_ATTEMPTS &&
+          isDeadlockWorkspaceMigrationRunnerException(error)
+        ) {
+          this.logger.warn(
+            `Migration run aborted as a deadlock victim (attempt ${attempt}/${WORKSPACE_MIGRATION_RUN_MAX_ATTEMPTS}), retrying`,
+            'Runner',
+          );
+
+          attempt += 1;
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, WORKSPACE_MIGRATION_RUN_RETRY_DELAY_MS),
+          );
+
+          continue;
+        }
+
+        throw error;
+      }
     }
   };
 
