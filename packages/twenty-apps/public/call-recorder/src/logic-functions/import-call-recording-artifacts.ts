@@ -1,8 +1,8 @@
 import { isUndefined } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/import-call-recording-artifacts-logic-function-universal-identifier';
-import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import {
   importCallRecordingArtifacts,
   type ImportCallRecordingArtifactsResult,
@@ -28,7 +28,7 @@ export const importCallRecordingArtifactsHandler = async (
 
   try {
     return await importCallRecordingArtifacts({
-      client: createRetryingCoreApiClient(),
+      client: new CoreApiClient(),
       request: { callRecordingId, requestedAt },
     });
   } catch (error) {

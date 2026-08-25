@@ -1,8 +1,8 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summaries-logic-function-universal-identifier';
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
-import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import { findCallRecordingIdsForCalendarEvents } from 'src/logic-functions/data/find-call-recording-ids-for-calendar-events.util';
 import { enqueueCallRecordingSummariesBackfill } from 'src/logic-functions/flows/enqueue-call-recording-summaries-backfill.util';
 import { generateCallRecordingSummariesForIds } from 'src/logic-functions/flows/generate-call-recording-summaries-for-ids.util';
@@ -26,7 +26,7 @@ export const generateCallRecordingSummariesHandler = async (
     return { outcome: 'disabled' };
   }
 
-  const client = createRetryingCoreApiClient();
+  const client = new CoreApiClient();
 
   const requestedCallRecordingIds = toIdList(payload.body?.callRecordingIds);
   const requestedCalendarEventIds = toIdList(payload.body?.calendarEventIds);

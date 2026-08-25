@@ -1,7 +1,7 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_BATCH_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summaries-batch-logic-function-universal-identifier';
-import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import { generateCallRecordingSummariesForIds } from 'src/logic-functions/flows/generate-call-recording-summaries-for-ids.util';
 import { type GenerateCallRecordingSummariesForIdsResult } from 'src/logic-functions/flows/generate-call-recording-summaries-for-ids-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
@@ -23,7 +23,7 @@ export const generateCallRecordingSummariesBatchHandler = async (
 
   try {
     const result = await generateCallRecordingSummariesForIds({
-      client: createRetryingCoreApiClient(),
+      client: new CoreApiClient(),
       callRecordingIds,
     });
 

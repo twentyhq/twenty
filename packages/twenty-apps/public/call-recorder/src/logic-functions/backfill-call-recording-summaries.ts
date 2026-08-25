@@ -1,7 +1,7 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/backfill-call-recording-summaries-logic-function-universal-identifier';
-import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import { enqueueCallRecordingSummariesBackfill } from 'src/logic-functions/flows/enqueue-call-recording-summaries-backfill.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
@@ -24,7 +24,7 @@ export const backfillCallRecordingSummariesHandler =
     try {
       const { callRecordingCount, batchCount } =
         await enqueueCallRecordingSummariesBackfill({
-          client: createRetryingCoreApiClient(),
+          client: new CoreApiClient(),
         });
 
       if (callRecordingCount === 0) {
