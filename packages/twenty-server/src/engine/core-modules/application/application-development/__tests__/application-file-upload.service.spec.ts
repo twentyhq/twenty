@@ -6,7 +6,8 @@ import { ApplicationFileUploadService } from 'src/engine/core-modules/applicatio
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
+import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -22,8 +23,11 @@ describe('ApplicationFileUploadService', () => {
     }),
   };
 
-  const fileUploadService = {
+  const fileUploadTargetService = {
     createUploadTargetsBatch: jest.fn(),
+  };
+
+  const fileUploadCompletionService = {
     completeUploadsBatch: jest.fn(),
   };
 
@@ -34,7 +38,7 @@ describe('ApplicationFileUploadService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    fileUploadService.createUploadTargetsBatch.mockImplementation(
+    fileUploadTargetService.createUploadTargetsBatch.mockImplementation(
       (requests: { resourcePath: string }[]) =>
         Promise.resolve(
           requests.map((request, index) => ({
@@ -53,7 +57,11 @@ describe('ApplicationFileUploadService', () => {
       providers: [
         ApplicationFileUploadService,
         { provide: ApplicationService, useValue: applicationService },
-        { provide: FileUploadService, useValue: fileUploadService },
+        { provide: FileUploadTargetService, useValue: fileUploadTargetService },
+        {
+          provide: FileUploadCompletionService,
+          useValue: fileUploadCompletionService,
+        },
         {
           provide: getWorkspaceScopedRepositoryToken(FileEntity),
           useValue: fileRepository,
@@ -91,9 +99,9 @@ describe('ApplicationFileUploadService', () => {
       expect(result.targets[0].fileFolder).toBe(FileFolder.BuiltLogicFunction);
       expect(result.targets[0].uploadUrl).toContain('https://storage.tld/');
       expect(result.targets[1].filePath).toBe('logo.png');
-      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(
+        fileUploadTargetService.createUploadTargetsBatch,
+      ).toHaveBeenCalledTimes(1);
     });
 
     it('should reserve pending files as octet-stream through the batch primitive', async () => {
@@ -109,7 +117,9 @@ describe('ApplicationFileUploadService', () => {
         ],
       });
 
-      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledWith([
+      expect(
+        fileUploadTargetService.createUploadTargetsBatch,
+      ).toHaveBeenCalledWith([
         expect.objectContaining({
           workspaceId: WORKSPACE_ID,
           applicationId: 'application-id',
@@ -141,9 +151,9 @@ describe('ApplicationFileUploadService', () => {
           message: expect.stringContaining('Invalid fileFolder'),
         },
       ]);
-      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledWith(
-        [],
-      );
+      expect(
+        fileUploadTargetService.createUploadTargetsBatch,
+      ).toHaveBeenCalledWith([]);
     });
 
     it('should fail slow: a path escaping the folder becomes a per-file error while valid files still upload', async () => {
@@ -168,7 +178,9 @@ describe('ApplicationFileUploadService', () => {
       expect(result.targets[0].filePath).toBe('src/index.ts');
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].filePath).toBe('../../../etc/passwd');
-      expect(fileUploadService.createUploadTargetsBatch).toHaveBeenCalledWith([
+      expect(
+        fileUploadTargetService.createUploadTargetsBatch,
+      ).toHaveBeenCalledWith([
         expect.objectContaining({ resourcePath: 'src/index.ts' }),
       ]);
     });
@@ -191,7 +203,7 @@ describe('ApplicationFileUploadService', () => {
     });
 
     it('should surface a batch-primitive failure as a per-file error', async () => {
-      fileUploadService.createUploadTargetsBatch.mockResolvedValueOnce([
+      fileUploadTargetService.createUploadTargetsBatch.mockResolvedValueOnce([
         { success: false, error: 'storage exploded' },
       ]);
 
@@ -246,7 +258,7 @@ describe('ApplicationFileUploadService', () => {
 
     it('should return the completed files delegated to the batch primitive', async () => {
       fileRepository.find.mockResolvedValueOnce([file]);
-      fileUploadService.completeUploadsBatch.mockResolvedValueOnce([
+      fileUploadCompletionService.completeUploadsBatch.mockResolvedValueOnce([
         {
           success: true,
           value: {
@@ -273,14 +285,16 @@ describe('ApplicationFileUploadService', () => {
           createdAt: file.createdAt,
         },
       ]);
-      expect(fileUploadService.completeUploadsBatch).toHaveBeenCalledWith([
+      expect(
+        fileUploadCompletionService.completeUploadsBatch,
+      ).toHaveBeenCalledWith([
         expect.objectContaining({ workspaceId: WORKSPACE_ID, file }),
       ]);
     });
 
     it('should surface a batch-primitive completion failure as a per-file error', async () => {
       fileRepository.find.mockResolvedValueOnce([file]);
-      fileUploadService.completeUploadsBatch.mockResolvedValueOnce([
+      fileUploadCompletionService.completeUploadsBatch.mockResolvedValueOnce([
         { success: false, error: 'size mismatch' },
       ]);
 
@@ -298,7 +312,9 @@ describe('ApplicationFileUploadService', () => {
 
     it('should report file ids that do not belong to the application as errors', async () => {
       fileRepository.find.mockResolvedValueOnce([]);
-      fileUploadService.completeUploadsBatch.mockResolvedValueOnce([]);
+      fileUploadCompletionService.completeUploadsBatch.mockResolvedValueOnce(
+        [],
+      );
 
       const result = await service.completeApplicationFileUploads({
         workspaceId: WORKSPACE_ID,

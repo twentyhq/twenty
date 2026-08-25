@@ -18,8 +18,9 @@ import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/val
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   type BatchUploadTargetRequest,
-  FileUploadService,
-} from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+  FileUploadTargetService,
+} from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -32,7 +33,8 @@ const APPLICATION_FILE_SETTINGS = {
 export class ApplicationFileUploadService {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly fileUploadService: FileUploadService,
+    private readonly fileUploadTargetService: FileUploadTargetService,
+    private readonly fileUploadCompletionService: FileUploadCompletionService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -86,7 +88,7 @@ export class ApplicationFileUploadService {
     }));
 
     const batchResults =
-      await this.fileUploadService.createUploadTargetsBatch(requests);
+      await this.fileUploadTargetService.createUploadTargetsBatch(requests);
 
     batchResults.forEach((batchResult, index) => {
       const file = validFiles[index];
@@ -143,13 +145,14 @@ export class ApplicationFileUploadService {
       }
     }
 
-    const batchResults = await this.fileUploadService.completeUploadsBatch(
-      files.map((file) => ({
-        workspaceId,
-        applicationUniversalIdentifier,
-        file,
-      })),
-    );
+    const batchResults =
+      await this.fileUploadCompletionService.completeUploadsBatch(
+        files.map((file) => ({
+          workspaceId,
+          applicationUniversalIdentifier,
+          file,
+        })),
+      );
 
     batchResults.forEach((batchResult, index) => {
       const file = files[index];
