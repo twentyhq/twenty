@@ -30,7 +30,6 @@
     "miniflare/undici": "^7.29.0",
     "e2b/undici8": "npm:undici@^8.9.0",
     "next/sharp": "^0.35.3",
-    "@argos-ci/core/sharp": "0.35.3",
     "zapier-platform-core/form-data": "4.0.6",
     "@nestjs/graphql/ws": "8.21.0",
     "@remote-dom/react/@types/react": "^19.2.0",
