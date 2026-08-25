@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -11,32 +8,19 @@ import { fromFieldPermissionEntityToFlatFieldPermission } from 'src/engine/metad
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatFieldPermissionMaps', { packingPonderation: 1 })
 export class WorkspaceFlatFieldPermissionMapCacheService extends WorkspaceCacheProvider<FlatFieldPermissionMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(FieldPermissionEntity)
-    private readonly fieldPermissionRepository: WorkspaceScopedRepository<FieldPermissionEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ) {
-    super();
-  }
-
-  async computeForCache(workspaceId: string): Promise<FlatFieldPermissionMaps> {
+  async computeForCache(
+    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<FlatFieldPermissionMaps> {
     const [
       fieldPermissions,
       applications,
@@ -44,28 +28,20 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends WorkspaceCacheP
       objectMetadatas,
       fieldMetadatas,
     ] = await Promise.all([
-      this.fieldPermissionRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.roleRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(FieldPermissionEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
     ]);
 
     const applicationIdToUniversalIdentifierMap =

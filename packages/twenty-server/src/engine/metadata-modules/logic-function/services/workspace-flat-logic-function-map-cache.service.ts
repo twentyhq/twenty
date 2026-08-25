@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -12,6 +11,7 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { fromLogicFunctionEntityToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-logic-function-entity-to-flat-logic-function.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -20,31 +20,24 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatLogicFunctionMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatLogicFunction>
 > {
-  constructor(
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatEntityMaps<FlatLogicFunction>> {
     const [logicFunctions, applications] = await Promise.all([
-      this.logicFunctionRepository.find({
-        where: { workspaceId },
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
+      recomputeContext.findAll(LogicFunctionEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+        'deletedAt',
+      ]),
     ]);
 
     const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
+      createIdToUniversalIdentifierMap(
+        // the previous application fetch excluded soft-deleted rows
+        applications.filter((application) => !isDefined(application.deletedAt)),
+      );
 
     const flatLogicFunctionMaps = createEmptyFlatEntityMaps();
 

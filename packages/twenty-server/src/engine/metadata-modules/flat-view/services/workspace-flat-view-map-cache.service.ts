@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { type Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -18,9 +15,8 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -28,32 +24,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @Injectable()
 @WorkspaceCache('flatViewMaps', { packingPonderation: 8 })
 export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<FlatViewMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectWorkspaceScopedRepository(ViewFieldEntity)
-    private readonly viewFieldRepository: WorkspaceScopedRepository<ViewFieldEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
-    @InjectWorkspaceScopedRepository(ViewGroupEntity)
-    private readonly viewGroupRepository: WorkspaceScopedRepository<ViewGroupEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterGroupEntity)
-    private readonly viewFilterGroupRepository: WorkspaceScopedRepository<ViewFilterGroupEntity>,
-    @InjectWorkspaceScopedRepository(ViewSortEntity)
-    private readonly viewSortRepository: WorkspaceScopedRepository<ViewSortEntity>,
-    @InjectWorkspaceScopedRepository(ViewFieldGroupEntity)
-    private readonly viewFieldGroupRepository: WorkspaceScopedRepository<ViewFieldGroupEntity>,
-  ) {
-    super();
-  }
-
-  async computeForCache(workspaceId: string): Promise<FlatViewMaps> {
+  async computeForCache(
+    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<FlatViewMaps> {
     const [
       views,
       applications,
@@ -66,48 +40,49 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
       viewSorts,
       viewFieldGroups,
     ] = await Promise.all([
-      this.viewRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.viewFieldRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewFilterRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewGroupRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewFilterGroupRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewSortRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'viewId'],
-        withDeleted: true,
-      }),
-      this.viewFieldGroupRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'viewId'],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(ViewEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ViewFieldEntity, [
+        'id',
+        'universalIdentifier',
+        'viewId',
+      ]),
+      recomputeContext.findAll(ViewFilterEntity, [
+        'id',
+        'universalIdentifier',
+        'viewId',
+      ]),
+      recomputeContext.findAll(ViewGroupEntity, [
+        'id',
+        'universalIdentifier',
+        'viewId',
+      ]),
+      recomputeContext.findAll(ViewFilterGroupEntity, [
+        'id',
+        'universalIdentifier',
+        'viewId',
+      ]),
+      recomputeContext.findAll(ViewSortEntity, [
+        'id',
+        'universalIdentifier',
+        'viewId',
+      ]),
+      recomputeContext.findAll(ViewFieldGroupEntity, [
+        'id',
+        'universalIdentifier',
+        'viewId',
+      ]),
     ]);
 
     const [

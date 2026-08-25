@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -10,37 +9,36 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { fromWebhookEntityToFlatWebhook } from 'src/engine/metadata-modules/flat-webhook/utils/from-webhook-entity-to-flat-webhook.util';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatWebhookMaps', { packingPonderation: 1 })
 export class WorkspaceFlatWebhookMapCacheService extends WorkspaceCacheProvider<FlatWebhookMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(WebhookEntity)
-    private readonly webhookRepository: WorkspaceScopedRepository<WebhookEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-  ) {
-    super();
-  }
-
-  async computeForCache(workspaceId: string): Promise<FlatWebhookMaps> {
-    const [webhooks, applications] = await Promise.all([
-      this.webhookRepository.find(workspaceId, {
-        where: { deletedAt: IsNull() },
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
+  async computeForCache(
+    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<FlatWebhookMaps> {
+    const [allWebhooks, applications] = await Promise.all([
+      recomputeContext.findAll(WebhookEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+        'deletedAt',
+      ]),
     ]);
 
+    // the previous fetches filtered soft-deleted rows in SQL
+    const webhooks = allWebhooks.filter(
+      (webhook) => !isDefined(webhook.deletedAt),
+    );
+
     const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
+      createIdToUniversalIdentifierMap(
+        applications.filter((application) => !isDefined(application.deletedAt)),
+      );
 
     const flatWebhookMaps = createEmptyFlatEntityMaps();
 

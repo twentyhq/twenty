@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -17,9 +14,8 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -29,29 +25,9 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatRole>
 > {
-  constructor(
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    @InjectWorkspaceScopedRepository(ObjectPermissionEntity)
-    private readonly objectPermissionRepository: WorkspaceScopedRepository<ObjectPermissionEntity>,
-    @InjectRepository(RolePermissionFlagEntity)
-    private readonly rolePermissionFlagRepository: Repository<RolePermissionFlagEntity>,
-    @InjectWorkspaceScopedRepository(FieldPermissionEntity)
-    private readonly fieldPermissionRepository: WorkspaceScopedRepository<FieldPermissionEntity>,
-    @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateEntity)
-    private readonly rowLevelPermissionPredicateRepository: WorkspaceScopedRepository<RowLevelPermissionPredicateEntity>,
-    @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity)
-    private readonly rowLevelPermissionPredicateGroupRepository: WorkspaceScopedRepository<RowLevelPermissionPredicateGroupEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatEntityMaps<FlatRole>> {
     const [
       roles,
@@ -63,39 +39,41 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroups,
     ] = await Promise.all([
-      this.roleRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.roleTargetRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.objectPermissionRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.rolePermissionFlagRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.fieldPermissionRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.rowLevelPermissionPredicateRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.rowLevelPermissionPredicateGroupRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(RoleEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(RoleTargetEntity, [
+        'id',
+        'universalIdentifier',
+        'roleId',
+      ]),
+      recomputeContext.findAll(ObjectPermissionEntity, [
+        'id',
+        'universalIdentifier',
+        'roleId',
+      ]),
+      recomputeContext.findAll(RolePermissionFlagEntity, [
+        'id',
+        'universalIdentifier',
+        'roleId',
+      ]),
+      recomputeContext.findAll(FieldPermissionEntity, [
+        'id',
+        'universalIdentifier',
+        'roleId',
+      ]),
+      recomputeContext.findAll(RowLevelPermissionPredicateEntity, [
+        'id',
+        'universalIdentifier',
+        'roleId',
+      ]),
+      recomputeContext.findAll(RowLevelPermissionPredicateGroupEntity, [
+        'id',
+        'universalIdentifier',
+        'roleId',
+      ]),
     ]);
 
     const [

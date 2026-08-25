@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -15,30 +13,17 @@ import { fromSearchFieldMetadataEntityToFlatSearchFieldMetadata } from 'src/engi
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatSearchFieldMetadataMaps', { packingPonderation: 1 })
 export class WorkspaceFlatSearchFieldMetadataMapCacheService extends WorkspaceCacheProvider<FlatSearchFieldMetadataMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(SearchFieldMetadataEntity)
-    private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatSearchFieldMetadataMaps> {
     const [
       existingSearchFieldMetadatas,
@@ -46,28 +31,22 @@ export class WorkspaceFlatSearchFieldMetadataMapCacheService extends WorkspaceCa
       objectMetadatas,
       fieldMetadatas,
     ] = await Promise.all([
-      this.searchFieldMetadataRepository.find(workspaceId),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: [
-          'id',
-          'universalIdentifier',
-          'name',
-          'type',
-          'objectMetadataId',
-        ],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(SearchFieldMetadataEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+        'name',
+        'type',
+        'objectMetadataId',
+      ]),
     ]);
 
     const applicationIdToUniversalIdentifierMap =

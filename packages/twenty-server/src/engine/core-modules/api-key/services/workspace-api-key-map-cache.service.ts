@@ -5,26 +5,19 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 @Injectable()
 @WorkspaceCache('apiKeyMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   Record<string, FlatApiKey>
 > {
-  constructor(
-    @InjectWorkspaceScopedRepository(ApiKeyEntity)
-    private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<Record<string, FlatApiKey>> {
-    const apiKeys = await this.apiKeyRepository.find(workspaceId);
+    const apiKeys = await recomputeContext.findAll(ApiKeyEntity);
 
     return apiKeys.reduce(
       (map, apiKey) => {

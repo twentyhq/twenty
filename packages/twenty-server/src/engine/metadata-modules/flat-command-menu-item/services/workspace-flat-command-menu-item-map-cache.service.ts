@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -13,31 +10,18 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatCommandMenuItemMaps', { packingPonderation: 4 })
 export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheProvider<FlatCommandMenuItemMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
-    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectWorkspaceScopedRepository(PageLayoutEntity)
-    private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
-  ) {
-    super();
-  }
-
-  async computeForCache(workspaceId: string): Promise<FlatCommandMenuItemMaps> {
+  async computeForCache(
+    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<FlatCommandMenuItemMaps> {
     const [
       commandMenuItems,
       applications,
@@ -45,28 +29,20 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
       frontComponents,
       pageLayouts,
     ] = await Promise.all([
-      this.commandMenuItemRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.frontComponentRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.pageLayoutRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(CommandMenuItemEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FrontComponentEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(PageLayoutEntity, ['id', 'universalIdentifier']),
     ]);
 
     const applicationIdToUniversalIdentifierMap =

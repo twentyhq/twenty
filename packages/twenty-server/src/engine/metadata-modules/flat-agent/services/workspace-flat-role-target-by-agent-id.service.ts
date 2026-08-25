@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { NonNullableRequired } from 'twenty-shared/types';
-import { IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -12,52 +11,31 @@ import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-ag
 import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
 @Injectable()
 @WorkspaceCache('flatRoleTargetByAgentIdMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvider<FlatRoleTargetByAgentIdMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectWorkspaceScopedRepository(AgentEntity)
-    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatRoleTargetByAgentIdMaps> {
-    const [roleTargetEntities, applications, roles, agents] = await Promise.all(
-      [
-        this.roleTargetRepository.find(workspaceId, {
-          where: {
-            agentId: Not(IsNull()),
-          },
-          withDeleted: true,
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.roleRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.agentRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-      ],
+    const [roleTargets, applications, roles, agents] = await Promise.all([
+      recomputeContext.findAll(RoleTargetEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
+      recomputeContext.findAll(AgentEntity, ['id', 'universalIdentifier']),
+    ]);
+
+    // the recompute context only filters on workspaceId: the previous
+    // agentId IS NOT NULL condition moved in memory
+    const roleTargetEntities = roleTargets.filter((roleTarget) =>
+      isDefined(roleTarget.agentId),
     );
 
     const applicationIdToUniversalIdentifierMap =

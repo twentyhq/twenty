@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -14,31 +11,16 @@ import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
 @Injectable()
 @WorkspaceCache('flatNavigationMenuItemMaps', { packingPonderation: 1 })
 export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCacheProvider<FlatNavigationMenuItemMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(NavigationMenuItemEntity)
-    private readonly navigationMenuItemRepository: WorkspaceScopedRepository<NavigationMenuItemEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-    @InjectWorkspaceScopedRepository(PageLayoutEntity)
-    private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatNavigationMenuItemMaps> {
     const [
       navigationMenuItems,
@@ -47,27 +29,17 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
       views,
       pageLayouts,
     ] = await Promise.all([
-      this.navigationMenuItemRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.viewRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.pageLayoutRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(NavigationMenuItemEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
+      recomputeContext.findAll(PageLayoutEntity, ['id', 'universalIdentifier']),
     ]);
 
     const applicationIdToUniversalIdentifierMap =

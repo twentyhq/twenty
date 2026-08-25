@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { type Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -12,9 +9,8 @@ import { fromViewFilterGroupEntityToFlatViewFilterGroup } from 'src/engine/metad
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -22,38 +18,23 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @Injectable()
 @WorkspaceCache('flatViewFilterGroupMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewFilterGroupMapCacheService extends WorkspaceCacheProvider<FlatViewFilterGroupMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(ViewFilterGroupEntity)
-    private readonly viewFilterGroupRepository: WorkspaceScopedRepository<ViewFilterGroupEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-  ) {
-    super();
-  }
-
-  async computeForCache(workspaceId: string): Promise<FlatViewFilterGroupMaps> {
+  async computeForCache(
+    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<FlatViewFilterGroupMaps> {
     const [viewFilterGroups, applications, viewFilters, views] =
       await Promise.all([
-        this.viewFilterGroupRepository.find(workspaceId, {
-          withDeleted: true,
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.viewFilterRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier', 'viewFilterGroupId'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
+        recomputeContext.findAll(ViewFilterGroupEntity),
+        recomputeContext.findAll(ApplicationEntity, [
+          'id',
+          'universalIdentifier',
+        ]),
+        recomputeContext.findAll(ViewFilterEntity, [
+          'id',
+          'universalIdentifier',
+          'viewFilterGroupId',
+        ]),
+        recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
       ]);
 
     const [viewFiltersByViewFilterGroupId, childViewFilterGroupsByParentId] = (

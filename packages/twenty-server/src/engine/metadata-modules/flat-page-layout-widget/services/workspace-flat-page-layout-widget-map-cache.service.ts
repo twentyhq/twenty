@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -15,36 +12,17 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatPageLayoutWidgetMaps', { packingPonderation: 5 })
 export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCacheProvider<FlatPageLayoutWidgetMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(PageLayoutWidgetEntity)
-    private readonly pageLayoutWidgetRepository: WorkspaceScopedRepository<PageLayoutWidgetEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(PageLayoutTabEntity)
-    private readonly pageLayoutTabRepository: WorkspaceScopedRepository<PageLayoutTabEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatPageLayoutWidgetMaps> {
     const [
       existingPageLayoutWidgets,
@@ -55,37 +33,28 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
       frontComponents,
       views,
     ] = await Promise.all([
-      this.pageLayoutWidgetRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.pageLayoutTabRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.frontComponentRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.viewRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
+      recomputeContext.findAll(PageLayoutWidgetEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(PageLayoutTabEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FrontComponentEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(ViewEntity, ['id', 'universalIdentifier']),
     ]);
 
     const applicationIdToUniversalIdentifierMap =

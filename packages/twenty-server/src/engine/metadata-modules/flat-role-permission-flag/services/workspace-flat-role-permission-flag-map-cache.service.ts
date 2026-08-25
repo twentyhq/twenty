@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -10,51 +7,31 @@ import { fromRolePermissionFlagEntityToFlatRolePermissionFlag } from 'src/engine
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('flatRolePermissionFlagMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCacheProvider<FlatRolePermissionFlagMaps> {
-  constructor(
-    @InjectRepository(RolePermissionFlagEntity)
-    private readonly rolePermissionFlagRepository: Repository<RolePermissionFlagEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectWorkspaceScopedRepository(PermissionFlagEntity)
-    private readonly permissionFlagRepository: WorkspaceScopedRepository<PermissionFlagEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatRolePermissionFlagMaps> {
     const [rolePermissionFlags, applications, roles, permissionFlags] =
       await Promise.all([
-        this.rolePermissionFlagRepository.find({
-          where: { workspaceId },
-          withDeleted: true,
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.roleRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.permissionFlagRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
+        recomputeContext.findAll(RolePermissionFlagEntity),
+        recomputeContext.findAll(ApplicationEntity, [
+          'id',
+          'universalIdentifier',
+        ]),
+        recomputeContext.findAll(RoleEntity, ['id', 'universalIdentifier']),
+        recomputeContext.findAll(PermissionFlagEntity, [
+          'id',
+          'universalIdentifier',
+        ]),
       ]);
 
     const applicationIdToUniversalIdentifierMap =

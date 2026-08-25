@@ -1,32 +1,29 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull, Not } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 @Injectable()
 @WorkspaceCache('apiKeyRoleMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
   Record<string, string>
 > {
-  constructor(
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-  ) {
-    super();
-  }
+  async computeForCache(
+    workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
+  ): Promise<Record<string, string>> {
+    const roleTargets = await recomputeContext.findAll(RoleTargetEntity);
 
-  async computeForCache(workspaceId: string): Promise<Record<string, string>> {
-    const roleTargetsMap = await this.roleTargetRepository.find(workspaceId, {
-      where: {
-        apiKeyId: Not(IsNull()),
-      },
-    });
+    // the recompute context only filters on workspaceId: the previous
+    // apiKeyId IS NOT NULL condition moved in memory
+    const roleTargetsMap = roleTargets.filter((roleTarget) =>
+      isDefined(roleTarget.apiKeyId),
+    );
 
     return roleTargetsMap.reduce(
       (acc, roleTarget) => {

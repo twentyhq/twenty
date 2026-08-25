@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -11,11 +10,11 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -24,47 +23,60 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatIndexMetadata>
 > {
-  constructor(
-    @InjectWorkspaceScopedRepository(IndexMetadataEntity)
-    private readonly indexMetadataRepository: WorkspaceScopedRepository<IndexMetadataEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ) {
-    super();
-  }
-
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatEntityMaps<FlatIndexMetadata>> {
-    const [indexes, applications, objectMetadatas, fieldMetadatas] =
-      await Promise.all([
-        this.indexMetadataRepository.find(workspaceId, {
-          withDeleted: true,
-          relationLoadStrategy: 'join',
-          relations: ['indexFieldMetadatas'],
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-        }),
-        this.objectMetadataRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.fieldMetadataRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-      ]);
+    const [
+      indexes,
+      indexFieldMetadatas,
+      applications,
+      objectMetadatas,
+      fieldMetadatas,
+    ] = await Promise.all([
+      recomputeContext.findAll(IndexMetadataEntity),
+      recomputeContext.findAll(IndexFieldMetadataEntity),
+      recomputeContext.findAll(ApplicationEntity, [
+        'id',
+        'universalIdentifier',
+        'deletedAt',
+      ]),
+      recomputeContext.findAll(ObjectMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+      recomputeContext.findAll(FieldMetadataEntity, [
+        'id',
+        'universalIdentifier',
+      ]),
+    ]);
+
+    const indexFieldMetadatasByIndexMetadataId = new Map<
+      string,
+      IndexFieldMetadataEntity[]
+    >();
+
+    for (const indexFieldMetadata of indexFieldMetadatas) {
+      const existingIndexFieldMetadatas =
+        indexFieldMetadatasByIndexMetadataId.get(
+          indexFieldMetadata.indexMetadataId,
+        );
+
+      if (isDefined(existingIndexFieldMetadatas)) {
+        existingIndexFieldMetadatas.push(indexFieldMetadata);
+      } else {
+        indexFieldMetadatasByIndexMetadataId.set(
+          indexFieldMetadata.indexMetadataId,
+          [indexFieldMetadata],
+        );
+      }
+    }
 
     const applicationIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(applications);
+      createIdToUniversalIdentifierMap(
+        // the previous application fetch excluded soft-deleted rows
+        applications.filter((application) => !isDefined(application.deletedAt)),
+      );
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
     const fieldMetadataIdToUniversalIdentifierMap =
@@ -74,7 +86,11 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
 
     for (const indexEntity of indexes) {
       const flatIndex = fromIndexMetadataEntityToFlatIndexMetadata({
-        entity: indexEntity,
+        entity: {
+          ...indexEntity,
+          indexFieldMetadatas:
+            indexFieldMetadatasByIndexMetadataId.get(indexEntity.id) ?? [],
+        },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
