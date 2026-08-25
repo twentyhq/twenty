@@ -87,7 +87,7 @@ system mailer, not this — leave them alone.
 | Trigger | Manual, single **Application** | Cron, daily |
 | Action | Update linked **Opportunity** | Send Email per partner via person lookup |
 | Published label | **Mark as Winner** (on application) | **Daily Digest** |
-| Who runs it | Admin / Partner Ops | Application role |
+| Who runs it | Admin | Application role |
 
 Repeat for each workspace after install. Workflows are workspace metadata — they do not
 travel with `deploy` / `install`.

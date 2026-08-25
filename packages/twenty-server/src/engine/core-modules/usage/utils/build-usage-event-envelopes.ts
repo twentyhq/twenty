@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 
