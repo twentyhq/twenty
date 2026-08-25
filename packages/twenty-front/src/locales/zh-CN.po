@@ -5014,12 +5014,12 @@ msgstr "复制到剪贴板"
 #. js-lingui-id: rG2gDo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy transcript"
-msgstr ""
+msgstr "复制转录文本"
 
 #. js-lingui-id: afZp3R
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy video download link"
-msgstr ""
+msgstr "复制视频下载链接"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10967,7 +10967,7 @@ msgstr ""
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 msgid "Jump to current"
-msgstr ""
+msgstr "跳转到当前"
 
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
@@ -15008,7 +15008,7 @@ msgstr "方案"
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
-msgstr ""
+msgstr "播放失败"
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -17046,7 +17046,7 @@ msgstr "查看与此记录关联的所有 {relationLabelPlural}"
 #. js-lingui-id: OhVSE4
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "See all call recordings linked to this calendar event"
-msgstr ""
+msgstr "查看与此日历事件关联的所有通话录音"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -17097,7 +17097,7 @@ msgstr "已预置"
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
 msgid "Seek recording to {formattedStartTimestamp}"
-msgstr ""
+msgstr "将录音定位到 {formattedStartTimestamp}"
 
 #. js-lingui-id: rG3WVm
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
@@ -18942,7 +18942,7 @@ msgstr "该 PDF 已由 Twenty 预先签署，并与您的法律实体和授权�
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "The recording could not be loaded."
-msgstr ""
+msgstr "无法加载该录音。"
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19695,12 +19695,12 @@ msgstr "在您的工作区中跟踪 AI 消耗。"
 #. js-lingui-id: DDziIo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 msgid "Transcript"
-msgstr ""
+msgstr "转录文本"
 
 #. js-lingui-id: hfpzKV
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Transcript copied to clipboard"
-msgstr ""
+msgstr "转录内容已复制到剪贴板"
 
 #. js-lingui-id: U2CSqa
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx

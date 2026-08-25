@@ -5014,12 +5014,12 @@ msgstr "Kopiér til udklipsholder"
 #. js-lingui-id: rG2gDo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy transcript"
-msgstr ""
+msgstr "Kopiér transskription"
 
 #. js-lingui-id: afZp3R
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy video download link"
-msgstr ""
+msgstr "Kopiér downloadlink til video"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10990,7 +10990,7 @@ msgstr ""
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 msgid "Jump to current"
-msgstr ""
+msgstr "Gå til nuværende"
 
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
@@ -15031,7 +15031,7 @@ msgstr "Planer"
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
-msgstr ""
+msgstr "Afspilning mislykkedes"
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -17069,7 +17069,7 @@ msgstr "Se alle {relationLabelPlural}, der er knyttet til denne post"
 #. js-lingui-id: OhVSE4
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "See all call recordings linked to this calendar event"
-msgstr ""
+msgstr "Se alle opkaldsoptagelser, der er knyttet til denne kalenderbegivenhed"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -17120,7 +17120,7 @@ msgstr "Forudfyldt"
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
 msgid "Seek recording to {formattedStartTimestamp}"
-msgstr ""
+msgstr "Søg i optagelsen til {formattedStartTimestamp}"
 
 #. js-lingui-id: rG3WVm
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
@@ -18995,7 +18995,7 @@ msgstr "PDF'en er forhåndsunderskrevet af Twenty og udfærdiget med din juridis
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "The recording could not be loaded."
-msgstr ""
+msgstr "Optagelsen kunne ikke indlæses."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19750,12 +19750,12 @@ msgstr "Spor AI-forbrug på tværs af dit arbejdsområde."
 #. js-lingui-id: DDziIo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 msgid "Transcript"
-msgstr ""
+msgstr "Transkript"
 
 #. js-lingui-id: hfpzKV
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Transcript copied to clipboard"
-msgstr ""
+msgstr "Transskription kopieret til udklipsholder"
 
 #. js-lingui-id: U2CSqa
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx

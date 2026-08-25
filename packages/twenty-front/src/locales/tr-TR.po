@@ -5014,12 +5014,12 @@ msgstr "Panoya kopyala"
 #. js-lingui-id: rG2gDo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy transcript"
-msgstr ""
+msgstr "Dökümü kopyala"
 
 #. js-lingui-id: afZp3R
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Copy video download link"
-msgstr ""
+msgstr "Video indirme bağlantısını kopyala"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10990,7 +10990,7 @@ msgstr ""
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 msgid "Jump to current"
-msgstr ""
+msgstr "Geçerli konuma atla"
 
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
@@ -15031,7 +15031,7 @@ msgstr "Planlar"
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "Playback failed"
-msgstr ""
+msgstr "Oynatma başarısız oldu"
 
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -17069,7 +17069,7 @@ msgstr "Bu kayda bağlı tüm {relationLabelPlural} listesini görüntüle"
 #. js-lingui-id: OhVSE4
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "See all call recordings linked to this calendar event"
-msgstr ""
+msgstr "Bu takvim etkinliğine bağlı tüm çağrı kayıtlarını görüntüle"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -17120,7 +17120,7 @@ msgstr "Örnek verilerle yüklendi"
 #. js-lingui-id: 5iyrla
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
 msgid "Seek recording to {formattedStartTimestamp}"
-msgstr ""
+msgstr "Kaydı {formattedStartTimestamp} konumuna sar"
 
 #. js-lingui-id: rG3WVm
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
@@ -18995,7 +18995,7 @@ msgstr "PDF, Twenty tarafından önceden imzalanmıştır ve tüzel kişiliğini
 #. js-lingui-id: 8vRPIJ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 msgid "The recording could not be loaded."
-msgstr ""
+msgstr "Kayıt yüklenemedi."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19748,12 +19748,12 @@ msgstr "Çalışma alanınız genelinde Yapay Zeka tüketimini takip edin."
 #. js-lingui-id: DDziIo
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 msgid "Transcript"
-msgstr ""
+msgstr "Döküm"
 
 #. js-lingui-id: hfpzKV
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 msgid "Transcript copied to clipboard"
-msgstr ""
+msgstr "Transkript panoya kopyalandı"
 
 #. js-lingui-id: U2CSqa
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
