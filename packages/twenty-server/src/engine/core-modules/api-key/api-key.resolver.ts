@@ -69,11 +69,9 @@ export class ApiKeyResolver {
     }
   }
 
-  // API_KEYS_AND_WEBHOOKS (class guard) gates managing API keys. Creating one
-  // also assigns it a role, so it additionally requires ROLES, the permission
-  // that governs role assignment, so a key can't be granted a role its creator
-  // is not allowed to grant. RequireAccessTokenGuard keeps derived PLAYGROUND
-  // tokens and API keys from escalating into a long-lived credential.
+  // Creating a key assigns it a role, so it also requires ROLES to prevent
+  // binding a role above the caller's own. RequireAccessTokenGuard blocks
+  // minting from derived PLAYGROUND tokens.
   @UseGuards(
     RequireAccessTokenGuard,
     SettingsPermissionGuard(PermissionFlagType.ROLES),
@@ -119,9 +117,7 @@ export class ApiKeyResolver {
     return this.apiKeyService.revoke(input.id, workspace.id);
   }
 
-  // Requires ROLES on top of API_KEYS_AND_WEBHOOKS: binding a role to an API
-  // key must require the role-assignment permission to prevent privilege
-  // escalation.
+  // Binding a role to an API key requires ROLES to prevent privilege escalation.
   @UseGuards(
     RequireAccessTokenGuard,
     SettingsPermissionGuard(PermissionFlagType.ROLES),
