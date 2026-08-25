@@ -30,9 +30,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useContext, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { useContext, useState } from 'react';
 import {
   IconDotsVertical,
   IconPencil,
@@ -178,8 +176,6 @@ export const SettingsDataModelFieldSelectForm = ({
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
-  const [searchParams] = useSearchParams();
-
   const {
     control,
     setValue: setFormValue,
@@ -187,26 +183,12 @@ export const SettingsDataModelFieldSelectForm = ({
     getValues,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
-  const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
   const [isBulkInputMode, setIsBulkInputMode] = useState(false);
   const [bulkInputText, setBulkInputText] = useState('');
 
   const OPTIONS_DROPDOWN_ID =
     'settings-data-model-field-select-options-dropdown';
   const { closeDropdown: closeOptionsDropdown } = useCloseDropdown();
-
-  useEffect(() => {
-    const newOptionValue = searchParams.get('newOption');
-
-    if (isDefined(newOptionValue) && !hasAppliedNewOption) {
-      const newOption = generateNewSelectOption(initialOptions, newOptionValue);
-
-      const optionsWithNew = [...initialOptions, newOption];
-
-      setFormValue('options', optionsWithNew, { shouldDirty: true });
-      setHasAppliedNewOption(true);
-    }
-  }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
 
   const handleDragEnd = (
     values: FieldMetadataItemOption[],
