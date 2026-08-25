@@ -5,6 +5,8 @@ import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-r
 
 export const QUERY_READ_TIMEOUT_MESSAGE = 'Query read timeout';
 
+export const CONNECTION_TERMINATED_MESSAGE = 'Connection terminated';
+
 export const DUPLICATE_ENTRY_DETECTED_MESSAGE =
   'A duplicate entry was detected';
 

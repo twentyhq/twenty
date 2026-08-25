@@ -206,6 +206,20 @@ describe('computeTwentyORMException', () => {
     });
   });
 
+  it('should return a TRANSIENT_DATABASE_ERROR exception when the socket dies mid-query and postgres reports no code', async () => {
+    const error = buildQueryFailedError(
+      undefined,
+      'Connection terminated unexpectedly',
+    );
+
+    const result = await computeTwentyORMException(error);
+
+    expect(result).toMatchObject({
+      code: TwentyORMExceptionCode.TRANSIENT_DATABASE_ERROR,
+      message: 'Connection terminated unexpectedly',
+    });
+  });
+
   it('should return a TRANSIENT_DATABASE_ERROR exception for a connection error that is not a QueryFailedError', async () => {
     const error = Object.assign(new Error('Connection terminated'), {
       code: POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,

@@ -6,6 +6,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constants';
 import {
+  CONNECTION_TERMINATED_MESSAGE,
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
   QUERY_READ_TIMEOUT_MESSAGE,
   QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
@@ -34,8 +35,9 @@ export const computeTwentyORMException = async (
     'code' in error && typeof error.code === 'string' ? error.code : undefined;
 
   if (
-    isDefined(errorCode) &&
-    TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode)
+    error.message.includes(CONNECTION_TERMINATED_MESSAGE) ||
+    (isDefined(errorCode) &&
+      TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode))
   ) {
     return new TwentyORMException(
       error.message,

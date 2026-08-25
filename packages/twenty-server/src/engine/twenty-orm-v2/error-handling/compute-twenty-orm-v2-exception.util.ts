@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constants';
 import {
+  CONNECTION_TERMINATED_MESSAGE,
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
   DUPLICATE_ENTRY_DETECTED_MESSAGE,
   DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
@@ -51,11 +52,11 @@ export const computeTwentyOrmV2Exception = (error: unknown): Error => {
   const errorCode =
     'code' in error && typeof error.code === 'string' ? error.code : undefined;
 
-  if (!isDefined(errorCode)) {
-    return error;
-  }
-
-  if (TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode)) {
+  if (
+    error.message.includes(CONNECTION_TERMINATED_MESSAGE) ||
+    (isDefined(errorCode) &&
+      TRANSIENT_POSTGRESQL_ERROR_CODES.includes(errorCode))
+  ) {
     return withCause(
       new TwentyOrmV2Exception(
         error.message,
@@ -64,6 +65,10 @@ export const computeTwentyOrmV2Exception = (error: unknown): Error => {
       ),
       error,
     );
+  }
+
+  if (!isDefined(errorCode)) {
+    return error;
   }
 
   if (errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {

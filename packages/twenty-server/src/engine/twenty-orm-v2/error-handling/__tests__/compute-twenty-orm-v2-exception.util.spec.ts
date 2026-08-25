@@ -104,8 +104,19 @@ describe('computeTwentyOrmV2Exception', () => {
     expect(result.message).toBe('Data validation error.');
   });
 
-  it('should return an unrecognised driver error untouched', () => {
+  it('should return a TRANSIENT_DATABASE_ERROR exception when the socket dies before postgres reports a code', () => {
     const error = new Error('Connection terminated unexpectedly');
+
+    const result = computeTwentyOrmV2Exception(error);
+
+    expect(result).toBeInstanceOf(TwentyOrmV2Exception);
+    expect((result as TwentyOrmV2Exception).code).toBe(
+      TwentyOrmV2ExceptionCode.TRANSIENT_DATABASE_ERROR,
+    );
+  });
+
+  it('should return an unrecognised driver error untouched', () => {
+    const error = new Error('some driver failure nobody maps');
 
     expect(computeTwentyOrmV2Exception(error)).toBe(error);
   });
