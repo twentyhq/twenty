@@ -9349,7 +9349,7 @@ msgstr "전체 서버 액세스"
 #. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Full-height Widget"
-msgstr ""
+msgstr "전체 높이 위젯"
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -21613,7 +21613,7 @@ msgstr "위젯"
 #. js-lingui-id: v1P7Gm
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Widget Settings"
-msgstr ""
+msgstr "위젯 설정"
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx

@@ -9349,7 +9349,7 @@ msgstr "потпун приступ серверу"
 #. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Full-height Widget"
-msgstr ""
+msgstr "Виџет пуне висине"
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -21613,7 +21613,7 @@ msgstr "Виџет"
 #. js-lingui-id: v1P7Gm
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Widget Settings"
-msgstr ""
+msgstr "Подешавања виџета"
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
