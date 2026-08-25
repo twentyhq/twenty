@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddBlocklistScopeFieldCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787203841000-add-blocklist-scope-field.command';
 import { BackfillActivityTargetsJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787123540000-backfill-activity-targets-junction-target.command';
 import { MigrateCommandMenuItemLabelsToPlaceholdersCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787127900000-migrate-command-menu-item-labels-to-placeholders.command';
 import { ReplaceTimelineActivityNameWithTypeCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-workspace-command-1787400001000-replace-timeline-activity-name-with-type.command';
@@ -22,6 +23,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AddBlocklistScopeFieldCommand,
     BackfillActivityTargetsJunctionTargetCommand,
     MarkSearchVectorFieldsSystemCommand,
     MigrateCommandMenuItemLabelsToPlaceholdersCommand,

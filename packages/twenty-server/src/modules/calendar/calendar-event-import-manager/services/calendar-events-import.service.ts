@@ -105,12 +105,11 @@ export class CalendarEventsImportService {
               })
             : null;
 
-          const blocklist = workspaceMember
-            ? await this.blocklistRepository.getByWorkspaceMemberId(
-                workspaceMember.id,
-                workspaceId,
-              )
-            : [];
+          const blocklist =
+            await this.blocklistRepository.getApplicableToWorkspaceMember({
+              workspaceMemberId: workspaceMember?.id ?? null,
+              workspaceId,
+            });
 
           if (!isDefined(connectedAccount.handleAliases)) {
             connectedAccount.handleAliases =
@@ -134,7 +133,9 @@ export class CalendarEventsImportService {
             filterEventsAndReturnCancelledEvents(
               [calendarChannel.handle, ...connectedAccount.handleAliases],
               calendarEvents,
-              blocklist.map((blocklist) => blocklist.handle ?? ''),
+              blocklist
+                .map((blocklistItem) => blocklistItem.handle)
+                .filter(isDefined),
             );
 
           const cancelledEventExternalIds = cancelledEvents.map(
