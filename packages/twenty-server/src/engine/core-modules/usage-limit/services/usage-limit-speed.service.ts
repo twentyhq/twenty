@@ -23,7 +23,7 @@ import { buildSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/b
 import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/constants/spender-type-specificity.constant';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { buildServerSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-server-speed-bucket-key.util';
-import { findRuleForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rule-for-spender.util';
+import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rules-for-spender.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { getApplicationUniversalIdentifier } from 'src/engine/core-modules/usage-limit/utils/get-application-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -161,24 +161,30 @@ export class UsageLimitSpeedService {
     const buckets: SpeedBucketRequest[] = [];
 
     for (const spender of spenders) {
-      const rule = findRuleForSpender({ rules, spender, operationType });
+      const spenderRules = findRulesForSpender({
+        rules,
+        spender,
+        operationType,
+      });
 
-      if (isDefined(rule)) {
-        buckets.push({
-          key: buildSpeedBucketKey({
-            workspaceId,
-            resourceType,
-            operationType,
+      if (spenderRules.length > 0) {
+        for (const rule of spenderRules) {
+          buckets.push({
+            key: buildSpeedBucketKey({
+              workspaceId,
+              resourceType,
+              operationType,
+              spenderType: spender.spenderType,
+              spenderId: spender.spenderId,
+              windowSeconds: rule.windowSeconds,
+            }),
+            burst: rule.burstValue ?? rule.limitValue,
+            refillPerWindow: rule.limitValue,
+            windowMs: rule.windowSeconds * 1000,
             spenderType: spender.spenderType,
             spenderId: spender.spenderId,
-            windowSeconds: rule.windowSeconds,
-          }),
-          burst: rule.burstValue ?? rule.limitValue,
-          refillPerWindow: rule.limitValue,
-          windowMs: rule.windowSeconds * 1000,
-          spenderType: spender.spenderType,
-          spenderId: spender.spenderId,
-        });
+          });
+        }
 
         continue;
       }
