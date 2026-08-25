@@ -1,5 +1,5 @@
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
@@ -12,11 +12,10 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   tabId: string,
 ): PageLayoutTab => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const { featureFilteredPageLayoutTabs } =
-    usePageLayoutTabsFilteredByFeatureFlags();
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const widgetVisibilityContext = useWidgetVisibilityContext();
 
-  const tab = featureFilteredPageLayoutTabs.find((tab) => tab.id === tabId);
+  const tab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
 
   // Memoized because consumers feed this widget array to dnd-kit and to
   // memoized callbacks, which a fresh array on every render would defeat.
