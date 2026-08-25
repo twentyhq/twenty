@@ -66,7 +66,7 @@ Validated structure (local, 2026-08-25):
      Subject and body carry the count from step 2 and the prod marketplace link.
 5. Publish and confirm the version shows ACTIVE.
 
-Prod prerequisites: a connected mailbox (Settings → Accounts) and app ≥ 1.8.0 applied.
+Prod prerequisites: a connected mailbox (Settings → Accounts) and the app installed.
 
 ### Local email testing (never prod)
 
