@@ -70,6 +70,51 @@ describe('generate-call-recording-summaries-batch', () => {
     expect(generateCallRecordingSummariesForIdsMock).not.toHaveBeenCalled();
   });
 
+  it('throws a retryable failure when generation errored for some recordings so the queue redelivers the batch', async () => {
+    generateCallRecordingSummariesForIdsMock.mockResolvedValue({
+      generatedCallRecordingIds: ['call-recording-1'],
+      failedCallRecordingIds: [],
+      erroredCallRecordingIds: ['call-recording-2', 'call-recording-3'],
+      skippedCallRecordingIds: [],
+    });
+
+    await expect(
+      generateCallRecordingSummariesBatchHandler({
+        callRecordingIds: [
+          'call-recording-1',
+          'call-recording-2',
+          'call-recording-3',
+        ],
+      }),
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining(
+        'summary generation errored for 2 of 3 call recordings',
+      ),
+    });
+  });
+
+  it('does not redeliver a batch whose recordings only produced empty summaries', async () => {
+    generateCallRecordingSummariesForIdsMock.mockResolvedValue({
+      generatedCallRecordingIds: [],
+      failedCallRecordingIds: ['call-recording-1'],
+      erroredCallRecordingIds: [],
+      skippedCallRecordingIds: [],
+    });
+
+    expect(
+      await generateCallRecordingSummariesBatchHandler({
+        callRecordingIds: ['call-recording-1'],
+      }),
+    ).toEqual({
+      outcome: 'processed',
+      generatedCallRecordingIds: [],
+      failedCallRecordingIds: ['call-recording-1'],
+      erroredCallRecordingIds: [],
+      skippedCallRecordingIds: [],
+    });
+  });
+
   it('rethrows a batch failure as retryable so the queue redelivers it', async () => {
     generateCallRecordingSummariesForIdsMock.mockRejectedValue(
       new Error('Service unavailable'),

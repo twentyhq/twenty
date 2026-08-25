@@ -21,16 +21,30 @@ export const generateCallRecordingSummariesBatchHandler = async (
     return { outcome: 'nothing-selected' };
   }
 
+  let result: GenerateCallRecordingSummariesForIdsResult;
+
   try {
-    const result = await generateCallRecordingSummariesForIds({
+    result = await generateCallRecordingSummariesForIds({
       client: new CoreApiClient(),
       callRecordingIds,
     });
-
-    return { outcome: 'processed', ...result };
   } catch (error) {
     throw buildRetryableStepFailure('call recording summaries batch', error);
   }
+
+  if (result.erroredCallRecordingIds.length > 0) {
+    // Returning normally would mark the job succeeded and skip redelivery, so
+    // generation errors must surface as a retryable failure; recordings that
+    // already got a summary short-circuit as already-summarized on the re-run.
+    throw buildRetryableStepFailure(
+      'call recording summaries batch',
+      new Error(
+        `summary generation errored for ${result.erroredCallRecordingIds.length} of ${callRecordingIds.length} call recordings`,
+      ),
+    );
+  }
+
+  return { outcome: 'processed', ...result };
 };
 
 export default defineLogicFunction({
