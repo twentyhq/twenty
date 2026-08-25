@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -80,11 +80,11 @@ export const NoteTile = ({
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
-  const activityTargetFieldName = useActivityTargetJunctionConfig({
-    activityObjectNameSingular: CoreObjectNameSingular.Note,
-  })?.activityTargetField.name;
+  const junctionFieldName = useObjectMorphJunctionConfig({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  })?.junctionField.name;
 
-  if (!isDefined(activityTargetFieldName)) {
+  if (!isDefined(junctionFieldName)) {
     throw new Error('Note target junction metadata is missing');
   }
 
@@ -92,7 +92,7 @@ export const NoteTile = ({
     useActivityFieldComponentInstanceId('note-card-targets');
   const componentInstanceId = getRecordFieldInputInstanceId({
     recordId: note.id,
-    fieldName: activityTargetFieldName,
+    fieldName: junctionFieldName,
     prefix: instanceIdPrefix,
   });
 
@@ -113,7 +113,7 @@ export const NoteTile = ({
         <FieldContextProvider
           objectNameSingular={CoreObjectNameSingular.Note}
           objectRecordId={note.id}
-          fieldMetadataName={activityTargetFieldName}
+          fieldMetadataName={junctionFieldName}
           fieldPosition={0}
           isDisplayModeFixHeight
         >

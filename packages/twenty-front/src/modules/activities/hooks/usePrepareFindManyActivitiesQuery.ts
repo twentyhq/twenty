@@ -11,7 +11,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -34,8 +34,8 @@ export const usePrepareFindManyActivitiesQuery = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
-    activityObjectNameSingular,
+  const morphJunctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: activityObjectNameSingular,
   });
 
   const { upsertFindManyRecordsQueryInCache: upsertFindManyActivitiesInCache } =
@@ -72,24 +72,24 @@ export const usePrepareFindManyActivitiesQuery = ({
       objectPermissionsByObjectMetadataId,
     });
 
-    if (!isDefined(activityTargetJunctionConfig)) {
+    if (!isDefined(morphJunctionConfig)) {
       throw new Error('Activity target junction metadata is invalid');
     }
 
     const {
       junctionObjectMetadata,
-      activityRelationField,
-      activityJoinColumnName,
-    } = activityTargetJunctionConfig;
+      sourceField,
+      sourceJoinColumnName,
+    } = morphJunctionConfig;
 
-    const activityTargetFieldName = targetableObjectMetadataItem.fields.find(
+    const junctionFieldName = targetableObjectMetadataItem.fields.find(
       (field) =>
         field.relation?.targetObjectMetadata.id === junctionObjectMetadata.id,
     )?.name;
 
     const activityTargets =
-      (isDefined(activityTargetFieldName)
-        ? (targetableObjectRecord?.[activityTargetFieldName] as
+      (isDefined(junctionFieldName)
+        ? (targetableObjectRecord?.[junctionFieldName] as
             | ActivityTarget[]
             | undefined)
         : undefined) ?? [];
@@ -101,8 +101,8 @@ export const usePrepareFindManyActivitiesQuery = ({
             (activityTarget) =>
               // The join column is written by every mutation, whereas the nested activity is
               // only there when a query asked for it.
-              activityTarget[activityJoinColumnName] ??
-              (activityTarget[activityRelationField.name] as
+              activityTarget[sourceJoinColumnName] ??
+              (activityTarget[sourceField.name] as
                 | ObjectRecord
                 | undefined)?.id,
           )

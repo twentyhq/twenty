@@ -7,7 +7,7 @@ import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Task } from '@/activities/types/Task';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -97,11 +97,11 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   const { completeTask } = useCompleteTask(task);
 
-  const activityTargetFieldName = useActivityTargetJunctionConfig({
-    activityObjectNameSingular: CoreObjectNameSingular.Task,
-  })?.activityTargetField.name;
+  const junctionFieldName = useObjectMorphJunctionConfig({
+    objectNameSingular: CoreObjectNameSingular.Task,
+  })?.junctionField.name;
 
-  if (!isDefined(activityTargetFieldName)) {
+  if (!isDefined(junctionFieldName)) {
     throw new Error('Task target junction metadata is missing');
   }
 
@@ -109,7 +109,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
     useActivityFieldComponentInstanceId('task-row-targets');
   const componentInstanceId = getRecordFieldInputInstanceId({
     recordId: task.id,
-    fieldName: activityTargetFieldName,
+    fieldName: junctionFieldName,
     prefix: instanceIdPrefix,
   });
 
@@ -155,7 +155,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
             <FieldContextProvider
               objectNameSingular={CoreObjectNameSingular.Task}
               objectRecordId={task.id}
-              fieldMetadataName={activityTargetFieldName}
+              fieldMetadataName={junctionFieldName}
               fieldPosition={0}
               showLabel={false}
               maxWidth={200}

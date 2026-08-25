@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,13 +28,13 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       objectMetadataItem.nameSingular === objectNameSingular,
   );
 
-  const activityTargetJunctionConfig = isDefined(activityObjectMetadata)
-    ? getActivityTargetJunctionConfig({
-        activityObjectMetadata,
+  const morphJunctionConfig = isDefined(activityObjectMetadata)
+    ? getObjectMorphJunctionConfig({
+        objectMetadata: activityObjectMetadata,
         objectMetadataItems,
       })
     : null;
-  const junctionField = activityTargetJunctionConfig?.activityTargetField;
+  const junctionField = morphJunctionConfig?.junctionField;
 
   const junctionGqlFields = isDefined(junctionField)
     ? generateJunctionRelationGqlFields({
