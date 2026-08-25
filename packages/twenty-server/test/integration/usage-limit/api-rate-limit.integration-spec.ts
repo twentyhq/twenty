@@ -1,5 +1,6 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { createClient } from 'redis';
@@ -12,13 +13,16 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
+const WINDOW_SECONDS = 1;
+const LIMIT_VALUE = 1;
+
 describe('API rate limiting', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let featureFlagRepository: Repository<FeatureFlagEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
   let usageLimitId: string;
 
-  const findCompanies = () =>
+  const findCompaniesOverGraphql = () =>
     makeGraphqlAPIRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'company',
@@ -27,6 +31,14 @@ describe('API rate limiting', () => {
         first: 1,
       }),
     );
+
+  const findCompaniesOverRest = () =>
+    makeRestAPIRequest({ method: 'get', path: '/companies?limit=1' });
+
+  // Every test starts from a full bucket so it does not inherit whatever the
+  // previous one spent.
+  const waitForBucketRefill = () =>
+    new Promise((resolve) => setTimeout(resolve, WINDOW_SECONDS * 1000 + 200));
 
   const invalidateWorkspaceCaches = async () => {
     const keys = [
@@ -66,10 +78,10 @@ describe('API rate limiting', () => {
         spenderType: 'workspace',
         spenderId: '',
         limitKind: 'speed',
-        windowSeconds: 1,
+        windowSeconds: WINDOW_SECONDS,
         limitValueType: 'absolute',
-        limitValue: 1,
-        burstValue: 1,
+        limitValue: LIMIT_VALUE,
+        burstValue: LIMIT_VALUE,
       },
     ]);
 
@@ -88,39 +100,112 @@ describe('API rate limiting', () => {
     await redis.quit();
   });
 
-  it('admits a request and rejects the one that follows it', async () => {
-    const admitted = await findCompanies();
+  describe('over GraphQL', () => {
+    it('admits a request and rejects the one that follows it', async () => {
+      await waitForBucketRefill();
 
-    expect(admitted.body.errors).toBeUndefined();
+      const admitted = await findCompaniesOverGraphql();
 
-    const rejected = await findCompanies();
+      expect(admitted.body.errors).toBeUndefined();
 
-    expect(rejected.body.errors?.[0]?.extensions?.code).toBe('RATE_LIMITED');
-  });
+      const rejected = await findCompaniesOverGraphql();
 
-  it('names the exhausted scope and says when to retry', async () => {
-    await findCompanies();
-
-    const { body } = await findCompanies();
-    const extensions = body.errors?.[0]?.extensions;
-
-    expect(extensions).toMatchObject({
-      code: 'RATE_LIMITED',
-      limitKind: 'speed',
-      limit: 1,
-      remaining: 0,
-      windowSeconds: 1,
-      scope: { spenderType: 'workspace' },
+      expect(rejected.body.errors?.[0]?.extensions?.code).toBe('RATE_LIMITED');
     });
-    expect(extensions.retryAfterMs).toBeGreaterThan(0);
+
+    // GraphQL keeps answering 200 and reports the denial in the extensions, so
+    // an Apollo caller reads it as a GraphQL error rather than a network one.
+    it('reports the denial in the body rather than in the HTTP status', async () => {
+      await waitForBucketRefill();
+      await findCompaniesOverGraphql();
+
+      const rejected = await findCompaniesOverGraphql();
+
+      expect(rejected.status).toBe(200);
+      expect(rejected.body.errors?.[0]?.extensions?.http).toBeUndefined();
+    });
+
+    it('names the exhausted scope and says when to retry', async () => {
+      await waitForBucketRefill();
+      await findCompaniesOverGraphql();
+
+      const { body } = await findCompaniesOverGraphql();
+      const extensions = body.errors?.[0]?.extensions;
+
+      expect(extensions).toMatchObject({
+        code: 'RATE_LIMITED',
+        limitKind: 'speed',
+        limit: LIMIT_VALUE,
+        remaining: 0,
+        windowSeconds: WINDOW_SECONDS,
+        scope: { spenderType: 'workspace' },
+      });
+      expect(extensions.retryAfterMs).toBeGreaterThan(0);
+    });
+
+    it('lets the caller back in once the window refills', async () => {
+      await waitForBucketRefill();
+      await findCompaniesOverGraphql();
+      await findCompaniesOverGraphql();
+
+      await waitForBucketRefill();
+
+      expect((await findCompaniesOverGraphql()).body.errors).toBeUndefined();
+    });
   });
 
-  it('lets the caller back in once the window refills', async () => {
-    await findCompanies();
-    await findCompanies();
+  describe('over REST', () => {
+    it('admits a request and rejects the one that follows it', async () => {
+      await waitForBucketRefill();
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+      const admitted = await findCompaniesOverRest();
 
-    expect((await findCompanies()).body.errors).toBeUndefined();
+      expect(admitted.status).toBe(200);
+
+      const rejected = await findCompaniesOverRest();
+
+      expect(rejected.status).toBe(429);
+    });
+
+    it('names the exhausted scope in the body', async () => {
+      await waitForBucketRefill();
+      await findCompaniesOverRest();
+
+      const { body } = await findCompaniesOverRest();
+
+      expect(body).toMatchObject({
+        statusCode: 429,
+        error: 'RATE_LIMITED',
+        limitKind: 'speed',
+        limit: LIMIT_VALUE,
+        remaining: 0,
+        windowSeconds: WINDOW_SECONDS,
+        retryAfterSeconds: 1,
+        scope: { spenderType: 'workspace' },
+      });
+      expect(body.messages).toHaveLength(1);
+    });
+
+    it('answers with a Retry-After the caller can honour', async () => {
+      await waitForBucketRefill();
+      await findCompaniesOverRest();
+
+      const rejected = await findCompaniesOverRest();
+
+      expect(rejected.headers['retry-after']).toBe('1');
+      expect(rejected.headers['x-ratelimit-limit']).toBe(String(LIMIT_VALUE));
+      expect(rejected.headers['x-ratelimit-remaining']).toBe('0');
+      expect(Number(rejected.headers['x-ratelimit-reset'])).toBeGreaterThan(0);
+    });
+
+    it('lets the caller back in once the window refills', async () => {
+      await waitForBucketRefill();
+      await findCompaniesOverRest();
+      await findCompaniesOverRest();
+
+      await waitForBucketRefill();
+
+      expect((await findCompaniesOverRest()).status).toBe(200);
+    });
   });
 });

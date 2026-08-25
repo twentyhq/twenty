@@ -178,7 +178,11 @@ describe('buildSpeedBuckets with rules configured', () => {
     const buckets = buildBuckets({
       authContext: userContext,
       rules: [
-        buildRule({ spenderType: 'workspace', spenderId: '', limitValue: 1000 }),
+        buildRule({
+          spenderType: 'workspace',
+          spenderId: '',
+          limitValue: 1000,
+        }),
       ],
     });
 

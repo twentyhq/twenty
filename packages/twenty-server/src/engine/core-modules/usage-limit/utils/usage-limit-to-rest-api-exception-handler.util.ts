@@ -3,10 +3,10 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UsageLimitHttpException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit-http.exception';
-import {
-  type UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { type UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { buildRateLimitResponseHeaders } from 'src/engine/core-modules/usage-limit/utils/build-rate-limit-response-headers.util';
+import { getRetryAfterSeconds } from 'src/engine/core-modules/usage-limit/utils/get-retry-after-seconds.util';
+import { getUsageLimitErrorCode } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-error-code.util';
 
 export const usageLimitToRestApiExceptionHandler = (
   error: UsageLimitException,
@@ -17,19 +17,14 @@ export const usageLimitToRestApiExceptionHandler = (
     throw new HttpException(error.message, HttpStatus.TOO_MANY_REQUESTS);
   }
 
-  const retryAfterSeconds = Math.max(
-    1,
-    Math.ceil(exhaustedScope.retryAfterMs / 1000),
-  );
+  const retryAfterSeconds = getRetryAfterSeconds(exhaustedScope.retryAfterMs);
 
   throw new UsageLimitHttpException(
     {
-      error:
-        error.code === UsageLimitExceptionCode.QUOTA_EXHAUSTED
-          ? 'QUOTA_EXHAUSTED'
-          : 'RATE_LIMITED',
+      statusCode: HttpStatus.TOO_MANY_REQUESTS,
+      error: getUsageLimitErrorCode(error.code),
+      messages: [error.message],
       limitKind: exhaustedScope.limitKind,
-      message: error.message,
       scope: {
         spenderType: exhaustedScope.spenderType,
         spenderId: exhaustedScope.spenderId,
@@ -39,13 +34,6 @@ export const usageLimitToRestApiExceptionHandler = (
       windowSeconds: exhaustedScope.windowSeconds,
       retryAfterSeconds,
     },
-    {
-      'Retry-After': String(retryAfterSeconds),
-      'X-RateLimit-Limit': String(exhaustedScope.limitValue),
-      'X-RateLimit-Remaining': String(exhaustedScope.remaining),
-      'X-RateLimit-Reset': String(
-        Math.ceil(Date.now() / 1000) + retryAfterSeconds,
-      ),
-    },
+    buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),
   );
 };

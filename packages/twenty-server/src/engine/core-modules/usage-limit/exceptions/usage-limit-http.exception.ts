@@ -1,19 +1,22 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-import { type HttpExceptionWithResponseHeaders } from 'src/engine/core-modules/usage-limit/types/http-exception-with-response-headers.type';
+import { type HttpExceptionWithRestResponse } from 'src/engine/core-modules/exception-handler/types/http-exception-with-rest-response.type';
+import { type UsageLimitRestResponseBody } from 'src/engine/core-modules/usage-limit/types/usage-limit-rest-response-body.type';
 
 export class UsageLimitHttpException
   extends HttpException
-  implements HttpExceptionWithResponseHeaders
+  implements HttpExceptionWithRestResponse
 {
-  private readonly responseHeaders: Record<string, string>;
-
   constructor(
-    body: Record<string, unknown>,
-    responseHeaders: Record<string, string>,
+    private readonly responseBody: UsageLimitRestResponseBody,
+    private readonly responseHeaders: Record<string, string>,
   ) {
-    super(body, HttpStatus.TOO_MANY_REQUESTS);
-    this.responseHeaders = responseHeaders;
+    super(responseBody, HttpStatus.TOO_MANY_REQUESTS);
+    this.message = responseBody.messages[0];
+  }
+
+  getResponseBody(): UsageLimitRestResponseBody {
+    return this.responseBody;
   }
 
   getResponseHeaders(): Record<string, string> {

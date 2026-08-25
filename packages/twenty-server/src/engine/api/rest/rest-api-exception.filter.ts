@@ -6,9 +6,10 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
+import { isDefined } from 'twenty-shared/utils';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
-import { hasResponseHeaders } from 'src/engine/core-modules/usage-limit/utils/has-response-headers.util';
+import { hasRestResponse } from 'src/engine/core-modules/exception-handler/utils/has-rest-response.util';
 
 @Catch()
 export class RestApiExceptionFilter implements ExceptionFilter {
@@ -20,12 +21,10 @@ export class RestApiExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    if (hasResponseHeaders(exception)) {
-      for (const [header, value] of Object.entries(
-        exception.getResponseHeaders(),
-      )) {
-        response.setHeader(header, value);
-      }
+    const restResponse = hasRestResponse(exception) ? exception : undefined;
+
+    if (isDefined(restResponse)) {
+      response.set(restResponse.getResponseHeaders());
     }
 
     const statusCode =
@@ -35,6 +34,9 @@ export class RestApiExceptionFilter implements ExceptionFilter {
       exception as Error | HttpException,
       response,
       statusCode,
+      undefined,
+      undefined,
+      { responseBody: restResponse?.getResponseBody() },
     );
   }
 }
