@@ -6674,6 +6674,16 @@ msgstr "Navigatiemenu-item niet gevonden."
 msgid "Navigation menu item type is required"
 msgstr "Type navigatiemenu-item is vereist"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Metadata van navigatiedoelobject niet gevonden"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Navigatiedoelobject niet gevonden"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

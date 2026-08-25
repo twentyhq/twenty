@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -46,6 +47,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
     private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(PageLayoutEntity)
     private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
+    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
+    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
   ) {
     super();
   }
@@ -62,6 +65,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       objectPermissions,
       searchFieldMetadatas,
       pageLayouts,
+      commandMenuItems,
     ] = await Promise.all([
       this.objectMetadataRepository.find({
         where: { workspaceId },
@@ -96,6 +100,14 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
         withDeleted: true,
       }),
+      this.commandMenuItemRepository.find(workspaceId, {
+        select: [
+          'id',
+          'universalIdentifier',
+          'navigationTargetObjectMetadataId',
+        ],
+        withDeleted: true,
+      }),
     ]);
 
     const [
@@ -105,6 +117,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
       objectPermissionsByObjectId,
       searchFieldMetadatasByObjectId,
       pageLayoutsByObjectId,
+      commandMenuItemsByObjectId,
     ] = (
       [
         {
@@ -131,6 +144,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           entities: pageLayouts,
           foreignKey: 'objectMetadataId',
         },
+        {
+          entities: commandMenuItems,
+          foreignKey: 'navigationTargetObjectMetadataId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -153,6 +170,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           searchFieldMetadatas:
             searchFieldMetadatasByObjectId.get(objectMetadataEntity.id) || [],
           pageLayouts: pageLayoutsByObjectId.get(objectMetadataEntity.id) || [],
+          commandMenuItems:
+            commandMenuItemsByObjectId.get(objectMetadataEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,

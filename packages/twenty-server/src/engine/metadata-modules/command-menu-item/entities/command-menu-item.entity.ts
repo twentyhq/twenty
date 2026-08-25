@@ -1,3 +1,4 @@
+import { type SerializedRelation } from 'twenty-shared/types';
 import {
   Check,
   Column,
@@ -10,11 +11,11 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { type SerializedRelation } from 'twenty-shared/types';
 
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/add-command-menu-item-target-object-metadata-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
-import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -51,9 +52,12 @@ export type CommandMenuItemOverrides = {
   'pageLayoutId',
   'workspaceId',
 ])
+@Index('IDX_COMMAND_MENU_ITEM_NAVIGATION_TARGET_OBJECT_METADATA_ID', [
+  'navigationTargetObjectMetadataId',
+])
 @Check(
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
-  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL)`,
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends OverridableEntity<CommandMenuItemOverrides>
@@ -119,6 +123,21 @@ export class CommandMenuItemEntity
   })
   @JoinColumn({ name: 'availabilityObjectMetadataId' })
   availabilityObjectMetadata: Relation<ObjectMetadataEntity> | null;
+
+  // Dual-written with payload.objectMetadataItemId until https://github.com/twentyhq/core-team-issues/issues/2794
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  navigationTargetObjectMetadataId: string | null;
+
+  @ManyToOne(() => ObjectMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'navigationTargetObjectMetadataId' })
+  navigationTargetObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   pageLayoutId: string | null;

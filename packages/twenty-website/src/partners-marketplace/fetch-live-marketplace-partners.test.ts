@@ -105,16 +105,24 @@ describe('fetchLiveMarketplacePartners', () => {
       { approvedCaseStudyWithCoverCount: -1 },
     ],
   ])(
-    'throws when the payload breaks the ranking contract on %s',
+    'degrades to [] and names the offending partner when the payload breaks the ranking contract on %s',
     async (field, override) => {
+      const errorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
       mockedFetch.mockResolvedValue({
         ok: true,
         partners: [{ ...rankablePartner, ...override }],
       });
 
-      await expect(fetchLiveMarketplacePartners()).rejects.toThrow(
-        new RegExp(`${field}.*acme`),
+      expect(await fetchLiveMarketplacePartners()).toEqual([]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        '[partners-marketplace] ranking contract broken:',
+        expect.objectContaining({
+          message: expect.stringMatching(new RegExp(`${field}.*acme`)),
+        }),
       );
+      errorSpy.mockRestore();
     },
   );
 

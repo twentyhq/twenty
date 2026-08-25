@@ -3768,6 +3768,11 @@ msgstr "Skift farve"
 msgid "Change email"
 msgstr "Skift e-mail"
 
+#. js-lingui-id: qTyVHs
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Change node"
+msgstr ""
+
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Change node type"
@@ -4164,7 +4169,7 @@ msgid "Close menu"
 msgstr "Luk menuen"
 
 #. js-lingui-id: saip/v
-#: src/modules/side-panel/components/SidePanelTopBar.tsx
+#: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
 msgstr "Luk sidepanelet"
 
@@ -6401,8 +6406,7 @@ msgid "Delete group"
 msgstr "Slet gruppe"
 
 #. js-lingui-id: Wk+A9S
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton.tsx
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
 msgstr "Slet knude"
 
@@ -6970,7 +6974,7 @@ msgid "Duplicate"
 msgstr "Duplikér"
 
 #. js-lingui-id: qaE1sk
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Duplicate node"
 msgstr "Dupliker node"
 
@@ -13775,6 +13779,11 @@ msgstr "Ingen arbejdsområder fundet, der matcher dine søgekriterier."
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
 msgstr "Node"
+
+#. js-lingui-id: 6cjyK/
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Node options"
+msgstr ""
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts

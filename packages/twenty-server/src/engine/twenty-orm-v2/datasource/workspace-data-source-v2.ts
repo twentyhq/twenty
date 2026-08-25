@@ -1,7 +1,11 @@
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  type ObjectsPermissionsByRoleId,
+} from 'twenty-shared/types';
+import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -60,11 +64,11 @@ export class WorkspaceDataSourceV2 {
     this.objectPermissionsByRoleId = objectPermissionsByRoleId;
   }
 
-  getRepository(
+  getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
-  ): WorkspaceRepositoryV2 {
-    return this.buildRepository({
+  ): WorkspaceRepositoryV2<T> {
+    return this.buildRepository<T>({
       nameSingular,
       rolePermissionConfig,
       executor: new PoolQueryExecutor({ pool: this.pool }),
@@ -98,7 +102,7 @@ export class WorkspaceDataSourceV2 {
     });
   }
 
-  private buildRepository({
+  private buildRepository<T extends ObjectLiteral = ObjectRecord>({
     nameSingular,
     rolePermissionConfig,
     executor,
@@ -108,7 +112,7 @@ export class WorkspaceDataSourceV2 {
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutorV2;
     isTransactional?: boolean;
-  }): WorkspaceRepositoryV2 {
+  }): WorkspaceRepositoryV2<T> {
     const objectMetadataId =
       this.internalContext.objectIdByNameSingular[nameSingular];
 
@@ -119,7 +123,7 @@ export class WorkspaceDataSourceV2 {
       );
     }
 
-    return this.buildRepositoryForObjectMetadataId({
+    return this.buildRepositoryForObjectMetadataId<T>({
       objectMetadataId,
       rolePermissionConfig,
       executor,
@@ -127,7 +131,9 @@ export class WorkspaceDataSourceV2 {
     });
   }
 
-  private buildRepositoryForObjectMetadataId({
+  private buildRepositoryForObjectMetadataId<
+    T extends ObjectLiteral = ObjectRecord,
+  >({
     objectMetadataId,
     rolePermissionConfig,
     executor,
@@ -137,7 +143,7 @@ export class WorkspaceDataSourceV2 {
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutorV2;
     isTransactional?: boolean;
-  }): WorkspaceRepositoryV2 {
+  }): WorkspaceRepositoryV2<T> {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
@@ -147,7 +153,7 @@ export class WorkspaceDataSourceV2 {
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
       });
 
-    return new WorkspaceRepositoryV2({
+    return new WorkspaceRepositoryV2<T>({
       tableShape: this.getTableShape(objectMetadataId),
       flatObjectMetadata,
       internalContext: this.internalContext,

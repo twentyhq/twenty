@@ -6674,6 +6674,16 @@ msgstr "Element del menú de navegació no trobat."
 msgid "Navigation menu item type is required"
 msgstr "El tipus d'element del menú de navegació és obligatori"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Metadades de l'objecte de destinació de navegació no trobades"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Objecte de destinació de navegació no trobat"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

@@ -6674,6 +6674,16 @@ msgstr "عنصر قائمة التنقل غير موجود."
 msgid "Navigation menu item type is required"
 msgstr "نوع عنصر قائمة التنقل مطلوب"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "لم يتم العثور على بيانات تعريف كائن هدف التنقل"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "لم يتم العثور على كائن هدف التنقل"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
