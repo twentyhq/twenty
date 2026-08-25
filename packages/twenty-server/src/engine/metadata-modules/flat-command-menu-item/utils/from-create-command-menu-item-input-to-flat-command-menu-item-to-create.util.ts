@@ -33,7 +33,6 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       ? (createCommandMenuItemInput.payload ?? null)
       : null;
 
-  // The payload stays the deprecated read surface, the column is the truth
   const navigationTargetObjectMetadataId =
     isObjectMetadataCommandMenuItemPayload(payload)
       ? payload.objectMetadataItemId

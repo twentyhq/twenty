@@ -57,8 +57,6 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
-    // The inverse aggregator update needs the target in the maps, so a missing
-    // one has to fail validation rather than throw while the maps are mutated
     if (
       isDefined(
         flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
