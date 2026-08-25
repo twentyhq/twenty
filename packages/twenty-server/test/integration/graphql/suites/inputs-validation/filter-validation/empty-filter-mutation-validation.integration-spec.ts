@@ -3,6 +3,7 @@ import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suit
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 
 // An empty filter matches every record, so a bulk mutation accepting it would
@@ -65,6 +66,32 @@ describe('Empty filter bulk mutation validation', () => {
       gqlFields: 'id',
       data: {},
       filter: {},
+    });
+
+    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+
+    expect(response.body.errors).toBeDefined();
+  });
+
+  it('should reject restoreMany with an empty filter', async () => {
+    const graphqlOperation = restoreManyOperationFactory({
+      objectMetadataSingularName,
+      objectMetadataPluralName,
+      gqlFields: 'id',
+      filter: {},
+    });
+
+    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+
+    expect(response.body.errors).toBeDefined();
+  });
+
+  it('should reject destroyMany with a nested empty logical filter', async () => {
+    const graphqlOperation = destroyManyOperationFactory({
+      objectMetadataSingularName,
+      objectMetadataPluralName,
+      gqlFields: 'id',
+      filter: { and: [] },
     });
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
