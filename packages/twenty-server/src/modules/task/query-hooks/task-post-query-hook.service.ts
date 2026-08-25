@@ -27,7 +27,7 @@ export class TaskPostQueryHookService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const taskTargetRepository =
-        await this.workspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
           'taskTarget',
         );
 
@@ -51,7 +51,7 @@ export class TaskPostQueryHookService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const taskTargetRepository =
-        await this.workspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
           'taskTarget',
         );
 

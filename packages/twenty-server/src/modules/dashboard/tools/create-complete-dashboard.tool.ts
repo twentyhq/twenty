@@ -241,7 +241,7 @@ const createDashboardRecord = async (
   const authContext = buildSystemAuthContext(context.workspaceId);
 
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository = await deps.workspaceOrmManager.getRepository(
+    const dashboardRepository = deps.workspaceOrmManager.getRepository(
       'dashboard',
       {
         shouldBypassPermissionChecks: true,

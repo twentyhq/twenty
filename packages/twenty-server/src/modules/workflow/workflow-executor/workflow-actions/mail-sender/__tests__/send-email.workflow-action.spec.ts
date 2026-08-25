@@ -71,9 +71,7 @@ describe('SendEmailWorkflowAction', () => {
           provide: WorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: jest.fn((callback) => callback()),
-            getRepository: jest
-              .fn()
-              .mockResolvedValue(workspaceMemberRepository),
+            getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
           },
         },
         {

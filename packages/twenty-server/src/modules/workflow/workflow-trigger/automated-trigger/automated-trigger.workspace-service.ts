@@ -41,7 +41,7 @@ export class AutomatedTriggerWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowAutomatedTriggerRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
         );
 
@@ -76,7 +76,7 @@ export class AutomatedTriggerWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowAutomatedTriggerRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
         );
 

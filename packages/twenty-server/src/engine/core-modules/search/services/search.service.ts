@@ -119,7 +119,7 @@ export class SearchService {
                 }) ?? undefined;
 
               const repository =
-                await this.workspaceOrmManager.getRepository<ObjectRecord>(
+                this.workspaceOrmManager.getRepository<ObjectRecord>(
                   flatObjectMetadata.nameSingular,
                   rolePermissionConfig,
                 );

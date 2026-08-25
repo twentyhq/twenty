@@ -108,7 +108,7 @@ describe('get_dashboard tool', () => {
         executeInWorkspaceContext: jest
           .fn()
           .mockImplementation(async (fn) => fn()),
-        getRepository: jest.fn().mockResolvedValue({
+        getRepository: jest.fn().mockReturnValue({
           findOne: jest.fn().mockResolvedValue(dashboard),
         }),
       },
