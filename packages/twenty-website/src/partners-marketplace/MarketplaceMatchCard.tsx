@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 import { type ReactNode } from 'react';
+
 import { BREAKPOINT_PX, color, mediaUp, spacing } from '@/tokens';
 import { Body, Eyebrow, Heading } from '@/ui';
 

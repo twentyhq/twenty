@@ -17,6 +17,7 @@ export default defineView({
   name: 'Pipeline',
   icon: 'IconLayoutKanban',
   objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+  position: 3,
   type: ViewType.KANBAN,
   mainGroupByFieldMetadataUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
   groups: [
