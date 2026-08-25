@@ -141,7 +141,6 @@ export class GlobalWorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap,
       permissionsPerRoleId,
-      entityMetadatas: [],
       userWorkspaceRoleMap,
       apiKeyRoleMap,
     };
@@ -183,7 +182,6 @@ export class GlobalWorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       permissionsPerRoleId: {},
-      entityMetadatas: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
     };
