@@ -239,7 +239,7 @@ export function Button({
 
   if (isProtocolLink) {
     return (
-      <a {...sharedAttributes} href={href}>
+      <a {...sharedAttributes} href={href} onClick={onClick}>
         {inner}
       </a>
     );
@@ -258,6 +258,7 @@ export function Button({
       <a
         {...sharedAttributes}
         href={href}
+        onClick={onClick}
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -269,7 +270,7 @@ export function Button({
   // Internal links route through LocalizedLink so an unprefixed href ("/x")
   // carries the active locale (/fr/x), and the source locale stays unprefixed.
   return (
-    <LocalizedLink {...sharedAttributes} href={href}>
+    <LocalizedLink {...sharedAttributes} href={href} onClick={onClick}>
       {inner}
     </LocalizedLink>
   );
