@@ -1985,7 +1985,7 @@ msgstr "Όλες οι καταχωρίσεις εφαρμογών"
 #. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
-msgstr ""
+msgstr "Όλες οι καταχωρίσεις εφαρμογών σε ολόκληρη την πλατφόρμα, συμπεριλαμβανομένων των ορφανών εφαρμογών του marketplace ({totalCount} που αντιστοιχούν)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -13862,7 +13862,7 @@ msgstr "Δεν είναι διαθέσιμο στην Προεπιλεγμένη
 #. js-lingui-id: SDND4q
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not configured"
-msgstr ""
+msgstr "Δεν έχει ρυθμιστεί"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13882,7 +13882,7 @@ msgstr "Δεν περιλαμβάνεται"
 #. js-lingui-id: i/2ImT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
-msgstr ""
+msgstr "Δεν εμφανίζεται στη λίστα"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx

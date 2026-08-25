@@ -1985,7 +1985,7 @@ msgstr "Toate înregistrările de aplicații"
 #. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
-msgstr ""
+msgstr "Toate înregistrările de aplicații de pe platformă, inclusiv aplicațiile orfane din marketplace ({totalCount} potriviri)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -13862,7 +13862,7 @@ msgstr "Nu este disponibil pe Vizualizare Implicită"
 #. js-lingui-id: SDND4q
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not configured"
-msgstr ""
+msgstr "Neconfigurat"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -13882,7 +13882,7 @@ msgstr "Neinclus"
 #. js-lingui-id: i/2ImT
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
-msgstr ""
+msgstr "Nelistat"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
