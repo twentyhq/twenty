@@ -5,7 +5,7 @@ import type {
 } from 'twenty-sdk/define';
 
 import { collectAll } from 'src/modules/shared/utils/paginate.util';
-import { getCompanyPartnerUser } from 'src/modules/opportunity/matching/graphql/queries/get-company-partner-user';
+import { getCompanyPartnerUser } from 'src/modules/shared/graphql/queries/get-company-partner-user';
 import { getOpportunityCascadeFields } from 'src/modules/opportunity/matching/graphql/queries/get-opportunity-cascade-fields';
 import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findOpportunityStillUsingCompany } from 'src/modules/opportunity/matching/graphql/queries/find-opportunity-still-using-company';

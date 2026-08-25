@@ -12,28 +12,16 @@ import {
   APPLY_TO_BRIEF_FRONT_COMPONENT_ID,
   MIN_PITCH_LENGTH,
 } from 'src/modules/application/apply/constants/apply-to-brief.constants';
-import { callAppRoute } from 'src/modules/shared/front-components/call-app-route';
-
 import {
   GENERIC_APPLY_FAILURE_MESSAGE,
   getRefusalMessage,
-} from './apply-to-brief/refusal-message';
+} from 'src/modules/application/apply/front-components/apply-to-brief/refusal-message';
+import { callAppRoute } from 'src/modules/shared/front-components/call-app-route';
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 
 type ApplyToBriefResult =
   | { ok: true; applicationId: string }
   | { ok: false; reason: string };
-
-// Palette kept local: the partner domain owns form-fields, and apply must not import across domains.
-const COLORS = {
-  fg: '#1c1c1c',
-  muted: '#66646a',
-  border: '#e7e7eb',
-  surface: '#ffffff',
-  accent: '#4a38f5',
-  danger: '#b42318',
-} as const;
-
-const FONT = '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif';
 
 const pageStyle: CSSProperties = {
   fontFamily: FONT,

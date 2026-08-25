@@ -4,7 +4,7 @@ import type {
   ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
 
-import { findPartnerByMember } from 'src/modules/application/graphql/queries/find-partner-by-member';
+import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
 import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
