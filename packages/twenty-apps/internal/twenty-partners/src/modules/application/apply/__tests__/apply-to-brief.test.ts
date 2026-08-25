@@ -59,8 +59,10 @@ const respondWith = (overrides: QueryResponses = {}) => {
 
 const pitchOf = (length: number) => 'a'.repeat(length);
 
-const event = (body: unknown, authorization: string | null = AUTHORIZATION) =>
-  ({ body, headers: { authorization: authorization ?? undefined } }) as never;
+const event = (body: unknown, authorization: string | null = AUTHORIZATION) => ({
+  body,
+  headers: { authorization: authorization ?? undefined },
+});
 
 const validBody = { opportunityId: OPPORTUNITY_ID, pitch: pitchOf(MIN_PITCH_LENGTH) };
 

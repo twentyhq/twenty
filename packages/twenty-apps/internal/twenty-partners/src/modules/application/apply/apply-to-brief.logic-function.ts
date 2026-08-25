@@ -4,8 +4,9 @@ import { APPLY_TO_BRIEF_FUNCTION_ID } from 'src/modules/application/apply/consta
 import { applyToBrief } from 'src/modules/application/apply/services/apply-to-brief.service';
 import { type ApplyToBriefResult } from 'src/modules/application/apply/types/apply-to-brief.types';
 
-export const handler = (event: RoutePayload<unknown>): Promise<ApplyToBriefResult> =>
-  applyToBrief(event);
+export const handler = (
+  event: Pick<RoutePayload<unknown>, 'body' | 'headers'>,
+): Promise<ApplyToBriefResult> => applyToBrief(event);
 
 export default defineLogicFunction({
   universalIdentifier: APPLY_TO_BRIEF_FUNCTION_ID,

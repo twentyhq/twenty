@@ -25,7 +25,7 @@ const applyToBriefSchema = z.object({
 });
 
 export const applyToBrief = async (
-  event: RoutePayload<unknown>,
+  event: Pick<RoutePayload<unknown>, 'body' | 'headers'>,
 ): Promise<ApplyToBriefResult> => {
   const resolved = await resolvePartnerFromForwardedToken(event);
   if ('error' in resolved) return errorResponse(resolved.error);

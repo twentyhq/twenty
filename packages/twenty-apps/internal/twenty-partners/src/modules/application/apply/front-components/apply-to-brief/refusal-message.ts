@@ -11,6 +11,9 @@ const REFUSAL_MESSAGES: Record<ApplyRefusalReason, string> = {
   ALREADY_APPLIED: 'You have already applied to this brief.',
 };
 
+const isApplyRefusalReason = (reason: string): reason is ApplyRefusalReason =>
+  reason in REFUSAL_MESSAGES;
+
 // The route may add a reason the front component does not know yet, so never index blindly.
 export const getRefusalMessage = (reason: string): string =>
-  REFUSAL_MESSAGES[reason as ApplyRefusalReason] ?? GENERIC_APPLY_FAILURE_MESSAGE;
+  isApplyRefusalReason(reason) ? REFUSAL_MESSAGES[reason] : GENERIC_APPLY_FAILURE_MESSAGE;
