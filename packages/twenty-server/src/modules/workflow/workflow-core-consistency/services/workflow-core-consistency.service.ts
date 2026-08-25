@@ -17,7 +17,8 @@ import {
 
 type DriftCounts = Record<string, number>;
 
-const SHARD_TOTAL = 8;
+const CRON_INTERVAL_HOURS = 3;
+const SHARD_TOTAL = 24 / CRON_INTERVAL_HOURS;
 
 // Detect drift between the workspace source-of-truth records and their core
 // mirror. The dual-write is best-effort (async, not transactional), so core can
@@ -36,11 +37,10 @@ export class WorkflowCoreConsistencyService {
   ) {}
 
   async runConsistencyCheck(): Promise<void> {
-    // The cron fires every 3 hours; sharding by fire hour spreads the fleet
-    // over the 8 daily runs so each workspace is checked once a day instead of
-    // every run.
     const shard = {
-      index: Math.floor(new Date().getUTCHours() / 3) % SHARD_TOTAL,
+      index:
+        Math.floor(new Date().getUTCHours() / CRON_INTERVAL_HOURS) %
+        SHARD_TOTAL,
       total: SHARD_TOTAL,
     };
 

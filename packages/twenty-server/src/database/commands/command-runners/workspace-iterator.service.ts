@@ -17,9 +17,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
-// Deterministic partition of the workspace fleet: a workspace belongs to shard
-// mod(first uuid byte, total), so iterating shard 0..total-1 covers every
-// workspace exactly once.
 export type WorkspaceIteratorShard = {
   index: number;
   total: number;
