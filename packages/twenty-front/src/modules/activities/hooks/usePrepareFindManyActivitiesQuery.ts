@@ -11,7 +11,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -33,6 +33,10 @@ export const usePrepareFindManyActivitiesQuery = ({
   const cache = useApolloCoreClient().cache;
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
+    activityObjectNameSingular,
+  });
 
   const { upsertFindManyRecordsQueryInCache: upsertFindManyActivitiesInCache } =
     useUpsertFindManyRecordsQueryInCache({
@@ -68,23 +72,19 @@ export const usePrepareFindManyActivitiesQuery = ({
       objectPermissionsByObjectMetadataId,
     });
 
-    const junctionConfig = getActivityTargetJunctionConfig({
-      activityObjectMetadata: objectMetadataItemActivity,
-      objectMetadataItems,
-    });
-
-    if (!isDefined(junctionConfig?.sourceField)) {
+    if (!isDefined(activityTargetJunctionConfig)) {
       throw new Error('Activity target junction metadata is invalid');
     }
 
-    const activityRelationFieldName = junctionConfig.sourceField.name;
-    const activityTargetObjectMetadataId =
-      junctionConfig.junctionObjectMetadata.id;
+    const {
+      junctionObjectMetadata,
+      activityRelationField,
+      activityJoinColumnName,
+    } = activityTargetJunctionConfig;
 
     const activityTargetFieldName = targetableObjectMetadataItem.fields.find(
       (field) =>
-        field.relation?.targetObjectMetadata.id ===
-        activityTargetObjectMetadataId,
+        field.relation?.targetObjectMetadata.id === junctionObjectMetadata.id,
     )?.name;
 
     const activityTargets =
@@ -97,13 +97,15 @@ export const usePrepareFindManyActivitiesQuery = ({
     const activityIds = [
       ...new Set(
         activityTargets
-          .map((activityTarget) => {
-            const activity = activityTarget[activityRelationFieldName] as
-              | ObjectRecord
-              | undefined;
-
-            return activity?.id;
-          })
+          .map(
+            (activityTarget) =>
+              // The join column is written by every mutation, whereas the nested activity is
+              // only there when a query asked for it.
+              activityTarget[activityJoinColumnName] ??
+              (activityTarget[activityRelationField.name] as
+                | ObjectRecord
+                | undefined)?.id,
+          )
           .filter(isDefined),
       ),
     ];

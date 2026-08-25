@@ -30,11 +30,11 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
     objectMetadataItems,
   });
 
-  if (!isDefined(junctionConfig) || !isDefined(junctionConfig.sourceField)) {
+  if (!isDefined(junctionConfig)) {
     throw new Error('Cannot resolve activity relation on junction object');
   }
 
-  const { activityTargetField, junctionObjectMetadata, sourceField } =
+  const { activityTargetField, junctionObjectMetadata, activityRelationField } =
     junctionConfig;
 
   const activityFieldKeys = generateDepthRecordGqlFieldsFromObject({
@@ -51,7 +51,7 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
       __typename: true,
       createdAt: true,
       updatedAt: true,
-      [sourceField.name]: {
+      [activityRelationField.name]: {
         ...activityFieldKeys,
         [activityTargetField.name]: generateDepthRecordGqlFieldsFromObject({
           objectMetadataItems,

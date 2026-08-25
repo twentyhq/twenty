@@ -4,9 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -82,13 +80,8 @@ export const NoteTile = ({
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const activityTargetFieldName = getActivityTargetJunctionConfig({
-    activityObjectMetadata: objectMetadataItem,
-    objectMetadataItems,
+  const activityTargetFieldName = useActivityTargetJunctionConfig({
+    activityObjectNameSingular: CoreObjectNameSingular.Note,
   })?.activityTargetField.name;
 
   if (!isDefined(activityTargetFieldName)) {

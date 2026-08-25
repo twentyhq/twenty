@@ -7,9 +7,7 @@ import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Task } from '@/activities/types/Task';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -99,13 +97,8 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   const { completeTask } = useCompleteTask(task);
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const activityTargetFieldName = getActivityTargetJunctionConfig({
-    activityObjectMetadata: objectMetadataItem,
-    objectMetadataItems,
+  const activityTargetFieldName = useActivityTargetJunctionConfig({
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
   })?.activityTargetField.name;
 
   if (!isDefined(activityTargetFieldName)) {
