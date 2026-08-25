@@ -22,6 +22,8 @@ describe('buildMessageCalendarTargetBackfillQueries', () => {
     expect(insertSql).toContain('NOT EXISTS');
     expect(insertSql).toContain('LIMIT 5000');
     expect(insertSql).toContain('ON CONFLICT DO NOTHING');
+    expect(insertSql).toContain('AS "candidateCount"');
+    expect(insertSql).toContain('AS "insertedCount"');
     expect(insertSql).toContain('TRUE, FALSE');
     expect(insertSql).not.toContain('messageParticipantTarget');
   });

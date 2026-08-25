@@ -42,17 +42,21 @@ WHERE source."parentId" IS NOT NULL
   ${candidateSql}
   ORDER BY source."parentId", source."targetId"
   LIMIT ${batchSize}
+), inserted AS (
+  INSERT INTO "${schemaName}"."${targetTableName}" (
+    "${parentColumnName}",
+    "${targetColumnName}",
+    "isAutomaticallyAssigned",
+    "isManuallyAssigned"
+  )
+  SELECT "parentId", "targetId", TRUE, FALSE
+  FROM candidates
+  ON CONFLICT DO NOTHING
+  RETURNING "id"
 )
-INSERT INTO "${schemaName}"."${targetTableName}" (
-  "${parentColumnName}",
-  "${targetColumnName}",
-  "isAutomaticallyAssigned",
-  "isManuallyAssigned"
-)
-SELECT "parentId", "targetId", TRUE, FALSE
-FROM candidates
-ON CONFLICT DO NOTHING
-RETURNING "id"`,
+SELECT
+  (SELECT COUNT(*)::int FROM candidates) AS "candidateCount",
+  (SELECT COUNT(*)::int FROM inserted) AS "insertedCount"`,
   };
 };
 

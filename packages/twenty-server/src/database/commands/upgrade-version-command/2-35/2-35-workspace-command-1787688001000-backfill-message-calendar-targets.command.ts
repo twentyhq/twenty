@@ -51,17 +51,17 @@ export class BackfillMessageCalendarTargetsCommand extends ProvisionedWorkspaceC
     }
 
     for (const query of queries) {
-      let insertedCount = 0;
+      let candidateCount = 0;
       let totalInsertedCount = 0;
 
       do {
-        const [insertedRows] = await dataSource.query<
-          [Array<{ id: string }>, number]
+        const [result] = await dataSource.query<
+          Array<{ candidateCount: number; insertedCount: number }>
         >(query.insertSql);
 
-        insertedCount = insertedRows.length;
-        totalInsertedCount += insertedCount;
-      } while (insertedCount === BACKFILL_BATCH_SIZE);
+        candidateCount = result?.candidateCount ?? 0;
+        totalInsertedCount += result?.insertedCount ?? 0;
+      } while (candidateCount === BACKFILL_BATCH_SIZE);
 
       this.logger.log(
         `Created ${totalInsertedCount} ${query.label} for workspace ${workspaceId}`,
