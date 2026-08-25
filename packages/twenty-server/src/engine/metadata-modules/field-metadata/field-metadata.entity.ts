@@ -24,6 +24,7 @@ import {
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
+import { ADD_FIELD_METADATA_POSITION_AND_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/add-field-metadata-position-and-visibility-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
@@ -184,6 +185,21 @@ export class FieldMetadataEntity<
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
+
+  // Data-model layout (base view order); null = not laid out yet
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_FIELD_METADATA_POSITION_AND_VISIBILITY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'double precision' })
+  position: number | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_FIELD_METADATA_POSITION_AND_VISIBILITY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: true, type: 'boolean' })
+  isVisibleByDefault: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
   relationTargetFieldMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<

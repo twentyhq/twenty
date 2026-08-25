@@ -20,6 +20,8 @@ type Assertions = [
       | 'isUIEditable'
       | 'writability'
       | 'isNullable'
+      | 'position'
+      | 'isVisibleByDefault'
       | 'universalSettings'
     >
   >,
