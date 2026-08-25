@@ -179,6 +179,22 @@ const recomputeAffectedIndexes = ({
   );
 };
 
+const findMissingIndexMetadataIds = ({
+  timelineActivityFlatObjectMetadata,
+  flatIndexMaps,
+}: {
+  timelineActivityFlatObjectMetadata: FlatObjectMetadata;
+} & Pick<AllFlatEntityMaps, 'flatIndexMaps'>): string[] =>
+  timelineActivityFlatObjectMetadata.indexMetadataIds.filter(
+    (indexMetadataId) =>
+      !isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatIndexMaps,
+          flatEntityId: indexMetadataId,
+        }),
+      ),
+  );
+
 export const buildTimelineActivityTargetFieldRepairs = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -240,6 +256,26 @@ export const buildTimelineActivityTargetFieldRepairs = ({
     { accepted: [], unrepairableTargetFields: [] },
   );
 
+  const missingIndexMetadataIds = findMissingIndexMetadataIds({
+    timelineActivityFlatObjectMetadata,
+    flatIndexMaps,
+  });
+
+  if (accepted.length > 0 && missingIndexMetadataIds.length > 0) {
+    return {
+      flatFieldMetadatasToUpdate: [],
+      flatIndexMetadatasToUpdate: [],
+      unrepairableTargetFields: [
+        ...unrepairableTargetFields,
+        ...accepted.map(({ flatFieldMetadata, expectedName }) => ({
+          fieldName: flatFieldMetadata.name,
+          expectedName,
+          reason: `timelineActivity references missing index metadata ${missingIndexMetadataIds.join(', ')}; index dependencies cannot be recomputed safely`,
+        })),
+      ],
+    };
+  }
+
   return {
     flatFieldMetadatasToUpdate: accepted.map(
       ({
@@ -250,10 +286,9 @@ export const buildTimelineActivityTargetFieldRepairs = ({
       }) => ({
         ...flatFieldMetadata,
         name: expectedName,
-        label:
-          flatFieldMetadata.isSystemSideEffect === true
-            ? capitalize(targetObjectNameSingular)
-            : flatFieldMetadata.label,
+        label: flatFieldMetadata.isSystemSideEffect
+          ? capitalize(targetObjectNameSingular)
+          : flatFieldMetadata.label,
         universalSettings: {
           ...flatFieldMetadata.universalSettings,
           joinColumnName: expectedJoinColumnName,

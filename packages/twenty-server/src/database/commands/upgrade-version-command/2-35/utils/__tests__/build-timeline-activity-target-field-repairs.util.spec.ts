@@ -21,6 +21,7 @@ type BuildArgs = {
   targetObjectNameSingularByKey: Record<string, string>;
   fields: FieldSpecification[];
   indexedFieldNamesByIndexKey?: Record<string, string[]>;
+  orphanedIndexIds?: string[];
   columnNames?: string[];
 };
 
@@ -28,6 +29,7 @@ const buildArgs = ({
   targetObjectNameSingularByKey,
   fields,
   indexedFieldNamesByIndexKey = {},
+  orphanedIndexIds = [],
   columnNames,
 }: BuildArgs) => {
   const indexKeys = Object.keys(indexedFieldNamesByIndexKey);
@@ -49,7 +51,10 @@ const buildArgs = ({
           namePlural: 'timelineActivities',
           isCustom: false,
           fieldIds: fields.map(({ name }) => `field-${name}`),
-          indexMetadataIds: indexKeys.map((key) => `index-${key}`),
+          indexMetadataIds: [
+            ...indexKeys.map((key) => `index-${key}`),
+            ...orphanedIndexIds,
+          ],
         },
         ...Object.fromEntries(
           entries(targetObjectNameSingularByKey).map(([key, nameSingular]) => [
@@ -280,6 +285,25 @@ describe('buildTimelineActivityTargetFieldRepairs', () => {
       'index-uid-shared',
     );
     expect(flatIndexMetadatasToUpdate[0].name).not.toBe('IDX_STALE_shared');
+  });
+
+  it('reports orphaned index metadata instead of attempting a partial repair', () => {
+    const result = buildTimelineActivityTargetFieldRepairs(
+      buildArgs({
+        ...staleField,
+        orphanedIndexIds: ['missing-index-id'],
+      }),
+    );
+
+    expect(result.flatFieldMetadatasToUpdate).toEqual([]);
+    expect(result.flatIndexMetadatasToUpdate).toEqual([]);
+    expect(result.unrepairableTargetFields).toEqual([
+      expect.objectContaining({
+        fieldName: 'targetPhoneNumber',
+        expectedName: 'targetPhoneNumber2',
+        reason: expect.stringContaining('missing-index-id'),
+      }),
+    ]);
   });
 
   it('refuses to repair when the expected column already exists', () => {
