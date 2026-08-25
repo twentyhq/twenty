@@ -10,6 +10,7 @@ import { In, type Repository } from 'typeorm';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type TargetFieldName } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -36,6 +37,7 @@ export class TimelineMessagingService {
     workspaceId: string,
     offset: number,
     pageSize: number,
+    targetFilter?: { fieldName: TargetFieldName; recordId: string },
   ): Promise<{
     messageThreads: Omit<
       TimelineThreadDTO,
@@ -55,30 +57,48 @@ export class TimelineMessagingService {
           'messageThread',
         );
 
-      const totalNumberOfThreads = await messageThreadRepository
+      const totalQueryBuilder = messageThreadRepository
         .createQueryBuilder('messageThread')
         .innerJoin('messageThread.messages', 'messages')
-        .innerJoin('messages.messageParticipants', 'messageParticipants')
-        .where('messageParticipants.personId IN(:...personIds)', {
-          personIds,
-        })
-        .groupBy('messageThread.id')
-        .getCount();
-
-      const threadIdsQuery = await messageThreadRepository
+        .groupBy('messageThread.id');
+      const threadIdsQueryBuilder = messageThreadRepository
         .createQueryBuilder('messageThread')
         .select('messageThread.id', 'id')
         .addSelect('MAX(messages.receivedAt)', 'max_received_at')
         .innerJoin('messageThread.messages', 'messages')
-        .innerJoin('messages.messageParticipants', 'messageParticipants')
-        .where('messageParticipants.personId IN (:...personIds)', {
-          personIds,
-        })
         .groupBy('messageThread.id')
         .orderBy('max_received_at', 'DESC')
         .offset(offset)
-        .limit(pageSize)
-        .getRawMany();
+        .limit(pageSize);
+
+      if (targetFilter) {
+        totalQueryBuilder
+          .innerJoin('messageThread.messageThreadTargets', 'messageThreadTargets')
+          .where(
+            `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
+            { targetRecordId: targetFilter.recordId },
+          );
+        threadIdsQueryBuilder
+          .innerJoin('messageThread.messageThreadTargets', 'messageThreadTargets')
+          .where(
+            `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
+            { targetRecordId: targetFilter.recordId },
+          );
+      } else {
+        totalQueryBuilder
+          .innerJoin('messages.messageParticipants', 'messageParticipants')
+          .where('messageParticipants.personId IN(:...personIds)', {
+            personIds,
+          });
+        threadIdsQueryBuilder
+          .innerJoin('messages.messageParticipants', 'messageParticipants')
+          .where('messageParticipants.personId IN (:...personIds)', {
+            personIds,
+          });
+      }
+
+      const totalNumberOfThreads = await totalQueryBuilder.getCount();
+      const threadIdsQuery = await threadIdsQueryBuilder.getRawMany();
 
       const messageThreadIds = threadIdsQuery.map((thread) => thread.id);
 

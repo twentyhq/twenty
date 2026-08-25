@@ -5,6 +5,10 @@ import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messag
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
+import {
+  getTargetFieldNameForObjectRecord,
+  type TargetFieldName,
+} from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 
 @Injectable()
 export class GetMessagesService {
@@ -19,6 +23,7 @@ export class GetMessagesService {
     workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+    targetFilter?: { fieldName: TargetFieldName; recordId: string },
   ): Promise<TimelineThreadsWithTotalDTO> {
     const offset = (page - 1) * pageSize;
 
@@ -28,6 +33,7 @@ export class GetMessagesService {
         workspaceId,
         offset,
         pageSize,
+        targetFilter,
       );
 
     if (!messageThreads) {
@@ -79,8 +85,10 @@ export class GetMessagesService {
       objectNameSingular,
       recordId,
     });
+    const targetFieldName =
+      getTargetFieldNameForObjectRecord(objectNameSingular);
 
-    if (personIds.length === 0) {
+    if (targetFieldName === null && personIds.length === 0) {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
@@ -94,6 +102,9 @@ export class GetMessagesService {
       workspaceId,
       page,
       pageSize,
+      targetFieldName !== null
+        ? { fieldName: targetFieldName, recordId }
+        : undefined,
     );
   }
 }
