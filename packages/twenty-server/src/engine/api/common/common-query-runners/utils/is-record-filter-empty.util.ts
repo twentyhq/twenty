@@ -4,10 +4,6 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 type RecordFilter = Partial<ObjectRecordFilter>;
 
-// A filter is empty when it produces no WHERE predicate, so a bulk mutation
-// using it would target every record of the object. That covers not only `{}`
-// but logical operators that recurse to nothing: `{ and: [] }`, `{ or: [] }`,
-// `{ not: {} }`, `{ and: [{}] }`, matching how the query parser walks them.
 export const isRecordFilterEmpty = (filter: RecordFilter): boolean => {
   const filterEntries = Object.entries(filter);
 

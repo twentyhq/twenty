@@ -6,8 +6,6 @@ import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 
-// An empty filter matches every record, so a bulk mutation accepting it would
-// delete/update the whole object. Each many-mutation must reject it.
 describe('Empty filter bulk mutation validation', () => {
   let objectMetadataId: string;
   let objectMetadataSingularName: string;

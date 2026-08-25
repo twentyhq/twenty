@@ -424,7 +424,6 @@ export abstract class CommonBaseQueryRunnerService<
     const { flatObjectMetadata, commonQueryParser } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
 
-    // An empty filter would make this bulk mutation an unbounded delete/update/restore of the whole object.
     if (isRecordFilterEmpty(filter)) {
       throw new CommonQueryRunnerException(
         'A non-empty filter is required for a bulk mutation',
