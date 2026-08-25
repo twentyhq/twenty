@@ -1,16 +1,13 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summaries-logic-function-universal-identifier';
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { createRetryingCoreApiClient } from 'src/logic-functions/data/create-retrying-core-api-client.util';
 import { findCallRecordingIdsForCalendarEvents } from 'src/logic-functions/data/find-call-recording-ids-for-calendar-events.util';
-import { findCallRecordingIdsMissingSummary } from 'src/logic-functions/data/find-call-recording-ids-missing-summary.util';
-import { generateMissingCallRecordingSummaries } from 'src/logic-functions/flows/generate-missing-call-recording-summaries.util';
+import { enqueueCallRecordingSummariesBackfill } from 'src/logic-functions/flows/enqueue-call-recording-summaries-backfill.util';
+import { generateCallRecordingSummariesForIds } from 'src/logic-functions/flows/generate-call-recording-summaries-for-ids.util';
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-
-const TIMEOUT_SECONDS = 900;
-const CONTINUATION_RESERVE_MS = 30_000;
+import { toIdList } from 'src/logic-functions/utils/to-id-list.util';
 
 type GenerateCallRecordingSummariesRouteBody = {
   callRecordingIds?: string[];
@@ -25,9 +22,6 @@ const hasOwnProperty = <T extends object>(
     ? false
     : Object.prototype.hasOwnProperty.call(object, propertyName);
 
-const toIdList = (value: unknown): string[] =>
-  Array.isArray(value) ? value.filter(isNonEmptyString) : [];
-
 export const generateCallRecordingSummariesHandler = async (
   payload: RoutePayload<GenerateCallRecordingSummariesRouteBody>,
 ): Promise<object> => {
@@ -35,33 +29,35 @@ export const generateCallRecordingSummariesHandler = async (
     return { outcome: 'disabled' };
   }
 
-  const startedAtMs = Date.now();
-  const client = new CoreApiClient();
+  const client = createRetryingCoreApiClient();
 
   const requestedCallRecordingIds = toIdList(payload.body?.callRecordingIds);
   const requestedCalendarEventIds = toIdList(payload.body?.calendarEventIds);
-  const hasRequestedCallRecordingIds = hasOwnProperty(
-    payload.body,
-    'callRecordingIds',
-  );
-  const hasRequestedCalendarEventIds = hasOwnProperty(
-    payload.body,
-    'calendarEventIds',
-  );
   const hasRequestedIds =
-    hasRequestedCallRecordingIds || hasRequestedCalendarEventIds;
+    hasOwnProperty(payload.body, 'callRecordingIds') ||
+    hasOwnProperty(payload.body, 'calendarEventIds');
 
-  let callRecordingIds = requestedCallRecordingIds;
+  if (!hasRequestedIds) {
+    const { callRecordingCount, batchCount } =
+      await enqueueCallRecordingSummariesBackfill({ client });
+
+    if (callRecordingCount === 0) {
+      return { outcome: 'nothing-to-summarize' };
+    }
+
+    return { outcome: 'backfill-enqueued', callRecordingCount, batchCount };
+  }
 
   if (
-    hasRequestedIds &&
     requestedCallRecordingIds.length === 0 &&
     requestedCalendarEventIds.length === 0
   ) {
     return { outcome: 'nothing-selected' };
   }
 
-  if (callRecordingIds.length === 0 && requestedCalendarEventIds.length > 0) {
+  let callRecordingIds = requestedCallRecordingIds;
+
+  if (callRecordingIds.length === 0) {
     callRecordingIds = await findCallRecordingIdsForCalendarEvents(client, {
       calendarEventIds: requestedCalendarEventIds,
     });
@@ -71,21 +67,9 @@ export const generateCallRecordingSummariesHandler = async (
     }
   }
 
-  const isSweep = !hasRequestedIds;
-
-  if (isSweep) {
-    callRecordingIds = await findCallRecordingIdsMissingSummary(client);
-
-    if (callRecordingIds.length === 0) {
-      return { outcome: 'nothing-to-summarize' };
-    }
-  }
-
-  const result = await generateMissingCallRecordingSummaries({
+  const result = await generateCallRecordingSummariesForIds({
     client,
     callRecordingIds,
-    deadlineAtMs:
-      startedAtMs + TIMEOUT_SECONDS * 1000 - CONTINUATION_RESERVE_MS,
   });
 
   return { outcome: 'processed', ...result };
@@ -96,8 +80,8 @@ export default defineLogicFunction({
     GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'generate-call-recording-summaries',
   description:
-    'Generates missing AI summaries for call recordings. Called with explicit call recording or calendar event ids for on-demand generation, or with no ids to sweep this app’s recordings that have a transcript but no summary; re-invokes itself with the remaining ids when a batch approaches the timeout.',
-  timeoutSeconds: TIMEOUT_SECONDS,
+    'Generates missing AI summaries for call recordings. Called with explicit call recording or calendar event ids for on-demand generation, or with no ids to enqueue a backfill of this app’s recordings that have a transcript but no summary.',
+  timeoutSeconds: 900,
   handler: generateCallRecordingSummariesHandler,
   httpRouteTriggerSettings: {
     path: GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,

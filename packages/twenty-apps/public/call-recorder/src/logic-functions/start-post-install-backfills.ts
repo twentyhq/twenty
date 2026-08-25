@@ -3,43 +3,48 @@ import {
   definePostInstallLogicFunction,
   type InstallPayload,
 } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
+import { BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/backfill-call-recording-summaries-logic-function-universal-identifier';
 import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/start-post-install-backfills-logic-function-universal-identifier';
-import { requestCallRecordingSummariesBackfill } from 'src/logic-functions/data/request-call-recording-summaries-backfill.util';
-import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
+import { SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/sweep-upcoming-calendar-events-logic-function-universal-identifier';
+import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
 
 // An app is allowed a single post-install hook, so the two backfills share it:
 // a fresh install seeds the scheduling window, an upgrade relies on the scheduled sweep and backfills summaries.
 type StartPostInstallBackfillsResult = {
-  calendarEventSweepOutcome: 'sweep-requested' | 'skipped-upgrade';
-  summaryBackfillOutcome: 'skipped-initial-install' | 'backfill-requested';
+  calendarEventSweepOutcome: 'sweep-enqueued' | 'skipped-upgrade';
+  summaryBackfillOutcome: 'skipped-initial-install' | 'backfill-enqueued';
 };
 
+// An enqueue failure throws so the async install hook retries the kickoff.
 export const startPostInstallBackfillsHandler = async ({
   previousVersion,
 }: InstallPayload): Promise<StartPostInstallBackfillsResult> => {
   if (isUndefined(previousVersion)) {
-    if (!(await requestUpcomingCalendarEventsReconciliation())) {
-      throw new Error(
-        '[call-recorder] Failed to start post-install backfills: upcoming calendar event sweep',
-      );
-    }
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier:
+        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      payloads: [{}],
+      retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+    });
 
     return {
-      calendarEventSweepOutcome: 'sweep-requested',
+      calendarEventSweepOutcome: 'sweep-enqueued',
       summaryBackfillOutcome: 'skipped-initial-install',
     };
   }
 
-  if (!(await requestCallRecordingSummariesBackfill())) {
-    throw new Error(
-      '[call-recorder] Failed to start post-install backfills: call recording summary backfill',
-    );
-  }
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier:
+      BACKFILL_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    payloads: [{}],
+    retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+  });
 
   return {
     calendarEventSweepOutcome: 'skipped-upgrade',
-    summaryBackfillOutcome: 'backfill-requested',
+    summaryBackfillOutcome: 'backfill-enqueued',
   };
 };
 
