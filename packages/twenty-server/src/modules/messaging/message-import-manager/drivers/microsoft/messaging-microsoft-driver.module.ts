@@ -12,7 +12,6 @@ import { MicrosoftMessagesImportErrorHandler } from 'src/modules/messaging/messa
 import { MicrosoftNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-network-error-handler.service';
 
 import { MicrosoftGetMessageListService } from './services/microsoft-get-message-list.service';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
@@ -23,7 +22,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     WorkspaceDataSourceModule,
   ],
   providers: [
-    BlocklistRepository,
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
     MicrosoftFetchByBatchService,

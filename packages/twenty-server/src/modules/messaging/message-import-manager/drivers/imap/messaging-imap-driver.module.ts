@@ -20,7 +20,6 @@ import { ImapMessageParserService } from 'src/modules/messaging/message-import-m
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
@@ -35,7 +34,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessageParticipantManagerModule,
   ],
   providers: [
-    BlocklistRepository,
     ImapClientProvider,
     ImapGetMessagesService,
     ImapGetMessageListService,

@@ -14,7 +14,6 @@ import { GmailGetMessagesService } from 'src/modules/messaging/message-import-ma
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
-import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessageParticipantManagerModule,
   ],
   providers: [
-    BlocklistRepository,
     GmailGetHistoryService,
     GmailGetMessagesService,
     GmailGetMessageListService,
