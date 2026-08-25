@@ -51,6 +51,7 @@ type MatchParticipantsArgs<
       >,
 > = {
   participants: ParticipantWorkspaceEntity[];
+  sourceRecordIds: string[];
   objectMetadataName: ObjectMetadataName;
   matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
   transactionScope?: WorkspaceTransactionScope;
@@ -96,11 +97,20 @@ export class MatchParticipantService<
 
   public async matchParticipants({
     participants,
+    sourceRecordIds,
     objectMetadataName,
     matchWith = 'workspaceMemberAndPerson',
     transactionScope,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
     if (participants.length === 0) {
+      await this.participantTargetReconciliationService.reconcileParticipantTargets(
+        {
+          sourceRecordIds,
+          objectMetadataName,
+          transactionScope,
+        },
+      );
+
       return;
     }
 
@@ -203,7 +213,7 @@ export class MatchParticipantService<
 
     await this.participantTargetReconciliationService.reconcileParticipantTargets(
       {
-        participants,
+        sourceRecordIds,
         objectMetadataName,
         transactionScope,
       },
@@ -238,6 +248,9 @@ export class MatchParticipantService<
       await this.matchParticipants({
         matchWith: 'workspaceMemberOnly',
         participants: tobeRematchedParticipants as ParticipantWorkspaceEntity[],
+        sourceRecordIds: this.getSourceRecordIds(
+          tobeRematchedParticipants as ParticipantWorkspaceEntity[],
+        ),
         objectMetadataName,
       });
     }, authContext);
@@ -293,8 +306,19 @@ export class MatchParticipantService<
       await this.matchParticipants({
         matchWith: 'personOnly',
         participants: tobeRematchedParticipants,
+        sourceRecordIds: this.getSourceRecordIds(tobeRematchedParticipants),
         objectMetadataName,
       });
     }, authContext);
+  }
+
+  private getSourceRecordIds(
+    participants: ParticipantWorkspaceEntity[],
+  ): string[] {
+    return participants.map((participant) =>
+      'messageId' in participant
+        ? participant.messageId
+        : participant.calendarEventId,
+    );
   }
 }
