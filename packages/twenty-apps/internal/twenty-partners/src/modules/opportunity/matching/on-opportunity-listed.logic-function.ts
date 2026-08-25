@@ -15,7 +15,7 @@ export const handler = async (
 ): Promise<Record<string, unknown>> => {
   const { before, after, updatedFields } = payload.properties;
   if (!updatedFields?.includes('isListed') || !after?.id) return {};
-  if (before?.isListed === true || after.isListed !== true) {
+  if (before?.isListed || !after.isListed) {
     return { skipped: true, reason: 'not_a_listing_flip' };
   }
 

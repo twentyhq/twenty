@@ -5,18 +5,17 @@ import {
   TWENTY_BLUE,
 } from 'src/modules/shared/connector/discord/config';
 import { postWebhook } from 'src/modules/shared/connector/discord/discord.connector';
+import {
+  inlineField,
+  truncate,
+  trimTrailingSlash,
+} from 'src/modules/shared/connector/discord/embed-text.util';
 import { type DiscordField } from 'src/modules/shared/connector/discord/types';
 import { getListedBriefDetails } from 'src/modules/opportunity/matching/graphql/queries/get-listed-brief-details';
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
 
 const NEED_MAX = 600;
 const REQUIREMENTS_MAX = 300;
-
-const truncate = (value: string, max: number): string =>
-  value.length <= max ? value : `${value.slice(0, max - 1)}…`;
-
-const inline = (name: string, value: string | undefined | null): DiscordField[] =>
-  isNonEmptyString(value) ? [{ name, value, inline: true }] : [];
 
 export async function notifyListedBrief(opportunityId: string): Promise<boolean> {
   const webhookUrl = process.env[DISCORD_WEBHOOK_ENV_VAR];
@@ -31,9 +30,9 @@ export async function notifyListedBrief(opportunityId: string): Promise<boolean>
       .filter(isNonEmptyString)
       .join(' ');
     const fields: DiscordField[] = [
-      ...inline('Company', brief.company?.name),
-      ...inline('Contact', contact),
-      ...inline('Referred by', brief.referredByPartner?.name),
+      ...inlineField('Company', brief.company?.name),
+      ...inlineField('Contact', contact),
+      ...inlineField('Referred by', brief.referredByPartner?.name),
     ];
     if (isNonEmptyString(brief.requirements)) {
       fields.push({ name: 'Requirements', value: truncate(brief.requirements.trim(), REQUIREMENTS_MAX) });
@@ -48,7 +47,7 @@ export async function notifyListedBrief(opportunityId: string): Promise<boolean>
     };
     const frontendUrl = process.env.PARTNER_APP_FRONTEND_URL;
     if (isNonEmptyString(frontendUrl)) {
-      embed.url = `${frontendUrl.replace(/\/+$/, '')}/object/opportunity/${brief.id}`;
+      embed.url = `${trimTrailingSlash(frontendUrl)}/object/opportunity/${brief.id}`;
     }
 
     return await postWebhook(webhookUrl, { embeds: [embed] }, 'notify-listed-brief');
