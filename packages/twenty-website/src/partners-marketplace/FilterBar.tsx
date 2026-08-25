@@ -62,6 +62,25 @@ const ResultCount = styled.p`
   line-height: ${fontSize(4)};
 `;
 
+const resultCountMessage = ({
+  hasAnyFilter,
+  totalCount,
+  visibleCount,
+}: Pick<FilterBarProps, 'hasAnyFilter' | 'totalCount' | 'visibleCount'>) => {
+  if (hasAnyFilter) {
+    return msg`Showing ${visibleCount} of ${totalCount} partners`;
+  }
+
+  if (totalCount === 0) {
+    return msg`No partners to show right now`;
+  }
+
+  return msg`${plural(totalCount, {
+    one: '# certified partner ready to take on your project',
+    other: '# certified partners ready to take on your project',
+  })}`;
+};
+
 export function FilterBar({
   criteria,
   hasAnyFilter,
@@ -92,14 +111,11 @@ export function FilterBar({
     })),
   ];
 
-  const resultCountLabel = hasAnyFilter
-    ? msg`Showing ${visibleCount} of ${totalCount} partners`
-    : totalCount === 0
-      ? msg`No partners to show right now`
-      : msg`${plural(totalCount, {
-          one: '# certified partner ready to take on your project',
-          other: '# certified partners ready to take on your project',
-        })}`;
+  const resultCountLabel = resultCountMessage({
+    hasAnyFilter,
+    totalCount,
+    visibleCount,
+  });
 
   return (
     <BarRoot aria-label={i18n._(msg`Filter partners`)} role="search">

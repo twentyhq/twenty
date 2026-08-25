@@ -237,15 +237,7 @@ export function Button({
     );
   }
 
-  if (isProtocolLink) {
-    return (
-      <a {...sharedAttributes} href={href} onClick={onClick}>
-        {inner}
-      </a>
-    );
-  }
-
-  if (isHashLink) {
+  if (isProtocolLink || isHashLink) {
     return (
       <a {...sharedAttributes} href={href} onClick={onClick}>
         {inner}
