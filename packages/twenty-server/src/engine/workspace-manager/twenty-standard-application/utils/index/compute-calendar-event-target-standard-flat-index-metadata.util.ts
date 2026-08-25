@@ -24,7 +24,7 @@ export const buildCalendarEventTargetStandardFlatIndexMetadatas = (
       indexName: 'calendarEventPersonUniqueIndex',
       relatedFieldNames: ['calendarEvent', 'targetPerson'],
       isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL AND "targetPersonId" IS NOT NULL',
+      indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
   calendarEventCompanyUniqueIndex: createStandardIndexFlatMetadata({
@@ -33,7 +33,7 @@ export const buildCalendarEventTargetStandardFlatIndexMetadatas = (
       indexName: 'calendarEventCompanyUniqueIndex',
       relatedFieldNames: ['calendarEvent', 'targetCompany'],
       isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL AND "targetCompanyId" IS NOT NULL',
+      indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
   calendarEventOpportunityUniqueIndex: createStandardIndexFlatMetadata({
@@ -42,8 +42,7 @@ export const buildCalendarEventTargetStandardFlatIndexMetadatas = (
       indexName: 'calendarEventOpportunityUniqueIndex',
       relatedFieldNames: ['calendarEvent', 'targetOpportunity'],
       isUnique: true,
-      indexWhereClause:
-        '"deletedAt" IS NULL AND "targetOpportunityId" IS NOT NULL',
+      indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
 });

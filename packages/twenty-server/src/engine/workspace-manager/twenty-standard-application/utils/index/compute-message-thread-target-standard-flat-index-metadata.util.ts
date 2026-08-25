@@ -24,7 +24,7 @@ export const buildMessageThreadTargetStandardFlatIndexMetadatas = (
       indexName: 'messageThreadPersonUniqueIndex',
       relatedFieldNames: ['messageThread', 'targetPerson'],
       isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL AND "targetPersonId" IS NOT NULL',
+      indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
   messageThreadCompanyUniqueIndex: createStandardIndexFlatMetadata({
@@ -33,7 +33,7 @@ export const buildMessageThreadTargetStandardFlatIndexMetadatas = (
       indexName: 'messageThreadCompanyUniqueIndex',
       relatedFieldNames: ['messageThread', 'targetCompany'],
       isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL AND "targetCompanyId" IS NOT NULL',
+      indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
   messageThreadOpportunityUniqueIndex: createStandardIndexFlatMetadata({
@@ -42,8 +42,7 @@ export const buildMessageThreadTargetStandardFlatIndexMetadatas = (
       indexName: 'messageThreadOpportunityUniqueIndex',
       relatedFieldNames: ['messageThread', 'targetOpportunity'],
       isUnique: true,
-      indexWhereClause:
-        '"deletedAt" IS NULL AND "targetOpportunityId" IS NOT NULL',
+      indexWhereClause: '"deletedAt" IS NULL',
     },
   }),
 });
