@@ -1,11 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
+import { GetMatchedButton } from '@/client-brief';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
-import { LeadHeroCtas } from './LeadHeroCtas';
+import { BrowseDirectoryButton } from './BrowseDirectoryButton';
 import { PartnerVisual } from './PartnerVisual';
 
 const GradientBackdrop = styled.div`
@@ -47,6 +48,18 @@ const BodyMeasure = styled.div`
   }
 `;
 
+const CtaRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(3)};
+  justify-content: center;
+
+  ${mediaUp('sm')} {
+    flex-direction: row;
+  }
+`;
+
 const VisualStage = styled.div`
   margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
   width: 100%;
@@ -76,7 +89,10 @@ export function PartnerLeadHero() {
             </Body>
           </BodyMeasure>
         </HeadingPair>
-        <LeadHeroCtas />
+        <CtaRow>
+          <GetMatchedButton label={msg`Get matched`} />
+          <BrowseDirectoryButton />
+        </CtaRow>
       </IntroStack>
       <VisualStage>
         <PartnerVisual />
