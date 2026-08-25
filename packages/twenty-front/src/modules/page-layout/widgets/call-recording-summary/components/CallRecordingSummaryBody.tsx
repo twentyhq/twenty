@@ -12,12 +12,17 @@ import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetA
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSummaryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[2]};
+
+  // The markdown renderer spaces blocks for chat bubbles, so its first block and
+  // leading heading would push the summary below where the transcript starts.
+  & > *:first-child,
+  & > *:first-child > *:first-child {
+    margin-top: 0;
+  }
 `;
 
 type CallRecordingSummaryBodyProps = {
