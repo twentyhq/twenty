@@ -1,15 +1,16 @@
 import { CallRecordingWidgetUnavailableDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay';
-import { useIsCallRecordingWidgetVisible } from '@/page-layout/widgets/call-recording/hooks/useIsCallRecordingWidgetVisible';
+import { useCallRecordingWidgetUnavailableReason } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetUnavailableReason';
 import { CallRecordingSummaryWidgetContent } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryWidgetContent';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CallRecordingSummaryWidget = () => {
-  const isWidgetVisible = useIsCallRecordingWidgetVisible();
+  const unavailableReason = useCallRecordingWidgetUnavailableReason();
 
-  if (!isWidgetVisible) {
+  if (isDefined(unavailableReason)) {
     return (
       <StyledWidgetScrollContainer>
-        <CallRecordingWidgetUnavailableDisplay />
+        <CallRecordingWidgetUnavailableDisplay reason={unavailableReason} />
       </StyledWidgetScrollContainer>
     );
   }
