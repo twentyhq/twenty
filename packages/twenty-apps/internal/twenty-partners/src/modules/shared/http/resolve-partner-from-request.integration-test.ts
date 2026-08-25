@@ -5,7 +5,7 @@ import {
   decodeJwtClaims,
   resolvePartnerByUserId,
   resolvePartnerFromRequest,
-} from '../services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 
 function requireId(id: string | null | undefined, what: string): string {
   if (!id) throw new Error(`${what} returned no id`);
