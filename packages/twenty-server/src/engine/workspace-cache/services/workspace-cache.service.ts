@@ -5,9 +5,12 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
+
+import { DataSource } from 'typeorm';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -19,6 +22,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
@@ -106,6 +110,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     private readonly cacheStorage: CacheStorageService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly discoveryService: DiscoveryService,
     private readonly reflector: Reflector,
     private readonly cacheMetricsService: WorkspaceCacheMetricsService,
@@ -508,6 +514,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return result;
     }
 
+    const recomputeContext = new WorkspaceCacheRecomputeContext(
+      this.coreDataSource,
+      workspaceId,
+    );
+
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
@@ -525,7 +536,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
               'cache.local_data_only': isLocalDataOnly,
             },
           },
-          () => provider.computeForCache(workspaceId),
+          () => provider.computeForCache(workspaceId, recomputeContext),
         );
 
         if (hashResolution.strategy === 'mint') {

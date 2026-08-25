@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -14,17 +13,16 @@ import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/f
 import { compactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/compact-flat-field-metadata-maps.util';
 import { expandFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/expand-flat-field-metadata-maps.util';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { computeUniqueFieldMetadataIdsFromIndexEntities } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-index-entities.util';
+import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -36,31 +34,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   FlatEntityMaps<FlatFieldMetadata>,
   CompactFlatFieldMetadataMaps
 > {
-  constructor(
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectWorkspaceScopedRepository(IndexMetadataEntity)
-    private readonly indexMetadataRepository: WorkspaceScopedRepository<IndexMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(ViewFieldEntity)
-    private readonly viewFieldRepository: WorkspaceScopedRepository<ViewFieldEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
-    @InjectWorkspaceScopedRepository(ViewGroupEntity)
-    private readonly viewGroupRepository: WorkspaceScopedRepository<ViewGroupEntity>,
-    @InjectWorkspaceScopedRepository(ViewSortEntity)
-    private readonly viewSortRepository: WorkspaceScopedRepository<ViewSortEntity>,
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-    @InjectWorkspaceScopedRepository(SearchFieldMetadataEntity)
-    private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
-  ) {
-    super();
-  }
-
   override compactForStorage(
     data: FlatEntityMaps<FlatFieldMetadata>,
   ): CompactFlatFieldMetadataMaps {
@@ -75,10 +48,12 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
 
   async computeForCache(
     workspaceId: string,
+    recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatEntityMaps<FlatFieldMetadata>> {
     const [
       fieldMetadatas,
       indexMetadatas,
+      indexFieldMetadatas,
       objectMetadatas,
       applications,
       viewFields,
@@ -87,51 +62,16 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       views,
       searchFieldMetadatas,
     ] = await Promise.all([
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        withDeleted: true,
-      }),
-      this.indexMetadataRepository.find(workspaceId, {
-        where: { isUnique: true },
-        relations: ['indexFieldMetadatas'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.viewFieldRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'fieldMetadataId'],
-        withDeleted: true,
-      }),
-      this.viewFilterRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'fieldMetadataId'],
-        withDeleted: true,
-      }),
-      this.viewSortRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'fieldMetadataId'],
-        withDeleted: true,
-      }),
-      this.viewRepository.find(workspaceId, {
-        select: [
-          'id',
-          'universalIdentifier',
-          'kanbanAggregateOperationFieldMetadataId',
-          'calendarFieldMetadataId',
-          'calendarEndFieldMetadataId',
-          'mainGroupByFieldMetadataId',
-        ],
-        withDeleted: true,
-      }),
-      this.searchFieldMetadataRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier', 'fieldMetadataId'],
-      }),
+      recomputeContext.findAll(FieldMetadataEntity),
+      recomputeContext.findAll(IndexMetadataEntity),
+      recomputeContext.findAll(IndexFieldMetadataEntity),
+      recomputeContext.findAll(ObjectMetadataEntity),
+      recomputeContext.findAll(ApplicationEntity),
+      recomputeContext.findAll(ViewFieldEntity),
+      recomputeContext.findAll(ViewFilterEntity),
+      recomputeContext.findAll(ViewSortEntity),
+      recomputeContext.findAll(ViewEntity),
+      recomputeContext.findAll(SearchFieldMetadataEntity),
     ]);
 
     const [
@@ -187,8 +127,34 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
-    const uniqueFieldMetadataIds =
-      computeUniqueFieldMetadataIdsFromIndexEntities(indexMetadatas);
+    const indexFieldMetadatasByIndexMetadataId = new Map<
+      string,
+      IndexFieldMetadataEntity[]
+    >();
+
+    for (const indexFieldMetadata of indexFieldMetadatas) {
+      const existingIndexFieldMetadatas =
+        indexFieldMetadatasByIndexMetadataId.get(
+          indexFieldMetadata.indexMetadataId,
+        );
+
+      if (isDefined(existingIndexFieldMetadatas)) {
+        existingIndexFieldMetadatas.push(indexFieldMetadata);
+      } else {
+        indexFieldMetadatasByIndexMetadataId.set(
+          indexFieldMetadata.indexMetadataId,
+          [indexFieldMetadata],
+        );
+      }
+    }
+
+    const uniqueFieldMetadataIds = computeUniqueFieldMetadataIdsFromIndexes(
+      indexMetadatas.map((indexMetadata) => ({
+        ...indexMetadata,
+        indexFieldMetadatas:
+          indexFieldMetadatasByIndexMetadataId.get(indexMetadata.id) ?? [],
+      })),
+    );
 
     const flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
