@@ -995,7 +995,6 @@ msgstr "Du får åtkomst till dina arbetsytedata från din favorit MCP-klient so
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1065,6 +1064,7 @@ msgstr "Åtgärd vid klick"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -1117,6 +1117,7 @@ msgstr "Aktiverar..."
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -1137,6 +1138,11 @@ msgstr "Aktiva installationer"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Active Sync"
 msgstr "Aktiv synk"
+
+#. js-lingui-id: LynXsl
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Activity visibility"
+msgstr "Aktivitetssynlighet"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1176,7 +1182,7 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr "Lägg till ett nytt företag vi är i kontakt med (t.ex. namn, webbplats, bransch). Detaljer: "
 
 #. js-lingui-id: Ad+JsP
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
 msgstr "Lägg först till en person med en e-postadress i det här företaget"
 
@@ -1212,12 +1218,12 @@ msgid "Add account"
 msgstr "Lägg till konto"
 
 #. js-lingui-id: W5wF8J
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
 msgstr "Lägg först till en e-postadress för kontaktpersonen"
 
 #. js-lingui-id: LVzaHu
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
 msgstr "Lägg först till en e-postadress för den här personen"
 
@@ -1315,7 +1321,6 @@ msgstr "Lägg till fält"
 
 #. js-lingui-id: T7RGT6
 #: src/modules/activities/files/components/FilesCardContent.tsx
-#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Lägg till fil"
 
@@ -1452,6 +1457,7 @@ msgid "Add permission"
 msgstr ""
 
 #. js-lingui-id: AmiJYR
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add relation"
 msgstr "Lägg till relation"
@@ -2525,6 +2531,7 @@ msgstr "applikationsvariabel"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -2836,6 +2843,11 @@ msgstr "på minuterna {remainingValues} och {0}"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at the top of the hour"
 msgstr "vid hel timme"
+
+#. js-lingui-id: x9ecE4
+#: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
+msgid "Attach file"
+msgstr "Bifoga fil"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3471,7 +3483,7 @@ msgid "Calendar event not found"
 msgstr "Kalenderhändelse hittades inte"
 
 #. js-lingui-id: rLQVsa
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Calendar events cannot be linked to this record type"
 msgstr "Kalenderhändelser kan inte kopplas till den här posttypen"
 
@@ -3957,6 +3969,11 @@ msgstr "Välj vad som händer när du klickar på en e-postadress"
 msgid "Choose where records open by default. Some objects may use a workspace setting"
 msgstr "Välj var poster öppnas som standard. Vissa objekt kan använda en arbetsyteinställning"
 
+#. js-lingui-id: EcjwmO
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Choose whether this activity type appears in record timelines"
+msgstr "Välj om den här aktivitetstypen visas i posts tidslinjer"
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -4425,10 +4442,10 @@ msgstr "Slutförda jobb sparas i {completedDuration}, misslyckade jobb sparas i 
 msgid "Component name"
 msgstr "Komponentnamn"
 
-#. js-lingui-id: QOhkyl
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
-msgid "Compose"
-msgstr "Skriv"
+#. js-lingui-id: rYRNgS
+#: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
+msgid "Compose email"
+msgstr "Skriv e-post"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4475,6 +4492,11 @@ msgstr "Konfiguration"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Configuration of this command menu item"
 msgstr "Konfiguration av detta kommandomenyalternativ"
+
+#. js-lingui-id: +rVpsA
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Configuration of this timeline activity type"
+msgstr "Konfiguration av denna tidslinjeaktivitetstyp"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5247,6 +5269,11 @@ msgstr "Skapa och konfigurera AI-agenter"
 msgid "Create API key"
 msgstr "Skapa API-nyckel"
 
+#. js-lingui-id: 0gp+cZ
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
+msgid "Create calendar event"
+msgstr "Skapa kalenderhändelse"
+
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Create Calendar Event"
@@ -5268,7 +5295,6 @@ msgid "Create date field"
 msgstr "Skapa datumfält"
 
 #. js-lingui-id: PybJS2
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
 msgstr "Skapa händelse"
@@ -5277,6 +5303,11 @@ msgstr "Skapa händelse"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create new view"
 msgstr "Skapa ny vy"
+
+#. js-lingui-id: BKucva
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create note"
+msgstr "Skapa anteckning"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5300,6 +5331,12 @@ msgstr "Skapa post"
 msgid "Create record on {0} at {1}"
 msgstr "Skapa post den {0} kl. {1}"
 
+#. js-lingui-id: fRYkDa
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
+#: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
+msgid "Create related"
+msgstr "Skapa relaterad"
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5315,6 +5352,11 @@ msgstr "Skapa valfält"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Create Select..."
 msgstr "Skapa Välj..."
+
+#. js-lingui-id: Z+6PPA
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create task"
+msgstr "Skapa uppgift"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -6247,7 +6289,7 @@ msgstr "ta bort"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -6594,6 +6636,7 @@ msgstr "Detaljer per arbetsyta"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Details"
 msgstr "Detaljer"
@@ -7172,6 +7215,11 @@ msgstr "Redigera posttabell"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Redigera poster i alla objekt"
+
+#. js-lingui-id: 4QhQge
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
+msgid "Edit relation"
+msgstr "Redigera relation"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
@@ -8045,6 +8093,7 @@ msgstr ""
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Event"
 msgstr "Händelse"
 
@@ -8563,6 +8612,11 @@ msgstr "Misslyckades med att ta bort bild"
 msgid "Failed to remove provider"
 msgstr "Det gick inte att ta bort leverantören"
 
+#. js-lingui-id: is6uow
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to reset the timeline activity type."
+msgstr "Det gick inte att återställa tidslinjeaktivitetstypen."
+
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "Failed to retry jobs. Please try again later."
@@ -8687,6 +8741,11 @@ msgstr "Det gick inte att uppdatera avsändarnamnet."
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Failed to update server administrator access."
 msgstr "Det gick inte att uppdatera serveradministratörsåtkomst."
+
+#. js-lingui-id: 6TG/SY
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to update the timeline activity type."
+msgstr "Det gick inte att uppdatera tidslinjeaktivitetstypen."
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9220,6 +9279,8 @@ msgstr "Franska"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
 msgstr "Från"
 
@@ -9238,6 +9299,7 @@ msgstr "frontendkomponent"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Front component"
 msgstr "Frontendkomponent"
 
@@ -9284,10 +9346,10 @@ msgstr "Helsida"
 msgid "full server access"
 msgstr "full serveråtkomst"
 
-#. js-lingui-id: Ld0Tt4
+#. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "Full tab widget"
-msgstr "Hel flikwidget"
+msgid "Full-height Widget"
+msgstr "Widget i full höjd"
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10989,6 +11051,7 @@ msgstr "Koreanska"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "Etikett"
 
@@ -11792,7 +11855,7 @@ msgstr "Gör privat"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "Hantera"
@@ -12394,7 +12457,7 @@ msgstr "Flytta ned"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move left"
 msgstr "Flytta åt vänster"
 
@@ -12402,7 +12465,7 @@ msgstr "Flytta åt vänster"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move right"
 msgstr "Flytta åt höger"
 
@@ -12529,6 +12592,7 @@ msgstr "N/A"
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -12788,7 +12852,6 @@ msgstr "Ny modell"
 
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCardContent.tsx
-#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Ny anteckning"
 
@@ -12838,7 +12901,6 @@ msgstr "Ny flik"
 
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
-#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Ny uppgift"
 
@@ -13178,7 +13240,7 @@ msgstr "Inget datum fält"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "Ingen standardkonfiguration finns tillgänglig för den här fliken"
 
@@ -13490,6 +13552,7 @@ msgstr "Ingen response body"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/views/components/ViewFieldsSearchDropdownSection.tsx
@@ -13795,6 +13858,9 @@ msgstr "Inte inspelat"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Not set"
 msgstr "Ej inställt"
@@ -13929,6 +13995,7 @@ msgstr "objekt"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -14837,15 +14904,15 @@ msgstr "Telefonnummer kopierat till urklipp"
 msgid "Pick a {objectLabel} record"
 msgstr "Välj en {objectLabel} post"
 
-#. js-lingui-id: 1Mj027
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Pick a connected account or set a workspace member as variable"
-msgstr "Välj ett anslutet konto eller ange en medlem i arbetsytan som variabel"
-
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
 msgstr "Välj en vy"
+
+#. js-lingui-id: rV71K7
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Pick an address to send from or set a workspace member as variable"
+msgstr "Välj en adress att skicka från eller ange en medlem i arbetsytan som variabel"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -14882,7 +14949,7 @@ msgid "Pie Chart"
 msgstr "Cirkeldiagram"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "Fäst flik"
 
@@ -14905,7 +14972,7 @@ msgid "Placeholder"
 msgstr "Platshållare"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "Placering"
@@ -15245,6 +15312,7 @@ msgstr "Egenskaper"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Property"
 msgstr "Egenskap"
@@ -16060,9 +16128,10 @@ msgstr "Skicka e-post på nytt"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset"
 msgstr "Återställ"
 
@@ -16091,10 +16160,11 @@ msgstr "Återställ postsidans layout"
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset to default"
 msgstr "Återställ till standard"
 
@@ -16165,6 +16235,11 @@ msgstr "Återställ"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "Återställ {objectLabel}"
+
+#. js-lingui-id: ZkHcxG
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Restore the activity type settings defined by the application"
+msgstr "Återställ inställningarna för aktivitetstypen som definierats av applikationen"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17607,6 +17682,11 @@ msgstr "Visa mer"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Visa endast rader med fel"
+
+#. js-lingui-id: P1iyUf
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Show this activity type in record timelines"
+msgstr "Visa denna aktivitetstyp i posternas tidslinjer"
 
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -19278,7 +19358,7 @@ msgstr "Denna vecka"
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr ""
 
@@ -19389,6 +19469,18 @@ msgstr "Tidslinje"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "timeline activity type"
 msgstr "tidslinjeaktivitetstyp"
+
+#. js-lingui-id: soVdWA
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Timeline activity type"
+msgstr "Tidslinjeaktivitetstyp"
+
+#. js-lingui-id: YZJ+T0
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Timeline activity types"
+msgstr "Tidslinjeaktivitetstyper"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -20040,6 +20132,7 @@ msgstr "Universellt ID"
 #. js-lingui-id: sd9apq
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Universal identifier"
@@ -20836,6 +20929,7 @@ msgstr "Giltighetstoken uppdaterades"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Value"
@@ -21117,7 +21211,7 @@ msgid "Visibility"
 msgstr "Synlighet"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "Synlighetsbegränsning"
 
@@ -21519,9 +21613,15 @@ msgid "widget"
 msgstr "widget"
 
 #. js-lingui-id: AHXN2z
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Widget"
 msgstr "Widget"
+
+#. js-lingui-id: v1P7Gm
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Widget Settings"
+msgstr "Widgetinställningar"
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -21638,6 +21738,7 @@ msgstr "Arbetsflöden"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx

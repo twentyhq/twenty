@@ -3,7 +3,7 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import { type Manifest } from 'twenty-shared/application';
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
@@ -89,7 +89,7 @@ export const validateTimelineActivityTypes = (
     if (isDefined(triggerFieldUniversalIdentifiers)) {
       if (
         emit.on !== 'updated' ||
-        triggerFieldUniversalIdentifiers.length === 0 ||
+        !isNonEmptyArray(triggerFieldUniversalIdentifiers) ||
         new Set(triggerFieldUniversalIdentifiers).size !==
           triggerFieldUniversalIdentifiers.length
       ) {

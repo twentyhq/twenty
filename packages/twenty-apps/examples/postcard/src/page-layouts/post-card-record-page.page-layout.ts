@@ -1,6 +1,7 @@
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from 'src/objects/post-card.object';
 import { CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/components/card.front-component';
+import { GENERATE_POST_CARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/command-menu-items/generate-post-card.command-menu-item';
 
 export default definePageLayout({
   universalIdentifier: 'f2bf4b9f-0485-46f0-89bb-9a65d2b939b1',
@@ -39,6 +40,9 @@ export default definePageLayout({
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
               CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+            headerCommandMenuItemUniversalIdentifiers: [
+              GENERATE_POST_CARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+            ],
           },
         },
       ],

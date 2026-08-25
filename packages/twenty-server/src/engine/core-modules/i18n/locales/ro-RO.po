@@ -293,7 +293,6 @@ msgstr "Lipsește un câmp necesar."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Lipsește un câmp obligatoriu. Vă rugăm să furnizați toate valorile obligatorii și să încercați din nou."
 
@@ -430,6 +429,11 @@ msgstr "A apărut o eroare la sortarea vizualizării."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Un webhook cu această configurație există deja."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Nu a fost găsită o acțiune în antetul widgetului."
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2031,6 +2035,16 @@ msgstr "Execuția pasului de cod a eșuat."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Schema culorilor"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Elementul de meniu de comandă {commandMenuItemUniversalIdentifier} la care face referire antetul widgetului aparține unei alte aplicații"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Elementul de meniu de comandă {commandMenuItemUniversalIdentifier} la care face referire antetul widgetului nu a fost găsit"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7047,8 @@ msgstr "Eticheta obiectului este prea scurtă"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -10162,11 +10178,6 @@ msgstr "Nu există un pas anterior de onboarding la care să te întorci."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Aceste câmpuri nu pot fi actualizate înainte ca spațiul de lucru să fie activat: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10432,7 +10443,6 @@ msgstr "Această operațiune nu este acceptată."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Această operațiune face referire la o înregistrare care nu există sau nu poate fi modificată din cauza relațiilor existente."
 
@@ -10464,7 +10474,6 @@ msgstr ""
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Această înregistrare nu poate fi ștearsă deoarece este încă referită de alte înregistrări."
 
@@ -11815,6 +11824,21 @@ msgstr "Widgetul depășește înălțimea grilei"
 msgid "Widget extends beyond grid width"
 msgstr "Widgetul depășește lățimea grilei"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Acțiunile din antetul widgetului trebuie să fie unice"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Acțiunile din antetul widgetului trebuie să aparțină aceleiași aplicații ca widgetul"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Referințele elementelor din meniul de comenzi din antetul widgetului trebuie să fie unice"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12409,7 +12433,6 @@ msgstr "Puteți actualiza câmpul de fișiere pentru o singură înregistrare od
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12443,6 +12466,11 @@ msgstr "Nu puteți elimina rolul de administrator de la ultimul administrator. V
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Nu puteți revoca accesul la panoul de administrare de la ultimul administrator de server."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Nu puteți trimite de la această adresă."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

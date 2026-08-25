@@ -995,7 +995,6 @@ msgstr "Přistupujte k datům svého pracovního prostoru ze svého oblíbeného
 #. js-lingui-id: AeXO77
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1065,6 +1064,7 @@ msgstr "Akce při kliknutí"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -1117,6 +1117,7 @@ msgstr "Aktivace..."
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -1137,6 +1138,11 @@ msgstr "Aktivní instalace"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Active Sync"
 msgstr "Aktivní synchronizace"
+
+#. js-lingui-id: LynXsl
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Activity visibility"
+msgstr "Viditelnost aktivit"
 
 #. js-lingui-id: m16xKo
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -1176,7 +1182,7 @@ msgid "Add a new company we're in touch with (e.g. name, website, industry). Det
 msgstr "Přidejte novou společnost, se kterou jsme v kontaktu (např. název, web, odvětví). Podrobnosti: "
 
 #. js-lingui-id: Ad+JsP
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
 msgstr "Nejdříve k této společnosti přidejte osobu s e-mailovou adresou."
 
@@ -1212,12 +1218,12 @@ msgid "Add account"
 msgstr "Přidat účet"
 
 #. js-lingui-id: W5wF8J
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
 msgstr "Nejdříve přidejte e-mailovou adresu ke kontaktní osobě."
 
 #. js-lingui-id: LVzaHu
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
 msgstr "Nejdříve této osobě přidejte e-mailovou adresu."
 
@@ -1315,7 +1321,6 @@ msgstr "Přidat pole"
 
 #. js-lingui-id: T7RGT6
 #: src/modules/activities/files/components/FilesCardContent.tsx
-#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Přidat soubor"
 
@@ -1452,6 +1457,7 @@ msgid "Add permission"
 msgstr ""
 
 #. js-lingui-id: AmiJYR
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Add relation"
 msgstr "Přidat vztah"
@@ -2525,6 +2531,7 @@ msgstr "aplikační proměnná"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
@@ -2836,6 +2843,11 @@ msgstr "v minutách {remainingValues} a {0}"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "at the top of the hour"
 msgstr "na začátku hodiny"
+
+#. js-lingui-id: x9ecE4
+#: src/modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx
+msgid "Attach file"
+msgstr "Připojit soubor"
 
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -3471,7 +3483,7 @@ msgid "Calendar event not found"
 msgstr "Událost kalendáře nenalezena"
 
 #. js-lingui-id: rLQVsa
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Calendar events cannot be linked to this record type"
 msgstr "Události kalendáře nelze propojit s tímto typem záznamu"
 
@@ -3957,6 +3969,11 @@ msgstr "Vyberte, co se stane při kliknutí na e-mailovou adresu"
 msgid "Choose where records open by default. Some objects may use a workspace setting"
 msgstr "Vyberte, kde se záznamy budou ve výchozím nastavení otevírat. Některé objekty mohou používat nastavení pracovního prostoru"
 
+#. js-lingui-id: EcjwmO
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Choose whether this activity type appears in record timelines"
+msgstr "Zvolte, zda se tento typ aktivity zobrazí na časových osách záznamů"
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -4425,10 +4442,10 @@ msgstr "Dokončené úlohy uchovány po dobu {completedDuration}, neúspěšné 
 msgid "Component name"
 msgstr "Název komponenty"
 
-#. js-lingui-id: QOhkyl
-#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
-msgid "Compose"
-msgstr "Napsat"
+#. js-lingui-id: rYRNgS
+#: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
+msgid "Compose email"
+msgstr "Napsat e-mail"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -4475,6 +4492,11 @@ msgstr "Konfigurace"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Configuration of this command menu item"
 msgstr "Konfigurace této položky menu příkazů"
+
+#. js-lingui-id: +rVpsA
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Configuration of this timeline activity type"
+msgstr "Konfigurace tohoto typu aktivity na časové ose"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5247,6 +5269,11 @@ msgstr "Vytvořit a nakonfigurovat AI agenty"
 msgid "Create API key"
 msgstr "Vytvořit API klíč"
 
+#. js-lingui-id: 0gp+cZ
+#: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
+msgid "Create calendar event"
+msgstr "Vytvořit událost v kalendáři"
+
 #. js-lingui-id: fbe2ik
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Create Calendar Event"
@@ -5268,7 +5295,6 @@ msgid "Create date field"
 msgstr "Vytvořit pole s datem"
 
 #. js-lingui-id: PybJS2
-#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 msgid "Create event"
 msgstr "Vytvořit událost"
@@ -5277,6 +5303,11 @@ msgstr "Vytvořit událost"
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 msgid "Create new view"
 msgstr "Vytvořit nové zobrazení"
+
+#. js-lingui-id: BKucva
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create note"
+msgstr "Vytvořit poznámku"
 
 #. js-lingui-id: gSyzEV
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5300,6 +5331,12 @@ msgstr "Vytvořit záznam"
 msgid "Create record on {0} at {1}"
 msgstr "Vytvořit záznam dne {0} v {1}"
 
+#. js-lingui-id: fRYkDa
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
+#: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
+msgid "Create related"
+msgstr "Vytvořit související záznam"
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5315,6 +5352,11 @@ msgstr "Vytvořit výběrové pole"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Create Select..."
 msgstr "Vytvořit výběr..."
+
+#. js-lingui-id: Z+6PPA
+#: src/modules/activities/hooks/useCreateActivityRelatedRecordAction.ts
+msgid "Create task"
+msgstr "Vytvořit úkol"
 
 #. js-lingui-id: JjK4rW
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -6247,7 +6289,7 @@ msgstr "smazat"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -6594,6 +6636,7 @@ msgstr "Podrobnosti pro každý pracovní prostor"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Details"
 msgstr "Podrobnosti"
@@ -7172,6 +7215,11 @@ msgstr "Upravit tabulku záznamů"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Upravit záznamy na všech objektech"
+
+#. js-lingui-id: 4QhQge
+#: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
+msgid "Edit relation"
+msgstr "Upravit vztah"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
@@ -8045,6 +8093,7 @@ msgstr ""
 
 #. js-lingui-id: 0pC/y6
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Event"
 msgstr "Událost"
 
@@ -8563,6 +8612,11 @@ msgstr "Nepodařilo se odstranit obrázek"
 msgid "Failed to remove provider"
 msgstr "Nepodařilo se odebrat poskytovatele"
 
+#. js-lingui-id: is6uow
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to reset the timeline activity type."
+msgstr "Nepodařilo se obnovit typ aktivity na časové ose."
+
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "Failed to retry jobs. Please try again later."
@@ -8687,6 +8741,11 @@ msgstr "Nepodařilo se aktualizovat jméno odesílatele."
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Failed to update server administrator access."
 msgstr "Nepodařilo se aktualizovat přístup administrátora serveru."
+
+#. js-lingui-id: 6TG/SY
+#: src/pages/settings/applications/hooks/useApplicationTimelineActivityTypes.ts
+msgid "Failed to update the timeline activity type."
+msgstr "Nepodařilo se aktualizovat typ aktivity na časové ose."
 
 #. js-lingui-id: 16Z+3L
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9220,6 +9279,8 @@ msgstr "Francouzština"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "From"
 msgstr "Od"
 
@@ -9238,6 +9299,7 @@ msgstr "frontendová komponenta"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Front component"
 msgstr "Frontendová komponenta"
 
@@ -9284,10 +9346,10 @@ msgstr "Celá stránka"
 msgid "full server access"
 msgstr "plný přístup k serveru"
 
-#. js-lingui-id: Ld0Tt4
+#. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "Full tab widget"
-msgstr "Widget přes celou kartu"
+msgid "Full-height Widget"
+msgstr "Widget v plné výšce"
 
 #. js-lingui-id: hdxwWi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10989,6 +11051,7 @@ msgstr "Korejština"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Label"
 msgstr "Štítek"
 
@@ -11792,7 +11855,7 @@ msgstr "Nastavit jako soukromé"
 
 #. js-lingui-id: wckWOP
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr "Spravovat"
@@ -12392,7 +12455,7 @@ msgstr "Přesunout dolů"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move left"
 msgstr "Posunout doleva"
 
@@ -12400,7 +12463,7 @@ msgstr "Posunout doleva"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Move right"
 msgstr "Posunout doprava"
 
@@ -12527,6 +12590,7 @@ msgstr "N/A"
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -12786,7 +12850,6 @@ msgstr "Nový model"
 
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCardContent.tsx
-#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Nová poznámka"
 
@@ -12836,7 +12899,6 @@ msgstr "Nová karta"
 
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
-#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Nový úkol"
 
@@ -13176,7 +13238,7 @@ msgstr "Žádné pole datumu"
 
 #. js-lingui-id: lAfu/q
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "No default configuration available for this tab"
 msgstr "Pro tuto kartu není k dispozici žádná výchozí konfigurace"
 
@@ -13488,6 +13550,7 @@ msgstr "Žádné tělo odpovědi"
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
+#: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownSelect.tsx
 #: src/modules/views/components/ViewFieldsSearchDropdownSection.tsx
@@ -13793,6 +13856,9 @@ msgstr "Nezaznamenáno"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Not set"
 msgstr "Nenastaveno"
@@ -13927,6 +13993,7 @@ msgstr "objekt"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -14835,15 +14902,15 @@ msgstr "Telefonní číslo zkopírováno do schránky"
 msgid "Pick a {objectLabel} record"
 msgstr "Vyberte záznam {objectLabel}"
 
-#. js-lingui-id: 1Mj027
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
-msgid "Pick a connected account or set a workspace member as variable"
-msgstr "Vyberte propojený účet nebo nastavte člena pracovního prostoru jako proměnnou"
-
 #. js-lingui-id: JqqNlC
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick a view"
 msgstr "Vyberte zobrazení"
+
+#. js-lingui-id: rV71K7
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Pick an address to send from or set a workspace member as variable"
+msgstr "Vyberte adresu, ze které se má odesílat, nebo nastavte člena pracovního prostoru jako proměnnou"
 
 #. js-lingui-id: Wlba2h
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -14880,7 +14947,7 @@ msgid "Pie Chart"
 msgstr "Koláčový graf"
 
 #. js-lingui-id: 3pU8e+
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Pin tab"
 msgstr "Připnout kartu"
 
@@ -14903,7 +14970,7 @@ msgid "Placeholder"
 msgstr "Zástupný text"
 
 #. js-lingui-id: MFTZK8
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Placement"
 msgstr "Umístění"
@@ -15243,6 +15310,7 @@ msgstr "Vlastnosti"
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 msgid "Property"
 msgstr "Vlastnost"
@@ -16058,9 +16126,10 @@ msgstr "Znovu odeslat e-mail"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset"
 msgstr "Obnovit"
 
@@ -16089,10 +16158,11 @@ msgstr "Obnovit rozvržení stránky záznamu"
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Reset to default"
 msgstr "Obnovit na výchozí"
 
@@ -16163,6 +16233,11 @@ msgstr "Obnovit"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "Obnovit {objectLabel}"
+
+#. js-lingui-id: ZkHcxG
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Restore the activity type settings defined by the application"
+msgstr "Obnovit nastavení typu aktivity definované aplikací"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -17603,6 +17678,11 @@ msgstr "Zobrazit více"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Zobrazit pouze řádky s chybami"
+
+#. js-lingui-id: P1iyUf
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Show this activity type in record timelines"
+msgstr "Zobrazit tento typ aktivity na časových osách záznamů"
 
 #. js-lingui-id: 3UVA3z
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -19270,7 +19350,7 @@ msgstr "Tento týden"
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr "Tím se zruší všechny úpravy provedené na kartě a jejích widgetech. Režim úprav bude zrušen a stránka se obnoví. Tuto akci nelze vrátit zpět."
 
@@ -19381,6 +19461,18 @@ msgstr "Časová osa"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "timeline activity type"
 msgstr "typ aktivity na časové ose"
+
+#. js-lingui-id: soVdWA
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
+msgid "Timeline activity type"
+msgstr "Typ aktivity na časové ose"
+
+#. js-lingui-id: YZJ+T0
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Timeline activity types"
+msgstr "Typy aktivit na časové ose"
 
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -20032,6 +20124,7 @@ msgstr "Univerzální ID"
 #. js-lingui-id: sd9apq
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Universal identifier"
@@ -20828,6 +20921,7 @@ msgstr "Token platnosti byl úspěšně obnoven"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Value"
@@ -21109,7 +21203,7 @@ msgid "Visibility"
 msgstr "Viditelnost"
 
 #. js-lingui-id: XQC+sL
-#: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
 msgid "Visibility restriction"
 msgstr "Omezení viditelnosti"
 
@@ -21511,9 +21605,15 @@ msgid "widget"
 msgstr "widget"
 
 #. js-lingui-id: AHXN2z
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Widget"
 msgstr "Widget"
+
+#. js-lingui-id: v1P7Gm
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Widget Settings"
+msgstr "Nastavení widgetu"
 
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -21630,6 +21730,7 @@ msgstr "Pracovní postupy"
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx

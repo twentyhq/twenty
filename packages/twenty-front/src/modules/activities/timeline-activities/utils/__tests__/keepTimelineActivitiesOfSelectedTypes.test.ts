@@ -38,16 +38,26 @@ const linkedActivity = {
 const untypedActivity = { properties: {} } satisfies FilterableTimelineActivity;
 
 describe('keepTimelineActivitiesOfSelectedTypes', () => {
-  it('keeps everything when nothing is selected', () => {
+  it('keeps everything when no filter is active', () => {
     const activities = [updatedActivity, linkedActivity, untypedActivity];
 
     expect(
       keepTimelineActivitiesOfSelectedTypes(
         activities,
-        [],
+        null,
         timelineActivityTypeMaps,
       ),
     ).toEqual(activities);
+  });
+
+  it('keeps nothing when an active filter has no matching types', () => {
+    expect(
+      keepTimelineActivitiesOfSelectedTypes(
+        [updatedActivity, linkedActivity, untypedActivity],
+        [],
+        timelineActivityTypeMaps,
+      ),
+    ).toEqual([]);
   });
 
   it('keeps only the activities carrying a selected type', () => {

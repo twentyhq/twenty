@@ -4,6 +4,7 @@ import chunk from 'lodash.chunk';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { type EntityManager } from 'typeorm';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TimelineActivityTypeCacheService } from 'src/modules/timeline/services/timeline-activity-type-cache.service';
@@ -12,7 +13,6 @@ import {
   type ResolvedTimelineActivityType,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineException } from 'src/modules/timeline/exceptions/timeline.exception';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
   CalendarEventParticipantDataSeed,
@@ -133,7 +133,7 @@ export class TimelineActivitySeederService {
     schemaName,
     workspaceId,
   }: {
-    entityManager: WorkspaceEntityManager;
+    entityManager: EntityManager;
     schemaName: string;
     workspaceId: string;
   }) {
@@ -254,7 +254,7 @@ export class TimelineActivitySeederService {
   }
 
   private async insertTimelineActivities(
-    entityManager: WorkspaceEntityManager,
+    entityManager: EntityManager,
     schemaName: string,
     timelineActivities: TimelineActivitySeedData[],
   ) {
@@ -267,9 +267,7 @@ export class TimelineActivitySeederService {
 
     for (const batch of timelineActivityBatches) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.timelineActivity`, [
           'id',

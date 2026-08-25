@@ -293,7 +293,6 @@ msgstr "Brak wymaganego pola."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Brakuje wymaganego pola. Podaj wszystkie wymagane wartości i spróbuj ponownie."
 
@@ -430,6 +429,11 @@ msgstr "Wystąpił błąd sortowania widoku."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Webhook z taką konfiguracją już istnieje."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Nie znaleziono działania nagłówka widżetu"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2031,6 +2035,16 @@ msgstr "Wykonanie kroku kodu nie powiodło się."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Schemat Kolorów"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Element menu poleceń {commandMenuItemUniversalIdentifier}, do którego odwołuje się nagłówek widżetu, należy do innej aplikacji"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Nie znaleziono elementu menu poleceń {commandMenuItemUniversalIdentifier}, do którego odwołuje się nagłówek widżetu"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7047,8 @@ msgstr "Etykieta obiektu jest zbyt krótka"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -10162,11 +10178,6 @@ msgstr "Nie ma wcześniejszego kroku onboardingu, do którego można wrócić."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Następujące pola nie mogą zostać zaktualizowane, dopóki obszar roboczy nie zostanie aktywowany: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Wartość w polu {fieldLabel} jest już używana. Sprawdź swoje dane i spróbuj ponownie."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10432,7 +10443,6 @@ msgstr "Ta operacja nie jest obsługiwana."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ta operacja odnosi się do rekordu, który nie istnieje lub nie może zostać zmodyfikowany z powodu istniejących powiązań."
 
@@ -10464,7 +10474,6 @@ msgstr "Ten zapis już istnieje. Sprawdź swoje dane i spróbuj ponownie."
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Tego rekordu nie można usunąć, ponieważ inne rekordy wciąż się do niego odwołują."
 
@@ -11815,6 +11824,21 @@ msgstr "Widżet wykracza poza wysokość siatki"
 msgid "Widget extends beyond grid width"
 msgstr "Widżet wykracza poza szerokość siatki"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Akcje nagłówka widżetu muszą być unikalne"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Akcje nagłówka widżetu muszą należeć do tej samej aplikacji co widżet"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Odwołania do elementów menu poleceń nagłówka widżetu muszą być unikalne"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12409,7 +12433,6 @@ msgstr "Możesz jednocześnie zaktualizować tylko jeden rekord zawierający pol
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12443,6 +12466,11 @@ msgstr "Nie możesz usunąć roli administratora od ostatniego administratora. N
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Nie możesz odebrać dostępu do panelu administracyjnego ostatniemu administratorowi serwera."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Nie możesz wysyłać z tego adresu."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

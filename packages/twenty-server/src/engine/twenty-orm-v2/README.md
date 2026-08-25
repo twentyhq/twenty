@@ -4,7 +4,8 @@ A workspace-data ORM that uses no TypeORM. It exposes the same surface as
 `src/engine/twenty-orm` so call sites can move over one at a time, and underneath it
 generates parameterised SQL from field metadata and hands it to `pg`.
 
-Behind `IS_ORM_V2_READ_PATH_ENABLED`. Off, nothing changes.
+This is now the only read/write path for workspace data. The `IS_ORM_V2_READ_PATH_ENABLED`
+flag that used to gate it has been removed, along with the v1 read/write branches it guarded.
 
 ## Why it can exist at all
 

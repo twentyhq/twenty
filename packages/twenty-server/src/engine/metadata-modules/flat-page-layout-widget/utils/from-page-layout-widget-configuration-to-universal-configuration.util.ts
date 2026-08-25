@@ -314,7 +314,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentId, configurationType } = configuration;
+      const {
+        frontComponentId,
+        configurationType,
+        headerCommandMenuItemUniversalIdentifiers,
+      } = configuration;
 
       const frontComponentUniversalIdentifier: string | null =
         frontComponentUniversalIdentifierById[frontComponentId] ?? null;
@@ -332,6 +336,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         configurationType,
         frontComponentUniversalIdentifier,
+        headerCommandMenuItemUniversalIdentifiers,
       };
     }
 

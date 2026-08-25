@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` es uno de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` para personalizar la vista de detalles de un objeto específico.
 * `objectUniversalIdentifier` especifica a qué objeto se aplica este diseño.
-* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode`: `VERTICAL_LIST` para páginas de registros y páginas independientes, `GRID` para paneles. En una pestaña `VERTICAL_LIST`, un solo widget se muestra a todo lo ancho y ocupa toda la pestaña; con varios widgets, se apilan como tarjetas. Una pestaña `GRID` siempre distribuye sus widgets como tarjetas en una cuadrícula de 12 columnas, sea cual sea su número, así que elige `VERTICAL_LIST` cuando quieras que un widget llene la página.
+* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode`: `VERTICAL_LIST` para páginas de registros y páginas independientes, `GRID` para paneles y `CANVAS` para un único widget que debe ocupar el área de visualización de la pestaña. Una pestaña `VERTICAL_LIST` apila los widgets verticalmente. Los widgets integrados que gestionan su propio desplazamiento, como las líneas de tiempo, los archivos, las notas, las tareas y los flujos de trabajo, ocupan un área de visualización; los campos, los componentes front, los gráficos y otros widgets de ajuste al contenido se representan a la altura de su contenido o a la altura configurada. Una pestaña `GRID` siempre distribuye sus widgets como tarjetas en una cuadrícula de 12 columnas. Un widget `CANVAS` no tiene una posición explícita; si una pestaña de lienzo contiene varios widgets, se representan a la altura de su contenido en lugar de llenar la ventana gráfica.
 * Establece `layoutMode` explícitamente. Omitirlo te da `VERTICAL_LIST` en una `STANDALONE_PAGE` y `GRID` en todos los demás casos, lo cual rara vez es lo que quieres en una página de registro.
 * Cada `widget` dentro de una pestaña puede renderizar un [componente de frontend](/l/es/developers/extend/apps/layout/front-components), una lista de relaciones u otros tipos de widget integrados.
+* Un widget `FRONT_COMPONENT` puede establecer `headerCommandMenuItemUniversalIdentifiers` en una matriz ordenada de identificadores universales de elementos de menú de comandos de la misma aplicación. Estas acciones aparecen como botones de icono en el encabezado de la tarjeta del widget y conservan sus comprobaciones de disponibilidad y permisos a nivel de comando. Los identificadores deben ser únicos y deben resolverse cuando se instala la aplicación.
 * `position` en las pestañas controla su orden. Usa valores más altos (p. ej., 50) para colocar pestañas personalizadas después de las integradas.
 
 ### Widgets de campos
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Cada entrada de diseño también expone sus `tabs` y sus `widgets`, para que puedas hacer referencia a cualquier nivel:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   También hay disponible un alias corto `STANDARD_PAGE_LAYOUT`:

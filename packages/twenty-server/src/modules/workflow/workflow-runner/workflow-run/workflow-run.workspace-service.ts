@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -110,7 +109,7 @@ export class WorkflowRunWorkspaceService {
           where: {
             workflowId: workflow.id,
           },
-          order: { createdAt: 'desc' },
+          order: { createdAt: 'DESC' },
         });
 
         const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
@@ -411,7 +410,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     workspaceId: string;
-    partialUpdate: QueryDeepPartialEntity<WorkflowRunWorkspaceEntity>;
+    partialUpdate: Partial<WorkflowRunWorkspaceEntity>;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -434,13 +433,7 @@ export class WorkflowRunWorkspaceService {
         );
       }
 
-      await workflowRunRepository.update(
-        workflowRunToUpdate.id,
-        partialUpdate,
-        undefined,
-        undefined,
-        ['id'],
-      );
+      await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
     }, authContext);
   }
 

@@ -193,8 +193,6 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
       const result = await dataSource.query(
         backfillQuery.sql,
         backfillQuery.parameters,
-        undefined,
-        { shouldBypassPermissionChecks: true },
       );
 
       lastBatchRowCount = result?.[1] ?? 0;
@@ -223,8 +221,6 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
         await dataSource.query<[Array<{ id: string }>, number]>(
           backfillQuery.sql,
           backfillQuery.parameters,
-          undefined,
-          { shouldBypassPermissionChecks: true },
         );
 
       lastBatchRowCount = updatedRowCount;

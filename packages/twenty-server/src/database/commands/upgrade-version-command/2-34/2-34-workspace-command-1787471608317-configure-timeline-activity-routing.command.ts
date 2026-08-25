@@ -106,7 +106,6 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
          AND timeline_activity_type."universalIdentifier" = routing."universalIdentifier"`,
         [workspaceId, twentyStandardFlatApplication.id, ...routingParameters],
         queryRunner,
-        { shouldBypassPermissionChecks: true },
       );
 
       const junctionConditions = JUNCTION_TARGETS.map(
@@ -135,7 +134,6 @@ export class ConfigureTimelineActivityRoutingCommand extends ProvisionedWorkspac
           ),
         ],
         queryRunner,
-        { shouldBypassPermissionChecks: true },
       );
 
       validateStandardMetadataUpdateCount({

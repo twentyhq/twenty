@@ -293,7 +293,6 @@ msgstr "Thiếu trường bắt buộc."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Thiếu trường bắt buộc. Vui lòng cung cấp tất cả giá trị bắt buộc và thử lại."
 
@@ -430,6 +429,11 @@ msgstr "Đã xảy ra lỗi sắp xếp chế độ xem."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Đã tồn tại webhook với cấu hình này."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Không tìm thấy hành động tiêu đề tiện ích"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2031,6 +2035,16 @@ msgstr "Thực thi bước mã thất bại."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Bảng màu"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Mục menu lệnh {commandMenuItemUniversalIdentifier} được tiêu đề tiện ích tham chiếu thuộc về một ứng dụng khác"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Không tìm thấy mục menu lệnh {commandMenuItemUniversalIdentifier} được tiêu đề tiện ích tham chiếu"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7047,8 @@ msgstr "Nhãn đối tượng quá ngắn"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -10162,11 +10178,6 @@ msgstr "Không có bước thiết lập ban đầu trước đó để quay l�
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Các trường này không thể được cập nhật trước khi workspace được kích hoạt: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr ""
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10432,7 +10443,6 @@ msgstr "Thao tác này không được hỗ trợ."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Thao tác này tham chiếu đến một bản ghi không tồn tại hoặc không thể sửa đổi do các mối quan hệ hiện có."
 
@@ -10464,7 +10474,6 @@ msgstr "Bản ghi này đã tồn tại. Vui lòng kiểm tra dữ liệu của 
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Không thể xóa bản ghi này vì nó vẫn đang được tham chiếu bởi các bản ghi khác."
 
@@ -11815,6 +11824,21 @@ msgstr "Tiện ích vượt quá chiều cao lưới"
 msgid "Widget extends beyond grid width"
 msgstr "Tiện ích vượt quá chiều rộng lưới"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Các hành động ở tiêu đề tiện ích phải là duy nhất"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Các hành động ở tiêu đề tiện ích phải thuộc cùng một ứng dụng với tiện ích"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Các tham chiếu mục menu lệnh ở tiêu đề tiện ích phải là duy nhất"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12409,7 +12433,6 @@ msgstr "Bạn chỉ có thể cập nhật một bản ghi có trường tệp t
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12443,6 +12466,11 @@ msgstr "Bạn không thể gỡ bỏ vai trò quản trị viên cuối cùng. V
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Bạn không thể thu hồi quyền truy cập bảng quản trị từ quản trị viên máy chủ cuối cùng."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Bạn không thể gửi từ địa chỉ này."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

@@ -293,7 +293,6 @@ msgstr "Een verplicht veld ontbreekt."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Een vereist veld ontbreekt. Geef alle vereiste waarden op en probeer het opnieuw."
 
@@ -430,6 +429,11 @@ msgstr "Er is een fout opgetreden in de weergavesortering."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Er bestaat al een webhook met deze configuratie."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Er is geen actie in de widgetkop gevonden."
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2031,6 +2035,16 @@ msgstr "Uitvoering van codestap mislukt."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Kleurenschema"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Het opdrachtmenu-item {commandMenuItemUniversalIdentifier} waarnaar wordt verwezen door de widgetkop behoort tot een andere applicatie"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Het opdrachtmenu-item {commandMenuItemUniversalIdentifier} waarnaar wordt verwezen door de widgetkop is niet gevonden"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -7033,6 +7047,8 @@ msgstr "Objectlabel is te kort"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -10162,11 +10178,6 @@ msgstr "Er is geen vorige onboarding-stap om naar terug te gaan."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Deze velden kunnen niet worden bijgewerkt voordat de werkruimte is geactiveerd: {fieldsList}."
 
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Deze {fieldLabel}-waarde is al in gebruik. Controleer uw gegevens en probeer het opnieuw."
-
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10432,7 +10443,6 @@ msgstr "Deze bewerking wordt niet ondersteund."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Deze bewerking verwijst naar een record dat niet bestaat of niet kan worden gewijzigd vanwege bestaande relaties."
 
@@ -10464,7 +10474,6 @@ msgstr "Deze record bestaat al. Controleer uw gegevens en probeer het opnieuw."
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Dit record kan niet worden verwijderd omdat er nog door andere records naar wordt verwezen."
 
@@ -11815,6 +11824,21 @@ msgstr "Widget overschrijdt rasterhoogte"
 msgid "Widget extends beyond grid width"
 msgstr "Widget overschrijdt rasterbreedte"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Widgetkopacties moeten uniek zijn"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Widgetkopacties moeten tot dezelfde applicatie als de widget behoren"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Verwijzingen naar widgetkopopdrachtmenu-items moeten uniek zijn"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12409,7 +12433,6 @@ msgstr "Je kunt slechts één record met het bestandenveld tegelijk bijwerken."
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12443,6 +12466,11 @@ msgstr "U kunt de beheerdersrol niet verwijderen van de laatste beheerder. Wijs 
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Je kunt de toegang tot het beheerderspaneel niet intrekken van de laatste serverbeheerder."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "U kunt niet vanaf dit adres verzenden."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

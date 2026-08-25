@@ -78,8 +78,8 @@ export class MessagingDeleteGroupEmailMessagesService {
                 'message.messageParticipants',
                 'participant',
                 'participant.role = :role',
-                { role: MessageParticipantRole.FROM },
               )
+              .setParameter('role', MessageParticipantRole.FROM)
               .where('mcma.messageChannelId = :messageChannelId', {
                 messageChannelId,
               })

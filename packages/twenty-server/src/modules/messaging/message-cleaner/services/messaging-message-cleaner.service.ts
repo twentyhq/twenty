@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -234,7 +234,7 @@ export class MessagingMessageCleanerService {
   }
 
   private async findReferencedMessageIds(
-    messageChannelMessageAssociationRepository: WorkspaceRepository<MessageChannelMessageAssociationWorkspaceEntity>,
+    messageChannelMessageAssociationRepository: WorkspaceRepositoryV2<MessageChannelMessageAssociationWorkspaceEntity>,
     messageIds: string[],
   ): Promise<string[]> {
     const associations = await messageChannelMessageAssociationRepository.find({
@@ -246,7 +246,7 @@ export class MessagingMessageCleanerService {
   }
 
   private async findReferencedThreadIds(
-    messageRepository: WorkspaceRepository<MessageWorkspaceEntity>,
+    messageRepository: WorkspaceRepositoryV2<MessageWorkspaceEntity>,
     threadIds: string[],
   ): Promise<string[]> {
     const messages = await messageRepository.find({

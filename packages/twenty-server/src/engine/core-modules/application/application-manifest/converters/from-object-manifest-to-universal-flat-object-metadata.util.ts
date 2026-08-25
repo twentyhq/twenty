@@ -42,6 +42,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier:
       objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier: null,

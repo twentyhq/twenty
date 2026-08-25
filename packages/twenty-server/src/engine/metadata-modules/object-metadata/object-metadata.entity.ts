@@ -24,6 +24,7 @@ import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 's
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
@@ -219,4 +220,13 @@ export class ObjectMetadataEntity
     cascade: true,
   })
   views: Relation<ViewEntity[]>;
+
+  @OneToMany(
+    () => PageLayoutEntity,
+    (pageLayout) => pageLayout.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  pageLayouts: Relation<PageLayoutEntity[]>;
 }

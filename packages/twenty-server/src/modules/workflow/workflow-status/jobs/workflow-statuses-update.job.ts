@@ -8,7 +8,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStatus,
@@ -192,7 +192,7 @@ export class WorkflowStatusesUpdateJob {
     workflowVersionRepository,
   }: {
     workflowId: string;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepositoryV2<WorkflowVersionWorkspaceEntity>;
   }) {
     const workflowVersions = await workflowVersionRepository.find({
       where: {
