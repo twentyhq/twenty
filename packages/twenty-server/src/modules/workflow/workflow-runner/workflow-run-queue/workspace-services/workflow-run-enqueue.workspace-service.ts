@@ -53,7 +53,6 @@ export class WorkflowRunEnqueueWorkspaceService {
         async () => {
           const workflowRunRepository =
             await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
               WorkflowRunWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );

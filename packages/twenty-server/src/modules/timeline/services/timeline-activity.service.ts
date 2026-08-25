@@ -38,7 +38,6 @@ type BuildPayloadsForRuleArgs = {
   rule: TimelineActivityRule;
   events: ObjectRecordBaseEvent[];
   action: DatabaseEventAction;
-  workspaceId: string;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
@@ -148,7 +147,6 @@ export class TimelineActivityService {
           // objects mostly, never pay the workspace member query.
           const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
             events: eventsWithoutPositionDiff,
-            workspaceId,
           });
 
           return Promise.all([
@@ -157,7 +155,6 @@ export class TimelineActivityService {
                 rule,
                 events: enrichedEvents,
                 action,
-                workspaceId,
                 flatFieldMetadataMaps,
                 resolveTimelineActivityType,
               }),
@@ -167,7 +164,6 @@ export class TimelineActivityService {
                 rule,
                 events: enrichedEvents,
                 action,
-                workspaceId,
                 flatFieldMetadataMaps,
                 resolveTimelineActivityType,
               }),
@@ -247,7 +243,6 @@ export class TimelineActivityService {
     rule,
     events,
     action,
-    workspaceId,
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
@@ -358,7 +353,6 @@ export class TimelineActivityService {
         {
           rule,
           sourceRecordIds: matchingEvents.map((event) => event.recordId),
-          workspaceId,
         },
       );
 
@@ -386,7 +380,6 @@ export class TimelineActivityService {
     rule,
     events,
     action,
-    workspaceId,
     flatFieldMetadataMaps,
     resolveTimelineActivityType,
   }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
@@ -463,7 +456,6 @@ export class TimelineActivityService {
           recordIds: eventsWithJunctionRecord.map(
             ({ sourceRecordId }) => sourceRecordId,
           ),
-          workspaceId,
         },
       );
 
@@ -489,10 +481,8 @@ export class TimelineActivityService {
 
   private async enrichEventsWithWorkspaceMemberId({
     events,
-    workspaceId,
   }: {
     events: ObjectRecordBaseEvent[];
-    workspaceId: string;
   }): Promise<ObjectRecordBaseEvent[]> {
     const userIds = events.map((event) => event.userId).filter(isDefined);
 
@@ -502,7 +492,6 @@ export class TimelineActivityService {
 
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
         WorkspaceMemberWorkspaceEntity,
         {
           shouldBypassPermissionChecks: true,

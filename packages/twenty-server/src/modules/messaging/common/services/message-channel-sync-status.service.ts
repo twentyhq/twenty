@@ -386,7 +386,6 @@ export class MessageChannelSyncStatusService {
 
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
       );

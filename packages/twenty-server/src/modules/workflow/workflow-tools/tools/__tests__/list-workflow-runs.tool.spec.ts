@@ -36,7 +36,6 @@ describe('list_workflow_runs tool', () => {
     await tool.execute({});
 
     expect(deps.globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
-      WORKSPACE_ID,
       'workflowRun',
       context.rolePermissionConfig,
     );

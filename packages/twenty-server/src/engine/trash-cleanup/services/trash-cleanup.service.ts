@@ -104,7 +104,6 @@ export class TrashCleanupService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
           objectName,
           { shouldBypassPermissionChecks: true },
         );

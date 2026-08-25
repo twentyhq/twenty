@@ -41,7 +41,6 @@ export const createGetWorkflowRunTool = (
         async () => {
           const workflowRunRepository =
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-              context.workspaceId,
               'workflowRun',
               context.rolePermissionConfig,
             );

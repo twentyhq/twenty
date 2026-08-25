@@ -64,7 +64,6 @@ export class WorkspaceInvitationResolver {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -104,7 +103,6 @@ export class WorkspaceInvitationResolver {
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );

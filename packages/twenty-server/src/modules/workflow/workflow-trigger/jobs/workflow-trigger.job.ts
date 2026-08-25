@@ -39,7 +39,6 @@ export class WorkflowTriggerJob {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-          data.workspaceId,
           'workflow',
           { shouldBypassPermissionChecks: true },
         );

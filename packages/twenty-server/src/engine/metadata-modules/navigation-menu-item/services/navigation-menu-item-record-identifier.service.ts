@@ -81,7 +81,6 @@ export class NavigationMenuItemRecordIdentifierService {
           }
 
           const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
             objectMetadata.nameSingular,
             rolePermissionConfig,
           );

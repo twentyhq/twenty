@@ -68,7 +68,6 @@ export class MessagingDraftSendService {
       async () => {
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
             'messageChannelMessageAssociation',
           );
 
@@ -137,7 +136,6 @@ export class MessagingDraftSendService {
         async () => {
           const messageChannelMessageAssociationRepository =
             await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-              workspaceId,
               'messageChannelMessageAssociation',
             );
 

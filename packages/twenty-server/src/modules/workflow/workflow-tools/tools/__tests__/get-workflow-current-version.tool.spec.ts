@@ -65,17 +65,11 @@ describe('get_workflow_current_version tool', () => {
 
     expect(
       deps.globalWorkspaceOrmManager.getRepository,
-    ).toHaveBeenNthCalledWith(
-      1,
-      WORKSPACE_ID,
-      'workflow',
-      context.rolePermissionConfig,
-    );
+    ).toHaveBeenNthCalledWith(1, 'workflow', context.rolePermissionConfig);
     expect(
       deps.globalWorkspaceOrmManager.getRepository,
     ).toHaveBeenNthCalledWith(
       2,
-      WORKSPACE_ID,
       'workflowVersion',
       context.rolePermissionConfig,
     );

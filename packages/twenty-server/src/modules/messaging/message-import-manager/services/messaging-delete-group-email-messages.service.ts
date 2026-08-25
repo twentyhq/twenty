@@ -44,7 +44,6 @@ export class MessagingDeleteGroupEmailMessagesService {
       async () => {
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
             'messageChannelMessageAssociation',
           );
 

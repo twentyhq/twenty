@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 10:13\n"
+"PO-Revision-Date: 2026-08-25 12:14\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1439,12 +1439,12 @@ msgstr "Twenty 파트너 되기 — 신청"
 #. js-lingui-id: 8x+SS7
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
-msgstr ""
+msgstr "Twenty 파트너 되기 — 오픈 소스 CRM 생태계에 참여하세요."
 
 #. js-lingui-id: r8MUXZ
 #: src/sections/faq/BecomePartnerFaq.tsx
 msgid "Becoming *a Twenty partner*"
-msgstr ""
+msgstr "*Twenty 파트너* 되기"
 
 #. js-lingui-id: 83Wi6G
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1565,7 +1565,7 @@ msgstr "파트너 찾아보기"
 #. js-lingui-id: jkVxe+
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Browse the *certified partners*"
-msgstr ""
+msgstr "*공인 파트너* 둘러보기"
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -1660,7 +1660,7 @@ msgstr "Burundi 🇧🇮"
 #. js-lingui-id: s61NQg
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Buyers submit a project brief with scope, timeline, and budget. We hand-pick the certified partners who fit and make the introduction within 48 hours."
-msgstr ""
+msgstr "구매자는 범위, 일정, 예산이 포함된 프로젝트 개요를 제출합니다. 적합한 공인 파트너를 엄선하여 48시간 이내에 연결해 드립니다."
 
 #. js-lingui-id: L40Ae7
 #: src/partner-application/partner-application-copy.ts
@@ -1685,7 +1685,7 @@ msgstr "Cameroon 🇨🇲"
 #. js-lingui-id: lhDlM3
 #: src/sections/faq/partner-faq.data.ts
 msgid "Can a partner run my migration?"
-msgstr ""
+msgstr "파트너가 마이그레이션을 진행해 줄 수 있나요?"
 
 #. js-lingui-id: wCALve
 #: src/sections/faq/faq.data.ts
@@ -1757,7 +1757,7 @@ msgstr "Central African Republic 🇨🇫"
 #. js-lingui-id: n6B8ue
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
-msgstr ""
+msgstr "인증과 함께 고객이 확인할 수 있는 디렉터리 프로필을 제공합니다. 우수 파트너에게는 서비스 범위에 맞는 고객 프로젝트 개요도 제공됩니다."
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -1844,7 +1844,7 @@ msgstr "더 명확해진 대시보드 숫자"
 #. js-lingui-id: +W4YRD
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
-msgstr ""
+msgstr "파트너 되기를 클릭하고 간단한 신청서를 작성하세요. 자신이 누구인지, 어떤 서비스를 제공하는지, 그리고 증빙 자료가 있는 실제 Twenty 프로젝트 한 건을 입력합니다. 모든 신청서는 실제로 출시된 작업물을 기준으로 검토하며, 선별적으로 승인합니다."
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2419,7 +2419,7 @@ msgstr "커스텀 오브젝트"
 #. js-lingui-id: 14p823
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Custom objects, workflows and apps built on the platform."
-msgstr ""
+msgstr "플랫폼을 기반으로 구축된 맞춤형 객체, 워크플로 및 앱입니다."
 
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2482,7 +2482,7 @@ msgstr "커스터마이징"
 #. js-lingui-id: hiB8fo
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Customization & apps"
-msgstr ""
+msgstr "커스터마이징 및 앱"
 
 #. js-lingui-id: 4urq82
 #: src/sections/compare/compare-data.ts
@@ -2631,7 +2631,7 @@ msgstr "Denmark 🇩🇰"
 #. js-lingui-id: w9Q2vI
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Deploy, upgrade and operate Twenty on your own infrastructure."
-msgstr ""
+msgstr "자체 인프라에서 Twenty를 배포, 업그레이드 및 운영합니다."
 
 #. js-lingui-id: 59TXqJ
 #: src/partner-application/partner-application-copy.ts
@@ -2697,7 +2697,7 @@ msgstr "Director, W3villa Technologies, 파트너"
 #. js-lingui-id: GhgbAN
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Directory"
-msgstr ""
+msgstr "디렉터리"
 
 #. js-lingui-id: 30qcNY
 #: src/sections/menu/data/menu.ts
@@ -2739,12 +2739,12 @@ msgstr "Twenty를 커스터마이징하려면 개발자가 꼭 필요하나요?"
 #. js-lingui-id: ISZL/U
 #: src/sections/faq/partner-faq.data.ts
 msgid "Do partners support self-hosting?"
-msgstr ""
+msgstr "파트너가 셀프 호스팅을 지원하나요?"
 
 #. js-lingui-id: xSh4Vw
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Does it cost anything?"
-msgstr ""
+msgstr "비용이 드나요?"
 
 #. js-lingui-id: Zx22Ih
 #: src/sections/faq/faq.data.ts
@@ -3174,7 +3174,7 @@ msgstr "최신 변경 로그, 데모, 팀이 가장 중요하게 여기는 하�
 #. js-lingui-id: xt/iek
 #: src/sections/faq/partner-faq.data.ts
 msgid "Every partner is certified by Twenty and reviewed on delivered projects, technical depth, and customer feedback before joining the directory."
-msgstr ""
+msgstr "모든 파트너는 디렉터리에 등록되기 전에 Twenty의 인증을 받고, 완료한 프로젝트, 기술적 전문성 및 고객 피드백을 기준으로 검토됩니다."
 
 #. js-lingui-id: rkZTD7
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3412,7 +3412,7 @@ msgstr "Multi-Select로 필터링"
 #. js-lingui-id: V5L7Y4
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Filter by region, language, and specialty, then read a profile and book a call with the partner yourself."
-msgstr ""
+msgstr "지역, 언어, 전문 분야로 필터링한 다음 프로필을 읽고 직접 파트너와 통화를 예약하세요."
 
 #. js-lingui-id: bOidm7
 #: src/partners-marketplace/FilterBar.tsx
@@ -3452,7 +3452,7 @@ msgstr "Twenty 파트너 찾기"
 #. js-lingui-id: AwJQl7
 #: src/platform/routing/static-website-routes.ts
 msgid "Find a Twenty Partner — Certified Open Source CRM Experts"
-msgstr ""
+msgstr "Twenty 파트너 찾기 — 공인 오픈 소스 CRM 전문가"
 
 #. js-lingui-id: RiVrPY
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3569,7 +3569,7 @@ msgstr "창립자, Wintactix"
 #. js-lingui-id: iAVWWq
 #: src/sections/partner-lead/PartnerServicesExplainer.tsx
 msgid "Four kinds of work, delivered by teams that build on Twenty every day."
-msgstr ""
+msgstr "매일 Twenty를 기반으로 구축하는 팀이 제공하는 네 가지 업무 유형입니다."
 
 #. js-lingui-id: 671GY5
 #: src/partner-application/data/partner-country-options.ts
@@ -3721,7 +3721,7 @@ msgstr "Germany 🇩🇪"
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
-msgstr ""
+msgstr "Twenty 파트너로 인증받으세요. 검증된 배지, 고객이 확인할 수 있는 디렉터리 프로필, 그리고 우수 파트너를 위한 매칭 고객 프로젝트 개요를 제공합니다."
 
 #. js-lingui-id: b+jRGN
 #: src/sections/partner-hero/PartnerLeadHero.tsx
@@ -3966,27 +3966,27 @@ msgstr "Alternative Partners가 구현 과정에 에이전틱 AI를 투입해 Sa
 #. js-lingui-id: Xtipai
 #: src/sections/faq/partner-faq.data.ts
 msgid "How are partners vetted?"
-msgstr ""
+msgstr "파트너는 어떻게 검증되나요?"
 
 #. js-lingui-id: rdK0XI
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "How do client briefs reach me?"
-msgstr ""
+msgstr "고객 프로젝트 개요는 어떻게 받나요?"
 
 #. js-lingui-id: YEWCmQ
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "How do I apply?"
-msgstr ""
+msgstr "어떻게 신청하나요?"
 
 #. js-lingui-id: 8Cnrle
 #: src/sections/faq/partner-faq.data.ts
 msgid "How do I become a partner?"
-msgstr ""
+msgstr "어떻게 파트너가 되나요?"
 
 #. js-lingui-id: eNrG1o
 #: src/sections/faq/partner-faq.data.ts
 msgid "How does matching work?"
-msgstr ""
+msgstr "매칭은 어떻게 이루어지나요?"
 
 #. js-lingui-id: +MLOVo
 #: src/case-studies/case-study-stories.ts
@@ -4461,7 +4461,7 @@ msgstr "CRM을 스스로 소유하기로 선택한 팀에 합류하세요. 지�
 #. js-lingui-id: DqW4G2
 #: src/platform/routing/static-website-routes.ts
 msgid "Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it."
-msgstr ""
+msgstr "Twenty 파트너 생태계에 참여하세요. 최고의 오픈 소스 CRM을 구현, 마이그레이션 및 지원하고, 이를 구축하는 팀과 함께 비즈니스를 성장시키세요."
 
 #. js-lingui-id: QbxNys
 #: src/partner-application/data/partner-country-options.ts
@@ -4630,7 +4630,7 @@ msgstr "{0}에 대해 자세히 알아보기"
 #. js-lingui-id: s7B7gx
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Learn more about the partner program"
-msgstr ""
+msgstr "파트너 프로그램 자세히 알아보기"
 
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
@@ -4802,7 +4802,7 @@ msgstr "로그인"
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
-msgstr ""
+msgstr "파트너를 고용하려고 하시나요?"
 
 #. js-lingui-id: 8xX9yd
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -4988,7 +4988,7 @@ msgstr "미들웨어는 별도 라이선스"
 #. js-lingui-id: u6h8ps
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Migration"
-msgstr ""
+msgstr "마이그레이션"
 
 #. js-lingui-id: so04x6
 #: src/case-studies/case-study-stories.ts
@@ -5108,7 +5108,7 @@ msgstr "빈 탭으로 직접 이동하는 것을 포함하여 드래그 앤 드�
 #. js-lingui-id: iTpW7h
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Move your data out of Salesforce, HubSpot or spreadsheets."
-msgstr ""
+msgstr "Salesforce, HubSpot 또는 스프레드시트에서 데이터를 이전하세요."
 
 #. js-lingui-id: EwJDrS
 #: src/partner-application/data/partner-country-options.ts
@@ -5345,7 +5345,7 @@ msgstr "필터에 맞는 파트너가 없습니다"
 #. js-lingui-id: KoCaEV
 #: src/partners-marketplace/FilterBar.tsx
 msgid "No partners to show right now"
-msgstr ""
+msgstr "현재 표시할 파트너가 없습니다"
 
 #. js-lingui-id: nDjC8E
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -5360,7 +5360,7 @@ msgstr "노코드"
 #. js-lingui-id: rNCZhO
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "No. Applying and being listed are free. You set your own rates and keep what you bill."
-msgstr ""
+msgstr "아니요. 신청 및 등록은 무료입니다. 요금은 직접 설정하며 청구한 금액을 그대로 받습니다."
 
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
@@ -5499,7 +5499,7 @@ msgstr "Twenty에서"
 #. js-lingui-id: sRJVQ1
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Onboard your team and design your sales process."
-msgstr ""
+msgstr "팀을 온보딩하고 영업 프로세스를 설계하세요."
 
 #. js-lingui-id: gukxZ5
 #: src/sections/compare/compare-data.ts
@@ -6050,7 +6050,7 @@ msgstr "Qatar 🇶🇦"
 #: src/sections/faq/PartnerFaq.tsx
 #: src/sections/faq/BecomePartnerFaq.tsx
 msgid "Questions"
-msgstr ""
+msgstr "질문"
 
 #. js-lingui-id: OialmJ
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6070,7 +6070,7 @@ msgstr "요율"
 #. js-lingui-id: F4EefJ
 #: src/sections/faq/partner-faq.data.ts
 msgid "Rates vary by partner and scope. Each partner profile lists their published rates, and you can compare before booking a call."
-msgstr ""
+msgstr "요금은 파트너와 서비스 범위에 따라 다릅니다. 각 파트너 프로필에는 공개 요금이 표시되며, 통화를 예약하기 전에 비교할 수 있습니다."
 
 #. js-lingui-id: zXRspj
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6719,7 +6719,7 @@ msgstr "자체 호스팅은 곧 제어권이라는 의미입니다."
 #. js-lingui-id: L6yOTN
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Self-hosted operations"
-msgstr ""
+msgstr "셀프 호스팅 운영"
 
 #. js-lingui-id: WxVgfh
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6810,7 +6810,7 @@ msgstr "비즈니스에 맞게 레코드 구조화"
 #. js-lingui-id: 3PvOYS
 #: src/sections/faq/partner-faq.data.ts
 msgid "Share a short brief on your project, timeline, and budget. We hand-pick certified partners who fit and introduce you within 48 hours."
-msgstr ""
+msgstr "프로젝트, 일정, 예산에 관한 간단한 개요를 공유하세요. 적합한 공인 파트너를 엄선하여 48시간 이내에 연결해 드립니다."
 
 #. js-lingui-id: vn7QMM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6925,7 +6925,7 @@ msgstr "지금은 건너뛰기"
 #. js-lingui-id: BXjtWS
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr ""
+msgstr "둘러볼 필요가 없습니다. 프로젝트를 설명해 주시면 적합한 공인 Twenty 파트너와 연결해 드립니다."
 
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
@@ -7372,7 +7372,7 @@ msgstr ""
 #. js-lingui-id: cgFMCg
 #: src/platform/routing/static-website-routes.ts
 msgid "Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM."
-msgstr ""
+msgstr "필요한 사항을 알려주시면 48시간 이내에 공인 Twenty 파트너와 매칭해 드립니다. 또는 오픈 소스 CRM을 마이그레이션, 커스터마이징 및 운영하는 에이전시와 컨설턴트의 디렉터리를 둘러보세요."
 
 #. js-lingui-id: kjnQvE
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
@@ -7382,7 +7382,7 @@ msgstr "필요한 내용을 알려 주시면, 공인 Twenty 파트너와 매칭�
 #. js-lingui-id: 7CRTri
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Tell us what you need, we match you in *48 hours*"
-msgstr ""
+msgstr "필요한 사항을 알려주세요. *48시간* 이내에 매칭해 드립니다."
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx
@@ -7794,7 +7794,7 @@ msgstr "관계를 추적하고, 파이프라인을 관리하며, 직관적인 CR
 #. js-lingui-id: OYcL1T
 #: src/sections/partner-lead/partner-services.data.ts
 msgid "Training & RevOps"
-msgstr ""
+msgstr "교육 및 RevOps"
 
 #. js-lingui-id: MtCqjl
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -8388,7 +8388,7 @@ msgstr "W3villa는 Twenty를 데이터 모델, 권한, 인증, 워크플로 엔�
 #. js-lingui-id: +uJeMJ
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Want to *offer* Twenty services?"
-msgstr ""
+msgstr "Twenty 서비스를 *제공*하고 싶으신가요?"
 
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8398,7 +8398,7 @@ msgstr "클라우드 구독을 모든 사용자에게 다시 개방하게 되어
 #. js-lingui-id: CtEyix
 #: src/sections/partner-signoff/PartnerSignoff.tsx
 msgid "We certify real builders only. Every application is reviewed against a shipped Twenty project — send yours with proof."
-msgstr ""
+msgstr "실제 구축 경험이 있는 사람만 인증합니다. 모든 신청서는 출시된 Twenty 프로젝트를 기준으로 검토되므로, 증빙 자료와 함께 프로젝트를 제출하세요."
 
 #. js-lingui-id: 8CHatv
 #: src/partner-application/partner-application-copy.ts
@@ -8433,7 +8433,7 @@ msgstr "검색 성능을 크게 향상해, 사람·회사·작업 같은 레코�
 #. js-lingui-id: d4cXeX
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "We review your delivered projects, technical depth, and customer feedback before you join the directory. Certified partners carry the badge on their profile."
-msgstr ""
+msgstr "디렉터리에 등록되기 전에 완료한 프로젝트, 기술적 전문성 및 고객 피드백을 검토합니다. 공인 파트너는 프로필에 배지를 표시합니다."
 
 #. js-lingui-id: l7iJRt
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8494,7 +8494,7 @@ msgstr "웹사이트 또는 GitHub *"
 #. js-lingui-id: KINqeH
 #: src/sections/partner-lead/PartnerServicesExplainer.tsx
 msgid "What a Twenty partner does"
-msgstr ""
+msgstr "Twenty 파트너가 하는 일"
 
 #. js-lingui-id: Lx0cVD
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -8505,7 +8505,7 @@ msgstr "관리자가 코드를 작성하지 않고 할 수 있는 모든 것."
 #. js-lingui-id: va07TZ
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What are the requirements?"
-msgstr ""
+msgstr "요구 사항은 무엇인가요?"
 
 #. js-lingui-id: Z34FQq
 #: src/case-studies/case-study-stories.ts
@@ -8520,12 +8520,12 @@ msgstr "저쪽에서 추가로 드는 비용"
 #. js-lingui-id: iGY4LD
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What do I get as a partner?"
-msgstr ""
+msgstr "파트너가 되면 무엇을 받을 수 있나요?"
 
 #. js-lingui-id: VkIKlY
 #: src/sections/faq/partner-faq.data.ts
 msgid "What do partners charge?"
-msgstr ""
+msgstr "파트너 요금은 얼마인가요?"
 
 #. js-lingui-id: SMBgOd
 #: src/client-brief/client-brief-copy.ts
@@ -8580,7 +8580,7 @@ msgstr ""
 #. js-lingui-id: MIVJ8U
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "What does certification involve?"
-msgstr ""
+msgstr "인증 절차에는 무엇이 포함되나요?"
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
@@ -8825,7 +8825,7 @@ msgstr "실제로 사용되는 워크플로"
 #. js-lingui-id: k7EuGf
 #: src/sections/faq/PartnerFaq.tsx
 msgid "Working with *a Twenty partner*"
-msgstr ""
+msgstr "*Twenty 파트너*와 협업하기"
 
 #. js-lingui-id: pmUArF
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -8921,12 +8921,12 @@ msgstr "예. CSV로 데이터를 가져오거나, 50,000개 이상의 레코드�
 #. js-lingui-id: xsbHte
 #: src/sections/faq/partner-faq.data.ts
 msgid "Yes. Migration partners move your data out of Salesforce, HubSpot, or spreadsheets, and can own the full cutover for you."
-msgstr ""
+msgstr "예. 마이그레이션 파트너는 Salesforce, HubSpot 또는 스프레드시트에서 데이터를 이전하고, 전체 전환 작업을 맡아 진행할 수 있습니다."
 
 #. js-lingui-id: DaIKN4
 #: src/sections/faq/partner-faq.data.ts
 msgid "Yes. Some partners specialise in deploying, upgrading, and operating self-hosted Twenty instances on your own infrastructure."
-msgstr ""
+msgstr "예. 일부 파트너는 자체 인프라에서 셀프 호스팅 Twenty 인스턴스를 배포, 업그레이드 및 운영하는 데 특화되어 있습니다."
 
 #. js-lingui-id: 8m0eN9
 #: src/sections/faq/faq.data.ts

@@ -101,10 +101,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workspaceMember = await this.findWorkspaceMemberById(
-          senderId,
-          workspaceId,
-        );
+        const workspaceMember = await this.findWorkspaceMemberById(senderId);
 
         if (!isDefined(workspaceMember)) {
           return senderId;
@@ -131,11 +128,9 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
   private async findWorkspaceMemberById(
     workspaceMemberId: string,
-    workspaceId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity | null> {
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
       );
