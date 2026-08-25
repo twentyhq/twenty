@@ -6,10 +6,8 @@ import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
+import { useActivityTargetFieldName } from '@/activities/hooks/useActivityTargetFieldName';
 import { type Task } from '@/activities/types/Task';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -99,26 +97,18 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   const { completeTask } = useCompleteTask(task);
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const activityTargetFieldName = getActivityTargetJunctionConfig({
-    activityObjectMetadata: objectMetadataItem,
-    objectMetadataItems,
-  })?.activityTargetField.name;
-
-  if (!isDefined(activityTargetFieldName)) {
-    throw new Error('Task target junction metadata is missing');
-  }
-
+  const activityTargetFieldName = useActivityTargetFieldName(
+    CoreObjectNameSingular.Task,
+  );
   const instanceIdPrefix =
     useActivityFieldComponentInstanceId('task-row-targets');
-  const componentInstanceId = getRecordFieldInputInstanceId({
-    recordId: task.id,
-    fieldName: activityTargetFieldName,
-    prefix: instanceIdPrefix,
-  });
+  const componentInstanceId = isDefined(activityTargetFieldName)
+    ? getRecordFieldInputInstanceId({
+        recordId: task.id,
+        fieldName: activityTargetFieldName,
+        prefix: instanceIdPrefix,
+      })
+    : undefined;
 
   return (
     <ActivityRow
@@ -157,33 +147,34 @@ export const TaskRow = ({ task }: { task: Task }) => {
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}
-        {
-          <StyledActivityTargetsContainer>
-            <FieldContextProvider
-              objectNameSingular={CoreObjectNameSingular.Task}
-              objectRecordId={task.id}
-              fieldMetadataName={activityTargetFieldName}
-              fieldPosition={0}
-              showLabel={false}
-              maxWidth={200}
-              isDisplayModeFixHeight
-            >
-              <RecordFieldsScopeContextProvider
-                value={{
-                  scopeInstanceId: task.id,
-                }}
+        {isDefined(activityTargetFieldName) &&
+          isDefined(componentInstanceId) && (
+            <StyledActivityTargetsContainer>
+              <FieldContextProvider
+                objectNameSingular={CoreObjectNameSingular.Task}
+                objectRecordId={task.id}
+                fieldMetadataName={activityTargetFieldName}
+                fieldPosition={0}
+                showLabel={false}
+                maxWidth={200}
+                isDisplayModeFixHeight
               >
-                <StopPropagationContainer>
-                  <RecordFieldComponentInstanceContext.Provider
-                    value={{ instanceId: componentInstanceId }}
-                  >
-                    <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-                  </RecordFieldComponentInstanceContext.Provider>
-                </StopPropagationContainer>
-              </RecordFieldsScopeContextProvider>
-            </FieldContextProvider>
-          </StyledActivityTargetsContainer>
-        }
+                <RecordFieldsScopeContextProvider
+                  value={{
+                    scopeInstanceId: task.id,
+                  }}
+                >
+                  <StopPropagationContainer>
+                    <RecordFieldComponentInstanceContext.Provider
+                      value={{ instanceId: componentInstanceId }}
+                    >
+                      <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+                    </RecordFieldComponentInstanceContext.Provider>
+                  </StopPropagationContainer>
+                </RecordFieldsScopeContextProvider>
+              </FieldContextProvider>
+            </StyledActivityTargetsContainer>
+          )}
       </StyledRightSideContainer>
     </ActivityRow>
   );

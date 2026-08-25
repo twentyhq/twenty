@@ -11,6 +11,7 @@ import {
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { getRelatedRecordFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordFromJunction';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,9 +32,10 @@ export const useActivities = <T extends Task | Note>({
   const updateActivitiesInStore = useCallback(
     (activityTargets: ActivityTarget[], activityRelationFieldName: string) => {
       for (const activityTarget of activityTargets) {
-        const activity = activityTarget[activityRelationFieldName] as
-          | T
-          | undefined;
+        const activity = getRelatedRecordFromJunction<T>(
+          activityTarget,
+          activityRelationFieldName,
+        );
 
         if (!isDefined(activity)) {
           continue;
@@ -61,34 +63,43 @@ export const useActivities = <T extends Task | Note>({
     limit,
   });
 
-  const activities = activityTargets
-    .map((activityTarget) => {
-      return activityTarget[activityRelationFieldName] as T | undefined;
-    })
-    .filter(isDefined) as T[];
+  const activities = isDefined(activityRelationFieldName)
+    ? activityTargets
+        .map((activityTarget) =>
+          getRelatedRecordFromJunction<T>(
+            activityTarget,
+            activityRelationFieldName,
+          ),
+        )
+        .filter(isDefined)
+    : [];
 
   const fetchMoreActivities = async () => {
     const result = await fetchMoreActivityTargets();
 
-    if (!isDefined(result?.data)) {
+    if (!isDefined(result?.data) || !isDefined(activityRelationFieldName)) {
       return [];
     }
 
-    const activityTargets = getRecordsFromRecordConnection<ActivityTarget>({
-      recordConnection: result.data,
-    });
+    const fetchedActivityTargets =
+      getRecordsFromRecordConnection<ActivityTarget>({
+        recordConnection: result.data,
+      });
 
-    updateActivitiesInStore(activityTargets, activityRelationFieldName);
+    updateActivitiesInStore(fetchedActivityTargets, activityRelationFieldName);
 
-    return activityTargets
-      .map((activityTarget) => {
-        return activityTarget[activityRelationFieldName] as T | undefined;
-      })
-      .filter(isDefined) as T[];
+    return fetchedActivityTargets
+      .map((activityTarget) =>
+        getRelatedRecordFromJunction<T>(
+          activityTarget,
+          activityRelationFieldName,
+        ),
+      )
+      .filter(isDefined);
   };
 
   return {
-    activities: activities as T[],
+    activities,
     loading: loadingActivityTargets,
     totalCountActivities: totalCountActivityTargets,
     fetchMoreActivities,

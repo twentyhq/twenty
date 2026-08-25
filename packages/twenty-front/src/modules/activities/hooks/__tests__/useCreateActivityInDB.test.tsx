@@ -4,6 +4,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { type Task } from '@/activities/types/Task';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -95,7 +96,10 @@ describe('useCreateActivityInDB', () => {
     expect(mockResult).toHaveBeenCalled();
     expect(jotaiStore.get(recordStoreFamilyState.atomFamily(id))).toMatchObject(
       {
-        taskTargets: [],
+        [getActivityTargetJunctionConfig({
+          activityObjectMetadata: taskMetadataItem,
+          objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+        })?.activityTargetField.name ?? 'taskTargets']: [],
       },
     );
   });

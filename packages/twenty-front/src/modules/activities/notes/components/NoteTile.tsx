@@ -2,11 +2,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
+import { useActivityTargetFieldName } from '@/activities/hooks/useActivityTargetFieldName';
 import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -82,26 +80,18 @@ export const NoteTile = ({
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Note,
-  });
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const activityTargetFieldName = getActivityTargetJunctionConfig({
-    activityObjectMetadata: objectMetadataItem,
-    objectMetadataItems,
-  })?.activityTargetField.name;
-
-  if (!isDefined(activityTargetFieldName)) {
-    throw new Error('Note target junction metadata is missing');
-  }
-
+  const activityTargetFieldName = useActivityTargetFieldName(
+    CoreObjectNameSingular.Note,
+  );
   const instanceIdPrefix =
     useActivityFieldComponentInstanceId('note-card-targets');
-  const componentInstanceId = getRecordFieldInputInstanceId({
-    recordId: note.id,
-    fieldName: activityTargetFieldName,
-    prefix: instanceIdPrefix,
-  });
+  const componentInstanceId = isDefined(activityTargetFieldName)
+    ? getRecordFieldInputInstanceId({
+        recordId: note.id,
+        fieldName: activityTargetFieldName,
+        prefix: instanceIdPrefix,
+      })
+    : undefined;
 
   return (
     <StyledCard isSingleNote={isSingleNote}>
@@ -116,27 +106,30 @@ export const NoteTile = ({
         <StyledNoteTitle>{note.title ?? t`Task Title`}</StyledNoteTitle>
         <StyledCardContent>{body}</StyledCardContent>
       </StyledCardDetailsContainer>
-      <StyledFooter>
-        <FieldContextProvider
-          objectNameSingular={CoreObjectNameSingular.Note}
-          objectRecordId={note.id}
-          fieldMetadataName={activityTargetFieldName}
-          fieldPosition={0}
-          isDisplayModeFixHeight
-        >
-          <RecordFieldsScopeContextProvider
-            value={{
-              scopeInstanceId: note.id,
-            }}
-          >
-            <RecordFieldComponentInstanceContext.Provider
-              value={{ instanceId: componentInstanceId }}
+      {isDefined(activityTargetFieldName) &&
+        isDefined(componentInstanceId) && (
+          <StyledFooter>
+            <FieldContextProvider
+              objectNameSingular={CoreObjectNameSingular.Note}
+              objectRecordId={note.id}
+              fieldMetadataName={activityTargetFieldName}
+              fieldPosition={0}
+              isDisplayModeFixHeight
             >
-              <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-            </RecordFieldComponentInstanceContext.Provider>
-          </RecordFieldsScopeContextProvider>
-        </FieldContextProvider>
-      </StyledFooter>
+              <RecordFieldsScopeContextProvider
+                value={{
+                  scopeInstanceId: note.id,
+                }}
+              >
+                <RecordFieldComponentInstanceContext.Provider
+                  value={{ instanceId: componentInstanceId }}
+                >
+                  <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+                </RecordFieldComponentInstanceContext.Provider>
+              </RecordFieldsScopeContextProvider>
+            </FieldContextProvider>
+          </StyledFooter>
+        )}
     </StyledCard>
   );
 };

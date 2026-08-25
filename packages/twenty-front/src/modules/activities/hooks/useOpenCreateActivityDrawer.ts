@@ -15,7 +15,10 @@ import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
   activityObjectNameSingular,
@@ -85,12 +88,13 @@ export const useOpenCreateActivityDrawer = ({
     });
 
     if (targetableObjects.length > 0) {
-      const sourceFieldInfo = findTargetFieldInfo(
-        activityTargetObjectMetadata?.fields ?? [],
-        activityObjectMetadata?.id ?? '',
-        objectMetadataItems,
-      );
-      const sourceJoinColumnName = sourceFieldInfo?.joinColumnName;
+      const sourceJoinColumnName = isDefined(
+        activityTargetJunctionConfig?.sourceField,
+      )
+        ? computeRelationGqlFieldJoinColumnName({
+            name: activityTargetJunctionConfig.sourceField.name,
+          })
+        : undefined;
 
       if (
         !isDefined(activityTargetObjectMetadata) ||

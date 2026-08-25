@@ -1,4 +1,4 @@
-export type Activity = Record<string, unknown> & {
+export type Activity = {
   id: string;
   createdAt: string;
   updatedAt: string;

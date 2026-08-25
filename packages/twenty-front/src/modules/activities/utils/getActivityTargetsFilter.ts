@@ -12,7 +12,7 @@ export const getActivityTargetsFilter = ({
     ActivityTargetableObject,
     'id' | 'targetObjectNameSingular'
   >[];
-  activityTargetObjectMetadata: EnrichedObjectMetadataItem;
+  activityTargetObjectMetadata: Pick<EnrichedObjectMetadataItem, 'fields'>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }) => {
   const findManyActivityTargetsQueryFilter = Object.fromEntries(

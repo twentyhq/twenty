@@ -66,11 +66,7 @@ const filterVisibleAndReadableRecordFields = (
         objectMetadataItem.labelIdentifierFieldMetadataId;
 
       const isActive =
-        isLabelIdentifier ||
-        isActiveFieldMetadataItem({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldMetadata: fieldMetadataItem,
-        });
+        isLabelIdentifier || isActiveFieldMetadataItem(fieldMetadataItem);
 
       const isReadable = objectMetadataItem.readableFields.some(
         findById(fieldMetadataItem.id),

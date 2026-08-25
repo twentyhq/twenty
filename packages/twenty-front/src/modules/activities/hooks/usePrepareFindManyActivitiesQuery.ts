@@ -11,8 +11,10 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getRecordArrayField } from '@/object-record/utils/getRecordArrayField';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -54,7 +56,7 @@ export const usePrepareFindManyActivitiesQuery = ({
         targetableObject.targetObjectNameSingular,
     );
 
-    if (!targetableObjectMetadataItem) {
+    if (!isDefined(targetableObjectMetadataItem)) {
       throw new Error(
         `Cannot find object metadata item for targetable object ${targetableObject.targetObjectNameSingular}`,
       );
@@ -74,7 +76,7 @@ export const usePrepareFindManyActivitiesQuery = ({
     });
 
     if (!isDefined(junctionConfig?.sourceField)) {
-      throw new Error('Activity target junction metadata is invalid');
+      return;
     }
 
     const activityRelationFieldName = junctionConfig.sourceField.name;
@@ -87,23 +89,24 @@ export const usePrepareFindManyActivitiesQuery = ({
         activityTargetObjectMetadataId,
     )?.name;
 
-    const activityTargets =
-      (isDefined(activityTargetFieldName)
-        ? (targetableObjectRecord?.[activityTargetFieldName] as
-            | ActivityTarget[]
-            | undefined)
-        : undefined) ?? [];
+    if (!isDefined(activityTargetFieldName)) {
+      return;
+    }
+
+    const activityTargets = getRecordArrayField<ActivityTarget>(
+      targetableObjectRecord,
+      activityTargetFieldName,
+    );
 
     const activityIds = [
       ...new Set(
         activityTargets
-          .map((activityTarget) => {
-            const activity = activityTarget[activityRelationFieldName] as
-              | ObjectRecord
-              | undefined;
-
-            return activity?.id;
-          })
+          .map((activityTarget) =>
+            getRelatedRecordIdFromJunction({
+              junctionRecord: activityTarget,
+              relationFieldName: activityRelationFieldName,
+            }),
+          )
           .filter(isDefined),
       ),
     ];

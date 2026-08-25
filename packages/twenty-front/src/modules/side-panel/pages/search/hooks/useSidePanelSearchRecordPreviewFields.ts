@@ -24,11 +24,7 @@ export const useSidePanelSearchRecordPreviewFields = (
     }
 
     const readableActiveFields = objectMetadataItem.readableFields.filter(
-      (fieldMetadata) =>
-        isActiveFieldMetadataItem({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldMetadata,
-        }),
+      (fieldMetadata) => isActiveFieldMetadataItem(fieldMetadata),
     );
 
     const sortedViewFields = [...view.viewFields].sort(

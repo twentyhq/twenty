@@ -6,11 +6,13 @@ import {
 import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetsForTargetableObjects = ({
   objectNameSingular,
@@ -36,42 +38,43 @@ export const useActivityTargetsForTargetableObjects = ({
   const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
-  const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
-    findActivityTargetsOperationSignatureFactory({
-      objectNameSingular,
-      objectMetadataItems,
-    });
-
-  const activityTargetObjectMetadata = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular ===
-      FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
-  );
-
-  if (!activityTargetObjectMetadata) {
-    throw new Error('Activity target object metadata is missing');
-  }
 
   const activityObjectMetadata = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === objectNameSingular,
   );
 
-  const activityRelationFieldName = activityTargetObjectMetadata.fields.find(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.relation?.targetObjectMetadata.id ===
-      activityObjectMetadata?.id,
-  )?.name;
+  const junctionConfig = isDefined(activityObjectMetadata)
+    ? getActivityTargetJunctionConfig({
+        activityObjectMetadata,
+        objectMetadataItems,
+      })
+    : null;
 
-  if (!activityRelationFieldName) {
-    throw new Error('Activity relation metadata is missing');
-  }
+  const activityRelationFieldName = junctionConfig?.sourceField?.name;
+  const shouldSkip =
+    skip === true ||
+    !isDefined(junctionConfig) ||
+    !isDefined(activityRelationFieldName);
 
-  const activityTargetsFilter = getActivityTargetsFilter({
-    targetableObjects,
-    activityTargetObjectMetadata,
-    objectMetadataItems,
-  });
+  const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE = shouldSkip
+    ? {
+        objectNameSingular,
+        variables: {},
+        fields: {},
+      }
+    : findActivityTargetsOperationSignatureFactory({
+        objectNameSingular,
+        objectMetadataItems,
+      });
+
+  const activityTargetsFilter = isDefined(junctionConfig)
+    ? getActivityTargetsFilter({
+        targetableObjects,
+        activityTargetObjectMetadata: junctionConfig.junctionObjectMetadata,
+        objectMetadataItems,
+      })
+    : {};
 
   // TODO: We want to optimistically remove from this request
   //   If we are on a show page and we remove the current show page object corresponding activity target
@@ -83,12 +86,15 @@ export const useActivityTargetsForTargetableObjects = ({
     fetchMoreRecords: fetchMoreActivityTargets,
     hasNextPage,
   } = useFindManyRecords<ActivityTarget>({
-    skip,
+    skip: shouldSkip,
     objectNameSingular:
       FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
-    onCompleted: (records) => onCompleted?.(records, activityRelationFieldName),
+    onCompleted: (records) =>
+      isDefined(activityRelationFieldName)
+        ? onCompleted?.(records, activityRelationFieldName)
+        : undefined,
     orderBy: activityTargetsOrderByVariables,
     limit,
   });
