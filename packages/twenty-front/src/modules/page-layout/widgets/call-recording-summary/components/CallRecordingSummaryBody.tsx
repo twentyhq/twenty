@@ -2,6 +2,7 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { StyledCallRecordingSummaryContainer } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryContainer';
 import { CallRecordingSummaryEditor } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryEditor';
 import { useIsCallRecordingSummaryEditable } from '@/page-layout/widgets/call-recording-summary/hooks/useIsCallRecordingSummaryEditable';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
@@ -15,12 +16,11 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledSummaryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  // The markdown renderer spaces blocks for chat bubbles, so its first block and
-  // leading heading would push the summary below where the transcript starts.
+// The markdown renderer spaces blocks for chat bubbles, so its first block and
+// leading heading would sit lower than the editor's first block.
+const StyledReadOnlySummaryContainer = styled(
+  StyledCallRecordingSummaryContainer,
+)`
   & > *:first-child,
   & > *:first-child > *:first-child {
     margin-top: 0;
@@ -77,9 +77,9 @@ export const CallRecordingSummaryBody = ({
 
     if (isDefined(summaryMarkdown)) {
       return (
-        <StyledSummaryContainer>
+        <StyledReadOnlySummaryContainer>
           <LazyMarkdownRenderer text={summaryMarkdown} />
-        </StyledSummaryContainer>
+        </StyledReadOnlySummaryContainer>
       );
     }
 

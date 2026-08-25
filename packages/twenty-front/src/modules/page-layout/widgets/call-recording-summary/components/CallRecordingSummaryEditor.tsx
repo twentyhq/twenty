@@ -2,7 +2,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useIsCallRecordingSummaryEditable } from '@/page-layout/widgets/call-recording-summary/hooks/useIsCallRecordingSummaryEditable';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { styled } from '@linaria/react';
+import { StyledCallRecordingSummaryContainer } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryContainer';
 import { lazy, Suspense } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,11 +12,6 @@ const RichTextFieldEditor = lazy(() =>
     (module) => ({ default: module.RichTextFieldEditor }),
   ),
 );
-
-const StyledEditorContainer = styled.div`
-  box-sizing: border-box;
-  width: 100%;
-`;
 
 type CallRecordingSummaryEditorProps = {
   callRecordingId: string;
@@ -39,7 +34,7 @@ export const CallRecordingSummaryEditor = ({
   }
 
   return (
-    <StyledEditorContainer>
+    <StyledCallRecordingSummaryContainer>
       <Suspense fallback={<WidgetSkeletonLoader />}>
         <RichTextFieldEditor
           recordId={callRecordingId}
@@ -48,6 +43,6 @@ export const CallRecordingSummaryEditor = ({
           isEditable={isSummaryEditable}
         />
       </Suspense>
-    </StyledEditorContainer>
+    </StyledCallRecordingSummaryContainer>
   );
 };
