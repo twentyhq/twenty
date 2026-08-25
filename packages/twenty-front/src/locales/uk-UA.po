@@ -5011,6 +5011,16 @@ msgstr "Скопіювати в буфер обміну"
 msgid "Copy to Clipboard"
 msgstr "Скопіювати в буфер обміну"
 
+#. js-lingui-id: rG2gDo
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Copy transcript"
+msgstr ""
+
+#. js-lingui-id: afZp3R
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Copy video download link"
+msgstr ""
+
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Copy view link"
@@ -11544,6 +11554,7 @@ msgstr "Посилання"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
 msgstr "Посилання скопійовано в буфер обміну"
@@ -13650,12 +13661,12 @@ msgid "No topic"
 msgstr "Без теми"
 
 #. js-lingui-id: 3Y/oDZ
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "No Transcript"
 msgstr "Немає транскрипту"
 
 #. js-lingui-id: du4Icj
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "No transcript is available for this recording."
 msgstr "Транскрипт цього запису недоступний."
 
@@ -15011,6 +15022,11 @@ msgstr "Заплановано на {formattedStartDate}"
 msgid "Plans"
 msgstr "Плани"
 
+#. js-lingui-id: XdRQm7
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
+msgid "Playback failed"
+msgstr ""
+
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Please check your cron expression syntax."
@@ -15148,7 +15164,7 @@ msgid "Prefix"
 msgstr "Префікс"
 
 #. js-lingui-id: dVCM1s
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "Preparing Transcript"
 msgstr "Підготовка транскрипту"
 
@@ -16273,6 +16289,7 @@ msgstr "Продовжити"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
@@ -17042,6 +17059,11 @@ msgstr "Переглянути {objectLabelPlural}"
 #: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
 msgid "See all {relationLabelPlural} linked to this record"
 msgstr "Переглянути всі {relationLabelPlural}, пов’язані з цим записом"
+
+#. js-lingui-id: OhVSE4
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "See all call recordings linked to this calendar event"
+msgstr ""
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -18959,6 +18981,11 @@ msgstr "Сторінка, яку ви шукаєте, зникла або нік
 msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
 msgstr "PDF попередньо підписано Twenty та укладено з вашою юридичною особою та уповноваженим підписантом."
 
+#. js-lingui-id: 8vRPIJ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
+msgid "The recording could not be loaded."
+msgstr ""
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -18980,7 +19007,7 @@ msgid "The shared email you want to use."
 msgstr "Спільна електронна адреса, яку ви хочете використовувати."
 
 #. js-lingui-id: 9q0gnf
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "The transcript could not be generated."
 msgstr "Не вдалося згенерувати транскрипт."
 
@@ -19709,13 +19736,18 @@ msgstr "Загальний час"
 msgid "Track AI consumption across your workspace."
 msgstr "Відстежуйте споживання ШІ у своєму робочому просторі."
 
+#. js-lingui-id: hfpzKV
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Transcript copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: U2CSqa
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "Transcript Failed"
 msgstr "Не вдалося створити транскрипт"
 
 #. js-lingui-id: zDTPYv
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "Transcript is being prepared…"
 msgstr "Транскрипт готується…"
 
@@ -20188,6 +20220,7 @@ msgstr "Невідомий об’єкт"
 
 #. js-lingui-id: 0Wy3/1
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText.ts
 msgid "Unknown speaker"
 msgstr "Невідомий промовець"
 
