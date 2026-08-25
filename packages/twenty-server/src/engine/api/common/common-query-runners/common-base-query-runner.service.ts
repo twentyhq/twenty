@@ -427,7 +427,7 @@ export abstract class CommonBaseQueryRunnerService<
     if (isRecordFilterEmpty(filter)) {
       throw new CommonQueryRunnerException(
         'A non-empty filter is required for a bulk mutation',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }

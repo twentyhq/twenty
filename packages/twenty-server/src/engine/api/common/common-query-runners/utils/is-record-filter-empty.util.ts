@@ -13,17 +13,19 @@ export const isRecordFilterEmpty = (filter: RecordFilter): boolean => {
 
   return filterEntries.every(([filterKey, filterValue]) => {
     if (filterKey === 'and' || filterKey === 'or') {
-      const subFilters = isDefined(filterValue)
-        ? (filterValue as RecordFilter[])
+      const subFilters: RecordFilter[] = isDefined(filterValue)
+        ? filterValue
         : [];
 
       return subFilters.every(isRecordFilterEmpty);
     }
 
     if (filterKey === 'not') {
-      return isRecordFilterEmpty(
-        isDefined(filterValue) ? (filterValue as RecordFilter) : {},
-      );
+      const negatedFilter: RecordFilter = isDefined(filterValue)
+        ? filterValue
+        : {};
+
+      return isRecordFilterEmpty(negatedFilter);
     }
 
     return false;

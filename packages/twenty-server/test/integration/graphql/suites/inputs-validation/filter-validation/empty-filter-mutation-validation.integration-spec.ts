@@ -6,12 +6,23 @@ import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 
+import { CommonQueryRunnerExceptionCode } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+
 describe('Empty filter bulk mutation validation', () => {
   let objectMetadataId: string;
   let objectMetadataSingularName: string;
   let objectMetadataPluralName: string;
   let targetObjectMetadata1Id: string;
   let targetObjectMetadata2Id: string;
+
+  const expectEmptyFilterRejection = (response: {
+    body: { errors?: any[] };
+  }) => {
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.[0].extensions.subCode).toBe(
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+    );
+  };
 
   beforeAll(async () => {
     const setupTest = await setupTestObjectsWithAllFieldTypes();
@@ -41,7 +52,7 @@ describe('Empty filter bulk mutation validation', () => {
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-    expect(response.body.errors).toBeDefined();
+    expectEmptyFilterRejection(response);
   });
 
   it('should reject deleteMany with an empty filter', async () => {
@@ -54,7 +65,7 @@ describe('Empty filter bulk mutation validation', () => {
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-    expect(response.body.errors).toBeDefined();
+    expectEmptyFilterRejection(response);
   });
 
   it('should reject updateMany with an empty filter', async () => {
@@ -62,13 +73,13 @@ describe('Empty filter bulk mutation validation', () => {
       objectMetadataSingularName,
       objectMetadataPluralName,
       gqlFields: 'id',
-      data: {},
+      data: { textField: 'updated' },
       filter: {},
     });
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-    expect(response.body.errors).toBeDefined();
+    expectEmptyFilterRejection(response);
   });
 
   it('should reject restoreMany with an empty filter', async () => {
@@ -81,7 +92,7 @@ describe('Empty filter bulk mutation validation', () => {
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-    expect(response.body.errors).toBeDefined();
+    expectEmptyFilterRejection(response);
   });
 
   it('should reject destroyMany with a nested empty logical filter', async () => {
@@ -94,6 +105,6 @@ describe('Empty filter bulk mutation validation', () => {
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
 
-    expect(response.body.errors).toBeDefined();
+    expectEmptyFilterRejection(response);
   });
 });
