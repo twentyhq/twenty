@@ -1,4 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetActionCallRecordingSummary } from '@/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary';
 import { WidgetActionCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
 import { WidgetActionCalendarEventCreate } from '@/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate';
@@ -24,5 +25,6 @@ export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
   [WidgetType.NOTES]: WidgetActionNoteCreate,
   [WidgetType.FILES]: WidgetActionFileAttach,
   [WidgetType.TIMELINE]: WidgetActionTimeline,
+  [WidgetType.CALL_RECORDING_SUMMARY]: WidgetActionCallRecordingSummary,
   [WidgetType.CALL_RECORDING_TRANSCRIPT]: WidgetActionCallRecordingTranscript,
 };
