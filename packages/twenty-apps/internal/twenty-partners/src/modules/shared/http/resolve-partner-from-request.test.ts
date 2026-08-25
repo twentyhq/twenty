@@ -97,12 +97,23 @@ describe('resolvePartnerFromForwardedToken', () => {
   const USER_ID = 'user-1';
   const WORKSPACE_MEMBER_ID = 'member-1';
   const PARTNER_ID = 'partner-1';
+  const PARTNER_NAME = 'Acme Partners';
+  const WORKSPACE_ID = 'workspace-1';
   const AUTHORIZATION = 'Bearer forwarded-token';
+
+  const originalAppToken = process.env.TWENTY_APP_ACCESS_TOKEN;
+  afterEach(() => {
+    if (originalAppToken === undefined) delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    else process.env.TWENTY_APP_ACCESS_TOKEN = originalAppToken;
+  });
 
   beforeEach(() => {
     coreQueryMock.mockReset();
     metadataQueryMock.mockReset();
-    metadataQueryMock.mockResolvedValue({ currentUser: { id: USER_ID } });
+    process.env.TWENTY_APP_ACCESS_TOKEN = makeToken({ workspaceId: WORKSPACE_ID });
+    metadataQueryMock.mockResolvedValue({
+      currentUser: { id: USER_ID, currentWorkspace: { id: WORKSPACE_ID } },
+    });
     coreQueryMock.mockImplementation((selection: Record<string, unknown>) => {
       const key = Object.keys(selection)[0];
       if (key === 'workspaceMembers') {
@@ -110,7 +121,9 @@ describe('resolvePartnerFromForwardedToken', () => {
           workspaceMembers: { edges: [{ node: { id: WORKSPACE_MEMBER_ID } }] },
         });
       }
-      return Promise.resolve({ partners: { edges: [{ node: { id: PARTNER_ID } }] } });
+      return Promise.resolve({
+        partners: { edges: [{ node: { id: PARTNER_ID, name: PARTNER_NAME } }] },
+      });
     });
   });
 
@@ -147,13 +160,39 @@ describe('resolvePartnerFromForwardedToken', () => {
     expect(coreQueryMock).not.toHaveBeenCalled();
   });
 
+  it('returns UNAUTHENTICATED when the token belongs to another workspace', async () => {
+    metadataQueryMock.mockResolvedValue({
+      currentUser: { id: USER_ID, currentWorkspace: { id: 'workspace-other' } },
+    });
+
+    expect(
+      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+    ).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(coreQueryMock).not.toHaveBeenCalled();
+  });
+
+  it('returns UNAUTHENTICATED when the app token carries no workspace to compare against', async () => {
+    delete process.env.TWENTY_APP_ACCESS_TOKEN;
+
+    expect(
+      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+    ).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(coreQueryMock).not.toHaveBeenCalled();
+  });
+
   it('resolves the partner by verifying the token against currentUser', async () => {
     const result = await resolvePartnerFromForwardedToken({
       headers: { authorization: AUTHORIZATION },
     });
 
-    expect(result).toEqual({ partnerId: PARTNER_ID, workspaceMemberId: WORKSPACE_MEMBER_ID });
-    expect(metadataQueryMock).toHaveBeenCalledWith({ currentUser: { id: true } });
+    expect(result).toEqual({
+      partnerId: PARTNER_ID,
+      partnerName: PARTNER_NAME,
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+    });
+    expect(metadataQueryMock).toHaveBeenCalledWith({
+      currentUser: { id: true, currentWorkspace: { id: true } },
+    });
     expect(MetadataApiClient).toHaveBeenCalledWith({
       headers: { Authorization: AUTHORIZATION },
     });

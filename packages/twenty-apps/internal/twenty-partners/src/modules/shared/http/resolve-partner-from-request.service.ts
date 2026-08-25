@@ -17,7 +17,7 @@ export const buildAppClient = (): CoreApiClient => {
 
 export const decodeJwtClaims = (
   token: string,
-): { userId?: string; userWorkspaceId?: string } => {
+): { userId?: string; userWorkspaceId?: string; workspaceId?: string } => {
   const part = token.split('.')[1];
   if (!part) return {};
   try {
@@ -35,10 +35,16 @@ export const decodeJwtClaims = (
   }
 };
 
+export type PartnerIdentity = {
+  partnerId: string;
+  partnerName: string | null;
+  workspaceMemberId: string;
+};
+
 export const resolvePartnerByUserId = async (
   client: CoreApiClient,
   userId: string,
-): Promise<{ partnerId: string; workspaceMemberId: string } | null> => {
+): Promise<PartnerIdentity | null> => {
   const members = await client.query({
     workspaceMembers: {
       __args: { filter: { userId: { eq: userId } }, first: 1 },
@@ -49,14 +55,18 @@ export const resolvePartnerByUserId = async (
   if (!workspaceMemberId) return null;
 
   const partners = await findPartnerByMember(client, workspaceMemberId);
-  const partnerId = partners.partners?.edges?.[0]?.node?.id;
-  if (!partnerId) return null;
+  const partner = partners.partners?.edges?.[0]?.node;
+  if (!partner?.id) return null;
 
-  return { partnerId, workspaceMemberId };
+  return {
+    partnerId: partner.id,
+    partnerName: partner.name ?? null,
+    workspaceMemberId,
+  };
 };
 
 export type ResolvedPartner =
-  | { partnerId: string; workspaceMemberId: string }
+  | PartnerIdentity
   | { error: 'UNAUTHENTICATED' | 'NO_PARTNER' };
 
 export const resolvePartnerFromRequest = async (event: {
@@ -86,17 +96,29 @@ export const resolvePartnerFromForwardedToken = async (event: {
   if (!authorization?.startsWith('Bearer ')) return { error: 'UNAUTHENTICATED' };
 
   let userId: string | undefined;
+  let callerWorkspaceId: string | undefined;
   try {
-    // Verification is the round trip itself: the server checks the signature, so the id it
-    // returns is trustworthy in a way a decoded claim never is.
+    // Verification is the round trip itself: the server checks the signature, so the ids it
+    // returns are trustworthy in a way a decoded claim never is.
     const current = await new MetadataApiClient({
       headers: { Authorization: authorization },
-    }).query({ currentUser: { id: true } });
+    }).query({ currentUser: { id: true, currentWorkspace: { id: true } } });
     userId = current.currentUser?.id;
+    callerWorkspaceId = current.currentUser?.currentWorkspace?.id;
   } catch {
     return { error: 'UNAUTHENTICATED' };
   }
   if (!userId) return { error: 'UNAUTHENTICATED' };
+
+  // currentUser answers for whatever workspace the presented token belongs to, and the route
+  // is open (isAuthRequired: false) with a caller-supplied header — so a token minted in any
+  // other workspace on the server would otherwise pass. Assert the audience here.
+  const appWorkspaceId = decodeJwtClaims(
+    process.env.TWENTY_APP_ACCESS_TOKEN ?? '',
+  ).workspaceId;
+  if (!appWorkspaceId || callerWorkspaceId !== appWorkspaceId) {
+    return { error: 'UNAUTHENTICATED' };
+  }
 
   const resolved = await resolvePartnerByUserId(buildAppClient(), userId);
   return resolved ?? { error: 'NO_PARTNER' };

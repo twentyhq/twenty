@@ -1,14 +1,16 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import {
-  type ApplyRefusalReason,
   MIN_PITCH_LENGTH,
+  PITCHABLE_STATES,
 } from 'src/modules/application/apply/constants/apply-to-brief.constants';
 import { createApplication } from 'src/modules/application/apply/graphql/mutations/create-application';
 import { findOpportunityForApply } from 'src/modules/application/apply/graphql/queries/find-opportunity-for-apply';
-import { findPartnerName } from 'src/modules/application/apply/graphql/queries/find-partner-name';
+import {
+  type ApplyRefusalReason,
+  type PitchableState,
+} from 'src/modules/application/apply/types/apply-to-brief.types';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { buildApplicationName } from 'src/modules/application/utils/build-application-name';
@@ -29,17 +31,6 @@ const applyToBriefSchema = z.object({
   pitch: z.string(),
 });
 
-// A partner who pastes a stale brief id must see BRIEF_NOT_OPEN, never the opaque failure
-// message, so a read that fails for any reason counts as "no brief".
-const loadBrief = async (client: CoreApiClient, opportunityId: string) => {
-  try {
-    const result = await findOpportunityForApply(client, opportunityId);
-    return result.opportunities?.edges?.[0]?.node ?? null;
-  } catch {
-    return null;
-  }
-};
-
 export const applyToBrief = async (
   event: RoutePayload<unknown>,
 ): Promise<ApplyToBriefResult> => {
@@ -47,14 +38,15 @@ export const applyToBrief = async (
   if ('error' in resolved) return errorResponse(resolved.error);
 
   const parsed = applyToBriefSchema.safeParse(event.body);
-  if (!parsed.success) return errorResponse('BRIEF_NOT_OPEN');
+  if (!parsed.success) return errorResponse('BAD_REQUEST');
 
   const { opportunityId, pitch } = parsed.data;
 
   try {
     const client = buildAppClient();
 
-    const brief = await loadBrief(client, opportunityId);
+    const briefs = await findOpportunityForApply(client, opportunityId);
+    const brief = briefs.opportunities?.edges?.[0]?.node;
     if (!brief || brief.isListed !== true) return errorResponse('BRIEF_NOT_OPEN');
 
     const trimmedPitch = pitch.trim();
@@ -65,15 +57,17 @@ export const applyToBrief = async (
     if (existing?.id) {
       if (isNonEmptyString(existing.pitch)) return errorResponse('ALREADY_APPLIED');
 
-      // Fill the pitch of an INVITED row in place and leave its state alone — the state
-      // records that Twenty pushed this brief at the partner. No extra guard is needed for
-      // late-stage rows: stamping introSentAt unlists the brief, so INTRODUCED / WON /
-      // DECLINED rows fail the isListed check above with BRIEF_NOT_OPEN.
+      // Fill the pitch in place and leave the state alone — an INVITED row records that
+      // Twenty pushed this brief at the partner. Guard on the state rather than on the
+      // brief being listed: the WON/DECLINED cascade fires on Opportunity.partner, which
+      // is not coupled to isListed, so a decided row can still sit under a listed brief.
+      if (!PITCHABLE_STATES.includes(existing.state as PitchableState)) {
+        return errorResponse('BRIEF_NOT_OPEN');
+      }
+
       await updateApplication(client, existing.id, { pitch: trimmedPitch });
       return { ok: true, applicationId: existing.id };
     }
-
-    const partner = (await findPartnerName(client, resolved.partnerId)).partners?.edges?.[0]?.node;
 
     // on-application-set-name fires on application.updated only, so an insert that already
     // carries partnerId never triggers it — the label must be written here.
@@ -82,7 +76,7 @@ export const applyToBrief = async (
       partnerId: resolved.partnerId,
       partnerUserId: resolved.workspaceMemberId,
       pitch: trimmedPitch,
-      name: buildApplicationName(partner?.name, brief.name),
+      name: buildApplicationName(resolved.partnerName, brief.name),
     });
 
     const applicationId = created.createApplication?.id;

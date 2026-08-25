@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { queryMock, mutationMock, metadataQueryMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
@@ -18,55 +18,42 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   }),
 }));
 
-import { MIN_PITCH_LENGTH } from '../constants/apply-to-brief.constants';
-import { applyToBrief } from '../services/apply-to-brief.service';
+import { MIN_PITCH_LENGTH } from 'src/modules/application/apply/constants/apply-to-brief.constants';
+import { applyToBrief } from 'src/modules/application/apply/services/apply-to-brief.service';
 
 const USER_ID = 'user-1';
+const WORKSPACE_ID = 'workspace-1';
 const WORKSPACE_MEMBER_ID = 'member-1';
 const PARTNER_ID = 'partner-1';
+const PARTNER_NAME = 'Acme Partners';
 const OPPORTUNITY_ID = 'opportunity-1';
 const AUTHORIZATION = 'Bearer caller-token';
 
-// An Error value makes that lookup reject, mirroring what the real SDK does on a bad id.
+const APP_TOKEN = `header.${Buffer.from(
+  JSON.stringify({ workspaceId: WORKSPACE_ID }),
+).toString('base64url')}.sig`;
+
 type QueryResponses = {
   workspaceMembers?: unknown;
-  partnerByMember?: unknown;
-  opportunities?: unknown;
-  applications?: unknown;
-  partnerName?: unknown;
-};
-
-type QuerySelection = {
-  workspaceMembers?: unknown;
-  partners?: { __args: { filter: Record<string, unknown> } };
+  partners?: unknown;
   opportunities?: unknown;
   applications?: unknown;
 };
 
 const defaultResponses = (): QueryResponses => ({
   workspaceMembers: { edges: [{ node: { id: WORKSPACE_MEMBER_ID } }] },
-  partnerByMember: { edges: [{ node: { id: PARTNER_ID } }] },
+  partners: { edges: [{ node: { id: PARTNER_ID, name: PARTNER_NAME } }] },
   opportunities: {
     edges: [{ node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: true } }],
   },
   applications: { edges: [] },
-  partnerName: { edges: [{ node: { id: PARTNER_ID, name: 'Acme Partners' } }] },
 });
 
 const respondWith = (overrides: QueryResponses = {}) => {
   const responses = { ...defaultResponses(), ...overrides };
-  queryMock.mockImplementation((selection: QuerySelection) => {
-    const key = Object.keys(selection)[0];
-    // Both the resolver and the partner-name lookup query `partners`; the filter tells them apart.
-    const responseKey =
-      key === 'partners'
-        ? selection.partners?.__args.filter.partnerUserId
-          ? 'partnerByMember'
-          : 'partnerName'
-        : (key as keyof QueryResponses);
-    const response = responses[responseKey];
-    if (response instanceof Error) return Promise.reject(response);
-    return Promise.resolve({ [key as string]: response });
+  queryMock.mockImplementation((selection: Record<string, unknown>) => {
+    const key = Object.keys(selection)[0] as keyof QueryResponses;
+    return Promise.resolve({ [key as string]: responses[key] });
   });
 };
 
@@ -78,11 +65,20 @@ const event = (body: unknown, authorization: string | null = AUTHORIZATION) =>
 const validBody = { opportunityId: OPPORTUNITY_ID, pitch: pitchOf(MIN_PITCH_LENGTH) };
 
 describe('applyToBrief', () => {
+  const originalAppToken = process.env.TWENTY_APP_ACCESS_TOKEN;
+  afterEach(() => {
+    if (originalAppToken === undefined) delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    else process.env.TWENTY_APP_ACCESS_TOKEN = originalAppToken;
+  });
+
   beforeEach(() => {
     queryMock.mockReset();
     mutationMock.mockReset();
     metadataQueryMock.mockReset();
-    metadataQueryMock.mockResolvedValue({ currentUser: { id: USER_ID } });
+    process.env.TWENTY_APP_ACCESS_TOKEN = APP_TOKEN;
+    metadataQueryMock.mockResolvedValue({
+      currentUser: { id: USER_ID, currentWorkspace: { id: WORKSPACE_ID } },
+    });
     mutationMock.mockResolvedValue({ createApplication: { id: 'application-1' } });
     respondWith();
   });
@@ -95,11 +91,22 @@ describe('applyToBrief', () => {
   });
 
   it('refuses a caller with no partner without creating anything', async () => {
-    respondWith({ partnerByMember: { edges: [] } });
+    respondWith({ partners: { edges: [] } });
 
     const result = await applyToBrief(event(validBody));
 
     expect(result).toEqual({ ok: false, reason: 'NO_PARTNER' });
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses a token minted in another workspace without creating anything', async () => {
+    metadataQueryMock.mockResolvedValue({
+      currentUser: { id: USER_ID, currentWorkspace: { id: 'workspace-other' } },
+    });
+
+    const result = await applyToBrief(event(validBody));
+
+    expect(result).toEqual({ ok: false, reason: 'UNAUTHENTICATED' });
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
@@ -125,19 +132,10 @@ describe('applyToBrief', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it('refuses when the brief lookup throws Record not found', async () => {
-    respondWith({ opportunities: new Error('Record not found') });
-
-    const result = await applyToBrief(event(validBody));
-
-    expect(result).toEqual({ ok: false, reason: 'BRIEF_NOT_OPEN' });
-    expect(mutationMock).not.toHaveBeenCalled();
-  });
-
   it('refuses a body without an opportunityId without creating anything', async () => {
     const result = await applyToBrief(event({ pitch: pitchOf(MIN_PITCH_LENGTH) }));
 
-    expect(result).toEqual({ ok: false, reason: 'BRIEF_NOT_OPEN' });
+    expect(result).toEqual({ ok: false, reason: 'BAD_REQUEST' });
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
@@ -153,7 +151,9 @@ describe('applyToBrief', () => {
   it('refuses an existing application that already carries a pitch', async () => {
     respondWith({
       applications: {
-        edges: [{ node: { id: 'existing-application', pitch: 'a real pitch' } }],
+        edges: [
+          { node: { id: 'existing-application', pitch: 'a real pitch', state: 'APPLIED' } },
+        ],
       },
     });
 
@@ -163,12 +163,28 @@ describe('applyToBrief', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
+  it.each([['INTRODUCED'], ['WON'], ['DECLINED'], ['BACKUP']])(
+    'refuses to fill the pitch of a pitchless row already at %s',
+    async (state) => {
+      respondWith({
+        applications: { edges: [{ node: { id: 'decided-application', pitch: null, state } }] },
+      });
+
+      const result = await applyToBrief(event(validBody));
+
+      expect(result).toEqual({ ok: false, reason: 'BRIEF_NOT_OPEN' });
+      expect(mutationMock).not.toHaveBeenCalled();
+    },
+  );
+
   it.each([
     ['null', null],
     ['whitespace only', '   \n  '],
   ])('fills the pitch of an existing row whose pitch is %s', async (_label, pitch) => {
     respondWith({
-      applications: { edges: [{ node: { id: 'invited-application', pitch } }] },
+      applications: {
+        edges: [{ node: { id: 'invited-application', pitch, state: 'INVITED' } }],
+      },
     });
     const submittedPitch = `  ${pitchOf(MIN_PITCH_LENGTH)}  `;
 
