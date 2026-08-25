@@ -3771,7 +3771,7 @@ msgstr "E-posta değiştir"
 #. js-lingui-id: qTyVHs
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
 msgid "Change node"
-msgstr ""
+msgstr "Düğümü değiştir"
 
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
@@ -13783,7 +13783,7 @@ msgstr "Düğüm"
 #. js-lingui-id: 6cjyK/
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
 msgid "Node options"
-msgstr ""
+msgstr "Düğüm seçenekleri"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
