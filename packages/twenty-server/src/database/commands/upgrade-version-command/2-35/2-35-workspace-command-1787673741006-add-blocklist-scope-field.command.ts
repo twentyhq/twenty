@@ -22,9 +22,9 @@ const SCOPE_FIELD_UNIVERSAL_IDENTIFIER =
 const WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
   BLOCKLIST.fields.workspaceMember.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.33.0', 1787203841000)
+@RegisteredWorkspaceCommand('2.35.0', 1787673741006)
 @Command({
-  name: 'upgrade:2-33:add-blocklist-scope-field',
+  name: 'upgrade:2-35:add-blocklist-scope-field',
   description:
     'Add the blocklist.scope field, make blocklist.workspaceMember nullable so a handle can be blocked workspace-wide, and switch that relation from SET_NULL to CASCADE so a destroyed workspace member takes their entries with them',
 })
