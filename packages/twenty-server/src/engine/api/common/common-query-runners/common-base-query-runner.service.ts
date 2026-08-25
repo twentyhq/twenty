@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -22,7 +22,6 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilderV2 } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder-v2.util';
-import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -425,7 +424,7 @@ export abstract class CommonBaseQueryRunnerService<
     const alias = flatObjectMetadata.nameSingular;
 
     // An empty filter would make this bulk mutation an unbounded delete/update/restore of the whole object.
-    if (isRecordFilterEmpty(filter)) {
+    if (isEmptyObject(filter)) {
       throw new CommonQueryRunnerException(
         'A non-empty filter is required for a bulk mutation',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
