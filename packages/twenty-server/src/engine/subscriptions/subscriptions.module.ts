@@ -1,9 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProcessNestedRelationsOrmV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-orm-v2.helper';
-import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
@@ -51,7 +50,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetadataEventsToDbListener,
     WorkspaceEventBroadcaster,
     ProcessNestedRelationsHelper,
-    ProcessNestedRelationsOrmV2Helper,
     CommonSelectFieldsHelper,
   ],
   exports: [

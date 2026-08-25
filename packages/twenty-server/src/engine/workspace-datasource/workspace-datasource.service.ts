@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type DataSource, type EntityManager, Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -35,15 +34,6 @@ export class WorkspaceDataSourceService {
         code: WorkspaceDataSourceExceptionCode.DDL_LOCKED,
       });
     }
-  }
-
-  public async checkSchemaExists(workspaceId: string): Promise<boolean> {
-    const workspace = await this.workspaceRepository.findOne({
-      select: ['databaseSchema'],
-      where: { id: workspaceId },
-    });
-
-    return isNonEmptyString(workspace?.databaseSchema);
   }
 
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
