@@ -4,8 +4,7 @@ import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
+import { getJunctionObjectMetadataIds } from '@/object-record/record-field/ui/utils/junction/getJunctionObjectMetadataIds';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -71,22 +70,19 @@ export const useRelevantRecordsGqlFields = ({
     depth: 1,
   });
 
-  const junctionRelationFields = objectMetadataItem.fields.filter(
-    (fieldMetadataItem) =>
-      isJunctionRelationField(fieldMetadataItem) ||
-      isDefined(
-        getReverseJunctionConfig({
-          junctionObjectMetadataId:
-            fieldMetadataItem.relation?.targetObjectMetadata.id,
-          sourceObjectMetadataId: objectMetadataItem.id,
-          objectMetadataItems,
-        }),
-      ),
-  );
+  // Junction records are the only way to reach what they link to, so they are always
+  // fetched, whether or not the field holding them is visible.
+  const junctionObjectMetadataIds =
+    getJunctionObjectMetadataIds(objectMetadataItems);
 
   const junctionRelationGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
-    fields: junctionRelationFields,
+    sourceObjectMetadataItem: objectMetadataItem,
+    fields: objectMetadataItem.fields.filter((fieldMetadataItem) =>
+      junctionObjectMetadataIds.has(
+        fieldMetadataItem.relation?.targetObjectMetadata.id ?? '',
+      ),
+    ),
     depth: 1,
   });
 
