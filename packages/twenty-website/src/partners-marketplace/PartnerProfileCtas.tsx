@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { IconArrowUpRight } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import {
   DURATION,
@@ -13,7 +14,6 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { GetMatchedButton } from '@/client-brief';
 import { Button, ExternalLink } from '@/ui';
 
 import { isSafeHttpUrl } from './is-safe-http-url';
@@ -117,14 +117,14 @@ const RailLinkIcon = styled(IconArrowUpRight)`
 
 export function PartnerProfileCtas({
   calendarLink,
+  cta,
   links,
   linkUrls,
-  slug,
 }: {
   calendarLink: string;
+  cta: ReactNode;
   links: PartnerLinks;
   linkUrls?: readonly string[];
-  slug: string;
 }) {
   const { i18n } = useLingui();
   const calendarHref = isSafeHttpUrl(calendarLink) ? calendarLink : null;
@@ -179,13 +179,7 @@ export function PartnerProfileCtas({
             ))}
           </RailLinks>
         )}
-        <PrimaryAction>
-          <GetMatchedButton
-            label={msg`Submit a brief`}
-            partnerSlug={slug}
-            variant="outlined"
-          />
-        </PrimaryAction>
+        <PrimaryAction>{cta}</PrimaryAction>
       </CtaCard>
     </Wrapper>
   );

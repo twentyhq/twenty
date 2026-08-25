@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { ClientBriefModalRoot } from '@/client-brief';
+import { ClientBriefModalRoot, GetMatchedButton } from '@/client-brief';
 import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -68,7 +68,16 @@ export default async function PartnerProfilePage({
       <Menu communityStats={communityStats} scheme="muted" />
       <ClientBriefModalRoot>
         <main aria-labelledby="partner-name">
-          <PartnerProfile partner={partner} />
+          <PartnerProfile
+            cta={
+              <GetMatchedButton
+                label={msg`Submit a brief`}
+                partnerSlug={partner.slug}
+                variant="outlined"
+              />
+            }
+            partner={partner}
+          />
         </main>
       </ClientBriefModalRoot>
     </>
