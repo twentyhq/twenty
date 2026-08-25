@@ -1,48 +1,34 @@
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
-import {
-  type CreateStandardIndexArgs,
-  createStandardIndexFlatMetadata,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
+import { type CreateStandardIndexArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
+import { buildStandardTargetFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-target-flat-index-metadatas.util';
 
 export const buildMessageThreadTargetStandardFlatIndexMetadatas = (
   args: Omit<CreateStandardIndexArgs<'messageThreadTarget'>, 'context'>,
 ): Record<
   AllStandardObjectIndexName<'messageThreadTarget'>,
   FlatIndexMetadata
-> => ({
-  messageThreadIdIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'messageThreadIdIndex',
-      relatedFieldNames: ['messageThread'],
+> => {
+  const indexes = buildStandardTargetFlatIndexMetadatas({
+    args,
+    fieldNames: {
+      parent: 'messageThread',
+      person: 'targetPerson',
+      company: 'targetCompany',
+      opportunity: 'targetOpportunity',
     },
-  }),
-  messageThreadPersonUniqueIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'messageThreadPersonUniqueIndex',
-      relatedFieldNames: ['messageThread', 'targetPerson'],
-      isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL',
+    indexNames: {
+      parentIdIndex: 'messageThreadIdIndex',
+      personUniqueIndex: 'messageThreadPersonUniqueIndex',
+      companyUniqueIndex: 'messageThreadCompanyUniqueIndex',
+      opportunityUniqueIndex: 'messageThreadOpportunityUniqueIndex',
     },
-  }),
-  messageThreadCompanyUniqueIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'messageThreadCompanyUniqueIndex',
-      relatedFieldNames: ['messageThread', 'targetCompany'],
-      isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL',
-    },
-  }),
-  messageThreadOpportunityUniqueIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'messageThreadOpportunityUniqueIndex',
-      relatedFieldNames: ['messageThread', 'targetOpportunity'],
-      isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL',
-    },
-  }),
-});
+  });
+
+  return {
+    messageThreadIdIndex: indexes.parentIdIndex,
+    messageThreadPersonUniqueIndex: indexes.personUniqueIndex,
+    messageThreadCompanyUniqueIndex: indexes.companyUniqueIndex,
+    messageThreadOpportunityUniqueIndex: indexes.opportunityUniqueIndex,
+  };
+};

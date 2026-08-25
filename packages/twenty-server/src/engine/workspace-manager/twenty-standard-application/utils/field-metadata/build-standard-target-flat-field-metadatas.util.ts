@@ -17,6 +17,12 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 
 type StandardTargetObjectName = 'calendarEventTarget' | 'messageThreadTarget';
 
+type SharedStandardTargetFieldName = Exclude<
+  AllStandardObjectFieldName<'calendarEventTarget'>,
+  'calendarEvent'
+> &
+  Exclude<AllStandardObjectFieldName<'messageThreadTarget'>, 'messageThread'>;
+
 type BuildStandardTargetFieldsArgs<T extends StandardTargetObjectName> = Omit<
   CreateStandardFieldArgs<T, FieldMetadataType>,
   'context'
@@ -33,7 +39,7 @@ export const buildStandardTargetFlatFieldMetadatas = <
   morphId,
   ...args
 }: BuildStandardTargetFieldsArgs<T>): Record<
-  Exclude<AllStandardObjectFieldName<'calendarEventTarget'>, 'calendarEvent'>,
+  SharedStandardTargetFieldName,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -63,7 +69,10 @@ export const buildStandardTargetFlatFieldMetadatas = <
         msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
-        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+        msg({
+          message: `Creation date`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconCalendar',
       isSystem: true,
