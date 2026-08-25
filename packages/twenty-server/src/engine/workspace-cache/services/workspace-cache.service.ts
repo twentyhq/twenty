@@ -291,9 +291,19 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
+  // For callers issuing several invalidateAndRecompute calls over the same
+  // post-commit state (e.g. the migration runner's fan-out): one context
+  // shared across the calls lets later batches reuse earlier batches' fetches.
+  public createRecomputeContext(
+    workspaceId: string,
+  ): WorkspaceCacheRecomputeContext {
+    return new WorkspaceCacheRecomputeContext(this.coreDataSource, workspaceId);
+  }
+
   public async invalidateAndRecompute(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
+    recomputeContext?: WorkspaceCacheRecomputeContext,
   ): Promise<void> {
     return Sentry.startSpan(
       {
@@ -306,9 +316,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.memoizer.clearKeys(`${workspaceId}-`);
 
         await this.flush(workspaceId, cacheKeyNames);
-        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
-          strategy: 'mint',
-        });
+        await this.recomputeDataFromProvider(
+          workspaceId,
+          cacheKeyNames,
+          {
+            strategy: 'mint',
+          },
+          recomputeContext,
+        );
 
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
@@ -507,6 +522,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
     hashResolution: RecomputeHashResolution,
+    sharedRecomputeContext?: WorkspaceCacheRecomputeContext,
   ): Promise<CacheEntriesResult> {
     const result: CacheEntriesResult = { data: {}, hashes: {} };
 
@@ -514,10 +530,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return result;
     }
 
-    const recomputeContext = new WorkspaceCacheRecomputeContext(
-      this.coreDataSource,
-      workspaceId,
-    );
+    const recomputeContext =
+      sharedRecomputeContext ??
+      new WorkspaceCacheRecomputeContext(this.coreDataSource, workspaceId);
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);

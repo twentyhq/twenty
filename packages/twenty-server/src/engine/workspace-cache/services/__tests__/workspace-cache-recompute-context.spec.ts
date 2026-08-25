@@ -139,7 +139,7 @@ describe('WorkspaceCacheRecomputeContext', () => {
     expect(lateRows).toBe(firstRows);
   });
 
-  it('runs a standalone query for a late request needing uncovered columns', async () => {
+  it('runs a second query for a late request needing uncovered columns', async () => {
     const { recomputeContext, findMocksByEntity } = setup();
 
     await recomputeContext.findAll(FirstTestEntity, ['id']);
@@ -151,5 +151,28 @@ describe('WorkspaceCacheRecomputeContext', () => {
     expect(findMock.mock.calls[1][0].select).toEqual(
       expect.arrayContaining(['id', 'name']),
     );
+  });
+
+  it('coalesces concurrent late uncovered requests into one follow-up query', async () => {
+    const { recomputeContext, findMocksByEntity } = setup();
+
+    await recomputeContext.findAll(FirstTestEntity, ['id']);
+
+    const [secondRoundRows, thirdRoundRows] = await Promise.all([
+      recomputeContext.findAll(FirstTestEntity, ['name']),
+      recomputeContext.findAll(FirstTestEntity, ['id', 'name']),
+    ]);
+    const coveredLateRows = await recomputeContext.findAll(FirstTestEntity, [
+      'id',
+    ]);
+
+    const findMock = findMocksByEntity.get(FirstTestEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(2);
+    expect(findMock.mock.calls[1][0].select).toEqual(
+      expect.arrayContaining(['id', 'name']),
+    );
+    expect(thirdRoundRows).toBe(secondRoundRows);
+    expect(coveredLateRows).toBe(secondRoundRows);
   });
 });

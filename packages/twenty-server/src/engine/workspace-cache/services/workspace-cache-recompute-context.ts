@@ -72,9 +72,19 @@ export class WorkspaceCacheRecomputeContext {
       return pendingFetch.rowsPromise as Promise<TEntity[]>;
     }
 
-    // Late request needing columns the dispatched fetch did not include: run
-    // it standalone rather than blocking on a second coalescing round.
-    return this.runFetch(entityTarget, selectColumns);
+    // Late request needing columns the dispatched fetch did not include:
+    // start a new coalescing round seeded with the union of both column sets,
+    // so concurrent late callers share a single follow-up query and further
+    // requests covered by the union reuse it.
+    return this.registerFetch(
+      entityName,
+      entityTarget,
+      isDefined(selectColumns)
+        ? ([
+            ...new Set([...pendingFetch.selectColumns!, ...selectColumns]),
+          ] as (keyof TEntity & string)[])
+        : undefined,
+    );
   }
 
   private registerFetch<TEntity extends WorkspaceScopedRow>(
