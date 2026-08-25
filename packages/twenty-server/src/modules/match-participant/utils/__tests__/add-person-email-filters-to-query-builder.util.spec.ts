@@ -1,8 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { type SelectQueryBuilder } from 'typeorm';
-
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
-import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 
 type AddPersonEmailFiltersToQueryBuilderTestCase = EachTestingContext<{
   emails: string[];
@@ -83,7 +81,7 @@ interface QueryBuilderCall {
 
 let queryBuilderCalls: QueryBuilderCall[] = [];
 
-const mockQueryBuilder: Partial<SelectQueryBuilder<PersonWorkspaceEntity>> = {
+const mockQueryBuilder: Partial<WorkspaceSelectQueryBuilderV2> = {
   select: jest.fn().mockImplementation((...args) => {
     queryBuilderCalls.push({ method: 'select', args });
 
@@ -122,7 +120,7 @@ describe('addPersonEmailFiltersToQueryBuilder', () => {
     ({ context: { emails, excludePersonIds, description } }) => {
       const result = addPersonEmailFiltersToQueryBuilder({
         queryBuilder:
-          mockQueryBuilder as SelectQueryBuilder<PersonWorkspaceEntity>,
+          mockQueryBuilder as unknown as WorkspaceSelectQueryBuilderV2,
         emails,
         excludePersonIds,
       });

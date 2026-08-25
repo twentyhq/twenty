@@ -143,7 +143,7 @@ export class MatchParticipantService<
 
       const people = await queryBuilder
         .orderBy('person.createdAt', 'ASC')
-        .getMany();
+        .getMany<PersonWorkspaceEntity>();
 
       const workspaceMembers = await workspaceMemberRepository.find({
         where: {

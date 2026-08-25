@@ -122,7 +122,6 @@ export class TrashCleanupService {
             },
             order: { deletedAt: 'ASC' },
             take,
-            loadEagerRelations: false,
           });
 
           if (recordsToDelete.length === 0) {
