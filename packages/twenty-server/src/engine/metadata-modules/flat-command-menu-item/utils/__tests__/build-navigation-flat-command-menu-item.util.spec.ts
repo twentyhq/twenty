@@ -62,6 +62,15 @@ describe('buildNavigationFlatCommandMenuItem', () => {
     expect(result.payload).toEqual({ objectMetadataItemId: 'obj-id-1' });
   });
 
+  it('should set the target object metadata foreign key alongside the payload', () => {
+    const result = buildNavigationFlatCommandMenuItem(baseArgs);
+
+    expect(result.navigationTargetObjectMetadataId).toBe('obj-id-1');
+    expect(result.navigationTargetObjectMetadataUniversalIdentifier).toBe(
+      'obj-universal-1',
+    );
+  });
+
   it('should include shortcut in hotKeys when shortcut is defined', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 

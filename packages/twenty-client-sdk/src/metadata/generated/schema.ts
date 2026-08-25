@@ -115,6 +115,7 @@ export interface CommandMenuItem {
     hotKeys?: Scalars['String'][]
     conditionalAvailabilityExpression?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
+    navigationTargetObjectMetadataId?: Scalars['UUID']
     pageLayoutId?: Scalars['UUID']
     universalIdentifier?: Scalars['UUID']
     applicationId?: Scalars['UUID']
@@ -136,6 +137,7 @@ export interface PathCommandMenuItemPayload {
 }
 
 export interface ObjectMetadataCommandMenuItemPayload {
+    /** @deprecated Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility. */
     objectMetadataItemId: Scalars['UUID']
     __typename: 'ObjectMetadataCommandMenuItemPayload'
 }
@@ -3417,6 +3419,7 @@ export interface CommandMenuItemGenqlSelection{
     hotKeys?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     availabilityObjectMetadataId?: boolean | number
+    navigationTargetObjectMetadataId?: boolean | number
     pageLayoutId?: boolean | number
     universalIdentifier?: boolean | number
     applicationId?: boolean | number
@@ -3440,6 +3443,7 @@ export interface PathCommandMenuItemPayloadGenqlSelection{
 }
 
 export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
+    /** @deprecated Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility. */
     objectMetadataItemId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
