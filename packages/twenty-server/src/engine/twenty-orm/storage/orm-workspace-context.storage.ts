@@ -4,7 +4,6 @@ import {
   type ObjectsPermissionsByRoleId,
   type FeatureFlagKey,
 } from 'twenty-shared/types';
-import { type EntityMetadata } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -23,7 +22,6 @@ export type ORMWorkspaceContext = {
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   permissionsPerRoleId: ObjectsPermissionsByRoleId;
-  entityMetadatas: EntityMetadata[];
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
