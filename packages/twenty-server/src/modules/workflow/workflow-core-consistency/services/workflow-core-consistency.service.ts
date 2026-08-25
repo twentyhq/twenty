@@ -1,14 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
@@ -28,8 +27,6 @@ export class WorkflowCoreConsistencyService {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
@@ -38,17 +35,12 @@ export class WorkflowCoreConsistencyService {
 
   async runConsistencyCheck(): Promise<void> {
     const report = await this.workspaceIteratorService.iterate({
-      callback: async ({ workspaceId }) => {
-        const workspace = await this.workspaceRepository.findOne({
-          select: ['databaseSchema'],
-          where: { id: workspaceId },
-        });
-
-        if (!isDefined(workspace?.databaseSchema)) {
+      callback: async ({ workspaceId, databaseSchema }) => {
+        if (!isDefined(databaseSchema)) {
           return;
         }
 
-        await this.checkWorkspace(workspaceId, workspace.databaseSchema);
+        await this.checkWorkspace(workspaceId, databaseSchema);
       },
     });
 
@@ -59,53 +51,79 @@ export class WorkflowCoreConsistencyService {
     }
   }
 
+  // Single statement instead of one shouldCheck + four aggregate queries: the
+  // cron visits every provisioned workspace every run, so per-workspace query
+  // count dominates its cost.
   private async checkWorkspace(
     workspaceId: string,
     schema: string,
   ): Promise<void> {
-    const [{ shouldCheck }] = await this.coreDataSource.query(
-      `SELECT (
-         EXISTS (SELECT 1 FROM "${schema}"."workflow" WHERE "deletedAt" IS NULL)
-         OR EXISTS (SELECT 1 FROM core."workflow" WHERE "workspaceId" = $1)
-       ) AS "shouldCheck"`,
-      [workspaceId],
-    );
-
-    if (!shouldCheck) {
-      return;
-    }
-
-    await this.checkWorkflowSync(workspaceId, schema);
-    await this.checkWorkflowVersionSync(workspaceId, schema);
-    await this.checkAutomatedTriggerSync(workspaceId, schema);
-  }
-
-  private async checkWorkflowSync(
-    workspaceId: string,
-    schema: string,
-  ): Promise<void> {
-    const [counts] = await this.coreDataSource.query(
+    const [counts]: [
+      {
+        workflowTotal: number;
+        workflowUnlinked: number;
+        workflowMissingCore: number;
+        workflowFieldMismatch: number;
+        workflowOrphanCore: number;
+        coreWorkflowTotal: number;
+        versionUnlinked: number;
+        versionMissingCore: number;
+        versionFieldMismatch: number;
+        versionOrphanCore: number;
+      },
+    ] = await this.coreDataSource.query(
       `SELECT
-         count(*) FILTER (WHERE wf."coreWorkflowId" IS NULL)::int AS unlinked,
-         count(*) FILTER (WHERE wf."coreWorkflowId" IS NOT NULL AND c.id IS NULL)::int AS "missingCore",
-         count(*) FILTER (WHERE c.id IS NOT NULL AND (
-           wf.name IS DISTINCT FROM c.name
-           OR NULLIF(wf."lastPublishedVersionId", '') IS DISTINCT FROM c."lastPublishedVersionId"::text
-         ))::int AS "fieldMismatch"
-       FROM "${schema}"."workflow" wf
-       LEFT JOIN core."workflow" c
-         ON c.id = wf."coreWorkflowId" AND c."workspaceId" = $1
-       WHERE wf."deletedAt" IS NULL`,
-      [workspaceId],
-    );
-
-    const [{ orphanCore }] = await this.coreDataSource.query(
-      `SELECT count(*)::int AS "orphanCore"
-       FROM core."workflow" c
-       WHERE c."workspaceId" = $1
-         AND NOT EXISTS (
-           SELECT 1 FROM "${schema}"."workflow" wf WHERE wf."coreWorkflowId" = c.id
-         )`,
+         wf."workflowTotal", wf."workflowUnlinked", wf."workflowMissingCore", wf."workflowFieldMismatch",
+         wfo."coreWorkflowTotal", wfo."workflowOrphanCore",
+         wv."versionUnlinked", wv."versionMissingCore", wv."versionFieldMismatch",
+         wvo."versionOrphanCore"
+       FROM (
+         SELECT
+           count(*)::int AS "workflowTotal",
+           count(*) FILTER (WHERE wf."coreWorkflowId" IS NULL)::int AS "workflowUnlinked",
+           count(*) FILTER (WHERE wf."coreWorkflowId" IS NOT NULL AND c.id IS NULL)::int AS "workflowMissingCore",
+           count(*) FILTER (WHERE c.id IS NOT NULL AND (
+             wf.name IS DISTINCT FROM c.name
+             OR NULLIF(wf."lastPublishedVersionId", '') IS DISTINCT FROM c."lastPublishedVersionId"::text
+           ))::int AS "workflowFieldMismatch"
+         FROM "${schema}"."workflow" wf
+         LEFT JOIN core."workflow" c
+           ON c.id = wf."coreWorkflowId" AND c."workspaceId" = $1
+         WHERE wf."deletedAt" IS NULL
+       ) wf
+       CROSS JOIN (
+         SELECT
+           count(*)::int AS "coreWorkflowTotal",
+           count(*) FILTER (WHERE NOT EXISTS (
+             SELECT 1 FROM "${schema}"."workflow" wf WHERE wf."coreWorkflowId" = c.id
+           ))::int AS "workflowOrphanCore"
+         FROM core."workflow" c
+         WHERE c."workspaceId" = $1
+       ) wfo
+       CROSS JOIN (
+         SELECT
+           count(*) FILTER (WHERE wf."coreWorkflowVersionId" IS NULL)::int AS "versionUnlinked",
+           count(*) FILTER (WHERE wf."coreWorkflowVersionId" IS NOT NULL AND c.id IS NULL)::int AS "versionMissingCore",
+           count(*) FILTER (WHERE c.id IS NOT NULL AND (
+             c.status::text IS DISTINCT FROM wf.status::text
+             OR c."workflowId" IS DISTINCT FROM wf."workflowId"
+             OR c.steps IS DISTINCT FROM wf.steps
+             OR c.triggers IS DISTINCT FROM (
+               CASE WHEN wf.trigger IS NULL THEN NULL ELSE jsonb_build_array(wf.trigger) END
+             )
+           ))::int AS "versionFieldMismatch"
+         FROM "${schema}"."workflowVersion" wf
+         LEFT JOIN core."workflowVersion" c
+           ON c.id = wf."coreWorkflowVersionId" AND c."workspaceId" = $1
+         WHERE wf."deletedAt" IS NULL
+       ) wv
+       CROSS JOIN (
+         SELECT count(*) FILTER (WHERE NOT EXISTS (
+           SELECT 1 FROM "${schema}"."workflowVersion" wf WHERE wf."coreWorkflowVersionId" = c.id
+         ))::int AS "versionOrphanCore"
+         FROM core."workflowVersion" c
+         WHERE c."workspaceId" = $1
+       ) wvo`,
       [workspaceId],
     );
 
@@ -114,45 +132,11 @@ export class WorkflowCoreConsistencyService {
       workspaceId,
       'workflow',
       {
-        unlinked: counts.unlinked,
-        missingCore: counts.missingCore,
-        fieldMismatch: counts.fieldMismatch,
-        orphanCore,
+        unlinked: counts.workflowUnlinked,
+        missingCore: counts.workflowMissingCore,
+        fieldMismatch: counts.workflowFieldMismatch,
+        orphanCore: counts.workflowOrphanCore,
       },
-    );
-  }
-
-  private async checkWorkflowVersionSync(
-    workspaceId: string,
-    schema: string,
-  ): Promise<void> {
-    const [counts] = await this.coreDataSource.query(
-      `SELECT
-         count(*) FILTER (WHERE wf."coreWorkflowVersionId" IS NULL)::int AS unlinked,
-         count(*) FILTER (WHERE wf."coreWorkflowVersionId" IS NOT NULL AND c.id IS NULL)::int AS "missingCore",
-         count(*) FILTER (WHERE c.id IS NOT NULL AND (
-           c.status::text IS DISTINCT FROM wf.status::text
-           OR c."workflowId" IS DISTINCT FROM wf."workflowId"
-           OR c.steps IS DISTINCT FROM wf.steps
-           OR c.triggers IS DISTINCT FROM (
-             CASE WHEN wf.trigger IS NULL THEN NULL ELSE jsonb_build_array(wf.trigger) END
-           )
-         ))::int AS "fieldMismatch"
-       FROM "${schema}"."workflowVersion" wf
-       LEFT JOIN core."workflowVersion" c
-         ON c.id = wf."coreWorkflowVersionId" AND c."workspaceId" = $1
-       WHERE wf."deletedAt" IS NULL`,
-      [workspaceId],
-    );
-
-    const [{ orphanCore }] = await this.coreDataSource.query(
-      `SELECT count(*)::int AS "orphanCore"
-       FROM core."workflowVersion" c
-       WHERE c."workspaceId" = $1
-         AND NOT EXISTS (
-           SELECT 1 FROM "${schema}"."workflowVersion" wf WHERE wf."coreWorkflowVersionId" = c.id
-         )`,
-      [workspaceId],
     );
 
     this.emitDrift(
@@ -160,12 +144,19 @@ export class WorkflowCoreConsistencyService {
       workspaceId,
       'workflowVersion',
       {
-        unlinked: counts.unlinked,
-        missingCore: counts.missingCore,
-        fieldMismatch: counts.fieldMismatch,
-        orphanCore,
+        unlinked: counts.versionUnlinked,
+        missingCore: counts.versionMissingCore,
+        fieldMismatch: counts.versionFieldMismatch,
+        orphanCore: counts.versionOrphanCore,
       },
     );
+
+    const hasWorkflows =
+      counts.workflowTotal > 0 || counts.coreWorkflowTotal > 0;
+
+    if (hasWorkflows) {
+      await this.checkAutomatedTriggerSync(workspaceId, schema);
+    }
   }
 
   private async checkAutomatedTriggerSync(

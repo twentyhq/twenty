@@ -28,6 +28,7 @@ export type WorkspaceIteratorArgs = {
 
 export type WorkspaceIteratorContext = {
   workspaceId: string;
+  databaseSchema?: string;
   dataSource?: DataSource;
   index: number;
   total: number;
@@ -122,6 +123,7 @@ export class WorkspaceIteratorService {
 
             await callback({
               workspaceId,
+              databaseSchema: workspace?.databaseSchema ?? undefined,
               dataSource,
               index,
               total: workspaceIdsToProcess.length,
