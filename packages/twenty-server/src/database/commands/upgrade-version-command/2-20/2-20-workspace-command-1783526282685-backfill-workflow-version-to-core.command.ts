@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
+import { isWorkspaceObjectNotFoundError } from 'src/database/commands/upgrade-version-command/utils/is-workspace-object-not-found-error.util';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -47,7 +47,7 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
           buildSystemAuthContext(workspaceId),
         );
     } catch (error) {
-      if (error instanceof EntityMetadataNotFoundError) {
+      if (isWorkspaceObjectNotFoundError(error)) {
         this.logger.log(
           `workflowVersion object does not exist for workspace ${workspaceId}, skipping`,
         );

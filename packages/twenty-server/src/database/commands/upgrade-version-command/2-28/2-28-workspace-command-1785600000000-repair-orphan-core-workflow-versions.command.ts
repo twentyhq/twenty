@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
+import { isWorkspaceObjectNotFoundError } from 'src/database/commands/upgrade-version-command/utils/is-workspace-object-not-found-error.util';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -50,7 +50,7 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
         })
         .count();
     } catch (error) {
-      if (error instanceof EntityMetadataNotFoundError) {
+      if (isWorkspaceObjectNotFoundError(error)) {
         return;
       }
 
