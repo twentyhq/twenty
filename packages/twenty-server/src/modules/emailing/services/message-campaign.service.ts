@@ -30,7 +30,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
-import { CampaignSendingReputationService } from 'src/modules/emailing/services/campaign-sending-reputation.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
@@ -62,7 +61,6 @@ export class MessageCampaignService {
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
-    private readonly campaignSendingReputationService: CampaignSendingReputationService,
     private readonly throttlerService: ThrottlerService,
   ) {}
 
@@ -75,10 +73,6 @@ export class MessageCampaignService {
     userWorkspaceId: string;
     campaignId: string;
   }): Promise<SendCampaignResult> {
-    await this.campaignSendingReputationService.assertWorkspaceCanKeepSendingOrThrow(
-      { workspaceId },
-    );
-
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
@@ -188,10 +182,6 @@ export class MessageCampaignService {
     fromAddress: string;
     unsubscribeTopicId?: string;
   }): Promise<EmailingDomainSendEmailResult> {
-    await this.campaignSendingReputationService.assertWorkspaceCanKeepSendingOrThrow(
-      { workspaceId },
-    );
-
     const emailingDomain = await this.findSendReadyEmailingDomainOrThrow({
       workspaceId,
       fromAddress,

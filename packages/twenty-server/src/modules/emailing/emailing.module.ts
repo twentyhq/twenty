@@ -35,7 +35,6 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignDeliveryFeedbackService } from 'src/modules/emailing/services/message-campaign-delivery-feedback.service';
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
-import { CampaignSendingReputationService } from 'src/modules/emailing/services/campaign-sending-reputation.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
@@ -73,7 +72,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     MessageCampaignDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignLifecycleService,
-    CampaignSendingReputationService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,
     MessageCampaignRecoveryService,
