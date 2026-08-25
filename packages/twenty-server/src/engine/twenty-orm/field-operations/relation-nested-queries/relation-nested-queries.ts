@@ -156,11 +156,11 @@ export class RelationNestedQueries {
         connectQueryConfig.targetObjectName,
       );
 
-      const recordsToConnect = await this.fetchRecordsToConnect(
+      const recordsToConnect = await this.fetchRecordsToConnect({
         connectQueryConfig,
         clause,
         parameters,
-      );
+      });
 
       allRecordsToConnectWithConfig.push([
         connectQueryConfig,
@@ -171,11 +171,15 @@ export class RelationNestedQueries {
     return allRecordsToConnectWithConfig;
   }
 
-  private async fetchRecordsToConnect(
-    connectQueryConfig: RelationConnectQueryConfig,
-    clause: string,
-    parameters: Record<string, unknown>,
-  ): Promise<Record<string, unknown>[]> {
+  private async fetchRecordsToConnect({
+    connectQueryConfig,
+    clause,
+    parameters,
+  }: {
+    connectQueryConfig: RelationConnectQueryConfig;
+    clause: string;
+    parameters: Record<string, unknown>;
+  }): Promise<Record<string, unknown>[]> {
     const targetObjectName = connectQueryConfig.targetObjectName;
     const targetQueryBuilder = this.workspaceOrmManager
       .getRepository(targetObjectName, this.rolePermissionConfig)
