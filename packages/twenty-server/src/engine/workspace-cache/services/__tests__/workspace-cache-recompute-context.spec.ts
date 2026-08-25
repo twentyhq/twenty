@@ -19,11 +19,15 @@ describe('WorkspaceCacheRecomputeContext', () => {
     const findMocksByEntity = new Map<EntityTarget<object>, jest.Mock>([
       [
         FirstTestEntity,
-        jest.fn().mockResolvedValue([{ id: 'first-row', workspaceId: WORKSPACE_ID }]),
+        jest
+          .fn()
+          .mockResolvedValue([{ id: 'first-row', workspaceId: WORKSPACE_ID }]),
       ],
       [
         SecondTestEntity,
-        jest.fn().mockResolvedValue([{ id: 'second-row', workspaceId: WORKSPACE_ID }]),
+        jest
+          .fn()
+          .mockResolvedValue([{ id: 'second-row', workspaceId: WORKSPACE_ID }]),
       ],
     ]);
 
