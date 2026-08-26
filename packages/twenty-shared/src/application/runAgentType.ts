@@ -8,6 +8,7 @@ export type RunAgentMessage = {
 export type RunAgentInput = {
   agentUniversalIdentifier: string;
   runAsWorkspaceMemberId?: string;
+  runAsRoleId?: string;
 } & (
   | { prompt: string; messages?: never }
   | { messages: RunAgentMessage[]; prompt?: never }

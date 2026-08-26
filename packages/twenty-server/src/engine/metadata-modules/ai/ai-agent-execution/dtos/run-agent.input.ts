@@ -34,6 +34,11 @@ export class RunAgentInputDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   runAsWorkspaceMemberId?: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  runAsRoleId?: string;
+
   @IsOptional()
   @IsArray()
   @ArrayNotEmpty()

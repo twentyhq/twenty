@@ -16,6 +16,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -61,6 +62,7 @@ import { AgentRunService } from './services/agent-run.service';
     AgentRunResolver,
     AgentRunService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(AgentEntity),
   ],
   exports: [

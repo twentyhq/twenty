@@ -145,13 +145,13 @@ export class AgentAsyncExecutorService {
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
-    runAsRoleId,
+    runAsRoleIds,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
-    runAsRoleId?: string;
+    runAsRoleIds?: string[];
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -162,7 +162,7 @@ export class AgentAsyncExecutorService {
       roleId: agentRoleId,
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId,
-        runAsRoleId,
+        runAsRoleIds,
       }),
       requireExplicitObjectGrants: true,
       authContext,
@@ -185,20 +185,20 @@ export class AgentAsyncExecutorService {
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
-    runAsRoleId,
+    runAsRoleIds,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
-    runAsRoleId?: string;
+    runAsRoleIds?: string[];
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
-    const rolePermissionConfig = isDefined(runAsRoleId)
-      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
+    const rolePermissionConfig = isNonEmptyArray(runAsRoleIds)
+      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleIds })
       : undefined;
 
     const toolContext: ToolContext = {
@@ -257,7 +257,7 @@ export class AgentAsyncExecutorService {
     authContext,
     workspaceId,
     userWorkspaceId,
-    runAsRoleId,
+    runAsRoleIds,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
   }: {
@@ -268,7 +268,7 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
-    runAsRoleId?: string;
+    runAsRoleIds?: string[];
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -332,7 +332,7 @@ export class AgentAsyncExecutorService {
             const lazyToolset = await this.buildLazyRegistryTools({
               agent,
               agentRoleId,
-              runAsRoleId,
+              runAsRoleIds,
               authContext,
               actorContext,
             });
@@ -343,7 +343,7 @@ export class AgentAsyncExecutorService {
             registryTools = await this.buildPreloadedRegistryTools({
               agent,
               agentRoleId,
-              runAsRoleId,
+              runAsRoleIds,
               authContext,
               actorContext,
             });
