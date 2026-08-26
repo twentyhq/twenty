@@ -113,8 +113,8 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
         })
       ];
 
-    // When the field metadata itself is missing, the create path recreates the
-    // column; only probe the schema for a field the metadata claims to have.
+    // Without field metadata there is no column name to probe; the column is
+    // gone with it and the create path recreates both.
     const searchVectorColumnExists = isDefined(searchVectorFlatFieldMetadata)
       ? await this.checkSearchVectorColumnExists({
           dataSource,
@@ -122,7 +122,7 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
           timelineActivityFlatObjectMetadata,
           columnName: searchVectorFlatFieldMetadata.name,
         })
-      : true;
+      : false;
 
     if (
       isDefined(standardFlatSearchFieldMetadata) &&
