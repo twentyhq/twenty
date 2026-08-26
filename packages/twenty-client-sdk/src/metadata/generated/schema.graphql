@@ -42,6 +42,7 @@ type ApplicationVariable {
   key: String!
   value: String!
   description: String!
+  label: String!
   isSecret: Boolean!
   isDeprecated: Boolean!
   type: String!
