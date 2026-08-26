@@ -5,8 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 import { fromLogicFunctionEntityToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-logic-function-entity-to-flat-logic-function.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -27,7 +26,7 @@ export class WorkspaceFlatLogicFunctionMapCacheService extends FlatEntityMapCach
     rows,
   }: WorkspaceCacheProviderContext<
     typeof FLAT_LOGIC_FUNCTION_ROWS_REQUIREMENT
-  >): FlatEntityMaps<FlatLogicFunction> {
+  >): FlatLogicFunctionMaps {
     const { logicFunction: logicFunctions, application: applications } = rows;
 
     const applicationIdToUniversalIdentifierMap =

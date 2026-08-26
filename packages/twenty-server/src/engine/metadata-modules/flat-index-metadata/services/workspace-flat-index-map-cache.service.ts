@@ -5,8 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatIndexMetadataMaps } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-maps.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -31,7 +30,7 @@ export class WorkspaceFlatIndexMapCacheService extends FlatEntityMapCacheProvide
     rows,
   }: WorkspaceCacheProviderContext<
     typeof FLAT_INDEX_ROWS_REQUIREMENT
-  >): FlatEntityMaps<FlatIndexMetadata> {
+  >): FlatIndexMetadataMaps {
     const {
       index: indexes,
       indexFieldMetadata: indexFieldMetadatas,

@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -49,7 +48,7 @@ export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider
     rows,
   }: WorkspaceCacheProviderContext<
     typeof FLAT_ROLE_ROWS_REQUIREMENT
-  >): FlatEntityMaps<FlatRole> {
+  >): FlatRoleMaps {
     const {
       role: roles,
       application: applications,

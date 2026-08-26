@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -57,7 +56,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
     rows,
   }: WorkspaceCacheProviderContext<
     typeof FLAT_OBJECT_METADATA_ROWS_REQUIREMENT
-  >): FlatEntityMaps<FlatObjectMetadata> {
+  >): FlatObjectMetadataMaps {
     const {
       objectMetadata: objectMetadatas,
       application: applications,

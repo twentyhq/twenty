@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
 import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
 import { compactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/compact-flat-field-metadata-maps.util';
 import { expandFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/expand-flat-field-metadata-maps.util';
@@ -64,14 +63,14 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
   override readonly rowsRequirement = FLAT_FIELD_METADATA_ROWS_REQUIREMENT;
 
   override compactForStorage(
-    data: FlatEntityMaps<FlatFieldMetadata>,
+    data: FlatFieldMetadataMaps,
   ): CompactFlatFieldMetadataMaps {
     return compactFlatFieldMetadataMaps(data);
   }
 
   override expandFromStorage(
     compactData: CompactFlatFieldMetadataMaps,
-  ): FlatEntityMaps<FlatFieldMetadata> {
+  ): FlatFieldMetadataMaps {
     return expandFlatFieldMetadataMaps(compactData);
   }
 
@@ -79,7 +78,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
     rows,
   }: WorkspaceCacheProviderContext<
     typeof FLAT_FIELD_METADATA_ROWS_REQUIREMENT
-  >): FlatEntityMaps<FlatFieldMetadata> {
+  >): FlatFieldMetadataMaps {
     const {
       fieldMetadata: fieldMetadatas,
       index: indexMetadatas,
