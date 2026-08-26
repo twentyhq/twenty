@@ -52,12 +52,12 @@ export class BackfillWorkflowRunCoreIdsCommand extends ProvisionedWorkspaceComma
         return;
       }
 
-      const [{ to_regclass: workflowRunTable }] = await queryRunner.query(
-        `SELECT to_regclass($1)`,
+      const [{ workflowRunTableExists }] = await queryRunner.query(
+        `SELECT to_regclass($1) IS NOT NULL AS "workflowRunTableExists"`,
         [`"${schema}"."workflowRun"`],
       );
 
-      if (!isDefined(workflowRunTable)) {
+      if (workflowRunTableExists !== true) {
         this.logger.log(
           `workflowRun table does not exist for workspace ${workspaceId}, skipping`,
         );
@@ -66,9 +66,14 @@ export class BackfillWorkflowRunCoreIdsCommand extends ProvisionedWorkspaceComma
       }
 
       if (options.dryRun === true) {
+        // The new columns may not exist yet in dry-run (the add-fields command
+        // also dry-ran), so count candidate rows without referencing them.
         const [{ count }] = await queryRunner.query(
-          `SELECT COUNT(*)::int AS count FROM "${schema}"."workflowRun"
-           WHERE "coreWorkflowId" IS NULL OR "coreWorkflowVersionId" IS NULL`,
+          `SELECT COUNT(*)::int AS count
+           FROM "${schema}"."workflowRun" workflowRun
+           JOIN "${schema}"."workflowVersion" workflowVersion
+             ON workflowVersion.id = workflowRun."workflowVersionId"
+           WHERE workflowVersion."coreWorkflowVersionId" IS NOT NULL`,
         );
 
         this.logger.log(
@@ -78,28 +83,26 @@ export class BackfillWorkflowRunCoreIdsCommand extends ProvisionedWorkspaceComma
         return;
       }
 
-      const updatedVersionRows = await queryRunner.query(
+      const [, updatedVersionRowCount] = await queryRunner.query(
         `UPDATE "${schema}"."workflowRun" workflowRun
          SET "coreWorkflowVersionId" = workflowVersion."coreWorkflowVersionId"
          FROM "${schema}"."workflowVersion" workflowVersion
          WHERE workflowVersion.id = workflowRun."workflowVersionId"
            AND workflowRun."coreWorkflowVersionId" IS NULL
-           AND workflowVersion."coreWorkflowVersionId" IS NOT NULL
-         RETURNING workflowRun.id`,
+           AND workflowVersion."coreWorkflowVersionId" IS NOT NULL`,
       );
 
-      const updatedWorkflowRows = await queryRunner.query(
+      const [, updatedWorkflowRowCount] = await queryRunner.query(
         `UPDATE "${schema}"."workflowRun" workflowRun
          SET "coreWorkflowId" = workflow."coreWorkflowId"
          FROM "${schema}"."workflow" workflow
          WHERE workflow.id = workflowRun."workflowId"
            AND workflowRun."coreWorkflowId" IS NULL
-           AND workflow."coreWorkflowId" IS NOT NULL
-         RETURNING workflowRun.id`,
+           AND workflow."coreWorkflowId" IS NOT NULL`,
       );
 
       this.logger.log(
-        `Backfilled workflowRun core ids for workspace ${workspaceId} (coreWorkflowVersionId: ${updatedVersionRows.length}, coreWorkflowId: ${updatedWorkflowRows.length})`,
+        `Backfilled workflowRun core ids for workspace ${workspaceId} (coreWorkflowVersionId: ${updatedVersionRowCount}, coreWorkflowId: ${updatedWorkflowRowCount})`,
       );
     } finally {
       await queryRunner.release();
