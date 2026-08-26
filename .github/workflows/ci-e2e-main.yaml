@@ -284,11 +284,14 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          MATCHES=$(grep -rIl 'sk-ant-' /tmp/qa-scout 2>/dev/null || true)
-          if [ -n "$MATCHES" ]; then
+          # NUL-delimited paths and no -I: an agent-chosen filename with
+          # spaces or newlines, or a token tucked into a binary-looking file,
+          # must not escape redaction.
+          if grep -rq 'sk-ant-' /tmp/qa-scout 2>/dev/null; then
             echo "Redacting Anthropic token shapes from Scout files:"
-            echo "$MATCHES"
-            echo "$MATCHES" | xargs sed -i -E 's/sk-ant-[A-Za-z0-9_-]+/[REDACTED]/g'
+            grep -rl 'sk-ant-' /tmp/qa-scout 2>/dev/null
+            grep -rlZ 'sk-ant-' /tmp/qa-scout 2>/dev/null \
+              | xargs -0 sed -i -E 's/sk-ant-[A-Za-z0-9_-]+/[REDACTED]/g'
           fi
 
       # Always leaves a breadcrumb on push/dispatch runs so a broken prepare
