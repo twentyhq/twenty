@@ -4,7 +4,7 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { SLACK_USER_LINKS_RESOLVE_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
 import { asRecord } from 'src/front-components/utils/as-record.util';
-import { type SlackResolvedUser } from 'src/front-components/types/slack-resolved-user.type';
+import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
 type ResolveInput = {
   email?: string;

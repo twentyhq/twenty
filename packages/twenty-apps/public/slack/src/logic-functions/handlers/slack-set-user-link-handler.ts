@@ -13,6 +13,7 @@ import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { isConsentedSlackUserLink } from 'src/logic-functions/utils/is-consented-slack-user-link';
@@ -116,6 +117,22 @@ export const slackSetUserLinkHandler = async (
     slackUserId = resolvedUser.slackUserId;
     slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
     resolvedName = resolvedName ?? resolvedUser.displayName;
+  }
+
+  // A Slack user id given without a team id (e.g. straight from the agent tool)
+  // may belong to another workspace. Resolve their real team so a cross-workspace
+  // user is not misread as in-workspace and pushed into a consent DM we cannot
+  // deliver, instead of being admin-set.
+  if (isNonEmptyString(slackUserId) && !isNonEmptyString(slackTeamId)) {
+    const identity = await fetchSlackUserIdentity({
+      client: slackClient,
+      slackUserId,
+    });
+
+    if (isDefined(identity)) {
+      slackTeamId = identity.slackTeamId;
+      resolvedName = resolvedName ?? identity.displayName;
+    }
   }
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);

@@ -11,6 +11,7 @@ const {
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
   resolveSlackUserByEmailMock,
+  fetchSlackUserIdentityMock,
   findWorkspaceMemberNameByIdMock,
   sendSlackUserLinkConsentDmMock,
 } = vi.hoisted(() => ({
@@ -22,6 +23,7 @@ const {
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
   resolveSlackUserByEmailMock: vi.fn(),
+  fetchSlackUserIdentityMock: vi.fn(),
   findWorkspaceMemberNameByIdMock: vi.fn(),
   sendSlackUserLinkConsentDmMock: vi.fn(),
 }));
@@ -44,6 +46,10 @@ vi.mock('src/logic-functions/utils/get-slack-client', () => ({
 
 vi.mock('src/logic-functions/utils/resolve-slack-user-by-email', () => ({
   resolveSlackUserByEmail: resolveSlackUserByEmailMock,
+}));
+
+vi.mock('src/logic-functions/utils/fetch-slack-user-identity', () => ({
+  fetchSlackUserIdentity: fetchSlackUserIdentityMock,
 }));
 
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
@@ -84,6 +90,7 @@ describe('slackSetUserLinkHandler', () => {
     });
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
     findSlackUserLinkMock.mockResolvedValue(undefined);
+    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
     findWorkspaceMemberNameByIdMock.mockResolvedValue('Ada Member');
     sendSlackUserLinkConsentDmMock.mockResolvedValue({ success: true });
   });
@@ -186,6 +193,26 @@ describe('slackSetUserLinkHandler', () => {
       expect.anything(),
       expect.objectContaining({
         slackTeamId: 'T9876543210',
+        consentState: 'ADMIN_SET',
+      }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should admin-set a cross-workspace user given by id without a team id', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: 'T-EXTERNAL',
+      displayName: 'Guest',
+    });
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        slackTeamId: 'T-EXTERNAL',
         consentState: 'ADMIN_SET',
       }),
     );

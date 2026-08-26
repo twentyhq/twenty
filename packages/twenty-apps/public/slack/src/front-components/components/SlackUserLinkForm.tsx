@@ -11,7 +11,7 @@ import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUse
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
 import { useResolveSlackUser } from 'src/front-components/hooks/use-resolve-slack-user';
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
-import { type SlackResolvedUser } from 'src/front-components/types/slack-resolved-user.type';
+import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 
 const StyledForm = styled.form`
