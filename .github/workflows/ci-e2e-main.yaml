@@ -242,6 +242,11 @@ jobs:
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The action needs a GitHub token to bootstrap; without one it tries
+          # an OIDC exchange, which this workflow's permissions rightly refuse.
+          # The workflow token is contents:read only, so the agent still holds
+          # no write capability.
+          github_token: ${{ github.token }}
           prompt: |
             Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
             the CI invocation: every path and credential in the skill's Inputs
