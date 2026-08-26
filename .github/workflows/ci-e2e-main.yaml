@@ -420,7 +420,9 @@ jobs:
           fi
           {
             echo "<!-- qa-scout -->"
-            head -c 60000 "$REPORT_FILE"
+            # iconv drops a multi-byte character split by the byte cap, keeping
+            # the payload valid UTF-8.
+            head -c 60000 "$REPORT_FILE" | iconv -f UTF-8 -t UTF-8 -c
             echo ""
             echo ""
             echo "[QA Scout run](${RUN_URL}) · verdict: ${VERDICT} · re-run: Actions → CI E2E Main → Run workflow with pr_number=${PR_NUMBER}"
