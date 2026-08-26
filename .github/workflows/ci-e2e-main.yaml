@@ -27,6 +27,8 @@ jobs:
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.labels.*.name, 'qa-scout')) ||
+      (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'run-merge-queue'))
     runs-on: ubuntu-latest-8-cores
     # 60 so build + suite plus the QA Scout's 15-minute step cap cannot hit
@@ -155,32 +157,51 @@ jobs:
       # exactly when a loud report helps), but not on merge-queue PR runs.
       - name: QA Scout / Prepare merged PR context
         id: qa-scout-pr
-        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+        if: >-
+          ${{ !cancelled() && (
+            github.event_name == 'push' ||
+            github.event_name == 'workflow_dispatch' ||
+            (github.event_name == 'pull_request' &&
+             contains(github.event.pull_request.labels.*.name, 'qa-scout') &&
+             github.event.pull_request.head.repo.full_name == github.repository)
+          ) }}
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/qa-scout/context /tmp/qa-scout/output /tmp/qa-scout/browser
-          PR_NUMBER="${INPUT_PR_NUMBER:-}"
-          if [ -z "$PR_NUMBER" ]; then
-            PR_NUMBER=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" --jq '.[0].number // empty' || true)
+          MODE="post-merge"
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            # Label-triggered pre-merge validation: the checkout IS the PR
+            # head, so the Scout QAs the PR itself before it merges.
+            MODE="pre-merge"
+            PR_NUMBER="${EVENT_PR_NUMBER:-}"
+          else
+            PR_NUMBER="${INPUT_PR_NUMBER:-}"
+            if [ -z "$PR_NUMBER" ]; then
+              PR_NUMBER=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" --jq '.[0].number // empty' || true)
+            fi
           fi
           if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "No merged PR associated with ${GITHUB_SHA}; skipping QA Scout."
+            echo "No target PR resolved; skipping QA Scout."
             echo "run=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
             --json number,title,body,author,url,mergedAt > /tmp/qa-scout/context/pr.json
-          # The Scout QAs main, so an unmerged PR (reachable via manual
-          # dispatch) would get a verdict about code it does not contain.
-          if [ -z "$(jq -r '.mergedAt // empty' /tmp/qa-scout/context/pr.json)" ]; then
+          # The post-merge Scout QAs main, so an unmerged PR (reachable via
+          # manual dispatch) would get a verdict about code main does not
+          # contain. Pre-merge label runs check out the PR head, so the guard
+          # does not apply there.
+          if [ "$MODE" = "post-merge" ] && [ -z "$(jq -r '.mergedAt // empty' /tmp/qa-scout/context/pr.json)" ]; then
             echo "PR #${PR_NUMBER} is not merged; skipping QA Scout."
             echo "run=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          printf '%s\n' "$MODE" > /tmp/qa-scout/context/mode
           TITLE=$(jq -r '.title' /tmp/qa-scout/context/pr.json)
           # Mirrors mustBeQa in the eng app: [no-qa]/[noqa] escape hatch, i18n
           # translation PRs are auto-generated and never QA candidates.
@@ -221,7 +242,7 @@ jobs:
                   "--browser", "chrome",
                   "--isolated",
                   "--output-dir", "/tmp/qa-scout/browser",
-                  "--allowed-origins", "http://localhost:3000;http://127.0.0.1:3000"
+                  "--allowed-origins", "http://localhost:3000;http://127.0.0.1:3000;http://app.localhost:3000;http://apple.localhost:3000"
                 ]
               }
             }
@@ -251,7 +272,7 @@ jobs:
             Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
             the CI invocation: every path and credential in the skill's Inputs
             table applies verbatim.
-          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),mcp__playwright"'
+          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),Bash(curl http://localhost:3000/*),mcp__playwright"'
 
       # The agent process necessarily holds the inference credential, and a
       # prompt-injected agent could copy it into any file it can write. The
@@ -273,7 +294,7 @@ jobs:
       # Always leaves a breadcrumb on push/dispatch runs so a broken prepare
       # step can never disable the Scout silently.
       - name: QA Scout / Job summary
-        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+        if: ${{ !cancelled() && steps.qa-scout-pr.outcome != 'skipped' }}
         continue-on-error: true
         env:
           SCOUT_RUN: ${{ steps.qa-scout-pr.outputs.run }}
